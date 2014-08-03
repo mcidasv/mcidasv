@@ -1,3 +1,5 @@
+"""Utility functions to ease working in the Jython Shell."""
+
 # python imports
 import datetime
 import fnmatch
@@ -39,11 +41,11 @@ def editFile(path, cleanup=False):
     
     Args:
         path: Required string value that represents a path to a file. The string
-        is validated with expandpath, so paths like "~/test.py" will work.
-        
+              is validated with expandpath, so paths like "~/test.py" will work.
+              
         cleanup: Optional boolean value that defaults to False. If set to True,
-        calls to removeAllData() and removeAllLayers() are added to the 
-        beginning of the Jython Shell input text field.
+                 calls to removeAllData() and removeAllLayers() are added to the 
+                 beginning of the Jython Shell input text field.
     """
     fp = open(expandpath(path), 'r')
     try:
@@ -58,23 +60,22 @@ def editFile(path, cleanup=False):
         fp.close()
         
 def today(dateFormat=None):
-    """Returns today's date in either the user's specified format, or YYYYDDD (default)."""
+    """Return today's date in either the user's specified format, or YYYYDDD (default)."""
     dateFormat = dateFormat or '%Y%j'
     return datetime.date.today().strftime(dateFormat)
     
 def tomorrow(dateFormat=None):
-    """Returns tomorrow's date in either the user's specified format, or YYYYDDD (default)."""
+    """Return tomorrow's date in either the user's specified format, or YYYYDDD (default)."""
     dateFormat = dateFormat or '%Y%j'
     return (datetime.date.today() + datetime.timedelta(days=1)).strftime(dateFormat)
     
 def yesterday(dateFormat=None):
-    """Returns yesterday's date in either the user's specified format, or YYYYDDD (default)."""
+    """Return yesterday's date in either the user's specified format, or YYYYDDD (default)."""
     dateFormat = dateFormat or '%Y%j'
     return (datetime.date.today() - datetime.timedelta(days=1)).strftime(dateFormat)
     
 def expandpath(path):
-    """Expands ENV variables, fixes things like '~', and then normalizes the
-    given path."""
+    """Expand ENV variables, fixes things like '~', and then normalizes the given path."""
     return os.path.normpath(os.path.expanduser(os.path.expandvars(path)))
     
 @deprecated(today)
@@ -94,17 +95,18 @@ def _expandpath(path):
     return expandpath
     
 def getUserPath():
-    """Returns the path to the user's McIDAS-V directory."""
+    """Return path to the user's McIDAS-V directory."""
     return getStaticMcv().getStore().getUserDirectory().getPath()
     
 def getMouseEarthLocation():
+    """Return position of the mouse pointer as a lat/lon tuple."""
     display = getStaticMcv().getVMManager().getLastActiveViewManager()
     master = display.getMaster()
     visadLat, visadLon = master.getCursorLatitude(), master.getCursorLongitude()
     return visadLat.getValue(), visadLon.getValue()
     
 def describeActions(pattern=None):
-    """Prints out a list of the McIDAS-V actions.
+    """Print out a list of the McIDAS-V actions.
     
     The output is ordered alphabetically and grouped by functionality. Each
     identifier can be "run" like so:
@@ -121,6 +123,7 @@ def describeActions(pattern=None):
     print sorted([action.getId() for action in actions])
     
 def getLogFile():
+    """Return the file path of the McIDAS-V log file."""
     # TODO(jon): this will likely have to change as the complexity of
     #            logback.xml increases. :(
     # should return the "default" logging context
@@ -133,6 +136,15 @@ def getLogFile():
     return appender.getFile()
     
 def getLogLevel(loggerName='ROOT'):
+    """Return log level.
+    
+    Optional Args:
+        loggerName: Name of a specific 'logger'. Default value is 'ROOT'.
+        
+    Returns:
+        Dictionary containing both the 'level' and 'effectiveLevel' of the 
+        given logger.
+    """
     logger = LoggerFactory.getLogger(loggerName)
     if logger.getLevel():
         level = str(logger.getLevel())
@@ -147,6 +159,21 @@ def getLogLevel(loggerName='ROOT'):
     return { 'level': level, 'effectiveLevel': effectiveLevel }
     
 def setLogLevel(level, loggerName='ROOT', temporary=True):
+    """Set the log level for the given logger.
+    
+    Args:
+        level: Logging level to set. Valid levels are 'TRACE', 'DEBUG', 'INFO',
+               'WARN', 'ERROR', and 'OFF'.
+                
+    Optional Args:
+        loggerName: Name of a specific 'logger'. Default value is 'ROOT'.
+        temporary: Whether or not the logging level should be saved between
+                   McIDAS-V sessions. Be aware that if set to True, loggerName
+                   must be 'ROOT'. Default value is True.
+                   
+    Raises:
+        ValueError: if temporary is True and loggerName is not 'ROOT'.
+    """
     if not temporary:
         if loggerName != 'ROOT':
             raise ValueError(_BAD_LOGGERNAME % (loggerName))
@@ -167,15 +194,15 @@ def setLogLevel(level, loggerName='ROOT', temporary=True):
     logger.setLevel(convertedLevel)
     
 def deleteLogFile():
-    """Removes the active log file."""
+    """Remove active log file."""
     os.remove(getLogFile())
     
 def moveLogFile(destination):
-    """Move the active log file to a given destination."""
+    """Move active log file to a given destination."""
     shutil.move(getLogFile(), _expandpath(destination))
     
 def copyLogFile(destination):
-    """Copies the active log files to a given destination."""
+    """Copy active log files to a given destination."""
     shutil.copy2(getLogFile(), _expandpath(destination))
     
 def ncdump(path, output_format='cdl', show_values='c', vars=None):
@@ -187,11 +214,10 @@ def ncdump(path, output_format='cdl', show_values='c', vars=None):
     Args:
         path: Path to an existing netCDF file.
         
-        output_format: Optional. Understands 'cdl' and 'ncml'. Defaults to 'cdl'
-        
-        show_values: Optional. Understands 'c' and 'vall'. Defaults to 'c'.
-        
-        vars: Optional. Allows you to dump specified variable(s) or variable section(s).
+    Optional Args:
+        output_format: Understands 'cdl' and 'ncml'. Defaults to 'cdl'.
+        show_values: Understands 'c' and 'vall'. Defaults to 'c'.
+        vars: Allows you to dump specified variable(s) or variable section(s).
         
     Returns:
         Nothing. However, you may want to try the 'ncdumpToString' function.
@@ -201,7 +227,7 @@ def ncdump(path, output_format='cdl', show_values='c', vars=None):
         print results
         
 def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
-    """Returns contents of a given netCDF file as a string.
+    """Return contents of a given netCDF file as a string.
     
     Please be aware that the resulting string CANNOT (currently) be used as
     input for ncgen due to netCDF-Java limitations.
@@ -209,17 +235,15 @@ def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
     Args:
         path: Path to an existing netCDF file.
         
-        output_format: Optional. Understands 'cdl' and 'ncml'. Defaults to 'cdl'
-        
-        show_values: Optional. Understands 'c' and 'vall'. Defaults to 'c'.
-        
-        vars: Optional. Allows you to dump specified variable(s) or variable section(s).
+    Optional Args:
+        output_format: Understands 'cdl' and 'ncml'. Defaults to 'cdl'.
+        show_values: Understands 'c' and 'vall'. Defaults to 'c'.
+        vars: Allows you to dump specified variable(s) or variable section(s).
         
     Returns:
         String representation of "ncdump" output (or an empty string if there
         was a problem within netCDF).
     """
-    
     from jarray import array
     from java.io import IOException
     from java.io import StringWriter
@@ -243,26 +267,33 @@ def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
     return writer.toString()
     
 def dump_active_display():
-    """ Returns the currently-active display object."""
+    """Return currently active display object."""
     pass
     
 # The dumpObj code has been adapted from
 # http://code.activestate.com/recipes/137951/
 def printDict(di, format="%-25s %s"):
+    """Print the contents of the given dictionary.
+    
+    Args:
+        di: Dictionary to print.
+        
+    Optional Args:
+        format: Formatting string to use when printing. Default value is '%-25s %s'.
+    """
     for (key, val) in di.items():
         print format % (str(key)+':', val)
         
 def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
     """Print a nicely formatted overview of an object.
 
-    The output lines will be wrapped at maxlen, with lindent of space
-    for names of attributes.  A maximum of maxspew characters will be
-    printed for each attribute value.
+    The output lines will be wrapped at maxlen, with lindent of space for 
+    names of attributes.  A maximum of maxspew characters will be printed for 
+    each attribute value.
 
-    You can hand dumpObj any data type -- a module, class, instance,
-    new class.
+    You can hand dumpObj any data type -- a module, class, instance, new class.
 
-    Note that in reformatting for compactness the routine trashes any
+    Note that in reformatting for compactness the routine trashes any 
     formatting in the docstrings it prints.
 
     Example:
@@ -391,10 +422,12 @@ def dumpObj(obj, maxlen=77, lindent=24, maxspew=600):
                                 tabbedwidths, ' ')
                                 
 def prettyPrintCols(strings, widths, split=' '):
-    """Pretty prints text in colums, with each string breaking at
-    split according to prettyPrint.  margins gives the corresponding
-    right breaking point."""
+    """Pretty prints text.
     
+    Resulting output is organized into columns, with each string breaking at
+    split according to prettyPrint. Margins gives the corresponding right 
+    breaking point.
+    """
     assert len(strings) == len(widths)
     
     strings = map(nukenewlines, strings)
@@ -414,12 +447,14 @@ def prettyPrintCols(strings, widths, split=' '):
     return '\n'.join(map(formatline, *cols))
     
 def prettyPrint(string, maxlen=75, split=' '):
-    """Pretty prints the given string to break at an occurrence of
-    split where necessary to avoid lines longer than maxlen.
-
-    This will overflow the line if no convenient occurrence of split
-    is found"""
+    """Pretty print the given string.
     
+    Breaks at an occurrence of split where necessary to avoid lines longer 
+    than maxlen.
+    
+    This will overflow the line if no convenient occurrence of split
+    is found.
+    """
     # Tack on the splitting character to guarantee a final match
     string += split
     
@@ -434,26 +469,26 @@ def prettyPrint(string, maxlen=75, split=' '):
     return lines
     
 def nukenewlines(string):
-    """Strip newlines and any trailing/following whitespace; rejoin
-    with a single space where the newlines were.
+    """Strip newlines and any trailing/following whitespace.
     
-    Bug: This routine will completely butcher any whitespace-formatted
-    text."""
+    Rejoins with a single space where the newlines were.
+    
+    Bug: This routine will completely butcher any whitespace-formatted text.
+    """
     if not string:
         return ''
     lines = string.splitlines()
     return ' '.join([line.strip() for line in lines])
     
 def delchars(str, chars):
-    """Returns a string for which all occurrences of characters in
-    chars have been removed."""
+    """Return string for which all occurrences of characters in chars have been removed."""
     # Translate demands a mapping string of 256 characters;
     # whip up a string that will leave all characters unmolested.
     identity = ''.join([chr(x) for x in range(256)])
     return str.translate(identity, chars)
     
 def javaInstanceMethods(clazz):
-    """Returns names of instance methods for a given Java class."""
+    """Return names of instance methods for a given Java class."""
     names = set()
     for method in Class.getDeclaredMethods(clazz):
         modifiers = method.getModifiers()
@@ -469,7 +504,7 @@ def javaInstanceMethods(clazz):
     return names
     
 def javaStaticMethods(clazz):
-    """Returns names of static methods for a given Java class."""
+    """Return names of static methods for a given Java class."""
     static_methods = {}
     for method in Class.getDeclaredMethods(clazz):
         modifiers = method.getModifiers()
@@ -482,7 +517,7 @@ def javaStaticMethods(clazz):
     return methods
     
 def javaStaticFields(clazz):
-    """Returns names of static fields for a given Java class."""
+    """Return names of static fields for a given Java class."""
     static_fields = {}
     for field in Class.getDeclaredFields(clazz):
         modifiers = field.getModifiers()
@@ -508,7 +543,7 @@ def ispython22(object):
     else:
         # assume rest is python
         python = True
-    
+        
     return python
     
 def ispython25(object):
