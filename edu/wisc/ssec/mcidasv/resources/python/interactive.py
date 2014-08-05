@@ -33,9 +33,21 @@ _APPENDER_ASSERT_MSG = "expected appender to be a subclass of FileAppender; got 
 _CONTEXT_FIND_LOGGER = "expected logger '%s' to be added to default context"
 _BAD_LOGGERNAME = "Cannot save log level if loggerName is not 'ROOT' (given loggerName is '%s')."
 
-# def runFile(path, showContents=False):
-#     raise NotImplementedError()
+def checkLocalServerStatus():
+    """Check the status of mcservl.
     
+    Returns:
+        True if things are working as expected, False if mcservl does not have
+        write access to the userpath.
+        
+    Raises:
+        RuntimeError: if getStaticMcv() fails (which should not happen).
+    """
+    mcv = getStaticMcv()
+    if mcv:
+        return mcv.getServerManager().testLocalServer()
+    raise RuntimeError('Could not get reference to McIDAS-V!')
+        
 def editFile(path, cleanup=False):
     """Import file contents into the Jython Shell input field.
     
