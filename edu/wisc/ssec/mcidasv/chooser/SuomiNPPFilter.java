@@ -39,10 +39,14 @@ import javax.swing.filechooser.FileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
+
 import edu.wisc.ssec.mcidasv.data.hydra.JPSSUtilities;
 
 /**
+ * File filter to pass names which match format for Suomi NPP data.
+ * 
  * @author tommyj
  *
  */
@@ -160,15 +164,15 @@ public class SuomiNPPFilter extends FileFilter {
     		try {
     			logger.debug("Trying to open file: " + fileNameAbsolute);
     			ncfile = NetcdfFile.open(fileNameAbsolute);
-    			ucar.nc2.Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
+    			Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
     			// if no GEO attribute, we can't visualize this Suomi NPP data file, don't include it
     			if (a == null) {
     				noGeo = true;
     			} else {
-        			logger.debug("Value of GEO global attribute: " + a.getStringValue());
-        			// in the newest data from GRAVITE server, attribute is entire file name
+        			// in the newest operational data format, attribute is entire file name
         			// if this is detected, no translation/mapping needed
-        			if (a.getStringValue().endsWith("h5")) {
+        			String geoStr = a.getStringValue();
+        			if (geoStr.matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
         				geoProductID = a.getStringValue();
         			} else {
         				noGeo = true;
