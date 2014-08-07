@@ -193,15 +193,16 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      */
     @Override public JComponent doMakeContents() {
         logger.debug("doMakeContents() in...");
-        JPanel outerPanel = new JPanel();
-        JPanel addePanel = new JPanel();
-        addePanel = (JPanel)makeAddePanel();
-        
+
         // retrieve our last visited directory
         String path = (String) getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
         tlefc = new TLEFileChooser(path);
         tlefc.setPotc(this);
 
+        JPanel outerPanel = new JPanel();
+        JPanel addePanel = new JPanel();
+        addePanel = (JPanel)makeAddePanel();
+        
         JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
@@ -283,7 +284,10 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         localBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // enable the file chooser
-                tlefc.setEnabled(true);
+                if (tlefc != null) {
+                    tlefc.setEnabled(true);
+                }
+
                 enableFileLoad(false);
                 // disable everything else? Just following pattern below
                 for (int i=0; i<5; i++) {
@@ -305,7 +309,9 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         addeBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // disable the file chooser
-                tlefc.setEnabled(false);
+                if (tlefc != null) {
+                    tlefc.setEnabled(false);
+                }
                 enableFileLoad(false);
                 for (int i=0; i<5; i++) {
                     JComponent comp = addeList.get(i);
@@ -326,7 +332,9 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         urlBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // disable the file chooser
-                tlefc.setEnabled(false);
+                if (tlefc != null) {
+                    tlefc.setEnabled(false);
+                }
                 enableFileLoad(false);
                 for (int i=5; i<7; i++) {
                     JComponent comp = addeList.get(i);
@@ -442,10 +450,25 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         String lastSource = store.get(PROP_LAST_SOURCE, FILE_SOURCE);
         if (FILE_SOURCE.equals(lastSource)) {
             localBtn.setSelected(true);
+            for (ActionListener a: localBtn.getActionListeners()) {
+                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
+                    // nothing to do in here
+                });
+            }
         } else if (ADDE_SOURCE.equals(lastSource)) {
             addeBtn.setSelected(true);
+            for (ActionListener a: addeBtn.getActionListeners()) {
+                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
+                    // nothing to do in here
+                });
+            }
         } else if (URL_SOURCE.equals(lastSource)) {
             urlBtn.setSelected(true);
+            for (ActionListener a: urlBtn.getActionListeners()) {
+                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
+                    // nothing to do in here
+                });
+            }
         } else {
             logger.trace("should not be able to arrive here; defaulting to file. (lastSource={})", lastSource);
             localBtn.setSelected(true);
