@@ -23,8 +23,31 @@
   <alias aliases=".*BrightnessTemp.*" label="BrightnessTemp" name="BrightnessTemp"/>
   <alias aliases=".*_Band.*_TEMP" label="BrightnessTemp" name="BrightnessTemp"/>
   <alias aliases="Total_Attenuated_Backscatter_532" label="TotalAttenuatedBackscatter_532" name="TAB_532"/>
-  <alias aliases="7_Band16_*" label="HydrometeorClassification" name="HydrometeorClassification"/>
+  <alias aliases="7_Band16_.*" label="HydrometeorClassification" name="HydrometeorClassification"/>
 
   <!-- temp fix for inq 1129.  remove once Geopotential_isobaric alias is in IDV's aliases.xml -->
   <alias aliases="Geopotential,Geopotential_isobaric" label="Geopotential" name="GP"/>
+
+  <!-- mjh inq1759 -->
+  <alias
+     name="TEMP"
+     label="Temperature"
+     aliases="Temperature_isobaric_ens,Temperature_height_above_ground_ens,Temperature_height_above_ground_stdDev,Temperature_height_above_ground_unweightedMean,Temperature_isobaric_stdDev,Temperature_isobaric_unweightedMean"/>
+  <alias
+     name="RH"
+     label="Relative humidity"
+     aliases="Relative_humidity_isobaric_ens,Relative_humidity_height_above_ground_ens,Relative_humidity_height_above_ground_stdDev,Relative_humidity_height_above_ground_unweightedMean,Relative_humidity_isobaric_stdDev,Relative_humidity_isobaric_unweightedMean"/>
+  <alias
+     name="Z"
+     label="Z"
+     aliases="Geopotential_height_surface_ens,Geopotential_height_isobaric_ens,Geopotential_height_surface_stdDev,Geopotential_height_surface_unweightedMean,Geopotential_height_isobaric_stdDev,Geopotential_height_isobaric_unweightedMean"/>
+  <alias
+     name="U"
+     label="U component of wind"
+     aliases="u-component_of_wind_height_above_ground_ens,u-component_of_wind_isobaric_ens,u-component_of_wind_height_above_ground_unweightedMean,u-component_of_wind_height_above_ground_stdDev,u-component_of_wind_isobaric_stdDev,u-component_of_wind_isobaric_unweightedMean"/>
+  <alias
+     name="V"
+     label="V component of wind"
+     aliases="v-component_of_wind_isobaric_ens,v-component_of_wind_height_above_ground_ens,v-component_of_wind_height_above_ground_unweightedMean,v-component_of_wind_height_above_ground_stdDev,v-component_of_wind_isobaric_stdDev,v-component_of_wind_isobaric_unweightedMean"/>
+  <!-- end inq1759 -->
 </aliases>
