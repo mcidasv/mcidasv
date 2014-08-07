@@ -107,17 +107,21 @@ fi
 
 # Point at McV's bundled JRE on OS X. 
 if [ `uname -s` = "Darwin" ]; then
-  JAVA_HOME="./.install4j/jre.bundle/Contents/Home"
+  JAVA_HOME="$PWD/.install4j/jre.bundle/Contents/Home/jre"
 fi
 
 # Look for java
 JAVA_BIN="java"
 if [ -f "./jre/bin/java" ]; then
-  JAVA_BIN="./jre/bin/java"
+  JAVA_HOME="$PWD/jre"
+fi
+
+if [ -n "${JAVA_HOME}" ]; then
+  JAVA_BIN="${JAVA_HOME}/bin/java"
 else
-  if [ -n "${JAVA_HOME}" ]; then
-    JAVA_BIN="${JAVA_HOME}/jre/bin/java"
-  fi
+  # try to infer JAVA_HOME...
+  JAVA_PATH=$(which java)
+  JAVA_HOME=$(readlink -f ${JAVA_PATH} | sed "s:/bin/java::")
 fi
 
 # Show the welcome window if needed
@@ -209,9 +213,15 @@ LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 # Gather up previously set values.
 MCV_USERPATH_ESCAPED=`echo ${MCV_USERPATH} |sed -e 's/ /\\\\ /g'`
 
-# McV supplies all of its dependencies; there's no need for the JRE to look elsewhere.
-MCV_EXTDIR="-Djava.ext.dirs=\"\""
-MCV_LIBPATH="-Djava.library.path=\"\""
+# restrict java.ext.dirs and java.library.path to the JRE
+if [ -n "${JAVA_HOME}" ]; then
+  MCV_EXTDIR="-Djava.ext.dirs=\"${JAVA_HOME}/lib/ext\""
+  MCV_LIBPATH="-Djava.library.path=\"${JAVA_HOME}/lib/ext\""
+else
+  echo "Warning: Please consider setting JAVA_HOME."
+  MCV_EXTDIR=""
+  MCV_LIBPATH=""
+fi
 
 JAVA_FLAGS="-XX:MaxPermSize=128m -Xmx${HEAP_SIZE} -XX:MaxPermSize=128m ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dpython.security.respectJavaAccessibility=false"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM}"
