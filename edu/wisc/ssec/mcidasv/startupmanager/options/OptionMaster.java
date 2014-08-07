@@ -59,11 +59,6 @@ public class OptionMaster {
         { "USE_3DSTUFF", "Enable 3D controls", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "DEFAULT_LAYOUT", "Load default layout", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "STARTUP_BUNDLE", "Defaults", "", Type.DIRTREE, OptionPlatform.ALL, Visibility.VISIBLE },
-        /**
-         * TODO: DAVEP: TomW's windows machine needs SET D3DREND= to work properly.
-         * Not sure why, but it shouldn't hurt other users.  Investigate after Alpha10
-         */
-        { "D3DREND", "Enable Direct3D", "", Type.BOOLEAN, OptionPlatform.WINDOWS, Visibility.VISIBLE },
         // mcidasv enables this (the actual property is "visad.java3d.geometryByRef")
         // by default in mcidasv.properties.
         { "USE_GEOBYREF", "Enable access to geometry by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },

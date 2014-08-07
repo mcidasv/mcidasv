@@ -280,7 +280,6 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption jogl = optMaster.getBooleanOption("JOGL_TOGL");
         BooleanOption use3d = optMaster.getBooleanOption("USE_3DSTUFF");
         BooleanOption defaultBundle = optMaster.getBooleanOption("DEFAULT_LAYOUT");
-        BooleanOption useDirect3d = optMaster.getBooleanOption("D3DREND");
         BooleanOption useCmsCollector = optMaster.getBooleanOption("USE_CMSGC");
         BooleanOption useNpot = optMaster.getBooleanOption("USE_NPOT");
         BooleanOption useGeometryByRef = optMaster.getBooleanOption("USE_GEOBYREF");
@@ -300,10 +299,8 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         use3dCheckBox.setText(use3d.getLabel());
         final JCheckBox joglCheckBox = jogl.getComponent();
         joglCheckBox.setText(jogl.getLabel());
-        final JCheckBox direct3dBox = useDirect3d.getComponent();
-        direct3dBox.setText(useDirect3d.getLabel());
-        
-        JPanel internalPanel = McVGuiUtils.topCenterBottom(use3dCheckBox, joglCheckBox, direct3dBox);
+
+        JPanel internalPanel = McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, McVGuiUtils.Prefer.TOP);
         JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:", internalPanel);
         
         // Build the bundle panel
