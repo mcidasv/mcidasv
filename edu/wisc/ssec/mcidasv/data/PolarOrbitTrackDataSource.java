@@ -79,8 +79,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackDataSource.class);
 
-    private ArrayList<String> tleCards = new ArrayList<String>();
-    private ArrayList<String> choices = new ArrayList<String>();
+    private ArrayList<String> tleCards = new ArrayList<>();
+    private ArrayList<String> choices = new ArrayList<>();
 
     private SGP4SatData data = new SGP4SatData();
     private TLE tle;
@@ -114,8 +114,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
            throws VisADException {
         super(descriptor, filename, null, properties);
 
-        tleCards = new ArrayList<String>();
-        choices = new ArrayList<String>();
+        tleCards = new ArrayList<>();
+        choices = new ArrayList<>();
         
         // we dealing with a local file?
         if (properties.containsKey(PolarOrbitTrackChooser.LOCAL_FILE_KEY)) {
@@ -128,7 +128,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         // not a file, must be URL or ADDE request
         String key = PolarOrbitTrackChooser.TLE_SERVER_NAME_KEY;
         if (properties.containsKey(key)) {
-        	logger.debug("ADDE request...");
+            logger.debug("ADDE request...");
             Object server = properties.get(key);
             key = PolarOrbitTrackChooser.TLE_GROUP_NAME_KEY;
             Object group = properties.get(key);
@@ -164,7 +164,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             try {
                 key = PolarOrbitTrackChooser.URL_NAME_KEY;
                 String urlStr = (String)(properties.get(key));
-                logger.debug("URL request: " + urlStr);
+                logger.debug("URL request: {}", urlStr);
                 URL url = new URL(urlStr);
                 URLConnection urlCon = url.openConnection();
                 InputStreamReader isr = new InputStreamReader(urlCon.getInputStream());
@@ -180,6 +180,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 }
             } catch (Exception e) {
                 notTLE();
+                logger.error("Could not complete URL request", e);
                 return;
             }
         }
@@ -210,8 +211,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     }
 
     private int decodeCard1(String card) {
-
-    	logger.debug("Decoding card: " + card);
+        logger.debug("Decoding card: {}", card);
         int satId = 0;
         double ddd = 1.0;
         double firstDev = 1.0;
@@ -632,8 +632,8 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     }
 
     private void notTLE() {
-        tleCards = new ArrayList<String>();
-        choices = new ArrayList<String>();
+        tleCards = new ArrayList<>();
+        choices = new ArrayList<>();
         setInError(true, "\nSource does not contain TLE data");
     }
 
