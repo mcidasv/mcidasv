@@ -52,19 +52,23 @@ fi
 
 JAVA_FLAGS=
 
-# Force Java 6 on OS X (for now).
+# Point at McV's bundled JRE on OS X. 
 if [ `uname -s` = "Darwin" ]; then
-  JAVA_HOME=`/usr/libexec/java_home -v 1.6`
+  JAVA_HOME="$PWD/.install4j/jre.bundle/Contents/Home/jre"
 fi
 
 # Look for java
 JAVA_BIN="java"
 if [ -f "./jre/bin/java" ]; then
-  JAVA_BIN="./jre/bin/java"
+  JAVA_HOME="$PWD/jre"
+fi
+
+if [ -n "${JAVA_HOME}" ]; then
+  JAVA_BIN="${JAVA_HOME}/bin/java"
 else
-  if [ -n "${JAVA_HOME}" ]; then
-    JAVA_BIN="${JAVA_HOME}/bin/java"
-  fi
+  # try to infer JAVA_HOME...
+  JAVA_PATH=$(which java)
+  JAVA_HOME=$(readlink -f ${JAVA_PATH} | sed "s:/bin/java::")
 fi
 
 # Get the amount of system memory
@@ -87,8 +91,8 @@ fi
 MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
 
 # McV supplies all of its dependencies; there's no need for the JRE to look elsewhere.
-MCV_EXTDIR="-Djava.ext.dirs=\"\""
-MCV_LIBPATH="-Djava.library.path=\"\""
+MCV_EXTDIR="-Djava.ext.dirs=\"${JAVA_HOME}/lib/ext\""
+MCV_LIBPATH="-Djava.library.path=\"${JAVA_HOME}/lib/ext\""
 
 # Run it
 ${JAVA_BIN} ${JAVA_FLAGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dmcv.userpath=\"${MCV_USERPATH}\" -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=${SYS_MEM} -userpath "${MCV_USERPATH}" $*
