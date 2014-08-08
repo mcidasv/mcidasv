@@ -33,9 +33,11 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JList;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,26 +50,28 @@ import ucar.unidata.idv.chooser.IdvChooser;
  * @author Gail Dengel and Tommy Jasmin
  *
  */
-
 public class TLEFileChooser extends JFileChooser implements PropertyChangeListener {
 
-	/**
-	 * auto-generated default value
-	 */
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LoggerFactory.getLogger(TLEFileChooser.class);
-	
-	// the enclosing orbit track chooser
-	private PolarOrbitTrackChooser potc = null;
-	
-	/**
+    /**
+     * auto-generated default value
+     */
+    private static final long serialVersionUID = 1L;
+    private static final Logger logger = LoggerFactory.getLogger(TLEFileChooser.class);
+
+    /* the enclosing orbit track chooser */
+    private PolarOrbitTrackChooser potc = null;
+
+    /**
      * Create the file chooser
      *
-     * @param path   the initial path
+     * @param chooser {@code PolarOrbitTrackChooser} to which this {@code TLEFileChooser} belongs.
+     * @param directory Initial directory.
+     * @param filename Initial filename within {@code directory}.
      */
-	
-    public TLEFileChooser(String path) {
-        super(path);
+    public TLEFileChooser(PolarOrbitTrackChooser chooser, String directory, String filename) {
+        super(directory);
+        potc = chooser;
+
         logger.debug("TLEFileChooser constructor...");
         setControlButtonsAreShown(false);
         setMultiSelectionEnabled(false);
@@ -76,46 +80,92 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
         setAcceptAllFileFilterUsed(false);
         setFileFilter(filter);
         addPropertyChangeListener(this);
+
+        File tmpFile = new File(directory + File.separatorChar + filename);
+//        logger.trace("tmpFile='{}' exists='{}'", tmpFile, tmpFile.exists());
+        setSelectedFile(null);
+        setSelectedFile(tmpFile);
+//        final JList list = McVGuiUtils.getDescendantOfType(JList.class, this, "Enabled", true);
+//        list.requestFocus();
+    }
+
+    @Override public void setSelectedFile(File file) {
+        // i REALLY don't know how to explain this one...but don't remove the
+        // following if-else stuff. at least on OSX, it has *something* to do with
+        // whether or not the UI actually shows the file selection.
+        // what is somewhat weird is that commenting out the current if-else
+        // and doing something like:
+        // if (file != null) {
+        //     boolean weird = file.exists();
+        // }
+        // does *NOT* work--but maybe HotSpot is optimizing away the unused code, right?
+        // wrong! the following also does not work:
+        // if (file != null && file.exists()) {
+        //    logger.trace("exists!");
+        // }
+        // i will note that calls to this method appear to be happening on threads
+        // other than the EDT...but using SwingUtilities.invokeLater and
+        // SwingUtilities.invokeAndWait have not worked so far (and I've tried
+        // the obvious places in the code, including POTC.doMakeContents()).
+        if (file != null) {
+            logger.trace("setting file='{}' exists={}", file, file.exists());
+        } else {
+            logger.trace("setting file='{}' exists=NULL", file);
+        }
+        super.setSelectedFile(file);
     }
 
     /**
      * Approve the selection
      */
-    
-    public void approveSelection() {
+    @Override public void approveSelection() {
+        logger.trace("firing");
+        super.approveSelection();
         potc.doLoad();
     }
 
-	public void setPotc(PolarOrbitTrackChooser potc) {
-		this.potc = potc;
-	}
+    public void setPotc(PolarOrbitTrackChooser potc) {
+        this.potc = potc;
+    }
 
-	public PolarOrbitTrackChooser getPotc() {
-		return potc;
-	}
+    public PolarOrbitTrackChooser getPotc() {
+        return potc;
+    }
 
-	@Override
-	public void propertyChange(PropertyChangeEvent pce) {
-		String propName = pce.getPropertyName();
-		if (propName.equals(SELECTED_FILE_CHANGED_PROPERTY)) {
-			// tell the chooser we have a file to load
-			if (potc != null) {
-				File f = getSelectedFile();
-				if ((f != null) && (accept(f)) && (potc.localMode())) {
-					if (! f.isDirectory()) {
-						// update last visited directory here
-						potc.getIdv().getStateManager().writePreference(
-								IdvChooser.PREF_DEFAULTDIR + potc.getId(), getSelectedFile().getParent()
-						);
-						potc.enableFileLoad(true);
-					}
-				} else {
-					potc.enableFileLoad(false);
-				}
-			} else {
-				logger.warn("null potc, must be set by caller before use.");
-			}
-		}
-	}
+    @Override public void propertyChange(PropertyChangeEvent pce) {
+        String propName = pce.getPropertyName();
+        if (propName.equals(SELECTED_FILE_CHANGED_PROPERTY)) {
+            // tell the chooser we have a file to load
+            handleFileChanged();
+        }
+    }
 
+    protected void handleFileChanged() {
+        if (potc != null) {
+            File f = getSelectedFile();
+            if ((f != null) && accept(f) && potc.localMode()) {
+                if (!f.isDirectory()) {
+                    // update last visited directory here
+                    String potcId = IdvChooser.PREF_DEFAULTDIR + potc.getId();
+                    String potcFileId = IdvChooser.PREF_DEFAULTDIR + potc.getId() + ".file";
+                    String dir = getSelectedFile().getParent();
+                    String file = getSelectedFile().getName();
+                    potc.getIdv().getStateManager().writePreference(
+                        potcId, dir
+                    );
+                    potc.getIdv().getStateManager().writePreference(
+                        potcFileId, file
+                    );
+
+                    logger.trace("potcId='{}' value='{}'", potcId, dir);
+                    logger.trace("potcFileId='{}' value='{}'", potcFileId, file);
+                    potc.enableLoadFromFile(true);
+                }
+            } else {
+                potc.enableLoadFromFile(false);
+            }
+        } else {
+            logger.warn("null potc, must be set by caller before use.");
+        }
+    }
 }

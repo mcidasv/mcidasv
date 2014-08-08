@@ -40,6 +40,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -53,10 +55,13 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.plaf.FileChooserUI;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -193,16 +198,16 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      */
     @Override public JComponent doMakeContents() {
         logger.debug("doMakeContents() in...");
-
-        // retrieve our last visited directory
-        String path = (String) getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
-        tlefc = new TLEFileChooser(path);
-        tlefc.setPotc(this);
-
         JPanel outerPanel = new JPanel();
         JPanel addePanel = new JPanel();
         addePanel = (JPanel)makeAddePanel();
-        
+
+        // retrieve our last visited directory
+        String path = (String)getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
+        String file = (String)getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId() + ".file");
+        tlefc = new TLEFileChooser(this, path, file);
+//        tlefc.setPotc(this);
+
         JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
         helpButton.addActionListener(this);
@@ -254,6 +259,54 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         controlPanel.add(loadButton);
         outerPanel.add(controlPanel, BorderLayout.PAGE_END);
 
+        final XmlObjectStore store = getIdv().getStore();
+        String lastSource = store.get(PROP_LAST_SOURCE, FILE_SOURCE);
+        if (FILE_SOURCE.equals(lastSource)) {
+            localBtn.setSelected(true);
+            for (ActionListener a: localBtn.getActionListeners()) {
+                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
+                    // nothing to do in here
+                });
+            }
+        } else if (ADDE_SOURCE.equals(lastSource)) {
+            addeBtn.setSelected(true);
+            for (ActionListener a: addeBtn.getActionListeners()) {
+                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
+                    // nothing to do in here
+                });
+            }
+        } else if (URL_SOURCE.equals(lastSource)) {
+            urlBtn.setSelected(true);
+            for (ActionListener a: urlBtn.getActionListeners()) {
+                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
+                    // nothing to do in here
+                });
+            }
+        } else {
+            logger.trace("should not be able to arrive here; defaulting to file. (lastSource={})", lastSource);
+            localBtn.setSelected(true);
+        }
+
+        if (localBtn.isSelected()) {
+            File tmp = new File(path + File.separatorChar + file);
+//            logger.trace("attempting to select '{}'", tmp.getAbsolutePath());
+//            tlefc.setSelectedFile(tmp);
+            try {
+                FileChooserUI fcUi = tlefc.getUI();
+                tlefc.setSelectedFile(tmp);
+                Class<? extends FileChooserUI> fcClass = fcUi.getClass();
+//                logger.trace("classname={}", fcClass.getCanonicalName());
+                Method setFileName = fcClass.getMethod("setFileName", String.class);
+                setFileName.invoke(fcUi, tmp.getName());
+//                final JList list = McVGuiUtils.getDescendantOfType(JList.class, this, "Enabled", true);
+//                list.requestFocus();
+            } catch (Exception e) {
+                logger.warn("Could not dynamically invoke setFileName", e);
+            }
+//            logger.trace("selected='{}'", tlefc.getSelectedFile());
+
+
+        }
         return outerPanel;
     }
     
@@ -283,19 +336,20 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
         localBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                enableLoadFromFile(false);
                 // enable the file chooser
                 if (tlefc != null) {
                     tlefc.setEnabled(true);
+                    tlefc.handleFileChanged();
                 }
 
-                enableFileLoad(false);
                 // disable everything else? Just following pattern below
-                for (int i=0; i<5; i++) {
+                for (int i = 0; i < 5; i++) {
                     JComponent comp = addeList.get(i);
                     comp.setEnabled(false);
                     enableDescriptors(false);
                 }
-                for (int i=5; i<7; i++) {
+                for (int i = 5; i < 7; i++) {
                     JComponent comp = addeList.get(i);
                     comp.setEnabled(false);
                 }
@@ -312,13 +366,13 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                 if (tlefc != null) {
                     tlefc.setEnabled(false);
                 }
-                enableFileLoad(false);
-                for (int i=0; i<5; i++) {
+                enableLoadFromAdde(false);
+                for (int i = 0; i < 5; i++) {
                     JComponent comp = addeList.get(i);
                     comp.setEnabled(true);
                     enableDescriptors(true);
                 }
-                for (int i=5; i<7; i++) {
+                for (int i = 5; i < 7; i++) {
                     JComponent comp = addeList.get(i);
                     comp.setEnabled(false);
                 }
@@ -326,32 +380,35 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                 store.save();
             }
         });
-        
+
+        final JLabel urlLabel = new JLabel("URL:");
         // TJJ Nov 2013, I need to figure out what these 
         // hardcoded component ids are!
         urlBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+//                logger.trace("url button");
                 // disable the file chooser
                 if (tlefc != null) {
                     tlefc.setEnabled(false);
                 }
-                enableFileLoad(false);
-                for (int i=5; i<7; i++) {
+                for (int i = 5; i < 7; i++) {
                     JComponent comp = addeList.get(i);
                     comp.setEnabled(true);
                 }
-                loadButton.setEnabled(true);
-                for (int i=0; i<5; i++) {
+                enableLoadFromUrl(true);
+                for (int i = 0; i < 5; i++) {
                     JComponent comp = addeList.get(i);
                     comp.setEnabled(false);
                     enableDescriptors(false);
                 }
+                urlLabel.setEnabled(true);
+                box.setEnabled(true);
                 store.put(PROP_LAST_SOURCE, URL_SOURCE);
                 store.save();
             }
         });
         JLabel serverLabel = new JLabel("Server:");
-        JLabel urlLabel = new JLabel("URL:");
+
         descLabel = new JLabel("Descriptor:");
         descLabel.setEnabled(false);
         descriptorComboBox.setEnabled(false);
@@ -447,41 +504,67 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         addeList.add(urlLabel);
         addeList.add(box);
 
-        String lastSource = store.get(PROP_LAST_SOURCE, FILE_SOURCE);
-        if (FILE_SOURCE.equals(lastSource)) {
-            localBtn.setSelected(true);
-            for (ActionListener a: localBtn.getActionListeners()) {
-                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
-                    // nothing to do in here
-                });
-            }
-        } else if (ADDE_SOURCE.equals(lastSource)) {
-            addeBtn.setSelected(true);
-            for (ActionListener a: addeBtn.getActionListeners()) {
-                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
-                    // nothing to do in here
-                });
-            }
-        } else if (URL_SOURCE.equals(lastSource)) {
-            urlBtn.setSelected(true);
-            for (ActionListener a: urlBtn.getActionListeners()) {
-                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
-                    // nothing to do in here
-                });
-            }
-        } else {
-            logger.trace("should not be able to arrive here; defaulting to file. (lastSource={})", lastSource);
-            localBtn.setSelected(true);
-        }
+//        String lastSource = store.get(PROP_LAST_SOURCE, FILE_SOURCE);
+//        if (FILE_SOURCE.equals(lastSource)) {
+//            localBtn.setSelected(true);
+//            for (ActionListener a: localBtn.getActionListeners()) {
+//                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
+//                    // nothing to do in here
+//                });
+//            }
+//        } else if (ADDE_SOURCE.equals(lastSource)) {
+//            addeBtn.setSelected(true);
+//            for (ActionListener a: addeBtn.getActionListeners()) {
+//                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
+//                    // nothing to do in here
+//                });
+//            }
+//        } else if (URL_SOURCE.equals(lastSource)) {
+//            urlBtn.setSelected(true);
+//            for (ActionListener a: urlBtn.getActionListeners()) {
+//                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
+//                    // nothing to do in here
+//                });
+//            }
+//        } else {
+//            logger.trace("should not be able to arrive here; defaulting to file. (lastSource={})", lastSource);
+//            localBtn.setSelected(true);
+//        }
 
         return outerPanel;
     }
-    
+
+    public void enableLoadFromFile(boolean val) {
+//        logger.trace("val={}", val);
+        loadButton.setEnabled(val);
+        if (tlefc != null && tlefc.getSelectedFile() != null) {
+            setHaveData(val);
+        }
+    }
+
+    public void enableLoadFromAdde(boolean val) {
+//        logger.trace("val={}", val);
+        loadButton.setEnabled(val);
+    }
+
+    public void enableLoadFromUrl(boolean val) {
+//        logger.trace("val={}", val);
+        loadButton.setEnabled(val);
+        String url = (String)box.getSelectedItem();
+        if (val && url != null && !url.isEmpty()) {
+            setHaveData(true);
+        } else {
+            setHaveData(val);
+        }
+    }
+
     public void enableFileLoad(boolean val) {
+//        logger.trace("loadButton={}", val);
         loadButton.setEnabled(val);
     }
 
     private void enableDescriptors(boolean val) {
+//        logger.trace("descriptors={}", val);
         if (val) {
             boolean connected;
             if (getState() == STATE_CONNECTED) {
@@ -502,10 +585,23 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         }
     }
 
+    @Override protected boolean getGoodToGo() {
+        final XmlObjectStore store = getIdv().getStore();
+        String lastSource = store.get(PROP_LAST_SOURCE, FILE_SOURCE);
+        boolean goodToGo = false;
+        if (URL_SOURCE.equals(lastSource)) {
+            goodToGo = true;
+        }
+        return goodToGo;
+    }
+
     /**
      * Update labels, enable widgets, etc.
      */
     @Override protected void updateStatus() {
+//        if (localBtn != null && addeBtn != null && urlBtn != null) {
+//            logger.trace("updating status fromFile={} fromAdde={} fromUrl={}", localBtn.isSelected(), addeBtn.isSelected(), urlBtn.isSelected());
+//        }
         super.updateStatus();
         enableWidgets();
     }
