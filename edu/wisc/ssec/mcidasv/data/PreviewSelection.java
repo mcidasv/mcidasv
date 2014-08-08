@@ -105,6 +105,7 @@ public class PreviewSelection extends DataSelectionComponent {
       static SampledSet lines_outlsupw = null;
       static SampledSet lines_outlhpol = null;
                                     
+      HydraContext hydraContext = null;
 
       public PreviewSelection() {
         super("Region");
@@ -215,7 +216,7 @@ public class PreviewSelection extends DataSelectionComponent {
            if (key instanceof MultiDimensionSubset) {
              hasSubset = true;
              MultiDimensionSubset select = (MultiDimensionSubset) table.get(key);
-             HydraContext hydraContext = null;
+
              if (formulaActive) {
             	 hydraContext = HydraContext.getHydraContext();
              } else {
@@ -299,7 +300,6 @@ public class PreviewSelection extends DataSelectionComponent {
              }
 
              if (hasSubset) {
-               HydraContext hydraContext = HydraContext.getHydraContext();
                MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
                HashMap map = select.getSubset();
 
@@ -381,12 +381,6 @@ public class PreviewSelection extends DataSelectionComponent {
       public void applyToDataSelection(DataSelection dataSelection) {
     	  
     	  if (hasSubset) {
-    		  HydraContext hydraContext = null;
-    		  if (formulaActive) {
-    			  hydraContext = HydraContext.getHydraContext();
-    		  } else {
-    			  hydraContext = HydraContext.getHydraContext(dataSource, dataCategory);
-    		  }
     		  Hashtable table = dataChoice.getProperties();
     		  table.put(MultiDimensionSubset.key, hydraContext.getMultiDimensionSubset());
 
