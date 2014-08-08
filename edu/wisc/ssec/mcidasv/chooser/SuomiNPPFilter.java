@@ -173,7 +173,7 @@ public class SuomiNPPFilter extends FileFilter {
         			// if this is detected, no translation/mapping needed
         			String geoStr = a.getStringValue();
         			if (geoStr.matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
-        				geoProductID = a.getStringValue();
+        				geoProductID = geoStr;
         			} else {
         				noGeo = true;
         			}
