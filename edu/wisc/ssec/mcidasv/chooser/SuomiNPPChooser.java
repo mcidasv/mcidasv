@@ -32,6 +32,7 @@ import java.io.File;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 
@@ -42,6 +43,8 @@ import javax.swing.filechooser.FileFilter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.wisc.ssec.mcidasv.data.hydra.JPSSUtilities;
 
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.StringUtil;
@@ -101,6 +104,19 @@ public class SuomiNPPChooser extends FileChooser {
             return false;
         }
 
+        // make a list of just the file names
+        ArrayList<String> fileNames = new ArrayList<String>();
+        for (int i = 0; i < files.length; i++) {
+        	fileNames.add(files[i].getName());
+        }
+        
+        // ensure these files make sense as a set to create a single SNPP data source
+    	if (! JPSSUtilities.isValidSet(fileNames)) {
+        	JOptionPane.showMessageDialog(null, 
+			"Unable to group selected data as a single data source.");
+        	return false;
+    	}
+    	
         // At present, Suomi NPP chooser only allows selecting sets of consecutive granules
         boolean granulesAreConsecutive = testConsecutiveGranules(files);
         if (granulesAreConsecutive) {
@@ -114,7 +130,13 @@ public class SuomiNPPChooser extends FileChooser {
 
     /**
      * Test whether a set of files are consecutive Suomi NPP granules,
-     * any sensor.
+     * any sensor. NOTE: This method works when the file list contains
+     * multiple products ONLY because once we've validate one product,
+     * the time check will be a negative number when comparing the FIRST
+     * granule of product 2 with the LAST granule of product 1. A better
+     * implementation would be to pass in the filename map like the 
+     * one generated in SuomiNPPDataSource constructor.
+     * 
      * @param files
      * @return true if consecutive tests pass for all files
      */
