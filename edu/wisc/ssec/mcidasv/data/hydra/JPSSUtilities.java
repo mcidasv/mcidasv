@@ -28,6 +28,14 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Utility class to support Joint Polar Satellite System (JPSS) functionality.
  * Documentation referenced is from Suomi NPP Common Data Format Control Book.
@@ -144,5 +152,66 @@ public abstract class JPSSUtilities {
     		"\\w\\w\\w" + 
     		// HDF5 suffix
     		".h5";
+	
+	/**
+	 * Determine if the set if filenames constitutes contiguous SNPP granules of the
+	 * same geographic coverage.
+	 * 
+	 * @return True if passes checks
+	 */
+	
+	public static boolean isValidSet(List fileList) {
+		
+		// map with filename from start date through orbit will be used for comparisons
+        Map metadataMap = new HashMap<String, List<String>>();
+        
+        // Pass 1, populate the list of products selected, and empty maps
+        for (Object o : fileList) {
+        	String filename = (String) o;
+        	// start at last path separator to clip off absolute paths
+        	int lastSeparator = filename.lastIndexOf(File.separatorChar);
+        	// products go to first underscore, see regex above for more detail
+        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+        	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
+        	if (! metadataMap.containsKey(prodStr)) {
+				List<String> l = new ArrayList<String>();
+				metadataMap.put(prodStr, l);
+        	}
+        }
+        
+        // Pass 2, build up the lists of meta data strings and full filenames
+        for (Object o : fileList) {
+        	String filename = (String) o;
+        	// start at last path separator to clip off absolute paths
+        	int lastSeparator = filename.lastIndexOf(File.separatorChar);
+        	// products go to first underscore, see regex above for more detail
+        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+        	// this is the key for the maps
+        	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
+        	// this is the value for the meta data map - start time through orbit 
+        	String metaStr = filename.substring(firstUnderscore + 1, firstUnderscore + 39);
+        	// get the appropriate list, add the new value
+        	List l = (List) metadataMap.get(prodStr);
+        	l.add(metaStr);
+        	metadataMap.put(prodStr, l);
+        }
+        
+        // loop over metadata map, every list much match the one for ALL other products
+        Set s = metadataMap.keySet();
+        Iterator iterator = s.iterator();
+        List prvList = null;
+        while (iterator.hasNext()) {
+        	String key = (String) iterator.next();
+        	List l = (List) metadataMap.get(key);
+        	for (int i = 0; i < l.size(); i++) {
+        		if (prvList != null) {
+        			if (! l.equals(prvList)) return false;
+        		}
+        	}
+        	prvList = l;
+        }
+        
+		return true;
+	}
 	
 }
