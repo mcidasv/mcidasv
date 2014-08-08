@@ -52,6 +52,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
 
@@ -113,6 +114,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     // for loading bundles, store granule lists and geo lists here
     protected List<String> oldSources = new ArrayList<String>();
     protected List<String> geoSources = new ArrayList<String>();
+    
+    // integrity map for grouping sets/aggregations of selected products
+    Map<String, List<String>> filenameMap = null;
 
     protected MultiDimensionReader nppAggReader;
 
@@ -201,8 +205,32 @@ public class SuomiNPPDataSource extends HydraDataSource {
         filename = (String) sources.get(0);
         setDescription("Suomi NPP");
         
+        // build the filename map - matches each product to set of files for that product
+        filenameMap = new HashMap<String, List<String>>();
+        
+        // Pass 1, populate the list of products selected
         for (Object o : sources) {
-        	logger.debug("Suomi NPP source file: " + (String) o);
+        	String filename = (String) o;
+        	// first five characters of any product go together
+        	int lastSeparator = filename.lastIndexOf(File.separatorChar);
+        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+        	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
+        	if (! filenameMap.containsKey(prodStr)) {
+				List<String> l = new ArrayList<String>();
+				filenameMap.put(prodStr, l);
+        	}
+        }
+        
+        // pass 2, create a list of files for each product in this data source
+        for (Object o : sources) {
+        	String filename = (String) o;
+        	// first five characters of any product go together
+        	int lastSeparator = filename.lastIndexOf(File.separatorChar);
+        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+        	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
+        	List l = (List) filenameMap.get(prodStr);
+        	l.add(filename);
+        	filenameMap.put(prodStr, l);
         }
         
         setup();
@@ -270,12 +298,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		nppPP = new SuomiNPPProductProfile();
     		
     		// for each source file provided get the nominal time
-    		for (int fileCount = 0; fileCount < sources.size(); fileCount++) {
+    		Set tmpSet = filenameMap.keySet();
+    		Iterator tmpIter = tmpSet.iterator();
+    		String tmpKey = (String) tmpIter.next();
+    		List tmpNames = (List) filenameMap.get(tmpKey);
+    		for (int fileCount = 0; fileCount < tmpNames.size(); fileCount++) {
 	    		// need to open the main NetCDF file to determine the geolocation product
 	    		NetcdfFile ncfile = null;
 	    		String fileAbsPath = null;
 	    		try {
-	    			fileAbsPath = (String) sources.get(fileCount);
+	    			fileAbsPath = (String) tmpNames.get(fileCount);
 		    		logger.debug("Trying to open file: " + fileAbsPath);
 		    		ncfile = NetcdfFile.open(fileAbsPath);
 		    		if (! isCombinedProduct) {
@@ -294,7 +326,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    			// when we find the Data_Products group, go down another group level and pull out 
 	    	    			// what we will use for nominal day and time (for now anyway).
 	    	    			// XXX TJJ fileCount check is so we don't count the GEO file in time array!
-	    	    			if (g.getFullName().contains("Data_Products") && (fileCount != sources.size())) {
+	    	    			if (g.getFullName().contains("Data_Products") && (fileCount != tmpNames.size())) {
 	    	    				boolean foundDateTime = false;
 	    	    				List<Group> dpg = g.getGroups();
 	    	    				
@@ -363,7 +395,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    							// set time for display to day/time of 1st granule examined
 	    	    							if (! nameHasBeenSet) {
 	    	    								setName(instrumentName.getStringValue() + " " + sdfOut.format(d)
-	    	    										+ ", " + sources.size() + " Granule");
+	    	    										+ ", " + tmpNames.size() + " Granule");
 	    	    								nameHasBeenSet = true;
 	    	    							}
 	    	    							break;
@@ -387,9 +419,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		
     		// build each union aggregation element
     		Iterator<String> iterator = geoProductIDs.iterator();
-    		for (int elementNum = 0; elementNum < sources.size(); elementNum++) {
+    		for (int elementNum = 0; elementNum < filenameMap.size(); elementNum++) {
     			
-    			String s = (String) sources.get(elementNum);
+    			String s = null;
     			
     			// build an XML (NCML actually) representation of the union aggregation of these two files
     			Namespace ns = Namespace.getNamespace("http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2");
@@ -399,9 +431,17 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			Element agg = new Element("aggregation", ns);
     			agg.setAttribute("type", "union");
         		
-    			Element fData = new Element("netcdf", ns);
-    			fData.setAttribute("location", s);
-    			agg.addContent(fData);
+    			// TJJ - Loop over filename map, could be several products that need to be aggregated
+    	        Set set = filenameMap.keySet();
+    	        Iterator mapIter = set.iterator();
+    	        while (mapIter.hasNext()) {
+    	        	String key = (String) mapIter.next();
+    	        	List l = (List) filenameMap.get(key);
+        			Element fData = new Element("netcdf", ns);
+        			fData.setAttribute("location", (String) l.get(elementNum));
+        			agg.addContent(fData);
+        			s = (String) l.get(elementNum);
+    	        }
     			
     			if (! isCombinedProduct) {
 	    			Element fGeo  = new Element("netcdf", ns);
