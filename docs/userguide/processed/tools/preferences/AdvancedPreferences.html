@@ -33,7 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   configure the settings before running McIDAS-V, execute the <em>runMcV-Config</em> command
   from the directory where McIDAS-V was installed (normally McIDAS-V-System)
   or by selecting <strong>Configure McIDAS-V</strong> in the Windows <strong>Start</strong> menu. The below image represents the default settings for the <strong>Advanced</strong> tab.</p>
-<div class="images"><img src="../images/preferences/Advanced.gif" width="973" height="627" alt="Image 1: Advanced Preferences (Default)"><br>
+<div class="images"><img src="../images/preferences/Advanced.gif" width="973" height="638" alt="Image 1: Advanced Preferences (Default)"><br>
   <span class="caption">Image 1: Advanced Preferences (Default)</span></div>
 <p></p>
 <div class="pagesubtitle">Startup Options</div>
@@ -61,14 +61,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   the "j3d.rend" property to "jogl", which sets Java3D to use JOGL (Java OpenGL)
   as the graphics rendering backend. Disabling will omit the &quot;j3d.rend&quot; property,
   causing Java3D to use its default OpenGL backend. </li>
-<li class="propertylistitem"><b>Enable Direct3D </b>(Windows only)<b> - </b>Sets the "j3d.rend" property
-  to "d3d", which  sets Java3D to use  Direct 3D as the graphics rendering
-  backend. Disabling
-  will omit the &quot;j3d.rend&quot; property, causing Java3D to use its default
-  OpenGL backend. </li>
 <li class="propertylistitem"><b><a name="geobyref" id="geobyref"></a>Enable access to geometry by reference - </b>Sets the "visad.java3d.geometryByRef" property
   to true and enables the visualization
-of larger datasets because of the more efficient use of memory. Unchecking this
+  of larger datasets because of the more efficient use of memory. Unchecking this
   option can help to remove random/extraneous map lines that sometimes appear
   in displays of image data. This is a problem that may occur more frequently
   on systems with ATI graphics cards.</li>
