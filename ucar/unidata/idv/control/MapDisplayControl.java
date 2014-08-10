@@ -51,6 +51,7 @@ import visad.VisADException;
 
 import visad.georef.EarthLocation;
 
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -87,6 +88,9 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JViewport;
 import javax.swing.ScrollPaneConstants;
+
+
+
 
 /**
  * A control for displaying map lines.
@@ -1757,7 +1761,6 @@ public class MapDisplayControl extends DisplayControlImpl {
          * Called by the base class when one of the latlon values have changed.
          */
         public void stateChanged() {
-        	//System.err.println("stateChanged...");
             if (ignoreStateChange || (myLatLon == null)
                     || (myLatLonPanel == null)) {
                 return;
@@ -1769,7 +1772,6 @@ public class MapDisplayControl extends DisplayControlImpl {
                     myLatLonPanel.applyStateToData();
                 }
                 //This triggers the application of the state to the myLatLon
-                //System.err.println("getLatLonLines...");
                 getLatLonLines();
             } catch (Exception exc) {
                 logException("State change", exc);
@@ -1960,7 +1962,6 @@ public class MapDisplayControl extends DisplayControlImpl {
          * @param values  the label lines
          */
         public void setLabelLines(float[] values) {
-        	//System.err.println("setLabelLines, 1st val: " + values[0]);
             boolean shouldShare = false
                                   && ( !Arrays.equals(values,
                                       getLabelLines()));

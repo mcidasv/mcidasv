@@ -26,6 +26,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+
+
 package ucar.unidata.ui;
 
 import java.awt.Font;
@@ -54,8 +56,9 @@ import ucar.unidata.util.Resource;
 /**
  * Class CheckboxCategoryPanel  holds the checkboxes under a category
  * 
+ *
  * @author IDV Development Team
- * @version $Revision$
+ * @version $Revision: 1.3 $
  */
 public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
 
@@ -183,6 +186,7 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
         checkVisCbx();
     }
 
+
     /**
      * Create and return the top panel. That is, the one that holds
      * the toggle button, vis checkbox and the label.
@@ -192,6 +196,7 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
     public JPanel getTopPanel() {
         return GuiUtils.hbox(Misc.newList(toggleBtn, visCbx));
     }
+
 
     /**
      * Turn on/off all of the checkboxes held under this category
@@ -237,5 +242,6 @@ public class CheckboxCategoryPanel extends JPanel implements ChangeListener {
         }
         checking = false;
     }
+
 }
 
