@@ -73,7 +73,7 @@ public class GEOSProjection extends ProjectionImpl {
    */
   @Override
   public ProjectionImpl constructCopy() {
-    return this;
+    return new GEOSProjection(navigation.sub_lon_degrees, navigation.scan_geom);
   }
 
   @Override
@@ -108,7 +108,13 @@ public class GEOSProjection extends ProjectionImpl {
 
   @Override
   public boolean equals(Object proj) {
-    return (proj == this);
+    if (!(proj instanceof GEOSProjection)) {
+      return false;
+    }
+    GEOSProjection gp = (GEOSProjection)proj;
+    if (!(this.navigation.equals(gp.navigation))) return false;
+    if (!(this.getDefaultMapArea().equals(gp.getDefaultMapArea()))) return false;
+    return true;
   }
 
   /**

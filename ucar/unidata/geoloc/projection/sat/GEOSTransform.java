@@ -306,6 +306,17 @@ public class GEOSTransform {
      return new double[] {fgf_x, fgf_y};
    }
 
+   public boolean equals(Object obj) {
+      if (!(obj instanceof GEOSTransform)) {
+         return false;
+      }
+      else {
+        GEOSTransform gt = (GEOSTransform) obj;
+        if (this.sub_lon_degrees != gt.sub_lon_degrees) return false;
+        if (!this.scan_geom.equals(gt.scan_geom)) return false;
+      }
+      return true;
+   }
 
 
   /**  Earth Geoid definitions
