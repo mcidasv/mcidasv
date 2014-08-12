@@ -384,6 +384,16 @@
             datasourceid="TLE" class="edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser" />
     </panel>
 
+    <panel title="Imagery - Compatibility Testing" category="Under Development" layout="border" tabtooltip="Please do not use this just yet.">
+        <chooser id="chooser.image"
+                 title="Image Chooser Compatibility Testing"
+                 menutitle="Compatibility Testing"
+                 helppath="idv.data.choosers.imagechooser"
+                 showdetails="true"
+                 includeNavComp="true"
+                 class="ucar.unidata.idv.chooser.adde.AddeImageChooser" />
+    </panel>
+
 	<!--                       -->
 	<!--     STYLES            -->
 	<!--                       -->
