@@ -424,10 +424,11 @@ public class JythonShell extends InteractiveShell {
      * Generate a timestamp that is formatted according to the user's
      * preferences.
      *
-     * <p><b>NOTE</b>: if the preferred time zone is {@literal "GMT"}, the
-     * resulting timestamp will end in {@literal "Z"}, rather than
-     * {@literal "GMT"}, in an effort to obey the IDV's behavior.
-     * Example result: {@code 2014-08-11 21:16:29Z}</p>
+     * <p><b>NOTE</b>: if the preferred date and time format is
+     * {@link IdvConstants#DEFAULT_DATE_FORMAT} and the preferred time zone
+     * is {@link IdvConstants#DEFAULT_TIMEZONE}, the resulting timestamp will
+     * end in {@literal "Z"}, rather than {@literal "GMT"}, in an effort to
+     * obey the IDV's behavior. Example result: {@code 2014-08-11 21:16:29Z}</p>
      *
      * @return Timestamp that conforms to the user's date, time, and time zone
      * preferences.
