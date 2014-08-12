@@ -298,16 +298,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		nppPP = new SuomiNPPProductProfile();
     		
     		// for each source file provided get the nominal time
-    		Set tmpSet = filenameMap.keySet();
-    		Iterator tmpIter = tmpSet.iterator();
-    		String tmpKey = (String) tmpIter.next();
-    		List tmpNames = (List) filenameMap.get(tmpKey);
-    		for (int fileCount = 0; fileCount < tmpNames.size(); fileCount++) {
+    		Iterator keyIterator = filenameMap.keySet().iterator();
+    		String keyStr = (String) keyIterator.next();
+    		List fileNames = (List) filenameMap.get(keyStr);
+    		for (int fileCount = 0; fileCount < fileNames.size(); fileCount++) {
 	    		// need to open the main NetCDF file to determine the geolocation product
 	    		NetcdfFile ncfile = null;
 	    		String fileAbsPath = null;
 	    		try {
-	    			fileAbsPath = (String) tmpNames.get(fileCount);
+	    			fileAbsPath = (String) fileNames.get(fileCount);
 		    		logger.debug("Trying to open file: " + fileAbsPath);
 		    		ncfile = NetcdfFile.open(fileAbsPath);
 		    		if (! isCombinedProduct) {
@@ -326,7 +325,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    			// when we find the Data_Products group, go down another group level and pull out 
 	    	    			// what we will use for nominal day and time (for now anyway).
 	    	    			// XXX TJJ fileCount check is so we don't count the GEO file in time array!
-	    	    			if (g.getFullName().contains("Data_Products") && (fileCount != tmpNames.size())) {
+	    	    			if (g.getFullName().contains("Data_Products") && (fileCount != fileNames.size())) {
 	    	    				boolean foundDateTime = false;
 	    	    				List<Group> dpg = g.getGroups();
 	    	    				
@@ -395,7 +394,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    	    							// set time for display to day/time of 1st granule examined
 	    	    							if (! nameHasBeenSet) {
 	    	    								setName(instrumentName.getStringValue() + " " + sdfOut.format(d)
-	    	    										+ ", " + tmpNames.size() + " Granule");
+	    	    										+ ", " + fileNames.size() + " Granule");
 	    	    								nameHasBeenSet = true;
 	    	    							}
 	    	    							break;
@@ -419,7 +418,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		
     		// build each union aggregation element
     		Iterator<String> iterator = geoProductIDs.iterator();
-    		for (int elementNum = 0; elementNum < filenameMap.size(); elementNum++) {
+    		for (int elementNum = 0; elementNum < fileNames.size(); elementNum++) {
     			
     			String s = null;
     			
