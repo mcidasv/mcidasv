@@ -29,12 +29,18 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
+
+import ucar.nc2.Attribute;
+import ucar.nc2.NetcdfFile;
 
 /**
  * Utility class to support Joint Polar Satellite System (JPSS) functionality.
@@ -211,6 +217,60 @@ public abstract class JPSSUtilities {
         	prvList = l;
         }
         
+		return true;
+	}
+
+	/**
+	 * Determine if a set if filenames which constitutes contiguous SNPP granules of 
+	 * various products all share the same geolocation data type.
+	 * 
+	 * @return True if passes checks
+	 */
+	
+	public static boolean hasCommonGeo(List fileList, File directory) {
+		Set<String> s = new HashSet<String>();
+		boolean isCombinedProduct = false;
+		
+		// loop through all filenames provided
+        for (Object o : fileList) {
+        	isCombinedProduct = false;
+        	String filename = (String) o;
+        	
+        	// check the case where GEO is embedded in the data granules
+        	int lastSeparator = filename.lastIndexOf(File.separatorChar);
+        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+        	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
+            StringTokenizer st = new StringTokenizer(prodStr, "-");
+            while (st.hasMoreTokens()) {
+            	String singleProd = st.nextToken();
+            	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
+            		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
+            			s.add(singleProd);
+            			isCombinedProduct = true;
+            			break;
+            		}
+            	}
+            }
+            // GEO not embedded in file, need to see which GEO file is referenced in 
+            // the global attribute
+            if (! isCombinedProduct) {
+            	try {
+            		String fileFullPath = directory.getAbsolutePath() + File.separator + filename;
+					NetcdfFile ncfile = NetcdfFile.open(fileFullPath);
+					Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
+					if (a != null) {
+						String geoFromAttr = a.getStringValue().substring(0, 5);
+						s.add(geoFromAttr);
+					}
+					ncfile.close();
+				} catch (IOException ioe) {
+					ioe.printStackTrace();
+				}
+            }
+        }
+        
+        // if the products chosen utilize multiple GEO types, fail the selection
+        if (s.size() > 1) return false;
 		return true;
 	}
 	
