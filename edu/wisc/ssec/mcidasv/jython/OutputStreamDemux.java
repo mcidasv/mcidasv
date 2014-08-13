@@ -43,9 +43,9 @@ public class OutputStreamDemux extends ByteArrayOutputStream {
 
     private OutputType type;
 
-    private final Map<String, ByteArrayOutputStream> streamMap = new ConcurrentHashMap<String, ByteArrayOutputStream>();
-    private final Map<String, Interpreter> interpreterMap = new ConcurrentHashMap<String, Interpreter>();
-    private final Map<String, Console> consoleMap = new ConcurrentHashMap<String, Console>();
+    private final Map<String, ByteArrayOutputStream> streamMap = new ConcurrentHashMap<>();
+    private final Map<String, Interpreter> interpreterMap = new ConcurrentHashMap<>();
+    private final Map<String, Console> consoleMap = new ConcurrentHashMap<>();
 
     private static String id() {
         return Thread.currentThread().getName();

@@ -153,7 +153,7 @@ public class Console implements Runnable, KeyListener {
      */
     public Console(final List<String> initialCommands) {
         notNull(initialCommands, "List of initial commands cannot be null");
-        jythonHistory = new ArrayList<String>();
+        jythonHistory = new ArrayList<>();
         jythonRunner = new Runner(this, initialCommands);
         jythonRunner.start();
         // err, shouldn't the gui stuff be done explicitly in the EDT!?
@@ -263,7 +263,7 @@ public class Console implements Runnable, KeyListener {
      * @param text The error message.
      */
     public void error(final String text) {
-        if (getLineText(getLineCount()-1).trim().length() > 0) {
+        if (!getLineText(getLineCount() - 1).trim().isEmpty()) {
             endln(TXT_ERROR);
         }
         insert(TXT_ERROR, '\n'+text);
@@ -273,7 +273,7 @@ public class Console implements Runnable, KeyListener {
      * Shows the normal Jython prompt.
      */
     public void prompt() {
-        if (getLineText(getLineCount()-1).trim().length() > 0) {
+        if (!getLineText(getLineCount() - 1).trim().isEmpty()) {
             endln(TXT_NORMAL);
         }
         insert(TXT_NORMAL, PS1);
@@ -400,8 +400,8 @@ public class Console implements Runnable, KeyListener {
         int lineNumber = getCaretLine();
         String currentLine = getLineText(lineNumber);
         int[] offsets = getLineOffsets(lineNumber);
-        logger.debug("position={} offsets[0]={} promptLen={}", new Object[] { position, offsets[0], getPromptLength(currentLine)});
-        return ((position - offsets[0]) >= getPromptLength(currentLine));
+        logger.debug("position={} offsets[0]={} promptLen={}", position, offsets[0], getPromptLength(currentLine));
+        return (position - offsets[0]) >= getPromptLength(currentLine);
     }
 
     /**
@@ -455,7 +455,7 @@ public class Console implements Runnable, KeyListener {
     private boolean onLastLine() {
         int[] offsets = locateLastLine();
         int position = textPane.getCaretPosition();
-        return (position >= offsets[0] && position <= offsets[1]);
+        return position >= offsets[0] && position <= offsets[1];
     }
 
     /**
@@ -479,7 +479,7 @@ public class Console implements Runnable, KeyListener {
         try {
             line = document.getText(start, stop - start);
         } catch (BadLocationException e) {
-            e.printStackTrace();
+            logger.error("Error getting text", e);
         }
         return line;
     }
@@ -544,7 +544,7 @@ public class Console implements Runnable, KeyListener {
         int tmpIndex = 0;
         while ((tmpIndex+indent) < line.length()) {
             int stop = tmpIndex + indent;
-            if (line.substring(tmpIndex, stop).trim().length() != 0) {
+            if (!line.substring(tmpIndex, stop).trim().isEmpty()) {
                 break;
             }
             tmpIndex += indent;
@@ -586,7 +586,7 @@ public class Console implements Runnable, KeyListener {
      * @return Jython variable names mapped to their Java instantiation.
      */
     public Map<String, Object> getJavaInstances() {
-        Map<String, Object> javaMap = new HashMap<String, Object>();
+        Map<String, Object> javaMap = new HashMap<>();
         Map<String, PyObject> locals = getLocalNamespace();
         for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
             PyObject val = entry.getValue();
@@ -622,7 +622,7 @@ public class Console implements Runnable, KeyListener {
      * @return Jython variable names mapped to {@link PyObject}s.
      */
     public Map<String, PyObject> getLocalNamespace() {
-        Map<String, PyObject> localsMap = new HashMap<String, PyObject>();
+        Map<String, PyObject> localsMap = new HashMap<>();
         PyStringMap jythonLocals = jythonRunner.copyLocals();
         if (jythonLocals != null) {
             PyList items = jythonLocals.items();
@@ -739,7 +739,7 @@ public class Console implements Runnable, KeyListener {
      * @return User's history.
      */
     public List<String> getHistory() {
-        return new ArrayList<String>(jythonHistory);
+        return new ArrayList<>(jythonHistory);
     }
 
     /**
@@ -817,7 +817,7 @@ public class Console implements Runnable, KeyListener {
         assert e != null;
         KeyStroke stroke = 
             KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
-        return (jtp.getKeymap().getAction(stroke) != null);
+        return jtp.getKeymap().getAction(stroke) != null;
     }
 
     /**
