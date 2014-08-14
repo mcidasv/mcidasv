@@ -62,6 +62,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
@@ -398,7 +399,7 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Update labels, enable widgets, etc.
      */
-    protected void updateStatus() {
+    @Override protected void updateStatus() {
         super.updateStatus();
         if (getDoAbsoluteTimes()) {
             setPropertiesState(getASelectedTime());
@@ -457,7 +458,7 @@ public class AddeImageChooser extends AddeChooser implements
      * @param exc
      *            Exception to log
      */
-    public void logException(String msg, Exception exc) {
+    @Override public void logException(String msg, Exception exc) {
         LogUtil.logException(msg, exc);
     }
 
@@ -466,7 +467,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return the dataset name
      */
-    public String getDataName() {
+    @Override public String getDataName() {
         return "Image Data";
     }
 
@@ -475,7 +476,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return label for the descriptor widget
      */
-    public String getDescriptorLabel() {
+    @Override public String getDescriptorLabel() {
         return "Image Type";
     }
         
@@ -528,7 +529,7 @@ public class AddeImageChooser extends AddeChooser implements
      * @throws Exception
      *             On badness
      */
-    public void handleUpdate() throws Exception {
+    @Override public void handleUpdate() throws Exception {
         if (getState() != STATE_CONNECTED) {
             // If not connected then update the server list
             updateServerList();
@@ -542,7 +543,7 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Do server connection stuff... override this with type-specific methods
      */
-    protected void readFromServer() {
+    @Override protected void readFromServer() {
         archiveDay = null;
         if (archiveDayLabel != null) {
             archiveDayLabel.setText("Select day:");
@@ -554,7 +555,7 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Overwrite base class method to clear out the lastAD member here.
      */
-    protected void clearTimesList() {
+    @Override protected void clearTimesList() {
         lastAD = null;
         super.clearTimesList();
     }
@@ -1018,7 +1019,7 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Handle the absolute time selection changing
      */
-    protected void absoluteTimesSelectionChanged() {
+    @Override protected void absoluteTimesSelectionChanged() {
         if (!getDoAbsoluteTimes()) {
             return;
         }
@@ -1029,11 +1030,21 @@ public class AddeImageChooser extends AddeChooser implements
     }
 
     /**
-     * Set the relative and absolute extra components
+     * Set the relative and absolute extra components.
      */
-    protected JPanel makeTimesPanel() {
-        JComponent extra = getExtraTimeComponent();
-        JPanel timesPanel = super.makeTimesPanel(null, extra);
+    @Override protected JPanel makeTimesPanel() {
+        // don't show timedriver stuff for the mcv image chooser.
+        JPanel timesPanel = super.makeTimesPanel(false, true, false);
+
+        // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
+        Component[] comps = timesPanel.getComponents();
+
+        if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
+            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
+            timesCardPanelExtra.add(new JPanel(), "relative");
+            timesCardPanelExtra.add(getExtraTimeComponent(), "absolute");
+            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
+        }
         return timesPanel;
     }
 
@@ -1042,7 +1053,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return a widget for selecing the day
      */
-    protected JComponent getExtraTimeComponent() {
+    @Override protected JComponent getExtraTimeComponent() {
         return McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
     }
 
@@ -1103,7 +1114,7 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Enable or disable the GUI widgets based on what has been selected.
      */
-    protected void enableWidgets() {
+    @Override protected void enableWidgets() {
         boolean descriptorState = ((getState() == STATE_CONNECTED) && canReadTimes());
 
         for (int i = 0; i < compsThatNeedDescriptor.size(); i++) {
@@ -1187,7 +1198,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return the data type
      */
-    public String getDataType() {
+    @Override public String getDataType() {
         return "IMAGE";
     }
 
@@ -1197,7 +1208,7 @@ public class AddeImageChooser extends AddeChooser implements
      * @return a description of the currently selected dataset
      * @deprecated use #getDatasetName()
      */
-    public String getDatasetDescription() {
+    @Deprecated public String getDatasetDescription() {
         return getDatasetName();
     }
 
@@ -1206,7 +1217,7 @@ public class AddeImageChooser extends AddeChooser implements
      * This method is a wrapper, setting the wait cursor and wrapping the call
      * to {@link #readTimesInner()}; in a try/catch block
      */
-    public void readTimes() {
+    @Override public void readTimes() {
         clearTimesList();
         if (!canReadTimes()) {
             return;
@@ -1230,7 +1241,7 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * _more_
      */
-    public void doCancel() {
+    @Override public void doCancel() {
         readTimesTask = null;
         setState(STATE_UNCONNECTED);
         super.doCancel();
@@ -1320,10 +1331,9 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Set the selected times in the times list based on the input times
      * 
-     * @param times
-     *            input times
+     * @param times Input times.
      */
-    protected void setSelectedTimes(DateTime[] times) {
+    @Override protected void setSelectedTimes(DateTime[] times) {
         if ((times == null) || (times.length == 0)) {
             return;
         }
@@ -1358,8 +1368,7 @@ public class AddeImageChooser extends AddeChooser implements
      * Set the center location portion of the request. If the input from the
      * widget is null, use the centerpoint from the image descriptor.
      * 
-     * @param aid
-     *            image descriptor for the image
+     * @param aid Image descriptor for the image.
      */
     protected void setCenterLocation(AddeImageDescriptor aid) {
         String latPoint = "";
@@ -1382,8 +1391,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return group type
      */
-    @Override
-    protected String getGroupType() {
+    @Override protected String getGroupType() {
         return AddeServer.TYPE_IMAGE;
     }
 
@@ -1392,7 +1400,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return Has the user chosen everything they need to choose to load data
      */
-    protected boolean getGoodToGo() {
+    @Override protected boolean getGoodToGo() {
         // if(!super.getGoodToGo()) return false;
         if (getDoAbsoluteTimes()) {
             return getHaveAbsoluteTimesSelected();
@@ -1406,7 +1414,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return list get the list of image descriptors
      */
-    public List getImageList() {
+    @Override public List getImageList() {
         if (!timesOk()) {
             return null;
         }
@@ -2261,12 +2269,12 @@ public class AddeImageChooser extends AddeChooser implements
         // n = name, n+1 = desc.
         // for radar, we only have one band
         if (ad == null) {
-            return new ArrayList<TwoFacedObject>();
+            return new ArrayList<>();
         }
         int[] bands = (int[]) bandTable.get(ad);
         int index = (bands == null) ? 0 : Arrays.binarySearch(bands, band);
         if (index < 0) index = 0;
-        Vector<TwoFacedObject> l = new Vector<TwoFacedObject>();
+        Vector<TwoFacedObject> l = new Vector<>();
         Vector v = ad.getCalInfo()[index];
         TwoFacedObject tfo = null;
         int preferredUnitIndex = 0;
@@ -2489,7 +2497,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @param e Exception to be handled.
      */
-    protected void handleConnectionError(Exception e) {
+    @Override protected void handleConnectionError(Exception e) {
         if (e != null && e.getMessage() != null) {
             Throwable cause = e.getCause();
             String msg = cause.getMessage().toLowerCase();
@@ -2512,7 +2520,7 @@ public class AddeImageChooser extends AddeChooser implements
      */
     protected List<BandInfo> makeBandInfos(AreaDirectory ad, int[] bands) {
         // readSatBands();
-        List<BandInfo> l = new ArrayList<BandInfo>();
+        List<BandInfo> l = new ArrayList<>();
         if (ad != null) {
             if (bands != null) {
                 for (int i = 0; i < bands.length; i++) {
@@ -2544,12 +2552,12 @@ public class AddeImageChooser extends AddeChooser implements
      */
     public List<BandInfo> getSelectedBandInfos() {
         // update the BandInfo list based on what has been chosen
-        List selectedBandInfos = new ArrayList<BandInfo>();
+        List selectedBandInfos = new ArrayList<>();
         List selectedUnits = null;
         if (unitComboBox != null) {
             TwoFacedObject tfo = (TwoFacedObject) unitComboBox.getSelectedItem();
             if (!(tfo.equals(ALLUNITS))) { // specific unit requested
-                selectedUnits = new ArrayList<TwoFacedObject>();
+                selectedUnits = new ArrayList<>();
                 selectedUnits.add(tfo);
             }
         }
@@ -2589,7 +2597,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return the display id
      */
-    protected String getDefaultDisplayType() {
+    @Override protected String getDefaultDisplayType() {
         return "imagedisplay";
     }
 
@@ -2598,7 +2606,7 @@ public class AddeImageChooser extends AddeChooser implements
      * and create the ADDE.IMAGE DataSource
      * 
      */
-    public void doLoadInThread() {
+    @Override public void doLoadInThread() {
         if (!checkForValidValues()) {
             return;
         }
@@ -2608,7 +2616,7 @@ public class AddeImageChooser extends AddeChooser implements
         }
 
         List imageList = getImageList();
-        if ((imageList == null) || (imageList.size() == 0)) {
+        if ((imageList == null) || (imageList.isEmpty())) {
             return;
         }
 
@@ -2705,7 +2713,7 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Return the data source ID.  Used by extending classes.
      */
-    protected String getDataSourceId() {
+    @Override protected String getDataSourceId() {
         return "ADDE.IMAGE";
     }
 
@@ -2715,7 +2723,7 @@ public class AddeImageChooser extends AddeChooser implements
      * @param ht
      *            Hashtable of properties
      */
-    protected void getDataSourceProperties(Hashtable ht) {
+    @Override protected void getDataSourceProperties(Hashtable ht) {
         super.getDataSourceProperties(ht);
         ht.put(DATASET_NAME_KEY, getDatasetName());
         ht.put(ImageDataSource.PROP_BANDINFO, getSelectedBandInfos());
@@ -2740,7 +2748,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return The gui
      */
-    public JComponent doMakeContents() {
+    @Override public JComponent doMakeContents() {
         JPanel myPanel = new JPanel();
 
         JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
@@ -2796,10 +2804,7 @@ public class AddeImageChooser extends AddeChooser implements
     }
 
     public JComponent doMakeContents(boolean doesOverride) {
-        if (doesOverride)
-            return super.doMakeContents();
-        else
-            return doMakeContents();
+        return doesOverride ? super.doMakeContents() : doMakeContents();
     }
 
 }

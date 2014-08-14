@@ -1812,7 +1812,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     /** Card panel to hold extra relative and absolute time components */
-    private GuiUtils.CardLayoutPanel timesCardPanelExtra;
+    protected GuiUtils.CardLayoutPanel timesCardPanelExtra;
 
     /**
      * Set the relative and absolute extra components.
