@@ -13,7 +13,6 @@ from java.util.concurrent import Callable
 from java.util.concurrent import Executors
 from java.util.concurrent import ExecutorCompletionService
 
-
 from edu.wisc.ssec.mcidas import AreaFile
 from edu.wisc.ssec.mcidas import AreaFileException
 from edu.wisc.ssec.mcidas import AreaFileFactory
@@ -329,6 +328,9 @@ class AddeJythonBandNotPresentInSpecifiedUnits(AddeJythonError):
     pass
     
 class AddeJythonErrorInvalidSize(AddeJythonError):
+    pass
+    
+class AddeJythonBadLocationError(AddeJythonError):
     pass
     
 # class AddeJythonUnknownFormatError(AddeJythonError): pass
@@ -1235,6 +1237,10 @@ def getADDEImage(localEntry=None,
                 raise AddeJythonNavigationError(e)
             elif e.getAddeErrorCode() == -11003:
                 raise AddeJythonBandNotPresent(e)
+            elif e.getAddeErrorCode() == -11002:
+                raise AddeJythonBadLocationError(e)
+            elif e.getAddeErrorCode() == -118:
+                raise AddeJythonInvalidDatasetError(e)
             elif e.getAddeErrorCode() == -7000:
                 raise AddeJythonBandNotPresentInSpecifiedUnits(e)
             elif e.getAddeErrorCode() == -6000:

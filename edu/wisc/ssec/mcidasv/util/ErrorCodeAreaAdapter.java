@@ -101,14 +101,18 @@ public class ErrorCodeAreaAdapter {
             return -11011;
         } else if (message.startsWith("Units requested are not available for this")) {
             return -11007;
-        } else if ("The requested portion of the image does not exist".equals(message) || "The portion of the image requested does not exist".equals(message) || "Invalid Line SIZE specified".equals(message)) {
+        } else if ("The requested portion of the image does not exist".equals(message) || "The portion of the image requested does not exist".equals(message) || "Invalid Line SIZE specified".equals(message) || "Invalid Element SIZE specified".equals(message)) {
             return -11010;
         } else if ("Unable to initialize navigation for this image".equals(message)) {
             return -11001;
-        } else if (message.endsWith("not present") || "Invalid BAND specified".equals(message) || "Invalid band number specified".equalsIgnoreCase(message)) {
+        } else if (message.endsWith("not present") || "Invalid BAND specified".equalsIgnoreCase(message) || "Invalid band number specified".equalsIgnoreCase(message) || "invalid band requested".equalsIgnoreCase(message)) {
             return -11003;
         } else if (message.startsWith("Band is not available in ") && message.endsWith(" units")) {
             return -7000;
+        } else if ("The requested Earth location is not contained in the image".equals(message)) {
+            return -11002;
+        } else if (message.startsWith("Image data server unable to resolve this dataset")) {
+            return -118;
         } else {
             Throwable nextCause = cause.getCause();
             if (nextCause != null) {
