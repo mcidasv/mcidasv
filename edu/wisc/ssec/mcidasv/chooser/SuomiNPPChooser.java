@@ -117,6 +117,13 @@ public class SuomiNPPChooser extends FileChooser {
         	return false;
     	}
     	
+        // ensure these files make sense as a set to create a single SNPP data source
+    	if (! JPSSUtilities.hasCommonGeo(fileNames, directory)) {
+        	JOptionPane.showMessageDialog(null, 
+			"Unable to group selected data as a single data source.");
+        	return false;
+    	}
+    	
         // At present, Suomi NPP chooser only allows selecting sets of consecutive granules
         boolean granulesAreConsecutive = testConsecutiveGranules(files);
         if (granulesAreConsecutive) {

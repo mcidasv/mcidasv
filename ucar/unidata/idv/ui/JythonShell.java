@@ -34,30 +34,25 @@ import static ucar.unidata.util.GuiUtils.makeMenuItem;
 import static ucar.unidata.util.LogUtil.logException;
 import static ucar.unidata.util.LogUtil.registerWindow;
 import static ucar.unidata.util.LogUtil.userMessage;
-import static ucar.unidata.util.StringUtil.join;
 import static ucar.unidata.util.StringUtil.replace;
 import static ucar.unidata.util.StringUtil.split;
 
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowListener;
+
 import java.io.OutputStream;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -71,6 +66,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.text.JTextComponent;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import org.python.core.PyException;
 import org.python.core.PyFunction;
@@ -81,8 +78,11 @@ import org.python.core.PyString;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ucar.unidata.idv.IdvConstants;
 
 import visad.Data;
 import visad.MathType;
@@ -391,26 +391,90 @@ public class JythonShell extends InteractiveShell {
      */
     public void exportHistory() {
         if (history.isEmpty()) {
-            userMessage("There are no commands to export");
+            userMessage("There are no commands to export.");
             return;
         }
         String procedureName =
-            GuiUtils.getInput("Enter optional procedure name",
-                              "Procedure name: ", "",
-                              " (Leave blank for no procedure)");
+            GuiUtils.getInput("Enter optional function name",
+                              "Function name: ", "",
+                              " (Leave blank for no function)");
         if (procedureName == null) {
             return;
         }
+
+        String timestamp = getTimestamp().trim();
+        procedureName = procedureName.trim();
         StringBuilder s;
-        if (procedureName.trim().length() == 0) {
-            s = new StringBuilder(join("\n", history));
+
+        if (procedureName.isEmpty()) {
+            String historyAsString = getHistoryAsString(false);
+            String prefix = "# Generated from Jython Shell history ("+timestamp+")\n";
+            s = new StringBuilder(prefix.length() + historyAsString.length() + 15);
+            s.append(prefix).append(historyAsString);
         } else {
-            s = new StringBuilder("def ").append(procedureName).append("():\n    ").append(join("\n    ", history));
+            String historyAsString = getHistoryAsString(true);
+            String prefix = "# Function '"+procedureName+"' generated from Jython Shell history ("+timestamp+")\n";
+            s = new StringBuilder(prefix.length() + procedureName.length() + 30 + historyAsString.length());
+            s.append(prefix).append("def ").append(procedureName).append("():\n").append(historyAsString);
         }
-        s.append("#From shell\n").append("\n\n");
-        idv.getJythonManager().appendJython(s.toString());
+        idv.getJythonManager().appendJython(s.append("\n\n").toString());
     }
-    
+
+    /**
+     * Generate a timestamp that is formatted according to the user's
+     * preferences.
+     *
+     * <p><b>NOTE</b>: if the preferred date and time format is
+     * {@link IdvConstants#DEFAULT_DATE_FORMAT} and the preferred time zone
+     * is {@link IdvConstants#DEFAULT_TIMEZONE}, the resulting timestamp will
+     * end in {@literal "Z"}, rather than {@literal "GMT"}, in an effort to
+     * obey the IDV's behavior. Example result: {@code 2014-08-11 21:16:29Z}</p>
+     *
+     * @return Timestamp that conforms to the user's date, time, and time zone
+     * preferences.
+     */
+    private String getTimestamp() {
+        String format = idv.getPreferenceManager().getDefaultDateFormat();
+        TimeZone javaTz = idv.getPreferenceManager().getDefaultTimeZone();
+        DateTimeZone tz = DateTimeZone.forTimeZone(javaTz);
+        DateTime now = DateTime.now(tz);
+        String timestamp;
+        if (IdvConstants.DEFAULT_DATE_FORMAT.equals(format) && IdvConstants.DEFAULT_TIMEZONE.equals(javaTz.getID())) {
+            format = format.substring(0, format.length() - 2);
+            timestamp = now.toString(format).trim() + 'Z';
+        } else {
+            timestamp = now.toString(format);
+        }
+        return timestamp;
+    }
+
+    /**
+     * Convert the {@link ShellHistoryEntry ShellHistoryEntries} in
+     * {@link #history} into a {@code String} suitable for saving off as a
+     * Jython script.
+     *
+     * @param indent Whether or not the output should be contain one level of
+     * indentation. Using {@code true} is handy when trying to save Jython
+     * history as the body of a function.
+     *
+     * @return Contents of {@code history} as a {@code String}.
+     */
+    private String getHistoryAsString(boolean indent) {
+        StringBuilder buf = new StringBuilder(history.size() * 1024);
+        for (ShellHistoryEntry historyEntry : history) {
+            String str = historyEntry.getEntryText();
+            if (indent) {
+                List<String> lines = split(str, "\n", false);
+                for (String line : lines) {
+                    buf.append("    ").append(line).append('\n');
+                }
+            } else {
+                buf.append(historyEntry.getEntryText()).append('\n');
+            }
+        }
+        return buf.toString();
+    }
+
     /**
      * create interp
      */

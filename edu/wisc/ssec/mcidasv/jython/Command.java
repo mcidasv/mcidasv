@@ -270,7 +270,7 @@ class BatchCommand extends Command {
     {
         super(console);
         this.bufferSource = bufferSource;
-        this.commandBuffer = new ArrayList<String>(buffer);
+        this.commandBuffer = new ArrayList<>(buffer);
     }
 
     public void execute(final Interpreter interpreter) throws Exception {

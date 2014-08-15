@@ -4260,13 +4260,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     double diff =
                         currentTime.getValue(CommonUnit.secondsSinceTheEpoch)
                         - firstTime.getValue(CommonUnit.secondsSinceTheEpoch);
-                    v = ((int) (diff / 60 / 60)) + "H";
+                    v = ((int) (diff / 60 / 60)) + "";
                 } catch (Exception exc) {
                     System.err.println("Error:" + exc);
                     exc.printStackTrace();
                 }
             }
-            return t.replace(MACRO_FHOUR, v);
+            return t.replace(MACRO_FHOUR2, v).replace(MACRO_FHOUR, v + "H");
         }
         return t;
     }
@@ -4277,7 +4277,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @return true if it does
      */
     private boolean hasForecastHourMacro(String t) {
-        return t.contains(MACRO_FHOUR);
+        return t.matches(".*(" + MACRO_FHOUR + "|" + MACRO_FHOUR2 +").*");
     }
 
 
@@ -5167,7 +5167,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @throws VisADException VisAD problem
      */
     public void reloadDataSource() throws RemoteException, VisADException {
-        List dataSources = getDataSources();
+        List dataSources = Misc.makeUnique(getDataSources());
         for (int i = 0; i < dataSources.size(); i++) {
             ((DataSource) dataSources.get(i)).reloadData();
         }
@@ -6331,6 +6331,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             labels.add("Time Stamp");
             names.add(MACRO_FHOUR);
             labels.add("Forecast Hour");
+            names.add(MACRO_FHOUR2);
+            labels.add("Forecast Hour (value only)");
         }
         if (canDoProgressiveResolution()) {
             names.addAll(Misc.newList(MACRO_RESOLUTION));

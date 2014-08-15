@@ -61,16 +61,20 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
+
 import visad.util.ThreadManager;
+
 
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -256,6 +260,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
     /** for saving favorites */
     private boolean catSelected;
 
+    static public String bundleIdvVersion;
     /**
      * The ctor
      *
@@ -2449,7 +2454,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                 }
             }
 
-            // Check for relative files.
+            //Check for realative files.
             data.put(ID_DATASOURCES, dataSources);
         }
 
@@ -3427,6 +3432,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         }
 
         String version = (String) ht.get(ID_VERSION);
+        bundleIdvVersion = version;
         if (version == null) {
             version = getStateManager().getVersion();
         }
@@ -3832,6 +3838,8 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
             }
         } finally {
             getVMManager().setDisplayMastersActive();
+            // HACK! - unset this property after bundle loads
+            getStateManager().putProperty(PROP_USE_DISPLAYAREA, false);
         }
 
         loadDialog.setMessage("Activating displays");
@@ -4012,6 +4020,8 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         }
     }
 
-
+    static public String getBundleIdvVersion(){
+        return bundleIdvVersion;
+    }
 
 }

@@ -149,7 +149,7 @@ public class Interpreter extends InteractiveInterpreter {
      */
     public void handleStreams(final Console console, final String command) {
         String output = clearStream(command, stdout);
-        if (output.length() != 0) {
+        if (!output.isEmpty()) {
             if (command != null) {
                 console.result(output);
             } else {
@@ -158,7 +158,7 @@ public class Interpreter extends InteractiveInterpreter {
         }
 
         String error = clearStream(command, stderr);
-        if (error.length() != 0) {
+        if (!error.isEmpty()) {
             if (command != null) {
                 console.error(error);
             } else {
@@ -184,7 +184,7 @@ public class Interpreter extends InteractiveInterpreter {
             output = stream.toString();
         } else if (stream.size() > 1) {
             String text = stream.toString();
-            int end = text.length() - ((command.length() == 0) ? 0 : 1);
+            int end = text.length() - (command.isEmpty() ? 0 : 1);
             output = text.substring(0, end);
         }
         stream.reset();

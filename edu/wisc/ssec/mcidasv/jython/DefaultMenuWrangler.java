@@ -176,10 +176,10 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         public JMenuItem buildMenuItem() {
-            JMenuItem item = new JMenuItem(label);
-            item.setEnabled(validConsoleState());
-            item.addActionListener(getActionListener());
-            return item;
+            JMenuItem menuItem = new JMenuItem(label);
+            menuItem.setEnabled(validConsoleState());
+            menuItem.addActionListener(getActionListener());
+            return menuItem;
         }
 
         abstract public boolean validConsoleState();
@@ -200,12 +200,12 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null) {
+            if ((console == null) || (console.getTextPane() == null)) {
                 return false;
             }
 
             String selection = console.getTextPane().getSelectedText();
-            if (selection != null && selection.length() > 0) {
+            if ((selection != null) && !selection.isEmpty()) {
                 return true;
             }
             return false;
@@ -229,12 +229,12 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null) {
+            if ((console == null) || (console.getTextPane() == null)) {
                 return false;
             }
 
             String selection = console.getTextPane().getSelectedText();
-            if (selection != null && selection.length() > 0) {
+            if ((selection != null) && !selection.isEmpty()) {
                 return true;
             }
 
@@ -260,7 +260,7 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null) {
+            if ((console == null) || (console.getTextPane() == null)) {
                 return false;
             }
 
@@ -291,7 +291,7 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null) {
+            if ((console == null) || (console.getTextPane() == null)) {
                 return false;
             }
             return true;
@@ -316,7 +316,7 @@ public class DefaultMenuWrangler implements MenuWrangler {
         }
 
         @Override public boolean validConsoleState() {
-            if (console == null || console.getTextPane() == null) {
+            if ((console == null) || (console.getTextPane() == null)) {
                 return false;
             }
             return true;

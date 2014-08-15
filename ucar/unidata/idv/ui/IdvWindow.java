@@ -28,7 +28,6 @@
 
 package ucar.unidata.idv.ui;
 
-import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.findDisplayNumberForEvent;
 
 import ucar.unidata.idv.*;
 import ucar.unidata.ui.ComponentGroup;
@@ -39,11 +38,15 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
+
 import ucar.unidata.util.Removable;
+
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
+
+import java.lang.reflect.Method;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -53,8 +56,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  * The window class used for the IDV. Really need to break this out into
@@ -64,10 +66,6 @@ import org.slf4j.LoggerFactory;
  * @author IDV development team
  */
 public class IdvWindow extends MultiFrame {
-
-    /** Logging object. */
-    private static final Logger logger = 
-        LoggerFactory.getLogger(IdvWindow.class);
 
     /** The chooser components in this window */
     public static final String GROUP_CHOOSERS = "choosers";
@@ -178,6 +176,14 @@ public class IdvWindow extends MultiFrame {
         if (uniqueId == null) {
             uniqueId = Misc.getUniqueId();
         }
+
+        // if macosx, try to add the OSX full screen mode widget
+        if ((GuiUtils.isMac())
+                && (theIdv.getProperty("mac.fullscreen.enable",
+                                       Boolean.FALSE))) {
+            enableFullScreenMode(this.getWindow());
+        }
+
         allWindows.add(this);
         if (isAMainWindow) {
             //            Misc.printStack("new window", 5,null);
@@ -196,8 +202,8 @@ public class IdvWindow extends MultiFrame {
                 || closeType == WindowConstants.DO_NOTHING_ON_CLOSE)
               {
                 if (doClose()) {
-                  removeWindowListener(wa[0]);
-                  lastActiveWindow = null;
+                    removeWindowListener(wa[0]);
+                    lastActiveWindow = null;
                 }
               }
             }
@@ -263,7 +269,7 @@ public class IdvWindow extends MultiFrame {
      *
      * @param contents window contents
      */
-    public void setContents(final JComponent contents) {
+    public void setContents(JComponent contents) {
         this.contents = contents;
         if (contents == null) {
             return;
@@ -272,14 +278,6 @@ public class IdvWindow extends MultiFrame {
         if (contentPane != null) {
             contentPane.removeAll();
             contentPane.add(contents);
-//            contentPane.addHierarchyBoundsListener(new HierarchyBoundsListener() {
-//                public void ancestorMoved(final HierarchyEvent e) {
-//                    logger.trace("idx={} event={}", findDisplayNumberForEvent(e), e);
-//                }
-//                public void ancestorResized(final HierarchyEvent e) {
-//                    logger.trace("idx={} event={}", findDisplayNumberForEvent(e), e);
-//                }
-//            });
             pack();
         }
     }
@@ -419,6 +417,8 @@ public class IdvWindow extends MultiFrame {
         // deiconify if needed
         setState(Frame.NORMAL);
         super.show();
+
+
     }
 
     /**
@@ -982,6 +982,29 @@ public class IdvWindow extends MultiFrame {
     }
 
     /**
+     * Enable full screen mode in the context of mac osx (>=10.7)
+     * Special thanks to
+     *
+     * http://saipullabhotla.blogspot.com/2012/05/enabling-full-screen-mode-for-java.html
+     *
+     * @param window The window to which you wish to add the full screen option
+     */
+    public static void enableFullScreenMode(Window window) {
+        String className  = "com.apple.eawt.FullScreenUtilities";
+        String methodName = "setWindowCanFullScreen";
+
+        try {
+            Class<?> clazz = Class.forName(className);
+            Method method = clazz.getMethod(methodName,
+                                            new Class<?>[] { Window.class,
+                    boolean.class });
+            method.invoke(null, window, true);
+        } catch (Throwable t) {
+            LogUtil.printMessage("Full screen mode is not supported");
+        }
+    }
+
+    /**
      * Resizes this window so that it has width {@code width} and height 
      * {@code height}. The window will keep its existing x and y coordinates.
      * 
@@ -992,4 +1015,5 @@ public class IdvWindow extends MultiFrame {
         Rectangle currentRect = getBounds();
         setBounds(new Rectangle(currentRect.x, currentRect.y, width, height));
     }
+
 }

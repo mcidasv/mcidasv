@@ -2829,8 +2829,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         getInitialBooleanProperties(props);
 
         if (booleanPropertiesForPersistence != null) {
+
             booleanPropertiesForPersistence =
-                edu.wisc.ssec.mcidasv.StateManager.mungePropertyTable(
+                StateManager.processPropertyTable(
                     booleanPropertiesForPersistence);
         }
 

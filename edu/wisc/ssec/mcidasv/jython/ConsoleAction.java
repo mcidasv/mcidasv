@@ -43,7 +43,7 @@ import edu.wisc.ssec.mcidasv.jython.Console.Actions;
 
 // TODO(jon): there has to be a less repetitive way...
 public abstract class ConsoleAction extends TextAction {
-    protected static final Map<JTextPane, Console> mapping = new ConcurrentHashMap<JTextPane, Console>();
+    protected static final Map<JTextPane, Console> mapping = new ConcurrentHashMap<>();
     protected Console console;
 
     protected ConsoleAction(final Console console, final Actions type) {

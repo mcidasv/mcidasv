@@ -104,7 +104,7 @@ public class Runner extends Thread {
         this.console = console;
         this.STD_ERR = new OutputStreamDemux();
         this.STD_OUT = new OutputStreamDemux();
-        this.queue = new ArrayBlockingQueue<Command>(QUEUE_CAPACITY, true);
+        this.queue = new ArrayBlockingQueue<>(QUEUE_CAPACITY, true);
         this.systemState = new PySystemState();
         this.interpreter = new Interpreter(systemState, STD_OUT, STD_ERR);
         for (String command : commands) {
