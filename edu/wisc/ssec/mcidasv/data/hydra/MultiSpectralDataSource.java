@@ -31,11 +31,8 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.geom.Rectangle2D;
-
 import java.io.File;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -62,17 +59,17 @@ import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
 import ucar.unidata.util.Misc;
 
+import visad.CommonUnit;
+import visad.CoordinateSystem;
 import visad.Data;
 import visad.FlatField;
-import visad.VisADException;
 import visad.FunctionType;
-import visad.RealType;
-import visad.RealTupleType;
-import visad.Linear2DSet;
 import visad.Gridded2DSet;
-import visad.CoordinateSystem;
-import visad.CommonUnit;
+import visad.Linear2DSet;
+import visad.RealTupleType;
+import visad.RealType;
 import visad.SetType;
+import visad.VisADException;
 import visad.georef.MapProjection;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -206,38 +203,64 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
         multiSpectData_s.clear();
 
-        if ( name.startsWith("AIRS")) {
-          HashMap table = SpectrumAdapter.getEmptyMetadataTable();
-          table.put(SpectrumAdapter.array_name, "L1B_AIRS_Science/Data_Fields/radiances");
-          table.put(SpectrumAdapter.range_name, "radiances");
-          table.put(SpectrumAdapter.channelIndex_name, "Channel");
-          table.put(SpectrumAdapter.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/resources/airs/L2.chan_prop.2003.11.19.v6.6.9.anc");
-          table.put(SpectrumAdapter.x_dim_name, "GeoXTrack");
-          table.put(SpectrumAdapter.y_dim_name, "GeoTrack");
-          spectrumAdapter = new AIRS_L1B_Spectrum(reader, table);
-                                                                                                                                                     
-          table = SwathAdapter.getEmptyMetadataTable();
-          table.put("array_name", "L1B_AIRS_Science/Data_Fields/radiances");
-          table.put(SwathAdapter.range_name, "radiances");
-          table.put("lon_array_name", "L1B_AIRS_Science/Geolocation_Fields/Longitude");
-          table.put("lat_array_name", "L1B_AIRS_Science/Geolocation_Fields/Latitude");
-          table.put("XTrack", "GeoXTrack");
-          table.put("Track", "GeoTrack");
-          table.put("geo_Track", "GeoTrack");
-          table.put("geo_XTrack", "GeoXTrack");
-          table.put(SpectrumAdapter.channelIndex_name, "Channel"); //- think about this?
+        // AIRS data
+        if (name.startsWith("AIRS")) {
+        	// make two data choices, Radiance and BrightnessTemperature
+        	// index 0: Rad, index 1: BT
+        	int choiceCount = 2;
+        	for (int i = 0; i < choiceCount; i++) {
+        		HashMap table = SpectrumAdapter.getEmptyMetadataTable();
+        		if (i == 0) {
+        			table.put(SpectrumAdapter.array_name, "L1B_AIRS_Science/Data_Fields/radiances");
+        			table.put(SpectrumAdapter.range_name, "Radiance");
+        		} else {
+        			table.put(SpectrumAdapter.array_name, "L1B_AIRS_Science/Data_Fields/radiances");
+        			table.put(SpectrumAdapter.range_name, "BrightnessTemperature");
+        		}
 
-          swathAdapter = new SwathAdapter(reader, table);
-          HashMap subset = swathAdapter.getDefaultSubset();
-          subset.put(SpectrumAdapter.channelIndex_name, new double[] {793,793,1});
-          defaultSubset = subset;
-          multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter);
-          DataCategory.createCategory("MultiSpectral");
-          categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
-          hasChannelSelect = true;
-          multiSpectData.init_wavenumber = 919.5f; 
-          multiSpectData_s.add(multiSpectData);
-       }
+        		table.put(SpectrumAdapter.channelIndex_name, "Channel");
+        		table.put(SpectrumAdapter.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/resources/airs/L2.chan_prop.2003.11.19.v6.6.9.anc");
+        		table.put(SpectrumAdapter.x_dim_name, "GeoXTrack");
+        		table.put(SpectrumAdapter.y_dim_name, "GeoTrack");
+        		SpectrumAdapter spectrumAdapter = new AIRS_L1B_Spectrum(reader, table);
+
+        		table = SwathAdapter.getEmptyMetadataTable();
+        		if (i == 0) {
+        			table.put(SwathAdapter.array_name, "L1B_AIRS_Science/Data_Fields/radiances");
+        			table.put(SwathAdapter.range_name, "Radiance");
+        		} else {
+        			table.put(SwathAdapter.array_name, "L1B_AIRS_Science/Data_Fields/radiances");
+        			table.put(SwathAdapter.range_name, "BrightnessTemperature");
+        		}
+        		table.put("lon_array_name", "L1B_AIRS_Science/Geolocation_Fields/Longitude");
+        		table.put("lat_array_name", "L1B_AIRS_Science/Geolocation_Fields/Latitude");
+        		table.put("XTrack", "GeoXTrack");
+        		table.put("Track", "GeoTrack");
+        		table.put("geo_Track", "GeoTrack");
+        		table.put("geo_XTrack", "GeoXTrack");
+        		table.put(SpectrumAdapter.channelIndex_name, "Channel"); //- think about this?
+
+        		SwathAdapter swathAdapter = new SwathAdapter(reader, table);
+        		HashMap subset = swathAdapter.getDefaultSubset();
+        		subset.put(SpectrumAdapter.channelIndex_name, new double[] {793,793,1});
+        		defaultSubset = subset;
+
+        		MultiSpectralData multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter);
+        		// Need to change paramater and range for Radiance, default is Brightness Temp, so
+        		// do nothing for 2nd time through loop
+        		if (i == 0) {
+        			multiSpectData.setParamName("Radiance");
+        			float [] radianceRange = new float[] {-20.0f, 140.0f};
+        			multiSpectData.setDataRange(radianceRange);
+        		}
+        		DataCategory.createCategory("MultiSpectral");
+        		categories = DataCategory.parseCategories("MultiSpectral;MultiSpectral;IMAGE");
+        		hasChannelSelect = true;
+        		multiSpectData.init_wavenumber = 919.5f; 
+
+        		multiSpectData_s.add(multiSpectData);
+        	}
+        }
        else if ( name.startsWith("IASI_xxx_1C") && name.endsWith("h5")) {
           HashMap table = SpectrumAdapter.getEmptyMetadataTable();
           table.put(SpectrumAdapter.array_name, "U-MARF/EPS/IASI_xxx_1C/DATA/SPECT_DATA");

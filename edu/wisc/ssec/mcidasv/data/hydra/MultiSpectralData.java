@@ -240,8 +240,22 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     return paramName;
   }
 
+  /**
+   * @return the paramName
+   */
+  public String getParamName() {
+	  return paramName;
+  }
+
+  /**
+   * @param paramName the paramName to set
+   */
+  public void setParamName(String paramName) {
+	  this.paramName = paramName;
+  }
+
   public String getName() {
-    return name;
+	  return name;
   }
 
   public CoordinateSystem getCoordinateSystem() {
