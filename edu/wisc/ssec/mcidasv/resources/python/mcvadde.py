@@ -333,6 +333,9 @@ class AddeJythonErrorInvalidSize(AddeJythonError):
 class AddeJythonBadLocationError(AddeJythonError):
     pass
     
+class AddeJythonBadHostError(AddeJythonError):
+    pass
+    
 # class AddeJythonUnknownFormatError(AddeJythonError): pass
 
 # alias = ADDE  alias
@@ -1243,6 +1246,8 @@ def getADDEImage(localEntry=None,
                 raise AddeJythonInvalidDatasetError(e)
             elif e.getAddeErrorCode() == -7000:
                 raise AddeJythonBandNotPresentInSpecifiedUnits(e)
+            elif e.getAddeErrorCode() == -114:
+                raise AddeJythonBadHostError(e)
             elif e.getAddeErrorCode() == -6000:
                 if accounting == DEFAULT_ACCOUNTING:
                     raise AddeJythonAccountingRequiredError(e)

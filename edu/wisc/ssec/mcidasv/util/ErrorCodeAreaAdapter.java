@@ -28,6 +28,7 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import edu.wisc.ssec.mcidas.adde.AddeException;
 
@@ -113,6 +114,8 @@ public class ErrorCodeAreaAdapter {
             return -11002;
         } else if (message.startsWith("Image data server unable to resolve this dataset")) {
             return -118;
+        } else if (cause instanceof UnknownHostException) {
+            return -114;
         } else {
             Throwable nextCause = cause.getCause();
             if (nextCause != null) {
