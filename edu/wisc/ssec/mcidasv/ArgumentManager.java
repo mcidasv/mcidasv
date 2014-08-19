@@ -29,20 +29,24 @@
 package edu.wisc.ssec.mcidasv;
 
 import java.rmi.RemoteException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ucar.unidata.util.StringUtil;
 import visad.VisADException;
+
+import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.util.StringUtil;
 
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.PatternFileFilter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 
@@ -61,9 +65,12 @@ public class ArgumentManager extends ArgsManager {
 
     public static final String ARG_LOGPATH = "-logpath";
 
-    /** usage message */
+    /** Usage message. */
     public static final String USAGE_MESSAGE =
         "Usage: runMcV [OPTIONS] <bundle/script files, e.g., .mcv, .mcvz, .py>";
+
+    /** {@literal "__name__"} to use when no Jython/Python script has been provided at startup. */
+    public static final String NO_PYTHON_MODULE = "<none>";
 
     /** Jython arguments, if any. */
     private List<String> jythonArguments;
@@ -71,9 +78,7 @@ public class ArgumentManager extends ArgsManager {
     /** Jython script to execute, or {@literal "<none>"} if one was not given. */
     private String jythonScript;
 
-    /**
-     *  Given by the "-user" argument. Alternative user path for bundles,  resources, etc.
-     */
+    /** Given by the "-user" argument. Alternative user path for bundles, resources, etc. */
     String defaultUserDirectory = StartupManager.getInstance().getPlatform().getUserDirectory();
 
     /**
@@ -84,12 +89,12 @@ public class ArgumentManager extends ArgsManager {
      */
     public ArgumentManager(IntegratedDataViewer idv, String[] args) {
         super(idv, args);
-        jythonArguments = new ArrayList<String>();
-        jythonScript = "<none>";
+        jythonArguments = new ArrayList<>(args.length);
+        jythonScript = NO_PYTHON_MODULE;
     }
 
-    private static List<String> extractJythonArgs(int index, String[] args) {
-        List<String> jythonArgs = new ArrayList<String>(args.length);
+    private static List<String> extractJythonArgs(int index, String... args) {
+        List<String> jythonArgs = new ArrayList<>(args.length);
         for (int i = index; i < args.length; i++) {
             jythonArgs.add(args[i]);
         }
@@ -290,7 +295,7 @@ public class ArgumentManager extends ArgsManager {
      * @see ArgsManager#getBundleFileFilters()
      */
     @Override public List<PatternFileFilter> getBundleFileFilters() {
-        List<PatternFileFilter> filters = new ArrayList<PatternFileFilter>(); 
+        List<PatternFileFilter> filters = new ArrayList<>(10);
         Collections.addAll(filters, getXidvFileFilter(), getZidvFileFilter(), FILTER_JNLP);
         return filters;
     }
@@ -310,11 +315,12 @@ public class ArgumentManager extends ArgsManager {
      * @return Filters for bundles.
      */
     public List<PatternFileFilter> getBundleFilters(final boolean fromOpen) {
-        List<PatternFileFilter> filters = new ArrayList<PatternFileFilter>();
+        List<PatternFileFilter> filters;
         if (fromOpen) {
+            filters = new ArrayList<>(10);
             Collections.addAll(filters, getXidvZidvFileFilter(), FILTER_JNLP, FILTER_ISL, super.getXidvZidvFileFilter());
         } else {
-            filters.addAll(getBundleFileFilters());
+            filters = new ArrayList<>(getBundleFileFilters());
         }
         return filters;
     }
@@ -354,38 +360,38 @@ public class ArgumentManager extends ArgsManager {
     }
 
     /**
-     * Tests to see if <code>name</code> has a known XML bundle extension.
+     * Tests to see if {@code name} has a known XML bundle extension.
      * 
      * @param name Name of the bundle.
      * 
-     * @return Whether or not <code>name</code> has an XML bundle suffix.
+     * @return Whether or not {@code name} has an XML bundle suffix.
      */
     public static boolean isXmlBundle(final String name) {
         return IOUtil.hasSuffix(name, Constants.FILTER_MCV.getPreferredSuffix())
-            || IOUtil.hasSuffix(name, Constants.FILTER_XIDV.getPreferredSuffix());
+            || IOUtil.hasSuffix(name, IdvConstants.FILTER_XIDV.getPreferredSuffix());
     }
 
     /**
-     * Tests to see if <code>name</code> has a known zipped bundle extension.
+     * Tests to see if {@code name} has a known zipped bundle extension.
      * 
      * @param name Name of the bundle.
      * 
-     * @return Whether or not <code>name</code> has zipped bundle suffix.
+     * @return Whether or not {@code name} has zipped bundle suffix.
      */
     public static boolean isZippedBundle(final String name) {
         return IOUtil.hasSuffix(name, Constants.FILTER_MCVZ.getPreferredSuffix())
-               || IOUtil.hasSuffix(name, Constants.FILTER_ZIDV.getPreferredSuffix());
+               || IOUtil.hasSuffix(name, IdvConstants.FILTER_ZIDV.getPreferredSuffix());
     }
 
     /**
-     * Tests <code>name</code> to see if it has a known bundle extension.
+     * Tests {@code name} to see if it has a known bundle extension.
      * 
      * @param name Name of the bundle.
      * 
-     * @return Whether or not <code>name</code> has a bundle suffix.
+     * @return Whether or not {@code name} has a bundle suffix.
      */
     public static boolean isBundle(final String name) {
-        return (isXmlBundle(name) || isZippedBundle(name));
+        return isXmlBundle(name) || isZippedBundle(name);
     }
 
     /**
