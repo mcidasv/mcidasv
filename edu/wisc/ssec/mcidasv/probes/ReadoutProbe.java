@@ -27,6 +27,7 @@
  */
 package edu.wisc.ssec.mcidasv.probes;
 
+import static java.util.Objects.requireNonNull;
 import static edu.wisc.ssec.mcidasv.util.Contract.*;
 
 import java.awt.Color;
@@ -95,9 +96,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color, final boolean visible) throws VisADException, RemoteException {
         super();
-        notNull(master, "DisplayMaster can't be null");
-        notNull(field, "Field can't be null");
-        notNull(color, "Color can't be null");
+        requireNonNull(master, "DisplayMaster can't be null");
+        requireNonNull(field, "Field can't be null");
+        requireNonNull(color, "Color can't be null");
 
         this.master = master;
         this.field = field;
@@ -131,7 +132,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * {@code PropertyChangeEvent}.
      */
     public void propertyChange(final PropertyChangeEvent e) {
-        notNull(e, "Cannot handle a null property change event");
+        requireNonNull(e, "Cannot handle a null property change event");
         if (e.getPropertyName().equals(SelectorDisplayable.PROPERTY_POSITION)) {
             RealTuple prev = getEarthPosition();
             //handleProbeUpdate();
@@ -146,7 +147,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     public void setField(final FlatField field) {
-        notNull(field);
+        requireNonNull(field);
         this.field = field;
         handleProbeUpdate();
     }
@@ -161,7 +162,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * @throws NullPointerException if {@code listener} is null.
      */
     public void addProbeListener(final ProbeListener listener) {
-        notNull(listener, "Can't add a null listener");
+        requireNonNull(listener, "Can't add a null listener");
         listeners.add(listener);
     }
 
@@ -187,8 +188,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * @param current Current position.
      */
     protected void fireProbePositionChanged(final RealTuple previous, final RealTuple current) {
-        notNull(previous);
-        notNull(current);
+        requireNonNull(previous);
+        requireNonNull(current);
 
         ProbeEvent<RealTuple> event = new ProbeEvent<>(this, previous, current);
         for (ProbeListener listener : listeners) {
@@ -204,8 +205,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * @param current Current color.
      */
     protected void fireProbeColorChanged(final Color previous, final Color current) {
-        notNull(previous);
-        notNull(current);
+        requireNonNull(previous);
+        requireNonNull(current);
 
         ProbeEvent<Color> event = new ProbeEvent<>(this, previous, current);
         for (ProbeListener listener : listeners) {
@@ -228,7 +229,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     public void setColor(final Color color) {
-        notNull(color, "Cannot set a probe to a null color");
+        requireNonNull(color, "Cannot set a probe to a null color");
         setColor(color, false);
     }
 
@@ -270,8 +271,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     public void setLatLon(final Double latitude, final Double longitude) {
-        notNull(latitude, "Null latitude values don't make sense!");
-        notNull(longitude, "Null longitude values don't make sense!");
+        requireNonNull(latitude, "Null latitude values don't make sense!");
+        requireNonNull(longitude, "Null longitude values don't make sense!");
 
         try {
             EarthLocationTuple elt = new EarthLocationTuple(latitude, longitude, 0.0);
@@ -297,8 +298,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     public void handleProbeUpdate() {
         RealTuple pos = getEarthPosition();
-        if (pos == null)
+        if (pos == null) {
             return;
+        }
 
         Tuple positionValue = valueAtPosition(pos, field);
         if (positionValue == null) {

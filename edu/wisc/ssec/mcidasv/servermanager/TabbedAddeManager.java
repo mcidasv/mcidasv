@@ -27,9 +27,10 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static java.util.Objects.requireNonNull;
+
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
-import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 
 import java.awt.BorderLayout;
@@ -209,7 +210,7 @@ public class TabbedAddeManager extends JFrame {
      * @throws NullPointerException if {@code entryStore} is {@code null}.
      */
     public TabbedAddeManager(final EntryStore entryStore) {
-        notNull(entryStore, "Cannot pass a null server manager");
+        requireNonNull(entryStore, "Cannot pass a null server manager");
         AnnotationProcessor.process(this);
         this.serverManager = entryStore; 
         this.selectedLocalEntries = arrList();
@@ -1293,7 +1294,7 @@ public class TabbedAddeManager extends JFrame {
     // stupid adde.ucar.edu entries never seem to time out! great! making the gui hang is just so awesome!
     @SuppressWarnings({"ObjectAllocationInLoop"})
     public Set<RemoteAddeEntry> checkDatasets(final Collection<RemoteAddeEntry> entries) {
-        notNull(entries, "can't check a null collection of entries");
+        requireNonNull(entries, "can't check a null collection of entries");
         if (entries.isEmpty()) {
             return Collections.emptySet();
         }
@@ -1372,7 +1373,7 @@ public class TabbedAddeManager extends JFrame {
     private class CheckEntryTask implements Callable<RemoteAddeEntry> {
         private final RemoteAddeEntry entry;
         public CheckEntryTask(final RemoteAddeEntry entry) {
-            notNull(entry);
+            requireNonNull(entry);
             this.entry = entry;
             this.entry.setEntryValidity(EntryValidity.VALIDATING);
         }
@@ -1414,7 +1415,7 @@ public class TabbedAddeManager extends JFrame {
          * @param entryStore Server manager object.
          */
         public RemoteAddeTableModel(final EntryStore entryStore) {
-            notNull(entryStore, "Cannot query a null EntryStore");
+            requireNonNull(entryStore, "Cannot query a null EntryStore");
             this.entryStore = entryStore;
             this.servers = arrList(entryStore.getRemoteEntryTexts());
         }
@@ -1606,7 +1607,7 @@ public class TabbedAddeManager extends JFrame {
         private final EntryStore entryStore;
 
         public LocalAddeTableModel(final EntryStore entryStore) {
-            notNull(entryStore, "Cannot query a null EntryStore");
+            requireNonNull(entryStore, "Cannot query a null EntryStore");
             this.entryStore = entryStore;
             this.entries = arrList(entryStore.getLocalEntries());
         }

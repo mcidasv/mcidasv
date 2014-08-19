@@ -28,7 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.jython;
 
-import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -100,7 +100,8 @@ public class Runner extends Thread {
      * @param commands
      */
     public Runner(final Console console, final List<String> commands) {
-        notNull(console, commands);
+        requireNonNull(console);
+        requireNonNull(commands);
         this.console = console;
         this.STD_ERR = new OutputStreamDemux();
         this.STD_OUT = new OutputStreamDemux();

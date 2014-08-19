@@ -27,7 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
-import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+import static java.util.Objects.requireNonNull;
+
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
@@ -149,8 +150,8 @@ public class EntryStore {
      * @param rscManager 
      */
     public EntryStore(final IdvObjectStore store, final IdvResourceManager rscManager) {
-        notNull(store);
-        notNull(rscManager);
+        requireNonNull(store);
+        requireNonNull(rscManager);
 
         this.idvStore = store;
         this.trie = new PatriciaTrie<>(new CharSequenceKeyAnalyzer());
@@ -236,8 +237,8 @@ public class EntryStore {
      * @param newEntries Cannot be {@code null}.
      */
     private static void putEntries(final PatriciaTrie<String, AddeEntry> trie, final Collection<? extends AddeEntry> newEntries) {
-        notNull(trie);
-        notNull(newEntries);
+        requireNonNull(trie);
+        requireNonNull(newEntries);
         for (AddeEntry e : newEntries) {
             trie.put(e.asStringId(), e);
         }
@@ -303,7 +304,7 @@ public class EntryStore {
      * @see edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry#INVALID_ENTRY
      */
     public static boolean isInvalidEntry(final AddeEntry entry) {
-        notNull(entry);
+        requireNonNull(entry);
         boolean retVal = true;
         if (entry instanceof RemoteAddeEntry) {
             retVal = RemoteAddeEntry.INVALID_ENTRY.equals(entry);
@@ -352,7 +353,7 @@ public class EntryStore {
      */
     @EventSubscriber(eventClass=Event.class)
     public void onEvent(Event evt) {
-        notNull(evt);
+        requireNonNull(evt);
         saveEntries();
     }
 
@@ -389,7 +390,7 @@ public class EntryStore {
      * @throws NullPointerException if {@code type} is {@code null}.
      */
     public List<AddeEntry> getLastAddedByType(final EntryType type) {
-        notNull(type);
+        requireNonNull(type);
         List<AddeEntry> entries = arrList(lastAdded.size());
         for (AddeEntry entry : lastAdded) {
             if (entry.getEntryType() == type) {
@@ -400,7 +401,7 @@ public class EntryStore {
     }
 
     public List<AddeEntry> getLastAddedByTypes(final EnumSet<EntryType> types) {
-        notNull(types);
+        requireNonNull(types);
         List<AddeEntry> entries = arrList(lastAdded.size());
         for (AddeEntry entry : lastAdded) {
             if (types.contains(entry.getEntryType())) {
@@ -424,7 +425,7 @@ public class EntryStore {
      * were no matches, an empty {@code Set} is returned.
      */
     public Set<AddeEntry> getVerifiedEntries(final EntryType type) {
-        notNull(type);
+        requireNonNull(type);
         Set<AddeEntry> verified = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.values()) {
             if (entry.getEntryType() != type) {
@@ -469,8 +470,8 @@ public class EntryStore {
      * there were no matches.
      */
     public Set<String> getGroupsFor(final String address, EntryType type) {
-        notNull(address);
-        notNull(type);
+        requireNonNull(address);
+        requireNonNull(type);
         Set<String> groups = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.getPrefixedBy(address+'!').values()) {
             if (entry.getAddress().equals(address) && entry.getEntryType() == type) {
@@ -491,7 +492,7 @@ public class EntryStore {
      * @see AddeEntry#asStringId()
      */
     public List<AddeEntry> searchWithPrefix(final String prefix) {
-        notNull(prefix);
+        requireNonNull(prefix);
         return arrList(trie.getPrefixedBy(prefix).values());
     }
 
@@ -539,7 +540,7 @@ public class EntryStore {
      * empty {@code Set}.
      */
     public Set<String> getGroups(final String address) {
-        notNull(address);
+        requireNonNull(address);
         Set<String> groups = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.getPrefixedBy(address+'!').values()) {
             groups.add(entry.getGroup());
@@ -691,10 +692,8 @@ public class EntryStore {
         return locals;
     }
     
-    public boolean removeEntries(
-        final Collection<? extends AddeEntry> removedEntries) 
-    {
-        notNull(removedEntries);
+    public boolean removeEntries(final Collection<? extends AddeEntry> removedEntries) {
+        requireNonNull(removedEntries);
 
         boolean val = true;
         boolean tmpVal = true;
@@ -707,7 +706,7 @@ public class EntryStore {
                 }
             }
         }
-        Event evt = (val) ? Event.REMOVAL : Event.FAILURE; 
+        Event evt = val ? Event.REMOVAL : Event.FAILURE;
         saveEntries();
         EventBus.publish(evt);
         return val;
@@ -721,7 +720,7 @@ public class EntryStore {
      * @return {@code true} if something was removed, {@code false} otherwise.
      */
     public boolean removeEntry(final AddeEntry entry) {
-        notNull(entry);
+        requireNonNull(entry);
         boolean val = trie.remove(entry.asStringId()) != null;
         logger.trace("attempted remove={} status={}", entry, val);
         Event evt = val ? Event.REMOVAL : Event.FAILURE;
@@ -738,7 +737,7 @@ public class EntryStore {
      * @throws NullPointerException if {@code entry} is {@code null}.
      */
     public void addEntry(final AddeEntry entry) {
-        notNull(entry, "Cannot add a null entry");
+        requireNonNull(entry, "Cannot add a null entry.");
         trie.put(entry.asStringId(), entry);
         saveEntries();
         lastAdded.clear();
@@ -755,7 +754,7 @@ public class EntryStore {
      * @throws NullPointerException if {@code newEntries} is {@code null}.
      */
     public void addEntries(final Collection<? extends AddeEntry> newEntries) {
-        notNull(newEntries, "Cannot add a null set");
+        requireNonNull(newEntries, "Cannot add a null Collection.");
         for (AddeEntry newEntry : newEntries) {
             trie.put(newEntry.asStringId(), newEntry);
         }
@@ -777,8 +776,8 @@ public class EntryStore {
      * {@code newEntries} is {@code null}.
      */
     public void replaceEntries(final Collection<? extends AddeEntry> oldEntries, final Collection<? extends AddeEntry> newEntries) {
-        notNull(oldEntries, "Cannot replace a null set");
-        notNull(newEntries, "Cannot add a null set");
+        requireNonNull(oldEntries, "Cannot replace a null Collection.");
+        requireNonNull(newEntries, "Cannot add a null Collection.");
 
         for (AddeEntry oldEntry : oldEntries) {
             trie.remove(oldEntry.asStringId());

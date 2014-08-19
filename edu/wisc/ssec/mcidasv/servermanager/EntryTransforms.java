@@ -28,6 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static java.util.Objects.requireNonNull;
+
 import static ucar.unidata.xml.XmlUtil.findChildren;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
@@ -73,7 +75,6 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.AddeFormat;
 import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.ServerName;
-import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
 /**
@@ -142,7 +143,7 @@ public class EntryTransforms {
         Set<String> addrs = newLinkedHashSet(entries.size());
         for (AddeEntry e : entries) {
             EntryStatus status = e.getEntryStatus();
-            if (status == EntryStatus.DISABLED || status == EntryStatus.INVALID) {
+            if ((status == EntryStatus.DISABLED) || (status == EntryStatus.INVALID)) {
                 continue;
             }
             String addr = e.getAddress();
@@ -314,7 +315,7 @@ public class EntryTransforms {
      * @throws NullPointerException if {@code serverName} is {@code null}.
      */
     public static String serverNameToStr(final ServerName serverName) {
-        Contract.notNull(serverName);
+        requireNonNull(serverName);
         return serverName.toString().toLowerCase();
     }
 
@@ -330,7 +331,7 @@ public class EntryTransforms {
      */
     public static ServerName strToServerName(final String s) {
         ServerName serverName = ServerName.INVALID;
-        Contract.notNull(s);
+        requireNonNull(s);
         try {
             serverName = ServerName.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -350,7 +351,7 @@ public class EntryTransforms {
      * @throws NullPointerException if {@code type} is {@code null}.
      */
     public static String entryTypeToStr(final EntryType type) {
-        Contract.notNull(type);
+        requireNonNull(type);
         return type.toString().toLowerCase();
     }
 
@@ -366,7 +367,7 @@ public class EntryTransforms {
      */
     public static EntryType strToEntryType(final String s) {
         EntryType type = EntryType.UNKNOWN;
-        Contract.notNull(s);
+        requireNonNull(s);
         try {
             type = EntryType.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -389,7 +390,7 @@ public class EntryTransforms {
      */
     public static EntrySource strToEntrySource(final String s) {
         EntrySource source = EntrySource.USER;
-        Contract.notNull(s);
+        requireNonNull(s);
         try {
             source = EntrySource.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -412,7 +413,7 @@ public class EntryTransforms {
      */
     public static EntryValidity strToEntryValidity(final String s) {
         EntryValidity valid = EntryValidity.UNVERIFIED;
-        Contract.notNull(s);
+        requireNonNull(s);
         try {
             valid = EntryValidity.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -435,7 +436,7 @@ public class EntryTransforms {
      */
     public static EntryStatus strToEntryStatus(final String s) {
         EntryStatus status = EntryStatus.DISABLED;
-        Contract.notNull(s);
+        requireNonNull(s);
         try {
             status = EntryStatus.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -466,7 +467,7 @@ public class EntryTransforms {
      */
     public static AddeFormat strToAddeFormat(final String s) {
         AddeFormat format = AddeFormat.INVALID;
-        Contract.notNull(s);
+        requireNonNull(s);
         try {
             format = AddeFormat.valueOf(s.toUpperCase().replace(' ', '_').replace("-", ""));
         } catch (IllegalArgumentException e) {
@@ -476,7 +477,7 @@ public class EntryTransforms {
     }
 
     public static String addeFormatToStr(final AddeFormat format) {
-        Contract.notNull(format);
+        requireNonNull(format);
         return format.toString().toLowerCase();
     }
 
@@ -805,8 +806,8 @@ public class EntryTransforms {
     }
 
     public static Set<LocalAddeEntry> removeTemporaryEntriesFromResolvFile(final String filename, final Collection<LocalAddeEntry> entries) throws IOException {
-        Contract.notNull(filename, "Path to resolv file cannot be null");
-        Contract.notNull(entries, "Local entries cannot be null");
+        requireNonNull(filename, "Path to resolv file cannot be null");
+        requireNonNull(entries, "Local entries cannot be null");
         Set<LocalAddeEntry> removedEntries = newLinkedHashSet(entries.size());
         BufferedWriter bw = null;
         try {
@@ -832,15 +833,15 @@ public class EntryTransforms {
      * @throws NullPointerException if {@code path} is {@code null}. 
      */
     public static String demungeFileMask(final String path) {
-        Contract.notNull(path, "how dare you! null paths cannot be munged!");
+        requireNonNull(path, "how dare you! null paths cannot be munged!");
         int index = path.indexOf("/*");
         if (index < 0) {
             return path;
         }
         String tmpFileMask = path.substring(0, index);
         // Look for "cygwinPrefix" at start of string and munge accordingly
-        if (tmpFileMask.length() > cygwinPrefixLength+1 &&
-            tmpFileMask.substring(0,cygwinPrefixLength).equals(cygwinPrefix)) {
+        if ((tmpFileMask.length() > (cygwinPrefixLength + 1)) &&
+                tmpFileMask.substring(0, cygwinPrefixLength).equals(cygwinPrefix)) {
             String driveLetter = tmpFileMask.substring(cygwinPrefixLength,cygwinPrefixLength+1).toUpperCase();
             return driveLetter + ':' + tmpFileMask.substring(cygwinPrefixLength+1).replace('/', '\\');
         } else {
@@ -858,9 +859,9 @@ public class EntryTransforms {
      * @throws NullPointerException if {@code mask} is {@code null}.
      */
     public static String mungeFileMask(final String mask) {
-        Contract.notNull(mask, "Cannot further munge this mask; it was null upon arriving");
+        requireNonNull(mask, "Cannot further munge this mask; it was null upon arriving");
         StringBuilder s = new StringBuilder(100);
-        if (mask.length() > 3 && ":".equals(mask.substring(1, 2))) {
+        if ((mask.length() > 3) && ":".equals(mask.substring(1, 2))) {
             String newFileMask = mask;
             String driveLetter = newFileMask.substring(0, 1).toLowerCase();
             newFileMask = newFileMask.substring(3);

@@ -27,6 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static java.util.Objects.requireNonNull;
+
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -35,7 +37,6 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
-import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
@@ -902,7 +903,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
      * @throws NullPointerException if {@code entries} is {@code null}.
      */
     public Set<RemoteAddeEntry> checkHosts(final Set<RemoteAddeEntry> entries) {
-        Contract.notNull(entries, "entries cannot be null");
+        requireNonNull(entries, "entries cannot be null");
         Set<RemoteAddeEntry> goodEntries = newLinkedHashSet();
         Set<String> checkedHosts = newLinkedHashSet();
         Map<String, Boolean> hostStatus = newMap();
@@ -926,7 +927,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
     }
 
     public Set<RemoteAddeEntry> checkGroups(final Set<RemoteAddeEntry> entries) {
-        Contract.notNull(entries, "entries cannot be null");
+        requireNonNull(entries, "entries cannot be null");
         if (entries.isEmpty()) {
             return Collections.emptySet();
         }
@@ -1012,7 +1013,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
          * @throws NullPointerException if {@code entry} is {@code null}.
          */
         public StatusWrapper(final RemoteAddeEntry entry) {
-            notNull(entry, "cannot create a entry/status pair with a null descriptor");
+            requireNonNull(entry, "cannot create a entry/status pair with a null descriptor");
             this.entry = entry;
         }
 
@@ -1052,7 +1053,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
     private class VerifyEntryTask implements Callable<StatusWrapper> {
         private final StatusWrapper entryStatus;
         public VerifyEntryTask(final StatusWrapper descStatus) {
-            notNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
+            requireNonNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
             this.entryStatus = descStatus;
         }
 

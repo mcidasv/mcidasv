@@ -28,6 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import static java.util.Objects.requireNonNull;
+
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newHashSet;
@@ -1593,7 +1595,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @throws NullPointerException if {@code actionId} is {@code null}.
      */
     @Override public Element getActionNode(final String actionId) {
-        Contract.notNull(actionId, "Null action id strings are invalid");
+        requireNonNull(actionId, "Null action id strings are invalid");
         return idvActions.getElementForAction(actionId);
     }
 
@@ -1614,8 +1616,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     @Override public String getActionAttr(final String actionId, 
         final String attr) 
     {
-        Contract.notNull(actionId, "Null action id strings are invalid");
-        Contract.notNull(attr, "Null attributes are invalid");
+        requireNonNull(actionId, "Null action id strings are invalid");
+        requireNonNull(attr, "Null attributes are invalid");
         ActionAttribute actionAttr = ActionAttribute.valueOf(attr.toUpperCase());
         return idvActions.getAttributeForAction(stripAction(actionId), actionAttr);
     }
@@ -1664,8 +1666,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             return Collections.emptyMap();
         }
         // loop through set of action attributes; if element contains attribute "A", add it; return results.
-        Map<ActionAttribute, String> attrs = 
-            new LinkedHashMap<ActionAttribute, String>();
+        Map<ActionAttribute, String> attrs = new LinkedHashMap<>();
         for (ActionAttribute attribute : ActionAttribute.values()) {
             String idvStr = attribute.asIdvString();
             if (XmlUtil.hasAttribute(element, idvStr)) {
@@ -1701,8 +1702,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             getPersistenceManager().getBundles(bundleType);
 
         // handy reference to parent nodes; bundle count * 4 seems pretty safe
-        final Map<String, BundleTreeNode> mapper =
-            new HashMap<String, BundleTreeNode>(bundles.size() * 4);
+        final Map<String, BundleTreeNode> mapper = new HashMap<>(bundles.size() * 4);
 
         // iterate through all toolbar bundles
         for (SavedBundle bundle : bundles) {
@@ -1781,21 +1781,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
     }
 
-    @Override
-    public void initDone() {
-    	super.initDone();
-    	if (getStore().get(Constants.PREF_VERSION_CHECK, true)) {
-        	StateManager stateManager = (StateManager) getStateManager();
-    		stateManager.checkForNewerVersion(false);
-    		stateManager.checkForNotice(false);
-    	}
-    	
-    	// not super excited about how this works.
-//    	showBasicWindow(true);
-    	
-    	initDone = true;
-    	
-    	showDashboard();
+    @Override public void initDone() {
+        super.initDone();
+        if (getStore().get(Constants.PREF_VERSION_CHECK, true)) {
+            StateManager stateManager = (StateManager)getStateManager();
+            stateManager.checkForNewerVersion(false);
+            stateManager.checkForNotice(false);
+        }
+
+        // not super excited about how this works.
+        // showBasicWindow(true);
+
+        initDone = true;
+        showDashboard();
     }
 
     /**
@@ -1819,13 +1817,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     /** THe help tip dialog */
     private McvHelpTipDialog helpTipDialog;
+
     public void initHelpTips(boolean checkPrefs) {
         try {
             if (getIdv().getArgsManager().getIsOffScreen()) {
                 return;
             }
             if (checkPrefs) {
-                if ( !getStore().get(McvHelpTipDialog.PREF_HELPTIPSHOW, true)) {
+                if (!getStore().get(McvHelpTipDialog.PREF_HELPTIPSHOW, true)) {
                     return;
                 }
             }
@@ -1844,6 +1843,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             logException("Reading help tips", excp);
         }
     }
+
     /**
      *  If created, close the HelpTipDialog window.
      */
@@ -1852,6 +1852,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             helpTipDialog.setVisible(false);
         }
     }
+
     /**
      *  Create (if null)  and show the HelpTipDialog
      */
@@ -1864,7 +1865,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param inBundleMenu The menu to populate
      */
     public void makeBundleMenu(JMenu inBundleMenu) {
-    	final int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
+        final int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
 
         JMenuItem mi;
         mi = new JMenuItem("Manage...");
@@ -1878,7 +1879,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         });
 
         final List bundles = getPersistenceManager().getBundles(bundleType);
-        if (bundles.size() == 0) {
+        if (bundles.isEmpty()) {
             return;
         }
         final String title =
@@ -1910,7 +1911,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     catMenus.put(mainCategory, tmpMenu);
                 }
                 catMenu = tmpMenu;
-
             }
 
             final SavedBundle theBundle = bundle;
@@ -1944,26 +1944,30 @@ public class UIManager extends IdvUIManager implements ActionListener {
         @SuppressWarnings("unchecked") // it's how the IDV does it.
         List windows = new ArrayList(IdvWindow.getWindows());
         for (int i = 0; i < windows.size(); i++) {
-            final IdvWindow window = ((IdvWindow)windows.get(i));
+            final IdvWindow window = (IdvWindow)windows.get(i);
 
             // Skip the main window
-            if (window.getIsAMainWindow())
+            if (window.getIsAMainWindow()) {
                 continue;
+            }
 
             String title = window.getTitle();
             String titleParts[] = splitTitle(title);
 
-            if (titleParts.length == 2)
+            if (titleParts.length == 2) {
                 title = titleParts[1];
+            }
 
             // Skip the data explorer and display controller
             String dataSelectorNameParts[] = splitTitle(Constants.DATASELECTOR_NAME);
-            if (title.equals(Constants.DATASELECTOR_NAME) || title.equals(dataSelectorNameParts[1]))
+            if (title.equals(Constants.DATASELECTOR_NAME) || title.equals(dataSelectorNameParts[1])) {
                 continue;
+            }
 
             // Add a meaningful name if there is none
-            if (title.equals(""))
+            if (title.isEmpty()) {
                 title = "<Unnamed>";
+            }
 
             if (window.isVisible()) {
                 mi = new JMenuItem(title);
@@ -1981,8 +1985,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 windowMenu.add(mi);
             }
         }
-
-        
         Msg.translateTree(windowMenu);
     }
 
@@ -1996,8 +1998,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
             initTabNavActions();
         }
 
-        if (McVGuiUtils.getAllComponentHolders().size() <= 1)
+        if (McVGuiUtils.getAllComponentHolders().size() <= 1) {
             return;
+        }
 
         menu.addSeparator();
 
@@ -2005,8 +2008,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         menu.add(new JMenuItem(prevDisplayAction));
         menu.add(new JMenuItem(showDisplayAction));
 
-        if (McVGuiUtils.getAllComponentGroups().size() > 0)
+        if (!McVGuiUtils.getAllComponentGroups().isEmpty()) {
             menu.addSeparator();
+        }
 
         Msg.translateTree(menu);
     }
@@ -2138,16 +2142,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 // if (disp != null)
                 //    showDisplay(disp);
                 final McvComponentHolder holder = (McvComponentHolder)getViewManagerHolder(vm);
-                if (holder != null)
+                if (holder != null) {
                     holder.setAsActiveTab();
-                
+                }
+
                 // have to do this on the event dispatch thread so we make
                 // sure it happens after showDisplay
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
                         //setActiveDisplay(disp, disp.managers.indexOf(vm));
-                        if (holder != null)
+                        if (holder != null) {
                             getVMManager().setLastActiveViewManager(vm);
+                        }
                     }
                 });
 
@@ -2176,8 +2182,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
             String cmd = e.getActionCommand();
-            if (cmd == null)
+            if (cmd == null) {
                 return;
+            }
 
             if (ACTION_NAME.equals(cmd)) {
                 showDisplaySelector();
@@ -2190,8 +2197,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     holder = (McvComponentHolder)holders.get(index);
                 } catch (Exception ex) {}
 
-                if (holder != null)
+                if (holder != null) {
                     holder.setAsActiveTab();
+                }
             }
         }
     }
@@ -2207,8 +2215,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
             McvComponentHolder prev = (McvComponentHolder)McVGuiUtils.getBeforeActiveHolder();
-            if (prev != null)
+            if (prev != null) {
                 prev.setAsActiveTab();
+            }
         }
     }
 
@@ -2223,8 +2232,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
             McvComponentHolder next = (McvComponentHolder)McVGuiUtils.getAfterActiveHolder();
-            if (next != null)
+            if (next != null) {
                 next.setAsActiveTab();
+            }
         }
     }
 
@@ -2275,7 +2285,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 String path = "";
                 for (int nameIdx = 0; nameIdx < names.size() - 1; nameIdx++) {
                     String catName = names.get(nameIdx);
-                    path = path + ">" + catName;
+                    path = path + '>' + catName;
                     JMenu tmpMenu = menus.get(path);
                     if (tmpMenu == null) {
                         tmpMenu = new JMenu(catName);
@@ -2456,12 +2466,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return A map of skin ids to their index within the skin resource.
      */
     private Map<String, Integer> readSkinIds() {
-        Map<String, Integer> ids = new HashMap<String, Integer>();
         XmlResourceCollection skins = getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN);
+        Map<String, Integer> ids = new HashMap<>(skins.size());
         for (int i = 0; i < skins.size(); i++) {
             String id = skins.getProperty("skinid", i);
-            if (id != null)
+            if (id != null) {
                 ids.put(id, i);
+            }
         }
         return ids;
     }
@@ -2474,9 +2485,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public void createNewTab(final String skinId) {
         IdvComponentGroup group = 
             McVGuiUtils.getComponentGroup(IdvWindow.getActiveWindow());
-
-        if (skinIds.containsKey(skinId))
+        if (skinIds.containsKey(skinId)) {
             group.makeSkin(skinIds.get(skinId));
+        }
     }
 
     /**
@@ -2501,8 +2512,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
             dashboard.show();
         }
 
-        if (tabName.equals(""))
+        if (tabName.isEmpty()) {
             return;
+        }
 
         // Dig two panels deep looking for a JTabbedPane
         // If you find one, try to show the requested tab name
@@ -2553,35 +2565,37 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * 
      * @param id ID of the desired component.
      * 
-     * @return True if <code>id</code> corresponds to a component. False otherwise.
+     * @return True if {@code id} corresponds to a component. False otherwise.
      */
     public boolean showDashboardComponent(String id) {
-    	Object comp = findComponent(id);
-    	if (comp != null) {
-    		GuiUtils.showComponentInTabs((JComponent)comp);
-    		return true;
-    	} else {
-    		super.showDashboard();
-    		for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
-    			String title = makeTitle(
-    				getStateManager().getTitle(),
-    				Constants.DATASELECTOR_NAME
-    			);
-    			if (title.equals(window.getTitle())) {
-    				dashboard = window;
-    				dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-    			}
-    		}
-    	}
-    	return false;
+        Object comp = findComponent(id);
+        if (comp != null) {
+            GuiUtils.showComponentInTabs((JComponent)comp);
+            return true;
+        } else {
+            super.showDashboard();
+            for (IdvWindow window : (List<IdvWindow>)IdvWindow.getWindows()) {
+                String title = makeTitle(
+                    getStateManager().getTitle(),
+                    Constants.DATASELECTOR_NAME
+                );
+                if (title.equals(window.getTitle())) {
+                    dashboard = window;
+                    dashboard.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+                }
+            }
+        }
+        return false;
     }
 
     /**
      * Close and dispose of the splash window (if it has been created).
      */
+    @Override
     public void splashClose() {
-        if (splash != null)
+        if (splash != null) {
             splash.doClose();
+        }
     }
 
     /**
@@ -2589,9 +2603,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
      *
      * @param m The message to show
      */
-    public void splashMsg(String m) {
-        if (splash != null)
+    @Override public void splashMsg(String m) {
+        if (splash != null) {
             splash.splashMsg(m);
+        }
     }
 
     /**
@@ -2604,12 +2619,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     public void setCurrentToolbars(final McvToolbarEditor tbe) {
         List<TwoFacedObject> tfos = tbe.getTLP().getCurrentEntries();
-        List<String> buttonIds = new ArrayList<String>();
+        List<String> buttonIds = new ArrayList<>(tfos.size());
         for (TwoFacedObject tfo : tfos) {
-            if (McvToolbarEditor.isSpace(tfo))
+            if (McvToolbarEditor.isSpace(tfo)) {
                 buttonIds.add((String)null);
-            else
+            } else {
                 buttonIds.add(TwoFacedObject.getIdString(tfo));
+            }
         }
 
         cachedButtons = buttonIds;
@@ -2949,7 +2965,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         menu.removeAll();
         JMenuItem saveLayout = new JMenuItem("Save");
-		McVGuiUtils.setMenuImage(saveLayout, Constants.ICON_DEFAULTLAYOUTADD_SMALL);
+        McVGuiUtils.setMenuImage(saveLayout, Constants.ICON_DEFAULTLAYOUTADD_SMALL);
         saveLayout.setToolTipText("Save as default layout");
         saveLayout.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
@@ -2958,7 +2974,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         });
 
         JMenuItem removeLayout = new JMenuItem("Remove");
-		McVGuiUtils.setMenuImage(removeLayout, Constants.ICON_DEFAULTLAYOUTDELETE_SMALL);
+        McVGuiUtils.setMenuImage(removeLayout, Constants.ICON_DEFAULTLAYOUTDELETE_SMALL);
         removeLayout.setToolTipText("Remove saved default layout");
         removeLayout.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
@@ -3011,27 +3027,28 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         for (TwoFacedObject tfo : vmStates) {
-          JMenuItem mi = new JMenuItem(tfo.getLabel().toString());
-          menu.add(mi);
-          mi.addActionListener(new ObjectListener(tfo.getId()) {
-              public void actionPerformed(final ActionEvent e) {
-                  if (vm == null)
-                      return;
+            JMenuItem mi = new JMenuItem(tfo.getLabel().toString());
+            menu.add(mi);
+            mi.addActionListener(new ObjectListener(tfo.getId()) {
+                public void actionPerformed(final ActionEvent e) {
+                    if (vm == null) {
+                        return;
+                    }
 
-                  if (theObject instanceof ViewManager) {
-                      vm.initWith((ViewManager)theObject, true);
-                  } else if (theObject instanceof ViewState) {
-                      try {
-                          vm.initWith((ViewState)theObject);
-                      } catch (Throwable ex) {
-                          logException("Initializing view with ViewState", ex);
-                      }
-                  } else {
-                      LogUtil.consoleMessage("UIManager.makeViewStateMenu: Object of unknown type: "+theObject.getClass().getName());
-                  }
-              }
-          });
-      }
+                    if (theObject instanceof ViewManager) {
+                        vm.initWith((ViewManager)theObject, true);
+                    } else if (theObject instanceof ViewState) {
+                        try {
+                            vm.initWith((ViewState)theObject);
+                        } catch (Throwable ex) {
+                            logException("Initializing view with ViewState", ex);
+                        }
+                    } else {
+                        LogUtil.consoleMessage("UIManager.makeViewStateMenu: Object of unknown type: "+theObject.getClass().getName());
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -3051,10 +3068,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @see #makeViewStateMenu(JMenu, ViewManager)
      */
     public static List<TwoFacedObject> filterVMMStatesWithVM(final ViewManager vm, final Collection<?> states) {
-        if (vm == null || states == null || states.isEmpty())
+        if ((vm == null) || (states == null) || states.isEmpty()) {
             return Collections.emptyList();
+        }
 
-        List<TwoFacedObject> validStates = new ArrayList<TwoFacedObject>(states.size());
+        List<TwoFacedObject> validStates = new ArrayList<>(states.size());
         for (Object obj : states) {
             TwoFacedObject tfo = null;
             if (obj instanceof TwoFacedObject) {
@@ -3080,8 +3098,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Overridden to build a custom Display menu.
      * @see ucar.unidata.idv.ui.IdvUIManager#initializeDisplayMenu(JMenu)
      */
-    @Override
-    protected void initializeDisplayMenu(JMenu displayMenu) {
+    @Override protected void initializeDisplayMenu(JMenu displayMenu) {
         JMenu m;
         JMenuItem mi;
 
@@ -3091,21 +3108,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
         for (int i = 0; i < controlDescriptors.size(); i++) {
             ControlDescriptor cd = (ControlDescriptor)controlDescriptors.get(i);
             String cdLabel = cd.getLabel();
-            if (cdLabel.equals("Range Rings"))
+            if (cdLabel.equals("Range Rings")) {
                 controlsHash.put(cdLabel, cd);
-            else if (cdLabel.equals("Range and Bearing"))
+            } else if (cdLabel.equals("Range and Bearing")) {
                 controlsHash.put(cdLabel, cd);
-            else if (cdLabel.equals("Location Indicator"))
+            } else if (cdLabel.equals("Location Indicator")) {
                 controlsHash.put(cdLabel, cd);
-            else if (cdLabel.equals("Drawing Control"))
+            } else if (cdLabel.equals("Drawing Control")) {
                 controlsHash.put(cdLabel, cd);
-            else if (cdLabel.equals("Transect Drawing Control"))
+            } else if (cdLabel.equals("Transect Drawing Control")) {
                 controlsHash.put(cdLabel, cd);
+            }
         }
-        
+
         // Build the menu
         ControlDescriptor cd;
-        
+
         mi = new JMenuItem("Create Layer from Data Source...");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -3113,7 +3131,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         });
         displayMenu.add(mi);
-        
+
         mi = new JMenuItem("Layer Controls...");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
@@ -3121,55 +3139,54 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         });
         displayMenu.add(mi);
-        
+
         displayMenu.addSeparator();
-        
+
         cd = (ControlDescriptor)controlsHash.get("Range Rings");
         mi = makeControlDescriptorItem(cd);
         mi.setText("Add Range Rings");
         displayMenu.add(mi);
-        
+
         cd = (ControlDescriptor)controlsHash.get("Range and Bearing");
         mi = makeControlDescriptorItem(cd);
         McVGuiUtils.setMenuImage(mi, Constants.ICON_RANGEANDBEARING_SMALL);
         mi.setText("Add Range and Bearing");
         displayMenu.add(mi);
-        
+
         displayMenu.addSeparator();
-        
+
         cd = (ControlDescriptor)controlsHash.get("Transect Drawing Control");
         mi = makeControlDescriptorItem(cd);
         mi.setText("Draw Transect...");
         displayMenu.add(mi);
-        
+
         cd = (ControlDescriptor)controlsHash.get("Drawing Control");
         mi = makeControlDescriptorItem(cd);
         mi.setText("Draw Freely...");
         displayMenu.add(mi);
-        
+
         displayMenu.addSeparator();
-        
+
         cd = (ControlDescriptor)controlsHash.get("Location Indicator");
         mi = makeControlDescriptorItem(cd);
         McVGuiUtils.setMenuImage(mi, Constants.ICON_LOCATION_SMALL);
         mi.setText("Add Location Indicator");
         displayMenu.add(mi);
-        
-        ControlDescriptor locationDescriptor =
-        	idv.getControlDescriptor("locationcontrol");
+
+        ControlDescriptor locationDescriptor = idv.getControlDescriptor("locationcontrol");
         if (locationDescriptor != null) {
-        	List stations = idv.getLocationList();
-        	ObjectListener listener = new ObjectListener(locationDescriptor) {
-        		public void actionPerformed(ActionEvent ae, Object obj) {
-        			addStationDisplay((NamedStationTable) obj, (ControlDescriptor) theObject);
-        		}
-        	};
-        	List menuItems = NamedStationTable.makeMenuItems(stations, listener);
-        	displayMenu.add(GuiUtils.makeMenu("Plot Location Labels", menuItems));
+            List stations = idv.getLocationList();
+            ObjectListener listener = new ObjectListener(locationDescriptor) {
+                public void actionPerformed(ActionEvent ae, Object obj) {
+                    addStationDisplay((NamedStationTable) obj, (ControlDescriptor) theObject);
+                }
+            };
+            List menuItems = NamedStationTable.makeMenuItems(stations, listener);
+            displayMenu.add(GuiUtils.makeMenu("Plot Location Labels", menuItems));
         }
-        
+
         displayMenu.addSeparator();
-        
+
         mi = new JMenuItem("Add Background Image");
         McVGuiUtils.setMenuImage(mi, Constants.ICON_BACKGROUND_SMALL);
         mi.addActionListener(new ActionListener() {
@@ -3178,24 +3195,21 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         });
         displayMenu.add(mi);
-        
+
         mi = new JMenuItem("Reset Map Layer to Defaults");
         mi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-            	// TODO: Call IdvUIManager.addDefaultMap()... should be made private
+                // TODO: Call IdvUIManager.addDefaultMap()... should be made private
 //                addDefaultMap();
-                ControlDescriptor mapDescriptor =
-                    idv.getControlDescriptor("mapdisplay");
+                ControlDescriptor mapDescriptor = idv.getControlDescriptor("mapdisplay");
                 if (mapDescriptor == null) {
                     return;
                 }
-                String attrs =
-                    "initializeAsDefault=true;displayName=Default Background Maps;";
+                String attrs = "initializeAsDefault=true;displayName=Default Background Maps;";
                 idv.doMakeControl(new ArrayList(), mapDescriptor, attrs, null);
             }
         });
         displayMenu.add(mi);
-        
         Msg.translateTree(displayMenu);
     }
 
@@ -3212,7 +3226,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             XmlResourceCollection skins = mngr.getXmlResources(mngr.RSC_SKIN);
             List<String> names = StringUtil.split(skins.getShortName(index), ">", true, true);
             String title = getStateManager().getTitle();
-            if (names.size() > 0)
+            if (!names.isEmpty())
                 title = title + " - " + StringUtil.join(" - ", names);
             skinToTitle.put(index, title);
         }
@@ -3226,14 +3240,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     @SuppressWarnings("unchecked")
     @Override public JMenuBar doMakeMenuBar(final IdvWindow idvWindow) {
-        Hashtable<String, JMenuItem> menuMap = new Hashtable<String, JMenuItem>();
+        Hashtable<String, JMenuItem> menuMap = new Hashtable<>();
         JMenuBar menuBar = new JMenuBar();
         final IdvResourceManager mngr = getResourceManager();
         XmlResourceCollection xrc = mngr.getXmlResources(mngr.RSC_MENUBAR);
-        Hashtable<String, ImageIcon> actionIcons = new Hashtable<String, ImageIcon>();
+        Hashtable<String, ImageIcon> actionIcons = new Hashtable<>();
 
-        for (int i = 0; i < xrc.size(); i++)
+        for (int i = 0; i < xrc.size(); i++) {
             GuiUtils.processXmlMenuBar(xrc.getRoot(i), menuBar, getIdv(), menuMap, actionIcons);
+        }
 
         menuIds = new Hashtable<String, JMenuItem>(menuMap);
 
@@ -3246,8 +3261,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         //TODO: Perhaps we will put the different skins in the menu?
         JMenu newDisplayMenu = (JMenu)menuMap.get(MENU_NEWDISPLAY);
-        if (newDisplayMenu != null)
+        if (newDisplayMenu != null) {
             GuiUtils.makeMenu(newDisplayMenu, makeSkinMenuItems(makeMenuBarActionListener(), true, false));
+        }
 
 //        final JMenu publishMenu = menuMap.get(MENU_PUBLISH);
 //        if (publishMenu != null) {
@@ -3258,8 +3274,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
 //        }
 
         for (Entry<String, JMenuItem> e : menuMap.entrySet()) {
-            if (!(e.getValue() instanceof JMenu))
+            if (!(e.getValue() instanceof JMenu)) {
                 continue;
+            }
             String menuId = e.getKey();
             JMenu menu = (JMenu)e.getValue();
             menu.addMenuListener(makeMenuBarListener(menuId, menu, idvWindow));
@@ -3301,15 +3318,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         // handle right clicks on os x and linux
         public void mousePressed(MouseEvent e) {
-            if (e.isPopupTrigger() == true)
+            if (e.isPopupTrigger()) {
                 popup.show(e.getComponent(), e.getX(), e.getY());
+            }
         }
 
         // Windows doesn't seem to trigger mousePressed() for right clicks, but
         // never fear; mouseReleased() does the job.
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() == true)
+            if (e.isPopupTrigger()) {
                 popup.show(e.getComponent(), e.getX(), e.getY());
+            }
         }
     }
 
@@ -3321,43 +3340,39 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param dcd The dialog
      */
     public void processDialog(DataControlDialog dcd) {
-    	int estimatedMB = getEstimatedMegabytes(dcd);
-    	
-    	if (estimatedMB > 0) {
+        int estimatedMB = getEstimatedMegabytes(dcd);
+        if (estimatedMB > 0) {
             double totalMem = Runtime.getRuntime().maxMemory();
             double highMem = Runtime.getRuntime().totalMemory();
             double freeMem = Runtime.getRuntime().freeMemory();
             double usedMem = (highMem - freeMem);
             int availableMB = Math.round( ((float)totalMem - (float)usedMem) / 1024f / 1024f);
             int percentOfAvailable = Math.round((float)estimatedMB / (float)availableMB * 100f);
-            
             if (percentOfAvailable > 95) {
-            	String message = "<html>You are attempting to load " + estimatedMB + "MB of data,<br>";
-            	message += "which exceeds 95% of total amount available (" + availableMB +"MB).<br>";
-            	message += "Data load cancelled.</html>";
-            	JComponent msgLabel = new JLabel(message);
-    			GuiUtils.showDialog("Data Size", msgLabel);
-    			return;
+                String message = "<html>You are attempting to load " + estimatedMB + "MB of data,<br>";
+                message += "which exceeds 95% of total amount available (" + availableMB +"MB).<br>";
+                message += "Data load cancelled.</html>";
+                JComponent msgLabel = new JLabel(message);
+                GuiUtils.showDialog("Data Size", msgLabel);
+                return;
+            } else if (percentOfAvailable >= 75) {
+                String message = "<html>You are attempting to load " + estimatedMB + "MB of data,<br>";
+                message += percentOfAvailable + "% of the total amount available (" + availableMB + "MB).<br>";
+                message += "Continue loading data?</html>";
+                JComponent msgLabel = new JLabel(message);
+                if (!GuiUtils.askOkCancel("Data Size", msgLabel)) {
+                    return;
+                }
             }
-            else if (percentOfAvailable >= 75) {
-            	String message = "<html>You are attempting to load " + estimatedMB + "MB of data,<br>";
-            	message += percentOfAvailable + "% of the total amount available (" + availableMB + "MB).<br>";
-            	message += "Continue loading data?</html>";
-            	JComponent msgLabel = new JLabel(message);
-    			if (!GuiUtils.askOkCancel("Data Size", msgLabel)) {
-    				return;
-    			}
-            }
-    	}
-    	
-    	super.processDialog(dcd);
+        }
+        super.processDialog(dcd);
     }
 
     /**
      * Estimate the number of megabytes that will be used by this data selection
      */
     protected int getEstimatedMegabytes(DataControlDialog dcd) {
-    	int estimatedMB = 0;
+        int estimatedMB = 0;
         DataChoice dataChoice = dcd.getDataChoice();
         if (dataChoice != null) {
             Object[] selectedControls = dcd.getSelectedControls();
@@ -3380,23 +3395,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 int myLines = -1;
                 int myElements = -1;
                 if (dims.size() == 2) {
-                	try {
-                		myLines = Integer.parseInt(dims.get(0));
-                		myElements = Integer.parseInt(dims.get(1));
-                	}
-                	catch (Exception e) { }
+                    try {
+                        myLines = Integer.parseInt(dims.get(0));
+                        myElements = Integer.parseInt(dims.get(1));
+                    }
+                    catch (Exception e) { }
                 }
 
                 // Get the count of times requested
                 int timeCount = 1;
                 DataSelectionWidget dsw = dcd.getDataSelectionWidget();
                 List times = dsw.getSelectedDateTimes();
-            	List timesAll = dsw.getAllDateTimes();
-                if (times != null && times.size() > 0) {
-                	timeCount = times.size();
-                }
-                else if (timesAll != null && timesAll.size() > 0) {
-                	timeCount = timesAll.size();
+                List timesAll = dsw.getAllDateTimes();
+                if ((times != null) && !times.isEmpty()) {
+                    timeCount = times.size();
+                } else if ((timesAll != null) && !timesAll.isEmpty()) {
+                    timeCount = timesAll.size();
                 }
                 
                 // Total number of pixels
@@ -3405,21 +3419,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 float totalPixels = (float)myLines * (float)myElements * (float)timeCount;
                 float totalBytes = totalPixels * 4 * 2;
                 estimatedMB += Math.round(totalBytes / 1024f / 1024f);
-                                
-		int additionalMB = 0;
-		// Empirical tests show that textures are not affecting
-		// required memory... comment out for now
-		/*
+
+                int additionalMB = 0;
+                // Empirical tests show that textures are not affecting
+                // required memory... comment out for now
+                /*
                 int textureDimensions = 2048;
                 int mbPerTexture = Math.round((float)textureDimensions * (float)textureDimensions * 4 / 1024f / 1024f);
                 int textureCount = (int)Math.ceil((float)myLines / 2048f) * (int)Math.ceil((float)myElements / 2048f);
                 int additionalMB = textureCount * mbPerTexture * timeCount;
-		*/
-                
+                */
                 estimatedMB += additionalMB;
             }
         }
-        
         return estimatedMB;
     }
 
@@ -3458,7 +3470,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         public BundleTreeNode(String name, SavedBundle bundle) {
             this.name = name;
             this.bundle = bundle;
-            kids = new LinkedList<BundleTreeNode>();
+            kids = new LinkedList<>();
         }
 
         /**
@@ -3567,32 +3579,32 @@ public class UIManager extends IdvUIManager implements ActionListener {
         /**
          * <p>
          * Since the IDV doesn't provide a getComponent for 
-         * <code>addToGui</code>, we must make our <code>component</code> field
+         * {@code addToGui}, we must make our {@code component} field
          * local to this class. 
-         * Hijacks any value requests so that the local <code>component</code>
+         * Hijacks any value requests so that the local {@code component}
          * field is queried, not the IDV's.
          * </p>
          * 
          * @see HttpFormEntry#getValue()
          */
         @Override public String getValue() {
-            if (type != HttpFormEntry.TYPE_AREA)
+            if (type != HttpFormEntry.TYPE_AREA) {
                 return super.getValue();
+            }
             return component.getText();
         }
 
         /**
-         * <p>
-         * Hijacks any requests to set the <code>component</code> field's text.
-         * </p>
+         * Hijacks any requests to set the {@code component} field's text.
          * 
          * @see HttpFormEntry#setValue(String)
          */
         @Override public void setValue(final String newValue) {
-            if (type == HttpFormEntry.TYPE_AREA)
+            if (type == HttpFormEntry.TYPE_AREA) {
                 component.setText(newValue);
-            else
+            } else {
                 super.setValue(newValue);
+            }
         }
     }
 
@@ -3649,12 +3661,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @throws IllegalArgumentException if {@code size} is not positive.
          */
         ToolbarStyle(final String label, final String action, final int size) {
-            if (label == null)
-                throw new NullPointerException("Label cannot be null");
-            if (action == null)
-                throw new NullPointerException("Action cannot be null");
-            if (size <= 0)
+            requireNonNull(label, "Label cannot be null.");
+            requireNonNull(action, "Action cannot be null.");
+
+            if (size <= 0) {
                 throw new IllegalArgumentException("Size must be a positive integer");
+            }
 
             this.label = label;
             this.action = action;
@@ -3794,7 +3806,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @throws NullPointerException if {@code idvString} is {@code null}.
          */
         ActionAttribute(final String idvString) {
-            Contract.notNull(idvString, "Cannot be associated with a null IDV action attribute String");
+            requireNonNull(idvString, "Cannot be associated with a null IDV action attribute String");
 
             this.idvString = idvString; 
             this.defaultValue = ""; 
@@ -3816,9 +3828,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * 
          */
         ActionAttribute(final String idvString, final String defValue) {
-            Contract.notNull(idvString, "Cannot be associated with a null IDV action attribute String");
+            requireNonNull(idvString, "Cannot be associated with a null IDV action attribute String");
             Contract.notNull(defValue, "Optional action attribute \"%s\" requires a non-null default value", toString());
-
             Contract.checkArg(!defValue.equals(""), "Optional action attribute \"%s\" requires something more descriptive than an empty String", toString());
 
             this.idvString = idvString; 
@@ -3877,8 +3888,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * is {@code null}. 
          */
         public IdvActions(final IntegratedDataViewer idv, final XmlIdvResource collectionId) {
-            Contract.notNull(idv, "Cannot provide a null IDV reference");
-            Contract.notNull(collectionId, "Cannot build actions from a null collection id");
+            requireNonNull(idv, "Cannot provide a null IDV reference");
+            requireNonNull(collectionId, "Cannot build actions from a null collection id");
 
             // i lub u xpath (but how much slower is this?)
             String query = "//action[@id and @image and @description and @action]";
@@ -3909,7 +3920,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          */
         // TODO(jon:103) here
         public IdvAction getAction(final String actionId) {
-            Contract.notNull(actionId, "Null action identifiers are not allowed");
+            requireNonNull(actionId, "Null action identifiers are not allowed");
             return idToAction.get(actionId);
         }
 
@@ -3928,8 +3939,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
          */
         // TODO(jon:103) here
         public String getAttributeForAction(final String actionId, final ActionAttribute attr) {
-            Contract.notNull(actionId, "Null action identifiers are not allowed");
-            Contract.notNull(attr, "Actions cannot have values associated with a null attribute");
+            requireNonNull(actionId, "Null action identifiers are not allowed");
+            requireNonNull(attr, "Actions cannot have values associated with a null attribute");
             IdvAction action = idToAction.get(actionId);
             if (action == null) {
                 return null;
@@ -3951,7 +3962,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          */
         // TODO(jon:103) here
         public Element getElementForAction(final String actionId) {
-            Contract.notNull(actionId, "Cannot search for a null action identifier");
+            requireNonNull(actionId, "Cannot search for a null action identifier");
             IdvAction action = idToAction.get(actionId);
             if (action == null) {
                 return null;
@@ -3975,8 +3986,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
          */
         // TODO(jon:103) here
         public Icon getStyledIconFor(final String actionId, final ToolbarStyle style) {
-            Contract.notNull(actionId, "Cannot get an icon for a null action identifier");
-            Contract.notNull(style, "Cannot get an icon for a null ToolbarStyle");
+            requireNonNull(actionId, "Cannot get an icon for a null action identifier");
+            requireNonNull(style, "Cannot get an icon for a null ToolbarStyle");
             IdvAction a = idToAction.get(actionId);
             if (a == null) {
                 return null;
@@ -3986,8 +3997,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         // TODO(jon:105): replace with something better
         public List<String> getAttributes(final ActionAttribute attr) {
-            Contract.notNull(attr, "Actions cannot have null attributes");
-            List<String> attributeList = arrList();
+            requireNonNull(attr, "Actions cannot have null attributes");
+            List<String> attributeList = arrList(idToAction.size());
             for (Map.Entry<String, IdvAction> entry : idToAction.entrySet()) {
                 attributeList.add(entry.getValue().getAttribute(attr));
             }
@@ -4028,7 +4039,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @see #getAllGroups()
          */
         public Set<IdvAction> getActionsForGroup(final String group) {
-            Contract.notNull(group, "Actions cannot be associated with a null group");
+            requireNonNull(group, "Actions cannot be associated with a null group");
             if (!groupToActions.containsKey(group)) {
                 return Collections.emptySet();
             }
@@ -4065,7 +4076,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * displayed. This is {@literal "lazy"}, so the cache does not contain
          * icons for {@link ToolbarStyle}s that haven't been used. 
          */
-        private final Map<ToolbarStyle, Icon> iconCache = new ConcurrentHashMap<ToolbarStyle, Icon>();
+        private final Map<ToolbarStyle, Icon> iconCache = new ConcurrentHashMap<>();
 
         /**
          * Creates a representation of an IDV action using a given {@link Element}.
@@ -4078,7 +4089,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @see UIManager#isValidIdvAction(Element)
          */
         public IdvAction(final Element element) {
-            Contract.notNull(element, "Cannot build an action from a null element");
+            requireNonNull(element, "Cannot build an action from a null element");
             // TODO(jon:107): need a way to diagnose what's wrong with the action?
             Contract.checkArg(isValidIdvAction(element), "Action lacks required attributes");
             originalElement = element;
@@ -4116,8 +4127,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @see #iconCache
          */
         public Icon getIconForStyle(final ToolbarStyle style) {
-            Contract.notNull(style, "Cannot build an icon for a null ToolbarStyle");
-
+            requireNonNull(style, "Cannot build an icon for a null ToolbarStyle");
             if (!iconCache.containsKey(style)) {
                 String styledPath = String.format(getRawIconPath(), style.getSize());
                 URL tmp = getClass().getResource(styledPath);
@@ -4153,7 +4163,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @throws NullPointerException if {@code attr} is {@code null}.
          */
         public String getAttribute(final ActionAttribute attr) {
-            Contract.notNull(attr, "No values can be associated with a null ActionAttribute");
+            requireNonNull(attr, "No values can be associated with a null ActionAttribute");
             return attributes.get(attr);
         }
 

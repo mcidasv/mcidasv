@@ -580,7 +580,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @throws NullPointerException if {@code cd} is {@code null}.
      */
     @Override protected void addControlDescriptor(ControlDescriptor cd) {
-        Contract.notNull(cd, "Cannot add a null control descriptor to the list of control descriptors");
+        cd = Objects.requireNonNull(cd, "Cannot add a null control descriptor to the list of control descriptors.");
         String id = cd.getControlId();
         if (controlDescriptorMap.get(id) == null) {
             controlDescriptors.add(cd);
@@ -1352,7 +1352,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @throws NullPointerException if {@code host} is {@code null}.
      */
     public static boolean isLoopback(final String host) {
-        String cleaned = Contract.notNull(host.trim().toLowerCase());
+        String cleaned = Objects.requireNonNull(host.trim().toLowerCase());
         return "127.0.0.1".startsWith(cleaned) 
             || "::1".startsWith(cleaned) 
             || cleaned.startsWith("localhost");

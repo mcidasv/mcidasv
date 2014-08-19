@@ -56,6 +56,7 @@ public final class Contract {
      * 
      * @throws NullPointerException if {@code object} is {@code null}.
      */
+    @Deprecated
     public static <T> T notNull(T object) {
         if (object == null) {
             throw new NullPointerException();
@@ -75,6 +76,7 @@ public final class Contract {
      * 
      * @throws NullPointerException if {@code object} is {@code null}.
      */
+    @Deprecated
     public static <T> T notNull(T object, Object message) {
         if (object == null) {
             throw new NullPointerException(String.valueOf(message));

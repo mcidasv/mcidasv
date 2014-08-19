@@ -28,6 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import static java.util.Objects.requireNonNull;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -109,7 +111,6 @@ import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 import edu.wisc.ssec.mcidasv.probes.ProbeEvent;
 import edu.wisc.ssec.mcidasv.probes.ProbeListener;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
-import edu.wisc.ssec.mcidasv.util.Contract;
 
 public class MultiSpectralControl extends HydraControl {
 
@@ -136,8 +137,8 @@ public class MultiSpectralControl extends HydraControl {
     final JTextField minBox = new JTextField(6);
     final JTextField maxBox = new JTextField(6);
 
-    private final List<Hashtable<String, Object>> spectraProperties = new ArrayList<Hashtable<String, Object>>();
-    private final List<Spectrum> spectra = new ArrayList<Spectrum>();
+    private final List<Hashtable<String, Object>> spectraProperties = new ArrayList<>();
+    private final List<Spectrum> spectra = new ArrayList<>();
 
     private McIDASVHistogramWrapper histoWrapper;
 
@@ -963,8 +964,8 @@ public class MultiSpectralControl extends HydraControl {
         private final MultiSpectralControl control;
 
         public ProbeTableModel(final MultiSpectralControl control, final List<Spectrum> probes) {
-            Contract.notNull(control);
-            Contract.notNull(probes);
+            requireNonNull(control);
+            requireNonNull(probes);
             this.control = control;
             updateWith(probes);
         }
@@ -997,7 +998,7 @@ public class MultiSpectralControl extends HydraControl {
         }
 
         public void updateWith(final List<Spectrum> updatedSpectra) {
-            Contract.notNull(updatedSpectra);
+            requireNonNull(updatedSpectra);
 
             probeToIndex.clear();
             indexToSpectrum.clear();
@@ -1018,9 +1019,9 @@ public class MultiSpectralControl extends HydraControl {
         }
 
         public int getRowCount() {
-            if (probeToIndex.size() != indexToSpectrum.size())
+            if (probeToIndex.size() != indexToSpectrum.size()) {
                 throw new AssertionError("");
-
+            }
             return probeToIndex.size();
         }
 

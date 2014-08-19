@@ -28,9 +28,9 @@
 
 package edu.wisc.ssec.mcidasv.probes;
 
-import java.util.EventObject;
+import static java.util.Objects.requireNonNull;
 
-import edu.wisc.ssec.mcidasv.util.Contract;
+import java.util.EventObject;
 
 /**
  * This class captures a change to a probe and stores both the previous and
@@ -63,9 +63,9 @@ public class ProbeEvent<T> extends EventObject {
     public ProbeEvent(final ReadoutProbe source, final T oldValue, final T newValue) {
         super(source);
 
-        Contract.notNull(source, "Events cannot originate from a null source object");
-        Contract.notNull(oldValue, "Old value cannot be null");
-        Contract.notNull(newValue, "New value cannot be null");
+        requireNonNull(source, "Events cannot originate from a null source object");
+        requireNonNull(oldValue, "Old value cannot be null");
+        requireNonNull(newValue, "New value cannot be null");
 
         this.oldValue = oldValue;
         this.newValue = newValue;

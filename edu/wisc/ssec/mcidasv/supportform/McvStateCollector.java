@@ -27,13 +27,14 @@
  */
 package edu.wisc.ssec.mcidasv.supportform;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Properties;
 
 import ucar.unidata.util.LogUtil;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.SystemState;
 
 public class McvStateCollector implements StateCollector {
@@ -54,7 +55,7 @@ public class McvStateCollector implements StateCollector {
      * @param mcv The McIDAS-V reference that we'll interrogate.
      */
     public McvStateCollector(final McIDASV mcv) {
-        this.mcv = Contract.notNull(mcv);
+        this.mcv = requireNonNull(mcv);
     }
 
     /**

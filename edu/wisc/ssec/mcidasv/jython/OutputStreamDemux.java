@@ -28,7 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.jython;
 
-import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+import static java.util.Objects.requireNonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -52,9 +52,9 @@ public class OutputStreamDemux extends ByteArrayOutputStream {
     }
 
     public synchronized void addStream(final Console console, final Interpreter interpreter, final OutputType type) {
-        notNull(console, "Cannot provide a null Jython console");
-        notNull(interpreter, "Cannot provide a null Jython interpreter");
-        this.type = notNull(type, "Cannot provide a null output type");
+        requireNonNull(console, "Cannot provide a null Jython console");
+        requireNonNull(interpreter, "Cannot provide a null Jython interpreter");
+        this.type = requireNonNull(type, "Cannot provide a null output type");
         String threadId = id();
         streamMap.put(threadId, new ByteArrayOutputStream());
         interpreterMap.put(threadId, interpreter);

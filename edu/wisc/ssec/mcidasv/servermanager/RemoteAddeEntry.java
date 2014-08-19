@@ -28,9 +28,9 @@
 
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static java.util.Objects.requireNonNull;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.Contract.checkArg;
-import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -535,8 +535,8 @@ public class RemoteAddeEntry implements AddeEntry {
      * {@link String}.
      */
     public static Set<String> readPublicGroups(final RemoteAddeEntry entry) {
-        notNull(entry, "entry cannot be null");
-        notNull(entry.getAddress());
+        requireNonNull(entry, "entry cannot be null");
+        requireNonNull(entry.getAddress());
         checkArg(!entry.getAddress().isEmpty());
 
         String user = entry.getAccount().getUsername();
@@ -584,7 +584,7 @@ public class RemoteAddeEntry implements AddeEntry {
      * @throws NullPointerException if {@code entry} is null.
      */
     public static boolean checkHost(final RemoteAddeEntry entry) {
-        notNull(entry, "entry cannot be null");
+        requireNonNull(entry, "entry cannot be null");
         String host = entry.getAddress();
         Socket socket = null;
         boolean connected = false;
@@ -643,7 +643,7 @@ public class RemoteAddeEntry implements AddeEntry {
      * @see AddeStatus
      */
     public static AddeStatus checkEntry(final boolean checkHost, final RemoteAddeEntry entry) {
-        notNull(entry, "Cannot check a null entry");
+        requireNonNull(entry, "Cannot check a null entry");
 
         if (checkHost && !checkHost(entry)) {
             return AddeStatus.BAD_SERVER;

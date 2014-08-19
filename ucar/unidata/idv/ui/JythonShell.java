@@ -47,12 +47,7 @@ import java.awt.event.WindowFocusListener;
 
 import java.io.OutputStream;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -872,7 +867,7 @@ public class JythonShell extends InteractiveShell {
      * @return Either the value associated with {@code PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH} or {@code defaultLength}.
      */
     public static int loadMaxHistoryLength(final IdvObjectStore store, final int defaultLength) {
-        Integer historyLength = (Integer) store.get(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH);
+        Integer historyLength = (Integer)store.get(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH);
         if (historyLength == null) {
             store.put(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH, defaultLength);
             historyLength = defaultLength;
@@ -901,13 +896,13 @@ public class JythonShell extends InteractiveShell {
      * {@code ShellHistoryEntry} entries.
      */
     public static List<ShellHistoryEntry> convertStringHistory(IdvObjectStore store) {
-        store = Contract.notNull(store, "Cannot use a null store");
+        store = Objects.requireNonNull(store, "Cannot use a null store.");
         List<?> oldEntries = (List<?>)store.get(PROP_JYTHON_SHELL_HISTORY);
         if (oldEntries == null) {
             oldEntries = Collections.emptyList();
             logger.trace("no history to convert; using empty list");
         }
-        List<ShellHistoryEntry> entries = new ArrayList<ShellHistoryEntry>(oldEntries.size());
+        List<ShellHistoryEntry> entries = new ArrayList<>(oldEntries.size());
         for (Object e : oldEntries) {
             ShellHistoryEntry entry;
             if (e instanceof String) {

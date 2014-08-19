@@ -28,7 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.jython;
 
-import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+import static java.util.Objects.requireNonNull;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -73,7 +73,7 @@ public class DefaultMenuWrangler implements MenuWrangler {
     private final SelectBufferAction selectAction;
 
     public DefaultMenuWrangler(final Console console) {
-        this.console = notNull(console, "Cannot provide a null console");
+        this.console = requireNonNull(console, "Cannot provide a null console");
 
         cutAction = new CutTextAction(console);
         copyAction = new CopyTextAction(console);

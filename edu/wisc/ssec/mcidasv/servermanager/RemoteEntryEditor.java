@@ -27,6 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static java.util.Objects.requireNonNull;
+
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -35,7 +37,6 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
-import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
@@ -400,7 +401,7 @@ public class RemoteEntryEditor extends JDialog {
         field.revalidate();
     }
 
-   /**
+    /**
      * Determines whether or not any fields are in an invalid state. Useful
      * for disallowing the user to add invalid entries to the server manager.
      *
@@ -913,7 +914,7 @@ public class RemoteEntryEditor extends JDialog {
      * @throws NullPointerException if {@code entries} is {@code null}.
      */
     public Set<RemoteAddeEntry> checkHosts(final Set<RemoteAddeEntry> entries) {
-        Contract.notNull(entries, "entries cannot be null");
+        requireNonNull(entries, "entries cannot be null");
         Set<RemoteAddeEntry> goodEntries = newLinkedHashSet();
         Set<String> checkedHosts = newLinkedHashSet();
         Map<String, Boolean> hostStatus = newMap();
@@ -937,42 +938,42 @@ public class RemoteEntryEditor extends JDialog {
     }
 
     public Set<RemoteAddeEntry> checkHosts2(final Set<RemoteAddeEntry> entries) {
-      Contract.notNull(entries, "entries cannot be null");
-      if (entries.isEmpty()) {
-          return Collections.emptySet();
-      }
-      
-      Set<RemoteAddeEntry> verified = newLinkedHashSet(entries.size());
-      Set<String> hosts = newLinkedHashSet(entries.size());
-//      Set<String> validHosts = newLinkedHashSet(entries.size());
-      
-      ExecutorService exec = Executors.newFixedThreadPool(POOL);
-      CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
-      for (RemoteAddeEntry entry : entries) {
-          ecs.submit(new VerifyHostTask(new StatusWrapper(entry)));
-      }
+        requireNonNull(entries, "entries cannot be null");
+        if (entries.isEmpty()) {
+            return Collections.emptySet();
+        }
 
-      try {
-          for (int i = 0; i < entries.size(); i++) {
-              StatusWrapper pairing = ecs.take().get();
-              RemoteAddeEntry entry = pairing.getEntry();
-              AddeStatus status = pairing.getStatus();
-//              setStatus(entry.getAddress()+": attempting to connect...");
-//              statuses.add(status);
-//              entry2Status.put(entry, status);
-              if (status == AddeStatus.OK) {
-                  verified.add(entry);
-//                  setStatus("Found host name "+entry.getAddress());
-              }
-          }
-      } catch (InterruptedException e) {
-          LogUtil.logException("interrupted while checking ADDE entries", e);
-      } catch (ExecutionException e) {
-          LogUtil.logException("ADDE validation execution error", e);
-      } finally {
-          exec.shutdown();
-      }
-      return verified;
+        Set<RemoteAddeEntry> verified = newLinkedHashSet(entries.size());
+        Set<String> hosts = newLinkedHashSet(entries.size());
+//        Set<String> validHosts = newLinkedHashSet(entries.size());
+
+        ExecutorService exec = Executors.newFixedThreadPool(POOL);
+        CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
+        for (RemoteAddeEntry entry : entries) {
+            ecs.submit(new VerifyHostTask(new StatusWrapper(entry)));
+        }
+
+        try {
+            for (int i = 0; i < entries.size(); i++) {
+                StatusWrapper pairing = ecs.take().get();
+                RemoteAddeEntry entry = pairing.getEntry();
+                AddeStatus status = pairing.getStatus();
+//                setStatus(entry.getAddress()+": attempting to connect...");
+//                statuses.add(status);
+//                entry2Status.put(entry, status);
+                if (status == AddeStatus.OK) {
+                    verified.add(entry);
+//                    setStatus("Found host name "+entry.getAddress());
+                }
+            }
+        } catch (InterruptedException e) {
+            LogUtil.logException("interrupted while checking ADDE entries", e);
+        } catch (ExecutionException e) {
+            LogUtil.logException("ADDE validation execution error", e);
+        } finally {
+            exec.shutdown();
+        }
+        return verified;
     }
 //    public Set<RemoteAddeEntry> checkHosts2(final Set<RemoteAddeEntry> entries) {
 //        Contract.notNull(entries, "entries cannot be null");
@@ -1040,7 +1041,7 @@ public class RemoteEntryEditor extends JDialog {
 //    }
     
     public Set<RemoteAddeEntry> checkGroups(final Set<RemoteAddeEntry> entries) {
-        Contract.notNull(entries, "entries cannot be null");
+        requireNonNull(entries, "entries cannot be null");
         if (entries.isEmpty()) {
             return Collections.emptySet();
         }
@@ -1126,7 +1127,7 @@ public class RemoteEntryEditor extends JDialog {
          * @throws NullPointerException if {@code entry} is {@code null}.
          */
         public StatusWrapper(final RemoteAddeEntry entry) {
-            notNull(entry, "cannot create a entry/status pair with a null descriptor");
+            requireNonNull(entry, "cannot create a entry/status pair with a null descriptor");
             this.entry = entry;
         }
 
@@ -1166,7 +1167,7 @@ public class RemoteEntryEditor extends JDialog {
     private class VerifyEntryTask implements Callable<StatusWrapper> {
         private final StatusWrapper entryStatus;
         public VerifyEntryTask(final StatusWrapper descStatus) {
-            notNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
+            requireNonNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
             this.entryStatus = descStatus;
         }
 
@@ -1179,7 +1180,7 @@ public class RemoteEntryEditor extends JDialog {
     private class VerifyHostTask implements Callable<StatusWrapper> {
         private final StatusWrapper entryStatus;
         public VerifyHostTask(final StatusWrapper descStatus) {
-            entryStatus = notNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
+            entryStatus = requireNonNull(descStatus, "cannot verify or set status of a null descriptor/status pair");
         }
         @Override public StatusWrapper call() throws Exception {
             boolean validHost = RemoteAddeEntry.checkHost(entryStatus.getEntry());

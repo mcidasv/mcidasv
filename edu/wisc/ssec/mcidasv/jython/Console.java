@@ -28,7 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.jython;
 
-import static edu.wisc.ssec.mcidasv.util.Contract.notNull;
+import static java.util.Objects.requireNonNull;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -152,7 +152,7 @@ public class Console implements Runnable, KeyListener {
      * @param initialCommands Jython statements to execute.
      */
     public Console(final List<String> initialCommands) {
-        notNull(initialCommands, "List of initial commands cannot be null");
+        requireNonNull(initialCommands, "List of initial commands cannot be null");
         jythonHistory = new ArrayList<>();
         jythonRunner = new Runner(this, initialCommands);
         jythonRunner.start();
@@ -513,7 +513,7 @@ public class Console implements Runnable, KeyListener {
      * @throws NullPointerException if {@code line} is {@code null}.
      */
     public static int getPromptLength(final String line) {
-        notNull(line, "Null lines do not have prompt lengths");
+        requireNonNull(line, "Null lines do not have prompt lengths");
         if (line.startsWith(PS1)) {
             return PS1.length();
         } else if (line.startsWith(PS2)) {
@@ -563,12 +563,12 @@ public class Console implements Runnable, KeyListener {
      * @throws NullPointerException if the new handler is null.
      */
     public void setCallbackHandler(final ConsoleCallback newHandler) {
-        notNull(newHandler, "Callback handler cannot be null");
+        requireNonNull(newHandler, "Callback handler cannot be null");
         jythonRunner.setCallbackHandler(newHandler);
     }
 
     public Set<String> getJythonReferencesTo(final Object obj) {
-        notNull(obj, "Cannot find references to a null object");
+        requireNonNull(obj, "Cannot find references to a null object");
         Set<String> refs = new TreeSet<String>();
         // TODO(jon): possibly inline getJavaInstances()?
         for (Map.Entry<String, Object> entry : getJavaInstances().entrySet()) {
@@ -861,16 +861,16 @@ public class Console implements Runnable, KeyListener {
         public HistoryEntry() {}
 
         public HistoryEntry(final HistoryType type, final String entry) {
-            this.type = notNull(type, "type cannot be null");
-            this.entry = notNull(entry, "entry cannot be null");
+            this.type = requireNonNull(type, "type cannot be null");
+            this.entry = requireNonNull(entry, "entry cannot be null");
         }
 
         public void setEntry(final String entry) {
-            this.entry = notNull(entry, "entry cannot be null");
+            this.entry = requireNonNull(entry, "entry cannot be null");
         }
 
         public void setType(final HistoryType type) {
-            this.type = notNull(type, "type cannot be null");
+            this.type = requireNonNull(type, "type cannot be null");
         }
 
         public String getEntry() {

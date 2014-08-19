@@ -53,6 +53,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -121,7 +122,7 @@ public class InteractiveShell implements HyperlinkListener {
     private boolean bufferOutput = false;
     
     /** _more_ */
-    protected final List<ShellHistoryEntry> history = new ArrayList<ShellHistoryEntry>();
+    protected final List<ShellHistoryEntry> history = new ArrayList<>();
     
     /** _more_ */
     protected int historyIdx = -1;
@@ -493,7 +494,7 @@ public class InteractiveShell implements HyperlinkListener {
      * @throws NullPointerException if {@code mode} is {@code null}.
      */
     public void setInputMode(final ShellHistoryMode mode) {
-        Contract.notNull(mode, "Cannot use a null mode.");
+        Objects.requireNonNull(mode, "Cannot use a null mode.");
         if (mode != ShellHistoryMode.UNKNOWN && mode != getInputMode()) {
             flipField();
         }
@@ -664,7 +665,7 @@ public class InteractiveShell implements HyperlinkListener {
      */
     public static ShellHistoryMode strToShellHistoryMode(final String mode) {
         ShellHistoryMode historyMode = ShellHistoryMode.UNKNOWN;
-        Contract.notNull(mode, "Cannot convert a null mode.");
+        Objects.requireNonNull(mode, "Cannot convert a null mode.");
         try {
             historyMode = ShellHistoryMode.valueOf(mode.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -684,7 +685,7 @@ public class InteractiveShell implements HyperlinkListener {
      * {@link ShellHistoryMode#MULTILINE}.
      */
     public static ShellHistoryMode detectInputMode(final String entryText) {
-        Contract.notNull(entryText, "Cannot test a null entryText.");
+        Objects.requireNonNull(entryText, "Cannot test a null entryText.");
         ShellHistoryMode mode;
         if (entryText.contains(System.getProperty("line.separator"))) {
             mode = ShellHistoryMode.MULTILINE;

@@ -27,6 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.util;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -53,8 +55,6 @@ import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.util.ResourceCollection.Resource;
 import ucar.unidata.xml.XmlResourceCollection;
 
-import edu.wisc.ssec.mcidasv.util.Contract;
-
 /**
  * Documentation is still forthcoming, but remember that <b>no methods accept 
  * {@code null} parameters!</b>
@@ -70,7 +70,7 @@ public final class XPathUtils {
     private XPathUtils() {}
 
     public static XPathExpression expr(String xPath) {
-        Contract.notNull(xPath, "Cannot compile a null string");
+        requireNonNull(xPath, "Cannot compile a null string");
 
         XPathExpression expr = pathMap.get(xPath);
         if (expr == null) {
@@ -85,8 +85,8 @@ public final class XPathUtils {
     }
 
     public static List<Node> eval(final XmlResourceCollection collection, final String xPath) {
-        Contract.notNull(collection, "Cannot search a null resource collection");
-        Contract.notNull(xPath, "Cannot search using a null XPath query");
+        requireNonNull(collection, "Cannot search a null resource collection");
+        requireNonNull(xPath, "Cannot search using a null XPath query");
 
         try {
             List<Node> nodeList = new ArrayList<Node>();
@@ -117,8 +117,8 @@ public final class XPathUtils {
     }
 
     public static NodeList eval(final String xmlFile, final String xPath) {
-        Contract.notNull(xmlFile, "Null path to a XML file");
-        Contract.notNull(xPath, "Cannot search using a null XPath query");
+        requireNonNull(xmlFile, "Null path to a XML file");
+        requireNonNull(xPath, "Cannot search using a null XPath query");
 
         try {
             return (NodeList)expr(xPath).evaluate(loadXml(xmlFile), XPathConstants.NODESET);
@@ -128,8 +128,8 @@ public final class XPathUtils {
     }
 
     public static NodeList eval(final Node root, final String xPath) {
-        Contract.notNull(root, "Cannot search a null root node");
-        Contract.notNull(xPath, "Cannot search using a null XPath query");
+        requireNonNull(root, "Cannot search a null root node");
+        requireNonNull(xPath, "Cannot search using a null XPath query");
 
         try {
             return (NodeList)expr(xPath).evaluate(root, XPathConstants.NODESET);
@@ -139,49 +139,49 @@ public final class XPathUtils {
     }
 
     public static List<Node> nodes(final IntegratedDataViewer idv, final IdvResource collectionId, final String xPath) {
-        Contract.notNull(idv);
-        Contract.notNull(collectionId);
-        Contract.notNull(xPath);
+        requireNonNull(idv);
+        requireNonNull(collectionId);
+        requireNonNull(xPath);
 
         XmlResourceCollection collection = idv.getResourceManager().getXmlResources(collectionId);
         return nodes(collection, xPath);
     }
 
     public static List<Node> nodes(final XmlResourceCollection collection, final String xPath) {
-        Contract.notNull(collection);
-        Contract.notNull(xPath);
+        requireNonNull(collection);
+        requireNonNull(xPath);
         return eval(collection, xPath);
     }
 
     public static NodeListIterator nodes(final String xmlFile, final String xPath) {
-        Contract.notNull(xmlFile);
-        Contract.notNull(xPath);
+        requireNonNull(xmlFile);
+        requireNonNull(xPath);
         return new NodeListIterator(eval(xmlFile, xPath));
     }
 
     public static NodeListIterator nodes(final Node root, final String xPath) {
-        Contract.notNull(root);
-        Contract.notNull(xPath);
+        requireNonNull(root);
+        requireNonNull(xPath);
         return new NodeListIterator(eval(root, xPath));
     }
 
     public static NodeListIterator nodes(final Node root) {
-        Contract.notNull(root);
+        requireNonNull(root);
         return nodes(root, "//*");
     }
 
     public static List<Element> elements(final IntegratedDataViewer idv, final IdvResource collectionId, final String xPath) {
-        Contract.notNull(idv);
-        Contract.notNull(collectionId);
-        Contract.notNull(xPath);
+        requireNonNull(idv);
+        requireNonNull(collectionId);
+        requireNonNull(xPath);
 
         XmlResourceCollection collection = idv.getResourceManager().getXmlResources(collectionId);
         return elements(collection, xPath);
     }
 
     public static List<Element> elements(final XmlResourceCollection collection, final String xPath) {
-        Contract.notNull(collection);
-        Contract.notNull(xPath);
+        requireNonNull(collection);
+        requireNonNull(xPath);
         List<Element> elements = new ArrayList<Element>();
         for (Node n : eval(collection, xPath))
             elements.add((Element)n);
@@ -189,24 +189,24 @@ public final class XPathUtils {
     }
 
     public static ElementListIterator elements(final String xmlFile, final String xPath) {
-        Contract.notNull(xmlFile);
-        Contract.notNull(xPath);
+        requireNonNull(xmlFile);
+        requireNonNull(xPath);
         return new ElementListIterator(eval(xmlFile, xPath));
     }
 
     public static ElementListIterator elements(final Node root) {
-        Contract.notNull(root);
+        requireNonNull(root);
         return elements(root, "//*");
     }
 
     public static ElementListIterator elements(final Node root, final String xPath) {
-        Contract.notNull(root);
-        Contract.notNull(xPath);
+        requireNonNull(root);
+        requireNonNull(xPath);
         return new ElementListIterator(eval(root, xPath));
     }
 
     public static Document loadXml(final String xmlFile) {
-        Contract.notNull(xmlFile);
+        requireNonNull(xmlFile);
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
@@ -219,7 +219,7 @@ public final class XPathUtils {
     }
 
     public static Document loadXml(final File xmlFile) {
-        Contract.notNull(xmlFile);
+        requireNonNull(xmlFile);
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
@@ -232,7 +232,7 @@ public final class XPathUtils {
     }
 
     public static Document loadXml(final InputStream in) {
-        Contract.notNull(in);
+        requireNonNull(in);
         
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
@@ -249,7 +249,7 @@ public final class XPathUtils {
         private int index = 0;
 
         public NodeListIterator(final NodeList nodeList) {
-            Contract.notNull(nodeList);
+            requireNonNull(nodeList);
             this.nodeList = nodeList;
         }
 
@@ -258,7 +258,7 @@ public final class XPathUtils {
         }
 
         public boolean hasNext() {
-            return (index < nodeList.getLength());
+            return index < nodeList.getLength();
         }
 
         public Node next() {
@@ -275,7 +275,7 @@ public final class XPathUtils {
         private int index = 0;
 
         public ElementListIterator(final NodeList nodeList) {
-            Contract.notNull(nodeList);
+            requireNonNull(nodeList);
             this.nodeList = nodeList;
         }
 
@@ -284,7 +284,7 @@ public final class XPathUtils {
         }
 
         public boolean hasNext() {
-            return (index < nodeList.getLength());
+            return index < nodeList.getLength();
         }
 
         public Element next() {

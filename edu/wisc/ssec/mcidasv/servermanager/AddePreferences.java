@@ -34,11 +34,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.Map.Entry;
 
 import javax.swing.JButton;
@@ -66,7 +62,6 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
-import edu.wisc.ssec.mcidasv.util.Contract;
 
 /**
  * The ADDE Server preference panel is <b>almost</b> a read-only
@@ -188,7 +183,7 @@ public class AddePreferences {
      * preference panel.
      */
     public AddePrefConglomeration buildPanel(final McIDASV mcv) {
-        Contract.notNull(mcv, "Cannot build a preference panel with a null McIDASV object");
+        Objects.requireNonNull(mcv, "Cannot build a preference panel with a null McIDASV object");
         Map<EntryType, Set<AddeEntry>> entries = 
             entryStore.getVerifiedEntriesByTypes();
 

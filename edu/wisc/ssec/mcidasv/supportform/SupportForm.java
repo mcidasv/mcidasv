@@ -27,6 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.supportform;
 
+import static java.util.Objects.requireNonNull;
+
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -54,7 +56,6 @@ import ucar.unidata.idv.ui.IdvUIManager;
 
 import edu.wisc.ssec.mcidasv.util.BackgroundTask;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
-import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.FocusTraveller;
 
 import java.io.File;
@@ -106,8 +107,8 @@ public class SupportForm extends JFrame {
      * @param collector Collects information about the current session.
      */
     public SupportForm(IdvObjectStore store, StateCollector collector) {
-        this.store = Contract.notNull(store);
-        this.collector = Contract.notNull(collector);
+        this.store = requireNonNull(store);
+        this.collector = requireNonNull(collector);
         initComponents();
         unpersistInput();
         otherDoFocusThingNow();
