@@ -1208,15 +1208,16 @@ def getADDEImage(localEntry=None,
     url = addeUrlFormat % formatValues
     if showUrls:
         print url
-    
-    # build an object that returns the SATBAND file.
-    satBandRequest = _SatBandReq(_satBandUrl(**formatValues))
-    
-    # submit the request
-    futureSatband = ecs.submit(satBandRequest)
-    
+        
     try:
         mapped = _MappedAreaImageFlatField.fromUrl(url)
+        
+        # build an object that returns the SATBAND file.
+        satBandRequest = _SatBandReq(_satBandUrl(**formatValues))
+        
+        # submit the request
+        futureSatband = ecs.submit(satBandRequest)
+        
         # the commented code will immediately attempt to grab the SATBAND file;
         # the uncommented code *should* be lazy-loaded.
         # mapped.addeSatBands = futureSatband.get()
