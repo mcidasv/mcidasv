@@ -64,6 +64,7 @@ import org.jdom2.input.SAXBuilder;
 import org.w3c.dom.Element;
 
 import thredds.catalog.XMLEntityResolver;
+import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.radar.TDSRadarDatasetCollection;
 import ucar.nc2.units.DateUnit;
 import ucar.unidata.data.radar.RadarQuery;
@@ -609,6 +610,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         if (selectedStation != null) {
             ht.put(ucar.unidata.data.radar.RadarDataSource.STATION_LOCATION,
                    selectedStation.getNamedLocation());
+            ht.put(DataSelection.PROP_CHOOSERTIMEMATCHING, getDoTimeDrivers());
         } else {
             LogUtil.userMessage("No Station selected");
         }
@@ -680,6 +682,10 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         } catch (Exception exc) {
             logException("Loading radar data", exc);
         }
+        // uncheck the check box every time click the add source button
+        drivercbx.setSelected(false);
+        enableTimeWidgets();
+        setDoTimeDrivers(false);
     }
     
     protected int getNumTimesToSelect() {

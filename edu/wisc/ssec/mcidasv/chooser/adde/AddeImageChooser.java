@@ -77,6 +77,7 @@ import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.AddeSatBands;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 
+import ucar.unidata.data.DataSelection;
 import visad.DateTime;
 import visad.Gridded1DSet;
 import visad.VisADException;
@@ -2700,14 +2701,19 @@ public class AddeImageChooser extends AddeChooser implements
         // make properties Hashtable to hand the station name
         // to the AddeImageDataSource
         Hashtable ht = new Hashtable();
+        ht.put(DataSelection.PROP_CHOOSERTIMEMATCHING, getDoTimeDrivers());
         getDataSourceProperties(ht);
         Object bandName = getSelectedBandName();
         if (bandName != null && !(bandName.equals(ALLBANDS.toString()))) {
             ht.put(DATA_NAME_KEY, bandName);
         }
-        
+//        ht.put("allBands", bandDirs);
         makeDataSource(ids, getDataSourceId(), ht);
         saveServerState();
+        // uncheck the check box every time click the add source button
+        drivercbx.setSelected(false);
+        enableTimeWidgets();
+        setDoTimeDrivers(false);
     }
     
     /**

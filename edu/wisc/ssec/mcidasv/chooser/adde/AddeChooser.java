@@ -1464,10 +1464,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return  true if an image type has been chosen
      */
     protected boolean haveDescriptorSelected() {
-        if ( !GuiUtils.anySelected(descriptorComboBox)) {
+        if (!GuiUtils.anySelected(descriptorComboBox)) {
             return false;
         }
-        return (getDescriptor() != null);
+        return getDescriptor() != null;
     }
 
     /**
@@ -1517,7 +1517,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * @return the selected descriptor
      */
     public String getSelectedDescriptor() {
-        String selection = (String) descriptorComboBox.getSelectedItem();
+        String selection = (String)descriptorComboBox.getSelectedItem();
         if (selection == null) {
             return null;
         }
@@ -1552,22 +1552,20 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     }
 
     public String getLastAddedUser() {
-        if (lastServerUser != null && lastServerUser.length() > 0) {
+        if ((lastServerUser != null) && !lastServerUser.isEmpty()) {
             logger.debug("getLastAddedUser: using non-default {}", lastServerUser);
             return lastServerUser;
-        }
-        else {
+        } else {
             logger.debug("getLastAddedUser: using default {}", DEFAULT_USER);
             return DEFAULT_USER;
         }
     }
 
     public String getLastAddedProj() {
-       if (lastServerProj != null && lastServerProj.length() > 0) {
-           logger.debug("getLastAddedProj: using non-default {}", lastServerProj);
+       if ((lastServerProj != null) && !lastServerProj.isEmpty()) {
+            logger.debug("getLastAddedProj: using non-default {}", lastServerProj);
             return lastServerProj;
-        }
-        else {
+        } else {
             logger.debug("getLastAddedProj: using default {}", DEFAULT_PROJ);
             return DEFAULT_PROJ;
         }
@@ -1584,7 +1582,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
         List groups = readGroups();
         popup.removeAll();
-        if ((groups == null) || (groups.size() == 0)) {
+        if ((groups == null) || (groups.isEmpty())) {
             popup.add(new JMenuItem("No public datasets available"));
             popup.setVisible(false);
             popup.setVisible(true);
@@ -1614,10 +1612,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     public String getServer() {
         AddeServer server = getAddeServer();
-        if (server!=null)
+        if (server != null) {
             return server.getName();
-        else
+        } else {
             return "";
+        }
     }
 
     protected String getGroup() {
@@ -1646,7 +1645,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
         if (selected instanceof AddeServer.Group) {
             AddeServer.Group group = (AddeServer.Group) selected;
-        return group.getName();
+            return group.getName();
         }
 
         if (selected instanceof String) {
@@ -1654,7 +1653,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         }
 
         String groupName = selected.toString().trim();
-        if (!fromGetServer && (groupName.length() > 0)) {
+        if (!fromGetServer && (!groupName.isEmpty())) {
             //Force the get in case they typed a server name
             getServer();
 
@@ -1684,14 +1683,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             serverSelector = super.getServerSelector();
 
         ItemListener[] ell = serverSelector.getItemListeners();
-        for (int i=0; i<ell.length; i++) {
+        for (int i=0; i < ell.length; i++) {
             serverSelector.removeItemListener((ItemListener)ell[i]);
         }
         updateServers();
         updateGroups();
         serverSelector.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if ( !ignoreStateChangedEvents) {
+                if (!ignoreStateChangedEvents) {
                     Object selected = serverSelector.getSelectedItem();
                     if (selected instanceof AddeServer) {
                         AddeServer selectedServer = (AddeServer)selected;
@@ -1818,7 +1817,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Set the relative and absolute extra components.
      */
     protected JPanel makeTimesPanel(JComponent relativeCard, JComponent absoluteCard) {
-        JPanel timesPanel = super.makeTimesPanel(false,true);
+        JPanel timesPanel = super.makeTimesPanel(false, true);
 
         // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
         Component[] comps = timesPanel.getComponents();
@@ -1847,8 +1846,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     @Override
     public void setStatus(String statusString, String foo) {
-        if (statusString == null)
+        if (statusString == null) {
             statusString = "";
+        }
         statusLabel.setText(statusString);
     }
 

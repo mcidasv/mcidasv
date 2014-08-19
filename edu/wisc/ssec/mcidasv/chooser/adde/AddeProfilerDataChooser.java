@@ -46,6 +46,7 @@ import javax.swing.JPanel;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.AddeUtil;
+import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.profiler.AddeProfilerDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.metdata.NamedStationTable;
@@ -222,7 +223,7 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
             profilersourceHT.put(AddeUtil.MISC_KEYWORDS,
                     getMiscKeywords());
 
-
+            profilersourceHT.put(DataSelection.PROP_CHOOSERTIMEMATCHING, getDoTimeDrivers());
             //System.out.println("   pc time list "+getSelectedTimes());
             //System.out.println
             // ("   pc data display interval "+getSelectedDataInterval());
@@ -239,6 +240,10 @@ public class AddeProfilerDataChooser extends AddePointDataChooser {
             logException("Unable to open Profiler dataset", excp);
         }
         showNormalCursor();
+        // uncheck the check box every time click the add source button
+        drivercbx.setSelected(false);
+        enableTimeWidgets();
+        setDoTimeDrivers(false);
     }
         
     /**
