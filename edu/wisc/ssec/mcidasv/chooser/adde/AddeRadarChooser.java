@@ -34,6 +34,7 @@ import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -45,6 +46,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import org.w3c.dom.Element;
 
@@ -58,6 +60,7 @@ import ucar.unidata.data.imagery.ImageDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.metdata.NamedStationTable;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
@@ -353,9 +356,9 @@ public class AddeRadarChooser extends AddeImageChooser {
             return getSelectedStation();
         }
         if (prop.equals(PROP_SPAC)) {
-        	// Don't want this to default to "1" or it will break 
-        	// Hydrometeor Classification product...see inquiry 1518
-        	return "4";
+            // Don't want this to default to "1" or it will break
+            // Hydrometeor Classification product...see inquiry 1518
+            return "4";
         }
         return super.getDefaultPropValue(prop, ad, forDisplay);
     }
@@ -366,11 +369,11 @@ public class AddeRadarChooser extends AddeImageChooser {
      * @return  a description
      */
     protected String getPropertiesDescription() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         if (unitComboBox != null) {
             buf.append(getAdvancedLabels()[0]);
-            buf.append(" ");
-            buf.append(unitComboBox.getSelectedItem().toString());
+            buf.append(' ');
+            buf.append(unitComboBox.getSelectedItem());
         }
         return buf.toString();
     }
@@ -469,10 +472,10 @@ public class AddeRadarChooser extends AddeImageChooser {
      * @return null for SIZE, else super
      */
     protected String getDefault(String property, String dflt) {
-    	if (PROP_SIZE.equals(property)) {
-    		return dflt;
-    	}
-    	return super.getDefault(property, dflt);
+        if (PROP_SIZE.equals(property)) {
+            return dflt;
+        }
+        return super.getDefault(property, dflt);
     }
     
     /**
@@ -536,5 +539,26 @@ public class AddeRadarChooser extends AddeImageChooser {
          * "\n");
          */
         return info;
+    }
+
+    /**
+     * Set the relative and absolute extra components.
+     */
+    @Override protected JPanel makeTimesPanel() {
+        // show the time driver if the rest of the choosers are doing so.
+        JPanel timesPanel =
+            super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
+
+        // Make a new timesPanel that has extra components tacked on the
+        // bottom, inside the tabs
+        Component[] comps = timesPanel.getComponents();
+
+        if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
+            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
+            timesCardPanelExtra.add(new JPanel(), "relative");
+            timesCardPanelExtra.add(getExtraTimeComponent(), "absolute");
+            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
+        }
+        return timesPanel;
     }
 }
