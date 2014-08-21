@@ -2062,7 +2062,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     // look at: effective java, particularly the stuff about enums
     private void initTabNavActions() {
         String mod = idv.getProperty(PROP_KB_MODIFIER, "control") + " ";
-        String acc = idv.getProperty(PROP_KB_SELECT_DISPLAY, "D");
+        String acc = idv.getProperty(PROP_KB_SELECT_DISPLAY, "L");
 
         String stroke = mod + acc;
         showDisplayAction = new ShowDisplayAction(KeyStroke.getKeyStroke(stroke));
@@ -2086,6 +2086,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param window IdvWindow that requires keyboard shortcut capability.
      */
     private void initDisplayShortcuts(IdvWindow window) {
+        //mjh aug2014 make sure showDisplayAction etc. are initialized:
+        initTabNavActions();
+        didInitActions = true;
+
         JComponent jcomp = window.getContents();
         jcomp.getActionMap().put("show_disp", showDisplayAction);
         jcomp.getActionMap().put("prev_disp", prevDisplayAction);
@@ -2098,7 +2102,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         });
 
         String mod = getIdv().getProperty(PROP_KB_MODIFIER, "control");
-        String acc = getIdv().getProperty(PROP_KB_SELECT_DISPLAY, "d");
+        String acc = getIdv().getProperty(PROP_KB_SELECT_DISPLAY, "L");
         jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
             KeyStroke.getKeyStroke(mod + " " + acc),
             "show_disp"
@@ -2131,7 +2135,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         JPanel contents = new JPanel();
         contents.setLayout(new BorderLayout());
         JComponent comp = getDisplaySelectorComponent();
-        final JDialog dialog = new JDialog(mainWindow.getFrame(), "Select Display", true);
+        final JDialog dialog = new JDialog(mainWindow.getFrame(), "List Displays", true);
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         contents.add(comp, BorderLayout.CENTER);
         JButton button = new JButton("OK");
@@ -2174,33 +2178,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     private class ShowDisplayAction extends AbstractAction {
         private static final long serialVersionUID = -4609753725057124244L;
-        private static final String ACTION_NAME = "Select Display...";
+        private static final String ACTION_NAME = "List Displays...";
         public ShowDisplayAction(KeyStroke k) {
             super(ACTION_NAME);
             putValue(Action.ACCELERATOR_KEY, k);
         }
 
         public void actionPerformed(ActionEvent e) {
-            String cmd = e.getActionCommand();
-            if (cmd == null) {
-                return;
-            }
-
-            if (ACTION_NAME.equals(cmd)) {
-                showDisplaySelector();
-            } else {
-                List<IdvComponentHolder> holders = McVGuiUtils.getAllComponentHolders();
-                McvComponentHolder holder = null;
-                int index = 0;
-                try {
-                    index = Integer.parseInt(cmd) - 1;
-                    holder = (McvComponentHolder)holders.get(index);
-                } catch (Exception ex) {}
-
-                if (holder != null) {
-                    holder.setAsActiveTab();
-                }
-            }
+            showDisplaySelector();
         }
     }
 
