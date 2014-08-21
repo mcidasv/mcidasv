@@ -366,7 +366,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
                 if (tlefc != null) {
                     tlefc.setEnabled(false);
                 }
-                enableLoadFromAdde(false);
+                enableLoadFromAdde(true);
                 for (int i = 0; i < 5; i++) {
                     JComponent comp = addeList.get(i);
                     comp.setEnabled(true);
@@ -544,7 +544,11 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
     public void enableLoadFromAdde(boolean val) {
 //        logger.trace("val={}", val);
-        loadButton.setEnabled(val);
+        if (val && descriptorComboBox.isEnabled() && getSelectedDescriptor() != null) {
+            loadButton.setEnabled(val);
+        } else {
+            loadButton.setEnabled(val);
+        }
     }
 
     public void enableLoadFromUrl(boolean val) {
@@ -604,6 +608,9 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 //        }
         super.updateStatus();
         enableWidgets();
+        if ((addeBtn != null) && addeBtn.isSelected()) {
+            enableLoadFromAdde(true);
+        }
     }
 
     /**
