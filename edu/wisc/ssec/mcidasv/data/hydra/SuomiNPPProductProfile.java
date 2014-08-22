@@ -117,7 +117,6 @@ public class SuomiNPPProductProfile {
 				name = entries.nextElement().getName();
 				// filter according to the profiles
 				if (name.contains("XML_Product_Profiles")) { 
-					logger.trace("looking at line: " + name);
 					if (name.contains(attrName + "-PP")) {
 						found = true;
 						break;

@@ -234,7 +234,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
         }
         
         setup();
-        
         initQfTranslations();
     }
     
@@ -292,133 +291,139 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	SuomiNPPProductProfile nppPP = null;
     	// and also Profile metadata for geolocation variables
     	boolean haveGeoMetaData = false;
+    	int granuleCount = 1;
     	   	
     	try {
     		
     		nppPP = new SuomiNPPProductProfile();
     		
-    		// for each source file provided get the nominal time
+    		// for each source file provided, find the appropriate geolocation,
+    		// get the nominal time and various other granule-level metadata
     		Iterator keyIterator = filenameMap.keySet().iterator();
-    		String keyStr = (String) keyIterator.next();
-    		List fileNames = (List) filenameMap.get(keyStr);
-    		for (int fileCount = 0; fileCount < fileNames.size(); fileCount++) {
-	    		// need to open the main NetCDF file to determine the geolocation product
-	    		NetcdfFile ncfile = null;
-	    		String fileAbsPath = null;
-	    		try {
-	    			fileAbsPath = (String) fileNames.get(fileCount);
-		    		logger.debug("Trying to open file: " + fileAbsPath);
-		    		ncfile = NetcdfFile.open(fileAbsPath);
-		    		if (! isCombinedProduct) {
-						Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
-						logger.debug("Value of GEO global attribute: "
-								+ a.getStringValue());
-						String tmpGeoProductID = a.getStringValue();
-						geoProductIDs.add(tmpGeoProductID);
-					}
-					Group rg = ncfile.getRootGroup();
+    		while (keyIterator.hasNext()) {
+    			String keyStr = (String) keyIterator.next();
+        		List fileNames = (List) filenameMap.get(keyStr);
+        		granuleCount = fileNames.size();
+    			for (int fileCount = 0; fileCount < granuleCount; fileCount++) {
+    				// need to open the main NetCDF file to determine the geolocation product
+    				NetcdfFile ncfile = null;
+    				String fileAbsPath = null;
+    				try {
+    					fileAbsPath = (String) fileNames.get(fileCount);
+    					logger.debug("Trying to open file: " + fileAbsPath);
+    					ncfile = NetcdfFile.open(fileAbsPath);
+    					if (! isCombinedProduct) {
+    						Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
+    						logger.debug("Value of GEO global attribute: "
+    								+ a.getStringValue());
+    						String tmpGeoProductID = a.getStringValue();
+    						geoProductIDs.add(tmpGeoProductID);
+    					}
+    					Group rg = ncfile.getRootGroup();
 
-	    	    	List<Group> gl = rg.getGroups();
-	    	    	if (gl != null) {
-	    	    		for (Group g : gl) {
-	    	    			logger.debug("Group name: " + g.getFullName());
-	    	    			// when we find the Data_Products group, go down another group level and pull out 
-	    	    			// what we will use for nominal day and time (for now anyway).
-	    	    			// XXX TJJ fileCount check is so we don't count the GEO file in time array!
-	    	    			if (g.getFullName().contains("Data_Products") && (fileCount != fileNames.size())) {
-	    	    				boolean foundDateTime = false;
-	    	    				List<Group> dpg = g.getGroups();
-	    	    				
-	    	    				// cycle through once looking for XML Product Profiles
-	    	    				for (Group subG : dpg) {
-	    	    					
-	    	    					String subName = subG.getFullName();
-	    	    					// use actual product, not geolocation, to id XML Product Profile
-	    	    					if (! subName.contains("-GEO")) {
-	    	    						// determine the instrument name (VIIRS, ATMS, CrIS, OMPS)
-	    	    						instrumentName = subG.findAttribute("Instrument_Short_Name");
+    					List<Group> gl = rg.getGroups();
+    					if (gl != null) {
+    						for (Group g : gl) {
+    							logger.debug("Group name: " + g.getFullName());
+    							// when we find the Data_Products group, go down another group level and pull out 
+    							// what we will use for nominal day and time (for now anyway).
+    							// XXX TJJ fileCount check is so we don't count the GEO file in time array!
+    							if (g.getFullName().contains("Data_Products") && (fileCount != fileNames.size())) {
+    								boolean foundDateTime = false;
+    								List<Group> dpg = g.getGroups();
 
-	    	    						// note any EDR products, will need to check for and remove
-	    	    						// fill scans later
-	    	    						Attribute adtt = subG.findAttribute("N_Dataset_Type_Tag");
-	    	    						if (adtt != null) {
-	    	    							String baseName = adtt.getStringValue();
-	    	    							if ((baseName != null) && (baseName.equals("EDR"))) {
-	    	    								isEDR = true;
-	    	    								// have to loop through sub groups variables to determine band
-	    	    								List<Variable> tmpVar = subG.getVariables();
-	    	    								for (Variable v : tmpVar) {
-	    	    									// if Imagery EDR attribute for band is specified, save it
-	    	    									Attribute mBand = v.findAttribute("Band_ID");
-	    	    									if (mBand != null) {
-	    	    										whichEDR = mBand.getStringValue();
-	    	    									}
-	    	    								}
-	    	    							}
-	    	    						}
-	    	    						
-	    	    						// This is also where we find the attribute which tells us which
-	    	    						// XML Product Profile to use!
-	    	    						Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
-	    	    						if (axpp != null) {
-	    	    							String baseName = axpp.getStringValue();
-	    	    							productName = baseName;
-	    	    							String productProfileFileName = nppPP.getProfileFileName(baseName);
-	    	    							logger.debug("Found profile: " + productProfileFileName);
-	    	    							if (productProfileFileName == null) {
-	    	    								throw new Exception("XML Product Profile not found in catalog");
-	    	    							}
-	    	    							try {
-	    	    								nppPP.addMetaDataFromFile(productProfileFileName);
-	    	    							} catch (Exception nppppe) {
-	    	    								logger.error("Error parsing XML Product Profile: " + productProfileFileName);
-	    	    								throw new Exception("XML Product Profile Error");
-	    	    							}
-	    	    						}
-	    	    					}
-	    	    				}
-	    	    				
-	    	    				// 2nd pass through sub-group to extract date/time for aggregation
-	    	    				for (Group subG : dpg) {
-	    	    					List<Variable> vl = subG.getVariables();
-	    	    					for (Variable v : vl) {
-	    	    						Attribute aDate = v.findAttribute("AggregateBeginningDate");
-	    	    						Attribute aTime = v.findAttribute("AggregateBeginningTime");
-	    	    						// did we find the attributes we are looking for?
-	    	    						if ((aDate != null) && (aTime != null)) {
-	    	    							String sDate = aDate.getStringValue();
-	    	    							String sTime = aTime.getStringValue();
-	    	    							logger.debug("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
-	    	    							Date d = sdf.parse(sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
-	    	    							foundDateTime = true;
-	    	    							// set time for display to day/time of 1st granule examined
-	    	    							if (! nameHasBeenSet) {
-	    	    								setName(instrumentName.getStringValue() + " " + sdfOut.format(d)
-	    	    										+ ", " + fileNames.size() + " Granule");
-	    	    								nameHasBeenSet = true;
-	    	    							}
-	    	    							break;
-	    	    						}
-	    	    					}
-	    	    					if (foundDateTime) break;
-	    	    				}
-	    	    				if (! foundDateTime) {
-	    	    					throw new VisADException("No date time found in Suomi NPP granule");
-	    	    				}
-	    	    			}	    	    			
-	    	    		}
-	    	    	}
-	    		} catch (Exception e) {
-	    			logger.debug("Exception during processing of file: " + fileAbsPath);
-	    			throw (e);
-	    		} finally {
-	    			ncfile.close();
-	    		}
+    								// cycle through once looking for XML Product Profiles
+    								for (Group subG : dpg) {
+
+    									String subName = subG.getFullName();
+    									// use actual product, not geolocation, to id XML Product Profile
+    									if (! subName.contains("-GEO")) {
+    										// determine the instrument name (VIIRS, ATMS, CrIS, OMPS)
+    										instrumentName = subG.findAttribute("Instrument_Short_Name");
+
+    										// note any EDR products, will need to check for and remove
+    										// fill scans later
+    										Attribute adtt = subG.findAttribute("N_Dataset_Type_Tag");
+    										if (adtt != null) {
+    											String baseName = adtt.getStringValue();
+    											if ((baseName != null) && (baseName.equals("EDR"))) {
+    												isEDR = true;
+    												// have to loop through sub groups variables to determine band
+    												List<Variable> tmpVar = subG.getVariables();
+    												for (Variable v : tmpVar) {
+    													// if Imagery EDR attribute for band is specified, save it
+    													Attribute mBand = v.findAttribute("Band_ID");
+    													if (mBand != null) {
+    														whichEDR = mBand.getStringValue();
+    													}
+    												}
+    											}
+    										}
+
+    										// This is also where we find the attribute which tells us which
+    										// XML Product Profile to use!
+    										Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
+    										if (axpp != null) {
+    											String baseName = axpp.getStringValue();
+    											productName = baseName;
+    											String productProfileFileName = nppPP.getProfileFileName(baseName);
+    											logger.debug("Found profile: " + productProfileFileName);
+    											if (productProfileFileName == null) {
+    												throw new Exception("XML Product Profile not found in catalog");
+    											}
+    											try {
+    												nppPP.addMetaDataFromFile(productProfileFileName);
+    											} catch (Exception nppppe) {
+    												logger.error("Error parsing XML Product Profile: " + productProfileFileName);
+    												throw new Exception("XML Product Profile Error");
+    											}
+    										}
+    									}
+    								}
+
+    								// 2nd pass through sub-group to extract date/time for aggregation
+    								for (Group subG : dpg) {
+    									List<Variable> vl = subG.getVariables();
+    									for (Variable v : vl) {
+    										Attribute aDate = v.findAttribute("AggregateBeginningDate");
+    										Attribute aTime = v.findAttribute("AggregateBeginningTime");
+    										// did we find the attributes we are looking for?
+    										if ((aDate != null) && (aTime != null)) {
+    											String sDate = aDate.getStringValue();
+    											String sTime = aTime.getStringValue();
+    											logger.debug("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
+    											Date d = sdf.parse(sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
+    											foundDateTime = true;
+    											// set time for display to day/time of 1st granule examined
+    											if (! nameHasBeenSet) {
+    												setName(instrumentName.getStringValue() + " " + sdfOut.format(d)
+    														+ ", " + fileNames.size() + " Granule");
+    												nameHasBeenSet = true;
+    											}
+    											break;
+    										}
+    									}
+    									if (foundDateTime) break;
+    								}
+    								if (! foundDateTime) {
+    									throw new VisADException("No date time found in Suomi NPP granule");
+    								}
+    							}	    	    			
+    						}
+    					}
+    				} catch (Exception e) {
+    					logger.debug("Exception during processing of file: " + fileAbsPath);
+    					throw (e);
+    				} finally {
+    					ncfile.close();
+    				}
+    			}
+
     		}
     		
     		// build each union aggregation element
     		Iterator<String> iterator = geoProductIDs.iterator();
-    		for (int elementNum = 0; elementNum < fileNames.size(); elementNum++) {
+    		for (int elementNum = 0; elementNum < granuleCount; elementNum++) {
     			
     			String s = null;
     			
@@ -654,7 +659,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    									vqf.setShortName(
     	    											varShortName.substring(0, 3) + "_" + qf.getName()
     	    									);
-    	    									logger.debug("New var full name: " + vqf.getFullName());
+    	    									logger.debug("New QF var full name: " + vqf.getFullName());
     	    	    							qfProds.add(vqf);
     	    	    							qfMap.put(vqf.getFullName(), qf);
     	    								}
