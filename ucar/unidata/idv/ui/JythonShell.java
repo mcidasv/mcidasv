@@ -79,6 +79,7 @@ import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.IdvConstants;
 
+import ucar.unidata.xml.XmlObjectStore;
 import visad.Data;
 import visad.MathType;
 
@@ -189,8 +190,8 @@ public class JythonShell extends InteractiveShell {
      * Print the Jython shell history.
      */
     public void listHistory() {
-        for (int i = 0; i < history.size(); i++) {
-            super.eval(history.get(i).getEntryText());
+        for (ShellHistoryEntry aHistory : history) {
+            super.eval(aHistory.getEntryText());
         }
     }
     
@@ -301,12 +302,14 @@ public class JythonShell extends InteractiveShell {
           //            System.err.println(t);
           */
         t = null;
-        
-        List<JMenuItem> items = new ArrayList<JMenuItem>();
+
+        // ArrayList default capacity is 10, so this works out.
+        List<JMenuItem> items = new ArrayList<>();
         if (history.isEmpty()) {
-            List<JMenuItem> historyItems = new ArrayList<JMenuItem>();
+            List<JMenuItem> historyItems = new ArrayList<>(history.size());
             for (int i = history.size() - 1; i >= 0; i--) {
                 String block = history.get(i).getEntryText();
+                logger.trace("adding to popup: '{}'", block);
                 historyItems.add(
                     makeMenuItem(
                         block, this, "eval",
@@ -322,7 +325,7 @@ public class JythonShell extends InteractiveShell {
         items.add(dataMenu);
         items.add(makeMenu("Insert Display Type", getDisplayMenuItems()));
         items.add(makeMenu("Insert Idv Action", idv.getIdvUIManager().makeActionMenu(this, "insertText", true)));
-        
+//        logger.trace("items len={}", items.size());
         JPopupMenu popup = GuiUtils.makePopupMenu(items);
         if (popup != null) {
             popup.show(cmdFld, xPos, yPos);
@@ -538,7 +541,7 @@ public class JythonShell extends InteractiveShell {
             JComponent comp = GuiUtils.vbox(new JLabel("<html>Variables created within the Jython Shell <b>cannot</b> be recovered after a reset. Would you like to proceed?</html>"), GuiUtils.inset(box, new Insets(4, 15, 0, 10)));
             result = JOptionPane.showOptionDialog(frame, comp, "Confirm Jython Shell Reset", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, (Icon)null, options, null);
             store.put(PROP_JYTHON_SHELL_DISABLE_RESET_WARNING, box.isSelected());
-            resetConfirmed = (result == 0);
+            resetConfirmed = result == 0;
         } else {
             resetConfirmed = true;
         }
@@ -588,7 +591,7 @@ public class JythonShell extends InteractiveShell {
      */
     @Override protected JMenuBar doMakeMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        List<JMenuItem> items = new ArrayList<JMenuItem>();
+        List<JMenuItem> items = new ArrayList<>();
         items.add(makeMenuItem("Save Commands to Jython Library", this, "exportHistory"));
         // not needed if we're "auto-saving" every command:
         //items.add(makeMenuItem("Save Commands to History", this, "saveHistory"));
@@ -616,8 +619,8 @@ public class JythonShell extends InteractiveShell {
      */
     protected List<JMenuItem> getDisplayMenuItems() {
         List<ControlDescriptor> cds = idv.getControlDescriptors();
-        List<JMenuItem> displayMenuItems = new ArrayList<JMenuItem>(cds.size());
-        Map<String, JMenu> catMenus = new HashMap<String, JMenu>(cds.size());
+        List<JMenuItem> displayMenuItems = new ArrayList<>(cds.size());
+        Map<String, JMenu> catMenus = new HashMap<>(cds.size());
         for (ControlDescriptor cd : cds) {
             JMenu catMenu = catMenus.get(cd.getDisplayCategory());
             if (catMenu == null) {
@@ -638,16 +641,16 @@ public class JythonShell extends InteractiveShell {
      * @return _more_
      */
     protected List<JMenuItem> getDataMenuItems() {
-        List<JMenuItem> items = new ArrayList<JMenuItem>();
-        for (DataSourceDescriptor descriptor : idv.getDataManager().getDescriptors()) {
+        List<DataSourceDescriptor> descriptors = idv.getDataManager().getDescriptors();
+        List<JMenuItem> items = new ArrayList<>(descriptors.size());
+        for (DataSourceDescriptor descriptor : descriptors) {
             List<String> ids = split(descriptor.getId(), ",", true, true);
             String label = descriptor.getLabel();
-            if ((label == null) || (label.trim().length() == 0)) {
+            if ((label == null) || label.trim().isEmpty()) {
                 label = ids.get(0);
             }
             items.add(makeMenuItem(label, this, "insert", '\'' + ids.get(0) + '\''));
         }
-        logger.trace("items size={}", items.size());
         return items;
     }
     
@@ -703,7 +706,7 @@ public class JythonShell extends InteractiveShell {
      */
     @Override public void eval(String jython) {
         try {
-            if (jython.trim().length() == 0) {
+            if (jython.trim().isEmpty()) {
                 return;
             }
             StringBuilder sb = new StringBuilder(jython.length() * 2);
@@ -737,7 +740,7 @@ public class JythonShell extends InteractiveShell {
                 }
                 
                 List<DataOperand> operands = DerivedDataChoice.parseOperands(code);
-                List<DataOperand> unboundOperands = new ArrayList<DataOperand>(operands.size());
+                List<DataOperand> unboundOperands = new ArrayList<>(operands.size());
                 for (DataOperand operand : operands) {
                     PyObject obj = interp.get(operand.getParamName());
                     if (obj == null) {
@@ -812,7 +815,7 @@ public class JythonShell extends InteractiveShell {
      * 
      * @return Either the value associated with {@code PROP_JYTHON_WINDOW_BOUNDS} or {@code defaultBounds}.
      */
-    public static Rectangle loadWindowBounds(final IdvObjectStore store, final Rectangle defaultBounds) {
+    public static Rectangle loadWindowBounds(final XmlObjectStore store, final Rectangle defaultBounds) {
         Rectangle windowBounds = (Rectangle)store.get(PROP_JYTHON_WINDOW);
         if (windowBounds == null) {
             store.put(PROP_JYTHON_WINDOW, defaultBounds);
@@ -827,7 +830,7 @@ public class JythonShell extends InteractiveShell {
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param windowBounds Window bounds to associate with {@code PROP_JYTHON_WINDOW_BOUNDS}. Cannot be {@code null}.
      */
-    public static void saveWindowBounds(final IdvObjectStore store, final Rectangle windowBounds) {
+    public static void saveWindowBounds(final XmlObjectStore store, final Rectangle windowBounds) {
         store.put(PROP_JYTHON_WINDOW, windowBounds);
     }
 
@@ -839,7 +842,7 @@ public class JythonShell extends InteractiveShell {
      * 
      * @return Either the value associated with {@code PROP_JYTHON_DIVIDER} or {@code defaultDividerLocation}.
      */
-    public static int loadDividerLocation(final IdvObjectStore store, final int defaultDividerLocation) {
+    public static int loadDividerLocation(final XmlObjectStore store, final int defaultDividerLocation) {
         Integer dividerLocation = (Integer)store.get(PROP_JYTHON_DIVIDER);
         if (dividerLocation == null) {
             store.put(PROP_JYTHON_DIVIDER, defaultDividerLocation);
@@ -854,7 +857,7 @@ public class JythonShell extends InteractiveShell {
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param dividerLocation distance from top of window of the horizontal divider bar separating text input/output.
      */
-    public static void saveDividerLocation(final IdvObjectStore store, final int dividerLocation) {
+    public static void saveDividerLocation(final XmlObjectStore store, final int dividerLocation) {
         store.put(PROP_JYTHON_DIVIDER, dividerLocation);
     }
     
@@ -866,7 +869,7 @@ public class JythonShell extends InteractiveShell {
      * 
      * @return Either the value associated with {@code PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH} or {@code defaultLength}.
      */
-    public static int loadMaxHistoryLength(final IdvObjectStore store, final int defaultLength) {
+    public static int loadMaxHistoryLength(final XmlObjectStore store, final int defaultLength) {
         Integer historyLength = (Integer)store.get(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH);
         if (historyLength == null) {
             store.put(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH, defaultLength);
@@ -881,7 +884,7 @@ public class JythonShell extends InteractiveShell {
      * @param store The {@link IdvObjectStore} that contains persisted session values. Cannot be {@code null}.
      * @param historyLength history length to associate with {@code PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH}. Cannot be {@code null}.
      */
-    public static void saveMaxHistoryLength(final IdvObjectStore store, final int historyLength) {
+    public static void saveMaxHistoryLength(final XmlObjectStore store, final int historyLength) {
         store.put(PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH,  historyLength);
     }
 
