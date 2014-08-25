@@ -293,7 +293,7 @@ class AddeJythonError(Exception, java.lang.Exception):
 class AddeJythonInvalidAccountingError(AddeJythonError):
     def __str__(self):
         return "Invalid user or project number. (error code: %d)" % (self.addeErrorCode)
-    
+        
 class AddeJythonAccountingRequiredError(AddeJythonError):
     def __str__(self):
         return "Accounting required for the server. (error code: %d)" % (self.addeErrorCode)
@@ -305,18 +305,19 @@ class AddeJythonInvalidDatasetError(AddeJythonError):
 class AddeJythonInvalidProjectError(AddeJythonError):
     def __str__(self):
         return "Check for valid project number. (error code: %d)" % (self.addeErrorCode)
-    
+        
 class AddeJythonInvalidPortError(AddeJythonError):
     def __str__(self):
         return "Check for valid port. (error code: %d)" % (self.addeErrorCode)
-    
+        
 class AddeJythonInvalidUserError(AddeJythonError):
     def __str__(self):
         return "Check for valid user. (error code: %d)" % (self.addeErrorCode)
-    
+        
 class AddeJythonUnknownDataError(AddeJythonError):
-    pass
-    
+    def __str__(self):
+        return "No images match given parameters. (error code: %d)" % (self.addeErrorCode)
+        
 class AddeJythonBandRequiredError(AddeJythonError):
     def __str__(self):
         return "Band required for multi-banded dataset. (error code: %d)" % (self.addeErrorCode)
@@ -328,23 +329,24 @@ class AddeJythonInvalidUnitError(AddeJythonError):
 class AddeJythonNavigationError(AddeJythonError):
     def __str__(self):
         return "Check for valid location. (error code: %d)" % (self.addeErrorCode)
-    
+        
 class AddeJythonBandNotPresent(AddeJythonError):
     def __str__(self):
-        "Check for valid band number. (error code: %d)" % (self.addeErrorCode)
+        return "Check for valid band number. (error code: %d)" % (self.addeErrorCode)
         
 # whew!
 class AddeJythonBandNotPresentInSpecifiedUnits(AddeJythonError):
-    pass
-    
+    def __str__(self):
+        return "Check for valid band and/or units. (error code: %d)" % (self.addeErrorCode)
+        
 class AddeJythonErrorInvalidSize(AddeJythonError):
     def __str__(self):
         return "Requested portion of image does not exist. (error code: %d)" % (self.addeErrorCode)
-    
+        
 class AddeJythonBadLocationError(AddeJythonError):
     def __str__(self):
         return "Requested location not in area. (error code: %d)" % (self.addeErrorCode)
-    
+        
 class AddeJythonServerNotFound(AddeJythonError):
     def __str__(self):
         return "Check for valid server. (error code: %d)" % (self.addeErrorCode)
