@@ -305,7 +305,7 @@ public class JythonShell extends InteractiveShell {
 
         // ArrayList default capacity is 10, so this works out.
         List<JMenuItem> items = new ArrayList<>();
-        if (history.isEmpty()) {
+        if (!history.isEmpty()) {
             List<JMenuItem> historyItems = new ArrayList<>(history.size());
             for (int i = history.size() - 1; i >= 0; i--) {
                 String block = history.get(i).getEntryText();
