@@ -309,7 +309,6 @@ public class JythonShell extends InteractiveShell {
             List<JMenuItem> historyItems = new ArrayList<>(history.size());
             for (int i = history.size() - 1; i >= 0; i--) {
                 String block = history.get(i).getEntryText();
-                logger.trace("adding to popup: '{}'", block);
                 historyItems.add(
                     makeMenuItem(
                         block, this, "eval",
@@ -325,7 +324,6 @@ public class JythonShell extends InteractiveShell {
         items.add(dataMenu);
         items.add(makeMenu("Insert Display Type", getDisplayMenuItems()));
         items.add(makeMenu("Insert Idv Action", idv.getIdvUIManager().makeActionMenu(this, "insertText", true)));
-//        logger.trace("items len={}", items.size());
         JPopupMenu popup = GuiUtils.makePopupMenu(items);
         if (popup != null) {
             popup.show(cmdFld, xPos, yPos);
@@ -903,17 +901,14 @@ public class JythonShell extends InteractiveShell {
         List<?> oldEntries = (List<?>)store.get(PROP_JYTHON_SHELL_HISTORY);
         if (oldEntries == null) {
             oldEntries = Collections.emptyList();
-            logger.trace("no history to convert; using empty list");
         }
         List<ShellHistoryEntry> entries = new ArrayList<>(oldEntries.size());
         for (Object e : oldEntries) {
             ShellHistoryEntry entry;
             if (e instanceof String) {
                 entry = new ShellHistoryEntry((String)e);
-                logger.trace("convert string entry: {}", entry);
             } else if (e instanceof ShellHistoryEntry) {
                 entry = (ShellHistoryEntry)e;
-                logger.trace("no conversion needed: {}", entry);
             } else {
                 entry = new ShellHistoryEntry(e.toString());
                 logger.trace("unknown type: {}, entry: {}", e.getClass().toString(), entry);
