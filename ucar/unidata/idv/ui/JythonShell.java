@@ -80,15 +80,11 @@ import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ucar.unidata.idv.IdvConstants;
-
-import ucar.unidata.xml.XmlObjectStore;
 import visad.Data;
 import visad.MathType;
 
+import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataOperand;
 import ucar.unidata.data.DataSourceDescriptor;
@@ -99,6 +95,11 @@ import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.JythonManager;
 import ucar.unidata.ui.InteractiveShell;
 import ucar.unidata.util.GuiUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.wisc.ssec.mcidasv.ui.MenuScroller;
 
 /**
  * This class provides an interactive shell for running Jython.
@@ -323,7 +324,9 @@ public class JythonShell extends InteractiveShell {
                         label, this, "eval",
                         block));
             }
-            items.add(makeMenu("History", historyItems));
+            JMenu historyMenu = makeMenu("History", historyItems);
+            new MenuScroller(historyMenu, 15, 125);
+            items.add(historyMenu);
         }
         
         items.add(makeMenu("Insert Procedure Call", idv.getJythonManager().makeProcedureMenu(this, "insertText", t)));
