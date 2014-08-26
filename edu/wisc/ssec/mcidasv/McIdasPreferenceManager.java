@@ -50,17 +50,21 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
+import java.text.Collator;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -95,6 +99,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ucar.unidata.data.DataUtil;
+import ucar.unidata.geoloc.ProjectionImpl;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvConstants;
@@ -986,15 +991,34 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             )
         );
         fontPanel.setBorder(BorderFactory.createTitledBorder("Layer List Properties"));
-        
+
+        List<ProjectionImpl> projections = (List<ProjectionImpl>)mappy.getProjectionList();
         final JComboBox projBox = new JComboBox();
-        GuiUtils.setListData(projBox, mappy.getProjectionList().toArray());
+        final Map<String, ProjectionImpl> projectionNamesToObjects = new HashMap<>(projections.size());
+
+        Collection<String> projectionNames = new TreeSet<>(Collator.getInstance());
+
+        for (ProjectionImpl projection : projections) {
+            String name = projection.getName();
+            projectionNamesToObjects.put(name, projection);
+            projectionNames.add(name);
+        }
+
+        logger.trace("projections={}", projections);
+        GuiUtils.setListData(projBox, projectionNames.toArray());
         Object defaultProj = mappy.getDefaultProjection();
-        if (defaultProj != null) projBox.setSelectedItem(defaultProj);
+        if (defaultProj != null) {
+            if (defaultProj instanceof ProjectionImpl) {
+                projBox.setSelectedItem(((ProjectionImpl)defaultProj).getName());
+            } else {
+                projBox.setSelectedItem(defaultProj);
+            }
+        }
+
         JPanel projPanel = GuiUtils.left(projBox);
         projPanel.setBorder(BorderFactory.createTitledBorder("Default Projection"));
         
-        McIDASV mcv = (McIDASV) getIdv();
+        McIDASV mcv = (McIDASV)getIdv();
         
         final JCheckBox logoVizBox = new JCheckBox(
             "Show Logo in View",
@@ -1111,7 +1135,16 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             // applyWidgets called the same way the IDV does it.
             public void applyPreference(XmlObjectStore theStore, Object data) {
                 IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
-                theStore.put(MapViewManager.PREF_PROJ_DFLT, projBox.getSelectedItem());
+
+                Object projBoxSelection = projBox.getSelectedItem();
+                if (projBoxSelection instanceof String) {
+                    String projName = (String)projBoxSelection;
+                    ProjectionImpl proj = projectionNamesToObjects.get(projName);
+                    theStore.put(MapViewManager.PREF_PROJ_DFLT, proj);
+                } else {
+                    theStore.put(MapViewManager.PREF_PROJ_DFLT, projBoxSelection);
+                }
+
                 theStore.put(MapViewManager.PREF_BGCOLOR, bgComps[0].getBackground());
                 theStore.put(MapViewManager.PREF_FGCOLOR, fgComps[0].getBackground());
                 theStore.put(MapViewManager.PREF_BORDERCOLOR, border[0].getBackground());
@@ -1134,7 +1167,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         this.add(Constants.PREF_LIST_VIEW, "Display Window Preferences", miscManager, outerPanel, widgets);
     }
-    
+
     /**
      * Creates and adds the basic preference panel.
      */
