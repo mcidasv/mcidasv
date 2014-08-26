@@ -47,7 +47,13 @@ import java.awt.event.WindowFocusListener;
 
 import java.io.OutputStream;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TimeZone;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -94,51 +100,48 @@ import ucar.unidata.idv.JythonManager;
 import ucar.unidata.ui.InteractiveShell;
 import ucar.unidata.util.GuiUtils;
 
-import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.util.Contract;
-
 /**
  * This class provides an interactive shell for running Jython.
- *
- * @author IDV development team
- * @version $Revision$Date: 2012/10/03 20:10:23 $
  */
 public class JythonShell extends InteractiveShell {
-    
+
     /** Internal logging object. */
     private static final Logger logger = 
         LoggerFactory.getLogger(JythonShell.class);
-    
+
     /** Property that holds jython shell window location and size. */
     public static final String PROP_JYTHON_WINDOW = 
         "prop.jython.shell.windowrect";
-    
+
     /** Property that hold location of divider bar between text input/output areas. */
     public static final String PROP_JYTHON_DIVIDER = 
         "prop.jython.shell.divider";
-    
+
     /** Property that holds the history */
     public static final String PROP_JYTHON_SHELL_HISTORY =
         "prop.jython.shell.history";
-    
+
     /** Property that holds the maximum length of the Jython Shell history. */
     public static final String PROP_JYTHON_SHELL_MAX_HISTORY_LENGTH =
         "prop.jython.shell.maxhistorylength";
-    
+
     /** Property that determines whether or not the user is warned before resetting the Jython Shell. */
     public static final String PROP_JYTHON_SHELL_DISABLE_RESET_WARNING = 
         "prop.jython.shell.disableresetwarning";
-    
+
     /** Max number of commands saved in history. */
     public static final int DEFAULT_MAX_HISTORY_LENGTH = 100;
-    
+
     /** Jython shell window title. */
     public static final String WINDOW_TITLE = "Jython Shell";
-    
+
     /** Logging object used for Jython-specific logging output. */
     protected static final Logger jythonLogger = 
         LoggerFactory.getLogger("jython");
-    
+
+    /** Limit items in the history popup menu to this many characters. */
+    private static final int MAX_HISTORY_MENU_ITEM_LENGTH = 50;
+
     /** {@code true} while a shell reset is taking place, {@code false} otherwise. */
     private boolean shellResetting = false;
     
@@ -309,9 +312,15 @@ public class JythonShell extends InteractiveShell {
             List<JMenuItem> historyItems = new ArrayList<>(history.size());
             for (int i = history.size() - 1; i >= 0; i--) {
                 String block = history.get(i).getEntryText();
+                String label;
+                if (block.length() > MAX_HISTORY_MENU_ITEM_LENGTH) {
+                    label = block.substring(0, MAX_HISTORY_MENU_ITEM_LENGTH - 3) + "...";
+                } else {
+                    label = block;
+                }
                 historyItems.add(
                     makeMenuItem(
-                        block, this, "eval",
+                        label, this, "eval",
                         block));
             }
             items.add(makeMenu("History", historyItems));
@@ -329,7 +338,7 @@ public class JythonShell extends InteractiveShell {
             popup.show(cmdFld, xPos, yPos);
         }
     }
-    
+
     /**
      * List the variables in the interpreter
      */
