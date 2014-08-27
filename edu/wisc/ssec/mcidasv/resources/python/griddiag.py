@@ -26,6 +26,7 @@ def atn2(S1,S2,WA=0):
   """
   return GridMath.atan2(S1,S2,WA)
 
+@keepMetadata
 def add(S1,S2,WA=0):
   """ Addition 
   <div class=jython>
@@ -35,6 +36,7 @@ def add(S1,S2,WA=0):
   """
   return GridMath.add(S1,S2,WA)
 
+@keepMetadata
 def mul(S1,S2,WA=0):
   """ Multiply 
   <div class=jython>
@@ -44,6 +46,7 @@ def mul(S1,S2,WA=0):
   """
   return GridMath.multiply(S1,S2,WA)
 
+@keepMetadata
 def quo(S1,S2,WA=0):
   """ Divide 
   <div class=jython>

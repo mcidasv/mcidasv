@@ -202,10 +202,6 @@ class _MappedData(object):
         # subclasses should override!
         raise NotImplementedError()
 
-    def clone(self):
-        # i'm so sorry :(
-        return self * 1
-            
     def __reversed__(self):
         raise NotImplementedError()
         
@@ -266,6 +262,10 @@ class _MappedVIIRSFlatField(_MappedFlatField):
         # TODO: get %timestamp% into defaultLabel
         defaultLabel = '%longname%'
         return defaultLabel
+
+    def clone(self):
+        return self * 1
+                
         
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime):
@@ -313,6 +313,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         areaFile.close()
         return cls(aiff, areaFile, areaDirectory, addeDescriptor,
                 ff.getStartTime())
+
+    def clone(self):
+        # i'm so sorry :(
+        return self * 1
                 
     def test(self):
         return self.aid
@@ -467,6 +471,9 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
             return self.filename
         else:
             raise KeyError('should not be capable of reaching here: %s')
+
+    def clone(self):
+        return self * 1
 
     def getMacrosDict(self):
         """Return dictionary mapping IDV macro strings to reasonable defaults."""
@@ -3059,10 +3066,13 @@ def loadFile(filename=None, field=None, level=None,
     return mapped
 
 def makeFlatFieldSequence(sequence):
-    """Turn list of _MappedGeoGridFlatField's into a FieldImpl with time domain that is suitable for displaying."""
-    # For now this is "dumb" ... assume input is:
-    # - in temporal order
-    # - a list of _MappedGeoGridFlatField's read from loadFile
+    """Turn list of _MappedGeoGridFlatField's into a FieldImpl with time domain that is suitable for displaying.
+
+    This will work if the flatfield's have a time associated with them via
+    getMetadataMap, but if that doesn't work we're out of luck because a
+    plain old FlatField doesn't have any timestamp.  How do handle we that case?  
+    Do we put in fake timestamps so the data can at least get displayed still?
+    """
     from ucar.unidata.data import DataUtil
     from ucar.visad import Util
     from visad import FunctionType
@@ -3086,6 +3096,11 @@ def makeFlatFieldSequence(sequence):
                 # should be a visad.DateTime:
                 timeStr = ff.getMetadataMap().get('times')[0].toString() 
                 dateTimes.append(DateTime.createDateTime(timeStr))
+        elif sequence[0].getMetadataMap().get('nominal-time'):
+            # this was a _MappedAreaImageFlatField
+            for ff in sequence:
+                time = ff.getMetadataMap().get('nominal-time')
+                dateTimes.append(time)
     timeSet = Util.makeTimeSet(dateTimes)
     ftype = FunctionType(RealType.Time, ff.getType())
     fi = FieldImpl(ftype, timeSet)
