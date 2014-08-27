@@ -40,8 +40,8 @@ def transform_flatfields(func, *args, **kwargs):
         wrappedKwargs = {}
         for keyword in kwargs:
             keywordValue = kwargs[keyword]
-            if isinstance(arg, FlatField):
-                arg = makeFlatFieldSequence([arg])
+            if isinstance(keywordValue, FlatField):
+                keywordValue = makeFlatFieldSequence([keywordValue])
             wrappedKwargs[keyword] = keywordValue
         # print [type(wrappedKwargs[a]) for a in wrappedKwargs]
         result = func(*wrappedArgs, **wrappedKwargs)
