@@ -494,9 +494,10 @@ public class MenuScroller {
                 menu.add(menuItems[i]);
             }
 
-            JComponent parent = (JComponent) upItem.getParent();
-            parent.revalidate();
-            parent.repaint();
+//            JComponent parent = (JComponent) upItem.getParent();
+//            parent.revalidate();
+//            parent.repaint();
+            menu.pack();
         }
     }
 
