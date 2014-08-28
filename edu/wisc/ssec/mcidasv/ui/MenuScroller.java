@@ -28,6 +28,9 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -64,6 +67,8 @@ import javax.swing.event.PopupMenuListener;
  * @author Darryl
  */
 public class MenuScroller {
+
+    private static final Logger logger = LoggerFactory.getLogger(MenuScroller.class);
 
     //private JMenu menu;
     private JPopupMenu menu;
@@ -354,7 +359,7 @@ public class MenuScroller {
      *
      * @return the number of items to display at a time
      */
-    public int getscrollCount() {
+    public int getScrollCount() {
         return scrollCount;
     }
 
@@ -460,8 +465,7 @@ public class MenuScroller {
      * @exception  Throwable if an error occurs.
      * @see MenuScroller#dispose()
      */
-    @Override
-    public void finalize() throws Throwable {
+    @Override public void finalize() throws Throwable {
         dispose();
     }
 
@@ -494,27 +498,30 @@ public class MenuScroller {
                 menu.add(menuItems[i]);
             }
 
-//            JComponent parent = (JComponent) upItem.getParent();
-//            parent.revalidate();
-//            parent.repaint();
-            menu.pack();
+            int preferredWidth = 0;
+            for (Component item : menuItems) {
+                preferredWidth = Math.max(preferredWidth, item.getPreferredSize().width);
+            }
+            menu.setPreferredSize(new Dimension(preferredWidth, menu.getPreferredSize().height));
+
+            JComponent parent = (JComponent)upItem.getParent();
+            parent.revalidate();
+            parent.repaint();
         }
     }
 
     private class MenuScrollListener implements PopupMenuListener {
 
-        @Override
-        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        @Override public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
             setMenuItems();
+//            logger.trace("e={}", e);
         }
 
-        @Override
-        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        @Override public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
             restoreMenuItems();
         }
 
-        @Override
-        public void popupMenuCanceled(PopupMenuEvent e) {
+        @Override public void popupMenuCanceled(PopupMenuEvent e) {
             restoreMenuItems();
         }
 
@@ -545,8 +552,7 @@ public class MenuScroller {
         public MenuScrollTimer(final int increment, int interval) {
             super(interval, new ActionListener() {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
+                @Override public void actionPerformed(ActionEvent e) {
                     firstIndex += increment;
                     refreshMenu();
                 }
@@ -570,8 +576,7 @@ public class MenuScroller {
             timer.setDelay(interval);
         }
 
-        @Override
-        public void stateChanged(ChangeEvent e) {
+        @Override public void stateChanged(ChangeEvent e) {
             if (isArmed() && !timer.isRunning()) {
                 timer.start();
             }
@@ -592,8 +597,7 @@ public class MenuScroller {
             this.yPoints = yPoints;
         }
 
-        @Override
-        public void paintIcon(Component c, Graphics g, int x, int y) {
+        @Override public void paintIcon(Component c, Graphics g, int x, int y) {
             Dimension size = c.getSize();
             Graphics g2 = g.create(size.width / 2 - 5, size.height / 2 - 5, 10, 10);
             g2.setColor(Color.GRAY);
@@ -605,13 +609,11 @@ public class MenuScroller {
             g2.dispose();
         }
 
-        @Override
-        public int getIconWidth() {
+        @Override public int getIconWidth() {
             return 0;
         }
 
-        @Override
-        public int getIconHeight() {
+        @Override public int getIconHeight() {
             return 10;
         }
     }
