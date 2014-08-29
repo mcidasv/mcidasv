@@ -1004,7 +1004,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             projectionNames.add(name);
         }
 
-        logger.trace("projections={}", projections);
         GuiUtils.setListData(projBox, projectionNames.toArray());
         Object defaultProj = mappy.getDefaultProjection();
         if (defaultProj != null) {
