@@ -36,6 +36,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -507,6 +508,14 @@ public class MenuScroller {
             JComponent parent = (JComponent)upItem.getParent();
             parent.revalidate();
             parent.repaint();
+            Component invoker = menu.getInvoker();
+            Dimension invokerSize = invoker.getSize();
+            Point invokerLocation = invoker.getLocationOnScreen();
+            int menuX = (int)(invokerSize.getWidth() + invokerLocation.getX());
+            Point newMenuLocation = new Point(menuX, 1000);
+            if (!menu.isVisible()) {
+                menu.setLocation(newMenuLocation);
+            }
         }
     }
 

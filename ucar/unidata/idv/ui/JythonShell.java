@@ -37,8 +37,13 @@ import static ucar.unidata.util.LogUtil.userMessage;
 import static ucar.unidata.util.StringUtil.replace;
 import static ucar.unidata.util.StringUtil.split;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -65,6 +70,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
 
 import org.joda.time.DateTime;
@@ -324,23 +331,97 @@ public class JythonShell extends InteractiveShell {
                         label, this, "eval",
                         block));
             }
-            JMenu historyMenu = makeMenu("History", historyItems);
-            new MenuScroller(historyMenu, 15, 125);
+//            JMenu historyMenu = makeMenu("History", historyItems);
+            historyMenu = makeMenu("History", historyItems);
+//            historyMenu.setMenuLocation();
+            historyMenuScroller = new MenuScroller(historyMenu, 15, 125);
             items.add(historyMenu);
         }
         
         items.add(makeMenu("Insert Procedure Call", idv.getJythonManager().makeProcedureMenu(this, "insertText", t)));
-        
-        JMenu dataMenu = makeMenu("Insert Data Source Type", getDataMenuItems());
+
+        List<JMenuItem> dataMenuItems = getDataMenuItems();
+        JMenu dataMenu = makeMenu("Insert Data Source Type", dataMenuItems);
         GuiUtils.limitMenuSize(dataMenu, "Data Source Types", 10);
         items.add(dataMenu);
         items.add(makeMenu("Insert Display Type", getDisplayMenuItems()));
         items.add(makeMenu("Insert Idv Action", idv.getIdvUIManager().makeActionMenu(this, "insertText", true)));
         JPopupMenu popup = GuiUtils.makePopupMenu(items);
         if (popup != null) {
+            if (historyMenuScroller != null) {
+                Point pt = new Point(xPos, yPos);
+                int newScrollCount = scrollCountForScreen(cmdFld, pt, dataMenuItems.get(0), historyMenuScroller.getBottomFixedCount());
+//                logger.trace("oldScrollCount={} newScrollCount={}", historyMenuScroller.getScrollCount(), newScrollCount);
+//                if (newScrollCount < historyMenuScroller.getScrollCount()) {
+//                    newScrollCount = historyMenuScroller.getScrollCount();
+//                }
+                historyMenuScroller.setScrollCount(newScrollCount);
+
+//                int x;
+//                int y;
+//
+//                JPopupMenu pm = historyMenu.getPopupMenu();
+//                Dimension s = historyMenu.getSize();
+//                Dimension pmSize = pm.getSize();
+//                if (pmSize.width==0) {
+//                    pmSize = pm.getPreferredSize();
+//                }
+//                Point position = historyMenu.getLocationOnScreen();
+//                Toolkit toolkit = Toolkit.getDefaultToolkit();
+//                GraphicsConfiguration gc = historyMenu.getGraphicsConfiguration();
+//                Rectangle screenBounds = new Rectangle(toolkit.getScreenSize());
+//                int xOffset = UIManager.getInt("Menu.submenuPopupOffsetX");
+//                int yOffset = UIManager.getInt("Menu.submenuPopupOffsetY");
+//                x = s.width + xOffset;   // Prefer placement to the right
+//                if (position.x + x + pmSize.width >= screenBounds.width
+//                    + screenBounds.x &&
+//                    // popup doesn't fit - place it wherever there's more room
+//                    screenBounds.width - s.width < 2*(position.x
+//                        - screenBounds.x)) {
+//
+//                    x = 0 - xOffset - pmSize.width;
+//                }
+//
+//                y = yOffset;                     // Prefer dropping down
+//                if (position.y + y + pmSize.height >= screenBounds.height
+//                    + screenBounds.y &&
+//                    // popup doesn't fit - place it wherever there's more room
+//                    screenBounds.height - s.height < 2*(position.y
+//                        - screenBounds.y)) {
+//
+//                    y = s.height - yOffset - pmSize.height;
+//                }
+//                logger.trace("x={} y={}", x, y);
+            }
             popup.show(cmdFld, xPos, yPos);
+
         }
     }
+
+    /**
+     * Calculates the number for scrollCount such that the menu fills the available
+     * vertical space from the point (mouse press) to the bottom of the screen.
+     *
+     * @param c   The component on which the point parameter is based
+     * @param pt  The point at which the top of the menu will appear (in component coordinate space)
+     * @param item  A menuitem of prototypical height off of which the average height is determined
+     * @param bottomFixedCount  Needed to offset the returned scrollCount
+     * @return the scrollCount
+     */
+    public static int scrollCountForScreen(Component c, Point pt, JMenuItem item, int bottomFixedCount) {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Point ptScreen = new Point(pt);
+        SwingUtilities.convertPointToScreen(ptScreen, c);
+        int height = screenSize.height - ptScreen.y;
+
+        int miHeight = item.getPreferredSize().height;
+        int scrollCount = (height / miHeight) - bottomFixedCount - 2;  // 2 just takes the menu up a bit from the bottom which looks nicer
+
+        return scrollCount;
+    }
+
+    private JMenu historyMenu;
+    private MenuScroller historyMenuScroller;
 
     /**
      * List the variables in the interpreter
