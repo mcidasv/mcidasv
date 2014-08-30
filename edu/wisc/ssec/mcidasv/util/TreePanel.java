@@ -37,6 +37,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.swing.ImageIcon;
@@ -376,7 +377,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
         String path = loadSavedPath();
         
         TreePath tp = findByName(tree, tokenizePath(path));
-        if (tp == null || tp.getPathCount() == 1) {
+        if ((tp == null) || (tp.getPathCount() == 1)) {
             tp = getPathToFirstLeaf(new TreePath(root));
         }
         
@@ -402,7 +403,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
             return path;
         }
         path = mcv.getStore().get("mcv.treepanel.savedpath", "");
-        if (path.length() > 0) {
+        if (!path.isEmpty()) {
             return path;
         }
         
@@ -415,9 +416,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
     }
     
     public static List<String> tokenizePath(final String path) {
-        if (path == null) {
-            throw new NullPointerException("Cannot tokenize a null path");
-        }
+        Objects.requireNonNull(path, "Cannot tokenize a null path.");
         StringTokenizer tokenizer = new StringTokenizer(path, CATEGORY_DELIMITER);
         List<String> tokens = arrList(tokenizer.countTokens() + 1);
         tokens.add("");
@@ -428,9 +427,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
     }
     
     public static String getPath(final DefaultMutableTreeNode node) {
-        if (node == null) {
-            throw new NullPointerException("Cannot get the path of a null node");
-        }
+        Objects.requireNonNull(node, "Cannot get the path of a null node.");
         StringBuilder path = new StringBuilder("");
         TreeNode[] nodes = node.getPath();
         TreeNode root = nodes[0];
@@ -476,7 +473,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
         
         if (payload.equals(nodes.get(depth).toString())) {
             // If at end, return match
-            if (depth == nodes.size() - 1) {
+            if (depth == (nodes.size() - 1)) {
                 return parent;
             }
             

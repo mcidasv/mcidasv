@@ -63,19 +63,17 @@ import edu.wisc.ssec.mcidasv.util.TreePanel;
 /**
  * <p>
  * McIDAS-V mostly extends this class to preempt the IDV. McIDAS-V needs to
- * control some HTML processing, ensure that {@link McvComponentGroup}s
- * and {@link McvComponentHolder}s are created, and handle some special
- * problems that occur when attempting to load bundles that do not contain
- * component groups.
+ * control some HTML processing, ensure that
+ * {@link McvComponentGroup McvComponentGroups} and
+ * {@link McvComponentHolder McvComponentHolders} are created, and handle some
+ * special problems that occur when attempting to load bundles that do not
+ * contain component groups.
  * </p>
  */
 @SuppressWarnings("unchecked") 
 public class McIDASVXmlUi extends IdvXmlUi {
 
-    /**
-     *  Maps an ID to an {@link Element}.
-     */
-//    private Hashtable<String, Element> idToElement;
+    /** Maps a {@code String} ID to an {@link Element}. */
     private Map<String, Element> idToElement;
 
     /** Avoids unneeded getIdv() calls. */
@@ -90,7 +88,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
     public McIDASVXmlUi(IntegratedDataViewer idv, Element root) {
         super(idv, root);
         if (idToElement == null) {
-            idToElement = new HashMap<String, Element>();
+            idToElement = new HashMap<>();
         }
     }
 
@@ -101,7 +99,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
         this.idv = idv;
         this.window = window;
         if (idToElement == null) {
-            idToElement = new HashMap<String, Element>();
+            idToElement = new HashMap<>();
         }
     }
 
@@ -117,7 +115,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
     }
 
     /**
-     * Add the component
+     * Add the component.
      * 
      * @param id id
      * @param component component
@@ -128,29 +126,25 @@ public class McIDASVXmlUi extends IdvXmlUi {
         // ucar.unidata.xml.XmlUi#initialize(Element) before control has 
         // returned to the McIDASVXmlUi constructor!
         if (idToElement == null) {
-            idToElement = new HashMap<String, Element>();
+            idToElement = new HashMap<>();
         }
         super.addComponent(id, component);
         idToElement.put(id, component);
     }
 
     /**
-     * <p>
      * Overridden so that any attempts to generate
-     * {@link IdvComponentGroup}s or {@link IdvComponentHolder}s will return 
-     * the respective McIDAS-V equivalents.
-     * </p>
+     * {@link IdvComponentGroup IdvComponentGroups} or
+     * {@link IdvComponentHolder IdvComponentHolders} will return the
+     * respective McIDAS-V equivalents.
      * 
      * <p>
      * It makes things like the draggable tabs possible.
      * </p>
      * 
-     * @param node The XML representation of the desired component group.
+     * @param node XML representation of the desired component group.
      * 
-     * @return An honest-to-goodness McIDASVComponentGroup based upon the
-     *         contents of <code>node</code>.
-     * 
-     * @see ucar.unidata.idv.ui.IdvXmlUi#makeComponentGroup(Element)
+     * @return An {@code McvComponentGroup} based upon the contents of {@code node}.
      */
     @Override protected IdvComponentGroup makeComponentGroup(Element node) {
         McvComponentGroup group = new McvComponentGroup(idv, "", window);
@@ -207,29 +201,25 @@ public class McIDASVXmlUi extends IdvXmlUi {
     }
 
     /**
-     * <p>
      * McIDAS-V overrides this so that it can seize control of some HTML
      * processing in addition to attempting to associate newly-created
-     * {@link ucar.unidata.idv.ViewManager}s with ViewManagers found in a
-     * bundle.
-     * </p>
+     * {@link ViewManager ViewManagers} with ViewManagers found in a bundle.
      * 
      * <p>
      * The latter is done so that McIDAS-V can load bundles that do not use
-     * component groups. A &quot;dynamic skin&quot; is built with ViewManagers
-     * for each ViewManager in the bundle. The &quot;viewid&quot; attribute of
+     * component groups. A {@literal "dynamic skin"} is built with ViewManagers
+     * for each ViewManager in the bundle. The {@literal "viewid"} attribute of
      * the dynamic skin ViewManager is the name of the
      * {@link ucar.unidata.idv.ViewDescriptor} from the bundled ViewManager.
-     * <tt>createViewManager()</tt> is used to actually associate the new
+     * {@code createViewManager()} is used to actually associate the new
      * ViewManager with its bundled ViewManager.
      * </p>
      * 
      * @param node The XML describing the component to be created.
-     * @param id <tt>node</tt>'s ID.
+     * @param id ID of {@code node}.
      * 
-     * @return The {@link java.awt.Component} described by <tt>node</tt>.
-     * 
-     * @see ucar.unidata.idv.ui.IdvXmlUi#createComponent(Element, String)
+     * @return The {@link java.awt.Component} described by {@code node}.
+     *
      * @see edu.wisc.ssec.mcidasv.ui.McIDASVXmlUi#createViewManager(Element)
      */
     @Override public Component createComponent(Element node, String id) {
@@ -249,9 +239,9 @@ public class McIDASVXmlUi extends IdvXmlUi {
             }
             HyperlinkListener linkListener = new HyperlinkListener() {
                 public void hyperlinkUpdate(HyperlinkEvent e) {
-                    if (e.getEventType() != EventType.ACTIVATED)
+                    if (e.getEventType() != EventType.ACTIVATED) {
                         return;
-
+                    }
                     String url;
                     if (e.getURL() == null) {
                         url = e.getDescription();
@@ -288,26 +278,26 @@ public class McIDASVXmlUi extends IdvXmlUi {
     /**
      * <p>
      * Attempts to build a {@link ucar.unidata.idv.ViewManager} based upon
-     * <tt>node</tt>. If the XML has a &quot;viewid&quot; attribute, the
+     * {@code node}. If the XML has a {@literal "viewid"} attribute, the
      * value will be used to search for a ViewManager that has been cached by
      * the McIDAS-V {@link UIManager}. If the UIManager has a matching
      * ViewManager, we'll use the cached ViewManager to initialize a
-     * &quot;blank&quot; ViewManager. The cached ViewManager is then removed
-     * from the cache and deleted. This method will return <code>null</code> if
+     * {@literal "blank"} ViewManager. The cached ViewManager is then removed
+     * from the cache and deleted. This method will return {@code null} if
      * no cached ViewManager was found.
      * </p>
      * 
      * <p>
-     * The ViewManager &quot;cache&quot; will only contain bundled ViewManagers
+     * The ViewManager {@literal "cache"} will only contain bundled ViewManagers
      * that were not held in a component holder. This means that any 
      * ViewManager returned was created for a dynamic skin, but initialized 
      * with the contents of the corresponding bundled ViewManager.
      * </p>
      * 
-     * @param node The XML description of the ViewManager that needs building.
+     * @param node XML description of the ViewManager that needs building.
      * 
-     * @return Null if there was no cached ViewManager, otherwise a ViewManager
-     *         that has been initialized with a bundled ViewManager.
+     * @return {@code null} if there was no cached ViewManager, otherwise a
+     * {@code ViewManager} that has been initialized with a bundled ViewManager.
      */
     private ViewManager createViewManager(final Element node) {
         final String viewId = getAttr(node, "viewid", NULLSTRING);
@@ -366,13 +356,13 @@ public class McIDASVXmlUi extends IdvXmlUi {
             return node;
         }
         
-        Element reffedNode = (Element)idToElement.get(idRef);
+        Element reffedNode = idToElement.get(idRef);
         if (reffedNode == null) {
             throw new IllegalStateException("Could not find idref=" + idRef);
         }
 
         // TODO(unidata): Make a new copy of the node 
-        // reffedNode = reffedNode.copy ();
+        // reffedNode = reffedNode.copy();
         NamedNodeMap map = node.getAttributes();
         for (int i = 0; i < map.getLength(); i++) {
             Node n = map.item(i);
