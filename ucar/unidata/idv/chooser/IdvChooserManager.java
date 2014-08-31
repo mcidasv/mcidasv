@@ -85,8 +85,12 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -550,7 +554,7 @@ public class IdvChooserManager extends IdvManager {
         IdvObjectStore store = getIdv().getStore();
         Hashtable<String, Boolean> chooserPrefs = null;
         Boolean allChoosers = (Boolean)store.get(IdvConstants.PROP_CHOOSERS_ALL);
-        if (allChoosers == null || !allChoosers.booleanValue()) {
+        if ((allChoosers == null) || !allChoosers.booleanValue()) {
             chooserPrefs = (Hashtable<String, Boolean>)store.get(IdvConstants.PROP_CHOOSERS);
         }
         choosersWeAreCreating = theseChoosers;
@@ -561,6 +565,7 @@ public class IdvChooserManager extends IdvManager {
                 continue;
             }
             NodeList nodeList = XmlUtil.getElements(root);
+            Map<String, Map<String, Boolean>> pathToIds = validateChooserStatuses(nodeList, chooserPrefs);
             for (int j = 0; j < nodeList.getLength(); j++) {
                 Element node = (Element) nodeList.item(j);
                 if (node.getTagName().equals(XmlUi.TAG_COMPONENTS)
@@ -588,13 +593,18 @@ public class IdvChooserManager extends IdvManager {
                     }
                     otherXml.append(XmlUtil.toString(node));
                 } else if (XmlUi.TAG_PANEL.equals(node.getTagName()) && chooserPrefs != null) {
-                    String xml = XmlUtil.toString(node);
                     NodeList children = node.getChildNodes();
+                    String category = node.getAttribute("category");
+                    Map<String, Boolean> idsToStatus = pathToIds.get(category);
                     for (int k = 0; k < children.getLength(); k++) {
                         String id = extractChooserId(children.item(k));
                         if (id != null) {
                             Boolean chooserStatus = chooserPrefs.get(id);
-                            if (chooserStatus != null && chooserStatus.booleanValue()) {
+                            if (chooserStatus == null) {
+                                chooserStatus = idsToStatus.get(id);
+                            }
+                            idsToStatus.put(id, chooserStatus);
+                            if ((chooserStatus != null) && chooserStatus.booleanValue()) {
                                 sb.append(XmlUtil.toString(node));
                             }
                         }
@@ -645,7 +655,81 @@ public class IdvChooserManager extends IdvManager {
         choosersWeAreCreating = null;
         Msg.translateTree(contents, true, false);
         return contents;
+    }
 
+    /**
+     * Returns a {@link Map} of chooser {@literal "categories"} to a {@code Map}
+     * of chooser {@literal "IDs"} to whether or not it is enabled in the
+     * preferences (note that the possible values are {@code true},
+     * {@code false}, and {@code null}).
+     *
+     * <p>
+     * If <i>all</i> of the choosers in a given category are {@literal "enabled"},
+     * then the assumption is that the category is enabled in the preferences,
+     * and any chooser with a {@code null} status in the category should be
+     * enabled.
+     * </p>
+     *
+     * <p>
+     * If <i>any</i> of the choosers in a given category is
+     * {@literal "disabled"}, then the assumption is that the category is not
+     * enabled in the preferences, and any chooser with a {@code null} status
+     * in the category should be disabled.
+     * </p>
+     *
+     * @param nodeList XML nodes that represent a set of choosers to be created.
+     * Cannot be {@code null}.
+     * @param chooserPrefs {@code Hashtable} that maps chooser IDs to status.
+     *
+     * @return See method description.
+     */
+    private static Map<String, Map<String, Boolean>> validateChooserStatuses(NodeList nodeList, Hashtable<String, Boolean> chooserPrefs) {
+        boolean anyNullChoosers = false;
+        Map<String, Map<String, Boolean>> pathsToIds = new HashMap<>(nodeList.getLength());
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Element node = (Element)nodeList.item(i);
+            if (XmlUi.TAG_PANEL.equals(node.getTagName()) && (chooserPrefs != null)) {
+                NodeList children = node.getChildNodes();
+                String category = node.getAttribute("category");
+                if (!pathsToIds.containsKey(category)) {
+                    pathsToIds.put(category, new HashMap<String, Boolean>(15));
+                }
+                Map<String, Boolean> idsToStatus = pathsToIds.get(category);
+                for (int j = 0; j < children.getLength(); j++) {
+                    String id = extractChooserId(children.item(j));
+                    if (id != null) {
+                        Boolean chooserStatus = chooserPrefs.get(id);
+                        idsToStatus.put(id, chooserStatus);
+                        if (chooserStatus == null) {
+                            anyNullChoosers = true;
+                        }
+                    }
+                }
+            }
+        }
+        if (anyNullChoosers) {
+            for (Map.Entry<String, Map<String, Boolean>> entry : pathsToIds.entrySet()) {
+                Map<String, Boolean> idsToStatus = entry.getValue();
+                boolean allNonNullEnabled = true;
+                for (Map.Entry<String, Boolean> subEntry : idsToStatus.entrySet()) {
+                    Boolean value = subEntry.getValue();
+                    if (value == null) {
+                        continue;
+                    } else {
+                        if (subEntry.getValue().equals(Boolean.FALSE)) {
+                            allNonNullEnabled = false;
+                            break;
+                        }
+                    }
+                }
+                for (Map.Entry<String, Boolean> subEntry : idsToStatus.entrySet()) {
+                    if (subEntry.getValue() == null) {
+                        subEntry.setValue(allNonNullEnabled);
+                    }
+                }
+            }
+        }
+        return pathsToIds;
     }
 
     /**
@@ -657,7 +741,7 @@ public class IdvChooserManager extends IdvManager {
      * @return Either {@code null} or the value of the chooser's {@code id}
      * attribute.
      */
-    private String extractChooserId(Node chooser) {
+    private static String extractChooserId(Node chooser) {
         String id = null;
         if (IdvUIManager.COMP_CHOOSER.equals(chooser.getNodeName())) {
             NamedNodeMap attrs = chooser.getAttributes();
