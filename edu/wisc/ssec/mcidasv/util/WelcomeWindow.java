@@ -72,7 +72,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
     private final java.net.URL contents;
 
     /** 
-     * Creates new form WelcomeWindow
+     * Creates new form WelcomeWindow.
      */
     public WelcomeWindow() {
         this.contents = WelcomeWindow.class.getResource(WELCOME_HTML);
@@ -183,6 +183,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
         setSize(WINDOW_SIZE);
     }// </editor-fold>
 
@@ -235,14 +236,16 @@ public class WelcomeWindow extends javax.swing.JFrame {
      * @see WebBrowser#browse(String)
      */
     private void textPaneHyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
-        if (evt.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
+        if (evt.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
             return;
+        }
 
         String url = null;
-        if (evt.getURL() == null)
+        if (evt.getURL() == null) {
             url = evt.getDescription();
-        else
+        } else {
             url = evt.getURL().toString();
+        }
 
         WebBrowser.browse(url);
     }
@@ -250,7 +253,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new WelcomeWindow().setVisible(true);
