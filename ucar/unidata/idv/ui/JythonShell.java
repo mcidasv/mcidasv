@@ -168,6 +168,12 @@ public class JythonShell extends InteractiveShell {
     /** _more_          */
     ImageGenerator islInterpreter;
 
+    /** Menu containing the user's input history as {@link JMenuItem JMenuItems}. */
+    private JMenu historyMenu;
+
+    /** {@code MenuScroller} used with {@link #historyMenu}. */
+    private MenuScroller historyMenuScroller;
+
     /**
      * ctor
      *
@@ -350,7 +356,7 @@ public class JythonShell extends InteractiveShell {
         if (popup != null) {
             if (historyMenuScroller != null) {
                 Point pt = new Point(xPos, yPos);
-                int newScrollCount = scrollCountForScreen(cmdFld, pt, dataMenuItems.get(0), historyMenuScroller.getBottomFixedCount());
+                int newScrollCount = MenuScroller.scrollCountForScreen(cmdFld, pt, dataMenuItems.get(0), historyMenuScroller.getBottomFixedCount());
 //                logger.trace("oldScrollCount={} newScrollCount={}", historyMenuScroller.getScrollCount(), newScrollCount);
 //                if (newScrollCount < historyMenuScroller.getScrollCount()) {
 //                    newScrollCount = historyMenuScroller.getScrollCount();
@@ -394,34 +400,8 @@ public class JythonShell extends InteractiveShell {
 //                logger.trace("x={} y={}", x, y);
             }
             popup.show(cmdFld, xPos, yPos);
-
         }
     }
-
-    /**
-     * Calculates the number for scrollCount such that the menu fills the available
-     * vertical space from the point (mouse press) to the bottom of the screen.
-     *
-     * @param c   The component on which the point parameter is based
-     * @param pt  The point at which the top of the menu will appear (in component coordinate space)
-     * @param item  A menuitem of prototypical height off of which the average height is determined
-     * @param bottomFixedCount  Needed to offset the returned scrollCount
-     * @return the scrollCount
-     */
-    public static int scrollCountForScreen(Component c, Point pt, JMenuItem item, int bottomFixedCount) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Point ptScreen = new Point(pt);
-        SwingUtilities.convertPointToScreen(ptScreen, c);
-        int height = screenSize.height - ptScreen.y;
-
-        int miHeight = item.getPreferredSize().height;
-        int scrollCount = (height / miHeight) - bottomFixedCount - 2;  // 2 just takes the menu up a bit from the bottom which looks nicer
-
-        return scrollCount;
-    }
-
-    private JMenu historyMenu;
-    private MenuScroller historyMenuScroller;
 
     /**
      * List the variables in the interpreter

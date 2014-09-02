@@ -30,13 +30,27 @@ package edu.wisc.ssec.mcidasv.util;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.setButtonImage;
 
 import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
 
+import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.LayoutStyle;
+import javax.swing.WindowConstants;
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 /**
  * {@code WelcomeWindow} is really just intended to <i>try</i> to detect known
@@ -47,7 +61,7 @@ import javax.swing.event.HyperlinkEvent;
  */
 // NOTE TO MCV CODERS:
 // **DOCUMENT WHAT CHECKS AND/OR DETECTION ARE BEING PERFORMED**
-public class WelcomeWindow extends javax.swing.JFrame {
+public class WelcomeWindow extends JFrame {
 
     /** Path to {@literal "header"} image. */
     private static final String LOGO_PATH = 
@@ -88,97 +102,97 @@ public class WelcomeWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Welcome to McIDAS-V");
         setLocationByPlatform(true);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
+        addWindowListener(new WindowAdapter() {
+            @Override public void windowClosing(WindowEvent evt) {
                 formWindowClosing(evt);
             }
         });
 
-        logoPanel.setLayout(new java.awt.GridBagLayout());
+        logoPanel.setLayout(new GridBagLayout());
 
-        logoLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource(LOGO_PATH))); // NOI18N
-        logoPanel.add(logoLabel, new java.awt.GridBagConstraints());
+        logoLabel.setIcon(new ImageIcon(getClass().getResource(LOGO_PATH))); // NOI18N
+        logoPanel.add(logoLabel, new GridBagConstraints());
 
         textPane.setEditable(false);
         try {
             textPane.setPage(contents);
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             textPane.setText(ERROR_MESSAGE);
             e.printStackTrace();
         }
-        textPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
-            public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
+        textPane.addHyperlinkListener(new HyperlinkListener() {
+            @Override public void hyperlinkUpdate(HyperlinkEvent evt) {
                 textPaneHyperlinkUpdate(evt);
             }
         });
         scrollPane.setViewportView(textPane);
 
-        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        GroupLayout mainPanelLayout = new GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+            mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(scrollPane, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+            mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
         );
 
         setButtonImage(startButton, McVGuiUtils.ICON_APPLY_SMALL);
-        startButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        startButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent evt) {
                 startButtonActionPerformed(evt);
             }
         });
 
         setButtonImage(quitButton, McVGuiUtils.ICON_CANCEL_SMALL);
-        quitButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        quitButton.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent evt) {
                 quitButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout buttonPanelLayout = new javax.swing.GroupLayout(buttonPanel);
+        GroupLayout buttonPanelLayout = new GroupLayout(buttonPanel);
         buttonPanel.setLayout(buttonPanelLayout);
         buttonPanelLayout.setHorizontalGroup(
-            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, buttonPanelLayout.createSequentialGroup()
+            buttonPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(GroupLayout.Alignment.TRAILING, buttonPanelLayout.createSequentialGroup()
                 .addContainerGap(144, Short.MAX_VALUE)
                 .addComponent(quitButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(startButton))
         );
         buttonPanelLayout.setVerticalGroup(
-            buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(buttonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            buttonPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(buttonPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                 .addComponent(startButton)
                 .addComponent(quitButton))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mainPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(buttonPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(logoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(mainPanel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(logoPanel, GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(logoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(logoPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(mainPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(buttonPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -194,26 +208,26 @@ public class WelcomeWindow extends javax.swing.JFrame {
      * 
      * @param evt Event to handle. Currently ignored.
      */
-    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void startButtonActionPerformed(ActionEvent evt) {
         System.exit(0);
     }
 
     /**
      * Handles the user clicking on {@link #quitButton}. Doesn't do anything
      * aside from handing off things to
-     * {@link #formWindowClosing(java.awt.event.WindowEvent)}
+     * {@link #formWindowClosing(WindowEvent)}
      *
      * @param evt Event to handle. Currently ignored.
      *
-     * @see #formWindowClosing(java.awt.event.WindowEvent)
+     * @see #formWindowClosing(WindowEvent)
      */
-    private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void quitButtonActionPerformed(ActionEvent evt) {
         formWindowClosing(null);
     }
 
     /**
      * Handles the user opting to close the welcome window
-     * {@link javax.swing.JFrame}. Executes {@code System.exit(1)} in an 
+     * {@link JFrame}. Executes {@code System.exit(1)} in an
      * effort to signal to the startup scripts that window terminated 
      * {@literal "abnormally"}.
      * 
@@ -222,7 +236,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
      * 
      * @param evt Note that this parameter is currently ignored.
      */
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {
+    private void formWindowClosing(WindowEvent evt) {
         System.exit(1);
     }
 
@@ -231,11 +245,11 @@ public class WelcomeWindow extends javax.swing.JFrame {
      * HTML links.
      *
      * @param evt Event to handle. Anything other than
-     * {@link javax.swing.event.HyperlinkEvent.EventType#ACTIVATED} is ignored.
+     * {@link HyperlinkEvent.EventType#ACTIVATED} is ignored.
      *
      * @see WebBrowser#browse(String)
      */
-    private void textPaneHyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
+    private void textPaneHyperlinkUpdate(HyperlinkEvent evt) {
         if (evt.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
             return;
         }
@@ -254,7 +268,7 @@ public class WelcomeWindow extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new WelcomeWindow().setVisible(true);
             }

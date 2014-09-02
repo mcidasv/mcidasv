@@ -37,6 +37,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -46,6 +47,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.MenuSelectionManager;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import javax.swing.event.ChangeEvent;
@@ -83,6 +85,27 @@ public class MenuScroller {
     private int bottomFixedCount;
     private int firstIndex = 0;
     private int keepVisibleIndex = -1;
+
+    /**
+     * Calculates the number for scrollCount such that the menu fills the available
+     * vertical space from the point (mouse press) to the bottom of the screen.
+     *
+     * @param c {@code Component} on which the point parameter is based.
+     * @param pt {@code Point} at which the top of the menu will appear (in component coordinate space).
+     * @param item  {@code JMenuItem} of prototypical height off of which the average height is determined.
+     * @param bottomFixedCount Needed to offset the returned scrollCount.
+     *
+     * @return the {@literal "scrollCount"} for the given parameters.
+     */
+    public static int scrollCountForScreen(Component c, Point pt, JMenuItem item, int bottomFixedCount) {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Point ptScreen = new Point(pt);
+        SwingUtilities.convertPointToScreen(ptScreen, c);
+        int height = screenSize.height - ptScreen.y;
+        int miHeight = item.getPreferredSize().height;
+        // 2 just takes the menu up a bit from the bottom which looks nicer
+        return (height / miHeight) - bottomFixedCount - 2;
+    }
 
     /**
      * Registers a menu to be scrolled with the default number of items to
