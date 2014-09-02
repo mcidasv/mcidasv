@@ -96,7 +96,7 @@ public class ErrorCodeAreaAdapter {
             return -1000;
         } else if ("No images satisfy the selection criteria".equals(message)) {
             return -5000;
-        } else if ("Accounting data was not valid".equals(message)) {
+        } else if ("Accounting data was not valid".equals(message) || message.startsWith("Invalid project number:")) {
             return -6000;
         } else if ("Band keyword required for multi-banded image".equals(message) || "No BAND(s) specified".equals(message) || "Band required for multi-banded image".equals(message)) {
             return -11011;
