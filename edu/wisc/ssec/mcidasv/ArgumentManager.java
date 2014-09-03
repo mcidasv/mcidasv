@@ -28,22 +28,35 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 import visad.VisADException;
 
 import ucar.unidata.idv.IdvConstants;
-import ucar.unidata.util.StringUtil;
 
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.Msg;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.PatternFileFilter;
+import ucar.unidata.util.StringUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,8 +142,12 @@ public class ArgumentManager extends ArgsManager {
             // preference is and load the Aqua L&F from there.
             McIDASV.useAquaLookAndFeel = true;
         } else if (ARG_HELP.equals(arg)) {
-            helpLogger.info(USAGE_MESSAGE);
-            helpLogger.info(getUsageMessage());
+            String msg = USAGE_MESSAGE + "\n" + getUsageMessage();
+            if (McIDASV.isWindows() && !GraphicsEnvironment.isHeadless()) {
+                userMessage(msg, false);
+            } else {
+                helpLogger.info(System.getProperty("line.separator") + msg);
+            }
             ((McIDASV)getIdv()).exit(1);
         } else if (checkArg(arg, "-script", args, idx, 1) || checkArg(arg, "-pyfile", args, idx, 1)) {
             String scriptArg = args[idx++];
@@ -169,15 +186,112 @@ public class ArgumentManager extends ArgsManager {
     }
 
     /**
+     * Get the {@link JComponent} that displays the given message.
+     *
+     * @param msg Message to display.
+     * @param breakLines Whether or not {@literal "long"} lines should be broken up.
+     *
+     * @return {@code JComponent} that displays {@code msg}.
+     */
+    private static JComponent getMessageComponent(String msg, boolean breakLines) {
+        if (msg.startsWith("<html>")) {
+            Component[] comps = GuiUtils.getHtmlComponent(msg, null, 500, 400);
+            return (JScrollPane)comps[1];
+        }
+
+        int msgLength = msg.length();
+        if (msgLength < 50) {
+            return new JLabel(msg);
+        }
+
+        StringBuilder sb = new StringBuilder(msgLength * 2);
+        if (breakLines) {
+            for (String line : StringUtil.split(msg, "\n")) {
+                line = StringUtil.breakText(line, "\n", 50);
+                sb.append(line).append('\n');
+            }
+        } else {
+            sb.append(msg).append('\n');
+        }
+
+        JTextArea textArea = new JTextArea(sb.toString());
+        textArea.setFont(textArea.getFont().deriveFont(Font.BOLD));
+        textArea.setBackground(new JPanel().getBackground());
+        textArea.setEditable(false);
+        JScrollPane textSp = GuiUtils.makeScrollPane(textArea, 400, 200);
+        textSp.setPreferredSize(new Dimension(400, 200));
+        return textSp;
+    }
+
+    /**
+     * Show a dialog containing a message.
+     *
+     * @param msg Message to display.
+     * @param breakLines If {@code true}, long lines are split.
+     */
+    public static void userMessage(String msg, boolean breakLines) {
+        msg = Msg.msg(msg);
+        if (LogUtil.showGui()) {
+            LogUtil.consoleMessage(msg);
+            JComponent msgComponent = getMessageComponent(msg, breakLines);
+            GuiUtils.addModalDialogComponent(msgComponent);
+            JOptionPane.showMessageDialog(LogUtil.getCurrentWindow(), msgComponent);
+            GuiUtils.removeModalDialogComponent(msgComponent);
+        } else {
+            System.err.println(msg);
+        }
+    }
+
+    /**
+     * Show a dialog containing an error message.
+     *
+     * @param msg Error message to display.
+     * @param breakLines If {@code true}, long lines are split.
+     */
+    public static void userErrorMessage(String msg, boolean breakLines) {
+        msg = Msg.msg(msg);
+        if (LogUtil.showGui()) {
+            LogUtil.consoleMessage(msg);
+            JComponent msgComponent = getMessageComponent(msg, breakLines);
+            GuiUtils.addModalDialogComponent(msgComponent);
+            JOptionPane.showMessageDialog(LogUtil.getCurrentWindow(),
+                msgComponent, "Error", JOptionPane.ERROR_MESSAGE);
+            GuiUtils.removeModalDialogComponent(msgComponent);
+        } else {
+            System.err.println(msg);
+        }
+    }
+
+    /**
      * Print out the command line usage message and exit
      * 
      * @param err The usage message
      */
     @Override public void usage(String err) {
+        List<String> chunks = StringUtil.split(err, ":");
+        if (chunks.size() == 2) {
+            err = chunks.get(0) + ": " + chunks.get(1) + '\n';
+        }
         String msg = USAGE_MESSAGE;
         msg = msg + '\n' + getUsageMessage();
-        LogUtil.userErrorMessage(err + '\n' + msg);
+        userErrorMessage(err + '\n' + msg, false);
         ((McIDASV)getIdv()).exit(1);
+    }
+
+    /**
+     * Format a line in the {@literal "usage message"} output. The chief
+     * difference between this method and
+     * {@link ArgsManager#msg(String, String)} is that this method prefixes
+     * each line with four {@literal "space"} characters, rather than a single
+     * {@literal "tab"} character.
+     *
+     * @param arg Commandline argument.
+     * @param desc Description of the argument.
+     *
+     * @return Formatted line (suitable for {@link #getUsageMessage()}.
+     */
+    @Override protected String msg(String arg, String desc) {
+        return "    " + arg + ' ' + desc + '\n';
     }
 
     /**
