@@ -1123,8 +1123,12 @@ def getADDEImage(localEntry=None,
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
-    if mag and hasattr(mag, '__getitem__'):
-        mag = '%s %s' % (mag[0], mag[1])
+    
+    if mag and hasattr(mag, '__getitem__') and len(mag) == 2:
+        if 0 not in mag and '0' not in mag:
+            mag = '%s %s' % (int(mag[0]), int(mag[1]))
+        else:
+            raise ValueError("Neither magnification factor may be zero (given mag=%s)." % (repr(mag)))
     else:
         raise ValueError("Mag keyword must be a tuple or list of at least two elements.")
         
