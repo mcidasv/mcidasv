@@ -1181,8 +1181,8 @@ def getADDEImage(localEntry=None,
         if size == 'ALL':
             size = '&SIZE=99999 99999'
         else:
-            if int(size[0]) <= 0:
-                raise ValueError("Invalid size: first size value must be a value from 1 to 9999999 (or size must be 'ALL').")
+            if int(size[0]) <= 0 or int(size[1]) <= 0:
+                raise ValueError("Invalid size: each size value must be a value from 1 to 9999999 (or size must be 'ALL').")
             size = '&SIZE=%s %s' % (size[0], size[1])
     else:
         size = ''

@@ -110,7 +110,7 @@ public class ErrorCodeAreaAdapter {
             return -11003;
         } else if (message.startsWith("Band is not available in ") && message.endsWith(" units")) {
             return -7000;
-        } else if ("The requested Earth location is not contained in the image".equals(message)) {
+        } else if ("The requested Earth location is not contained in the image".equals(message) || "Specified Lat/Lon not in image".equals(message)) {
             return -11002;
         } else if (message.startsWith("Image data server unable to resolve this dataset")) {
             return -118;
