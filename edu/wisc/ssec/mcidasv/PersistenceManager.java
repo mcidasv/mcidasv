@@ -390,6 +390,27 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
+     * Prompt the user for a name and write out the given display control
+     * as a bundle into the user's {@code McIDAS-V/displaytemplates} directory.
+     *
+     * @param displayControl Display control to write.
+     * @param templateName Possibly {@code null} initial name for the template.
+     */
+    @Override public void saveDisplayControlFavorite(DisplayControl displayControl,
+                                                     String templateName) {
+        List cats = getCategories(BUNDLES_DISPLAY, Misc.newList(CAT_GENERAL));
+        String fullFile =
+            getCategorizedFile("Save Display Template", templateName,
+                getBundles(BUNDLES_DISPLAY),
+                getBundleDirectory(BUNDLES_DISPLAY), cats,
+                getArgsManager().getXidvFileFilter().getPreferredSuffix(), false);
+        if (fullFile == null) {
+            return;
+        }
+        saveDisplayControl(displayControl, new File(fullFile));
+    }
+
+    /**
      * Overridden so that McIDAS-V can: 
      * <ul>
      * <li>add better versioning information to bundles</li>
