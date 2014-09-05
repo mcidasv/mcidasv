@@ -93,7 +93,9 @@ public class InteractiveShell implements HyperlinkListener {
     
     /** Logging object. */
     private static final Logger logger = LoggerFactory.getLogger(InteractiveShell.class);
-    
+
+    private static final String BLANK = "";
+
     /** */
     private static Object MUTEX =  new Object();
     
@@ -292,7 +294,7 @@ public class InteractiveShell implements HyperlinkListener {
             }
         });
         
-        commandArea = new JTextArea("", 4, 30);
+        commandArea = new JTextArea(BLANK, 4, 30);
         GuiUtils.setFixedWidthFont(commandArea);
         GuiUtils.addKeyBindings(commandArea);
         commandArea.setTabSize(4);
@@ -464,24 +466,38 @@ public class InteractiveShell implements HyperlinkListener {
         historyIdx = -1;
         history.clear();
         clearOutput();
-        getCommandFld().setText("");
+        clearCommandField();
     }
     
     public void clearOutput() {
         sb = new StringBuffer();
-        editorPane.setText("");
+        editorPane.setText(BLANK);
     }
     
     /**
-     * _more_
+     * Return the text component associated with the current input mode of the
+     * shell. Single line mode will return {@link #commandFld}. Multi-line mode
+     * returns {@link #commandArea}.
      *
-     * @return _more_
+     * @return See description.
      */
     protected JTextComponent getCommandFld() {
         if (cardLayoutPanel.getVisibleIndex() == 0) {
             return commandFld;
         }
         return commandArea;
+    }
+
+    /**
+     * Clear out any text in both {@link #commandFld} and {@link #commandArea}.
+     */
+    protected void clearCommandField() {
+        if (!commandFld.getText().isEmpty()) {
+            commandFld.setText(BLANK);
+        }
+        if (!commandArea.getText().isEmpty()) {
+            commandArea.setText(BLANK);
+        }
     }
 
     /**
@@ -550,7 +566,7 @@ public class InteractiveShell implements HyperlinkListener {
                 return;
             }
         }
-        cmdFld.setText("");
+        cmdFld.setText(BLANK);
 //        history.add(cmd);
         history.add(new ShellHistoryEntry(cmd, getInputMode()));
         historyIdx = -1;

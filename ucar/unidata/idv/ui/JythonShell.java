@@ -656,27 +656,25 @@ public class JythonShell extends InteractiveShell {
     }
     
     /**
-     * Make menu bar
+     * Make menu bar.
      *
      * @return menu bar
      */
     @Override protected JMenuBar doMakeMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        List<JMenuItem> items = new ArrayList<>();
+        List<JMenuItem> items = new ArrayList<>(10);
         items.add(makeMenuItem("Save Commands to Jython Library", this, "exportHistory"));
         // not needed if we're "auto-saving" every command:
         //items.add(makeMenuItem("Save Commands to History", this, "saveHistory"));
         items.add(makeMenuItem("List Saved History", this, "listHistory"));
         items.add(makeMenuItem("List Current Variables", this, "listVars"));
         menuBar.add(makeMenu("File", items));
-        
         items.clear();
         items.add(makeMenuItem("Reset Jython Shell", this, "clear"));
         items.add(makeMenuItem("Clear Output Buffer", this, "clearOutput"));
         items.add(makeCheckboxMenuItem("Auto-select Operands", this, "autoSelect", null));
         //        items.add(GuiUtils.makeMenu("Insert Display Type", getDisplayMenuItems()));
         menuBar.add(makeMenu("Edit", items));
-        
         items.clear();
         items.add(makeMenuItem("Help", this, "showHelp"));
         menuBar.add(makeMenu("Help", items));
