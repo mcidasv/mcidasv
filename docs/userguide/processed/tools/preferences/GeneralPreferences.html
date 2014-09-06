@@ -42,7 +42,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <a name="showdataexploreronstart" id="showdataexploreronstart"></a>
 <li class="propertylistitem"><b>Show Data Explorer on start -</b> Opens the Data Explorer window when McIDAS-V starts.</li>
 <a name="checkfornewversion" id="checkfornewversion"></a>
-<li class="propertylistitem"><b>Check for new version and notice on start -</b> Checks at startup to see if your current version of McIDAS-V is up to date and checks for important notices from SSEC.</li>
+<li class="propertylistitem"><b>Check for new version and notice on start -</b> Checks at startup to see if the current version of McIDAS-V is up to date and checks for important notices from SSEC.</li>
 <a name="confirmbeforeexiting" id="confirmbeforeexiting"></a>
 <li class="propertylistitem"><b>Include prereleases in version check -</b> Checks at startup to see if there is an updated prerelease version ready for download.</li>
 <li class="propertylistitem"><b>Confirm before exiting -</b> Asks the user to confirm before the exiting McIDAS-V.</li>
@@ -63,10 +63,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   to current window, and Replace session. </li>
 <a name="removealldisplaysanddatasources" id="removealldisplaysanddatasources"></a>
 <li class="propertylistitem"><b>Prompt when opening bundles -</b> Opens a window asking
-  how to open the bundle, allowing you to choose each time you open
-  a bundle.</li> 
+  how to open the bundle, allowing for the user to choose each time
+  a bundle is opened.</li> 
   <a name="wheretoputzippedfiles" id="wheretoputzippedfiles"></a>
-<li class="propertylistitem"><b>Prompt for location for zipped data -</b> Allows you to specify
+<li class="propertylistitem"><b>Prompt for location for zipped data -</b> Allows for specifying
   a directory to place zipped data files, or choose to create a temporary directory.</li>
 </ul>
 <div class="pagesubtitle">Layer Controls</div>
@@ -80,7 +80,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   map layers is available in the <a href="../../controls/MapDisplayControl.html">Map
   Controls</a>. </li>
 <a name="auto-selectdatawhenloadingatemplate" id="auto-selectdatawhenloadingatemplate"></a>
-<li class="propertylistitem"><b>Auto-select data when loading a template -</b>  Displays can be saved as a template without data. When it is created, should McIDAS-V attempt to automatically select the appropriate data fields.</li>
+<li class="propertylistitem"><b>Auto-select data when loading a template -</b> Auto-selects the data when loading in a display template bundle. A display template is created in the Layer Controls tab through the <a href="../../controls/LayerControls.html#template">Save Display as Favorite</a> menu item. Note that display templates don't store the data, so in order to load in a display template bundle, the data must first be added by the user. When this option is turned off, a Field Selector window will appear when loading a display template bundle that allows for the selection of a field to display. When the option is turned on, the same field that was displayed when the display template was created will be automatically selected and displayed. Note that this option does not impact a user when selecting a display template through the Displays panel of the Field Selector.</li>
 </ul>
 <div class="pagesubtitle">When Layer Control Window is Closed</div>
 <ul class="propertylist">
