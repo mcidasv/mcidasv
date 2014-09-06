@@ -66,6 +66,8 @@ import ucar.unidata.idv.control.multi.DisplayGroup;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 
+import visad.ErrorEstimate;
+import visad.FieldImpl;
 import visad.FlatField;
 import visad.Unit;
 import visad.VisADException;
@@ -142,14 +144,19 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
             }
 
             Hashtable props = new Hashtable();
+            ErrorEstimate[] errOut = new ErrorEstimate[1];
             for (int paramIdx = 0; paramIdx < dataChoiceWrappers.size(); paramIdx++) {
                 DataChoiceWrapper wrapper = (DataChoiceWrapper)dataChoiceWrappers.get(paramIdx);
 
                 DataChoice dataChoice = wrapper.getDataChoice();
                 props = dataChoice.getProperties();
-                Unit unit = ucar.visad.Util.getDefaultRangeUnits((FlatField) data)[0];
+                Unit defaultUnit = ucar.visad.Util.getDefaultRangeUnits((FlatField) data)[0];
+                Unit unit = ((DisplayControlImpl)imageControl).getDisplayUnit();
                 double[][] samples = data.getValues(false);
                 double[] actualValues = filterData(samples[0], getTimeValues(samples, data))[0];
+                if ((defaultUnit != null) && !defaultUnit.equals(unit)) {
+                    actualValues = Unit.transformUnits(unit, errOut, defaultUnit, null, actualValues);
+                }
                 final NumberAxis domainAxis = new NumberAxis(wrapper.getLabel(unit));
 
                 domainAxis.setAutoRangeIncludesZero(false);
@@ -168,7 +175,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 MyHistogramDataset dataset = new MyHistogramDataset();
                 dataset.setType(HistogramType.FREQUENCY);
                 dataset.addSeries(dataChoice.getName() + " [" + unit + "]",
-                                  actualValues, getBins());
+                    actualValues, getBins());
+                samples = null;
+                actualValues = null;
                 plot.setDomainAxis(paramIdx, domainAxis, false);
                 plot.mapDatasetToDomainAxis(paramIdx, paramIdx);
                 plot.setDataset(paramIdx, dataset);
@@ -210,13 +219,37 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         }
     }
 
+    /**
+     * Modify the low and high values of the domain axis.
+     *
+     * @param lowVal Low value.
+     * @param hiVal High value.
+     *
+     * @return {@code false} if {@link #plot} is {@code null}. {@code true}
+     * otherwise.
+     */
     protected boolean modifyRange(double lowVal, double hiVal) {
+        return modifyRange(lowVal, hiVal, true);
+    }
+
+    /**
+     * Modify the low and high values of the domain axis.
+     *
+     * @param lowVal Low value.
+     * @param hiVal High value.
+     * @param notify Whether or not listeners should be notified.
+     *
+     * @return {@code false} if {@link #plot} is {@code null}. {@code true}
+     * otherwise.
+     */
+    protected boolean modifyRange(double lowVal, double hiVal, boolean notify) {
         try {
             if (plot == null) {
                 return false;
             }
             ValueAxis domainAxis = plot.getDomainAxis();
-            domainAxis.setRange(lowVal, hiVal); 
+            org.jfree.data.Range newRange = new org.jfree.data.Range(lowVal, hiVal);
+            domainAxis.setRange(newRange, domainAxis.isAutoRange(), notify);
             return true;
         } catch (Exception e) {
             return true;
@@ -245,12 +278,12 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         XYPlot plot = (XYPlot) chart.getPlot();
         int    rcnt = plot.getRangeAxisCount();
         for (int i = 0; i < rcnt; i++) {
-            ValueAxis axis = (ValueAxis) plot.getRangeAxis(i);
+            ValueAxis axis = plot.getRangeAxis(i);
             axis.setAutoRange(true);
         }
         int dcnt = plot.getDomainAxisCount();
         for (int i = 0; i < dcnt; i++) {
-            ValueAxis axis = (ValueAxis)plot.getDomainAxis(i);
+            ValueAxis axis = plot.getDomainAxis(i);
             try {
                 axis.setRange(low, high);
             } catch (Exception e) {
@@ -392,8 +425,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
 
         return true;
     }
-
-
 
     /**
      * Been removed, do any cleanup

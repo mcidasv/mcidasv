@@ -64,6 +64,7 @@ import visad.Data;
 import visad.DateTime;
 import visad.FieldImpl;
 import visad.FlatField;
+import visad.Unit;
 import visad.VisADException;
 import visad.meteorology.ImageSequenceImpl;
 
@@ -189,7 +190,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             ControlContext controlContext = getControlContext();
             if (controlContext != null) {
                 IdvResourceManager irm = controlContext.getResourceManager();
-                ret=irm.getXmlResources( IdvResourceManager.RSC_IMAGEDEFAULTS);
+                ret = irm.getXmlResources( IdvResourceManager.RSC_IMAGEDEFAULTS);
                 if (ret.hasWritableResource()) {
                     imageDefaultsDocument =
                         ret.getWritableDocument("<imagedefaults></imagedefaults>");
@@ -202,7 +203,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         }
         return ret;
     }
-
 
     /**
      * Called by doMakeWindow in DisplayControlImpl, which then calls its
@@ -289,9 +289,8 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                         throw new Exception("Histogram must be made from a FlatField");
                     }
                 }
-                if (seq != null) {
-                    if (seq.getImageCount() > 0) 
-                        image = (FlatField)seq.getImage(0);
+                if ((seq != null) && (seq.getImageCount() > 0)) {
+                    image = (FlatField)seq.getImage(0);
                 }
                 histoWrapper.loadData(image);
             } catch (Exception e) {
@@ -325,13 +324,16 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
     @Override public boolean setData(DataChoice dataChoice) throws VisADException, RemoteException {
         boolean result = super.setData(dataChoice);
-        logger.trace("result: {}, dataChoice: {}", result, dataChoice);
+//        logger.trace("result: {}, dataChoice: {}", result, dataChoice);
         return result;
     }
 
     @Override public void setRange(final Range newRange) throws RemoteException, VisADException {
-        logger.trace("newRange: {} [avoiding NPE!]", newRange);
+//        logger.trace("newRange: {} [avoiding NPE!]", newRange);
         super.setRange(newRange);
+        if (histoWrapper != null) {
+            histoWrapper.modifyRange(newRange.getMin(), newRange.getMax(), false);
+        }
     }
         
     public void resetColorTable() {
@@ -365,8 +367,8 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
     private Hashtable makeParameterValues() {
         Hashtable parameterValues = new Hashtable();
-        //    	Document doc = XmlUtil.makeDocument();
-        //    	Element newChild = doc.createElement(TAG_DEFAULT);
+//        Document doc = XmlUtil.makeDocument();
+//        Element newChild = doc.createElement(TAG_DEFAULT);
 
         if (datachoice == null) {
             datachoice = getDataChoice();
@@ -384,9 +386,9 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         if (!(imageList == null)) {
             AddeImageDescriptor aid = null;
             for (int imageNo=0; imageNo<numImages; imageNo++) {
-                aid = (AddeImageDescriptor)(imageList.get(imageNo));
+                aid = (AddeImageDescriptor) imageList.get(imageNo);
                 thisDT = aid.getImageTime();
-                if (!(dateTimes.contains(thisDT))) {
+                if (!dateTimes.contains(thisDT)) {
                     if (thisDT != null) {
                         dateTimes.add(thisDT);
                     }
@@ -396,7 +398,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             // Set the date and time for later reference
             String dateS = "";
             String timeS = "";
-            if (!(dateTimes.isEmpty())) {
+            if (!dateTimes.isEmpty()) {
                 thisDT = (DateTime)dateTimes.get(0);
                 dateS = thisDT.dateString();
                 timeS = thisDT.timeString();
@@ -404,10 +406,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                     for (int img=1; img<dateTimes.size(); img++) {
                         thisDT = (DateTime)dateTimes.get(img);
                         String str = "," + thisDT.dateString();
-                        String newString = new String(dateS + str);
+                        String newString = dateS + str;
                         dateS = newString;
                         str = "," + thisDT.timeString();
-                        newString = new String(timeS + str);
+                        newString = timeS + str;
                         timeS = newString;
                     }
                 }
@@ -424,12 +426,12 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
             if (aid != null) {
                 String displayUrl = testDataSource.getDisplaySource();
-                ImageParameters ip = new ImageParameters(displayUrl);    			
+                ImageParameters ip = new ImageParameters(displayUrl);
                 List props = ip.getProperties();
                 List vals = ip.getValues();
                 String server = ip.getServer();
                 parameterValues.put(ATTR_SERVER, server);
-                //    			newChild.setAttribute(ATTR_SERVER, server);
+//                newChild.setAttribute(ATTR_SERVER, server);
                 int num = props.size();
                 if (num > 0) {
                     String attr = "";
@@ -964,11 +966,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             addChangeListener(this);
         }
         /**
+         * The histogram isn't created unless the user selects the histogram
+         * tab (this is done in an effort to avoid a spike in memory usage).
          *
-         * Only make the histogram once the user clicks the Histogram tab
-         * for the first time.
-         *
-         * @param e The event
+         * @param e The event. Ignored for now.
          */
         public void stateChanged(ChangeEvent e) {
             // MH: don't make the histogram until user clicks the tab.
@@ -979,7 +980,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                         GuiUtils.inset(getHistogramTabComponent(),5));
                 setInitialHistogramRange();
                 getIdv().clearWaitCursor();
-                haveDoneHistogramInit = true;
+//                haveDoneHistogramInit = true;
             }
         }
 
