@@ -21,6 +21,7 @@
 package ucar.unidata.idv.ui;
 
 
+import edu.wisc.ssec.mcidasv.util.McVTextField;
 import org.w3c.dom.Document;
 
 import org.w3c.dom.Element;
@@ -38,9 +39,11 @@ import ucar.unidata.util.FileManager;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
+import ucar.unidata.util.ObjectListener;
 import ucar.unidata.xml.XmlUtil;
 
 import java.awt.*;
@@ -671,9 +674,7 @@ public class BundleTree extends DndTree {
      * @param parentNode The parent tree node
      */
     public void addCategory(DefaultMutableTreeNode parentNode) {
-        String cat =
-            GuiUtils.getInput("Please enter the new sub-category name",
-                              "Name: ", "");
+        String cat = getInput("Please enter the new sub-category name", "Name: ", "", "", null, "", 20, null);
         if (cat == null) {
             return;
         }
@@ -768,6 +769,77 @@ public class BundleTree extends DndTree {
             return null;
         }
         return nodeToData.get(last);
+    }
+
+    /**
+     * Ask the user the question. Return their response or null.
+     *
+     * @param question The question.
+     * @param label Extra label.
+     * @param initValue Initial value of answer
+     * @param trailingLabel Label after the text field.
+     * @param underLabel Label under the text field.
+     * @param title for the dialog box.
+     * @param fieldWidth Field width
+     * @param nearComponent If non-null then show the dialog near this component
+     *
+     * @return The user's response
+     */
+    public static String getInput(String question, String label,
+                                  String initValue, String trailingLabel,
+                                  Object underLabel, String title,
+                                  int fieldWidth, JComponent nearComponent)
+    {
+        final JDialog      dialog = GuiUtils.createDialog(title, true);
+        final McVTextField field  = new McVTextField((initValue == null) ? "" : initValue, fieldWidth);
+        field.setDeny('\\', '/', ':', '*', '?', '"', '<', '>', '|');
+        ObjectListener listener = new ObjectListener(false) {
+            public void actionPerformed(ActionEvent ae) {
+                String cmd = ae.getActionCommand();
+                if ((ae.getSource() == field) || cmd.equals(GuiUtils.CMD_OK)) {
+                    theObject = true;
+                } else {
+                    theObject = false;
+                }
+                dialog.setVisible(false);
+            }
+        };
+        field.addActionListener(listener);
+        List comps = new ArrayList();
+        if (question != null) {
+            comps.add(LayoutUtil.left(LayoutUtil.inset(new JLabel(question), 4)));
+        }
+        if (trailingLabel != null) {
+            comps.add(LayoutUtil.left(LayoutUtil.centerRight(GuiUtils.label(label, field),
+                new JLabel(trailingLabel))));
+        } else {
+            comps.add(LayoutUtil.left(GuiUtils.label(label, field)));
+        }
+
+        if (underLabel != null) {
+            if (underLabel instanceof String) {
+                comps.add(LayoutUtil.left(new JLabel(underLabel.toString())));
+            } else if (underLabel instanceof Component) {
+                comps.add(LayoutUtil.left((Component) underLabel));
+            }
+        }
+
+        JComponent contents = LayoutUtil.inset(LayoutUtil.centerBottom(LayoutUtil.vbox(comps),
+            GuiUtils.makeOkCancelButtons(listener)), 4);
+
+        GuiUtils.packDialog(dialog, contents);
+        Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
+        if (nearComponent != null) {
+            GuiUtils.showDialogNearSrc(nearComponent, dialog);
+        } else {
+            Point ctr = new Point(ss.width / 2 - 100, ss.height / 2 - 100);
+            dialog.setLocation(ctr);
+            dialog.setVisible(true);
+        }
+        if ( !((Boolean) listener.getObject()).booleanValue()) {
+            return null;
+        }
+        return field.getText();
     }
 
 }

@@ -168,7 +168,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         } catch (IllegalArgumentException e) {
             setValue(value);
         }
-        text.setAllow(new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+        text.setAllow('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
         jrbSlider.setActionCommand("slider");
         jrbSlider.addActionListener(this);
         jrbNumber.setActionCommand("number");

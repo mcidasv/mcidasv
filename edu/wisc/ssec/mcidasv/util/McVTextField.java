@@ -135,12 +135,12 @@ public class McVTextField extends JTextField {
 		super.setDocument(document);
 	}
 		
-	public void setAllow(char[] characters) {
+	public void setAllow(char... characters) {
 		this.document.setAllow(makePattern(characters));
 		super.setDocument(document);
 	}
 	
-	public void setDeny(char[] characters) {
+	public void setDeny(char... characters) {
 		this.document.setDeny(makePattern(characters));
 		super.setDocument(document);
 	}
@@ -167,7 +167,7 @@ public class McVTextField extends JTextField {
 	}
 	
 	// Take a character array and turn it into a [abc] class pattern
-	private Pattern makePattern(char[] characters) {
+	private Pattern makePattern(char... characters) {
 		if (characters == null) return null;
 		String string = ".*";
 		if (characters.length > 0) {
@@ -213,7 +213,7 @@ public class McVTextField extends JTextField {
 	}
 	
 	// Add an InputVerifier if we want to validate a particular set of strings
-	public void setValidStrings(String[] strings) {
+	public void setValidStrings(String... strings) {
 		if (strings == null) {
 			this.validStrings = null;
 			if (this.validPattern == null) removeInputVerifier();
@@ -271,15 +271,15 @@ public class McVTextField extends JTextField {
 	 */
 	private class McVTextFieldDocument extends PlainDocument {
 		private int limit;
-		private boolean toUppercase = false;		
+		private boolean toUppercase = false;
 		private boolean hasPatterns = false;
 		private Pattern allow = Pattern.compile(".*");
 		private Pattern deny = null;
-										
+
 		public McVTextFieldDocument() {
 			super();
 		}
-				
+
 		public McVTextFieldDocument(int limit, boolean upper) {
 			super();
 			setLimit(limit);
