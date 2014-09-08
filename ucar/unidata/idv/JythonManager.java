@@ -66,6 +66,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +91,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -194,7 +194,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     private TreePanel treePanel;
     
     /** One text component per tab */
-    private List<LibHolder> libHolders = new ArrayList<LibHolder>();
+    private List<LibHolder> libHolders = new ArrayList<>();
     
     /** tmp lib */
     private LibHolder tmpHolder;
@@ -228,7 +228,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * the user changes the jython library we can reevaluate the code
      * in each interpreter.
      */
-    private List<PythonInterpreter> interpreters = new ArrayList<PythonInterpreter>();
+    private List<PythonInterpreter> interpreters = new ArrayList<>();
     
     /** The edit menu item */
     private JMenuItem editFileMenuItem;
@@ -594,7 +594,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         if (getArgsManager().isScriptingMode()) {
             return true;
         }
-        List<LibHolder> toSave = new ArrayList<LibHolder>(libHolders.size());
+        List<LibHolder> toSave = new ArrayList<>(libHolders.size());
         for (int i = libHolders.size() - 1; i >= 0; i--) {
             LibHolder holder = libHolders.get(i);
             if ((holder.saveBtn == null) || !holder.isEditable()) {
@@ -839,7 +839,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      *
      * @return the libs
      */
-    public List getLibHolders() {
+    public List<LibHolder> getLibHolders() {
         return libHolders;
     }
     
@@ -1125,9 +1125,34 @@ public class JythonManager extends IdvManager implements ActionListener {
         interpreter.set("datamanager", getDataManager());
         interpreter.set("installmanager", getInstallManager());
     }
+
+    /**
+     * Intializes a given {@link PythonInterpreter} so that it can be used to
+     * {@link PythonInterpreter#exec exec} a Jython Library module.
+     *
+     * @param interpreter The interpreter to initialize. Cannot be {@code null}.
+     */
+    protected void initLibraryInterpreter(PythonInterpreter interpreter) {
+        doLibraryImports(interpreter);
+        interpreter.set("idv", getIdv());
+        interpreter.set("interpreter", interpreter);
+        interpreter.set("datamanager", getDataManager());
+        interpreter.set("installmanager", getInstallManager());
+    }
     
     public static final String CONSOLE_INIT = "/edu/wisc/ssec/mcidasv/resources/python/console_init.py";
+    public static final String LIBRARY_INIT = "/edu/wisc/ssec/mcidasv/resources/python/library_init.py";
     
+    protected static void doLibraryImports(PythonInterpreter interpreter) {
+        // TODO(jon): revisit this asap
+        try {
+            InputStream consoleInitializer = IOUtil.getInputStream(LIBRARY_INIT, JythonManager.class);
+            interpreter.execfile(consoleInitializer, LIBRARY_INIT);
+            consoleInitializer.close();
+        } catch (IOException e) {
+            logException("Failed to initialize Jython's sys.path.", e);
+        }
+    }
     /**
      * initialize the interp
      *
@@ -1269,7 +1294,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         boolean ok   = false;
         String  what = "";
         try {
-            if (interpreters.size() == 0) {
+            if (interpreters.isEmpty()) {
                 getDerivedDataInterpreter();
             }
             List holders = Misc.newList(holderToWrite);
@@ -1724,7 +1749,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return List of menu items
      */
     public List<JMenuItem> doMakeFormulaDataSourceMenuItems(DataSource dataSource) {
-        List<JMenuItem> menuItems = new ArrayList<JMenuItem>();
+        List<JMenuItem> menuItems = new ArrayList<>();
         menuItems.add(iconMenuItem("Create Formula", "showFormulaDialog", "/auxdata/ui/icons/formula_add.png"));
         menuItems.add(iconMenuItem("Edit Jython Library", "showJythonEditor", "/auxdata/ui/icons/EditJython16.gif"));
         menuItems.add(iconMenuItem("Import Formulas", "importFormulas", "/auxdata/ui/icons/formula_import.png"));
@@ -1760,10 +1785,10 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return List of menu items
      */
     public List<JMenuItem> doMakeEditMenuItems(DescriptorDataSource dds) {
-        List<JMenuItem> editMenuItems = new ArrayList<JMenuItem>();
+        List<JMenuItem> editMenuItems = new ArrayList<>();
         List<DerivedDataDescriptor> descriptors = (List<DerivedDataDescriptor>)dds.getDescriptors();
-        Map<String, JMenuItem> catMenus = new HashMap<String, JMenuItem>();
-        List<JMenuItem> topItems = new ArrayList<JMenuItem>();
+        Map<String, JMenuItem> catMenus = new HashMap<>();
+        List<JMenuItem> topItems = new ArrayList<>();
         JMenu derivedMenu = null;
         for (DerivedDataDescriptor ddd : descriptors) {
             DataCategory dc = ddd.getDisplayCategory();
@@ -1993,18 +2018,16 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return menus
      */
     public List<JMenuItem> makeProcedureMenu(final Object object, final String method, final String prefix) {
-        List<JMenuItem> menuItems = new ArrayList<JMenuItem>();
         List<LibHolder> holders = getLibHolders();
+        List<JMenuItem> menuItems = new ArrayList<>(holders.size());
         for (final LibHolder libHolder : holders) {
             final JMenu menu = new JMenu(libHolder.getName());
             menu.addMenuListener(new MenuListener() {
                 @Override public void menuSelected(MenuEvent e) {
                     menu.removeAll();
                     int cnt = 0;
-                    List<Object[]> funcs = libHolder.getFunctions();
-                    for (int itemIdx = 0; itemIdx < funcs.size(); itemIdx++) {
-                        Object[] pair = (Object[])funcs.get(itemIdx);
-                        PyFunction func = (PyFunction)pair[1];
+                    for (Object[] pair : libHolder.getFunctions()) {
+                        PyFunction func = (PyFunction) pair[1];
                         String s = makeCallString(func, null);
                         if ((prefix != null) && !s.startsWith(prefix)) {
                             continue;
@@ -2012,10 +2035,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                         JMenuItem menuItem = makeMenuItem(s, object, method, s);
                         PyObject docString = func.getFuncDoc();
                         if (docString != Py.None) {
-                            menuItem.setToolTipText(
-                                new StringBuilder("<html><pre>")
-                                    .append(docString.toString().trim())
-                                    .append("</html>").toString());
+                            menuItem.setToolTipText("<html><pre>" + docString.toString().trim() + "</pre></html>");
                         }
                         menu.add(menuItem);
                         cnt++;
@@ -2259,24 +2279,29 @@ public class JythonManager extends IdvManager implements ActionListener {
          */
         public List<Object[]> getFunctions() {
             if (functions == null) {
-                functions = new ArrayList<Object[]>();
+
                 PythonInterpreter interpreter = new PythonInterpreter();
-                interpreter.exec("import sys");
-                interpreter.exec("import java");
+                jythonManager.initLibraryInterpreter(interpreter);
                 try {
                     interpreter.exec(getText());
                 } catch (Exception exc) {
-                    return functions;
+                    logger.error("jython could not exec contents of '"+filePath+'"', exc);
+                    return Collections.emptyList();
                 }
                 PyStringMap locals = (PyStringMap)interpreter.getLocals();
+                functions = new ArrayList<>(locals.__len__());
                 for (Object name : locals.keys()) {
-                    PyObject value = locals.get(new PyString(name.toString()));
-                    // the x.isCallable() thing will allow *any* callable code;
-                    // later on things barf due to PyReflectedFunction rather
-                    // than PyFunction
-                    //                    if (value.isCallable()) {
-                    if (value instanceof PyFunction) {
-                        functions.add(new Object[] { name, value });
+                    String strName = name.toString();
+                    // skip "private" stuff
+                    if (!strName.startsWith("_")) {
+                        PyObject value = locals.get(new PyString(strName));
+                        // the x.isCallable() thing will allow *any* callable code;
+                        // later on things barf due to PyReflectedFunction rather
+                        // than PyFunction
+                        //                    if (value.isCallable()) {
+                        if (value instanceof PyFunction) {
+                            functions.add(new Object[]{ name, value });
+                        }
                     }
                 }
                 functions = Misc.sortTuples(functions, true);

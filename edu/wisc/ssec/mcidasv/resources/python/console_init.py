@@ -158,3 +158,5 @@ if os.path.exists(_user_python):
             globals()[modname] = __import__(modname, globals(), locals(), ['*'], -1)
         del modname, ext
         
+del _mcvinit_jythonpaths
+del _mcvinit_classpath_hack

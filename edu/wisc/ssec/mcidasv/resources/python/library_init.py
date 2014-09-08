@@ -120,6 +120,5 @@ except ImportError, e:
     for i, path in enumerate(sys.path):
         print i, path
         
-from see import see
-
-from decorators import deprecated
+del _mcvinit_jythonpaths
+del _mcvinit_classpath_hack
