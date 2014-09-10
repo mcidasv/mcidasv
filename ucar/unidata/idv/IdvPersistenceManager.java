@@ -29,6 +29,8 @@
 package ucar.unidata.idv;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -1994,6 +1996,24 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         return true;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(IdvPersistenceManager.class);
+
+    public boolean renameBundleCategory(int bundleType, String originalCategory, String newCategory) {
+        String originalPath = StringUtil.join(File.separator, stringToCategories(originalCategory));
+        String newPath = StringUtil.join(File.separator, stringToCategories(newCategory));
+        File originalFile = new File(IOUtil.joinDir(getBundleDirectory(bundleType), originalPath));
+        File newFile = new File(IOUtil.joinDir(getBundleDirectory(bundleType), newPath));
+//        logger.trace("original='{}' new='{}'", originalFile, newFile);
+        boolean status = false;
+        if (originalFile.exists() && !newFile.exists()) {
+            originalFile.renameTo(newFile);
+            status = !originalFile.exists() && newFile.exists();
+//            logger.trace("second check: status={} original.exists='{}' new.exists='{}'", status, originalFile.exists(), newFile.exists());
+        } else {
+//            logger.trace("failed first check: original.exists='{}' new.exists='{}'", originalFile.exists(), newFile.exists());
+        }
+        return status;
+    }
 
     /**
      * Get the data sources we should persist

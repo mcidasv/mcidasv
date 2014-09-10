@@ -22,6 +22,8 @@ package ucar.unidata.idv.ui;
 
 
 import edu.wisc.ssec.mcidasv.util.McVTextField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import org.w3c.dom.Element;
@@ -52,6 +54,7 @@ import java.awt.event.*;
 import java.io.File;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -78,7 +81,6 @@ public class BundleTree extends DndTree {
     /** The window */
     private JFrame frame;
 
-
     /** What is the type of the bundles we are showing */
     private int bundleType;
 
@@ -99,9 +101,6 @@ public class BundleTree extends DndTree {
 
     /** Icon to use for bundles */
     private ImageIcon bundleIcon;
-
-
-
 
     /**
      * Create the tree with the given bundle type
@@ -159,9 +158,6 @@ public class BundleTree extends DndTree {
         };
         setCellRenderer(renderer);
 
-
-
-
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (GuiUtils.isDeleteEvent(e)) {
@@ -187,7 +183,7 @@ public class BundleTree extends DndTree {
                 Object data = findDataAtPath(path);
                 if ( !SwingUtilities.isRightMouseButton(event)) {
                     if (event.getClickCount() > 1) {
-                        if ((data != null) && (data instanceof SavedBundle)) {
+                        if ((data instanceof SavedBundle)) {
                             doOpen((SavedBundle) data);
                         }
                     }
@@ -204,7 +200,7 @@ public class BundleTree extends DndTree {
                             BundleTree.this, "addCategory", parentNode));
                 } else {
                     if (data instanceof SavedBundle) {
-                        SavedBundle bundle = (SavedBundle) data;
+                        SavedBundle bundle = (SavedBundle)data;
                         popup.add(GuiUtils.makeMenuItem("Open",
                                 BundleTree.this, "doOpen", bundle));
                         popup.add(GuiUtils.makeMenuItem("Rename",
@@ -223,6 +219,7 @@ public class BundleTree extends DndTree {
                                 data.toString()));
                         popup.add(GuiUtils.makeMenuItem("Add Sub-Category",
                                 BundleTree.this, "addCategory", parentNode));
+                        popup.add(GuiUtils.makeMenuItem("Rename Sub-Category", BundleTree.this, "renameCategory", parentNode));
                     }
                 }
                 popup.show((Component) event.getSource(), event.getX(),
@@ -275,7 +272,6 @@ public class BundleTree extends DndTree {
         getPersistenceManager().open(bundle);
     }
 
-
     /**
      * Rename the bundle
      * @param bundle the bundle
@@ -290,9 +286,7 @@ public class BundleTree extends DndTree {
      */
     public void doExport(SavedBundle bundle) {
         getPersistenceManager().export(bundle, getBundleType());
-
     }
-
 
     /**
      * Export the bundle
@@ -300,7 +294,6 @@ public class BundleTree extends DndTree {
      */
     public void doExportToPlugin(SavedBundle bundle) {
         uiManager.getIdv().getPluginManager().addObject(bundle);
-
     }
 
     /**
@@ -310,18 +303,17 @@ public class BundleTree extends DndTree {
         frame.dispose();
     }
 
-
     /**
      * Get the list of selected bundles
      *
      * @return The selected bundles
      */
-    private List getSelectedBundles() {
+    private List<SavedBundle> getSelectedBundles() {
         TreePath[] paths = getSelectionModel().getSelectionPaths();
         if ((paths == null) || (paths.length == 0)) {
-            return new ArrayList();
+            return Collections.emptyList();
         }
-        List bundles = new ArrayList();
+        List<SavedBundle> bundles = new ArrayList<>(paths.length);
         for (int i = 0; i < paths.length; i++) {
             Object data = findDataAtPath(paths[i]);
             if (data == null) {
@@ -330,36 +322,31 @@ public class BundleTree extends DndTree {
             if ( !(data instanceof SavedBundle)) {
                 continue;
             }
-            bundles.add(data);
+            bundles.add((SavedBundle)data);
         }
         return bundles;
     }
 
-
-
     /**
-     * Export the selected bundles to the plugin creator
+     * Export the selected bundles to the plugin creator.
      */
     public void doExportToPlugin() {
         List bundles = getSelectedBundles();
-        if (bundles.size() == 0) {
+        if (bundles.isEmpty()) {
             LogUtil.userMessage("No bundles are selected");
             return;
         }
         uiManager.getIdv().getPluginManager().addObjects(bundles);
     }
 
-
-
-
     /**
-     * Export the selected bundles
+     * Export the selected bundles.
      */
     public void doExport() {
         try {
             List bundles = getSelectedBundles();
-            if (bundles.size() == 0) {
-                LogUtil.userMessage("No bundles are selected");
+            if (bundles.isEmpty()) {
+                LogUtil.userMessage("No bundles are selected!");
                 return;
             }
 
@@ -383,7 +370,6 @@ public class BundleTree extends DndTree {
                     break;
                 }
             }
-
             if (anyExist) {
                 if ( !GuiUtils.showOkCancelDialog(null,
                         "Overwrite Bundle Files",
@@ -393,11 +379,10 @@ public class BundleTree extends DndTree {
                 }
             }
 
-
             Document doc  = XmlUtil.makeDocument();
             Element  root = doc.createElement(SavedBundle.TAG_BUNDLES);
             for (int i = 0; i < bundles.size(); i++) {
-                SavedBundle bundle = (SavedBundle) bundles.get(i);
+                SavedBundle bundle = (SavedBundle)bundles.get(i);
                 bundle.toXml(doc, root);
             }
 
@@ -415,18 +400,15 @@ public class BundleTree extends DndTree {
             }
             msg += "</html>";
             LogUtil.userMessage(msg);
-
-
         } catch (Exception exc) {
             LogUtil.logException("Exporting bundles", exc);
         }
-
     }
 
     /**
-     * Return the bundle type
+     * Return the bundle type.
      *
-     * @return The bundle type
+     * @return Bundle type.
      */
     private int getBundleType() {
         return bundleType;
@@ -435,12 +417,11 @@ public class BundleTree extends DndTree {
     /**
      * Return the persistence manager
      *
-     * @return The persistence manager
+     * @return Persistence manager.
      */
     private IdvPersistenceManager getPersistenceManager() {
         return uiManager.getPersistenceManager();
     }
-
 
     /**
      * Show or hide {@link #frame}.
@@ -452,11 +433,10 @@ public class BundleTree extends DndTree {
         frame.setVisible(visible);
     }
 
-
     /**
-     * Ok to drag the node
+     * Ok to drag the node.
      *
-     * @param sourceNode The node to drag
+     * @param sourceNode Node to drag.
      *
      * @return Ok to drag
      */
@@ -464,19 +444,16 @@ public class BundleTree extends DndTree {
         return sourceNode.getParent() != null;
     }
 
-
     /**
-     * Ok to drop the node
+     * Ok to drop the node.
      *
+     * @param sourceNode Dragged node.
+     * @param destNode Where to drop {@code sourceNode}.
      *
-     * @param sourceNode The dragged node
-     * @param destNode Where to drop
-     *
-     * @return Ok to drop
+     * @return Ok to drop.
      */
     protected boolean okToDrop(DefaultMutableTreeNode sourceNode,
                                DefaultMutableTreeNode destNode) {
-
 
         //Don't drop a bundle onto the root. It must be in a catgegory
         if (sourceNode.getUserObject() instanceof SavedBundle) {
@@ -500,8 +477,6 @@ public class BundleTree extends DndTree {
         return true;
     }
 
-
-
     /**
      * Handle the DND drop
      *
@@ -520,12 +495,8 @@ public class BundleTree extends DndTree {
                 getCategoryList(sourceNode), getCategoryList(destNode),
                 bundleType);
         }
-
         loadBundles();
     }
-
-
-
 
     /**
      * Create the list of categories
@@ -534,16 +505,14 @@ public class BundleTree extends DndTree {
      *
      * @return List of String categories
      */
-    private List getCategoryList(DefaultMutableTreeNode destNode) {
-        List categories = new ArrayList();
+    private List<String> getCategoryList(DefaultMutableTreeNode destNode) {
+        List<String> categories = new ArrayList<>();
         while (destNode.getParent() != null) {
             categories.add(0, destNode.getUserObject().toString());
-            destNode = (DefaultMutableTreeNode) destNode.getParent();
+            destNode = (DefaultMutableTreeNode)destNode.getParent();
         }
         return categories;
     }
-
-
 
     /**
      * Delete the selected item in the tree
@@ -564,7 +533,6 @@ public class BundleTree extends DndTree {
         }
     }
 
-
     /**
      * Find and return the selected bundle. May return null if none selected
      *
@@ -584,7 +552,6 @@ public class BundleTree extends DndTree {
         }
         return null;
     }
-
 
     /**
      * Load in the bundles into the tree
@@ -649,8 +616,6 @@ public class BundleTree extends DndTree {
         GuiUtils.expandPathsAfterChange(this, expandedState, treeRoot);
     }
 
-
-
     /**
      * Delete the given bundle
      *
@@ -666,7 +631,6 @@ public class BundleTree extends DndTree {
         uiManager.getPersistenceManager().deleteBundle(bundle.getUrl());
         loadBundles();
     }
-
 
     /**
      * Create a new category under the given node
@@ -701,7 +665,33 @@ public class BundleTree extends DndTree {
         GuiUtils.expandPathsAfterChange(this, expandedState, treeRoot);
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(BundleTree.class);
 
+    public void renameCategory(DefaultMutableTreeNode renameNode) {
+        String category = getInput("Please enter the new sub-category name", "New Name: ", "", "", null, "", 20, null);
+        if (category == null) {
+            return;
+        }
+        String parentCategory = (String)nodeToData.get(renameNode.getParent());
+        String originalFullCategory   = ((parentCategory == null)
+            ? renameNode.toString()
+            : (parentCategory
+            + IdvPersistenceManager.CATEGORY_SEPARATOR
+            + renameNode.toString()));
+
+        String newFullCategory   = ((parentCategory == null)
+            ? category
+            : (parentCategory
+            + IdvPersistenceManager.CATEGORY_SEPARATOR
+            + category));
+//        logger.trace("parentCategory='{}' origFullCategory='{}' newFullCategory='{}'", parentCategory, originalFullCategory, newFullCategory);
+//        logger.trace("renameNode='{}'", renameNode);
+        boolean status = uiManager.getPersistenceManager().renameBundleCategory(bundleType, originalFullCategory, newFullCategory);
+        if (status) {
+            renameNode.setUserObject(category);
+        }
+//        logger.trace("rename status='{}'", status);
+    }
 
     /**
      * Create a new category under the given node
@@ -728,8 +718,6 @@ public class BundleTree extends DndTree {
         GuiUtils.expandPathsAfterChange(this, expandedState, treeRoot);
     }
 
-
-
     /**
      * Delete the given bundle category
      *
@@ -748,8 +736,6 @@ public class BundleTree extends DndTree {
         loadBundles();
     }
 
-
-
     /**
      * Find the data (either a SavedBundle or a category)
      * associated with the given  tree path
@@ -758,13 +744,12 @@ public class BundleTree extends DndTree {
      *
      * @return The data
      */
-
     private Object findDataAtPath(TreePath path) {
         if ((path == null) || (nodeToData == null)) {
             return null;
         }
         DefaultMutableTreeNode last =
-            (DefaultMutableTreeNode) path.getLastPathComponent();
+            (DefaultMutableTreeNode)path.getLastPathComponent();
         if (last == null) {
             return null;
         }
