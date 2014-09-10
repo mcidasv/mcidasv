@@ -35,30 +35,26 @@ package edu.wisc.ssec.mcidasv.control;
  */
 public class FrameComponentInfo {
 
-    /** Should we include image data */
+    /** Should we include image data? */
     private boolean isImage = true;
 
-    /** Should we include graphics data */
+    /** Should we include graphics data? */
     private boolean isGraphics = true;
 
-    /** Should we include color tables data */
+    /** Should we include color tables data? */
     private boolean isColorTable = true;
     
-    /** Should we include the annotation line */
+    /** Should we include the annotation line? */
     private boolean isAnnotation = true;
     
-    /** Should we reset the projection when the data is refreshed */
+    /** Should we reset the projection when the data is refreshed? */
     private boolean resetProjection = true;
     
-    /** Should we fake the date to preserve frame order */
+    /** Should we fake the date to preserve frame order? */
     private boolean fakeDateTime = false;
 
-    /**
-     * Constructor
-     *
-     *
-     */
-    public FrameComponentInfo() {}
+    public FrameComponentInfo() {
+    }
 
     /**
      * Copy constructor
@@ -81,14 +77,16 @@ public class FrameComponentInfo {
      * @param isImage The isImage parameter
      * @param isGraphics The isGraphics parameter
      * @param isColorTable The isColorTable parameter
-     *
+     * @param isAnnotation
+     * @param resetProjection
+     * @param fakeDateTime
      */
     public FrameComponentInfo(boolean isImage,
-    						  boolean isGraphics,
-    						  boolean isColorTable,
-    						  boolean isAnnotation,
-    						  boolean resetProjection,
-    						  boolean fakeDateTime) {
+                              boolean isGraphics,
+                              boolean isColorTable,
+                              boolean isAnnotation,
+                              boolean resetProjection,
+                              boolean fakeDateTime) {
         this.isImage = isImage;
         this.isGraphics = isGraphics;
         this.isColorTable = isColorTable;
@@ -210,20 +208,21 @@ public class FrameComponentInfo {
      * @return a string representation
      */
     public String toString() {
-        StringBuffer buf = new StringBuffer();
-        buf.append("isImage: ");
-        buf.append(this.isImage);
-        buf.append(", isGraphics: ");
-        buf.append(this.isGraphics);
-        buf.append(", isColorTable: ");
-        buf.append(this.isColorTable);
-        buf.append(", isAnnotation: ");
-        buf.append(this.isAnnotation);
-        buf.append(", resetProjection: ");
-        buf.append(this.resetProjection);
-        buf.append(", fakeDateTime: ");
-        buf.append(this.fakeDateTime);
-        return buf.toString();
+        // max possible length should be 120
+        return new StringBuilder(128)
+            .append("isImage: ")
+            .append(this.isImage)
+            .append(", isGraphics: ")
+            .append(this.isGraphics)
+            .append(", isColorTable: ")
+            .append(this.isColorTable)
+            .append(", isAnnotation: ")
+            .append(this.isAnnotation)
+            .append(", resetProjection: ")
+            .append(this.resetProjection)
+            .append(", fakeDateTime: ")
+            .append(this.fakeDateTime)
+            .toString();
     }
 
 }

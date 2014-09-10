@@ -157,7 +157,7 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
 
         master.getDisplay().addDisplayListener( new DisplayListener() {
             public void displayChanged(DisplayEvent de) {
-              if ((de.getId() == DisplayEvent.MOUSE_RELEASED)) {
+              if (de.getId() == DisplayEvent.MOUSE_RELEASED) {
                 try {
                   RealTuple position = getPosition();
                   doShare(SHARE_POSITION, position);
@@ -167,9 +167,8 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
               }
             }
         });
-
-	numFmt = new DecimalFormat();
-	numFmt.setMaximumFractionDigits(2);
+        numFmt = new DecimalFormat();
+        numFmt.setMaximumFractionDigits(2);
     }
 
     /**
@@ -183,7 +182,7 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
     }
 
     /**
-     * Make the probe with the specific <code>Color</code>.
+     * Make the probe with the specific {@code Color}.
      *
      * @param c  color for probe.
      *
@@ -196,7 +195,7 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
 
 
     /**
-     * Make the probe with the specific <code>ViewDescriptor</code>.
+     * Make the probe with the specific {@code ViewDescriptor}.
      *
      * @param view  view descriptor
      *
@@ -438,18 +437,22 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
         try {
             RealTuple location = (RealTuple)positionRef.getData();
           
-            if (location == null)
+            if (location == null) {
                 return;
+            }
 
-            if (image == null)
+            if (image == null) {
                 return;
+            }
 
             double[] vals = location.getValues();
-            if (vals[1] < -180)
+            if (vals[1] < -180) {
                 vals[1] += 360f;
+            }
 
-            if (vals[1] > 180)
+            if (vals[1] > 180) {
                 vals[1] -= 360f;
+            }
 
             if (earthTupleType != null) {
               RealTuple lonLat =
@@ -468,8 +471,7 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
               if ( ((FunctionType)image.getType()).getRange() instanceof RealTupleType ) { 
                 RealTuple tmp = (RealTuple)dat;
                 val = (tmp.getRealComponents())[0];
-              }
-              else {
+              } else {
                 val = (Real)dat;
               }
               float fval = (float)val.getValue();
@@ -483,31 +485,30 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
             LogUtil.logException("HydraImageProbe.updateLocationValue", e);
         }
 
-        if (tup != null)
+        if (tup != null) {
             locationValue = tup;
+        }
     }
 
     public NavigatedDisplay  getNavigatedDisplay() {
-      return (NavigatedDisplay) master;
+        return (NavigatedDisplay)master;
     }
 
     public static RealTupleType check2DEarthTuple(FlatField field) {
-      CoordinateSystem cs;
-      FunctionType ftype = (FunctionType) field.getType();
-      RealTupleType domain = ftype.getDomain();
-      if ( (domain.equals(RealTupleType.SpatialEarth2DTuple)) ||
-           (domain.equals(RealTupleType.LatitudeLongitudeTuple)) ) {
-        return domain;
-      } 
-      else if ((cs = domain.getCoordinateSystem()) != null) {
-        RealTupleType ref = cs.getReference();
-        if ( (ref.equals(RealTupleType.SpatialEarth2DTuple)) ||
-             (ref.equals(RealTupleType.LatitudeLongitudeTuple)) ) {
-           return ref;
+        CoordinateSystem cs;
+        FunctionType ftype = (FunctionType) field.getType();
+        RealTupleType domain = ftype.getDomain();
+        if ( (domain.equals(RealTupleType.SpatialEarth2DTuple)) ||
+            (domain.equals(RealTupleType.LatitudeLongitudeTuple)) ) {
+            return domain;
+        } else if ((cs = domain.getCoordinateSystem()) != null) {
+            RealTupleType ref = cs.getReference();
+            if (ref.equals(RealTupleType.SpatialEarth2DTuple) ||
+                ref.equals(RealTupleType.LatitudeLongitudeTuple)) {
+                return ref;
+            }
         }
-      }
-
-      return null;
+        return null;
     }
 
     private static TextDisplayable createValueDisplayer(final Color color)
@@ -516,12 +517,10 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
         DecimalFormat fmt = new DecimalFormat();
         fmt.setMaximumIntegerDigits(3);
         fmt.setMaximumFractionDigits(1);
-
         TextDisplayable td = new TextDisplayable(TextType.Generic);
         td.setLineWidth(2f);
         td.setColor(color);
         td.setTextSize(1.75f);
-
         return td;
     }
 
@@ -697,9 +696,6 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
         if ((probe != null) && (marker != null)) {
             try {
                 probe.setAutoSize(false);
-		/*
-                probe.setMarker(
-                    SelectorPoint.reduce(ShapeUtility.makeShape(marker))); */
                 probe.setAutoSize(true);
             } catch (Exception exc) {
                 logException("Setting marker", exc);
@@ -756,7 +752,6 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
         }
     }
 
-
     /**
      * Append any label information to the list of labels.
      *
@@ -767,6 +762,5 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
         super.getLegendLabels(labels, legendType);
         labels.add(positionText);
     }
-
 }
 
