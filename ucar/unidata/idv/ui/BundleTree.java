@@ -20,24 +20,16 @@
 
 package ucar.unidata.idv.ui;
 
-
 import edu.wisc.ssec.mcidasv.util.McVTextField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import org.w3c.dom.Element;
 
-
 import ucar.unidata.idv.*;
-
 
 import ucar.unidata.ui.DndTree;
 
-
-
 import ucar.unidata.util.FileManager;
-
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -60,11 +52,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
 import javax.swing.tree.*;
-
 
 /**
  * Class BundleTree Gives a tree gui for editing bundles
@@ -91,7 +79,7 @@ public class BundleTree extends DndTree {
     private DefaultTreeModel treeModel;
 
     /** A mapping from tree node to, either, category or SavedBundle */
-    private Hashtable nodeToData;
+    private Hashtable<DefaultMutableTreeNode, Object> nodeToData;
 
     /** The ui manager */
     private IdvUIManager uiManager;
@@ -183,7 +171,7 @@ public class BundleTree extends DndTree {
                 Object data = findDataAtPath(path);
                 if ( !SwingUtilities.isRightMouseButton(event)) {
                     if (event.getClickCount() > 1) {
-                        if ((data instanceof SavedBundle)) {
+                        if (data instanceof SavedBundle) {
                             doOpen((SavedBundle) data);
                         }
                     }
@@ -565,7 +553,7 @@ public class BundleTree extends DndTree {
 
         List allCategories =
             uiManager.getPersistenceManager().getAllCategories(bundleType);
-        nodeToData = new Hashtable();
+        nodeToData = new Hashtable<>();
         treeRoot.removeAllChildren();
         Hashtable catNodes    = new Hashtable();
         Hashtable fakeBundles = new Hashtable();
@@ -643,11 +631,11 @@ public class BundleTree extends DndTree {
             return;
         }
         String parentCat = (String) nodeToData.get(parentNode);
-        String fullCat   = ((parentCat == null)
-                            ? cat
-                            : (parentCat
-                               + IdvPersistenceManager.CATEGORY_SEPARATOR
-                               + cat));
+        String fullCat   = (parentCat == null)
+                           ? cat
+                           : (parentCat
+                              + IdvPersistenceManager.CATEGORY_SEPARATOR
+                              + cat);
         if ( !uiManager.getPersistenceManager().addBundleCategory(bundleType,
                 fullCat)) {
             LogUtil.userMessage(
@@ -665,32 +653,41 @@ public class BundleTree extends DndTree {
         GuiUtils.expandPathsAfterChange(this, expandedState, treeRoot);
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(BundleTree.class);
-
+    /**
+     * Rename an existing category.
+     *
+     * @param renameNode Node representing the category to be renamed.
+     * Cannot be {@code null}.
+     */
     public void renameCategory(DefaultMutableTreeNode renameNode) {
-        String category = getInput("Please enter the new sub-category name", "New Name: ", "", "", null, "", 20, null);
-        if (category == null) {
-            return;
-        }
-        String parentCategory = (String)nodeToData.get(renameNode.getParent());
-        String originalFullCategory   = ((parentCategory == null)
-            ? renameNode.toString()
-            : (parentCategory
-            + IdvPersistenceManager.CATEGORY_SEPARATOR
-            + renameNode.toString()));
+        String newCategory = getInput("Please enter the new sub-category name", "New Name: ", "", "", null, "", 20, null);
+        if (newCategory != null) {
+            String originalCategory     = renameNode.toString();
+            String parentCategory       = (String) nodeToData.get(renameNode.getParent());
+            String originalFullCategory = (parentCategory == null)
+                                          ? originalCategory
+                                          : (parentCategory
+                                             + IdvPersistenceManager.CATEGORY_SEPARATOR
+                                             + originalCategory);
+            String newFullCategory      = (parentCategory == null)
+                                          ? newCategory
+                                          : (parentCategory
+                                             + IdvPersistenceManager.CATEGORY_SEPARATOR
+                                             + newCategory);
 
-        String newFullCategory   = ((parentCategory == null)
-            ? category
-            : (parentCategory
-            + IdvPersistenceManager.CATEGORY_SEPARATOR
-            + category));
-//        logger.trace("parentCategory='{}' origFullCategory='{}' newFullCategory='{}'", parentCategory, originalFullCategory, newFullCategory);
-//        logger.trace("renameNode='{}'", renameNode);
-        boolean status = uiManager.getPersistenceManager().renameBundleCategory(bundleType, originalFullCategory, newFullCategory);
-        if (status) {
-            renameNode.setUserObject(category);
+            boolean status =
+                uiManager.getPersistenceManager().renameBundleCategory(bundleType,
+                    originalFullCategory, newFullCategory);
+
+            if (status) {
+                nodeToData.put(renameNode, newFullCategory);
+                renameNode.setUserObject(newCategory);
+                treeModel.nodeChanged(renameNode);
+                uiManager.favoriteBundlesChanged();
+            } else {
+                LogUtil.userMessage("Could not rename '" + renameNode.toString() + "' to '" + newCategory + "'.");
+            }
         }
-//        logger.trace("rename status='{}'", status);
     }
 
     /**

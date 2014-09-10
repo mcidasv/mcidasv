@@ -1996,21 +1996,37 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         return true;
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(IdvPersistenceManager.class);
+//    private static final Logger logger = LoggerFactory.getLogger(IdvPersistenceManager.class);
 
-    public boolean renameBundleCategory(int bundleType, String originalCategory, String newCategory) {
-        String originalPath = StringUtil.join(File.separator, stringToCategories(originalCategory));
-        String newPath = StringUtil.join(File.separator, stringToCategories(newCategory));
-        File originalFile = new File(IOUtil.joinDir(getBundleDirectory(bundleType), originalPath));
-        File newFile = new File(IOUtil.joinDir(getBundleDirectory(bundleType), newPath));
-//        logger.trace("original='{}' new='{}'", originalFile, newFile);
+    /**
+     * Change the name of {@code originalCategory} to {@code newCategory}.
+     *
+     * @param bundleType Type of bundle (e.g. favorites).
+     * @param originalCategory Original category name. Cannot be {@code null}.
+     * @param newCategory New name of {@code originalCategory}.
+     * Cannot be {@code null}.
+     *
+     * @return {@code true} if {@code originalCategory} was successfully
+     * renamed {@code newCategory}. {@code false} otherwise.
+     */
+    public boolean renameBundleCategory(int bundleType,
+                                        String originalCategory,
+                                        String newCategory) {
+        String originalPath =
+            StringUtil.join(File.separator,
+                            stringToCategories(originalCategory));
+
+        String newPath = StringUtil.join(File.separator,
+                                         stringToCategories(newCategory));
+        File originalFile =
+            new File(IOUtil.joinDir(getBundleDirectory(bundleType),
+                                    originalPath));
+        File newFile =
+            new File(IOUtil.joinDir(getBundleDirectory(bundleType), newPath));
+
         boolean status = false;
         if (originalFile.exists() && !newFile.exists()) {
-            originalFile.renameTo(newFile);
-            status = !originalFile.exists() && newFile.exists();
-//            logger.trace("second check: status={} original.exists='{}' new.exists='{}'", status, originalFile.exists(), newFile.exists());
-        } else {
-//            logger.trace("failed first check: original.exists='{}' new.exists='{}'", originalFile.exists(), newFile.exists());
+            status = originalFile.renameTo(newFile);
         }
         return status;
     }
