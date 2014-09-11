@@ -25,18 +25,22 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.util;
 
 import ch.qos.logback.core.joran.spi.NoAutoStart;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RolloverFailure;
-import ch.qos.logback.core.rolling.helper.CompressionMode;
-import ch.qos.logback.core.rolling.helper.FileFilterUtil;
 
 import java.io.File;
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 
 /**
  * This is a Logback {@literal "triggering policy"} that forces a log
@@ -58,10 +62,10 @@ public class StartupTriggeringPolicy<E>
     private void renameOldLogDirectory() {
         String userpath = System.getProperty("mcv.userpath");
         if (userpath != null) {
-            String oldLogPath = userpath + File.separatorChar + "logs";
-            String newLogPath = userpath + File.separatorChar + "archived_logs";
-            File oldDirectory = new File(oldLogPath);
-            File newDirectory = new File(newLogPath);
+            Path oldLogPath = Paths.get(userpath, "logs");
+            Path newLogPath = Paths.get(userpath, "archived_logs");
+            File oldDirectory = oldLogPath.toFile();
+            File newDirectory = newLogPath.toFile();
 
             // T F = rename
             // F F = attempt to create
@@ -79,7 +83,7 @@ public class StartupTriggeringPolicy<E>
                 addWarn("Both log directories exist; moving files from '" + oldLogPath + "' and attempting to delete");
                 removeOldLogDirectory(oldDirectory, newDirectory);
             } else if (!oldDirectory.exists() && newDirectory.exists()) {
-                addInfo('\''+oldLogPath+"' does not exist; no cleanup is required");
+                addInfo('\''+oldLogPath.toString()+"' does not exist; no cleanup is required");
             } else {
                 addWarn("Unknown state! oldDirectory.exists()='"+oldDirectory.exists()+"' newDirectory.exists()='"+newDirectory.exists()+'\'');
             }
@@ -119,7 +123,10 @@ public class StartupTriggeringPolicy<E>
      * of {@code oldDirectory}. Be aware that this thread has not yet had
      * {@literal "start"} called.
      */
-    private Runnable asyncClearFiles(final File oldDirectory, final File newDirectory, final File[] files) {
+    private Runnable asyncClearFiles(final File oldDirectory,
+                                     final File newDirectory,
+                                     final File[] files)
+    {
         return new Runnable() {
             public void run() {
                 boolean success = true;
@@ -152,9 +159,9 @@ public class StartupTriggeringPolicy<E>
     private void cleanupArchivedLogs(int keepFiles) {
         String userpath = System.getProperty("mcv.userpath");
         if (userpath != null) {
-            File logDirectory = new File(userpath + File.separatorChar + "archived_logs");
-            File[] files = logDirectory.listFiles();
-            if (files.length > keepFiles) {
+            Path logDirectory = Paths.get(userpath, "archived_logs");
+            File[] files = logDirectory.toFile().listFiles();
+            if ((files != null) && (files.length > keepFiles)) {
                 new Thread(asyncCleanFiles(keepFiles, files)).start();
             }
             new Thread(asyncCleanReallyOldFiles()).start();
@@ -174,24 +181,29 @@ public class StartupTriggeringPolicy<E>
             public void run() {
                 String userpath = System.getProperty("mcv.userpath");
                 if (userpath != null) {
-                    File oldArchivedLog = new File(userpath + File.separatorChar + "mcidasv.1.log.zip");
-                    if (oldArchivedLog.exists()) {
-                        addInfo("removing '" + oldArchivedLog + '\'');
-                        oldArchivedLog.delete();
-                    }
-                    oldArchivedLog = new File(userpath + File.separatorChar + "mcidasv.2.log.zip");
-                    if (oldArchivedLog.exists()) {
-                        addInfo("removing '" + oldArchivedLog + '\'');
-                        oldArchivedLog.delete();
-                    }
-                    oldArchivedLog = new File(userpath + File.separatorChar + "mcidasv.3.log.zip");
-                    if (oldArchivedLog.exists()) {
-                        addInfo("removing '" + oldArchivedLog + '\'');
-                        oldArchivedLog.delete();
-                    }
+                    Path userDirectory = Paths.get(userpath);
+                    removePath(userDirectory.resolve("mcidasv.1.log.zip"));
+                    removePath(userDirectory.resolve("mcidasv.2.log.zip"));
+                    removePath(userDirectory.resolve("mcidasv.3.log.zip"));
                 }
             }
         };
+    }
+
+    /**
+     * Convenience method that attempts to delete {@code pathToRemove}.
+     *
+     * @param pathToRemove {@code Path} to the file to delete.
+     * Cannot be {@code null}.
+     */
+    private void removePath(Path pathToRemove) {
+        try {
+            if (Files.deleteIfExists(pathToRemove)) {
+                addInfo("removing '"+pathToRemove+'\'');
+            }
+        } catch (IOException e) {
+            addError("An exception occurred while trying to remove '"+pathToRemove+'\'', e);
+        }
     }
 
     /**
@@ -215,7 +227,11 @@ public class StartupTriggeringPolicy<E>
                 });
                 for (int i = keep-1; i < files.length; i++) {
                     addInfo("removing '"+files[i]+'\'');
-                    files[i].delete();
+                    try {
+                        Files.deleteIfExists(files[i].toPath());
+                    } catch (IOException e) {
+                        addWarn("An exception occurred while trying to remove '"+files[i]+'\'');
+                    }
                 }
             }
         };
