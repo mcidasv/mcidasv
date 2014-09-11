@@ -31,6 +31,7 @@ package edu.wisc.ssec.mcidasv.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.util.Date;
 import java.util.concurrent.Future;
 
@@ -42,7 +43,6 @@ import ch.qos.logback.core.rolling.helper.AsynchronousCompressor;
 import ch.qos.logback.core.rolling.helper.CompressionMode;
 import ch.qos.logback.core.rolling.helper.Compressor;
 import ch.qos.logback.core.rolling.helper.FileFilterUtil;
-import ch.qos.logback.core.rolling.helper.RenameUtil;
 import ch.qos.logback.core.util.FileUtil;
 
 /**
@@ -55,8 +55,6 @@ import ch.qos.logback.core.util.FileUtil;
 public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
 
     private Compressor compressor;
-
-    private RenameUtil renameUtil = new RenameUtil();
 
     Future<?> future;
 
@@ -74,10 +72,10 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
         if (compressionMode == CompressionMode.NONE) {
             String src = getParentsRawFileProperty();
             if (src != null) {
-                if (!isFileEmpty(src)) {
-                    renameByCopying(src, elapsedPeriodsFileName);
-                } else {
+                if (isFileEmpty(src)) {
                     addInfo("File '"+src+"' exists and is zero-length; avoiding copy");
+                } else {
+                    renameByCopying(src, elapsedPeriodsFileName);
                 }
             } // else { nothing to do if CompressionMode == NONE and parentsRawFileProperty == null }
         } else {
@@ -95,14 +93,18 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
         }
     }
 
-    Future asyncCompress(String nameOfFile2Compress, String nameOfCompressedFile, String innerEntryName)
-        throws RolloverFailure {
+    Future<?> asyncCompress(String nameOfFile2Compress,
+                            String nameOfCompressedFile, String innerEntryName)
+        throws RolloverFailure
+    {
         AsynchronousCompressor ac = new AsynchronousCompressor(compressor);
         return ac.compressAsynchronously(nameOfFile2Compress, nameOfCompressedFile, innerEntryName);
     }
 
-    Future renamedRawAndAsyncCompress(String nameOfCompressedFile, String innerEntryName)
-        throws RolloverFailure {
+    Future<?> renamedRawAndAsyncCompress(String nameOfCompressedFile,
+                                         String innerEntryName)
+        throws RolloverFailure
+    {
         String parentsRawFile = getParentsRawFileProperty();
         String tmpTarget = parentsRawFile + System.nanoTime() + ".tmp";
         renameByCopying(parentsRawFile, tmpTarget);
@@ -118,25 +120,14 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
      * @throws RolloverFailure
      */
     public void renameByCopying(String src, String target)
-        throws RolloverFailure {
-
+        throws RolloverFailure
+    {
         FileUtil fileUtil = new FileUtil(getContext());
         fileUtil.copy(src, target);
-
-        FileOutputStream writer = null;
-        try {
-            writer = new FileOutputStream(src);
+        try (FileOutputStream writer = new FileOutputStream(src)) {
             addInfo("zeroing out " + src);
         } catch (IOException e) {
             addError("Could not reset " + src, e);
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    addError("Could not close " + src, e);
-                }
-            }
         }
     }
 
@@ -149,7 +140,6 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
      */
     private static boolean isFileEmpty(String filepath) {
         File f = new File(filepath);
-        return f.exists() && f.length() == 0L;
+        return f.exists() && (f.length() == 0L);
     }
-
 }
