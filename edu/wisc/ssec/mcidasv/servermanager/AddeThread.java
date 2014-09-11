@@ -102,7 +102,7 @@ public class AddeThread extends Thread {
         for (String cmd : cmds) {
             temp.append(cmd).append(' ');
         }
-        logger.info("Starting mcservl: {}"+temp.toString());
+        logger.info("Starting mcservl: {}", temp.toString());
         temp = new StringBuilder(1024).append("{ ");
         for (String e : env) {
             temp.append(e).append(", ");
