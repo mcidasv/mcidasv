@@ -45,13 +45,11 @@ import static ucar.unidata.util.IOUtil.joinDir;
 import static ucar.unidata.util.IOUtil.makeDir;
 import static ucar.unidata.util.IOUtil.moveFile;
 import static ucar.unidata.util.IOUtil.readContents;
-import static ucar.unidata.util.IOUtil.stripExtension;
 import static ucar.unidata.util.IOUtil.writeFile;
 import static ucar.unidata.util.IOUtil.writeTo;
 import static ucar.unidata.util.LogUtil.userErrorMessage;
 import static ucar.unidata.util.LogUtil.userMessage;
 import static ucar.unidata.util.Misc.toList;
-import static ucar.unidata.util.StringUtil.join;
 import static ucar.unidata.util.StringUtil.listToStringArray;
 import static ucar.unidata.util.StringUtil.removeWhitespace;
 import static ucar.unidata.util.StringUtil.replace;
@@ -115,12 +113,10 @@ import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyFunction;
-import org.python.core.PyList;
 import org.python.core.PyStringMap;
 import org.python.core.PySyntaxError;
 import org.python.core.PySystemState;
 import org.python.core.PyTableCode;
-import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
 
 import org.slf4j.Logger;
@@ -1111,85 +1107,36 @@ public class JythonManager extends IdvManager implements ActionListener {
     public boolean getInError() {
         return inError;
     }
-    
-    /**
-     * Setup some basic state in the given interpreter.
-     * Set the idv and datamanager variables.
-     *
-     * @param interpreter The interpreter to initialize
-     */
-    protected void initBasicInterpreter(PythonInterpreter interpreter) {
-        doBasicImports(interpreter);
-        interpreter.set("idv", getIdv());
-        interpreter.set("interpreter", interpreter);
-        interpreter.set("datamanager", getDataManager());
-        interpreter.set("installmanager", getInstallManager());
-    }
 
-    /**
-     * Intializes a given {@link PythonInterpreter} so that it can be used to
-     * {@link PythonInterpreter#exec exec} a Jython Library module.
-     *
-     * @param interpreter The interpreter to initialize. Cannot be {@code null}.
-     */
-    protected void initLibraryInterpreter(PythonInterpreter interpreter) {
-        doLibraryImports(interpreter);
-        interpreter.set("idv", getIdv());
-        interpreter.set("interpreter", interpreter);
-        interpreter.set("datamanager", getDataManager());
-        interpreter.set("installmanager", getInstallManager());
-    }
-    
     public static final String CONSOLE_INIT = "/edu/wisc/ssec/mcidasv/resources/python/console_init.py";
     public static final String LIBRARY_INIT = "/edu/wisc/ssec/mcidasv/resources/python/library_init.py";
-    
-    protected static void doLibraryImports(PythonInterpreter interpreter) {
-        // TODO(jon): revisit this asap
-        try {
-            InputStream consoleInitializer = IOUtil.getInputStream(LIBRARY_INIT, JythonManager.class);
-            interpreter.execfile(consoleInitializer, LIBRARY_INIT);
-            consoleInitializer.close();
-        } catch (IOException e) {
-            logException("Failed to initialize Jython's sys.path.", e);
-        }
-    }
+
     /**
-     * initialize the interp
+     * Intializes a given {@link PythonInterpreter} so that it can either be
+     * used to {@link PythonInterpreter#exec exec} a Jython Library module.
      *
-     * @param interpreter the interp to initi
+     * @param initScript Jython script that does {@literal "sys.path"} setup.
+     * Cannot be {@code null}.
+     * @param interpreter Interpreter to initialize. Cannot be {@code null}.
      */
-    protected static void doBasicImports(PythonInterpreter interpreter) {
-        // TODO(jon): revisit this asap
-        
-        try {
-            InputStream consoleInitializer = IOUtil.getInputStream(CONSOLE_INIT, JythonManager.class);
-            interpreter.execfile(consoleInitializer, CONSOLE_INIT);
-            consoleInitializer.close();
+    protected void initJythonEnvironment(String initScript,
+                                         PythonInterpreter interpreter)
+    {
+        // TODO(jon): has to be a better approach
+        try (InputStream consoleInitializer =
+                 IOUtil.getInputStream(initScript, JythonManager.class))
+        {
+            interpreter.execfile(consoleInitializer, initScript);
+            interpreter.set("idv", getIdv());
+            interpreter.set("_idv", getIdv());
+            interpreter.set("interpreter", interpreter);
+            interpreter.set("datamanager", getDataManager());
+            interpreter.set("installmanager", getInstallManager());
         } catch (IOException e) {
             logException("Failed to initialize Jython's sys.path.", e);
         }
-        
-        // interpreter.exec("import sys");
-        // interpreter.exec("import java");
-        // interpreter.exec("sys.add_package('visad')");
-        // interpreter.exec("sys.add_package('visad.python')");
-        // interpreter.exec("sys.add_package('visad.data.units')");
-        // interpreter.exec("from visad.python.JPythonMethods import *");
-        // interpreter.exec("import ucar.unidata.data.grid.GridUtil as GridUtil");
-        // interpreter.exec("import ucar.unidata.data.DataSelection as DataSelection");
-        // interpreter.exec("import ucar.unidata.data.GeoLocationInfo as GeoLocationInfo");
-        // interpreter.exec("import ucar.unidata.data.GeoSelection as GeoSelection");
-        // interpreter.exec("from java.lang import Integer");
-        // interpreter.exec("import ucar.unidata.data.grid.GridMath as GridMath");
-        // interpreter.exec("import ucar.unidata.data.DataUtil as DataUtil");
-        // interpreter.exec("import ucar.visad.Util as Util");
-        // interpreter.exec("import ucar.unidata.util.StringUtil as StringUtil");
-        // interpreter.exec("import ucar.unidata.data.grid.DerivedGridFactory as DerivedGridFactory");
-        // interpreter.exec("from console_init import deprecated");
-        //interpreter.exec("from visad import FlatField");
-        //interpreter.exec("from visad import FieldImpl");
     }
-    
+
     /**
      *  Initialize the given interpreter. Add in variables for "idv" and "datamanager"
      *  If initVisadLibs is true then load in the visad libs, etc.
@@ -1200,7 +1147,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @param interpreter The interpreter to initialize
      */
     private void initInterpreter(PythonInterpreter interpreter) {
-        initBasicInterpreter(interpreter);
+        initJythonEnvironment(CONSOLE_INIT, interpreter);
         if (DerivedDataDescriptor.classes != null) {
             for (int i = 0; i < DerivedDataDescriptor.classes.size(); i++) {
                 String c = (String)DerivedDataDescriptor.classes.get(i);
@@ -1659,7 +1606,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @param dataChoice The data choice to delete
      */
     public void deleteKeyPressed(DataChoice dataChoice) {
-        if ((dataChoice == null) || !(dataChoice instanceof DerivedDataChoice)) {
+        if (!(dataChoice instanceof DerivedDataChoice)) {
             return;
         }
         DerivedDataDescriptor ddd =
@@ -1774,7 +1721,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      *
      * @return List of menu items
      */
-    public List doMakeEditMenuItems() {
+    public List<JMenuItem> doMakeEditMenuItems() {
         return doMakeEditMenuItems(descriptorDataSource);
     }
     
@@ -1864,7 +1811,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return end user formulas
      */
     public List<DerivedDataDescriptor> getEndUserDescriptors() {
-        List<DerivedDataDescriptor> formulas = new ArrayList<DerivedDataDescriptor>(descriptors.size());
+        List<DerivedDataDescriptor> formulas = new ArrayList<>(descriptors.size());
         for (DerivedDataDescriptor ddd : descriptors) {
             if (ddd.getIsEndUser()) {
                 formulas.add(ddd);
@@ -1879,7 +1826,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return local descriptors
      */
     public List<DerivedDataDescriptor> getLocalDescriptors() {
-        List<DerivedDataDescriptor> formulas = new ArrayList<DerivedDataDescriptor>(descriptors.size());
+        List<DerivedDataDescriptor> formulas = new ArrayList<>(descriptors.size());
         for (DerivedDataDescriptor ddd : descriptors) {
             if (ddd.getIsLocalUsers()) {
                 formulas.add(ddd);
@@ -1894,7 +1841,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @return end user formulas
      */
     public List<DerivedDataDescriptor> getDefaultDescriptors() {
-        List<DerivedDataDescriptor> formulas = new ArrayList<DerivedDataDescriptor>(descriptors.size());
+        List<DerivedDataDescriptor> formulas = new ArrayList<>(descriptors.size());
         for (DerivedDataDescriptor ddd : descriptors) {
             if (ddd.getIsDefault()) {
                 formulas.add(ddd);
@@ -1909,7 +1856,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @param descriptor The descriptor for the formula.
      */
     public void showFormulaDialog(DerivedDataDescriptor descriptor) {
-        showFormulaDialog(descriptor, (descriptor == null));
+        showFormulaDialog(descriptor, descriptor == null);
     }
     
     /**
@@ -1919,7 +1866,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @param isNew is this a new one or are we just changing it
      */
     public void showFormulaDialog(DerivedDataDescriptor descriptor, boolean isNew) {
-        List<String> categories = new ArrayList<String>();
+        List<String> categories = new ArrayList<>();
         DescriptorDataSource dds = getDescriptorDataSource();
         if (dds != null) {
             List descriptors = dds.getDescriptors();
@@ -2119,77 +2066,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
         return result;
     }
-    
-    /**
-     * main
-     * 
-     * @param args args
-     * 
-     * @throws Exception on badness
-     */
-    public static void main(String[] args) throws Exception {
-        for (int i = 0; i < args.length; i++) {
-            PythonInterpreter interpreter = new PythonInterpreter();
-            doBasicImports(interpreter);
-            String mod = stripExtension(getFileTail(args[i]));
-            interpreter.execfile(new java.io.FileInputStream(args[i]), mod);
-            PyStringMap seq = (PyStringMap)interpreter.getLocals();
-            PyList keys = seq.keys();
-            PyList items = seq.items();
-            StringBuilder sb = new StringBuilder();
-            String modDoc = "";
-            List funcs = new ArrayList();
-            for (int itemIdx = 0; itemIdx < items.__len__(); itemIdx++) {
-                PyTuple pair = (PyTuple)items.__finditem__(itemIdx);
-                if (!(pair.__finditem__(1) instanceof PyFunction)) {
-                    if ("__doc__".equals(pair.__finditem__(0).toString())) {
-                        modDoc = pair.__finditem__(1).toString();
-                    }
-                    continue;
-                }
-                funcs.add(new Object[] { pair.__finditem__(0).toString(), pair.__finditem__(1) });
-            }
-            
-            funcs = Misc.sortTuples(funcs, true);
-            
-            for (int itemIdx = 0; itemIdx < funcs.size(); itemIdx++) {
-                Object[] pair = (Object[])funcs.get(itemIdx);
-                PyFunction func = (PyFunction)pair[1];
-                sb.append("\n<meta name=\"jhid\" value=\"")
-                    .append(func.__name__).append("\">")
-                    .append("\n<p><a name=\"").append(func.__name__)
-                    .append("\"></a><code class=\"command\">")
-                    .append(func.__name__ ).append('(');
-                PyTableCode tc = (PyTableCode)func.func_code;
-                for (int argIdx = 0; argIdx < tc.co_argcount; argIdx++) {
-                    if (argIdx > 0) {
-                        sb.append(", ");
-                    }
-                    sb.append(tc.co_varnames[argIdx]);
-                }
-                sb.append("):</code><p style=\"padding:0;margin-left:20;margin-top:0\">\n");
-                PyObject docString = func.getFuncDoc();
-                if (docString != Py.None) {
-                    String doc = docString.toString().trim();
-                    doc = replace(doc,"\n","<br>");
-                    doc = replace(doc, "[", "\\[");
-                    doc = replace(doc, "]", "\\]");
-                    List<String> toks = split(doc, "\n", true, true);
-                    sb.append(join("\n", toks));
-                }
-                sb.append("</p>");
-            }
-            System.out.printf("<a name=\"%s\">\n", mod);
-            System.out.printf("<h2> Module: %s</h2>\n", mod);
-            if (!"None".equals(modDoc)) {
-                System.out.println(modDoc);
-            }
-            System.out.println("<hr>");
-            System.out.println(sb.toString());
-            //            interpreter.exec("dir(" + mod +")");
-        }
-    }
-    
+
     /**
      * Class LibHolder holds all things for a single lib
      * 
@@ -2281,7 +2158,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             if (functions == null) {
 
                 PythonInterpreter interpreter = new PythonInterpreter();
-                jythonManager.initLibraryInterpreter(interpreter);
+                jythonManager.initJythonEnvironment(LIBRARY_INIT, interpreter);
                 try {
                     interpreter.exec(getText());
                 } catch (Exception exc) {

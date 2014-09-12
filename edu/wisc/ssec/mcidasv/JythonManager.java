@@ -54,8 +54,8 @@ import ucar.unidata.idv.ui.JythonShell;
  */
 public class JythonManager extends ucar.unidata.idv.JythonManager {
     
-    /** Trusty logging object. */
-    private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
+//    /** Trusty logging object. */
+//    private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
     
     /** Associated Jython Shell. May be {@code null}. */
     private JythonShell jythonShell;
@@ -114,24 +114,12 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
      */
     @Override public void removeInterpreter(PythonInterpreter interpreter) {
         super.removeInterpreter(interpreter);
-        if (jythonShell != null && !jythonShell.isShellResetting() && jythonShell.getInterpreter().equals(interpreter)) {
+        if ((jythonShell != null) && !jythonShell.isShellResetting() && jythonShell.getInterpreter().equals(interpreter)) {
             jythonShell.close();
             jythonShell = null;
         }
     }
-    
-    /**
-     * Overridden so that McIDAS-V can inject a variable named {@code _idv}
-     * into {@code interpreter's} globals.
-     * 
-     * @param interpreter Jython interpreter being initialized by the IDV. Cannot be {@code null}.
-     */
-    @Override protected void initBasicInterpreter(PythonInterpreter interpreter) {
-        interpreter.set("_idv", getIdv());
-        interpreter.set("idv", getIdv());
-        super.initBasicInterpreter(interpreter);
-    }
-    
+
     /**
      * Overridden so that McIDAS-V can add an {@code islInterpreter} object
      * to the interpreter's locals (before executing the contents of {@code}.
