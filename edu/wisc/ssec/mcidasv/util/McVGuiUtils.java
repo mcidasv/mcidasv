@@ -1602,15 +1602,16 @@ public class McVGuiUtils implements Constants {
     // thing below here are courtesy http://tips4java.wordpress.com/2008/11/13/swing-utils/
 
     /**
-     * Convenience method for searching below <code>container</code> in the
+     * Convenience method for searching below {@code container} in the
      * component hierarchy and return nested components that are instances of
-     * class <code>clazz</code> it finds. Returns an empty list if no such
+     * class {@code clazz} it finds. Returns an empty list if no such
      * components exist in the container.
      * <P>
      * Invoking this method with a class parameter of JComponent.class
      * will return all nested components.
      * <P>
-     * This method invokes getDescendantsOfType(clazz, container, true)
+     * This method invokes
+     * {@link #getDescendantsOfType(Class, java.awt.Container, boolean)}
      *
      * @param clazz the class of components whose instances are to be found.
      * @param container the container at which to begin the search
@@ -1622,9 +1623,9 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Convenience method for searching below <code>container</code> in the
+     * Convenience method for searching below {@code container} in the
      * component hierarchy and return nested components that are instances of
-     * class <code>clazz</code> it finds. Returns an empty list if no such
+     * class {@code clazz} it finds. Returns an empty list if no such
      * components exist in the container.
      * <P>
      * Invoking this method with a class parameter of JComponent.class
@@ -1638,32 +1639,33 @@ public class McVGuiUtils implements Constants {
      */
     public static <T extends JComponent> List<T> getDescendantsOfType(
         Class<T> clazz, Container container, boolean nested) {
-        List<T> tList = new ArrayList<T>();
+        List<T> tList = new ArrayList<>();
         for (Component component : container.getComponents()) {
             if (clazz.isAssignableFrom(component.getClass())) {
                 tList.add(clazz.cast(component));
             }
             if (nested || !clazz.isAssignableFrom(component.getClass())) {
-                tList.addAll(McVGuiUtils.<T>getDescendantsOfType(clazz,
-                    (Container) component, nested));
+                tList.addAll(McVGuiUtils.getDescendantsOfType(clazz,
+                    (Container)component, nested));
             }
         }
         return tList;
     }
 
     /**
-     * Convenience method that searches below <code>container</code> in the
+     * Convenience method that searches below {@code container} in the
      * component hierarchy and returns the first found component that is an
-     * instance of class <code>clazz</code> having the bound property value.
+     * instance of class {@code clazz} having the bound property value.
      * Returns {@code null} if such component cannot be found.
      * <P>
-     * This method invokes getDescendantOfType(clazz, container, property, value,
-     * true)
+     * This method invokes
+     * {@link #getDescendantOfType(Class, java.awt.Container, String, Object, boolean)}
      *
      * @param clazz the class of component whose instance is to be found.
      * @param container the container at which to begin the search
      * @param property the className of the bound property, exactly as expressed in
-     * the accessor e.g. "Text" for getText(), "Value" for getValue().
+     * the accessor e.g. {@literal "Text"} for getText(), {@literal "Value"}
+     * for getValue().
      * @param value the value of the bound property
      * @return the component, or null if no such component exists in the
      * container
@@ -1672,111 +1674,128 @@ public class McVGuiUtils implements Constants {
      */
     public static <T extends JComponent> T getDescendantOfType(
         Class<T> clazz, Container container, String property, Object value)
-        throws IllegalArgumentException {
+        throws IllegalArgumentException
+    {
         return getDescendantOfType(clazz, container, property, value, true);
     }
 
     /**
-     * Convenience method that searches below <code>container</code> in the
+     * Convenience method that searches below {@code container} in the
      * component hierarchy and returns the first found component that is an
-     * instance of class <code>clazz</code> and has the bound property value.
+     * instance of class {@code clazz} and has the bound property value.
      * Returns {@code null} if such component cannot be found.
      *
      * @param clazz the class of component whose instance to be found.
      * @param container the container at which to begin the search
      * @param property the className of the bound property, exactly as expressed in
-     * the accessor e.g. "Text" for getText(), "Value" for getValue().
+     * the accessor e.g. {@literal "Text"} for getText(), {@literal "Value"}
+     * for getValue().
      * @param value the value of the bound property
      * @param nested true to list components nested within another component
-     * which is also an instance of <code>clazz</code>, false otherwise
+     * which is also an instance of {@code clazz}, false otherwise.
+     *
      * @return the component, or null if no such component exists in the
-     * container
+     * container.
+     *
      * @throws java.lang.IllegalArgumentException if the bound property does
-     * not exist for the class or cannot be accessed
+     * not exist for the class or cannot be accessed.
      */
     public static <T extends JComponent> T getDescendantOfType(Class<T> clazz,
-                                                               Container container, String property, Object value, boolean nested)
-        throws IllegalArgumentException {
+                                                               Container container,
+                                                               String property,
+                                                               Object value,
+                                                               boolean nested)
+        throws IllegalArgumentException
+    {
         List<T> list = getDescendantsOfType(clazz, container, nested);
         return getComponentFromList(clazz, list, property, value);
     }
 
     /**
-     * Convenience method for searching below <code>container</code> in the
+     * Convenience method for searching below {@code container} in the
      * component hierarchy and return nested components of class
-     * <code>clazz</code> it finds.  Returns an empty list if no such
+     * {@code clazz} it finds.  Returns an empty list if no such
      * components exist in the container.
      * <P>
-     * This method invokes getDescendantsOfClass(clazz, container, true)
+     * This method invokes
+     * {@link #getDescendantsOfClass(Class, java.awt.Container, boolean)}.
      *
      * @param clazz the class of components to be found.
      * @param container the container at which to begin the search
      * @return the List of components
      */
     public static <T extends JComponent> List<T> getDescendantsOfClass(
-        Class<T> clazz, Container container) {
+        Class<T> clazz, Container container)
+    {
         return getDescendantsOfClass(clazz, container, true);
     }
 
     /**
-     * Convenience method for searching below <code>container</code> in the
+     * Convenience method for searching below {@code container} in the
      * component hierarchy and return nested components of class
-     * <code>clazz</code> it finds.  Returns an empty list if no such
+     * {@code clazz} it finds.  Returns an empty list if no such
      * components exist in the container.
      *
      * @param clazz the class of components to be found.
      * @param container the container at which to begin the search
      * @param nested true to list components nested within another listed
      * component, false otherwise
+     *
      * @return the List of components
      */
     public static <T extends JComponent> List<T> getDescendantsOfClass(
-        Class<T> clazz, Container container, boolean nested) {
-        List<T> tList = new ArrayList<T>();
+        Class<T> clazz, Container container, boolean nested)
+    {
+        List<T> tList = new ArrayList<>();
         for (Component component : container.getComponents()) {
             if (clazz.equals(component.getClass())) {
                 tList.add(clazz.cast(component));
             }
             if (nested || !clazz.equals(component.getClass())) {
-                tList.addAll(McVGuiUtils.<T>getDescendantsOfClass(clazz,
-                    (Container) component, nested));
+                tList.addAll(McVGuiUtils.getDescendantsOfClass(clazz,
+                    (Container)component, nested));
             }
         }
         return tList;
     }
 
     /**
-     * Convenience method that searches below <code>container</code> in the
+     * Convenience method that searches below {@code container} in the
      * component hierarchy in a depth first manner and returns the first
-     * found component of class <code>clazz</code> having the bound property
+     * found component of class {@code clazz} having the bound property
      * value.
      * <P>
      * Returns {@code null} if such component cannot be found.
      * <P>
-     * This method invokes getDescendantOfClass(clazz, container, property,
-     * value, true)
+     * This method invokes
+     * {@link #getDescendantOfClass(Class, java.awt.Container, String, Object, boolean)}
      *
      * @param clazz the class of component to be found.
      * @param container the container at which to begin the search
      * @param property the className of the bound property, exactly as expressed in
-     * the accessor e.g. "Text" for getText(), "Value" for getValue().
-     * This parameter is case sensitive.
+     * the accessor e.g. {@literal "Text"} for getText(), {@literal "Value"}
+     * for getValue(). This parameter is case sensitive.
      * @param value the value of the bound property
+     *
      * @return the component, or null if no such component exists in the
      * container's hierarchy.
+     *
      * @throws java.lang.IllegalArgumentException if the bound property does
      * not exist for the class or cannot be accessed
      */
     public static <T extends JComponent> T getDescendantOfClass(Class<T> clazz,
-                                                                Container container, String property, Object value)
-        throws IllegalArgumentException {
+                                                                Container container,
+                                                                String property,
+                                                                Object value)
+        throws IllegalArgumentException
+    {
         return getDescendantOfClass(clazz, container, property, value, true);
     }
 
     /**
-     * Convenience method that searches below <code>container</code> in the
+     * Convenience method that searches below {@code container} in the
      * component hierarchy in a depth first manner and returns the first
-     * found component of class <code>clazz</code> having the bound property
+     * found component of class {@code clazz} having the bound property
      * value.
      * <P>
      * Returns {@code null} if such component cannot be found.
@@ -1784,26 +1803,35 @@ public class McVGuiUtils implements Constants {
      * @param clazz the class of component to be found.
      * @param container the container at which to begin the search
      * @param property the className of the bound property, exactly as expressed
-     * in the accessor e.g. "Text" for getText(), "Value" for getValue().
-     * This parameter is case sensitive.
+     * in the accessor e.g. {@literal "Text"} for getText(), {@literal "Value"}
+     * for getValue(). This parameter is case sensitive.
      * @param value the value of the bound property
      * @param nested true to include components nested within another listed
-     * component, false otherwise
+     * component, false otherwise.
+     *
      * @return the component, or null if no such component exists in the
-     * container's hierarchy
+     * container's hierarchy.
+     *
      * @throws java.lang.IllegalArgumentException if the bound property does
      * not exist for the class or cannot be accessed
      */
     public static <T extends JComponent> T getDescendantOfClass(Class<T> clazz,
-                                                                Container container, String property, Object value, boolean nested)
-        throws IllegalArgumentException {
+                                                                Container container,
+                                                                String property,
+                                                                Object value,
+                                                                boolean nested)
+        throws IllegalArgumentException
+    {
         List<T> list = getDescendantsOfClass(clazz, container, nested);
         return getComponentFromList(clazz, list, property, value);
     }
 
     private static <T extends JComponent> T getComponentFromList(Class<T> clazz,
-                                                                 List<T> list, String property, Object value)
-        throws IllegalArgumentException {
+                                                                 List<T> list,
+                                                                 String property,
+                                                                 Object value)
+        throws IllegalArgumentException
+    {
         T retVal = null;
         Method method = null;
         try {
@@ -1849,7 +1877,7 @@ public class McVGuiUtils implements Constants {
      * false otherwise
      */
     public static boolean equals(Object obj1, Object obj2) {
-        return obj1 == null ? obj2 == null : obj1.equals(obj2);
+        return (obj1 == null) ? (obj2 == null) : obj1.equals(obj2);
     }
 
     /**
@@ -1866,11 +1894,13 @@ public class McVGuiUtils implements Constants {
      * @return the Map of the UI
      */
     public static Map<JComponent, List<JComponent>> getComponentMap(
-        JComponent container, boolean nested) {
-        HashMap<JComponent, List<JComponent>> retVal =
-            new HashMap<JComponent, List<JComponent>>();
-        for (JComponent component : getDescendantsOfType(JComponent.class,
-            container, false)) {
+        JComponent container, boolean nested)
+    {
+        List<JComponent> descendants =
+            getDescendantsOfType(JComponent.class, container, false);
+        Map<JComponent, List<JComponent>> retVal =
+            new HashMap<>(descendants.size());
+        for (JComponent component : descendants) {
             if (!retVal.containsKey(container)) {
                 retVal.put(container,
                     new ArrayList<JComponent>());
@@ -1890,7 +1920,7 @@ public class McVGuiUtils implements Constants {
      * @param clazz the class of interest
      * @return the UIDefaults of the class
      */
-    public static UIDefaults getUIDefaultsOfClass(Class clazz) {
+    public static UIDefaults getUIDefaultsOfClass(Class<?> clazz) {
         String name = clazz.getName();
         name = name.substring(name.lastIndexOf(".") + 2);
         return getUIDefaultsOfClass(name);
@@ -1908,7 +1938,7 @@ public class McVGuiUtils implements Constants {
         UIDefaults defaults = javax.swing.UIManager.getLookAndFeelDefaults();
         List<?> listKeys = Collections.list(defaults.keys());
         for (Object key : listKeys) {
-            if (key instanceof String && ((String) key).startsWith(className)) {
+            if ((key instanceof String) && ((String) key).startsWith(className)) {
                 String stringKey = (String) key;
                 String property = stringKey;
                 if (stringKey.contains(".")) {
@@ -1928,7 +1958,7 @@ public class McVGuiUtils implements Constants {
      * @param property the property to query
      * @return the UIDefault property, or null if not found
      */
-    public static Object getUIDefaultOfClass(Class clazz, String property) {
+    public static Object getUIDefaultOfClass(Class<?> clazz, String property) {
         Object retVal = null;
         UIDefaults defaults = getUIDefaultsOfClass(clazz);
         List<Object> listKeys = Collections.list(defaults.keys());
@@ -1946,7 +1976,7 @@ public class McVGuiUtils implements Constants {
     /**
      * Exclude methods that return values that are meaningless to the user
      */
-    static Set<String> setExclude = new HashSet<String>();
+    static Set<String> setExclude = new HashSet<>(10);
     static {
         setExclude.add("getFocusCycleRootAncestor");
         setExclude.add("getAccessibleContext");
@@ -1966,21 +1996,21 @@ public class McVGuiUtils implements Constants {
      * @return the class and value of the properties
      */
     public static Map<Object, Object> getProperties(JComponent component) {
-        Map<Object, Object> retVal = new HashMap<Object, Object>();
         Class<?> clazz = component.getClass();
         Method[] methods = clazz.getMethods();
+        Map<Object, Object> retVal = new HashMap<>(methods.length);
         Object value = null;
         for (Method method : methods) {
             if (method.getName().matches("^(is|get).*") &&
-                method.getParameterTypes().length == 0) {
+                (method.getParameterTypes().length == 0)) {
                 try {
-                    Class returnType = method.getReturnType();
-                    if (returnType != void.class &&
+                    Class<?> returnType = method.getReturnType();
+                    if ((returnType != void.class) &&
                         !returnType.getName().startsWith("[") &&
                         !setExclude.contains(method.getName())) {
                         String key = method.getName();
                         value = method.invoke(component);
-                        if (value != null && !(value instanceof Component)) {
+                        if ((value != null) && !(value instanceof Component)) {
                             retVal.put(key, value);
                         }
                     }
@@ -2002,7 +2032,7 @@ public class McVGuiUtils implements Constants {
      * determined
      * @return The nearest Swing class in the inheritance tree
      */
-    public static <T extends JComponent> Class getJClass(T component) {
+    public static <T extends JComponent> Class<?> getJClass(T component) {
         Class<?> clazz = component.getClass();
         while (!clazz.getName().matches("javax.swing.J[^.]*$")) {
             clazz = clazz.getSuperclass();
