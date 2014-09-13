@@ -1109,24 +1109,25 @@ public class JythonManager extends IdvManager implements ActionListener {
     }
 
     public static final String CONSOLE_INIT = "/edu/wisc/ssec/mcidasv/resources/python/console_init.py";
-    public static final String LIBRARY_INIT = "/edu/wisc/ssec/mcidasv/resources/python/library_init.py";
 
     /**
      * Intializes a given {@link PythonInterpreter} so that it can either be
      * used to {@link PythonInterpreter#exec exec} a Jython Library module.
      *
-     * @param initScript Jython script that does {@literal "sys.path"} setup.
-     * Cannot be {@code null}.
      * @param interpreter Interpreter to initialize. Cannot be {@code null}.
+     * @param isInteractive Whether or not {@code interpreter} will be used with
+     * a {@literal "Jython Shell"}.
      */
-    protected void initJythonEnvironment(String initScript,
-                                         PythonInterpreter interpreter)
+    protected void initJythonEnvironment(PythonInterpreter interpreter, boolean isInteractive)
     {
+        // this line *must* be the first thing set, otherwise console_init.py
+        // will assume it is being run in "interactive" mode.
+        interpreter.set("_isInteractive", isInteractive);
         // TODO(jon): has to be a better approach
         try (InputStream consoleInitializer =
-                 IOUtil.getInputStream(initScript, JythonManager.class))
+                 IOUtil.getInputStream(CONSOLE_INIT, JythonManager.class))
         {
-            interpreter.execfile(consoleInitializer, initScript);
+            interpreter.execfile(consoleInitializer, CONSOLE_INIT);
             interpreter.set("idv", getIdv());
             interpreter.set("_idv", getIdv());
             interpreter.set("interpreter", interpreter);
@@ -1147,7 +1148,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @param interpreter The interpreter to initialize
      */
     private void initInterpreter(PythonInterpreter interpreter) {
-        initJythonEnvironment(CONSOLE_INIT, interpreter);
+        initJythonEnvironment(interpreter, true);
         if (DerivedDataDescriptor.classes != null) {
             for (int i = 0; i < DerivedDataDescriptor.classes.size(); i++) {
                 String c = (String)DerivedDataDescriptor.classes.get(i);
@@ -2158,7 +2159,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             if (functions == null) {
 
                 PythonInterpreter interpreter = new PythonInterpreter();
-                jythonManager.initJythonEnvironment(LIBRARY_INIT, interpreter);
+                jythonManager.initJythonEnvironment(interpreter, false);
                 try {
                     interpreter.exec(getText());
                 } catch (Exception exc) {

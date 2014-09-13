@@ -118,45 +118,49 @@ except ImportError, e:
     for i, path in enumerate(sys.path):
         print i, path
         
-from see import see
-
-from decorators import deprecated
-
-from background import (
-    activeDisplay, allActions, allColorTables, allDisplays, allFontNames,
-    allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
-    colorTableNames, firstDisplay, firstWindow, getColorTable, getProjection,
-    managedDataSource, pause, performAction, projectionNames, removeAllData,
-    removeAllLayers, setViewSize, _MappedAreaImageFlatField, writeImageAtIndex,
-)
-
-from mcvadde import (
-    enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, getDescriptor,
-    oldADDEImage, listADDEImages, params1, params_area_coords,
-    params_image_coords, params_sizeall, disableAddeDebug, enableAddeDebug,
-    isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER, getADDEImage,
-    makeLocalADDEEntry,
-)
-
-from interactive import (
-    describeActions, dumpObj, editFile, expandpath, ncdump, ncdumpToString,
-    today, tomorrow, yesterday, _expandpath, _today, _tomorrow, _yesterday,
-    getLogLevel, setLogLevel,
-)
-
-from islformatters import (
-    ImageFormatting, Matte, ImageOverlay, TextOverlay, Clip, Colorbar,
-    TransparentColor, TransparentBackground
-)
-
-_user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
-if os.path.exists(_user_python):
-    sys.path.append(_user_python)
-    for mod in os.listdir(_user_python):
-        modname, ext = os.path.splitext(mod)
-        if ext == '.py':
-            globals()[modname] = __import__(modname, globals(), locals(), ['*'], -1)
-        del modname, ext
-        
+print _isInteractive
+if _isInteractive:
+    
+    from see import see
+    
+    from decorators import deprecated
+    
+    from background import (
+        activeDisplay, allActions, allColorTables, allDisplays, allFontNames,
+        allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
+        colorTableNames, firstDisplay, firstWindow, getColorTable, getProjection,
+        managedDataSource, pause, performAction, projectionNames, removeAllData,
+        removeAllLayers, setViewSize, _MappedAreaImageFlatField, writeImageAtIndex,
+    )
+    
+    from mcvadde import (
+        enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, getDescriptor,
+        oldADDEImage, listADDEImages, params1, params_area_coords,
+        params_image_coords, params_sizeall, disableAddeDebug, enableAddeDebug,
+        isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER, getADDEImage,
+        makeLocalADDEEntry,
+    )
+    
+    from interactive import (
+        describeActions, dumpObj, editFile, expandpath, ncdump, ncdumpToString,
+        today, tomorrow, yesterday, _expandpath, _today, _tomorrow, _yesterday,
+        getLogLevel, setLogLevel,
+    )
+    
+    from islformatters import (
+        ImageFormatting, Matte, ImageOverlay, TextOverlay, Clip, Colorbar,
+        TransparentColor, TransparentBackground
+    )
+    
+    _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
+    if os.path.exists(_user_python):
+        sys.path.append(_user_python)
+        for mod in os.listdir(_user_python):
+            modname, ext = os.path.splitext(mod)
+            if ext == '.py':
+                globals()[modname] = __import__(modname, globals(), locals(), ['*'], -1)
+            del modname, ext
+            
 del _mcvinit_jythonpaths
 del _mcvinit_classpath_hack
+del _isInteractive
