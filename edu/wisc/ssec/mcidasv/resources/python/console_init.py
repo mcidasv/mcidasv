@@ -118,9 +118,13 @@ except ImportError, e:
     for i, path in enumerate(sys.path):
         print i, path
         
-print _isInteractive
-if _isInteractive:
+try:
+    _isInteractive
+except NameError:
+    print '*** _isInteractive has not been set; assuming value is True'
+    _isInteractive = True
     
+if _isInteractive:
     from see import see
     
     from decorators import deprecated

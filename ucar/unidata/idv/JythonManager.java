@@ -1120,10 +1120,12 @@ public class JythonManager extends IdvManager implements ActionListener {
      */
     protected void initJythonEnvironment(PythonInterpreter interpreter, boolean isInteractive)
     {
+        // TODO(jon): has to be a better approach
+
         // this line *must* be the first thing set, otherwise console_init.py
         // will assume it is being run in "interactive" mode.
         interpreter.set("_isInteractive", isInteractive);
-        // TODO(jon): has to be a better approach
+
         try (InputStream consoleInitializer =
                  IOUtil.getInputStream(CONSOLE_INIT, JythonManager.class))
         {
