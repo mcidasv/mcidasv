@@ -169,8 +169,13 @@ import ucar.unidata.util.TwoFacedObject;
 public class JythonManager extends IdvManager implements ActionListener {
     
     /** Trusty logging object. */
-    private static final Logger logger = LoggerFactory.getLogger(JythonManager.class);
-    
+    private static final Logger logger =
+        LoggerFactory.getLogger(JythonManager.class);
+
+    /** Jython script that correctly initializes Jython environment. */
+    public static final String CONSOLE_INIT =
+        "/edu/wisc/ssec/mcidasv/resources/python/console_init.py";
+
     /** The path to the editor executable */
     public static final String PROP_JYTHON_EDITOR = "idv.jython.editor";
     
@@ -178,7 +183,8 @@ public class JythonManager extends IdvManager implements ActionListener {
     private static final Color COLOR_DISABLED = new Color(210, 210, 210);
     
     /** Logging object used for Jython-specific logging output. */
-    protected static final Logger jythonLogger = LoggerFactory.getLogger("jython");
+    protected static final Logger jythonLogger =
+        LoggerFactory.getLogger("jython");
     
     /** output stream for interp */
     private OutputStream outputStream;
@@ -376,7 +382,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     private void makeFormulasFromLib() {
         List<PyFunction> procedures = findJythonMethods(true);
         for (int i = 0; i < procedures.size(); i++) {
-            PyFunction func = (PyFunction)procedures.get(i);
+            PyFunction func = procedures.get(i);
             PyObject docString = func.getFuncDoc();
             if (docString == Py.None) {
                 continue;
@@ -1108,17 +1114,17 @@ public class JythonManager extends IdvManager implements ActionListener {
         return inError;
     }
 
-    public static final String CONSOLE_INIT = "/edu/wisc/ssec/mcidasv/resources/python/console_init.py";
-
     /**
      * Intializes a given {@link PythonInterpreter} so that it can either be
-     * used to {@link PythonInterpreter#exec exec} a Jython Library module.
+     * used to {@link PythonInterpreter#exec exec} a Jython Library module or
+     * set up an interactive Jython Shell.
      *
      * @param interpreter Interpreter to initialize. Cannot be {@code null}.
      * @param isInteractive Whether or not {@code interpreter} will be used with
      * a {@literal "Jython Shell"}.
      */
-    protected void initJythonEnvironment(PythonInterpreter interpreter, boolean isInteractive)
+    protected void initJythonEnvironment(PythonInterpreter interpreter,
+                                         boolean isInteractive)
     {
         // TODO(jon): has to be a better approach
 
@@ -2056,7 +2062,7 @@ public class JythonManager extends IdvManager implements ActionListener {
             return result;
         }
         for (LibHolder libHolder : holders) {
-            List<PyFunction> subItems = new ArrayList<PyFunction>();
+            List<PyFunction> subItems = new ArrayList<>();
             for (Object[] pair : libHolder.getFunctions()) {
                 PyFunction func = (PyFunction)pair[1];
                 subItems.add(func);
