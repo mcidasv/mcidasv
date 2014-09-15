@@ -118,6 +118,10 @@ except ImportError, e:
     for i, path in enumerate(sys.path):
         print i, path
         
+# _isInteractive's value is controlled by code that calls JythonManager's 
+# "initJythonEnvironment" method. the reasoning behind assuming that the value
+# should *default* to True is because the interactive mode works for every case
+# (though it will pollute the procedure submenus in the Jython Shell).
 try:
     _isInteractive
 except NameError:
@@ -165,6 +169,9 @@ if _isInteractive:
                 globals()[modname] = __import__(modname, globals(), locals(), ['*'], -1)
             del modname, ext
             
+# Clean up stuff that is only useful for this script/module. *almost* 
+# everything prefixed with "_" is a good candidate for clean up, though be 
+# aware that "_idv" is an exception to the rule!
 del _mcvinit_jythonpaths
 del _mcvinit_classpath_hack
 del _isInteractive
