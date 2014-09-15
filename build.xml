@@ -105,9 +105,14 @@
     <property name="slf4j.version" value="1.7.7" />
     <property name="logback.version" value="1.1.2" />
     <property name="miglayout.version" value="4.2" />
+    <property name="jogamp.version" value="2.2.1" />
+    <!-- note that the J3D JARs available from http://jogamp.org/deployment/java3d/
+         do not (as of 20140915) have the version string in the filenames.
+         this must be done manually for now. -->
+    <property name="java3d.version" value="1.6.0-pre11" />
 
     <!-- The CLASSPATH specified within McV's manifest -->
-    <property name="jar.base.classpath" value="gluegen-rt.jar gluegen.jar joal.jar jocl.jar jogl-all.jar sysout-over-slf4j-1.0.2.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-1.4.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-3.3.jar rsyntaxtextarea-2.5.3.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-1.6.5-1.jar" />
+    <property name="jar.base.classpath" value="gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-1.0.2.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-1.4.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-3.3.jar rsyntaxtextarea-2.5.3.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-1.6.5-1.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar" />
     
     <!-- List of McIDAS-V jars -->
     <fileset id="mcv.libs" dir="${dist.dir}">
@@ -126,15 +131,15 @@
         <include name="rsyntaxtextarea-2.5.3.jar" />
         <include name="jul-to-slf4j-${slf4j.version}.jar" />
         <include name="JSatTrak.jar"/>
-        <include name="j3dcore.jar" />
-        <include name="j3dutils.jar" />
-        <include name="vecmath.jar" />
-        <include name="gluegen-rt.jar" />
-        <include name="gluegen.jar" />
-        <include name="joal.jar" />
-        <include name="jocl.jar" />
+        <include name="j3dcore-${java3d.version}.jar" />
+        <include name="j3dutils-${java3d.version}.jar" />
+        <include name="vecmath-${java3d.version}.jar" />
+        <include name="gluegen-rt-${jogamp.version}.jar" />
+        <include name="gluegen-${jogamp.version}.jar" />
+        <include name="joal-${jogamp.version}.jar" />
+        <include name="jocl-${jogamp.version}.jar" />
         <include name="jogl-all-noawt.jar" />
-        <include name="jogl-all.jar" />
+        <include name="jogl-all-${jogamp.version}.jar" />
     </fileset>
     
     <!-- List of IDV jars -->
@@ -150,38 +155,38 @@
     </fileset>
 
     <fileset id="linux_x64.libs" dir="${dist.dir}">
-        <include name="gluegen-rt-natives-linux-amd64.jar" />
-        <include name="joal-natives-linux-amd64.jar" />
-        <include name="jocl-natives-linux-amd64.jar" />
-        <include name="jogl-all-natives-linux-amd64.jar" />
+        <include name="gluegen-rt-${jogamp.version}-natives-linux-amd64.jar" />
+        <include name="joal-${jogamp.version}-natives-linux-amd64.jar" />
+        <include name="jocl-${jogamp.version}-natives-linux-amd64.jar" />
+        <include name="jogl-all-${jogamp.version}-natives-linux-amd64.jar" />
     </fileset>
 
     <fileset id="linux_x86.libs" dir="${dist.dir}">
-        <include name="gluegen-rt-natives-linux-i586.jar" />
-        <include name="joal-natives-linux-i586.jar" />
-        <include name="jocl-natives-linux-i586.jar" />
-        <include name="jogl-all-natives-linux-i586.jar" />
+        <include name="gluegen-rt-${jogamp.version}-natives-linux-i586.jar" />
+        <include name="joal-${jogamp.version}-natives-linux-i586.jar" />
+        <include name="jocl-${jogamp.version}-natives-linux-i586.jar" />
+        <include name="jogl-all-${jogamp.version}-natives-linux-i586.jar" />
     </fileset>
 
     <fileset id="windows_x64.libs" dir="${dist.dir}">
-        <include name="gluegen-rt-natives-windows-amd64.jar" />
-        <include name="joal-natives-windows-amd64.jar" />
-        <include name="jocl-natives-windows-amd64.jar" />
-        <include name="jogl-all-natives-windows-amd64.jar" />
+        <include name="gluegen-rt-${jogamp.version}-natives-windows-amd64.jar" />
+        <include name="joal-${jogamp.version}-natives-windows-amd64.jar" />
+        <include name="jocl-${jogamp.version}-natives-windows-amd64.jar" />
+        <include name="jogl-all-${jogamp.version}-natives-windows-amd64.jar" />
     </fileset>
 
     <fileset id="windows_x86.libs" dir="${dist.dir}">
-        <include name="gluegen-rt-natives-windows-i586.jar" />
-        <include name="joal-natives-windows-i586.jar" />
-        <include name="jocl-natives-windows-i586.jar" />
-        <include name="jogl-all-natives-windows-i586.jar" />
+        <include name="gluegen-rt-${jogamp.version}-natives-windows-i586.jar" />
+        <include name="joal-${jogamp.version}-natives-windows-i586.jar" />
+        <include name="jocl-${jogamp.version}-natives-windows-i586.jar" />
+        <include name="jogl-all-${jogamp.version}-natives-windows-i586.jar" />
     </fileset>
 
     <fileset id="macosx.libs" dir="${dist.dir}">
-        <include name="gluegen-rt-natives-macosx-universal.jar" />
-        <include name="joal-natives-macosx-universal.jar" />
-        <include name="jocl-natives-macosx-universal.jar" />
-        <include name="jogl-all-natives-macosx-universal.jar" />
+        <include name="gluegen-rt-${jogamp.version}-natives-macosx-universal.jar" />
+        <include name="joal-${jogamp.version}-natives-macosx-universal.jar" />
+        <include name="jocl-${jogamp.version}-natives-macosx-universal.jar" />
+        <include name="jogl-all-${jogamp.version}-natives-macosx-universal.jar" />
     </fileset>
 
 
@@ -369,6 +374,8 @@
             Main Class: ${app.mainclass}
 
             == VERSIONS ==================
+            JogAmp (jogl/joal/jocl/gluegen): ${jogamp.version}
+            Java3D: ${java3d.version}
             SLF4J: ${slf4j.version}
             Logback: ${logback.version}
             MigLayout: ${miglayout.version}
