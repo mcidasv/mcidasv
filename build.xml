@@ -99,26 +99,32 @@
     
     <!-- Javadoc options -->
     <property name="javadoc.level" value="private" />
-    
+
+    <!-- Use these properties to make changing the versions of related JARs
+        (see SLF4J or Logback) a bit less tedious. -->
+    <property name="slf4j.version" value="1.7.7" />
+    <property name="logback.version" value="1.1.2" />
+    <property name="miglayout.version" value="4.2" />
+
     <!-- The CLASSPATH specified within McV's manifest -->
-    <property name="jar.base.classpath" value="gluegen-rt.jar gluegen.jar joal.jar jocl.jar jogl-all.jar sysout-over-slf4j-1.0.2.jar miglayout-core-4.2.jar miglayout-swing-4.2.jar eventbus-1.4.jar logback-core-1.1.1.jar logback-classic-1.1.1.jar log4j-over-slf4j-1.7.6.jar slf4j-api-1.7.6.jar local-idv.jar repositorytds.jar commons-math3-3.2.jar rsyntaxtextarea-2.5.1.jar jul-to-slf4j-1.7.6.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-1.6.5-1.jar" />
+    <property name="jar.base.classpath" value="gluegen-rt.jar gluegen.jar joal.jar jocl.jar jogl-all.jar sysout-over-slf4j-1.0.2.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-1.4.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-3.3.jar rsyntaxtextarea-2.5.3.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-1.6.5-1.jar" />
     
     <!-- List of McIDAS-V jars -->
     <fileset id="mcv.libs" dir="${dist.dir}">
         <include name="swingx-common-1.6.5-1.jar" />
         <include name="sysout-over-slf4j-1.0.2.jar" />
-        <include name="miglayout-core-4.2.jar" />
-        <include name="miglayout-swing-4.2.jar" />
+        <include name="miglayout-core-${miglayout.version}.jar" />
+        <include name="miglayout-swing-${miglayout.version}.jar" />
         <include name="eventbus-1.4.jar" />
-        <include name="logback-core-1.1.1.jar" />
-        <include name="logback-classic-1.1.1.jar" />
-        <include name="log4j-over-slf4j-1.7.6.jar" />
-        <include name="slf4j-api-1.7.6.jar" />
+        <include name="logback-core-${logback.version}.jar" />
+        <include name="logback-classic-${logback.version}.jar" />
+        <include name="log4j-over-slf4j-${slf4j.version}.jar" />
+        <include name="slf4j-api-${slf4j.version}.jar" />
         <include name="local-idv.jar" />
         <include name="repositorytds.jar" />
-        <include name="commons-math3-3.2.jar" />
-        <include name="rsyntaxtextarea-2.5.1.jar" />
-        <include name="jul-to-slf4j-1.7.6.jar" />
+        <include name="commons-math3-3.3.jar" />
+        <include name="rsyntaxtextarea-2.5.3.jar" />
+        <include name="jul-to-slf4j-${slf4j.version}.jar" />
         <include name="JSatTrak.jar"/>
         <include name="j3dcore.jar" />
         <include name="j3dutils.jar" />
@@ -338,36 +344,34 @@
     <target name="info" description="Print various significant property values">
         <echo>
             == ANT =======================
-            ant java version:
-            ${ant.java.version}
+            ant java version: ${ant.java.version}
             ant lib dir: ${ant.library.dir}
-            ant home:
-            ${ant.home}
+            ant home: ${ant.home}
             ant basedir: ${base.dir}
-            
+
             == JAVA ======================
             java home: ${java.home}
             java version: ${java.runtime.version}
-            javadoc
-            access: ${javadoc.level}
-            
+            javadoc access: ${javadoc.level}
+
             == COMPILER OPTIONS ==========
-            source:
-            ${source.ver}
+            source: ${source.ver}
             target: ${target.ver}
             debug(-g): ${debug.flag}
             deprecation: ${deprecation.flag}
             Xlint warn: ${xlint}
-            
-            == PROPERTIES
-            ===============
+
+            == PROPERTIES ================
             libdir: ${lib.dir}
             idvlibdir: ${idvlib.dir}
-            javadoc:
-            ${javadoc.dir}
-            userguide: ${userguide.dir}
-            mainclass: ${app.mainclass}
-            
+            javadoc: ${javadoc.dir}
+            User Guide: ${userguide.dir}
+            Main Class: ${app.mainclass}
+
+            == VERSIONS ==================
+            SLF4J: ${slf4j.version}
+            Logback: ${logback.version}
+            MigLayout: ${miglayout.version}
         </echo>
     </target>
     
