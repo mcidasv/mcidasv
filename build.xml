@@ -155,6 +155,7 @@
     </fileset>
 
     <fileset id="linux_x64.libs" dir="${dist.dir}">
+        <include name="gluegen-${jogamp.version}-natives-linux-amd64.jar" />
         <include name="gluegen-rt-${jogamp.version}-natives-linux-amd64.jar" />
         <include name="joal-${jogamp.version}-natives-linux-amd64.jar" />
         <include name="jocl-${jogamp.version}-natives-linux-amd64.jar" />
@@ -162,6 +163,7 @@
     </fileset>
 
     <fileset id="linux_x86.libs" dir="${dist.dir}">
+        <include name="gluegen-${jogamp.version}-natives-linux-i586.jar" />
         <include name="gluegen-rt-${jogamp.version}-natives-linux-i586.jar" />
         <include name="joal-${jogamp.version}-natives-linux-i586.jar" />
         <include name="jocl-${jogamp.version}-natives-linux-i586.jar" />
@@ -169,6 +171,7 @@
     </fileset>
 
     <fileset id="windows_x64.libs" dir="${dist.dir}">
+        <include name="gluegen-${jogamp.version}-natives-windows-amd64.jar" />
         <include name="gluegen-rt-${jogamp.version}-natives-windows-amd64.jar" />
         <include name="joal-${jogamp.version}-natives-windows-amd64.jar" />
         <include name="jocl-${jogamp.version}-natives-windows-amd64.jar" />
@@ -176,6 +179,7 @@
     </fileset>
 
     <fileset id="windows_x86.libs" dir="${dist.dir}">
+        <include name="gluegen-${jogamp.version}-natives-windows-i586.jar" />
         <include name="gluegen-rt-${jogamp.version}-natives-windows-i586.jar" />
         <include name="joal-${jogamp.version}-natives-windows-i586.jar" />
         <include name="jocl-${jogamp.version}-natives-windows-i586.jar" />
@@ -183,12 +187,12 @@
     </fileset>
 
     <fileset id="macosx.libs" dir="${dist.dir}">
+        <include name="gluegen-${jogamp.version}-natives-macosx-universal.jar" />
         <include name="gluegen-rt-${jogamp.version}-natives-macosx-universal.jar" />
         <include name="joal-${jogamp.version}-natives-macosx-universal.jar" />
         <include name="jocl-${jogamp.version}-natives-macosx-universal.jar" />
         <include name="jogl-all-${jogamp.version}-natives-macosx-universal.jar" />
     </fileset>
-
 
     <!-- Shared classpath -->
     <path id="app.classpath">
