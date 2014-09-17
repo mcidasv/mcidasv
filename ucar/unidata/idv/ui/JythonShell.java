@@ -226,7 +226,7 @@ public class JythonShell extends InteractiveShell {
         store.put(PROP_JYTHON_SHELL_HISTORY, history);
         store.save(); // TODO: do we REALLY want to do this every command?
     }
-    
+
     @Override public void flipField() {
         super.flipField();
         getCommandFld().requestFocusInWindow();
@@ -325,17 +325,15 @@ public class JythonShell extends InteractiveShell {
         if (!history.isEmpty()) {
             List<JMenuItem> historyItems = new ArrayList<>(history.size());
             for (int i = history.size() - 1; i >= 0; i--) {
-                String block = history.get(i).getEntryText();
+                ShellHistoryEntry entry = history.get(i);
+                String block = entry.getEntryText();
                 String label;
                 if (block.length() > MAX_HISTORY_MENU_ITEM_LENGTH) {
                     label = block.substring(0, MAX_HISTORY_MENU_ITEM_LENGTH - 3) + "...";
                 } else {
                     label = block;
                 }
-                historyItems.add(
-                    makeMenuItem(
-                        label, this, "eval",
-                        block));
+                historyItems.add(makeMenuItem(label, this, "setTextFromHistoryEntry", entry));
             }
 //            JMenu historyMenu = makeMenu("History", historyItems);
             historyMenu = makeMenu("History", historyItems);

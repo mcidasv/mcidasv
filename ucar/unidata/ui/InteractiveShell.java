@@ -258,7 +258,45 @@ public class InteractiveShell implements HyperlinkListener {
             }
         });
     }
-    
+
+    /**
+     * Sets the contents of {@link #getCommandFld()} using the given
+     * {@code ShellHistoryEntry}.
+     *
+     * <p>Note: This method will change the input mode depending upon
+     * {@code entry}. If the current input mode and the input mode of
+     * {@code entry} are the same, then the contents of {@link #getCommandFld()}
+     * will be overwritten with {@link ShellHistoryEntry#getEntryText()}.</p>
+     *
+     * @param entry History item to put in the {@literal "command field"}.
+     * Should not be {@code null}.
+     */
+    public void setTextFromHistoryEntry(final ShellHistoryEntry entry) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                ShellHistoryMode inputMode = entry.getInputMode();
+                String text = entry.getEntryText();
+                if (inputMode == ShellHistoryMode.UNKNOWN) {
+                    inputMode = detectInputMode(text);
+                }
+
+                JTextComponent inputField = getCommandFld();
+                if (inputMode == ShellHistoryMode.SINGLE) {
+                    if (inputField instanceof JTextArea) {
+                        flipField();
+                        inputField = getCommandFld();
+                    }
+                } else {
+                    if (inputField instanceof JTextField) {
+                        flipField();
+                        inputField = getCommandFld();
+                    }
+                }
+                inputField.setText(entry.getEntryText());
+            }
+        });
+    }
+
     /**
      * _more_
      *
