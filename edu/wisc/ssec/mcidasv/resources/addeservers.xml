@@ -32,14 +32,24 @@ This file overrides IDV addeservers.xml
        names="RTWXTEXT"
        type="text"/>
   </server>
-  
+  <server name="atm.ucar.edu" active="true">
+    <group
+            names="RTIMAGES,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINICOMP,NEXRCOMP,TOPO,GLOBAL, GINIALL, IMAGEALL, NEXRCALL"
+            type="image"/>
+    <group
+            names="RTNEXRAD,NEXRALL"
+            type="radar"/>
+    <group
+            names="RTWXTEXT"
+            type="wxtext"/>
+  </server>
   <server name="goessouth.unidata.ucar.edu">
     <group
        names="SOUTH"
        type="image"/>
   </server>
 
-  <server name="idd.unl.edu">
+<!--   <server name="idd.unl.edu">
     <group
        names="RTIMAGES,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINICOMP,NEXRCOMP,TOPO"
        type="image"/>
@@ -52,7 +62,7 @@ This file overrides IDV addeservers.xml
      <group
        names="RTWXTEXT"
        type="text"/>
-  </server>
+  </server> -->
   
   <server name="rets1.ssec.wisc.edu">
     <group
@@ -80,7 +90,7 @@ This file overrides IDV addeservers.xml
   
   <server name="stratus.al.noaa.gov">
     <group
-       names="RTIMAGES,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINCOMP,TOPO"
+       names="RTIMAGES,CIMSS,GINIEAST,GINIWEST,TOPO"
        type="image"/>
     <group
        names="RTGRIDS"
@@ -96,7 +106,7 @@ This file overrides IDV addeservers.xml
        type="text"/>
   </server>
   
-  <server name="twister.millersville.edu">
+<!--   <server name="twister.millersville.edu">
     <group
        names="CIMSS,GINICOMP,GINIEAST,GINIWEST,NEXRCOMP,RTIMAGES,TOPO"
        type="image"/>
@@ -127,6 +137,6 @@ This file overrides IDV addeservers.xml
      <group
        names="RTWXTEXT"
        type="text"/>
-  </server>
+  </server>-->
   
 </servers>
