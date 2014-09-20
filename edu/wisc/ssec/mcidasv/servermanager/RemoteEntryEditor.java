@@ -45,6 +45,7 @@ import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -70,6 +71,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -503,9 +507,9 @@ public class RemoteEntryEditor extends JDialog {
             setTitle("Edit Remote Dataset");
         }
         setResizable(false);
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
+            public void windowClosed(WindowEvent evt) {
                 formWindowClosed(evt);
             }
         });
@@ -541,11 +545,11 @@ public class RemoteEntryEditor extends JDialog {
             }
         });
 
-        javax.swing.event.DocumentListener inputListener = new javax.swing.event.DocumentListener() {
-            public void changedUpdate(javax.swing.event.DocumentEvent evt) {
+        DocumentListener inputListener = new DocumentListener() {
+            public void changedUpdate(DocumentEvent evt) {
                 reactToValueChanges();
             }
-            public void insertUpdate(javax.swing.event.DocumentEvent evt) {
+            public void insertUpdate(DocumentEvent evt) {
                 if (inErrorState) {
                     verifyAddButton.setEnabled(true);
                     verifyServer.setEnabled(true);
@@ -553,7 +557,7 @@ public class RemoteEntryEditor extends JDialog {
                     resetBadFields();
                 }
             }
-            public void removeUpdate(javax.swing.event.DocumentEvent evt) {
+            public void removeUpdate(DocumentEvent evt) {
                 if (inErrorState) {
                     verifyAddButton.setEnabled(true);
                     verifyServer.setEnabled(true);
@@ -670,7 +674,7 @@ public class RemoteEntryEditor extends JDialog {
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
+        if (initEntries.equals(RemoteAddeEntry.INVALID_ENTRIES)) {
             verifyAddButton.setText("Verify and Add Server");
         } else {
             verifyAddButton.setText("Verify and Save Changes");
@@ -695,7 +699,7 @@ public class RemoteEntryEditor extends JDialog {
             }
         });
 
-        if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
+        if (initEntries.equals(RemoteAddeEntry.INVALID_ENTRIES)) {
             addServer.setText("Add Server");
         } else {
             addServer.setText("Save Changes");
@@ -830,8 +834,18 @@ public class RemoteEntryEditor extends JDialog {
         if (!forceCaps) {
             return;
         }
-        datasetField.setText(datasetField.getText().toUpperCase());
-        userField.setText(userField.getText().toUpperCase());
+
+        String dataset = datasetField.getText();
+        if (dataset == null) {
+            dataset = "";
+        }
+        datasetField.setText(dataset.toUpperCase());
+
+        String user = userField.getText();
+        if (user == null) {
+            user = "";
+        }
+        userField.setText(user.toUpperCase());
     }
 
     private void verifyAddButtonActionPerformed(ActionEvent evt) {
@@ -863,7 +877,7 @@ public class RemoteEntryEditor extends JDialog {
         disposeDisplayable(false);
     }
 
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {
+    private void formWindowClosed(WindowEvent evt) {
         setEditorAction(EditorAction.CANCELLED);
         disposeDisplayable(false);
     }
@@ -920,9 +934,9 @@ public class RemoteEntryEditor extends JDialog {
         Map<String, Boolean> hostStatus = newMap();
         for (RemoteAddeEntry entry : entries) {
             String host = entry.getAddress();
-            if (hostStatus.get(host) == Boolean.FALSE) {
+            if (hostStatus.get(host).equals(Boolean.FALSE)) {
                 continue;
-            } else if (hostStatus.get(host) == Boolean.TRUE) {
+            } else if (hostStatus.get(host).equals(Boolean.TRUE)) {
                 goodEntries.add(entry);
             } else {
                 checkedHosts.add(host);
