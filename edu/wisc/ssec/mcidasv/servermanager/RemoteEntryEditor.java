@@ -41,8 +41,10 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
 
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -85,7 +87,6 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
-import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 /**
@@ -168,22 +169,22 @@ public class RemoteEntryEditor extends JDialog {
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
+    public RemoteEntryEditor(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
         this(parent, modal, manager, store, RemoteAddeEntry.INVALID_ENTRIES);
     }
 
-    public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final RemoteAddeEntry entry) {
+    public RemoteEntryEditor(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final RemoteAddeEntry entry) {
         this(parent, modal, manager, store, CollectionHelpers.list(entry));
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public RemoteEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final List<RemoteAddeEntry> entries) {
+    public RemoteEntryEditor(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final List<RemoteAddeEntry> entries) {
         super(manager, modal);
         this.entryStore = store;
 //        this.manager = manager;
         this.serverText = null;
         this.datasetText = null;
-        if (entries != RemoteAddeEntry.INVALID_ENTRIES) {
+        if (entries.equals(RemoteAddeEntry.INVALID_ENTRIES)) {
             currentEntries.addAll(entries);
         }
         initComponents(entries);
@@ -202,13 +203,13 @@ public class RemoteEntryEditor extends JDialog {
      * empty {@code Set} if the input was invalid somehow.
      */
     private Set<RemoteAddeEntry> pollWidgets(final boolean ignoreCheckboxes) {
-        String host = serverField.getText().trim();
-        String dataset = datasetField.getText().trim();
+        String host = safeGetText(serverField).trim();
+        String dataset = safeGetText(datasetField).trim();
         String username = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
         String project = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
         if (acctBox.isSelected()) {
-            username = userField.getText().trim();
-            project = projField.getText().trim();
+            username = safeGetText(userField).trim();
+            project = safeGetText(projField).trim();
         }
 
         // determine the "valid" types
@@ -834,18 +835,8 @@ public class RemoteEntryEditor extends JDialog {
         if (!forceCaps) {
             return;
         }
-
-        String dataset = datasetField.getText();
-        if (dataset == null) {
-            dataset = "";
-        }
-        datasetField.setText(dataset.toUpperCase());
-
-        String user = userField.getText();
-        if (user == null) {
-            user = "";
-        }
-        userField.setText(user.toUpperCase());
+        datasetField.setText(safeGetText(datasetField).toUpperCase());
+        userField.setText(safeGetText(userField).toUpperCase());
     }
 
     private void verifyAddButtonActionPerformed(ActionEvent evt) {

@@ -2039,4 +2039,23 @@ public class McVGuiUtils implements Constants {
         }
         return clazz;
     }
+
+    /**
+     * Gets the {@literal "text"} contents of a {@link JTextField} without
+     * the possibility of a {@code NullPointerException}.
+     *
+     * @param textField {@code JTextField} whose contents should be extracted.
+     * {@code null} is allowed.
+     *
+     * @return Either the results of {@link JTextField#getText()} or an empty
+     * {@code String} if {@code textField} or {@code getText()} are
+     * {@code null}.
+     */
+    public static String safeGetText(JTextField textField) {
+        String value = "";
+        if ((textField != null) && (textField.getText() != null)) {
+            value = textField.getText();
+        }
+        return value;
+    }
 }
