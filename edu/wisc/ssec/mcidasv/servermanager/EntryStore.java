@@ -1008,7 +1008,7 @@ public class EntryStore {
             if (!checkLocalServer()) {
                 if (!testLocalServer()) {
                     LogUtil.userErrorMessage("Local servers cannot write to userpath:\n"+USER_DIRECTORY);
-                    logger.info("Local servers cannot write to userpath");
+                    logger.info("Local servers cannot write to userpath ('{}')", USER_DIRECTORY);
                     return;
                 }
                 thread = new AddeThread(this);
