@@ -27,12 +27,15 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.DefaultComboBoxModel;
@@ -184,7 +187,7 @@ public class LocalEntryShortcut extends JDialog {
         JButton saveButton = new JButton("Add Dataset");
         saveButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent evt) {
-                if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
+                if (Objects.equals(initEntry, LocalAddeEntry.INVALID_ENTRY)) {
                     saveButtonActionPerformed(evt);
                 } else {
                     editButtonActionPerformed(evt);
@@ -199,7 +202,7 @@ public class LocalEntryShortcut extends JDialog {
             }
         });
 
-        if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
+        if (Objects.equals(initEntry, LocalAddeEntry.INVALID_ENTRY)) {
             setTitle("Add Local Dataset");
         } else {
             setTitle("Edit Local Dataset");
@@ -331,11 +334,11 @@ public class LocalEntryShortcut extends JDialog {
      * empty {@code Set} if the input was somehow invalid.
      */
     private Set<LocalAddeEntry> pollWidgets() {
-        String group = datasetField.getText();
-        String name = typeField.getText();
+        String group = safeGetText(datasetField);
+        String name = safeGetText(typeField);
         String mask = getLastPath();
-        if (mask.isEmpty() && !directoryField.getText().isEmpty()) {
-            mask = directoryField.getText();
+        if (mask.isEmpty() && !safeGetText(directoryField).isEmpty()) {
+            mask = safeGetText(directoryField);
             setLastPath(mask);
         }
         AddeFormat format = (AddeFormat)formatComboBox.getSelectedItem();

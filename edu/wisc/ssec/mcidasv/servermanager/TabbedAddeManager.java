@@ -32,6 +32,7 @@ import static java.util.Objects.requireNonNull;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -606,7 +607,7 @@ public class TabbedAddeManager extends JFrame {
 
         JMenuItem closeMenuItem = new JMenuItem("Close");
         closeMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 logger.debug("evt={}", evt.toString());
                 closeManager();
             }
@@ -619,7 +620,7 @@ public class TabbedAddeManager extends JFrame {
         editMenuItem = new JMenuItem("Edit Entry...");
         editMenuItem.setEnabled(false);
         editMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 if (tabbedPane.getSelectedIndex() == 0) {
                     showRemoteEditor(getSelectedRemoteEntries());
                 } else {
@@ -632,7 +633,7 @@ public class TabbedAddeManager extends JFrame {
         removeMenuItem = new JMenuItem("Remove Selection");
         removeMenuItem.setEnabled(false);
         removeMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 if (tabbedPane.getSelectedIndex() == 0) {
                     removeRemoteEntries(getSelectedRemoteEntries());
                 } else {
@@ -666,7 +667,7 @@ public class TabbedAddeManager extends JFrame {
 
         JMenuItem remoteHelpMenuItem = new JMenuItem("Show Remote Data Help");
         remoteHelpMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(REMOTE_HELP_TARGET);
             }
         });
@@ -674,7 +675,7 @@ public class TabbedAddeManager extends JFrame {
 
         JMenuItem localHelpMenuItem = new JMenuItem("Show Local Data Help");
         localHelpMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 ucar.unidata.ui.Help.getDefaultHelp().gotoTarget(LOCAL_HELP_TARGET);
             }
         });
@@ -1147,7 +1148,7 @@ public class TabbedAddeManager extends JFrame {
      * 
      * @see #closeManager()
      */
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {
+    private void formWindowClosed(WindowEvent evt) {
         logger.debug("evt={}", evt.toString());
         closeManager();
     }
@@ -1160,7 +1161,7 @@ public class TabbedAddeManager extends JFrame {
         importAccountBox = new JCheckBox("Use ADDE Accounting?");
         importAccountBox.setSelected(false);
         importAccountBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            public void actionPerformed(ActionEvent evt) {
                 boolean selected = importAccountBox.isSelected();
                 importUser.setEnabled(selected);
                 importProject.setEnabled(selected);
@@ -1205,7 +1206,7 @@ public class TabbedAddeManager extends JFrame {
         return accessory;
     }
 
-    private void importButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void importButtonActionPerformed(ActionEvent evt) {
         assert SwingUtilities.isEventDispatchThread();
         JFileChooser fc = new JFileChooser(getLastImportPath());
         fc.setAccessory(makeFileChooserAccessory());
@@ -1216,21 +1217,21 @@ public class TabbedAddeManager extends JFrame {
             String path = f.getPath();
 
             boolean defaultUser = false;
-            String forceUser = importUser.getText();
-            if (forceUser.length() == 0) {
+            String forceUser = safeGetText(importUser);
+            if (forceUser.isEmpty()) {
                 forceUser = AddeEntry.DEFAULT_ACCOUNT.getUsername();
                 defaultUser = true;
             }
 
             boolean defaultProj = false;
-            String forceProj = importProject.getText();
-            if (forceProj.length() == 0) {
+            String forceProj = safeGetText(importProject);
+            if (forceProj.isEmpty()) {
                 forceProj = AddeEntry.DEFAULT_ACCOUNT.getProject();
                 defaultProj = true;
             }
 
             
-            if ((importAccountBox.isSelected()) && (defaultUser || defaultProj)) {
+            if (importAccountBox.isSelected() && (defaultUser || defaultProj)) {
                 logger.warn("bad acct dialog: forceUser={} forceProj={}", forceUser, forceProj);
             } else {
                 logger.warn("acct appears valid: forceUser={} forceProj={}", forceUser, forceProj);

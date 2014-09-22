@@ -41,9 +41,12 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.set;
 import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.runOnEDT;
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
 
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -62,6 +65,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -78,7 +82,6 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
-import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 /**
@@ -87,7 +90,7 @@ import edu.wisc.ssec.mcidasv.util.McVTextField;
  * Temporary solution for adding entries via the adde choosers.
  */
 @SuppressWarnings("serial")
-public class RemoteEntryShortcut extends javax.swing.JDialog {
+public class RemoteEntryShortcut extends JDialog {
 
     /** Logger object. */
     private static final Logger logger = LoggerFactory.getLogger(RemoteEntryShortcut.class);
@@ -152,7 +155,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
      * but empty and {@code null} values are allowed.
      */
     public RemoteEntryShortcut(EntryStore entryStore, String address, String group) {
-        super((javax.swing.JDialog)null, true);
+        super((JDialog)null, true);
         this.entryStore = entryStore;
         this.serverText = address;
         this.datasetText = group;
@@ -160,16 +163,16 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public RemoteEntryShortcut(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
+    public RemoteEntryShortcut(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
         this(parent, modal, manager, store, RemoteAddeEntry.INVALID_ENTRIES);
     }
 
-    public RemoteEntryShortcut(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final RemoteAddeEntry entry) {
+    public RemoteEntryShortcut(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final RemoteAddeEntry entry) {
         this(parent, modal, manager, store, CollectionHelpers.list(entry));
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public RemoteEntryShortcut(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final List<RemoteAddeEntry> entries) {
+    public RemoteEntryShortcut(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final List<RemoteAddeEntry> entries) {
         super(manager, modal);
         this.entryStore = store;
         this.serverText = null;
@@ -193,13 +196,13 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
      * empty {@code Set} if the input was invalid somehow.
      */
     private Set<RemoteAddeEntry> pollWidgets(final boolean ignoreCheckboxes) {
-        String host = serverField.getText().trim();
-        String dataset = datasetField.getText().trim();
+        String host = safeGetText(serverField).trim();
+        String dataset = safeGetText(datasetField).trim();
         String username = RemoteAddeEntry.DEFAULT_ACCOUNT.getUsername();
         String project = RemoteAddeEntry.DEFAULT_ACCOUNT.getProject();
         if (acctBox.isSelected()) {
-            username = userField.getText().trim();
-            project = projField.getText().trim();
+            username = safeGetText(userField).trim();
+            project = safeGetText(projField).trim();
         }
 
         // determine the "valid" types
@@ -494,7 +497,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         setResizable(false);
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosed(java.awt.event.WindowEvent evt) {
+            public void windowClosed(WindowEvent evt) {
                 formWindowClosed(evt);
             }
         });
@@ -819,8 +822,8 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         if (!forceCaps) {
             return;
         }
-        datasetField.setText(datasetField.getText().toUpperCase());
-        userField.setText(userField.getText().toUpperCase());
+        datasetField.setText(safeGetText(datasetField).toUpperCase());
+        userField.setText(safeGetText(userField).toUpperCase());
     }
 
     private void verifyAddButtonActionPerformed(ActionEvent evt) {
@@ -852,7 +855,7 @@ public class RemoteEntryShortcut extends javax.swing.JDialog {
         disposeDisplayable(false);
     }
 
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {
+    private void formWindowClosed(WindowEvent evt) {
         setEditorAction(EditorAction.CANCELLED);
         disposeDisplayable(false);
     }

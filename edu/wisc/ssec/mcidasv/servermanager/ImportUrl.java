@@ -27,6 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
@@ -104,7 +106,7 @@ public class ImportUrl extends JDialog implements ActionListener {
         contentPanel.add(mctableField, "cell 1 0,growx");
         mctableField.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(final DocumentEvent e) {
-                int len = mctableField.getText().trim().length();
+                int len = safeGetText(mctableField).trim().length();
 //                okButton.setEnabled(mctableField.getText().trim().length() > 0);
                 okButton.setEnabled(len > 0);
                 logger.trace("len={}", len);
@@ -173,12 +175,12 @@ public class ImportUrl extends JDialog implements ActionListener {
             dispose();
         } else if (CMD_IMPORT.equals(cmd)) {
             
-            String path = mctableField.getText().trim();
+            String path = safeGetText(mctableField).trim();
             String user = AddeEntry.DEFAULT_ACCOUNT.getUsername();
             String proj = AddeEntry.DEFAULT_ACCOUNT.getProject();
             if (acctBox.isSelected()) {
-                user = userField.getText().trim();
-                proj = projField.getText().trim();
+                user = safeGetText(userField).trim();
+                proj = safeGetText(projField).trim();
             }
             logger.trace("importing: path={} user={} proj={}", path, user, proj);
             if (serverManagerGui != null) {

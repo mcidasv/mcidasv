@@ -27,6 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
@@ -332,8 +334,8 @@ public class LocalEntryEditor extends JDialog {
      * empty {@code Set} if the input was somehow invalid.
      */
     private Set<LocalAddeEntry> pollWidgets(boolean newEntry) {
-        String group = datasetField.getText();
-        String name = typeField.getText();
+        String group = safeGetText(datasetField);
+        String name = safeGetText(typeField);
         String mask = getLastPath();
         
         // consider the UI in error if any field is blank
@@ -345,8 +347,8 @@ public class LocalEntryEditor extends JDialog {
 
         // if there is something in the directoryField, that's the value we
         // should be using.
-        if (!directoryField.getText().isEmpty()) {
-            mask = directoryField.getText();
+        if (!safeGetText(directoryField).isEmpty()) {
+            mask = safeGetText(directoryField);
             setLastPath(mask);
         }
         
@@ -360,7 +362,7 @@ public class LocalEntryEditor extends JDialog {
                 String storeGroup = storeEntry.getGroup();
                 if (newGroup.equals(storeGroup)) {
                     // only apply this restriction to MSG HRIT data
-                    if (format.equals(AddeFormat.MSG_HRIT_FD) || (format.equals(AddeFormat.MSG_HRIT_HRV))) {
+                    if ((format == AddeFormat.MSG_HRIT_FD) || (format == AddeFormat.MSG_HRIT_HRV)) {
                         JOptionPane.showMessageDialog(this.getContentPane(),
                             "Dataset specified is a duplicate, not supported with MSG HRIT format.");
                         return Collections.emptySet();
