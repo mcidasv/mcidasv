@@ -74,6 +74,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
+import javax.swing.text.JTextComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2041,20 +2042,20 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * Gets the {@literal "text"} contents of a {@link JTextField} without
+     * Gets the {@literal "text"} contents of a {@link JTextComponent} without
      * the possibility of a {@code NullPointerException}.
      *
-     * @param textField {@code JTextField} whose contents should be extracted.
-     * {@code null} is allowed.
+     * @param textComponent {@code JTextComponent} whose contents should be
+     * extracted. {@code null} is allowed.
      *
-     * @return Either the results of {@link JTextField#getText()} or an empty
-     * {@code String} if {@code textField} or {@code getText()} are
+     * @return Either the results of {@link JTextComponent#getText()} or an
+     * empty {@code String} if {@code textComponent} or {@code getText()} are
      * {@code null}.
      */
-    public static String safeGetText(JTextField textField) {
+    public static String safeGetText(JTextComponent textComponent) {
         String value = "";
-        if ((textField != null) && (textField.getText() != null)) {
-            value = textField.getText();
+        if ((textComponent != null) && (textComponent.getText() != null)) {
+            value = textComponent.getText();
         }
         return value;
     }
