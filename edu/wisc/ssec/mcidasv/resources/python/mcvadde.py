@@ -683,16 +683,45 @@ def listADDEImageTimes(localEntry=None,
             'time': time,
             'position': position,
         }
-        url = addeUrlFormat % formatValues
-        if showUrls:
-            print url
-        adl = AreaDirectoryList(url)
-        results = adl.getSortedDirs()
-        for imageTimes in results:
-            for areaDirectory in imageTimes:
-                urls.append(url)
-                areaDirectories.append(areaDirectory)
-                
+        try:
+            url = addeUrlFormat % formatValues
+            if showUrls:
+                print url
+            adl = AreaDirectoryList(url)
+            results = adl.getSortedDirs()
+            for imageTimes in results:
+                for areaDirectory in imageTimes:
+                    urls.append(url)
+                    areaDirectories.append(areaDirectory)
+        except AddeException, e:
+            if e.hasAddeErrorCode():
+                if e.getAddeErrorCode() == -5000:
+                    raise AddeJythonUnknownDataError(e)
+                elif e.getAddeErrorCode() == -11011:
+                    raise AddeJythonBandRequiredError(e)
+                elif e.getAddeErrorCode() == -11007:
+                    raise AddeJythonInvalidUnitError(e)
+                elif e.getAddeErrorCode() == -11010:
+                    raise AddeJythonErrorInvalidSize(e)
+                elif e.getAddeErrorCode() == -11001:
+                    raise AddeJythonNavigationError(e)
+                elif e.getAddeErrorCode() == -11003:
+                    raise AddeJythonBandNotPresent(e)
+                elif e.getAddeErrorCode() == -11002:
+                    raise AddeJythonBadLocationError(e)
+                elif e.getAddeErrorCode() == -118:
+                    raise AddeJythonInvalidDatasetError(e)
+                elif e.getAddeErrorCode() == -7000:
+                    raise AddeJythonBandNotPresentInSpecifiedUnits(e)
+                elif e.getAddeErrorCode() == -114:
+                    raise AddeJythonServerNotFound(e)
+                elif e.getAddeErrorCode() == -6000:
+                    if accounting == DEFAULT_ACCOUNTING:
+                        raise AddeJythonAccountingRequiredError(e)
+                    else:
+                        raise AddeJythonInvalidAccountingError(e)
+            raise AddeJythonError(e)
+            
     uniques = set()
     times = []
     for d in areaDirectories:
