@@ -30,6 +30,8 @@ package edu.wisc.ssec.mcidasv.util;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import edu.wisc.ssec.mcidas.AreaDirectoryList;
+import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.adde.AddeException;
 
 import visad.VisADException;
@@ -82,6 +84,17 @@ public class ErrorCodeAreaUtils {
             }
         }
         return aa;
+    }
+
+    public static AreaDirectoryList createAreaDirectoryList(final String url) throws AddeException {
+        AreaDirectoryList adl = null;
+        try {
+            adl = new AreaDirectoryList(url);
+        } catch (AreaFileException e) {
+            int errorCode = searchStackTrace(e.getCause());
+            throw new AddeException(errorCode, GENERIC_EXCEPTION_MESSAGE, e);
+        }
+        return adl;
     }
 
     // yes. this approach is awful. but since i can't modify the visad code
