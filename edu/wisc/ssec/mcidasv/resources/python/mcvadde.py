@@ -687,7 +687,7 @@ def listADDEImageTimes(localEntry=None,
             url = addeUrlFormat % formatValues
             if showUrls:
                 print url
-            adl = AreaDirectoryList(url)
+            adl = ErrorCodeAreaUtils.createAreaDirectoryList(url)
             results = adl.getSortedDirs()
             for imageTimes in results:
                 for areaDirectory in imageTimes:
