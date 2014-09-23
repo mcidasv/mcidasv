@@ -34,6 +34,8 @@ import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.adde.AddeException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.VisADException;
 import visad.data.mcidas.AreaAdapter;
 
@@ -46,7 +48,7 @@ import visad.data.mcidas.AreaAdapter;
  */
 public class ErrorCodeAreaUtils {
 
-//    private static final Logger logger = LoggerFactory.getLogger(ErrorCodeAreaUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(ErrorCodeAreaUtils.class);
 
     public static final String GENERIC_EXCEPTION_MESSAGE = "Could not create VisAD data object.";
 
@@ -102,6 +104,7 @@ public class ErrorCodeAreaUtils {
         try {
             adl = new AreaDirectoryList(url);
         } catch (AreaFileException e) {
+//            logger.trace("exception='{}'", e);
             int errorCode = searchStackTrace(e.getCause());
             throw new AddeException(errorCode, GENERIC_EXCEPTION_MESSAGE, e);
         }
@@ -136,7 +139,7 @@ public class ErrorCodeAreaUtils {
             return -7000;
         } else if (message.contains("requested Earth location is not contained in the image") || "Specified Lat/Lon not in image".equals(message)) {
             return -11002;
-        } else if (message.startsWith("Image data server unable to resolve this dataset")) {
+        } else if (message.startsWith("Image data server unable to resolve this dataset") || message.startsWith("Image directory server unable to resolve this dataset:")) {
             return -118;
         } else if (cause instanceof UnknownHostException) {
             return -114;
