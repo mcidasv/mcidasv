@@ -60,7 +60,7 @@ from ucar.visad.data import AreaImageFlatField
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from visad.data.mcidas import AreaAdapter
-from edu.wisc.ssec.mcidasv.util import ErrorCodeAreaAdapter
+from edu.wisc.ssec.mcidasv.util import ErrorCodeAreaUtils
 
 def pause():
     """Pause McIDAS-V until all displays have finished being created."""
@@ -297,7 +297,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     @classmethod
     def fromUrl(cls, imageUrl):
         """Create an AreaImageFlatField from a URL, then make a _MappedAreaImageFlatField."""
-        aa = ErrorCodeAreaAdapter.createAreaAdapter(imageUrl)
+        aa = ErrorCodeAreaUtils.createAreaAdapter(imageUrl)
         areaFile = aa.getAreaFile()
         areaDirectory = aa.getAreaDirectory()
         addeDescriptor = AddeImageDescriptor(areaDirectory, imageUrl)
