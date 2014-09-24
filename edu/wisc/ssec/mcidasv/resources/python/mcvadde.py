@@ -1115,7 +1115,7 @@ def getADDEImage(localEntry=None,
     location=None,
     coordinateSystem=None,
     place=None,
-    mag=(1, 1),
+    mag=None,
     position=0,
     unit='BRIT',
     day=None,
@@ -1183,11 +1183,15 @@ def getADDEImage(localEntry=None,
     proj = accounting[1]
     debug = str(debug).lower()
     
-    if mag and hasattr(mag, '__getitem__') and len(mag) == 2:
-        if 0 not in mag and '0' not in mag:
-            mag = '%s %s' % (int(mag[0]), int(mag[1]))
+    if not mag:
+        # mag = ''
+        mag = '&MAG=1 1'
+    elif mag and hasattr(mag, '__getitem__') and len(mag) == 2:
+        lmag, emag = int(mag[0]), int(mag[1])
+        if lmag < 0 and emag < 0:
+            mag = '&MAG=%s %s' % (lmag, emag)
         else:
-            raise ValueError("Neither magnification factor may be zero (given mag=%s)." % (repr(mag)))
+            raise ValueError("Neither magnification factor may be greater than zero (given mag=%s)." % (repr(mag)))
     else:
         raise ValueError("Mag keyword must be a tuple or list of at least two elements.")
         
@@ -1265,7 +1269,7 @@ def getADDEImage(localEntry=None,
     else:
         band = ''
         
-    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s&UNIT=%(unit)s&MAG=%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s%(time)s&POS=%(position)s&TRACKING=%(track)d"
+    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s&UNIT=%(unit)s%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s%(time)s&POS=%(position)s&TRACKING=%(track)d"
     formatValues = {
         'server': server,
         'port': port,
