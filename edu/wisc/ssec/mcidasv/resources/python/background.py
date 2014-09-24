@@ -2941,7 +2941,7 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
     islInterpreter.captureImage(macros, elem)
 
 
-def loadGrid(filename=None, field=None, level=None,
+def loadGrid(filename=None, field=None, level='all',
         time=None, xStride=1, yStride=1, 
         xRange=None, yRange=None, latLonBounds=None, **kwargs): 
     """Load gridded fields; analagous to the "Gridded Data" chooser.
@@ -2956,11 +2956,11 @@ def loadGrid(filename=None, field=None, level=None,
                           default is all levels.
         time (optional): integer representing index of time to be loaded. 
                          default is zero.
-        xStride: integer stride value for reduced resolution loading.
-        yStride: integer stride value for reduced resolution loading.
-        xRange: integer for subsetting by grid indices.
-        yRange: integer for subsetting by grid indices.
-        latLonBounds: specify a rectangle for subsetting the part of the grid
+        xStride (optional): integer stride value for reduced resolution loading.
+        yStride (optional): integer stride value for reduced resolution loading.
+        xRange (optional): integer for subsetting by grid indices.
+        yRange (optional): integer for subsetting by grid indices.
+        latLonBounds (optional): specify a rectangle for subsetting the part of the grid
                       you want.  Expected format is (leftLat, leftLon, rightLat, rightLon),
                       e.g., (30.0, -80.0, 35.0, -73.0)
 
@@ -3007,10 +3007,12 @@ def loadGrid(filename=None, field=None, level=None,
         raise ValueError('no field name provided')
     
     levelReal = None
-    if level:
-        # TODO: type checking on level
+    if level and level.lower() != 'all':
         # expecting string specifying value and units, e.g. "1000 hPa"
-        levelWanted = Util.toReal(level)
+        try:
+            levelWanted = Util.toReal(level)
+        except java.lang.NumberFormatException:
+            raise ValueError("Please specify level as string containing level and unit, e.g. '1000 hPa', or do level='all' for all levels.")
         levels = geogrid.getLevels()
         for i, levelToTest in enumerate(levels):
             levelString = '%s %s' % (levelToTest.getName(), levelToTest.getDescription())
@@ -3123,27 +3125,37 @@ def makeFlatFieldSequence(sequence):
     return fi
 
 def loadGridListFieldsInFile(filename):
-    """Print a list of all fields in a NetCDF/HDF/grib2 file."""
+    """Print and return a list of all fields in a NetCDF/HDF/grib2 file."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     for grid in gridDataset.getGrids():
         print '%s ; %s' % (grid.getName(), grid.getDescription())
+    names = [grid.getName() for grid in gridDataset.getGrids()]
+    gridDataset.close()
+    return names
 
 def loadGridListLevelsInField(filename, field):
-    """Print a list of all levels in a NetCDF/HDF/grib2 field."""
+    """Print and return a list of all levels in a NetCDF/HDF/grib2 field."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     geogrid = gridDataset.findGridByName(field)
     for level in geogrid.getLevels():
         print '%s %s' % (level.getName(), level.getDescription())
+    levels = [level.getName() for level in geogrid.getLevels()]
+    if not levels:
+        print 'No levels found for specified field: %s' % field
+    gridDataset.close()
+    return levels
 
 def loadGridListTimesInField(filename, field):
-    """Print a list of all times in a NetCDF/HDF/grib2 field."""
+    """Print and return a list of all times in a NetCDF/HDF/grib2 field."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     geogrid = gridDataset.findGridByName(field)
     for time in geogrid.getTimes():
         print time
+    gridDataset.close()
+    return geogrid.getTimes()
 
 def getVIIRSImage(file_list, field, stride=1, **kwargs):
     """Experimental function for loading VIIRS imagery.
