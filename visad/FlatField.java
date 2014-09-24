@@ -26,6 +26,9 @@ MA 02111-1307, USA
 
 package visad;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Random;
@@ -294,6 +297,7 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
           throws VisADException {
    //Call FieldImpl.ctor passing false to tell it not to create the Range array
     super(type, domain_set, false);
+    // System.out.println("LOLOLOLOLOLOL");
     pr ("ctor");
 
     if (!type.getFlat()) {
@@ -2015,6 +2019,8 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
     }
   }
 
+    private static final Logger logger = LoggerFactory.getLogger(FlatField.class);
+
   /** 
    * Return new Field with value 'this op data'.
    * test for various relations between types of this and data;
@@ -2042,7 +2048,7 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
       throw new TypeException("binary: new_type may not be null");
     }
 
-
+    logger.trace("FlatField binary!");
 
     if (data instanceof Field) {
       /*- TDR June  1998 */
@@ -2057,6 +2063,7 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
         /*- TDR June  1998
         return data.binary(this, invertOp(op), sampling_mode, error_mode);
         */
+          logger.trace("#1");
         return data.binary(this, invertOp(op), new_type, sampling_mode, error_mode);
       }
       else if (!Type.equalsExceptName(data.getType())) {
@@ -2076,11 +2083,15 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
         /*- TDR June  1998
         return convertToField().binary(data, op, sampling_mode, error_mode);
         */
+          logger.trace("#2");
         return convertToField().binary(data, op, new_type, sampling_mode, error_mode);
       }
 
       // use DoubleSet rather than RangeSet for intermediate computation results
-      if (isMissing() || data.isMissing()) return new_type.missingData();
+      if (isMissing() || data.isMissing()) {
+          logger.trace("#3");
+          return new_type.missingData();
+      }
 
       // resample data if needed
       data = ((FlatField) data).resample(getDomainSet(), sampling_mode, error_mode);
@@ -2642,11 +2653,14 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
       if (thisValuesF!=null)
           new_field = cloneFloat (new_type, outUnits, outErrs, thisValuesF);
       new_field.clearMissing();
+      logger.trace("#4");
+      new_field.setMetadataMap(getMetadataMap());
       return new_field;
     }
     else if (data instanceof Real || data instanceof RealTuple ||
              (data instanceof TupleIface &&
               ((TupleType) data.getType()).getFlat())) {
+      logger.trace("#5");
       MathType RangeType = ((FunctionType) Type).getRange();
       /*- TDR July 1998
       if (!RangeType.equalsExceptName(data.getType())) {
@@ -2660,7 +2674,10 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
       /*- end */
 
       // use DoubleSet rather than RangeSet for intermediate computation results
-      if (isMissing() || data.isMissing()) return new_type.missingData();
+      if (isMissing() || data.isMissing()) {
+        logger.trace("#6");
+        return new_type.missingData();
+      }
 
 
       // get data values and possibly apply coordinate transform
@@ -3138,6 +3155,8 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
           new_field = cloneFloat( new_type, outUnits, outErrs, thisValuesF);
 
       new_field.clearMissing();
+      logger.trace("#7");
+      new_field.setMetadataMap(getMetadataMap());
       return new_field;
     }
     else {
@@ -4588,7 +4607,10 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
                       ((SetType) set.getType()).getDomain(), coord_sys,
                       units, errors, vals, false);
     } catch (UnitException ue) {
-        throw new VisADException("Sampling set is not compatible with domain");
+        throw new VisADException(
+          "Sampling set is not compatible with domain",
+          ue
+        );
     }
     visad.util.Trace.call2("FlatField.resample:transformCoords");
     boolean coord_transform = !(vals == oldvals);
@@ -4986,7 +5008,10 @@ if (pr) System.out.println("value = " + new_values[0][0]);
                       ((SetType) set.getType()).getDomain(), coord_sys,
                       units, errors, vals, false);
     } catch (UnitException ue) {
-        throw new VisADException("Sampling set is not compatible with domain");
+        throw new VisADException(
+          "Sampling set is not compatible with domain",
+          ue
+        );
     }
     visad.util.Trace.call2("FlatField.resample:transformCoords");
     boolean coord_transform = !(vals == oldvals);
@@ -5646,7 +5671,7 @@ if (pr) System.out.println("value = " + new_values[0][0]);
       clone = (FlatField)super.clone();
     }
     catch (CloneNotSupportedException ex) {
-      throw new Error("Assertion failure");  // can't happen
+      throw new Error("Assertion failure", ex);  // can't happen
     }
 
     synchronized(DoubleRange) {
@@ -5659,13 +5684,13 @@ if (pr) System.out.println("value = " + new_values[0][0]);
           clone.packValues(values, false);
         }
         catch (VisADException ex) {
-          throw new RuntimeException(ex.toString());
+          throw new RuntimeException("Clone failed", ex);
         }
         try {
           clone.setRangeErrors(RangeErrors);
         }
         catch (FieldException ex) {
-          throw new Error("Assertion failure");  // can't happen
+          throw new Error("Assertion failure", ex);  // can't happen
         }
       }
     }
