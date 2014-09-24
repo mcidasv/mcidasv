@@ -480,6 +480,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(uFI.getMetadataMap());
                         }
 
 
@@ -492,6 +493,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         rvFI = new FieldImpl(newFieldType, timeSet);
+                        rvFI.setMetadataMap(uFI.getMetadataMap());
                     }
                     rvFI.setSample(i, funcFF, false);
                 } else {
@@ -522,6 +524,7 @@ public class DerivedGridFactory {
                         // System.out.println ("       rvFI func type = "+functionType);
                         // make the new FieldImpl (but as yet empty of data)
                         rvFI = new FieldImpl(functionType, timeSet);
+                        rvFI.setMetadataMap(uFI.getMetadataMap());
                     }
 
                     // System.out.println ("    rv single grid range type = "+
@@ -742,6 +745,7 @@ public class DerivedGridFactory {
                         new SingletonSet(new RealTuple(new Real[] {
                             new Real(index, 0) }));
                     funcFF0 = new FieldImpl(newinnerType, ss);
+                    funcFF0.setMetadataMap(uvGrid.getMetadataMap());
                     funcFF0.setSample(0, innerField, false);
                     FieldImpl innerrvFF =
                         (FieldImpl) GridRelativeHorizontalWind
@@ -756,6 +760,7 @@ public class DerivedGridFactory {
                     }
                     if (funcFF == null) {
                         funcFF = new FieldImpl(innerType, ensDomain);
+                        funcFF.setMetadataMap(uvGrid.getMetadataMap());
                     }
 
                     funcFF.setSample(j, innerrvFF.getSample(0), false);
@@ -766,6 +771,7 @@ public class DerivedGridFactory {
                             ((SetType) timeSet.getType()).getDomain(),
                             funcFF.getType());
                     result = new FieldImpl(newFieldType, timeSet);
+                    result.setMetadataMap(uvGrid.getMetadataMap());
                 }
                 result.setSample(i, funcFF, false);
             }
@@ -1138,7 +1144,7 @@ public class DerivedGridFactory {
                                             false /* copy */);
         }
 
-        logger.trace("outgoing metadataMap size: " + uGrid.getMetadataMap().size());
+        logger.trace("outgoing metadataMap size: " + retGrid.getMetadataMap().size());
         return retGrid;
     }
 
@@ -1386,6 +1392,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(grid1.getMetadataMap());
                         }
 
 
@@ -1398,6 +1405,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         wvFI = new FieldImpl(newFieldType, timeSet);
+                        wvFI.setMetadataMap(grid1.getMetadataMap());
                     }
                     wvFI.setSample(i, funcFF, false);
                 } else {
@@ -1416,6 +1424,7 @@ public class DerivedGridFactory {
                         // make the new FieldImpl for dewpoint
                         // (but as yet empty of data)
                         wvFI = new FieldImpl(functionType, timeSet);
+                        wvFI.setMetadataMap(grid1.getMetadataMap());
                     }
 
                     wvFI.setSample(i, wvFF, false);
@@ -1454,6 +1463,7 @@ public class DerivedGridFactory {
                     // make the new FieldImpl for dewpoint
                     // (but as yet empty of data)
                     wvFI = new FieldImpl(functionType, timeSet);
+                    wvFI.setMetadataMap(grid1.getMetadataMap());
                 }
 
                 wvFI.setSample(i, wvFF, false);
@@ -1463,10 +1473,10 @@ public class DerivedGridFactory {
             // make combinded FlatField
             wvFI = (FieldImpl) FieldImpl.combine(new Field[] { grid1,
                     grid2 }, samplingMode, errorMode, flatten, copy);
+            // mjh how do we catch cases like this?
+            wvFI.setMetadataMap(grid1.getMetadataMap());
         }  // end single time
 
-        logger.trace("wvFI.setMetadataMap");
-        wvFI.setMetadataMap(grid1.getMetadataMap());
         return wvFI;
 
     }  // end combineGrids
@@ -1607,6 +1617,7 @@ public class DerivedGridFactory {
                             dirFF.getType());
 
                     dirFI = new FieldImpl(dirFT, timeSet);
+                    dirFI.setMetadataMap(vector.getMetadataMap());
                 }
 
                 if (dirFF != null) {
@@ -1642,6 +1653,7 @@ public class DerivedGridFactory {
                 ((SetType) vector.getDomainSet().getType()).getDomain(),
                 Direction.getRealTupleType());
         FlatField dirFF   = new FlatField(dirFT, vector.getDomainSet());
+        dirFF.setMetadataMap(vector.getMetadataMap());
         float[][] samples = vector.getFloats(false);
         float[][] dirs    = new float[1][samples[0].length];
         float     u, v, dir;
@@ -1750,6 +1762,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(uGrid.getMetadataMap());
                         }
 
 
@@ -1762,6 +1775,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         divFI = new FieldImpl(newFieldType, timeSet);
+                        divFI.setMetadataMap(uGrid.getMetadataMap());
                     }
                     divFI.setSample(i, funcFF, false);
                 } else {
@@ -1778,6 +1792,7 @@ public class DerivedGridFactory {
                         // make the new FieldImpl for dewpoint
                         // (but as yet empty of data)
                         divFI = new FieldImpl(functionType, timeSet);
+                        divFI.setMetadataMap(uGrid.getMetadataMap());
                     }
 
                     divFI.setSample(i, divFF, false);
@@ -1913,6 +1928,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(paramGrid.getMetadataMap());
                         }
 
 
@@ -1925,6 +1941,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         divFI = new FieldImpl(newFieldType, timeSet);
+                        divFI.setMetadataMap(paramGrid.getMetadataMap());
                     }
                     divFI.setSample(i, funcFF, false);
                 } else {
@@ -1940,6 +1957,7 @@ public class DerivedGridFactory {
 
                         // make the new FieldImpl for advection
                         divFI = new FieldImpl(functionType, timeSet);
+                        divFI.setMetadataMap(paramGrid.getMetadataMap());
                     }
 
                     // add data for this time step
@@ -2046,6 +2064,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(temperFI.getMetadataMap());
                         }
 
 
@@ -2058,6 +2077,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         dewpointFI = new FieldImpl(newFieldType, timeSet);
+                        dewpointFI.setMetadataMap(temperFI.getMetadataMap());
                     }
                     dewpointFI.setSample(i, funcFF, false);
                 } else {
@@ -2075,6 +2095,7 @@ public class DerivedGridFactory {
                         // make the new FieldImpl for dewpoint
                         // (but as yet empty of data)
                         dewpointFI = new FieldImpl(functionType, timeSet);
+                        dewpointFI.setMetadataMap(temperFI.getMetadataMap());
                     }
 
                     dewpointFI.setSample(i, dewptFF, false);
@@ -2203,6 +2224,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(temperFI.getMetadataMap());
                         }
 
 
@@ -2215,6 +2237,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         eptFI = new FieldImpl(newFieldType, timeSet);
+                        eptFI.setMetadataMap(temperFI.getMetadataMap());
                     }
                     eptFI.setSample(i, funcFF, false);
                 } else {
@@ -2232,6 +2255,7 @@ public class DerivedGridFactory {
                         // make the new FieldImpl for mixing ratio
                         // (but as yet empty of data)
                         eptFI = new FieldImpl(functionType, timeSet);
+                        eptFI.setMetadataMap(temperFI.getMetadataMap());
                     }
 
                     eptFI.setSample(i, eptFF, false);
@@ -2356,6 +2380,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(temperFI.getMetadataMap());
                         }
 
 
@@ -2368,6 +2393,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         rhFI = new FieldImpl(newFieldType, timeSet);
+                        rhFI.setMetadataMap(temperFI.getMetadataMap());
                     }
                     rhFI.setSample(i, funcFF, false);
 
@@ -2393,6 +2419,7 @@ public class DerivedGridFactory {
                         // make the new FieldImpl for relative humidity
                         // (but as yet empty of data)
                         rhFI = new FieldImpl(functionType, timeSet);
+                        rhFI.setMetadataMap(temperFI.getMetadataMap());
                     }
 
                     rhFI.setSample(i, rhFF, false);
@@ -2497,6 +2524,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(temperFI.getMetadataMap());
                         }
 
 
@@ -2509,6 +2537,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         mixFI = new FieldImpl(newFieldType, timeSet);
+                        mixFI.setMetadataMap(temperFI.getMetadataMap());
                     }
                     mixFI.setSample(i, funcFF, false);
                 } else {
@@ -2525,6 +2554,7 @@ public class DerivedGridFactory {
                         // make the new FieldImpl for mixing ratio
                         // (but as yet empty of data)
                         mixFI = new FieldImpl(functionType, timeSet);
+                        mixFI.setMetadataMap(temperFI.getMetadataMap());
                     }
 
                     mixFI.setSample(i, mixFF, false);
@@ -2634,11 +2664,13 @@ public class DerivedGridFactory {
                 new FunctionType(
                     ((FunctionType) press.getType()).getDomain(), newFFType);
             newPress = new FieldImpl(newFIType, ss);
+            newPress.setMetadataMap(press.getMetadataMap());
             for (int i = 0; i < ss.getLength(); i++) {
                 FlatField timeSample = (FlatField) press.getSample(i, false);
                 if (timeSample != null) {
                     FlatField newSample = new FlatField(newFFType,
                                               timeSample.getDomainSet());
+                    newSample.setMetadataMap(press.getMetadataMap());
                     float[][] values = timeSample.getFloats(false);
                     float[][] newvals = Unit.convertTuple(values, oldUnits,
                                             newUnits);
@@ -2649,6 +2681,7 @@ public class DerivedGridFactory {
 
         } else {
             newPress = new FlatField(newFFType, press.getDomainSet());
+            newPress.setMetadataMap(press.getMetadataMap());
             float[][] values  = sample.getFloats(false);
             float[][] newvals = Unit.convertTuple(values, oldUnits, newUnits);
             ((FlatField) newPress).setSamples(newvals, false);
@@ -2733,6 +2766,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(temperFI.getMetadataMap());
                         }
 
                         funcFF.setSample(j, innerdivFF, false);
@@ -2744,6 +2778,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         thetaFI = new FieldImpl(newFieldType, timeSet);
+                        thetaFI.setMetadataMap(temperFI.getMetadataMap());
                     }
                     thetaFI.setSample(i, funcFF, false);
                 } else {
@@ -2761,6 +2796,7 @@ public class DerivedGridFactory {
                         // ((FunctionType)temperFI.getType()).getDomain() = "Time"
                         // make the new FieldImpl for theta  (but as yet empty of data)
                         thetaFI = new FieldImpl(functionType, timeSet);
+                        thetaFI.setMetadataMap(temperFI.getMetadataMap());
                     }
 
                     thetaFI.setSample(i, thetaFF, false);
@@ -2930,6 +2966,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(temperFI.getMetadataMap());
                         }
                         dtdp = (FlatField) dtdp.changeMathType(ipvFFType);
 
@@ -2942,6 +2979,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         ipvFI = new FieldImpl(newFieldType, timeSet);
+                        ipvFI.setMetadataMap(temperFI.getMetadataMap());
                     }
                     ipvFI.setSample(i, funcFF, false);
                 } else {
@@ -3000,6 +3038,7 @@ public class DerivedGridFactory {
                         // System.out.println ("    first func type = "+functionType);
                         // make the new FieldImpl for IPV (but as yet empty of data)
                         ipvFI = new FieldImpl(functionType, timeSet);
+                        ipvFI.setMetadataMap(temperFI.getMetadataMap());
                     }
 
                     dtdp = (FlatField) dtdp.changeMathType(ipvFFType);
@@ -3087,6 +3126,7 @@ public class DerivedGridFactory {
                         }
                         if (funcFF == null) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(thetaFI.getMetadataMap());
                         }
                         funcFF.setSample(j, innerdivFF, false);
 
@@ -3097,6 +3137,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         pvorFI = new FieldImpl(newFieldType, timeSet);
+                        pvorFI.setMetadataMap(thetaFI.getMetadataMap());
                     }
                     pvorFI.setSample(i, funcFF, false);
                 } else {
@@ -3112,6 +3153,7 @@ public class DerivedGridFactory {
                         // System.out.println ("    first func type = "+functionType);
                         // make the new FieldImpl for IPV (but as yet empty of data)
                         pvorFI = new FieldImpl(pvorFIType, timeSet);
+                        pvorFI.setMetadataMap(thetaFI.getMetadataMap());
                     }
 
                     // set this time's ipv grid
@@ -3241,6 +3283,7 @@ public class DerivedGridFactory {
         FlatField pressureFF = new FlatField(funct, domainSet3D,
                                              (CoordinateSystem[]) null,
                                              (Set[]) null, rangeUnits);
+        pressureFF.setMetadataMap(ff.getMetadataMap());
 
         // create a grid of pressure values; in this case the third positional
         // coord IS the pressure (x,y,pressure) for height indication,
@@ -3341,6 +3384,7 @@ public class DerivedGridFactory {
                                         maskType);
 
                                 maskFF = new FieldImpl(innerType, ensDomain);
+                                maskFF.setMetadataMap(gridToMask.getMetadataMap());
                             }
 
                             maskFF.setSample(j, innerMaskedFF, false);
@@ -3362,6 +3406,7 @@ public class DerivedGridFactory {
                                 maskFF.getType());
 
                         newField = new FieldImpl(newFieldType, timeDomain);
+                        newField.setMetadataMap(gridToMask.getMetadataMap());
                     }
 
                     newField.setSample(timeStepIdx, maskFF, false);
@@ -3412,6 +3457,7 @@ public class DerivedGridFactory {
             mask = (FlatField) mask.resample(gridToMask.getDomainSet());
         }
         newField = new FlatField(newType, gridToMask.getDomainSet());
+        newField.setMetadataMap(gridToMask.getMetadataMap());
 
         float[][] maskValues = mask.getFloats(false);
         float[][] gridValues = gridToMask.getFloats(false);
@@ -3576,6 +3622,7 @@ public class DerivedGridFactory {
                         }
                         if (j == 0) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(fi.getMetadataMap());
                         }
 
 
@@ -3588,6 +3635,7 @@ public class DerivedGridFactory {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 funcFF.getType());
                         latField = new FieldImpl(newFieldType, timeSet);
+                        latField.setMetadataMap(fi.getMetadataMap());
                     }
                     latField.setSample(i, funcFF, false);
                 } else {
@@ -3604,6 +3652,7 @@ public class DerivedGridFactory {
                                 (FunctionType) latFF.getType());
 
                         latField = new FieldImpl(latFIType, timeSet);
+                        latField.setMetadataMap(fi.getMetadataMap());
                     }
 
                     latField.setSample(i, latFF);
@@ -3684,6 +3733,7 @@ public class DerivedGridFactory {
                                          (FunctionType) lonFF.getType());
 
                     lonField = new FieldImpl(lonFIType, timeSet);
+                    lonField.setMetadataMap(fi.getMetadataMap());
                 }
 
                 lonField.setSample(i, lonFF);
@@ -3728,6 +3778,7 @@ public class DerivedGridFactory {
         }
 
         FlatField latff = new FlatField(FT, g3dset);
+        latff.setMetadataMap(ff.getMetadataMap());
         float[]   lats  = null;
 
         if (domIsLatLon) {
@@ -3847,7 +3898,8 @@ public class DerivedGridFactory {
             retField = new FlatField(retType, newDomain,
                                      domainSet.getCoordinateSystem(), rset,
                                      new Unit[] { uset[0][0],
-                    uset[1][0] });
+                                     uset[1][0] });
+            retField.setMetadataMap(ff.getMetadataMap());
             retField.setSamples(values, false);
 
         } catch (RemoteException re) {
@@ -3924,6 +3976,7 @@ public class DerivedGridFactory {
         FT = new FunctionType(rTT, RealType.Longitude);
 
         FlatField lonff = new FlatField(FT, g3dset);
+        lonff.setMetadataMap(ff.getMetadataMap());
         float[]   lons  = null;
 
         if (domIsLatLon) {
@@ -4141,6 +4194,7 @@ public class DerivedGridFactory {
                 for (int g = 0; g < indexes.length; g++) {
                     grids[g] = (FlatField) dailyData.getSample(indexes[g],
                             false);
+                    grids[g].setMetadataMap(dailyData.getMetadataMap());
                 }
                 FlatField avgGrid = GridMath.applyFunctionOverGrids(grids,
                                         GridMath.FUNC_AVERAGE);
@@ -4152,6 +4206,7 @@ public class DerivedGridFactory {
                         new FunctionType(RealTupleType.Time1DTuple,
                                          avgGrid.getType());
                     dailyClim = new FieldImpl(ftype, climTimes);
+                    dailyClim.setMetadataMap(dailyData.getMetadataMap());
                 }
                 dailyClim.setSample(i, avgGrid, false, false);
             }
@@ -4284,6 +4339,7 @@ public class DerivedGridFactory {
                             ((SetType) dailyTimes.getType()).getDomain(),
                             dayAnom.getType());
                     dailyAnom = new FieldImpl(ft, dailyTimes);
+                    dailyAnom.setMetadataMap(dailyData.getMetadataMap());
                 }
                 dailyAnom.setSample(i, dayAnom, false, false);
             }
