@@ -429,7 +429,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
 
 class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
     
-    """Implements the 'mega-object' class for grids read with loadFile."""
+    """Implements the 'mega-object' class for grids read with loadGrid."""
     
     def __init__(self, ggff, geogrid, filename, field):
         self.geogrid = geogrid
@@ -2941,21 +2941,31 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
     islInterpreter.captureImage(macros, elem)
 
 
-def loadFile(filename=None, field=None, level=None,
+def loadGrid(filename=None, field=None, level=None,
         time=None, xStride=1, yStride=1, 
         xRange=None, yRange=None, latLonBounds=None, **kwargs): 
-    """Method for loading anything handled by the netCDF-java library (netCDF, HDF, GRIB...).
+    """Load gridded fields; analagous to the "Gridded Data" chooser.
+    
+    Should be compatible with file formats handled by the netCDF-java library 
+    (netCDF, HDF, GRIB...).
 
     Args:
-        filename
-        field
-        level
-        time
-        xStride
-        yStride
-        xRange
-        yRange
-        latLonBounds
+        filename: path to local file, or an http/dods URL
+        field: the "short name" of the variable to be loaded.
+        level (optional): string specifying value and units, e.g. "1000 hPa". 
+                          default is all levels.
+        time (optional): integer representing index of time to be loaded. 
+                         default is zero.
+        xStride: integer stride value for reduced resolution loading.
+        yStride: integer stride value for reduced resolution loading.
+        xRange: integer for subsetting by grid indices.
+        yRange: integer for subsetting by grid indices.
+        latLonBounds: specify a rectangle for subsetting the part of the grid
+                      you want.  Expected format is (leftLat, leftLon, rightLat, rightLon),
+                      e.g., (30.0, -80.0, 35.0, -73.0)
+
+    Raises:
+        ValueError:  due to various problems with input arguments.
 
     Returns:
         _MappedGeoGridFlatField with the requested data
@@ -2992,7 +3002,7 @@ def loadFile(filename=None, field=None, level=None,
     if field:
         geogrid = gridDataset.findGridByName(field)
         if not geogrid:
-            raise ValueError('Failed to create geogrid.  Make sure the field you specified exists in the file (use loadFileListFieldsInFile): ' + field)
+            raise ValueError('Failed to create geogrid.  Make sure the field you specified exists in the file (use loadGridListFieldsInFile): ' + field)
     else:
         raise ValueError('no field name provided')
     
@@ -3065,6 +3075,10 @@ def loadFile(filename=None, field=None, level=None,
 
     return mapped
 
+def loadFile(**kwargs):
+    """Placeholder to redirect user to renamed function."""
+    raise NotImplementedError("The name of loadFile has changed to loadGrid.  You'll need to update your scripts.  Sorry for the hassle!")
+
 def makeFlatFieldSequence(sequence):
     """Turn list of _MappedGeoGridFlatField's into a FieldImpl with time domain that is suitable for displaying.
 
@@ -3108,14 +3122,14 @@ def makeFlatFieldSequence(sequence):
         fi.setSample(i, ff)
     return fi
 
-def loadFileListFieldsInFile(filename):
+def loadGridListFieldsInFile(filename):
     """Print a list of all fields in a NetCDF/HDF/grib2 file."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     for grid in gridDataset.getGrids():
         print '%s ; %s' % (grid.getName(), grid.getDescription())
 
-def loadFileListLevelsInField(filename, field):
+def loadGridListLevelsInField(filename, field):
     """Print a list of all levels in a NetCDF/HDF/grib2 field."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
@@ -3123,7 +3137,7 @@ def loadFileListLevelsInField(filename, field):
     for level in geogrid.getLevels():
         print '%s %s' % (level.getName(), level.getDescription())
 
-def loadFileListTimesInField(filename, field):
+def loadGridListTimesInField(filename, field):
     """Print a list of all times in a NetCDF/HDF/grib2 field."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)

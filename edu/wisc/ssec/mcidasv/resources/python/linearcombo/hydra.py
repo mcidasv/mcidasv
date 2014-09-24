@@ -36,7 +36,7 @@ def _extract_kwarg(aliases, arg_dict):
 def load(path):
     """Simplistic file loading function.
     
-    Please use loadFile instead.
+    Please use loadGrid instead.
     """
     return getStaticMcv().makeOneDataSource(path, None, None)
     
