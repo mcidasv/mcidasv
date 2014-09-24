@@ -407,10 +407,10 @@
     <resource label="Constants" location="%IDVPATH%/python/constants.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="Grid Diagnostics" location="%APPPATH%/python/griddiag.py">
+    <resource label="Grid Diagnostics" location="%IDVPATH%/python/griddiag.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="Grid Routines" location="%APPPATH%/python/grid.py">
+    <resource label="Grid Routines" location="%IDVPATH%/python/grid.py">
       <property name="category" value="System"/>
     </resource>
     <resource label="Ensemble Grid Routines" location="%APPPATH%/python/ensemble.py">
