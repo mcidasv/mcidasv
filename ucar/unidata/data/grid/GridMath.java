@@ -1620,6 +1620,7 @@ public class GridMath {
                         ((SetType) newDomain.getType()).getDomain(),
                         newRangeType);
                 newField = new FlatField(newFT, newDomain);
+                newField.setMetadataMap(grid.getMetadataMap());
                 newField.setSamples(values, false);
 
                 if (newGrid == null) {
@@ -1628,6 +1629,7 @@ public class GridMath {
                             ((SetType) timeDomain.getType()).getDomain(),
                             newField.getType());
                     newGrid = new FieldImpl(newFieldType, timeDomain);
+                    newGrid.setMetadataMap(grid.getMetadataMap());
                 }
 
                 newGrid.setSample(timeStepIdx, newField, false);
@@ -1790,6 +1792,7 @@ public class GridMath {
                         ((SetType) newDomain.getType()).getDomain(),
                         newRangeType);
                 newField = new FlatField(newFT, newDomain);
+                newField.setMetadataMap(grid.getMetadataMap());
                 newField.setSamples(values, false);
 
 
@@ -1799,6 +1802,7 @@ public class GridMath {
                             ((SetType) timeDomain.getType()).getDomain(),
                             newField.getType());
                     newGrid = new FieldImpl(newFieldType, timeDomain);
+                    newGrid.setMetadataMap(grid.getMetadataMap());
                 }
 
                 newGrid.setSample(timeStepIdx, newField, false);
@@ -1881,6 +1885,7 @@ public class GridMath {
                                         DataUtility.getDomainType(ensDomain),
                                         innerFuncFF.getType());
                                 funcFF = new FieldImpl(innerType, ensDomain);
+                                funcFF.setMetadataMap(grid.getMetadataMap());
                             }
                             funcFF.setSample(j, innerFuncFF, false);
                         }
@@ -1904,6 +1909,7 @@ public class GridMath {
                                 ((SetType) timeDomain.getType()).getDomain(),
                                 funcFF.getType());
                         newField = new FieldImpl(newFieldType, timeDomain);
+                        newField.setMetadataMap(grid.getMetadataMap());
                     }
                     newField.setSample(timeStepIdx, funcFF, false);
                 }
@@ -1999,6 +2005,7 @@ public class GridMath {
                 new FunctionType(((SetType) newDomain.getType()).getDomain(),
                                  newRangeType);
             newField = new FlatField(newFT, newDomain);
+            newField.setMetadataMap(grid.getMetadataMap());
             newField.setSamples(newValues, false);
 
         } catch (RemoteException re) {
@@ -2063,6 +2070,7 @@ public class GridMath {
                                         DataUtility.getDomainType(ensDomain),
                                         innerFuncFF.getType());
                                 funcFF = new FieldImpl(innerType, ensDomain);
+                                funcFF.setMetadataMap(grid.getMetadataMap());
                             }
                             funcFF.setSample(j, innerFuncFF, false);
                         }
@@ -2082,6 +2090,7 @@ public class GridMath {
                                 ((SetType) timeDomain.getType()).getDomain(),
                                 funcFF.getType());
                         newField = new FieldImpl(newFieldType, timeDomain);
+                        newField.setMetadataMap(grid.getMetadataMap());
                     }
                     newField.setSample(timeStepIdx, funcFF, false);
                 }
@@ -2238,6 +2247,7 @@ public class GridMath {
                                         DataUtility.getDomainType(ensDomain),
                                         innerFuncFF.getType());
                                 funcFF = new FieldImpl(innerType, ensDomain);
+                                funcFF.setMetadataMap(grid.getMetadataMap());
                             }
                             funcFF.setSample(j, innerFuncFF, false);
                         }
@@ -2257,6 +2267,7 @@ public class GridMath {
                                 ((SetType) timeDomain.getType()).getDomain(),
                                 funcFF.getType());
                         newField = new FieldImpl(newFieldType, timeDomain);
+                        newField.setMetadataMap(grid.getMetadataMap());
                     }
                     newField.setSample(timeStepIdx, funcFF, false);
                 }
@@ -2479,6 +2490,7 @@ public class GridMath {
                         }
                         if (funcFF == null) {
                             funcFF = new FieldImpl(innerType, ensDomain);
+                            funcFF.setMetadataMap(grid.getMetadataMap());
                         }
                         funcFF.setSample(j, innerFuncFF, false);
                     }
@@ -2488,6 +2500,7 @@ public class GridMath {
                                 ((SetType) s.getType()).getDomain(),
                                 funcFF.getType());
                         retField = new FieldImpl(newFieldType, s);
+                        retField.setMetadataMap(grid.getMetadataMap());
                     }
                     retField.setSample(i, funcFF, false);
                 } else {
@@ -2499,6 +2512,7 @@ public class GridMath {
                                 ((SetType) s.getType()).getDomain(),
                                 f.getType());
                         retField = new FieldImpl(ftype, s);
+                        retField.setMetadataMap(grid.getMetadataMap());
                     }
                     retField.setSample(i, f, false);
                 }
