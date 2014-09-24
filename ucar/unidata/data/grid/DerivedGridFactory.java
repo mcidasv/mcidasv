@@ -54,6 +54,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * DerivedGridFactory has static methods for creating various derived
@@ -80,6 +83,8 @@ import java.util.List;
  * @version $Revision: 1.73 $
  */
 public class DerivedGridFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(DerivedGridFactory.class);
 
     /** negative one */
     public static final Real NEGATIVE_ONE = GridMath.NEGATIVE_ONE;
@@ -1099,6 +1104,8 @@ public class DerivedGridFactory {
     public static FieldImpl createFlowVectors(FieldImpl uGrid,
             FieldImpl vGrid)
             throws VisADException, RemoteException {
+
+        logger.trace("incoming metadataMap size: " + uGrid.getMetadataMap().size());
         FieldImpl uvGrid      = combineGrids(uGrid, vGrid,
                                              true /* flatten */);
         FieldImpl retGrid     = uvGrid;
@@ -1131,6 +1138,7 @@ public class DerivedGridFactory {
                                             false /* copy */);
         }
 
+        logger.trace("outgoing metadataMap size: " + uGrid.getMetadataMap().size());
         return retGrid;
     }
 
@@ -1457,6 +1465,8 @@ public class DerivedGridFactory {
                     grid2 }, samplingMode, errorMode, flatten, copy);
         }  // end single time
 
+        logger.trace("wvFI.setMetadataMap");
+        wvFI.setMetadataMap(grid1.getMetadataMap());
         return wvFI;
 
     }  // end combineGrids

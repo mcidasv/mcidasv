@@ -140,6 +140,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Set of static methods for messing with grids.  A grid is defined
@@ -165,6 +168,8 @@ import java.util.List;
  * @version $Revision: 1.112 $
  */
 public class GridUtil {
+    
+    private static final Logger logger = LoggerFactory.getLogger(GridUtil.class);
 
     /**
      * Weighted average sampling mode
@@ -3261,6 +3266,8 @@ public class GridUtil {
         } catch (RemoteException re) {
             throw new VisADException("problem setting param type " + re);
         }
+        logger.trace("newField.setMetadataMap");
+        newField.setMetadataMap(grid.getMetadataMap());
         return newField;
 
     }
