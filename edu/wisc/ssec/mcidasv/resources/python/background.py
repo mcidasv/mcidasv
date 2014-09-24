@@ -3075,7 +3075,7 @@ def loadGrid(filename=None, field=None, level=None,
 
     return mapped
 
-def loadFile(**kwargs):
+def loadFile(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of loadFile has changed to loadGrid.  You'll need to update your scripts.  Sorry for the hassle!")
 
