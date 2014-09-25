@@ -258,7 +258,6 @@ to access the near-realtime data. For more information on accessing data on ADDE
 servers, see the <a href="choosers/index.html">Data Sources</a> section.</p>
 <p>SSEC image data sets include:</p>
 <ul>
-</li>
 <li><strong>rets1.ssec.wisc.edu</strong>
 <ul>
 <li><strong>CIMSSP1 -</strong> GOES East and West Cloud mask, imager CTP and ECA,
@@ -275,18 +274,27 @@ servers, see the <a href="choosers/index.html">Data Sources</a> section.</p>
   Cld, Ctop Pr).</li>
 </ul>
 </ul>
-<p>Additional image data sets:</p>
+<p>Additional data sets:</p>
 <ul>
 <li><strong>adde.ucar.edu*</strong></li>
 <ul>
+<li><strong>BLIZZARD -</strong> Archived data from the 1993 Storm of the Century.</li>
 <li><strong>CIMSS</strong> - Products derived from one or more channels, made by CIMSS, SSEC.</li>
+<li><strong>GINIALL -</strong> GINI images over different regions with different resolutions.</li>
 <li><strong>GINICOMP</strong> -  GINIEAST AND GINIWEST composites.</li>
 <li><strong>GINIEAST</strong> - GOES East images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 1.</li>
 <li><strong>GINIWEST</strong> - GOES West images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 2.</li>
+<li><strong>GLOBAL -</strong> Global composite IR and WV images</li>
+<li><strong>IMAGEALL -</strong> GOES images, Antarctic composites and Radar.</li>
+<li><strong>NEXRCALL -</strong> Composites of radar reflectivity, echo tops, and storm precipitation with different resolutions.</li>
 <li><strong>NEXRCOMP</strong> - Composites of NEXRAD imagery (1km,
-    6km, 10 km radar coded message, 1-hour precip total, storm total precip).</li>
+    6km, 10 km radar coded message, 1-hour precipitation total, storm total precipitation).</li>
 <li><strong>RTIMAGES</strong> - GOES East and West images in native view, not remapped. Also some global Mollweide images, and an Antarctic composite.</li>
 <li><strong>TOPO -</strong> Plots land elevations with different projections using the color scales relevant to the chosen descriptor. The image will remap.</li>
+<li><strong>NEXRALL -</strong> NEXRAD imagery of a variety of products for individual sites.</li>
+<li><strong>RTNEXRAD -</strong>NEXRAD imagery of a variety of products for individual sites.</li>
+<li><strong>RTPTSRC -</strong> Point data from hourly observations, planes, ships, and soundings.</li>
+<li><strong>RTWXTEXT -</strong> Text data used to plot front analysis and forecasts.</li>
 </ul>
 <li><strong>goessouth.unidata.ucar.edu</strong>
 <ul>
@@ -300,7 +308,7 @@ servers, see the <a href="choosers/index.html">Data Sources</a> section.</p>
 </ul>
 </ul>
 <p>You can configure defaults for particular images by creating a custom defaults file. For more information, see <a href="../misc/ImageDefaults.html">Configuring Image Defaults</a>.</p>
-<p>*Additional alternate servers include: idd.unl.edu, stratus.al.noaa.gov, twister.millersville.edu, weather2.admin.niu.edu, and weather3.admin.niu.edu. These alternate servers have most or all of the datasets listed under adde.ucar.edu.</p>
+<p>*Additional alternate servers include: stratus.al.noaa.gov, adde.ssec.wisc.edu, atm.ucar.edu, goessouth.unidata.ucar.edu, satepsanone.nesdis.noaa.gov, and weather2.admin.niu.edu. These alternate servers have most or all of the datasets listed under adde.ucar.edu.</p>
 <div class="pagesubsubtitle"><a name="thredds" id="thredds"></a>THREDDS Data Server (TDS)/OPeNDAP</div>
 <p>McIDAS-V can access gridded data (netCDF/GRIB/GEMPAK) and NEXRAD radar data stored on a THREDDS Data Server (TDS) through the OPeNDAP (formerly called DODS) protocol. See <a href="choosers/CatalogChooser.html">Choosing
 Cataloged Data</a> for more information.</p>
