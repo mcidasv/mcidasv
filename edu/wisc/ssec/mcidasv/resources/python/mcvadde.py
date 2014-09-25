@@ -1191,7 +1191,7 @@ def getADDEImage(localEntry=None,
         if lmag < 0 and emag < 0:
             mag = '&MAG=%s %s' % (lmag, emag)
         else:
-            raise ValueError("Neither magnification factor may be greater than zero (given mag=%s)." % (repr(mag)))
+            raise ValueError("Neither magnification factor may be greater than or equal to zero (given mag=%s)." % (repr(mag)))
     else:
         raise ValueError("Mag keyword must be a tuple or list of at least two elements.")
         
