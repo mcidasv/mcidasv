@@ -244,7 +244,7 @@ public class MultiSpectralControl extends HydraControl {
         });
 
         final boolean use360 = getIdv().getStore().get(Constants.PROP_HYDRA_360, false);
-        use360Box = new JCheckBox("0-360", use360);
+        use360Box = new JCheckBox("0-360 Longitude Format", use360);
         use360Box.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 getIdv().getStore().put(Constants.PROP_HYDRA_360, use360Box.isSelected());
