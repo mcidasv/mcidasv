@@ -3272,9 +3272,6 @@ public class GridUtil {
                 // have "grid" single FlatField; neither time nor index domain
                 newField = (FieldImpl) Util.clone(grid, newParam, true, copy,
                         false);
-                // mjh: another case where we need a setMetadataMap when no "new"?
-                // or do we think we can be thorough enough to propagate it inside of e.g. Util.clone?
-                newField.setMetadataMap(grid.getMetadataMap());
             }
         } catch (RemoteException re) {
             throw new VisADException("problem setting param type " + re);
