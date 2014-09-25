@@ -1511,6 +1511,9 @@ public class FieldImpl extends FunctionImpl implements Field {
     }
 
     visad.util.Trace.call2("combine, copy = " + copy);
+    if (field_0 instanceof FieldImpl) {
+        ((FieldImpl)new_field).setMetadataMap(((FieldImpl)field_0).getMetadataMap());
+    }
     return new_field;
   }
 

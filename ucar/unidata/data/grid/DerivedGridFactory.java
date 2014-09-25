@@ -1473,8 +1473,6 @@ public class DerivedGridFactory {
             // make combinded FlatField
             wvFI = (FieldImpl) FieldImpl.combine(new Field[] { grid1,
                     grid2 }, samplingMode, errorMode, flatten, copy);
-            // mjh how do we catch cases like this?
-            wvFI.setMetadataMap(grid1.getMetadataMap());
         }  // end single time
 
         return wvFI;
