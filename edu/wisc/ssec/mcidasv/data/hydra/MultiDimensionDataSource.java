@@ -58,7 +58,6 @@ import visad.UnionSet;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
-
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -85,7 +84,7 @@ import edu.wisc.ssec.mcidasv.data.PreviewSelection;
  */
 
 public class MultiDimensionDataSource extends HydraDataSource {
-
+	
     /** Sources file */
     protected String filename;
 
@@ -865,6 +864,12 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         GeoLocationInfo ginfo = null;
         GeoSelection geoSelection = null;
+        
+        // TJJ 25 Sep 2014 found this case to be needed for Calypso data, need to init
+        // with default data selection arg passed in to avoid NPE.
+        if (dataChoice.getDataSelection() == null) {
+        	dataChoice.setDataSelection(dataSelection);
+        }
         
         if ((dataSelection != null) && (dataSelection.getGeoSelection() != null)) {
           geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :
