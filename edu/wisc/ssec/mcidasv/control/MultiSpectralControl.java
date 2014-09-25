@@ -155,7 +155,7 @@ public class MultiSpectralControl extends HydraControl {
     private final JScrollPane scrollPane = new JScrollPane(probeTable);
     private final JButton addProbe = new JButton("Add Probe");
     private final JButton removeProbe = new JButton("Remove Probe");
-    private final JCheckBox use360Box = new JCheckBox("0-360");
+    private JCheckBox use360Box;
 
     public MultiSpectralControl() {
         super();
@@ -240,6 +240,14 @@ public class MultiSpectralControl extends HydraControl {
                 } else {
                     removeProbe.setEnabled(false);
                 }
+            }
+        });
+
+        final boolean use360 = getIdv().getStore().get(Constants.PROP_HYDRA_360, false);
+        use360Box = new JCheckBox("0-360", use360);
+        use360Box.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                getIdv().getStore().put(Constants.PROP_HYDRA_360, use360Box.isSelected());
             }
         });
 

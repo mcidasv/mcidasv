@@ -291,6 +291,9 @@ public interface Constants extends IdvConstants {
     /** Property used to store and retrieve color selection history. */
     public static final String PROP_RECENT_COLORS = "mcidasv.colorchooser.recentcolors";
 
+    /** Property used to store and retrieve the {@literal "0-360"} checkbox value. */
+    public static final String PROP_HYDRA_360 = "mcidasv.hydra.multispectral.use360";
+
 	/** Application property file name. */
 	public static final String PROPERTIES_FILE = 
 		"/edu/wisc/ssec/mcidasv/resources/mcidasv.properties";
