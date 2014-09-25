@@ -543,10 +543,6 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         return t;
     }
 
-    public static double clamp180(double value) {
-        return ((((value + 180.0) % 360.0) + 360.0) % 360.0) - 180.0;
-    }
-
     /**
      * Returns a brief summary of a ReadoutProbe. Please note that this format
      * is subject to change.

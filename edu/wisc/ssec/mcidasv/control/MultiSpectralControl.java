@@ -248,6 +248,9 @@ public class MultiSpectralControl extends HydraControl {
         use360Box.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 getIdv().getStore().put(Constants.PROP_HYDRA_360, use360Box.isSelected());
+                ProbeTableModel model = (ProbeTableModel)probeTable.getModel();
+                model.updateWith(spectra);
+                model.fireTableDataChanged();
             }
         });
 
@@ -346,8 +349,6 @@ public class MultiSpectralControl extends HydraControl {
         display.reorderDataRefsById(dataRefIds);
     }
 
-    
-    
     /**
      * Uses a variable-length array of {@link Color}s to create new readout 
      * probes using the specified colors.
@@ -993,8 +994,8 @@ public class MultiSpectralControl extends HydraControl {
             "Visibility", "Probe ID", "Value", "Latitude", "Longitude", "Color" 
         };
 
-        private final Map<ReadoutProbe, Integer> probeToIndex = new LinkedHashMap<ReadoutProbe, Integer>();
-        private final Map<Integer, Spectrum> indexToSpectrum = new LinkedHashMap<Integer, Spectrum>();
+        private final Map<ReadoutProbe, Integer> probeToIndex = new LinkedHashMap<>();
+        private final Map<Integer, Spectrum> indexToSpectrum = new LinkedHashMap<>();
         private final MultiSpectralControl control;
 
         public ProbeTableModel(final MultiSpectralControl control, final List<Spectrum> probes) {
@@ -1080,14 +1081,15 @@ public class MultiSpectralControl extends HydraControl {
 //            }
 //        }
         public Object getValueAt(final int row, final int column) {
+            DecimalFormat format = new DecimalFormat(control.getIdv().getStore().get(Constants.PREF_LATLON_FORMAT, "##0.0"));
             boolean use360 = control.use360Box.isSelected();
             Spectrum spectrum = indexToSpectrum.get(row);
             switch (column) {
                 case 0: return spectrum.isVisible();
                 case 1: return spectrum.getId();
                 case 2: return spectrum.getValue();
-                case 3: return formatPosition(use360, spectrum.getLatitude());
-                case 4: return formatPosition(use360, spectrum.getLongitude());
+                case 3: return format.format(spectrum.getLatitude());
+                case 4: return format.format(use360 ? clamp360(spectrum.getLongitude()) : clamp180(spectrum.getLongitude()));
                 case 5: return spectrum.getColor();
                 default: throw new AssertionError("uh oh");
             }
@@ -1150,21 +1152,17 @@ public class MultiSpectralControl extends HydraControl {
             return getValueAt(0, column).getClass();
         }
 
-        private static String formatPosition(boolean use360, double position) {
-            McIDASV mcv = McIDASV.getStaticMcv();
-            if (mcv == null) {
-                return "NaN";
-            }
-
-            DecimalFormat format = new DecimalFormat(mcv.getStore().get(Constants.PREF_LATLON_FORMAT, "##0.0"));
-            if (!use360) {
-                position = clamp180(position);
-            }
-            return format.format(position);
-        }
-
         public static double clamp180(double value) {
             return ((((value + 180.0) % 360.0) + 360.0) % 360.0) - 180.0;
+        }
+
+        public static double clamp360(double value) {
+            boolean positive = value > 0.0;
+            value = ((value % 360.0) + 360.0) % 360.0;
+            if ((value == 0.0) && positive) {
+                value = 360.0;
+            }
+            return value;
         }
     }
 
