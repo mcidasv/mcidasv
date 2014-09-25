@@ -525,6 +525,9 @@ public final class Util {
                                    oldFuncType.getRange());
 
             newField = new FieldImpl(newFuncType, domain);
+            if (field instanceof FieldImpl) {
+                ((FieldImpl)newField).setMetadataMap(((FieldImpl)field).getMetadataMap());
+            }
 
             if (copyRange && !fieldImpl.isMissing()) {
                 for (int i = fieldImpl.getLength(); --i >= 0; ) {
@@ -576,6 +579,7 @@ public final class Util {
                                            rangeCoordinateSystems,
                                            flatField.getRangeSets(),
                                            (Unit[]) null);  // use default units
+        newField.setMetadataMap(flatField.getMetadataMap());
 
         if (copyRange && !flatField.isMissing()) {
             ((FlatField) newField).setSamples(flatField.getValues(true),
@@ -626,6 +630,9 @@ public final class Util {
                         field)), convertDomain(
                             (SampledSet) getDomainSet(
                                 field), newDomainType, coordinateSystem));
+            if (field instanceof FieldImpl) {
+                ((FieldImpl)newField).setMetadataMap(((FieldImpl)field).getMetadataMap());
+            }
 
             if ( !fieldImpl.isMissing()) {
                 for (int i = fieldImpl.getLength(); --i >= 0; ) {
@@ -688,6 +695,7 @@ public final class Util {
                         newErrors), rangeCoordinateSystem,
                                     rangeCoordinateSystems,
                                     field.getRangeSets(), (Unit[]) null);  // default units
+        newField.setMetadataMap(field.getMetadataMap());
 
         if ( !field.isMissing()) {
             newField.setSamples(field.getValues(true), false);
@@ -1260,6 +1268,9 @@ public final class Util {
                     //getRangeCoordinateSystem(oldFlatField),
                     //getRangeCoordinateSystems(oldFlatField),
                     newRangeSets, oldUnits);
+                    if (data instanceof FieldImpl) {
+                        newFlatField.setMetadataMap(((FieldImpl)data).getMetadataMap());
+                    }
 
                     if ( !oldFlatField.isMissing()) {
                         boolean useFloats = true;
@@ -1515,6 +1526,7 @@ public final class Util {
                                    getRangeCoordinateSystems(flatField),
                                    flatField.getRangeSets(),
                                    flatField.getDefaultRangeUnits());  // use default units
+            newFlatField.setMetadataMap(flatField.getMetadataMap());
 
             newFlatField.setSamples(flatField.getValues(true), false);  // default units
             newFlatField.setRangeErrors(flatField.getRangeErrors());
@@ -2450,6 +2462,9 @@ public final class Util {
         FunctionType ft     = new FunctionType(index, mt);
         Integer1DSet domain = new Integer1DSet(index, datas.length);
         FieldImpl    fi     = new FieldImpl(ft, domain);
+        if (datas[0] instanceof FieldImpl) {
+            fi.setMetadataMap(((FieldImpl)datas[0]).getMetadataMap());
+        }
         fi.setSamples(datas, false);
         return fi;
     }
@@ -3331,6 +3346,9 @@ public final class Util {
                 }
                 fi = new FieldImpl(new FunctionType(dttm.getType(),
                         range.getType()), timeSet);
+                if (range instanceof FieldImpl) {
+                    fi.setMetadataMap(((FieldImpl)range).getMetadataMap());
+                }
             }
             fi.setSample(i, range, false, false);
         }
@@ -3383,6 +3401,9 @@ public final class Util {
             if (fi == null) {
                 fi = new FieldImpl(new FunctionType(dttm.getType(),
                         range.getType()), timeSet);
+                if (range instanceof FieldImpl) {
+                    fi.setMetadataMap(((FieldImpl)range).getMetadataMap());
+                }
             }
             fi.setSample(i, range, false, false);
         }
@@ -3436,6 +3457,9 @@ public final class Util {
                 DateTime dttm = (DateTime) times.get(i);
                 fi = new FieldImpl(new FunctionType(dttm.getType(),
                         range.getType()), timeSet);
+                if (range instanceof FieldImpl) {
+                    fi.setMetadataMap(((FieldImpl)range).getMetadataMap());
+                }
             }
             if ((i != 0) && (i != times.size() - 1)) {
                 fi.setSample(i, range, false, false);
