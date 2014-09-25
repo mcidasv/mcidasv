@@ -1115,7 +1115,7 @@ def getADDEImage(localEntry=None,
     location=None,
     coordinateSystem=None,
     place=None,
-    mag=None,
+    mag=(1, 1),
     position=0,
     unit='BRIT',
     day=None,
@@ -1188,10 +1188,10 @@ def getADDEImage(localEntry=None,
         mag = '&MAG=1 1'
     elif mag and hasattr(mag, '__getitem__') and len(mag) == 2:
         lmag, emag = int(mag[0]), int(mag[1])
-        if lmag < 0 and emag < 0:
+        if (lmag < 0 and emag < 0) or (lmag == 1 and emag == 1):
             mag = '&MAG=%s %s' % (lmag, emag)
         else:
-            raise ValueError("Neither magnification factor may be greater than or equal to zero (given mag=%s)." % (repr(mag)))
+            raise ValueError("Magnification factors must be either (1, 1) or less than zero (given mag=%s)." % (repr(mag)))
     else:
         raise ValueError("Mag keyword must be a tuple or list of at least two elements.")
         
