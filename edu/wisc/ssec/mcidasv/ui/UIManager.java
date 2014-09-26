@@ -506,12 +506,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
             // TODO: determine which threads are clobbering each other.
             List<IdvComponentHolder> holders = 
                 new ArrayList<>(bundleGroup.getDisplayComponents());
-
+            
             for (IdvComponentHolder holder : holders) {
                 group.quietAddComponent(holder);
             }
 
             group.redoLayout();
+
+            JComponent groupContents = group.getContents();
+            groupContents.setPreferredSize(groupContents.getSize());
         }
         return true;
     }
