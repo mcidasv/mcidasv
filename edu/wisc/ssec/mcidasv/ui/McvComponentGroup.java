@@ -110,17 +110,16 @@ public class McvComponentGroup extends IdvComponentGroup {
     @SuppressWarnings("unused")
     private int tabCount = 0;
 
-    /** Whether or not <code>init</code> has been called. */
+    /** Whether or not {@code init} has been called. */
     private boolean initDone = false;
 
     /**
      * Holders that McV knows are held by this component group. Used to avoid
-     * any needless work in <code>redoLayout</code>.
+     * any needless work in {@code redoLayout}.
      */
-    private List<ComponentHolder> knownHolders =
-        new ArrayList<ComponentHolder>();
+    private List<ComponentHolder> knownHolders = new ArrayList<>();
 
-    /** Keep a reference to avoid extraneous calls to <tt>getIdv().</tt> */
+    /** Keep a reference to avoid extraneous calls to {@code getIdv()}. */
     private IntegratedDataViewer idv;
 
     /** Reference to the window associated with this group. */
@@ -390,7 +389,7 @@ public class McvComponentGroup extends IdvComponentGroup {
                 tabbedPane.setVisible(false);
                 tabbedPane.removeAll();
 
-                knownHolders = new ArrayList<ComponentHolder>(currentHolders);
+                knownHolders = new ArrayList<>(currentHolders);
                 for (ComponentHolder holder : knownHolders) {
                     tabbedPane.addTab(holder.getName(), holder.getContents());
                 }
@@ -448,7 +447,7 @@ public class McvComponentGroup extends IdvComponentGroup {
             holder.setName("untitled");
         }
 
-        if (holder.getName().trim().length() == 0) {
+        if (holder.getName().trim().isEmpty()) {
             holder.setName("untitled");
         }
 
@@ -462,12 +461,12 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     private boolean shouldGenerateName(final ComponentHolder h, final int i) {
-        if (h.getName() != null && !h.getName().startsWith("untitled")) {
+        if ((h.getName() != null) && !h.getName().startsWith("untitled")) {
             return false;
         }
 
-        boolean invalidIndex = (i >= 0);
-        boolean withoutName = (h.getName() == null || h.getName().length() == 0);
+        boolean invalidIndex = i >= 0;
+        boolean withoutName = ((h.getName() == null) || (h.getName().length() == 0));
         boolean loadingBundle = ((PersistenceManager)getIdv().getPersistenceManager()).isBundleLoading();
 
         return invalidIndex || withoutName || !loadingBundle;

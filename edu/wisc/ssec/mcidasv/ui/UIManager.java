@@ -188,7 +188,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Used to keep track of ViewManagers inside a bundle.
      */
     public static final HashMap<String, ViewManager> savedViewManagers =
-        new HashMap<String, ViewManager>();
+        new HashMap<>();
 
     /** 
      * Property name for whether or not the description field of the support
@@ -239,10 +239,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     protected static final String TITLE_SEPARATOR = " - ";
 
     /**
-     * <p>The currently "displayed" actions. Keeping this List allows us to get 
+     * The currently "displayed" actions. Keeping this List allows us to get
      * away with only reading the XML files upon starting the application and 
      * only writing the XML files upon exiting the application. This will avoid
-     * those redrawing delays.</p>
+     * those redrawing delays.
      */
     private List<String> cachedButtons;
 
@@ -253,15 +253,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private Map<String, Integer> skinIds = readSkinIds();
 
     /** An easy way to figure out who is holding a given ViewManager. */
-    private Map<ViewManager, ComponentHolder> viewManagers = 
-        new HashMap<ViewManager, ComponentHolder>();
+    private Map<ViewManager, ComponentHolder> viewManagers = new HashMap<>();
 
     private int componentHolderCount;
     
     private int componentGroupCount;
     
     /** Cache for the results of {@link #getWindowTitleFromSkin(int)}. */
-    private final Map<Integer, String> skinToTitle = new ConcurrentHashMap<Integer, String>();
+    private final Map<Integer, String> skinToTitle = new ConcurrentHashMap<>();
 
     /** Maps menu IDs to {@link JMenu}s. */
 //    private Hashtable<String, JMenu> menuIds;
@@ -474,23 +473,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * <p>
-     * Attempts to add all component holders in <code>info</code> to
-     * <code>group</code>. Especially useful when unpersisting a bundle and
+     * Attempts to add all component holders in {@code info} to
+     * {@code group}. Especially useful when unpersisting a bundle and
      * attempting to deal with its component groups.
-     * </p>
      * 
      * @param info The window we want to process.
-     * @param group Receives the holders in <code>info</code>.
+     * @param group Receives the holders in {@code info}.
      * 
-     * @return True if there were component groups in <code>info</code>.
+     * @return True if there were component groups in {@code info}.
      */
     public boolean unpersistComponentGroups(final WindowInfo info,
         final McvComponentGroup group) {
         Collection<Object> comps = info.getPersistentComponents().values();
 
-        if (comps.isEmpty())
+        if (comps.isEmpty()) {
             return false;
+        }
 
         for (Object comp : comps) {
             // comp is typically always an IdvComponentGroup, but there are
@@ -507,10 +505,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
             // ConcurrentModificationException
             // TODO: determine which threads are clobbering each other.
             List<IdvComponentHolder> holders = 
-                new ArrayList<IdvComponentHolder>(bundleGroup.getDisplayComponents());
+                new ArrayList<>(bundleGroup.getDisplayComponents());
 
-            for (IdvComponentHolder holder : holders)
+            for (IdvComponentHolder holder : holders) {
                 group.quietAddComponent(holder);
+            }
 
             group.redoLayout();
         }
@@ -574,11 +573,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
     
     /**
-     * <p>
      * Handles the windowing portions of bundle loading: wraps things in
      * component groups (if needed), merges things into existing windows or
      * creates new windows, and removes displays and data if asked nicely.
-     * </p>
      * 
      * @param windows WindowInfos from the bundle.
      * @param newViewManagers ViewManagers stored in the bundle.
@@ -593,13 +590,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
             List newViewManagers, boolean okToMerge, boolean fromCollab,
             boolean didRemoveAll) 
         {
-            if (newViewManagers == null)
-                newViewManagers = new ArrayList<ViewManager>();
+            if (newViewManagers == null) {
+                newViewManagers = new ArrayList<>();
+            }
 
             // keep track of the "old" state if the user wants to remove things.
             boolean mergeLayers = ((PersistenceManager)getPersistenceManager()).getMergeBundledLayers();
-            List<IdvComponentHolder> holdersBefore = new ArrayList<IdvComponentHolder>();
-            List<IdvWindow> windowsBefore = new ArrayList<IdvWindow>();
+            List<IdvComponentHolder> holdersBefore = new ArrayList<>();
+            List<IdvWindow> windowsBefore = new ArrayList<>();
             if (didRemoveAll) {
                 holdersBefore.addAll(McVGuiUtils.getAllComponentHolders());
                 windowsBefore.addAll(McVGuiUtils.getAllDisplayWindows());
@@ -609,20 +607,20 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 newViewManagers.removeAll(info.getViewManagers());
                 makeBundledDisplays(info, okToMerge, mergeLayers, fromCollab);
 
-                if (mergeLayers)
+                if (mergeLayers) {
                     holdersBefore.addAll(McVGuiUtils.getComponentHolders(info));
+                }
             }
 //            System.err.println("holdersBefore="+holdersBefore);
             // no reason to kill the displays if there aren't any windows in the
             // bundle!
-            if ((mergeLayers) || (didRemoveAll && !windows.isEmpty()))
+            if ((mergeLayers) || (didRemoveAll && !windows.isEmpty())) {
                 killOldDisplays(holdersBefore, windowsBefore, (okToMerge || mergeLayers));
+            }
         }
 
     /**
-     * <p>
      * Removes data and displays that existed prior to loading a bundle.
-     * </p>
      * 
      * @param oldHolders Component holders around before loading.
      * @param oldWindows Windows around before loading.
@@ -634,9 +632,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
 //        System.err.println("killOldDisplays: merge="+merge);
         // if we merged, this will ensure that any old holders in the merged
         // window also get removed.
-        if (merge)
-            for (IdvComponentHolder holder : oldHolders)
+        if (merge) {
+            for (IdvComponentHolder holder : oldHolders) {
                 holder.doRemove();
+            }
+        }
 
         // mop up any windows that no longer have component holders.
         for (IdvWindow window : oldWindows) {
@@ -705,9 +705,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         if ((merge || (mergeLayers)) && last != null) {
             List<IdvWindow> windows = IdvWindow.getWindows();
             for (IdvWindow tmpWindow : windows) {
-                if (tmpWindow.getComponentGroups().isEmpty())
+                if (tmpWindow.getComponentGroups().isEmpty()) {
                     continue;
-
+                }
                 List<IdvComponentGroup> groups = tmpWindow.getComponentGroups();
                 for (IdvComponentGroup group : groups) {
                     List<IdvComponentHolder> holders = group.getDisplayComponents();
@@ -754,7 +754,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         List<ViewManager> oldVms = McVGuiUtils.getViewManagers(window);
 
         if (oldVms.size() == newVms.size()) {
-            List<ViewManager> merged = new ArrayList<ViewManager>();
+            List<ViewManager> merged = new ArrayList<>();
             for (int vmIdx = 0;
                      (vmIdx < newVms.size())
                      && (vmIdx < oldVms.size());
@@ -776,7 +776,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 
                 IdvComponentGroup group = (IdvComponentGroup)comp;
                 List<IdvComponentHolder> holders = group.getDisplayComponents();
-                List<IdvComponentHolder> emptyHolders = new ArrayList<IdvComponentHolder>();
+                List<IdvComponentHolder> emptyHolders = new ArrayList<>();
                 for (IdvComponentHolder holder : holders) {
                     List<ViewManager> vms = holder.getViewManagers();
                     for (ViewManager vm : merged) {
@@ -853,7 +853,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Split window title using <code>TITLE_SEPARATOR</code>.
+     * Split window title using {@code TITLE_SEPARATOR}.
      * 
      * @param title The window title to split
      * @return Parts of the title with the white space trimmed.
@@ -1862,7 +1862,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Populate a menu with bundles known to the <tt>PersistenceManager</tt>.
+     * Populate a menu with bundles known to the {@code PersistenceManager}.
+     *
      * @param inBundleMenu The menu to populate
      */
     public void makeBundleMenu(JMenu inBundleMenu) {
@@ -2043,19 +2044,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     private NextDisplayAction nextDisplayAction;
 
-    /** Modifier key, like &quot;control&quot; or &quot;shift&quot;. */
+    /** Modifier key, like {@literal "control"} or {@literal "shift"}. */
     private static final String PROP_KB_MODIFIER = "mcidasv.tabbedui.display.kbmodifier";
 
-    /** Key that pops up the list of displays. Used in conjunction with <code>PROP_KB_MODIFIER</code>. */
+    /** Key that pops up the list of displays. Used in conjunction with {@code PROP_KB_MODIFIER}. */
     private static final String PROP_KB_SELECT_DISPLAY = "mcidasv.tabbedui.display.kbselect";
     
-    /** Key for moving to the previous display. Used in conjunction with <code>PROP_KB_MODIFIER</code>. */
+    /** Key for moving to the previous display. Used in conjunction with {@code PROP_KB_MODIFIER}. */
     private static final String PROP_KB_DISPLAY_PREV = "mcidasv.tabbedui.display.kbprev";
 
-    /** Key for moving to the next display. Used in conjunction with <code>PROP_KB_MODIFIER</code>. */
+    /** Key for moving to the next display. Used in conjunction with {@code PROP_KB_MODIFIER}. */
     private static final String PROP_KB_DISPLAY_NEXT = "mcidasv.tabbedui.display.kbnext";
 
-    /** Key for showing the dashboard. Used in conjunction with <code>PROP_KB_MODIFIER</code>. */
+    /** Key for showing the dashboard. Used in conjunction with {@code PROP_KB_MODIFIER}. */
     private static final String PROP_KB_SHOW_DASHBOARD = "mcidasv.tabbedui.display.kbdashboard";
 
     // TODO: make all this stuff static: mod + acc don't need to read the properties file.
@@ -2249,7 +2250,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 getResourceManager().getXmlResources(
                     IdvResourceManager.RSC_SKIN);
 
-            Map<String, JMenu> menus = new Hashtable<String, JMenu>();
+            Map<String, JMenu> menus = new Hashtable<>();
             for (int i = 0; i < skins.size(); i++) {
                 final Element root = skins.getRoot(i);
                 if (root == null) {
@@ -2259,7 +2260,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 // filter out mcv or idv skins based on whether or not we're
                 // interested in tabs or new windows.
                 final String skinid = skins.getProperty("skinid", i);
-                if (skinid != null && skinid.startsWith(skinFilter)) {
+                if ((skinid != null) && skinid.startsWith(skinFilter)) {
                     continue;
                 }
 
@@ -2291,7 +2292,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
                         public void actionPerformed(ActionEvent ae) {
                             if (!inWindow) {
-//                                group.makeSkin(skinIndex);
                                 createNewTab(skinid);
                             } else {
                                 createNewWindow(null, true,
@@ -2387,8 +2387,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /**
      * Associates a given ViewManager with a given ComponentHolder.
      * 
-     * @param vm The ViewManager that is inside <tt>holder</tt>.
-     * @param holder The ComponentHolder that contains <tt>vm</tt>.
+     * @param vm The ViewManager that is inside {@code holder}.
+     * @param holder The ComponentHolder that contains {@code vm}.
      */
     public void setViewManagerHolder(ViewManager vm, ComponentHolder holder) {
         viewManagers.put(vm, holder);
@@ -2602,10 +2602,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * <p>
      * Uses a given toolbar editor to repopulate all toolbars so that they 
      * correspond to the user's choice of actions.
-     * </p>
      * 
      * @param tbe The toolbar editor that contains the actions the user wants.
      */
@@ -2693,7 +2691,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     private void showSupportFormInThread(String description,
                                          String stackTrace, JDialog dialog) {
-        List<HttpFormEntry> entries = new ArrayList<HttpFormEntry>();
+        List<HttpFormEntry> entries = new ArrayList<>();
 
         StringBuffer extra   = new StringBuffer("<h3>McIDAS-V</h3>\n");
         Hashtable<String, String> table = 
@@ -2839,7 +2837,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             getStore().save();
 
             List<HttpFormEntry> entriesToPost = 
-                new ArrayList<HttpFormEntry>(entries);
+                new ArrayList<>(entries);
 
             if ((stackTrace != null) && (stackTrace.length() > 0)) {
                 entriesToPost.remove(descriptionEntry);
@@ -3242,7 +3240,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             GuiUtils.processXmlMenuBar(xrc.getRoot(i), menuBar, getIdv(), menuMap, actionIcons);
         }
 
-        menuIds = new Hashtable<String, JMenuItem>(menuMap);
+        menuIds = new Hashtable<>(menuMap);
 
         // Ensure that the "help" menu is the last menu.
         JMenuItem helpMenu = menuMap.get(MENU_HELP);
@@ -3495,10 +3493,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * <p>
-     * A type of <code>HttpFormEntry</code> that supports line wrapping for 
+     * A type of {@code HttpFormEntry} that supports line wrapping for
      * text area entries.
-     * </p>
      * 
      * @see HttpFormEntry
      */
@@ -3530,10 +3526,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         /**
-         * <p>
          * Using this constructor allows McIDAS-V to control whether or not a
          * HttpFormEntry performs line wrapping for JTextArea components.
-         * </p>
          * 
          * @see HttpFormEntry#HttpFormEntry(int, String, String, String, int, int, boolean)
          */
@@ -3546,10 +3540,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         /**
-         * <p>
          * Overrides the IDV method so that the McIDAS-V support request form
          * will wrap lines in the "Description" field.
-         * </p>
          * 
          * @see HttpFormEntry#addToGui(List)
          */
@@ -3569,13 +3561,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         /**
-         * <p>
          * Since the IDV doesn't provide a getComponent for 
          * {@code addToGui}, we must make our {@code component} field
          * local to this class. 
          * Hijacks any value requests so that the local {@code component}
          * field is queried, not the IDV's.
-         * </p>
          * 
          * @see HttpFormEntry#getValue()
          */
@@ -3864,11 +3854,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public static final class IdvActions {
 
         /** Maps {@literal "id"} values to {@link IdvAction}s. */
-        private final Map<String, IdvAction> idToAction = new ConcurrentHashMap<String, IdvAction>();
+        private final Map<String, IdvAction> idToAction = new ConcurrentHashMap<>();
 
         /** Collects {@link IdvAction}s {@literal "under"} common group values. */
         // TODO(jon:102): this should probably become concurrency-friendly.
-        private final Map<String, Set<IdvAction>> groupToActions = new LinkedHashMap<String, Set<IdvAction>>();
+        private final Map<String, Set<IdvAction>> groupToActions = new LinkedHashMap<>();
 
         /**
          * 

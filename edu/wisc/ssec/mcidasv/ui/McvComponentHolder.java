@@ -244,8 +244,8 @@ public class McvComponentHolder extends IdvComponentHolder {
         @SuppressWarnings("unchecked")
         List<ViewManager> vms = getViewManagers();
         if (vms != null) {
-            for (int i = 0; i < vms.size(); i++) {
-                uiManager.getViewPanel().viewManagerChanged(vms.get(i));
+            for (ViewManager vm : vms) {
+                uiManager.getViewPanel().viewManagerChanged(vm);
             }
         }
     }
@@ -256,9 +256,9 @@ public class McvComponentHolder extends IdvComponentHolder {
      * @return UI Component specified by the skin contained in this holder.
      */
     public JComponent makeDynamicSkin() {
-        if (cached != null)
+        if (cached != null) {
             return cached;
-
+        }
         try {
             Element root = XmlUtil.getRoot((String) getObject());
 
@@ -277,7 +277,6 @@ public class McvComponentHolder extends IdvComponentHolder {
 
             cached = contents;
             return contents;
-
         } catch (Exception e) {
             throw new WrapperException(e);
         }
