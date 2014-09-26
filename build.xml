@@ -964,6 +964,7 @@
             <link href="http://java.sun.com/javase/6/docs/api/" />
             <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/" />
             <link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc/" />
+            <link href="http://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/v4.3/javadocAll/index.html" />
             <link href="http://www.eventbus.org/api/" />
         </javadoc>
     </target>
