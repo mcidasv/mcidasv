@@ -79,6 +79,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -2290,7 +2291,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
                         public void actionPerformed(ActionEvent ae) {
                             if (!inWindow) {
-                                group.makeSkin(skinIndex);
+//                                group.makeSkin(skinIndex);
+                                createNewTab(skinid);
                             } else {
                                 createNewWindow(null, true,
                                     getStateManager().getTitle(), skins.get(
@@ -2468,10 +2470,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param skinId The value of the skin's skinid attribute.
      */
     public void createNewTab(final String skinId) {
-        IdvComponentGroup group = 
-            McVGuiUtils.getComponentGroup(IdvWindow.getActiveWindow());
+        IdvWindow activeWindow = IdvWindow.getActiveWindow();
+        IdvComponentGroup group =
+            McVGuiUtils.getComponentGroup(activeWindow);
         if (skinIds.containsKey(skinId)) {
             group.makeSkin(skinIds.get(skinId));
+        }
+        JFrame frame = activeWindow.getFrame();
+        if (frame != null) {
+            frame.setPreferredSize(frame.getSize());
         }
     }
 
