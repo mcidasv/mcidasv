@@ -28,31 +28,38 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSubset.h
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Data Subset</div>
-<p>The <strong>Data Subset</strong> panel contains tabs for subsetting <strong>Times</strong>, <strong>Levels</strong>, <strong>Region</strong>, and <strong>Stride</strong>. These  tabs may be different depending on what data you are loading.</p>
-<p>Optionally subset the times by clicking off the <strong>Use Default</strong> checkbox and selecting the times. You can select individual times to display with Ctrl+click or Shift+click. Alternatively, you can subset the times by right clicking in the panel and selecting 'Select every N'th time'. This automatically subsets the times by only selecting every N'th time. The <strong>Use Default</strong> checkbox will utilize every available time in the display:</p>
-  <div class="images"><img src="images/SelectorStep4.gif" alt="Times Tab of Subset Panel in the Field Selector"><br>
+<p>The <strong>Data Subset</strong> panel contains tabs for subsetting <strong>Times</strong>, <strong>Levels</strong>, <strong>Region</strong>, and <strong>Stride</strong>. These  tabs may be different depending on the type of data.</p>
+<p>The <strong>Times</strong> tab allows for selecting which times will be used in the display, as well as for matching or setting a time driver:</p>
+  <div class="images"><img src="images/SelectorStep4.gif" width="280" height="214" alt="Image 1: Times Tab of the Subset Panel in the Field Selector"><br>
 <span class="caption">Image 1: Times Tab of the Subset Panel in the Field Selector</span></div>
-  <p>For 3D grids, you can optionally subset the levels. This represents the level in the atmosphere that will be used to plot the data in the Main Display window:</p>
+  <p>There are four different modes when selecting what times of data to display:</p>
+  <ul class="propertylist">
+      <li class="propertylistitem"><strong>Use Default -</strong> Selects all times included with the data source.</li>
+      <li class="propertylistitem"><strong>Use Selected -</strong> Allows for selection of individual times to display with Ctrl+click or Shift+click. Alternatively, subset the times by right-clicking in the panel and selecting 'Select every N'th time'.</li>
+      <li class="propertylistitem"><strong>Match Time Driver -</strong> Selects times that match the time driver, assuming one has been set.</li>
+      <li class="propertylistitem"><strong>Sets As Time Driver -</strong> Sets the times being displayed as the time driver.</li>
+      </ul>
+  <p>The <strong>Level</strong> tab allows for subsetting levels for 3D grids. This sets the level in the atmosphere that will be used to plot the data in the Main Display window:</p>
   <div class="images"><img src="images/SelectorStep5.gif" alt="Image 2: Level Tab of the Subset Panel in the Field Selector"><br>
 <span class="caption">Image 2: Level of the Subset Panel in the Field Selector</span></div>
 <p>For images, optionally subset the spatial area to be displayed. Use the
 <strong>Region </strong>tab to left-click and drag to select a geographical region to display. In the Main Display window, the display will be centered around your box and no data will be plotted outside of it. Note that before subsetting a region, you may have to uncheck the <strong>Use Default</strong> checkbox:</p>
     <div class="images"><img src="../quickstart/images/RegionTab.gif" alt="Image 3: Region Tab of the Subset Panel in the Field Selector" width="294" height="222"><br>
 <span class="caption">Image 3: Region of the Subset Panel in the Field Selector</span></div>
-  <p>Use the <strong>Advanced</strong> tab to further refine your data selection and refer back to the <strong>Region</strong> tab to view the image you've selected:</p>
+  <p>Use the <strong>Advanced</strong> tab to further refine the data selection and refer back to the <strong>Region</strong> tab to view the image you've selected:</p>
   <div class="images"><img src="../quickstart/images/AdvancedTab.gif" alt="Image 4: Advanced Tab in the Subset Panel of the Field Selector" width="475" height="358"><br>
 <span class="caption">Image 4: Advanced Tab of the Subset Panel in the Field Selector</span></div>
     <div class="pagesubtitle">Properties</div>
-<p>The image properties in the <strong>Advanced</strong> tab allow you to override the default properties McIDAS-V uses to specify aspects of the image data. The widgets show the defaults McIDAS-V will use. By changing any of the widgets you can override the default value. </p>
+<p>The image properties in the <strong>Advanced</strong> tab allow for overriding the default properties McIDAS-V uses to specify aspects of the image data. The widgets show the defaults McIDAS-V will use. Changing any of the widgets can override the default value. </p>
     <ul class="propertylist">
       <li class="propertylistitem"><strong>Coordinate Type -</strong> Changes the coordinate type used to specify the data location.</li>
       <ul class="propertylist">
-      <li class="propertylistitem"><strong>Latitude/Longitude Coordinates -</strong> Specifies Latitude and Longitude values of the image to be used by the <strong>Location</strong> field. Note that McIDAS-V cannot read latitude and longitude values for loops of polar data where the navigation changes. If you are displaying a loop of polar data, you should use <strong>Image Coordinates</strong> to ensure the images will be displayed.</li>
+      <li class="propertylistitem"><strong>Latitude/Longitude Coordinates -</strong> Specifies Latitude and Longitude values of the image to be used by the <strong>Location</strong> field. Note that McIDAS-V cannot read latitude and longitude values for loops of polar data where the navigation changes. If displaying a loop of polar data, <strong>Image Coordinates</strong> should be used to ensure the images will be displayed.</li>
       <li class="propertylistitem"><strong>Image Coordinates -</strong> Specifies the line and element values of the image itself to be used by the <strong>Location</strong> field. The upper left point is specified by (1,1) and each pixel in the image has its own, unique pair.</li>
       <li class="propertylistitem"><strong>Area Coordinates -</strong> Specifies the area coordinate of the image to be used by the <strong>Location</strong> field. This is based off the size of the area and referenced in terms of line/element. The upper left point is specified by (0,0) and each pixel has its own, unique pair.</li>
       </ul>
       <li class="propertylistitem"><strong>Location -</strong>  Specifies the placement point of the image at either the center or the upper left.</li>
-      <li class="propertylistitem"><strong>Lat/Lon -</strong> Specifies the location of the image with respect to latitude and longitude. Note that if you select <strong>Image</strong> or <strong>Area Coordinates</strong> in the <strong>Coordinate Type</strong> field, these fields will be <strong>Line/Element</strong>.</li>
+      <li class="propertylistitem"><strong>Lat/Lon -</strong> Specifies the location of the image with respect to latitude and longitude. Note that if  <strong>Image</strong> or <strong>Area Coordinates</strong> is selected in the <strong>Coordinate Type</strong> field, these fields will be <strong>Line/Element</strong>.</li>
       <li class="propertylistitem"><strong>Line/Element -</strong>  Specifies the location of the image with respect to line and element.</li>
       <li class="propertylistitem"><img src="choosers/images/CenterDisplay.gif" alt="Center Display icon" width="18" height="18" align="absmiddle"> <strong> Center Display -</strong>  Centers the image over the center, upper left, upper right, lower left, or lower right latitude and longitude coordinates of the of the current main display.</li>
       <li class="propertylistitem"><strong>Image Size -</strong>  Changes the size of the image.</li>
@@ -63,10 +70,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSubset.h
       <li class="propertylistitem"><strong>Res -</strong>  Lists the approximate resolution of the image, if displayed with the current Image Properties. </li>
       <li class="propertylistitem"><strong>Approx. Area -</strong>  Lists the center, upper left, upper right, lower left, and lower right coordinates of the selected image, if displayed with the current Image Properties.</li>
     </ul>
-<p>Use the <strong>Stride</strong> tab to change the number of points used to create the image. You can utilize fewer points along the X and Y-axes to display the data faster, but with less precision. It is recommended to leave the X and Y values as their default (All points) unless you are trying to get a general picture and nothing too specific.</p>
-<p>Use the <strong>Settings</strong> tab to utilize any <a href="../tools/DisplaySettings.html">display settings</a> you may have set.</p>  
+<p>Use the <strong>Data Sampling</strong> tab to change the number of points used to create the image. Fewer points along the X and Y-axes will display the data faster, but with less precision. It is recommended to leave the X and Y values as their default (all points) unless a general picture and nothing too specific is the overall goal.</p>
+<p>Use the <strong>Settings</strong> tab to utilize any <a href="../tools/DisplaySettings.html">display settings</a> that may have been set.</p>  
 <div class="pagesubtitle"><a name="subsetting" id="subsetting"></a>Subsetting</div>
-<p>The Subsetting component of the <strong>Field Selector</strong> allows you to subset the data in both time and space (if possible). If there are times in the data source you are viewing they will be shown in this area. Likewise, if it is possible to do spatial subsetting or decimation a <strong>Spatial Subset</strong> tab will be shown.</p>
+<p>The Subsetting component of the <strong>Field Selector</strong> allows for subsetting the data in both time and space (if possible). If there are times in the data source they will be shown in this area. Likewise, if it is possible to do spatial subsetting or decimation. a <strong>Spatial Subset</strong> tab will be shown.</p>
 <p>Time and spatial subsetting defaults can be applied to the data source itself through the <a href="DataSource.html#times">Data Source Properties</a> dialog or the defaults can be overwritten through the <strong>Field Selector</strong> tab.</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
