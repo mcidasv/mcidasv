@@ -79,7 +79,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Development</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#npp1.5">Suomi NPP Chooser</a></strong></li></ul></div>
+    <li><strong><a class="faq-question-link" href="#npp1.5">Suomi NPP Chooser</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#satTrack1.5">Satellite Orbit Track Chooser</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.5" id="faq1_cat1_1.5"></a>Documentation
@@ -128,6 +129,16 @@ Development</div>
           located in the Under Development list of choosers in the Data Sources tab
           of the Data Explorer and is available for user feedback through the <a href="http://mcidas.ssec.wisc.edu/forums/" target="_blank">McIDAS-V
               Support Forums</a>. As the IDPS (Interface Data Processing Segment) begins to distribute new types of NPP data, we test it in McIDAS-V and make any necessary changes to be able to get the data to display.</p>
+</div></div>
+<div class="faq-category"><a name="satTrack1.5" id="satTrack1.5"></a>
+  <h4>Satellite Orbit Track Chooser</h4>
+  <div class="faq-answer">
+      <p>Changed the name of the chooser from Polar Orbit Track chooser to the Satellite Orbit Track chooser. This change was made because tracks for other low earth orbit (LEO) satellites (such as TRMM) can be plotted, as well as geostationary satellites.</p>
+      <p>Added a valid timestamp macro that prints out the beginning and ending dates and times of the track plotted in the Main Display window. Also modified the Layer Controls tab of the Data Explorer to enhance functionality. This includes additional options to turn swath edge lines on/off, individually set font, style, and size of text for swath line times and ground station lines, options for setting line style of the track, swath edge, and ground station rings, the ability to plot multiple ground stations at once, and also the ability to specify your own ground station via lat/lon values.</p>
+<p>This is currently
+          located in the Under Development list of choosers in the Data Sources tab
+          of the Data Explorer and is available for user feedback through the <a href="http://mcidas.ssec.wisc.edu/forums/" target="_blank">McIDAS-V
+              Support Forums</a>.</p>
 </div></div>
 <br>
     <hr size="4" noshade>
