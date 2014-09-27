@@ -464,7 +464,7 @@ public class InteractiveShell implements HyperlinkListener {
      * @param cmdFld _more_
      */
     protected void handleKeyPress(KeyEvent e, JTextComponent cmdFld) {
-        boolean isArea  = (cmdFld instanceof JTextArea);
+        boolean isArea  = cmdFld instanceof JTextArea;
         int keyCode = e.getKeyCode();
         boolean isControlDown = e.isControlDown();
         boolean isShiftDown = e.isShiftDown();
@@ -853,7 +853,7 @@ class HTMLCleanupTransferHandler extends TransferHandler {
     }
 
     public String extractText(Reader reader) {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
 
         HTMLEditorKit.ParserCallback parserCallback = new HTMLEditorKit.ParserCallback() {
             public void handleText(final char[] data, final int pos) {

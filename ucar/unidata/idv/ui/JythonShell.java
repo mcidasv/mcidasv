@@ -569,7 +569,8 @@ public class JythonShell extends InteractiveShell {
         outputStream = new OutputStream() {
             @Override public void write(byte[] b, int off, int len) {
                 String output = new String(b, off, len);
-                boolean truncation = idv.getStore().get(PROP_JYTHON_SHELL_TRUNCATE, true);
+                boolean truncation =
+                    idv.getStore().get(PROP_JYTHON_SHELL_TRUNCATE, true);
                 if (!truncation || (len < 8192)) {
                     // only print "short" output. This combats problem of the Jython
                     // Shell effectively locking up when user prints a large data object.
