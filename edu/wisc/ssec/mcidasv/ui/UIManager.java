@@ -144,7 +144,9 @@ import ucar.unidata.ui.RovingProgress;
 import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.MenuUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
@@ -506,7 +508,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             // TODO: determine which threads are clobbering each other.
             List<IdvComponentHolder> holders = 
                 new ArrayList<>(bundleGroup.getDisplayComponents());
-            
+
             for (IdvComponentHolder holder : holders) {
                 group.quietAddComponent(holder);
             }
@@ -1105,18 +1107,22 @@ public class UIManager extends IdvUIManager implements ActionListener {
     private ToolbarStyle getToolbarStylePref(final ToolbarStyle defaultStyle) {
         assert defaultStyle != null;
         String storedStyle = getStateManager().getPreferenceOrProperty(PROP_ICON_SIZE, (String)null);
-        if (storedStyle == null)
+        if (storedStyle == null) {
             return defaultStyle;
+        }
 
         int intSize = Integer.valueOf(storedStyle);
 
         // can't switch on intSize using ToolbarStyles as the case...
-        if (intSize == ToolbarStyle.LARGE.getSize())
+        if (intSize == ToolbarStyle.LARGE.getSize()) {
             return ToolbarStyle.LARGE;
-        if (intSize == ToolbarStyle.MEDIUM.getSize())
+        }
+        if (intSize == ToolbarStyle.MEDIUM.getSize()) {
             return ToolbarStyle.MEDIUM;
-        if (intSize == ToolbarStyle.SMALL.getSize())
+        }
+        if (intSize == ToolbarStyle.SMALL.getSize()) {
             return ToolbarStyle.SMALL;
+        }
 
         // uh oh
         throw new AssertionError("Invalid preferred icon size: " + intSize);
@@ -1131,8 +1137,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     private JButton buildToolbarButton(String action) {
         IdvAction a = idvActions.getAction(action);
-        if (a == null)
+        if (a == null) {
             return null;
+        }
 
         JButton button = new JButton(idvActions.getStyledIconFor(action, currentToolbarStyle));
 
@@ -1146,18 +1153,18 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     @Override public JPanel doMakeStatusBar(final IdvWindow window) {
-        if (window == null)
+        if (window == null) {
             return new JPanel();
-
+        }
         JLabel msgLabel = new JLabel("                         ");
         LogUtil.addMessageLogger(msgLabel);
 
         window.setComponent(COMP_MESSAGELABEL, msgLabel);
 
         IdvXmlUi xmlUI = window.getXmlUI();
-        if (xmlUI != null)
+        if (xmlUI != null) {
             xmlUI.addComponent(COMP_MESSAGELABEL, msgLabel);
-
+        }
         JLabel waitLabel = new JLabel(IdvWindow.getNormalIcon());
         waitLabel.addMouseListener(new ObjectListener(null) {
             public void mouseClicked(final MouseEvent e) {
@@ -1184,8 +1191,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 //        ((JPanel)label).setBorder(getStatusBorder());
 
 //        JPanel msgBar = GuiUtils.leftCenter((JPanel)label, msgLabel);
-        JPanel msgBar = GuiUtils.leftCenter(mm, msgLabel);
-        JPanel statusBar = GuiUtils.centerRight(msgBar, progress);
+        JPanel msgBar = LayoutUtil.leftCenter(mm, msgLabel);
+        JPanel statusBar = LayoutUtil.centerRight(msgBar, progress);
         statusBar.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         return statusBar;
     }
@@ -1196,59 +1203,52 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @return Roving progress bar
      */
     public RovingProgress doMakeRovingProgressBar() {
-    	RovingProgress progress = new RovingProgress(Constants.MCV_BLUE) {
-    		private Font labelFont;
-//            public boolean drawFilledSquare() {
-//                return false;
-//            }
+        RovingProgress progress = new RovingProgress(Constants.MCV_BLUE) {
+            private Font labelFont;
 
-    		public void paintInner(Graphics g) {
-    			//Catch if we're not in a wait state
-    			if ( !IdvWindow.getWaitState() && super.isRunning()) {
-    				stop();
-    				return;
-    			}
-    			if ( !super.isRunning()) {
-    				super.paintInner(g);
-    				return;
-    			}
-    			super.paintInner(g);
-    		}
-    		
-    		public void paintLabel(Graphics g, Rectangle bounds) {
-    			if (labelFont == null) {
-    				labelFont = g.getFont();
-    				labelFont = labelFont.deriveFont(Font.BOLD);
-    			}
-    			g.setFont(labelFont);
-    			g.setColor(Color.black);
-    			if (DataSourceImpl.getOutstandingGetDataCalls() > 0) {
-    				g.drawString(" Reading data", 5, bounds.height - 4);
-    			}
-    			else if (!idv.getAllDisplaysIntialized()){
-    				g.drawString(" Creating layers", 5, bounds.height - 4);
-    			}
+            public void paintInner(Graphics g) {
+                //Catch if we're not in a wait state
+                if (!IdvWindow.getWaitState() && super.isRunning()) {
+                    stop();
+                    return;
+                }
+                if (!super.isRunning()) {
+                    super.paintInner(g);
+                    return;
+                }
+                super.paintInner(g);
+            }
 
-    		}
-    		
-    	    public synchronized void stop() {
-    	    	super.stop();
-    	    	super.reset();
-    	    }
+            public void paintLabel(Graphics g, Rectangle bounds) {
+                if (labelFont == null) {
+                    labelFont = g.getFont();
+                    labelFont = labelFont.deriveFont(Font.BOLD);
+                }
+                g.setFont(labelFont);
+                g.setColor(Color.black);
+                if (DataSourceImpl.getOutstandingGetDataCalls() > 0) {
+                    g.drawString(" Reading data", 5, bounds.height - 4);
+                } else if (!idv.getAllDisplaysIntialized()){
+                    g.drawString(" Creating layers", 5, bounds.height - 4);
+                }
 
-    	};
-    	progress.setPreferredSize(new Dimension(130, 10));
-    	return progress;
+            }
+
+            public synchronized void stop() {
+                super.stop();
+                super.reset();
+            }
+        };
+        progress.setPreferredSize(new Dimension(130, 10));
+        return progress;
     }
     
     /**
-     * <p>
      * Overrides the IDV's getToolbarUI so that McV can return its own toolbar
      * and not deal with the way the IDV handles toolbars. This method also
      * updates the toolbar data member so that other methods can fool around
      * with whatever the IDV thinks is a toolbar (without having to rely on the
      * IDV window manager code).
-     * </p>
      * 
      * <p>
      * Not that the IDV code is bad of course--I just can't handle that pause
@@ -1361,12 +1361,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * <p>
      * Builds two things, given a toolbar and a tree node: a JButton that
      * represents a "first-level" parent node and a JPopupMenu that appears
      * upon clicking the JButton. The button is then added to the given
      * toolbar.
-     * </p>
      * 
      * <p>
      * "First-level" means the given node is a child of the root node.
@@ -1556,20 +1554,20 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * @see GuiUtils#makeMenuItem(String, Object, String, Object)
+     * @see ucar.unidata.util.MenuUtil#makeMenuItem(String, Object, String, Object)
      */
     public static JMenuItem makeMenuItem(String label, Object obj, 
         String method, Object arg) 
     {
-        return GuiUtils.makeMenuItem(label, obj, method, arg);
+        return MenuUtil.makeMenuItem(label, obj, method, arg);
     }
 
     /**
-     * @see GuiUtils#makeMenu(String, List)
+     * @see ucar.unidata.util.MenuUtil#makeMenu(String, List)
      */
     @SuppressWarnings("unchecked")
     public static JMenu makeMenu(String name, List menuItems) {
-        return GuiUtils.makeMenu(name, menuItems);
+        return MenuUtil.makeMenu(name, menuItems);
     }
 
     /**
@@ -2026,7 +2024,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param menu edit menu to add to
      */
     public void makeFormulasMenu(JMenu menu) {
-        GuiUtils.makeMenu(menu, getJythonManager().doMakeFormulaDataSourceMenuItems(null));
+        MenuUtil.makeMenu(menu, getJythonManager().doMakeFormulaDataSourceMenuItems(null));
     }
     
     /** Whether or not the list of available actions has been initialized. */
@@ -2822,12 +2820,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         JLabel statusLabel = GuiUtils.cLabel(" ");
-        JComponent bottom = GuiUtils.vbox(GuiUtils.leftVbox(checkboxes), statusLabel);
+        JComponent bottom = LayoutUtil.vbox(LayoutUtil.leftVbox(checkboxes), statusLabel);
 
         while (true) {
             //Show form. Check if user pressed cancel.
             statusLabel.setText(" ");
-            if ( !HttpFormEntry.showUI(entries, GuiUtils.inset(topLabel, 10),
+            if ( !HttpFormEntry.showUI(entries, LayoutUtil.inset(topLabel, 10),
                                        bottom, dialog, alreadyHaveDialog)) {
                 break;
             }
@@ -3119,16 +3117,16 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         mi = new JMenuItem("Create Layer from Data Source...");
         mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-            	showDashboard("Data Sources");
+            @Override public void actionPerformed(ActionEvent ae) {
+                showDashboard("Data Sources");
             }
         });
         displayMenu.add(mi);
 
         mi = new JMenuItem("Layer Controls...");
         mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-            	showDashboard("Layer Controls");
+            @Override public void actionPerformed(ActionEvent ae) {
+                showDashboard("Layer Controls");
             }
         });
         displayMenu.add(mi);
@@ -3175,7 +3173,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 }
             };
             List menuItems = NamedStationTable.makeMenuItems(stations, listener);
-            displayMenu.add(GuiUtils.makeMenu("Plot Location Labels", menuItems));
+            displayMenu.add(MenuUtil.makeMenu("Plot Location Labels", menuItems));
         }
 
         displayMenu.addSeparator();
@@ -3219,8 +3217,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
             XmlResourceCollection skins = mngr.getXmlResources(mngr.RSC_SKIN);
             List<String> names = StringUtil.split(skins.getShortName(index), ">", true, true);
             String title = getStateManager().getTitle();
-            if (!names.isEmpty())
+            if (!names.isEmpty()) {
                 title = title + " - " + StringUtil.join(" - ", names);
+            }
             skinToTitle.put(index, title);
         }
         return skinToTitle.get(index);
@@ -3255,7 +3254,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         //TODO: Perhaps we will put the different skins in the menu?
         JMenu newDisplayMenu = (JMenu)menuMap.get(MENU_NEWDISPLAY);
         if (newDisplayMenu != null) {
-            GuiUtils.makeMenu(newDisplayMenu, makeSkinMenuItems(makeMenuBarActionListener(), true, false));
+            MenuUtil.makeMenu(newDisplayMenu, makeSkinMenuItems(makeMenuBarActionListener(), true, false));
         }
 
 //        final JMenu publishMenu = menuMap.get(MENU_PUBLISH);
@@ -3545,18 +3544,17 @@ public class UIManager extends IdvUIManager implements ActionListener {
         /**
          * Overrides the IDV method so that the McIDAS-V support request form
          * will wrap lines in the "Description" field.
-         * 
-         * @see HttpFormEntry#addToGui(List)
          */
         @SuppressWarnings("unchecked")
         @Override public void addToGui(List guiComps) {
             if (type == HttpFormEntry.TYPE_AREA) {
-                guiComps.add(GuiUtils.top(GuiUtils.rLabel(getLabel())));
+                Dimension minSize = new Dimension(500, 200);
+                guiComps.add(LayoutUtil.top(GuiUtils.rLabel(getLabel())));
                 component.setLineWrap(wrap);
                 component.setWrapStyleWord(wrap);
                 JScrollPane sp = new JScrollPane(component);
-                sp.setPreferredSize(new Dimension(500, 200));
-                sp.setMinimumSize(new Dimension(500, 200));
+                sp.setPreferredSize(minSize);
+                sp.setMinimumSize(minSize);
                 guiComps.add(sp);
             } else {
                 super.addToGui(guiComps);
@@ -3569,8 +3567,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * local to this class. 
          * Hijacks any value requests so that the local {@code component}
          * field is queried, not the IDV's.
-         * 
-         * @see HttpFormEntry#getValue()
          */
         @Override public String getValue() {
             if (type != HttpFormEntry.TYPE_AREA) {
@@ -3581,8 +3577,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         /**
          * Hijacks any requests to set the {@code component} field's text.
-         * 
-         * @see HttpFormEntry#setValue(String)
          */
         @Override public void setValue(final String newValue) {
             if (type == HttpFormEntry.TYPE_AREA) {
