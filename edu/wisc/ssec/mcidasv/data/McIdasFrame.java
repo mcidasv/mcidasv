@@ -177,7 +177,7 @@ public class McIdasFrame {
      * See if this McIdasFrame is equal to the object in question
      *
      * @param o   object in question
-     * @return  true if <code>o</code> is a McIdasFrame and
+     * @return  true if {@code o} is a McIdasFrame and
      *          they area equivalent
      */
     public boolean equals(Object o) {

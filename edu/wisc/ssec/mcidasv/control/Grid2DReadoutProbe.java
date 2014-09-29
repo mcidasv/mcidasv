@@ -357,7 +357,7 @@ public class Grid2DReadoutProbe extends GridDisplayControl {
     /**
      * Get the initial position of the probe set during unpersistence.
      *
-     * @return  initial position or <code>null</code> if not set during
+     * @return  initial position or {@code null} if not set during
      *          initialization.
      */
     public RealTuple getInitialPosition() {

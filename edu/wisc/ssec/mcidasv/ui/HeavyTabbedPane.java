@@ -43,8 +43,8 @@ import javax.swing.JTabbedPane;
  * light-weight stand in is removed and it's heavy-weight counter-part is displayed.  
  * When another tab is selected the reverse happens.
  * <p>
- * This was originally written to facilitate the use of <tt>Canvas3D</tt> objects in 
- * a <tt>JTabbedPane</tt>, but I believe it will work for any heavy-weight component.
+ * This was originally written to facilitate the use of {@code Canvas3D} objects in
+ * a {@code JTabbedPane}, but I believe it will work for any heavy-weight component.
  * <p>
  * 
  * @author <a href="http://www.ssec.wisc.edu/cgi-bin/email_form.cgi?name=Flynn,%20Bruce">Bruce Flynn, SSEC</a>
@@ -54,8 +54,8 @@ public class HeavyTabbedPane extends JTabbedPane {
 	private static final long serialVersionUID = -3903797547171213551L;
 	
 	/**
-	 * Delay in milliseconds for <tt>ChangeEvent</tt>s. This prevents some
-	 * re-draw issues that popup with the heavy weight components.
+	 * Delay in milliseconds for {@link javax.swing.event.ChangeEvent ChangeEvents}.
+     * This prevents some re-draw issues that popup with the heavy weight components.
 	 */
 	protected long heavyWeightDelay = 0;
 	
@@ -165,7 +165,7 @@ public class HeavyTabbedPane extends JTabbedPane {
 	}
 	
 	/**
-	 * <tt>ChangeEvent</tt> are delayed by the heavy weight delay 
+	 * {@code ChangeEvent} are delayed by the heavy weight delay
 	 * milliseconds to aid in the proper rendering of heavy weight components.
 	 * @see javax.swing.JTabbedPane#fireStateChanged()
 	 */

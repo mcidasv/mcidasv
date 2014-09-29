@@ -210,29 +210,28 @@ public class NearCastTrajDataSource extends DataSourceImpl {
     }
 
     /**
-     * Make and insert the <code>DataChoice</code>-s for this
-     * <code>DataSource</code>.
+     * Make and insert the {@link DataChoice DataChoices} for this {@code DataSource}.
      */
     public void doMakeDataChoices() {
         try {
-          for (int k=0; k<paramList.length; k++) {
-            DataChoice choice = doMakeDataChoice(k);
-            if (choice != null) {
-	      addDataChoice(choice);
-	    }
-          }
+            for (int k=0; k<paramList.length; k++) {
+                DataChoice choice = doMakeDataChoice(k);
+                if (choice != null) {
+                    addDataChoice(choice);
+                }
+            }
         }
         catch(Exception e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
     private DataChoice doMakeDataChoice(int idx) throws Exception {
         String name = paramList[idx];
-	DirectDataChoice ddc = null;
-	if (ncFile.hasArray(name)) {
-           ddc = new DirectDataChoice(this, new Integer(idx), name, name, null, new Hashtable());
-	}
+        DirectDataChoice ddc = null;
+        if (ncFile.hasArray(name)) {
+            ddc = new DirectDataChoice(this, new Integer(idx), name, name, null, new Hashtable());
+        }
         return ddc;
     }
 

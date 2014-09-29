@@ -103,8 +103,6 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * @author IDV development team
  * @version $Revision$Date: 2011/03/24 16:06:32 $
  */
-
-
 public class AddeRaobChooser extends AddePointDataChooser {
     
     /** Property for the data type. */
@@ -156,11 +154,11 @@ public class AddeRaobChooser extends AddePointDataChooser {
     private boolean showMainHoursOnly = true;
 
     /**
-     * Construct a <code>RaobChooser</code> using the manager
+     * Construct a {@code RaobChooser} using the manager
      * and the root XML that defines this object.
      *
-     * @param mgr  <code>IdvChooserManager</code> that controls this chooser.
-     * @param root root element of the XML that defines this object
+     * @param mgr {@code IdvChooserManager} that controls this chooser.
+     * @param root Root element of the XML that defines this object.
      */
     public AddeRaobChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);

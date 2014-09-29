@@ -55,7 +55,7 @@ public class AddeLightningDataChooser extends AddePointDataChooser {
 
 
     /**
-     * Create a new <code>AddeLightningDataChooser</code> with the preferred
+     * Create a new {@code AddeLightningDataChooser} with the preferred
      * list of ADDE servers.
      *
      *

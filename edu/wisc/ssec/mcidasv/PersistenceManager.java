@@ -111,14 +111,14 @@ import edu.wisc.ssec.mcidasv.util.XPathUtils;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
 /**
- * <p>McIDAS-V has 99 problems, and bundles are several of 'em. Since the UI of
+ * McIDAS-V has 99 problems, and bundles are several of 'em. Since the UI of
  * alpha 10 relies upon component groups and McIDAS-V needs to support IDV and
  * bundles prior to alpha 10, we must add facilities for coping with bundles
  * that may not contain component groups. Here's a list of the issues and how
- * they are resolved:</p> 
+ * they are resolved:
  * 
  * <p><ul>
- * <li>Bundles prior to alpha 9 use the <code>TabbedUIManager</code>. Each tab
+ * <li>Bundles prior to alpha 9 use the {@code TabbedUIManager}. Each tab
  * is, internally, an IDV window. This is reflected in the contents of bundles,
  * so the IDV wants to create a new window for each tab upon loading. Alpha 10
  * allows the user to force bundles to only create one window. This work is
@@ -127,7 +127,7 @@ import edu.wisc.ssec.mcidasv.util.XmlUtil;
  * <li>The IDV allows users to save bundles that contain <i>both</i> 
  * {@link ucar.unidata.idv.ViewManager}s with component groups and without! 
  * This is actually only a problem when limiting the windows; 
- * <code>injectComponentGroups</code> has to wrap ViewManagers without 
+ * {@code injectComponentGroups} has to wrap ViewManagers without
  * component groups in dynamic skins. These ViewManagers must be removed 
  * from the bundle's internal list of ViewManagers, as they don't exist until
  * the dynamic skin is built. <i>Do not simply clear the list!</i> The 
@@ -1044,7 +1044,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 
     /**
      * <p>Does the work in fixing the collisions described in the
-     * <code>instantiateFromBundle</code> javadoc. Basically just queries the
+     * {@code instantiateFromBundle} javadoc. Basically just queries the
      * {@link ucar.unidata.idv.VMManager} for each 
      * {@link ucar.unidata.idv.ViewManager}. If a match is found, a new ID is
      * generated and associated with the ViewManager, its 
@@ -1076,9 +1076,9 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * <p>Builds a single window with a single component group. The group 
+     * Builds a single window with a single component group. The group
      * contains component holders that correspond to each window or component
-     * holder stored in the incoming bundle.</p>
+     * holder stored in the incoming bundle.
      * 
      * @param windows The bundle's list of 
      *                {@link ucar.unidata.idv.ui.WindowInfo}s.
@@ -1086,7 +1086,7 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @return List of WindowInfos that contains only one element/window.
      * 
      * @throws Exception Bubble up any exceptions from 
-     *                   <code>makeImpromptuSkin</code>.
+     *                   {@code makeImpromptuSkin}.
      */
     protected List<WindowInfo> injectComponentGroups(
         final List<WindowInfo> windows) throws Exception {
@@ -1124,11 +1124,9 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * <p>
-     * Builds an altered copy of <code>windows</code> that preserves the
+     * Builds an altered copy of {@code windows} that preserves the
      * number of windows while ensuring all displays are inside component
      * holders.
-     * </p>
      * 
      * @throws Exception Bubble up dynamic skin exceptions.
      * 
@@ -1168,8 +1166,8 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * <p>Builds a list of component holders with all of <code>window</code>'s
-     * displays.</p>
+     * Builds a list of component holders with all of {@code window}'s
+     * displays.
      * 
      * @throws Exception Bubble up any problems creating a dynamic skin.
      */
@@ -1205,7 +1203,7 @@ public class PersistenceManager extends IdvPersistenceManager {
      * 
      * @param windows The bundle's windows.
      * 
-     * @return Any dynamic skins in <code>windows</code>.
+     * @return Any dynamic skins in {@code windows}.
      */
     public List<ViewManager> mapDynamicSkins(final List<WindowInfo> windows) {
         List<ViewManager> vms = new ArrayList<ViewManager>();
@@ -1516,8 +1514,8 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * <p>Alters <code>windows</code> so that no windows in the bundle contain
-     * nested component groups.</p>
+     * Alters {@code windows} so that no windows in the bundle contain
+     * nested component groups.
      */
     protected void flattenWindows(final List<WindowInfo> windows) {
         for (WindowInfo window : windows) {
@@ -1537,7 +1535,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * @return An altered version of <code>nested</code> that contains no 
+     * @return An altered version of {@code nested} that contains no
      *         nested component groups.
      */
     protected IdvComponentGroup flattenGroup(final IdvComponentGroup nested) {
@@ -1560,7 +1558,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * @return An altered <code>group</code> containing only component holders
+     * @return An altered {@code group} containing only component holders
      *         with displays.
      */
     protected static List<IdvComponentHolder> removeUIHolders(final IdvComponentGroup group) {
@@ -1577,8 +1575,8 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * <p>Ensures that the lists corresponding to the ids in <code>ids</code>
-     * actually exist in <code>table</code>, even if they are empty.</p>
+     * Ensures that the lists corresponding to the ids in {@code ids}
+     * actually exist in {@code table}, even if they are empty.
      */
     // TODO: not a fan of this method.
     protected static void populateEssentialLists(final String[] ids, final Hashtable<String, Object> table) {
@@ -1590,8 +1588,8 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * <p>Returns an altered copy of <code>windows</code> containing only 
-     * component holders that have displays.</p>
+     * Returns an altered copy of {@code windows} containing only
+     * component holders that have displays.
      * 
      * <p>The IDV allows users to embed HTML controls or things like the 
      * dashboard into component holders. This ability, while powerful, could
@@ -1643,13 +1641,13 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * <p>Uses the {@link ucar.unidata.idv.ViewManager}s in <code>info</code> 
-     * to build a dynamic skin.</p>
+     * Uses the {@link ViewManager ViewManagers} in {@code info}
+     * to build a dynamic skin.
      * 
      * @param info Window that needs to become a dynamic skin.
      * 
-     * @return A {@link edu.wisc.ssec.mcidasv.ui.McvComponentHolder} containing 
-     *         the ViewManagers inside <code>info</code>.
+     * @return {@link McvComponentHolder} containing the ViewManagers inside
+     * {@code info}.
      * 
      * @throws Exception Bubble up any XML problems.
      */

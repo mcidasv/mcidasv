@@ -57,7 +57,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 /**
  * A popup window that attaches itself to a parent and can display an 
- * component without preventing user interaction like a <tt>JComboBox</tt>.
+ * component without preventing user interaction like a {@code JComboBox}.
  *   
  * @author <a href="http://www.ssec.wisc.edu/cgi-bin/email_form.cgi?name=Flynn,%20Bruce">Bruce Flynn, SSEC</a>
  *

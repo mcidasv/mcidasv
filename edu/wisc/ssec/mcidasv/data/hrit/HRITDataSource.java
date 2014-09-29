@@ -86,7 +86,7 @@ public class HRITDataSource extends DataSourceImpl  {
 
     /**
      * Construct a new HRIT data source.
-     * @param  descriptor  descriptor for this <code>DataSource</code>
+     * @param  descriptor  descriptor for this {@code DataSource}
      * @param  fileName  name of the HRIT segment file to read
      * @param  properties  hashtable of properties
      *
@@ -100,7 +100,7 @@ public class HRITDataSource extends DataSourceImpl  {
     
     /**
      * Construct a new HRIT data source.
-     * @param  descriptor  descriptor for this <code>DataSource</code>
+     * @param  descriptor  descriptor for this {@code DataSource}
      * @param  newSources  List of filenames
      * @param  properties  hashtable of properties
      *
@@ -185,8 +185,7 @@ public class HRITDataSource extends DataSourceImpl  {
     }
     
     /**
-     * Make and insert the <code>DataChoice</code>-s for this
-     * <code>DataSource</code>.
+     * Make and insert the {@link DataChoice DataChoices} for this {@code DataSource}.
      */
     public void doMakeDataChoices() {
     	DataChoice choice = null;

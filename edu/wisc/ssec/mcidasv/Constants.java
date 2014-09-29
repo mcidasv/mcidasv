@@ -50,7 +50,7 @@ public interface Constants extends IdvConstants {
 
 	/**
 	 * A thing that contains one or more of the things named
-	 * <tt>PANEL_NAME</tt>. One of these can be either in a tab
+	 * {@code PANEL_NAME}. One of these can be either in a tab
 	 * or in it's own window.
 	 */
 	public static final String DISPLAY_NAME = "Display";

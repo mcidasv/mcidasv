@@ -111,10 +111,10 @@ public interface Trie<K, V> extends SortedMap<K, V> {
      * entry is found, the Trie will call select on that entry and continue
      * calling select for each entry (traversing in order of XOR closeness,
      * NOT lexicographically) until the cursor returns 
-     * <code>Cursor.SelectStatus.EXIT</code>.<br>
-     * The cursor can return <code>Cursor.SelectStatus.CONTINUE</code> to 
+     * {@code Cursor.SelectStatus.EXIT}.<br>
+     * The cursor can return {@code Cursor.SelectStatus.CONTINUE} to
      * continue traversing.<br>
-     * <code>Cursor.SelectStatus.REMOVE_AND_EXIT</code> is used to remove the current element
+     * {@code Cursor.SelectStatus.REMOVE_AND_EXIT} is used to remove the current element
      * and stop traversing.
      * <p>
      * Note: The {@link Cursor.SelectStatus#REMOVE} operation is not supported.
@@ -125,13 +125,13 @@ public interface Trie<K, V> extends SortedMap<K, V> {
     public Map.Entry<K,V> select(K key, Cursor<? super K, ? super V> cursor);
     
     /**
-     * Traverses the Trie in lexicographical order. <code>Cursor.select</code> 
+     * Traverses the Trie in lexicographical order. {@code Cursor.select}
      * will be called on each entry.<p>
-     * The traversal will stop when the cursor returns <code>Cursor.SelectStatus.EXIT</code>.<br>
-     * <code>Cursor.SelectStatus.CONTINUE</code> is used to continue traversing.<br>
-     * <code>Cursor.SelectStatus.REMOVE</code> is used to remove the element that was 
+     * The traversal will stop when the cursor returns {@code Cursor.SelectStatus.EXIT}.<br>
+     * {@code Cursor.SelectStatus.CONTINUE} is used to continue traversing.<br>
+     * {@code Cursor.SelectStatus.REMOVE} is used to remove the element that was
      * selected and continue traversing.<br>
-     * <code>Cursor.SelectStatus.REMOVE_AND_EXIT</code> is used to remove the current element
+     * {@code Cursor.SelectStatus.REMOVE_AND_EXIT} is used to remove the current element
      * and stop traversing.
      *   
      * @return The entry the cursor returned EXIT on, or null if it continued
@@ -141,12 +141,12 @@ public interface Trie<K, V> extends SortedMap<K, V> {
     
     /**
      * An interface used by a {@link Trie}. A {@link Trie} selects items by 
-     * closeness and passes the items to the <code>Cursor</code>. You can then 
+     * closeness and passes the items to the {@code Cursor}. You can then
      * decide what to do with the key-value pair and the return value 
-     * from {@link #select(java.util.Map.Entry)} tells the <code>Trie</code> 
+     * from {@link #select(java.util.Map.Entry)} tells the {@code Trie}
      * what to do next.
      * <p>
-     * <code>Cursor</code> returns status/selection status might be:
+     * {@code Cursor} returns status/selection status might be:
      * <table cellspace="5">
      * <tr><td><b>Return Value</b></td><td><b>Status</b></td></tr>
      * <tr><td>EXIT</td><td>Finish the Trie operation</td></tr>
@@ -156,7 +156,7 @@ public interface Trie<K, V> extends SortedMap<K, V> {
      * </table>
 
      * Note: {@link Trie#select(Object, edu.wisc.ssec.mcidasv.util.trie.Trie.Cursor)}
-     * does not support <code>REMOVE</code>.
+     * does not support {@code REMOVE}.
      *
      * @param <K> Key Type
      * @param <V> Key Value
@@ -165,11 +165,11 @@ public interface Trie<K, V> extends SortedMap<K, V> {
         
         /**
          * Notification that the Trie is currently looking at the given entry.
-         * Return <code>EXIT</code> to finish the Trie operation, 
-         * <code>CONTINUE</code> to look at the next entry, <code>REMOVE</code>
+         * Return {@code EXIT} to finish the Trie operation,
+         * {@code CONTINUE} to look at the next entry, {@code REMOVE}
          * to remove the entry and continue iterating, or
-         * <code>REMOVE_AND_EXIT</code> to remove the entry and stop iterating. 
-         * Not all operations support <code>REMOVE</code>.
+         * {@code REMOVE_AND_EXIT} to remove the entry and stop iterating.
+         * Not all operations support {@code REMOVE}.
          * 
          */
         public SelectStatus select(Map.Entry<? extends K, ? extends V> entry);

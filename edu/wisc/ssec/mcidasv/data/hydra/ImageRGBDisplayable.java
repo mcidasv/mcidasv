@@ -192,7 +192,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
     /**
      * Get the RealTupleType of the RGB parameter.
      *  @return The RealTupleType of the RGB parameters.
-     *         May be <code>null</code>.
+     *         May be {@code null}.
      */
     public RealTupleType getColorTupleType() {
         return colorTupleType;
@@ -201,7 +201,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
     /**
      * Sets the RealTupleType of the RGB parameter.
      * @param realTupleType     The RealTupleType of the RGB parameters.  May
-     *                          not be <code>null</code>.
+     *                          not be {@code null}.
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
@@ -218,7 +218,7 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
     /**
      * Returns the RealTupleType of the RGB parameter.
      * @return                  The RealTupleType of the color parameter.  May
-     *                          be <code>null</code>.
+     *                          be {@code null}.
      * @deprecated  use getColorTupleType()
      */
     public RealTupleType getRGBRealTupleType() {
@@ -230,10 +230,10 @@ public class ImageRGBDisplayable extends DisplayableData implements GridDisplaya
      * Sets the set of ScalarMap-s of this instance.  The ScalarMap-s of
      * this instance will be added to the set before the SCALAR_MAP_SET
      * property is set.  This method fires a PropertyChangeEvent for
-     * SCALAR_MAP_SET with <code>null</code> for the old value and the new
+     * SCALAR_MAP_SET with {@code null} for the old value and the new
      * set of ScalarMap-s for the new Value.  Intermediate subclasses that
      * have their own ScalarMap-s should override this method and invoke
-     * <code>super.setScalarMaps(ScalarMapSet)</code>.
+     * {@code super.setScalarMaps(ScalarMapSet)}.
      * @param maps              The set of ScalarMap-s to be added.
      * @throws BadMappingException      The RealType of the color parameter
      *                          has not been set or its ScalarMap is already in

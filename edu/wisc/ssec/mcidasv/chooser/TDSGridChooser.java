@@ -39,7 +39,7 @@ import ucar.unidata.util.PreferenceList;
 public class TDSGridChooser extends XmlChooser {
 
     /**
-     * Create the <code>XmlChooser</code>
+     * Create the {@code XmlChooser}
      *
      * @param mgr The {@link IdvChooserManager}. Cannot be {@code null}.
      * @param root XML root that defines this chooser. Cannot be {@code null}.
