@@ -44,11 +44,9 @@ import ucar.unidata.util.WrapperException;
 import ucar.unidata.xml.XmlUtil;
 
 /**
- * <p>
  * McIDAS-V needs its own ComponentHolder merely to associate ViewManagers with
  * their parent ComponentHolders. This association is later used in
  * McIDASVViewPanel to create a "hierarchical name" for each ViewManager.
- * </p>
  * 
  * <p>
  * Instead of having something like "Panel 1" appearing in the layer controls,
@@ -182,10 +180,8 @@ public class McvComponentHolder extends IdvComponentHolder {
     }
 
     /**
-     * <p>
      * If the object being held in this component holder is a skin, calling this
      * method will create a component based upon the skin.
-     * </p>
      * 
      * <p>
      * Overridden so that McV can tell the UIManager to associate the skin's
@@ -224,10 +220,7 @@ public class McvComponentHolder extends IdvComponentHolder {
     }
 
     /**
-     * <p>
-     * Merely sets the name of this component holder to the contents of
-     * <tt>value</tt>.
-     * </p>
+     * Set the name of this component holder to the contents of {@code value}.
      * 
      * <p>
      * Overridden so that McV can tell the ViewPanel to update upon a name
@@ -283,10 +276,8 @@ public class McvComponentHolder extends IdvComponentHolder {
     }
 
     /**
-     * <p>
      * Tell this component holder's component group that the tab corresponding
      * to this holder should become the active tab.
-     * </p>
      */
     public void setAsActiveTab() {
         McvComponentGroup parent = (McvComponentGroup)getParent();

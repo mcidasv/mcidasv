@@ -206,11 +206,9 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Importing a display control entails adding the control to the component
      * group and informing the UI that the control is no longer in its own
      * window.
-     * </p>
      * 
      * <p>
      * Overridden in McV so that the display control is wrapped in a
@@ -260,10 +258,8 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Handles creation of the component represented by the XML skin at the
      * given index.
-     * </p>
      * 
      * <p>
      * Overridden so that McV can wrap the component in a
@@ -311,10 +307,8 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Create a new component whose type will be determined by the contents of
-     * <code>what</code>.
-     * </p>
+     * {@code what}.
      * 
      * <p>
      * Overridden so that McV can wrap up the components in
@@ -362,12 +356,10 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Forces this group to layout its components. Extended because the IDV was
      * doing extra work that McIDAS-V doesn't need, such as dealing with
      * layouts other than LAYOUT_TABS and needlessly reinitializing the group's
      * container.
-     * </p>
      * 
      * @see ucar.unidata.ui.ComponentGroup#redoLayout()
      */
@@ -429,11 +421,9 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Adds a component holder to this group. Extended so that the added holder
      * becomes the active tab, and the component is explicitly set to visible
      * in an effort to fix that heavyweight/lightweight component problem.
-     * </p>
      * 
      * @param holder
      * @param index
@@ -632,7 +622,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
     
     /**
-     * Create the <tt>JPopupMenu</tt> that will be displayed for a tab.
+     * Create the {@code JPopupMenu} that will be displayed for a tab.
      * 
      * @return Menu initialized with tab options
      */
