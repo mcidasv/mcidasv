@@ -72,7 +72,7 @@ public abstract class XmlUtil {
 
     /** The header to use when writing out xml */
     public static final String XML_HEADER =
-        "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
 
     /**
