@@ -336,7 +336,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                 IOUtil.writeFile(layoutFile, xml);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("error while saving default layout", e);
         } finally {
             savingDefaultLayout = false;
         }
@@ -434,8 +434,8 @@ public class PersistenceManager extends IdvPersistenceManager {
         // ADDE data sources
         if (displayControls != null) {
 //            Set<DataSourceImpl> observed = new HashSet<DataSourceImpl>();
-            Map<DataSourceImpl, List<DataChoice>> observed = new LinkedHashMap<DataSourceImpl, List<DataChoice>>();
-            List<DisplayControl> newControls = new ArrayList<DisplayControl>();
+            Map<DataSourceImpl, List<DataChoice>> observed = new LinkedHashMap<>();
+            List<DisplayControl> newControls = new ArrayList<>();
             for (DisplayControl dc : (List<DisplayControl>)displayControls) {
                 if (dc instanceof ReadoutProbe) {
                     logger.trace("skipping readoutprobe!");
@@ -449,7 +449,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                             logger.trace("already seen src={} new selection={}", src);
                         } else {
                             logger.trace("haven't seen src={}", src);
-                            List<DataChoice> selected = new ArrayList<DataChoice>(imageControl.getDataChoices());
+                            List<DataChoice> selected = new ArrayList<>(imageControl.getDataChoices());
                             observed.put(src, selected);
                         }
                     }
@@ -470,8 +470,8 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     @Override public List getLocalBundles() {
-        List<SavedBundle> allBundles = new ArrayList<SavedBundle>();
-        List<String> dirs = new ArrayList<String>();
+        List<SavedBundle> allBundles = new ArrayList<>();
+        List<String> dirs = new ArrayList<>();
         String sitePath = getResourceManager().getSitePath();
 
         Collections.addAll(dirs, getStore().getLocalBundlesDir());
@@ -546,7 +546,7 @@ public class PersistenceManager extends IdvPersistenceManager {
             return false;
         }
         
-        String name = ((label != null) ? label : IOUtil.getFileTail(xmlFile));
+        String name = label != null ? label : IOUtil.getFileTail(xmlFile);
 
         boolean shouldMerge = getStore().get(PREF_OPEN_MERGE, true);
 
@@ -921,11 +921,11 @@ public class PersistenceManager extends IdvPersistenceManager {
         getStateManager().putProperty(PROP_LOADINGXML, false);
 
         boolean generatedExceptions = false;
-        if (xmlEncoder != null && xmlEncoder.getExceptions() != null) {
+        if ((xmlEncoder != null) && (xmlEncoder.getExceptions() != null)) {
             generatedExceptions = !xmlEncoder.getExceptions().isEmpty();
         }
 
-        if (generatedExceptions && getIdv().getInteractiveMode() && versions != null) {
+        if (generatedExceptions && getIdv().getInteractiveMode() && (versions != null)) {
             String versionFromBundle = versions.get("mcv.version.general");
             if (versionFromBundle != null) {
                 String currentVersion = ((StateManager)getIdv().getStateManager()).getMcIdasVersion();
@@ -946,7 +946,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
         xmlEncoder = null;
 
-        if (!inError && getIdv().getInteractiveMode() && xmlFile != null) {
+        if (!inError && getIdv().getInteractiveMode() && (xmlFile != null)) {
             getIdv().addToHistoryList(xmlFile);
         }
 
@@ -1097,7 +1097,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         group.setLayout(McvComponentGroup.LAYOUT_TABS);
 
         Hashtable<String, McvComponentGroup> persist = 
-            new Hashtable<String, McvComponentGroup>();
+            new Hashtable<>();
 
         for (WindowInfo window : windows) {
             List<IdvComponentHolder> holders = buildHolders(window);
@@ -1118,7 +1118,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         // make a new list so that we can populate the list of windows with 
         // our single window.
-        List<WindowInfo> newWindow = new ArrayList<WindowInfo>();
+        List<WindowInfo> newWindow = new ArrayList<>();
         newWindow.add(limitedWindow);
         return newWindow;
     }
@@ -1137,7 +1137,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         throws Exception 
     {
 
-        List<WindowInfo> newList = new ArrayList<WindowInfo>();
+        List<WindowInfo> newList = new ArrayList<>();
 
         for (WindowInfo window : windows) {
             McvComponentGroup group = new McvComponentGroup(getIdv(), "Group");
@@ -1145,7 +1145,7 @@ public class PersistenceManager extends IdvPersistenceManager {
             group.setLayout(McvComponentGroup.LAYOUT_TABS);
 
             Hashtable<String, McvComponentGroup> persist =
-                new Hashtable<String, McvComponentGroup>();
+                new Hashtable<>();
 
             List<IdvComponentHolder> holders = buildHolders(window);
             for (IdvComponentHolder holder : holders) {
@@ -1176,7 +1176,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         throws Exception {
 
         List<IdvComponentHolder> holders = 
-            new ArrayList<IdvComponentHolder>();
+            new ArrayList<>();
 
         if (!window.getPersistentComponents().isEmpty()) {
             Collection<Object> comps = 
@@ -1217,7 +1217,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                 }
 
                 List<IdvComponentHolder> holders = 
-                    new ArrayList<IdvComponentHolder>(
+                    new ArrayList<>(
                             ((IdvComponentGroup)comp).getDisplayComponents());
 
                 for (IdvComponentHolder holder : holders) {
@@ -1260,7 +1260,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         String zidvPath = getStateManager().getProperty(PROP_ZIDVPATH, "");
 
         // bail out if the macro replacement cannot work
-        if (zidvPath.length() == 0) {
+        if (zidvPath.isEmpty()) {
             return;
         }
 
@@ -1272,7 +1272,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 
             // err... now do the macro sub and replace the contents of 
             // data paths with the singular element in temp paths?
-            List<String> tempPaths = new ArrayList<String>(d.getTmpPaths());
+            List<String> tempPaths = new ArrayList<>(d.getTmpPaths());
             String tempPath = tempPaths.get(0);
             tempPath = tempPath.replace(MACRO_ZIDVPATH, zidvPath);
             tempPaths.set(0, tempPath);
@@ -1306,11 +1306,11 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         List filePaths = d.getDataPaths();
         List tempPaths = d.getTmpPaths();
-        if (filePaths == null || filePaths.isEmpty()) {
+        if ((filePaths == null) || filePaths.isEmpty()) {
             return false;
         }
 
-        if (tempPaths == null || tempPaths.isEmpty()) {
+        if ((tempPaths == null) || tempPaths.isEmpty()) {
             return false;
         }
 
@@ -1321,7 +1321,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         // if those checks don't suffice, you can also look for the "prop.pollinfo" key
         // if the PollingInfo object has a filePaths list, with one element whose last directory matches 
         // the data source "name" (then you are probably good).
-        if ((localFiles == true) && ((tempPaths.size() == 1) && (filePaths.size() >= 2))) {
+        if (localFiles && (tempPaths.size() == 1) && (filePaths.size() >= 2)) {
             return true;
         }
 
@@ -1330,17 +1330,17 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * <p>Overridden so that McIDAS-V can preempt the IDV's bundle loading. 
-     * There will be problems if any of the incoming 
-     * {@link ucar.unidata.idv.ViewManager}s share an ID with an existing 
+     * Overridden so that McIDAS-V can preempt the IDV's bundle loading.
+     * There will be problems if any of the incoming
+     * {@link ViewManager ViewManagers} share an ID with an existing
      * ViewManager. While this case may seem unlikely, it can be triggered 
      * when loading a bundle and then reloading. The problem is that the 
      * ViewManagers are the same, and if the previous ViewManagers were not 
-     * removed, the IDV doesn't know what to do.</p>
+     * removed, the IDV doesn't know what to do.
      * 
      * <p>Assigning the incoming ViewManagers a new ID, <i>and associating its
-     * {@link ucar.unidata.idv.ViewDescriptor}s and 
-     * {@link ucar.unidata.idv.DisplayControl}s</i> with the new ID fixes this
+     * {@link ViewDescriptor ViewDescriptors} and
+     * {@link DisplayControl DisplayControls}</i> with the new ID fixes this
      * problem.</p>
      * 
      * <p>McIDAS-V also allows the user to limit the number of new windows the
@@ -1438,7 +1438,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
 
         List<WindowInfo> newWindows;
-        if (limitNewWindows && windows.size() > 1) {
+        if (limitNewWindows && (windows.size() > 1)) {
             newWindows = injectComponentGroups(windows);
         } else {
             newWindows = betterInject(windows);
@@ -1489,7 +1489,7 @@ public class PersistenceManager extends IdvPersistenceManager {
 //    }
 
     private List<WindowInfo> wrapViewManagers(final List<ViewManager> vms) {
-        List<WindowInfo> windows = new ArrayList<WindowInfo>(vms.size());
+        List<WindowInfo> windows = new ArrayList<>(vms.size());
         for (ViewManager vm : vms) {
             WindowInfo window = new WindowInfo();
             window.setIsAMainWindow(true);
@@ -1505,7 +1505,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     private List<ViewManager> generateViewManagers(final List<DisplayControlImpl> controls) {
-        List<ViewManager> vms = new ArrayList<ViewManager>(controls.size());
+        List<ViewManager> vms = new ArrayList<>(controls.size());
         for (DisplayControlImpl control : controls) {
             ViewManager vm = getVMManager().findOrCreateViewManager(control.getDefaultViewDescriptor(), "");
             vms.add(vm);
@@ -1563,7 +1563,7 @@ public class PersistenceManager extends IdvPersistenceManager {
      */
     protected static List<IdvComponentHolder> removeUIHolders(final IdvComponentGroup group) {
         List<IdvComponentHolder> newHolders = 
-            new ArrayList<IdvComponentHolder>(group.getDisplayComponents());
+            new ArrayList<>(group.getDisplayComponents());
 
         for (IdvComponentHolder holder : newHolders) {
             if (McVGuiUtils.isUIHolder(holder)) {
@@ -1582,7 +1582,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     protected static void populateEssentialLists(final String[] ids, final Hashtable<String, Object> table) {
         for (String id : ids) {
             if (table.get(id) == null) {
-                table.put(id, new ArrayList<Object>());
+                table.put(id, new ArrayList<>());
             }
         }
     }
@@ -1781,21 +1781,21 @@ public class PersistenceManager extends IdvPersistenceManager {
      * Write the parameter sets
      */
     public void writeParameterSets() {
-    	if (parameterSets != null) {
-    		
-    		//DAVEP: why is our write failing?
-    		if (!parameterSets.hasWritableResource()) {
-    			System.err.println("Oops--lost writable resource");
-    		}
-    		
-    		try {
-    			parameterSets.writeWritable();
-    		} catch (IOException exc) {
-            	LogUtil.logException("Error writing " + parameterSets.getDescription(), exc);
-    		}
-    		
-    		parameterSets.setWritableDocument(parameterSetsDocument, parameterSetsRoot);
-    	}
+        if (parameterSets != null) {
+
+            //DAVEP: why is our write failing?
+            if (!parameterSets.hasWritableResource()) {
+                logger.trace("lost writable resource");
+            }
+
+            try {
+                parameterSets.writeWritable();
+            } catch (IOException exc) {
+                LogUtil.logException("Error writing " + parameterSets.getDescription(), exc);
+            }
+
+            parameterSets.setWritableDocument(parameterSetsDocument, parameterSetsRoot);
+        }
     }
     
     /**
@@ -1806,35 +1806,34 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @return Element representing parameterType node
      */
     private Element getParameterTypeNode(String parameterType) {
-    	if (parameterSets == null) {
-    		parameterSets = getIdv().getResourceManager().getXmlResources(ResourceManager.RSC_PARAMETERSETS);
+        if (parameterSets == null) {
+            parameterSets = getIdv().getResourceManager().getXmlResources(ResourceManager.RSC_PARAMETERSETS);
             if (parameterSets.hasWritableResource()) {
                 parameterSetsDocument = parameterSets.getWritableDocument("<parametersets></parametersets>");
                 parameterSetsRoot = parameterSets.getWritableRoot("<parametersets></parametersets>");
-            }
-            else {
-            	System.err.println("No writable resource found");
-            	return null;
+            } else {
+                logger.trace("no writable resource found");
+                return null;
             }
         }
 
-    	Element parameterTypeNode = null;
-    	try {
-    		List<Element> rootTypes = XmlUtil.findChildren(parameterSetsRoot, parameterType);
-    		if (rootTypes.size() == 0) {
-    			parameterTypeNode = parameterSetsDocument.createElement(parameterType);
-    			parameterSetsRoot.appendChild(parameterTypeNode);
-    			System.out.println("Created new " + parameterType + " node");
-    			writeParameterSets();
-    		}
-    		else if (rootTypes.size() == 1) {
-    			parameterTypeNode = rootTypes.get(0);
-    			System.out.println("Found existing " + parameterType + " node");
-    		}
-    	} catch (Exception exc) {
-    		LogUtil.logException("Error loading " + parameterSets.getDescription(), exc);
-    	}
-    	return parameterTypeNode;
+        Element parameterTypeNode = null;
+        try {
+            List<Element> rootTypes = XmlUtil.findChildren(parameterSetsRoot, parameterType);
+            if (rootTypes.isEmpty()) {
+                parameterTypeNode = parameterSetsDocument.createElement(parameterType);
+                parameterSetsRoot.appendChild(parameterTypeNode);
+                logger.trace("created new '{}' node", parameterType);
+                writeParameterSets();
+            }
+            else if (rootTypes.size() == 1) {
+                parameterTypeNode = rootTypes.get(0);
+                logger.trace("found existing '{}' node", parameterType);
+            }
+        } catch (Exception exc) {
+            LogUtil.logException("Error loading " + parameterSets.getDescription(), exc);
+        }
+        return parameterTypeNode;
     }
 
     /**
@@ -1845,17 +1844,16 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @return List of (String) categories
      */
     public List<String> getAllParameterSetCategories(String parameterType) {
-    	List<String> allCategories = new ArrayList<String>();
-    	try {
-    		Element rootType = getParameterTypeNode(parameterType);
-    		if (rootType!=null) {
-    			allCategories =
-    				XmlUtil.findDescendantNamesWithSeparator(rootType, TAG_FOLDER, CATEGORY_SEPARATOR);
-    		}
+        List<String> allCategories = new ArrayList<>();
+        try {
+            Element rootType = getParameterTypeNode(parameterType);
+            if (rootType != null) {
+                allCategories =
+                    XmlUtil.findDescendantNamesWithSeparator(rootType, TAG_FOLDER, CATEGORY_SEPARATOR);
+            }
         } catch (Exception exc) {
-        	LogUtil.logException("Error loading " + parameterSets.getDescription(), exc);
+            LogUtil.logException("Error loading " + parameterSets.getDescription(), exc);
         }
-
         return allCategories;
     }
     
@@ -1868,32 +1866,29 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @return List of writable parameter sets
      */
     public List<ParameterSet> getAllParameterSets(String parameterType) {
-    	List<ParameterSet> allParameterSets = new ArrayList<ParameterSet>();
+        List<ParameterSet> allParameterSets = new ArrayList<>();
         try {
-    		Element rootType = getParameterTypeNode(parameterType);
-    		if (rootType!=null) {
-    	    	List<String> defaults =
-    	    		XmlUtil.findDescendantNamesWithSeparator(rootType, TAG_DEFAULT, CATEGORY_SEPARATOR);
-    			
-    			for (final String aDefault : defaults) {
-    				Element anElement = XmlUtil.getElementAtNamedPath(rootType, stringToCategories(aDefault));
-    				List<String> defaultParts = stringToCategories(aDefault);
-    				int lastIndex = defaultParts.size() - 1;
-    				String defaultName = defaultParts.get(lastIndex);
-    				defaultParts.remove(lastIndex);
-    				String folderName = StringUtil.join(CATEGORY_SEPARATOR, defaultParts);
-    				ParameterSet newSet = new ParameterSet(defaultName, folderName, parameterType, anElement);
-    				allParameterSets.add(newSet);
-    			}
+            Element rootType = getParameterTypeNode(parameterType);
+            if (rootType != null) {
+                List<String> defaults =
+                    XmlUtil.findDescendantNamesWithSeparator(rootType, TAG_DEFAULT, CATEGORY_SEPARATOR);
 
-        	}
+                for (final String aDefault : defaults) {
+                    Element anElement = XmlUtil.getElementAtNamedPath(rootType, stringToCategories(aDefault));
+                    List<String> defaultParts = stringToCategories(aDefault);
+                    int lastIndex = defaultParts.size() - 1;
+                    String defaultName = defaultParts.get(lastIndex);
+                    defaultParts.remove(lastIndex);
+                    String folderName = StringUtil.join(CATEGORY_SEPARATOR, defaultParts);
+                    ParameterSet newSet = new ParameterSet(defaultName, folderName, parameterType, anElement);
+                    allParameterSets.add(newSet);
+                }
+            }
         } catch (Exception exc) {
-        	LogUtil.logException("Error loading " + ResourceManager.RSC_PARAMETERSETS.getDescription(), exc);
+            LogUtil.logException("Error loading " + ResourceManager.RSC_PARAMETERSETS.getDescription(), exc);
         }
-        
         return allParameterSets;
     }
-
 
     /**
      * Add the directory
@@ -1903,13 +1898,13 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @return true if the create was successful. False if there already is a category with that name
      */
     public boolean addParameterSetCategory(String parameterType, String category) {
-    	System.out.println("addParameterSetCategory: " + category);
-		Element rootType = getParameterTypeNode(parameterType);
-    	XmlUtil.makeElementAtNamedPath(rootType, stringToCategories(category), TAG_FOLDER);
-    	writeParameterSets();
+        logger.trace("parameter type: '{}' category: '{}'", parameterType, category);
+        Element rootType = getParameterTypeNode(parameterType);
+        XmlUtil.makeElementAtNamedPath(rootType, stringToCategories(category), TAG_FOLDER);
+        writeParameterSets();
         return true;
     }
-    
+
     /**
      * Delete the given parameter set
      *
@@ -1917,12 +1912,11 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param set Parameter set to delete.
      */
     public void deleteParameterSet(String parameterType, ParameterSet set) {
-    	Element parameterElement = set.getElement();
-    	Node parentNode = parameterElement.getParentNode();
-    	parentNode.removeChild((Node)parameterElement);
-    	writeParameterSets();
+        Element parameterElement = set.getElement();
+        Node parentNode = parameterElement.getParentNode();
+        parentNode.removeChild((Node)parameterElement);
+        writeParameterSets();
     }
-
 
     /**
      * Delete the directory and all of its contents
@@ -1932,13 +1926,12 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param category The category (really a ">" delimited string)
      */
     public void deleteParameterSetCategory(String parameterType, String category) {
-		Element rootType = getParameterTypeNode(parameterType);
-    	Element parameterSetElement = XmlUtil.getElementAtNamedPath(rootType, stringToCategories(category));
-    	Node parentNode = parameterSetElement.getParentNode();
-    	parentNode.removeChild((Node)parameterSetElement);
-    	writeParameterSets();
+        Element rootType = getParameterTypeNode(parameterType);
+        Element parameterSetElement = XmlUtil.getElementAtNamedPath(rootType, stringToCategories(category));
+        Node parentNode = parameterSetElement.getParentNode();
+        parentNode.removeChild((Node)parameterSetElement);
+        writeParameterSets();
     }
-
 
     /**
      * Rename the parameter set
@@ -1974,13 +1967,13 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param categories Where to move to
      */
     public void moveParameterSet(String parameterType, ParameterSet set, List categories) {
-		Element rootType = getParameterTypeNode(parameterType);
-    	Element parameterElement = set.getElement();
-    	Node parentNode = parameterElement.getParentNode();
-    	parentNode.removeChild((Node)parameterElement);
-    	Node newParentNode = XmlUtil.getElementAtNamedPath(rootType, categories);
-    	newParentNode.appendChild(parameterElement);
-    	writeParameterSets();
+        Element rootType = getParameterTypeNode(parameterType);
+        Element parameterElement = set.getElement();
+        Node parentNode = parameterElement.getParentNode();
+        parentNode.removeChild((Node)parameterElement);
+        Node newParentNode = XmlUtil.getElementAtNamedPath(rootType, categories);
+        newParentNode.appendChild(parameterElement);
+        writeParameterSets();
     }
 
     /**
@@ -1991,117 +1984,116 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param toCategories Where to move to
      */
     public void moveParameterSetCategory(String parameterType, List fromCategories, List toCategories) {
-		Element rootType = getParameterTypeNode(parameterType);
-    	Element parameterSetElementFrom = XmlUtil.getElementAtNamedPath(rootType, fromCategories);
-    	Node parentNode = parameterSetElementFrom.getParentNode();
-    	parentNode.removeChild((Node)parameterSetElementFrom);
-    	Node parentNodeTo = (Node)XmlUtil.getElementAtNamedPath(rootType, toCategories);
-    	parentNodeTo.appendChild(parameterSetElementFrom);
-    	writeParameterSets();
+        Element rootType = getParameterTypeNode(parameterType);
+        Element parameterSetElementFrom = XmlUtil.getElementAtNamedPath(rootType, fromCategories);
+        Node parentNode = parameterSetElementFrom.getParentNode();
+        parentNode.removeChild((Node)parameterSetElementFrom);
+        Node parentNodeTo = (Node)XmlUtil.getElementAtNamedPath(rootType, toCategories);
+        parentNodeTo.appendChild(parameterSetElementFrom);
+        writeParameterSets();
     }
 
     /**
      * Show the Save Parameter Set dialog
      */
     public boolean saveParameterSet(String parameterType, Hashtable parameterValues) {
+        try {
+            String title = "Save Parameter Set";
 
-    	try {
-    		String title = "Save Parameter Set";
+            // Create the category dropdown
+            List<String> categories = getAllParameterSetCategories(parameterType);
+            final JComboBox catBox = new JComboBox();
+            catBox.setToolTipText(
+                "<html>Categories can be entered manually. <br>Use '>' as the category delimiter. e.g.:<br>General > Subcategory</html>");
+            catBox.setEditable(true);
+            McVGuiUtils.setComponentWidth(catBox, McVGuiUtils.ELEMENT_DOUBLE_WIDTH);
+            GuiUtils.setListData(catBox, categories);
 
-    		// Create the category dropdown
-    		List<String> categories = getAllParameterSetCategories(parameterType);
-    		final JComboBox catBox = new JComboBox();
-    		catBox.setToolTipText(
-    				"<html>Categories can be entered manually. <br>Use '>' as the category delimiter. e.g.:<br>General > Subcategory</html>");
-    		catBox.setEditable(true);
-    		McVGuiUtils.setComponentWidth(catBox, McVGuiUtils.ELEMENT_DOUBLE_WIDTH);
-    		GuiUtils.setListData(catBox, categories);
+            // Create the default name dropdown
+            final JComboBox nameBox = new JComboBox();
+            nameBox.setEditable(true);
 
-    		// Create the default name dropdown
-    		final JComboBox nameBox = new JComboBox();
-    		nameBox.setEditable(true);
-    		List tails = new ArrayList();
+            List<ParameterSet> pSets = getAllParameterSets(parameterType);
+            List tails = new ArrayList(pSets.size() * 2);
+            for (int i = 0; i < pSets.size(); i++) {
+                ParameterSet pSet = pSets.get(i);
+                tails.add(new TwoFacedObject(pSet.getName(), pSet));
+            }
+            java.util.Collections.sort(tails);
 
-    		List<ParameterSet> pSets = getAllParameterSets(parameterType);
-    		for (int i = 0; i < pSets.size(); i++) {
-    			ParameterSet pSet = pSets.get(i);
-    			tails.add(new TwoFacedObject(pSet.getName(), pSet));
-    		}
-    		java.util.Collections.sort(tails);
+            tails.add(0, new TwoFacedObject("", null));
+            GuiUtils.setListData(nameBox, tails);
+            nameBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    Object selected = nameBox.getSelectedItem();
+                    if ( !(selected instanceof TwoFacedObject)) {
+                        return;
+                    }
+                    TwoFacedObject tfo = (TwoFacedObject) selected;
+                    List cats = ((ParameterSet) tfo.getId()).getCategories();
+                    //    			if ((cats.size() > 0) && !catSelected) {
+                    if (!cats.isEmpty()) {
+                        catBox.setSelectedItem(
+                            StringUtil.join(CATEGORY_SEPARATOR, cats));
+                    }
+                }
+            });
 
-    		tails.add(0, new TwoFacedObject("", null));
-    		GuiUtils.setListData(nameBox, tails);
-    		nameBox.addActionListener(new ActionListener() {
-    			public void actionPerformed(ActionEvent ae) {
-    				Object selected = nameBox.getSelectedItem();
-    				if ( !(selected instanceof TwoFacedObject)) {
-    					return;
-    				}
-    				TwoFacedObject tfo = (TwoFacedObject) selected;
-    				List cats = ((ParameterSet) tfo.getId()).getCategories();
-    				//    			if ((cats.size() > 0) && !catSelected) {
-    				if ((cats.size() > 0)) {
-    					catBox.setSelectedItem(
-    							StringUtil.join(CATEGORY_SEPARATOR, cats));
-    				}
-    			}
-    		});
+            JPanel panel = McVGuiUtils.sideBySide(
+                McVGuiUtils.makeLabeledComponent("Category:", catBox),
+                McVGuiUtils.makeLabeledComponent("Name:", nameBox)
+            );
 
-    		JPanel panel = McVGuiUtils.sideBySide(
-    				McVGuiUtils.makeLabeledComponent("Category:", catBox),
-    				McVGuiUtils.makeLabeledComponent("Name:", nameBox)
-    		);
+            String name = "";
+            String category = "";
+            while (true) {
+                if ( !GuiUtils.askOkCancel(title, panel)) {
+                    return false;
+                }
+                name = StringUtil.replaceList(nameBox.getSelectedItem().toString().trim(),
+                    new String[] { "<", ">", "/", "\\", "\"" },
+                    new String[] { "_", "_", "_", "_",  "_"  }
+                );
+                if (name.isEmpty()) {
+                    LogUtil.userMessage("Please enter a name");
+                    continue;
+                }
+                category = StringUtil.replaceList(catBox.getSelectedItem().toString().trim(),
+                    new String[] { "/", "\\", "\"" },
+                    new String[] { "_", "_",  "_"  }
+                );
+                if (category.isEmpty()) {
+                    LogUtil.userMessage("Please enter a category");
+                    continue;
+                }
+                break;
+            }
 
-    		String name = "";
-    		String category = "";
-    		while (true) {
-    			if ( !GuiUtils.askOkCancel(title, panel)) {
-    				return false;
-    			}
-    			name = StringUtil.replaceList(nameBox.getSelectedItem().toString().trim(),
-    					new String[] { "<", ">", "/", "\\", "\"" },
-    					new String[] { "_", "_", "_", "_",  "_"  }
-    			);
-    			if (name.length() == 0) {
-    				LogUtil.userMessage("Please enter a name");
-    				continue;
-    			}
-    			category = StringUtil.replaceList(catBox.getSelectedItem().toString().trim(),
-    					new String[] { "/", "\\", "\"" },
-    					new String[] { "_", "_",  "_"  }
-    			);
-    			if (category.length() == 0) {
-    				LogUtil.userMessage("Please enter a category");
-    				continue;
-    			}
-    			break;
-    		}
+            // Create a new element from the hashtable
+            Element rootType = getParameterTypeNode(parameterType);
+            Element parameterElement = parameterSetsDocument.createElement(TAG_DEFAULT);
+            for (Enumeration e = parameterValues.keys(); e.hasMoreElements(); ) {
+                Object nextKey = e.nextElement();
+                String attribute = (String)nextKey;
+                String value = (String)parameterValues.get(nextKey);
+                parameterElement.setAttribute(attribute, value);
+            }
 
-    		// Create a new element from the hashtable
-    		Element rootType = getParameterTypeNode(parameterType);
-    		Element parameterElement = parameterSetsDocument.createElement(TAG_DEFAULT);
-    	    for (Enumeration e = parameterValues.keys(); e.hasMoreElements(); ) {
-    	    	Object nextKey = e.nextElement();
-    	    	String attribute = (String)nextKey;
-    	    	String value = (String)parameterValues.get(nextKey);
-    	    	parameterElement.setAttribute(attribute, value);
-    	    }
+            // Set the name to the one we entered
+            parameterElement.setAttribute(ATTR_NAME, name);
 
-    		// Set the name to the one we entered
-    		parameterElement.setAttribute(ATTR_NAME, name);
-
-    		Element categoryNode = XmlUtil.makeElementAtNamedPath(rootType, stringToCategories(category), TAG_FOLDER);
+            Element categoryNode = XmlUtil.makeElementAtNamedPath(rootType, stringToCategories(category), TAG_FOLDER);
 //    		Element categoryNode = XmlUtil.getElementAtNamedPath(rootType, stringToCategories(category));
 
-    		categoryNode.appendChild(parameterElement);    	
-    		writeParameterSets();
-    	}
-    	catch (Exception e) {
-    		e.printStackTrace();
-    		return false;
-    	}
-    	
-    	return true;
+            categoryNode.appendChild(parameterElement);
+            writeParameterSets();
+        }
+        catch (Exception e) {
+            logger.error("error while saving parameter set", e);
+            return false;
+        }
+
+        return true;
     }
 
 }
