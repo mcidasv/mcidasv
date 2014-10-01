@@ -33,13 +33,12 @@ import ucar.unidata.geoloc.ProjectionRect;
 import ucar.unidata.geoloc.projection.LatLonProjection;
 
 /**
- * An extension of <tt>LatLonProjection</tt> that adds properties for 
+ * An extension of {@code LatLonProjection} that adds properties for
  * the center point and dimensions of the projection box.  Appropriate
  * getters and setters are added so they will be picked up by the
- * <tt>ProjectionImpl</tt> and thereby editable by the user.
+ * {@code ProjectionImpl} and thereby editable by the user.
  * 
  * @author McIDAS-V Dev Team, UW SSEC
- * @version $Id$
  */
 public class McIDASVLatLonProjection extends LatLonProjection {
 

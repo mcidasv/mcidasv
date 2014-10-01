@@ -60,7 +60,7 @@ public class HydraPlanViewControl extends ImagePlanViewControl {
 
     /**
      * Default constructor.  Sets the attribute flags used by
-     * this particular <code>PlanViewControl</code>
+     * this particular {@code PlanViewControl}
      */
     public HydraPlanViewControl() {
         super();
@@ -69,7 +69,7 @@ public class HydraPlanViewControl extends ImagePlanViewControl {
     }
 
     /**
-     * Method to create the particular <code>DisplayableData</code> that
+     * Method to create the particular {@code DisplayableData} that
      * this this instance uses for data depictions.
      * @return Contour2DDisplayable for this instance.
      *

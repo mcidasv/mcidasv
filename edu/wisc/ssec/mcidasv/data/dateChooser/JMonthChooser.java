@@ -370,7 +370,7 @@ public class JMonthChooser extends JPanel implements ItemListener,
     /**
      * Sets the font for this component.
      *
-     * @param font the desired <code>Font</code> for this component
+     * @param font the desired {@code Font} for this component
      */
 	public void setFont(Font font) {
 		if (comboBox != null) {

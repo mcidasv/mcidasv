@@ -890,8 +890,8 @@ public class EntryStore {
      * 
      * @param xmlResources Resource collection. Cannot be {@code null}.
      * 
-     * @return {@link Set} of {@link RemoteAddeEntry}s contained within 
-     * {@code resource}.
+     * @return {@link Set} of {@link RemoteAddeEntry RemoteAddeEntries}
+     * contained within {@code resource}.
      */
     private Set<AddeEntry> extractUserEntries(final XmlResourceCollection xmlResources) {
         int rcSize = xmlResources.size();

@@ -30,11 +30,11 @@ package edu.wisc.ssec.mcidasv.util.trie;
 import edu.wisc.ssec.mcidasv.util.trie.PatriciaTrie.KeyAnalyzer;
 
 /**
- * Analyzes <code>CharSequence</code> keys with case sensitivity. With 
- * <code>CharSequenceKeyAnalyzer</code> you can
+ * Analyzes {@code CharSequence} keys with case sensitivity. With
+ * {@code CharSequenceKeyAnalyzer} you can
  * compare, check prefix, and determine the index of a bit.
  * <p>
- * A typical use case for a <code>CharSequenceKeyAnalyzer</code> is with a 
+ * A typical use case for a {@code CharSequenceKeyAnalyzer} is with a
  * {@link PatriciaTrie}.
  * <pre>
     PatriciaTrie&lt;String, String&gt; trie = new PatriciaTrie&lt;String, String&gt;(new CharSequenceKeyAnalyzer());

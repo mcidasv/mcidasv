@@ -94,7 +94,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     private RealTuple prevPos = null;
 
-    public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color, final boolean visible) throws VisADException, RemoteException {
+    public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color, final String pattern, final boolean visible) throws VisADException, RemoteException {
         super();
         requireNonNull(master, "DisplayMaster can't be null");
         requireNonNull(field, "Field can't be null");
@@ -115,7 +115,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         probe.addPropertyChangeListener(this);
         probe.setPointSize(getDisplayScale());
 
-        numFmt.setMaximumFractionDigits(2);
+        numFmt.applyPattern(pattern);
 
         master.addDisplayable(valueDisplay);
         master.addDisplayable(probe);
@@ -138,14 +138,22 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
             //handleProbeUpdate();
             RealTuple current = getEarthPosition();
             if (prevPos != null) {
-              fireProbePositionChanged(prev, current);
-              handleProbeUpdate();
+                fireProbePositionChanged(prev, current);
+                handleProbeUpdate();
             }
             prevPos = current;
             //fireProbePositionChanged(prev, current);
         }
     }
 
+    /**
+     * Sets the {@link FlatField} associated with this probe to the given
+     * {@code field}.
+     *
+     * @param field New {@code FlatField} for this probe.
+     *
+     * @throws NullPointerException if passed a {@code null} {@code field}.
+     */
     public void setField(final FlatField field) {
         requireNonNull(field);
         this.field = field;
@@ -162,8 +170,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * @throws NullPointerException if {@code listener} is null.
      */
     public void addProbeListener(final ProbeListener listener) {
-        requireNonNull(listener, "Can't add a null listener");
-        listeners.add(listener);
+        listeners.add(requireNonNull(listener, "Can't add a null listener"));
     }
 
     /**
@@ -176,13 +183,23 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         listeners.remove(listener);
     }
 
+    /**
+     * Determine whether or not a given {@link ProbeListener} is listening to
+     * the current probe.
+     *
+     * @param listener {@code ProbeListener} to check. {@code null} values are
+     * permitted.
+     *
+     * @return {@code true} if {@code listener} has been added to the list of
+     * {@code ProbeListener} objects, {@code false} otherwise.
+     */
     public boolean hasListener(final ProbeListener listener) {
         return listeners.contains(listener);
     }
 
     /**
-     * Notifies the registered {@link ProbeListener}s that this probe's 
-     * position has changed.
+     * Notifies the registered {@link ProbeListener ProbeListeners} that this
+     * probe's position has changed.
      * 
      * @param previous Previous position.
      * @param current Current position.
@@ -198,8 +215,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     /**
-     * Notifies the registered {@link ProbeListener}s that this probe's color
-     * has changed.
+     * Notifies the registered {@link ProbeListener ProbeListeners} that this
+     * probe's color has changed.
      * 
      * @param previous Previous color.
      * @param current Current color.
@@ -215,9 +232,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     /**
-     * Notifies registered {@link ProbeListener}s that this probe's visibility
-     * has changed. Only takes a {@literal "previous"} value, which is negated
-     * to form the {@literal "current"} value.
+     * Notifies registered {@link ProbeListener ProbeListeners} that this
+     * probe's visibility has changed. Only takes a {@literal "previous"}
+     * value, which is negated to form the {@literal "current"} value.
      * 
      * @param previous Visibility <b>before</b> change.
      */
@@ -228,11 +245,40 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         }
     }
 
+    /**
+     * Notifies the registered {@link ProbeListener ProbeListeners} that this
+     * probe's location format pattern has changed.
+     *
+     * @param previous Previous location format pattern.
+     * @param current Current location format pattern.
+     */
+     protected void fireProbeFormatPatternChanged(final String previous, final String current) {
+         ProbeEvent<String> event = new ProbeEvent<>(this, previous, current);
+         for (ProbeListener listener : listeners) {
+             listener.probeFormatPatternChanged(event);
+         }
+     }
+
+    /**
+     *
+     *
+     * @param color
+     */
     public void setColor(final Color color) {
         requireNonNull(color, "Cannot set a probe to a null color");
         setColor(color, false);
     }
 
+    /**
+     *
+     *
+     * <p>Note that if {@code color} is the same as {@code currentColor},
+     * nothing will happen (the method exits early).</p>
+     *
+     * @param color New color for this probe. Cannot be {@code null}.
+     * @param quietly Whether or not to notify the list of
+     * {@link ProbeListener ProbeListeners} of a color change.
+     */
     private void setColor(final Color color, final boolean quietly) {
         assert color != null;
 
@@ -296,6 +342,50 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         setColor(newColor, true);
     }
 
+    /**
+     * Update the location format pattern for the current probe.
+     *
+     * @param pattern New location format pattern. Cannot be {@code null}.
+     */
+    public void setFormatPattern(final String pattern) {
+        setFormatPattern(pattern, false);
+    }
+
+    /**
+     * Update the location format pattern for the current probe, but
+     * <b>do not</b> fire off any events.
+     *
+     * @param pattern New location format pattern. Cannot be {@code null}.
+     */
+    public void quietlySetFormatPattern(final String pattern) {
+        setFormatPattern(pattern, true);
+    }
+
+    /**
+     * Update the location format pattern for the current probe and optionally
+     * fire off an update event.
+     *
+     * @param pattern New location format pattern. Cannot be {@code null}.
+     * @param quietly Whether or not to fire a format pattern change update.
+     */
+    private void setFormatPattern(final String pattern, final boolean quietly) {
+        String previous = numFmt.toPattern();
+        numFmt.applyPattern(pattern);
+        if (!quietly) {
+            fireProbeFormatPatternChanged(previous, pattern);
+        }
+    }
+
+    /**
+     *
+     *
+     * @return
+     */
+    public String getFormatPattern() {
+        return numFmt.toPattern();
+    }
+
+
     public void handleProbeUpdate() {
         RealTuple pos = getEarthPosition();
         if (pos == null) {
@@ -339,7 +429,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         try {
             scale = master.getDisplayScale();
         } catch (Exception e) {
-            System.err.println("Error getting display scale: "+e);
+            LogUtil.logException("Error getting display scale.", e);
         }
         return scale;
     }

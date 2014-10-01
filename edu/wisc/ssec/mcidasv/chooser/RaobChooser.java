@@ -74,10 +74,10 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 public class RaobChooser extends ucar.unidata.idv.chooser.RaobChooser implements Constants {
     
     /**
-     * Construct a <code>RaobChooser</code> using the manager
+     * Construct a {@code RaobChooser} using the manager
      * and the root XML that defines this object.
      *
-     * @param mgr  <code>IdvChooserManager</code> that controls this chooser.
+     * @param mgr  {@code IdvChooserManager} that controls this chooser.
      * @param root root element of the XML that defines this object
      */
     public RaobChooser(IdvChooserManager mgr, Element root) {

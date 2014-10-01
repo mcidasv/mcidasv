@@ -58,7 +58,6 @@ import visad.UnionSet;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
-
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -85,7 +84,7 @@ import edu.wisc.ssec.mcidasv.data.PreviewSelection;
  */
 
 public class MultiDimensionDataSource extends HydraDataSource {
-
+	
     /** Sources file */
     protected String filename;
 
@@ -117,7 +116,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     /**
      * Construct a new HYDRA hdf data source.
-     * @param  descriptor  descriptor for this <code>DataSource</code>
+     * @param  descriptor  descriptor for this {@code DataSource}
      * @param  fileName  name of the hdf file to read
      * @param  properties  hashtable of properties
      *
@@ -131,8 +130,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     /**
      * Construct a new HYDRA hdf data source.
-     * @param  descriptor  descriptor for this <code>DataSource</code>
-     * @param  sources   List of filenames
+     * @param  descriptor  descriptor for this {@code DataSource}
+     * @param  newSources  List of filenames
      * @param  properties  hashtable of properties
      *
      * @throws VisADException problem creating data
@@ -760,8 +759,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
     }
 
     /**
-     * Make and insert the <code>DataChoice</code>-s for this
-     * <code>DataSource</code>.
+     * Make and insert the {@link DataChoice DataChoices} for this {@code DataSource}.
      */
     public void doMakeDataChoices() {
         DataChoice choice = null;
@@ -809,7 +807,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
     }
 
     /**
-     * Check to see if this <code>HDFHydraDataSource</code> is equal to the object
+     * Check to see if this {@code HDFHydraDataSource} is equal to the object
      * in question.
      * @param o  object in question
      * @return true if they are the same or equivalent objects
@@ -865,6 +863,12 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         GeoLocationInfo ginfo = null;
         GeoSelection geoSelection = null;
+        
+        // TJJ 25 Sep 2014 found this case to be needed for Calypso data, need to init
+        // with default data selection arg passed in to avoid NPE.
+        if (dataChoice.getDataSelection() == null) {
+        	dataChoice.setDataSelection(dataSelection);
+        }
         
         if ((dataSelection != null) && (dataSelection.getGeoSelection() != null)) {
           geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :

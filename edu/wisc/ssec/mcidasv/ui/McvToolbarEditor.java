@@ -453,12 +453,12 @@ public class McvToolbarEditor implements ActionListener {
     /**
      * <p>
      * Sorts a {@link List} of 
-     * {@link TwoFacedObject}s by label. Case is ignored.
+     * {@link TwoFacedObject TwoFacedObjects} by label. Case is ignored.
      * </p>
      * 
      * @param objs The list that needs some sortin' out.
      * 
-     * @return The sorted contents of <tt>objs</tt>.
+     * @return The sorted contents of {@code objs}.
      */
     private List<TwoFacedObject> sortTwoFaced(final List<TwoFacedObject> objs) {
         Comparator<TwoFacedObject> comp = new Comparator<TwoFacedObject>() {

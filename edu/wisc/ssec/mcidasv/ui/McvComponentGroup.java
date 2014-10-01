@@ -110,17 +110,16 @@ public class McvComponentGroup extends IdvComponentGroup {
     @SuppressWarnings("unused")
     private int tabCount = 0;
 
-    /** Whether or not <code>init</code> has been called. */
+    /** Whether or not {@code init} has been called. */
     private boolean initDone = false;
 
     /**
      * Holders that McV knows are held by this component group. Used to avoid
-     * any needless work in <code>redoLayout</code>.
+     * any needless work in {@code redoLayout}.
      */
-    private List<ComponentHolder> knownHolders =
-        new ArrayList<ComponentHolder>();
+    private List<ComponentHolder> knownHolders = new ArrayList<>();
 
-    /** Keep a reference to avoid extraneous calls to <tt>getIdv().</tt> */
+    /** Keep a reference to avoid extraneous calls to {@code getIdv()}. */
     private IntegratedDataViewer idv;
 
     /** Reference to the window associated with this group. */
@@ -207,11 +206,9 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Importing a display control entails adding the control to the component
      * group and informing the UI that the control is no longer in its own
      * window.
-     * </p>
      * 
      * <p>
      * Overridden in McV so that the display control is wrapped in a
@@ -261,10 +258,8 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Handles creation of the component represented by the XML skin at the
      * given index.
-     * </p>
      * 
      * <p>
      * Overridden so that McV can wrap the component in a
@@ -312,10 +307,8 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Create a new component whose type will be determined by the contents of
-     * <code>what</code>.
-     * </p>
+     * {@code what}.
      * 
      * <p>
      * Overridden so that McV can wrap up the components in
@@ -363,12 +356,10 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Forces this group to layout its components. Extended because the IDV was
      * doing extra work that McIDAS-V doesn't need, such as dealing with
      * layouts other than LAYOUT_TABS and needlessly reinitializing the group's
      * container.
-     * </p>
      * 
      * @see ucar.unidata.ui.ComponentGroup#redoLayout()
      */
@@ -390,7 +381,7 @@ public class McvComponentGroup extends IdvComponentGroup {
                 tabbedPane.setVisible(false);
                 tabbedPane.removeAll();
 
-                knownHolders = new ArrayList<ComponentHolder>(currentHolders);
+                knownHolders = new ArrayList<>(currentHolders);
                 for (ComponentHolder holder : knownHolders) {
                     tabbedPane.addTab(holder.getName(), holder.getContents());
                 }
@@ -430,11 +421,9 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     /**
-     * <p>
      * Adds a component holder to this group. Extended so that the added holder
      * becomes the active tab, and the component is explicitly set to visible
      * in an effort to fix that heavyweight/lightweight component problem.
-     * </p>
      * 
      * @param holder
      * @param index
@@ -448,7 +437,7 @@ public class McvComponentGroup extends IdvComponentGroup {
             holder.setName("untitled");
         }
 
-        if (holder.getName().trim().length() == 0) {
+        if (holder.getName().trim().isEmpty()) {
             holder.setName("untitled");
         }
 
@@ -462,12 +451,12 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
 
     private boolean shouldGenerateName(final ComponentHolder h, final int i) {
-        if (h.getName() != null && !h.getName().startsWith("untitled")) {
+        if ((h.getName() != null) && !h.getName().startsWith("untitled")) {
             return false;
         }
 
-        boolean invalidIndex = (i >= 0);
-        boolean withoutName = (h.getName() == null || h.getName().length() == 0);
+        boolean invalidIndex = i >= 0;
+        boolean withoutName = ((h.getName() == null) || (h.getName().length() == 0));
         boolean loadingBundle = ((PersistenceManager)getIdv().getPersistenceManager()).isBundleLoading();
 
         return invalidIndex || withoutName || !loadingBundle;
@@ -633,7 +622,7 @@ public class McvComponentGroup extends IdvComponentGroup {
     }
     
     /**
-     * Create the <tt>JPopupMenu</tt> that will be displayed for a tab.
+     * Create the {@code JPopupMenu} that will be displayed for a tab.
      * 
      * @return Menu initialized with tab options
      */

@@ -90,10 +90,10 @@ import ucar.unidata.util.Msg;
 import ucar.unidata.util.StringUtil;
 
 /**
- * <p>This class has largely been copied over wholesale from the IDV code. 
+ * This class has largely been copied over wholesale from the IDV code.
  * Merely extending was proving to be as much as a hassle as just copying it, 
  * though now we still maintain complete control over the ViewPanel, and we have 
- * an obvious point of departure for whenever the JTree is started.</p>
+ * an obvious point of departure for whenever the JTree is started.
  * 
  * <p>That said, I personally recommend avoiding this class until the JTree 
  * stuff is ready to go.</p>
@@ -615,7 +615,8 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 		 * 
 		 * @param vm The ViewManager you wish to test.
 		 * 
-		 * @return True if this VMInfo contains <tt>vm</tt>, false otherwise.
+		 * @return {@code true} if this VMInfo contains {@code vm},
+         * {@code false} otherwise.
 		 */
 		public boolean holds(ViewManager vm) {
 			return viewManager == vm;

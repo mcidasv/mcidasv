@@ -62,15 +62,18 @@ public class ProbeEvent<T> extends EventObject {
      */
     public ProbeEvent(final ReadoutProbe source, final T oldValue, final T newValue) {
         super(source);
-
         requireNonNull(source, "Events cannot originate from a null source object");
         requireNonNull(oldValue, "Old value cannot be null");
         requireNonNull(newValue, "New value cannot be null");
-
         this.oldValue = oldValue;
         this.newValue = newValue;
     }
 
+    /**
+     * Returns the probe that generated this event.
+     *
+     * @return Probe from which this event originated.
+     */
     public ReadoutProbe getProbe() {
         return (ReadoutProbe)getSource();
     }

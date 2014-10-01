@@ -220,9 +220,7 @@ public class AddePointDataChooser extends AddeChooser {
     }
 
     /**
-     * Load in an ADDE point data set based on the
-     * <code>PropertyChangeEvent<code>.
-     *
+     * Load in an ADDE point data set based on the {@code PropertyChangeEvent}.
      */
     @Override public void doLoadInThread() {
         showWaitCursor();

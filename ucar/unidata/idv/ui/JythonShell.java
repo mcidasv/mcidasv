@@ -137,6 +137,10 @@ public class JythonShell extends InteractiveShell {
     public static final String PROP_JYTHON_SHELL_DISABLE_RESET_WARNING = 
         "prop.jython.shell.disableresetwarning";
 
+    /** Property that determines whether or not the Jython Shell will truncate output longer than 8192 characters. */
+    public static final String PROP_JYTHON_SHELL_TRUNCATE =
+        "prop.jython.shell.truncate";
+
     /** Max number of commands saved in history. */
     public static final int DEFAULT_MAX_HISTORY_LENGTH = 100;
 
@@ -565,7 +569,9 @@ public class JythonShell extends InteractiveShell {
         outputStream = new OutputStream() {
             @Override public void write(byte[] b, int off, int len) {
                 String output = new String(b, off, len);
-                if (len < 8192) {
+                boolean truncation =
+                    idv.getStore().get(PROP_JYTHON_SHELL_TRUNCATE, true);
+                if (!truncation || (len < 8192)) {
                     // only print "short" output. This combats problem of the Jython
                     // Shell effectively locking up when user prints a large data object.
                     // I use 8192 as a threshold because this is apparently the max

@@ -81,12 +81,12 @@ public class AddePointDataSource extends ucar.unidata.data.point.AddePointDataSo
     }
 
     /**
-     * Create a new <code>AddePointDataSource</code> from the parameters
+     * Create a new {@code AddePointDataSource} from the parameters
      * supplied.
      *
-     * @param descriptor  <code>DataSourceDescriptor</code> for this.
-     * @param source      Source URL
-     * @param properties  <code>Hashtable</code> of properties for the source.
+     * @param descriptor {@code DataSourceDescriptor} for this.
+     * @param source Source URL.
+     * @param properties {@code Hashtable} of properties for the source.
      *
      * @throws VisADException  couldn't create the VisAD data
      */

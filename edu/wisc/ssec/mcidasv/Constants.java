@@ -50,7 +50,7 @@ public interface Constants extends IdvConstants {
 
 	/**
 	 * A thing that contains one or more of the things named
-	 * <tt>PANEL_NAME</tt>. One of these can be either in a tab
+	 * {@code PANEL_NAME}. One of these can be either in a tab
 	 * or in it's own window.
 	 */
 	public static final String DISPLAY_NAME = "Display";
@@ -290,6 +290,9 @@ public interface Constants extends IdvConstants {
 
     /** Property used to store and retrieve color selection history. */
     public static final String PROP_RECENT_COLORS = "mcidasv.colorchooser.recentcolors";
+
+    /** Property used to store and retrieve the {@literal "0-360"} checkbox value. */
+    public static final String PROP_HYDRA_360 = "mcidasv.hydra.multispectral.use360";
 
 	/** Application property file name. */
 	public static final String PROPERTIES_FILE = 

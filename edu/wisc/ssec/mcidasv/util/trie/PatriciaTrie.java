@@ -65,16 +65,16 @@ import java.util.SortedMap;
  * false for a bit being set or not in a given key.
  * <p>
  * This PATRICIA Trie supports both variable length & fixed length keys.
- * Some methods, such as <code>getPrefixedBy(...)</code> are suited only to 
- * variable length keys, whereas <code>getPrefixedByBits(...)</code> is suited 
+ * Some methods, such as {@code getPrefixedBy(...)} are suited only to
+ * variable length keys, whereas {@code getPrefixedByBits(...)} is suited
  * to fixed-size keys.
  * <p>
  * Additionally see <a 
  * href="http://www.csse.monash.edu.au/~lloyd/tildeAlgDS/Tree/PATRICIA/">PATRICIA</a>
  * for more information.
  * <p>
- * Any methods here that take an <code>Object</code> may throw a 
- * <code>ClassCastException<code> if the method is expecting an instance of K 
+ * Any methods here that take an {@code Object} may throw a
+ * {@code ClassCastException} if the method is expecting an instance of K
  * (and it isn't K).
  * 
  * <pre>
@@ -1207,7 +1207,7 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
     
     /** 
      * Defines the interface to analyze {@link Trie} keys on a bit 
-     * level. <code>KeyAnalyzer</code>'s 
+     * level. {@code KeyAnalyzer}'s
      * methods return the length of the key in bits, whether or not a bit is 
      * set, and bits per element in the key. 
      * <p>
@@ -1215,7 +1215,7 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * returns the bit index where one key is different from another key (if 
      * the key and found key are equal than the return value is EQUAL_BIT_KEY).
      * <p>
-     * <code>KeyAnalyzer</code> defines:<br>
+     * {@code KeyAnalyzer} defines:<br>
      * <table cellspace="5">
      * <tr><td>NULL_BIT_KEY</td><td>When key's bits are all zero</td></tr>
      * <tr><td> EQUAL_BIT_KEY </td><td>When keys are the same </td></tr>
@@ -1490,10 +1490,10 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * Returns a set view of the keys contained in this map.  The set is
      * backed by the map, so changes to the map are reflected in the set, and
      * vice-versa.  The set supports element removal, which removes the
-     * corresponding mapping from this map, via the <tt>Iterator.remove</tt>,
-     * <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt>, and
-     * <tt>clear</tt> operations.  It does not support the <tt>add</tt> or
-     * <tt>addAll</tt> operations.
+     * corresponding mapping from this map, via the {@code Iterator.remove},
+     * {@code Set.remove}, {@code removeAll}, {@code retainAll}, and
+     * {@code clear} operations.  It does not support the {@code add} or
+     * {@code addAll} operations.
      *
      * @return a set view of the keys contained in this map.
      */
@@ -1527,9 +1527,9 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * collection is backed by the map, so changes to the map are reflected in
      * the collection, and vice-versa. The collection supports element
      * removal, which removes the corresponding mapping from this map, via the
-     * <tt>Iterator.remove</tt>, <tt>Collection.remove</tt>,
-     * <tt>removeAll</tt>, <tt>retainAll</tt>, and <tt>clear</tt> operations.
-     * It does not support the <tt>add</tt> or <tt>addAll</tt> operations.
+     * {@code Iterator.remove}, {@code Collection.remove},
+     * {@code removeAll}, {@code retainAll}, and {@code clear} operations.
+     * It does not support the {@code add} or {@code addAll} operations.
      *
      * @return a collection view of the values contained in this map.
      */

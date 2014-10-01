@@ -1189,7 +1189,7 @@ public class McVGuiUtils implements Constants {
     }
 
     /**
-     * @return The component holders within <code>windowInfo</code>.
+     * @return The component holders within {@code windowInfo}.
      * @see #getComponentHolders(IdvComponentGroup)
      */
     public static List<IdvComponentHolder> getComponentHolders(final WindowInfo windowInfo) {

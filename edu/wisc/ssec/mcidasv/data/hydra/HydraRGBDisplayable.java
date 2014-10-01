@@ -153,7 +153,7 @@ public class HydraRGBDisplayable extends DisplayableData {
      *
      * @param name              The name for the displayable.
      * @param rgbRealType       The type of the RGB parameter.  May be
-     *                          <code>null</code>.
+     *                          {@code null}.
      * @param alphaflag         boolean - will use Display.RBGA if true
      *                            otherwise only Display.RGB
      * @throws VisADException   VisAD failure.
@@ -177,9 +177,9 @@ public class HydraRGBDisplayable extends DisplayableData {
      *
      * @param name              The name for the displayable.
      * @param rgbRealType       The type of the RGB parameter.  May be
-     *                          <code>null</code>.
+     *                          {@code null}.
      * @param colorPalette      The initial colorPalette to use. May be
-     *                          <code>null</code> (Vis5D palette used
+     *                          {@code null} (Vis5D palette used
      *                          as default).
      * @param alphaflag         boolean - use Display.RBGA if true
      * @param initRange         Range to use as initial or first min,max
@@ -258,7 +258,7 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Sets the RealType of the RGB parameter.
      * @param realType          The RealType of the RGB parameter.  May
-     *                          not be <code>null</code>.
+     *                          not be {@code null}.
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */
@@ -294,7 +294,7 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Returns the RealType of the RGB parameter.
      * @return                  The RealType of the color parameter.  May
-     *                          be <code>null</code>.
+     *                          be {@code null}.
      */
     public RealType getRGBRealType() {
         return rgbRealType;
@@ -303,7 +303,7 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Returns the RealType of the SelectRange parameter.
      * @return                  The RealType of the select range parameter.  May
-     *                          be <code>null</code>.
+     *                          be {@code null}.
      */
     public RealType getSelectRealType() {
         return selectRealType;
@@ -330,10 +330,10 @@ public class HydraRGBDisplayable extends DisplayableData {
      * Sets the set of ScalarMap-s of this instance.  The ScalarMap-s of
      * this instance will be added to the set before the SCALAR_MAP_SET
      * property is set.  This method fires a PropertyChangeEvent for
-     * SCALAR_MAP_SET with <code>null</code> for the old value and the new
+     * SCALAR_MAP_SET with {@code null} for the old value and the new
      * set of ScalarMap-s for the new Value.  Intermediate subclasses that
      * have their own ScalarMap-s should override this method and invoke
-     * <code>super.setScalarMaps(ScalarMapSet)</code>.
+     * {@code super.setScalarMaps(ScalarMapSet)}.
      * @param maps              The set of ScalarMap-s to be added.
      * @throws BadMappingException      The RealType of the color parameter
      *                          has not been set or its ScalarMap is alread in
@@ -364,8 +364,8 @@ public class HydraRGBDisplayable extends DisplayableData {
      * pair this method with setRange(lo,high) to get
      * a fixed association of color table and range of values.
      *
-     * @param colorPalette     the color table or color-alpha table desired
-     * @param colorPaletteName name for the color table (can be null)
+     * @param colorPalette Color table or color-alpha table desired.
+     * @param name Name for the color table (can be {@code null}).
      * @throws VisADException  if a core VisAD failure occurs.
      * @throws RemoteException if a Java RMI failure occurs.
      */
@@ -774,7 +774,7 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Sets the RealType of the select parameter.
      * @param realType          The RealType of the RGB parameter.  May
-     *                          not be <code>null</code>.
+     *                          not be {@code null}.
      * @throws VisADException   VisAD failure.
      * @throws RemoteException  Java RMI failure.
      */

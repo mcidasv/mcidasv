@@ -7013,8 +7013,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         };
 
-        // GuiUtils.invokeInSwingThread(runnable);
-        Misc.run(runnable);
+        /**** BEGIN MCV ADDONS ****/
+        // see inquiry 1841
+        SwingUtilities.invokeLater(runnable);
+        /**** END MCV ADDONS ****/
     }
 
     /**

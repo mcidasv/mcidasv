@@ -150,8 +150,7 @@ public class McIdasBridgeChooser extends IdvChooser implements Constants {
     }
     
     /**
-     * Load in an ADDE point data set based on the
-     * <code>PropertyChangeEvent<code>.
+     * Load in an ADDE point data set based on the {@code PropertyChangeEvent}.
      *
      */
     public void doLoadInThread() {

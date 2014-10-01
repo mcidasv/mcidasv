@@ -28,87 +28,77 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
-import java.awt.Container;
-import java.awt.Component;
-import java.awt.Insets;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.GridBagConstraints;
-import javax.swing.JLabel;
-import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
+import java.awt.Insets;
 import java.rmi.RemoteException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.ArrayList;
-import java.text.DecimalFormat;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JTabbedPane;
+
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DerivedDataChoice;
+import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.control.ControlWidget;
+import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Range;
+import ucar.visad.ShapeUtility;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.DisplayableData;
+import ucar.visad.display.LineDrawing;
+import ucar.visad.display.SelectorPoint;
+import ucar.visad.display.TextDisplayable;
+import ucar.visad.display.XYDisplay;
+
+import visad.ConstantMap;
 import visad.Data;
 import visad.DataReference;
 import visad.DataReferenceImpl;
+import visad.Display;
 import visad.FlatField;
-import visad.Real;
 import visad.FunctionType;
-import visad.Integer1DSet;
-import visad.GriddedSet;
 import visad.Gridded1DSet;
 import visad.Gridded3DSet;
+import visad.GriddedSet;
+import visad.Integer1DSet;
+import visad.LocalDisplay;
 import visad.MathType;
+import visad.Real;
 import visad.RealTuple;
 import visad.RealTupleType;
 import visad.RealType;
-import visad.Set;
 import visad.SampledSet;
+import visad.ScalarMap;
+import visad.Set;
 import visad.SimpleSet;
 import visad.Text;
 import visad.TextType;
 import visad.Tuple;
 import visad.TupleType;
 import visad.UnionSet;
-import visad.ScalarMap;
-import visad.Display;
-import visad.LocalDisplay;
-import visad.ConstantMap;
 import visad.VisADException;
 import visad.VisADGeometryArray;
-import visad.georef.LatLonTuple;
 import visad.georef.EarthLocationTuple;
-import visad.util.Util;
-
-import ucar.unidata.idv.control.ControlWidget;
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DirectDataChoice;
-import ucar.unidata.data.DerivedDataChoice;
-import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.GeoSelectionPanel;
-import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Range;
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.DisplayableData;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.TextDisplayable;
-import ucar.visad.display.XYDisplay;
-import ucar.visad.display.SelectorPoint;
-import ucar.visad.ShapeUtility;
 
 import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionSubset;
-import edu.wisc.ssec.mcidasv.data.hydra.GrabLineRendererJ3D;
 import edu.wisc.ssec.mcidasv.display.hydra.DragLine;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
-
-
 public class ProfileAlongTrackControl extends DisplayControlImpl {
-
-  private DataChoice dataChoice;
   
   private DisplayableData imageDisplay;
   private DisplayableData trackDisplay;
@@ -125,10 +115,6 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
 
   private FlatField track;
 
-  private GeoSelection geoSelection;
-
-  private GeoSelectionPanel geoSelectionPanel;
-
   private XYDisplay display2D = null;
 
   private SelectorPoint locOnTrack;
@@ -142,7 +128,7 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
   }
 
   public boolean init(DataChoice dataChoice) throws VisADException, RemoteException {
-    this.dataChoice = dataChoice;
+
     FlatField data;
 
     if (dataChoice instanceof DerivedDataChoice) {
@@ -189,7 +175,7 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
   }
 
   private FlatField createTrackDisplay(DataChoice dataChoice) throws VisADException, RemoteException {
-    IntegratedDataViewer idv = getIdv();
+
     FlatField track = null;
 
     dataChoice = dataSource.findDataChoice("Track3D");
@@ -405,7 +391,4 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
         return GuiUtils.doLayout(widgetComponents, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
     }
 
-  private JComponent getDisplayTab() {
-     return null;
-  }
 }

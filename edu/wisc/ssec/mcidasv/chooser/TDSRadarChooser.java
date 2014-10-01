@@ -158,10 +158,10 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
 
     /**
-     * Create the RadarChooser
+     * Create the RadarChooser.
      *
-     * @param mgr The <code>IdvChooserManager</code>
-     * @param root  The xml root that defines this chooser
+     * @param mgr {@code IdvChooserManager}
+     * @param root XML root that defines this chooser.
      *
      */
     public TDSRadarChooser(IdvChooserManager mgr, Element root) {

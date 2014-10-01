@@ -74,8 +74,6 @@ import ucar.unidata.util.StringUtil;
  * @author IDV development team
  * @version $Revision$Date: 2011/03/24 16:06:31 $
  */
-
-
 public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements Constants {
 
     /** Manages the pull down list of urls */
@@ -112,10 +110,10 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
     protected IntegratedDataViewer idv = getIdv();
 
     /**
-     * Create the <code>UrlChooser</code>
+     * Create the {@code UrlChooser}.
      *
-     * @param mgr The <code>IdvChooserManager</code>
-     * @param root  The xml root that defines this chooser
+     * @param mgr {@code IdvChooserManager}.
+     * @param root XML root that defines this chooser.
      *
      */
     public UrlChooser(IdvChooserManager mgr, Element root) {

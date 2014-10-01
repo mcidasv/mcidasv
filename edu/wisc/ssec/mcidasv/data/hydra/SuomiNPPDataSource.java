@@ -173,7 +173,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     /**
      * Construct a new Suomi NPP HDF5 data source.
-     * @param  descriptor  descriptor for this <code>DataSource</code>
+     * @param  descriptor  descriptor for this {@code DataSource}
      * @param  fileName  name of the hdf file to read
      * @param  properties  hashtable of properties
      *
@@ -189,7 +189,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     /**
      * Construct a new Suomi NPP HDF5 data source.
-     * @param  descriptor  descriptor for this <code>DataSource</code>
+     * @param  descriptor  descriptor for this {@code DataSource}
      * @param  sources   List of filenames
      * @param  properties  hashtable of properties
      *
@@ -1249,8 +1249,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	}
 
 	/**
-     * Make and insert the <code>DataChoice</code>-s for this
-     * <code>DataSource</code>.
+     * Make and insert the {@link DataChoice DataChoices} for this
+     * {@code DataSource}.
      */
     
     public void doMakeDataChoices() {
@@ -1331,7 +1331,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     }
 
     /**
-     * Check to see if this <code>SuomiNPPDataSource</code> is equal to the object
+     * Check to see if this {@code SuomiNPPDataSource} is equal to the object
      * in question.
      * @param o  object in question
      * @return true if they are the same or equivalent objects

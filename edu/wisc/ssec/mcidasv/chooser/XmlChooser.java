@@ -78,8 +78,6 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * @author IDV development team
  * @version $Revision$Date: 2011/03/24 16:06:31 $
  */
-
-
 public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements Constants {
     
     /** Catalog browser panel */
@@ -90,10 +88,10 @@ public class XmlChooser extends ucar.unidata.idv.chooser.XmlChooser implements C
     List labelHistory = new ArrayList();
     
     /**
-     * Create the <code>XmlChooser</code>
+     * Create the {@code XmlChooser}.
      *
-     * @param mgr The <code>IdvChooserManager</code>
-     * @param root  The xml root that defines this chooser
+     * @param mgr {@code IdvChooserManager}
+     * @param root XML root that defines this chooser.
      *
      */
     public XmlChooser(IdvChooserManager mgr, Element root) {

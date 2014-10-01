@@ -599,7 +599,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     /**
-     * @return The ConstantMap representation of <code>color</code>.
+     * @return The ConstantMap representation of {@code color}.
      */
     public static ConstantMap[] makeColorMap(final Color color)
         throws VisADException, RemoteException 
@@ -615,7 +615,7 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     /**
-     * Provides <code>master</code> some sensible default attributes.
+     * Provides {@code master} some sensible default attributes.
      */
     private static void setDisplayMasterAttributes(final XYDisplay master) 
         throws VisADException, RemoteException 
