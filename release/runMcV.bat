@@ -3,12 +3,14 @@
 SET MCV_USERPATH=%USERPROFILE%\McIDAS-V
 SET MCV_LOGPATH=%MCV_USERPATH%\mcidasv.log
 SET MCV_PARAMS=%*
+SET USE_TEMPUSERPATH=0
 
 REM Check for -userpath parameter
 :checkparameters
 IF '%1' == '' GOTO endparameters
 IF '%1' == '-userpath' GOTO setuserpath
 IF '%1' == '-logpath' GOTO setlogpath
+IF '%1' == '-tempuserpath' GOTO settempuserpath
 SHIFT
 GOTO checkparameters
 
@@ -24,7 +26,22 @@ SHIFT
 SHIFT
 GOTO checkparameters
 
+:settempuserpath
+SET USE_TEMPUSERPATH=1
+:maketempname
+SET TEMPUSERPATH=%TMP%\mcidasv-%RANDOM%-%TIME:~6,5%.tmp
+IF EXIST "%TEMPUSERPATH%" GOTO :maketempname
+SHIFT
+GOTO checkparameters
+
 :endparameters
+
+IF "%USE_TEMPUSERPATH%"=="1" (
+    SET MCV_USERPATH=%TEMPUSERPATH%
+    SET MCV_LOGPATH=%TEMPUSERPATH%\mcidasv.log
+    SET MCV_PARAMS=%MCV_PARAMS:-tempuserpath= %
+    ECHO Using randomly generated userpath: %TEMPUSERPATH%
+)
 
 REM Initialize new userpath
 IF EXIST "%MCV_USERPATH%" GOTO hasuserpath

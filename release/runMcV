@@ -10,6 +10,8 @@ fi
 MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
 
+USE_TEMPUSERPATH="0"
+
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
   if [ "$1" = "-userpath" ]; then
@@ -20,10 +22,21 @@ while [ "$1" != "" ]; do
     MCV_LOGPATH="$2"
     shift
     shift
+  elif [ "$1" = "-tempuserpath" ]; then
+    USE_TEMPUSERPATH="1"
+    shift
   else
     shift
   fi
 done
+
+if [ "${USE_TEMPUSERPATH}" = "1" ]; then
+  # first command is for Linux; it'll fail on OS X and then attempt the second
+  MCV_USERPATH=`mktemp -d 2>/dev/null || mktemp -d -t 'mcidasv'`
+  echo "Using randomly generated userpath: ${MCV_USERPATH}"
+  MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
+  MCV_PARAMS="${str// -tempuserpath/}"
+fi
 
 # Check for old style default userpath
 if [ -d "${HOME}/.mcidasv" ]; then
