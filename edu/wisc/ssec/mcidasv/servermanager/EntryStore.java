@@ -1061,7 +1061,7 @@ public class EntryStore {
                 return false;
             }
         } catch (Exception e) {
-                return false;
+            return false;
         }
         return true;
     }
