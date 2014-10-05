@@ -1866,11 +1866,19 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                             components.add(
                                 viewManager.getMaster().getComponent());
                         } else if (allViewsBtn.isSelected()) {  // All Views
-                            for (Object o :
-                                    viewManager.getDisplayWindow()
-                                        .getViewManagers()) {
+                            IdvWindow w = viewManager.getDisplayWindow();
+                            for (Object o : w.getViewManagers()) {
                                 components.add(
                                     ((MapViewManager) o).getComponent());
+                            }
+                            for (IdvComponentGroup icg : w.getComponentGroups()) {
+                                for (IdvComponentHolder idh : (List<IdvComponentHolder>)icg.getDisplayComponents()) {
+                                    if (idh.getViewManagers().contains(viewManager)) {
+                                        for (ViewManager vm : (List<ViewManager>)idh.getViewManagers()) {
+                                            components.add(vm.getComponent());
+                                        }
+                                    }
+                                }
                             }
                         } else {  // View & Legend
                             components.add(viewManager.getContents());
