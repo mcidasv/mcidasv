@@ -6064,10 +6064,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     List<ViewManager> l = new ArrayList<ViewManager>();
 
                     if (allViewsBtn.isSelected()) {  // All Views
-                        for (Object o :
-                                getDisplayWindow().getViewManagers()) {
+                        /* changes for McV Inquiry 1837 */
+                        IdvWindow w = getDisplayWindow();
+                        for (Object o : w.getViewManagers()) {
                             l.add((ViewManager) o);
                         }
+                        for (IdvComponentGroup icg : w.getComponentGroups()) {
+                            for (IdvComponentHolder idh : (List<IdvComponentHolder>)icg.getDisplayComponents()) {
+                                List<ViewManager> vms = (List<ViewManager>)idh.getViewManagers();
+                                if (vms.contains(this)) {
+                                    for (ViewManager vm : vms) {
+                                        l.add(vm);
+                                    }
+                                }
+                            }
+                        }
+                        /* end 1837 changes */
                     } else {
                         l.add(this);
                     }
@@ -6116,11 +6128,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
                             getDisplayWindow().getViewManagers());
                         for (IdvComponentGroup icg :
                                 getDisplayWindow().getComponentGroups()) {
+                            /* changes for McV Inquiry 1837 */
                             for (IdvComponentHolder idh :
                                     (List<IdvComponentHolder>) icg
                                         .getDisplayComponents()) {
-                                viewManagers.addAll(idh.getViewManagers());
+                                List<ViewManager> vms = idh.getViewManagers();
+                                if (vms.contains(this)) {
+                                    viewManagers.addAll(vms);
+                                }
                             }
+                            /* end 1837 changes */
                         }
                         for (ViewManager v : viewManagers) {
                             views.add(v.getComponent());
