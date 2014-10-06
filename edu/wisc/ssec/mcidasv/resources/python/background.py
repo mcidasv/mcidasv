@@ -1442,7 +1442,7 @@ class _Display(_JavaProxy):
                     layer.getJavaInstance().setId(None)
                     layer.usedTemporaryId = False
                     
-    def captureImage(self, filename, quality=1.0, height=-1, width=-1):
+    def captureImage(self, filename, quality=1.0, height=-1, width=-1, bgtransparent=False):
         """Attempt at a replacement for ISL writeImage.
         
         Args:
@@ -1491,8 +1491,11 @@ class _Display(_JavaProxy):
         elif fileExt in extensions:
             islInterpreter.writeImage(filename, "", quality)
         else:
-            # 2nd arg is whether image is written in current thread
-            self._JavaProxy__javaObject.writeImage(imageFile, True, quality)
+            if bgtransparent:
+                writeImage(filename, 'backgroundtransparent', quality)
+            else:
+                # 2nd arg is whether image is written in current thread
+                self._JavaProxy__javaObject.writeImage(imageFile, True, quality)
             
         # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
         
