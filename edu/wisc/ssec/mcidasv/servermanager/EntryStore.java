@@ -675,10 +675,25 @@ public class EntryStore {
         return this.filterLocalEntriesByTemporaryStatus(false);
     }
 
+    /**
+     * Returns any {@link LocalAddeEntry LocalAddeEntries} that will be removed
+     * at the end of the current McIDAS-V session.
+     *
+     * @return {@code Set} of all the temporary local ADDE entries.
+     */
     public Set<LocalAddeEntry> getTemporaryLocalEntries() {
         return this.filterLocalEntriesByTemporaryStatus(true);
     }
-    
+
+    /**
+     * Filters the local entries by whether or not they are set as
+     * {@literal "temporary"}.
+     *
+     * @param getTemporaryEntries {@code true} returns temporary local
+     * entries; {@code false} returns local entries that are permanent.
+     *
+     * @return {@link Set} of filtered local ADDE entries.
+     */
     private Set<LocalAddeEntry> filterLocalEntriesByTemporaryStatus(final boolean getTemporaryEntries) {
         Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
         for (AddeEntry e : trie.getPrefixedBy("localhost").values()) {
@@ -691,7 +706,15 @@ public class EntryStore {
         }
         return locals;
     }
-    
+
+    /**
+     * Removes the given {@link AddeEntry AddeEntries}.
+     *
+     * @param removedEntries {@code AddeEntry} objects to remove.
+     * Cannot be {@code null}.
+     *
+     * @return Whether or not {@code removeEntries} were removed.
+     */
     public boolean removeEntries(final Collection<? extends AddeEntry> removedEntries) {
         requireNonNull(removedEntries);
 
@@ -791,6 +814,13 @@ public class EntryStore {
         EventBus.publish(Event.REPLACEMENT);
     }
 
+    /**
+     * Returns all enabled, valid {@link LocalAddeEntry LocalAddeEntries} as a
+     * collection of {@literal "IDV style"} {@link AddeServer.Group} objects.
+     *
+     * @return {@link Set} of {@code AddeServer.Group} objects that corresponds
+     * with the enabled, valid local ADDE entries.
+     */
     // if true, filters out disabled local groups; if false, returns all local groups
     public Set<AddeServer.Group> getIdvStyleLocalGroups() {
         Set<LocalAddeEntry> localEntries = getLocalEntries();
@@ -805,10 +835,35 @@ public class EntryStore {
         return idvGroups;
     }
 
+    /**
+     * Returns the entries matching the given {@code server} and
+     * {@code typeAsStr} parameters as a collection of {@link AddeServer.Group}
+     * objects.
+     *
+     * @param server Remote ADDE server. Should not be {@code null}.
+     * @param typeAsStr Entry type. One of {@literal "IMAGE"},
+     * {@literal "POINT"}, {@literal "GRID"}, {@literal "TEXT"},
+     * {@literal "NAV"}, {@literal "RADAR"}, {@literal "UNKNOWN"}, or
+     * {@literal "INVALID"}. Should not be {@code null}.
+     *
+     * @return {@link Set} of {@code AddeServer.Group} objects that corresponds
+     * to the entries associated with {@code server} and {@code typeAsStr}.
+     */
     public Set<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final String typeAsStr) {
         return getIdvStyleRemoteGroups(server, EntryTransforms.strToEntryType(typeAsStr));
     }
 
+    /**
+     * Returns the entries matching the given {@code server} and
+     * {@code type} parameters as a collection of {@link AddeServer.Group}
+     * objects.
+     *
+     * @param server Remote ADDE server. Should not be {@code null}.
+     * @param type Entry type. Should not be {@code null}.
+     *
+     * @return {@link Set} of {@code AddeServer.Group} objects that corresponds
+     * to the entries associated with {@code server} and {@code type}.
+     */
     public Set<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final EntryType type) {
         Set<AddeServer.Group> idvGroups = newLinkedHashSet(trie.size());
         String typeStr = type.name();
