@@ -78,9 +78,8 @@ import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry.ServerName;
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
 /**
- * Useful methods for doing things like converting a 
- * {@link ucar.unidata.idv.chooser.adde.AddeServer AddeServer} to a
- * {@link edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry RemoteAddeEntry}.
+ * Useful methods for doing things like converting a {@link AddeServer} to a
+ * {@link RemoteAddeEntry}.
  */
 public class EntryTransforms {
 
@@ -132,12 +131,31 @@ public class EntryTransforms {
     }
 
     // converts a list of AddeServers to a set of RemoteAddeEntry
+
+    /**
+     * Converts given {@code idvServers} to a
+     * {@link RemoteAddeEntry RemoteAddeEntries}.
+     *
+     * @param idvServers {@literal "IDV-style"} ADDE servers to convert.
+     *
+     * @return {@code Set} of remote ADDE entries that corresponds to the unique
+     * objects in {@code idvServers}.
+     */
     public static Set<RemoteAddeEntry> convertIdvServers(final List<AddeServer> idvServers) {
-        Set<RemoteAddeEntry> addeEntries = newLinkedHashSet();
+        Set<RemoteAddeEntry> addeEntries = newLinkedHashSet(idvServers.size());
         addeEntries.addAll(map(convertIdvServer, idvServers));
         return addeEntries;
     }
 
+    /**
+     * Converts given {@link AddeEntry AddeEntries} to
+     * {@link AddeServer AddeServers}.
+     *
+     * @param entries {@literal "McIDAS-V style"} ADDE entries to convert.
+     *
+     * @return {@code Set} of {@code AddeServer} objects that corresponds to
+     * the ones found in {@code entries}.
+     */
     public static Set<AddeServer> convertMcvServers(final Collection<AddeEntry> entries) {
         Set<AddeServer> addeServs = newLinkedHashSet(entries.size());
         Set<String> addrs = newLinkedHashSet(entries.size());
@@ -595,9 +613,11 @@ public class EntryTransforms {
         for (Entry<String, Set<String>> entry : map.entrySet()) {
             Set<String> names = entry.getValue();
             String displayName = "";
-            for (String name : names)
-                if (name.length() >= displayName.length())
+            for (String name : names) {
+                if (name.length() >= displayName.length()) {
                     displayName = name;
+                }
+            }
 
             if (displayName.isEmpty()) {
                 displayName = entry.getKey();
