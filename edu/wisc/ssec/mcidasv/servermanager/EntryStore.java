@@ -35,7 +35,14 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -65,6 +72,14 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeThread.McservEvent;
 import edu.wisc.ssec.mcidasv.util.trie.CharSequenceKeyAnalyzer;
 import edu.wisc.ssec.mcidasv.util.trie.PatriciaTrie;
 
+/**
+ * McIDAS-V ADDE server manager. This class is essentially the
+ * {@literal "gatekeeper"} for anything having to do with the application's
+ * collection of ADDE servers. This class is also responsible for controlling
+ * the thread used to manage the external mcservl binary.
+ *
+ * @see AddeThread
+ */
 public class EntryStore {
 
     /** 
@@ -104,6 +119,7 @@ public class EntryStore {
     /** Logging object. */
     private static final Logger logger = LoggerFactory.getLogger(EntryStore.class);
 
+    /** Preference key for ADDE entries. */
     private static final String PREF_ADDE_ENTRIES = "mcv.servers.entries";
 
     /** The ADDE servers known to McIDAS-V. */
@@ -127,7 +143,10 @@ public class EntryStore {
     /** Path to the user's {@literal "RESOLV.SRV"}. */
     private final String ADDE_RESOLV;
 
-    /** */
+    /**
+     * Value of {@literal "MCTRACE"} environment variable for mcservl.
+     * Currently set to {@literal "0"} within {@link EntryStore#EntryStore}.
+     */
     private final String MCTRACE;
 
     /** Which port is this particular manager operating on */
@@ -136,18 +155,23 @@ public class EntryStore {
     /** Thread that monitors the mcservl process. */
     private static AddeThread thread;
 
-    /** The last {@link AddeEntry}s added to the manager. */
+    /** Last {@link AddeEntry AddeEntries} added to the manager. */
     private final List<AddeEntry> lastAdded;
 
+    /** McIDAS-V preferences store. */
     private final IdvObjectStore idvStore;
 
+    /** Whether or not mcservl is restarting. */
     private boolean restartingMcserv;
 
     /**
      * Constructs a server manager.
      * 
-     * @param store 
-     * @param rscManager 
+     * @param store McIDAS-V's preferences store. Cannot be {@code null}.
+     * @param rscManager McIDAS-V's resource manager. Cannot be {@code null}.
+     *
+     * @throws NullPointerException if either of {@code store} or
+     * {@code rscManager} is {@code null}.
      */
     public EntryStore(final IdvObjectStore store, final IdvResourceManager rscManager) {
         requireNonNull(store);
@@ -244,10 +268,20 @@ public class EntryStore {
         }
     }
 
+    /**
+     * Returns the {@link IdvObjectStore} used to save user preferences.
+     *
+     * @return {@code IdvObjectStore} used by the rest of McIDAS-V.
+     */
     public IdvObjectStore getIdvStore() {
         return idvStore;
     }
 
+    /**
+     * Returns environment variables that allow mcservl to run on Windows.
+     *
+     * @return {@code String} array containing mcservl's environment variables.
+     */
     protected String[] getWindowsAddeEnv() {
         // Drive letters should come from environment
         // Java drive is not necessarily system drive
@@ -267,6 +301,12 @@ public class EntryStore {
         };
     }
 
+    /**
+     * Returns environment variables that allow mcservl to run on
+     * {@literal "unix-like"} systems.
+     *
+     * @return {@code String} array containing mcservl's environment variables.
+     */
     protected String[] getUnixAddeEnv() {
         return new String[] {
             "PATH=" + ADDE_BIN,
@@ -282,6 +322,11 @@ public class EntryStore {
         };
     }
 
+    /**
+     * Returns command line used to launch mcservl.
+     *
+     * @return {@code String} array that represents an invocation of mcservl.
+     */
     protected String[] getAddeCommands() {
         String mcvPID = Integer.toString(PosixModule.getpid());
         if (McIDASV.isWindows() || (mcvPID == null) || "0".equals(mcvPID)) {
@@ -292,16 +337,19 @@ public class EntryStore {
     }
 
     /**
-     * Determine the validity of a given {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry AddeEntry}.
+     * Determine the validity of a given {@link AddeEntry}.
      * 
      * @param entry Entry to check. Cannot be {@code null}.
      * 
-     * @return {@code true} if {@code entry} is invalid or {@code false} otherwise.
+     * @return {@code true} if {@code entry} is invalid or {@code false}
+     * otherwise.
+     *
+     * @throws NullPointerException if {@code entry} is {@code null}.
+     * @throws AssertionError if {@code entry} is somehow neither a
+     * {@code RemoteAddeEntry} or {@code LocalAddeEntry}.
      * 
-     * @throws AssertionError if {@code entry} is somehow neither a {@code RemoteAddeEntry} or {@code LocalAddeEntry}.
-     * 
-     * @see edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry#INVALID_ENTRY
-     * @see edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry#INVALID_ENTRY
+     * @see LocalAddeEntry#INVALID_ENTRY
+     * @see RemoteAddeEntry#INVALID_ENTRY
      */
     public static boolean isInvalidEntry(final AddeEntry entry) {
         requireNonNull(entry);
@@ -317,10 +365,11 @@ public class EntryStore {
     }
 
     /**
-     * Returns the {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry AddeEntrys} stored 
-     * in the user's preferences.
+     * Returns the {@link AddeEntry AddeEntries} stored in the user's
+     * preferences.
      * 
-     * @param store Object store that represents the user's preferences. Cannot be {@code null}.
+     * @param store Object store that represents the user's preferences.
+     * Cannot be {@code null}.
      * 
      * @return Either the {@code AddeEntrys} stored in the prefs or an empty {@link java.util.Set Set}.
      */
@@ -349,7 +398,9 @@ public class EntryStore {
     /**
      * Responds to server manager events being passed with the event bus. 
      * 
-     * @param evt Event to which this method is responding.
+     * @param evt Event to which this method is responding. Cannot be {@code null}.
+     *
+     * @throws NullPointerException if {@code evt} is {@code null}.
      */
     @EventSubscriber(eventClass=Event.class)
     public void onEvent(Event evt) {
@@ -358,7 +409,8 @@ public class EntryStore {
     }
 
     /**
-     * Saves the current set of ADDE servers to the user's preferences.
+     * Saves the current set of ADDE servers to the user's preferences and
+     * {@link #ADDE_RESOLV}.
      */
     public void saveEntries() {
         idvStore.put(PREF_ADDE_ENTRIES, arrList(trie.values()));
@@ -370,6 +422,10 @@ public class EntryStore {
         }
     }
 
+    /**
+     * Saves the list of ADDE entries to both the user's preferences and
+     * {@link #ADDE_RESOLV}.
+     */
     public void saveForShutdown() {
         idvStore.put(PREF_ADDE_ENTRIES, arrList(getPersistedEntrySet()));
         idvStore.saveIfNeeded();
@@ -381,11 +437,13 @@ public class EntryStore {
     }
 
     /**
-     * Searches the newest entries for the entries of the given {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType EntryType}.
+     * Searches the newest entries for the entries of the given {@link EntryType}.
      * 
-     * @param type Look for entries matching this {@code EntryType}. Cannot be {@code null}.
+     * @param type Look for entries matching this {@code EntryType}.
+     * Cannot be {@code null}.
      * 
-     * @return Either a {@link java.util.List List} of entries or an empty {@code List}.
+     * @return Either a {@link java.util.List List} of entries or an empty
+     * {@code List}.
      *
      * @throws NullPointerException if {@code type} is {@code null}.
      */
@@ -400,6 +458,18 @@ public class EntryStore {
         return entries;
     }
 
+    /**
+     * Returns the {@link AddeEntry AddeEntries} that were added last, filtered
+     * by the given {@link EntryType EntryTypes}.
+     *
+     * @param types Filter the last added entries by these entry type.
+     * Cannot be {@code null}.
+     *
+     * @return {@link List} of the last added entries, filtered by
+     * {@code types}.
+     *
+     * @throws NullPointerException if {@code types} is {@code null}.
+     */
     public List<AddeEntry> getLastAddedByTypes(final EnumSet<EntryType> types) {
         requireNonNull(types);
         List<AddeEntry> entries = arrList(lastAdded.size());
@@ -411,18 +481,28 @@ public class EntryStore {
         return entries;
     }
 
+    /**
+     * Returns the {@link AddeEntry AddeEntries} that were added last. Note
+     * that this value is <b>not</b> preserved between sessions.
+     *
+     * @return {@link List} of the last ADDE entries that were added. May be
+     * empty.
+     */
     public List<AddeEntry> getLastAdded() {
         return arrList(lastAdded);
     }
 
     /**
-     * Returns the {@link Set} of {@link AddeEntry}s that are known to work (for
-     * a given {@link EntryType} of entries).
+     * Returns the {@link Set} of {@link AddeEntry AddeEntries} that are known
+     * to work (for a given {@link EntryType} of entries).
      * 
-     * @param type The {@code EntryType} you are interested in.
+     * @param type The {@code EntryType} you are interested in. Cannot be
+     * {@code null}.
      * 
-     * @return A {@code Set} of matching {@code RemoteAddeEntry}s. If there 
-     * were no matches, an empty {@code Set} is returned.
+     * @return A {@code Set} of matching remote ADDE entries. If there were no
+     * matches, an empty {@code Set} is returned.
+     *
+     * @throws NullPointerException if {@code type} is {@code null}.
      */
     public Set<AddeEntry> getVerifiedEntries(final EntryType type) {
         requireNonNull(type);
@@ -441,7 +521,13 @@ public class EntryStore {
         return verified;
     }
 
-    // TODO(jon): better name
+    /**
+     * Returns the available {@link AddeEntry AddeEntries}, grouped by
+     * {@link EntryType}.
+     *
+     * @return {@link Map} of {@code EntryType} to a {@link Set} containing all
+     * of the entries that match that {@code EntryType}.
+     */
     public Map<EntryType, Set<AddeEntry>> getVerifiedEntriesByTypes() {
         Map<EntryType, Set<AddeEntry>> entryMap =
                 newLinkedHashMap(EntryType.values().length);
@@ -458,8 +544,8 @@ public class EntryStore {
     }
 
     /**
-     * Returns the {@link Set} of {@link AddeEntry#getGroup()}s
-     * that match the given {@code address} and {@code type}.
+     * Returns the {@link Set} of {@link AddeEntry#getGroup() groups} that
+     * match the given {@code address} and {@code type}.
      * 
      * @param address ADDE server address whose groups are needed.
      * Cannot be {@code null}.
@@ -468,13 +554,16 @@ public class EntryStore {
      * 
      * @return Either a set containing the desired groups, or an empty set if
      * there were no matches.
+     *
+     * @throws NullPointerException if either {@code address} or {@code type}
+     * is {@code null}.
      */
     public Set<String> getGroupsFor(final String address, EntryType type) {
         requireNonNull(address);
         requireNonNull(type);
         Set<String> groups = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.getPrefixedBy(address+'!').values()) {
-            if (entry.getAddress().equals(address) && entry.getEntryType() == type) {
+            if (entry.getAddress().equals(address) && (entry.getEntryType() == type)) {
                 groups.add(entry.getGroup());
             }
         }
@@ -484,11 +573,13 @@ public class EntryStore {
     /**
      * Search the server manager for entries that match {@code prefix}.
      * 
-     * @param prefix {@code String} to match.
+     * @param prefix {@code String} to match. Cannot be {@code null}.
      * 
      * @return {@link List} containing matching entries. If there were no 
      * matches the {@code List} will be empty.
-     * 
+     *
+     * @throws NullPointerException if {@code prefix} is {@code null}.
+     *
      * @see AddeEntry#asStringId()
      */
     public List<AddeEntry> searchWithPrefix(final String prefix) {
@@ -512,8 +603,8 @@ public class EntryStore {
     }
 
     /**
-     * Returns a {@link Set} containing <b>ADDRESS/GROUPNAME</b> {@code String}s
-     * for each {@link RemoteAddeEntry}.
+     * Returns a {@link Set} containing {@code ADDRESS/GROUPNAME}
+     * {@link String Strings} for each {@link RemoteAddeEntry}.
      * 
      * @return The {@literal "entry text"} representations of each 
      * {@code RemoteAddeEntry}.
@@ -549,8 +640,8 @@ public class EntryStore {
     }
 
     /**
-     * Returns the {@link Set} of {@link EntryType}s for a given {@code group}
-     * on a given {@code address}.
+     * Returns the {@link Set} of {@link EntryType EntryTypes} for a given
+     * {@code group} on a given {@code address}.
      * 
      * @param address Address of a server.
      * @param group Group whose {@literal "types"} you want.
@@ -595,10 +686,22 @@ public class EntryStore {
         return AddeEntry.DEFAULT_ACCOUNT;
     }
 
+    /**
+     * Returns the accounting for the given {@code idvServer} and
+     * {@code typeAsStr}.
+     *
+     * @param idvServer Server to search for.
+     * @param typeAsStr One of {@literal "IMAGE"}, {@literal "POINT"},
+     * {@literal "GRID"}, {@literal "TEXT"}, {@literal "NAV"},
+     * {@literal "RADAR"}, {@literal "UNKNOWN"}, or {@literal "INVALID"}.
+     *
+     * @return {@code AddeAccount} associated with {@code idvServer} and
+     * {@code typeAsStr}.
+     */
     public AddeAccount getAccountingFor(final AddeServer idvServer, String typeAsStr) {
         String address = idvServer.getName();
         List<AddeServer.Group> groups = (List<AddeServer.Group>)idvServer.getGroups();
-        if (groups != null && !groups.isEmpty()) {
+        if ((groups != null) && !groups.isEmpty()) {
             EntryType type = EntryTransforms.strToEntryType(typeAsStr);
             return getAccountingFor(address, groups.get(0).getName(), type);
         } else {
@@ -607,12 +710,18 @@ public class EntryStore {
     }
 
     /**
-     * Returns the complete {@link Set} of {@link AddeEntry}s.
+     * Returns the complete {@link Set} of {@link AddeEntry AddeEntries}.
      */
     public Set<AddeEntry> getEntrySet() {
         return newLinkedHashSet(trie.values());
     }
 
+    /**
+     * Returns all non-temporary {@link AddeEntry AddeEntries}.
+     *
+     * @return {@link Set} of ADDE entries that stick around between McIDAS-V
+     * sessions.
+     */
     public Set<AddeEntry> getPersistedEntrySet() {
         Set<AddeEntry> entries = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.values()) {
@@ -624,9 +733,11 @@ public class EntryStore {
     }
 
     /**
-     * Returns the complete {@link Set} of {@link RemoteAddeEntry}s.
+     * Returns the complete {@link Set} of
+     * {@link RemoteAddeEntry RemoteAddeEntries}.
      * 
-     * @return The {@code RemoteAddeEntry}s stored within the available entries.
+     * @return {@code Set} of remote ADDE entries stored within the available
+     * entries.
      */
     public Set<RemoteAddeEntry> getRemoteEntries() {
         Set<RemoteAddeEntry> remotes = newLinkedHashSet(trie.size());
@@ -639,9 +750,11 @@ public class EntryStore {
     }
 
     /**
-     * Returns the complete {@link Set} of {@link LocalAddeEntry}s.
+     * Returns the complete {@link Set} of
+     * {@link LocalAddeEntry LocalAddeEntries}.
      * 
-     * @return The {@code LocalAddeEntry}s stored within the available entries.
+     * @return {@code Set} of local ADDE entries  stored within the available
+     * entries.
      */
     public Set<LocalAddeEntry> getLocalEntries() {
         Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
@@ -654,12 +767,12 @@ public class EntryStore {
     }
 
     /**
-     * Returns the {@link Set} of {@link LocalAddeEntry LocalAddeEntries} that will
-     * be saved between McIDAS-V sessions. 
+     * Returns the {@link Set} of {@link LocalAddeEntry LocalAddeEntries} that
+     * will be saved between McIDAS-V sessions.
      * 
      * <p>Note: all this does is check {@link LocalAddeEntry#isTemporary} field. 
      * 
-     * @return {@code LocalAddeEntry}s that will be saved for the next session.
+     * @return Local ADDE entries that will be saved for the next session.
      */
     public Set<LocalAddeEntry> getPersistedLocalEntries() {
 //        Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
@@ -714,6 +827,8 @@ public class EntryStore {
      * Cannot be {@code null}.
      *
      * @return Whether or not {@code removeEntries} were removed.
+     *
+     * @throws NullPointerException if {@code removedEntries} is {@code null}.
      */
     public boolean removeEntries(final Collection<? extends AddeEntry> removedEntries) {
         requireNonNull(removedEntries);
@@ -741,6 +856,8 @@ public class EntryStore {
      * @param entry Entry to remove. Cannot be {@code null}.
      * 
      * @return {@code true} if something was removed, {@code false} otherwise.
+     *
+     * @throws NullPointerException if {@code entry} is {@code null}.
      */
     public boolean removeEntry(final AddeEntry entry) {
         requireNonNull(entry);
@@ -769,7 +886,7 @@ public class EntryStore {
     }
 
     /**
-     * Adds a {@link Set} of {@link AddeEntry}s to {@link #trie}.
+     * Adds a {@link Set} of {@link AddeEntry AddeEntries} to {@link #trie}.
      * 
      * @param newEntries New entries to add to the server manager. Cannot be
      * {@code null}.
@@ -788,8 +905,8 @@ public class EntryStore {
     }
 
     /**
-     * Replaces the {@link AddeEntry}s within {@code trie} with the contents
-     * of {@code newEntries}.
+     * Replaces the {@link AddeEntry AddeEntries} within {@code trie} with the
+     * contents of {@code newEntries}.
      * 
      * @param oldEntries Entries to be replaced. Cannot be {@code null}.
      * @param newEntries Entries to use as replacements. Cannot be 
