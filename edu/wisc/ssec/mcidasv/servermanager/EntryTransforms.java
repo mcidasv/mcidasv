@@ -57,8 +57,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.idv.IdvResourceManager;
@@ -67,6 +65,9 @@ import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.StringUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.wisc.ssec.mcidasv.ResourceManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
@@ -189,11 +190,11 @@ public class EntryTransforms {
 
     /**
      * Converts the XML contents of {@link ResourceManager#RSC_NEW_USERSERVERS}
-     * to a {@link Set} of {@link RemoteAddeEntry}s.
+     * to a {@link Set} of {@link RemoteAddeEntry RemoteAddeEntries}.
      * 
      * @param root {@literal "Root"} of the XML to convert.
      * 
-     * @return {@code Set} of {@code RemoteAddeEntry}s described by 
+     * @return {@code Set} of remote ADDE entries described by
      * {@code root}.
      */
     protected static Set<RemoteAddeEntry> convertUserXml(final Element root) {
@@ -256,14 +257,13 @@ public class EntryTransforms {
     
     /**
      * Converts the XML contents of {@link IdvResourceManager#RSC_ADDESERVER} 
-     * to a {@link Set} of {@link RemoteAddeEntry}s.
+     * to a {@link Set} of {@link RemoteAddeEntry RemoteAddeEntries}.
      * 
      * @param root XML to convert.
      * @param source Used to {@literal "bulk set"} the origin of whatever
-     * {@code RemoteAddeEntry}s get created.
+     * remote ADDE entries get created.
      * 
-     * @return {@code Set} of {@code RemoteAddeEntry}s contained within 
-     * {@code root}.
+     * @return {@code Set} of remote ADDE entries contained within {@code root}.
      */
     @SuppressWarnings("unchecked")
     protected static Set<AddeEntry> convertAddeServerXml(Element root, EntrySource source) {
@@ -305,7 +305,7 @@ public class EntryTransforms {
 
                 // there's also an optional "name" attribute! woo!
                 String name = getAttribute(group, "name", (String) null);
-                if ((name != null) && (!name.isEmpty())) {
+                if ((name != null) && !name.isEmpty()) {
 
                     RemoteAddeEntry e = new RemoteAddeEntry
                                             .Builder(address, name)
@@ -384,8 +384,8 @@ public class EntryTransforms {
      * @throws NullPointerException if {@code s} is {@code null}.
      */
     public static EntryType strToEntryType(final String s) {
-        EntryType type = EntryType.UNKNOWN;
         requireNonNull(s);
+        EntryType type = EntryType.UNKNOWN;
         try {
             type = EntryType.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -407,8 +407,8 @@ public class EntryTransforms {
      * @throws NullPointerException if {@code s} is {@code null}.
      */
     public static EntrySource strToEntrySource(final String s) {
-        EntrySource source = EntrySource.USER;
         requireNonNull(s);
+        EntrySource source = EntrySource.USER;
         try {
             source = EntrySource.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -430,8 +430,8 @@ public class EntryTransforms {
      * @throws NullPointerException if {@code s} is {@code null}.
      */
     public static EntryValidity strToEntryValidity(final String s) {
-        EntryValidity valid = EntryValidity.UNVERIFIED;
         requireNonNull(s);
+        EntryValidity valid = EntryValidity.UNVERIFIED;
         try {
             valid = EntryValidity.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -453,8 +453,8 @@ public class EntryTransforms {
      * @throws NullPointerException if {@code s} is {@code null}.
      */
     public static EntryStatus strToEntryStatus(final String s) {
-        EntryStatus status = EntryStatus.DISABLED;
         requireNonNull(s);
+        EntryStatus status = EntryStatus.DISABLED;
         try {
             status = EntryStatus.valueOf(s.toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -484,8 +484,8 @@ public class EntryTransforms {
      * @throws NullPointerException if {@code s} is {@code null}.
      */
     public static AddeFormat strToAddeFormat(final String s) {
-        AddeFormat format = AddeFormat.INVALID;
         requireNonNull(s);
+        AddeFormat format = AddeFormat.INVALID;
         try {
             format = AddeFormat.valueOf(s.toUpperCase().replace(' ', '_').replace("-", ""));
         } catch (IllegalArgumentException e) {
@@ -564,8 +564,8 @@ public class EntryTransforms {
      * This method is slightly confusing, sorry! Think of it kind of like a
      * {@literal "SQL JOIN"}... 
      * 
-     * <p>Basically create {@link RemoteAddeEntry}s by using a hostname to
-     * determine which dataset belongs to which IP.
+     * <p>Basically create {@link RemoteAddeEntry RemoteAddeEntries} by using
+     * a hostname to determine which dataset belongs to which IP.</p>
      * 
      * @param datasetToHost {@code Map} of ADDE groups to host names.
      * @param hostToIp {@code Map} of host names to IP addresses.
@@ -644,12 +644,12 @@ public class EntryTransforms {
 
     /**
      * Reads a {@literal "RESOLV.SRV"} file and converts the contents into a 
-     * {@link Set} of {@link LocalAddeEntry}s.
+     * {@link Set} of {@link LocalAddeEntry LocalAddeEntries}.
      * 
-     * @param filename Filename containing desired {@code LocalAddeEntry}s. 
+     * @param filename Filename containing desired local ADDE entries.
      * Cannot be {@code null}.
      * 
-     * @return {@code Set} of {@code LocalAddeEntry}s contained within 
+     * @return {@code Set} of local ADDE entries contained within
      * {@code filename}.
      * 
      * @throws IOException if there was a problem reading from {@code filename}.
@@ -693,14 +693,14 @@ public class EntryTransforms {
 
         String[] pairs = commaSplit.split(line.trim());
         String[] pair;
-        Map<String, String> keyVals = new HashMap<String, String>(pairs.length);
+        Map<String, String> keyVals = new HashMap<>(pairs.length);
         for (int i = 0; i < pairs.length; i++) {
-            if (pairs[i] == null || pairs[i].isEmpty()) {
+            if ((pairs[i] == null) || pairs[i].isEmpty()) {
                 continue;
             }
 
             pair = equalSplit.split(pairs[i]);
-            if (pair.length != 2 || pair[0].isEmpty() || pair[1].isEmpty()) {
+            if ((pair.length != 2) || pair[0].isEmpty() || pair[1].isEmpty()) {
                 continue;
             }
 
@@ -749,7 +749,7 @@ public class EntryTransforms {
 
         if (keyVals.containsKey("C") && keyVals.containsKey("N1") && keyVals.containsKey("MCV") && keyVals.containsKey("MASK")) {
             LocalAddeEntry entry = new LocalAddeEntry.Builder(keyVals).build();
-            EntryStatus status = (disabled) ? EntryStatus.DISABLED : EntryStatus.ENABLED;
+            EntryStatus status = disabled ? EntryStatus.DISABLED : EntryStatus.ENABLED;
             entry.setEntryStatus(status);
             return entry;
         } else {
@@ -758,11 +758,12 @@ public class EntryTransforms {
     }
 
     /**
-     * Writes a {@link Collection} of {@link LocalAddeEntry}s to a {@literal "RESOLV.SRV"}
-     * file. <b>This method discards the current contents of {@code filename}!</b>
+     * Writes a {@link Collection} of {@link LocalAddeEntry LocalAddeEntries}
+     * to a {@literal "RESOLV.SRV"} file. <b>This method discards the current
+     * contents of {@code filename}!</b>
      * 
-     * @param filename Filename that will contain the {@code LocalAddeEntry}s within 
-     * {@code entries}. Cannot be {@code null}.
+     * @param filename Filename that will contain the local ADDE entries
+     * within {@code entries}. Cannot be {@code null}.
      * 
      * @param entries {@code Set} of entries to be written to {@code filename}.
      * Cannot be {@code null}.
@@ -776,11 +777,11 @@ public class EntryTransforms {
     }
 
     /**
-     * Writes a {@link Collection} of {@link LocalAddeEntry}s to a {@literal "RESOLV.SRV"}
-     * file. This method will <i>append</i> the contents of {@code entries} to
-     * {@code filename}.
+     * Writes a {@link Collection} of {@link LocalAddeEntry LocalAddeEntries}
+     * to a {@literal "RESOLV.SRV"} file. This method will <i>append</i> the
+     * contents of {@code entries} to {@code filename}.
      * 
-     * @param filename Filename that will contain the {@code LocalAddeEntry}s within 
+     * @param filename Filename that will contain the local ADDE entries within
      * {@code entries}. Cannot be {@code null}.
      * 
      * @param entries {@code Collection} of entries to be written to {@code filename}.
@@ -795,16 +796,17 @@ public class EntryTransforms {
     }
 
     /**
-     * Writes a {@link Collection} of {@link LocalAddeEntry}s to a {@literal "RESOLV.SRV"}
-     * file.
+     * Writes a {@link Collection} of {@link LocalAddeEntry LocalAddeEntries}
+     * to a {@literal "RESOLV.SRV"} file.
      * 
-     * @param filename Filename that will contain the {@code LocalAddeEntry}s within 
+     * @param filename Filename that will contain the local ADDE entries within
      * {@code entries}. Cannot be {@code null}.
      * 
-     * @param append If {@code true}, append {@code entries} to {@code filename}. Otherwise discards contents of {@code filename}.
+     * @param append If {@code true}, append {@code entries} to
+     * {@code filename}. Otherwise discards contents of {@code filename}.
      * 
-     * @param entries {@code Collection} of entries to be written to {@code filename}.
-     * Cannot be {@code null}. 
+     * @param entries {@code Collection} of entries to be written to
+     * {@code filename}. Cannot be {@code null}.
      * 
      * @throws IOException if there was a problem writing to {@code filename}.
      * 
@@ -894,12 +896,13 @@ public class EntryTransforms {
     }
 
     /**
-     * Converts a {@link Collection} of {@link LocalAddeEntry}s into a {@link List}
-     * of {@code String}s. 
+     * Converts a {@link Collection} of {@link LocalAddeEntry LocalAddeEntries}
+     * into a {@link List} of strings.
      * 
-     * @param entries {@code Collection} of entries to convert. Should not be {@code null}.
+     * @param entries {@code Collection} of entries to convert. Should not be
+     * {@code null}.
      * 
-     * @return {@code entries} represented as {@code String}s.
+     * @return {@code entries} represented as strings.
      * 
      * @see #asResolvEntry(LocalAddeEntry)
      */
@@ -916,7 +919,8 @@ public class EntryTransforms {
      * suitable for including in a {@literal "RESOLV.SRV"} file. This method
      * does <b>not</b> append a newline to the end of the {@code String}.
      * 
-     * @param entry The {@code LocalAddeEntry} to convert. Should not be {@code null}.
+     * @param entry The {@code LocalAddeEntry} to convert. Should not be
+     * {@code null}.
      * 
      * @return {@code entry} as a {@literal "RESOLV.SRV"} entry.
      */
