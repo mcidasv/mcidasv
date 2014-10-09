@@ -1252,8 +1252,19 @@ public class MultiSpectralDataSource extends HydraDataSource {
     FlatField swath = new FlatField(new FunctionType(ftype.getDomain(),
         new RealTupleType(new RealType[] {RealType.getRealType("redimage_"+count), RealType.getRealType("greenimage_"+count), RealType.getRealType("blueimage_"+count)})), domSet);
 
-    swath.setSamples(new float[][]
-        {swaths[0].getFloats(false)[0], swaths[1].getFloats(false)[0], swaths[2].getFloats(false)[0]});
+    if (swaths[0].getFloats(false)[0].length == swaths[1].getFloats(false)[0].length &&
+            swaths[0].getFloats(false)[0].length == swaths[2].getFloats(false)[0].length) {
+        logger.trace("SKIPPING RESAMPLE; domains are the same length");
+        swath.setSamples(new float[][]
+                {swaths[0].getFloats(false)[0], swaths[1].getFloats(false)[0], swaths[2].getFloats(false)[0]});
+    } else {
+        logger.trace("DOING RESAMPLE; domains are different lengths");
+        visad.Field gResampled = swaths[1].resample(swaths[0].getDomainSet(), Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+        visad.Field bResampled = swaths[2].resample(swaths[0].getDomainSet(), Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+        
+        swath.setSamples(new float[][]
+            {swaths[0].getFloats(false)[0], gResampled.getFloats(false)[0], bResampled.getFloats(false)[0]});
+    } 
 
     count++;
 
