@@ -616,7 +616,7 @@ def listADDEImageTimes(localEntry=None,
     if location:
         location = '&%s=%s %s' % (coordSys, location[0], location[1])
     else:
-        location = '%s=0 0' % (coordSys)
+        location = '&%s=0 0' % (coordSys)
         
     if size:
         if size == 'ALL':
