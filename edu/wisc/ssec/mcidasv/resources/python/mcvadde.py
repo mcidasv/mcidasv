@@ -634,7 +634,8 @@ def listADDEImageTimes(localEntry=None,
     if band:
         band = '&BAND=%s' % (str(band))
     else:
-        band = '&BAND=ALL'
+        # band = '&BAND=ALL'
+        raise TypeError("band must be specified (either integer value or 'ALL')")
         
     if position is not None:
         if isinstance(position, int):
@@ -840,7 +841,8 @@ def listADDEImages(localEntry=None,
     if band:
         band = '&BAND=%s' % (str(band))
     else:
-        band = '&BAND=ALL'
+        # band = '&BAND=ALL'
+        raise TypeError("band must be specified (either integer value or 'ALL')")
         
     if position is not None:
         if isinstance(position, int):
