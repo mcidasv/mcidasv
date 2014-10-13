@@ -48,8 +48,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
   <li><a href="#replace">Replace Image Filter</a></li>
   <li><a href="#shot">Shot Image Filter</a></li>
 </ul>
-<p><a name="clean" id="clean"></a><strong>Clean Image Filter (fill, bline, eline, pdiff, ldiff)</strong></p>
-<p>This formula cleans an image by first applying a shot noise filter to each element in the source region, and then locating and replacing bad lines. Each element is compared to the elements on either side and replaced if the values are significantly different. The average value of each line is then compared to the lines above and below and replaced if it is significantly different.</p>
+<ul class="propertylist">
+<li class="propertylistitem"><a name="clean" id="clean"></a><strong>Clean Image Filter (fill, bline, eline, pdiff, ldiff) -</strong> Cleans an image by first applying a shot noise filter to each element in the source region, and then locating and replacing bad lines. Each element is compared to the elements on either side and replaced if the values are significantly different. The average value of each line is then compared to the lines above and below and replaced if it is significantly different.
 <table id="cleanfilter" cellpadding="0" cellspacing="0" border="1">
     <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -113,11 +113,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
-</table>
-<p><a name="cloud" id="cloud"></a><strong>Cloud Image Filter (replace, constant)</strong></p>
-<p>This formula applies a cloud
+</table></li>
+<li class="propertylistitem"><a name="cloud" id="cloud"></a><strong>Cloud Image Filter (replace, constant) -</strong> Applies a cloud
   filter to an image by comparing each element to the elements of another image.
-  Use this filter to mask off a portion of the first source image. </p>
+  Use this filter to mask off a portion of the first source image.
 <table id="cloudfilter" cellpadding="0" cellspacing="0" border="1">
    <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -161,10 +160,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageFilter
    <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
 </table>
-<p><a name="core" id="core"></a><strong>Core Image Filter (brkpoint1, brkpoint2, replace1, replace2)</strong></p>
-<p>This formula applies a core
+</li>
+<li class="propertylistitem"><a name="core" id="core"></a><strong>Core Image Filter (brkpoint1, brkpoint2, replace1, replace2) -</strong> Applies a core
   filter to two images by comparing elements to breakpoints. The resulting image
-has only two values.</p>
+has only two values.
 <table id="corefilter" cellpadding="0" cellspacing="0" border="1">
     <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -229,12 +228,12 @@ then <em>ddataset</em> = <em>replace1</em><br>
 else <em>ddataset</em> = <em>replace2</em></p>
   </tr>
 </table>
-<p><a name="discriminate" id="discriminate"></a><strong>Discriminate Image Filter (brkpoint1, brkpoint2, brkpoint3, brkpoint4,
-    replace)</strong></p>
-<p>This formula applies a discriminate
+</li>
+<li class="propertylistitem"><a name="discriminate" id="discriminate"></a><strong>Discriminate Image Filter (brkpoint1, brkpoint2, brkpoint3, brkpoint4,
+    replace) -</strong> Applies a discriminate
   filter to two images by comparing elements in each image to different high
   and low breakpoints. Use this filter to mask off a portion of the first source
-  image.</p>
+  image.
 <table id="discriminatefilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -311,10 +310,9 @@ else <em>ddataset</em> = <em>replace</em></p>
 </td>
 </tr>
 </table>
-<p><a name="gradient" id="gradient"></a><strong>Gradient Image Filter</strong></p>
-<p>This formula applies a gradient filter to the source image.</p>
+</li>
+<li class="propertylistitem"><a name="gradient" id="gradient"></a><strong>Gradient Image Filter -</strong> Applies a gradient filter to the source image.
 <table id="gradientfilter" cellpadding="0" cellspacing="0" border="1">
-
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
@@ -349,12 +347,12 @@ else <em>ddataset</em> = <em>replace</em></p>
 </td>
 </tr>
 </table>
-<p><a name="high2d" id="high2d"></a><strong>High Pass 2D Image Filter</strong></p>
-<p>This formula applies a two-dimensional
+</li>
+<li class="propertylistitem"><a name="high2d" id="high2d"></a><strong>High Pass 2D Image Filter -</strong> Applies a two-dimensional
   high-pass filter to each element in the source image. It eliminates low-frequency
   deviations by clustering them around the distribution's midpoint. A sample
   average is calculated by the program using values in a two-dimensional region
-  around the source element.</p>
+  around the source element.
 <table id="high2dfilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -390,13 +388,12 @@ else <em>ddataset</em> = <em>replace</em></p>
 </td>
 </tr>
 </table>
-
-<p><a name="high" id="high"></a><strong>High Pass Image Filter (radius, leak)</strong></p>
-<p>This formula applies a one-dimensional
+</li>
+<li class="propertylistitem"><a name="high" id="high"></a><strong>High Pass Image Filter (radius, leak) -</strong> Applies a one-dimensional
   high-pass filter to each element in the source image. It eliminates low-frequency
   deviations by clustering them around the distribution's midpoint. A sample
   average is determined using values on either side of the source element and
-  the percentage of filter efficiency.</p>
+  the percentage of filter efficiency.
 <table id="highpassfilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -447,10 +444,10 @@ else <em>ddataset</em> = <em>replace</em></p>
 </td>
 </tr>
 </table>
-<p><a name="hole" id="hole"></a><strong>Hole Image Filter (brkpoint1, brkpoint2)</strong></p>
-<p>This formula searches for missing
+</li>
+<li class="propertylistitem"><a name="hole" id="hole"></a><strong>Hole Image Filter (brkpoint1, brkpoint2) -</strong> Searches for missing
   data and fills the holes in the image using the average of the surrounding
-  element values.</p>
+  element values.
 <table id="holefilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -502,11 +499,11 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
 </td>
 </tr>
 </table>
-<p><a name="low2d" id="low2d"></a><strong>Low Pass 2D Image Filter (linecoef, elecoef)</strong></p>
-<p>This formula applies a two-dimensional
+</li>
+<li class="propertylistitem"><a name="low2d" id="low2d"></a><strong>Low Pass 2D Image Filter (linecoef, elecoef) -</strong> Applies a two-dimensional
   low-pass filter to each element in the source image. It eliminates high-frequency
   deviations by replacing the source image data values with the average of the
-  values in the sample defined with the line and element coefficients.</p>
+  values in the sample defined with the line and element coefficients.
 <table id="low2dfilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -556,12 +553,12 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
 <td width="510" colspan="2" rowspan="1" valign="top"><p><em>ddataset</em> = (sample average)</p>
   </tr>
 </table>
-<p><a name="low" id="low"></a><strong>Low Pass Image Filter (radius, leak)</strong></p>
-<p>This formula applies a one-dimensional
+</li>
+<li class="propertylistitem"><a name="low" id="low"></a><strong>Low Pass Image Filter (radius, leak) -</strong> Applies a one-dimensional
   low-pass filter to each element of the source image. It eliminates high-frequency
   deviations by replacing the source image data values with the average of the
   values on either side of the source element. The sample average is determined
-  using the percentage of filter efficiency.</p>
+  using the percentage of filter efficiency.
 <table id="lowfilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -612,9 +609,9 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
       <td width="510" colspan="2" rowspan="1" valign="top"><p><em>ddataset</em> = (sample average)</p>
   </tr>
 </table>
-<p><a name="merge" id="merge"></a><strong>Merge Image Filter (brkpoint1, brkpoint2, constant)</strong></p>
-
-<p>This formula merges two images by selecting the <em>sdataset1</em> value for each element if its value is between the specified breakpoints. Otherwise, it selects the <em>sdataset2</em> value minus the specified constant.<table id="mergefilter" cellpadding="0" cellspacing="0" border="1">
+</li>
+<li class="propertylistitem"><a name="merge" id="merge"></a><strong>Merge Image Filter (brkpoint1, brkpoint2, constant) -</strong> Merges two images by selecting the <em>sdataset1</em> value for each element if its value is between the specified breakpoints. Otherwise, it selects the <em>sdataset2</em> value minus the specified constant.
+<table id="mergefilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
@@ -664,10 +661,9 @@ else <em>ddataset</em> = <em>sdataset</em> </p>
    <p>The maximum brightness value for calibration (default=255).</p></td>
    </tr>
 </table>
-<p><a name="replace" id="replace"></a><strong>Replace Image  Filter (New Value, Old Value)</strong></p>
-<p>This formula replaces selected
+</li>
+<li class="propertylistitem"><a name="replace" id="replace"></a><strong>Replace Image  Filter (New Value, Old Value) -</strong>< Replaces selected
   elements in the defined region of the source image with the specified replacement value.
-</p>
 <table id="replacefilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -720,11 +716,11 @@ then <em>ddataset</em> = <em>sdataset</em><br>
 else <em>ddataset</em> = <em>replaceVal</em> </p>
   </tr>
 </table>
-<p><a name="shot" id="shot"></a><strong>Shot Image Filter (bline, eline, pdiff)</strong></p>
-<p>This formula cleans an image
+</li>
+<li class="propertylistitem"><a name="shot" id="shot"></a><strong>Shot Image Filter (bline, eline, pdiff) -</strong> Cleans an image
   by applying a shot noise filter to each element in the source image. Each element
   is compared to the elements on either side and replaced if the values are significantly
-  different.</p>
+  different.
 <table id="shotfilter" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -785,6 +781,8 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </td>
 </tr>
 </table>
+</li>
+</ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

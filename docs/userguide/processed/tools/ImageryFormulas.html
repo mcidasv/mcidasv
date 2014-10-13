@@ -31,10 +31,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
 <p>The following describes each formula included in the Imagery Formulas section
   of McIDAS-V.</p>
 <p><strong>Note:</strong> If the formula you select utilizes a Select Input window&nbsp;to enter values to be used by the formula, you can choose if you want to save these values in a bundle if you wish to create one. Each field of the Select Input window has a <strong>Save in Bundle</strong> option&nbsp;(chosen by default). If you keep this option selected, the value(s) you choose will be stored in the bundle, and if all values are saved, the formula will automatically execute when you load in your bundle without any user input. If you do not save the values in your bundle, the values you use will not be saved, and the formula will not automatically execute without requiring the user to enter/change values.</p>
-<p><strong>Geolocate an Image (Upper Left Lat, Upper Left Lon, Lower Right Lat,
+<ul class="propertylistitem">
+<li class="propertylistitem"><strong>Geolocate an Image (Upper Left Lat, Upper Left Lon, Lower Right Lat,
     Lower Right Lon) -</strong> Takes an image data object and a lat/lon bounding box and adds
   a lat/lon domain to the data. This formula is commonly used in conjunction
-  with another formula. </p>
+  with another formula.
 <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -61,9 +62,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
         longitude value (default=180).</p></td>
   </tr>
 </table>
-<p><strong>Image over topography -</strong> Obtains the latitude coordinate from the grid and returns a grid
-of the latitudes at each point.</p>
-<p><strong>Mask Value -</strong> Allows you to specify a threshold value where only data greater than, less than, greater than or equal to, less than or equal to, or equal to values will display. After defining the initial Input Parameters, a Field Selector window will appear where you can specify <em>inputFieldForMask</em> (the field to be masked) as well as <em>displayFieldToBeMasked</em> (a second field that will be multiplied by the result of the mask of the <em>inputFieldForMask</em>. This field can be either the same field that you apply the mask to, or a different field).</p>
+</li>
+<li class="propertylistitem"><strong>Image over topography -</strong> Obtains the latitude coordinate from the grid and returns a grid
+of the latitudes at each point.</li>
+<li class="propertylistitem"><strong>Mask Value -</strong> Allows you to specify a threshold value where only data greater than, less than, greater than or equal to, less than or equal to, or equal to values will display. After defining the initial Input Parameters, a Field Selector window will appear where you can specify <em>inputFieldForMask</em> (the field to be masked) as well as <em>displayFieldToBeMasked</em> (a second field that will be multiplied by the result of the mask of the <em>inputFieldForMask</em>. This field can be either the same field that you apply the mask to, or a different field).
 <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -82,7 +84,8 @@ of the latitudes at each point.</p>
     <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>Default value = 1. When 0, values outside data will be 0, when 1, values outside data will be unprobeable.</p></td>
   </tr>
 </table>
-<p><strong>Mask Values Within Range -</strong> Allows you to specify a numerical range where&nbsp;data values will display. After defining the initial Input Parameters, a Field Selector window will appear where you can specify <em>inputFieldForMask</em> (the field to be masked) as well as <em>displayFieldToBeMasked</em> (a second field that will be multiplied by the result of the mask of the <em>inputFieldForMask</em>. This field can be either the same field that you apply the mask to, or a different field).</p>
+</li>
+<li class="propertylistitem"><strong>Mask Values Within Range -</strong> Allows you to specify a numerical range where&nbsp;data values will display. After defining the initial Input Parameters, a Field Selector window will appear where you can specify <em>inputFieldForMask</em> (the field to be masked) as well as <em>displayFieldToBeMasked</em> (a second field that will be multiplied by the result of the mask of the <em>inputFieldForMask</em>. This field can be either the same field that you apply the mask to, or a different field).
 <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
@@ -101,8 +104,9 @@ of the latitudes at each point.</p>
     <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>Default value = 0. When 0, values outside data will be 0, when 1, values outside data will be unprobeable.</p></td>
   </tr>
 </table>
-<p><strong>Scale images to brightness ranges -</strong> Displays your selected parameter in the Main Display window. Instead of using the color bar range that would be customary for your selected parameter, the standard range for brightness values will be used (i.e. 0-255).</p>
-<p><strong>Three Color (RGB) Image -</strong> Combines three images as a RGB image when the 3 Color (RGB) Image display type is selected. When you select Create Display, a Field Selector window will open. The fields in this window are red, green, and blue. Once you click OK, an RGB image will be created in the Main Display window. Below is the <strong>Layer Controls</strong> tab for the 3 Color (RGB) Image display type.</p>
+</li>
+<li class="propertylistitem"><strong>Scale images to brightness ranges -</strong> Displays your selected parameter in the Main Display window. Instead of using the color bar range that would be customary for your selected parameter, the standard range for brightness values will be used (i.e. 0-255).</li>
+<li class="propertylistitem"><strong>Three Color (RGB) Image -</strong> Combines three images as a RGB image when the 3 Color (RGB) Image display type is selected. When you select Create Display, a Field Selector window will open. The fields in this window are red, green, and blue. Once you click OK, an RGB image will be created in the Main Display window. Below is the <strong>Layer Controls</strong> tab for the 3 Color (RGB) Image display type.
 <div class="images"><img src="images/formula/RGBControls.gif" alt="Image 1: Three Color (RGB) Image" width="452" height="195"><br> 
 <span class="caption">Image 1: Three Color (RGB) Image</span></div>
 <ul class="propertylist">
@@ -110,7 +114,8 @@ of the latitudes at each point.</p>
 <li class="propertylistitem"><strong>Vertical Position -</strong> Changes the vertical position of the image with respect to other variables being displayed in the Main Display window. You can change this with the slider, or by entering a value into the field and pressing Enter.</li>
 <li class="propertylistitem"><strong>Transparency -</strong> Increases or decreases the transparency of the image.</li>
 </ul>
-<p><strong>Three Color (RGB) Image (Auto-scale) -</strong> Combines three images as a RGB image when the RGB Composite display type is selected. When you select Create Display, a Field Selector window will open. The fields in this window are red, green, and blue. Once you click OK, an RGB image will be created in the Main Display window. After the display is created, you have the ability to change the ranges for the red, green, and blue values, as well as the gamma values. Below is the <strong>Layer Controls</strong> tab for the RGB Composite display type.</p>
+</li>
+<li class="propertylistitem"><strong>Three Color (RGB) Image (Auto-scale) -</strong> Combines three images as a RGB image when the RGB Composite display type is selected. When you select Create Display, a Field Selector window will open. The fields in this window are red, green, and blue. Once you click OK, an RGB image will be created in the Main Display window. After the display is created, you have the ability to change the ranges for the red, green, and blue values, as well as the gamma values. Below is the <strong>Layer Controls</strong> tab for the RGB Composite display type.
 <div class="images"><img src="images/formula/RGBCompositeControls.gif" width="577" height="247" alt="Image 2: RGB Composite Controls"><br> 
 <span class="caption">Image 2: RGB Composite Controls</span></div>
 <ul class="propertylist">
@@ -121,6 +126,8 @@ of the latitudes at each point.</p>
 <li class="propertylistitem"><strong><img src="images/formula/reset.gif" width="67" height="26" alt="Reset button"align='absmiddle'> -</strong> Resets the minimum and maximum range as well as gamma values for the color to their defaults.</li>
 <li class="propertylistitem"><strong> <img src="images/formula/Apply.gif" width="65" height="26" alt="Apply button"align='absmiddle'> -</strong> Applies any changes that have been made to any of the fields of the individual R, G, and B components to the image in the Main Display window. This button does not affect the bottom <strong>Gamma</strong> value. Alternatively, after changing a value in each field, you may press Enter to apply your change to the image.</li>
 <li class="propertylistitem"><img src="images/formula/ApplyAllGamma.gif" width="179" height="26" alt="Apply to All Gamma Fields button"align='absmiddle'><strong> -</strong> Applies a Common Gamma value to all red, green, and blue gamma fields.</li>
+</ul>
+</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
