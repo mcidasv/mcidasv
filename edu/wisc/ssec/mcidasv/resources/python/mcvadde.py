@@ -595,7 +595,7 @@ def listADDEImageTimes(localEntry=None,
         origUnit = unit
         unit = '&UNIT=%s' % (unit)
     else:
-        # origUnit = None
+        origUnit = ''
         unit = ''
         
     if place is Places.CENTER:
@@ -725,8 +725,13 @@ def listADDEImageTimes(localEntry=None,
             
     uniques = set()
     times = []
+    foundUnit = False
     for d in areaDirectories:
         dt = DateTime(d.getNominalTime())
+        unitList = map(str, list(d.getCalInfo()[0])[::2])
+        if origUnit in unitList:
+            foundUnit = True
+            
         if dt not in uniques:
             d = { 
                 'day': str(dt.formattedString('yyyyDDD', tz)), 
@@ -734,6 +739,10 @@ def listADDEImageTimes(localEntry=None,
             }
             times.append(d)
             uniques.add(dt)
+            
+    if unit and not foundUnit:
+        raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
+        
     uniques = None
     return sorted(times)
     
@@ -802,7 +811,7 @@ def listADDEImages(localEntry=None,
         origUnit = unit
         unit = '&UNIT=%s' % (unit)
     else:
-        # origUnit = None
+        origUnit = ''
         unit = ''
         
     if place is Places.CENTER:
@@ -932,6 +941,7 @@ def listADDEImages(localEntry=None,
             raise AddeJythonError(e)
             
     temp = _AreaDirectoryList()
+    foundUnit = False
     for i, d in enumerate(areaDirectories):
         nominalTime = d.getNominalTime()
         tempDay = str(dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
@@ -942,12 +952,20 @@ def listADDEImages(localEntry=None,
         # unitList = tempUnitList[::2]
         # unitDescList = tempUnitList[1::2]
         # calInfo = dict(zip(unitList, unitDescList))
-        if unit:
+        unitList = map(str, list(d.getCalInfo()[0])[::2])
+        if origUnit in unitList:
+            foundUnit = True
             unitList = [origUnit]
-        else:
-            unitList = map(str, list(d.getCalInfo()[0])[::2])
+            
+        # if origUnit not in unitList:
+        #     raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
+        # if unit:
+        #     unitList = [origUnit]
+        # else:
+        #     unitList = map(str, list(d.getCalInfo()[0])[::2])
             
         for band in bandList:
+            tempList = []
             for calUnit in unitList:
                 dt = {
                     'server': server,
@@ -986,6 +1004,10 @@ def listADDEImages(localEntry=None,
                     'url': urls[i],
                 }
             temp.append(dt)
+                
+    if unit and not foundUnit:
+        raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
+        
     return temp
     
 def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
