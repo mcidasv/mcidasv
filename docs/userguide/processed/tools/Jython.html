@@ -94,18 +94,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Jython.html
   <div class="faq-bottom">
     <hr>
     <div class="faq-category-title"><a name="faq1_cat1_" id="faq1_cat1_"></a>FAQ</div>
-    <div class="faq-category"><a name="faq1_cat1_0" id="faq1_cat1_0"></a>
+    <div class="faq-category">
       <div class="faq-question">
-        <h4>Q. What is Jython?</h4>
+        <h4><a name="faq1_cat1_0" id="faq1_cat1_0"></a>Q. What is Jython?</h4>
       </div>
       <div class="faq-answer"><strong>A.</strong> Jython is a Java implementation
         of the Python language. It is used within McIDAS-V for data analysis.
         Complex routines can be written in the McIDAS-V Jython editor and called
         from the <a href="Formulas.html">McIDAS-V Formulas</a>.</div>
-      
-      <p><a name="top" id="top"></a> <a name="learn" id="learn"></a></p>
       <div class="faq-question">
-        <h4><P></P>
+        <h4><a name="top" id="top"></a> <a name="learn" id="learn"></a>
 Q. How do I learn to write Jython?</h4>
       </div>
       <div class="faq-answer"><strong>A.</strong> There are a <a href="http://www.amazon.com/s/ref=nb_ss_gw/002-3107995-7532045?url=search-alias%3Daps&amp;field-keywords=jython&amp;x=0&amp;y=0"target="_blank">number
@@ -115,10 +113,8 @@ Q. How do I learn to write Jython?</h4>
           <li><a href="http://www.jython.org" target="_blank">http://www.jython.org</a></li>
         </ul>
       </div>
-      
-      <p><a name="faq1_cat1_2" id="faq1_cat1_2"></a></p>
       <div class="faq-question">
-        <h4>Q. How does Jython work with my data in McIDAS-V?</h4>
+        <h4><a name="faq1_cat1_2" id="faq1_cat1_2"></a>Q. How does Jython work with my data in McIDAS-V?</h4>
       </div>
       <div class="faq-answer"><strong>A.</strong> McIDAS-V uses the <a href="http://visad.ssec.wisc.edu/" target="_blank">VisAD</a> package
         as as an underlying data model. There is a <a href="http://www.ssec.wisc.edu/~tomw/visadtutor/"target="_blank">VisAD/Jython
@@ -142,18 +138,14 @@ Q. How do I learn to write Jython?</h4>
           error will also be printed in the console window running McIDAS-V.
           Correct the error and try to save again.</p>
       </div>-->
-      
-      <p><a name="faq1_cat1_4" id="faq1_cat1_4"></a></p>
       <div class="faq-question">
-        <h4>Q. Creating/Removing library files</h4>
+        <h4><a name="faq1_cat1_4" id="faq1_cat1_4"></a>Q. Creating/Removing library files</h4>
       </div>
       <div class="faq-answer"><strong>A.</strong> To create a new file use the <strong>File-&gt;New
           Jython Library...</strong> menu. To remove the currently displayed
           library file use the <strong>File-&gt;Remove Library</strong> menu.</div>
-      
-      <p><a name="faq1_cat1_5" id="faq1_cat1_5"></a></p>
       <div class="faq-question">
-        <h4>Q. Calling procedures from formulas</h4>
+        <h4><a name="faq1_cat1_5" id="faq1_cat1_5"></a>Q. Calling procedures from formulas</h4>
       </div>
       <div class="faq-answer"><strong>A.</strong> When creating a formula with
         the <a href="Formulas.html">Formula Editor</a> you can call any routines
@@ -161,10 +153,8 @@ Q. How do I learn to write Jython?</h4>
         in the formula with appropriate arguments, if any. For example a formula
         might be "convertCToF(atemp)". When evaluating the formula for display,
         this will call the routine that you define in the Jython Library.</div>
-      
-      <p><a name="faq1_cat1_6" id="faq1_cat1_6"></a></p>
       <div class="faq-question">
-        <h4>Q. Create a formula from my procedure</h4>
+        <h4><a name="faq1_cat1_6" id="faq1_cat1_6"></a>Q. Create a formula from my procedure</h4>
       </div>
       <div class="faq-answer"><strong>A.</strong> Right click on a procedure
         definition within the McIDAS-V editor window and choose <strong>Make
@@ -174,10 +164,8 @@ Q. How do I learn to write Jython?</h4>
             Procedure Call</strong> menu. This lists all of the currently defined
             procedures in the other Jython libraries.</p>
       </div>
-      
-      <p><a name="faq1_cat1_6" id="faq1_cat1_7"></a></p>
       <div class="faq-question">
-        <h4>Q. Why do I see "TypeError: object is not callable" messages when scripting?</h4>
+        <h4><a name="faq1_cat1_6" id="faq1_cat1_7"></a>Q. Why do I see "TypeError: object is not callable" messages when scripting?</h4>
       </div>
       <div class="faq-answer"><strong>A.</strong> This error occurs when a user gives a variable the same name as a reserved keyword or function. For a list of reserved Jython functions, please see <a href="http://www.jython.org/docs/library/functions.html"target="_blank">Built-in Functions</a>. Variable names should be unique. </div>
     </div>
