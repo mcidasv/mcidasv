@@ -585,10 +585,6 @@ def listADDEImageTimes(localEntry=None,
     if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
         raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
         
-    # if mag:
-    #     mag = '&MAG=%s %s' % (mag[0], mag[1])
-    # else:
-    #     mag = ''
     mag = ''
     
     if unit:
@@ -618,14 +614,6 @@ def listADDEImageTimes(localEntry=None,
     else:
         location = '&%s=0 0' % (coordSys)
         
-    # if size:
-    #     if size == 'ALL':
-    #         size = '&SIZE=99999 99999'
-    #     else:
-    #         size = '&SIZE=%s %s' % (size[0], size[1])
-    # else:
-    #     size = ''
-    
     if time:
         time = '&TIME=%s %s I' % (time[0], time[1])
     else:
@@ -800,10 +788,6 @@ def listADDEImages(localEntry=None,
     if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
         raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
         
-    # if mag:
-    #     mag = '&MAG=%s %s' % (mag[0], mag[1])
-    # else:
-    #     mag = ''
     mag = ''
     
     if unit:
@@ -833,14 +817,6 @@ def listADDEImages(localEntry=None,
     else:
         location = '&%s=0 0' % (coordSys)
         
-    # if size:
-    #     if size == 'ALL':
-    #         size = '&SIZE=99999 99999'
-    #     else:
-    #         size = '&SIZE=%s %s' % (size[0], size[1])
-    # else:
-    #     size = ''
-    
     if time:
         time = '&TIME=%s %s I' % (time[0], time[1])
     else:
