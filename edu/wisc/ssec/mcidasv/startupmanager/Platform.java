@@ -28,18 +28,27 @@
 package edu.wisc.ssec.mcidasv.startupmanager;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
 
+/**
+ * Represents platform specific details used by McIDAS-V. In particular, there
+ * are useful methods related to the McIDAS-V {@literal "userpath"}.
+ *
+ * <p>Currently McIDAS-V distinguishes between {@literal "Unix-like"} and
+ * {@literal "Windows"}; these can be accessed using {@code Platform.UNIXLIKE}
+ * or {@code Platform.WINDOWS}.</p>
+ */
 public enum Platform {
     /** Instance of unix-specific platform information. */
-    UNIXLIKE("/", "runMcV.prefs", "\n"),
+    UNIXLIKE("runMcV.prefs", "\n"),
     
     /** Instance of windows-specific platform information. */
-    WINDOWS("\\", "runMcV-Prefs.bat", "\r\n");
+    WINDOWS("runMcV-Prefs.bat", "\r\n");
     
     /** Path to the user's {@literal "userpath"} directory. */
     private String userDirectory;
@@ -52,9 +61,9 @@ public enum Platform {
     
     /** Holds the platform's representation of a new line. */
     private final String newLine;
-    
-    /** Directory delimiter for the current platform. */
-    private final String pathSeparator;
+
+    /** Path to the bundles subdirectory within {@code userDirectory}. */
+    private final String userBundles;
     
     /** Total amount of memory avilable in megabytes */
     private int availableMemory = 0;
@@ -63,40 +72,37 @@ public enum Platform {
      * Initializes the platform-specific paths to the different files 
      * required by the startup manager.
      * 
-     * @param pathSeparator Character that delimits directories. On Windows
-     * this will be {@literal \\}, while on Unix-style systems, it will be
-     * {@literal /}.
-     * @param defaultPrefs The path to the preferences file that ships with
-     * McIDAS-V.
+     * @param defaultPrefs Path to the preferences file that ships with
+     * McIDAS-V. Cannot be {@code null} or empty.
      * @param newLine Character(s!) that represent a new line for this 
-     * platform.
+     * platform. Cannot be {@code null} or empty.
      * 
-     * @throws NullPointerException if either {@code pathSeparator} or 
-     * {@code defaultPrefs} are null.
+     * @throws NullPointerException if either {@code defaultPrefs} or
+     * {@code newLine} are {@code null}.
      * 
-     * @throws IllegalArgumentException if either {@code pathSeparator} or
-     * {@code defaultPrefs} are an empty string.
+     * @throws IllegalArgumentException if either {@code defaultPrefs} or
+     * {@code newLine} are an empty string.
      */
-    Platform(final String pathSeparator, final String defaultPrefs, 
-        final String newLine) 
-    {
-        if (pathSeparator == null || defaultPrefs == null) {
-            throw new NullPointerException("");
-        }
-        if (pathSeparator.isEmpty() || defaultPrefs.isEmpty()) {
+    Platform(final String defaultPrefs, final String newLine) {
+        Objects.requireNonNull(defaultPrefs);
+        Objects.requireNonNull(newLine);
+        if (defaultPrefs.isEmpty() || newLine.isEmpty()) {
             throw new IllegalArgumentException("");
         }
-        
+
         String osName = System.getProperty("os.name");
+        Path tmpPath;
         if (osName.startsWith("Mac OS X")) {
-            this.userDirectory = System.getProperty("user.home") + pathSeparator + "Documents" + pathSeparator + Constants.USER_DIRECTORY_NAME;
+            tmpPath = Paths.get(System.getProperty("user.home"), "Documents", Constants.USER_DIRECTORY_NAME);
         } else {
-            this.userDirectory = System.getProperty("user.home") + pathSeparator + Constants.USER_DIRECTORY_NAME;
+            tmpPath = Paths.get(System.getProperty("user.home"), Constants.USER_DIRECTORY_NAME);
         }
-        this.userPrefs = userDirectory + pathSeparator + defaultPrefs;
+
+        this.userDirectory = tmpPath.toString();
+        this.userPrefs = Paths.get(userDirectory, defaultPrefs).toString();
         this.defaultPrefs = defaultPrefs;
         this.newLine = newLine;
-        this.pathSeparator = pathSeparator;
+        this.userBundles = Paths.get(this.userDirectory, "bundles").toString();
     }
     
     /**
@@ -135,7 +141,7 @@ public enum Platform {
         }
 
         userDirectory = path;
-        userPrefs = userDirectory + pathSeparator + defaultPrefs;
+        userPrefs = Paths.get(userDirectory, defaultPrefs).toString();
     }
     
     /**
@@ -151,9 +157,7 @@ public enum Platform {
      * @see StartupManager#getArgs
      */
     public void setAvailableMemory(String megabytes) {
-        if (megabytes == null) {
-            throw new NullPointerException("Available memory cannot be null");
-        }
+        Objects.requireNonNull(megabytes, "Available memory cannot be null");
         if (megabytes.isEmpty()) {
             megabytes = "0";
         }
@@ -189,17 +193,23 @@ public enum Platform {
      * may not yet exist.
      */
     public String getUserFile(String filename) {
-        return getUserDirectory() + pathSeparator + filename;
+        return Paths.get(userDirectory, filename).toString();
     }
-    
+
+    /**
+     * Returns the path to the user's bundles directory. Note: this should be
+     * a directory within {@link #getUserDirectory()}.
+     *
+     * @return Path to the user's bundles directory.
+     */
     public String getUserBundles() {
-        return getUserDirectory() + pathSeparator + "bundles";
+        return userBundles;
     }
     
     /**
-     * Returns the amount of available memory in megabytes
+     * Returns the amount of available memory in megabytes.
      * 
-     * @return Available memory in megabytes
+     * @return Available memory in megabytes.
      */
     public int getAvailableMemory() {
         return availableMemory;
@@ -216,8 +226,7 @@ public enum Platform {
     
     /**
      * Returns the path of the startup preferences included in the McIDAS-V
-     * distribution. Mostly useful for normalizing the user 
-     * directory.
+     * distribution. Mostly useful for normalizing the user directory.
      * 
      * @return Path to the default startup preferences.
      * 
