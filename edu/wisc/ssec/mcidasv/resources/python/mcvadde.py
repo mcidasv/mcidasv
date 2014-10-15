@@ -557,8 +557,8 @@ def listADDEImageTimes(localEntry=None,
     time=None,
     debug=False,
     band=None,
-    size=None,
     mag=None,
+    size=None,
     showUrls=True):
     
     if localEntry:
@@ -604,17 +604,17 @@ def listADDEImageTimes(localEntry=None,
         # raise ValueError()
         place = ''
         
-    if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
-        coordSys = 'LATLON'
-    elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
-        coordSys = 'LINELE'
-    else:
-        raise ValueError("Invalid coordinateSystem value.")
+    # if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
+    #     coordSys = 'LATLON'
+    # elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
+    #     coordSys = 'LINELE'
+    # else:
+    #     raise ValueError("Invalid coordinateSystem value.")
         
-    if location:
-        location = '&%s=%s %s' % (coordSys, location[0], location[1])
-    else:
-        location = '&%s=0 0' % (coordSys)
+    # if location:
+    #     location = '&%s=%s %s' % (coordSys, location[0], location[1])
+    # else:
+    #     location = '&%s=0 0' % (coordSys)
         
     if time:
         time = '&TIME=%s %s I' % (time[0], time[1])
@@ -648,7 +648,7 @@ def listADDEImageTimes(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(unit)s%(day)s%(time)s%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(place)s%(unit)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -664,7 +664,7 @@ def listADDEImageTimes(localEntry=None,
             'dataset': dataset,
             'descriptor': descriptor,
             'band': band,
-            'location': location,
+            # 'location': location,
             'place': place,
             # 'size': size,
             'unit': unit,
@@ -747,8 +747,8 @@ def listADDEImages(localEntry=None,
     time=None,
     debug=False,
     band=None,
-    size=None,
     mag=None,
+    size=None,
     showUrls=True):
     """Creates a list of ADDE images.
     
@@ -809,17 +809,17 @@ def listADDEImages(localEntry=None,
         # raise ValueError()
         place = ''
         
-    if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
-        coordSys = 'LATLON'
-    elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
-        coordSys = 'LINELE'
-    else:
-        raise ValueError("Invalid coordinateSystem value.")
+    # if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
+    #     coordSys = 'LATLON'
+    # elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
+    #     coordSys = 'LINELE'
+    # else:
+    #     raise ValueError("Invalid coordinateSystem value.")
         
-    if location:
-        location = '&%s=%s %s' % (coordSys, location[0], location[1])
-    else:
-        location = '&%s=0 0' % (coordSys)
+    # if location:
+    #     location = '&%s=%s %s' % (coordSys, location[0], location[1])
+    # else:
+    #     location = '&%s=0 0' % (coordSys)
         
     if time:
         time = '&TIME=%s %s I' % (time[0], time[1])
@@ -853,7 +853,7 @@ def listADDEImages(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(unit)s%(day)s%(time)s%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(place)s%(unit)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -869,7 +869,7 @@ def listADDEImages(localEntry=None,
             'dataset': dataset,
             'descriptor': descriptor,
             'band': band,
-            'location': location,
+            # 'location': location,
             'place': place,
             # 'size': size,
             'unit': unit,
