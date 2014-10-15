@@ -557,6 +557,8 @@ def listADDEImageTimes(localEntry=None,
     time=None,
     debug=False,
     band=None,
+    size=None,
+    mag=None,
     showUrls=True):
     
     if localEntry:
@@ -646,7 +648,7 @@ def listADDEImageTimes(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(unit)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -664,9 +666,9 @@ def listADDEImageTimes(localEntry=None,
             'band': band,
             'location': location,
             'place': place,
-            'size': size,
+            # 'size': size,
             'unit': unit,
-            'mag': mag,
+            # 'mag': mag,
             'day': date,
             'time': time,
             'position': position,
@@ -745,6 +747,8 @@ def listADDEImages(localEntry=None,
     time=None,
     debug=False,
     band=None,
+    size=None,
+    mag=None,
     showUrls=True):
     """Creates a list of ADDE images.
     
@@ -849,7 +853,7 @@ def listADDEImages(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(unit)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -867,9 +871,9 @@ def listADDEImages(localEntry=None,
             'band': band,
             'location': location,
             'place': place,
-            'size': size,
+            # 'size': size,
             'unit': unit,
-            'mag': mag,
+            # 'mag': mag,
             'day': date,
             'time': time,
             'position': position,
