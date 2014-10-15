@@ -318,6 +318,7 @@ public class ArgumentManager extends ArgsManager {
             + msg(ARG_NOONEINSTANCE, "(Don't do the one instance port)")
             + msg(ARG_NOPREF, "(Don't read in the user preferences)")
             + msg(ARG_USERPATH, "<user directory to use>")
+            + msg("-tempuserpath", "(Starts McIDAS-V with a randomly generated temporary userpath)")
             + msg(ARG_LOGPATH, "<path to log file>")
             + msg(ARG_SITEPATH, "<url path to find site resources>")
             + msg(ARG_NOGUI, "(Don't show the main window gui)")
