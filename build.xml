@@ -26,7 +26,7 @@
     <property name="heap.dir" location="/tmp/mcidasv-heapdump.hprof" />
     
     <!-- For example: "/Applications/McIDAS/adde" on OS X and NOT "/Applications/McIDAS/adde/bin" -->
-    <!-- <property name="addeservers.dir" location="/path/to/local/adde/root" /> --> 
+    <!-- <property name="addeservers.dir" location="/path/to/local/adde/root" /> -->
     <property name="addeservers.dir" location="/Applications/mcidasv/nightly/adde" />
     
     <!-- Sets the McV userpath -->
@@ -1056,6 +1056,22 @@
         <exec dir="${release.dir}" executable="${install4jc.bin}">
             <arg line="mcidasv.install4j" />
         </exec>
+    </target>
+
+    <!-- Zip up local-idv.jar and mcidasv.jar in dist.dir into mcidasv-tiny.zip. -->
+    <target name="zip.tiny" depends="jar" description="Build McIDAS-V JARs and archive local-idv.jar and mcidasv.jar.">
+        <!-- mcidasv-tiny.zip is always overwritten -->
+        <zip destfile="${dist.dir}/mcidasv-tiny.zip">
+            <fileset dir="${dist.dir}" includes="local-idv.jar, mcidasv.jar"/>
+        </zip>
+    </target>
+
+    <!-- Zip up all of the JAR files in dist.dir into mcidasv-alljars.zip. -->
+    <target name="zip.all" depends="jar" description="Build McIDAS-V JARs and archive contents of dist directory.">
+        <!-- mcidasv-alljars.zip is always overwritten -->
+        <zip destfile="${dist.dir}/mcidasv-alljars.zip">
+            <fileset dir="${dist.dir}" includes="*.jar"/>
+        </zip>
     </target>
 
     <!--                           HERE BE DRAGONS                           -->
