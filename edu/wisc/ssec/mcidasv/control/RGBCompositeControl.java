@@ -286,6 +286,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
    private void updateRedRange(double lo, double hi) {
      redRange[0] = lo;
      redRange[1] = hi;
+     redHighTxtFld.setText(Float.toString((float)hi));
+     redLowTxtFld.setText(Float.toString((float)lo));
      try {
        redMap.setRange(lo, hi);
      } catch (VisADException ex) {
@@ -307,6 +309,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
    private void updateGrnRange(double lo, double hi) {
      grnRange[0] = lo;
      grnRange[1] = hi;
+     grnHighTxtFld.setText(Float.toString((float)hi));
+     grnLowTxtFld.setText(Float.toString((float)lo));
      try {
        grnMap.setRange(lo, hi);
      } catch (VisADException ex) {
@@ -328,6 +332,8 @@ public class RGBCompositeControl extends DisplayControlImpl {
    private void updateBluRange(double lo, double hi) {
      bluRange[0] = lo;
      bluRange[1] = hi;
+     bluHighTxtFld.setText(Float.toString((float)hi));
+     bluLowTxtFld.setText(Float.toString((float)lo));
      try {
        bluMap.setRange(lo, hi);
      } catch (VisADException ex) {
