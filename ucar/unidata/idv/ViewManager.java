@@ -1,5 +1,5 @@
 /*
- * Copyright 1997-2013 Unidata Program Center/University Corporation for
+ * Copyright 1997-2014 Unidata Program Center/University Corporation for
  * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
  * support@unidata.ucar.edu.
  * 
@@ -23,7 +23,6 @@ package ucar.unidata.idv;
 /**** BEGIN MCV ADDONS ****/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.swing.SwingUtilities;
 /**** END MCV ADDONS ****/
 
 import org.w3c.dom.Document;
@@ -188,6 +187,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
@@ -7030,10 +7030,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         };
 
-        /**** BEGIN MCV ADDONS ****/
-        // see inquiry 1841
+        // GuiUtils.invokeInSwingThread(runnable);
         SwingUtilities.invokeLater(runnable);
-        /**** END MCV ADDONS ****/
     }
 
     /**
