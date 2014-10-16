@@ -61,8 +61,12 @@ import ucar.unidata.xml.XmlResourceCollection;
  */
 public final class XPathUtils {
 
-    /** Maps (and caches) the XPath {@link String} to its compiled {@link XPathExpression}. */
-    private static final Map<String, XPathExpression> pathMap = new ConcurrentHashMap<String, XPathExpression>();
+    /**
+     * Maps (and caches) the XPath {@link String} to its compiled
+     * {@link XPathExpression}.
+     */
+    private static final Map<String, XPathExpression> pathMap =
+        new ConcurrentHashMap<>();
 
     /**
      * Thou shalt not create an instantiation of this class!
@@ -89,7 +93,7 @@ public final class XPathUtils {
         requireNonNull(xPath, "Cannot search using a null XPath query");
 
         try {
-            List<Node> nodeList = new ArrayList<Node>();
+            List<Node> nodeList = new ArrayList<>();
             XPathExpression expression = expr(xPath);
 
             // Resources are the only things added to the list returned by 
@@ -98,12 +102,14 @@ public final class XPathUtils {
             List<Resource> files = collection.getResources();
 
             for (int i = 0; i < files.size(); i++) {
-                if (!collection.isValid(i))
+                if (!collection.isValid(i)) {
                     continue;
+                }
 
                 InputStream in = XPathUtils.class.getResourceAsStream(files.get(i).toString());
-                if (in == null)
+                if (in == null) {
                     continue;
+                }
 
                 NodeList tmpList = (NodeList)expression.evaluate(loadXml(in), XPathConstants.NODESET);
                 for (int j = 0; j < tmpList.getLength(); j++) {
@@ -182,9 +188,10 @@ public final class XPathUtils {
     public static List<Element> elements(final XmlResourceCollection collection, final String xPath) {
         requireNonNull(collection);
         requireNonNull(xPath);
-        List<Element> elements = new ArrayList<Element>();
-        for (Node n : eval(collection, xPath))
+        List<Element> elements = new ArrayList<>();
+        for (Node n : eval(collection, xPath)) {
             elements.add((Element)n);
+        }
         return elements;
     }
 
