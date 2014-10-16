@@ -87,19 +87,7 @@ This file overrides IDV addeservers.xml
        names="CIMSSP1"
        type="image"/>
   </server>
-  
-  <server name="rets2.ssec.wisc.edu">
-    <group
-       names="CIMSSP2"
-       type="image"/>
-  </server>
-  
-  <server name="rets3.ssec.wisc.edu">
-    <group
-       names="CIMSSP3"
-       type="image"/>
-  </server>
-  
+
   <server name="satepsanone.nesdis.noaa.gov">
     <group
        names="PUB"
