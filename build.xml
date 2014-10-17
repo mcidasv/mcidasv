@@ -1058,17 +1058,13 @@
         </exec>
     </target>
 
-    <!-- Zip up local-idv.jar and mcidasv.jar in dist.dir into mcidasv-tiny.zip. -->
-    <target name="zip.tiny" depends="jar" description="Build McIDAS-V JARs and archive local-idv.jar and mcidasv.jar.">
-        <!-- mcidasv-tiny.zip is always overwritten -->
+    <!-- Zip up McIDAS-V JARs. mcidasv-tiny.zip contains only local-idv.jar  -->
+    <!-- and mcidasv.jar. mcidasv-alljars.zip contains all McIDAS-V JARs.    -->
+    <target name="archive" depends="jar" description="Build McIDAS-V JARs and create mcidasv-tiny.zip and mcidasv-alljars.zip.">
+        <!-- zip task defaults to overwriting destfile.  -->
         <zip destfile="${dist.dir}/mcidasv-tiny.zip">
             <fileset dir="${dist.dir}" includes="local-idv.jar, mcidasv.jar"/>
         </zip>
-    </target>
-
-    <!-- Zip up all of the JAR files in dist.dir into mcidasv-alljars.zip. -->
-    <target name="zip.all" depends="jar" description="Build McIDAS-V JARs and archive contents of dist directory.">
-        <!-- mcidasv-alljars.zip is always overwritten -->
         <zip destfile="${dist.dir}/mcidasv-alljars.zip">
             <fileset dir="${dist.dir}" includes="*.jar"/>
         </zip>
