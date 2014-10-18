@@ -961,10 +961,10 @@
             
             <classpath refid="app.classpath" />
             <link href="http://download.java.net/media/java3d/javadoc/1.5.2/" />
-            <link href="http://java.sun.com/javase/6/docs/api/" />
+            <link href="http://docs.oracle.com/javase/7/docs/api/" />
             <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/" />
             <link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc/" />
-            <link href="http://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/v4.3/javadocAll/index.html" />
+            <link href="http://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/v4.3/javadoc/" />
             <link href="http://www.eventbus.org/api/" />
         </javadoc>
     </target>
@@ -1083,7 +1083,7 @@
     
     <!-- This value will regrettably be user and platform depedent. Look at  -->
     <!-- http://www.yourkit.com/docs/11/help/agent.jsp                       -->
-    <property name="yourkit.agentlib" value="/Applications/YourKit_Java_Profiler_11_EAP_build11014.app/bin/mac/libyjpagent.jnilib" />
+    <property name="yourkit.agentlib" value="/Applications/YourKit_Java_Profiler_2014_build_14108.app/Contents/Resources/bin/mac/libyjpagent.jnilib" />
 
     <target name="memory.profiler" description="Starts McIDAS-V and takes a snapshot of performance and memory at shutdown.">
         <antcall target="profiler.runlarge">
@@ -1117,7 +1117,22 @@
             <jvmarg value="-agentpath:${yourkit.agentlib}=${yourkit.options}" />
             <jvmarg value="-XX:+UseConcMarkSweepGC" />
             <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
-            <jvmarg value="-XX:MaxPermSize=128m" />
+            <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" />
+            <jvmarg value="-XX:MaxPermSize=512m" />
+            <jvmarg value="-noverify" />
+            <!--
+              The following two lines will allow the JVM to dump the heap's
+              contents on an OutOfMemory exception (very helpful!).
+              ${heap.dir} defaults to "/tmp/mcidasv-heapdump.hprof" but feel free
+              to change it.
+            -->
+            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+            <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+            <sysproperty key="java.ext.dirs" value="${java.home}/lib/ext" />
+            <sysproperty key="java.library.path" value="${java.home}/lib/ext" />
+            <sysproperty key="loglevel" value="${run.log.level}" />
+            <sysproperty key="mcv.userpath" value="${userpath.dir}" />
+            <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
             <sysproperty key="debug.adde.reqs" value="true" />
             <sysproperty key="idv.usetimedriver" value="true" />
             <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
@@ -1126,7 +1141,11 @@
             <sysproperty key="visad.java3d.imageByRef" value="true" />
             <sysproperty key="visad.java3d.geometryByRef" value="true" />
             <sysproperty key="python.security.respectJavaAccessibility" value="false" />
-            <!-- <arg value="-forceaqua" /> -->
+            <!--
+            <sysproperty key="sun.java2d.opengl" value="True" />
+            <sysproperty key="sun.java2d.trace" value="log,timestamp,count,out:./java2d.log,verbose" />
+            -->
+            <arg value="-forceaqua" />
             <arg value="-userpath" />
             <arg value="${userpath.dir}" />
         </java>
