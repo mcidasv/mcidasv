@@ -933,7 +933,9 @@ public class EntryStore {
 
     /**
      * Returns all enabled, valid {@link LocalAddeEntry LocalAddeEntries} as a
-     * collection of {@literal "IDV style"} {@link AddeServer.Group} objects.
+     * collection of {@literal "IDV style"}
+     * {@link ucar.unidata.idv.chooser.adde.AddeServer.Group AddeServer.Group}
+     * objects.
      *
      * @return {@link Set} of {@code AddeServer.Group} objects that corresponds
      * with the enabled, valid local ADDE entries.
@@ -954,7 +956,8 @@ public class EntryStore {
 
     /**
      * Returns the entries matching the given {@code server} and
-     * {@code typeAsStr} parameters as a collection of {@link AddeServer.Group}
+     * {@code typeAsStr} parameters as a collection of
+     * {@link ucar.unidata.idv.chooser.adde.AddeServer.Group AddeServer.Group}
      * objects.
      *
      * @param server Remote ADDE server. Should not be {@code null}.
@@ -972,7 +975,8 @@ public class EntryStore {
 
     /**
      * Returns the entries matching the given {@code server} and
-     * {@code type} parameters as a collection of {@link AddeServer.Group}
+     * {@code type} parameters as a collection of
+     * {@link ucar.unidata.idv.chooser.adde.AddeServer.Group AddeServer.Group}
      * objects.
      *
      * @param server Remote ADDE server. Should not be {@code null}.
@@ -1011,7 +1015,8 @@ public class EntryStore {
      * Returns a list that consists of the available ADDE datasets for a given 
      * {@link EntryType}, converted to IDV {@link AddeServer} objects.
      * 
-     * @param type Only add entries with this type to the returned list. Cannot be {@code null}. 
+     * @param type Only add entries with this type to the returned list.
+     * Cannot be {@code null}.
      * 
      * @return {@code AddeServer} objects for each ADDE entry of the given type.
      */
