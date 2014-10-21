@@ -280,9 +280,15 @@ class AddeJythonError(Exception, java.lang.Exception):
         if isinstance(ex, AddeException):
             self.hasErrorCode = ex.hasAddeErrorCode()
             self.addeErrorCode = ex.getAddeErrorCode()
+            self.addeErrorMessage = None
+        elif isinstance(ex, (str, unicode, String)):
+            self.hasAddeErrorCode = False
+            self.addeErrorCode = 0
+            self.addeErrorMessage = str(ex)
         else:
             self.hasAddeErrorCode = False
             self.addeErrorCode = 0
+            self.addeErrorMessage = None
             
     def hasAddeErrorCode(self):
         return self.hasAddeErrorCode
@@ -290,6 +296,13 @@ class AddeJythonError(Exception, java.lang.Exception):
     def getAddeErrorCode(self):
         return self.addeErrorCode
         
+    def getAddeErrorMessage(self):
+        return self.addeErrorMessage
+        
+    def __str__(self):
+        if self.addeErrorMessage:
+            return self.addeErrorMessage
+            
 class AddeJythonInvalidAccountingError(AddeJythonError):
     def __str__(self):
         return "Invalid user or project number. (error code: %d)" % (self.addeErrorCode)
