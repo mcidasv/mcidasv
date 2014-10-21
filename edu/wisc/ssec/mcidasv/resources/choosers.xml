@@ -315,6 +315,7 @@
 	<!--    McIDAS-X      -->
 	<!--                  -->
 
+<!--
 	<panel title="McIDAS-X Bridge" layout="border"
 		tabTooltip="For importing McIDAS-X frames" mnemonic="C">
 		<chooser id="chooser.mcidasx" title="McIDAS-X" menutitle="From McIDAS-X"
@@ -322,7 +323,7 @@
 			class="edu.wisc.ssec.mcidasv.chooser.McIdasBridgeChooser"
 			showpolling="false" />
 	</panel>
-
+-->
 
 
 
