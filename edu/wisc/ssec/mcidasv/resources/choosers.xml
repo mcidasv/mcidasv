@@ -120,15 +120,13 @@
 		categorycomponent="true">
 		<html
 			text="
-			&lt;b&gt;Display Surface, Upper Air, Sounding and Wind Profiler data from stations around the world&lt;/b&gt;
+			&lt;b&gt;Display Surface, Upper Air, and Sounding data from stations around the world&lt;/b&gt;
 			&lt;br&gt;
 			&lt;ul&gt;
 			&lt;li&gt;
 			Select &lt;b&gt;Plot/Contour&lt;/b&gt; to access data via ADDE
 			&lt;li&gt;
 			&lt;b&gt;Soundings&lt;/b&gt; data can be local or remote
-			&lt;li&gt;
-			Select &lt;b&gt;Wind Profiler&lt;/b&gt; to access data via ADDE
 			&lt;/ul&gt;
 		" />
 	</panel>
@@ -190,17 +188,6 @@
 		<chooser id="chooser.raob.remote" title="Remote" menutitle="Sounding Data-Remote"
 			helppath="idv.data.choosers.raobchooser" class="edu.wisc.ssec.mcidasv.chooser.adde.AddeRaobChooser" />
 	</panel>
-
-	<panel title="Wind Profiler" category="Point Observations"
-		layout="border" tabtooltip="For accessing ADDE profiler data" mnemonic="O">
-		<chooser id="chooser.profiler" title="Profiler Winds"
-			menutitle="Profiler Winds" helppath="idv.data.choosers.profilerchooser"
-			class="edu.wisc.ssec.mcidasv.chooser.adde.AddeProfilerDataChooser" />
-	</panel>
-
-
-
-
 
 	<!--                  -->
 	<!--    GRIDDED       -->
