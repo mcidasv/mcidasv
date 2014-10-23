@@ -94,11 +94,28 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     private RealTuple prevPos = null;
 
+    /**
+     * Create a {@literal "HYDRA"} probe that allows for displaying things like
+     * value at current position, current color, and location.
+     *
+     * <p>Note: <b>none</b> of the parameters permit {@code null} values.</p>
+     *
+     * @param master {@code DisplayMaster} containing the probe.
+     * @param field Data to probe.
+     * @param color {@code Color} of the probe.
+     * @param pattern Format string to use with probe's location values.
+     * @param visible Whether or not the probe is visible.
+     *
+     * @throws NullPointerException if any of the given parameters are {@code null}.
+     * @throws VisADException if VisAD had problems.
+     * @throws RemoteException if VisAD had problems.
+     */
     public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color, final String pattern, final boolean visible) throws VisADException, RemoteException {
         super();
         requireNonNull(master, "DisplayMaster can't be null");
         requireNonNull(field, "Field can't be null");
         requireNonNull(color, "Color can't be null");
+        requireNonNull(pattern, "Pattern can't be null");
 
         this.master = master;
         this.field = field;
