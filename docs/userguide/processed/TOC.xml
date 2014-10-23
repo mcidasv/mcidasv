@@ -25,7 +25,6 @@
     <tocitem text="Displaying Fronts" target="idv.quickstart.fronts"/>
     <tocitem text="Displaying Local Files" target="idv.quickstart.localfiles"/>
     <tocitem text="Displaying Files from a URL" target="idv.quickstart.urlfiles"/>
-    <tocitem text="Using the McIDAS-X Bridge" target="idv.quickstart.bridge"/>
 	<tocitem text="Using the Globe Display" target="idv.quickstart.globe"/>
 </tocitem>
 <tocitem text="Data Explorer" target="idv.ui.dashboard">
@@ -43,7 +42,6 @@
 		<tocitem text="Choosing Cataloged Data" target="idv.data.choosers.catalogchooser"/>
         <tocitem text="Choosing a URL" target="idv.data.choosers.urlchooser"/>
         <tocitem text="Choosing Flat File Data" target="idv.data.choosers.flatfilechooser"/>
-        <tocitem text="Creating a McIDAS-X Bridge Session" target="idv.data.choosers.bridgechooser"/>
     </tocitem>
     <tocitem text="Field Selector" target="idv.data.fieldselector">
         <tocitem text="Data Sources" target="idv.data.datasource"/>
@@ -109,7 +107,6 @@
         </tocitem>
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
             <tocitem text="Scatter Analysis Controls" target="idv.controls.misc.scatteranalysiscontrol"/>
-            <tocitem text="McIDAS-X Bridge Controls" target="idv.controls.misc.bridgecontrol"/>
 			<tocitem text="Grid Table Controls" target="idv.controls.misc.gridtable"/>
             <tocitem text="Omni Controls" target="idv.controls.misc.omnicontrol"/>
             <tocitem text="Jython Controls" target="idv.controls.jythoncontrol"/>

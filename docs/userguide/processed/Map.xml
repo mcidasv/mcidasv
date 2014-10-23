@@ -59,7 +59,6 @@
         <mapID target="idv.controls.leveliiicontrol"                 url="controls/LevelIIIControl.html" />
         <mapID target="idv.controls.mapdisplaycontrol"               url="controls/MapDisplayControl.html" />
         <mapID target="idv.controls.menus"                           url="controls/index.html#menus" />
-        <mapID target="idv.controls.misc.bridgecontrol"				 url="controls/misc/BridgeControl.html" />
 		<mapID target="idv.controls.misc.contourdialog"				 url="controls/misc/ContourDialog.html" />
 		<mapID target="idv.controls.misc.gridtable"					 url="controls/misc/GridTable.html" />
         <mapID target="idv.controls.misc.locationindicatorcontrol"   url="controls/misc/LocationIndicatorControl.html" />
@@ -110,8 +109,6 @@
         <mapID target="idv.controls.volumerendercontrol"             url="controls/VolumeRenderControl.html" />
         <mapID target="idv.controls.worldwindcontrol"                url="controls/WorldWindControl.html" />
         <mapID target="idv.data.choosers"                            url="data/choosers/index.html" />
-        <mapID target="idv.data.choosers.bridgechooser"				 url="data/choosers/BridgeChooser.html" />
-        <mapID target="idv.data.choosers.bridgechooser.image1"		 url="data/choosers/BridgeChooser.html#image1" />
         <mapID target="idv.data.choosers.catalogchooser"             url="data/choosers/CatalogChooser.html" />
         <mapID target="idv.data.choosers.catalogchooser.image1"      url="data/choosers/CatalogChooser.html#image1" />
         <mapID target="idv.data.choosers.catalogchooser.image2"      url="data/choosers/CatalogChooser.html#image2" />
@@ -296,10 +293,6 @@
         <mapID target="idv.page_satelliteandradardisplays"           url="page_satelliteandradardisplays.html" />
         <mapID target="idv.page_tools"                               url="page_tools.html" />
         <mapID target="idv.quickstart"                               url="quickstart/index.html" />
-        <mapID target="idv.quickstart.bridge"						 url="quickstart/Bridge.html" />
-        <mapID target="idv.quickstart.bridge.bridge"				 url="quickstart/Bridge.html#bridge" />
-        <mapID target="idv.quickstart.bridge.displays"				 url="quickstart/Bridge.html#displays" />
-        <mapID target="idv.quickstart.bridge.listener"				 url="quickstart/Bridge.html#listener" />
         <mapID target="idv.quickstart.directoryfiles"				 url="quickstart/DirectoryFiles.html" />
 		<mapID target="idv.quickstart.fronts"						 url="quickstart/Fronts.html" />
         <mapID target="idv.quickstart.globe"                         url="quickstart/Globe.html" />

@@ -48,8 +48,7 @@
             <span class="link" onClick="setPage('quickstart/Grids.html');">Displaying Gridded Data</span><br>
 	  <span class="link" onClick="setPage('quickstart/Fronts.html');">Displaying Fronts</span><br>
       <span class="link" onClick="setPage('quickstart/LocalFiles.html');">Displaying Local Files</span><br>
-      <span class="link" onClick="setPage('quickstart/UrlFiles.html');">Displaying Files from a URL</span><br>
-      <span class="link" onClick="setPage('quickstart/Bridge.html');">Using the McIDAS-X Bridge</span><br>
+<span class="link" onClick="setPage('quickstart/UrlFiles.html');">Displaying Files from a URL</span><br>
             <span class="link" onClick="setPage('quickstart/Globe.html');">Using the Globe Display</span><br>
     </div>
 
@@ -76,7 +75,6 @@
                     <span class="link" onClick="setPage('data/choosers/CatalogChooser.html');">Choosing Cataloged Data</span><br>    
         <span class="link" onClick="setPage('data/choosers/UrlChooser.html');">Choosing a URL</span><br>
         <span class="link" onClick="setPage('data/choosers/FlatFileChooser.html');">Choosing Flat File Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/BridgeChooser.html');">Creating a McIDAS-X Bridge Session </span><br>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'thefieldselector');">+</span>
@@ -184,7 +182,6 @@
 
       <div class="indented" id="layercontrols_7">
         <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
-        <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
                 <span class="link" onClick="setPage('controls/misc/GridTable.html');">Grid Table Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/OmniControl.html');">Omni Controls</span><br>
         <span class="link" onClick="setPage('controls/JythonControl.html');">Jython Controls</span><br>
