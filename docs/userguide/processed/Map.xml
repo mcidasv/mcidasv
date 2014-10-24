@@ -77,16 +77,6 @@
 		<mapID target="idv.controls.pointvolumecontrol"				 url="controls/PointVolumeControl.html" />
         <mapID target="idv.controls.probecontrol"                    url="controls/ProbeControl.html" />
         <mapID target="idv.controls.profilecontrol"                  url="controls/ProfileControl.html" />
-        <mapID target="idv.controls.profiler"                        url="controls/profiler/index.html" />
-        <mapID target="idv.controls.profiler.profilermultistationcontrol3d"  url="controls/profiler/ProfilerMultiStationControl3D.html" />
-        <mapID target="idv.controls.profiler.profilermultistationcontrol3d.image1"  url="controls/profiler/ProfilerMultiStationControl3D.html#image1" />
-        <mapID target="idv.controls.profiler.profilerstationplotcontrol"  url="controls/profiler/ProfilerStationPlotControl.html" />
-        <mapID target="idv.controls.profiler.profilerstationplotcontrol.image1"  url="controls/profiler/ProfilerStationPlotControl.html#image1" />
-        <mapID target="idv.controls.profiler.profilertimeheightcontrol"  url="controls/profiler/ProfilerTimeHeightControl.html" />
-        <mapID target="idv.controls.profiler.profilertimeheightcontrol.image1"  url="controls/profiler/ProfilerTimeHeightControl.html#image1" />
-        <mapID target="idv.controls.profilermultistation"            url="controls/profiler/ProfilerStationPlotControl.html" />
-        <mapID target="idv.controls.profilermultistationcontrol"     url="controls/profiler/ProfilerMultiStationControl3D.html" />
-        <mapID target="idv.controls.profilertimeheightcontrol"       url="controls/profiler/ProfilerTimeHeightControl.html" />
         <mapID target="idv.controls.properties"                      url="controls/index.html#properties" />
 		<mapID target="idv.controls.propertiesdialog"				 url="controls/PropertiesDialog.html" />
         <mapID target="idv.controls.radargridcontrol"                url="controls/misc/RadarGridControl.html" />
@@ -125,8 +115,6 @@
         <mapID target="idv.data.choosers.level2chooser.image1"       url="data/choosers/Level2Chooser.html#image1" />
         <mapID target="idv.data.choosers.pointchooser"               url="data/choosers/PointChooser.html" />
         <mapID target="idv.data.choosers.pointchooser.image1"        url="data/choosers/PointChooser.html#image1" />
-        <mapID target="idv.data.choosers.profilerchooser"            url="data/choosers/ProfilerChooser.html" />
-        <mapID target="idv.data.choosers.profilerchooser.image1"     url="data/choosers/ProfilerChooser.html#image1" />
         <mapID target="idv.data.choosers.radarchooser"               url="data/choosers/RadarChooser.html" />
         <mapID target="idv.data.choosers.radarchooser.image1"        url="data/choosers/RadarChooser.html#image1" />
         <mapID target="idv.data.choosers.raobchooser"                url="data/choosers/RaobChooser.html" />
@@ -216,13 +204,6 @@
         <mapID target="idv.examples.planviews.colorshadedplan"       url="examples/PlanViews.html#colorshadedplan" />
 		<mapID target="idv.examples.planviews.valueplots"			 url="examples/PlanViews.html#valueplots" />
 		<mapID target="idv.examples.probes"							 url="examples/Probes.html" />
-        <mapID target="idv.examples.profiler"                        url="examples/Profiler.html" />
-        <mapID target="idv.examples.profiler.image1"                 url="examples/Profiler.html#image1" />
-        <mapID target="idv.examples.profiler.image2"                 url="examples/Profiler.html#image2" />
-        <mapID target="idv.examples.profiler.image3"                 url="examples/Profiler.html#image3" />
-		<mapID target="idv.examples.profiler.3dview"				 url="examples/Profiler.html#3dview" />
-		<mapID target="idv.examples.profiler.profiler"				 url="examples/Profiler.html#profiler" />
-		<mapID target="idv.examples.profiler.timeheight"			 url="examples/Profiler.html#timeheight" />
         <mapID target="idv.examples.radar"                           url="examples/Radar.html" />
         <mapID target="idv.examples.radar.image1"                    url="examples/Radar.html#image1" />
         <mapID target="idv.examples.radar.image2"                    url="examples/Radar.html#image2" />
@@ -314,10 +295,6 @@
         <mapID target="idv.quickstart.localfiles.creating"			 url="quickstart/LocalFiles.html#creating" />
         <mapID target="idv.quickstart.localfiles.directory"			 url="quickstart/LocalFiles.html#directory" />
 		<mapID target="idv.quickstart.localfiles.files"				 url="quickstart/LocalFiles.html#files" />
-        <mapID target="idv.quickstart.profiler"                      url="quickstart/Profiler.html" />
-        <mapID target="idv.quickstart.profiler.connecting"           url="quickstart/Profiler.html#connecting" />
-        <mapID target="idv.quickstart.profiler.display"              url="quickstart/Profiler.html#display" />
-        <mapID target="idv.quickstart.profiler.others"               url="quickstart/Profiler.html#others" />
         <mapID target="idv.quickstart.radarlevelii"                  url="quickstart/RadarLevelII.html" />
         <mapID target="idv.quickstart.radarlevelii.2displays"        url="quickstart/RadarLevelII.html#2displays" />
         <mapID target="idv.quickstart.radarlevelii.3ddisplays"       url="quickstart/RadarLevelII.html#3ddisplays" />

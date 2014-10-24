@@ -20,7 +20,6 @@
     <tocitem text="Displaying Level III Radar Imagery" target="idv.quickstart.radarleveliii"/>
 	<tocitem text="Displaying Surface and Upper Air Point Data" target="idv.quickstart.surface"/>
 	<tocitem text="Displaying RAOB Sounding Data" target="idv.quickstart.upperair"/>
-	<tocitem text="Displaying Profiler Data" target="idv.quickstart.profiler"/>
     <tocitem text="Displaying Gridded Data" target="idv.quickstart.grids"/>
     <tocitem text="Displaying Fronts" target="idv.quickstart.fronts"/>
     <tocitem text="Displaying Local Files" target="idv.quickstart.localfiles"/>
@@ -35,7 +34,6 @@
 		<tocitem text="Choosing NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
 		<tocitem text="Choosing Point Data" target="idv.data.choosers.pointchooser"/>
 		<tocitem text="Choosing Upper Air Sounding Data" target="idv.data.choosers.raobchooser"/>
-		<tocitem text="Choosing NOAA National Profiler Network Data" target="idv.data.choosers.profilerchooser"/>
 		<tocitem text="Choosing Gridded Data" target="idv.data.choosers.gridchooser"/>
 		<tocitem text="Choosing Front Positions" target="idv.data.choosers.frontchooser"/>
         <tocitem text="Choosing Data on Disk" target="idv.data.choosers.filechooser"/>
@@ -78,11 +76,6 @@
                 <tocitem text="Radar Volume Scan Controls" target="idv.controls.level2.radarvolumecontrol"/>
                 <tocitem text="Radar Isosurface Controls" target="idv.controls.level2.radarisosurfacecontrol"/>
             </tocitem>
-        </tocitem>
-        <tocitem text="Profiler Controls" target="idv.controls.profiler">
-            <tocitem text="Profiler Time/Height Controls" target="idv.controls.profiler.profilertimeheightcontrol"/>
-            <tocitem text="Profiler Station Plot Controls" target="idv.controls.profiler.profilerstationplotcontrol"/>
-            <tocitem text="Profiler 3D Multi-Station Controls" target="idv.controls.profiler.profilermultistationcontrol3d"/>
         </tocitem>
         <tocitem text="Probes" target="idv.page_probes">
             <tocitem text="Data Probe/Time Series" target="idv.controls.probecontrol"/>
@@ -223,7 +216,6 @@
         <tocitem text="Imagery" target="idv.examples.imagery"/>
         <tocitem text="Radar - Level II WSR-88D Data Displays" target="idv.examples.radar"/>
         <tocitem text="Soundings" target="idv.examples.soundings"/>
-        <tocitem text="Profiler Winds" target="idv.examples.profiler"/>
         <tocitem text="Flow Displays" target="idv.examples.flowdisplays"/>
         <tocitem text="Observations" target="idv.examples.observations"/>
         <tocitem text="Miscellaneous Display Types" target="idv.examples.miscellaneous"/>

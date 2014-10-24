@@ -43,8 +43,7 @@
       <span class="link" onClick="setPage('quickstart/Point.html');">Displaying
       Surface and Upper Air Point Data</span><br>
       <span class="link" onClick="setPage('quickstart/Sounding.html');">Displaying
-      RAOB Sounding Data</span><br>
-      <span class="link" onClick="setPage('quickstart/Profiler.html');">Displaying Profiler Data</span><br>
+RAOB Sounding Data</span><br>
             <span class="link" onClick="setPage('quickstart/Grids.html');">Displaying Gridded Data</span><br>
 	  <span class="link" onClick="setPage('quickstart/Fronts.html');">Displaying Fronts</span><br>
       <span class="link" onClick="setPage('quickstart/LocalFiles.html');">Displaying Local Files</span><br>
@@ -67,8 +66,7 @@
                                         <span class="link" onClick="setPage('data/choosers/RadarChooser.html');">Choosing NEXRAD Level III Radar Data</span><br>
                                                 <span class="link" onClick="setPage('data/choosers/PointChooser.html');">Choosing
         Point Data</span><br>
-                <span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing Upper Air Sounding Data</span><br>
-                        <span class="link" onClick="setPage('data/choosers/ProfilerChooser.html');">Choosing NOAA National Profiler Network Data</span><br>
+<span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing Upper Air Sounding Data</span><br>
                         		<span class="link" onClick="setPage('data/choosers/GridChooser.html');">Choosing Gridded Data</span><br>
                                 		<span class="link" onClick="setPage('data/choosers/FrontChooser.html');">Choosing Front Positions </span><br>
                 <span class="link" onClick="setPage('data/choosers/FileChooser.html');">Choosing Data on Disk</span><br>
@@ -133,15 +131,6 @@
         	<span class="link" onClick="setPage('controls/level2/RadarVolumeControl.html');">Radar Volume Scan Controls</span><br>
         	<span class="link" onClick="setPage('controls/level2/RadarIsosurfaceControl.html');">Radar Isosurface Controls </span><br>
 		</div>
-      </div>
-
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_3');">+</span>
-      <span class="link" onClick="setPage('controls/profiler/index.html');">Profiler Controls</span><br>
-
-      <div class="indented" id="layercontrols_3">
-        <span class="link" onClick="setPage('controls/profiler/ProfilerTimeHeightControl.html');">Profiler Time/Height Controls</span><br>
-        <span class="link" onClick="setPage('controls/profiler/ProfilerStationPlotControl.html');">Profiler Station Plot Controls</span><br>
-        <span class="link" onClick="setPage('controls/profiler/ProfilerMultiStationControl3D.html');">Profiler 3D Multi-Station Controls</span><br>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_4');">+</span>
@@ -332,7 +321,6 @@
         <span class="link" onClick="setPage('examples/Imagery.html');">Imagery</span><br>
         <span class="link" onClick="setPage('examples/Radar.html');">Radar - Level II WSR-88D Data Displays</span><br>
         <span class="link" onClick="setPage('examples/Soundings.html');">Soundings</span><br>
-        <span class="link" onClick="setPage('examples/Profiler.html');">Profiler Winds</span><br>
         <span class="link" onClick="setPage('examples/FlowDisplays.html');">Flow Displays</span><br>
         <span class="link" onClick="setPage('examples/Observations.html');">Observations</span><br>
         <span class="link" onClick="setPage('examples/Miscellaneous.html');">Miscellaneous Display Types</span><br>
