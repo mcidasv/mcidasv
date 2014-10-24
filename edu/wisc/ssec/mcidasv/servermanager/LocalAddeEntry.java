@@ -98,7 +98,7 @@ public class LocalAddeEntry implements AddeEntry {
     private String entryAlias;
 
     public enum ServerName {
-        AREA, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
+        AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
         MODR, MSGT, MTST, SMIN, TMIN, MD, INVALID;
     }
 
@@ -119,6 +119,7 @@ public class LocalAddeEntry implements AddeEntry {
         MCIDAS_AREA(ServerName.AREA, "McIDAS AREA"),
         MCIDAS_MD(ServerName.MD, "McIDAS MD", "McIDAS MD", EntryType.POINT),
         AMSRE_L1B(ServerName.AMSR, "AMSR-E L 1b", "AMSR-E Level 1b"),
+        AMSRE_L2A(ServerName.AMSE, "AMSR-E L 2a", "AMSR-E Level 2a"),
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),
         GINI(ServerName.GINI, "GINI"),
         LRIT_GOES9(ServerName.FSDX, "LRIT GOES-9", "EUMETCast LRIT GOES-9"),
