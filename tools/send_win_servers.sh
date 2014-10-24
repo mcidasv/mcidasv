@@ -32,7 +32,9 @@ msgxadir.exe msgxaget.exe
 omtpadir.exe omtpaget.exe
 poesadir.exe poesaget.exe
 
+amseadir.exe amseaget.exe
 amsradir.exe amsraget.exe
+amrradir.exe amrraget.exe
 sminadir.exe sminaget.exe
 tminadir.exe tminaget.exe
 
