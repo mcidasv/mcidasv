@@ -28,7 +28,6 @@
 package edu.wisc.ssec.mcidasv.probes;
 
 import static java.util.Objects.requireNonNull;
-import static edu.wisc.ssec.mcidasv.util.Contract.*;
 
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
@@ -40,7 +39,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import ucar.unidata.collab.SharableImpl;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
-import ucar.visad.ShapeUtility;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineProbe;
 import ucar.visad.display.SelectorDisplayable;
@@ -394,9 +392,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     /**
+     * Returns the number format string current being used.
      *
-     *
-     * @return
+     * @return Location format pattern string.
      */
     public String getFormatPattern() {
         return numFmt.toPattern();
