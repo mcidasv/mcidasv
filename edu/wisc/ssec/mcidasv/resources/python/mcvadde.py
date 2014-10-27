@@ -280,9 +280,15 @@ class AddeJythonError(Exception, java.lang.Exception):
         if isinstance(ex, AddeException):
             self.hasErrorCode = ex.hasAddeErrorCode()
             self.addeErrorCode = ex.getAddeErrorCode()
+            self.addeErrorMessage = None
+        elif isinstance(ex, (str, unicode, String)):
+            self.hasAddeErrorCode = False
+            self.addeErrorCode = 0
+            self.addeErrorMessage = str(ex)
         else:
             self.hasAddeErrorCode = False
             self.addeErrorCode = 0
+            self.addeErrorMessage = None
             
     def hasAddeErrorCode(self):
         return self.hasAddeErrorCode
@@ -290,6 +296,13 @@ class AddeJythonError(Exception, java.lang.Exception):
     def getAddeErrorCode(self):
         return self.addeErrorCode
         
+    def getAddeErrorMessage(self):
+        return self.addeErrorMessage
+        
+    def __str__(self):
+        if self.addeErrorMessage:
+            return self.addeErrorMessage
+            
 class AddeJythonInvalidAccountingError(AddeJythonError):
     def __str__(self):
         return "Invalid user or project number. (error code: %d)" % (self.addeErrorCode)
@@ -551,13 +564,13 @@ def listADDEImageTimes(localEntry=None,
     location=None,
     coordinateSystem=None,
     place=None,
-    mag=None,
     position=None,
     unit=None,
     day=None,
     time=None,
     debug=False,
     band=None,
+    mag=None,
     size=None,
     showUrls=True):
     
@@ -583,19 +596,17 @@ def listADDEImageTimes(localEntry=None,
     hasPlace = place or False
     hasLocation = location or False
     
+    size = ''
     if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
         raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
         
-    if mag:
-        mag = '&MAG=%s %s' % (mag[0], mag[1])
-    else:
-        mag = ''
-        
+    mag = ''
+    
     if unit:
         origUnit = unit
         unit = '&UNIT=%s' % (unit)
     else:
-        # origUnit = None
+        origUnit = ''
         unit = ''
         
     if place is Places.CENTER:
@@ -606,25 +617,17 @@ def listADDEImageTimes(localEntry=None,
         # raise ValueError()
         place = ''
         
-    if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
-        coordSys = 'LATLON'
-    elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
-        coordSys = 'LINELE'
-    else:
-        raise ValueError("Invalid coordinateSystem value.")
+    # if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
+    #     coordSys = 'LATLON'
+    # elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
+    #     coordSys = 'LINELE'
+    # else:
+    #     raise ValueError("Invalid coordinateSystem value.")
         
-    if location:
-        location = '&%s=%s %s' % (coordSys, location[0], location[1])
-    else:
-        location = '%s=0 0' % (coordSys)
-        
-    if size:
-        if size == 'ALL':
-            size = '&SIZE=99999 99999'
-        else:
-            size = '&SIZE=%s %s' % (size[0], size[1])
-    else:
-        size = ''
+    # if location:
+    #     location = '&%s=%s %s' % (coordSys, location[0], location[1])
+    # else:
+    #     location = '&%s=0 0' % (coordSys)
         
     if time:
         time = '&TIME=%s %s I' % (time[0], time[1])
@@ -658,7 +661,7 @@ def listADDEImageTimes(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(place)s%(unit)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -674,11 +677,11 @@ def listADDEImageTimes(localEntry=None,
             'dataset': dataset,
             'descriptor': descriptor,
             'band': band,
-            'location': location,
+            # 'location': location,
             'place': place,
-            'size': size,
+            # 'size': size,
             'unit': unit,
-            'mag': mag,
+            # 'mag': mag,
             'day': date,
             'time': time,
             'position': position,
@@ -724,8 +727,13 @@ def listADDEImageTimes(localEntry=None,
             
     uniques = set()
     times = []
+    foundUnit = False
     for d in areaDirectories:
         dt = DateTime(d.getNominalTime())
+        unitList = map(str, list(d.getCalInfo()[0])[::2])
+        if origUnit in unitList:
+            foundUnit = True
+            
         if dt not in uniques:
             d = { 
                 'day': str(dt.formattedString('yyyyDDD', tz)), 
@@ -733,6 +741,10 @@ def listADDEImageTimes(localEntry=None,
             }
             times.append(d)
             uniques.add(dt)
+            
+    if unit and not foundUnit:
+        raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
+        
     uniques = None
     return sorted(times)
     
@@ -742,13 +754,13 @@ def listADDEImages(localEntry=None,
     location=None,
     coordinateSystem=None,
     place=None,
-    mag=None,
     position=None,
     unit=None,
     day=None,
     time=None,
     debug=False,
     band=None,
+    mag=None,
     size=None,
     showUrls=True):
     """Creates a list of ADDE images.
@@ -789,19 +801,17 @@ def listADDEImages(localEntry=None,
     hasPlace = place or False
     hasLocation = location or False
     
+    size = ''
     if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
         raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
         
-    if mag:
-        mag = '&MAG=%s %s' % (mag[0], mag[1])
-    else:
-        mag = ''
-        
+    mag = ''
+    
     if unit:
         origUnit = unit
         unit = '&UNIT=%s' % (unit)
     else:
-        # origUnit = None
+        origUnit = ''
         unit = ''
         
     if place is Places.CENTER:
@@ -812,25 +822,17 @@ def listADDEImages(localEntry=None,
         # raise ValueError()
         place = ''
         
-    if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
-        coordSys = 'LATLON'
-    elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
-        coordSys = 'LINELE'
-    else:
-        raise ValueError("Invalid coordinateSystem value.")
+    # if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
+    #     coordSys = 'LATLON'
+    # elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
+    #     coordSys = 'LINELE'
+    # else:
+    #     raise ValueError("Invalid coordinateSystem value.")
         
-    if location:
-        location = '&%s=%s %s' % (coordSys, location[0], location[1])
-    else:
-        location = '&%s=0 0' % (coordSys)
-        
-    if size:
-        if size == 'ALL':
-            size = '&SIZE=99999 99999'
-        else:
-            size = '&SIZE=%s %s' % (size[0], size[1])
-    else:
-        size = ''
+    # if location:
+    #     location = '&%s=%s %s' % (coordSys, location[0], location[1])
+    # else:
+    #     location = '&%s=0 0' % (coordSys)
         
     if time:
         time = '&TIME=%s %s I' % (time[0], time[1])
@@ -864,7 +866,7 @@ def listADDEImages(localEntry=None,
     timeFormat.setTimeZone(tz)
     timeFormat.applyPattern('HH:mm:ss')
     
-    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s%(day)s%(time)s%(position)s"
+    addeUrlFormat = "adde://%(server)s/imagedirectory?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(place)s%(unit)s%(day)s%(time)s%(position)s"
     
     urls = []
     areaDirectories = []
@@ -880,11 +882,11 @@ def listADDEImages(localEntry=None,
             'dataset': dataset,
             'descriptor': descriptor,
             'band': band,
-            'location': location,
+            # 'location': location,
             'place': place,
-            'size': size,
+            # 'size': size,
             'unit': unit,
-            'mag': mag,
+            # 'mag': mag,
             'day': date,
             'time': time,
             'position': position,
@@ -930,6 +932,7 @@ def listADDEImages(localEntry=None,
             raise AddeJythonError(e)
             
     temp = _AreaDirectoryList()
+    foundUnit = False
     for i, d in enumerate(areaDirectories):
         nominalTime = d.getNominalTime()
         tempDay = str(dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
@@ -940,12 +943,20 @@ def listADDEImages(localEntry=None,
         # unitList = tempUnitList[::2]
         # unitDescList = tempUnitList[1::2]
         # calInfo = dict(zip(unitList, unitDescList))
-        if unit:
+        unitList = map(str, list(d.getCalInfo()[0])[::2])
+        if origUnit in unitList:
+            foundUnit = True
             unitList = [origUnit]
-        else:
-            unitList = map(str, list(d.getCalInfo()[0])[::2])
+            
+        # if origUnit not in unitList:
+        #     raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
+        # if unit:
+        #     unitList = [origUnit]
+        # else:
+        #     unitList = map(str, list(d.getCalInfo()[0])[::2])
             
         for band in bandList:
+            tempList = []
             for calUnit in unitList:
                 dt = {
                     'server': server,
@@ -984,6 +995,10 @@ def listADDEImages(localEntry=None,
                     'url': urls[i],
                 }
             temp.append(dt)
+                
+    if unit and not foundUnit:
+        raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
+        
     return temp
     
 def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,

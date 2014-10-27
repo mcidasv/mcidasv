@@ -245,7 +245,9 @@ public class WelcomeWindow extends JFrame {
      * HTML links.
      *
      * @param evt Event to handle. Anything other than
-     * {@link HyperlinkEvent.EventType#ACTIVATED} is ignored.
+     * an {@literal "ACTIVATED"}
+     * {@link javax.swing.event.HyperlinkEvent.EventType HyperlinkEvent.EventType}
+     * is ignored.
      *
      * @see WebBrowser#browse(String)
      */

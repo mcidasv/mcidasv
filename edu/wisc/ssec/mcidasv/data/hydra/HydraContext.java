@@ -28,13 +28,11 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSource;
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataCategory;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+
+import ucar.unidata.data.DataCategory;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSource;
 
 public class HydraContext {
 
@@ -45,7 +43,6 @@ public class HydraContext {
   private static HashMap<DataSource, HashMap<DataCategory, HydraContext>> contextMap = new HashMap<DataSource, HashMap<DataCategory, HydraContext>>();
 
   private static HydraContext hydraContext = null;
-  private boolean useSubset = false;
   private MultiDimensionSubset subset = null;
   private Object selectBox = null;
 
@@ -58,7 +55,7 @@ public class HydraContext {
         return contextMap.get(source).get(dataCategory);
       }
       else {
-        HashMap catMap = contextMap.get(source);
+        HashMap<DataCategory, HydraContext> catMap = contextMap.get(source);
         HydraContext hydraContext = new HydraContext();
         catMap.put(dataCategory, hydraContext);
         return hydraContext;
@@ -66,7 +63,7 @@ public class HydraContext {
     }
     else {
       HydraContext hydraContext = new HydraContext();
-      HashMap catMap = new HashMap();
+      HashMap<DataCategory, HydraContext> catMap = new HashMap<>();
       catMap.put(dataCategory, hydraContext);
       contextMap.put(source, catMap);
       return hydraContext;

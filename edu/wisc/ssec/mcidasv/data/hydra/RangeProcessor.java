@@ -214,19 +214,17 @@ public class RangeProcessor {
 	}
 
 	/**
-	 * Process a range of data from a byte array where bytes are packed bit or
-	 * multi-bit fields of quality flags. Based on info in a QualityFlag object
-	 * passed in, we extract and return values for that flag.
+	 * Process a range of data from an array of {@code byte} values where
+	 * bytes are packed bit or multi-bit fields of quality flags. Based on
+	 * info in a {@link QualityFlag} object passed in, we extract and return
+	 * values for that flag.
 	 * 
-	 * @param values
-	 *            input values
-	 * @param subset
-	 *            optional subset
-	 * @param qf
-	 *            quality flag
-	 * @return processed range
+	 * @param values Input byte values. Cannot be {@code null}.
+	 * @param subset Optional subset.
+	 * @param qf Quality flag.
+	 *
+	 * @return Processed range.
 	 */
-
 	public float[] processRangeQualityFlag(byte[] values, HashMap subset,
 			QualityFlag qf) {
 
@@ -312,13 +310,13 @@ public class RangeProcessor {
 	}
 
 	/**
-	 * Process a range of data from a byte array
+	 * Process a range of data from an array of {@code byte} values.
 	 * 
-	 * @param values
-	 * @param subset
-	 * @return
+	 * @param values Input {@code byte} values. Cannot be {@code null}.
+	 * @param subset Optional subset.
+	 *
+	 * @return Processed range.
 	 */
-
 	public float[] processRange(byte[] values, HashMap subset) {
 
 		if (subset != null) {
@@ -395,13 +393,13 @@ public class RangeProcessor {
 	}
 
 	/**
-	 * Process a range of data from a short array
+	 * Process a range of data from an array of {@code short} values.
 	 * 
-	 * @param values
-	 * @param subset
-	 * @return
+	 * @param values Input {@code short} values. Cannot be {@code null}.
+	 * @param subset Optional subset.
+	 *
+	 * @return Processed range.
 	 */
-
 	public float[] processRange(short[] values, HashMap subset) {
 
 		if (subset != null) {
@@ -479,13 +477,13 @@ public class RangeProcessor {
 	}
 
 	/**
-	 * Process a range of data from a float array
+	 * Process a range of data from an array of {@code float} values.
 	 * 
-	 * @param values
-	 * @param subset
-	 * @return
+	 * @param values Input {@code float} values. Cannot be {@code null}.
+	 * @param subset Optional subset.
+	 *
+	 * @return Processed array.
 	 */
-
 	public float[] processRange(float[] values, HashMap subset) {
 
 		float[] new_values = null;
@@ -523,13 +521,13 @@ public class RangeProcessor {
 	}
 
 	/**
-	 * Process a range of data from a double array
+	 * Process a range of data from an array of {@code double} value.
 	 * 
-	 * @param values
-	 * @param subset
-	 * @return
+	 * @param values Input {@code double} values. Cannot be {@code null}.
+	 * @param subset Optional subset.
+	 *
+	 * @return Processed array.
 	 */
-
 	public double[] processRange(double[] values, HashMap subset) {
 
 		double[] new_values = null;
@@ -566,12 +564,8 @@ public class RangeProcessor {
 	}
 
 	/**
-	 * Process a range of data from a byte array
-	 * 
-	 * @param values
-	 * @return
+	 * Process a range of data from an array of byte values.
 	 */
-
 	public float[] processAlongMultiScaleDim(byte[] values) {
 
 		float[] new_values = new float[values.length];
@@ -638,12 +632,8 @@ public class RangeProcessor {
 	}
 
 	/**
-	 * Process a range of data from a short array
-	 * 
-	 * @param values
-	 * @return
+	 * Process a range of data from an array of short values.
 	 */
-
 	public float[] processAlongMultiScaleDim(short[] values) {
 
 		float[] new_values = new float[values.length];

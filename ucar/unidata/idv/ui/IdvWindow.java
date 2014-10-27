@@ -29,6 +29,7 @@
 package ucar.unidata.idv.ui;
 
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import ucar.unidata.idv.*;
 import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.IndependentWindow;
@@ -219,6 +220,17 @@ public class IdvWindow extends MultiFrame {
         setLocation(lastX, lastY);
         lastX += 50;
         //        lastY += 50;
+        /*** added for mcv inquiry 1837 ***/
+        getFrame().addComponentListener(new ComponentAdapter() {
+            @Override public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                List<ViewManager> vms = McVGuiUtils.getViewManagers(IdvWindow.this);
+                for (ViewManager vm : vms) {
+                    vm.setSize(vm.getMaster().getComponent().getSize());
+                }
+            }
+        });
+        /*** end inquiry 1837 changes ***/
     }
 
 

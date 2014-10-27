@@ -28,7 +28,6 @@
 package edu.wisc.ssec.mcidasv.probes;
 
 import static java.util.Objects.requireNonNull;
-import static edu.wisc.ssec.mcidasv.util.Contract.*;
 
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
@@ -40,7 +39,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import ucar.unidata.collab.SharableImpl;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
-import ucar.visad.ShapeUtility;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineProbe;
 import ucar.visad.display.SelectorDisplayable;
@@ -94,11 +92,28 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
 
     private RealTuple prevPos = null;
 
+    /**
+     * Create a {@literal "HYDRA"} probe that allows for displaying things like
+     * value at current position, current color, and location.
+     *
+     * <p>Note: <b>none</b> of the parameters permit {@code null} values.</p>
+     *
+     * @param master {@code DisplayMaster} containing the probe.
+     * @param field Data to probe.
+     * @param color {@code Color} of the probe.
+     * @param pattern Format string to use with probe's location values.
+     * @param visible Whether or not the probe is visible.
+     *
+     * @throws NullPointerException if any of the given parameters are {@code null}.
+     * @throws VisADException if VisAD had problems.
+     * @throws RemoteException if VisAD had problems.
+     */
     public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color, final String pattern, final boolean visible) throws VisADException, RemoteException {
         super();
         requireNonNull(master, "DisplayMaster can't be null");
         requireNonNull(field, "Field can't be null");
         requireNonNull(color, "Color can't be null");
+        requireNonNull(pattern, "Pattern can't be null");
 
         this.master = master;
         this.field = field;
@@ -377,9 +392,9 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     }
 
     /**
+     * Returns the number format string current being used.
      *
-     *
-     * @return
+     * @return Location format pattern string.
      */
     public String getFormatPattern() {
         return numFmt.toPattern();

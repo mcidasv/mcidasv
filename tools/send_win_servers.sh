@@ -5,12 +5,12 @@
 #
 
 # This script will send the necessary Windows server components to
-# mcidasv@pappy (to be used with pack_servers.sh)
+# mcidasv@mcidasv (to be used with pack_servers.sh)
 
 ################################################################################
 
 # Where to put the .zip package
-DEST_DIR=mcidasv@pappy:/home/mcidasv/adde
+DEST_DIR=mcidasv@mcidasv:/home/mcidasv/adde
 
 # Binary server files
 BIN_FILES="
@@ -32,7 +32,9 @@ msgxadir.exe msgxaget.exe
 omtpadir.exe omtpaget.exe
 poesadir.exe poesaget.exe
 
+amseadir.exe amseaget.exe
 amsradir.exe amsraget.exe
+amrradir.exe amrraget.exe
 sminadir.exe sminaget.exe
 tminadir.exe tminaget.exe
 

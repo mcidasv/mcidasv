@@ -179,7 +179,10 @@ application/x-java-jnlp-file JNLP
         <div class="faq-question">
         <h4><strong>Q.</strong> Why do I see 'Local servers cannot write to userpath:' errors when starting McIDAS-V?</h4>
       </div>
-        <div class="faq-answer"><strong>A.</strong> To use local servers in McIDAS-V, there is a background server listening process called <em>mcservl</em>. This process run for the duration of the session, and after McIDAS-V is exited, the process take extra time to terminate. If McIDAS-V is closed and started again before the <em>mcservl</em> process terminates, local servers will not be able to start and the 'Local servers cannot write to userpath:' error occurs. Once this error comes up, click OK. If you attempt connecting to a local dataset, a message will pop up directing you to the ADDE Data Manager, where navigating to the <em><strong>Local Servers -&gt; Start Local Servers</strong></em> menu item will start up the local servers correctly so that local servers can be used in the session. To avoid this error, it is recommended that a user waits about 10 seconds after exiting McIDAS-V before starting again.</div>    
+        <div class="faq-answer">
+          <p><strong>A.</strong> To use local servers in McIDAS-V, there is a background server listening process called <em>mcservl</em>. This process run for the duration of the session, and after McIDAS-V is exited, the process take extra time to terminate. If McIDAS-V is closed and started again before the <em>mcservl</em> process terminates, local servers will not be able to start and the 'Local servers cannot write to userpath:' error occurs. Once this error comes up, click OK. If you attempt connecting to a local dataset, a message will pop up directing you to the ADDE Data Manager, where navigating to the <em><strong>Local Servers -&gt; Start Local Servers</strong></em> menu item will start up the local servers correctly so that local servers can be used in the session. To avoid this error, it is recommended that a user waits about 10 seconds after exiting McIDAS-V before starting again.</p>
+          <p>Additionally, if running 64bit Debian or Ubuntu operating systems, this message can appear at startup if the ia32-libs package is not installed on the workstation. The ia32-libs are the 32bit libraries that 32bit applications need to execute on a 64bit system.</p>
+        </div>    
 <a name="glx-graphics" id="glx-graphics"></a>
         <div class="faq-question">
         <h4><strong>Q.</strong> What do I do if I get a 'Could not create a graphics configuration' error?</h4>
@@ -209,7 +212,7 @@ application/x-java-jnlp-file JNLP
       <h4>Q. What do I do if I see 'Connection refused' and 'No public datasets found' errors when connecting to the listed data servers?</h4></div>
     <div class="faq-answer">
     <p><strong>A. </strong>If you have a firewall and are trying to get data from the remote servers
-      (image, radar, point, upper air and profiler data), error messages such
+      (image, radar, point, and upper air data), error messages such
       as <span class="faq-answer">&quot;</span>Error opening connection ... Operation
       timed out<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>No
       Data Available<span class="faq-answer">&quot;</span> are normal.&nbsp; For

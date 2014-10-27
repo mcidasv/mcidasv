@@ -43,13 +43,11 @@
       <span class="link" onClick="setPage('quickstart/Point.html');">Displaying
       Surface and Upper Air Point Data</span><br>
       <span class="link" onClick="setPage('quickstart/Sounding.html');">Displaying
-      RAOB Sounding Data</span><br>
-      <span class="link" onClick="setPage('quickstart/Profiler.html');">Displaying Profiler Data</span><br>
+RAOB Sounding Data</span><br>
             <span class="link" onClick="setPage('quickstart/Grids.html');">Displaying Gridded Data</span><br>
 	  <span class="link" onClick="setPage('quickstart/Fronts.html');">Displaying Fronts</span><br>
       <span class="link" onClick="setPage('quickstart/LocalFiles.html');">Displaying Local Files</span><br>
-      <span class="link" onClick="setPage('quickstart/UrlFiles.html');">Displaying Files from a URL</span><br>
-      <span class="link" onClick="setPage('quickstart/Bridge.html');">Using the McIDAS-X Bridge</span><br>
+<span class="link" onClick="setPage('quickstart/UrlFiles.html');">Displaying Files from a URL</span><br>
             <span class="link" onClick="setPage('quickstart/Globe.html');">Using the Globe Display</span><br>
     </div>
 
@@ -68,15 +66,13 @@
                                         <span class="link" onClick="setPage('data/choosers/RadarChooser.html');">Choosing NEXRAD Level III Radar Data</span><br>
                                                 <span class="link" onClick="setPage('data/choosers/PointChooser.html');">Choosing
         Point Data</span><br>
-                <span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing Upper Air Sounding Data</span><br>
-                        <span class="link" onClick="setPage('data/choosers/ProfilerChooser.html');">Choosing NOAA National Profiler Network Data</span><br>
+<span class="link" onClick="setPage('data/choosers/RaobChooser.html');">Choosing Upper Air Sounding Data</span><br>
                         		<span class="link" onClick="setPage('data/choosers/GridChooser.html');">Choosing Gridded Data</span><br>
                                 		<span class="link" onClick="setPage('data/choosers/FrontChooser.html');">Choosing Front Positions </span><br>
                 <span class="link" onClick="setPage('data/choosers/FileChooser.html');">Choosing Data on Disk</span><br>
                     <span class="link" onClick="setPage('data/choosers/CatalogChooser.html');">Choosing Cataloged Data</span><br>    
         <span class="link" onClick="setPage('data/choosers/UrlChooser.html');">Choosing a URL</span><br>
         <span class="link" onClick="setPage('data/choosers/FlatFileChooser.html');">Choosing Flat File Data</span><br>
-        <span class="link" onClick="setPage('data/choosers/BridgeChooser.html');">Creating a McIDAS-X Bridge Session </span><br>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'thefieldselector');">+</span>
@@ -137,15 +133,6 @@
 		</div>
       </div>
 
-      <span class="toggle" onClick="toggleChildren(this,'layercontrols_3');">+</span>
-      <span class="link" onClick="setPage('controls/profiler/index.html');">Profiler Controls</span><br>
-
-      <div class="indented" id="layercontrols_3">
-        <span class="link" onClick="setPage('controls/profiler/ProfilerTimeHeightControl.html');">Profiler Time/Height Controls</span><br>
-        <span class="link" onClick="setPage('controls/profiler/ProfilerStationPlotControl.html');">Profiler Station Plot Controls</span><br>
-        <span class="link" onClick="setPage('controls/profiler/ProfilerMultiStationControl3D.html');">Profiler 3D Multi-Station Controls</span><br>
-      </div>
-
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_4');">+</span>
       <span class="link" onClick="setPage('page_probes.html');">Probes</span><br>
 
@@ -184,7 +171,6 @@
 
       <div class="indented" id="layercontrols_7">
         <span class="link" onClick="setPage('controls/misc/ScatterAnalysisControl.html');">Scatter Analysis Controls</span><br>
-        <span class="link" onClick="setPage('controls/misc/BridgeControl.html');">McIDAS-X Bridge Controls</span><br>
                 <span class="link" onClick="setPage('controls/misc/GridTable.html');">Grid Table Controls</span><br>
         <span class="link" onClick="setPage('controls/misc/OmniControl.html');">Omni Controls</span><br>
         <span class="link" onClick="setPage('controls/JythonControl.html');">Jython Controls</span><br>
@@ -335,7 +321,6 @@
         <span class="link" onClick="setPage('examples/Imagery.html');">Imagery</span><br>
         <span class="link" onClick="setPage('examples/Radar.html');">Radar - Level II WSR-88D Data Displays</span><br>
         <span class="link" onClick="setPage('examples/Soundings.html');">Soundings</span><br>
-        <span class="link" onClick="setPage('examples/Profiler.html');">Profiler Winds</span><br>
         <span class="link" onClick="setPage('examples/FlowDisplays.html');">Flow Displays</span><br>
         <span class="link" onClick="setPage('examples/Observations.html');">Observations</span><br>
         <span class="link" onClick="setPage('examples/Miscellaneous.html');">Miscellaneous Display Types</span><br>

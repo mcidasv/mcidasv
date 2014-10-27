@@ -835,7 +835,7 @@ public class MultiSpectralControl extends HydraControl {
             this.myId = myId;
             spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
             display.addRef(spectrumRef, color);
-            String pattern = (String)control.getStore().get(IdvConstants.PREF_LATLON_FORMAT);
+            String pattern = (String)control.getStore().get(IdvConstants.PREF_LATLON_FORMAT, "##0.0");
             probe = new ReadoutProbe(control.getNavigatedDisplay(), display.getImageData(), color, pattern, control.getDisplayVisibility());
             this.updatePosition(probe.getEarthPosition());
             probe.addProbeListener(this);

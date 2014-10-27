@@ -70,7 +70,7 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
      *  @return The list of descendants that match the given tag.
      */
     public static List<String> findDescendantNamesWithSeparator(Node parent, String tag, String separator) {
-        List<String> found = new ArrayList<String>();
+        List<String> found = new ArrayList<>();
         findDescendantNamesWithSeparator(parent, tag, "", separator, found);
         return found;
     }
@@ -99,7 +99,7 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
         NodeList children = parent.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
-        	findDescendantNamesWithSeparator(child, tag, descendants, separator, found);
+            findDescendantNamesWithSeparator(child, tag, descendants, separator, found);
         }
     }
     
@@ -140,16 +140,20 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
      */
     public static Element getMakeElementAtNamedPath(Node parent, List<String> nameList, String tagName, boolean makeNew) {
         Element thisElement = null;
-        if (parent instanceof Element && !nameList.isEmpty()) {
+        if ((parent instanceof Element) && !nameList.isEmpty()) {
             for (int i=0; i < nameList.size(); i++) {
                 String thisName = nameList.get(i);
                 NodeList children = parent.getChildNodes();
                 boolean foundChild = false;
-                for (int j=0; j < children.getLength(); j++) {
+                for (int j = 0; j < children.getLength(); j++) {
                     Node child = children.item(j);
-                    if (!(child instanceof Element)) continue;
+                    if (!(child instanceof Element)) {
+                        continue;
+                    }
                     if (XmlUtil.getAttribute(child, "name").equals(thisName)) {
-                        if (i == nameList.size()-1) thisElement = (Element)child;
+                        if (i == (nameList.size() - 1)) {
+                            thisElement = (Element)child;
+                        }
                         parent = child;
                         foundChild = true;
                         break;
@@ -157,7 +161,7 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
                 }
 
                 // Didn't find it where we expected to.  Create a new one.
-                if (makeNew && !foundChild && parent instanceof Element) {
+                if (makeNew && !foundChild && (parent instanceof Element)) {
                     try {
                         Element newElement = XmlUtil.create(tagName, (Element)parent);
                         newElement.setAttribute("name", thisName);
@@ -189,19 +193,22 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
      */
     
     public static String stripNonValidXMLCharacters(String in) {
-        StringBuffer out = new StringBuffer(); // Used to hold the output.
-        char current; // Used to reference the current character.
-
-        if (in == null || ("".equals(in))) return ""; // vacancy test.
+        if ((in == null) || in.isEmpty()) {
+            return ""; // vacancy test.
+        }
+        StringBuilder out = new StringBuilder(in.length()); // Used to hold the output.
         for (int i = 0; i < in.length(); i++) {
-            current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
+            char current = in.charAt(i); // Used to reference the current character.
+                                         // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
             if ((current == 0x9) ||
                 (current == 0xA) ||
                 (current == 0xD) ||
                 ((current >= 0x20) && (current <= 0xD7FF)) ||
                 ((current >= 0xE000) && (current <= 0xFFFD)) ||
                 ((current >= 0x10000) && (current <= 0x10FFFF)))
+            {
                 out.append(current);
+            }
         }
         return out.toString();
     }

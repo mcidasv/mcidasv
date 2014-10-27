@@ -404,7 +404,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * @return Panel containing the startup options.
      */
     public JPanel getAdvancedPanel(final boolean forceBuild) {
-        if (forceBuild || ADVANCED_PANEL == null) {
+        if (forceBuild || (ADVANCED_PANEL == null)) {
             OptionMaster.getInstance().readStartup();
             ADVANCED_PANEL = buildAdvancedPanel();
         }
@@ -643,7 +643,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
             }
             
             // handle userpath changes
-            else if (ARG_USERPATH.equals(args[i]) && (i+1) < args.length) {
+            else if (ARG_USERPATH.equals(args[i]) && ((i + 1) < args.length)) {
                 props.setProperty("userpath", args[++i]);
             }
             
@@ -664,8 +664,8 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     
     public static int getMaximumHeapSize() {
         int sysmem = StartupManager.getInstance().getPlatform().getAvailableMemory();
-        if (sysmem > Constants.MAX_MEMORY_32BIT &&
-                System.getProperty("os.arch").indexOf("64") < 0) {
+        if ((sysmem > Constants.MAX_MEMORY_32BIT) &&
+            (System.getProperty("os.arch").indexOf("64") < 0)) {
             return Constants.MAX_MEMORY_32BIT;
         }
         return sysmem;
@@ -679,8 +679,8 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      */
     private static void usage(final String err) {
         String msg = USAGE_MESSAGE;
-        msg = msg + "\n" + getUsageMessage();
-        LogUtil.userErrorMessage(err + "\n" + msg);
+        msg = msg + '\n' + getUsageMessage();
+        LogUtil.userErrorMessage(err + '\n' + msg);
         System.exit(1);
     }
     
@@ -690,8 +690,8 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * @return The usage message
      */
     protected static String getUsageMessage() {
-        return "\t"+ARG_HELP+"  (this message)\n"+
-               "\t"+ARG_USERPATH+"  <user directory to use>\n"+
+        return '\t'+ARG_HELP+"  (this message)\n"+
+               '\t'+ARG_USERPATH+"  <user directory to use>\n"+
                "\t-Dpropertyname=value  (Define the property value)\n";
     }
     

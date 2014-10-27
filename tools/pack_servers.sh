@@ -30,7 +30,9 @@ msgxadir msgxaget
 omtpadir omtpaget
 poesadir poesaget
 
+amseadir amseaget
 amsradir amsraget
+amrradir amrraget
 sminadir sminaget
 tminadir tminaget
 
@@ -69,11 +71,7 @@ SATBAND
 
 PLATFORMS="
 darwin
-darwin86
 linux
-linux64
-solaris
-soli86
 windows
 "
 
