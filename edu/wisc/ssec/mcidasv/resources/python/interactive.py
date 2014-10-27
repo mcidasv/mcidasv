@@ -17,7 +17,10 @@ from decorators import deprecated
 from ch.qos.logback.core import FileAppender
 from ch.qos.logback.classic import LoggerContext
 
+from ucar.unidata.idv.ui.JythonShell import PROP_JYTHON_SHELL_TRUNCATE
+
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
+from edu.wisc.ssec.mcidasv.util import JythonObjectStore
 
 from java.lang import Class
 from java.lang import Object
@@ -277,6 +280,26 @@ def ncdumpToString(path, output_format='cdl', show_values='c', vars=None):
         print ioe
         
     return writer.toString()
+    
+# TODO(jon): consider making a JythonObjectStore context manager!
+def disableTruncation():
+    """Disable Jython Shell truncation."""
+    store = JythonObjectStore.newInstance(getStaticMcv())
+    store.putBoolean(PROP_JYTHON_SHELL_TRUNCATE, False)
+    store = None
+    
+def enableTruncation():
+    """Enable Jython Shell truncation."""
+    store = JythonObjectStore.newInstance(getStaticMcv())
+    store.putBoolean(PROP_JYTHON_SHELL_TRUNCATE, True)
+    store = None
+    
+def truncation():
+    """Return Jython Shell truncation status."""
+    store = JythonObjectStore.newInstance(getStaticMcv())
+    value = store.getBoolean(PROP_JYTHON_SHELL_TRUNCATE, True)
+    store = None
+    return value
     
 def dump_active_display():
     """Return currently active display object."""
