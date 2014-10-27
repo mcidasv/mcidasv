@@ -98,6 +98,9 @@ public class LocalAddeEntry implements AddeEntry {
     private String entryAlias;
 
     public enum ServerName {
+        // note: if you are add a new server you may need to edit the
+        // AddeFormat enum below, as well as the "formats" field in both
+        // LocalEntryEditor and LocalEntryShortcut.
         AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
         MODR, MSGT, MTST, SMIN, TMIN, MD, INVALID;
     }
@@ -111,11 +114,17 @@ public class LocalAddeEntry implements AddeEntry {
      * <li>Optional tooltip description ({@link #tooltip}).</li>
      * <li>Type of data ({@link #type}).</li>
      * <li>File naming pattern {@link #fileFilter}.</li>
-     * </ul>
+     * </ul></p>
      * 
-     * <p>None of {@code AddeFormat}'s fields should contain {@code null}.
+     * <p>None of {@code AddeFormat}'s fields should contain {@code null}.</p>
+     *
+     * <p>Note: if you are adding a new value to this list</p>
      */
     public enum AddeFormat {
+        // note: if you are adding a new value to this list, you may need to
+        // edit the ServerName enum as well as the "formats" field in both
+        // LocalEntryEditor and LocalEntryShortcut.
+        // sorry. :(
         MCIDAS_AREA(ServerName.AREA, "McIDAS AREA"),
         MCIDAS_MD(ServerName.MD, "McIDAS MD", "McIDAS MD", EntryType.POINT),
         AMSRE_L1B(ServerName.AMSR, "AMSR-E L 1b", "AMSR-E Level 1b"),

@@ -78,7 +78,40 @@ public class LocalEntryShortcut extends JDialog {
     private static final String PROP_LAST_PATH = "mcv.localdata.lastpath";
 
     /** The valid local ADDE formats. */
-    private static final DefaultComboBoxModel<AddeFormat> formats = new DefaultComboBoxModel<>(new AddeFormat[] { AddeFormat.MCIDAS_AREA, AddeFormat.AMSRE_L1B, AddeFormat.AMSRE_L2A, AddeFormat.AMSRE_RAIN_PRODUCT, AddeFormat.GINI, AddeFormat.LRIT_GOES9, AddeFormat.LRIT_GOES10, AddeFormat.LRIT_GOES11, AddeFormat.LRIT_GOES12, AddeFormat.LRIT_MET5, AddeFormat.LRIT_MET7, AddeFormat.LRIT_MTSAT1R, AddeFormat.METEOSAT_OPENMTP, AddeFormat.METOP_AVHRR_L1B, AddeFormat.MODIS_L1B_MOD02, AddeFormat.MODIS_L2_MOD06, AddeFormat.MODIS_L2_MOD07, AddeFormat.MODIS_L2_MOD35, AddeFormat.MODIS_L2_MOD04, AddeFormat.MODIS_L2_MOD28, AddeFormat.MODIS_L2_MODR, AddeFormat.MSG_HRIT_FD, AddeFormat.MSG_HRIT_HRV, AddeFormat.MTSAT_HRIT, AddeFormat.NOAA_AVHRR_L1B, AddeFormat.SSMI, AddeFormat.TRMM, AddeFormat.MCIDAS_MD });
+    private static final DefaultComboBoxModel<AddeFormat> formats =
+        new DefaultComboBoxModel<>(new AddeFormat[] {
+            // note: if you are looking to add a new value you may need to make
+            // changes to LocalAddeEntry's ServerName and AddeFormat enums, as
+            // well as the format combo box in LocalEntryEditor.
+            AddeFormat.MCIDAS_AREA,
+            AddeFormat.AMSRE_L1B,
+            AddeFormat.AMSRE_L2A,
+            AddeFormat.AMSRE_RAIN_PRODUCT,
+            AddeFormat.GINI,
+            AddeFormat.LRIT_GOES9,
+            AddeFormat.LRIT_GOES10,
+            AddeFormat.LRIT_GOES11,
+            AddeFormat.LRIT_GOES12,
+            AddeFormat.LRIT_MET5,
+            AddeFormat.LRIT_MET7,
+            AddeFormat.LRIT_MTSAT1R,
+            AddeFormat.METEOSAT_OPENMTP,
+            AddeFormat.METOP_AVHRR_L1B,
+            AddeFormat.MODIS_L1B_MOD02,
+            AddeFormat.MODIS_L2_MOD06,
+            AddeFormat.MODIS_L2_MOD07,
+            AddeFormat.MODIS_L2_MOD35,
+            AddeFormat.MODIS_L2_MOD04,
+            AddeFormat.MODIS_L2_MOD28,
+            AddeFormat.MODIS_L2_MODR,
+            AddeFormat.MSG_HRIT_FD,
+            AddeFormat.MSG_HRIT_HRV,
+            AddeFormat.MTSAT_HRIT,
+            AddeFormat.NOAA_AVHRR_L1B,
+            AddeFormat.SSMI,
+            AddeFormat.TRMM,
+            AddeFormat.MCIDAS_MD
+        });
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
     private final TabbedAddeManager managerController;
