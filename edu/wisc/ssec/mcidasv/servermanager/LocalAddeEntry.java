@@ -117,8 +117,6 @@ public class LocalAddeEntry implements AddeEntry {
      * </ul></p>
      * 
      * <p>None of {@code AddeFormat}'s fields should contain {@code null}.</p>
-     *
-     * <p>Note: if you are adding a new value to this list</p>
      */
     public enum AddeFormat {
         // note: if you are adding a new value to this list, you may need to
