@@ -43,93 +43,331 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  */
 public class JythonObjectStore {
 
+    /** {@code IdvObjectStore} used by the current McIDAS-V session. */
     private final IdvObjectStore idvStore;
 
+    /**
+     * Return a new {@code JythonObjectStore} instance.
+     *
+     * <p>Use this method rather than the constructor.</p>
+     *
+     * @param mcidasv McIDAS-V instance that represents current session. Cannot
+     * be {@code null}.
+     *
+     * @return New instance of the {@code JythonObjectStore} class.
+     *
+     * @throws NullPointerException if {@code mcidasv} is {@code null}.
+     */
     public static JythonObjectStore newInstance(final McIDASV mcidasv) {
         return new JythonObjectStore(requireNonNull(mcidasv.getStore()));
     }
 
+    /**
+     * Create a new {@code JythonObjectStore} wrapper object.
+     *
+     * @param store McIDAS-V object store. Cannot be {@code null}.
+     *
+     * @throws NullPointerException if {@code store} is {@code null}.
+     */
     private JythonObjectStore(IdvObjectStore store) {
         idvStore = requireNonNull(store);
     }
 
+    /**
+     * Removes the value associated with the given {@code key} (if any).
+     *
+     * @param key Key whose associated value is to be removed. Cannot be
+     * {@code null}.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
+    public void remove(String key) {
+        idvStore.remove(requireNonNull(key));
+    }
+
+    /**
+     * Returns the object associated with the given {@code key}. If {@code key}
+     * does not exist, {@code defaultValue} is returned.
+     *
+     * @param key Key whose associated object is to be returned.
+     * Cannot be {@code null}.
+     * @param defaultValue Value to be returned if {@code key} is not valid.
+     * {@code null} is allowed.
+     *
+     * @return Object associated with {@code key} or {@code defaultValue} if
+     * {@code key} is not valid.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
     public <T> T getObject(String key, T defaultValue) {
-        T storedValue = (T)idvStore.get(key);
+        T storedValue = (T)idvStore.get(requireNonNull(key));
         if (storedValue == null) {
             storedValue = defaultValue;
         }
         return storedValue;
     }
 
+    /**
+     * Returns the {@code short} value associated with the given {@code key}.
+     * If {@code key} does not exist, {@code defaultValue} is returned.
+     *
+     * @param key Key whose associated {@code short} value is to be returned.
+     * Cannot be {@code null}.
+     * @param defaultValue Value to be returned if {@code key} is not valid.
+     *
+     * @return {@code short} value associated with {@code key} or
+     * {@code defaultValue} if {@code key} is not valid.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
     public short getShort(String key, short defaultValue) {
-        return idvStore.get(key, defaultValue);
+        return idvStore.get(requireNonNull(key), defaultValue);
     }
 
+    /**
+     * Returns the {@code char} value associated with the given {@code key}.
+     * If {@code key} does not exist, {@code defaultValue} is returned.
+     *
+     * @param key Key whose associated {@code char} value is to be returned.
+     * Cannot be {@code null}.
+     * @param defaultValue Value to be returned if {@code key} is not valid.
+     *
+     * @return {@code char} value associated with {@code key} or
+     * {@code defaultValue} if {@code key} is not valid.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
     public char getChar(String key, char defaultValue) {
-        return idvStore.get(key, defaultValue);
+        return idvStore.get(requireNonNull(key), defaultValue);
     }
 
+    /**
+     * Returns the {@code String} value associated with the given {@code key}.
+     * If {@code key} does not exist, {@code defaultValue} is returned.
+     *
+     * @param key Key whose associated {@code String} value is to be returned.
+     * Cannot be {@code null}.
+     * @param defaultValue Value to be returned if {@code key} is not valid.
+     *
+     * @return {@code String} value associated with {@code key} or
+     * {@code defaultValue} if {@code key} is not valid.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
     public String getString(String key, String defaultValue) {
-        return idvStore.get(key, defaultValue);
+        return idvStore.get(requireNonNull(key), defaultValue);
     }
 
+    /**
+     * Returns the {@code boolean} value associated with the given {@code key}.
+     * If {@code key} does not exist, {@code defaultValue} is returned.
+     *
+     * @param key Key whose associated {@code boolean} value is to be returned.
+     * Cannot be {@code null}.
+     * @param defaultValue Value to be returned if {@code key} is not valid.
+     *
+     * @return {@code boolean} value associated with {@code key} or
+     * {@code defaultValue} if {@code key} is not valid.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
     public boolean getBoolean(String key, boolean defaultValue) {
-        return idvStore.get(key, defaultValue);
+        return idvStore.get(requireNonNull(key), defaultValue);
     }
 
+    /**
+     * Returns the {@code double} value associated with the given {@code key}.
+     * If {@code key} does not exist, {@code defaultValue} is returned.
+     *
+     * @param key Key whose associated {@code double} value is to be returned.
+     * Cannot be {@code null}.
+     * @param defaultValue Value to be returned if {@code key} is not valid.
+     *
+     * @return {@code double} value associated with {@code key} or
+     * {@code defaultValue} if {@code key} is not valid.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
     public double getDouble(String key, double defaultValue) {
-        return idvStore.get(key, defaultValue);
+        return idvStore.get(requireNonNull(key), defaultValue);
     }
 
+    /**
+     * Returns the {@code float} value associated with the given {@code key}.
+     * If {@code key} does not exist, {@code defaultValue} is returned.
+     *
+     * @param key Key whose associated {@code float} value is to be returned.
+     * Cannot be {@code null}.
+     * @param defaultValue Value to be returned if {@code key} is not valid.
+     *
+     * @return {@code float} value associated with {@code key} or
+     * {@code defaultValue} if {@code key} is not valid.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
     public float getFloat(String key, float defaultValue) {
-        return idvStore.get(key, defaultValue);
+        return idvStore.get(requireNonNull(key), defaultValue);
     }
 
+    /**
+     * Returns the {@code int} value associated with the given {@code key}.
+     * If {@code key} does not exist, {@code defaultValue} is returned.
+     *
+     * @param key Key whose associated {@code int} value is to be returned.
+     * Cannot be {@code null}.
+     * @param defaultValue Value to be returned if {@code key} is not valid.
+     *
+     * @return {@code int} value associated with {@code key} or
+     * {@code defaultValue} if {@code key} is not valid.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
     public int getInt(String key, int defaultValue) {
-        return idvStore.get(key, defaultValue);
+        return idvStore.get(requireNonNull(key), defaultValue);
     }
 
+    /**
+     * Returns the {@code long} value associated with the given {@code key}.
+     * If {@code key} does not exist, {@code defaultValue} is returned.
+     *
+     * @param key Key whose associated {@code long} value is to be returned.
+     * Cannot be {@code null}.
+     * @param defaultValue Value to be returned if {@code key} is not valid.
+     *
+     * @return {@code long} value associated with {@code key} or
+     * {@code defaultValue} if {@code key} is not valid.
+     *
+     * @throws NullPointerException if {@code key} is {@code null}.
+     */
     public long getLong(String key, long defaultValue) {
-        return idvStore.get(key, defaultValue);
+        return idvStore.get(requireNonNull(key), defaultValue);
     }
 
+    /**
+     * Associates the given {@code key} with the given object.
+     *
+     * @param key Key to associate with the given {@code value}.
+     * Cannot be {@code null}.
+     * @param value Object to associate with {@code key}. Cannot be
+     * {@code null}.
+     *
+     * @throws NullPointerException if either {@code key} or {@code value} is
+     * {@code null}.
+     */
     public <T> void putObject(String key, T value) {
-        idvStore.put(key, value);
+        idvStore.put(requireNonNull(key), requireNonNull(value));
     }
 
+    /**
+     * Associates the given {@code key} with the given {@code short} value.
+     *
+     * @param key Key to associate with the given {@code value}.
+     * Cannot be {@code null}.
+     * @param value {@code short} value to associate with {@code key}.
+     *
+     * @throws NullPointerException if either {@code key} or {@code value} is
+     * {@code null}.
+     */
     public void putShort(String key, short value) {
-        idvStore.put(key, value);
+        idvStore.put(requireNonNull(key), value);
     }
 
+    /**
+     * Associates the given {@code key} with the given {@code char} value.
+     *
+     * @param key Key to associate with the given {@code value}.
+     * Cannot be {@code null}.
+     * @param value {@code char} value to associate with {@code key}.
+     *
+     * @throws NullPointerException if either {@code key} or {@code value} is
+     * {@code null}.
+     */
     public void putChar(String key, char value) {
-        idvStore.put(key, value);
+        idvStore.put(requireNonNull(key), value);
     }
 
+    /**
+     * Associates the given {@code key} with the given {@code String} value.
+     *
+     * @param key Key to associate with the given {@code value}.
+     * Cannot be {@code null}.
+     * @param value {@code String} value to associate with {@code key}.
+     * Cannot be {@code null}.
+     *
+     * @throws NullPointerException if either {@code key} or {@code value} is
+     * {@code null}.
+     */
     public void putString(String key, String value) {
-        idvStore.put(key, value);
+        idvStore.put(requireNonNull(key), requireNonNull(value));
     }
 
+    /**
+     * Associates the given {@code key} with the given {@code boolean} value.
+     *
+     * @param key Key to associate with the given {@code value}.
+     * Cannot be {@code null}.
+     * @param value {@code boolean} value to associate with {@code key}.
+     *
+     * @throws NullPointerException if either {@code key} or {@code value} is
+     * {@code null}.
+     */
     public void putBoolean(String key, boolean value) {
-        idvStore.put(key, value);
+        idvStore.put(requireNonNull(key), value);
     }
 
+    /**
+     * Associates the given {@code key} with the given {@code double} value.
+     *
+     * @param key Key to associate with the given {@code value}.
+     * Cannot be {@code null}.
+     * @param value {@code double} value to associate with {@code key}.
+     *
+     * @throws NullPointerException if either {@code key} or {@code value} is
+     * {@code null}.
+     */
     public void putDouble(String key, double value) {
-        idvStore.put(key, value);
+        idvStore.put(requireNonNull(key), value);
     }
 
+    /**
+     * Associates the given {@code key} with the given {@code float} value.
+     *
+     * @param key Key to associate with the given {@code value}.
+     * Cannot be {@code null}.
+     * @param value {@code float} value to associate with {@code key}.
+     *
+     * @throws NullPointerException if either {@code key} or {@code value} is
+     * {@code null}.
+     */
     public void putFloat(String key, float value) {
-        idvStore.put(key, value);
+        idvStore.put(requireNonNull(key), value);
     }
 
+    /**
+     * Associates the given {@code key} with the given {@code int} value.
+     *
+     * @param key Key to associate with the given {@code value}.
+     * Cannot be {@code null}.
+     * @param value {@code int} value to associate with {@code key}.
+     *
+     * @throws NullPointerException if either {@code key} or {@code value} is
+     * {@code null}.
+     */
     public void putInt(String key, int value) {
-        idvStore.put(key, value);
+        idvStore.put(requireNonNull(key), value);
     }
 
+    /**
+     * Associates the given {@code key} with the given {@code long} value.
+     *
+     * @param key Key to associate with the given {@code value}.
+     * Cannot be {@code null}.
+     * @param value {@code long} value to associate with {@code key}.
+     *
+     * @throws NullPointerException if either {@code key} or {@code value} is
+     * {@code null}.
+     */
     public void putLong(String key, long value) {
-        idvStore.put(key, value);
+        idvStore.put(requireNonNull(key), value);
     }
-
-//    public byte[] getByteArray(String key, byte[] defaultValue)
-//    public void putByteArray(String key, byte[] value)
-//    remove(String key)
 }
