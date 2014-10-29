@@ -99,8 +99,9 @@ public class LocalAddeEntry implements AddeEntry {
 
     public enum ServerName {
         // note: if you are add a new server you may need to edit the
-        // AddeFormat enum below, as well as the "formats" field in both
-        // LocalEntryEditor and LocalEntryShortcut.
+        // AddeFormat enum below, the "formats" field in both
+        // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
+        // in mcvadde.py.
         AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
         MODR, MSGT, MTST, SMIN, TMIN, MD, INVALID;
     }
@@ -120,8 +121,9 @@ public class LocalAddeEntry implements AddeEntry {
      */
     public enum AddeFormat {
         // note: if you are adding a new value to this list, you may need to
-        // edit the ServerName enum as well as the "formats" field in both
-        // LocalEntryEditor and LocalEntryShortcut.
+        // edit the ServerName enum, the "formats" field in both
+        // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
+        // in mcvadde.py.
         // sorry. :(
         MCIDAS_AREA(ServerName.AREA, "McIDAS AREA"),
         MCIDAS_MD(ServerName.MD, "McIDAS MD", "McIDAS MD", EntryType.POINT),

@@ -81,8 +81,9 @@ public class LocalEntryShortcut extends JDialog {
     private static final DefaultComboBoxModel<AddeFormat> formats =
         new DefaultComboBoxModel<>(new AddeFormat[] {
             // note: if you are looking to add a new value you may need to make
-            // changes to LocalAddeEntry's ServerName and AddeFormat enums, as
-            // well as the format combo box in LocalEntryEditor.
+            // changes to LocalAddeEntry's ServerName and AddeFormat enums,
+            // the format combo box in LocalEntryEditor, and the _formats
+            // dictionary in mcvadde.py.
             AddeFormat.MCIDAS_AREA,
             AddeFormat.AMSRE_L1B,
             AddeFormat.AMSRE_L2A,
