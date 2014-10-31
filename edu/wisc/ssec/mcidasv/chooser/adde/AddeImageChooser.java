@@ -300,7 +300,7 @@ public class AddeImageChooser extends AddeChooser implements
     /** Mapping of area directory to list of BandInfos */
     protected Hashtable bandTable;
 
-    /** _more_ */
+    /** Mapping of band index to {@link edu.wisc.ssec.mcidas.AreaDirectory}. */
     protected Hashtable bandDirs;
 
     /**
