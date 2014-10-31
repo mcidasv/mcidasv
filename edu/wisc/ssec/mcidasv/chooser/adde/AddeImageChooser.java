@@ -300,6 +300,9 @@ public class AddeImageChooser extends AddeChooser implements
     /** Mapping of area directory to list of BandInfos */
     protected Hashtable bandTable;
 
+    /** _more_ */
+    protected Hashtable bandDirs;
+
     /**
      * The list of currently loaded AddeImageDescriptor-s
      */
@@ -1289,6 +1292,16 @@ public class AddeImageChooser extends AddeChooser implements
                 imageDescriptors = new Vector();
                 // TODO: Add a setBands method to AreaDirectory to replace bandtable
                 bandTable = new Hashtable(numImages);
+                int len = dirs[0].length;
+                bandDirs = new Hashtable(len);
+                for (int i = 0; i < len; i++) {
+                    AreaDirectory dir = dirs[0][i];
+                    int ilen = dirs[0][i].getBands().length;
+                    for(int j = 0; j < ilen; j++){
+                        int bindex = dirs[0][i].getBands()[j];
+                        bandDirs.put(bindex, dir);
+                    }
+                }
                 lastAD = null;
                 for (int i = 0; i < numImages; i++) {
                     int bandIndex = 0;

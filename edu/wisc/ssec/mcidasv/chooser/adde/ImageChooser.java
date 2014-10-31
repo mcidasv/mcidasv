@@ -44,13 +44,21 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.w3c.dom.Element;
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
 
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.BandInfo;
+import ucar.unidata.data.imagery.ImageDataset;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlObjectStore;
 
@@ -101,6 +109,7 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     private static final String ALL = "ALL";
 
     private static JCheckBox previewBox = null;
+
 
     /**
      * Construct an Adde image selection widget
@@ -252,8 +261,11 @@ public class ImageChooser extends AddeImageChooser implements Constants {
      */
     protected boolean usePropFromUser(String propId) {
         boolean fromSuper = super.usePropFromUser(propId);
-        if (propId.equals(PROP_UNIT)) fromSuper = false;
-        else if (propId.equals(PROP_BAND)) fromSuper = false;
+        if (propId.equals(PROP_UNIT)) {
+            fromSuper = false;
+        } else if (propId.equals(PROP_BAND)) {
+            fromSuper = false;
+        }
         return fromSuper;
     }
     
@@ -340,6 +352,120 @@ public class ImageChooser extends AddeImageChooser implements Constants {
         
         setInnerPanel(myPanel);
         return super.doMakeContents(true);
+    }
+
+    /**
+     * User said go, we go. Simply get the list of images from the imageChooser
+     * and create the ADDE.IMAGE DataSource
+     *
+     */
+    @Override public void doLoadInThread() {
+        if (!checkForValidValues()) {
+            return;
+        }
+        if (!getGoodToGo()) {
+            updateStatus();
+            return;
+        }
+
+        List imageList = getImageList();
+        if ((imageList == null) || (imageList.isEmpty())) {
+            return;
+        }
+
+        // Check for size threshold
+        final int[] dim = { 0, 0 };
+        AddeImageDescriptor aid = (AddeImageDescriptor) imageList.get(0);
+        dim[0] = aid.getImageInfo().getElements();
+        dim[1] = aid.getImageInfo().getLines();
+        // System.err.println("dim:" + dim[0] + " x " + dim[1] + " # images:"
+        // + imageList.size());
+        int numPixels = dim[0] * dim[1] * imageList.size();
+        double megs = (4 * numPixels) / (double) 1000000;
+
+        //DAVEP: take this out--it should be warning in the data source, not the chooser
+        boolean doSizeCheck = false;
+        if (megs > AddeImageChooser.SIZE_THRESHOLD && doSizeCheck) {
+            final JCheckBox maintainSize = new JCheckBox(
+                "Maintain spatial extent", false);
+            final JLabel sizeLbl = new JLabel(StringUtil.padRight("  "
+                + ((double) ((int) megs * 100)) / 100.0 + " MB", 14));
+            GuiUtils.setFixedWidthFont(sizeLbl);
+            final List[] listHolder = { imageList };
+            final JSlider slider = new JSlider(2, (int) megs, (int) megs);
+            slider.setMajorTickSpacing((int) (megs - 2) / 10);
+            slider.setMinorTickSpacing((int) (megs - 2) / 10);
+            // slider.setPaintTicks(true);
+            slider.setSnapToTicks(true);
+            final long timeNow = System.currentTimeMillis();
+            ChangeListener sizeListener = new javax.swing.event.ChangeListener() {
+                public void stateChanged(ChangeEvent evt) {
+                    // A hack so we don't respond to the first event that we get
+                    // from the slider when
+                    // the dialog is first shown
+                    if (System.currentTimeMillis() - timeNow < 500)
+                        return;
+                    JSlider slider = (JSlider) evt.getSource();
+                    int pixelsPerImage = 1000000 * slider.getValue()
+                        / listHolder[0].size() / 4;
+                    double aspect = dim[1] / (double) dim[0];
+                    int nx = (int) Math.sqrt(pixelsPerImage / aspect);
+                    int ny = (int) (aspect * nx);
+                    if (maintainSize.isSelected()) {
+                        // doesn't work
+                        lineMagSlider.setValue(getLineMagValue() - 1);
+                        lineMagSliderChanged(true);
+                    } else {
+                        numElementsFld.setText("" + nx);
+                        numLinesFld.setText("" + ny);
+                    }
+                    listHolder[0] = getImageList();
+                    AddeImageDescriptor aid = (AddeImageDescriptor) listHolder[0]
+                        .get(0);
+                    dim[0] = aid.getImageInfo().getElements();
+                    dim[1] = aid.getImageInfo().getLines();
+                    int numPixels = dim[0] * dim[1] * listHolder[0].size();
+                    double nmegs = (4 * numPixels) / (double) 1000000;
+                    sizeLbl.setText(StringUtil.padRight("  "
+                            + ((double) ((int) nmegs * 100)) / 100.0 + " MB",
+                        14));
+                }
+            };
+            slider.addChangeListener(sizeListener);
+
+            JComponent msgContents = GuiUtils
+                .vbox(
+                    new JLabel(
+                        "<html>You are about to load "
+                            + megs
+                            + " MB of imagery.<br>Are you sure you want to do this?<p><hr><p></html>"),
+                    GuiUtils.inset(GuiUtils.leftCenterRight(new JLabel(
+                            "Change Size: "),
+                        GuiUtils.inset(slider, 5), sizeLbl), 5));
+
+            if (!GuiUtils.askOkCancel("Image Size", msgContents)) {
+                return;
+            }
+            imageList = listHolder[0];
+        }
+
+        ImageDataset ids = new ImageDataset(getDatasetName(), imageList);
+        // make properties Hashtable to hand the station name
+        // to the AddeImageDataSource
+        Hashtable ht = new Hashtable();
+        ht.put(DataSelection.PROP_CHOOSERTIMEMATCHING, getDoTimeDrivers());
+        getDataSourceProperties(ht);
+        Object bandName = getSelectedBandName();
+        if (bandName != null && !(bandName.equals(ALLBANDS.toString()))) {
+            ht.put(DATA_NAME_KEY, bandName);
+        }
+        ht.put("allBands", bandDirs);
+        makeDataSource(ids, getDataSourceId(), ht);
+        saveServerState();
+        // uncheck the check box every time click the add source button
+        drivercbx.setSelected(false);
+        enableTimeWidgets();
+        setDoTimeDrivers(false);
     }
 
 }
