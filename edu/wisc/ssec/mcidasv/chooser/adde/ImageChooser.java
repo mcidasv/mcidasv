@@ -39,6 +39,7 @@ import java.awt.event.ItemListener;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -148,7 +149,9 @@ public class ImageChooser extends AddeImageChooser implements Constants {
      */
     @Override protected boolean restoreParameterSet(Element restoreElement) {
         boolean okay = super.restoreParameterSet(restoreElement);
-        if (!okay) return okay;
+        if (!okay) {
+            return okay;
+        }
         
         // Imagery specific restore
         
@@ -156,11 +159,11 @@ public class ImageChooser extends AddeImageChooser implements Constants {
         if (restoreElement.hasAttribute(ATTR_NAV)) {
             String nav = restoreElement.getAttribute(ATTR_NAV);
             TwoFacedObject tfo = new TwoFacedObject("Default", "X");
-            navComboBox.setSelectedItem((Object)tfo);
+            navComboBox.setSelectedItem(tfo);
             if (nav.toUpperCase().equals("LALO")) {
                 tfo = new TwoFacedObject("Lat/Lon", "LALO");
             }
-            navComboBox.setSelectedItem((Object)tfo);
+            navComboBox.setSelectedItem(tfo);
         }
         return true;
     }
@@ -184,7 +187,7 @@ public class ImageChooser extends AddeImageChooser implements Constants {
      */
     @Override protected String getPropValue(String prop, AreaDirectory ad) {
         String propValue = super.getPropValue(prop, ad);
-        if (prop.equals(PROP_NAV)) {
+        if (PROP_NAV.equals(prop)) {
             propValue = TwoFacedObject.getIdString(navComboBox.getSelectedItem());
         }
         return propValue;
@@ -200,15 +203,15 @@ public class ImageChooser extends AddeImageChooser implements Constants {
      */
     @Override protected String getDefault(String property, String dflt) {
         String paramDefault = super.getDefault(property, dflt);
-        if (property.equals(PROP_NAV)) {
+        if (PROP_NAV.equals(property)) {
             if (restoreElement != null) {
                 paramDefault = restoreElement.getAttribute(ATTR_NAV);
             }
-        } else if (property.equals(PROP_UNIT)) {
+        } else if (PROP_UNIT.equals(property)) {
             paramDefault = "";
-        } else if (property.equals(PROP_BAND)) {
+        } else if (PROP_BAND.equals(property)) {
             paramDefault = ALL;
-        } else if (property.equals(PROP_PLACE)) {
+        } else if (PROP_PLACE.equals(property)) {
             paramDefault = "";
         }
         return paramDefault;
@@ -225,30 +228,30 @@ public class ImageChooser extends AddeImageChooser implements Constants {
         super.getDataSourceProperties(ht);
         if (restoreElement != null) {
             if (restoreElement.hasAttribute(ATTR_BAND)) {
-                ht.put(BAND_KEY, (Object)(restoreElement.getAttribute(ATTR_BAND)));
+                ht.put(BAND_KEY, restoreElement.getAttribute(ATTR_BAND));
             }
             if (restoreElement.hasAttribute(ATTR_LATLON)) {
-                ht.put(LATLON_KEY, (Object)(restoreElement.getAttribute(ATTR_LATLON)));
+                ht.put(LATLON_KEY, restoreElement.getAttribute(ATTR_LATLON));
             }
             if (restoreElement.hasAttribute(ATTR_LINELE)) {
-                ht.put(LINELE_KEY, (Object)(restoreElement.getAttribute(ATTR_LINELE)));
+                ht.put(LINELE_KEY, restoreElement.getAttribute(ATTR_LINELE));
             }
             if (restoreElement.hasAttribute(ATTR_MAG)) {
-                ht.put(MAG_KEY, (Object)(restoreElement.getAttribute(ATTR_MAG)));
+                ht.put(MAG_KEY, restoreElement.getAttribute(ATTR_MAG));
             }
             if (restoreElement.hasAttribute(ATTR_PLACE)) {
-                ht.put(PLACE_KEY, (Object)(restoreElement.getAttribute(ATTR_PLACE)));
+                ht.put(PLACE_KEY, restoreElement.getAttribute(ATTR_PLACE));
             }
             if (restoreElement.hasAttribute(ATTR_SIZE)) {
-                ht.put(SIZE_KEY, (Object)(restoreElement.getAttribute(ATTR_SIZE)));
+                ht.put(SIZE_KEY, restoreElement.getAttribute(ATTR_SIZE));
             }
             if (restoreElement.hasAttribute(ATTR_UNIT)) {
-                ht.put(UNIT_KEY, (Object)(restoreElement.getAttribute(ATTR_UNIT)));
+                ht.put(UNIT_KEY, restoreElement.getAttribute(ATTR_UNIT));
             }
         } else {
-            ht.put(NAVIGATION_KEY, (Object)getPropValue(PROP_NAV, null));
+            ht.put(NAVIGATION_KEY, getPropValue(PROP_NAV, null));
         }
-        ht.put(PREVIEW_KEY, (Object)previewBox.isSelected());
+        ht.put(PREVIEW_KEY, previewBox.isSelected());
     }
     
     /**
@@ -282,7 +285,7 @@ public class ImageChooser extends AddeImageChooser implements Constants {
         addDescComp(timesLabel);
 
         JPanel timesPanel = makeTimesPanel();
-        timesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        timesPanel.setBorder(BorderFactory.createEtchedBorder());
         addDescComp(timesPanel);
 
         JLabel navigationLabel = McVGuiUtils.makeLabelRight("Navigation:");
@@ -369,7 +372,7 @@ public class ImageChooser extends AddeImageChooser implements Constants {
         }
 
         List imageList = getImageList();
-        if ((imageList == null) || (imageList.isEmpty())) {
+        if ((imageList == null) || imageList.isEmpty()) {
             return;
         }
 
@@ -385,7 +388,7 @@ public class ImageChooser extends AddeImageChooser implements Constants {
 
         //DAVEP: take this out--it should be warning in the data source, not the chooser
         boolean doSizeCheck = false;
-        if (megs > AddeImageChooser.SIZE_THRESHOLD && doSizeCheck) {
+        if ((megs > AddeImageChooser.SIZE_THRESHOLD) && doSizeCheck) {
             final JCheckBox maintainSize = new JCheckBox(
                 "Maintain spatial extent", false);
             final JLabel sizeLbl = new JLabel(StringUtil.padRight("  "
@@ -403,11 +406,11 @@ public class ImageChooser extends AddeImageChooser implements Constants {
                     // A hack so we don't respond to the first event that we get
                     // from the slider when
                     // the dialog is first shown
-                    if (System.currentTimeMillis() - timeNow < 500)
+                    if ((System.currentTimeMillis() - timeNow) < 500) {
                         return;
+                    }
                     JSlider slider = (JSlider) evt.getSource();
-                    int pixelsPerImage = 1000000 * slider.getValue()
-                        / listHolder[0].size() / 4;
+                    int pixelsPerImage = (1000000 * slider.getValue()) / listHolder[0].size() / 4;
                     double aspect = dim[1] / (double) dim[0];
                     int nx = (int) Math.sqrt(pixelsPerImage / aspect);
                     int ny = (int) (aspect * nx);
@@ -456,7 +459,7 @@ public class ImageChooser extends AddeImageChooser implements Constants {
         ht.put(DataSelection.PROP_CHOOSERTIMEMATCHING, getDoTimeDrivers());
         getDataSourceProperties(ht);
         Object bandName = getSelectedBandName();
-        if (bandName != null && !(bandName.equals(ALLBANDS.toString()))) {
+        if ((bandName != null) && !(bandName.equals(ALLBANDS.toString()))) {
             ht.put(DATA_NAME_KEY, bandName);
         }
         ht.put("allBands", bandDirs);
