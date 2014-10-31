@@ -379,7 +379,7 @@
                  helppath="idv.data.choosers.imagechooser"
                  showdetails="true"
                  includeNavComp="true"
-                 class="ucar.unidata.idv.chooser.adde.AddeImageChooser" />
+                 class="edu.wisc.ssec.mcidasv.chooser.adde.ImageChooser" />
     </panel>
 
 	<!--                       -->
