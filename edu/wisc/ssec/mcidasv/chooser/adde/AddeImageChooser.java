@@ -129,7 +129,7 @@ public class AddeImageChooser extends AddeChooser implements
                     0, 0, true);
 
     /** _more_ */
-    private static final int SIZE_THRESHOLD = 50;
+    public static final int SIZE_THRESHOLD = 50;
 
     /** default magnification */
     private static final int DEFAULT_MAG = 0;
