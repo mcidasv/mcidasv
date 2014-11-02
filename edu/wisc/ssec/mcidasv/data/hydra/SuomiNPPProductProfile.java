@@ -90,10 +90,13 @@ public class SuomiNPPProductProfile {
 	}
 	
 	/**
-	 * See if for a given N_Collection_Short_Name attribute, the profile is present
-	 * @param pathStr the directory the XML Product Profiles reside
-	 * @param attrName The attribute name our file should match
-	 * @return the full file name for the XML Product Profile
+	 * See if for a given N_Collection_Short_Name attribute, the profile is
+	 * present.
+	 *
+	 * @param attrName The attribute name our file should match. {@code null}
+	 * is allowed.
+	 *
+	 * @return Full file name for the XML Product Profile, or {@code null}.
 	 */
 	
 	public String getProfileFileName(String attrName) {
@@ -140,8 +143,11 @@ public class SuomiNPPProductProfile {
 	}
 
 	/**
-	 * @param mcvJar
-	 * @return the File object which for mcidasv.jar, or null if not found
+	 * Attempts to locate {@code mcidasv.jar} within the
+	 * {@literal "classpath"}.
+	 *
+	 * @return {@code File} object which for mcidasv.jar, or {@code null} if
+	 * not found
 	 */
 	
 	private File findMcVJar() {
@@ -404,9 +410,12 @@ public class SuomiNPPProductProfile {
 	}
 
 	/**
-	 * Check if this product profile has a product AND metadata
-	 * Checking presence of a Range alone is not sufficient.
-	 * @param product name
+	 * Check if this product profile has a product AND metadata.
+	 *
+	 * <p>Note: Checking presence of a Range alone is not sufficient.</p>
+	 *
+	 * @param name {@literal "Product"} name.
+	 *
 	 * @return true if both conditions met
 	 */
 	
