@@ -498,9 +498,12 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
    
    /**
-    * Based on the names of the variable dimensions, determine the in-track index
-    * @param dimNames names of dimensions - should match static strings in relevant classes
-    * @return correct index (0 or greater), or -1 if error
+    * Based on the names of the variable dimensions, determine the in-track index.
+    *
+    * @param v {@code Variable} that {@literal "contains"} dimension names that
+    * allow for inference of the in-track index. {@code null} is allowed.
+    *
+    * @return correct index (0 or greater), or -1 if error.
     */
    
    private int getInTrackIndex(Variable v) {
