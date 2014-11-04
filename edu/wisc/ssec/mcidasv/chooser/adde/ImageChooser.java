@@ -34,11 +34,15 @@ import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
@@ -46,6 +50,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -58,6 +63,7 @@ import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.data.imagery.ImageDataset;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.chooser.TimesChooser;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
@@ -311,50 +317,83 @@ public class ImageChooser extends AddeImageChooser implements Constants {
         });
         addDescComp(previewBox);
 
+        // time driver checkbox
+//        JLabel driverLabel = McVGuiUtils.makeLabelRight("Time Driver:");
+//        addDescComp(driverLabel);
+//        JCheckBox driverBox = new JCheckBox("Match time driver", getDoTimeDrivers());
+//        driverBox.setToolTipText("Use the times from the time driver in the display.");
+//        addDescComp(driverBox);
+
         GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(LEADING)
+            layout.createParallelGroup(LEADING)
                 .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                        .addComponent(descriptorLabel)
-                                        .addGap(GAP_RELATED)
-                                        .addComponent(descriptorComboBox))
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(timesLabel)
-                                                .addGap(GAP_RELATED)
-                                                .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
-                                                .addGroup(layout.createSequentialGroup()
-                                                        .addComponent(navigationLabel)
-                                                        .addGap(GAP_RELATED)
-                                                        .addComponent(navComboBox))
-                                                        .addGroup(layout.createSequentialGroup()
-                                                                .addComponent(previewLabel)
-                                                                .addGap(GAP_RELATED)
-                                                                .addComponent(previewBox))))
+                    .addGroup(layout.createParallelGroup(LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(descriptorLabel)
+                            .addGap(GAP_RELATED)
+                            .addComponent(descriptorComboBox))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(timesLabel)
+                            .addGap(GAP_RELATED)
+                            .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(navigationLabel)
+                            .addGap(GAP_RELATED)
+                            .addComponent(navComboBox))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(previewLabel)
+                            .addGap(GAP_RELATED)
+                            .addComponent(previewBox))))
+//                            .addGroup(layout.createSequentialGroup()
+//                                .addComponent(driverLabel)
+//                                .addGap(GAP_RELATED)
+//                                .addComponent(driverBox))))
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(LEADING)
+            layout.createParallelGroup(LEADING)
                 .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(BASELINE)
-                                .addComponent(descriptorLabel)
-                                .addComponent(descriptorComboBox))
-                                .addPreferredGap(RELATED)
-                                .addGroup(layout.createParallelGroup(LEADING)
-                                        .addComponent(timesLabel)
-                                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addPreferredGap(RELATED)
-                                        .addGroup(layout.createParallelGroup(LEADING)
-                                                .addComponent(navigationLabel)
-                                                .addComponent(navComboBox))
-                                                .addGroup(layout.createParallelGroup(LEADING)
-                                                        .addComponent(previewLabel)
-                                                        .addComponent(previewBox)))
+                    .addGroup(layout.createParallelGroup(BASELINE)
+                        .addComponent(descriptorLabel)
+                        .addComponent(descriptorComboBox))
+                    .addPreferredGap(RELATED)
+                    .addGroup(layout.createParallelGroup(LEADING)
+                        .addComponent(timesLabel)
+                        .addComponent(timesPanel, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addPreferredGap(RELATED)
+                    .addGroup(layout.createParallelGroup(LEADING)
+                        .addComponent(navigationLabel)
+                        .addComponent(navComboBox))
+                    .addGroup(layout.createParallelGroup(LEADING)
+                        .addComponent(previewLabel)
+                        .addComponent(previewBox)))
+//                    .addGroup(layout.createParallelGroup(LEADING)
+//                        .addComponent(driverLabel)
+//                        .addComponent(driverBox)))
         );
         
         setInnerPanel(myPanel);
         return super.doMakeContents(true);
+    }
+
+    /**
+     * Set the relative and absolute extra components.
+     */
+    @Override protected JPanel makeTimesPanel() {
+        JPanel timesPanel = super.makeTimesPanel(false, true, true);
+
+        // Make a new timesPanel that has extra components tacked on the
+        // bottom, inside the tabs
+        Component[] comps = timesPanel.getComponents();
+
+        if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
+            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
+            timesCardPanelExtra.add(new JPanel(), "relative");
+            timesCardPanelExtra.add(getExtraTimeComponent(), "absolute");
+            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
+        }
+        return timesPanel;
     }
 
     /**
@@ -459,7 +498,7 @@ public class ImageChooser extends AddeImageChooser implements Constants {
         ht.put(DataSelection.PROP_CHOOSERTIMEMATCHING, getDoTimeDrivers());
         getDataSourceProperties(ht);
         Object bandName = getSelectedBandName();
-        if ((bandName != null) && !(bandName.equals(ALLBANDS.toString()))) {
+        if ((bandName != null) && !bandName.equals(ALLBANDS.toString())) {
             ht.put(DATA_NAME_KEY, bandName);
         }
         ht.put("allBands", bandDirs);
