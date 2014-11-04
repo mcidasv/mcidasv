@@ -289,20 +289,15 @@ if [ "${PLATFORM_CHOICE}" = "linux64" ]; then
 	fi
 fi
 if [ "${PLATFORM_CHOICE}" = "darwin" ]; then
-	FILE=libgfortran.3.dylib
-	echo "Copying ${FILE}..."
-	if [ -r "${DEST_DIR}/${FILE}" ]; then
-		cp ${DEST_DIR}/${FILE} ${DEST_DIR_BIN}/${FILE}
-	else
-		echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
-	fi
-	FILE=libquadmath.0.dylib
-	echo "Copying ${FILE}..."
-	if [ -r "${DEST_DIR}/${FILE}" ]; then
-		cp ${DEST_DIR}/${FILE} ${DEST_DIR_BIN}/${FILE}
-	else
-		echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
-	fi
+	FILES="libgcc_s.1.dylib libgfortran.3.dylib libquadmath.0.dylib"
+	for FILE in ${FILES}; do
+		echo "Copying ${FILE}..."
+		if [ -r "${DEST_DIR}/${FILE}" ]; then
+			cp ${DEST_DIR}/${FILE} ${DEST_DIR_BIN}/${FILE}
+		else
+			echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
+		fi
+	done
 fi
 
 # Compress & cleanup
