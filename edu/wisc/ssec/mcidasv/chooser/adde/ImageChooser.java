@@ -34,15 +34,13 @@ import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.Action;
+import java.awt.Component;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
@@ -63,7 +61,6 @@ import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.data.imagery.ImageDataset;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.chooser.TimesChooser;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
@@ -72,11 +69,11 @@ import ucar.unidata.xml.XmlObjectStore;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
-
 /**
- * Widget to select images from a remote ADDE server
- * Displays a list of the descriptors (names) of the image datasets
- * available for a particular ADDE group on the remote server.
+ * Chooser that allows users to select images from a remote ADDE server.
+ *
+ * <p>Displays a list of the descriptors (names) of the image datasets
+ * available for a particular ADDE group on the remote server.</p>
  */
 public class ImageChooser extends AddeImageChooser implements Constants {
 
@@ -115,14 +112,14 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     /** string for ALL */
     private static final String ALL = "ALL";
 
-    private static JCheckBox previewBox = null;
+    private JCheckBox previewBox = null;
 
 
     /**
-     * Construct an Adde image selection widget
+     * Construct an ADDE image selection widget.
      *
-     * @param mgr The chooser manager
-     * @param root The chooser.xml node
+     * @param mgr Chooser manager.
+     * @param root Chooser XML node.
      */
     public ImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
@@ -131,14 +128,14 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     }
     
     /**
-     * Return the parameter type associated with this chooser.  Override!
+     * Return the parameter type associated with this chooser.
      */
     @Override protected String getParameterSetType() {
         return "addeimagery";
     }
     
     /**
-     * Return the data source ID.  Used by extending classes.
+     * Return the data source ID. Used by extending classes.
      */
     @Override protected String getDataSourceId() {
         return "ADDE.IMAGE";
@@ -175,8 +172,9 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     }
     
     /**
-     * Get the list of BandInfos for the current selected images
-     * @return list of BandInfos
+     * Get the list of BandInfos for the current selected images.
+     *
+     * @return List of BandInfos.
      */
     public List<BandInfo> getSelectedBandInfos() {
         return super.getBandInfos();
@@ -184,12 +182,12 @@ public class ImageChooser extends AddeImageChooser implements Constants {
 
     /**
      * Get the value for the given property. This can either be the value
-     * supplied by the end user through the advanced GUI or is the default
+     * supplied by the end user through the advanced GUI or is the default.
      *
-     * @param prop The property
-     * @param ad The AreaDirectory
+     * @param prop The property.
+     * @param ad The AreaDirectory.
      *
-     * @return The value of the property to use in the request string
+     * @return Value of the property to use in the request string.
      */
     @Override protected String getPropValue(String prop, AreaDirectory ad) {
         String propValue = super.getPropValue(prop, ad);
@@ -200,12 +198,12 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     }
 
     /**
-     * Get the default value for a key
+     * Get the default value for a key.
      *
-     * @param property property (key type)
-     * @param dflt default value
+     * @param property Property (key type).
+     * @param dflt Default value.
      *
-     * @return Value for key or dflt if not found.
+     * @return Value for key or {@code dflt} if not found.
      */
     @Override protected String getDefault(String property, String dflt) {
         String paramDefault = super.getDefault(property, dflt);
@@ -224,13 +222,11 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     }
     
     /**
-     * Get the DataSource properties
+     * Get the DataSource properties.
      * 
-     * @param ht
-     *            Hashtable of properties
+     * @param ht Hashtable of properties.
      */
-    @Override
-    protected void getDataSourceProperties(Hashtable ht) {
+    @Override protected void getDataSourceProperties(Hashtable ht) {
         super.getDataSourceProperties(ht);
         if (restoreElement != null) {
             if (restoreElement.hasAttribute(ATTR_BAND)) {
@@ -261,18 +257,15 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     }
     
     /**
-     * Should we use the user supplied property
+     * Should we use the user supplied property.
      * 
-     * @param propId
-     *            The property
+     * @param propId The property.
      * 
-     * @return Should use the value from the advanced widget
+     * @return Should use the value from the advanced widget.
      */
     protected boolean usePropFromUser(String propId) {
         boolean fromSuper = super.usePropFromUser(propId);
-        if (propId.equals(PROP_UNIT)) {
-            fromSuper = false;
-        } else if (propId.equals(PROP_BAND)) {
+        if (PROP_UNIT.equals(propId) || PROP_BAND.equals(propId)) {
             fromSuper = false;
         }
         return fromSuper;
@@ -281,10 +274,9 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     /**
      * Make the UI for this selector.
      *
-     * @return The gui
+     * @return The GUI.
      */
-    @Override
-    public JComponent doMakeContents() {
+    @Override public JComponent doMakeContents() {
         JPanel myPanel = new JPanel();
 
         JLabel timesLabel = McVGuiUtils.makeLabelRight("Times:");
@@ -317,13 +309,6 @@ public class ImageChooser extends AddeImageChooser implements Constants {
         });
         addDescComp(previewBox);
 
-        // time driver checkbox
-//        JLabel driverLabel = McVGuiUtils.makeLabelRight("Time Driver:");
-//        addDescComp(driverLabel);
-//        JCheckBox driverBox = new JCheckBox("Match time driver", getDoTimeDrivers());
-//        driverBox.setToolTipText("Use the times from the time driver in the display.");
-//        addDescComp(driverBox);
-
         GroupLayout layout = new GroupLayout(myPanel);
         myPanel.setLayout(layout);
         layout.setHorizontalGroup(
@@ -346,10 +331,6 @@ public class ImageChooser extends AddeImageChooser implements Constants {
                             .addComponent(previewLabel)
                             .addGap(GAP_RELATED)
                             .addComponent(previewBox))))
-//                            .addGroup(layout.createSequentialGroup()
-//                                .addComponent(driverLabel)
-//                                .addGap(GAP_RELATED)
-//                                .addComponent(driverBox))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(LEADING)
@@ -368,11 +349,7 @@ public class ImageChooser extends AddeImageChooser implements Constants {
                     .addGroup(layout.createParallelGroup(LEADING)
                         .addComponent(previewLabel)
                         .addComponent(previewBox)))
-//                    .addGroup(layout.createParallelGroup(LEADING)
-//                        .addComponent(driverLabel)
-//                        .addComponent(driverBox)))
         );
-        
         setInnerPanel(myPanel);
         return super.doMakeContents(true);
     }
@@ -397,9 +374,8 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     }
 
     /**
-     * User said go, we go. Simply get the list of images from the imageChooser
-     * and create the ADDE.IMAGE DataSource
-     *
+     * User said go, we go. Simply get the list of images from the Image Chooser
+     * and create the {@code ADDE.IMAGE} data source.
      */
     @Override public void doLoadInThread() {
         if (!checkForValidValues()) {
