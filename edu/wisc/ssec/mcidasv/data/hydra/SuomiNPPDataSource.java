@@ -189,9 +189,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     /**
      * Construct a new Suomi NPP HDF5 data source.
-     * @param  descriptor  descriptor for this {@code DataSource}
-     * @param  sources   List of filenames
-     * @param  properties  hashtable of properties
+     *
+     * @param descriptor Descriptor for this {@code DataSource}.
+     * @param newSources List of filenames.
+     * @param properties Hashtable of properties.
      *
      * @throws VisADException problem creating data
      */

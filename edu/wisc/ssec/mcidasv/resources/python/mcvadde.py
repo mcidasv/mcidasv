@@ -125,11 +125,16 @@ def _normalizeUnits(units):
         normalized = ['BRIT']
     return normalized
     
+# note: if you are looking to add a new format you may need to make changes to 
+# LocalAddeEntry's ServerName and AddeFormat enums, and the format combo boxes 
+# in LocalEntryEditor and LocalEntryShortcut.
 _formats = {
     "AMSR-E Rain Product":                                     AddeFormat.AMSRE_RAIN_PRODUCT,
     "AMRR":                                                    AddeFormat.AMSRE_RAIN_PRODUCT,
     "AMSR-E L 1b":                                             AddeFormat.AMSRE_L1B,
     "AMSR":                                                    AddeFormat.AMSRE_L1B,
+    "AMSR-E L 2a":                                             AddeFormat.AMSRE_L2A,
+    "AMSE":                                                    AddeFormat.AMSRE_L2A,
     "LRIT GOES-9":                                             AddeFormat.LRIT_GOES9,
     "FSDX_G9":                                                 AddeFormat.LRIT_GOES9,
     "LRIT GOES-10":                                            AddeFormat.LRIT_GOES10,
