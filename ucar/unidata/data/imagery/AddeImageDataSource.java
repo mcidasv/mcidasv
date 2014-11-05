@@ -26,6 +26,8 @@ import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaFile;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.*;
 import ucar.unidata.geoloc.LatLonPoint;
 import ucar.unidata.geoloc.LatLonPointImpl;
@@ -64,6 +66,8 @@ import javax.swing.JOptionPane;
  */
 
 public class AddeImageDataSource extends ImageDataSource {
+
+    private static final Logger logger = LoggerFactory.getLogger(AddeImageDataSource.class);
 
     /* ADDE request string */
 
@@ -135,7 +139,8 @@ public class AddeImageDataSource extends ImageDataSource {
     public AddeImageDataSource(DataSourceDescriptor descriptor, String image,
                                Hashtable properties)
             throws VisADException {
-        super(descriptor, new String[] { image }, properties);
+        super(descriptor, new String[]{image}, properties);
+        logger.trace("descriptor='{}' image='{}' properties='{}'", descriptor, image, properties);
     }
 
     /**
@@ -152,6 +157,7 @@ public class AddeImageDataSource extends ImageDataSource {
                                String[] images, Hashtable properties)
             throws VisADException {
         super(descriptor, images, properties);
+        logger.trace("descriptor='{}' images='{}' properties='{}'", descriptor, images, properties);
     }
 
     /**
@@ -168,6 +174,7 @@ public class AddeImageDataSource extends ImageDataSource {
                                Hashtable properties)
             throws VisADException {
         super(descriptor, images, properties);
+        logger.trace("descriptor='{}' images='{}' properties='{}'", descriptor, images, properties);
     }
 
 
@@ -184,7 +191,7 @@ public class AddeImageDataSource extends ImageDataSource {
                                ImageDataset ids, Hashtable properties)
             throws VisADException {
         super(descriptor, ids, properties);
-
+        logger.trace("desc='{}' ids='{}' props='{}'", descriptor, ids, properties);
         List                descs = ids.getImageDescriptors();
         AddeImageDescriptor aid   = (AddeImageDescriptor) descs.get(0);
         this.source = getPreviewSource(aid.getSource(), aid.getDirectory());
@@ -196,7 +203,6 @@ public class AddeImageDataSource extends ImageDataSource {
             this.bandId = (BandInfo) oj.get(0);
         }
     }
-
 
     /**
      * _more_
