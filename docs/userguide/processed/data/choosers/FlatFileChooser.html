@@ -31,7 +31,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Fla
 
 <p>The <strong>General-&gt;Flat files</strong> chooser allows generic flat (2-dimensional) data to be loaded.  The user must supply information about the format of the data by either specifying it directly or by loading a properly formatted header file.  Flat files can be binary, ASCII values, or standard images (JPEG, GIF, etc.), and may contain multiple bands.  Navigation may be loaded via separate navigation files or by specifying a bounding box for the data.</p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/FlatFileChooser.gif" alt="Image 1: Flat File Chooser" width="1012" height="717"><br>
+<div class="images"><img src="images/FlatFileChooser.gif" width="1011" height="710" alt="Image 1: Flat File Chooser"><br>
 <span class="caption">Image 1: Flat File Chooser</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
@@ -44,14 +44,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Fla
       <li class="propertylistitem"><strong>Lines</strong> - Lists the number of lines (rows) in the data.</li>
       <li class="propertylistitem"><strong>Bands</strong> - Lists the number of bands (layers) in the data.</li>
       <li class="propertylistitem"><strong>Units</strong> - Lists the unit type of the data.</li>
-      <li class="propertylistitem"><strong>Sampling</strong> - Lists the number of points to skip in each dimension when loading the data. This is useful with very large data files.</li>
+      <li class="propertylistitem"><strong>Sampling</strong> - Sets the number of points to skip in each dimension when loading the data. This is useful with very large data files.</li>
     </ul>
     <li class="propertylistitem"><strong>Properties-&gt;Navigation -</strong></li>
   <ul class="propertylist">
       <li class="propertylistitem"><strong>Files</strong> - Specifies navigation files containing grids of Lat/Lon points  by specified by clicking on the <img src="images/BrowseFiles.gif" alt="Browse button" width="24" height="24"align=absmiddle> button.</li>
       <li class="propertylistitem"><strong>Bounds</strong> - Specifies a navigation bounding box by entering Upper Left (UL) and Lower Right (LR) Lat/Lon pairs.</li>
       <li class="propertylistitem"><strong>Scale</strong> - Specifies the scaling factor if the Lat/Lon navigation dimensions if different than the data.</li>
-    <li class="propertylistitem"><strong>East positive</strong> - Indicates that the data is East positive.</li>
+    <li class="propertylistitem"><strong>East positive</strong> - Indicates that the longitude values are East positive.</li>
     </ul>
   <li class="propertylistitem"><strong>Properties-&gt;Format -</strong></li>
   <ul class="propertylist">
