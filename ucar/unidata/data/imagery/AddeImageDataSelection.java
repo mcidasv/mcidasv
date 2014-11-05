@@ -26,6 +26,8 @@ import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.*;
 import ucar.unidata.geoloc.*;
 import ucar.unidata.idv.MapViewManager;
@@ -73,6 +75,8 @@ import javax.swing.event.ChangeListener;
  * To change this template use File | Settings | File Templates.
  */
 public class AddeImageDataSelection {
+
+    private static final Logger logger = LoggerFactory.getLogger(AddeImageAdvancedPanel.class);
 
     /** _more_ */
     public AddeImageDataSource dataSource;
@@ -279,8 +283,11 @@ public class AddeImageDataSelection {
         /** area */
         protected static final String TYPE_AREA = "Area Coordinates";
 
+        /** Image coordinates */
+        protected static final String TYPE_IMAGE = "Image Coordinates";
+
         /** _more_ */
-        String[] coordinateTypes = { TYPE_LATLON, TYPE_AREA };
+        String[] coordinateTypes = { TYPE_LATLON, TYPE_AREA, TYPE_IMAGE };
 
         /** _more_ */
         String[] locations = { "Center", "Upper Left" };
@@ -1074,11 +1081,30 @@ public class AddeImageDataSelection {
                     int selectedIndex =
                         coordinateTypeComboBox.getSelectedIndex();
                     flipLocationPanel(selectedIndex);
-                    if(selectedIndex == 0){
-                        urlInfo.setLocateKey(AddeImageURL.KEY_LATLON);
-                    } else {
-                        urlInfo.setLocateKey(AddeImageURL.KEY_LINEELE);
+                    switch (selectedIndex) {
+                        case 0:
+                            urlInfo.setLocateKey(AddeImageURL.KEY_LATLON);
+//                            urlInfo.setLocateType('E');
+                            break;
+                        case 1:
+                            urlInfo.setLocateKey(AddeImageURL.KEY_LINEELE);
+//                            urlInfo.setLocateType('A');
+                            break;
+                        case 2:
+//                            urlInfo.setLocateKey(AddeImageURL.KEY_LINEELE);
+//                            urlInfo.setLocateType('I');
+                            logger.trace("image coordinates");
+                            break;
+                        default:
+                            logger.warn("unknown coordinate selection: {}", selectedIndex);
+                            break;
                     }
+//                    if(selectedIndex == 0){
+//                        urlInfo.setLocateKey(AddeImageURL.KEY_LATLON);
+//                    } else {
+//                        urlInfo.setLocateKey(AddeImageURL.KEY_LINEELE);
+//                    }
+
                 }
             });
 
@@ -1114,16 +1140,35 @@ public class AddeImageDataSelection {
             ActionListener latLonChange = new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
                     String type = getCoordinateType();
-                    if (type.equals(TYPE_LATLON)) {
-                        setLatitude();
-                        setLongitude();
-                        convertToLineEle();
-                        updatePlace();
-                    } else {
-                        setLineElement();
-                        convertToLatLon();
-                        updatePlace();
+                    switch (type) {
+                        case TYPE_LATLON:
+                            setLatitude();
+                            setLongitude();
+                            convertToLineEle();
+                            updatePlace();
+                            break;
+                        case TYPE_AREA:
+                            setLineElement();
+                            convertToLatLon();
+                            updatePlace();
+                            break;
+                        case TYPE_IMAGE:
+                            logger.trace("image coordinates!");
+                            break;
+                        default:
+                            logger.trace("unknown type: '{}'", type);
+                            break;
                     }
+//                    if (type.equals(TYPE_LATLON)) {
+//                        setLatitude();
+//                        setLongitude();
+//                        convertToLineEle();
+//                        updatePlace();
+//                    } else {
+//                        setLineElement();
+//                        convertToLatLon();
+//                        updatePlace();
+//                    }
                 }
             };
 
