@@ -133,7 +133,7 @@ public class ImageDataSelectionInfo {
     public String version;
 
     /** _more_ */
-    List<String> leftovers = new ArrayList<String>();
+    List<String> leftovers = new ArrayList<>();
 
     /**
      * Construct a ImageDataSelectionInfo
@@ -816,42 +816,40 @@ public class ImageDataSelectionInfo {
      * @return _more_
      */
     public String getURLString() {
-        StringBuffer buf = new StringBuffer(AddeImageURL.ADDE_PROTOCOL);
+        StringBuilder buf = new StringBuilder(AddeImageURL.ADDE_PROTOCOL);
         buf.append("://");
         buf.append(host);
-        buf.append("/");
+        buf.append('/');
         buf.append(requestType);
-        buf.append("?");
-        appendKeyValue(buf, AddeImageURL.KEY_PORT, "" + getPort());
+        buf.append('?');
+        appendKeyValue(buf, AddeImageURL.KEY_PORT, Integer.toString(getPort()));
         appendKeyValue(buf, AddeImageURL.KEY_COMPRESS, getCompression());
         appendKeyValue(buf, AddeImageURL.KEY_USER, getUser());
-        appendKeyValue(buf, AddeImageURL.KEY_PROJ, "" + getProject());
+        appendKeyValue(buf, AddeImageURL.KEY_PROJ, Integer.toString(getProject()));
         appendKeyValue(buf, AddeImageURL.KEY_VERSION, getVersion());
         appendKeyValue(buf, AddeImageURL.KEY_DEBUG,
                        Boolean.toString(getDebug()));
-        appendKeyValue(buf, AddeImageURL.KEY_TRACE, "" + getTrace());
-        appendKeyValue(buf, AddeImageURL.KEY_GROUP, "" + getGroup());
+        appendKeyValue(buf, AddeImageURL.KEY_TRACE, Integer.toString(getTrace()));
+        appendKeyValue(buf, AddeImageURL.KEY_GROUP, getGroup());
         appendKeyValue(buf, AddeImageURL.KEY_DESCRIPTOR,
-                       "" + getDescriptor());
-        appendKeyValue(buf, AddeImageURL.KEY_BAND, "" + getBand());
+                       getDescriptor());
+        appendKeyValue(buf, AddeImageURL.KEY_BAND, getBand());
         if (getLocateKey().equals(AddeImageURL.KEY_LINEELE)) {
-            appendKeyValue(buf, AddeImageURL.KEY_LINEELE,
-                           "" + getLocate());
+            appendKeyValue(buf, AddeImageURL.KEY_LINEELE, getLocate());
         } else {
-            appendKeyValue(buf, AddeImageURL.KEY_LATLON,
-                           "" + getLocate());
+            appendKeyValue(buf, AddeImageURL.KEY_LATLON, getLocate());
         }
 
-        appendKeyValue(buf, AddeImageURL.KEY_PLACE, "" + getPlaceValue());
-        appendKeyValue(buf, AddeImageURL.KEY_SIZE, "" + getSizeValue());
-        appendKeyValue(buf, AddeImageURL.KEY_UNIT, "" + getUnit());
-        appendKeyValue(buf, AddeImageURL.KEY_MAG, "" + getMagValue());
-        appendKeyValue(buf, AddeImageURL.KEY_SPAC, "" + getSpacing());
-        appendKeyValue(buf, AddeImageURL.KEY_NAV, "" + getNavType());
+        appendKeyValue(buf, AddeImageURL.KEY_PLACE, getPlaceValue());
+        appendKeyValue(buf, AddeImageURL.KEY_SIZE, getSizeValue());
+        appendKeyValue(buf, AddeImageURL.KEY_UNIT, getUnit());
+        appendKeyValue(buf, AddeImageURL.KEY_MAG, getMagValue());
+        appendKeyValue(buf, AddeImageURL.KEY_SPAC, Integer.toString(getSpacing()));
+        appendKeyValue(buf, AddeImageURL.KEY_NAV, getNavType());
 
         if ( !leftovers.isEmpty()) {
             for (String leftover : leftovers) {
-                buf.append("&");
+                buf.append('&');
                 buf.append(leftover);
             }
         }
@@ -868,13 +866,13 @@ public class ImageDataSelectionInfo {
      * @param name _more_
      * @param value _more_
      */
-    protected void appendKeyValue(StringBuffer buf, String name,
+    protected void appendKeyValue(StringBuilder buf, String name,
                                   String value) {
         if ((buf.length() == 0) || (buf.charAt(buf.length() - 1) != '?')) {
-            buf.append("&");
+            buf.append('&');
         }
         buf.append(name);
-        buf.append("=");
+        buf.append('=');
         buf.append(value);
     }
 }
