@@ -23,6 +23,8 @@ package ucar.unidata.data.imagery;
 
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
@@ -43,6 +45,8 @@ import java.util.regex.Pattern;
  * To change this template use File | Settings | File Templates.
  */
 public class ImageDataSelectionInfo {
+
+    private static final Logger logger = LoggerFactory.getLogger(ImageDataSelectionInfo.class);
 
     /** _more_ */
     public double locationLat;
@@ -142,7 +146,7 @@ public class ImageDataSelectionInfo {
      * @param sourceURL _more_
      */
     public ImageDataSelectionInfo(String sourceURL) {
-
+        logger.trace("sourceUrl='{}'", sourceURL);
         URL url = null;
         try {
             url = new URL(sourceURL);
@@ -851,7 +855,10 @@ public class ImageDataSelectionInfo {
                 buf.append(leftover);
             }
         }
-        return buf.toString();
+        String tmp = buf.toString();
+        logger.trace("url='{}'", tmp);
+        return tmp;
+//        return buf.toString();
     }
 
     /**
