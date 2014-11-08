@@ -293,10 +293,10 @@ public class AddeImageDataSelection {
         String[] locations = { "Center", "Upper Left" };
 
         /** _more_ */
-        JComboBox coordinateTypeComboBox;
+        JComboBox<String> coordinateTypeComboBox;
 
         /** _more_ */
-        JComboBox locationComboBox;
+        JComboBox<String> locationComboBox;
 
         /** Input for lat/lon center point */
         protected LatLonWidget latLonWidget = new LatLonWidget();
@@ -1075,7 +1075,7 @@ public class AddeImageDataSelection {
             //allComps1.add(new JLabel(" "));
             //allComps1.add(new JLabel(" "));
 
-            coordinateTypeComboBox = new JComboBox(coordinateTypes);
+            coordinateTypeComboBox = new JComboBox<>(coordinateTypes);
             coordinateTypeComboBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
                     int selectedIndex =
@@ -1129,7 +1129,7 @@ public class AddeImageDataSelection {
                 }
             };
 
-            locationComboBox = new JComboBox(locations);
+            locationComboBox = new JComboBox<>(locations);
             locationComboBox.addActionListener(placeChange);
             setPlace(urlInfo.getPlaceValue());
 
@@ -1156,19 +1156,9 @@ public class AddeImageDataSelection {
                             logger.trace("image coordinates!");
                             break;
                         default:
-                            logger.trace("unknown type: '{}'", type);
+                            logger.trace("unknown coordinate selection: '{}'", type);
                             break;
                     }
-//                    if (type.equals(TYPE_LATLON)) {
-//                        setLatitude();
-//                        setLongitude();
-//                        convertToLineEle();
-//                        updatePlace();
-//                    } else {
-//                        setLineElement();
-//                        convertToLatLon();
-//                        updatePlace();
-//                    }
                 }
             };
 
@@ -1378,10 +1368,11 @@ public class AddeImageDataSelection {
             lineMagSlider.setMajorTickSpacing(1);
             lineMagSlider.setSnapToTicks(true);
             lineMagSlider.setExtent(1);
-            if(lmag > 0)
+            if(lmag > 0) {
                 lineMagSlider.setValue(lmag - 1);
-            else
+            } else {
                 lineMagSlider.setValue(lmag + 1);
+            }
             //lineMagSlider.setValue(lmag + 1);
             lineMagComps[0].setToolTipText("Change the line magnification");
             JComponent[] elementMagComps =
@@ -1390,10 +1381,11 @@ public class AddeImageDataSelection {
             elementMagSlider.setExtent(1);
             elementMagSlider.setMajorTickSpacing(1);
             elementMagSlider.setSnapToTicks(true);
-            if(emag > 0)
+            if(emag > 0) {
                 elementMagSlider.setValue(emag - 1);
-            else
+            } else {
                 elementMagSlider.setValue(emag + 1);
+            }
             elementMagComps[0].setToolTipText(
                 "Change the element magnification");
             lineMagSlider.setToolTipText(
