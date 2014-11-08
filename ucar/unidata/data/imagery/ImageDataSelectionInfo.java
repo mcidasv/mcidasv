@@ -33,6 +33,7 @@ import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +48,23 @@ import java.util.regex.Pattern;
 public class ImageDataSelectionInfo {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageDataSelectionInfo.class);
+
+    public enum LineElementType {
+        // default
+        IMAGE('I'),
+        EARTH('E'),
+        AREA('A');
+
+        private final char symbol;
+
+        LineElementType(char symbol) {
+            this.symbol = symbol;
+        }
+
+        public char getSymbol() {
+            return symbol;
+        }
+    }
 
     /** _more_ */
     public double locationLat;
@@ -92,6 +110,9 @@ public class ImageDataSelectionInfo {
 
     /** _more_ */
     public String locateKey;
+
+    /** only applicable if we're a LINE/ELE URL... */
+    public LineElementType locateType;
 
     /** _more_ */
     public int line;
@@ -607,17 +628,32 @@ public class ImageDataSelectionInfo {
         //super.setLocateValue(value);
         String       locKey  = getLocateKey();
         List<String> locList = StringUtil.split(value, " ");
-        if ((locKey != null) && locKey.equals(AddeImageURL.KEY_LINEELE)) {
+        if (AddeImageURL.KEY_LINEELE.equals(locKey)) {
             this.locationLine = Integer.parseInt(locList.get(0));
             this.locationElem = Integer.parseInt(locList.get(1));
             this.locateValue  = this.locationLine + " " + this.locationElem;
+
+            // this stuff is only applicable to lineele
+            if (locList.size() == 3) {
+                LineElementType temp = symbolToType(locList.get(2));
+                if (temp != null) {
+                    setLocateType(temp);
+                }
+            }
         } else {
             this.locationLat = Double.parseDouble(locList.get(0));
             this.locationLon = Double.parseDouble(locList.get(1));
             this.locateValue = Misc.format(this.locationLat) + " "
                                + Misc.format(this.locationLon);
         }
+    }
 
+    public void setLocateType(LineElementType value) {
+        this.locateType = value;
+    }
+
+    public LineElementType getLocateType() {
+        return this.locateType;
     }
 
     /**
@@ -637,11 +673,9 @@ public class ImageDataSelectionInfo {
     public String getLocate() {
         String locKey = getLocateKey();
 
-        if ((locKey != null) && locKey.equals(AddeImageURL.KEY_LINEELE)) {
-
+        if (AddeImageURL.KEY_LINEELE.equals(locKey)) {
             this.locateValue = this.locationLine + " " + this.locationElem;
         } else {
-
             this.locateValue = Misc.format(this.locationLat) + " "
                                + Misc.format(this.locationLon);
         }
@@ -835,7 +869,13 @@ public class ImageDataSelectionInfo {
                        getDescriptor());
         appendKeyValue(buf, AddeImageURL.KEY_BAND, getBand());
         if (getLocateKey().equals(AddeImageURL.KEY_LINEELE)) {
-            appendKeyValue(buf, AddeImageURL.KEY_LINEELE, getLocate());
+            LineElementType temp = getLocateType();
+            // default type for line/ele is image
+            if (temp == null) {
+                temp = LineElementType.IMAGE;
+            }
+            String locate = getLocate() + ' ' + temp.getSymbol();
+            appendKeyValue(buf, AddeImageURL.KEY_LINEELE, locate);
         } else {
             appendKeyValue(buf, AddeImageURL.KEY_LATLON, getLocate());
         }
@@ -874,5 +914,20 @@ public class ImageDataSelectionInfo {
         buf.append(name);
         buf.append('=');
         buf.append(value);
+    }
+
+    private LineElementType symbolToType(String symbol) {
+        LineElementType converted = null;
+        if ((symbol != null) && !symbol.isEmpty() && (symbol.length() == 1)) {
+            char c = symbol.charAt(0);
+            if (LineElementType.AREA.getSymbol() == c) {
+                converted = LineElementType.AREA;
+            } else if (LineElementType.EARTH.getSymbol() == c) {
+                converted = LineElementType.EARTH;
+            } else if (LineElementType.IMAGE.getSymbol() == c) {
+                converted = LineElementType.IMAGE;
+            }
+        }
+        return converted;
     }
 }
