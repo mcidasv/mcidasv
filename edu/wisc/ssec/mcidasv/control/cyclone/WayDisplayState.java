@@ -796,8 +796,6 @@ public class WayDisplayState {
 	/**
 	 * _more_
 	 * 
-	 * @return _more_
-	 * 
 	 * @throws Exception
 	 *             _more_
 	 */
