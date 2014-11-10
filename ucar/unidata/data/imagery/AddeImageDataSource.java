@@ -621,7 +621,7 @@ public class AddeImageDataSource extends ImageDataSource {
         String magValue = "";
        // if (isProgressiveResolution) {
         if (eleMag >= 1 || lineMag >= 1) {
-            magValue = DataUtil.makeSamplingLabel(eleMag, lineMag, "pixel");
+           magValue = makeSamplingLabel(eleMag, lineMag, "pixel");
             //System.out.println("newLine X newElement : " + lineMag + " "+ eleMag);
             //magValue = "Resolution: " + "-" + Integer.toString(lineMag)
             //           + " " + "-" + Integer.toString(eleMag);
@@ -643,6 +643,49 @@ public class AddeImageDataSource extends ImageDataSource {
         return descriptors;
 
 
+    }
+
+    /**
+     * Make a label for the stride/sampling
+     * @param xStride  the x stride
+     * @param yStride  the y stride
+     * @param pointType    the name for the point type
+     * @return
+     */
+    public static String makeSamplingLabel(int xStride, int yStride, String pointType) {
+        StringBuilder buf = new StringBuilder(64);
+        buf.append("Data Sampling: every ");
+        buf.append(getStrideLabel(xStride));
+        if (xStride != yStride) {
+            buf.append(" by ");
+            buf.append(getStrideLabel(yStride));
+        }
+        buf.append(' ');
+        buf.append(pointType);
+        return buf.toString();
+    }
+
+    /**
+     * Get a label for a stride value
+     * @param strideValue the value
+     * @return
+     */
+    private static String getStrideLabel(int strideValue) {
+        int remainder = strideValue%10;
+        if (strideValue == 2) {
+            //return "other";
+            return "2nd";
+            //} else if (strideValue == 3) {
+            //	return strideValue+"rd";
+        } else if (remainder == 1 && strideValue != 11) {
+            return strideValue+"st";
+        } else if (remainder == 2 && strideValue != 12) {
+            return strideValue+"nd";
+        } else if (remainder == 3 && strideValue != 13) {
+            return strideValue+"rd";
+        } else {
+            return strideValue+"th";
+        }
     }
 
     /**
