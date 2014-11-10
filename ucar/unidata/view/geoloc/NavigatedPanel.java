@@ -24,6 +24,8 @@
 package ucar.unidata.view.geoloc;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.*;
 import ucar.unidata.ui.BAMutil;
@@ -569,6 +571,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         BAMutil.addActionToMenu(menu, zoomOut);
         BAMutil.addActionToMenu(menu, zoomBack);
         BAMutil.addActionToMenu(menu, zoomDefault);
+        BAMutil.addActionToMenu(menu, activeDisplay);
 
         menu.addSeparator();
 
@@ -1531,7 +1534,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     // toolbars
 
     /** toolbar actions */
-    private AbstractAction zoomIn, zoomOut, zoomDefault, zoomBack;
+    private AbstractAction zoomIn, zoomOut, zoomDefault, zoomBack, activeDisplay;
 
     /** more toolbar actions */
     private AbstractAction moveUp, moveDown, moveLeft, moveRight;
@@ -1603,13 +1606,21 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         drawG();
     }
 
-
+    private static final Logger logger = LoggerFactory.getLogger(NavigatedPanel.class);
 
     /**
      * Make the default actions
      */
     private void makeActions() {
         // add buttons/actions
+        activeDisplay = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                logger.trace("(not yet) using active display!");
+            }
+        };
+//        BAMutil.setActionProperties(activeDisplay, "Home16", "Match Region of Active View", false, 'M', KeyEvent.VK_BACK_QUOTE);
+        BAMutil.setActionProperties(activeDisplay, "Home16", "REPLACE THIS", false, 'M', KeyEvent.VK_BACK_QUOTE);
+
         zoomIn = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 doZoomIn();
@@ -1707,7 +1718,10 @@ public class NavigatedPanel extends JPanel implements MouseListener,
          */
         NToolBar() {
             setFloatable(false);
-            AbstractButton b = BAMutil.addActionToContainer(this, zoomIn);
+            AbstractButton b = BAMutil.addActionToContainer(this, activeDisplay);
+            b.setName("activeDisplay");
+
+            b = BAMutil.addActionToContainer(this, zoomIn);
             b.setName("zoomIn");
 
             b = BAMutil.addActionToContainer(this, zoomOut);
