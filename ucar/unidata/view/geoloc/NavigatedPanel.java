@@ -99,6 +99,7 @@ import javax.swing.*;
 public class NavigatedPanel extends JPanel implements MouseListener,
         MouseMotionListener, KeyListener {
 
+    private static final Logger logger = LoggerFactory.getLogger(NavigatedPanel.class);
 
     /** _more_          */
     private static Color disabledColor = new Color(230, 230, 230);
@@ -731,7 +732,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
                                          double displayWidth,
                                          double displayHeight) {
         return navigate.calcTransform(rotate, displayX, displayY,
-                                      displayWidth, displayHeight);
+            displayWidth, displayHeight);
     }
 
 
@@ -935,7 +936,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         LatLonPoint ur = screenToEarth(new Point2D.Double(r.getX()
                              + r.getWidth(), r.getY()));
         LatLonPoint ll = screenToEarth(new Point2D.Double(r.getX(),
-                             r.getY() + r.getHeight()));
+            r.getY() + r.getHeight()));
         //        return new LatLonRect(ul, lr);
         return new LatLonRect(ll, ur);
     }
@@ -1606,7 +1607,9 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         drawG();
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(NavigatedPanel.class);
+    public void doUseActiveView() {
+        logger.trace("(not yet) using active display!");
+    }
 
     /**
      * Make the default actions
@@ -1615,11 +1618,10 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         // add buttons/actions
         activeDisplay = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                logger.trace("(not yet) using active display!");
+                doUseActiveView();
             }
         };
-//        BAMutil.setActionProperties(activeDisplay, "Home16", "Match Region of Active View", false, 'M', KeyEvent.VK_BACK_QUOTE);
-        BAMutil.setActionProperties(activeDisplay, "Home16", "REPLACE THIS", false, 'M', KeyEvent.VK_BACK_QUOTE);
+        BAMutil.setActionProperties(activeDisplay, "Airplane16", "NOT WORKING YET: Match Region of Active View", false, 'A', KeyEvent.VK_BACK_QUOTE);
 
         zoomIn = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
