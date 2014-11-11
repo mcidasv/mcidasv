@@ -23,6 +23,8 @@ package ucar.unidata.data.imagery;
 
 import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidas.AreaFile;
+import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
@@ -2090,17 +2092,22 @@ public class AddeImageDataSelection {
         public String USE_DISPLAYREGION = DataSelection.PROP_USEDISPLAYAREA;
 
         /** _more_ */
-        private String[] regionSubsetOptionLabels = new String[] {
-                                                        USE_DEFAULTREGION,
-                USE_SELECTEDREGION, USE_DISPLAYREGION };
+//        private String[] regionSubsetOptionLabels = new String[] {
+//                                                        USE_DEFAULTREGION,
+//                USE_SELECTEDREGION, USE_DISPLAYREGION };
+        private String[] regionSubsetOptionLabels = {
+            USE_SELECTEDREGION,
+            USE_DEFAULTREGION,
+            USE_DISPLAYREGION
+        };
 
         /** the regions selection options */
         private TwoFacedObject[] regionSubsetOptions =
             new TwoFacedObject[] {
-                new TwoFacedObject("Use Default Region",
-                                   DataSelection.PROP_USEDEFAULTAREA),
                 new TwoFacedObject("Select A Region",
                                    DataSelection.PROP_USESELECTEDAREA),
+                new TwoFacedObject("Use Default Region",
+                                   DataSelection.PROP_USEDEFAULTAREA),
                 new TwoFacedObject("Match Display Region",
                                    DataSelection.PROP_USEDISPLAYAREA) };
 
@@ -2109,7 +2116,8 @@ public class AddeImageDataSelection {
         private JComponent regionsListInfo;
 
         /** _more_ */
-        private String regionOption = USE_DEFAULTREGION;
+//        private String regionOption = USE_DEFAULTREGION;
+        private String regionOption = USE_SELECTEDREGION;
 
         /** _more_ */
         JComboBox regionOptionLabelBox;
@@ -2147,6 +2155,18 @@ public class AddeImageDataSelection {
             display = new NavigatedMapPanel(null, true, false,
                                             imagePreview.getPreviewImage(),
                                             aAdapter.getAreaFile());
+            AreaFile af = aAdapter.getAreaFile();
+            try {
+                AREACoordinateSystem acs = new AREACoordinateSystem(af);
+                ProjectionRect rect = new ProjectionRect(acs.getDefaultMapArea());
+                display.getNavigatedPanel().setEnabled(true);
+                display.getNavigatedPanel().setSelectRegionMode(true);
+                display.getNavigatedPanel().setSelectedRegion(rect);
+                display.getNavigatedPanel().drawG();
+            } catch (AreaFileException e) {
+
+            }
+
             this.eMag  = dataSource.getEMag();
             this.lMag  = dataSource.getLMag();
             this.eMag0  = dataSource.getEMag();
