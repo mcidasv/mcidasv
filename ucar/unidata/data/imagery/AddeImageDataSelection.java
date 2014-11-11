@@ -2159,14 +2159,10 @@ public class AddeImageDataSelection {
             try {
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
                 ProjectionRect rect = new ProjectionRect(acs.getDefaultMapArea());
-                display.getNavigatedPanel().setEnabled(true);
-                display.getNavigatedPanel().setSelectRegionMode(true);
                 display.getNavigatedPanel().setSelectedRegion(rect);
-                display.getNavigatedPanel().drawG();
             } catch (AreaFileException e) {
-
+                logger.error("problem building default region selection", e);
             }
-
             this.eMag  = dataSource.getEMag();
             this.lMag  = dataSource.getLMag();
             this.eMag0  = dataSource.getEMag();
