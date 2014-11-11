@@ -1541,10 +1541,51 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     private AbstractAction moveUp, moveDown, moveLeft, moveRight;
 
     /**
+     * Zooming or translating increments the count, {@literal "undoing"}
+     * decrements the count. When the value is {@code 0}, there are no changes
+     * left to undo.
+     *
+     * <p>Note: this had to be implemented outside of the stack in
+     * {@link Navigation.ZoomStack} because the initialization of the panel
+     * introduces {@literal "blank"} states that are accepted by the
+     * zoomStack.</p>
+     */
+    private int mapChangeCount = 0;
+
+    /**
+     * Increment {@link #mapChangeCount} and if {@link #zoomBack} is disabled,
+     * enable it.
+     */
+    private void addMapChange() {
+        mapChangeCount++;
+        if ((zoomBack != null) && !zoomBack.isEnabled()) {
+            zoomBack.setEnabled(true);
+        }
+    }
+
+    /**
+     * Decrement {@link #mapChangeCount} and if its new value is zero, disable
+     * {@link #zoomBack} (there is nothing left to undo).
+     */
+    private void undoMapChange() {
+        if (mapChangeCount > 0) {
+            navigate.zoomPrevious();
+            drawG();
+            mapChangeCount--;
+            if (mapChangeCount == 0) {
+                zoomBack.setEnabled(false);
+            }
+        } else {
+//            logger.trace("nothing left to undo: {} zoomBack={}", mapChangeCount, zoomBack.isEnabled());
+        }
+    }
+
+    /**
      * Zoom in
      */
     public void doZoomIn() {
         navigate.zoomIn();
+        addMapChange();
         drawG();
     }
 
@@ -1554,6 +1595,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     public void doZoomOut() {
         navigate.zoomOut();
+        addMapChange();
         drawG();
     }
 
@@ -1564,6 +1606,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     public void zoom(double zoomFactor) {
         navigate.zoom(zoomFactor);
+        addMapChange();
         drawG();
     }
 
@@ -1574,6 +1617,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     public void doMoveUp(double factor) {
         navigate.moveUp(factor);
+        addMapChange();
         drawG();
     }
 
@@ -1584,6 +1628,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     public void doMoveDown(double factor) {
         navigate.moveDown(factor);
+        addMapChange();
         drawG();
     }
 
@@ -1594,6 +1639,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     public void doMoveRight(double factor) {
         navigate.moveRight(factor);
+        addMapChange();
         drawG();
     }
 
@@ -1604,6 +1650,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     public void doMoveLeft(double factor) {
         navigate.moveLeft(factor);
+        addMapChange();
         drawG();
     }
 
@@ -1641,12 +1688,13 @@ public class NavigatedPanel extends JPanel implements MouseListener,
 
         zoomBack = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                navigate.zoomPrevious();
-                drawG();
+                undoMapChange();
             }
         };
         BAMutil.setActionProperties(zoomBack, "Undo16", "Previous map area",
                                     false, 'P', KeyEvent.VK_BACK_SPACE);
+        // disabled at the outset as there are no changes to undo
+        zoomBack.setEnabled(false);
 
         zoomDefault = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -1698,11 +1746,13 @@ public class NavigatedPanel extends JPanel implements MouseListener,
                                     "Set reference Point", true, 'P', 0);
     }
 
+
     /**
      *  Reset the  zoom and projection
      */
     public void resetZoom() {
         navigate.setMapArea(normalizeRectangle(project.getDefaultMapArea()));
+        addMapChange();
         drawG();
     }
 
