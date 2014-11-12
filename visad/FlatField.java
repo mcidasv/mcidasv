@@ -4578,6 +4578,8 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
     FlatField new_field =
       new FlatField(func_type, set, RangeCoordinateSystem,
                     RangeCoordinateSystems, sets, RangeUnits);
+    logger.trace("FlatField.resample setMetadataMap");
+    new_field.setMetadataMap(getMetadataMap());
 
     if (isMissing()) return new_field;
 
@@ -5584,6 +5586,8 @@ if (pr) System.out.println("value = " + new_values[0][0]);
     // field.DoubleRange = values;
     field.setRangeErrors(errors);
     field.clearMissing();
+    logger.trace("cloneDouble setMetadataMap");
+    field.setMetadataMap(getMetadataMap());
     return field;
   }
 
@@ -5641,6 +5645,8 @@ if (pr) System.out.println("value = " + new_values[0][0]);
     // field.DoubleRange = values;
     field.setRangeErrors(errors);
     field.clearMissing();
+    logger.trace("cloneFloat setMetadataMap");
+    field.setMetadataMap(getMetadataMap());
     return field;
   }
 
@@ -5695,6 +5701,8 @@ if (pr) System.out.println("value = " + new_values[0][0]);
       }
     }
 
+    logger.trace("FlatField clone!");
+    clone.setMetadataMap(getMetadataMap());
     return clone;
   }
 
