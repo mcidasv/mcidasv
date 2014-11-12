@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.*;
+import ucar.unidata.idv.NavigatedViewManager;
 import ucar.unidata.ui.BAMutil;
 import ucar.unidata.ui.Rubberband;
 import ucar.unidata.ui.RubberbandRectangle;
@@ -1655,8 +1656,27 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     }
 
     public void doUseActiveView() {
-        logger.trace("(not yet) using active display!");
+        if (activeView != null) {
+            try {
+                setSelectedRegion(activeView.getNavigatedDisplay().getLatLonRect());
+                drawG();
+            } catch (Exception e) {
+                logger.warn("oh no it's visad checked exception boilerplate", e);
+            }
+        } else {
+            logger.warn("activeView is null...");
+        }
     }
+
+    public void setActiveView(NavigatedViewManager viewManager) {
+        activeView = viewManager;
+    }
+
+    public NavigatedViewManager getActiveView() {
+        return activeView;
+    }
+
+    private NavigatedViewManager activeView;
 
     /**
      * Make the default actions
