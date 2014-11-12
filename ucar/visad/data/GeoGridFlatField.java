@@ -20,6 +20,8 @@
 
 package ucar.visad.data;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.ma2.Array;
 import ucar.ma2.Index;
@@ -57,6 +59,8 @@ import java.rmi.RemoteException;
  * @version $Revision: 1.7 $ $Date: 2007/08/08 17:14:56 $
  */
 public class GeoGridFlatField extends CachedFlatField {
+
+    private static final Logger logger = LoggerFactory.getLogger(GeoGridFlatField.class);
 
     /** the read label */
     private String readLabel = "";
@@ -169,10 +173,12 @@ public class GeoGridFlatField extends CachedFlatField {
                                    Set[] rangeSets, Unit[] units)
             throws VisADException {
 
+        logger.trace("GeoGridFlatField cloneMe");
         //        msg("GeoGridFlatField.cloneMe");
         CachedFlatField ccf = new GeoGridFlatField(this, copy, type,
                                   domainSet, rangeCoordSys,
                                   rangeCoordSysArray, rangeSets, units);
+        ccf.setMetadataMap(getMetadataMap());
         return ccf;
     }
 

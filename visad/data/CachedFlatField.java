@@ -27,6 +27,9 @@
 
 package visad.data;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import visad.*;
 import visad.util.DataUtility;
 import java.rmi.RemoteException;
@@ -37,6 +40,7 @@ import java.rmi.RemoteException;
  */
 public class CachedFlatField extends FlatField {
 
+    private static final Logger logger = LoggerFactory.getLogger(CachedFlatField.class);
 
     /** the id for this instance */
     private Object cacheId;
@@ -212,9 +216,12 @@ public class CachedFlatField extends FlatField {
                                    Set[] rangeSets, Unit[] units)
             throws VisADException {
 
+        logger.trace("CachedFlatField cloneMe");
+
         CachedFlatField ccf = new CachedFlatField(this, copy, type,
                                   domainSet, rangeCoordSys,
                                   rangeCoordSysArray, rangeSets, units);
+        ccf.setMetadataMap(getMetadataMap());
         return ccf;
     }
 
