@@ -323,11 +323,13 @@ public final class GridRelativeHorizontalWind extends HorizontalWind {
         FlatField uvField = new FlatField(innerType, innerDom,
                                           (CoordinateSystem) null,
                                           (Set[]) null, rangeUnits);
+        uvField.setMetadataMap(((FieldImpl)rel).getMetadataMap());
 
 
 
         Field result = new FieldImpl(new FunctionType(outerDomType,
                            uvField.getType()), rel.getDomainSet());
+        ((FieldImpl)result).setMetadataMap(((FieldImpl)rel).getMetadataMap());
 
 
 
@@ -379,6 +381,7 @@ public final class GridRelativeHorizontalWind extends HorizontalWind {
                 uvField = new FlatField(innerType, innerDom,
                                         (CoordinateSystem) null,
                                         (Set[]) null, rangeUnits);
+                uvField.setMetadataMap(((FieldImpl)rel).getMetadataMap());
                 us = new float[innerDom.getLength()];
                 vs = new float[us.length];
             }
@@ -767,6 +770,7 @@ public final class GridRelativeHorizontalWind extends HorizontalWind {
                     funcType.getDomain(),
                     CartesianHorizontalWind.getEarthVectorType()), grid,
                         (CoordinateSystem[]) null, rel.getRangeSets(), units);
+        abs.setMetadataMap(rel.getMetadataMap());
 
         abs.setSamples(trueWind(rel.getFloats(), grid), false);
 
