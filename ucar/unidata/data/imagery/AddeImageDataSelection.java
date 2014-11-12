@@ -34,6 +34,7 @@ import ucar.unidata.data.*;
 import ucar.unidata.geoloc.*;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.NavigatedViewManager;
+import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
@@ -148,7 +149,8 @@ public class AddeImageDataSelection {
             if(this.aAdapter == null && this.source != null){
                 this.aAdapter = new AreaAdapter(this.source, false);
             }
-            this.regionPanel = new AddeImagePreviewPanel(this);
+//            dataSource.getIdv().getVMManager()
+            this.regionPanel = new AddeImagePreviewPanel(this, dataSource.getIdv().getVMManager());
         } catch (Exception e) {}
 
 
@@ -2056,6 +2058,19 @@ public class AddeImageDataSelection {
     }
 
 
+    public static Rectangle2D calculateRectangle(Rectangle2D.Double box) {
+        if (!box.isEmpty()) {
+            // pad rectangle by 5%
+            double deltaWidth  = (double) (.05 * box.width);
+            double deltaHeight = (double) (.05 * box.height);
+            double newX        = box.x - deltaWidth;
+            double newY        = box.y - deltaHeight;
+            box.setRect(newX, newY, box.width + (2.0 * deltaWidth),
+                box.height + (2.0 * deltaHeight));
+        }
+        return box;
+    }
+
     /**
      * Class description
      *
@@ -2080,6 +2095,8 @@ public class AddeImageDataSelection {
 
         /** _more_ */
         private JCheckBox chkUseFull;
+
+//        private JCheckBox chkAdaptResolution;
         //final AddeImageDataSource this;
 
         /** _more_ */
@@ -2146,7 +2163,7 @@ public class AddeImageDataSelection {
          * @throws VisADException _more_
          */
         public AddeImagePreviewPanel(
-                AddeImageDataSelection addeImageDataSelection)
+                AddeImageDataSelection addeImageDataSelection, VMManager vmManager)
                 throws IOException, ParseException, VisADException {
             super("Region");
 
@@ -2163,6 +2180,16 @@ public class AddeImageDataSelection {
             } catch (AreaFileException e) {
                 logger.error("problem building default region selection", e);
             }
+
+            ViewManager vm = vmManager.getLastActiveViewManager();
+            if (vm instanceof NavigatedViewManager) {
+                NavigatedViewManager nvm = (NavigatedViewManager)vm;
+                display.getNavigatedPanel().setActiveView(nvm);
+            } else {
+                logger.trace("vmManager: last active display is bad!");
+            }
+
+
             this.eMag  = dataSource.getEMag();
             this.lMag  = dataSource.getLMag();
             this.eMag0  = dataSource.getEMag();
