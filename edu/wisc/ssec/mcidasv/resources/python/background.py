@@ -3073,10 +3073,18 @@ def loadGrid(filename=None, field=None, level='all',
         ff = adapterData.getSample(0)
     else:
         ff = adapterData
-
+    
     # make the 'mega-object'
     mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field)
     mapped.levelReal = levelReal
+    if level and level.lower() != 'all':
+        # PRO: this avoids 'manifold dim must be 3' error in IDV formulas
+        # CON: this means we return plain 'FlatField' instead of mega-object,
+        #      which will be a surprise to user trying to use object as a dict.
+        #      (TODO): try using new _MappedFlatField constructor instead?
+        # NOTE: We can't do this *before* making mega-object, because that 
+        #       constructor expects a GGFF, not a plain FF.
+        mapped = make2D(mapped)
 
     return mapped
 
