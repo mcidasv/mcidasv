@@ -25,12 +25,74 @@
     <property name="userguide.dir" location="${doc.dir}/userguide" />
     <property name="heap.dir" location="/tmp/mcidasv-heapdump.hprof" />
     
-    <!-- For example: "/Applications/McIDAS/adde" on OS X and NOT "/Applications/McIDAS/adde/bin" -->
-    <!-- <property name="addeservers.dir" location="/path/to/local/adde/root" /> -->
-    <property name="addeservers.dir" location="/Applications/mcidasv/nightly/adde" />
-    
-    <!-- Sets the McV userpath -->
-    <property name="userpath.dir" location="${user.home}/Documents/McIDAS-V" />
+    <!--
+      This section attempts to set the path to the local ADDE servers in
+      a platform independent way. In order to take advantage of this, you
+      MUST install McIDAS-V into the directory suggested by the installer.
+
+      The installer will suggest the following (depending on platform):
+
+        Windows: C:\Program Files\McIDAS-V-System
+        Linux  : /home/YOUR_USER/McIDAS-V-System
+        OS X   : /Applications/McIDAS-V-System
+
+      If you need to use a specific path, you must run Ant like so:
+        ant -Daddeservers.dir="<McIDAS-V INSTALL PATH>/adde" <TARGET>
+
+      Some examples:
+        ant -Daddeservers.dir="/Applications/mcidasv/nightly/adde" jar.runlarge
+        ant -Daddeservers.dir="C:\\mcidasv\\nightly\\adde" jar.runlarge
+    -->
+    <condition property="addeservers.dir" value="C:\\Program Files\\McIDAS-V-System\\adde">
+        <os family="windows" />
+    </condition>
+    <condition property="addeservers.dir" value="/home/${user.name}/McIDAS-V-System/adde">
+        <and>
+            <os family="unix"/>
+            <not>
+                <os family="mac"/>
+            </not>
+        </and>
+    </condition>
+    <condition property="addeservers.dir" value="/Applications/McIDAS-V-System/adde">
+        <os family="mac" />
+    </condition>
+    <!-- end of local server path stuff -->
+
+    <!--
+      This section attempts to set the McIDAS-V userpath (where RESOLV.SRV is)
+      in a platform independent way. In order to take advantage of this, you
+      simply need to have run McIDAS-V.
+
+      The installer will suggest the following (depending on platform):
+
+        Windows: C:\Users\YOUR_USER\McIDAS-V
+        Linux  : /home/YOUR_USER/McIDAS-V
+        OS X   : /Users/YOUR_USER/Documents/McIDAS-V
+
+      If you need to use a specific path, you must run Ant like so:
+        ant -Duserpath.dir="<USER PATH>" <TARGET>
+
+      Some examples:
+        ant -Duserpath.dir="/tmp/mcidasv" jar.runlarge
+        ant -Duserpath.dir="C:\\temp\\mcidasv" jar.runlarge
+      -->
+    <condition property="userpath.dir" value="${user.home}\\McIDAS-V">
+        <os family="windows" />
+    </condition>
+    <condition property="userpath.dir" value="${user.home}/McIDAS-V">
+        <and>
+            <os family="unix"/>
+            <not>
+                <os family="mac"/>
+            </not>
+        </and>
+    </condition>
+    <condition property="userpath.dir" value="${user.home}/Documents/McIDAS-V">
+        <os family="mac" />
+    </condition>
+    <!-- end of userpath stuff -->
+
     
     <!-- Attempt to load the version property file -->
     <property file="${resource.dir}/version.properties" />
@@ -754,8 +816,7 @@
 
   <!-- Build and run McIDAS-V application (large memory) -->
   <target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
-    <!--<java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">-->
-      <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
+    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
       <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
       <jvmarg value="-XX:+UseConcMarkSweepGC" />

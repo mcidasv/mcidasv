@@ -26,6 +26,8 @@ import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaFile;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.*;
 import ucar.unidata.geoloc.LatLonPoint;
 import ucar.unidata.geoloc.LatLonPointImpl;
@@ -64,6 +66,8 @@ import javax.swing.JOptionPane;
  */
 
 public class AddeImageDataSource extends ImageDataSource {
+
+    private static final Logger logger = LoggerFactory.getLogger(AddeImageDataSource.class);
 
     /* ADDE request string */
 
@@ -135,7 +139,8 @@ public class AddeImageDataSource extends ImageDataSource {
     public AddeImageDataSource(DataSourceDescriptor descriptor, String image,
                                Hashtable properties)
             throws VisADException {
-        super(descriptor, new String[] { image }, properties);
+        super(descriptor, new String[]{image}, properties);
+        logger.trace("descriptor='{}' image='{}' properties='{}'", descriptor, image, properties);
     }
 
     /**
@@ -152,6 +157,7 @@ public class AddeImageDataSource extends ImageDataSource {
                                String[] images, Hashtable properties)
             throws VisADException {
         super(descriptor, images, properties);
+        logger.trace("descriptor='{}' images='{}' properties='{}'", descriptor, images, properties);
     }
 
     /**
@@ -168,6 +174,7 @@ public class AddeImageDataSource extends ImageDataSource {
                                Hashtable properties)
             throws VisADException {
         super(descriptor, images, properties);
+        logger.trace("descriptor='{}' images='{}' properties='{}'", descriptor, images, properties);
     }
 
 
@@ -184,7 +191,7 @@ public class AddeImageDataSource extends ImageDataSource {
                                ImageDataset ids, Hashtable properties)
             throws VisADException {
         super(descriptor, ids, properties);
-
+        logger.trace("desc='{}' ids='{}' props='{}'", descriptor, ids, properties);
         List                descs = ids.getImageDescriptors();
         AddeImageDescriptor aid   = (AddeImageDescriptor) descs.get(0);
         this.source = getPreviewSource(aid.getSource(), aid.getDirectory());
@@ -196,7 +203,6 @@ public class AddeImageDataSource extends ImageDataSource {
             this.bandId = (BandInfo) oj.get(0);
         }
     }
-
 
     /**
      * _more_
@@ -615,7 +621,7 @@ public class AddeImageDataSource extends ImageDataSource {
         String magValue = "";
        // if (isProgressiveResolution) {
         if (eleMag >= 1 || lineMag >= 1) {
-            magValue = DataUtil.makeSamplingLabel(eleMag, lineMag, "pixel");
+           magValue = makeSamplingLabel(eleMag, lineMag, "pixel");
             //System.out.println("newLine X newElement : " + lineMag + " "+ eleMag);
             //magValue = "Resolution: " + "-" + Integer.toString(lineMag)
             //           + " " + "-" + Integer.toString(eleMag);
@@ -637,6 +643,49 @@ public class AddeImageDataSource extends ImageDataSource {
         return descriptors;
 
 
+    }
+
+    /**
+     * Make a label for the stride/sampling
+     * @param xStride  the x stride
+     * @param yStride  the y stride
+     * @param pointType    the name for the point type
+     * @return
+     */
+    public static String makeSamplingLabel(int xStride, int yStride, String pointType) {
+        StringBuilder buf = new StringBuilder(64);
+        buf.append("Data Sampling: every ");
+        buf.append(getStrideLabel(xStride));
+        if (xStride != yStride) {
+            buf.append(" by ");
+            buf.append(getStrideLabel(yStride));
+        }
+        buf.append(' ');
+        buf.append(pointType);
+        return buf.toString();
+    }
+
+    /**
+     * Get a label for a stride value
+     * @param strideValue the value
+     * @return
+     */
+    private static String getStrideLabel(int strideValue) {
+        int remainder = strideValue%10;
+        if (strideValue == 2) {
+            //return "other";
+            return "2nd";
+            //} else if (strideValue == 3) {
+            //	return strideValue+"rd";
+        } else if (remainder == 1 && strideValue != 11) {
+            return strideValue+"st";
+        } else if (remainder == 2 && strideValue != 12) {
+            return strideValue+"nd";
+        } else if (remainder == 3 && strideValue != 13) {
+            return strideValue+"rd";
+        } else {
+            return strideValue+"th";
+        }
     }
 
     /**
