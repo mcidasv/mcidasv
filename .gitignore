@@ -22,3 +22,6 @@ build/*
 # OS Junk
 .DS_Store
 /bin
+
+# Vim swap files
+.*.swp
