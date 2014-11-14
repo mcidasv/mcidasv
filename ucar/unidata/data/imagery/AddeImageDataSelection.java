@@ -2339,6 +2339,15 @@ public class AddeImageDataSelection {
                 display.getNavigatedPanel().repaint();
             } else if (selectedObject.equals(USE_SELECTEDREGION)) {
                 display.getNavigatedPanel().setSelectRegionMode(true);
+                AreaFile af = aAdapter.getAreaFile();
+                try {
+                    AREACoordinateSystem acs = new AREACoordinateSystem(af);
+                    ProjectionRect rect = new ProjectionRect(acs.getDefaultMapArea());
+                    display.getNavigatedPanel().setSelectedRegion(rect);
+                    display.getNavigatedPanel().repaint();
+                } catch (Exception e) {
+                    logger.error("problem building default region selection", e);
+                }
             } else if (selectedObject.equals(USE_DISPLAYREGION)) {
                 display.getNavigatedPanel().setSelectedRegion(
                     (LatLonRect) null);
