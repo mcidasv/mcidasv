@@ -2181,14 +2181,8 @@ public class AddeImageDataSelection {
                 logger.error("problem building default region selection", e);
             }
 
-            ViewManager vm = vmManager.getLastActiveViewManager();
-            if (vm instanceof NavigatedViewManager) {
-                NavigatedViewManager nvm = (NavigatedViewManager)vm;
-                display.getNavigatedPanel().setActiveView(nvm);
-            } else {
-                logger.trace("vmManager: last active display is bad!");
-            }
-
+            NavigatedPanel navigatedPanel = display.getNavigatedPanel();
+            navigatedPanel.setVMManager(vmManager);
 
             this.eMag  = dataSource.getEMag();
             this.lMag  = dataSource.getLMag();

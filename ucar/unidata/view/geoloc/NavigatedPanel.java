@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.*;
 import ucar.unidata.idv.NavigatedViewManager;
+import ucar.unidata.idv.VMManager;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.ui.BAMutil;
 import ucar.unidata.ui.Rubberband;
 import ucar.unidata.ui.RubberbandRectangle;
@@ -931,7 +933,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     private LatLonRect screenToEarth(RectangularShape r) {
         LatLonPoint ul = screenToEarth(new Point2D.Double(r.getX(),
-                             r.getY()));
+            r.getY()));
         LatLonPoint lr = screenToEarth(new Point2D.Double(r.getX()
                              + r.getWidth(), r.getY() + r.getHeight()));
         LatLonPoint ur = screenToEarth(new Point2D.Double(r.getX()
@@ -982,7 +984,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     public LatLonPoint screenToEarth(Point2D p) {
         ProjectionPointImpl ppi = navigate.screenToWorld(p,
-                                      new ProjectionPointImpl());
+            new ProjectionPointImpl());
         return project.projToLatLon(ppi, new LatLonPointImpl());
     }
 
@@ -1096,7 +1098,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
 
         if ( !setReferenceMode) {
             navigate.screenToWorld(new Point2D.Double(e.getX(), e.getY()),
-                                   workW);
+                workW);
             if (lmPick != null) {
                 lmPick.sendEvent(new PickEvent(NavigatedPanel.this, workW,
                         e));
@@ -1553,8 +1555,11 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     private int mapChangeCount = 0;
 
-    // TODO(jon): this may have to change to be the VMManager...
-    private NavigatedViewManager activeView;
+    /**
+     * Used to grab region of last active {@link NavigatedViewManager}.
+     * Value may be {@code null}.
+     */
+    private VMManager vmManager;
 
     /**
      * Increment {@link #mapChangeCount} and if {@link #zoomBack} is disabled,
@@ -1659,39 +1664,51 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     }
 
     /**
-     * Changes the selected region to match that of {@link #activeView}.
+     * Changes the selected region to match that of the last active
+     * {@link NavigatedViewManager}.
      *
-     * <p>If {@code activeView} is {@code null}, nothing will happen.</p>
+     * <p>If {@link #vmManager} is {@code null} or the result of
+     * {@link VMManager#getLastActiveViewManager} is not a
+     * {@code NavigatedViewManager}, nothing will happen.</p>
      */
     public void doUseActiveView() {
-        if (activeView != null) {
-            try {
-                setSelectedRegion(activeView.getNavigatedDisplay().getLatLonRect());
-                drawG();
-            } catch (Exception e) {
-                logger.warn("oh no it's visad checked exception boilerplate", e);
+        if (vmManager != null) {
+            ViewManager vm = vmManager.getLastActiveViewManager();
+            if (vm instanceof NavigatedViewManager) {
+                NavigatedViewManager nvm = (NavigatedViewManager)vm;
+                try {
+                    setSelectedRegion(nvm.getNavigatedDisplay().getLatLonRect());
+                    drawG();
+                } catch (Exception e) {
+                    logger.warn("caught visad exception", e);
+                }
+            } else {
+                logger.warn("ViewManager is not a NavigatedViewManager", vm);
             }
         } else {
-            logger.warn("activeView is null...");
+            logger.warn("no vmmanager has been set...");
         }
     }
 
     /**
-     * Associates a view manager with this panel.
+     * Set the {@link ucar.unidata.idv.VMManager VMManager} used by the
+     * application.
      *
-     * @param viewManager View manager to use. {@code null} is allowed.
+     * @param vmManager The {@literal "ViewManager manager"}. {@code null} is
+     * allowed.
      */
-    public void setActiveView(NavigatedViewManager viewManager) {
-        activeView = viewManager;
+    public void setVMManager(VMManager vmManager) {
+        this.vmManager = vmManager;
     }
 
     /**
-     * Returns the view manager associated with this panel.
+     * Returns the {@link ucar.unidata.idv.VMManager VMManager} used by the
+     * application.
      *
      * @return Value may be {@code null}.
      */
-    public NavigatedViewManager getActiveView() {
-        return activeView;
+    public VMManager getVMManager() {
+        return this.vmManager;
     }
 
     /**
