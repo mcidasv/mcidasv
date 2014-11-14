@@ -1553,6 +1553,9 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     private int mapChangeCount = 0;
 
+    // TODO(jon): this may have to change to be the VMManager...
+    private NavigatedViewManager activeView;
+
     /**
      * Increment {@link #mapChangeCount} and if {@link #zoomBack} is disabled,
      * enable it.
@@ -1655,6 +1658,11 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         drawG();
     }
 
+    /**
+     * Changes the selected region to match that of {@link #activeView}.
+     *
+     * <p>If {@code activeView} is {@code null}, nothing will happen.</p>
+     */
     public void doUseActiveView() {
         if (activeView != null) {
             try {
@@ -1668,15 +1676,23 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         }
     }
 
+    /**
+     * Associates a view manager with this panel.
+     *
+     * @param viewManager View manager to use. {@code null} is allowed.
+     */
     public void setActiveView(NavigatedViewManager viewManager) {
         activeView = viewManager;
     }
 
+    /**
+     * Returns the view manager associated with this panel.
+     *
+     * @return Value may be {@code null}.
+     */
     public NavigatedViewManager getActiveView() {
         return activeView;
     }
-
-    private NavigatedViewManager activeView;
 
     /**
      * Make the default actions
