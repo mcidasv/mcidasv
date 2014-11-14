@@ -79,7 +79,7 @@ import javax.swing.event.ChangeListener;
  */
 public class AddeImageDataSelection {
 
-    private static final Logger logger = LoggerFactory.getLogger(AddeImageAdvancedPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(AddeImageDataSelection.class);
 
     /** _more_ */
     public AddeImageDataSource dataSource;
@@ -156,7 +156,10 @@ public class AddeImageDataSelection {
 
         try {
             this.advancedPanel = new AddeImageAdvancedPanel(this);
+            regionPanel.setAdvancedPanel(regionPanel.getRegionOption());
         } catch (Exception e) {}
+
+
 
         //regionPanel.display.setUseProgressiveResolution(usePR);
         /*prograssiveCbx1 = regionPanel.display.getPrograssiveCbx();
@@ -1478,7 +1481,7 @@ public class AddeImageDataSelection {
             if (regionPanel != null) {
                 String opStr = regionPanel.getRegionOptions();
 
-                if (opStr.equals("Use Selected")) {
+                if (opStr.equals(DataSelection.PROP_USESELECTEDAREA)) {
                     enablePanelAll(true);
                 } else {
                     enablePanelAll(false);
@@ -2224,7 +2227,7 @@ public class AddeImageDataSelection {
          * @return _more_
          */
         public JComponent getRegionsList() {
-            return getRegionsList(USE_DEFAULTREGION);
+            return getRegionsList(regionOption);
 
         }
 
