@@ -1111,7 +1111,10 @@ public class MultiSpectralDataSource extends HydraDataSource {
          List<DataSelectionComponent> components,
              final DataChoice dataChoice) {
 
-      if (System.getProperty("os.name").equals("Mac OS X") && hasImagePreview && hasChannelSelect) {
+    	// TJJ Nov 2014 - Why did we need an OS-specific check here? Seems this should be the choice 
+    	// each time and in fact Linux no longer works if we drop through, so commenting out [1805]
+      // if (System.getProperty("os.name").equals("Mac OS X") && hasImagePreview && hasChannelSelect) {
+      if (hasImagePreview && hasChannelSelect) {
         try {
           components.add(new ImageChannelSelection(new PreviewSelection(dataChoice, previewImage, null), new ChannelSelection(dataChoice)));
         } catch (Exception e) {
