@@ -149,15 +149,18 @@ public class AddeImageDataSelection {
             if(this.aAdapter == null && this.source != null){
                 this.aAdapter = new AreaAdapter(this.source, false);
             }
-//            dataSource.getIdv().getVMManager()
             this.regionPanel = new AddeImagePreviewPanel(this, dataSource.getIdv().getVMManager());
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            logger.warn("exception happenend!", e);
+        }
 
 
         try {
             this.advancedPanel = new AddeImageAdvancedPanel(this);
             regionPanel.setAdvancedPanel(regionPanel.getRegionOption());
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            logger.warn("could not build advanced props panel", e);
+        }
 
 
 

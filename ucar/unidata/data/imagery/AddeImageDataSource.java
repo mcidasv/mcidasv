@@ -1562,22 +1562,36 @@ public class AddeImageDataSource extends ImageDataSource {
                 return;
             }
 
+            // TODO(jon): this logic may need to be reworked...
             if ((id != null) && !id.equals(this.bandId)) {
                 // now different band selected, and the preview and advanced need to be recreated
 
                 AreaDirectory thisDir =
                     (AreaDirectory) allBandDirs.get(id.getBandNumber());
+//                logger.trace("orig source='{}'", this.source);
                 this.source = getPreviewSource(this.source, thisDir);
+//                logger.trace("after getPrevSrc source='{}'", this.source);
                 this.source =
                     replaceKey(this.source, "BAND",
                                Integer.toString(id.getBandNumber()));
+
+//                logger.trace("after replaceKey source='{}'", this.source);
                 this.descriptor = new AddeImageDescriptor(thisDir, null);
 
+            } else {
+//                logger.warn("fail check 1");
             }
 
             if ((baseAnav == null) || !id.equals(this.bandId)) {
 
                 try {
+//                    logger.trace("baseAnav='{}", baseAnav);
+//                    logger.trace("id='{} bandId='{}'", id, bandId);
+//                    logger.trace("attempting to use source='{}'", this.source);
+                    this.source =
+                        replaceKey(this.source, "BAND",
+                            Integer.toString(id.getBandNumber()));
+//                    logger.trace("after replaceKey source='{}'", this.source);
                     areaAdapter = new AreaAdapter(this.source, false);
                     AreaFile areaFile = areaAdapter.getAreaFile();
                     baseAnav = areaFile.getNavigation();
@@ -1588,6 +1602,8 @@ public class AddeImageDataSource extends ImageDataSource {
                 }
 
                 this.bandId = id;
+            } else {
+//                logger.warn("fail check 2");
             }
 
             addeImageDataSelection = new AddeImageDataSelection(this,
