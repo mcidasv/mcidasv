@@ -250,8 +250,6 @@ public class StormTrack implements Comparable {
 
 	/**
 	 * _more_
-	 * 
-	 * @return _more_
 	 */
 	public void setIsEdited(boolean isEdited) {
 		this.isEdited = isEdited;
