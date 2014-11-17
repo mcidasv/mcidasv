@@ -646,11 +646,12 @@ public class AddeImageDataSource extends ImageDataSource {
     }
 
     /**
-     * Make a label for the stride/sampling
+     * Make a label for the stride/sampling.
      * @param xStride  the x stride
      * @param yStride  the y stride
      * @param pointType    the name for the point type
-     * @return
+     * @return Label for the stride/sampling. Resulting string will look like
+     * {@literal "Data Sampling: every X by Y pointType"}.
      */
     public static String makeSamplingLabel(int xStride, int yStride, String pointType) {
         StringBuilder buf = new StringBuilder(64);
@@ -668,7 +669,8 @@ public class AddeImageDataSource extends ImageDataSource {
     /**
      * Get a label for a stride value
      * @param strideValue the value
-     * @return
+     * @return String with proper {@literal "st"}, {@literal "nd"}, etc suffix
+     * for {@code strideValue}.
      */
     private static String getStrideLabel(int strideValue) {
         int remainder = strideValue%10;
