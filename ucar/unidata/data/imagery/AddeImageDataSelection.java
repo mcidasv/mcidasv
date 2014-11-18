@@ -157,7 +157,6 @@ public class AddeImageDataSelection {
 
         try {
             this.advancedPanel = new AddeImageAdvancedPanel(this);
-            regionPanel.setAdvancedPanel(regionPanel.getRegionOption());
         } catch (Exception e) {
             logger.warn("could not build advanced props panel", e);
         }
