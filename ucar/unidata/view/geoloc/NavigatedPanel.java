@@ -1580,7 +1580,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      * Increment {@link #mapChangeCount} and if {@link #zoomBack} is disabled,
      * enable it.
      */
-    private void addMapChange() {
+    public void addMapChange() {
         mapChangeCount++;
         if ((zoomBack != null) && !zoomBack.isEnabled()) {
             zoomBack.setEnabled(true);
@@ -1591,7 +1591,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      * Decrement {@link #mapChangeCount} and if its new value is zero, disable
      * {@link #zoomBack} (there is nothing left to undo).
      */
-    private void undoMapChange() {
+    public void undoMapChange() {
         if (mapChangeCount > 0) {
             navigate.zoomPrevious();
             drawG();
