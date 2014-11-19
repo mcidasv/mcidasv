@@ -79,7 +79,7 @@ import javax.swing.event.ChangeListener;
  */
 public class AddeImageDataSelection {
 
-    private static final Logger logger = LoggerFactory.getLogger(AddeImageAdvancedPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(AddeImageDataSelection.class);
 
     /** _more_ */
     public AddeImageDataSource dataSource;
@@ -149,14 +149,19 @@ public class AddeImageDataSelection {
             if(this.aAdapter == null && this.source != null){
                 this.aAdapter = new AreaAdapter(this.source, false);
             }
-//            dataSource.getIdv().getVMManager()
             this.regionPanel = new AddeImagePreviewPanel(this, dataSource.getIdv().getVMManager());
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            logger.warn("exception happenend!", e);
+        }
 
 
         try {
             this.advancedPanel = new AddeImageAdvancedPanel(this);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            logger.warn("could not build advanced props panel", e);
+        }
+
+
 
         //regionPanel.display.setUseProgressiveResolution(usePR);
         /*prograssiveCbx1 = regionPanel.display.getPrograssiveCbx();
@@ -1478,7 +1483,7 @@ public class AddeImageDataSelection {
             if (regionPanel != null) {
                 String opStr = regionPanel.getRegionOptions();
 
-                if (opStr.equals("Use Selected")) {
+                if (opStr.equals(DataSelection.PROP_USESELECTEDAREA)) {
                     enablePanelAll(true);
                 } else {
                     enablePanelAll(false);
@@ -2181,14 +2186,8 @@ public class AddeImageDataSelection {
                 logger.error("problem building default region selection", e);
             }
 
-            ViewManager vm = vmManager.getLastActiveViewManager();
-            if (vm instanceof NavigatedViewManager) {
-                NavigatedViewManager nvm = (NavigatedViewManager)vm;
-                display.getNavigatedPanel().setActiveView(nvm);
-            } else {
-                logger.trace("vmManager: last active display is bad!");
-            }
-
+            NavigatedPanel navigatedPanel = display.getNavigatedPanel();
+            navigatedPanel.setVMManager(vmManager);
 
             this.eMag  = dataSource.getEMag();
             this.lMag  = dataSource.getLMag();
@@ -2230,7 +2229,7 @@ public class AddeImageDataSelection {
          * @return _more_
          */
         public JComponent getRegionsList() {
-            return getRegionsList(USE_DEFAULTREGION);
+            return getRegionsList(regionOption);
 
         }
 
@@ -2342,6 +2341,15 @@ public class AddeImageDataSelection {
                 display.getNavigatedPanel().repaint();
             } else if (selectedObject.equals(USE_SELECTEDREGION)) {
                 display.getNavigatedPanel().setSelectRegionMode(true);
+                AreaFile af = aAdapter.getAreaFile();
+                try {
+                    AREACoordinateSystem acs = new AREACoordinateSystem(af);
+                    ProjectionRect rect = new ProjectionRect(acs.getDefaultMapArea());
+                    display.getNavigatedPanel().setSelectedRegion(rect);
+                    display.getNavigatedPanel().repaint();
+                } catch (Exception e) {
+                    logger.error("problem building default region selection", e);
+                }
             } else if (selectedObject.equals(USE_DISPLAYREGION)) {
                 display.getNavigatedPanel().setSelectedRegion(
                     (LatLonRect) null);

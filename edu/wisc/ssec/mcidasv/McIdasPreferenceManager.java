@@ -928,7 +928,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show Map Display Scales", MapViewManager.PREF_SHOWSCALES, Boolean.valueOf(mappy.getLabelsVisible()) },
             { "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES, Boolean.valueOf(mappy.getTransectLabelsVisible()) },
             { "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, Boolean.valueOf(mappy.getWaitMessageVisible()) },
-            { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA }
+            { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
+            { MapViewManager.PR_LABEL, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION }
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
         panelPanel.setBorder(BorderFactory.createTitledBorder("Panel Configuration"));
@@ -1386,24 +1387,24 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             inner.setLayout(layout);
             layout.setHorizontalGroup(
                 layout.createParallelGroup(LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addGroup(layout.createParallelGroup(LEADING)
-                        .addComponent(loadComboBox, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(preferenceCbx)
-                        .addComponent(askCbx))
-                    .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(LEADING)
+                            .addComponent(loadComboBox, PREFERRED_SIZE, DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(preferenceCbx)
+                            .addComponent(askCbx))
+                        .addContainerGap())
             );
             layout.setVerticalGroup(
                 layout.createParallelGroup(LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(loadComboBox, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
-                    .addPreferredGap(RELATED)
-                    .addComponent(preferenceCbx)
-                    .addPreferredGap(RELATED)
-                    .addComponent(askCbx)
-                    .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(loadComboBox, PREFERRED_SIZE, DEFAULT_SIZE, PREFERRED_SIZE)
+                        .addPreferredGap(RELATED)
+                        .addComponent(preferenceCbx)
+                        .addPreferredGap(RELATED)
+                        .addComponent(askCbx)
+                        .addContainerGap())
             );
             
             if (!GuiUtils.showOkCancelDialog(null, "Open bundle", inner, null)) {

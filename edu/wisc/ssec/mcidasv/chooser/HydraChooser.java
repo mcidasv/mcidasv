@@ -28,48 +28,34 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
-
-import edu.wisc.ssec.mcidasv.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
+import java.awt.Dimension;
 import java.io.File;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.filechooser.FileFilter;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 
 import org.w3c.dom.Element;
 
-import ucar.unidata.data.DataSourceResults;
-
-import ucar.unidata.idv.*;
-
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.FileChooser;
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
-
 import ucar.unidata.ui.ChooserPanel;
-
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.PatternFileFilter;
-import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
-
-import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
 
 public class HydraChooser extends IdvChooser {
 
-    private Element chooserNode;
+	private static final long serialVersionUID = 1L;
+
+	private Element chooserNode;
 
     private JFileChooser fileChooser;
 
@@ -129,9 +115,6 @@ public class HydraChooser extends IdvChooser {
         fileChooser.setPreferredSize(new Dimension(300, 300));
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setApproveButtonText(ChooserPanel.CMD_LOAD);
-
-        PatternFileFilter ff = new PatternFileFilter(".hdf", "*.hdf files");
-        //fileChooser.setFileFilter(ff);
 
         JComponent chooserPanel = fileChooser;
         JPanel filePanel = GuiUtils.vbox(chooserPanel, getDefaultButtons());
@@ -301,8 +284,7 @@ public class HydraChooser extends IdvChooser {
             dataSourceId = dfltDataSourceId;
         }
 
-        //If the user specifically selected a data source type then pass all files to that data source and be done.
-        DataSourceResults results;
+        // If the user specifically selected a data source type then pass all files to that data source and be done.
         if (dataSourceId == null) {
             //If they selected one directory then ask if they want to load all the files
             if (selectedFiles.size() == 1) {

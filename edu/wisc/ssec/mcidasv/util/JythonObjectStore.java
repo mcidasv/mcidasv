@@ -39,7 +39,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * provides methods that are safe to use from Jython scripts.
  *
  * <p>A secondary aim of this class is to be largely API-compatible with
- * {@link java.util.prefs.Preferences}.</p>
+ * {@code java.util.prefs.Preferences}.</p>
  */
 public class JythonObjectStore {
 
