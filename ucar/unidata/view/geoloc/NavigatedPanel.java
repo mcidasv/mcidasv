@@ -144,6 +144,9 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     //    private LatLonRect selectedRegion;
     private ProjectionRect selectedRegion;
 
+    /** {@literal "Active view region"}. Value may be {@code null}. */
+    private ProjectionRect viewRegion;
+
     //    private LatLonRect selectedRegionBounds;   
 
     /** Bounds of the user selected region */
@@ -918,6 +921,18 @@ public class NavigatedPanel extends JPanel implements MouseListener,
                 g.setColor(Color.black);
                 Glyph.paintSelectionPoints(g, screenRect, 6);
             }
+        }
+
+        if (viewRegion != null) {
+            logger.trace("drawing viewRegion='{}", viewRegion);
+            Rectangle2D screenRect = navigate.worldToScreen(viewRegion);
+            g.setColor(Color.magenta);
+            Stroke stroke = g.getStroke();
+            g.setStroke(new BasicStroke(2.0f));
+            g.draw(screenRect);
+            g.setStroke(stroke);
+        } else {
+            logger.trace("refusing to attempt drawing null view!");
         }
 
         // clean up
@@ -1699,6 +1714,23 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      */
     public void setVMManager(VMManager vmManager) {
         this.vmManager = vmManager;
+//        if (vmManager != null) {
+//            ViewManager vm = vmManager.getLastActiveViewManager();
+//            if (vm instanceof NavigatedViewManager) {
+//                NavigatedViewManager nvm = (NavigatedViewManager)vm;
+//                try {
+//                    logger.trace("umm='{}'", nvm.getNavigatedDisplay().getLatLonRect());
+//                    setViewRegion(nvm.getNavigatedDisplay().getLatLonRect());
+//                    drawG();
+//                } catch (Exception e) {
+//                    logger.warn("caught visad exception", e);
+//                }
+//            } else {
+//                logger.warn("ViewManager is not a NavigatedViewManager", vm);
+//            }
+//        } else {
+//            logger.warn("no vmmanager has been set...");
+//        }
     }
 
     /**
@@ -1971,7 +2003,39 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         return screenToEarth(navigate.worldToScreen(selectedRegion));
     }
 
+    /**
+     * Set the {@literal "active view region"}.
+     *
+     * @param value New view region. {@code null} is allowed.
+     */
+    public void setViewRegion(ProjectionRect value) {
+//        logger.trace("value='{}'", value);
+        viewRegion = value;
+    }
 
+    /**
+     * Set the {@literal "active view region"}.
+     *
+     * @param llr New region. {@code null} is allowed.
+     */
+    public void setViewRegion(LatLonRect llr) {
+//        logger.trace("llr='{}'", llr);
+        if (llr == null) {
+            setViewRegion((ProjectionRect) null);
+        } else {
+            setViewRegion(earthToWorld(llr));
+        }
+    }
+
+    /**
+     * Returns the {@literal "active view region"}.
+     *
+     * @return Either the region of the active {@code ViewManager} or
+     * {@code null}.
+     */
+    public ProjectionRect getViewRegion() {
+        return viewRegion;
+    }
 
 
 }
