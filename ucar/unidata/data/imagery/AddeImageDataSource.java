@@ -53,6 +53,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.JOptionPane;
 
@@ -1539,6 +1540,26 @@ public class AddeImageDataSource extends ImageDataSource {
         return this.addeImageDataSelection;
     }
 
+    /**
+     * Check two {@code BandInfo} objects for equality. This differs from
+     * {@link BandInfo#equals} in that it will also check the results of
+     * {@link BandInfo#getPreferredUnit}.
+     *
+     * @param bi1 First {@code BandInfo} to check. {@code null} is allowed.
+     * @param bi2 Second {@code BandInfo} to check. {@code null} is allowed.
+     *
+     * @return {@code true} when both objects are not {@code null} and both
+     * preferred units are non-null and equal. {@code false} otherwise.
+     */
+    private static boolean bandInfoEqualityCheck(BandInfo bi1, BandInfo bi2) {
+        boolean result = false;
+        if ((bi1 != null) && (bi2 != null) && Objects.equals(bi1, bi2)) {
+            String prefUnit1 = bi1.getPreferredUnit();
+            String prefUnit2 = bi2.getPreferredUnit();
+            result = (prefUnit1 != null) && (prefUnit2 != null) && prefUnit1.equals(prefUnit2);
+        }
+        return result;
+    }
 
     /**
      * _more_
@@ -1565,7 +1586,7 @@ public class AddeImageDataSource extends ImageDataSource {
             }
 
             // TODO(jon): this logic may need to be reworked...
-            if ((id != null) && !id.equals(this.bandId)) {
+            if ((id != null) && !bandInfoEqualityCheck(id, this.bandId)) {
                 // now different band selected, and the preview and advanced need to be recreated
 
                 AreaDirectory thisDir =
@@ -1577,15 +1598,19 @@ public class AddeImageDataSource extends ImageDataSource {
                     replaceKey(this.source, "BAND",
                                Integer.toString(id.getBandNumber()));
 
+                String prefUnit = id.getPreferredUnit();
+                if (prefUnit != null) {
+                    this.source = replaceKey(this.source, "UNIT", prefUnit);
+                }
+
 //                logger.trace("after replaceKey source='{}'", this.source);
                 this.descriptor = new AddeImageDescriptor(thisDir, null);
 
             } else {
-//                logger.warn("fail check 1");
+//                logger.warn("fail check 1: id is '{}'; !id.equals(this.bandId) is '{}'", id, !id.equals(this.bandId));
             }
 
-            if ((baseAnav == null) || !id.equals(this.bandId)) {
-
+            if ((baseAnav == null) || !bandInfoEqualityCheck(id, this.bandId)) {
                 try {
 //                    logger.trace("baseAnav='{}", baseAnav);
 //                    logger.trace("id='{} bandId='{}'", id, bandId);
@@ -1593,6 +1618,10 @@ public class AddeImageDataSource extends ImageDataSource {
                     this.source =
                         replaceKey(this.source, "BAND",
                             Integer.toString(id.getBandNumber()));
+                    String prefUnit = id.getPreferredUnit();
+                    if (prefUnit != null) {
+                        this.source = replaceKey(this.source, "UNIT", prefUnit);
+                    }
 //                    logger.trace("after replaceKey source='{}'", this.source);
                     areaAdapter = new AreaAdapter(this.source, false);
                     AreaFile areaFile = areaAdapter.getAreaFile();
@@ -1605,7 +1634,7 @@ public class AddeImageDataSource extends ImageDataSource {
 
                 this.bandId = id;
             } else {
-//                logger.warn("fail check 2");
+//                logger.warn("fail check 2: baseAnav is '{}'; !id.equals(bandId) is '{}'", baseAnav, !id.equals(this.bandId));
             }
 
             addeImageDataSelection = new AddeImageDataSelection(this,
@@ -1615,6 +1644,7 @@ public class AddeImageDataSource extends ImageDataSource {
 
 
         } catch (Exception ex) {
+//            logger.error("some kind of problem happened", ex);
             JOptionPane.showMessageDialog(
                 LogUtil.getCurrentWindow(), ex.getMessage(),
                 "Error in initDataSelectionComponents 2", 0);
