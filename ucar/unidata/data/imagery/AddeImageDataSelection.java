@@ -21,6 +21,7 @@
 package ucar.unidata.data.imagery;
 
 
+import com.ibm.media.content.application.mvr.Master;
 import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaFile;
@@ -2174,14 +2175,26 @@ public class AddeImageDataSelection {
 
             this.addeImageDataSelection = addeImageDataSelection;
             this.imagePreview           = createImagePreview(source);
-            display = new NavigatedMapPanel(null, true, false,
-                                            imagePreview.getPreviewImage(),
-                                            aAdapter.getAreaFile());
+//            display = new NavigatedMapPanel(null, true, false,
+//                                            imagePreview.getPreviewImage(),
+//                                            aAdapter.getAreaFile());
+            display = new NavigatedMapPanel(null, false, false,
+                imagePreview.getPreviewImage(),
+                aAdapter.getAreaFile());
             AreaFile af = aAdapter.getAreaFile();
+            JButton resetButton = new JButton("RESET");
             try {
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
-                ProjectionRect rect = new ProjectionRect(acs.getDefaultMapArea());
+                final ProjectionRect rect = new ProjectionRect(acs.getDefaultMapArea());
                 display.getNavigatedPanel().setSelectedRegion(rect);
+                resetButton.addActionListener(new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        NavigatedPanel navPanel = display.getNavigatedPanel();
+                        navPanel.setSelectedRegion(rect);
+                        navPanel.addMapChange();
+                        navPanel.drawG();
+                    }
+                });
             } catch (AreaFileException e) {
                 logger.error("problem building default region selection", e);
             }
@@ -2203,11 +2216,15 @@ public class AddeImageDataSelection {
             JPanel labelsPanel = null;
             labelsPanel = new JPanel();
             labelsPanel.setLayout(new BoxLayout(labelsPanel, 2));
-            labelsPanel.add(getRegionsList());
+//            labelsPanel.add(getRegionsList());
+
+            JToolBar navToolBar = display.getNavigatedPanel().getNavToolBar();
+            navToolBar.add(resetButton);
 
             MasterPanel = new JPanel(new java.awt.BorderLayout());
             MasterPanel.add(labelsPanel, "North");
             MasterPanel.add(jsp, "Center");
+            MasterPanel.add(navToolBar, "South");
 
             display.getNavigatedPanel().addFocusListener(new FocusListener() {
                 @Override
@@ -2296,7 +2313,7 @@ public class AddeImageDataSelection {
             GuiUtils.setListData(regionOptionLabelBox, regionOptionNames);
             //        JComponent top = GuiUtils.leftRight(new JLabel("Times"),
             //                                            allTimesButton);
-            JComponent top;
+            JComponent top = null;
 
 
             if (extra != null) {
