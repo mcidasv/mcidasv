@@ -924,7 +924,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         }
 
         if (viewRegion != null) {
-            logger.trace("drawing viewRegion='{}", viewRegion);
+//            logger.trace("drawing viewRegion='{}", viewRegion);
             Rectangle2D screenRect = navigate.worldToScreen(viewRegion);
             g.setColor(Color.magenta);
             Stroke stroke = g.getStroke();
@@ -932,7 +932,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
             g.draw(screenRect);
             g.setStroke(stroke);
         } else {
-            logger.trace("refusing to attempt drawing null view!");
+//            logger.trace("refusing to attempt drawing null view!");
         }
 
         // clean up
