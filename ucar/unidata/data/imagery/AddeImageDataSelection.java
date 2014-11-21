@@ -2116,9 +2116,6 @@ public class AddeImageDataSelection {
         public String USE_DISPLAYREGION = DataSelection.PROP_USEDISPLAYAREA;
 
         /** _more_ */
-//        private String[] regionSubsetOptionLabels = new String[] {
-//                                                        USE_DEFAULTREGION,
-//                USE_SELECTEDREGION, USE_DISPLAYREGION };
         private String[] regionSubsetOptionLabels = {
             USE_SELECTEDREGION,
             USE_DEFAULTREGION,
@@ -2140,7 +2137,6 @@ public class AddeImageDataSelection {
         private JComponent regionsListInfo;
 
         /** _more_ */
-//        private String regionOption = USE_DEFAULTREGION;
         private String regionOption = USE_SELECTEDREGION;
 
         /** _more_ */
@@ -2163,6 +2159,7 @@ public class AddeImageDataSelection {
 
         /**
          * Construct a AddeImagePreviewPanel
+         *
          * @param addeImageDataSelection _more_
          *
          * @throws IOException _more_

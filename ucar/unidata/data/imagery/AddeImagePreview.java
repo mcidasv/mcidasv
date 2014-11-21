@@ -24,6 +24,8 @@ package ucar.unidata.data.imagery;
 import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.ma2.Array;
 import ucar.ma2.InvalidRangeException;
 import ucar.ma2.Range;
@@ -35,6 +37,7 @@ import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.geoloc.ProjectionImpl;
 
 import ucar.unidata.util.StringUtil;
@@ -53,7 +56,9 @@ import java.awt.image.*;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 
@@ -107,7 +112,7 @@ public class AddeImagePreview {
         } catch (Exception e) {}
     }
 
-
+    private static final Logger logger = LoggerFactory.getLogger(AddeImagePreview.class);
 
     /**
      * _more_
@@ -169,13 +174,61 @@ public class AddeImagePreview {
         subSampledPixels = ldir[9];
         subSampledScans  = ldir[8];
 
+        ucar.unidata.util.Range r = GridUtil.fieldMinMax(ff)[0];
         float[][] image_data = ff.unpackFloats();
-
-        createBufferedImage(image_data);
-
-
+        float[][] remapped = remap(image_data, (float)r.getMin(), (float)r.getMax(), 0.0f, 255.0f);
+//        createBufferedImage(image_data);
+        createBufferedImage(remapped);
     }
 
+    private static final float[][] EMPTY = new float[0][0];
+
+    private static float[][] remap(float[][] imageData, float oldMin, float oldMax, float newMin, float newMax) {
+        if (oldMin == oldMax) {
+            logger.warn("zero input range: old");
+            return EMPTY;
+        }
+
+        if (newMin == newMax) {
+            logger.warn("zero input range: new");
+            return EMPTY;
+        }
+
+        boolean reversedInput = false;
+        float oMin = Math.min(oldMin, oldMax);
+        float oMax = Math.max(oldMin, oldMax);
+        if (oMin != oldMin) {
+            reversedInput = true;
+        }
+
+        boolean reversedOutput = false;
+        float nMin = Math.min(newMin, newMax);
+        float nMax = Math.max(newMin, newMax);
+        if (nMin != newMin) {
+            reversedOutput = true;
+        }
+
+        float[][] newData = new float[1][imageData[0].length];
+        for (int i = 0; i < imageData[0].length; i++) {
+//            float portion = (imageData[0][i] - oMin) * (nMax - nMin) / (oMax - oMin);
+            float portion;
+            if (reversedInput) {
+                portion = (oMax - imageData[0][i]) * (nMax - nMin) / (oMax - oMin);
+            } else {
+                portion = (imageData[0][i] - oMin) * (nMax - nMin) / (oMax - oMin);
+            }
+
+//            float result = portion + nMin;
+            float result;
+            if (reversedOutput) {
+                result = nMax - portion;
+            } else {
+                result = portion + nMin;
+            }
+            newData[0][i] = result;
+        }
+        return newData;
+    }
 
     /**
      * _more_
