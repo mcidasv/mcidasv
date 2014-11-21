@@ -578,7 +578,6 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         BAMutil.addActionToMenu(menu, zoomOut);
         BAMutil.addActionToMenu(menu, zoomBack);
         BAMutil.addActionToMenu(menu, zoomDefault);
-        BAMutil.addActionToMenu(menu, activeDisplay);
 
         menu.addSeparator();
 
@@ -1553,7 +1552,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     // toolbars
 
     /** toolbar actions */
-    private AbstractAction zoomIn, zoomOut, zoomDefault, zoomBack, activeDisplay;
+    private AbstractAction zoomIn, zoomOut, zoomDefault, zoomBack;
 
     /** more toolbar actions */
     private AbstractAction moveUp, moveDown, moveLeft, moveRight;
@@ -1686,41 +1685,13 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      * {@link VMManager#getLastActiveViewManager} is not a
      * {@code NavigatedViewManager}, nothing will happen.</p>
      */
-    public void doUseActiveView() {
-        if (vmManager != null) {
-            ViewManager vm = vmManager.getLastActiveViewManager();
-            if (vm instanceof NavigatedViewManager) {
-                NavigatedViewManager nvm = (NavigatedViewManager)vm;
-                try {
-                    setSelectedRegion(nvm.getNavigatedDisplay().getLatLonRect());
-                    drawG();
-                } catch (Exception e) {
-                    logger.warn("caught visad exception", e);
-                }
-            } else {
-                logger.warn("ViewManager is not a NavigatedViewManager", vm);
-            }
-        } else {
-            logger.warn("no vmmanager has been set...");
-        }
-    }
-
-    /**
-     * Set the {@link ucar.unidata.idv.VMManager VMManager} used by the
-     * application.
-     *
-     * @param vmManager The {@literal "ViewManager manager"}. {@code null} is
-     * allowed.
-     */
-    public void setVMManager(VMManager vmManager) {
-        this.vmManager = vmManager;
+//    public void doUseActiveView() {
 //        if (vmManager != null) {
 //            ViewManager vm = vmManager.getLastActiveViewManager();
 //            if (vm instanceof NavigatedViewManager) {
 //                NavigatedViewManager nvm = (NavigatedViewManager)vm;
 //                try {
-//                    logger.trace("umm='{}'", nvm.getNavigatedDisplay().getLatLonRect());
-//                    setViewRegion(nvm.getNavigatedDisplay().getLatLonRect());
+//                    setSelectedRegion(nvm.getNavigatedDisplay().getLatLonRect());
 //                    drawG();
 //                } catch (Exception e) {
 //                    logger.warn("caught visad exception", e);
@@ -1731,29 +1702,19 @@ public class NavigatedPanel extends JPanel implements MouseListener,
 //        } else {
 //            logger.warn("no vmmanager has been set...");
 //        }
-    }
-
-    /**
-     * Returns the {@link ucar.unidata.idv.VMManager VMManager} used by the
-     * application.
-     *
-     * @return Value may be {@code null}.
-     */
-    public VMManager getVMManager() {
-        return this.vmManager;
-    }
+//    }
 
     /**
      * Make the default actions
      */
     private void makeActions() {
         // add buttons/actions
-        activeDisplay = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
-                doUseActiveView();
-            }
-        };
-        BAMutil.setActionProperties(activeDisplay, "Airplane16", "NOT WORKING YET: Match Region of Active View", false, 'A', KeyEvent.VK_BACK_QUOTE);
+//        activeDisplay = new AbstractAction() {
+//            public void actionPerformed(ActionEvent e) {
+//                doUseActiveView();
+//            }
+//        };
+//        BAMutil.setActionProperties(activeDisplay, "Airplane16", "NOT WORKING YET: Match Region of Active View", false, 'A', KeyEvent.VK_BACK_QUOTE);
 
         zoomIn = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -1855,10 +1816,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
          */
         NToolBar() {
             setFloatable(false);
-            AbstractButton b = BAMutil.addActionToContainer(this, activeDisplay);
-            b.setName("activeDisplay");
-
-            b = BAMutil.addActionToContainer(this, zoomIn);
+            AbstractButton b = BAMutil.addActionToContainer(this, zoomIn);
             b.setName("zoomIn");
 
             b = BAMutil.addActionToContainer(this, zoomOut);
