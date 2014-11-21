@@ -28,9 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.*;
-import ucar.unidata.idv.NavigatedViewManager;
-import ucar.unidata.idv.VMManager;
-import ucar.unidata.idv.ViewManager;
 import ucar.unidata.ui.BAMutil;
 import ucar.unidata.ui.Rubberband;
 import ucar.unidata.ui.RubberbandRectangle;
@@ -1570,12 +1567,6 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     private int mapChangeCount = 0;
 
     /**
-     * Used to grab region of last active {@link NavigatedViewManager}.
-     * Value may be {@code null}.
-     */
-    private VMManager vmManager;
-
-    /**
      * Increment {@link #mapChangeCount} and if {@link #zoomBack} is disabled,
      * enable it.
      */
@@ -1678,44 +1669,10 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     }
 
     /**
-     * Changes the selected region to match that of the last active
-     * {@link NavigatedViewManager}.
-     *
-     * <p>If {@link #vmManager} is {@code null} or the result of
-     * {@link VMManager#getLastActiveViewManager} is not a
-     * {@code NavigatedViewManager}, nothing will happen.</p>
-     */
-//    public void doUseActiveView() {
-//        if (vmManager != null) {
-//            ViewManager vm = vmManager.getLastActiveViewManager();
-//            if (vm instanceof NavigatedViewManager) {
-//                NavigatedViewManager nvm = (NavigatedViewManager)vm;
-//                try {
-//                    setSelectedRegion(nvm.getNavigatedDisplay().getLatLonRect());
-//                    drawG();
-//                } catch (Exception e) {
-//                    logger.warn("caught visad exception", e);
-//                }
-//            } else {
-//                logger.warn("ViewManager is not a NavigatedViewManager", vm);
-//            }
-//        } else {
-//            logger.warn("no vmmanager has been set...");
-//        }
-//    }
-
-    /**
      * Make the default actions
      */
     private void makeActions() {
         // add buttons/actions
-//        activeDisplay = new AbstractAction() {
-//            public void actionPerformed(ActionEvent e) {
-//                doUseActiveView();
-//            }
-//        };
-//        BAMutil.setActionProperties(activeDisplay, "Airplane16", "NOT WORKING YET: Match Region of Active View", false, 'A', KeyEvent.VK_BACK_QUOTE);
-
         zoomIn = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
                 doZoomIn();

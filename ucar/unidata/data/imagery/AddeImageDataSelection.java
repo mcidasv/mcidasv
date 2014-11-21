@@ -2176,35 +2176,12 @@ public class AddeImageDataSelection {
 
             this.addeImageDataSelection = addeImageDataSelection;
             this.imagePreview           = createImagePreview(source);
-//            display = new NavigatedMapPanel(null, true, false,
-//                                            imagePreview.getPreviewImage(),
-//                                            aAdapter.getAreaFile());
             display = new NavigatedMapPanel(null, false, false,
                 imagePreview.getPreviewImage(),
                 aAdapter.getAreaFile());
             AreaFile af = aAdapter.getAreaFile();
-            JButton test = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
-            test.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
-                    if (vmManager != null) {
-                        ViewManager vm = vmManager.getLastActiveViewManager();
-                        if (vm instanceof NavigatedViewManager) {
-                            NavigatedPanel navPanel = display.getNavigatedPanel();
-                            NavigatedViewManager nvm = (NavigatedViewManager)vm;
-                            try {
-                                navPanel.setSelectedRegion(nvm.getNavigatedDisplay().getLatLonRect());
-                                navPanel.drawG();
-                            } catch (Exception ex) {
-                                logger.warn("caught visad exception", ex);
-                            }
-                        } else {
-                            logger.warn("ViewManager is not a NavigatedViewManager", vm);
-                        }
-                    } else {
-                        logger.warn("no vmmanager has been set...");
-                    }
-                }
-            });
+            JButton activeViewButton = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
+            activeViewButton.addActionListener(new UseActiveDisplayRegion(display, vmManager));
             JButton resetButton = new JButton("RESET");
             try {
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
@@ -2221,9 +2198,6 @@ public class AddeImageDataSelection {
             } catch (AreaFileException e) {
                 logger.error("problem building default region selection", e);
             }
-
-//            NavigatedPanel navigatedPanel = display.getNavigatedPanel();
-//            navigatedPanel.setVMManager(vmManager);
 
             this.eMag  = dataSource.getEMag();
             this.lMag  = dataSource.getLMag();
@@ -2242,7 +2216,7 @@ public class AddeImageDataSelection {
 //            labelsPanel.add(getRegionsList());
 
             JToolBar navToolBar = display.getNavigatedPanel().getNavToolBar();
-            navToolBar.add(test, 0);
+            navToolBar.add(activeViewButton, 0);
             navToolBar.add(resetButton);
 
             MasterPanel = new JPanel(new java.awt.BorderLayout());
@@ -2607,10 +2581,10 @@ public class AddeImageDataSelection {
                         //upper right conner
                         maxLat = cImpl.getLatitude()
                                  + (cImpl.getLatitude()
-                                    - llImpl.getLatitude());
+                            - llImpl.getLatitude());
                         minLat = llImpl.getLatitude();
                         maxLon = cImpl.getLongitude()
-                                 + (cImpl.getLongitude()
+                            + (cImpl.getLongitude()
                                     - lrImpl.getLongitude());
                         minLon = lrImpl.getLongitude();
                     } else if (llImpl.getLatitude() != llImpl.getLatitude()) {
@@ -2716,6 +2690,47 @@ public class AddeImageDataSelection {
                 }
             }
 
+        }
+    }
+
+    /**
+     * Changes the selected region to match that of the last active
+     * {@link NavigatedViewManager}.
+     *
+     * <p>If {@link #vmManager} or {@code display} is {@code null} or the
+     * result of {@link VMManager#getLastActiveViewManager} is not a
+     * {@code NavigatedViewManager}, nothing will happen.</p>
+     */
+    private static class UseActiveDisplayRegion implements ActionListener {
+        private final NavigatedMapPanel display;
+        private final VMManager vmManager;
+
+        public UseActiveDisplayRegion(NavigatedMapPanel display,
+                                      VMManager vmManager)
+        {
+            this.display = display;
+            this.vmManager = vmManager;
+        }
+
+        @Override public void actionPerformed(ActionEvent e) {
+            if ((vmManager != null) && (display != null)) {
+                ViewManager vm = vmManager.getLastActiveViewManager();
+                if (vm instanceof NavigatedViewManager) {
+                    NavigatedPanel navPanel = display.getNavigatedPanel();
+                    NavigatedViewManager nvm = (NavigatedViewManager)vm;
+                    try {
+                        LatLonRect r = nvm.getNavigatedDisplay().getLatLonRect();
+                        navPanel.setSelectedRegion(r);
+                        navPanel.drawG();
+                    } catch (Exception ex) {
+                        logger.warn("caught visad exception", ex);
+                    }
+                } else {
+                    logger.warn("ViewManager is not a NavigatedViewManager", vm);
+                }
+            } else {
+                logger.warn("no vmmanager has been set...");
+            }
         }
     }
 }
