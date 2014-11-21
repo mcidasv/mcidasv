@@ -37,6 +37,7 @@ import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.NavigatedViewManager;
 import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.ui.BAMutil;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
@@ -2169,7 +2170,7 @@ public class AddeImageDataSelection {
          * @throws VisADException _more_
          */
         public AddeImagePreviewPanel(
-                AddeImageDataSelection addeImageDataSelection, VMManager vmManager)
+                AddeImageDataSelection addeImageDataSelection, final VMManager vmManager)
                 throws IOException, ParseException, VisADException {
             super("Region");
 
@@ -2182,6 +2183,28 @@ public class AddeImageDataSelection {
                 imagePreview.getPreviewImage(),
                 aAdapter.getAreaFile());
             AreaFile af = aAdapter.getAreaFile();
+            JButton test = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
+            test.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    if (vmManager != null) {
+                        ViewManager vm = vmManager.getLastActiveViewManager();
+                        if (vm instanceof NavigatedViewManager) {
+                            NavigatedPanel navPanel = display.getNavigatedPanel();
+                            NavigatedViewManager nvm = (NavigatedViewManager)vm;
+                            try {
+                                navPanel.setSelectedRegion(nvm.getNavigatedDisplay().getLatLonRect());
+                                navPanel.drawG();
+                            } catch (Exception ex) {
+                                logger.warn("caught visad exception", ex);
+                            }
+                        } else {
+                            logger.warn("ViewManager is not a NavigatedViewManager", vm);
+                        }
+                    } else {
+                        logger.warn("no vmmanager has been set...");
+                    }
+                }
+            });
             JButton resetButton = new JButton("RESET");
             try {
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
@@ -2199,8 +2222,8 @@ public class AddeImageDataSelection {
                 logger.error("problem building default region selection", e);
             }
 
-            NavigatedPanel navigatedPanel = display.getNavigatedPanel();
-            navigatedPanel.setVMManager(vmManager);
+//            NavigatedPanel navigatedPanel = display.getNavigatedPanel();
+//            navigatedPanel.setVMManager(vmManager);
 
             this.eMag  = dataSource.getEMag();
             this.lMag  = dataSource.getLMag();
@@ -2219,6 +2242,7 @@ public class AddeImageDataSelection {
 //            labelsPanel.add(getRegionsList());
 
             JToolBar navToolBar = display.getNavigatedPanel().getNavToolBar();
+            navToolBar.add(test, 0);
             navToolBar.add(resetButton);
 
             MasterPanel = new JPanel(new java.awt.BorderLayout());
