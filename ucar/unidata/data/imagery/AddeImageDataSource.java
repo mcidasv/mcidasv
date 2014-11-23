@@ -1395,11 +1395,11 @@ public class AddeImageDataSource extends ImageDataSource {
                 && ("BRIT".equals(val))) {
             returnString = replaceKey(returnString, AddeImageURL.KEY_SPAC,
                                       AddeImageURL.KEY_SPAC, SPACING_BRIT);
-        } /*else {
+        } else {
             returnString = replaceKey(returnString, AddeImageURL.KEY_SPAC,
                                       AddeImageURL.KEY_SPAC,
                                       SPACING_NON_BRIT);
-        }   */
+        }
         return returnString;
     }
 
