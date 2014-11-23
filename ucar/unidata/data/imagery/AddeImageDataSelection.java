@@ -1960,7 +1960,7 @@ public class AddeImageDataSelection {
          *
          * @param update _more_
          */
-        public void setToFullResolution(Boolean update) {
+        public void setToFullResolution(boolean update) {
             setPlace(PLACE_CENTER);
             setLatitude(this.previewDir.getCenterLatitude());
             setLongitude(this.previewDir.getCenterLongitude());
@@ -2649,7 +2649,7 @@ public class AddeImageDataSelection {
 
                 // set lat lon values   locateValue = Misc.format(maxLat) + " " + Misc.format(minLon);
                 if (isFull) {
-                    advancedPanel.setToFullResolution(new Boolean(false));
+                    advancedPanel.setToFullResolution(false);
                 } else if ( !hasCorner) {
                     advancedPanel.setLatitude(gInfo.getMaxLat());
                     advancedPanel.setLongitude(gInfo.getMinLon());
