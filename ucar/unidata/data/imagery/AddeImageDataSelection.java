@@ -21,7 +21,6 @@
 package ucar.unidata.data.imagery;
 
 
-import com.ibm.media.content.application.mvr.Master;
 import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaFile;
