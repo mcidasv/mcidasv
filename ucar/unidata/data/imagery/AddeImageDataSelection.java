@@ -2177,7 +2177,7 @@ public class AddeImageDataSelection {
                 aAdapter.getAreaFile());
             AreaFile af = aAdapter.getAreaFile();
             JButton activeViewButton = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
-            activeViewButton.addActionListener(new UseActiveDisplayRegion(display, vmManager));
+            activeViewButton.addActionListener(new UseActiveDisplayRegion(this, vmManager));
             JButton resetButton = new JButton("RESET");
             try {
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
@@ -2509,7 +2509,6 @@ public class AddeImageDataSelection {
             //                          hasCorner);
             dataSelection.setGeoSelection(geoSelection);
 
-
         }
 
 
@@ -2698,13 +2697,15 @@ public class AddeImageDataSelection {
      * {@code NavigatedViewManager}, nothing will happen.</p>
      */
     private static class UseActiveDisplayRegion implements ActionListener {
+        private final AddeImagePreviewPanel panel;
         private final NavigatedMapPanel display;
         private final VMManager vmManager;
 
-        public UseActiveDisplayRegion(NavigatedMapPanel display,
+        public UseActiveDisplayRegion(AddeImagePreviewPanel panel,
                                       VMManager vmManager)
         {
-            this.display = display;
+            this.panel = panel;
+            this.display = panel.getNavigatedMapPanel();
             this.vmManager = vmManager;
         }
 
@@ -2718,6 +2719,7 @@ public class AddeImageDataSelection {
                         LatLonRect r = nvm.getNavigatedDisplay().getLatLonRect();
                         navPanel.setSelectedRegion(r);
                         navPanel.drawG();
+                        panel.update();
                     } catch (Exception ex) {
                         logger.warn("caught visad exception", ex);
                     }
