@@ -41,6 +41,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -67,6 +68,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
@@ -77,6 +79,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -90,6 +93,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -101,6 +105,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -113,9 +118,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataOperand;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.DerivedDataChoice;
+import ucar.unidata.data.UserOperandValue;
+import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.idv.IdvPreferenceManager;
@@ -140,6 +149,7 @@ import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.HttpFormEntry;
+import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.ui.RovingProgress;
 import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.GuiUtils;
@@ -150,6 +160,7 @@ import ucar.unidata.util.MenuUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
+import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlResourceCollection;
@@ -2912,7 +2923,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      */
     @Override
     protected void handleMenuDeSelected(final String id, final JMenu menu, final IdvWindow idvWindow) {
-    	super.handleMenuDeSelected(id, menu, idvWindow);
+        super.handleMenuDeSelected(id, menu, idvWindow);
     }
 
     /**
@@ -2945,6 +2956,211 @@ public class UIManager extends IdvUIManager implements ActionListener {
         } else {
             super.handleMenuSelected(id, menu, idvWindow);
         }
+    }
+
+    /** A cache of the operand name to value for the user choices */
+    private Map operandCache;
+
+    @Override public List selectUserChoices(String msg, List userOperands) {
+        if (operandCache == null) {
+            operandCache =
+                (Hashtable) getStore().getEncodedFile("operandcache.xml");
+            if (operandCache == null) {
+                operandCache = new Hashtable();
+            }
+        }
+        List fields         = new ArrayList();
+        List components     = new ArrayList();
+        List persistentCbxs = new ArrayList();
+        components.add(new JLabel("Property"));
+        components.add(new JLabel("Value"));
+        components.add(new JLabel("Save in Bundle"));
+        for (int i = 0; i < userOperands.size(); i++) {
+            DataOperand operand   = (DataOperand) userOperands.get(i);
+            String      fieldType = (String) operand.getProperty("type");
+            if (fieldType == null) {
+                fieldType = FIELDTYPE_TEXT;
+            }
+            DerivedDataChoice formula = operand.getDataChoice();
+            String description = operand.getDescription();
+            if (formula != null) {
+                description = formula.toString();
+            }
+
+            String label = operand.getLabel();
+            Object dflt = operand.getUserDefault();
+            Object cacheKeyNewStyle = Misc.newList(description, label, fieldType);
+            Object cacheKey = Misc.newList(label, fieldType);
+
+            Object cachedOperand = null;
+            boolean oldStyle = operandCache.containsKey(cacheKey);
+            boolean newStyle = operandCache.containsKey(cacheKeyNewStyle);
+
+            // if new style, always use that and ignore old style
+            // if no new style, proceed as before.
+            if (newStyle) {
+                cachedOperand = operandCache.get(cacheKeyNewStyle);
+            } else if (oldStyle) {
+                cachedOperand = operandCache.get(cacheKey);
+            }
+
+            if (cachedOperand != null) {
+                dflt = cachedOperand;
+            }
+
+            JCheckBox cbx = new JCheckBox("", operand.isPersistent());
+            persistentCbxs.add(cbx);
+            JComponent field     = null;
+            JComponent fieldComp = null;
+            if (fieldType.equals(FIELDTYPE_TEXT)) {
+                String rowString = (String) operand.getProperty("rows");
+                if (rowString == null) {
+                    rowString = "1";
+                }
+                int rows = new Integer(rowString).intValue();
+                if (rows == 1) {
+                    field = new JTextField((dflt != null)
+                        ? dflt.toString()
+                        : "", 15);
+                } else {
+                    field     = new JTextArea((dflt != null)
+                        ? dflt.toString()
+                        : "", rows, 15);
+                    fieldComp = GuiUtils.makeScrollPane(field, 200, 100);
+                }
+            } else if (fieldType.equals(FIELDTYPE_BOOLEAN)) {
+                field = new JCheckBox("", ((dflt != null)
+                    ? new Boolean(
+                    dflt.toString()).booleanValue()
+                    : true));
+            } else if (fieldType.equals(FIELDTYPE_CHOICE)) {
+                String choices = (String) operand.getProperty("choices");
+                if (choices == null) {
+                    throw new IllegalArgumentException(
+                        "No 'choices' attribute defined for operand: "
+                            + operand);
+                }
+                List l = StringUtil.split(choices, ";", true, true);
+                field = new JComboBox(new Vector(l));
+                if ((dflt != null) && l.contains(dflt)) {
+                    ((JComboBox) field).setSelectedItem(dflt);
+                }
+            } else if (fieldType.equals(FIELDTYPE_FILE)) {
+                JTextField fileFld = new JTextField(((dflt != null)
+                    ? dflt.toString()
+                    : ""), 30);
+                field = fileFld;
+                String patterns = operand.getProperty("filepattern");
+                List   filters  = null;
+                if (patterns != null) {
+                    filters = new ArrayList();
+                    List toks = StringUtil.split(patterns, ";", true, true);
+                    for (int tokIdx = 0; tokIdx < toks.size(); tokIdx++) {
+                        String tok   = (String) toks.get(tokIdx);
+                        List subToks = StringUtil.split(tok, ":", true, true);
+                        if (subToks.size() == 2) {
+                            filters.add(
+                                new PatternFileFilter(
+                                    (String) subToks.get(0),
+                                    (String) subToks.get(1)));
+                        } else {
+                            filters.add(new PatternFileFilter(tok, tok));
+                        }
+                    }
+                }
+                fieldComp = GuiUtils.centerRight(GuiUtils.hfill(fileFld),
+                    GuiUtils.makeFileBrowseButton(fileFld, filters));
+            } else if (fieldType.equals(FIELDTYPE_LOCATION)) {
+                List l = ((dflt != null)
+                    ? StringUtil.split(dflt.toString(), ";", true, true)
+                    : (List) new ArrayList());
+                final LatLonWidget llw = new LatLonWidget();
+                field = llw;
+                if (l.size() == 2) {
+                    llw.setLat(Misc.decodeLatLon(l.get(0).toString()));
+                    llw.setLon(Misc.decodeLatLon(l.get(1).toString()));
+                }
+                final JButton centerPopupBtn =
+                    GuiUtils.getImageButton("/auxdata/ui/icons/Map16.gif",
+                        getClass());
+                centerPopupBtn.setToolTipText("Center on current displays");
+                centerPopupBtn.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent ae) {
+                        popupCenterMenu(centerPopupBtn, llw);
+                    }
+                });
+                JComponent centerPopup = GuiUtils.inset(centerPopupBtn,
+                    new Insets(0, 0, 0, 4));
+                fieldComp = GuiUtils.hbox(llw, centerPopup);
+            } else if (fieldType.equals(FIELDTYPE_AREA)) {
+                //TODO:
+            } else {
+                throw new IllegalArgumentException("Unknown type: "
+                    + fieldType + " for operand: " + operand);
+            }
+
+            fields.add(field);
+            label = StringUtil.replace(label, "_", " ");
+            components.add(GuiUtils.rLabel(label));
+            components.add((fieldComp != null)
+                ? fieldComp
+                : field);
+            components.add(cbx);
+        }
+        //        GuiUtils.tmpColFills = new int[] { GridBagConstraints.HORIZONTAL,
+        //                                           GridBagConstraints.NONE,
+        //                                           GridBagConstraints.NONE };
+        GuiUtils.tmpInsets = GuiUtils.INSETS_5;
+        Component contents = GuiUtils.topCenter(new JLabel(msg),
+            GuiUtils.doLayout(components, 3,
+                GuiUtils.WT_NYN, GuiUtils.WT_N));
+        if ( !GuiUtils.showOkCancelDialog(null, "Select input", contents,
+            null, fields)) {
+            return null;
+        }
+        List values = new ArrayList();
+        for (int i = 0; i < userOperands.size(); i++) {
+            DataOperand operand = (DataOperand) userOperands.get(i);
+            String description = operand.getDescription();
+            DerivedDataChoice formula = operand.getDataChoice();
+            String label = operand.getLabel();
+            Object field = fields.get(i);
+            Object value = null;
+            Object cacheValue = null;
+
+            if (formula != null) {
+                description = formula.toString();
+            }
+
+            if (field instanceof JTextComponent) {
+                value = ((JTextComponent) field).getText().trim();
+            } else if (field instanceof JCheckBox) {
+                value = new Boolean(((JCheckBox) field).isSelected());
+            } else if (field instanceof JComboBox) {
+                value = ((JComboBox) field).getSelectedItem();
+            } else if (field instanceof LatLonWidget) {
+                LatLonWidget llw = (LatLonWidget) field;
+                value      = new LatLonPointImpl(llw.getLat(), llw.getLon());
+                cacheValue = llw.getLat() + ";" + llw.getLon();
+            } else {
+                throw new IllegalArgumentException("Unknown field type:"
+                    + field.getClass().getName());
+            }
+            if (cacheValue == null) {
+                cacheValue = value;
+            }
+            JCheckBox cbx       = (JCheckBox) persistentCbxs.get(i);
+            String    fieldType = (String) operand.getProperty("type");
+            if (fieldType == null) {
+                fieldType = "text";
+            }
+
+            Object cacheKey = Misc.newList(description, label, fieldType);
+            operandCache.put(cacheKey, cacheValue);
+            values.add(new UserOperandValue(value, cbx.isSelected()));
+        }
+        getStore().putEncodedFile("operandcache.xml", operandCache);
+        return values;
     }
 
     private boolean didTabs = false;

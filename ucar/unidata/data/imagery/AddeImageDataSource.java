@@ -1395,11 +1395,11 @@ public class AddeImageDataSource extends ImageDataSource {
                 && ("BRIT".equals(val))) {
             returnString = replaceKey(returnString, AddeImageURL.KEY_SPAC,
                                       AddeImageURL.KEY_SPAC, SPACING_BRIT);
-        } /*else {
+        } else {
             returnString = replaceKey(returnString, AddeImageURL.KEY_SPAC,
                                       AddeImageURL.KEY_SPAC,
                                       SPACING_NON_BRIT);
-        }   */
+        }
         return returnString;
     }
 
@@ -1569,7 +1569,9 @@ public class AddeImageDataSource extends ImageDataSource {
      */
     protected void initDataSelectionComponents(List components,
             DataChoice dataChoice) {
-
+        // anywhere this method can potentially exit will require a call to
+        // getDataContext().getIdv().showNormalCursor()
+        getDataContext().getIdv().showWaitCursor();
         try {
             /* String zpath = (String)getIdv().getStateManager().getProperty(
                      IdvPersistenceManager.PROP_ZIDVPATH);
@@ -1582,6 +1584,7 @@ public class AddeImageDataSource extends ImageDataSource {
                     && (allBandDirs != null)) {
                 id = (BandInfo) dataChoice.getId();
             } else {
+                getDataContext().getIdv().showNormalCursor();
                 return;
             }
 
@@ -1653,6 +1656,7 @@ public class AddeImageDataSource extends ImageDataSource {
         }
         components.add(addeImageDataSelection.getRegionPanel());
         components.add(addeImageDataSelection.getAdvancedPanel());
+        getDataContext().getIdv().showNormalCursor();
     }
 
 

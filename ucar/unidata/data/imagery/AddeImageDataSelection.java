@@ -21,7 +21,6 @@
 package ucar.unidata.data.imagery;
 
 
-import com.ibm.media.content.application.mvr.Master;
 import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaFile;
@@ -37,6 +36,7 @@ import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.NavigatedViewManager;
 import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.ui.BAMutil;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
@@ -1960,7 +1960,7 @@ public class AddeImageDataSelection {
          *
          * @param update _more_
          */
-        public void setToFullResolution(Boolean update) {
+        public void setToFullResolution(boolean update) {
             setPlace(PLACE_CENTER);
             setLatitude(this.previewDir.getCenterLatitude());
             setLongitude(this.previewDir.getCenterLongitude());
@@ -2115,9 +2115,6 @@ public class AddeImageDataSelection {
         public String USE_DISPLAYREGION = DataSelection.PROP_USEDISPLAYAREA;
 
         /** _more_ */
-//        private String[] regionSubsetOptionLabels = new String[] {
-//                                                        USE_DEFAULTREGION,
-//                USE_SELECTEDREGION, USE_DISPLAYREGION };
         private String[] regionSubsetOptionLabels = {
             USE_SELECTEDREGION,
             USE_DEFAULTREGION,
@@ -2139,7 +2136,6 @@ public class AddeImageDataSelection {
         private JComponent regionsListInfo;
 
         /** _more_ */
-//        private String regionOption = USE_DEFAULTREGION;
         private String regionOption = USE_SELECTEDREGION;
 
         /** _more_ */
@@ -2162,6 +2158,7 @@ public class AddeImageDataSelection {
 
         /**
          * Construct a AddeImagePreviewPanel
+         *
          * @param addeImageDataSelection _more_
          *
          * @throws IOException _more_
@@ -2169,19 +2166,18 @@ public class AddeImageDataSelection {
          * @throws VisADException _more_
          */
         public AddeImagePreviewPanel(
-                AddeImageDataSelection addeImageDataSelection, VMManager vmManager)
+                AddeImageDataSelection addeImageDataSelection, final VMManager vmManager)
                 throws IOException, ParseException, VisADException {
             super("Region");
 
             this.addeImageDataSelection = addeImageDataSelection;
             this.imagePreview           = createImagePreview(source);
-//            display = new NavigatedMapPanel(null, true, false,
-//                                            imagePreview.getPreviewImage(),
-//                                            aAdapter.getAreaFile());
             display = new NavigatedMapPanel(null, false, false,
                 imagePreview.getPreviewImage(),
                 aAdapter.getAreaFile());
             AreaFile af = aAdapter.getAreaFile();
+            JButton activeViewButton = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
+            activeViewButton.addActionListener(new UseActiveDisplayRegion(this, vmManager));
             JButton resetButton = new JButton("RESET");
             try {
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
@@ -2198,9 +2194,6 @@ public class AddeImageDataSelection {
             } catch (AreaFileException e) {
                 logger.error("problem building default region selection", e);
             }
-
-            NavigatedPanel navigatedPanel = display.getNavigatedPanel();
-            navigatedPanel.setVMManager(vmManager);
 
             this.eMag  = dataSource.getEMag();
             this.lMag  = dataSource.getLMag();
@@ -2219,6 +2212,7 @@ public class AddeImageDataSelection {
 //            labelsPanel.add(getRegionsList());
 
             JToolBar navToolBar = display.getNavigatedPanel().getNavToolBar();
+            navToolBar.add(activeViewButton, 0);
             navToolBar.add(resetButton);
 
             MasterPanel = new JPanel(new java.awt.BorderLayout());
@@ -2515,7 +2509,6 @@ public class AddeImageDataSelection {
             //                          hasCorner);
             dataSelection.setGeoSelection(geoSelection);
 
-
         }
 
 
@@ -2583,10 +2576,10 @@ public class AddeImageDataSelection {
                         //upper right conner
                         maxLat = cImpl.getLatitude()
                                  + (cImpl.getLatitude()
-                                    - llImpl.getLatitude());
+                            - llImpl.getLatitude());
                         minLat = llImpl.getLatitude();
                         maxLon = cImpl.getLongitude()
-                                 + (cImpl.getLongitude()
+                            + (cImpl.getLongitude()
                                     - lrImpl.getLongitude());
                         minLon = lrImpl.getLongitude();
                     } else if (llImpl.getLatitude() != llImpl.getLatitude()) {
@@ -2656,7 +2649,7 @@ public class AddeImageDataSelection {
 
                 // set lat lon values   locateValue = Misc.format(maxLat) + " " + Misc.format(minLon);
                 if (isFull) {
-                    advancedPanel.setToFullResolution(new Boolean(false));
+                    advancedPanel.setToFullResolution(false);
                 } else if ( !hasCorner) {
                     advancedPanel.setLatitude(gInfo.getMaxLat());
                     advancedPanel.setLongitude(gInfo.getMinLon());
@@ -2692,6 +2685,50 @@ public class AddeImageDataSelection {
                 }
             }
 
+        }
+    }
+
+    /**
+     * Changes the selected region to match that of the last active
+     * {@link NavigatedViewManager}.
+     *
+     * <p>If {@link #vmManager} or {@code display} is {@code null} or the
+     * result of {@link VMManager#getLastActiveViewManager} is not a
+     * {@code NavigatedViewManager}, nothing will happen.</p>
+     */
+    private static class UseActiveDisplayRegion implements ActionListener {
+        private final AddeImagePreviewPanel panel;
+        private final NavigatedMapPanel display;
+        private final VMManager vmManager;
+
+        public UseActiveDisplayRegion(AddeImagePreviewPanel panel,
+                                      VMManager vmManager)
+        {
+            this.panel = panel;
+            this.display = panel.getNavigatedMapPanel();
+            this.vmManager = vmManager;
+        }
+
+        @Override public void actionPerformed(ActionEvent e) {
+            if ((vmManager != null) && (display != null)) {
+                ViewManager vm = vmManager.getLastActiveViewManager();
+                if (vm instanceof NavigatedViewManager) {
+                    NavigatedPanel navPanel = display.getNavigatedPanel();
+                    NavigatedViewManager nvm = (NavigatedViewManager)vm;
+                    try {
+                        LatLonRect r = nvm.getNavigatedDisplay().getLatLonRect();
+                        navPanel.setSelectedRegion(r);
+                        navPanel.drawG();
+                        panel.update();
+                    } catch (Exception ex) {
+                        logger.warn("caught visad exception", ex);
+                    }
+                } else {
+                    logger.warn("ViewManager is not a NavigatedViewManager", vm);
+                }
+            } else {
+                logger.warn("no vmmanager has been set...");
+            }
         }
     }
 }
