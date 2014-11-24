@@ -1960,7 +1960,7 @@ public class AddeImageDataSelection {
          *
          * @param update _more_
          */
-        public void setToFullResolution(boolean update) {
+        public void setToFullResolution(Boolean update) {
             setPlace(PLACE_CENTER);
             setLatitude(this.previewDir.getCenterLatitude());
             setLongitude(this.previewDir.getCenterLongitude());
