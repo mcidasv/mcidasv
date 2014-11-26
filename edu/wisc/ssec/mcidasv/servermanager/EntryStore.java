@@ -80,6 +80,7 @@ import edu.wisc.ssec.mcidasv.util.trie.PatriciaTrie;
  *
  * @see AddeThread
  */
+
 public class EntryStore {
 
     /** 
@@ -161,9 +162,6 @@ public class EntryStore {
     /** McIDAS-V preferences store. */
     private final IdvObjectStore idvStore;
 
-    /** Whether or not mcservl is restarting. */
-    private boolean restartingMcserv;
-
     /**
      * Constructs a server manager.
      * 
@@ -182,8 +180,7 @@ public class EntryStore {
         this.ADDE_DIRECTORY = getAddeRootDirectory();
         this.ADDE_BIN = ADDE_DIRECTORY + File.separator + "bin";
         this.ADDE_DATA = ADDE_DIRECTORY + File.separator + "data";
-        this.localPort = Constants.LOCAL_ADDE_PORT;
-        this.restartingMcserv = false;
+        EntryStore.localPort = Constants.LOCAL_ADDE_PORT;
         this.lastAdded = arrList();
         AnnotationProcessor.process(this);
 
@@ -1227,7 +1224,6 @@ public class EntryStore {
      * {@code false} otherwise.
      */
     public boolean testLocalServer() {
-        StringBuilder err = new StringBuilder();
         String[] cmds = { ADDE_MCSERVL, "-t" };
         String[] env = McIDASV.isWindows() ? getWindowsAddeEnv() : getUnixAddeEnv();
 
