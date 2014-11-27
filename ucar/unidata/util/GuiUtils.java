@@ -21,10 +21,12 @@
 package ucar.unidata.util;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import ucar.unidata.xml.XmlObjectStore;
 
 
 import java.awt.CardLayout;
@@ -1021,6 +1023,10 @@ public class GuiUtils extends LayoutUtil {
         return new JComponent[] { swatch, swatch.setBtn, swatch.clearBtn };
     }
 
+    public static JComponent[] makeColorSwatchWidget(XmlObjectStore store, Color color, String label) {
+        ColorSwatchComponent swatch = new ColorSwatchComponent(store, color, label);
+        return new JComponent[] { swatch, swatch.getSetButton(), swatch.getClearButton() };
+    }
 
     /**
      * A helper to make a color selector combo box
