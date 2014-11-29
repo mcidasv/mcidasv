@@ -136,8 +136,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -153,8 +155,10 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
@@ -4100,8 +4104,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (legendType == SIDE_LEGEND) {
             if (sideLegendButtonPanel == null) {
                 //                DndImageButton dndBtn = new DndImageButton(this, "control");
-                sideLegendButtonPanel = GuiUtils.hbox(  /*dndBtn,*/
-                    makeLockButton(), makeRemoveButton(), 2);
+                if (canDoProgressiveResolution()) {
+                    sideLegendButtonPanel = GuiUtils.hbox(  /*dndBtn,*/
+                        makeMiscButton(), makeLockButton(), makeRemoveButton(), 2);
+                } else {
+                    sideLegendButtonPanel = GuiUtils.hbox(  /*dndBtn,*/
+                        makeLockButton(), makeRemoveButton(), 2);
+                }
                 //                dndBtn.setToolTipText("Click to drag-and-drop");
                 sideLegendButtonPanel.setBackground(null);
             }
@@ -4109,8 +4118,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
 
         if (bottomLegendButtonPanel == null) {
-            bottomLegendButtonPanel = GuiUtils.hbox(makeLockButton(),
+            if (canDoProgressiveResolution()) {
+                bottomLegendButtonPanel = GuiUtils.hbox(makeMiscButton(),
+                    makeLockButton(), makeRemoveButton(), 2);
+            } else {
+                bottomLegendButtonPanel = GuiUtils.hbox(makeLockButton(),
                     makeRemoveButton(), 2);
+            }
             bottomLegendButtonPanel.setBackground(null);
         }
         return bottomLegendButtonPanel;
@@ -10170,6 +10184,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param methodName    the method name to invoke
      */
     public void showColorDialog(String methodName) {
+
         Color newColor = JColorChooser.showDialog(null, "Choose Color",
                              color);
         if (newColor != null) {
@@ -11635,7 +11650,57 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
 
 
+    protected JButton makeMiscButton() {
+        final JPopupMenu popup = new JPopupMenu();
+        ButtonGroup group = new ButtonGroup();
+        final JRadioButtonMenuItem adaptiveRezOnItem = new JRadioButtonMenuItem("AR Off");
+        adaptiveRezOnItem.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                logger.trace("adaptiveRezOnItem={}", adaptiveRezOnItem.isSelected());
+            }
+        });
+        group.add(adaptiveRezOnItem);
+        popup.add(adaptiveRezOnItem);
 
+        final JRadioButtonMenuItem adaptiveRezOffItem = new JRadioButtonMenuItem("AR On");
+        adaptiveRezOffItem.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                logger.trace("adaptiveRezOffItem='{}'", adaptiveRezOffItem.isSelected());
+            }
+        });
+        group.add(adaptiveRezOffItem);
+        popup.add(adaptiveRezOffItem);
+
+        final JRadioButtonMenuItem fullRezItem = new JRadioButtonMenuItem("Full Res");
+        fullRezItem.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                logger.trace("fullRezItem='{}'", fullRezItem.isSelected());
+            }
+        });
+        group.add(fullRezItem);
+        popup.add(fullRezItem);
+
+        final JButton button = GuiUtils.getImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing16.png", DisplayControlImpl.class);
+        button.setToolTipText(Msg.msg("Resolution Control"));
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+                popup.show(button, button.getBounds().x, button.getBounds().y
+                    + button.getBounds().height);
+            }
+        });
+
+        if (matchDisplayRegion) {
+            adaptiveRezOnItem.setSelected(true);
+        } else {
+            adaptiveRezOffItem.setSelected(false);
+        }
+
+        return button;
+    }
+
+    protected void updateMiscButton(JButton miscButton) {
+
+    }
 
     /**
      * Create a  lock button for the given display control.
