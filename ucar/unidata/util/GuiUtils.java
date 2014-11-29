@@ -756,7 +756,10 @@ public class GuiUtils extends LayoutUtil {
      *
      * @author IDV Development Team
      * @version $Revision: 1.317 $
+     *
+     * @deprecated Use {@code ColorSwatchComponent} instead.
      */
+    @Deprecated
     public static class ColorSwatch extends JPanel {
 
         /** flag for alpha */
@@ -1015,8 +1018,13 @@ public class GuiUtils extends LayoutUtil {
      * @param color The initial color
      * @param label The label to use when popping up the color dialog
      *
-     * @return 3 element array that holds the swatch and the set button and the clear button
+     * @return 3 element array that holds the swatch and the set button and
+     * the clear button.
+     *
+     * @deprecated Use the {@code makeColorSwatchWidget} that takes a
+     * {@code XmlObjectStore} instead.
      */
+    @Deprecated
     public static JComponent[] makeColorSwatchWidget(Color color,
             String label) {
         ColorSwatch swatch = new ColorSwatch(color, label);
