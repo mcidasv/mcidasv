@@ -24,12 +24,15 @@ package ucar.unidata.idv;
 
 //~--- non-JDK imports --------------------------------------------------------
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+
 import ucar.unidata.ui.ImageUtils;
 import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.Plotter;
 
 import visad.DisplayImpl;
@@ -115,7 +118,7 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
      * @param columns the number of columns when there are multiple images
      */
     public VectorGraphicsRenderer(List<? extends ViewManager> viewManagers, int columns) {
-        List<BufferedImage> l = new ArrayList<BufferedImage>();
+        List<BufferedImage> l = new ArrayList<BufferedImage>(viewManagers.size());
 
         for (ViewManager viewManager : viewManagers) {
             l.add(makeImage(viewManager));
@@ -154,8 +157,8 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
      *
      * @return true if successful
      */
-    public boolean showConfigDialog() {
-        GuiUtils.ColorSwatch labelBGFld = new GuiUtils.ColorSwatch(labelBG, "Label Color", true);
+    public boolean showConfigDialog(XmlObjectStore store) {
+        ColorSwatchComponent labelBGFld = new ColorSwatchComponent(store, labelBG, "Label Color", true);
         JTextField           widthFld   = new JTextField("" + labelWidth, 5);
         JTextArea            ta         = new JTextArea(labelHtml, 5, 50);
 

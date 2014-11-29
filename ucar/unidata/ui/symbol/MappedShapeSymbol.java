@@ -38,6 +38,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
 
 import ucar.visad.ShapeUtility;
@@ -186,7 +187,8 @@ public class MappedShapeSymbol extends ShapeSymbol {
      */
     protected void applyProperties() {
         super.applyProperties();
-        shapeMappings = ColorMap.applyProperties(mappingFields);
+        XmlObjectStore store = canvas.getStationModelManager().store;
+        shapeMappings = ColorMap.applyProperties(store, mappingFields);
         updateShapeMappings();
     }
 

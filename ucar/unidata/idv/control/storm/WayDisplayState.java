@@ -23,6 +23,7 @@
 package ucar.unidata.idv.control.storm;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.point.PointOb;
 import ucar.unidata.data.point.PointObFactory;
@@ -39,6 +40,7 @@ import ucar.unidata.ui.symbol.StationModel;
 import ucar.unidata.util.*;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.Util;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.Displayable;
@@ -118,7 +120,7 @@ public class WayDisplayState {
     private Color color;
 
     /** _more_ */
-    private GuiUtils.ColorSwatch colorSwatch;
+    private ColorSwatchComponent colorSwatch;
 
     /** _more_ */
     private CompositeDisplayable holder;
@@ -944,7 +946,8 @@ public class WayDisplayState {
      */
     protected JComponent getColorSwatch() {
         if (colorSwatch == null) {
-            colorSwatch = new GuiUtils.ColorSwatch(getColor(),
+            XmlObjectStore store = stormDisplayState.getStormTrackControl().getStore();
+            colorSwatch = new ColorSwatchComponent(store, getColor(),
                     "Set track color") {
                 public void setBackground(Color newColor) {
                     super.setBackground(newColor);

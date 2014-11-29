@@ -23,6 +23,7 @@
 package ucar.unidata.ui.symbol;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataAlias;
@@ -44,6 +45,7 @@ import ucar.unidata.util.ObjectPair;
 import ucar.unidata.util.Range;
 import ucar.unidata.util.TwoFacedObject;
 
+import ucar.unidata.xml.XmlObjectStore;
 import visad.Data;
 
 
@@ -102,10 +104,10 @@ public class PropertiesDialog implements ActionListener {
     private JTextField scaleFld;
 
     /** Shows the color */
-    private GuiUtils.ColorSwatch bgColorSwatch;
+    private ColorSwatchComponent bgColorSwatch;
 
     /** Shows the color */
-    private GuiUtils.ColorSwatch fgColorSwatch;
+    private ColorSwatchComponent fgColorSwatch;
 
     /** Holds the scale by scale min */
     private JTextField scaleMinFld;
@@ -629,17 +631,19 @@ public class PropertiesDialog implements ActionListener {
         comps.add(GuiUtils.rLabel("Shown:"));
         comps.add(GuiUtils.left(shownCheckbox));
 
+        XmlObjectStore store = canvas.getStationModelManager().store;
+
         JComponent[] fgSwatch =
-            GuiUtils.makeColorSwatchWidget(symbol.getForeground(), "");
-        fgColorSwatch = (GuiUtils.ColorSwatch) fgSwatch[0];
+            GuiUtils.makeColorSwatchWidget(store, symbol.getForeground(), "");
+        fgColorSwatch = (ColorSwatchComponent) fgSwatch[0];
         JPanel fgColorPanel = GuiUtils.hbox(fgSwatch[0], fgSwatch[2]);
         comps.add(GuiUtils.rLabel("Foreground Color:"));
         comps.add(GuiUtils.left(fgColorPanel));
 
 
         JComponent[] bgSwatch =
-            GuiUtils.makeColorSwatchWidget(symbol.getBackground(), "");
-        bgColorSwatch = (GuiUtils.ColorSwatch) bgSwatch[0];
+            GuiUtils.makeColorSwatchWidget(store, symbol.getBackground(), "");
+        bgColorSwatch = (ColorSwatchComponent) bgSwatch[0];
         JPanel bgColorPanel = GuiUtils.hbox(bgSwatch[0], bgSwatch[2]);
         comps.add(GuiUtils.rLabel("Background Color:"));
         comps.add(GuiUtils.left(bgColorPanel));

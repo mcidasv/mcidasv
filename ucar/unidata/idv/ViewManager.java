@@ -21,6 +21,7 @@
 package ucar.unidata.idv;
 
 /**** BEGIN MCV ADDONS ****/
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**** END MCV ADDONS ****/
@@ -627,7 +628,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     private double[] aspectRatio;
 
     /** background color swatch */
-    private GuiUtils.ColorSwatch bgPropertiesSwatch;
+    private ColorSwatchComponent bgPropertiesSwatch;
 
     /** Holds the values to force them to be persisted */
     private Hashtable booleanPropertiesForPersistence;
@@ -654,7 +655,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     private CompositeDisplayable displayListDisplayables;
 
     /** background color swatch */
-    private GuiUtils.ColorSwatch dlPropertiesSwatch;
+    private ColorSwatchComponent dlPropertiesSwatch;
 
     /** This allows us to have an animation from an external source for doing movie captures */
     private Animation externalAnimation;
@@ -663,7 +664,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     private AnimationWidget externalAnimationWidget;
 
     /** foreground color swatch */
-    private GuiUtils.ColorSwatch fgPropertiesSwatch;
+    private ColorSwatchComponent fgPropertiesSwatch;
 
     /**
      * DisplayList font selector
@@ -1393,10 +1394,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         JComponent propsComp = GuiUtils.doLayout(props, 2, GuiUtils.WT_N,
                                    GuiUtils.WT_N);
 
-        bgPropertiesSwatch = new GuiUtils.ColorSwatch(getBackground(),
-                "Set Background Color");
-        fgPropertiesSwatch = new GuiUtils.ColorSwatch(getForeground(),
-                "Set Foreground Color");
+        bgPropertiesSwatch = new ColorSwatchComponent(getStore(),
+                                                      getBackground(),
+                                                      "Set Background Color");
+        fgPropertiesSwatch = new ColorSwatchComponent(getStore(),
+                                                      getForeground(),
+                                                      "Set Foreground Color");
 
         List colorProps = new ArrayList();
 
@@ -1413,8 +1416,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false,
                                         false);
         fontSelector.setFont(getDisplayListFont());
-        dlPropertiesSwatch = new GuiUtils.ColorSwatch(getDisplayListColor(),
-                "Set Display List Color");
+        dlPropertiesSwatch = new ColorSwatchComponent(getStore(),
+                                                      getDisplayListColor(),
+                                                      "Set Display List Color");
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
 
         JComponent fontPanel = GuiUtils.doLayout(new Component[] {
@@ -6088,11 +6092,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         new VectorGraphicsRenderer(l,
                             getColumnCountFromVM(l));
 
-                    if (vectorRenderer.showConfigDialog()) {
+                    /**** BEGIN MCV ADDONS ****/
+                    // this is for inquiry 1765 (persistable color swatches)
+                    if (vectorRenderer.showConfigDialog(getIdv().getStore())) {
                         vectorRenderer.renderTo(filename);
                         getIdv().getPublishManager().publishContent(filename,
                                 this, publishCbx);
                     }
+                    /**** END MCV ADDONS ****/
 
                     System.setSecurityManager(backup);
 
@@ -6614,10 +6621,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         JLabel             bgLbl   = GuiUtils.rLabel("Background:");
         JLabel             fgLbl   = GuiUtils.rLabel("Foreground:");
         final JComponent[] bgComps =
-            GuiUtils.makeColorSwatchWidget(getBackground(),
+            GuiUtils.makeColorSwatchWidget(getStore(),
+                                           getBackground(),
                                            "Set Background Color");
         final JComponent[] fgComps =
-            GuiUtils.makeColorSwatchWidget(getForeground(),
+            GuiUtils.makeColorSwatchWidget(getStore(),
+                                           getForeground(),
                                            "Set Foreground Color");
 
         GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);

@@ -21,6 +21,7 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataTimeRange;
 import ucar.unidata.data.grid.GridUtil;
@@ -392,7 +393,7 @@ public class StationModelControl extends ObsDisplayControl {
     JTextField kmzNameFld;
 
     /** the GE KMZ color swatch field */
-    GuiUtils.ColorSwatch kmzColorSwatch;
+    ColorSwatchComponent kmzColorSwatch;
 
     /**
      * Default constructor.
@@ -2981,7 +2982,7 @@ public class StationModelControl extends ObsDisplayControl {
                 kmzWidthFld    = new JTextField("80", 5);
                 kmzHeightFld   = new JTextField("80", 5);
                 kmzNameFld     = new JTextField("Point Observations");
-                kmzColorSwatch = new GuiUtils.ColorSwatch(Color.white,
+                kmzColorSwatch = new ColorSwatchComponent(getStore(), Color.white,
                         "KMZ Icon Color", true);
             }
 

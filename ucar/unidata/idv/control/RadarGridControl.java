@@ -21,6 +21,7 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.collab.Sharable;
 
 import ucar.unidata.data.DataChoice;
@@ -458,7 +459,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
      */
     JComponent makeColorBox(final String cmd, Color color) {
 
-        GuiUtils.ColorSwatch swatch = new GuiUtils.ColorSwatch(color,
+        ColorSwatchComponent swatch = new ColorSwatchComponent(getStore(), color,
                                           "Set Color") {
             public void userSelectedNewColor(Color c) {
                 super.userSelectedNewColor(c);

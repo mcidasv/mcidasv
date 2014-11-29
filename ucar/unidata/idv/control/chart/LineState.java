@@ -23,6 +23,7 @@
 package ucar.unidata.idv.control.chart;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
@@ -254,7 +255,7 @@ public class LineState {
     JComboBox sideCbx;
 
     /** for gui */
-    GuiUtils.ColorSwatch colorSwatch;
+    ColorSwatchComponent colorSwatch;
 
     /** for gui */
     JComboBox strokeCbx;
@@ -600,7 +601,7 @@ public class LineState {
         }
         widthFld = new JTextField("" + width, 3);
         JComponent[] bg = GuiUtils.makeColorSwatchWidget(color, "");
-        colorSwatch = (GuiUtils.ColorSwatch) bg[0];
+        colorSwatch = (ColorSwatchComponent) bg[0];
 
         comps.add(GuiUtils.rLabel("Line:"));
         List lineComps = new ArrayList();

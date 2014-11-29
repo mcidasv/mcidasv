@@ -1043,15 +1043,15 @@ public class MapDisplayControl extends DisplayControlImpl {
         latLabelState.other = lonLabelState;
         lonLabelState.other = latLabelState;
 
-        latPanel = new LatLonPanel(latState);
+        latPanel = new LatLonPanel(getStore(), latState);
         latState.myLatLonPanel = latPanel;
-        lonPanel = new LatLonPanel(lonState);
+        lonPanel = new LatLonPanel(getStore(), lonState);
         lonState.myLatLonPanel = lonPanel;
         JPanel llPanel = LatLonPanel.layoutPanels(latPanel, lonPanel);
 
-        latLabelPanel = new LatLonLabelPanel(latLabelState);
+        latLabelPanel = new LatLonLabelPanel(getStore(), latLabelState);
         latLabelState.myLatLonLabelPanel = latLabelPanel;
-        lonLabelPanel = new LatLonLabelPanel(lonLabelState);
+        lonLabelPanel = new LatLonLabelPanel(getStore(), lonLabelState);
         lonLabelState.myLatLonLabelPanel = lonLabelPanel;
         JPanel lllPanel = LatLonLabelPanel.layoutPanels(latLabelPanel,
                               lonLabelPanel);

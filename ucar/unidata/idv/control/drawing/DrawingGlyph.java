@@ -24,6 +24,7 @@
 package ucar.unidata.idv.control.drawing;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -327,9 +328,9 @@ public abstract class DrawingGlyph {
     private boolean beingCreated = false;
 
     /** Shows the color */
-    private GuiUtils.ColorSwatch colorSwatch;
+    private ColorSwatchComponent colorSwatch;
 
-    private GuiUtils.ColorSwatch bgColorSwatch;
+    private ColorSwatchComponent bgColorSwatch;
 
     /** _more_          */
     private AbstractTableModel pointTableModel;
@@ -1584,7 +1585,7 @@ public abstract class DrawingGlyph {
         comps.add(visibleCbx = new JCheckBox("Visible", visibleFlag));
         if (shouldShowColorSelector()) {
             comps.add(GuiUtils.rLabel("Color:"));
-            colorSwatch = new GuiUtils.ColorSwatch(color, "", false);
+            colorSwatch = new ColorSwatchComponent(control.getStore(), color, "", false);
             colorSwatch.setMinimumSize(new Dimension(20, 20));
             colorSwatch.setPreferredSize(new Dimension(20, 20));
             comps.add(GuiUtils.left(colorSwatch));
@@ -1593,7 +1594,7 @@ public abstract class DrawingGlyph {
 
         if (shouldShowBgColorSelector()) {
             comps.add(GuiUtils.rLabel("BG Color:"));
-            bgColorSwatch = new GuiUtils.ColorSwatch(bgcolor, "", false);
+            bgColorSwatch = new ColorSwatchComponent(control.getStore(), bgcolor, "", false);
             bgColorSwatch.setMinimumSize(new Dimension(20, 20));
             bgColorSwatch.setPreferredSize(new Dimension(20, 20));
             comps.add(GuiUtils.left(bgColorSwatch.getPanel()));

@@ -23,6 +23,7 @@
 package ucar.unidata.ui.symbol;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.point.PointOb;
@@ -38,6 +39,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
 
 import ucar.visad.ShapeUtility;
@@ -82,6 +84,8 @@ public class ColorMap {
     /** The range */
     private Real[] range;
 
+    private XmlObjectStore store;
+
     /**
      * Default ctor
      */
@@ -113,10 +117,11 @@ public class ColorMap {
      *
      * @return The list of ColorMaps-s that actually have a pattern.
      */
-    public static List applyProperties(List mappings) {
+    public static List applyProperties(XmlObjectStore store, List mappings) {
         List goodMappings = new ArrayList();
         for (int i = 0; i < mappings.size(); i++) {
             ColorMap colorMap = (ColorMap) mappings.get(i);
+            colorMap.store = store;
             colorMap.applyProperties();
             if (colorMap.hasPattern()) {
                 goodMappings.add(colorMap);
@@ -131,8 +136,8 @@ public class ColorMap {
     public void applyProperties() {
         range   = null;
         pattern = patternFld.getText().trim();
-        GuiUtils.ColorSwatch colorSwatch =
-            (GuiUtils.ColorSwatch) getSwatchComps()[0];
+        ColorSwatchComponent colorSwatch =
+            (ColorSwatchComponent) getSwatchComps()[0];
         color = colorSwatch.getSwatchColor();
     }
 
@@ -143,7 +148,7 @@ public class ColorMap {
      */
     public JComponent[] getSwatchComps() {
         if (swatchComps == null) {
-            swatchComps = GuiUtils.makeColorSwatchWidget(color, "");
+            swatchComps = GuiUtils.makeColorSwatchWidget(store, color, "");
         }
         return swatchComps;
     }

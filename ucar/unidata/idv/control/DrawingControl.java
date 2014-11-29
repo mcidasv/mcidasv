@@ -21,6 +21,7 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.python.util.PythonInterpreter;
 
 import org.w3c.dom.Document;
@@ -50,6 +51,7 @@ import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
 
 import ucar.visad.data.CalendarDateTime;
@@ -1842,8 +1844,9 @@ public class DrawingControl extends DisplayControlImpl {
         if (c == null) {
             c = Color.red;
         }
-        GuiUtils.ColorSwatch colorSwatch = new GuiUtils.ColorSwatch(c,
-                                               "Set color", true) {
+        XmlObjectStore store = getIdv().getStore();
+        ColorSwatchComponent colorSwatch = new ColorSwatchComponent(store,
+                                               c, "Set color", true) {
             public void setBackground(Color newColor) {
                 super.setBackground(newColor);
                 try {

@@ -23,6 +23,7 @@
 package ucar.unidata.idv.control.storm;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.w3c.dom.*;
 
 
@@ -51,6 +52,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
 
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
 
 import ucar.visad.*;
@@ -164,7 +166,7 @@ public class YearDisplayState {
     private JButton button;
 
     /** _more_ */
-    private GuiUtils.ColorSwatch colorSwatch;
+    private ColorSwatchComponent colorSwatch;
 
     /**
      * _more_
@@ -193,7 +195,8 @@ public class YearDisplayState {
      */
     protected JComponent getColorSwatch() {
         if (colorSwatch == null) {
-            colorSwatch = new GuiUtils.ColorSwatch(getColor(),
+            XmlObjectStore store = stormTrackControl.getStore();
+            colorSwatch = new ColorSwatchComponent(store, getColor(),
                     "Set track color") {
                 public void setBackground(Color newColor) {
                     super.setBackground(newColor);

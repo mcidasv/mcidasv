@@ -466,7 +466,7 @@ public class StateManager extends IdvManager {
         //Trace.msg("initState-7");
 
         getStationModelManager()
-            .init(getResourceManager()
+            .init(getStore(), getResourceManager()
                 .getXmlResources(IdvResourceManager
                     .RSC_STATIONSYMBOLS), getResourceManager()
                         .getResources(IdvResourceManager.RSC_STATIONMODELS));

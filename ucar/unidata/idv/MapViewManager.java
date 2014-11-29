@@ -29,6 +29,7 @@
 package ucar.unidata.idv;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.grid.GridUtil;
@@ -1309,22 +1310,25 @@ public class MapViewManager extends NavigatedViewManager {
 
         super.initPreferences(preferenceManager);
 
+        XmlObjectStore store = getStore();
+
         final JComponent[] bgComps =
-            GuiUtils.makeColorSwatchWidget(getStore().get(PREF_BGCOLOR,
+            GuiUtils.makeColorSwatchWidget(store, store.get(PREF_BGCOLOR,
                 getBackground()), "Set Background Color");
 
         final JComponent[] fgComps =
-            GuiUtils.makeColorSwatchWidget(getStore().get(PREF_FGCOLOR,
+            GuiUtils.makeColorSwatchWidget(store, store.get(PREF_FGCOLOR,
                 getForeground()), "Set Foreground Color");
 
         final JComponent[] border =
             GuiUtils
-                .makeColorSwatchWidget(getStore()
-                    .get(PREF_BORDERCOLOR, ViewManager
-                        .borderHighlightColor), "Set Selected Panel Border Color");
+                .makeColorSwatchWidget(store,
+                    store.get(PREF_BORDERCOLOR, ViewManager.borderHighlightColor),
+                    "Set Selected Panel Border Color");
 
         final JComponent[] globeComps =
-            GuiUtils.makeColorSwatchWidget(getGlobeBackgroundColorToUse(),
+            GuiUtils.makeColorSwatchWidget(store,
+                                           getGlobeBackgroundColorToUse(),
                                            "Globe Background Color");
         StateManager stateManager = getStateManager();
 
@@ -1367,8 +1371,9 @@ public class MapViewManager extends NavigatedViewManager {
             new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         Font f = getStore().get(PREF_DISPLAYLISTFONT, getDisplayListFont());
         fontSelector.setFont(f);
-        final GuiUtils.ColorSwatch dlColorWidget =
-            new GuiUtils.ColorSwatch(getStore().get(PREF_DISPLAYLISTCOLOR,
+
+        final ColorSwatchComponent dlColorWidget =
+            new ColorSwatchComponent(store, store.get(PREF_DISPLAYLISTCOLOR,
                 getDisplayListColor()), "Set Display List Color");
         //GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
         JPanel fontPanel = GuiUtils.vbox(GuiUtils.lLabel("Display List:"),
@@ -2489,7 +2494,8 @@ public class MapViewManager extends NavigatedViewManager {
         globeBackgroundLevelSlider = new ZSlider(globeBackgroundLevel);
         JComponent levelComp = globeBackgroundLevelSlider.getContents();
         JComponent[] bgComps =
-            GuiUtils.makeColorSwatchWidget(getGlobeBackgroundColorToUse(),
+            GuiUtils.makeColorSwatchWidget(getStore(),
+                                           getGlobeBackgroundColorToUse(),
                                            "Globe Background Color");
 
 

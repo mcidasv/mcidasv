@@ -20,6 +20,7 @@
 
 package ucar.unidata.idv.control;
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.DataChoice;
@@ -266,7 +267,7 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
     private JSlider probeSizeSlider;
 
     /** probe color swatch selector */
-    private GuiUtils.ColorSwatch probeColorSwatch;
+    private ColorSwatchComponent probeColorSwatch;
 
     /** probe shape selector */
     private JComboBox shapeCbx;
@@ -446,7 +447,7 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
         comps.add(GuiUtils.rLabel("Size:"));
         probeSizeSlider = new JSlider(1, 2000, (int) (getPointSize() * 100));
         comps.add(probeSizeSlider);
-        probeColorSwatch = new GuiUtils.ColorSwatch(getColor(),
+        probeColorSwatch = new ColorSwatchComponent(getStore(), getColor(),
                 "Probe Color");
         comps.add(GuiUtils.rLabel("Color:"));
         comps.add(GuiUtils.left(probeColorSwatch));

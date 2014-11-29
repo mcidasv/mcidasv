@@ -1208,6 +1208,8 @@ public class StationModelCanvas extends EditCanvas {
 
     }
 
-
+    public StationModelManager getStationModelManager() {
+        return smm;
+    }
 }
 

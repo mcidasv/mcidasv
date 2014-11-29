@@ -29,6 +29,8 @@
 package ucar.unidata.idv.control;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.nc2.time.Calendar;
 
 import ucar.unidata.collab.Sharable;
@@ -1020,6 +1022,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             return;
         }
 
+        logger.trace("current={} incoming={}", this.dataSelection, dataSelection);
 
         initSharable();
         this.displayId      = displayId;
@@ -1028,6 +1031,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         this.dataSelection  = dataSelection;
         if (this.dataSelection == null) {
             this.dataSelection = new DataSelection();
+            logger.trace("created new dataSelection={}", this.dataSelection);
         }
         setMatchDisplayRegion(
         	this.dataSelection.getGeoSelection(true).getUseViewBounds());
@@ -1085,7 +1089,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
         // we do this here because time driver properties 
         // might be changed by the display settings.
+        logger.trace("before update={}", this.dataSelection);
         updateDataSelection(this.dataSelection);
+        logger.trace("after update={}", this.dataSelection);
 
 
         //Call the derived class init method.
@@ -1380,8 +1386,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                                       + UtcDate.MACRO_TIMESTAMP;
             }
 
+            logger.trace("selection before={}", getDataSelection());
             init(getDisplayId(), getCategories(), initDataChoices,
-                 getControlContext(), properties, getDataSelection());
+                getControlContext(), properties, getDataSelection());
+            logger.trace("selection after={}", getDataSelection());
             initDataChoices = null;
         } catch (ucar.unidata.data.DataCancelException dce) {
             displayControlFailed();
@@ -3662,31 +3670,43 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     	// and the screen lat/lon box if usedisplay area
         GeoSelection geoSelection = 
         	dataSelection.getGeoSelection(true);
+        logger.trace("geoSelection={}", geoSelection);
         // always update the screen size
         NavigatedDisplay navDisplay = getNavigatedDisplay();
       	Rectangle2D sbox = navDisplay.getScreenBounds();
+        logger.trace("navDisplay={} sbox={}", navDisplay, sbox);
         geoSelection.setScreenBound(sbox);
+        logger.trace("new geoselection stuff={}", geoSelection);
         boolean levelChanged = dataSelection.getProperty("levelChanged", false);
         //if (Misc.equals(dataSelection.getProperty(DataSelection.PROP_REGIONOPTION), 
         //		DataSelection.PROP_USEDISPLAYAREA) && !levelChanged) {
         if (getMatchDisplayRegion() && !levelChanged) {
+            logger.trace("enter block={}", dataSelection);
             getViewManager().setProjectionFromData(false);
+            logger.trace("after setProjFromData(false)={}", dataSelection);
       	    Rectangle2D bbox = navDisplay.getLatLonBox();
+//            logger.trace("after grabbing bbox={} bbox={} latlonrect={}", dataSelection, bbox, geoSelection.getLatLonRect());
             geoSelection.setLatLonRect(bbox);
+            logger.trace("after setLatLonRect={} latlonrect={}", dataSelection, geoSelection.getLatLonRect());
             geoSelection.setUseViewBounds(true);
+            logger.trace("after setUseViewBounds(true)={}", dataSelection);
             dataSelection.setGeoSelection(geoSelection);
+            logger.trace("after setGeoSelection={}", dataSelection);
             EarthLocation el = navDisplay.screenToEarthLocation(
         		(int) (sbox.getWidth()/2), (int)(sbox.getHeight()/2));
+            logger.trace("after screenToEarthLocation={}", dataSelection);
             LatLonPointImpl llpi =
                     new LatLonPointImpl(el.getLatitude().getValue(),  
                     		            el.getLongitude().getValue());
-
+            logger.trace("before putProp={}", dataSelection);
             dataSelection.putProperty("centerPosition", llpi);
+            logger.trace("after putProp={}", dataSelection);
         }
         if(levelChanged){
             dataSelection.removeProperty("levelChanged");
         }
         if ( !getIdv().getUseTimeDriver()) {
+            logger.trace("no time driver! returning {}", dataSelection);
             return dataSelection;
         }
         if (getIsTimeDriver() || !getUsesTimeDriver()) {
@@ -3695,20 +3715,23 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 dataSelection.putProperty(DataSelection.PROP_USESTIMEDRIVER,
                                           getUsesTimeDriver());
             }
+            logger.trace("no idea! returning {}", dataSelection);
             return dataSelection;
         }
         ViewManager vm = getViewManager();
         if (vm == null) {
+            logger.trace("null viewmanager! returning {}", dataSelection);
             return dataSelection;
         }
         List<DateTime> times = vm.getTimeDriverTimes();
         //        System.err.println("\tdriver times to use:" + times);
         dataSelection.putProperty(DataSelection.PROP_USESTIMEDRIVER, true);
         dataSelection.setTheTimeDriverTimes(times);
+        logger.trace("fallthrough! returning {}", dataSelection);
         return dataSelection;
     }
 
-
+    private static final Logger logger = LoggerFactory.getLogger(DisplayControlImpl.class);
     /**
      * The name of the parameter (initially from the DataChoice) displayed
      * by this control.
@@ -8364,9 +8387,12 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @return The dataSelection member
      */
     public DataSelection getDataSelection() {
+        logger.trace("enter");
         if (dataSelection == null) {
             dataSelection = new DataSelection();
+            logger.trace("had to create a new data selection: {}", dataSelection);
         }
+        logger.trace("exit: {}", dataSelection);
         return dataSelection;
     }
 
@@ -8378,6 +8404,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param newDataSelection  The new dataSelection member
      */
     public void setDataSelection(DataSelection newDataSelection) {
+        logger.trace("current={} incoming={}", dataSelection, newDataSelection);
         dataSelection = newDataSelection;
     }
 

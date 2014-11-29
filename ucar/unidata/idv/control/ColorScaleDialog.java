@@ -21,6 +21,7 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -70,7 +71,7 @@ public class ColorScaleDialog implements ActionListener {
     private JComboBox placementBox;
 
     /** combobox for the label color */
-    private GuiUtils.ColorSwatch colorSwatch;
+    private ColorSwatchComponent colorSwatch;
 
     /** checkbox for visibility */
     private JCheckBox visibilityCbx;
@@ -196,7 +197,7 @@ public class ColorScaleDialog implements ActionListener {
      */
     private void doMakeContents(boolean showDialog) {
         placementBox = new JComboBox(positions);
-        colorSwatch  = new GuiUtils.ColorSwatch(myInfo.getLabelColor(),
+        colorSwatch  = new ColorSwatchComponent(displayControl.getIdv().getStore(), myInfo.getLabelColor(),
                 "Color Scale Label Color");
         final JComponent colorComp = colorSwatch.getSetPanel();
         visibilityCbx = new JCheckBox("", myInfo.getIsVisible());

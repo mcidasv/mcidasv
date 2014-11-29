@@ -73,6 +73,7 @@ public class StationModelManager extends ResourceManager {
     /** The window */
     JFrame frame;
 
+    XmlObjectStore store;
 
     /** This defines where we get the symbol definition xml files */
     protected XmlResourceCollection symbolTypes;
@@ -102,8 +103,9 @@ public class StationModelManager extends ResourceManager {
      * @param symbolTypes  This defines where we get the symbol definition xml files
      * @param stationModels Where we get the station model files
      */
-    public void init(XmlResourceCollection symbolTypes,
+    public void init(XmlObjectStore store, XmlResourceCollection symbolTypes,
                      ResourceCollection stationModels) {
+        this.store = store;
         this.symbolTypes = symbolTypes;
         init(stationModels);
     }
