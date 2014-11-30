@@ -11653,28 +11653,41 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     protected JButton makeMiscButton() {
         final JPopupMenu popup = new JPopupMenu();
         ButtonGroup group = new ButtonGroup();
-        final JRadioButtonMenuItem adaptiveRezOnItem = new JRadioButtonMenuItem("AR Off");
-        adaptiveRezOnItem.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                logger.trace("adaptiveRezOnItem={}", adaptiveRezOnItem.isSelected());
-            }
-        });
-        group.add(adaptiveRezOnItem);
-        popup.add(adaptiveRezOnItem);
+        final JRadioButtonMenuItem adaptiveRezOffItem = new JRadioButtonMenuItem("AR Off");
+        final JRadioButtonMenuItem adaptiveRezOnItem = new JRadioButtonMenuItem("AR On");
+        final JRadioButtonMenuItem fullRezItem = new JRadioButtonMenuItem("Full Res");
 
-        final JRadioButtonMenuItem adaptiveRezOffItem = new JRadioButtonMenuItem("AR On");
+        if (matchDisplayRegion) {
+            adaptiveRezOnItem.setSelected(true);
+        } else {
+            adaptiveRezOffItem.setSelected(false);
+        }
+
         adaptiveRezOffItem.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 logger.trace("adaptiveRezOffItem='{}'", adaptiveRezOffItem.isSelected());
+                if (adaptiveRezOffItem.isSelected()) {
+                    setMatchDisplayRegion(false);
+                }
             }
         });
         group.add(adaptiveRezOffItem);
         popup.add(adaptiveRezOffItem);
 
-        final JRadioButtonMenuItem fullRezItem = new JRadioButtonMenuItem("Full Res");
+        adaptiveRezOnItem.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                logger.trace("adaptiveRezOnItem={}", adaptiveRezOnItem.isSelected());
+                if (adaptiveRezOnItem.isSelected()) {
+                    setMatchDisplayRegion(true);
+                }
+            }
+        });
+        group.add(adaptiveRezOnItem);
+        popup.add(adaptiveRezOnItem);
+
         fullRezItem.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
-                logger.trace("fullRezItem='{}'", fullRezItem.isSelected());
+                logger.trace("need some way to force a fullrez load: fullRezItem='{}'", fullRezItem.isSelected());
             }
         });
         group.add(fullRezItem);
@@ -11689,11 +11702,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         });
 
-        if (matchDisplayRegion) {
-            adaptiveRezOnItem.setSelected(true);
-        } else {
-            adaptiveRezOffItem.setSelected(false);
-        }
+//        if (matchDisplayRegion) {
+//            adaptiveRezOnItem.setSelected(true);
+//        } else {
+//            adaptiveRezOffItem.setSelected(false);
+//        }
 
         return button;
     }
