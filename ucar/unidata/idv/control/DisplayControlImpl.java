@@ -4105,8 +4105,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             if (sideLegendButtonPanel == null) {
                 //                DndImageButton dndBtn = new DndImageButton(this, "control");
                 if (canDoProgressiveResolution()) {
+                    miscButton = makeMiscButton();
                     sideLegendButtonPanel = GuiUtils.hbox(  /*dndBtn,*/
-                        makeMiscButton(), makeLockButton(), makeRemoveButton(), 2);
+                        miscButton, makeLockButton(), makeRemoveButton(), 2);
                 } else {
                     sideLegendButtonPanel = GuiUtils.hbox(  /*dndBtn,*/
                         makeLockButton(), makeRemoveButton(), 2);
@@ -6528,8 +6529,16 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             if (canDoProgressiveResolution()) {
                items.add(GuiUtils.makeCheckboxMenuItem(MapViewManager.PR_LABEL, this,
                     "isProgressiveResolution", null));
-               items.add(GuiUtils.makeCheckboxMenuItem("Match Display Region", this,
-                    "matchDisplayRegion", null));
+                // makeCheckboxMenuItem will call both getMatchDisplayRegion()
+                // as well as setMatchDisplayRegion()
+                final JCheckBoxMenuItem menuItem = GuiUtils.makeCheckboxMenuItem("Match Display Region", this, "matchDisplayRegion", null);
+                menuItem.addActionListener(new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        logger.trace("firing!");
+                        updateMiscButton();
+                    }
+                });
+                items.add(menuItem);
             }
         }
 
@@ -11648,19 +11657,24 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         return animationInfo;
     }
 
-
+    private JButton miscButton;
+    private JRadioButtonMenuItem adaptiveRezOffItem;
+    private JRadioButtonMenuItem adaptiveRezOnItem;
+    private JRadioButtonMenuItem fullRezItem;
 
     protected JButton makeMiscButton() {
         final JPopupMenu popup = new JPopupMenu();
         ButtonGroup group = new ButtonGroup();
-        final JRadioButtonMenuItem adaptiveRezOffItem = new JRadioButtonMenuItem("AR Off");
-        final JRadioButtonMenuItem adaptiveRezOnItem = new JRadioButtonMenuItem("AR On");
-        final JRadioButtonMenuItem fullRezItem = new JRadioButtonMenuItem("Full Res");
+        adaptiveRezOffItem = new JRadioButtonMenuItem("AR Off");
+        adaptiveRezOnItem = new JRadioButtonMenuItem("AR On");
+        fullRezItem = new JRadioButtonMenuItem("Full Res");
 
         if (matchDisplayRegion) {
+            logger.trace("AR on");
             adaptiveRezOnItem.setSelected(true);
         } else {
-            adaptiveRezOffItem.setSelected(false);
+            logger.trace("AR off");
+            adaptiveRezOffItem.setSelected(true);
         }
 
         adaptiveRezOffItem.addActionListener(new ActionListener() {
@@ -11711,8 +11725,16 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         return button;
     }
 
-    protected void updateMiscButton(JButton miscButton) {
-
+    protected void updateMiscButton() {
+        logger.trace("firing");
+        if (miscButton == null) {
+            miscButton = makeMiscButton();
+        }
+        if (matchDisplayRegion) {
+            adaptiveRezOnItem.setSelected(true);
+        } else {
+            adaptiveRezOffItem.setSelected(false);
+        }
     }
 
     /**
@@ -12691,6 +12713,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param useDR  true if match display region
      */
     public void setMatchDisplayRegion(boolean useDR) {
+        logger.trace("new value={}", useDR);
     	this.matchDisplayRegion = useDR;
         if (dataSelection != null) {
             dataSelection.getGeoSelection(true).setUseViewBounds(useDR);
