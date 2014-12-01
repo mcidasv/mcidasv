@@ -11671,12 +11671,21 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         adaptiveRezOnItem = new JRadioButtonMenuItem("AR On");
         fullRezItem = new JRadioButtonMenuItem("Full Res");
 
+        group.add(adaptiveRezOffItem);
+        group.add(adaptiveRezOnItem);
+        group.add(fullRezItem);
+
         if (matchDisplayRegion) {
             logger.trace("AR on");
             adaptiveRezOnItem.setSelected(true);
         } else {
             logger.trace("AR off");
             adaptiveRezOffItem.setSelected(true);
+        }
+
+        if (dataSelection != null && dataSelection.getGeoSelection().getUseFullBounds()) {
+            logger.trace("full rez on");
+            fullRezItem.setSelected(true);
         }
 
         adaptiveRezOffItem.addActionListener(new ActionListener() {
@@ -11687,7 +11696,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
             }
         });
-        group.add(adaptiveRezOffItem);
+//        group.add(adaptiveRezOffItem);
         popup.add(adaptiveRezOffItem);
 
         adaptiveRezOnItem.addActionListener(new ActionListener() {
@@ -11699,7 +11708,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
             }
         });
-        group.add(adaptiveRezOnItem);
+//        group.add(adaptiveRezOnItem);
         popup.add(adaptiveRezOnItem);
 
         fullRezItem.addActionListener(new ActionListener() {
@@ -11715,7 +11724,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
             }
         });
-        group.add(fullRezItem);
+//        group.add(fullRezItem);
         popup.add(fullRezItem);
 
         final JButton button = GuiUtils.getImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing16.png", DisplayControlImpl.class);
