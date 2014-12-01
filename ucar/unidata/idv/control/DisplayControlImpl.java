@@ -2751,6 +2751,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public void viewpointChanged() {
     	//System.out.println("viewpointChanged");
+        logger.trace("matchDisplayRegion={} reloadFromBounds={}", getMatchDisplayRegion(), reloadFromBounds);
         if (getMatchDisplayRegion()) {
             if (reloadFromBounds) {
             	loadDataFromViewBounds();
@@ -3684,6 +3685,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         boolean levelChanged = dataSelection.getProperty("levelChanged", false);
         //if (Misc.equals(dataSelection.getProperty(DataSelection.PROP_REGIONOPTION), 
         //		DataSelection.PROP_USEDISPLAYAREA) && !levelChanged) {
+        logger.trace("*** 1826: matchDisplayRegion={} !levelChanged={} useFullBounds={}", getMatchDisplayRegion(), !levelChanged, dataSelection.getGeoSelection().getUseFullBounds());
         if (getMatchDisplayRegion() && !levelChanged) {
             logger.trace("enter block={}", dataSelection);
             getViewManager().setProjectionFromData(false);
@@ -11693,6 +11695,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 logger.trace("adaptiveRezOnItem={}", adaptiveRezOnItem.isSelected());
                 if (adaptiveRezOnItem.isSelected()) {
                     setMatchDisplayRegion(true);
+                    dataChanged();
                 }
             }
         });
@@ -11702,6 +11705,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         fullRezItem.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 logger.trace("need some way to force a fullrez load: fullRezItem='{}'", fullRezItem.isSelected());
+                if (fullRezItem.isSelected()) {
+                    setMatchDisplayRegion(false);
+                    if (dataSelection != null) {
+                        logger.trace("trying to force full rez");
+                        dataSelection.getGeoSelection(true).setUseFullBounds(true);
+                        dataChanged();
+                    }
+                }
             }
         });
         group.add(fullRezItem);
