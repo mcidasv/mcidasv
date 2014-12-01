@@ -462,6 +462,8 @@ public class AddeImageDataSelection {
         /** Widget for selecting image nav type */
         protected JComboBox navComboBox;
 
+        protected boolean clickedFull = false;
+
         /**
          * Construct a AddeImageAdvancedPanel
          *
@@ -1269,6 +1271,9 @@ public class AddeImageDataSelection {
             ActionListener lSizeChange = new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
                     int lines = getNumLines() * Math.abs(getLineMagValue());
+                    int eles = getNumEles() * Math.abs(getElementMagValue());
+                    clickedFull = getNumEles() == maxEles && getNumLines() == maxLines;
+                    logger.trace("clickedFull={}", clickedFull);
                     if (lines > maxLines) {
                         lines = maxLines;
                     }
@@ -1277,7 +1282,10 @@ public class AddeImageDataSelection {
             };
             ActionListener eSizeChange = new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
+                    int lines = getNumLines() * Math.abs(getLineMagValue());
                     int eles = getNumEles() * Math.abs(getElementMagValue());
+                    clickedFull = getNumEles() == maxEles && getNumLines() == maxLines;
+                    logger.trace("clickedFull={}", clickedFull);
                     if (eles > maxEles) {
                         eles = maxEles;
                     }
@@ -1288,6 +1296,9 @@ public class AddeImageDataSelection {
                 public void focusGained(FocusEvent fe) {}
                 public void focusLost(FocusEvent fe) {
                     int lines = getNumLines() * Math.abs(getLineMagValue());
+                    int eles = getNumEles() * Math.abs(getElementMagValue());
+                    clickedFull = getNumEles() == maxEles && getNumLines() == maxLines;
+                    logger.trace("clickedFull={}", clickedFull);
                     if (lines > maxLines) {
                         lines = maxLines;
                     }
@@ -1297,7 +1308,10 @@ public class AddeImageDataSelection {
             FocusListener eSizeFocusChange = new FocusListener() {
                 public void focusGained(FocusEvent fe) {}
                 public void focusLost(FocusEvent fe) {
+                    int lines = getNumLines() * Math.abs(getLineMagValue());
                     int eles = getNumEles() * Math.abs(getElementMagValue());
+                    clickedFull = getNumEles() == maxEles && getNumLines() == maxLines;
+                    logger.trace("clickedFull={}", clickedFull);
                     if (eles > maxEles) {
                         eles = maxEles;
                     }
@@ -1961,6 +1975,9 @@ public class AddeImageDataSelection {
          * @param update _more_
          */
         public void setToFullResolution(Boolean update) {
+            if (update != null) {
+                clickedFull = update.booleanValue();
+            }
             setPlace(PLACE_CENTER);
             setLatitude(this.previewDir.getCenterLatitude());
             setLongitude(this.previewDir.getCenterLongitude());
@@ -2595,9 +2612,7 @@ public class AddeImageDataSelection {
 //            }
 
             geoSelection = new GeoSelection(gInfo);
-            if (isFull) {
-                geoSelection.setUseFullBounds(true);
-            }
+            geoSelection.setUseFullBounds(advancedPanel.clickedFull);
             dataSelection.putProperty(DataSelection.PROP_REGIONOPTION,
                                       regionOption);
             //dataSelection.putProperty(DataSelection.PROP_HASCORNER,
@@ -2744,7 +2759,8 @@ public class AddeImageDataSelection {
 
                 // set lat lon values   locateValue = Misc.format(maxLat) + " " + Misc.format(minLon);
                 if (isFull) {
-                    advancedPanel.setToFullResolution(false);
+//                    advancedPanel.setToFullResolution(false);
+                    advancedPanel.setToFullResolution(true);
                 } else if ( !hasCorner) {
                     advancedPanel.setLatitude(gInfo.getMaxLat());
                     advancedPanel.setLongitude(gInfo.getMinLon());
