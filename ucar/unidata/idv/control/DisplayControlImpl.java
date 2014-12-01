@@ -29,6 +29,7 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.nc2.time.Calendar;
@@ -10207,9 +10208,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param methodName    the method name to invoke
      */
     public void showColorDialog(String methodName) {
-
-        Color newColor = JColorChooser.showDialog(null, "Choose Color",
-                             color);
+        Color newColor = ColorSwatchComponent.colorChooserDialog(getStore(), null, "Chooser Color", color);
         if (newColor != null) {
             try {
 
@@ -10226,6 +10225,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 logException("Setting color with:" + methodName, exc);
             }
         }
+
     }
 
 
