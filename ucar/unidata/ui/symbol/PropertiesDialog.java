@@ -336,7 +336,8 @@ public class PropertiesDialog implements ActionListener {
         if (colorParamFld != null) {
             what = "Color by properties";
             symbol.setColorParam(getParam(colorParamFld));
-            symbol.setColorMappings(ColorMap.applyProperties(colorMappings));
+            XmlObjectStore store = canvas.getStationModelManager().store;
+            symbol.setColorMappings(ColorMap.applyProperties(store, colorMappings));
         }
 
 
