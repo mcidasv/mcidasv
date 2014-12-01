@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.12" transformSequenceNumber="4">
-  <directoryPresets config="${compiler:MCVDIR}/lib/macosx/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" />
+  <directoryPresets config="${compiler:MCVDIR}/release/create-jsa.bat" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.5beta2" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.6" javaMaxVersion="1.7" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -100,6 +100,7 @@
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV.prefs" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-HeapDumpEnabled" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/create-jsa.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/mcidasv.icns" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/macos-apps.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-apps-setdir.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -109,6 +110,7 @@
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-HeapDumpEnabled.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7416" file="${compiler:ADDEDIR}/adde-linux.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7417" file="${compiler:ADDEDIR}/adde-darwin.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7469" file="${compiler:ADDEDIR}/adde-windows.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -1101,6 +1103,62 @@ return allowed;</validation>
                   </java>
                 </serializedBean>
                 <condition>return Util.isWindows();</condition>
+              </action>
+              <action name="Create classes.jsa on Windows" id="8258" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Could not enable class data sharing">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
+                      <void property="arguments">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>${installer:sys.installationDir}</string>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="executable">
+                        <object class="java.io.File">
+                          <string>create-jsa.bat</string>
+                        </object>
+                      </void>
+                      <void property="workingDirectory">
+                        <object class="java.io.File">
+                          <string>${installer:sys.installationDir}</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>// os.arch returns the "bitness" of the JRE--not the OS
+String javaArch = System.getProperty("os.arch");
+return Util.isWindows() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64".equals(javaArch);</condition>
+              </action>
+              <action name="Create classes.jsa on Unix (but not OS X)" id="8298" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Could not enable class data sharing">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
+                      <void property="arguments">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>${installer:sys.installationDir}</string>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="executable">
+                        <object class="java.io.File">
+                          <string>create-jsa.sh</string>
+                        </object>
+                      </void>
+                      <void property="workingDirectory">
+                        <object class="java.io.File">
+                          <string>${installer:sys.installationDir}</string>
+                        </object>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>// os.arch returns the "bitness" of the JRE--not the OS
+String javaArch = System.getProperty("os.arch");
+return !Util.isWindows() &amp;&amp; !Util.isMacOS() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64".equals(javaArch);</condition>
               </action>
             </actions>
             <formComponents />
