@@ -36,6 +36,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -58,8 +60,6 @@ import javax.swing.UIManager;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 
 import org.jdesktop.beans.AbstractBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This has been essentially ripped out of the (wonderful) GNU Classpath
@@ -1128,7 +1128,7 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
     /**
      * This class is used to save and restore the recent color choices..
      */
-    public static class ColorTracker extends AbstractBean {
+    public static class ColorTracker extends AbstractBean implements ActionListener {
 
         /** The list of recent {@link Color Colors}. */
         private List<Color> colors = new ArrayList<>();
@@ -1169,6 +1169,29 @@ public class PersistableSwatchChooserPanel extends AbstractColorChooserPanel imp
          */
         public List<Color> getColors() {
             return new ArrayList<>(colors);
+        }
+
+        /**
+         * Returns the user's last {@link Color} selection.
+         *
+         * @return Either the last {@code Color} that was selected, or
+         * {@code null} if no colors have been selected.
+         */
+        public Color getMostRecentColor() {
+            Color c = null;
+            if (!colors.isEmpty()) {
+                c = colors.get(0);
+            }
+            return c;
+        }
+
+        /**
+         * This method currently does nothing.
+         *
+         * @param e Ignored.
+         */
+        @Override public void actionPerformed(ActionEvent e) {
+            // noop
         }
     }
 }
