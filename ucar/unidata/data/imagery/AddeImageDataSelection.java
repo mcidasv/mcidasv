@@ -2493,106 +2493,106 @@ public class AddeImageDataSelection {
          */
         public void applyToDataSelection(DataSelection dataSelection) {
 
-            boolean hasCorner = false;
+            //boolean hasCorner = false;
             boolean isFull = false;
             regionOption = getRegionOption();
             GeoLocationInfo gInfo = null;
 
-            if (regionOption.equals(DataSelection.PROP_USESELECTEDAREA)) {
-                ProjectionRect rect =
-                    display.getNavigatedPanel().getSelectedRegion();
-                if(rect == null){
-                    dataSelection.putProperty(DataSelection.PROP_REGIONOPTION,
-                        regionOption);
-                    return;
-                }
-                ProjectionImpl projectionImpl =
-                    getNavigatedMapPanel().getProjectionImpl();
-                LatLonRect latLonRect =
-                    projectionImpl.getLatLonBoundingBox(rect);
-
-                if (latLonRect.getHeight() != latLonRect.getHeight()) {
-                    //corner point outside the earth
-                    hasCorner = true;
-                    LatLonPointImpl cImpl =
-                        projectionImpl.projToLatLon(rect.x
-                            + rect.getWidth() / 2, rect.y
-                            + rect.getHeight() / 2);
-                    LatLonPointImpl urImpl =
-                        projectionImpl.projToLatLon(rect.x + rect.getWidth(),
-                            rect.y + rect.getHeight());
-                    LatLonPointImpl ulImpl =
-                        projectionImpl.projToLatLon(rect.x,
-                            rect.y + rect.getHeight());
-                    LatLonPointImpl lrImpl =
-                        projectionImpl.projToLatLon(rect.x + rect.getWidth(),
-                            rect.y);
-                    LatLonPointImpl llImpl =
-                        projectionImpl.projToLatLon(rect.x, rect.y);
-
-                    double maxLat = Double.NaN;
-                    double minLat = Double.NaN;
-                    double maxLon = Double.NaN;
-                    double minLon = Double.NaN;
-                    if (cImpl.getLatitude() != cImpl.getLatitude()) {
-                        //do nothing
-                    } else if (ulImpl.getLatitude() != ulImpl.getLatitude() &&
-                        urImpl.getLatitude() != urImpl.getLatitude() &&
-                        llImpl.getLatitude() != llImpl.getLatitude() &&
-                        lrImpl.getLatitude() != lrImpl.getLatitude()) {
-
-                        isFull = true;
-                    } else if (ulImpl.getLatitude() != ulImpl.getLatitude()) {
-                        //upper left conner
-                        maxLat = cImpl.getLatitude()
-                            + (cImpl.getLatitude()
-                            - lrImpl.getLatitude());
-                        minLat = lrImpl.getLatitude();
-                        maxLon = lrImpl.getLongitude();
-                        minLon = cImpl.getLongitude()
-                            - (lrImpl.getLongitude()
-                            - cImpl.getLongitude());
-                    } else if (urImpl.getLatitude() != urImpl.getLatitude()) {
-                        //upper right conner
-                        maxLat = cImpl.getLatitude()
-                            + (cImpl.getLatitude()
-                            - llImpl.getLatitude());
-                        minLat = llImpl.getLatitude();
-                        maxLon = cImpl.getLongitude()
-                            + (cImpl.getLongitude()
-                            - lrImpl.getLongitude());
-                        minLon = lrImpl.getLongitude();
-                    } else if (llImpl.getLatitude() != llImpl.getLatitude()) {
-                        // lower left conner
-                        maxLat = urImpl.getLatitude();
-                        minLat = cImpl.getLatitude()
-                            - (urImpl.getLatitude()
-                            - cImpl.getLatitude());
-                        maxLon = urImpl.getLongitude();
-                        minLon = cImpl.getLongitude()
-                            - (urImpl.getLongitude()
-                            - cImpl.getLongitude());
-                    } else if (lrImpl.getLatitude() != lrImpl.getLatitude()) {
-                        // lower right conner
-                        maxLat = ulImpl.getLatitude();
-                        minLat = cImpl.getLatitude()
-                            - (ulImpl.getLatitude()
-                            - cImpl.getLatitude());
-                        maxLon = cImpl.getLongitude()
-                            + (cImpl.getLongitude()
-                            - ulImpl.getLongitude());
-                        minLon = ulImpl.getLongitude();
-                    }
-
-                    gInfo = new GeoLocationInfo(maxLat,
-                        LatLonPointImpl.lonNormal(minLon), minLat,
-                        LatLonPointImpl.lonNormal(maxLon));
-
-                } else {
-                    gInfo = new GeoLocationInfo(latLonRect);
-                }
-
-            }
+//            if (regionOption.equals(DataSelection.PROP_USESELECTEDAREA)) {
+//                ProjectionRect rect =
+//                    display.getNavigatedPanel().getSelectedRegion();
+//                if(rect == null){
+//                    dataSelection.putProperty(DataSelection.PROP_REGIONOPTION,
+//                        regionOption);
+//                    return;
+//                }
+//                ProjectionImpl projectionImpl =
+//                    getNavigatedMapPanel().getProjectionImpl();
+//                LatLonRect latLonRect =
+//                    projectionImpl.getLatLonBoundingBox(rect);
+//
+//                if (latLonRect.getHeight() != latLonRect.getHeight()) {
+//                    //corner point outside the earth
+//                    hasCorner = true;
+//                    LatLonPointImpl cImpl =
+//                        projectionImpl.projToLatLon(rect.x
+//                            + rect.getWidth() / 2, rect.y
+//                            + rect.getHeight() / 2);
+//                    LatLonPointImpl urImpl =
+//                        projectionImpl.projToLatLon(rect.x + rect.getWidth(),
+//                            rect.y + rect.getHeight());
+//                    LatLonPointImpl ulImpl =
+//                        projectionImpl.projToLatLon(rect.x,
+//                            rect.y + rect.getHeight());
+//                    LatLonPointImpl lrImpl =
+//                        projectionImpl.projToLatLon(rect.x + rect.getWidth(),
+//                            rect.y);
+//                    LatLonPointImpl llImpl =
+//                        projectionImpl.projToLatLon(rect.x, rect.y);
+//
+//                    double maxLat = Double.NaN;
+//                    double minLat = Double.NaN;
+//                    double maxLon = Double.NaN;
+//                    double minLon = Double.NaN;
+//                    if (cImpl.getLatitude() != cImpl.getLatitude()) {
+//                        //do nothing
+//                    } else if (ulImpl.getLatitude() != ulImpl.getLatitude() &&
+//                        urImpl.getLatitude() != urImpl.getLatitude() &&
+//                        llImpl.getLatitude() != llImpl.getLatitude() &&
+//                        lrImpl.getLatitude() != lrImpl.getLatitude()) {
+//
+//                        isFull = true;
+//                    } else if (ulImpl.getLatitude() != ulImpl.getLatitude()) {
+//                        //upper left conner
+//                        maxLat = cImpl.getLatitude()
+//                            + (cImpl.getLatitude()
+//                            - lrImpl.getLatitude());
+//                        minLat = lrImpl.getLatitude();
+//                        maxLon = lrImpl.getLongitude();
+//                        minLon = cImpl.getLongitude()
+//                            - (lrImpl.getLongitude()
+//                            - cImpl.getLongitude());
+//                    } else if (urImpl.getLatitude() != urImpl.getLatitude()) {
+//                        //upper right conner
+//                        maxLat = cImpl.getLatitude()
+//                            + (cImpl.getLatitude()
+//                            - llImpl.getLatitude());
+//                        minLat = llImpl.getLatitude();
+//                        maxLon = cImpl.getLongitude()
+//                            + (cImpl.getLongitude()
+//                            - lrImpl.getLongitude());
+//                        minLon = lrImpl.getLongitude();
+//                    } else if (llImpl.getLatitude() != llImpl.getLatitude()) {
+//                        // lower left conner
+//                        maxLat = urImpl.getLatitude();
+//                        minLat = cImpl.getLatitude()
+//                            - (urImpl.getLatitude()
+//                            - cImpl.getLatitude());
+//                        maxLon = urImpl.getLongitude();
+//                        minLon = cImpl.getLongitude()
+//                            - (urImpl.getLongitude()
+//                            - cImpl.getLongitude());
+//                    } else if (lrImpl.getLatitude() != lrImpl.getLatitude()) {
+//                        // lower right conner
+//                        maxLat = ulImpl.getLatitude();
+//                        minLat = cImpl.getLatitude()
+//                            - (ulImpl.getLatitude()
+//                            - cImpl.getLatitude());
+//                        maxLon = cImpl.getLongitude()
+//                            + (cImpl.getLongitude()
+//                            - ulImpl.getLongitude());
+//                        minLon = ulImpl.getLongitude();
+//                    }
+//
+//                    gInfo = new GeoLocationInfo(maxLat,
+//                        LatLonPointImpl.lonNormal(minLon), minLat,
+//                        LatLonPointImpl.lonNormal(maxLon));
+//
+//                } else {
+//                    gInfo = new GeoLocationInfo(latLonRect);
+//                }
+//
+//            }
 
             geoSelection = new GeoSelection(gInfo);
             if (isFull) {
@@ -2600,8 +2600,8 @@ public class AddeImageDataSelection {
             }
             dataSelection.putProperty(DataSelection.PROP_REGIONOPTION,
                                       regionOption);
-            dataSelection.putProperty(DataSelection.PROP_HASCORNER,
-                                      hasCorner);
+            //dataSelection.putProperty(DataSelection.PROP_HASCORNER,
+            //                          hasCorner);
             dataSelection.setGeoSelection(geoSelection);
 
         }
