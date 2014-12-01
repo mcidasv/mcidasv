@@ -3685,7 +3685,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         boolean levelChanged = dataSelection.getProperty("levelChanged", false);
         //if (Misc.equals(dataSelection.getProperty(DataSelection.PROP_REGIONOPTION), 
         //		DataSelection.PROP_USEDISPLAYAREA) && !levelChanged) {
-        logger.trace("*** 1826: matchDisplayRegion={} !levelChanged={} useFullBounds={}", getMatchDisplayRegion(), !levelChanged, dataSelection.getGeoSelection().getUseFullBounds());
+        logger.trace("*** 1826: matchDisplayRegion={} !levelChanged={} useFullBounds={}", getMatchDisplayRegion(), !levelChanged, geoSelection.getUseFullBounds());
         if (getMatchDisplayRegion() && !levelChanged) {
             logger.trace("enter block={}", dataSelection);
             getViewManager().setProjectionFromData(false);
@@ -3707,6 +3707,18 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             logger.trace("before putProp={}", dataSelection);
             dataSelection.putProperty("centerPosition", llpi);
             logger.trace("after putProp={}", dataSelection);
+        } else if (dataSelection.getGeoSelection().getUseFullBounds()) {
+            logger.trace("trying to work with full bounds");
+            getViewManager().setProjectionFromData(true);
+            Rectangle2D bbox = navDisplay.getLatLonBox();
+            geoSelection.setLatLonRect(bbox);
+            dataSelection.setGeoSelection(geoSelection);
+            EarthLocation el = navDisplay.screenToEarthLocation(
+                (int) (sbox.getWidth()), (int)(sbox.getHeight()));
+            LatLonPointImpl llpi =
+                new LatLonPointImpl(el.getLatitude().getValue(),
+                    el.getLongitude().getValue());
+            dataSelection.putProperty("centerPosition", llpi);
         }
         if(levelChanged){
             dataSelection.removeProperty("levelChanged");
