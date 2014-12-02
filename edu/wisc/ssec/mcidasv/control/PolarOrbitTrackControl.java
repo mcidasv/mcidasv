@@ -34,6 +34,7 @@ import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
 import edu.wisc.ssec.mcidasv.data.TimeRangeSelection;
 import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
 import java.awt.Color;
@@ -76,7 +77,6 @@ import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.GuiUtils.ColorSwatch;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.visad.UtcDate;
@@ -187,13 +187,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final int DEFAULT_LABEL_INTERVAL = 5;
     private int labelInterval = DEFAULT_LABEL_INTERVAL;
 
-    private ColorSwatch colorSwatch;
+    private ColorSwatchComponent colorSwatch;
 
     private static final Color DEFAULT_COLOR = Color.GREEN;
     private Color curSwathColor = DEFAULT_COLOR;
     private Color prvSwathColor = null;
     
-    private ColorSwatch antColorSwatch;
+    private ColorSwatchComponent antColorSwatch;
     private Color antColor;
     private Color defaultAntColor = Color.MAGENTA;
     private PolarOrbitTrackDataSource dataSource;
@@ -728,7 +728,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         botPanel.add(otFontSelector.getComponent());
         fontSizePanel.add(botPanel);
 
-        colorSwatch = new GuiUtils.ColorSwatch(curSwathColor, "Color");
+        colorSwatch = new ColorSwatchComponent(getStore(), curSwathColor, "Color");
         colorSwatch.setPreferredSize(new Dimension(30, 30));
         
         colorPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -1201,7 +1201,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         gsFontPanel.add(gsFontSelector.getComponent());
         
         Color swatchAntColor = getAntColor();
-        antColorSwatch = new GuiUtils.ColorSwatch(swatchAntColor, "Color");
+        antColorSwatch = new ColorSwatchComponent(getStore(), swatchAntColor, "Color");
         antColorSwatch.setPreferredSize(new Dimension(30, 30));
         
         antColorPanel = new JPanel();

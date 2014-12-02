@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
@@ -142,6 +143,50 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
         });
     }
 
+    /**
+     * Prompt the user to select a {@link Color} using a dialog box.
+     *
+     * @param store Application object store. Cannot be {@code null}.
+     * @param c Parent component. {@code null} is allowed.
+     * @param label Title of the dialog box.
+     * @param color Initially selected color. {@code null} will result in
+     * either the most recently used color, or {@code Color.WHITE} if there
+     * are no persisted colors.
+     *
+     * @return Either the user's selected {@code Color}, or {@code null} if the
+     * user closed the dialog or hit cancel.
+     */
+    public static Color colorChooserDialog(XmlObjectStore store, Component c, String label, Color color) {
+        List<Color> savedColors =
+            (List<Color>)store.get(Constants.PROP_RECENT_COLORS);
+        if (color == null) {
+            if ((savedColors != null) && !savedColors.isEmpty()) {
+                color = savedColors.get(0);
+            } else {
+                color = Color.WHITE;
+            }
+        }
+        ColorSwatchComponent comp = new ColorSwatchComponent(store, color, label);
+        JColorChooser chooser = new JColorChooser(comp.getBackground());
+        List<AbstractColorChooserPanel> choosers =
+            new ArrayList<>(Arrays.asList(chooser.getChooserPanels()));
+        choosers.remove(0);
+        PersistableSwatchChooserPanel swatch = new PersistableSwatchChooserPanel();
+        PersistableSwatchChooserPanel.ColorTracker tracker = new PersistableSwatchChooserPanel.ColorTracker();
+        tracker.addPropertyChangeListener("colors", comp);
+
+        if (savedColors != null) {
+            tracker.setColors(savedColors);
+        }
+        swatch.setColorTracker(tracker);
+        choosers.add(0, swatch);
+        chooser.setChooserPanels(choosers.toArray(new AbstractColorChooserPanel[0]));
+        swatch.updateRecentSwatchPanel();
+        if (GuiUtils.showOkCancelDialog(null, label, chooser, null)) {
+            comp.userSelectedNewColor(chooser.getColor());
+        }
+        return tracker.getMostRecentColor();
+    }
 
     /**
      * Show the color chooser
@@ -164,7 +209,7 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
         } else {
             contents = chooser;
         }
-        if ( !GuiUtils.showOkCancelDialog(null, label, contents, null)) {
+        if (!GuiUtils.showOkCancelDialog(null, label, contents, null)) {
             return;
         }
         alpha = alphaSlider.getValue();
@@ -349,4 +394,4 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
             }
         }
     }
-    }
+}

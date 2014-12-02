@@ -37,11 +37,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.gis.maps.LatLonLabelData;
 import ucar.unidata.idv.control.MapDisplayControl;
 import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlObjectStore;
 
 /**
  * A panel to hold the gui for Lat/Lon label adjustments
@@ -71,7 +73,7 @@ public class LatLonLabelPanel extends JPanel {
 
     /** Shows the color */
     //JButton colorButton;
-    GuiUtils.ColorSwatch colorButton;
+    ColorSwatchComponent colorButton;
 
     /** The line style box */
     JCheckBox fastRenderCbx;
@@ -109,7 +111,7 @@ public class LatLonLabelPanel extends JPanel {
      * @param lld Holds the lat lon data
      *
      */
-    public LatLonLabelPanel(LatLonLabelData lld) {
+    public LatLonLabelPanel(XmlObjectStore store, LatLonLabelData lld) {
 
         this.latLonLabelData = lld;
         ignoreEvents         = true;
@@ -181,7 +183,7 @@ public class LatLonLabelPanel extends JPanel {
             }
         });
 
-        colorButton = new GuiUtils.ColorSwatch(latLonLabelData.getColor(),
+        colorButton = new ColorSwatchComponent(store, latLonLabelData.getColor(),
                 "Set " + (latLonLabelData.getIsLatitude()
                           ? "Latitude"
                           : "Longitude") + " Color");

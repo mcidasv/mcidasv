@@ -39,10 +39,12 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.data.storm.StormTrack;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.Util;
 import ucar.visad.display.StationModelDisplayable;
 import ucar.visad.display.TrackDisplayable;
@@ -98,7 +100,7 @@ public class YearDisplayState {
 	private JButton button;
 
 	/** _more_ */
-	private GuiUtils.ColorSwatch colorSwatch;
+	private ColorSwatchComponent colorSwatch;
 
 	/**
 	 * _more_
@@ -129,7 +131,10 @@ public class YearDisplayState {
 	 */
 	protected JComponent getColorSwatch() {
 		if (colorSwatch == null) {
-			colorSwatch = new GuiUtils.ColorSwatch(getColor(),
+			XmlObjectStore store = stormTrackControl.getStore();
+			XmlObjectStore store1 = stormTrackControl.getIdv().getStore();
+			System.err.println("store == store1"+(store==store1));
+			colorSwatch = new ColorSwatchComponent(store1, getColor(),
 					"Set track color") {
 				public void setBackground(Color newColor) {
 					super.setBackground(newColor);

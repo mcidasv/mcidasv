@@ -29,6 +29,9 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.nc2.time.Calendar;
 
 import ucar.unidata.collab.Sharable;
@@ -134,8 +137,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -151,8 +156,10 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
@@ -1020,6 +1027,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             return;
         }
 
+        logger.trace("current={} incoming={}", this.dataSelection, dataSelection);
 
         initSharable();
         this.displayId      = displayId;
@@ -1028,6 +1036,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         this.dataSelection  = dataSelection;
         if (this.dataSelection == null) {
             this.dataSelection = new DataSelection();
+            logger.trace("created new dataSelection={}", this.dataSelection);
         }
         setMatchDisplayRegion(
         	this.dataSelection.getGeoSelection(true).getUseViewBounds());
@@ -1085,7 +1094,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
         // we do this here because time driver properties 
         // might be changed by the display settings.
+        logger.trace("before update={}", this.dataSelection);
         updateDataSelection(this.dataSelection);
+        logger.trace("after update={}", this.dataSelection);
 
 
         //Call the derived class init method.
@@ -1380,8 +1391,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                                       + UtcDate.MACRO_TIMESTAMP;
             }
 
+            logger.trace("selection before={}", getDataSelection());
             init(getDisplayId(), getCategories(), initDataChoices,
-                 getControlContext(), properties, getDataSelection());
+                getControlContext(), properties, getDataSelection());
+            logger.trace("selection after={}", getDataSelection());
             initDataChoices = null;
         } catch (ucar.unidata.data.DataCancelException dce) {
             displayControlFailed();
@@ -2739,6 +2752,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public void viewpointChanged() {
     	//System.out.println("viewpointChanged");
+        logger.trace("matchDisplayRegion={} reloadFromBounds={}", getMatchDisplayRegion(), reloadFromBounds);
         if (getMatchDisplayRegion()) {
             if (reloadFromBounds) {
             	loadDataFromViewBounds();
@@ -3662,31 +3676,56 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     	// and the screen lat/lon box if usedisplay area
         GeoSelection geoSelection = 
         	dataSelection.getGeoSelection(true);
+        logger.trace("geoSelection={}", geoSelection);
         // always update the screen size
         NavigatedDisplay navDisplay = getNavigatedDisplay();
       	Rectangle2D sbox = navDisplay.getScreenBounds();
+        logger.trace("navDisplay={} sbox={}", navDisplay, sbox);
         geoSelection.setScreenBound(sbox);
+        logger.trace("new geoselection stuff={}", geoSelection);
         boolean levelChanged = dataSelection.getProperty("levelChanged", false);
         //if (Misc.equals(dataSelection.getProperty(DataSelection.PROP_REGIONOPTION), 
         //		DataSelection.PROP_USEDISPLAYAREA) && !levelChanged) {
+        logger.trace("*** 1826: matchDisplayRegion={} !levelChanged={} useFullBounds={}", getMatchDisplayRegion(), !levelChanged, geoSelection.getUseFullBounds());
         if (getMatchDisplayRegion() && !levelChanged) {
+            logger.trace("enter block={}", dataSelection);
             getViewManager().setProjectionFromData(false);
+            logger.trace("after setProjFromData(false)={}", dataSelection);
       	    Rectangle2D bbox = navDisplay.getLatLonBox();
+//            logger.trace("after grabbing bbox={} bbox={} latlonrect={}", dataSelection, bbox, geoSelection.getLatLonRect());
             geoSelection.setLatLonRect(bbox);
+            logger.trace("after setLatLonRect={} latlonrect={}", dataSelection, geoSelection.getLatLonRect());
             geoSelection.setUseViewBounds(true);
+            logger.trace("after setUseViewBounds(true)={}", dataSelection);
             dataSelection.setGeoSelection(geoSelection);
+            logger.trace("after setGeoSelection={}", dataSelection);
             EarthLocation el = navDisplay.screenToEarthLocation(
         		(int) (sbox.getWidth()/2), (int)(sbox.getHeight()/2));
+            logger.trace("after screenToEarthLocation={}", dataSelection);
             LatLonPointImpl llpi =
                     new LatLonPointImpl(el.getLatitude().getValue(),  
                     		            el.getLongitude().getValue());
-
+            logger.trace("before putProp={}", dataSelection);
+            dataSelection.putProperty("centerPosition", llpi);
+            logger.trace("after putProp={}", dataSelection);
+        } else if (dataSelection.getGeoSelection().getUseFullBounds()) {
+            logger.trace("trying to work with full bounds");
+            getViewManager().setProjectionFromData(true);
+            Rectangle2D bbox = navDisplay.getLatLonBox();
+            geoSelection.setLatLonRect(bbox);
+            dataSelection.setGeoSelection(geoSelection);
+            EarthLocation el = navDisplay.screenToEarthLocation(
+                (int) (sbox.getWidth()), (int)(sbox.getHeight()));
+            LatLonPointImpl llpi =
+                new LatLonPointImpl(el.getLatitude().getValue(),
+                    el.getLongitude().getValue());
             dataSelection.putProperty("centerPosition", llpi);
         }
         if(levelChanged){
             dataSelection.removeProperty("levelChanged");
         }
         if ( !getIdv().getUseTimeDriver()) {
+            logger.trace("no time driver! returning {}", dataSelection);
             return dataSelection;
         }
         if (getIsTimeDriver() || !getUsesTimeDriver()) {
@@ -3695,20 +3734,23 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 dataSelection.putProperty(DataSelection.PROP_USESTIMEDRIVER,
                                           getUsesTimeDriver());
             }
+            logger.trace("no idea! returning {}", dataSelection);
             return dataSelection;
         }
         ViewManager vm = getViewManager();
         if (vm == null) {
+            logger.trace("null viewmanager! returning {}", dataSelection);
             return dataSelection;
         }
         List<DateTime> times = vm.getTimeDriverTimes();
         //        System.err.println("\tdriver times to use:" + times);
         dataSelection.putProperty(DataSelection.PROP_USESTIMEDRIVER, true);
         dataSelection.setTheTimeDriverTimes(times);
+        logger.trace("fallthrough! returning {}", dataSelection);
         return dataSelection;
     }
 
-
+    private static final Logger logger = LoggerFactory.getLogger(DisplayControlImpl.class);
     /**
      * The name of the parameter (initially from the DataChoice) displayed
      * by this control.
@@ -4077,8 +4119,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (legendType == SIDE_LEGEND) {
             if (sideLegendButtonPanel == null) {
                 //                DndImageButton dndBtn = new DndImageButton(this, "control");
-                sideLegendButtonPanel = GuiUtils.hbox(  /*dndBtn,*/
-                    makeLockButton(), makeRemoveButton(), 2);
+                if (canDoProgressiveResolution()) {
+                    miscButton = makeMiscButton();
+                    sideLegendButtonPanel = GuiUtils.hbox(  /*dndBtn,*/
+                        miscButton, makeLockButton(), makeRemoveButton(), 2);
+                } else {
+                    sideLegendButtonPanel = GuiUtils.hbox(  /*dndBtn,*/
+                        makeLockButton(), makeRemoveButton(), 2);
+                }
                 //                dndBtn.setToolTipText("Click to drag-and-drop");
                 sideLegendButtonPanel.setBackground(null);
             }
@@ -4086,8 +4134,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
 
         if (bottomLegendButtonPanel == null) {
-            bottomLegendButtonPanel = GuiUtils.hbox(makeLockButton(),
+            if (canDoProgressiveResolution()) {
+                bottomLegendButtonPanel = GuiUtils.hbox(makeMiscButton(),
+                    makeLockButton(), makeRemoveButton(), 2);
+            } else {
+                bottomLegendButtonPanel = GuiUtils.hbox(makeLockButton(),
                     makeRemoveButton(), 2);
+            }
             bottomLegendButtonPanel.setBackground(null);
         }
         return bottomLegendButtonPanel;
@@ -6491,8 +6544,16 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             if (canDoProgressiveResolution()) {
                items.add(GuiUtils.makeCheckboxMenuItem(MapViewManager.PR_LABEL, this,
                     "isProgressiveResolution", null));
-               items.add(GuiUtils.makeCheckboxMenuItem("Match Display Region", this,
-                    "matchDisplayRegion", null));
+                // makeCheckboxMenuItem will call both getMatchDisplayRegion()
+                // as well as setMatchDisplayRegion()
+                final JCheckBoxMenuItem menuItem = GuiUtils.makeCheckboxMenuItem("Match Display Region", this, "matchDisplayRegion", null);
+                menuItem.addActionListener(new ActionListener() {
+                    @Override public void actionPerformed(ActionEvent e) {
+                        logger.trace("firing!");
+                        updateMiscButton();
+                    }
+                });
+                items.add(menuItem);
             }
         }
 
@@ -8364,9 +8425,12 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @return The dataSelection member
      */
     public DataSelection getDataSelection() {
+        logger.trace("enter");
         if (dataSelection == null) {
             dataSelection = new DataSelection();
+            logger.trace("had to create a new data selection: {}", dataSelection);
         }
+        logger.trace("exit: {}", dataSelection);
         return dataSelection;
     }
 
@@ -8378,6 +8442,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param newDataSelection  The new dataSelection member
      */
     public void setDataSelection(DataSelection newDataSelection) {
+        logger.trace("current={} incoming={}", dataSelection, newDataSelection);
         dataSelection = newDataSelection;
     }
 
@@ -10143,8 +10208,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param methodName    the method name to invoke
      */
     public void showColorDialog(String methodName) {
-        Color newColor = JColorChooser.showDialog(null, "Choose Color",
-                             color);
+        Color newColor = ColorSwatchComponent.colorChooserDialog(getStore(), null, "Chooser Color", color);
         if (newColor != null) {
             try {
 
@@ -10161,6 +10225,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 logException("Setting color with:" + methodName, exc);
             }
         }
+
     }
 
 
@@ -11606,9 +11671,103 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         return animationInfo;
     }
 
+    private JButton miscButton;
+    private JRadioButtonMenuItem adaptiveRezOffItem;
+    private JRadioButtonMenuItem adaptiveRezOnItem;
+    private JRadioButtonMenuItem fullRezItem;
 
+    protected JButton makeMiscButton() {
+        final JPopupMenu popup = new JPopupMenu();
+        ButtonGroup group = new ButtonGroup();
+        adaptiveRezOffItem = new JRadioButtonMenuItem("AR Off");
+        adaptiveRezOnItem = new JRadioButtonMenuItem("AR On");
+        fullRezItem = new JRadioButtonMenuItem("Full Res");
 
+        group.add(adaptiveRezOffItem);
+        group.add(adaptiveRezOnItem);
+        group.add(fullRezItem);
 
+        if (matchDisplayRegion) {
+            logger.trace("AR on");
+            adaptiveRezOnItem.setSelected(true);
+        } else {
+            logger.trace("AR off");
+            adaptiveRezOffItem.setSelected(true);
+        }
+
+        if (dataSelection != null && dataSelection.getGeoSelection().getUseFullBounds()) {
+            logger.trace("full rez on");
+            fullRezItem.setSelected(true);
+        }
+
+        adaptiveRezOffItem.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                logger.trace("adaptiveRezOffItem='{}'", adaptiveRezOffItem.isSelected());
+                if (adaptiveRezOffItem.isSelected()) {
+                    setMatchDisplayRegion(false);
+                }
+            }
+        });
+//        group.add(adaptiveRezOffItem);
+        popup.add(adaptiveRezOffItem);
+
+        adaptiveRezOnItem.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                logger.trace("adaptiveRezOnItem={}", adaptiveRezOnItem.isSelected());
+                if (adaptiveRezOnItem.isSelected()) {
+                    setMatchDisplayRegion(true);
+                    dataChanged();
+                }
+            }
+        });
+//        group.add(adaptiveRezOnItem);
+        popup.add(adaptiveRezOnItem);
+
+        fullRezItem.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                logger.trace("need some way to force a fullrez load: fullRezItem='{}'", fullRezItem.isSelected());
+                if (fullRezItem.isSelected()) {
+                    setMatchDisplayRegion(false);
+                    if (dataSelection != null) {
+                        logger.trace("trying to force full rez");
+                        dataSelection.getGeoSelection(true).setUseFullBounds(true);
+                        dataChanged();
+                    }
+                }
+            }
+        });
+//        group.add(fullRezItem);
+        popup.add(fullRezItem);
+
+        final JButton button = GuiUtils.getImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing16.png", DisplayControlImpl.class);
+        button.setToolTipText(Msg.msg("Resolution Control"));
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+                popup.show(button, button.getBounds().x, button.getBounds().y
+                    + button.getBounds().height);
+            }
+        });
+
+//        if (matchDisplayRegion) {
+//            adaptiveRezOnItem.setSelected(true);
+//        } else {
+//            adaptiveRezOffItem.setSelected(false);
+//        }
+
+        return button;
+    }
+
+    protected void updateMiscButton() {
+        logger.trace("firing");
+        if (miscButton == null) {
+            miscButton = makeMiscButton();
+        }
+        if (matchDisplayRegion) {
+            adaptiveRezOnItem.setSelected(true);
+        } else {
+            adaptiveRezOffItem.setSelected(false);
+        }
+    }
 
     /**
      * Create a  lock button for the given display control.
@@ -12586,6 +12745,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param useDR  true if match display region
      */
     public void setMatchDisplayRegion(boolean useDR) {
+        logger.trace("new value={}", useDR);
     	this.matchDisplayRegion = useDR;
         if (dataSelection != null) {
             dataSelection.getGeoSelection(true).setUseViewBounds(useDR);

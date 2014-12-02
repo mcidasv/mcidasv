@@ -20,9 +20,11 @@
 
 package ucar.unidata.ui;
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.gis.maps.LatLonData;
 import ucar.unidata.idv.control.MapDisplayControl;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.xml.XmlObjectStore;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -65,7 +67,7 @@ public class LatLonPanel extends JPanel {
     JTextField baseField;
 
     /** Shows the color */
-    GuiUtils.ColorSwatch colorButton;
+    ColorSwatchComponent colorButton;
 
     /** The line width box */
     JComboBox widthBox;
@@ -83,7 +85,7 @@ public class LatLonPanel extends JPanel {
      *
      */
     
-    public LatLonPanel(LatLonData lld) {
+    public LatLonPanel(XmlObjectStore store, LatLonData lld) {
         this.latLonData = lld;
         ignoreEvents    = true;
         onOffCbx        = new JCheckBox("", latLonData.getVisible());
@@ -166,7 +168,7 @@ public class LatLonPanel extends JPanel {
                     ((JComboBox) e.getSource()).getSelectedIndex());
             }
         });
-        colorButton = new GuiUtils.ColorSwatch(latLonData.getColor(),
+        colorButton = new ColorSwatchComponent(store, latLonData.getColor(),
                 "Set " + (latLonData.getIsLatitude()
                           ? "Latitude"
                           : "Longitude") + " Color");
