@@ -25,6 +25,7 @@
 package ucar.unidata.ui.drawing;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -36,6 +37,7 @@ import ucar.unidata.ui.XmlUi;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
 
 
@@ -162,8 +164,8 @@ public class EditCanvas extends DisplayCanvas implements MouseListener,
      */
     CanvasCommand currentCommand;
 
-
-
+    /** IDV preferences store. Value may be {@code null}. */
+    XmlObjectStore store;
 
     /**
      * _more_
@@ -176,7 +178,14 @@ public class EditCanvas extends DisplayCanvas implements MouseListener,
         addKeyListener(this);
     }
 
-
+    /**
+     * Set the IDV preferences store with the given {@code XmlObjectStore}.
+     *
+     * @param store IDV preferences. {@code null} is allowed.
+     */
+    public void setStore(XmlObjectStore store) {
+        this.store = store;
+    }
 
     /**
      * _more_
@@ -1027,11 +1036,13 @@ public class EditCanvas extends DisplayCanvas implements MouseListener,
      */
     public void setColor(Glyph g, boolean foreground, Color newColor) {
         if (newColor == null) {
-            newColor = JColorChooser.showDialog(this, "Choose " + (foreground
-                    ? "foreground"
-                    : "background") + " color", (foreground
-                    ? g.getForeground()
-                    : g.getBackground()));
+            String title = "Choose " + (foreground
+                ? "foreground"
+                : "background") + " color";
+            Color tmpColor = foreground ? g.getForeground() : g.getBackground();
+            newColor = (store != null)
+                     ? ColorSwatchComponent.colorChooserDialog(store, this, title, tmpColor)
+                     : JColorChooser.showDialog(this, title, tmpColor);
         }
         if (newColor != null) {
             if (foreground) {
