@@ -21,6 +21,7 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.idv.ControlDescriptor;
@@ -1115,8 +1116,7 @@ public class DisplaySettingsDialog {
                 }
                 propertyValue.setValue(newUnit);
             } else if (value instanceof Color) {
-                Color c = JColorChooser.showDialog(changeBtn, "Select Color",
-                              (Color) value);
+                Color c = ColorSwatchComponent.colorChooserDialog(idv.getStore(), changeBtn, "Select Color", (Color) value);
                 if (c == null) {
                     return;
                 }
