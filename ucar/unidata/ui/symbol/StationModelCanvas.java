@@ -151,6 +151,7 @@ public class StationModelCanvas extends EditCanvas {
                               JFrame frame) {
         this.smm   = smm;
         this.frame = frame;
+        setStore(smm.store);
         initFromDefault();
         this.addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent event) {
