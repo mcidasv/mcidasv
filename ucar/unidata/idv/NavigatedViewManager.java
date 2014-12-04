@@ -429,7 +429,7 @@ public abstract class NavigatedViewManager extends ViewManager {
         // 'show display scales' switch
         vertRangeWidget = getViewpointControl().makeVerticalRangeWidget(
             getNavigatedDisplay().getVerticalRangeVisible());
-        tabbedPane.add("Vertical Range", GuiUtils.topLeft(vertRangeWidget));
+        tabbedPane.add("Vertical Scale", GuiUtils.topLeft(vertRangeWidget));
 
     }
 

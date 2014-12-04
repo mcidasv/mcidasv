@@ -80,8 +80,9 @@ public class VertScaleInfo extends ucar.visad.display.AxisScaleInfo {
         this.unit         = unit;
         this.minorDivision = 1;
         this.visible = true;
+        this.setVisible(true);
         this.majorIncrement = (max - min) / DEFAULT_MAJ_DIVISIONS;
-        this.setLabel(DEFAULT_AXIS_LABEL + "(" + unit.getIdentifier() + ")");
+        this.setLabel(DEFAULT_AXIS_LABEL);
     }
 
     /**
