@@ -352,10 +352,10 @@ public class AddeImageDataSelection {
         private int imageLine;
 
         /** _more_ */
-        private int areaLine1;
+        private int areaLine;
 
         /** _more_ */
-        private int areaElement1;
+        private int areaElement;
 
         /** _more_ */
         private int imageElement;
@@ -1096,16 +1096,18 @@ public class AddeImageDataSelection {
                     switch (selectedIndex) {
                         case 0:
                             urlInfo.setLocateKey(AddeImageURL.KEY_LATLON);
+                            urlInfo.setLocateType(ImageDataSelectionInfo.LineElementType.EARTH);
 //                            urlInfo.setLocateType('E');
                             break;
                         case 1:
                             urlInfo.setLocateKey(AddeImageURL.KEY_LINEELE);
+                            urlInfo.setLocateType(ImageDataSelectionInfo.LineElementType.AREA);
 //                            urlInfo.setLocateType('A');
                             break;
                         case 2:
-//                            urlInfo.setLocateKey(AddeImageURL.KEY_LINEELE);
-//                            urlInfo.setLocateType('I');
-                            logger.trace("image coordinates");
+                            logger.trace("image coordinates?");
+                            urlInfo.setLocateKey(AddeImageURL.KEY_LINEELE);
+                            urlInfo.setLocateType(ImageDataSelectionInfo.LineElementType.IMAGE);
                             break;
                         default:
                             logger.warn("unknown coordinate selection: {}", selectedIndex);
@@ -1166,6 +1168,9 @@ public class AddeImageDataSelection {
                             break;
                         case TYPE_IMAGE:
                             logger.trace("image coordinates!");
+                            setLineElement();
+                            convertToLatLon();
+                            updatePlace();
                             break;
                         default:
                             logger.trace("unknown coordinate selection: '{}'", type);
@@ -1554,9 +1559,22 @@ public class AddeImageDataSelection {
                 String type = getCoordinateType();
                 int    ele  = this.imageElement;
                 int    lin  = this.imageLine;
+                logger.trace("lin={} ele={}", lin, ele);
                 if (type.equals(TYPE_AREA)) {
                     ele = urlInfo.getLocationElem();
                     lin = urlInfo.getLocationLine();
+                } else if (type.equals(TYPE_IMAGE)) {
+                    double[][] ll = new double[2][1];
+                    ll[0][0] = getLatitude();
+                    ll[1][0] = getLongitude();
+                    double[][] el = this.addeImageDataSelection.baseAnav.toLinEle(ll);
+                    this.areaElement = (int)Math.floor(el[0][0] + 0.5);
+                    this.areaLine = (int)Math.floor(el[1][0] + 0.5);
+                    el = this.addeImageDataSelection.baseAnav.areaCoordToImageCoord(el);
+                    this.imageElement = (int)Math.floor(el[0][0] + 0.5);
+                    this.imageLine = (int)Math.floor(el[1][0] + 0.5);
+                    ele = this.imageElement;
+                    lin = this.imageLine;
                 }
                 setElement(ele);
                 setLine(lin);
@@ -1669,19 +1687,22 @@ public class AddeImageDataSelection {
             double[][] ll = new double[2][1];
             ll[0][0] = getLatitude();
             ll[1][0] = getLongitude();
-            AREACoordinateSystem macs =
-                (AREACoordinateSystem) sampleProjection;
+//            AREACoordinateSystem macs =
+//                (AREACoordinateSystem) sampleProjection;
             double[][] el = baseAnav.toLinEle(ll);
-            try {
-                double[][] el1 = macs.fromReference(ll);
-            } catch (Exception e) {}
+//            try {
+//                double[][] el1 = macs.fromReference(ll);
+//            } catch (Exception e) {}
+
             int elem = (int) Math.floor(el[0][0] + 0.5)
                                * Math.abs(getElementMagValue());
             int line = (int) Math.floor(el[1][0] + 0.5)
                             * Math.abs(getLineMagValue());
             urlInfo.setLocationLine(line);
             urlInfo.setLocationElem(elem);
-             el                = baseAnav.areaCoordToImageCoord(el);
+            this.areaElement = elem;
+            this.areaLine = line;
+            el                = baseAnav.areaCoordToImageCoord(el);
             this.imageElement = (int) Math.floor(el[0][0] + 0.5);
             this.imageLine    = (int) Math.floor(el[1][0] + 0.5);
         }
@@ -1789,15 +1810,32 @@ public class AddeImageDataSelection {
          * _more_
          */
         protected void setLineElement() {
-            double[][] el = getLineElement();
+//            double[][] el = getLineElement();
+//            String type = getCoordinateType();
+//
+//            int elem = (int) Math.floor(el[0][0] + 0.5);
+//            int line = (int) Math.floor(el[1][0] + 0.5);
+//            urlInfo.setLocationElem(elem);
+//            urlInfo.setLocationLine(line);
+//            double[][] vals = baseAnav.areaCoordToImageCoord(el);
+//            this.imageElement = (int) Math.floor(vals[0][0] + 0.5);
+//            this.imageLine    = (int) Math.floor(vals[1][0] + 0.5);
 
-            int elem = (int) Math.floor(el[0][0] + 0.5);
-            int line = (int) Math.floor(el[1][0] + 0.5);
-            urlInfo.setLocationElem(elem);
-            urlInfo.setLocationLine(line);
-            double[][] vals = baseAnav.areaCoordToImageCoord(el);
-            this.imageElement = (int) Math.floor(vals[0][0] + 0.5);
-            this.imageLine    = (int) Math.floor(vals[1][0] + 0.5);
+            double[][] el = getLineElement();
+            String type = getCoordinateType();
+            if (type.equals(TYPE_IMAGE)) {
+                this.imageElement = (int)Math.floor(el[0][0] + 0.5);
+                this.imageLine = (int)Math.floor(el[1][0] + 0.5);
+                double[][] vals = this.addeImageDataSelection.baseAnav.imageCoordToAreaCoord(el);
+                this.areaElement = (int)Math.floor(vals[0][0] + 0.5);
+                this.areaLine = (int)Math.floor(vals[1][0] + 0.5);
+            } else {
+                this.areaElement = (int)Math.floor(el[0][0] + 0.5);
+                this.areaLine = (int)Math.floor(el[1][0] + 0.5);
+                double[][] vals = this.addeImageDataSelection.baseAnav.areaCoordToImageCoord(el);
+                this.imageElement = (int)Math.floor(vals[0][0] + 0.5);
+                this.imageLine = (int)Math.floor(vals[1][0] + 0.5);
+            }
 
         }
 
