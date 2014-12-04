@@ -273,9 +273,9 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
             }
 
             // Turn off all non-raster
-            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
-                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWRASTER);
-            }
+//            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
+//                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWRASTER);
+//            }
 
             viewManager.toFront();
             Misc.sleep(1000);
@@ -285,11 +285,11 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
 
             // GuiUtils.showOkCancelDialog(null,"",new JLabel(new ImageIcon(image)),null);
             graphics.drawImage(image, 0, 0, null);
-
+//            logger.trace("drawing!");
             // Now,  turn off rasters and turn on all non-raster
-            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
-                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWNONRASTER);
-            }
+//            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
+//                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWNONRASTER);
+//            }
 
             if (wasShowingWireframe) {
                 viewManager.setWireframe(true);
@@ -309,11 +309,11 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
             renderer.setTransformToScreenCoords(is3D);
             renderer.plot(graphics, display, viewManager.getDisplayCoordinateSystem(), dim.width, dim.height);
 
-            // viewManager.getBp(ViewManager.PREF_3DCLIP));
-            // Reset all displays
-            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
-                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWALL);
-            }
+//            // viewManager.getBp(ViewManager.PREF_3DCLIP));
+//            // Reset all displays
+//            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
+//                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWALL);
+//            }
 
             // Now, draw the display list using the graphics
             int height = dim.height;
