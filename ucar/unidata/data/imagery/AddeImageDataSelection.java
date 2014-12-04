@@ -2815,11 +2815,17 @@ public class AddeImageDataSelection {
                     advancedPanel.setPlace("CENTER");
                 }
                 // set latlon coord
-                if(baseAnav.toString().equals("LALO")) {
-                    advancedPanel.coordinateTypeComboBox.setSelectedIndex(1);
-                } else {
-                    advancedPanel.coordinateTypeComboBox.setSelectedIndex(0);
-                }
+//                int navIndex = 0;
+//                int selectedIndex = advancedPanel.coordinateTypeComboBox.getSelectedIndex();
+//                if (baseAnav.toString().equals("LALO")) {
+////                    advancedPanel.coordinateTypeComboBox.setSelectedIndex(1);
+//                    navIndex = 1;
+//                } else {
+////                    advancedPanel.coordinateTypeComboBox.setSelectedIndex(0);
+//                    navIndex = 0;
+//                }
+//                if (nav)
+//                logger.trace("navIndex={} selectedIndex={}", navIndex, selectedIndex);
                 // update the size
                 if ( !isFull) {
                     advancedPanel.setNumLines(lines);
