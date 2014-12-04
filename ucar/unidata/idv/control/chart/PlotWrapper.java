@@ -67,6 +67,7 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.Util;
 
 
@@ -254,9 +255,10 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
             return;
         }
         if (canDoColors()) {
+            XmlObjectStore store = this.displayControl.getStore();
             backgroundSwatch =
-                GuiUtils.makeColorSwatchWidget(backgroundColor, "")[0];
-            dataAreaSwatch = GuiUtils.makeColorSwatchWidget(dataAreaColor,
+                GuiUtils.makeColorSwatchWidget(store, backgroundColor, "")[0];
+            dataAreaSwatch = GuiUtils.makeColorSwatchWidget(store, dataAreaColor,
                     "")[0];
             comps.add(GuiUtils.rLabel("Color: "));
             List colorComps = Misc.newList(new JLabel("Background:"),
@@ -265,9 +267,9 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
                                            dataAreaSwatch);
             comps.add(GuiUtils.left(GuiUtils.hbox(colorComps, 4)));
             comps.add(GuiUtils.rLabel("Domain Lines: "));
-            comps.add(domainLineState.getPropertyContents());
+            comps.add(domainLineState.getPropertyContents(store));
             comps.add(GuiUtils.rLabel("Range Lines: "));
-            comps.add(rangeLineState.getPropertyContents());
+            comps.add(rangeLineState.getPropertyContents(store));
 
         }
     }
