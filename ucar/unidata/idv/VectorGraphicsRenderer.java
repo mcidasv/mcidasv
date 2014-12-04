@@ -26,6 +26,8 @@ package ucar.unidata.idv;
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.ui.ImageUtils;
 import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.GuiUtils;
@@ -223,6 +225,8 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
         }
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(VectorGraphicsRenderer.class);
+
     /**
      * Make image.
      *
@@ -230,11 +234,15 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
      * @return the buffered image
      */
     private BufferedImage makeImage(ViewManager viewManager) {
+//        logger.trace("viewManager.getComponent: width={} height={}", viewManager.getComponent().getWidth(), viewManager.getComponent().getHeight());
+//        logger.trace("viewManager.fullScreen: width={} height={}", viewManager.getFullScreenWidth(), viewManager.getFullScreenHeight());
         Dimension     dim      = new Dimension(viewManager.getComponent().getWidth(), viewManager.getComponent().getHeight());
-        BufferedImage bimage   = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D    graphics = (Graphics2D) bimage.getGraphics();
+        BufferedImage bimage;
 
         try {
+            bimage = viewManager.getMaster().getImage(false);
+            dim = new Dimension(bimage.getWidth(), bimage.getHeight());
+            Graphics2D    graphics = (Graphics2D) bimage.getGraphics();
 
             // Turn off the display list
             boolean wasShowingDisplayList = viewManager.getShowDisplayList();
