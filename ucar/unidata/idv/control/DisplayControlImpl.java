@@ -9626,7 +9626,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (rasterMode == RASTERMODE_SHOWRASTER) {
             setDisplayVisibility(getIsRaster());
         } else if (rasterMode == RASTERMODE_SHOWNONRASTER) {
-            setDisplayVisibility( !getIsRaster());
+            setDisplayVisibility(!getIsRaster());
         } else {
             setDisplayVisibility(true);
         }
@@ -11687,9 +11687,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         group.add(adaptiveRezOnItem);
         group.add(fullRezItem);
 
-        if (matchDisplayRegion) {
+        if (matchDisplayRegion || getShoulDoProgressiveResolution()) {
             logger.trace("AR on");
             adaptiveRezOnItem.setSelected(true);
+            setMatchDisplayRegion(true);
         } else {
             logger.trace("AR off");
             adaptiveRezOffItem.setSelected(true);
