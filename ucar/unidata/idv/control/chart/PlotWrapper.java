@@ -238,6 +238,9 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
         return new String[] { "Data", "Display" };
     }
 
+    public DisplayControlImpl getControl() {
+        return displayControl;
+    }
 
     /**
      * Create the properties contents
