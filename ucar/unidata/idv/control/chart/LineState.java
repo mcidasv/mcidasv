@@ -29,6 +29,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
 
+import ucar.unidata.xml.XmlObjectStore;
 import visad.DateTime;
 import visad.Real;
 
@@ -387,8 +388,8 @@ public class LineState {
      *
      * @return Contents for properties dialog
      */
-    protected JComponent getPropertyContents() {
-        return getPropertyContents(false, null, null);
+    protected JComponent getPropertyContents(XmlObjectStore store) {
+        return getPropertyContents(store, false, null, null);
     }
 
 
@@ -403,10 +404,10 @@ public class LineState {
      *
      * @return ok
      */
-    public boolean showPropertiesDialog(
+    public boolean showPropertiesDialog(XmlObjectStore store,
             final PropertyChangeListener listener, List chartNames,
             List ranges) {
-        return showPropertiesDialog(listener, true, true, chartNames, ranges);
+        return showPropertiesDialog(store, listener, true, true, chartNames, ranges);
     }
 
 
@@ -421,10 +422,10 @@ public class LineState {
      *
      * @return ok
      */
-    public boolean showPropertiesDialog(
+    public boolean showPropertiesDialog(XmlObjectStore store,
             final PropertyChangeListener propListener, boolean doVisible,
             boolean doRange, List chartNames, List sampleRanges) {
-        JComponent comp = getPropertyContents(true, chartNames, sampleRanges);
+        JComponent comp = getPropertyContents(store, true, chartNames, sampleRanges);
         final JDialog dialog = GuiUtils.createDialog(null,
                                    getName() + " " + "Properties", true);
         final boolean[] ok       = { false };
@@ -500,7 +501,7 @@ public class LineState {
      * @param sampleRanges ranges
      * @return Contents for properties dialog
      */
-    protected JComponent getPropertyContents(boolean full, List chartNames,
+    protected JComponent getPropertyContents(XmlObjectStore store, boolean full, List chartNames,
                                              List sampleRanges) {
 
         List comps = new ArrayList();
@@ -600,7 +601,7 @@ public class LineState {
             strokeCbx.setFont(f);
         }
         widthFld = new JTextField("" + width, 3);
-        JComponent[] bg = GuiUtils.makeColorSwatchWidget(color, "");
+        JComponent[] bg = GuiUtils.makeColorSwatchWidget(store, color, "");
         colorSwatch = (ColorSwatchComponent) bg[0];
 
         comps.add(GuiUtils.rLabel("Line:"));

@@ -26,6 +26,8 @@ package ucar.unidata.idv;
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.ui.ImageUtils;
 import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.GuiUtils;
@@ -223,6 +225,8 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
         }
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(VectorGraphicsRenderer.class);
+
     /**
      * Make image.
      *
@@ -230,11 +234,15 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
      * @return the buffered image
      */
     private BufferedImage makeImage(ViewManager viewManager) {
+//        logger.trace("viewManager.getComponent: width={} height={}", viewManager.getComponent().getWidth(), viewManager.getComponent().getHeight());
+//        logger.trace("viewManager.fullScreen: width={} height={}", viewManager.getFullScreenWidth(), viewManager.getFullScreenHeight());
         Dimension     dim      = new Dimension(viewManager.getComponent().getWidth(), viewManager.getComponent().getHeight());
-        BufferedImage bimage   = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D    graphics = (Graphics2D) bimage.getGraphics();
+        BufferedImage bimage;
 
         try {
+            bimage = viewManager.getMaster().getImage(false);
+            dim = new Dimension(bimage.getWidth(), bimage.getHeight());
+            Graphics2D    graphics = (Graphics2D) bimage.getGraphics();
 
             // Turn off the display list
             boolean wasShowingDisplayList = viewManager.getShowDisplayList();
@@ -265,9 +273,9 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
             }
 
             // Turn off all non-raster
-            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
-                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWRASTER);
-            }
+//            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
+//                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWRASTER);
+//            }
 
             viewManager.toFront();
             Misc.sleep(1000);
@@ -277,11 +285,11 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
 
             // GuiUtils.showOkCancelDialog(null,"",new JLabel(new ImageIcon(image)),null);
             graphics.drawImage(image, 0, 0, null);
-
+//            logger.trace("drawing!");
             // Now,  turn off rasters and turn on all non-raster
-            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
-                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWNONRASTER);
-            }
+//            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
+//                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWNONRASTER);
+//            }
 
             if (wasShowingWireframe) {
                 viewManager.setWireframe(true);
@@ -301,11 +309,11 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
             renderer.setTransformToScreenCoords(is3D);
             renderer.plot(graphics, display, viewManager.getDisplayCoordinateSystem(), dim.width, dim.height);
 
-            // viewManager.getBp(ViewManager.PREF_3DCLIP));
-            // Reset all displays
-            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
-                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWALL);
-            }
+//            // viewManager.getBp(ViewManager.PREF_3DCLIP));
+//            // Reset all displays
+//            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
+//                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWALL);
+//            }
 
             // Now, draw the display list using the graphics
             int height = dim.height;

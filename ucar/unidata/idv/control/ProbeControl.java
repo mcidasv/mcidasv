@@ -43,6 +43,7 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.ShapeUtility;
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
@@ -1728,8 +1729,9 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
                 }
             }
         };
+        XmlObjectStore store = ProbeControl.this.getStore();
         LineState lineState = rowInfo.getLineState();
-        lineState.showPropertiesDialog(listener, getChart().getPlotNames(),
+        lineState.showPropertiesDialog(store, listener, getChart().getPlotNames(),
                                        getChart().getCurrentRanges());
     }
 

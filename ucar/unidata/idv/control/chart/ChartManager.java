@@ -63,6 +63,7 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
+import ucar.unidata.xml.XmlObjectStore;
 import visad.Real;
 
 
@@ -638,11 +639,13 @@ public abstract class ChartManager implements ImageObserver {
         comps.add(GuiUtils.rLabel("Name: "));
         comps.add(chartHolder.nameFld);
 
+        XmlObjectStore store = getControl().getIdv().getStore();
+
         chartHolder.backgroundSwatch =
-            GuiUtils.makeColorSwatchWidget(chartHolder.getBackgroundColor(),
+            GuiUtils.makeColorSwatchWidget(store, chartHolder.getBackgroundColor(),
                                            "")[0];
         chartHolder.dataAreaSwatch =
-            GuiUtils.makeColorSwatchWidget(chartHolder.getDataAreaColor(),
+            GuiUtils.makeColorSwatchWidget(store, chartHolder.getDataAreaColor(),
                                            "")[0];
         comps.add(GuiUtils.rLabel("Color: "));
         List colorComps = Misc.newList(new JLabel("Background:"),
@@ -653,9 +656,9 @@ public abstract class ChartManager implements ImageObserver {
         comps.add(GuiUtils.left(GuiUtils.hbox(colorComps, 5)));
 
         comps.add(GuiUtils.rLabel("Domain Lines: "));
-        comps.add(chartHolder.getDomainLineState().getPropertyContents());
+        comps.add(chartHolder.getDomainLineState().getPropertyContents(store));
         comps.add(GuiUtils.rLabel("Range Lines: "));
-        comps.add(chartHolder.getRangeLineState().getPropertyContents());
+        comps.add(chartHolder.getRangeLineState().getPropertyContents(store));
         
         chartHolder.getPropertiesComponents(comps);
         comps.add(GuiUtils.rLabel("Date Format: "));

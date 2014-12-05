@@ -95,6 +95,7 @@ def managedDataSource(path, cleanup=True, dataType=None):
     # how do i grab the ref to the actual datasource that got
     # created?
     dataSource = getStaticMcv().makeOneDataSource(path, dataType, None)
+    getstat
     # TODO(jon): perhaps write another generator that takes a varname?
     #actualData = getData(dataSource.getName(), variableName)
     try:
@@ -1363,9 +1364,11 @@ class _Display(_JavaProxy):
         from ucar.unidata.idv import VectorGraphicsRenderer
         
         renderer = VectorGraphicsRenderer(self._JavaProxy__javaObject)
-        if renderer.showConfigDialog():
-            renderer.renderTo(filename)
         
+        isOffScreen = getStaticMcv().getArgsManager().getIsOffScreen()
+        if isOffScreen or renderer.showConfigDialog(self._JavaProxy__javaObject.getStore()):
+            renderer.renderTo(filename)
+            
     def _captureAsKml(self, filename, quality):
         from java.awt import Color
         from java.util import ArrayList
