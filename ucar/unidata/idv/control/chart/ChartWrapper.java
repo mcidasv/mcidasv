@@ -72,6 +72,7 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.AnimationInfo;
@@ -925,7 +926,8 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
                     paramIdx++) {
                 DataChoiceWrapper wrapper =
                     (DataChoiceWrapper) dataChoiceWrappers.get(paramIdx);
-                fieldProperties.add(new FieldProperties(wrapper));
+                XmlObjectStore store = getDisplayControl().getControlContext().getIdv().getStore();
+                fieldProperties.add(new FieldProperties(store, wrapper));
             }
             wrapperPanel = new JPanel();
 
@@ -1006,12 +1008,12 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
          *
          * @param wrapper The wrapper we represent
          */
-        public FieldProperties(DataChoiceWrapper wrapper) {
+        public FieldProperties(XmlObjectStore store, DataChoiceWrapper wrapper) {
 
             this.wrapper   = wrapper;
             nameFld        = new JTextField(wrapper.getDescription(), 15);
             displayComp    =
-                this.wrapper.getLineState().getPropertyContents();
+                this.wrapper.getLineState().getPropertyContents(store);
             this.removeCbx = new JCheckBox(" ", false);
             this.sideCbx = GuiUtils.makeComboBox(DataChoiceWrapper.SIDES,
                     DataChoiceWrapper.SIDELABELS, wrapper.getSide());

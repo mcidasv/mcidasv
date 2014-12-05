@@ -860,7 +860,8 @@ public class VerticalProfileControl extends LineProbeControl {
             }
         };
         LineState lineState = vpInfo.getLineState();
-        lineState.showPropertiesDialog(listener, getChart().getPlotNames(),
+        lineState.showPropertiesDialog(getStore(), listener,
+                                       getChart().getPlotNames(),
                                        getChart().getCurrentRanges());
     }
 

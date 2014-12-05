@@ -49,7 +49,7 @@ import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.TwoFacedObject;
 
 
-
+import ucar.unidata.xml.XmlObjectStore;
 import visad.*;
 
 
@@ -457,7 +457,8 @@ public class ScatterPlotChartWrapper extends PlotWrapper {
             return new JLabel(" ");
         }
         LineState ls = fieldProperty.wrapper.getLineState();
-        ls.getPropertyContents();
+        XmlObjectStore store = getDisplayControl().getControlContext().getIdv().getStore();
+        ls.getPropertyContents(store);
         List comps = new ArrayList();
         comps.add(GuiUtils.inset(ls.colorSwatch, 4));
         comps.add(ls.shapeBox);
