@@ -56,6 +56,7 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.GlobeDisplay;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.DisplayableData;
@@ -2747,7 +2748,7 @@ public class StationModelControl extends ObsDisplayControl {
                 chartChanged();
             }
         };
-        if ( !lineState.showPropertiesDialog(listener,
+        if ( !lineState.showPropertiesDialog(getStore(), listener,
                                              getChart().getPlotNames(),
                                              getChart().getCurrentRanges())) {
             return;

@@ -57,6 +57,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
 
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.GeoUtils;
 import ucar.visad.Util;
 import ucar.visad.display.*;
@@ -282,8 +283,9 @@ public abstract class ChartAnnotation extends PropertiedThing implements XYAnnot
         comps.add(GuiUtils.rLabel("Name: "));
         comps.add(nameFld = new JTextField(getName()));
         if (showColorInProperties()) {
+            XmlObjectStore store = plotWrapper.getControl().getStore();
             JComponent[] colorSwatchComps =
-                GuiUtils.makeColorSwatchWidget(color, "Chart Color: ");
+                GuiUtils.makeColorSwatchWidget(store, color, "Chart Color: ");
             colorSwatch = colorSwatchComps[0];
             comps.add(GuiUtils.rLabel("Color: "));
             comps.add(GuiUtils.left(GuiUtils.hbox(GuiUtils.inset(colorSwatch,
