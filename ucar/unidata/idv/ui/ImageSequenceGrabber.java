@@ -42,6 +42,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.StringUtil;
+import ucar.unidata.view.geoloc.CoordinateFormat;
 import ucar.unidata.xml.XmlUtil;
 
 import ucar.visad.display.Animation;
@@ -2226,6 +2227,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                 } else if (movieFile.toLowerCase()
                         .endsWith(FileManager.SUFFIX_KMZ)) {
                     createKmz(movieFile, images, scriptingNode);
+                } else if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_KML)) {
+                    createKml(movieFile, images, scriptingNode);
                 } else if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_ZIP)) {
                     createZip(movieFile, images, scriptingNode);
                 } else if (movieFile.toLowerCase().endsWith(
@@ -2445,6 +2448,117 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             LogUtil.logException("Saving kmz file", exc);
         }
 
+    }
+
+    /**
+     * create the kmz
+     *
+     * @param movieFile file name
+     * @param images list of images
+     * @param scriptingNode isl node
+     */
+    public void createKml(String movieFile, List<ImageWrapper> images,
+                          Element scriptingNode) {
+        // TODO(jon): have this *always* write the results to a given directory. that way you can just supply a temp directory for KMZ generation (and then have method to zip up everything in a given directory).
+        try {
+            StringBuilder sb =
+                new StringBuilder(
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n");
+
+//            sb.append("<kml xmlns=\"http://earth.google.com/kml/2.0\">\n");
+
+            String open       = "1";
+            String visibility = "1";
+
+            if (scriptingNode != null) {
+                visibility = imageGenerator.applyMacros(scriptingNode,
+                    ATTR_KML_VISIBILITY, visibility);
+                open = imageGenerator.applyMacros(scriptingNode,
+                    ATTR_KML_OPEN, open);
+            }
+
+            sb.append("<Folder>\n").append("<open>").append(open).append("</open>\n").append(XmlUtil.tag(TAG_VISIBILITY, "", visibility));
+
+            if (scriptingNode != null) {
+                String folderName = imageGenerator.applyMacros(scriptingNode,
+                    ATTR_KML_NAME, (String) null);
+
+                if (folderName != null) {
+                    sb.append("<name>").append(folderName).append("</name>\n");
+                }
+
+                String desc = imageGenerator.applyMacros(scriptingNode,
+                    ATTR_KML_DESC, (String) null);
+
+                if (desc == null) {
+                    desc = imageGenerator.applyMacros(
+                        XmlUtil.getChildText(scriptingNode));
+
+                    if (desc != null) {
+                        desc = desc.trim();
+                    }
+                }
+
+                if ((desc != null) && !desc.isEmpty()) {
+                    sb.append(XmlUtil.tag(TAG_DESCRIPTION, "", desc));
+                }
+            }
+
+            if (scriptingNode != null) {
+                Element kmlElement = XmlUtil.findChild(scriptingNode,
+                    ImageGenerator.TAG_KML);
+
+                if (kmlElement != null) {
+                    sb.append(
+                        imageGenerator.applyMacros(
+                            XmlUtil.getChildText(kmlElement)));
+                }
+            }
+
+            TimeZone tz = TimeZone.getTimeZone("GMT");
+
+            for (ImageWrapper imageWrapper : images) {
+                String          extraKml = (String) imageWrapper.getProperty("kml");
+                String          image    = imageWrapper.getPath();
+                String          tail     = IOUtil.getFileTail(image);
+                DateTime        dttm     = imageWrapper.getDttm();
+                GeoLocationInfo bounds   = imageWrapper.getBounds();
+
+                if (extraKml != null) {
+                    sb.append(extraKml);
+                }
+
+                sb.append("<GroundOverlay>\n");
+                sb.append("<name>").append(((dttm == null)
+                    ? tail
+                    : dttm.toString())).append("</name>\n");
+                sb.append(XmlUtil.tag(TAG_VISIBILITY, "", visibility));
+                sb.append("<Icon><href>").append(tail).append("</href></Icon>\n");
+
+                if (bounds != null) {
+                    sb.append("<LatLonBox>\n")
+                        .append("<north>").append(bounds.getMaxLat()).append("</north>\n")
+                        .append("<south>").append(bounds.getMinLat()).append("</south>\n")
+                        .append("<east>").append(CoordinateFormat.formatLongitude(bounds.getMaxLon(), "DD.dddddd", false)).append("</east>\n")
+                        .append("<west>").append(CoordinateFormat.formatLongitude(bounds.getMinLon(), "DD.dddddd", false)).append("</west>\n")
+                    .append("</LatLonBox>\n");
+                }
+
+                if (dttm != null) {
+                    String when = dttm.formattedString("yyyy-MM-dd", tz)
+                        + 'T'
+                        + dttm.formattedString("HH:mm:ss", tz)
+                        + 'Z';
+
+                    sb.append("<TimeStamp><when>").append(when).append("</when></TimeStamp>\n");
+                }
+                sb.append("</GroundOverlay>\n");
+            }
+            sb.append("</Folder></kml>\n");
+            IOUtil.writeFile(movieFile, sb.toString());
+        } catch (Exception exc) {
+            LogUtil.logException("Saving KML file", exc);
+        }
     }
 
     /**

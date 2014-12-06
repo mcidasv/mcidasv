@@ -102,6 +102,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
@@ -5184,19 +5185,20 @@ public class ImageGenerator extends IdvManager {
 
         if (filename != null) {
             float quality = (float) applyMacros(node, ATTR_QUALITY, 1.0);
-            List<String> fileToks = (List<String>) StringUtil.split(filename,
-                                        ",", true, true);
+            List<String> fileToks = StringUtil.split(filename, ",", true, true);
             for (String file : fileToks) {
                 file = getImageFileName(file);
                 debug("Writing image:" + file);
-                if (file.endsWith(FileManager.SUFFIX_KMZ)) {
+                if (file.endsWith(FileManager.SUFFIX_KMZ) || file.endsWith(FileManager.SUFFIX_KML)) {
                     GeoLocationInfo bounds = null;
                     if (viewManager != null) {
                         bounds = viewManager.getVisibleGeoBounds();
                         ImageSequenceGrabber.subsetBounds(bounds, imageProps);
+                        String root = IOUtil.getFileRoot(file);
                         String tail = IOUtil.getFileTail(file);
-                        String tmpImageFile =
-                            getIdv().getStore().getTmpFile(tail + ".png");
+                        String tmpImageFile = file.endsWith(FileManager.SUFFIX_KML)
+                            ? Paths.get(root, tail + ".png").toString()
+                            : getIdv().getStore().getTmpFile(tail + ".png");
                         ImageUtils.writeImageToFile(image, tmpImageFile,
                                 quality);
                         ImageWrapper imageWrapper =

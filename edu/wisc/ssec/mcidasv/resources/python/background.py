@@ -1406,7 +1406,10 @@ class _Display(_JavaProxy):
         
         # do some sanity checking on filename
         filename = expandpath(filename)
-        
+        fileRoot, fileExt = os.path.splitext(filename.lower())
+        if fileExt == '.kml':
+            print '*** Warning: KML files will only display properly when all of the captured images are in the same directory as the KML file. Please consider using a KMZ file instead.'
+            
         isDir = os.path.isdir(filename)
         
         if isDir:
