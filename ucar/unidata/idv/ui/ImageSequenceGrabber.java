@@ -23,6 +23,8 @@ package ucar.unidata.idv.ui;
 
 import ij.ImagePlus;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.GeoLocationInfo;
@@ -73,6 +75,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DecimalFormat;
 
 import java.util.*;
@@ -539,7 +547,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                                 List<ImageWrapper> imageFiles,
                                 Dimension size, double displayRate) {
         this(filename, idv, imageGenerator, scriptingNode, imageFiles, size,
-             displayRate, -1);
+            displayRate, -1);
     }
 
     /**
@@ -568,7 +576,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         this.idv            = idv;
         movieFileName       = filename;
         createMovie(movieFileName, images, size, displayRate, scriptingNode,
-                    endPause);
+            endPause);
     }
 
     /**
@@ -1034,7 +1042,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         // grabAutoBtn.setIcon (startIcon);
         // }
         grabAnimationBtn.setEnabled( !capturingAuto);
-        grabBtn.setEnabled( !capturingAuto && !capturingAnim);
+        grabBtn.setEnabled(!capturingAuto && !capturingAnim);
     }
 
     /**
@@ -1981,7 +1989,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         imageSize = new Dimension(dim.width, dim.height);
 
         return robot.createScreenCapture(new Rectangle(loc.x, loc.y,
-                dim.width, dim.height));
+            dim.width, dim.height));
     }
 
     /**
@@ -2268,204 +2276,70 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
     }
 
     /**
-     * create the kmz
+     * Create the {@literal "KMZ"} file specified by {@code movieFile}.
      *
-     * @param movieFile file name
-     * @param images list of images
-     * @param scriptingNode isl node
+     * <p>Since a KMZ file is simply a zip archive containing a KML file and
+     * its dependencies (e.g. images), this method is just a wrapper around the
+     * {@link #createKml} and {@link #directoryToKmz} methods.</p>
+     *
+     * <p>If there is at least one {@link ImageWrapper} within {@code images},
+     * the temporary KML file will be in the same directory as the first
+     * {@code ImageWrapper} in {@code images}. If {@code images} is empty,
+     * the method will use the results of
+     * {@link ucar.unidata.xml.XmlObjectStore#getUniqueTmpDirectory getUniqueTmpDirectory}
+     * to store the temporary KML file.
+     * </p>
+     *
+     * <p>Once the images and the KML file have been created, the contents of
+     * the directory are placed within the KMZ file given by {@code movieFile}.
+     * </p>
+     *
+     * @param movieFile Path to write. Cannot be {@code null}.
+     * @param images List of images. Cannot be {@code null}.
+     * @param scriptingNode ISL node. Cannot be {@code null}.
      */
     public void createKmz(String movieFile, List<ImageWrapper> images,
                           Element scriptingNode) {
+        String tail = IOUtil.getFileTail(movieFile);
+        String kmlFile = IOUtil.stripExtension(tail) + FileManager.SUFFIX_KML;
 
-        try {
-            ZipOutputStream zos = null;
+        // kmlPath = Paths.get(wrapper.getPath()).getParent().resolve(kmlFile)
+        // this way you can have the image already written and place the kml
+        // where it belongs by simply running createKml(kmlPath.toString(), images, scriptingNode),
+        // and then directoryToKmz(kmlPath.toString(), movieFile)
+        // w00t!
+        // and then you can delete the old createKmz!
+        //
+        // if there is nothing in images, just do
+        // kmlPath = idv.getStore().getUniqueTmpDirectory().toPath().resolve(kmlFile);
 
-            if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_KMZ)) {
-                zos = new ZipOutputStream(new FileOutputStream(movieFile));
-            }
-
-            StringBuffer sb =
-                new StringBuffer(
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-
-            sb.append("<kml xmlns=\"http://earth.google.com/kml/2.0\">\n");
-
-            String open       = "1";
-            String visibility = "1";
-
-            if (scriptingNode != null) {
-                visibility = imageGenerator.applyMacros(scriptingNode,
-                        ATTR_KML_VISIBILITY, visibility);
-                open = imageGenerator.applyMacros(scriptingNode,
-                        ATTR_KML_OPEN, open);
-            }
-
-            sb.append("<Folder>\n");
-            sb.append("<open>" + open + "</open>\n");
-            sb.append(XmlUtil.tag(TAG_VISIBILITY, "", visibility));
-
-            if (scriptingNode != null) {
-                String folderName = imageGenerator.applyMacros(scriptingNode,
-                                        ATTR_KML_NAME, (String) null);
-
-                if (folderName != null) {
-                    sb.append("<name>" + folderName + "</name>\n");
-                }
-
-                String desc = imageGenerator.applyMacros(scriptingNode,
-                                  ATTR_KML_DESC, (String) null);
-
-                if (desc == null) {
-                    desc = imageGenerator.applyMacros(
-                        XmlUtil.getChildText(scriptingNode));
-
-                    if (desc != null) {
-                        desc = desc.trim();
-                    }
-                }
-
-                if ((desc != null) && (desc.length() > 0)) {
-                    sb.append(XmlUtil.tag(TAG_DESCRIPTION, "", desc));
-                }
-            }
-
-            if (scriptingNode != null) {
-                Element kmlElement = XmlUtil.findChild(scriptingNode,
-                                         ImageGenerator.TAG_KML);
-
-                if (kmlElement != null) {
-                    sb.append(
-                        imageGenerator.applyMacros(
-                            XmlUtil.getChildText(kmlElement)));
-                }
-
-                List nodes = XmlUtil.findChildren(scriptingNode,
-                                 ImageGenerator.TAG_KMZFILE);
-
-                for (int i = 0; i < nodes.size(); i++) {
-                    Element child = (Element) nodes.get(i);
-                    String  file  = XmlUtil.getAttribute(child, ATTR_FILENAME);
-
-                    if (zos != null) {
-                        zos.putNextEntry(
-                            new ZipEntry(IOUtil.getFileTail(file)));
-
-                        byte[] bytes =
-                            IOUtil.readBytes(IOUtil.getInputStream(file));
-
-                        zos.write(bytes, 0, bytes.length);
-                    }
-                }
-            }
-
-            // <name>Buienradar.nl</name>
-            TimeZone tz          = TimeZone.getTimeZone("GMT");
-            boolean  didKmlFiles = false;
-
-            for (ImageWrapper imageWrapper : images) {
-                List kmlFiles = (List) imageWrapper.getProperty("kmlfiles");
-
-                if ( !didKmlFiles && (kmlFiles != null)) {
-                    didKmlFiles = true;
-
-                    for (String kmlFile : (List<String>) kmlFiles) {
-                        String tail = IOUtil.getFileTail(kmlFile);
-
-                        if (zos != null) {
-                            zos.putNextEntry(new ZipEntry(tail));
-
-                            byte[] imageBytes = IOUtil.readBytes(
-                                                    new FileInputStream(
-                                                        kmlFile));
-
-                            zos.write(imageBytes, 0, imageBytes.length);
-                        }
-                    }
-                }
-
-                String extraKml = (String) imageWrapper.getProperty("kml");
-                String image    = imageWrapper.getPath();
-                String tail     = IOUtil.getFileTail(image);
-
-                // System.err.println("tail:" + tail);
-                if (zos != null) {
-                    zos.putNextEntry(new ZipEntry(tail));
-
-                    byte[] imageBytes =
-                        IOUtil.readBytes(new FileInputStream(image));
-
-                    zos.write(imageBytes, 0, imageBytes.length);
-                }
-
-                DateTime        dttm   = imageWrapper.getDttm();
-                GeoLocationInfo bounds = imageWrapper.getBounds();
-
-                if (extraKml != null) {
-                    sb.append(extraKml);
-                }
-
-                sb.append("<GroundOverlay>\n");
-                sb.append("<name>" + ((dttm == null)
-                                      ? tail
-                                      : dttm.toString()) + "</name>\n");
-                sb.append(XmlUtil.tag(TAG_VISIBILITY, "", visibility));
-                sb.append("<Icon><href>" + tail + "</href></Icon>\n");
-
-                if (bounds != null) {
-                    KmlDataSource.createLatLonBox(bounds, sb);
-                }
-
-                if (dttm != null) {
-                    String when = dttm.formattedString("yyyy-MM-dd", tz)
-                                  + "T"
-                                  + dttm.formattedString("HH:mm:ss", tz)
-                                  + "Z";
-
-                    sb.append("<TimeStamp><when>" + when
-                              + "</when></TimeStamp>\n");
-                }
-
-                sb.append("</GroundOverlay>\n");
-            }
-
-            sb.append("</Folder></kml>\n");
-
-            if (zos != null) {
-                zos.putNextEntry(
-                    new ZipEntry(
-                        IOUtil.stripExtension(IOUtil.getFileTail(movieFile))
-                        + FileManager.SUFFIX_KML));
-
-                byte[] kmlBytes = sb.toString().getBytes();
-
-                // System.out.println("sb:" + sb);
-                zos.write(kmlBytes, 0, kmlBytes.length);
-                zos.close();
-            } else {
-                IOUtil.writeFile(movieFile, sb.toString());
-            }
-        } catch (Exception exc) {
-            LogUtil.logException("Saving kmz file", exc);
+        Path kmlPath;
+        if (images.isEmpty()) {
+            kmlPath = idv.getStore().getUniqueTmpDirectory().toPath().resolve(kmlFile);
+        } else {
+            kmlPath = Paths.get(images.get(0).getPath()).getParent().resolve(kmlFile);
         }
-
+        createKml(kmlPath.toString(), images, scriptingNode);
+        try {
+            directoryToKmz(kmlPath.toString(), movieFile);
+        } catch (IOException e) {
+            LogUtil.logException("Saving KMZ file", e);
+        }
     }
 
     /**
-     * create the kmz
+     * Create the KML.
      *
-     * @param movieFile file name
-     * @param images list of images
-     * @param scriptingNode isl node
+     * @param movieFile File name.
+     * @param images List of images.
+     * @param scriptingNode ISL node.
      */
     public void createKml(String movieFile, List<ImageWrapper> images,
                           Element scriptingNode) {
-        // TODO(jon): have this *always* write the results to a given directory. that way you can just supply a temp directory for KMZ generation (and then have method to zip up everything in a given directory).
         try {
             StringBuilder sb =
                 new StringBuilder(
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://earth.google.com/kml/2.0\">\n");
-
-//            sb.append("<kml xmlns=\"http://earth.google.com/kml/2.0\">\n");
 
             String open       = "1";
             String visibility = "1";
@@ -2558,6 +2432,36 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             IOUtil.writeFile(movieFile, sb.toString());
         } catch (Exception exc) {
             LogUtil.logException("Saving KML file", exc);
+        }
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(ImageSequenceGrabber.class);
+
+    /**
+     * Create a {@literal "KMZ"} file from the various files in the same
+     * directory as {@code kmlPath}.
+     *
+     * @param kmlPath Path to a {@literal "KML"} file. Cannot be {@code null}.
+     * @param kmzPath Path to the {@literal "KMZ"} that will be created.
+     * Cannot be {@code null}.
+     *
+     * @throws IOException if there was a problem creating the {@literal "KMZ"}.
+     */
+    private static void directoryToKmz(String kmlPath, String kmzPath) throws IOException {
+        Path kml = Paths.get(kmlPath);
+        final Path directory = kml.getParent();
+        try (final ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(kmzPath))) {
+            Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                    throws IOException {
+//                    logger.trace("visting file '{}' ({})", file, directory.relativize(file));
+                    zos.putNextEntry(new ZipEntry(directory.relativize(file).toString()));
+                    byte[] bytes = IOUtil.readBytes(IOUtil.getInputStream(file.toString()));
+                    zos.write(bytes, 0, bytes.length);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
         }
     }
 
