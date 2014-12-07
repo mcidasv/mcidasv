@@ -23,8 +23,6 @@ package ucar.unidata.idv.ui;
 
 import ij.ImagePlus;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.GeoLocationInfo;
@@ -2302,17 +2300,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                           Element scriptingNode) {
         String tail = IOUtil.getFileTail(movieFile);
         String kmlFile = IOUtil.stripExtension(tail) + FileManager.SUFFIX_KML;
-
-        // kmlPath = Paths.get(wrapper.getPath()).getParent().resolve(kmlFile)
-        // this way you can have the image already written and place the kml
-        // where it belongs by simply running createKml(kmlPath.toString(), images, scriptingNode),
-        // and then directoryToKmz(kmlPath.toString(), movieFile)
-        // w00t!
-        // and then you can delete the old createKmz!
-        //
-        // if there is nothing in images, just do
-        // kmlPath = idv.getStore().getUniqueTmpDirectory().toPath().resolve(kmlFile);
-
         Path kmlPath;
         if (images.isEmpty()) {
             kmlPath = idv.getStore().getUniqueTmpDirectory().toPath().resolve(kmlFile);
@@ -2435,8 +2422,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         }
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(ImageSequenceGrabber.class);
-
     /**
      * Create a {@literal "KMZ"} file from the various files in the same
      * directory as {@code kmlPath}.
@@ -2455,7 +2440,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                     throws IOException {
-//                    logger.trace("visting file '{}' ({})", file, directory.relativize(file));
                     zos.putNextEntry(new ZipEntry(directory.relativize(file).toString()));
                     byte[] bytes = IOUtil.readBytes(IOUtil.getInputStream(file.toString()));
                     zos.write(bytes, 0, bytes.length);
