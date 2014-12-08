@@ -11709,7 +11709,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
             }
         });
-//        group.add(adaptiveRezOffItem);
         popup.add(adaptiveRezOffItem);
 
         adaptiveRezOnItem.addActionListener(new ActionListener() {
@@ -11721,7 +11720,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
             }
         });
-//        group.add(adaptiveRezOnItem);
         popup.add(adaptiveRezOnItem);
 
         fullRezItem.addActionListener(new ActionListener() {
@@ -11737,7 +11735,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
             }
         });
-//        group.add(fullRezItem);
         popup.add(fullRezItem);
 
         final JButton button = GuiUtils.getImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing16.png", DisplayControlImpl.class);
@@ -11748,13 +11745,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     + button.getBounds().height);
             }
         });
-
-//        if (matchDisplayRegion) {
-//            adaptiveRezOnItem.setSelected(true);
-//        } else {
-//            adaptiveRezOffItem.setSelected(false);
-//        }
-
         return button;
     }
 
