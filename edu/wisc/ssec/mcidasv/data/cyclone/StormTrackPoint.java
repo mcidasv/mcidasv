@@ -213,7 +213,6 @@ public class StormTrackPoint implements Comparable {
 	 * @param real
 	 *            _more_
 	 * 
-	 * @return _more_
 	 */
 	public void setAttribute(Real real) {
 		for (Real attr : attributes) {
