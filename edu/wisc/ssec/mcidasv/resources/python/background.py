@@ -428,23 +428,19 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         defaultLabel = '%longname% %timestamp%'
         return defaultLabel
 
-class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
+class _MappedGeoGridFlatField(_MappedFlatField):
     
     """Implements the 'mega-object' class for grids read with loadGrid."""
     
-    def __init__(self, ggff, geogrid, filename, field):
+    def __init__(self, ggff, geogrid, filename, field, levelReal):
         self.geogrid = geogrid
         self.filename = filename
         self.field = field
-        self.levelReal = None
+        self.levelReal = levelReal
         keys = ['attributes', 'datatype', 'description', 'info',
-                'levels', 'units', 'times', 'projection', 'field', 'filename']
-        _MappedData.__init__(self, keys)
-        # call the "copy constructor", not copying values
-        GeoGridFlatField.__init__(self, ggff, False, ggff.getType(), 
-                ggff.getDomainSet(), ggff.RangeCoordinateSystem, 
-                ggff.RangeCoordinateSystems, ggff.RangeSet,
-                ggff.RangeUnits)
+                'levels', 'units', 'times', 'projection', 'field', 'filename',
+                'level']
+        _MappedFlatField.__init__(self, ggff, keys)
         self.initMetadataMap()
     
     def _getDirValue(self, key):
@@ -460,6 +456,9 @@ class _MappedGeoGridFlatField(_MappedData, GeoGridFlatField):
             return self.geogrid.getInfo()
         if key == 'levels':
             return self.geogrid.getLevels()
+        if key == 'level':
+            # this will only work if single level case
+            return self.levelReal
         if key == 'units':
             return self.geogrid.getUnitsString()
         if key == 'times':
@@ -1343,10 +1342,10 @@ class _Display(_JavaProxy):
         except TypeError:
             # try one more time; this is to make a plain FlatField w/no time field still work
             ddc = DataDataChoice(shortname, data[0])
-        if isinstance(firstData, _MappedGeoGridFlatField):
+        if hm and hm.containsKey('level'):
             # this will get the %level% macro filled in,
             # and the GUI will reflect the level in other places.
-            ddc.setLevelSelection(firstData.levelReal)
+            ddc.setLevelSelection(hm.get('level'))
         # setting the description should set the %longname% macro
         ddc.setDescription(longname)
         newLayer = mcv.doMakeControl( 
@@ -3080,17 +3079,12 @@ def loadGrid(filename=None, field=None, level='all',
     else:
         ff = adapterData
     
-    # make the 'mega-object'
-    mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field)
-    mapped.levelReal = levelReal
+    # if FF is 2D, running it through make2D will avoid VisAD "manifold 
+    # dimension" errors if it gets used in an IDV formula later on...
     if level and level.lower() != 'all':
-        # PRO: this avoids 'manifold dim must be 3' error in IDV formulas
-        # CON: this means we return plain 'FlatField' instead of mega-object,
-        #      which will be a surprise to user trying to use object as a dict.
-        #      (TODO): try using new _MappedFlatField constructor instead?
-        # NOTE: We can't do this *before* making mega-object, because that 
-        #       constructor expects a GGFF, not a plain FF.
-        mapped = make2D(mapped)
+        ff = make2D(ff)
+    # make the 'mega-object'
+    mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field, levelReal)
 
     return mapped
 
