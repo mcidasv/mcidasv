@@ -322,6 +322,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			String keyStr = (String) keyIterator.next();
         		List fileNames = (List) filenameMap.get(keyStr);
         		granuleCount = fileNames.size();
+				setProperty("granuleCount", granuleCount);
+				logger.trace("properties='{}'", getProperties());
     			for (int fileCount = 0; fileCount < granuleCount; fileCount++) {
     				// need to open the main NetCDF file to determine the geolocation product
     				NetcdfFile ncfile = null;
@@ -1192,8 +1194,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			logger.error("Exception: ", e);
     		}
     	}
-
-    	setProperties(properties);
+		logger.info("local properties='{}'", properties);
+		logger.info("getProperties='{}'", getProperties());
+		Hashtable temp = getProperties();
+		temp.putAll(properties);
+		logger.info("temp='{}'", temp);
+		setProperties(temp);
     }
 
     public void initAfterUnpersistence() {
@@ -1282,6 +1288,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			DataChoice choice = null;
 				try {
 					choice = doMakeDataChoice(k, adapter);
+					choice.setObjectProperty("granuleCount", getProperty("granuleCount", -2));
 	    			msdMap.put(choice.getName(), adapter);
 	    			addDataChoice(choice);
 				} catch (Exception e) {
@@ -1297,6 +1304,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			DataChoice choice = null;
     			try {
     				choice = doMakeDataChoice(idx, adapters[idx].getArrayName());
+					choice.setObjectProperty("granuleCount", getProperty("granuleCount", -2));
     			} 
     			catch (Exception e) {
     				e.printStackTrace();

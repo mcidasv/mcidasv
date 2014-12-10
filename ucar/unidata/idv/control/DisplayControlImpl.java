@@ -29,6 +29,7 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -4246,7 +4247,16 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         } else {
             values.add(resolutionReadout);
         }
-
+        if (getDataChoice() != null) {
+            Object granuleCount = getDataChoice().getProperty("granuleCount");
+            if (granuleCount == null) {
+                granuleCount = "";
+            }
+            patterns.add("%granulecount%");
+            values.add(granuleCount.toString());
+        }
+        logger.trace("patterns='{}'", patterns);
+        logger.trace("values='{}'", values);
     }
 
 
@@ -6390,6 +6400,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (canDoProgressiveResolution()) {
             names.addAll(Misc.newList(MACRO_RESOLUTION));
             labels.addAll(Misc.newList("Resolution"));
+        }
+        if (getDataChoice() != null) {
+            Object granuleCount = getDataChoice().getProperty("granuleCount");
+            if (granuleCount == null) {
+                granuleCount = "";
+            }
+            names.add("%granulecount%");
+            labels.add("Granule Count");
         }
     }
 
