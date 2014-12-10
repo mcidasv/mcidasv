@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
@@ -37,11 +38,8 @@ import edu.wisc.ssec.mcidasv.data.QualityFlag;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FilenameFilter;
-
 import java.rmi.RemoteException;
-
 import java.text.SimpleDateFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -56,24 +54,24 @@ import java.util.Set;
 import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
 
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.output.XMLOutputter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.ma2.ArrayFloat;
 import ucar.ma2.DataType;
-
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.VariableDS;
-
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -82,17 +80,19 @@ import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
+import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.IdvPersistenceManager;
-
 import ucar.unidata.util.Misc;
-
 import visad.Data;
+import visad.DateTime;
 import visad.DerivedUnit;
+import visad.FieldImpl;
 import visad.FlatField;
+import visad.FunctionType;
 import visad.RealType;
+import visad.SampledSet;
 import visad.Unit;
 import visad.VisADException;
-
 import visad.data.units.NoSuchUnitException;
 import visad.data.units.ParseException;
 import visad.data.units.Parser;
@@ -158,6 +158,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     
     // date formatter for how we want to show granule day/time on display
     SimpleDateFormat sdfOut = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+    
+    // MJH keep track of date to add time dim to FieldImpl
+    Date theDate;
 
     /**
      * Zero-argument constructor for construction via unpersistence.
@@ -234,12 +237,26 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	filenameMap.put(prodStr, l);
         }
         
+        versionCheck();
         setup();
         initQfTranslations();
     }
     
+    // alert user about possible VIIRS plugin compatibility issues
+    private void versionCheck() {
+    	boolean pluginDialog = getIdv().getStore().get(Constants.PREF_VIIRS_PLUGIN, false);
+    	if (! pluginDialog) {
+    		String msg = "If you are running McIDAS-V 1.5 or newer, and use the VIIRS plugin, " +
+    				"you will need to uninstall, then reinstall it.";
+    		JCheckBox jcbPlugin = new JCheckBox("Do not show this message again");
+    		Object[] params = { msg, jcbPlugin };
+    		JOptionPane.showMessageDialog(null, params, "Plugin Compatibility Notice", JOptionPane.OK_OPTION);
+    		boolean dontShow = jcbPlugin.isSelected();
+    		getIdv().getStore().put(Constants.PREF_VIIRS_PLUGIN, dontShow);
+    	}
+	}
 
-    public void setup() throws VisADException {
+	public void setup() throws VisADException {
 
     	// store filenames for possible bundle unpersistence
     	for (Object o : sources) {
@@ -394,11 +411,13 @@ public class SuomiNPPDataSource extends HydraDataSource {
     											String sTime = aTime.getStringValue();
     											logger.debug("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
     											Date d = sdf.parse(sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
+    											theDate = d;
     											foundDateTime = true;
     											// set time for display to day/time of 1st granule examined
     											if (! nameHasBeenSet) {
-    												setName(instrumentName.getStringValue() + " " + sdfOut.format(d)
-    														+ ", " + fileNames.size() + " Granule");
+    												setName(instrumentName.getStringValue());
+    												//setName(instrumentName.getStringValue() + " " + sdfOut.format(d)
+    												//		+ ", " + fileNames.size() + " Granule");
     												nameHasBeenSet = true;
     											}
     											break;
@@ -1471,6 +1490,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
         } catch (Exception e) {
             logger.error("getData Exception: ", e);
         }
+        ////////// inq1429 return FieldImpl with time dim /////////////////
+        List dateTimes = new ArrayList();
+        dateTimes.add(new DateTime(theDate));
+        SampledSet timeSet = (SampledSet) ucar.visad.Util.makeTimeSet(dateTimes);
+        FunctionType ftype = new FunctionType(RealType.Time, data.getType());
+        FieldImpl fi = new FieldImpl(ftype, timeSet);
+        fi.setSample(0, data);
+        data = fi;
+        //////////////////////////////////////////////////////////////////
         return data;
     }
 
@@ -1491,7 +1519,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
              final DataChoice dataChoice) {
       
 		  try {
-			  FlatField image = (FlatField) dataChoice.getData(null);
+			  // inq1429: need to handle FieldImpl here
+			  FieldImpl thing = (FieldImpl) dataChoice.getData(null);
+			  FlatField image;
+			  if (GridUtil.isTimeSequence(thing)) {
+				  image = (FlatField) thing.getSample(0);
+			  } else {
+				  image = (FlatField) thing;
+			  }
 			  PreviewSelection ps = new PreviewSelection(dataChoice, image, null);
 			  // Region subsetting not yet implemented for CrIS data
 			  if (instrumentName.getStringValue().equals("CrIS")) {

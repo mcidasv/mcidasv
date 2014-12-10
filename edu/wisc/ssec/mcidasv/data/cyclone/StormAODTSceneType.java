@@ -857,12 +857,15 @@ public class StormAODTSceneType {
 	}
 
 	/**
-	 * 
+	 * Determine radius of maximum wind based upon Jim Kossin's regression based
+	 * scheme.
+	 *
 	 * @param odtcurrent
 	 * @param areadata
-	 * @return
+	 *
+	 * @return Array of floats that contains radius of maximum wind distance
+	 * and eye size radius (km).
 	 */
-
 	static float[] aodtv72_rmw(StormAODTInfo.IRData odtcurrent,
 			StormAODTInfo.DataGrid areadata)
 	/*
@@ -966,14 +969,21 @@ public class StormAODTSceneType {
 	}
 
 	/**
-	 * 
-	 * @param inlat
-	 * @param inlon
-	 * @param searchtemp
-	 * @param searchtype
+	 * Determine storm location using 10^ Log-spiral analysis. Algorithm will
+	 * attempt to match the spiral with the image pixels at or below the
+	 * threshold temperature based on BD-enhancement curve values
+	 *
+	 * @param inlat center latitude of analysis grid
+	 * @param inlon center longitude of analysis grid
+	 * @param searchtemp temperature threshold value
+	 * @param searchtype 1=search at single point; 2=search over 2^box
 	 * @param odtcurrent
 	 * @param areadata
-	 * @return
+	 *
+	 * @return Array of floats containing: {@code bestspiral} - number of
+	 * consecutive arcs through which spiral passes, {@code bestlat} - best
+	 * latitude location from analysis, and {@code bestlon} - best longitude
+	 * location from analysis.
 	 */
 	static float[] aodtv72_logspiral(float inlat, float inlon,
 			float searchtemp, int searchtype, StormAODTInfo.IRData odtcurrent,
@@ -2024,14 +2034,16 @@ public class StormAODTSceneType {
 	}
 
 	/**
-	 * 
-	 * @param xlat
-	 * @param xlon
-	 * @param tempval
-	 * @param atype
-	 * @param areadata
-	 *            _more_
-	 * @return
+	 * Determine eye size or shear distance for a given scene.
+	 *
+	 * @param xlat Center latitude of analysis grid.
+	 * @param xlon Center longitude of analysis grid.
+	 * @param tempval Temperature threshold value to be used.
+	 * @param atype Analysis type (1: cdo size; 2: eye size; 3: shear distance).
+	 * @param areadata _more_
+	 *
+	 * @return Array of floats containing: {@code valb} - eye/cdo radius
+	 * or shear distance, and {@code valc} - eye/cdo symmetry value or 0.
 	 */
 	static float[] aodtv72_cdoshearcalc(float xlat, float xlon, float tempval,
 			int atype, StormAODTInfo.DataGrid areadata)

@@ -287,6 +287,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         DirectoryOption startupBundle = optMaster.getDirectoryOption("STARTUP_BUNDLE");
         TextOption jvmArgs = optMaster.getTextOption("JVM_OPTIONS");
         LoggerLevelOption logLevel = optMaster.getLoggerLevelOption("LOG_LEVEL");
+        TextOption textureWidth = optMaster.getTextOption("TEXTURE_WIDTH");
         
         JPanel startupPanel = new JPanel();
         startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
@@ -299,15 +300,17 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         use3dCheckBox.setText(use3d.getLabel());
         final JCheckBox joglCheckBox = jogl.getComponent();
         joglCheckBox.setText(jogl.getLabel());
+        JPanel texturePanel = McVGuiUtils.makeLabeledComponent(textureWidth.getLabel()+':', textureWidth.getComponent());
+//        JTextField textureField = textureWidth.getComponent();
 
-        JPanel internalPanel = McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, McVGuiUtils.Prefer.TOP);
+        JPanel internalPanel = McVGuiUtils.topCenterBottom(use3dCheckBox, joglCheckBox, texturePanel);
         JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:", internalPanel);
         
         // Build the bundle panel
         JPanel startupBundlePanel = startupBundle.getComponent();
         JCheckBox defaultBundleCheckBox = defaultBundle.getComponent();
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
-        JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+":",
+        JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+ ':',
             McVGuiUtils.topBottom(startupBundlePanel, defaultBundleCheckBox, McVGuiUtils.Prefer.TOP));
             
         JCheckBox useCmsCollectorCheckBox = useCmsCollector.getComponent();
@@ -324,17 +327,17 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         
         JComboBox logLevelComboBox = logLevel.getComponent();
 
-        JPanel logLevelPanel = McVGuiUtils.makeLabeledComponent(logLevel.getLabel()+":", logLevelComboBox);
+        JPanel logLevelPanel = McVGuiUtils.makeLabeledComponent(logLevel.getLabel()+':', logLevelComboBox);
         
         JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", useCmsCollectorCheckBox);
 
         JTextField jvmArgsField = jvmArgs.getComponent();
         JPanel jvmPanel = McVGuiUtils.makeLabeledComponent("Java Flags:", jvmArgsField);
 
-        Component[] visadComponents = new Component[] {
-                useGeometryByRefCheckBox,
-                useImageByRefCheckBox,
-                useNpotCheckBox
+        Component[] visadComponents = {
+            useGeometryByRefCheckBox,
+            useImageByRefCheckBox,
+            useNpotCheckBox
         };
         
         JPanel visadPanel = McVGuiUtils.makeLabeledComponent("VisAD:", McVGuiUtils.vertical(visadComponents));

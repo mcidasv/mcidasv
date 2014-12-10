@@ -94,5 +94,8 @@
   <logger name="edu.wisc.ssec.mcidas.adde.AddeTextReader" level="OFF" />
   <logger name="edu.wisc.ssec.mcidas.adde.DataSetInfo" level="OFF" />
   <logger name="net.sf.ehcache" level="OFF" />
+  <logger name="org.apache.commons.logging.impl.SimpleLog" level="OFF" />
+  <logger name="org.apache.fop" level="OFF" />
+  <logger name="org.apache.xmlgraphics" level="OFF" />
   <!-- End of verbose logger section -->
 </configuration>

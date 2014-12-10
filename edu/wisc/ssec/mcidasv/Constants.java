@@ -226,6 +226,9 @@ public interface Constants extends IdvConstants {
     /** Preference for saving image preview default */
     public static final String PREF_IMAGE_PREVIEW = "mcidasv.chooser.adde.preview";
     
+    /** Whether to show user VIIRS plugin compatibility check popup */
+    public static final String PREF_VIIRS_PLUGIN = "mcidasv.viirs.pluginversiondialog";
+    
 	/** 
 	 * Show large or small icons. If PREF_TBM_ICONS is disabled, this pref
 	 * has no meaning.
