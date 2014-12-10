@@ -304,7 +304,7 @@ class AddeJythonError(Exception, java.lang.Exception):
     def getAddeErrorMessage(self):
         return self.addeErrorMessage
         
-def __str__(self):
+    def __str__(self):
         if self.addeErrorMessage:
             return self.addeErrorMessage
         else:
