@@ -369,6 +369,10 @@ class AddeJythonServerNotFound(AddeJythonError):
     def __str__(self):
         return "Check for valid server. (error code: %d)" % (self.addeErrorCode)
         
+class AddeJythonDayRequiredError(AddeJythonError):
+    def __str__(self):
+        return "Day required for archived datasets. (error code: %d)" % (self.addeErrorCode)
+        
 # class AddeJythonUnknownFormatError(AddeJythonError): pass
 
 # alias = ADDE  alias
@@ -723,6 +727,8 @@ def listADDEImageTimes(localEntry=None,
                     raise AddeJythonBandNotPresentInSpecifiedUnits(e)
                 elif e.getAddeErrorCode() == -114:
                     raise AddeJythonServerNotFound(e)
+                elif e.getAddeErrorCode() == -1000:
+                    raise AddeJythonDayRequiredError(e)
                 elif e.getAddeErrorCode() == -6000:
                     if accounting == DEFAULT_ACCOUNTING:
                         raise AddeJythonAccountingRequiredError(e)
@@ -929,6 +935,8 @@ def listADDEImages(localEntry=None,
                     raise AddeJythonBandNotPresentInSpecifiedUnits(e)
                 elif e.getAddeErrorCode() == -114:
                     raise AddeJythonServerNotFound(e)
+                elif e.getAddeErrorCode() == -1000:
+                    raise AddeJythonDayRequiredError(e)
                 elif e.getAddeErrorCode() == -6000:
                     if accounting == DEFAULT_ACCOUNTING:
                         raise AddeJythonAccountingRequiredError(e)
@@ -1353,6 +1361,8 @@ def getADDEImage(localEntry=None,
                 raise AddeJythonBandNotPresentInSpecifiedUnits(e)
             elif e.getAddeErrorCode() == -114:
                 raise AddeJythonServerNotFound(e)
+            elif e.getAddeErrorCode() == -1000:
+                raise AddeJythonDayRequiredError(e)
             elif e.getAddeErrorCode() == -6000:
                 if accounting == DEFAULT_ACCOUNTING:
                     raise AddeJythonAccountingRequiredError(e)
