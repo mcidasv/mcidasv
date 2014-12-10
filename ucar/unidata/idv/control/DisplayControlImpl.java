@@ -29,11 +29,13 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ucar.nc2.time.Calendar;
 
+import ucar.nc2.time.Calendar;
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.collab.SharableImpl;
 import ucar.unidata.data.*;
@@ -78,20 +80,17 @@ import ucar.unidata.view.geoloc.GlobeDisplay;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.unidata.xml.XmlObjectStore;
-
 import ucar.visad.UtcDate;
 import ucar.visad.Util;
 import ucar.visad.data.CalendarDateTime;
 import ucar.visad.data.CalendarDateTimeSet;
 import ucar.visad.display.*;
-
 import visad.*;
-
 import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.georef.MapProjection;
-
 import visad.util.DataUtility;
+
 
 
 import java.awt.BorderLayout;
@@ -121,16 +120,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.io.File;
-
 import java.lang.reflect.Method;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -4245,6 +4239,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             values.add("");
         } else {
             values.add(resolutionReadout);
+        }
+        // TJJ Dec 2014 - below only applies to swath data which sets this prop (e.g. Suomi NPP)
+        if (getDataChoice() != null) {
+        	Object granuleCount = getDataChoice().getProperty(Constants.PROP_GRANULE_COUNT);
+        	if (granuleCount == null) {
+        		granuleCount = "";
+        	}
+        	patterns.add(Constants.MACRO_GRANULE_COUNT);
+        	values.add(granuleCount.toString());
         }
 
     }

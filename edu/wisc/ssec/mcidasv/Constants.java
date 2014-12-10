@@ -74,6 +74,9 @@ public interface Constants extends IdvConstants {
 
 	/** Macro for the VisAD version in the about HTML file. */
 	public static String MACRO_VISAD_VERSION = "%VISADVERSION%";
+	
+	/** Macro for granule count (only applies for swath data). */
+	public static String MACRO_GRANULE_COUNT = "%granulecount%";
 
     /** Default size for GUI elements */
 	public static final int ELEMENT_WIDTH = 90;
@@ -296,6 +299,9 @@ public interface Constants extends IdvConstants {
 
     /** Property used to store and retrieve the {@literal "0-360"} checkbox value. */
     public static final String PROP_HYDRA_360 = "mcidasv.hydra.multispectral.use360";
+    
+    /** Property indicating how many source granules made up a swath data source */
+    public static final String PROP_GRANULE_COUNT = "mcidasv.swath.granulecount";
 
 	/** Application property file name. */
 	public static final String PROPERTIES_FILE = 

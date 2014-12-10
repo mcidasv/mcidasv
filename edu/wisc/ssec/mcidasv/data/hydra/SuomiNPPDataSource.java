@@ -309,6 +309,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	SuomiNPPProductProfile nppPP = null;
     	// and also Profile metadata for geolocation variables
     	boolean haveGeoMetaData = false;
+    	
+    	// number of source granules which make up the data source
     	int granuleCount = 1;
     	   	
     	try {
@@ -322,6 +324,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			String keyStr = (String) keyIterator.next();
         		List fileNames = (List) filenameMap.get(keyStr);
         		granuleCount = fileNames.size();
+        		setProperty(Constants.PROP_GRANULE_COUNT, granuleCount + " Granule");
     			for (int fileCount = 0; fileCount < granuleCount; fileCount++) {
     				// need to open the main NetCDF file to determine the geolocation product
     				NetcdfFile ncfile = null;
@@ -416,8 +419,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     											// set time for display to day/time of 1st granule examined
     											if (! nameHasBeenSet) {
     												setName(instrumentName.getStringValue());
-    												//setName(instrumentName.getStringValue() + " " + sdfOut.format(d)
-    												//		+ ", " + fileNames.size() + " Granule");
     												nameHasBeenSet = true;
     											}
     											break;
@@ -1193,7 +1194,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		}
     	}
 
-    	setProperties(properties);
+    	// Merge with pre-set properties
+    	Hashtable tmpHt = getProperties();
+    	tmpHt.putAll(properties);
+    	setProperties(tmpHt);
     }
 
     public void initAfterUnpersistence() {
@@ -1282,6 +1286,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			DataChoice choice = null;
 				try {
 					choice = doMakeDataChoice(k, adapter);
+					choice.setObjectProperty(Constants.PROP_GRANULE_COUNT, 
+							getProperty(Constants.PROP_GRANULE_COUNT, "1 Granule"));
 	    			msdMap.put(choice.getName(), adapter);
 	    			addDataChoice(choice);
 				} catch (Exception e) {
@@ -1297,6 +1303,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			DataChoice choice = null;
     			try {
     				choice = doMakeDataChoice(idx, adapters[idx].getArrayName());
+    				choice.setObjectProperty(Constants.PROP_GRANULE_COUNT, 
+							getProperty(Constants.PROP_GRANULE_COUNT, "1 Granule")); 
     			} 
     			catch (Exception e) {
     				e.printStackTrace();
@@ -1375,8 +1383,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     public String getDatasetName() {
       return filename;
     }
-    
-    /**
+
+	/**
 	 * @return the qfMap
 	 */
 	public HashMap<String, QualityFlag> getQfMap() {
@@ -1491,13 +1499,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
             logger.error("getData Exception: ", e);
         }
         ////////// inq1429 return FieldImpl with time dim /////////////////
-        List dateTimes = new ArrayList();
-        dateTimes.add(new DateTime(theDate));
-        SampledSet timeSet = (SampledSet) ucar.visad.Util.makeTimeSet(dateTimes);
-        FunctionType ftype = new FunctionType(RealType.Time, data.getType());
-        FieldImpl fi = new FieldImpl(ftype, timeSet);
-        fi.setSample(0, data);
-        data = fi;
+        if (data != null) {
+        	List dateTimes = new ArrayList();
+        	dateTimes.add(new DateTime(theDate));
+        	SampledSet timeSet = (SampledSet) ucar.visad.Util.makeTimeSet(dateTimes);
+        	FunctionType ftype = new FunctionType(RealType.Time, data.getType());
+        	FieldImpl fi = new FieldImpl(ftype, timeSet);
+        	fi.setSample(0, data);
+        	data = fi;
+        }
         //////////////////////////////////////////////////////////////////
         return data;
     }
@@ -1527,12 +1537,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
 			  } else {
 				  image = (FlatField) thing;
 			  }
-			  PreviewSelection ps = new PreviewSelection(dataChoice, image, null);
-			  // Region subsetting not yet implemented for CrIS data
-			  if (instrumentName.getStringValue().equals("CrIS")) {
-				  ps.enableSubsetting(false);
+			  if (image != null) {
+				  PreviewSelection ps = new PreviewSelection(dataChoice, image, null);
+				  // Region subsetting not yet implemented for CrIS data
+				  if (instrumentName.getStringValue().equals("CrIS")) {
+					  ps.enableSubsetting(false);
+				  }
+				  components.add(ps);
 			  }
-			  components.add(ps);
 		  } catch (Exception e) {
 			  logger.error("Can't make PreviewSelection: ", e);
 		  }
