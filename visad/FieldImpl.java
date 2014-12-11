@@ -26,6 +26,9 @@ MA 02111-1307, USA
 
 package visad;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.rmi.RemoteException;
 
 import java.util.Enumeration;
@@ -33,6 +36,7 @@ import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
    FieldImpl is the VisAD class for finite samplings of functions
@@ -775,6 +779,11 @@ public class FieldImpl extends FunctionImpl implements Field {
     }
   }
 
+//    private static final Logger LOGGER =
+//        Logger.getLogger(FieldImpl.class.getName());
+
+    private static final Logger logger = LoggerFactory.getLogger(FieldImpl.class);
+
   /** return new Field with value 'this op data';
       test for various relations between types of this and data */
   /*- TDR  May 1998
@@ -784,7 +793,8 @@ public class FieldImpl extends FunctionImpl implements Field {
   public Data binary(Data data, int op, MathType new_type,
                      int sampling_mode, int error_mode)
               throws VisADException, RemoteException {
-    boolean field_flag; // true if this and data have same type
+    logger.trace("FieldImpl binary!");
+      boolean field_flag; // true if this and data have same type
     if ( new_type == null ) {
       throw new TypeException("binary: new_type may not be null" );
     }
@@ -826,13 +836,16 @@ public class FieldImpl extends FunctionImpl implements Field {
       /*- TDR  May 1998
       return data.binary(this, invertOp(op), sampling_mode, error_mode);
        */
+        logger.trace("FieldImpl binary: instanceof Field");
       return data.binary(this, invertOp(op), new_type, sampling_mode, error_mode);
     }
     else {
       throw new TypeException("FieldImpl.binary: types don't match");
     }
     // create (initially missing) Field for return
+      logger.trace("FieldImpl binary: fall through #1");
     Field new_field = new FieldImpl((FunctionType) new_type, getDomainSet());
+    ((FieldImpl)new_field).setMetadataMap(getMetadataMap());
     if (isMissing() || data.isMissing()) return new_field;
     Data[] range = new Data[getLength()];
     /*- TDR  May 1998  */
@@ -867,6 +880,7 @@ public class FieldImpl extends FunctionImpl implements Field {
         }
       }
     }
+      logger.trace("FieldImpl binary: fall through #2");
     new_field.setSamples(range, false);
     return new_field;
   }
@@ -1497,6 +1511,9 @@ public class FieldImpl extends FunctionImpl implements Field {
     }
 
     visad.util.Trace.call2("combine, copy = " + copy);
+    if (field_0 instanceof FieldImpl) {
+        ((FieldImpl)new_field).setMetadataMap(((FieldImpl)field_0).getMetadataMap());
+    }
     return new_field;
   }
 
@@ -2878,6 +2895,9 @@ public class FieldImpl extends FunctionImpl implements Field {
     FunctionType func_type = new FunctionType(domain_type, range_type);
     Field field = new FieldImpl(func_type, set);
     // Field field = new FieldImpl((FunctionType) Type, set);
+    logger.info("FieldImpl resample setting metadata map");
+    // TODO mjh ... add setMetadataMap declaration to "Field"?
+    ((FieldImpl)field).setMetadataMap(getMetadataMap());
     if (isMissing()) return field;
 
     int dim = domainSet.getDimension();
@@ -3618,7 +3638,7 @@ public class FieldImpl extends FunctionImpl implements Field {
             }
         }
     }
-
+    clone.setMetadataMap(getMetadataMap());
     return clone;
   }
 

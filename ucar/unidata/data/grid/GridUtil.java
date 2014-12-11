@@ -485,6 +485,7 @@ public class GridUtil {
 
                 }
                 newFieldImpl = new FieldImpl(newFieldType, sequenceSet);
+                newFieldImpl.setMetadataMap(grid.getMetadataMap());
 
                 // get each grid in turn; change domain; 
                 // set result into new sequence
@@ -497,6 +498,7 @@ public class GridUtil {
                         if (hasInnerSteps) {
                             Set innerSet = Util.getDomainSet(data);
                             fi = new FieldImpl(innerFieldType, innerSet);
+                            fi.setMetadataMap(grid.getMetadataMap());
                             for (int j = 0; j < innerSet.getLength(); j++) {
                                 FlatField dataFF =
                                     (FlatField) data.getSample(j, false);
@@ -505,6 +507,7 @@ public class GridUtil {
                                     ff = dataFF;
                                 } else {
                                     ff = new FlatField(rangeFT, newDomain);
+                                    ff.setMetadataMap(grid.getMetadataMap());
                                     ff.setSamples(dataFF.getFloats(copy),
                                             false);
                                 }
@@ -512,6 +515,7 @@ public class GridUtil {
                             }
                         } else {
                             fi = new FlatField(rangeFT, newDomain);
+                            fi.setMetadataMap(grid.getMetadataMap());
                             ((FlatField) fi).setSamples(
                                 ((FlatField) data).getFloats(copy), false);
                         }
@@ -522,6 +526,7 @@ public class GridUtil {
         } else {  // single time
             if ( !grid.isMissing()) {
                 newFieldImpl = new FlatField(rangeFT, newDomain);
+                newFieldImpl.setMetadataMap(grid.getMetadataMap());
                 try {
                     ((FlatField) newFieldImpl).setSamples(
                         grid.getFloats(copy), false);
@@ -1196,6 +1201,7 @@ public class GridUtil {
             try {
                 Set timeSet = getTimeSet(grid);
                 fi = new FieldImpl((FunctionType) grid.getType(), timeSet);
+                fi.setMetadataMap(grid.getMetadataMap());
                 for (int i = 0; i < timeSet.getLength(); i++) {
                     FieldImpl ff    = (FieldImpl) grid.getSample(i);
                     FieldImpl slice = null;
@@ -1687,6 +1693,7 @@ public class GridUtil {
                             new FunctionType(
                                 ((SetType) timeSet.getType()).getDomain(),
                                 (FunctionType) slice.getType()), timeSet);
+                        fi.setMetadataMap(grid.getMetadataMap());
                     }
                     fi.setSample(i, slice, false);
                 }
@@ -2460,6 +2467,7 @@ public class GridUtil {
                             new FunctionType(
                                 ((SetType) timeSet.getType()).getDomain(),
                                 (FunctionType) slice.getType()), timeSet);
+                        fi.setMetadataMap(grid.getMetadataMap());
                     }
                     fi.setSample(i, slice, false);
 
@@ -2734,6 +2742,7 @@ public class GridUtil {
                             new FunctionType(
                                 ((SetType) timeSet.getType()).getDomain(),
                                 newSlice.getType()), timeSet);
+                    retField.setMetadataMap(slice.getMetadataMap());
                     retField.setSample(0, newSlice, copy);
                     for (int t = 1; t < timeSet.getLength(); t++) {
                         FieldImpl timeStep = (FieldImpl) slice.getSample(t,
@@ -2963,6 +2972,7 @@ public class GridUtil {
 
                     Set timeDomain = Util.getDomainSet(grid);
                     newField = new FieldImpl(newType, timeDomain);
+                    newField.setMetadataMap(grid.getMetadataMap());
                     for (int i = 0; i < timeDomain.getLength(); i++) {
                         newField.setSample(i, ((FlatField) grid.getSample(i,
                                 false)).extract(index, copy), false);
@@ -2994,12 +3004,14 @@ public class GridUtil {
                     newType = new FunctionType(timedomRT, indexRange);
                     Set timeDomain = Util.getDomainSet(grid);
                     newField = new FieldImpl(newType, timeDomain);
+                    newField.setMetadataMap(grid.getMetadataMap());
                     for (int i = 0; i < timeDomain.getLength(); i++) {
                         FieldImpl indexField = (FieldImpl) grid.getSample(i,
                                                    false);
                         Set indexSet = Util.getDomainSet(indexField);
                         FieldImpl newIndexField = new FieldImpl(indexRange,
                                                       indexSet);
+                        newIndexField.setMetadataMap(grid.getMetadataMap());
                         for (int j = 0; j < indexSet.getLength(); j++) {
                             newIndexField.setSample(j,
                                     ((FlatField) indexField.getSample(j,
@@ -3203,6 +3215,7 @@ public class GridUtil {
 
                     Set timeDomain = Util.getDomainSet(grid);
                     newField = new FieldImpl(newType, timeDomain);
+                    newField.setMetadataMap(grid.getMetadataMap());
                     for (int i = 0; i < timeDomain.getLength(); i++) {
                         newField.setSample(
                             i, (FieldImpl) Util.clone(
@@ -3236,12 +3249,14 @@ public class GridUtil {
                     newType = new FunctionType(timedomRT, indexRange);
                     Set timeDomain = Util.getDomainSet(grid);
                     newField = new FieldImpl(newType, timeDomain);
+                    newField.setMetadataMap(grid.getMetadataMap());
                     for (int i = 0; i < timeDomain.getLength(); i++) {
                         FieldImpl indexField = (FieldImpl) grid.getSample(i,
                                                    false);
                         Set indexSet = Util.getDomainSet(indexField);
                         FieldImpl newIndexField = new FieldImpl(indexRange,
                                                       indexSet);
+                        newIndexField.setMetadataMap(grid.getMetadataMap());
                         for (int j = 0; j < indexSet.getLength(); j++) {
                             newIndexField.setSample(
                                 j, (FieldImpl) Util.clone(
@@ -3329,6 +3344,7 @@ public class GridUtil {
                         newType = new FunctionType(domRT,
                                 new FunctionType(ffdomRT, param));
                         newGrid = new FieldImpl(newType, s);
+                        newGrid.setMetadataMap(grid.getMetadataMap());
                         for (int i = 0; i < s.getLength(); i++) {
                             newGrid.setSample(i,
                                     ((FieldImpl) grid.getSample(i,
@@ -3367,6 +3383,7 @@ public class GridUtil {
                         newType = new FunctionType(timedomRT, indexFIType);
 
                         newGrid = new FieldImpl(newType, s);
+                        newGrid.setMetadataMap(grid.getMetadataMap());
                         for (int i = 0; i < s.getLength(); i++) {
                             FieldImpl indexFI = (FieldImpl) grid.getSample(i,
                                                     false);
@@ -3374,6 +3391,7 @@ public class GridUtil {
                                 (SampledSet) Util.getDomainSet(indexFI);
                             FieldImpl tempFI = new FieldImpl(indexFIType,
                                                    domSet);
+                            tempFI.setMetadataMap(grid.getMetadataMap());
                             for (int j = 0; j < domSet.getLength(); j++) {
                                 tempFI.setSample(
                                     j, ((FieldImpl) indexFI.getSample(
@@ -3424,6 +3442,7 @@ public class GridUtil {
                                 .getType()).getDomain(), sample.getType());
                         extractedFI = new FieldImpl(sampledType,
                                 sequenceDomain);
+                        extractedFI.setMetadataMap(grid.getMetadataMap());
                     }
                     extractedFI.setSample(i, sample, false);
                 }
@@ -3958,6 +3977,7 @@ public class GridUtil {
                                       new Real(index, 0) }));
                 sampledFI = new FieldImpl(new FunctionType(index,
                         value.getType()), ss);
+                sampledFI.setMetadataMap(grid.getMetadataMap());
                 sampledFI.setSample(0, value, false);
             } else {  // some sort of sequence - evaluate each
                 //                System.err.println("is sequence");
@@ -3972,6 +3992,7 @@ public class GridUtil {
                                 .getType()).getDomain(), sample.getType());
                         sampledFI = new FieldImpl(sampledType,
                                 sequenceDomain);
+                        sampledFI.setMetadataMap(grid.getMetadataMap());
                     }
                     sampledFI.setSample(i, sample, false);
                 }
@@ -4378,12 +4399,14 @@ public class GridUtil {
                     if (getTimeSet(grid) == null) {  // single time
                         FunctionType ffType = (FunctionType) grid.getType();
                         sampledFI = new FlatField(ffType, subDomain);
+                        sampledFI.setMetadataMap(grid.getMetadataMap());
                         sampledFI.setSample(0, grid.getSample(index), false);
                     } else {
                         Set timeSet = getTimeSet(grid);
                         sampledFI =
                             new FieldImpl((FunctionType) grid.getType(),
                                           timeSet);
+                        sampledFI.setMetadataMap(grid.getMetadataMap());
                         FunctionType subType =
                             (FunctionType) grid.getSample(0).getType();
                         for (int i = 0; i < timeSet.getLength(); i++) {
@@ -4393,6 +4416,7 @@ public class GridUtil {
                                 subType = (FunctionType) subField.getType();
                             }
                             FlatField ff = new FlatField(subType, subDomain);
+                            ff.setMetadataMap(grid.getMetadataMap());
                             ff.setSample(0, subField.getSample(index));
                             sampledFI.setSample(i, ff, false);
                         }
@@ -4449,6 +4473,7 @@ public class GridUtil {
                                                     .getType());
                                 sampledField = new FieldImpl(innerType,
                                         innerSequenceDomain);
+                                sampledFI.setMetadataMap(grid.getMetadataMap());
                             }
                             sampledField.setSample(j, innerSampledField,
                                     false);
@@ -4462,6 +4487,7 @@ public class GridUtil {
                                 sampledField.getType());
                         sampledFI = new FieldImpl(sampledType,
                                 sequenceDomain);
+                        sampledFI.setMetadataMap(grid.getMetadataMap());
                     }
                     Trace.call1("GridUtil setSample");
                     if (sampledField != null) {
@@ -4505,6 +4531,7 @@ public class GridUtil {
             if ( !isSequence(grid)) {
                 sampledFI = new FlatField((FunctionType) grid.getType(),
                                           subDomain);
+                sampledFI.setMetadataMap(grid.getMetadataMap());
                 sampledFI.setSamples(getSubValues(getSpatialDomain(grid),
                         grid.getFloats(), skipx, skipy));
             } else {  // some sort of sequence - resample each
@@ -4520,6 +4547,7 @@ public class GridUtil {
                         sampledField =
                             new FlatField((FunctionType) sample.getType(),
                                           subDomain);
+                        sampledField.setMetadataMap(grid.getMetadataMap());
                         sampledField.setSamples(getSubValues(ss,
                                 sample.getFloats(), skipx, skipy));
 
@@ -4528,6 +4556,7 @@ public class GridUtil {
                         sampledField =
                             new FieldImpl((FunctionType) sample.getType(),
                                           ensDomain);
+                        sampledField.setMetadataMap(grid.getMetadataMap());
                         for (int j = 0; j < ensDomain.getLength(); j++) {
                             FlatField innerField =
                                 (FlatField) sample.getSample(j, false);
@@ -4538,6 +4567,7 @@ public class GridUtil {
                                 new FlatField(
                                     (FunctionType) innerField.getType(),
                                     subDomain);
+                            sampledFF.setMetadataMap(grid.getMetadataMap());
                             sampledFF.setSamples(getSubValues(ss,
                                     innerField.getFloats(), skipx, skipy));
                             sampledField.setSample(j, sampledFF);
@@ -4550,6 +4580,7 @@ public class GridUtil {
                                     .getType());
                         sampledFI = new FieldImpl(sampledType,
                                 sequenceDomain);
+                        sampledFI.setMetadataMap(grid.getMetadataMap());
                     }
                     if (sampledField != null) {
                         sampledFI.setSample(i, sampledField, false);
@@ -5109,6 +5140,7 @@ public class GridUtil {
                             ((SetType) timeSet.getType()).getDomain(),
                             ff.getType());
                         retField = new FieldImpl(retFieldType, timeSet);
+                        retField.setMetadataMap(grid.getMetadataMap());
                     }
                     retField.setSample(i, ff, false);
                 }
@@ -5148,6 +5180,7 @@ public class GridUtil {
                            new FunctionType(
                                ((SetType) points.getType()).getDomain(),
                                rangeType), points);
+        ff.setMetadataMap(timeStep.getMetadataMap());
         float[][] samples  = timeStep.getFloats(false);
         float[][] geoVals  = getEarthLocationPoints((GriddedSet) domain);
         boolean   isLatLon = isLatLonOrder(domain);
@@ -6669,6 +6702,7 @@ public class GridUtil {
                             ((SetType) timeSet.getType()).getDomain(),
                             ff.getType());
                         retField = new FieldImpl(retFieldType, timeSet);
+                        retField.setMetadataMap(grid.getMetadataMap());
                     }
                     retField.setSample(i, ff, false);
                 }
@@ -6789,6 +6823,7 @@ public class GridUtil {
                 new FunctionType(((SetType) newSet.getType()).getDomain(),
                                  GridUtil.getParamType(grid));
             llGrid = new FlatField(newType, newSet);
+            llGrid.setMetadataMap(grid.getMetadataMap());
             llGrid.setSamples(newSamples, false);
         }
 
@@ -6927,6 +6962,7 @@ public class GridUtil {
                                         innerSmoothedField.getType());
                                 smoothedFF = new FieldImpl(innerType,
                                         ensDomain);
+                                smoothedFF.setMetadataMap(slice.getMetadataMap());
                             }
                             smoothedFF.setSample(j, innerSmoothedField,
                                     false);
@@ -6942,6 +6978,7 @@ public class GridUtil {
                                 ((SetType) timeSet.getType()).getDomain(),
                                 smoothedFFType);
                         smoothedFI = new FieldImpl(smoothedFT, timeSet);
+                        smoothedFI.setMetadataMap(slice.getMetadataMap());
                     }
                     if (smoothedFF != null) {
                         smoothedFI.setSample(i, smoothedFF, false, false);
@@ -7954,6 +7991,7 @@ public class GridUtil {
             Set timeDomain = grid.getDomainSet();
             flipped = new FieldImpl(((FunctionType) grid.getType()),
                                     timeDomain);
+            flipped.setMetadataMap(grid.getMetadataMap());
             FieldImpl flippedField = null;
             for (int timeStepIdx = 0; timeStepIdx < timeDomain.getLength();
                     timeStepIdx++) {
@@ -7969,6 +8007,7 @@ public class GridUtil {
                     flippedField =
                         new FieldImpl(((FunctionType) sample.getType()),
                                       ensDomain);
+                    flippedField.setMetadataMap(grid.getMetadataMap());
                     for (int j = 0; j < ensDomain.getLength(); j++) {
                         FlatField innerField =
                             (FlatField) sample.getSample(j, false);
@@ -8100,6 +8139,7 @@ public class GridUtil {
                                     grid.getRangeCoordinateSystem()[0],
                                     grid.getRangeSets(),
                                     Util.getRangeUnits(grid));
+            flipped.setMetadataMap(grid.getMetadataMap());
             flipped.setSamples(newValues, false);
         }
         return flipped;
