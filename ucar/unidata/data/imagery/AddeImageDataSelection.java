@@ -746,6 +746,14 @@ public class AddeImageDataSelection {
             updatePlace();
         }
 
+        public boolean usingFullDomain() {
+//            int lines = getNumLines() * Math.abs(getLineMagValue());
+//            int eles = getNumEles() * Math.abs(getElementMagValue());
+            boolean value = getNumEles() == maxEles && getNumLines() == maxLines;
+            logger.trace("value={}", value);
+            return value;
+        }
+
         /**
          * _more_
          *
@@ -2650,7 +2658,7 @@ public class AddeImageDataSelection {
 //            }
 
             geoSelection = new GeoSelection(gInfo);
-            geoSelection.setUseFullBounds(advancedPanel.clickedFull);
+            geoSelection.setUseFullBounds(advancedPanel.usingFullDomain());
             dataSelection.putProperty(DataSelection.PROP_REGIONOPTION,
                                       regionOption);
             //dataSelection.putProperty(DataSelection.PROP_HASCORNER,
