@@ -432,14 +432,15 @@ class _MappedGeoGridFlatField(_MappedFlatField):
     
     """Implements the 'mega-object' class for grids read with loadGrid."""
     
-    def __init__(self, ggff, geogrid, filename, field, levelReal):
+    def __init__(self, ggff, geogrid, filename, field, levelReal, dataSourceName):
         self.geogrid = geogrid
         self.filename = filename
         self.field = field
         self.levelReal = levelReal
+        self.dataSourceName = dataSourceName
         keys = ['attributes', 'datatype', 'description', 'info',
                 'levels', 'units', 'times', 'projection', 'field', 'filename',
-                'level']
+                'level', 'dataSourceName']
         _MappedFlatField.__init__(self, ggff, keys)
         self.initMetadataMap()
     
@@ -450,6 +451,8 @@ class _MappedGeoGridFlatField(_MappedFlatField):
             return self.geogrid.getAttributes()
         if key == 'datatype':
             return self.geogrid.getDataType()
+        if key == 'dataSourceName':
+            return self.dataSourceName
         if key == 'description':
             return self.geogrid.getDescription()
         if key == 'info':
@@ -1346,6 +1349,8 @@ class _Display(_JavaProxy):
             # this will get the %level% macro filled in,
             # and the GUI will reflect the level in other places.
             ddc.setLevelSelection(hm.get('level'))
+        if hm and hm.containsKey('dataSourceName'):
+            ddc.setProperty('datasourcename', hm.get('dataSourceName'))
         # setting the description should set the %longname% macro
         ddc.setDescription(longname)
         newLayer = mcv.doMakeControl( 
@@ -3084,7 +3089,7 @@ def loadGrid(filename=None, field=None, level='all',
     if level and level.lower() != 'all':
         ff = make2D(ff)
     # make the 'mega-object'
-    mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field, levelReal)
+    mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field, levelReal, dataSource.toString())
 
     return mapped
 

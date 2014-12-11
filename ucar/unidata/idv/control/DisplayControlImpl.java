@@ -4222,6 +4222,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 dataSourceName = name;
             }
         }
+        if (dataSourceName == null && getDataChoice() != null) {
+            // mjh: if dataSourceName is still null, try to get it from from a 
+            // data choice property.  this lets us set %datasourcename% from scripting...
+            dataSourceName = getDataChoice().getProperty("datasourcename", null);
+        }
         patterns.add(MACRO_DISPLAYNAME);
         values.add(getDisplayName());
         patterns.add(MACRO_SHORTNAME);
