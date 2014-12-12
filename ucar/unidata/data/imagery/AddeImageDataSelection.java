@@ -746,12 +746,15 @@ public class AddeImageDataSelection {
             updatePlace();
         }
 
+        /**
+         * Check to see if the current values for lines and elements are at
+         * their maximum values.
+         *
+         * @return {@code true} if {@code getNumEles() == maxEles} and
+         * {@code getNumLines() == maxLines}.
+         */
         public boolean usingFullDomain() {
-//            int lines = getNumLines() * Math.abs(getLineMagValue());
-//            int eles = getNumEles() * Math.abs(getElementMagValue());
-            boolean value = getNumEles() == maxEles && getNumLines() == maxLines;
-            logger.trace("value={}", value);
-            return value;
+            return (getNumEles() == maxEles) && (getNumLines() == maxLines);
         }
 
         /**
