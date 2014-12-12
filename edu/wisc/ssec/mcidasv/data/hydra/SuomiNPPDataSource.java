@@ -246,8 +246,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private void versionCheck() {
     	boolean pluginDialog = getIdv().getStore().get(Constants.PREF_VIIRS_PLUGIN, false);
     	if (! pluginDialog) {
-    		String msg = "If you are running McIDAS-V 1.5 or newer, and use the VIIRS plugin, " +
-    				"you will need to uninstall, then reinstall it.";
+    		String msg = "In McIDAS-V 1.5, there was an update to the VIIRS Formulas plugin.\n" +
+    				"If you use the plugin, you will need to uninstall the currently installed\n" +
+    				"version of the plugin, and install the plugin called \"VIIRS Formulas\".";
     		JCheckBox jcbPlugin = new JCheckBox("Do not show this message again");
     		Object[] params = { msg, jcbPlugin };
     		JOptionPane.showMessageDialog(null, params, "Plugin Compatibility Notice", JOptionPane.OK_OPTION);
