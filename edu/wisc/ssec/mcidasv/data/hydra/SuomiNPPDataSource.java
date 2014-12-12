@@ -418,7 +418,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     											foundDateTime = true;
     											// set time for display to day/time of 1st granule examined
     											if (! nameHasBeenSet) {
-    												setName(instrumentName.getStringValue());
+    												setName(instrumentName.getStringValue() + " " + sdfOut.format(d));
     												nameHasBeenSet = true;
     											}
     											break;
