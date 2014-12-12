@@ -43,7 +43,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ColorTableE
 <p>The Color Table Editor supports editing existing color tables and creating
   new ones. A color table is an ordered collection of colors that is used to
 color a display according to a range of data values.</p>
-  <div class="images"><img src="images/NewPictures/ColorTable3a.jpg" alt="Image 1: The Color Table Editor"><br>
+  <div class="images"><img src="images/NewPictures/ColorTable3a.jpg" width="889" height="575" alt="Image 1: The Color Table Editor"><br>
 <span class="caption">Image 1: The Color Table Editor</span></div>
 <div class="pagesubtitle"><a name="starting" id="starting"></a>Starting the Color Table Editor</div>
 <p>The Color Table Editor can be used stand-alone by selecting the <strong>Tools-&gt;Color
@@ -169,11 +169,11 @@ can be saved for future use. To save a new or modified color table simply select
 <p>In the example above, there are six lines (definitions) that would be divided  into the color table. The color table would be broken into six even segments, with the first line applying to the first segment, the second to the second segment, etc. Your file may be any number of lines long. The values in these columns must be between 0 and 255.</p>
 <div class="pagesubtitle"><a name="chooser" id="chooser"></a>Using the Color Chooser</div>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/colorchooser/ColorChooser.gif" alt="Image 5: The HSB Tab of the Color Chooser"> <br>
-  <span class="caption">Image 5: The HSB Tab of the Color Chooser</span></div>
+<div class="images"><img src="images/colorchooser/ColorChooser.gif" width="617" height="273" alt="Image 4: The Color Chooser"><br>
+  <span class="caption">Image 5: The  Color Chooser</span></div>
 <p>The Color Chooser, in the lower half of the Color Table Editor window, allows
-    you to select any possible color. The chooser contains two tabs, <strong>HSB</strong> (Hue, Saturation, Brightness) and <strong>RGB</strong> (Red, Green, Blue). In most cases, the <strong>HSB</strong> tab provides better control and better depiction of color changes because of its hue, saturation, and brightness controls. Thus, it is recommended that you use the <strong>HSB</strong> tab (rather than the <strong>RGB</strong> tab) unless you have specific red, green, and blue values to set.</p>
-<h4>The HSB Tab</h4>
+    you to select any possible color. The chooser contains four tabs, <strong>HSV</strong> (Hue, Saturation, Value), <strong>HSL</strong> (Hue, Saturation, Lightness), <strong>RGB</strong> (Red, Green, Blue), and <strong>CMYK</strong> (Cyan, Magenta, Yellow, Black, Alpha). In most cases, the <strong>HSV</strong> tab provides better control and better depiction of color changes because of its hue, saturation, and value controls. Thus, it is recommended that you use the <strong>HSV</strong> tab (rather than the other tabs) unless you have specific values to set in the other tabs.</p>
+<h4>The HSV Tab</h4>
 <p>The <strong>HSB</strong> tab allows you to control color by hue, saturation, and brightness,
   thereby making any color. With the <strong>HSB</strong> tab open, click on one of
   the radio buttons marked <strong>H</strong>, <strong>S</strong>, or <strong>B</strong> for
@@ -184,32 +184,52 @@ can be saved for future use. To save a new or modified color table simply select
   to the hue. 100% brightness has no black and maximum brilliancy, but can be
   any saturation from the hue to pure white. 0% brightness is solid black. Some colors are not found in the spectrum, and are a mixture of a hue and
   black and/or white. You only need to use one of the controls for <strong>H</strong>, <strong>S</strong>, or <strong>B</strong> to make any color.</p>
-<p> With the <strong>Hue</strong> (<strong>H</strong>) radio button selected, the slider bar chooses the pure hue. Once you have chosen a hue, clicking or dragging the mouse on the color display chooses degrees of saturation and brightness for that hue.</p>
+<p> With the <strong>Hue</strong> (<strong>H</strong>) radio button selected, the slider bar chooses the pure hue. Once <strong>Hue</strong> has been selected, clicking or dragging the mouse on the color display chooses degrees of saturation and value for that hue.</p>
 <p><a name="image2" id="image2"></a>
 </p>
 <div class="images">
-  <p><img src="images/colorchooser/Hue.gif" alt="Image 6: The HSB Hue Tab, Set on Green With High S and High B"> <br>
-      <span class="caption">Image 6: The HSB Hue Tab, Set on Green With High
+  <p><img src="images/colorchooser/Hue.gif" width="598" height="225" alt="Image 6: The HSV Hue Tab, Set on Green With High S and High B"><br>
+      <span class="caption">Image 6: The HSV Hue Tab, Set on Green With High
     S and High B</span></p>
 </div>
 <p><strong>Saturation </strong>(<strong>S</strong>) has a slider bar with the full
-    range of saturation. The bottom is always solid black. A saturation value of 100 is the pure hue, and more black is mixed in with the hue until it is solid black at a value of 0. The saturation value can be controlled by the slider to the right of the color square, or by entering a value into the field to the right of <strong>S</strong> and pressing Enter. After selecting a saturation level, you can click and drag in the colored square to get your desired color.</p>
+    range of saturation. The bottom is always solid black. A saturation value of 100 is the pure hue, and more white is mixed in with the hue until it is solid white at a value of 0. The saturation value can be controlled by the slider to the right of the color square, or by entering a value into the field to the right of <strong>Saturation</strong> and pressing Enter. After selecting a saturation level,  click and drag in the colored square to get your desired color.</p>
 <a name="image3" id="image3"></a>
-<div class="images"><img src="images/colorchooser/Saturation.gif" alt="Image 7: The HSB Saturation Tab, Set on the Same Green"> <br>
-  <span class="caption">Image 7: The HSB Saturation Tab, Set on the Same Green</span></div>
-<p><strong>Brightness </strong>(<strong>B</strong>) has a slider bar with the full
-    range of brightness. The bottom is always solid white. A brightness value of 100 is the pure hue, and more white is mixed in with the hue until it is solid white at a value of 0. The brightness value can be controlled by the slider to the right of the color square, or by entering a value into the field to the right of <strong>B</strong> and pressing Enter. After selecting a brightness level, you can click and drag in the colored square to get your desired color.</p>
+<div class="images"><img src="images/colorchooser/Saturation.gif" width="603" height="225" alt="Image 7: The HSV Saturation Tab, Set on the Same Green"><br>
+  <span class="caption">Image 7: The HSV Saturation Tab, Set on the Same Green</span></div>
+<p><strong>Value </strong>(<strong>V</strong>) has a slider bar with the full
+    range of brightness. The bottom is always solid white. A brightness value of 100 is the pure hue, and more black is mixed in with the hue until it is solid black at a value of 0. The brightness value can be controlled by the slider to the right of the color square, or by entering a value into the field to the right of <strong>Value</strong> and pressing Enter. After selecting a brightness level, click and drag in the colored square to get your desired color.</p>
 <a name="image4" id="image4"></a>
-<div class="images"><img src="images/colorchooser/Brightness.gif" alt="Image 8: The HSB Brightness Tab Set on the Same Green"> <br>
-  <span class="caption">Image 8: The HSB Brightness Tab, Set on the Same Green</span></div>
-<p>All controls in the <strong>HSB</strong> tab show the <strong>RGB</strong> values for any color selected,
-    in case you need to know the <strong>RGB</strong> values for another use.</p>
-<h4>The RGB Tab</h4>
-  <p>The <strong>RGB</strong> tab allows you to control color by specifying individual Red, Green, and Blue components.</p>
-  <div class="images"><img src="images/colorchooser/RGB.gif" width="621" height="266" alt="Image 8: The RGB Tab, Set on the Same Green"><br>
-  <span class="caption">Image 9: The RGB Tab, Set on the Same Green</span></div>
-  <p>The individual <strong>R</strong>, <strong>G</strong>, and <strong>B</strong> components are numerically scaled between 0 and 255, ranging from black to the true color. Each color can be modified by using the slider, typing a value into the field and pressing Enter, or by using the up and down arrows to the right of the value.</p>
-  <p>As you make modifications to the <strong>RGB</strong> components, the current color will be displayed above the <strong>HSB</strong> and <strong>RGB</strong> tabs next to the <strong>Actively set color </strong>checkbox. If you have the <strong>Actively set color</strong> checkbox selected, any changes you make in this tab will be applied directly to the color bar as you make the changes.</p>
+<div class="images"><img src="images/colorchooser/Value.gif" width="598" height="225" alt="Image 8: The HSV Value Tab, Set on the Same Green"><br>
+  <span class="caption">Image 8: The HSV Value Tab, Set on the Same Green</span></div>
+<p>When a <strong>HSV</strong> color is selected, the numerical values in all of the other tabs are updated to reflect the color. There is also a <strong>Transparency</strong> slider at the bottom of this tab that sets the transparency associated with the <strong>HSV</strong> color. This transparency is applied to the color bar</p>
+<h4>The HSL, RGB, and CMYK Tabs</h4>
+  <p>The other three tabs (<strong>HSL</strong>, <strong>RGB</strong>, and <strong>CMYK</strong>) all work in generally the same way as the <strong>HSV</strong> tab, with the color swatch, and different sliders to control aspects of the selected color. Below is a description of the components in each of these tabs.</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>HSL tab -</strong> Sets Hue, Saturation, Lightness, and Transparency values for the color.</li>
+      <ul class="propertylist">
+      <li class="propertylistitem"><strong>Hue -</strong> Sets the base, true color.</li>
+      <li class="propertylistitem"><strong>Saturation -</strong> Sets the variation of the hue dependent on lightness. A value of 100 matches the hue.</li>
+      <li class="propertylistitem"><strong>Lightness -</strong> Sets the amount of white or black to mix in with the hue color. A value of 50 matches the hue. Values less than 50 become darker until a value of 0 which is black. Values greater than 50 become lighter until value of 100 which is white.</li>
+      <li class="propertylistitem"><strong>Transparency -</strong> Sets the transparency value of the color. A value of 0 is opaque, and as the number increases to 100 the color becomes more transparent.</li>
+    </ul>
+  <li class="propertylistitem"><strong>RGB tab -</strong> Sets Red, Green, Blue, and Alpha values for the color.</li>
+    <ul class="propertylist">
+      <li class="propertylistitem"><strong>Red -</strong> Sets the amount of red in the color. A value of 255 is the true color of red. As the number gets lower, black gets mixed in, until a value of 0 is solid black.</li>
+      <li class="propertylistitem"> <strong>Green -</strong> Sets the amount of green in the color. A value of 255 is the true color of green. As the number gets lower, black gets mixed in, until a value of 0 is solid black.</li>
+      <li class="propertylistitem"><strong>Blue - </strong>Sets the amount of blue in the color. A value of 255 is the true color of blue. As the number gets lower, black gets mixed in, until a value of 0 is solid black.</li>
+      <li class="propertylistitem"><strong>Alpha -</strong> Sets the transparency of the color. A value of 255 is opaque, and a value of 0 is 100% transparent.</li>
+    </ul>
+  <li class="propertylistitem"><strong>CMYK tab -</strong> Sets Cyan, Magenta, Yellow, Black, and Alpha values for the color.</li>
+    <ul class="propertylist">
+      <li class="propertylistitem"><strong>Cyan -</strong> Sets the amount of cyan in the color, ranging from 0 to 255. A value of 255 is the true color of cyan, and as the value gets lower white gets mixed in, until 0 where no cyan is included in the color.</li>
+      <li class="propertylistitem"><strong>Magenta -</strong> Sets the amount of magenta in the color, ranging from 0 to 255. A value of 255 is the true color of magenta, and as the value gets lower white gets mixed in, until 0 where no magenta is included in the color.</li>
+      <li class="propertylistitem"><strong>Yellow -</strong> Sets the amount of yellow in the color, ranging from 0 to 255. A value of 255 is the true color of yellow, and as the value gets lower white gets mixed in, until 0 where no yellow is included in the color.</li>
+      <li class="propertylistitem"><strong>Black -</strong> Sets the amount of black in the color, ranging from 0 to 255. A value of 255 is the true color of black, and as the value gets lower white gets mixed in, until 0 where no magenta is included in the color.</li>
+      <li class="propertylistitem"><strong>Alpha -</strong> Sets the transparency of the color. A value of 255 is opaque, and a value of 0 is 100% transparent.</li>
+    </ul>
+</ul>
+<p>As modifications are made in any of these four tabs, the current color will be displayed above the tabs next to the <strong>Actively set color </strong>checkbox. If the <strong>Actively set color</strong> checkbox is selected, any changes made in the tabs will be applied directly to the color bar as changes are made, with the exception of the <strong>Transparency</strong> and <strong>Alpha</strong> fields.</p>
   <div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are several options  unique to this display.</p>
 <p>The<strong> File </strong>menu has these unique options:</p>
