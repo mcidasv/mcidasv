@@ -3173,7 +3173,11 @@ def loadGridListTimesInField(filename, field):
     gridDataset.close()
     return geogrid.getTimes()
 
-def getVIIRSImage(file_list, field, stride=1, **kwargs):
+def getVIIRSImage(*args, **kwargs):
+    """Placeholder to redirect user to renamed function."""
+    raise NotImplementedError("The name of getVIIRSImage has changed to loadVIIRSImage.  You'll need to update your scripts.  Sorry for the hassle!")
+
+def loadVIIRSImage(file_list, field, stride=1, **kwargs):
     """Experimental function for loading VIIRS imagery.
 
     file_list: list of NPP *data* files.  You need to have geolocation files
@@ -3186,6 +3190,8 @@ def getVIIRSImage(file_list, field, stride=1, **kwargs):
     stride: Optional; set the stride.  Default is full-res (1).  Larger
             than 1 will give you a lower resolution
     """
+    from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
+
     # try some quick input validation before doing any real work
     if not file_list:
         raise ValueError('File list must contain at least one file.')
@@ -3218,13 +3224,18 @@ def getVIIRSImage(file_list, field, stride=1, **kwargs):
     # Note: there might be a cleaner way to do this using 
     #       SwathAdapter.getDefaultSubset and setDefaultStride; but this works
     #       for now.
-    multi_dimension_subset = data_choice.getProperties().values().toArray()[0]
+    # Note2:  For some reason the MultiDimensionSubset isn't associated 
+    #         with a key... so I can't think of a better way to do this...
+    for thing in data_choice.getProperties().values().toArray():
+        if isinstance(thing, MultiDimensionSubset):
+            multi_dimension_subset = thing
+            break
     multi_dimension_subset.coords[0][2] = stride
     multi_dimension_subset.coords[1][2] = stride
 
     # get the flatfield; we *want* to pass in a null dataSelection; category and
     # request properties don't really seem to matter so we pass in null as well.
-    ff = data_source.getData(data_choice, None, None, None)
+    ff = data_source.getData(data_choice, None, None, None).getSample(0)
 
     # make a _MappedFlatField.
     mapped_ff = _MappedVIIRSFlatField(ff, field)
