@@ -2,12 +2,13 @@ import os
 import hashlib
 import threading
 import urllib2
+import warnings
 
 import java.lang.Exception
 
-from collections import namedtuple
-
 from background import _MappedAreaImageFlatField
+
+from collections import namedtuple
 
 from java.util.concurrent import Callable
 from java.util.concurrent import Executors
@@ -1016,30 +1017,17 @@ def listADDEImages(localEntry=None,
         
     return temp
     
-def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
-    accounting=DEFAULT_ACCOUNTING,
-    location=None,
-    coordinateSystem=CoordinateSystems.LATLON,
-    place=Places.CENTER,
-    mag=(1, 1),
-    position=0,
-    unit='BRIT',
-    day=None,
-    time=None,
-    debug=False,
-    track=False,
-    band=None,
-    size=DEFAULT_SIZE):
-    """Requests data from an ADDE Image server - returns both data and metadata objects.
-
-    An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
-
+def loadADDEImage(*args, **kwargs):
+    """Loads data from an ADDE Image server - returns a _MappedAreaImageFlatField object that contains data and metadata.
+    
+    An ADDE request must include values for either localEntry or the 
+    combination of server, dataset and descriptor.
+    
     Required Args:
-        localEntry: Local data set defined by makeLocalADDEEntry. 
+        localEntry: Local data set defined by makeLocalADDEEntry.
         server: ADDE server.
         dataset: ADDE dataset group name.
         descriptor: ADDE dataset descriptor.
-        
         
     Optional Args:
         day: Day range ('begin date','end date')
@@ -1066,80 +1054,14 @@ def oldADDEImage(localEntry=None, server=None, dataset=None, descriptor=None,
         debug: send debug information to file; default=False
         track: default=False
     """
+    metadata, result = _getADDEImage(*args, **kwargs)
+    return result
     
-    # still need to handle dates+times
-    # todo: don't break!
-    user = accounting[0]
-    proj = accounting[1]
-    debug = str(debug).lower()
-    mag = '%s %s' % (mag[0], mag[1])
+def getADDEImage(*args, **kwargs):
+    warnings.warn("'metadata, data = getADDEImage(...)' has been deprecated; please use 'metadataAndData = loadADDEImage(...)' instead.")
+    return _getADDEImage(*args, **kwargs)
     
-    if place is Places.CENTER:
-        place = 'CENTER'
-    elif place is Places.ULEFT:
-        place = 'ULEFT'
-    else:
-        raise ValueError()
-        
-    if coordinateSystem is CoordinateSystems.LATLON:
-        coordSys = 'LATLON'
-        coordType = 'E'
-    elif coordinateSystem is CoordinateSystems.AREA:
-        coordSys = 'LINELE'
-        coordType = 'A'
-    elif coordinateSystem is CoordinateSystems.IMAGE:
-        coordSys = 'LINELE'
-        coordType = 'I'
-    else:
-        raise ValueError()
-        
-    if location:
-        location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
-    else:
-        location = ''
-        
-    if day:
-        day = '&DAY=%s' % (day)
-    else:
-        day = ''
-        
-    if size:
-        if size == 'ALL':
-            size = '99999 99999'
-        else:
-            size = '%s %s' % (size[0], size[1])
-            
-    if time:
-        time = '%s %s I' % (time[0], time[1])
-    else:
-        time = ''
-        
-    if band:
-        band = '&BAND=%s' % (str(band))
-    else:
-        band = ''
-        
-    addeUrlFormat = "adde://%s/imagedata?&PORT=112&COMPRESS=gzip&USER=%s&PROJ=%s&VERSION=1&DEBUG=%s&TRACE=0&GROUP=%s&DESCRIPTOR=%s%s%s&PLACE=%s&SIZE=%s&UNIT=%s&MAG=%s&SPAC=4&NAV=X&AUX=YES&DOC=X%s&TIME=%s&POS=%s&TRACK=%d"
-    url = addeUrlFormat % (server, user, proj, debug, dataset, descriptor, band, location, place, size, unit, mag, day, time, position, track)
-    retvals = (-1, -1)
-    
-    try:
-        area = AreaAdapter(url)
-        areaDirectory = AreaAdapter.getAreaDirectory(area)
-        if debug:
-            elements = areaDirectory.getElements()
-            lines = areaDirectory.getLines()
-            print 'url:', url
-            print 'lines=%s elements=%d' % (lines, elements)
-        retvals = (_areaDirectoryToDictionary(areaDirectory), area.getData())
-    except Exception, err:
-        if debug:
-            print 'exception: %s\n' % (str(err))
-            print 'problem with adde url:', url
-            
-    return retvals
-    
-def getADDEImage(localEntry=None,
+def _getADDEImage(localEntry=None,
     server=None, dataset=None, descriptor=None,
     accounting=DEFAULT_ACCOUNTING,
     location=None,
@@ -1156,42 +1078,6 @@ def getADDEImage(localEntry=None,
     size=DEFAULT_SIZE,
     showUrls=True,
     **kwargs):
-    """Requests data from an ADDE Image server - returns both data and metadata objects.
-    
-    An ADDE request must include values for either localEntry or the combination of server, dataset and descriptor.
-    
-    Required Args:
-        localEntry: Local data set defined by makeLocalADDEEntry.
-        server: ADDE server.
-        dataset: ADDE dataset group name.
-        descriptor: ADDE dataset descriptor.
-        
-        
-    Optional Args:
-        day: Day range ('begin date','end date')
-        time: ('begin time', 'end time')
-        coordinateSystem: coordinate system to use for retrieving data
-                            AREA       AREA file coordinates - zero based
-                            LATLON   latitude and longitude coordinates
-                            IMAGE     image coordinates - one based
-        location: (x,y)
-                            x           AREA line, latitude, or IMAGE line
-                            y           AREA element, longitude, or IMAGE element
-        place: CENTER places specified location (x,y) at center of panel
-                            ULEFT places specified location (x,y) at upper-left coordinate of panel
-        band: McIDAS band number; must be specified if requesting data from
-              multi-banded image; default=band in image
-        unit: calibration unit to request; default = 'BRIT'
-        position: time relative (negative values) or absolute (positive values)
-                  position in the dataset; default=0 (most recent image)
-        size: number of lines and elements to request; default=(480,640)
-        mag: magnification of data (line,element), negative number used for
-             sampling data; default=(1,1)
-        accounting: ('user', 'project number') user and project number required
-                    by servers using McIDAS accounting; default = ('idv','0')
-        debug: send debug information to file; default=False
-        track: default=False.
-    """
     
     if localEntry:
         server = localEntry.getAddress()

@@ -139,14 +139,15 @@ if _isInteractive:
         colorTableNames, firstDisplay, firstWindow, getColorTable, getProjection,
         managedDataSource, pause, performAction, projectionNames, removeAllData,
         removeAllLayers, setViewSize, _MappedAreaImageFlatField, writeImageAtIndex,
+        loadVIIRSImage, _MappedVIIRSFlatField,
     )
     
     from mcvadde import (
         enum, DEFAULT_ACCOUNTING, CoordinateSystems, Places, getDescriptor,
-        oldADDEImage, listADDEImages, params1, params_area_coords,
+        listADDEImages, params1, params_area_coords,
         params_image_coords, params_sizeall, disableAddeDebug, enableAddeDebug,
         isAddeDebugEnabled, LATLON, AREA, IMAGE, ULEFT, CENTER, getADDEImage,
-        makeLocalADDEEntry,
+        makeLocalADDEEntry, loadADDEImage,
     )
     
     from interactive import (
