@@ -969,8 +969,8 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
     private void updateVertScale(AxisScale scale, String title,
                                  double[] maxmin, double bottom, double top)
             throws VisADException, RemoteException {
-
-        scale.setVisible(getVerticalRangeVisible());
+    	
+    	scale.setVisible(getVerticalRangeVisible());
         scale.setSnapToBox(true);
         
         // TJJ 2014 - we are letting user choose their own title now if they want.
@@ -992,6 +992,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         scale.setLabelTable(labelTable);
         scale.setTickBase(maxmin[0]);
         
+        int step = 0;
         for (int i = (int) bottom; i < top; i += majorIncrement / minorIncrement) {
 
         	// Values that are not in this range are not visible.
@@ -1001,12 +1002,15 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
 
         	double rangeMap = maxmin[0] + (maxmin[1] - maxmin[0]) / (top - bottom) * (i - bottom);
 
-        	if ((i % majorIncrement) == 0) {
+            if (step == 0) {
         		majorTicks.add(rangeMap);
         		labelTable.put(rangeMap, labelFormat.format(i));
         	} else {
         		minorTicks.add(rangeMap);
         	}
+            
+            step++;
+            if (step == minorIncrement) step = 0;
         }
         
         // see if the top should be labeled too

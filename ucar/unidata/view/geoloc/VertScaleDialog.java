@@ -95,16 +95,6 @@ public class VertScaleDialog extends JPanel implements ActionListener {
      *
      * @param parent   parent for model dialog
      * @param control The control
-     */
-    public VertScaleDialog(JFrame parent, ViewpointControl control) {
-        this(parent, control, null);
-    }
-
-    /**
-     * Create a new dialog for setting the vertical range of the display
-     *
-     * @param parent   parent for model dialog
-     * @param control The control
      * @param vertScaleInfo The info to use
      */
     public VertScaleDialog(JFrame parent, ViewpointControl control,
@@ -167,9 +157,8 @@ public class VertScaleDialog extends JPanel implements ActionListener {
         if (vertScaleInfo != null) {
             min.setText(Misc.format(vertScaleInfo.minVertRange));
             max.setText(Misc.format(vertScaleInfo.maxVertRange));
-            vertIncrement.setText(
-            		"" + (vertScaleInfo.maxVertRange - vertScaleInfo.minVertRange) / VertScaleInfo.DEFAULT_MAJ_DIVISIONS
-            );
+            vertIncrement.setText("" + vertScaleInfo.getMajorIncrement());
+            vertMinorSpinner.setValue(vertScaleInfo.getMinorDivision());
 
             if (vertScaleInfo.unit != null) {
                 unitCombo.setSelectedItem(vertScaleInfo.unit.toString());
