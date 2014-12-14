@@ -240,28 +240,34 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
         BufferedImage bimage;
 
         try {
-            bimage = viewManager.getMaster().getImage(false);
-            dim = new Dimension(bimage.getWidth(), bimage.getHeight());
-            Graphics2D    graphics = (Graphics2D) bimage.getGraphics();
+//            bimage = viewManager.getMaster().getImage(false);
+//            dim = new Dimension(bimage.getWidth(), bimage.getHeight());
+//            Graphics2D    graphics = (Graphics2D) bimage.getGraphics();
 
             // Turn off the display list
             boolean wasShowingDisplayList = viewManager.getShowDisplayList();
-
+//
             if (wasShowingDisplayList) {
                 viewManager.setShowDisplayList(false);
+                Misc.sleep(500);
             }
+//
+//            boolean wasShowingWireframe = viewManager.getWireframe();
+//
+//            if (wasShowingWireframe) {
+//                viewManager.setWireframe(false);
+//            }
+//
+//            boolean wasShowingScales = viewManager.getShowScales();
+//
+//            if (wasShowingScales) {
+//                viewManager.setShowScales(false);
+//            }
 
-            boolean wasShowingWireframe = viewManager.getWireframe();
+            bimage = viewManager.getMaster().getImage(true);
+            dim = new Dimension(bimage.getWidth(), bimage.getHeight());
+            Graphics2D    graphics = (Graphics2D) bimage.getGraphics();
 
-            if (wasShowingWireframe) {
-                viewManager.setWireframe(false);
-            }
-
-            boolean wasShowingScales = viewManager.getShowScales();
-
-            if (wasShowingScales) {
-                viewManager.setShowScales(false);
-            }
 
             // Find all visible displays
             final List<DisplayControl> onDisplays = new ArrayList<DisplayControl>();
@@ -281,7 +287,7 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
             Misc.sleep(1000);
 
             // capture the image of the rasters and write it into the graphics
-            BufferedImage image = viewManager.getMaster().getImage(false);
+            BufferedImage image = viewManager.getMaster().getImage(true);
 
             // GuiUtils.showOkCancelDialog(null,"",new JLabel(new ImageIcon(image)),null);
             graphics.drawImage(image, 0, 0, null);
@@ -291,13 +297,13 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
 //                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWNONRASTER);
 //            }
 
-            if (wasShowingWireframe) {
-                viewManager.setWireframe(true);
-            }
-
-            if (wasShowingScales) {
-                viewManager.setShowScales(true);
-            }
+//            if (wasShowingWireframe) {
+//                viewManager.setWireframe(true);
+//            }
+//
+//            if (wasShowingScales) {
+//                viewManager.setShowScales(true);
+//            }
 
             Misc.sleep(500);
 
