@@ -1398,8 +1398,19 @@ class _Display(_JavaProxy):
         
         ImageUtils.writeImageToFile(image, kmlImagePath, quality)
         
-    def _testCaptureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False):
-        """Don't use this method for anything other than testing."""
+    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, bgtransparent=False):
+        """Attempt at a replacement for ISL writeImage.
+        
+        Args:
+            filename: Output file.
+            quality:  float between 0.0 and 1.0 (relevant for JPEG's)
+                    0.0 is highest compression / smallest file size / worst quality
+                    1.0 is least compression / biggest file size / best quality
+            height, width: size of image
+            
+        Raises:
+            ValueError:  if filename is a directory
+        """
         from ucar.unidata.idv.ui import ImageGenerator
         from ucar.unidata.xml import XmlUtil
         
@@ -1422,9 +1433,17 @@ class _Display(_JavaProxy):
             
         isl = ''
         
-        for formatter in formatting:
-            isl += formatter.toIsl()
-            
+        if height == -1 and width == -1 and not bgtransparent:
+            for formatter in formatting:
+                isl += formatter.toIsl()
+        else:
+            if formatting:
+                print "*** Warning: Please use either the 'Resize' or 'TransparentBackground' formatting objects, rather than the 'height', 'width', or 'bgtransparent' parameters."
+            if height != -1 and width != -1:
+                isl += 'resize height=%d width=%d; ' % (height, width)
+            if bgtransparent:
+                isl += 'backgroundtransparent; '
+                
         if not ignoreLogo and self._JavaProxy__javaObject.getLogoVisibility():
             logoFile = self._JavaProxy__javaObject.getLogoFile()
             logoPosition = self._JavaProxy__javaObject.getLogoPosition().upper()
@@ -1452,63 +1471,6 @@ class _Display(_JavaProxy):
                     layer.getJavaInstance().setId(None)
                     layer.usedTemporaryId = False
                     
-    def captureImage(self, filename, quality=1.0, height=-1, width=-1, bgtransparent=False):
-        """Attempt at a replacement for ISL writeImage.
-        
-        Args:
-            filename: 
-            quality:  float between 0.0 and 1.0 (relevant for JPEG's)
-                    0.0 is highest compression / smallest file size / worst quality
-                    1.0 is least compression / biggest file size / best quality
-            height, width: size of image
-            
-        Raises:
-            ValueError:  if filename is a directory
-            RuntimeError: if height and width specified here after an annotate
-            
-        """
-        from ucar.unidata.idv.ViewManager import isVectorGraphicsFile
-        from visad import DisplayException
-        
-        # this pause is apparently critical
-        pause()
-        
-        # do some sanity checking on filename
-        filename = expandpath(filename)
-        
-        isDir = os.path.isdir(filename)
-        
-        if isDir:
-            # this isn't really good enough.  could be permissions issue, etc.
-            raise ValueError(filename, " is a directory")
-            
-        if height != -1 and width != -1:
-            try:
-                self.setSize(width, height)
-            except DisplayException, target:
-                if "ScalarMap cannot belong to two Displays" in target.getMessage():
-                    # this should only happen if captureImage is called
-                    # with a height and width after an annotate() in the background
-                    raise RuntimeError("Height/width for captureImage is currently not supported after a text annotation. Height/Width can be specified with buildWindow or openBundle instead, then leave height/width out of subsequent calls to captureImage.")
-                    
-        imageFile = java.io.File(filename)
-        fileRoot, fileExt = os.path.splitext(filename.lower())
-        extensions = ['.pdf', '.kmz', '.svg']
-        if isVectorGraphicsFile(filename):
-            self._captureAsVector(filename)
-        elif fileExt == '.kml':
-            self._captureAsKml(filename, quality)
-        elif fileExt in extensions:
-            islInterpreter.writeImage(filename, "", quality)
-        else:
-            if bgtransparent:
-                writeImage(filename, 'backgroundtransparent', quality)
-            else:
-                # 2nd arg is whether image is written in current thread
-                self._JavaProxy__javaObject.writeImage(imageFile, True, quality)
-            
-        # TODO(mike): catch exceptions resulting from writeImage (e.g., if filename has invalid extension)
-        
     #@gui_invoke_later
     def annotate(self, text, lat=None, lon=None, line=None, element=None,
         font=None, color='red', size=None, style=None, alignment=None):
