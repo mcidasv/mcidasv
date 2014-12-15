@@ -993,6 +993,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         scale.setTickBase(maxmin[0]);
         
         int step = 0;
+        int majorCount = 0;
         for (int i = (int) bottom; i < top; i += majorIncrement / minorIncrement) {
 
         	// Values that are not in this range are not visible.
@@ -1004,7 +1005,8 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
 
             if (step == 0) {
         		majorTicks.add(rangeMap);
-        		labelTable.put(rangeMap, labelFormat.format(i));
+        		labelTable.put(rangeMap, labelFormat.format(bottom + (majorCount * majorIncrement)));
+        		majorCount++;
         	} else {
         		minorTicks.add(rangeMap);
         	}
