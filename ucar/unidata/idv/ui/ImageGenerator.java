@@ -27,6 +27,8 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import org.python.util.PythonInterpreter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -4275,13 +4277,9 @@ public class ImageGenerator extends IdvManager {
                         new VectorGraphicsRenderer(viewManager);
                     vectorRenderer.renderTo(loopFilename);
                 } else {
-                    if(viewManager instanceof CrossSectionViewManager)
-                        getIdv().getIdvUIManager().waitUntilDisplaysAreDone(
-                            getIdv().getIdvUIManager(), 1000);
-                    else
-                        getIdv().getIdvUIManager().waitUntilDisplaysAreDone(
-                                getIdv().getIdvUIManager(), 0);
-                    lastImage       = viewManager.getMaster().getImage(false);
+                    getIdv().getIdvUIManager().waitUntilDisplaysAreDone(
+                        getIdv().getIdvUIManager(), 1000);
+                    lastImage       = viewManager.getMaster().getImage(true);
                     imageProperties = new Hashtable();
                     lastImage = processImage((BufferedImage) lastImage,
                                              loopFilename, scriptingNode,
