@@ -42,6 +42,7 @@ import ucar.unidata.data.*;
 import ucar.unidata.data.grid.GridDataInstance;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.geoloc.LatLonPointImpl;
+import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.DisplayControl;
@@ -77,7 +78,6 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.GlobeDisplay;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.UtcDate;
@@ -131,7 +131,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -139,7 +138,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -150,7 +148,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
@@ -3687,8 +3684,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             logger.trace("after setProjFromData(false)={}", dataSelection);
       	    Rectangle2D bbox = navDisplay.getLatLonBox();
 //            logger.trace("after grabbing bbox={} bbox={} latlonrect={}", dataSelection, bbox, geoSelection.getLatLonRect());
-            geoSelection.setLatLonRect(bbox);
-            logger.trace("after setLatLonRect={} latlonrect={}", dataSelection, geoSelection.getLatLonRect());
+            LatLonRect origbbox = geoSelection.getLatLonRect();
+            logger.trace("origbbox='{}'", origbbox);
+            if (!isRectBad(bbox)) {
+                logger.trace("bbox is valid, replacing geoselection latlonrect='{}' with '{}'", origbbox, bbox);
+                geoSelection.setLatLonRect(bbox);
+            } else {
+                logger.trace("bbox is invalid; keeping geoselection latlonrect='{}'", origbbox);
+            }
+            logger.trace("after setLatLonRect={} latlonrect={} isRectBad={}", dataSelection, geoSelection.getLatLonRect(), isRectBad(bbox));
             geoSelection.setUseViewBounds(true);
             logger.trace("after setUseViewBounds(true)={}", dataSelection);
             dataSelection.setGeoSelection(geoSelection);
@@ -3723,6 +3727,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             return dataSelection;
         }
         if (getIsTimeDriver() || !getUsesTimeDriver()) {
+            logger.trace("weird block: getIsTimeDriver={} !getUsesTimeDriver={}", getIsTimeDriver(), !getUsesTimeDriver());
             if ( !getUsesTimeDriver()) {
                 dataSelection.setTheTimeDriverTimes(null);
                 dataSelection.putProperty(DataSelection.PROP_USESTIMEDRIVER,
@@ -3742,6 +3747,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         dataSelection.setTheTimeDriverTimes(times);
         logger.trace("fallthrough! returning {}", dataSelection);
         return dataSelection;
+    }
+
+    public static boolean isRectBad(Rectangle2D test) {
+        return (test.getX() == -90.0) && (test.getY() == -10.0) && (test.getWidth() == 0.0) && (test.getHeight() == 0.0);
     }
 
     private static final Logger logger = LoggerFactory.getLogger(DisplayControlImpl.class);
