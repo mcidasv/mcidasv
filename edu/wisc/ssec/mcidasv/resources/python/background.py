@@ -1264,6 +1264,7 @@ class _Display(_JavaProxy):
             ValueError:  if layerType isn't valid
         """
         from ucar.unidata.data import DataDataChoice
+        from ucar.unidata.data.grid import GridUtil
         from visad.meteorology import ImageSequenceImpl
         from visad.meteorology import SingleBandedImage
         from visad.meteorology import SingleBandedImageImpl
@@ -1299,7 +1300,17 @@ class _Display(_JavaProxy):
         else:
             firstData = data[0]
 
-        if isinstance(data[0], _MappedGeoGridFlatField):
+        # find out if data is already a proper time sequence
+        try:
+            alreadyTimeSequence = GridUtil.isTimeSequence(data)
+        except TypeError:
+            alreadyTimeSequence = False
+        
+        # transform data from Python list to proper time sequence if necessary
+        if alreadyTimeSequence:
+            # if already a time sequence, don't need to create one
+            pass
+        elif isinstance(data[0], _MappedGeoGridFlatField):
             data = makeFlatFieldSequence(data)
         elif isinstance(data[0], SingleBandedImage):
             data = ImageSequenceImpl(data)
