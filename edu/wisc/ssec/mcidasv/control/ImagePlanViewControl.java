@@ -54,12 +54,14 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import ucar.unidata.data.DataSource;
 import visad.Data;
 import visad.DateTime;
 import visad.FieldImpl;
@@ -226,7 +228,17 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         }
         return null;
     }
-    
+
+    @Override protected boolean canDoProgressiveResolution() {
+        List<DataSource> sources = getDataSources();
+        for (DataSource source : sources) {
+            if ((source instanceof AddeImageParameterDataSource) || (source instanceof SuomiNPPDataSource)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Take out the histogram-related stuff that was in doMakeContents and put it
      * in a standalone method, so we can wait and call it only after the
