@@ -1,0 +1,7 @@
+<bundles>
+  <bundle category="Toolbar&gt;Sample Bundles&gt;Current Data" name="4 Panel GFS" type="default" url="%APPPATH%/defaultbundles/Toolbar_Sample Bundles_Current Data4_panel_GFS.mcv"/>
+  <bundle category="Toolbar&gt;Sample Bundles&gt;Current Data" name="Global Temps and Winds" type="default" url="%APPPATH%/defaultbundles/Toolbar_Sample Bundles_Current DataRotating_Globe.mcv"/>
+  <bundle category="Toolbar&gt;Sample Bundles&gt;Current Data" name="Precipitable Water and Winds" type="default" url="%APPPATH%/defaultbundles/Toolbar_Sample Bundles_Current DataPWAT_Winds_Short.mcv"/>
+  <bundle category="Toolbar&gt;Sample Bundles&gt;Current Data" name="Surface Observations" type="default" url="%APPPATH%/defaultbundles/Toolbar_Sample Bundles_Current DataSurface_Observations.mcv"/>
+  <bundle category="Toolbar&gt;Sample Bundles&gt;Current Data" name="Satellite and Surface Temps" type="default" url="%APPPATH%/defaultbundles/Toolbar_Sample Bundles_Current DataSat_Temps_TimeMatching.mcv"/>
+</bundles>
