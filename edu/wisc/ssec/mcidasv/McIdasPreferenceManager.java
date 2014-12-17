@@ -1189,6 +1189,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         boolean isPrerelease = sm.getIsPrerelease();
         Object[][] generalObjects = {
+            { "Show McIDAS-V default bundles", PREF_SHOW_DEFAULT_BUNDLES, Boolean.TRUE },
             { "Show Help Tips on start", HelpTipDialog.PREF_HELPTIPSHOW },
             { "Show Data Explorer on start", PREF_SHOWDASHBOARD, Boolean.TRUE },
             { "Check for new version and notice on start", Constants.PREF_VERSION_CHECK, Boolean.TRUE },

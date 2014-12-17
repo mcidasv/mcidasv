@@ -231,7 +231,10 @@ public interface Constants extends IdvConstants {
     
     /** Whether to show user VIIRS plugin compatibility check popup */
     public static final String PREF_VIIRS_PLUGIN = "mcidasv.viirs.pluginversiondialog";
-    
+
+    /** Whether or not to show the McIDAS-V {@literal "default"} bundles. */
+    public static final String PREF_SHOW_DEFAULT_BUNDLES = "mcidasv.showdefaultbundles";
+
 	/** 
 	 * Show large or small icons. If PREF_TBM_ICONS is disabled, this pref
 	 * has no meaning.

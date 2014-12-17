@@ -1326,28 +1326,30 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         }
 
-        toolbar.addSeparator();
+        if (getStore().get(Constants.PREF_SHOW_DEFAULT_BUNDLES, true)) {
+            toolbar.addSeparator();
 
-        BundleTreeNode treeRoot = buildBundleTree(SavedBundle.TYPE_DEFAULT);
-        if (treeRoot != null) {
+            BundleTreeNode treeRoot = buildBundleTree(SavedBundle.TYPE_DEFAULT);
+            if (treeRoot != null) {
 
-            // add the favorite bundles to the toolbar (hello Tom Whittaker!)
-            for (BundleTreeNode tmp : treeRoot.getChildren()) {
+                // add the favorite bundles to the toolbar (hello Tom Whittaker!)
+                for (BundleTreeNode tmp : treeRoot.getChildren()) {
 
-                // if this node doesn't have a bundle, it's considered a parent
-                if (tmp.getBundle() == null) {
-                    addBundleTree(toolbar, tmp);
-                }
-                // otherwise it's just another button to add.
-                else {
-                    addBundle(toolbar, tmp);
+                    // if this node doesn't have a bundle, it's considered a parent
+                    if (tmp.getBundle() == null) {
+                        addBundleTree(toolbar, tmp);
+                    }
+                    // otherwise it's just another button to add.
+                    else {
+                        addBundle(toolbar, tmp);
+                    }
                 }
             }
         }
 
         toolbar.addSeparator();
 
-        treeRoot = buildBundleTree(SavedBundle.TYPE_FAVORITE);
+        BundleTreeNode treeRoot = buildBundleTree(SavedBundle.TYPE_FAVORITE);
         if (treeRoot != null) {
 
             // add the favorite bundles to the toolbar (hello Tom Whittaker!)
@@ -1725,7 +1727,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      *
      * @param bundleType One of {@link ucar.unidata.idv.SavedBundle#TYPE_FAVORITE},
      * {@link ucar.unidata.idv.SavedBundle#TYPE_DISPLAY},
-     * {@link ucar.unidata.idv.SavedBundle#TYPE_DATA}.
+     * {@link ucar.unidata.idv.SavedBundle#TYPE_DATA} or
+     * {@link ucar.unidata.idv.SavedBundle#TYPE_DEFAULT}.
      * 
      * @return The root BundleTreeNode for the tree containing toolbar bundles.
      */
