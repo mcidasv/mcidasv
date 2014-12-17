@@ -1328,7 +1328,26 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         toolbar.addSeparator();
 
-        BundleTreeNode treeRoot = buildBundleTree();
+        BundleTreeNode treeRoot = buildBundleTree(SavedBundle.TYPE_DEFAULT);
+        if (treeRoot != null) {
+
+            // add the favorite bundles to the toolbar (hello Tom Whittaker!)
+            for (BundleTreeNode tmp : treeRoot.getChildren()) {
+
+                // if this node doesn't have a bundle, it's considered a parent
+                if (tmp.getBundle() == null) {
+                    addBundleTree(toolbar, tmp);
+                }
+                // otherwise it's just another button to add.
+                else {
+                    addBundle(toolbar, tmp);
+                }
+            }
+        }
+
+        toolbar.addSeparator();
+
+        treeRoot = buildBundleTree(SavedBundle.TYPE_FAVORITE);
         if (treeRoot != null) {
 
             // add the favorite bundles to the toolbar (hello Tom Whittaker!)
@@ -1350,8 +1369,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * Given a reference to the current toolbar and a bundle tree node, build a
      * button representation of the bundle and add it to the toolbar.
      * 
-     * @param toolbar The toolbar to which we add the bundle.
-     * @param node The node within the bundle tree that contains our bundle.
+     * @param toolbar Toolbar to which we add the bundle.
+     * @param node Node within the bundle tree that contains our bundle.
      */
     private void addBundle(JToolBar toolbar, BundleTreeNode node) {
         final SavedBundle bundle = node.getBundle();
@@ -1364,7 +1383,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         button.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                // running in a separate thread is kinda nice!
+                // running in a separate thread is kinda nice! *HEH*
                 Misc.run(UIManager.this, "processBundle", bundle);
             }
         });
@@ -1373,16 +1392,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * Builds two things, given a toolbar and a tree node: a JButton that
-     * represents a "first-level" parent node and a JPopupMenu that appears
-     * upon clicking the JButton. The button is then added to the given
+     * represents a {@literal "first-level"} parent node and a JPopupMenu that
+     * appears upon clicking the JButton. The button is then added to the given
      * toolbar.
      * 
-     * <p>
-     * "First-level" means the given node is a child of the root node.
-     * </p>
+     * <p>{@literal "First-level"} means the given node is a child of the root
+     * node.</p>
      * 
-     * @param toolbar The toolbar to which we add the bundle tree.
-     * @param node The node we want to add! OMG like duh!
+     * @param toolbar Toolbar to which we add the bundle tree.
+     * @param node Node we want to add.
      */
     private void addBundleTree(JToolBar toolbar, BundleTreeNode node) {
         ImageIcon catIcon =
@@ -1402,8 +1420,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         toolbar.add(button);
 
         // recurse through the child nodes
-        for (BundleTreeNode kid : node.getChildren())
+        for (BundleTreeNode kid : node.getChildren()) {
             buildPopupMenu(kid, popup);
+        }
     }
 
     /**
@@ -1690,7 +1709,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
         return attrs;
     }
-    
+
     /**
      * <p>
      * Builds a tree out of the bundles that should appear within the McV
@@ -1703,13 +1722,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * The tree makes it REALLY easy to replicate the default IDV
      * functionality.
      * </p>
+     *
+     * @param bundleType One of {@link ucar.unidata.idv.SavedBundle#TYPE_FAVORITE},
+     * {@link ucar.unidata.idv.SavedBundle#TYPE_DISPLAY},
+     * {@link ucar.unidata.idv.SavedBundle#TYPE_DATA}.
      * 
      * @return The root BundleTreeNode for the tree containing toolbar bundles.
      */
-    public BundleTreeNode buildBundleTree() {
+    public BundleTreeNode buildBundleTree(int bundleType) {
         final String TOOLBAR = "Toolbar";
-
-        int bundleType = IdvPersistenceManager.BUNDLES_FAVORITES;
 
         final List<SavedBundle> bundles =
             getPersistenceManager().getBundles(bundleType);

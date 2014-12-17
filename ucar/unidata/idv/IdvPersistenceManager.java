@@ -28,6 +28,8 @@
 
 package ucar.unidata.idv;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -146,6 +148,9 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
     /** The type to specify the data */
     public static final int BUNDLES_DATA = SavedBundle.TYPE_DATA;
+
+    /** Bundles that are part of the default application installation. */
+    public static final int BUNDLES_DEFAULT = SavedBundle.TYPE_DEFAULT;
 
     // Note - if you change this, then change the XML version
 
@@ -637,7 +642,6 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         return subset;
     }
 
-
     /**
      * Create, if needed, and return the list of {@link SavedBundle}s
      *
@@ -649,7 +653,17 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         return allBundles;
     }
 
-
+    /**
+     * Return a list of the application's {@literal "default"} bundles.
+     *
+     * @return Either a list of bundles that have {@literal type="default"} or
+     * an empty list if there are none.
+     */
+    public List<SavedBundle> getDefaultBundles() {;
+        List<SavedBundle> allBundles = new ArrayList<>();
+        allBundles.addAll(getXmlBundles(BUNDLES_DEFAULT));
+        return allBundles;
+    }
 
     /**
      * Get the last xidv filename for doing saves/saveas.
@@ -1587,6 +1601,9 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         if (bundleType == BUNDLES_DATA) {
             return "Favorite Data Sources";
         }
+        if (bundleType == BUNDLES_DEFAULT) {
+            return "Default Bundles";
+        }
         throw new IllegalArgumentException("Unknown bundle type:"
                                            + bundleType);
     }
@@ -1610,6 +1627,9 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         if (bundleType == BUNDLES_DATA) {
             return getStore().getDataSourcesDir();
         }
+        if (bundleType == BUNDLES_DEFAULT) {
+            return getResourceManager().getAppResourcePath() + "/defaultbundles";
+        }
         throw new IllegalArgumentException("Unknown bundle type:"
                                            + bundleType);
     }
@@ -1631,6 +1651,9 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         }
         if (bundleType == BUNDLES_DATA) {
             return getDataSourceBundles();
+        }
+        if (bundleType == BUNDLES_DEFAULT) {
+            return getDefaultBundles();
         }
         throw new IllegalArgumentException("Unknown bundle type:"
                                            + bundleType);

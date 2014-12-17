@@ -59,6 +59,9 @@ public class SavedBundle {
     /** The type to specify the data */
     public static final int TYPE_DATA = 2;
 
+    /** The type to specify default application bundle. */
+    public static final int TYPE_DEFAULT = 3;
+
 
     /** type of saved bundle */
     public static final String VALUE_FAVORITE = "favorite";
@@ -68,6 +71,9 @@ public class SavedBundle {
 
     /** type of saved bundle */
     public static final String VALUE_DISPLAY = "display";
+
+    /** type of saved bundle */
+    public static final String VALUE_DEFAULT = "default";
 
     /** Xml tag name for the bundles element */
     public static final String TAG_BUNDLES = "bundles";
@@ -133,6 +139,8 @@ public class SavedBundle {
             type = TYPE_DATA;
         } else if (typeString.equals(VALUE_DISPLAY)) {
             type = TYPE_DISPLAY;
+        } else if (typeString.equals(VALUE_DEFAULT)) {
+            type = TYPE_DEFAULT;
         }
 
 
