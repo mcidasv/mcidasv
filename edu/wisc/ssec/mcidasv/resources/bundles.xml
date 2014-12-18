@@ -1,7 +1,7 @@
 <bundles>
-  <bundle category="Toolbar&gt;Current WX" name="4 Panel GFS" type="default" url="%APPPATH%/defaultbundles/Toolbar_Current WX4_panel_GFS.mcv"/>
-  <bundle category="Toolbar&gt;Current WX" name="Global Temps and Winds" type="default" url="%APPPATH%/defaultbundles/Toolbar_Current WXRotating_Globe.mcv"/>
-  <bundle category="Toolbar&gt;Current WX" name="Precipitable Water and Winds" type="default" url="%APPPATH%/defaultbundles/Toolbar_Current WXPWAT_Winds_Short.mcv"/>
-  <bundle category="Toolbar&gt;Current WX" name="Surface Observations" type="default" url="%APPPATH%/defaultbundles/Toolbar_Current WXSurface_Observations.mcv"/>
-  <bundle category="Toolbar&gt;Current WX" name="Satellite and Surface Temps" type="default" url="%APPPATH%/defaultbundles/Toolbar_Current WXSat_Temps_TimeMatching.mcv"/>
+  <bundle category="Toolbar&gt;Current WX" name="4 Panel GFS" type="system" url="%APPPATH%/systembundles/Toolbar_Current WX4_panel_GFS.mcv"/>
+  <bundle category="Toolbar&gt;Current WX" name="Global Temps and Winds" type="system" url="%APPPATH%/systembundles/Toolbar_Current WXRotating_Globe.mcv"/>
+  <bundle category="Toolbar&gt;Current WX" name="Precipitable Water and Winds" type="system" url="%APPPATH%/systembundles/Toolbar_Current WXPWAT_Winds_Short.mcv"/>
+  <bundle category="Toolbar&gt;Current WX" name="Surface Observations" type="system" url="%APPPATH%/systembundles/Toolbar_Current WXSurface_Observations.mcv"/>
+  <bundle category="Toolbar&gt;Current WX" name="Satellite and Surface Temps" type="system" url="%APPPATH%/systembundles/Toolbar_Current WXSat_Temps_TimeMatching.mcv"/>
 </bundles>

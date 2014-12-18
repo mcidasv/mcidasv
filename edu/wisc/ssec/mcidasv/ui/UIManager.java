@@ -1326,10 +1326,10 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         }
 
-        if (getStore().get(Constants.PREF_SHOW_DEFAULT_BUNDLES, true)) {
+        if (getStore().get(Constants.PREF_SHOW_SYSTEM_BUNDLES, true)) {
             toolbar.addSeparator();
 
-            BundleTreeNode treeRoot = buildBundleTree(SavedBundle.TYPE_DEFAULT);
+            BundleTreeNode treeRoot = buildBundleTree(SavedBundle.TYPE_SYSTEM);
             if (treeRoot != null) {
 
                 // add the favorite bundles to the toolbar (hello Tom Whittaker!)
@@ -1405,7 +1405,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         showWaitCursor();
         LogUtil.message("Loading bundle: " + bundle.getName());
         int type = bundle.getType();
-        boolean checkToRemove = (type == SavedBundle.TYPE_FAVORITE) || (type == SavedBundle.TYPE_DEFAULT);
+        boolean checkToRemove = (type == SavedBundle.TYPE_FAVORITE) || (type == SavedBundle.TYPE_SYSTEM);
         boolean ok = getPersistenceManager().decodeXmlFile(bundle.getUrl(),
             bundle.getName(),
             checkToRemove);
@@ -1752,7 +1752,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param bundleType One of {@link ucar.unidata.idv.SavedBundle#TYPE_FAVORITE},
      * {@link ucar.unidata.idv.SavedBundle#TYPE_DISPLAY},
      * {@link ucar.unidata.idv.SavedBundle#TYPE_DATA} or
-     * {@link ucar.unidata.idv.SavedBundle#TYPE_DEFAULT}.
+     * {@link ucar.unidata.idv.SavedBundle#TYPE_SYSTEM}.
      * 
      * @return The root BundleTreeNode for the tree containing toolbar bundles.
      */

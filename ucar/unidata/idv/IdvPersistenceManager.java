@@ -149,8 +149,8 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
     /** The type to specify the data */
     public static final int BUNDLES_DATA = SavedBundle.TYPE_DATA;
 
-    /** Bundles that are part of the default application installation. */
-    public static final int BUNDLES_DEFAULT = SavedBundle.TYPE_DEFAULT;
+    /** Bundles that are part of the application installation. */
+    public static final int BUNDLES_SYSTEM = SavedBundle.TYPE_SYSTEM;
 
     // Note - if you change this, then change the XML version
 
@@ -661,7 +661,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
      */
     public List<SavedBundle> getDefaultBundles() {;
         List<SavedBundle> allBundles = new ArrayList<>();
-        allBundles.addAll(getXmlBundles(BUNDLES_DEFAULT));
+        allBundles.addAll(getXmlBundles(BUNDLES_SYSTEM));
         return allBundles;
     }
 
@@ -1601,8 +1601,8 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         if (bundleType == BUNDLES_DATA) {
             return "Favorite Data Sources";
         }
-        if (bundleType == BUNDLES_DEFAULT) {
-            return "Default Bundles";
+        if (bundleType == BUNDLES_SYSTEM) {
+            return "System Bundles";
         }
         throw new IllegalArgumentException("Unknown bundle type:"
                                            + bundleType);
@@ -1627,8 +1627,8 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         if (bundleType == BUNDLES_DATA) {
             return getStore().getDataSourcesDir();
         }
-        if (bundleType == BUNDLES_DEFAULT) {
-            return getResourceManager().getAppResourcePath() + "/defaultbundles";
+        if (bundleType == BUNDLES_SYSTEM) {
+            return getResourceManager().getAppResourcePath() + "/systembundles";
         }
         throw new IllegalArgumentException("Unknown bundle type:"
                                            + bundleType);
@@ -1652,7 +1652,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         if (bundleType == BUNDLES_DATA) {
             return getDataSourceBundles();
         }
-        if (bundleType == BUNDLES_DEFAULT) {
+        if (bundleType == BUNDLES_SYSTEM) {
             return getDefaultBundles();
         }
         throw new IllegalArgumentException("Unknown bundle type:"
