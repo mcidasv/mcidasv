@@ -1393,6 +1393,30 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * Handle loading the given {@link ucar.unidata.idv.SavedBundle SavedBundle}.
+     *
+     * <p>Overridden in McIDAS-V to allow {@literal "default"} bundles to
+     * show the same bundle loading dialog as a {@literal "favorite"} bundle.
+     * </p>
+     *
+     * @param bundle Bundle to process. Cannot be {@code null}.
+     */
+    @Override public void processBundle(SavedBundle bundle) {
+        showWaitCursor();
+        LogUtil.message("Loading bundle: " + bundle.getName());
+        int type = bundle.getType();
+        boolean checkToRemove = (type == SavedBundle.TYPE_FAVORITE) || (type == SavedBundle.TYPE_DEFAULT);
+        boolean ok = getPersistenceManager().decodeXmlFile(bundle.getUrl(),
+            bundle.getName(),
+            checkToRemove);
+        if (ok && (bundle.getType() == SavedBundle.TYPE_DATA)) {
+            showDataSelector();
+        }
+        LogUtil.message("");
+        showNormalCursor();
+    }
+
+    /**
      * Builds two things, given a toolbar and a tree node: a JButton that
      * represents a {@literal "first-level"} parent node and a JPopupMenu that
      * appears upon clicking the JButton. The button is then added to the given
