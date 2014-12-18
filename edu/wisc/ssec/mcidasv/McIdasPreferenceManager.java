@@ -1182,6 +1182,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             public void applyPreference(XmlObjectStore theStore, Object data) {
                 applyWidgets((Hashtable)data, theStore);
                 getIdv().getIdvUIManager().setDateFormat();
+                getIdv().getIdvUIManager().favoriteBundlesChanged();
                 getIdv().initCacheManager();
                 applyEventPreferences(theStore);
             }
@@ -1336,7 +1337,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .addComponent(layerPanel, DEFAULT_SIZE, DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        
         this.add(Constants.PREF_LIST_GENERAL, "General Preferences", basicManager, outerPanel, widgets);
     }
     
