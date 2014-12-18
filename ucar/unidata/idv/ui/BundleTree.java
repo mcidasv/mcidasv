@@ -20,6 +20,7 @@
 
 package ucar.unidata.idv.ui;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 import org.w3c.dom.Document;
 
@@ -38,6 +39,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
 import ucar.unidata.util.ObjectListener;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
 
 import java.awt.*;
@@ -97,7 +99,7 @@ public class BundleTree extends DndTree {
      * @param uiManager The UI manager
      * @param bundleType The type of the bundles we are showing
      */
-    public BundleTree(IdvUIManager uiManager, int bundleType) {
+    public BundleTree(final IdvUIManager uiManager, int bundleType) {
 
         categoryIcon = GuiUtils.getImageIcon("/auxdata/ui/icons/folder.png",
                                              getClass());
@@ -240,10 +242,22 @@ public class BundleTree extends DndTree {
         fileMenu.add(GuiUtils.makeMenuItem("Close", this, "doClose"));
 
 
+        final XmlObjectStore store = uiManager.getIdv().getStore();
+        final boolean showSystemBundles =
+            store.get(Constants.PREF_SHOW_SYSTEM_BUNDLES, true);
+        final JCheckBox showSystemBox =
+            new JCheckBox("Show McIDAS-V system bundles", showSystemBundles);
+        showSystemBox.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                boolean value = showSystemBox.isSelected();
+                store.put(Constants.PREF_SHOW_SYSTEM_BUNDLES, value);
+                uiManager.favoriteBundlesChanged();
+            }
+        });
 
-
-        JComponent bottom = GuiUtils.wrap(GuiUtils.makeButton("Close", this,
+        JComponent close = GuiUtils.wrap(GuiUtils.makeButton("Close", this,
                                 "doClose"));
+        JPanel bottom = GuiUtils.topBottom(showSystemBox, close);
 
         JPanel contents = GuiUtils.topCenterBottom(menuBar, sp, bottom);
         frame = GuiUtils.createFrame(title);
