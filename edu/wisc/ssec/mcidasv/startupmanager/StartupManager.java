@@ -303,7 +303,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JPanel texturePanel = McVGuiUtils.makeLabeledComponent(textureWidth.getLabel()+':', textureWidth.getComponent());
 //        JTextField textureField = textureWidth.getComponent();
 
-        JPanel internalPanel = McVGuiUtils.topCenterBottom(use3dCheckBox, joglCheckBox, texturePanel);
+        JPanel internalPanel = McVGuiUtils.topBottom(use3dCheckBox, joglCheckBox, McVGuiUtils.Prefer.TOP);
         JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:", internalPanel);
         
         // Build the bundle panel
@@ -337,7 +337,8 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         Component[] visadComponents = {
             useGeometryByRefCheckBox,
             useImageByRefCheckBox,
-            useNpotCheckBox
+            useNpotCheckBox,
+            texturePanel,
         };
         
         JPanel visadPanel = McVGuiUtils.makeLabeledComponent("VisAD:", McVGuiUtils.vertical(visadComponents));
