@@ -21,6 +21,7 @@
 package ucar.unidata.data.grid;
 
 
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -131,6 +132,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
@@ -5753,10 +5756,9 @@ public class GridUtil {
             HSSFRow         row;
             int             sheetIdx = -1;
             List<HSSFSheet> sheets   = new ArrayList<HSSFSheet>();
-            filename = new File(filename).getAbsolutePath();
             OutputStream fileOut =
-                new BufferedOutputStream(new FileOutputStream(filename),
-                                         1000000);
+                new BufferedOutputStream(
+                    new FileOutputStream(makePathAbsolute(filename)), 1000000);
 
             int             MAXROWS    = 65000;
             List<DateTime>  times      = new ArrayList<DateTime>();
@@ -5912,9 +5914,8 @@ public class GridUtil {
         Object loadId =
             JobManager.getManager().startLoad("Writing grid to CF", true);
         try {
-            filename = new File(filename).getAbsolutePath();
             NetcdfFileWriteable ncfile =
-                NetcdfFileWriteable.createNew(filename, false);
+                NetcdfFileWriteable.createNew(makePathAbsolute(filename), false);
             boolean         isTimeSequence = isTimeSequence(grid);
             List<Dimension> dims           = new ArrayList<Dimension>();
             // make variables for the time and xyz axes
@@ -6035,6 +6036,33 @@ public class GridUtil {
         } finally {
             JobManager.getManager().stopLoad(loadId);
         }
+    }
+
+    /**
+     * Ensure that the given file path is absolute. If it is <b>not</b>
+     * absolute, then resulting file path will be within the
+     * {@literal "userpath"}.
+     *
+     * @param filename File path. Cannot be {@code null}.
+     *
+     * @return {@code String} representation of the absolute path to the given
+     * (potentially relative) path.
+     *
+     * @see Path#isAbsolute
+     */
+    private static String makePathAbsolute(final String filename) {
+        Path p = Paths.get(filename);
+        String result;
+        if (p.isAbsolute()) {
+            result = p.toString();
+        } else {
+            String defaultUserPath =
+                StartupManager.getInstance().getPlatform().getUserDirectory();
+            String userpath =
+                System.getProperty("mcv.userpath", defaultUserPath);
+            result = Paths.get(userpath, filename).toString();
+        }
+        return result;
     }
 
     /**
