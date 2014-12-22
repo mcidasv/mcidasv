@@ -1,3 +1,5 @@
+"""McIDAS-V Jython decorators."""
+
 import sys
 import warnings
 
@@ -17,6 +19,49 @@ from ucar.unidata.data.grid import GridUtil
 
 from java.util.concurrent import ExecutionException
 
+def makeFlatFieldSequence(sequence):
+    """Turn list of _MappedGeoGridFlatField's into a FieldImpl with time domain that is suitable for displaying.
+
+    This will work if the flatfield's have a time associated with them via
+    getMetadataMap, but if that doesn't work we're out of luck because a
+    plain old FlatField doesn't have any timestamp.  How do handle we that case?  
+    Do we put in fake timestamps so the data can at least get displayed still?
+    """
+    from ucar.unidata.data import DataUtil
+    from ucar.visad import Util
+    from visad import FunctionType
+    from visad import RealType
+    from visad import DateTime
+    dateTimes = []
+    try:
+        for ff in sequence:
+            if ff.geogrid.getCoordinateSystem().hasTimeAxis1D():
+                timeAxis = ff.geogrid.getCoordinateSystem().getTimeAxis1D()
+                dateTimes.append(DataUtil.makeDateTimes(timeAxis)[0])
+            else:
+                # fix for ABI data / data with no time coord: just return plain FF
+                # this will allow data to get displayed, but w/o time info
+                return ff
+    except AttributeError:
+        # no geogrid ... try to read from getMetadataMap
+        if sequence[0].getMetadataMap().get('times'):
+            # this was a _MappedGeoGridFlatField
+            for ff in sequence:
+                # should be a visad.DateTime:
+                timeStr = ff.getMetadataMap().get('times')[0].toString() 
+                dateTimes.append(DateTime.createDateTime(timeStr))
+        elif sequence[0].getMetadataMap().get('nominal-time'):
+            # this was a _MappedAreaImageFlatField
+            for ff in sequence:
+                time = ff.getMetadataMap().get('nominal-time')
+                dateTimes.append(time)
+    timeSet = Util.makeTimeSet(dateTimes)
+    ftype = FunctionType(RealType.Time, ff.getType())
+    fi = FieldImpl(ftype, timeSet)
+    for i, ff in enumerate(sequence):
+        fi.setSample(i, ff)
+    return fi
+
 class _JythonCallable(Callable):
     def __init__(self, func, args, kwargs):
         self._func = func
@@ -27,7 +72,8 @@ class _JythonCallable(Callable):
         return self._func(*self._args, **self._kwargs)
         
 def transform_flatfields(func, *args, **kwargs):
-    from background import makeFlatFieldSequence
+    """Convert any FlatField parameters to FieldImpl with a time domain suitable for displaying."""
+    # from background import makeFlatFieldSequence
     @wraps(func)
     def wrapper(*args, **kwargs):
         wrappedArgs = []
@@ -56,6 +102,7 @@ def transform_flatfields(func, *args, **kwargs):
     return wrapper
 
 def keepMetadata(func, *args, **kwargs):
+    """"Ensure metadata mapping is propagated to result (when applicable)."""
     @wraps(func)
     def wrapper(*args, **kwargs):
         print 'inside wrapper'
@@ -88,12 +135,14 @@ def _swingWaitForResult(func, *args, **kwargs):
     return task.get()
     
 def gui_invoke_later(func):
+    """Run the given function or method via SwingUtilities.invokeLater."""
     @wraps(func)
     def wrapper(*args, **kwargs):
         return _swingRunner(func, *args, **kwargs)
     return wrapper
     
 def gui_invoke_now(func):
+    """Run the given function or method via SwingUtilities.invokeAndWait."""
     @wraps(func)
     def wrapper(*args, **kwargs):
         return _swingWaitForResult(func, *args, **kwargs)
@@ -101,7 +150,8 @@ def gui_invoke_now(func):
     
 def deprecated(replacement=None):
     """A decorator which can be used to mark functions as deprecated.
-    replacement is a callable that will be called with the same args
+    
+    Replacement is a callable that will be called with the same args
     as the decorated function.
 
     >>> @deprecated()
