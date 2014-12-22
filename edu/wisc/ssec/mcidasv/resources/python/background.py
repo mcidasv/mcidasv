@@ -3171,6 +3171,9 @@ def loadVIIRSImage(file_list, field, stride=1, **kwargs):
         raise ValueError('File list must contain at least one file.')
     
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
+    if stride < 1:
+        raise ValueError("stride must be greater than zero")
+
     # First, need to create the data source:
     # TODO: how to avoid re-creating identical data sources?
     descriptor = _mcv.getDataManager().getDescriptor('SuomiNPP')
