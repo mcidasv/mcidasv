@@ -1,27 +1,27 @@
-""" This is the doc for the ensemble grid module """
+""" This is the doc for the ensemble grid module. """
 
 def ens_savg(grid):
-   """ basic ensemble average """
+   """ basic ensemble average. """
    return GridMath.averageOverMembers(grid)
 
 def ens_ssprd(grid):
-   """ standard deviation of all members """
+   """ standard deviation of all members. """
    return GridMath.ensembleStandardDeviation(grid)
 
 def ens_smax(grid):
-   """ max value of all member """
+   """ max value of all member. """
    return GridMath.ensembleHighestValues(grid)
 
 def ens_smin(grid):
-   """ min value of all member """
+   """ min value of all member. """
    return GridMath.ensembleLowestValues(grid)
 
 def ens_prcntl(grid, percent):
-   """ percentile value """
+   """ percentile value. """
    return GridMath.ensemblePercentileValues(grid, percent)
 
 def ens_uprob(grid, logicalOp1, pValue1, and_or, logicalOp2, pValue2, exptdLoBound, exptdUpBound):
-   """ ensemble univariate probability calculation """
+   """ ensemble univariate probability calculation. """
    #
    # define a few custom exception types
    #
@@ -151,9 +151,9 @@ def ens_uprob(grid, logicalOp1, pValue1, and_or, logicalOp2, pValue2, exptdLoBou
    return prob
 
 def ens_srng(grid):
-   """ max - min grid value """
+   """ max - min grid value. """
    return GridMath.ensembleRangeValues(grid)
 
 def ens_mode(grid):
-   """ mode value """
+   """ mode value. """
    return GridMath.ensembleModeValues(grid)
