@@ -278,7 +278,10 @@ class Colorbar(ImageFormatting):
         if suffixFrequency:
             self.suffixFrequency = 'suffixfrequency=%s' % (suffixFrequency)
         else:
-            self.suffixFrequency = ''
+            if suffix or showUnit:
+                self.suffixFrequency = 'suffixfrequency=last'
+            else:
+                self.suffixFrequency = ''
             
         if showUnit:
             self.showUnit = 'showunit=%s' % (showUnit)
