@@ -1269,8 +1269,7 @@ class _Display(_JavaProxy):
         from visad.meteorology import ImageSequenceImpl
         from visad.meteorology import SingleBandedImage
         from visad.meteorology import SingleBandedImageImpl
-        from visad import FlatField
-        from visad import DateTime
+        from visad import FlatField, DateTime, VisADException
         
         # need to get short control description from long name
         mcv = getStaticMcv()
@@ -1320,13 +1319,21 @@ class _Display(_JavaProxy):
             # make into some kind of time sequence.
             if isinstance(data[0].getMetadataMap().get('nominal-time'), DateTime):
                 # this was a _MappedAreaImageFlatField
-                newData = []
-                for step in data:
-                    # should be a visad.DateTime:
-                    theTime = step.getMetadataMap().get('nominal-time') 
-                    newData.append(SingleBandedImageImpl(step, theTime,
-                        theTime.toString()))
-                data = ImageSequenceImpl(newData)
+                try:
+                    # TODO(after 1.5 release): get rid of all ImageSequenceImpl
+                    # related code and just use makeFlatFieldSequence instead. Leaving
+                    # it in for now to make sure to not break old scripts.
+                    newData = []
+                    for step in data:
+                        # should be a visad.DateTime:
+                        theTime = step.getMetadataMap().get('nominal-time') 
+                        newData.append(SingleBandedImageImpl(step, theTime,
+                            theTime.toString()))
+                    data = ImageSequenceImpl(newData)
+                except VisADException:
+                    # This is probably the result of an RGB function.  The
+                    # SingleBandedImageImpl constructor fails due to 3 range components.
+                    data = makeFlatFieldSequence(data)
             elif data[0].getMetadataMap().get('times'):
                 # this was a _MappedGeoGridFlatField
                 data = makeFlatFieldSequence(data)
