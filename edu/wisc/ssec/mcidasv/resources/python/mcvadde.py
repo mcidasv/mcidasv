@@ -1,3 +1,5 @@
+"""McIDAS-V Jython ADDE module."""
+
 import os
 import hashlib
 import threading
@@ -56,6 +58,7 @@ from java.util import TimeZone
 
 # credit for enum goes to http://stackoverflow.com/a/1695250
 def enum(*sequential, **named):
+    """Create a group of related symbolic names bound to unique, constant values."""
     enums = dict(zip(sequential, range(len(sequential))), **named)
     return type('Enum', (), enums)
     
@@ -280,7 +283,11 @@ class _AreaDirectoryList(object):
         return str(self.values)
         
 class AddeJythonError(Exception, java.lang.Exception):
+    
+    """Jython ADDE exception base class."""
+    
     def __init__(self, ex):
+        """Wrap a VisAD AddeException or a string containing the error."""
         Exception.__init__(self, ex)
         
         if isinstance(ex, AddeException):
@@ -297,15 +304,22 @@ class AddeJythonError(Exception, java.lang.Exception):
             self.addeErrorMessage = None
             
     def hasAddeErrorCode(self):
+        """Determine whether or not this exception has a numeric error code."""
         return self.hasAddeErrorCode
         
     def getAddeErrorCode(self):
+        """Return numeric error code.
+        
+        Note: if 'hasAddeErrorCode' returns False, this method will return 0.
+        """
         return self.addeErrorCode
         
     def getAddeErrorMessage(self):
+        """Return the error message associated with the wrapped exception."""
         return self.addeErrorMessage
         
     def __str__(self):
+        """Return the string representation of the wrapped exception."""
         if self.addeErrorMessage:
             return self.addeErrorMessage
         else:
@@ -461,25 +475,29 @@ params_sizeall = dict(
 
 
 def enableAddeDebug():
+    """Enable ADDE debug messages."""
     EntryStore.setAddeDebugEnabled(True)
     
 def disableAddeDebug():
+    """Disable ADDE debug messages."""
     EntryStore.setAddeDebugEnabled(False)
     
 def isAddeDebugEnabled(defaultValue=False):
+    """Determine whether or not ADDE debug messages are enabled."""
     return EntryStore.isAddeDebugEnabled(defaultValue)
     
 def getDescriptor(dataset, imageType):
-    """Get the descriptor for a local ADDE entry
+    """Get the descriptor for a local ADDE entry.
     
-    (this wasn't included in the 1.2 release, but enough people are using it
-    that we'll want to keep it for backward compatibility.)
+    This wasn't included in the 1.2 release, but enough people are using it
+    that we'll want to keep it for backward compatibility.
         
     Args:
-        dataset: Dataset field from local ADDE server
-        imageType: Image Type field from local ADDE server
+        dataset: Dataset field from local ADDE server.
+        imageType: Image Type field from local ADDE server.
         
-    Returns: valid descriptor string or -1 if no match was found
+    Returns:
+        Valid descriptor string or -1 if no match was found.
     """
     # get a list of local ADDE server entries
     localEntries = getStaticMcv().getServerManager().getLocalEntries()
@@ -511,7 +529,7 @@ def getLocalADDEEntry(dataset, imageType):
     return None
     
 def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
-    """Creates a local ADDE entry in the server table.
+    """Create a local ADDE entry in the server table.
     
     Required Args:
         dataset: Name of the group associated with the created dataset.
@@ -554,7 +572,6 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     Returns:
         The newly created local ADDE dataset.
     """
-    
     if len(dataset) > 8 or not dataset.isupper() or any(c in dataset for c in "/. []%"):
         raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
         
@@ -777,7 +794,7 @@ def listADDEImages(localEntry=None,
     mag=None,
     size=None,
     showUrls=True):
-    """Creates a list of ADDE images.
+    """Create a list of ADDE images.
     
     Args:
         localEntry: Local ADDE dataset.
@@ -1018,7 +1035,7 @@ def listADDEImages(localEntry=None,
     return temp
     
 def loadADDEImage(*args, **kwargs):
-    """Loads data from an ADDE Image server - returns a _MappedAreaImageFlatField object that contains data and metadata.
+    """Load data from an ADDE Image server - returns a _MappedAreaImageFlatField object that contains data and metadata.
     
     An ADDE request must include values for either localEntry or the 
     combination of server, dataset and descriptor.
