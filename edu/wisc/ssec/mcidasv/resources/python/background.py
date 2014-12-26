@@ -1704,12 +1704,18 @@ class _Layer(_JavaProxy):
                  do. Case sensitive!
            Range: 2-element list specifying min and max data range.
         """
+        didSomething = False
         if name is not None:  # leave as-is if not specified
             self.setEnhancementTable(name)
+            didSomething = True
             
         # but 'range' is a Python built-in.........
         if range is not None:
             self.setDataRange(range[0], range[1])
+            didSomething = True
+            
+        if didSomething:
+            self._JavaProxy__javaObject.notifyViewManagersOfChange()
             
     @gui_invoke_later
     def getEnhancementTable(self):
