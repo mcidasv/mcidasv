@@ -326,67 +326,115 @@ class AddeJythonError(Exception, java.lang.Exception):
             return 'Error Code: %d' % (self.addeErrorCode)
             
 class AddeJythonInvalidAccountingError(AddeJythonError):
+    
+    """Jython ADDE exception that signals incorrect accounting information."""
+    
     def __str__(self):
         return "Invalid user or project number. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonAccountingRequiredError(AddeJythonError):
+    
+    """Jython ADDE exception generated when the server requires accounting information."""
+    
     def __str__(self):
         return "Accounting required for the server. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidDatasetError(AddeJythonError):
+    
+    """Jython ADDE exception generated when the user requests an invalid dataset."""
+    
     def __str__(self):
         return "Check for valid dataset/descriptor. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidProjectError(AddeJythonError):
+    
+    """Jython ADDE exception generated when a user provides an incorrect ADDE project number."""
+    
     def __str__(self):
         return "Check for valid project number. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidPortError(AddeJythonError):
+    
+    """Jython ADDE exception generated when the wrong port is used."""
+    
     def __str__(self):
         return "Check for valid port. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidUserError(AddeJythonError):
+    
+    """Jython ADDE exception generated when a user provides an incorrect ADDE user."""
+    
     def __str__(self):
         return "Check for valid user. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonUnknownDataError(AddeJythonError):
+    
+    """Jython ADDE exception generated when the request has no matches."""
+    
     def __str__(self):
         return "No images match given parameters. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonBandRequiredError(AddeJythonError):
+    
+    """Jython ADDE exception generated when requesting from a multi-banded dataset without specifying a band number."""
+    
     def __str__(self):
         return "Band required for multi-banded dataset. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidUnitError(AddeJythonError):
+    
+    """Jython ADDE exception generated when the user requests a unit not found within the given band number."""
+    
     def __str__(self):
         return "Unit not found in band. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonNavigationError(AddeJythonError):
+    
+    """Jython ADDE exception generated when there is an invalid location given."""
+    
     def __str__(self):
         return "Check for valid location. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonBandNotPresent(AddeJythonError):
+    
+    """Jython ADDE exception generated when an invalid band number is given."""
+    
     def __str__(self):
         return "Check for valid band number. (error code: %d)" % (self.addeErrorCode)
         
 # whew!
 class AddeJythonBandNotPresentInSpecifiedUnits(AddeJythonError):
+    
+    """Jython ADDE exception generated when invalid band and/or units have been given."""
+    
     def __str__(self):
         return "Check for valid band and/or units. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonErrorInvalidSize(AddeJythonError):
+    
+    """Jython ADDE exception generated when a user requests an invalid image size."""
+    
     def __str__(self):
         return "Requested portion of image does not exist. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonBadLocationError(AddeJythonError):
+    
+    """Jython ADDE exception generated when a user requests a location that does not match any images."""
+    
     def __str__(self):
         return "Requested location not in area. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonServerNotFound(AddeJythonError):
+    
+    """Jython ADDE exception generated when McIDAS-V cannot contact the given server."""
+    
     def __str__(self):
         return "Check for valid server. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonDayRequiredError(AddeJythonError):
+    
+    """Jython ADDE exception generated when a user requests data from an 'archive' dataset without providing a date."""
+    
     def __str__(self):
         return "Day required for archived datasets. (error code: %d)" % (self.addeErrorCode)
         
@@ -602,7 +650,22 @@ def listADDEImageTimes(localEntry=None,
     mag=None,
     size=None,
     showUrls=True):
+    """Create a list of ADDE image times.
     
+    Args:
+        localEntry: Local ADDE dataset.
+        server: ADDE server.
+        dataset: ADDE dataset group name.
+        descriptor: ADDE dataset descriptor.
+        day: Day range. ('begin date', 'end date')
+        time: ('begin time', 'end time')
+        position: Position number. Values may be integers or the string "ALL". (default=0)
+        band: McIDAS band number; only images that have matching band number will be returned.
+        accounting: ('user', 'project number') User and project number required by servers using McIDAS accounting. default = ('idv','0')
+        
+    Returns:
+        List of ADDE image times matching the given criteria, if any.
+    """
     if localEntry:
         server = localEntry.getAddress()
         dataset = localEntry.getGroup()
@@ -1075,6 +1138,7 @@ def loadADDEImage(*args, **kwargs):
     return result
     
 def getADDEImage(*args, **kwargs):
+    """Deprecated in favor of 'loadADDEImage'."""
     warnings.warn("'metadata, data = getADDEImage(...)' has been deprecated; please use 'metadataAndData = loadADDEImage(...)' instead.")
     return _getADDEImage(*args, **kwargs)
     
