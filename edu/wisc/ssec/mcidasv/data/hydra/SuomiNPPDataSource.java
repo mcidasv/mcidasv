@@ -1203,14 +1203,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     public void initAfterUnpersistence() {
     	try {
+            String zidvPath = 
+                    McIDASV.getStaticMcv().getStateManager().
+                    getProperty(IdvPersistenceManager.PROP_ZIDVPATH, "");
     	    if (getTmpPaths() != null) {
     	        // New code for zipped bundles-
     	        // we want 'sources' to point to wherever the zipped data was unpacked.
     	        sources.clear();
     	        // following PersistenceManager.fixBulkDataSources, get temporary data location
-    	        String zidvPath = 
-    	                McIDASV.getStaticMcv().getStateManager().
-    	                getProperty(IdvPersistenceManager.PROP_ZIDVPATH, "");
     	        for (Object o : getTmpPaths()) {
     	            String tempPath = (String) o;
     	            // replace macro string with actual path
@@ -1221,6 +1221,22 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	                sources.add(expandedPath);
     	            }
     	        }
+
+                // mjh fix absolute paths in filenameMap
+                logger.debug("original filenameMap: {}", filenameMap);
+                Iterator keyIterator = filenameMap.keySet().iterator();
+                while (keyIterator.hasNext()) {
+                    String keyStr = (String) keyIterator.next();
+                    List<String> fileNames = (List<String>) filenameMap.get(keyStr);
+                    for (int i = 0; i < fileNames.size(); i++) {
+                        String name = fileNames.get(i);
+                        int lastSeparator = name.lastIndexOf(File.separatorChar);
+                        String sub = name.substring(0, lastSeparator);
+                        name = name.replace(sub, zidvPath);
+                        fileNames.set(i, name);
+                    }
+                }
+                logger.debug("filenameMap with zidvPath: {}", filenameMap);
     	    } else {
     	        // leave in original unpersistence code - this will get run for unzipped bundles.
     	        // TODO: do we need to handle the "Save with relative paths" case specially?
@@ -1272,6 +1288,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	public void setOldSources(List<String> oldSources) {
 		this.oldSources = oldSources;
 	}
+    
+    public Map<String, List<String>> getFilenameMap() {
+        return filenameMap;
+    }
+
+    public void setFilenameMap(Map<String, List<String>> filenameMap) {
+        this.filenameMap = filenameMap;
+    }
 
 	/**
      * Make and insert the {@link DataChoice DataChoices} for this
