@@ -11754,7 +11754,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         });
         popup.add(fullRezItem);
 
-        final JButton button = GuiUtils.getImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing16.png", DisplayControlImpl.class);
+        final JButton button = GuiUtils.getImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/emblem-system16.png", DisplayControlImpl.class);
         button.setToolTipText(Msg.msg("Resolution Control"));
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
