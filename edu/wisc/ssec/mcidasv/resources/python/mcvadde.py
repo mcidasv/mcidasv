@@ -330,6 +330,7 @@ class AddeJythonInvalidAccountingError(AddeJythonError):
     """Jython ADDE exception that signals incorrect accounting information."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Invalid user or project number. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonAccountingRequiredError(AddeJythonError):
@@ -337,6 +338,7 @@ class AddeJythonAccountingRequiredError(AddeJythonError):
     """Jython ADDE exception generated when the server requires accounting information."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Accounting required for the server. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidDatasetError(AddeJythonError):
@@ -344,6 +346,7 @@ class AddeJythonInvalidDatasetError(AddeJythonError):
     """Jython ADDE exception generated when the user requests an invalid dataset."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid dataset/descriptor. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidProjectError(AddeJythonError):
@@ -351,6 +354,7 @@ class AddeJythonInvalidProjectError(AddeJythonError):
     """Jython ADDE exception generated when a user provides an incorrect ADDE project number."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid project number. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidPortError(AddeJythonError):
@@ -358,6 +362,7 @@ class AddeJythonInvalidPortError(AddeJythonError):
     """Jython ADDE exception generated when the wrong port is used."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid port. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidUserError(AddeJythonError):
@@ -365,6 +370,7 @@ class AddeJythonInvalidUserError(AddeJythonError):
     """Jython ADDE exception generated when a user provides an incorrect ADDE user."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid user. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonUnknownDataError(AddeJythonError):
@@ -372,6 +378,7 @@ class AddeJythonUnknownDataError(AddeJythonError):
     """Jython ADDE exception generated when the request has no matches."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "No images match given parameters. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonBandRequiredError(AddeJythonError):
@@ -379,6 +386,7 @@ class AddeJythonBandRequiredError(AddeJythonError):
     """Jython ADDE exception generated when requesting from a multi-banded dataset without specifying a band number."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Band required for multi-banded dataset. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonInvalidUnitError(AddeJythonError):
@@ -386,6 +394,7 @@ class AddeJythonInvalidUnitError(AddeJythonError):
     """Jython ADDE exception generated when the user requests a unit not found within the given band number."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Unit not found in band. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonNavigationError(AddeJythonError):
@@ -393,6 +402,7 @@ class AddeJythonNavigationError(AddeJythonError):
     """Jython ADDE exception generated when there is an invalid location given."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid location. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonBandNotPresent(AddeJythonError):
@@ -400,6 +410,7 @@ class AddeJythonBandNotPresent(AddeJythonError):
     """Jython ADDE exception generated when an invalid band number is given."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid band number. (error code: %d)" % (self.addeErrorCode)
         
 # whew!
@@ -408,6 +419,7 @@ class AddeJythonBandNotPresentInSpecifiedUnits(AddeJythonError):
     """Jython ADDE exception generated when invalid band and/or units have been given."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid band and/or units. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonErrorInvalidSize(AddeJythonError):
@@ -415,6 +427,7 @@ class AddeJythonErrorInvalidSize(AddeJythonError):
     """Jython ADDE exception generated when a user requests an invalid image size."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Requested portion of image does not exist. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonBadLocationError(AddeJythonError):
@@ -422,6 +435,7 @@ class AddeJythonBadLocationError(AddeJythonError):
     """Jython ADDE exception generated when a user requests a location that does not match any images."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Requested location not in area. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonServerNotFound(AddeJythonError):
@@ -429,6 +443,7 @@ class AddeJythonServerNotFound(AddeJythonError):
     """Jython ADDE exception generated when McIDAS-V cannot contact the given server."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid server. (error code: %d)" % (self.addeErrorCode)
         
 class AddeJythonDayRequiredError(AddeJythonError):
@@ -436,6 +451,7 @@ class AddeJythonDayRequiredError(AddeJythonError):
     """Jython ADDE exception generated when a user requests data from an 'archive' dataset without providing a date."""
     
     def __str__(self):
+        """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Day required for archived datasets. (error code: %d)" % (self.addeErrorCode)
         
 # class AddeJythonUnknownFormatError(AddeJythonError): pass
