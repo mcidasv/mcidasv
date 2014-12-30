@@ -2280,6 +2280,8 @@ public class AddeImageDataSelection {
             JToolBar navToolBar = display.getNavigatedPanel().getNavToolBar();
             navToolBar.add(activeViewButton, 0);
             navToolBar.add(resetButton);
+            navToolBar.add(Box.createHorizontalGlue());
+            navToolBar.add(new JCheckBox("Adaptive Resolution"));
 
             MasterPanel = new JPanel(new java.awt.BorderLayout());
             MasterPanel.add(labelsPanel, "North");
