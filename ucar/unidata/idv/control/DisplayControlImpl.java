@@ -11693,6 +11693,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     private JRadioButtonMenuItem adaptiveRezOnItem;
     private JRadioButtonMenuItem fullRezItem;
 
+    protected static boolean dataSelectionAdaptiveResolution(DataSelection s) {
+        String p = s.getProperty(DataSelection.PROP_REGIONOPTION, DataSelection.PROP_USEDEFAULTAREA);
+        return DataSelection.PROP_USEDISPLAYAREA.equals(p);
+    }
+
     protected JButton makeMiscButton() {
         final JPopupMenu popup = new JPopupMenu();
         ButtonGroup group = new ButtonGroup();
@@ -11703,6 +11708,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         group.add(adaptiveRezOffItem);
         group.add(adaptiveRezOnItem);
         group.add(fullRezItem);
+
+        boolean fromSelection = dataSelectionAdaptiveResolution(dataSelection);
+
+        // TODO(jon): need to determine precedent: if the display has adaptrez off and the selection has it enabled...who wins?
+//        logger.trace("matchDisplayRegion={} shouldDoProgRez={} REGION_OPT='{}'", matchDisplayRegion, getShoulDoProgressiveResolution(), dataSelection.getProperty(DataSelection.PROP_REGIONOPTION, DataSelection.PROP_USEDEFAULTAREA));
 
         if (matchDisplayRegion || getShoulDoProgressiveResolution()) {
             logger.trace("AR on");
