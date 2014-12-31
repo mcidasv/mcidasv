@@ -38,41 +38,41 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <p></p>
 <div class="pagesubtitle">Startup Options</div>
 <ul class="propertylist">
-<li class="propertylistitem"><a name="heapsize" id="heapsize"></a><b>Memory -</b> Sets the Java heap size, which is the amount of
+<li class="propertylistitem"><a name="heapsize" id="heapsize"></a><strong>Memory -</strong> Sets the Java heap size, which is the amount of
   memory allocated by McIDAS-V at startup. Use the first bubble to choose a percentage
   of available memory, or use the second bubble to enter a specific value. The
   new amount of memory will be saved and used in subsequent sessions. For more
   information, see the <a href="../../Starting.html#memory">Setting Memory Usage</a> section in Downloading
   and Running McIDAS-V.</li>
-<li class="propertylistitem"><a name="defaultbundle" id="defaultbundle"></a><b>Specify default bundle - </b> Loads the selected bundle at startup
+<li class="propertylistitem"><a name="defaultbundle" id="defaultbundle"></a><strong>Specify default bundle - </strong> Loads the selected bundle at startup
   by setting the &quot;-bundle&quot; command line flag.
   Select a default bundle in the tree below the checkbox, which shows the bundles
   in the <strong>Bundles-&gt;Favorite
   Bundles</strong> menu. Note that when a favorite bundle is created, McIDAS-V will have to be restarted before the bundle will list in the <strong>Advanced</strong> tab.</li>
-<li class="propertylistitem"><b>Load default layout -</b> Restores the previously-saved window
+<li class="propertylistitem"><strong>Load default layout -</strong> Restores the previously-saved window
   configuration upon startup. Uncheck to use the initial window layout of one
   Main Display window with one panel. For more information, see the Menu Bar's <span class="faq-question-link"><a href="../../ui/Menus.html#defaultlayout">Default Layout</a></span> section.</li>
-<li class="propertylistitem"><b>Enable 3D controls - </b>Controls the value of the "idv.3d" IDV
+<li class="propertylistitem"><strong>Enable 3D controls - </strong>Controls the value of the "idv.3d" IDV
   property and gives the ability to view and navigate in 3D space with
   the 3D controls in the Main Display window's <a href="../../ui/Navigation.html#viewpoint">Viewpoint
   Toolbar</a>. Uncheck to override the default 3D behavior of McIDAS-V and to
   switch to a 2D view with the Viewpoint Toolbar removed.</li>
-<li class="propertylistitem"><b><a name="jogl" id="jogl"></a>Enable JOGL </b>(Mac OS X only)<b> -</b>Sets
+<li class="propertylistitem"><strong><a name="jogl" id="jogl"></a>Enable JOGL </strong>(Mac OS X only)<strong> -</strong>Sets
   the "j3d.rend" property to "jogl", which sets Java3D to use JOGL (Java OpenGL)
   as the graphics rendering backend. Disabling will omit the &quot;j3d.rend&quot; property,
   causing Java3D to use its default OpenGL backend. </li>
-<li class="propertylistitem"><b><a name="geobyref" id="geobyref"></a>Enable access to geometry by reference - </b>Sets the "visad.java3d.geometryByRef" property
+<li class="propertylistitem"><strong><a name="geobyref" id="geobyref"></a>Enable access to geometry by reference - </strong>Sets the "visad.java3d.geometryByRef" property
   to true and enables the visualization
   of larger datasets because of the more efficient use of memory. Unchecking this
   option can help to remove random/extraneous map lines that sometimes appear
   in displays of image data. This is a problem that may occur more frequently
   on systems with ATI graphics cards.</li>
-<li class="propertylistitem"><b>Enable access to image data by reference - </b>Sets the "visad.java3d.imageByRef" property
+<li class="propertylistitem"><strong>Enable access to image data by reference - </strong>Sets the "visad.java3d.imageByRef" property
   to true and improves the rendering of satellite imagery in the satellite's
   native projection, removing the jagged edges at the limb and/or
   gaps at the dateline that sometimes appear in displays of image data. It is
   recommended that this option be checked.</li>
-<li class="propertylistitem"><b>Enable Non-Power of Two (NPOT) textures - </b>Sets the "visad.java3d.textureNpot" property
+<li class="propertylistitem"><strong>Enable Non-Power of Two (NPOT) textures - </strong>Sets the "visad.java3d.textureNpot" property
 to true and enables the visualization
 of larger datasets because of the more efficient use of memory. Unchecking this
   option may be necessary on machines with graphics cards that do not support
@@ -87,12 +87,13 @@ of larger datasets because of the more efficient use of memory. Unchecking this
 <li class="propertylistitem"><strong>ERROR -</strong> Outputs error messages.</li>
 <li class="propertylistitem"><strong>OFF -</strong> Outputs no information.</li>
 </ul>
-<li class="propertylistitem"><b>Enable concurrent mark-sweep garbage collector - </b>Passes "-XX:+UseConcMarkSweepGC
+<li class="propertylistitem"><strong>Enable concurrent mark-sweep garbage collector - </strong>Passes "-XX:+UseConcMarkSweepGC
   -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=128m" to the McIDAS-V JVM (Java
   Virtual Machine) and uses shorter
   garbage collection pauses by performing most garbage collection activity while
   the McIDAS-V threads are running. Unchecking this option uses the JVM defaults,
-  which vary by Operating System. </li>
+  which vary by Operating System.</li>
+  <li class="propertylistitem"><strong>Java Flags -</strong> Allows for manually entered Java flags to be used at the startup of McIDAS-V.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

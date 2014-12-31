@@ -96,7 +96,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/LayerCon
   <a name="bringtofront" id="bringtofront"></a>
   <li class="propertylistitem"><strong>Bring To Front</strong> - Selects which display is on top if one display is showing at the same level in 3D as another (e.g., satellite and radar images in the same display).</li>
   <li class="propertylistitem"><strong>Show View Window</strong> - Brings the Main Display window to the front.</li>
+         <li class="propertylistitem"><strong>Times -</strong></li>
+      <ul class="propertylist">
   <li class="propertylistitem"><strong>Use Times in Animation</strong> - Loops the data when the layers have a time associated with them by adding the <a href="../ui/Animation.html">Time Animation Widget</a> to the Main Display window.</li>
+  <li class="propertylistitem"><strong>Drive Times with this Display -</strong> Sets the layer as the time driver.  For more information, see <a href="../misc/TimeMatching.html">Time Matching</a>.</li>
+  <li class="propertylistitem"><strong>Uses Time Driver Times -</strong> Sets the times of the layer to match the time driver times, assuming a time driver has been set. Note that the layer must be reloaded via <strong>File -> Reload Data</strong> after using this option. For more information, see <a href="../misc/TimeMatching.html">Time Matching</a>.</li>
+      </ul>
   <li class="propertylistitem"><strong>Display List</strong> - Displays the parameter information at the bottom of the Main Display window and allows for  setting the color of the text.</li>
   <li class="propertylistitem"><strong>Center on Display</strong> - Re-centers the display in the Main Display window without changing the zoom level if the display has been translated from its original position.</li>
   <li class="propertylistitem"><strong>Undock from Data Explorer -</strong> Unattaches the<strong> Layer Controls</strong> tab from the Data Explorer by making it its own window. This can be brought back to the Data Explorer by selecting <strong>View-&gt;Dock</strong>.</li>

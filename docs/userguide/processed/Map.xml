@@ -258,6 +258,7 @@
         <mapID target="idv.misc.siteconfiguration.resources"         url="misc/SiteConfiguration.html#resources" />
         <mapID target="idv.misc.sourcebuild"                         url="misc/SourceBuild.html" />
 		<mapID target="idv.misc.supportrequestform"        	         url="misc/SupportRequestForm.html" />
+		<mapID target="idv.misc.timematching"   	     	         url="misc/TimeMatching.html" />
         <mapID target="idv.misc.xgrf"                                url="misc/Xgrf.html" />
         <mapID target="idv.page_appendix"                            url="page_appendix.html" />
         <mapID target="idv.page_dataanalysis"                        url="page_dataanalysis.html" />
