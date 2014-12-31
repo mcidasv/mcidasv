@@ -1900,6 +1900,9 @@ public class AddeImageDataSelection {
                 }
             }
 
+            if (regionPanel.getAdaptiveResolution()) {
+                dataSelection.putProperty(DataSelection.PROP_REGIONOPTION, DataSelection.PROP_USEDISPLAYAREA);
+            }
             //    if (geoSelection == null) {
             String regionOption =
                 dataSelection.getProperty(DataSelection.PROP_REGIONOPTION,
@@ -2222,6 +2225,10 @@ public class AddeImageDataSelection {
         /** _more_ */
         AddeImageDataSelection addeImageDataSelection;
 
+        private JCheckBox enableAdaptiveRezBox;
+
+        private String previousRegionChoice = regionOption;
+
         /**
          * Construct a AddeImagePreviewPanel
          *
@@ -2277,11 +2284,25 @@ public class AddeImageDataSelection {
             labelsPanel.setLayout(new BoxLayout(labelsPanel, 2));
 //            labelsPanel.add(getRegionsList());
 
+            enableAdaptiveRezBox = new JCheckBox("Adaptive Resolution", getIsProgressiveResolution());
+            enableAdaptiveRezBox.addActionListener(new ActionListener() {
+                @Override public void actionPerformed(ActionEvent e) {
+                    boolean status = enableAdaptiveRezBox.isSelected();
+                    if (status) {
+                        previousRegionChoice = getRegionOption();
+                        setRegionOptions(USE_DISPLAYREGION);
+                    } else {
+                        setRegionOptions(previousRegionChoice);
+                    }
+//                    logger.trace("status='{}'", getRegionOptions());
+                }
+            });
+
             JToolBar navToolBar = display.getNavigatedPanel().getNavToolBar();
             navToolBar.add(activeViewButton, 0);
             navToolBar.add(resetButton);
             navToolBar.add(Box.createHorizontalGlue());
-            navToolBar.add(new JCheckBox("Adaptive Resolution"));
+            navToolBar.add(enableAdaptiveRezBox);
 
             MasterPanel = new JPanel(new java.awt.BorderLayout());
             MasterPanel.add(labelsPanel, "North");
@@ -2299,7 +2320,15 @@ public class AddeImageDataSelection {
                     update();
                 }
             });
+//            logger.trace("default region box value='{}'", getRegionOptions());
+        }
 
+        public boolean getAdaptiveResolution() {
+            return enableAdaptiveRezBox.isSelected();
+        }
+
+        public void setAdaptiveResolution(boolean value) {
+            enableAdaptiveRezBox.setSelected(value);
         }
 
         /**
