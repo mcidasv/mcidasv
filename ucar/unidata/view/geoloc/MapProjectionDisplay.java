@@ -992,9 +992,13 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         scale.setLabelTable(labelTable);
         scale.setTickBase(maxmin[0]);
         
-        int step = 0;
         int majorCount = 0;
-        for (int i = (int) bottom; i < top; i += majorIncrement / minorIncrement) {
+        // scale mapping for previous pass through loop
+        double prevMap = 0;
+        // map increment from previous major to next minor tick
+        double tmpIncr = 0.0d;
+
+        for (int i = (int) bottom; i < top; i += majorIncrement) {
 
         	// Values that are not in this range are not visible.
         	if (i < bottom) {
@@ -1003,22 +1007,36 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
 
         	double rangeMap = maxmin[0] + (maxmin[1] - maxmin[0]) / (top - bottom) * (i - bottom);
 
-            if (step == 0) {
-        		majorTicks.add(rangeMap);
-        		labelTable.put(rangeMap, labelFormat.format(bottom + (majorCount * majorIncrement)));
-        		majorCount++;
-        	} else {
-        		minorTicks.add(rangeMap);
-        	}
-            
-            step++;
-            if (step == minorIncrement) step = 0;
+    		majorTicks.add(rangeMap);
+    		labelTable.put(rangeMap, labelFormat.format(bottom + (majorCount * majorIncrement)));
+
+    		// do minor increment labeling, if needed
+    		if (minorIncrement > 1) {
+    			// only do these after one major tick has been labeled
+    			if (majorCount > 0) {
+    				tmpIncr = (Math.abs(rangeMap - prevMap)) / minorIncrement;
+    				for (int j = 1; j < minorIncrement; j++) {
+    					minorTicks.add(prevMap + (tmpIncr * j));
+    				}
+    			}
+    		}
+    		majorCount++;
+    		prevMap = rangeMap;
+
         }
         
         // see if the top should be labeled too
         if ((top % majorIncrement) == 0) {
     		majorTicks.add(maxmin[1]);
     		labelTable.put(maxmin[1], labelFormat.format(top));
+    		// do minor increment labeling, if needed
+    		if (minorIncrement > 1) {
+    			if (majorCount > 0) {
+    				for (int j = 1; j < minorIncrement; j++) {
+    					minorTicks.add(prevMap + (tmpIncr * j));
+    				}
+    			}
+    		}
         }
         
         finalizeAxis(scale, getVertScaleInfo().getLabel(), labelTable,
