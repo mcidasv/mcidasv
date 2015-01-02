@@ -424,24 +424,49 @@ class TransparentColor(ImageFormatting):
     """The TransparentColor formatter marks a color in the display as transparent."""
     
     # def __init__(self, color, rgbTuple):
-    def __init__(self, color=None):
+    def __init__(self, color):
         """Create a new TransparentColor ISL formatting object.
         
-        Optional Arg:
-            color: Color to set to transparent.
-        """
-        if color:
-            self.color = 'color=%s' % (color)
-        else:
-            self.color = ''
-        # self.red = red
-        # self.green = green
-        # self.blue = blue
+        Arbitrarily many TransparentColor objects can be passed 'captureImage'.
+        This is especially useful in situations where multiple RGB color values
+        must be made transparent.
         
+        Required Arg:
+            color: Color to set to transparent. Value may either be a single
+                   RGB (values from 0 to 255) or named colors. Multiple named
+                   color must be separated by commas.
+        """
+        if not color:
+            self.colorList = []
+        else:
+            # coming in as string:
+            # 255,0,0        : a single color specified as rgb!
+            # Red            : just the color red
+            # Red,Green,Blue : needs to be three sep colors!
+            # Red, Green,Blue: needs to be three sep colors!
+            # ,              : invalid!
+            # Red,, Blue     : also invalid!
+            index = color.find(',')
+            
+            # there was a least a single comma
+            if index >= 0:
+                vals = [x.strip() for x in color.split(',') if len(x.strip()) != 0]
+                
+                if len(vals) == 3 and all(int(x) >= 0 or x <= 255 for x in vals):
+                    self.colorList = [ color ]
+                elif not any(x.lstrip('-+').isdigit() for x in vals):
+                    self.colorList = vals
+                else:
+                    raise ValueError("Input color must be either a single RGB color (e.g. 'color=\"0,255,0\"') or color names (multiple colors may be specified, but must be delimited by commas). Color provided was: %s" % (color))
+            else:
+                self.colorList = [ color ]
+                
     def toIsl(self):
         """Return the ISL string representing this TransparentColor instance."""
-        islString = "transparent %s" % (self.color)
-        return islString.strip() + '; '
+        islString = ''
+        for color in self.colorList:
+            islString += "transparent color=%s ;" % (color)
+        return islString
         
 class TransparentBackground(ImageFormatting):
     
