@@ -227,22 +227,22 @@ class Clip(ImageFormatting):
         else:
             self.west = ''
             
-        if top:
+        if top or top == 0:
             self.top = 'top=%s' % (top)
         else:
             self.top = ''
             
-        if bottom:
+        if bottom or bottom == 0:
             self.bottom = 'bottom=%s' % (bottom)
         else:
             self.bottom = ''
             
-        if left:
+        if left or left == 0:
             self.left = 'left=%s' % (left)
         else:
             self.left = ''
             
-        if right:
+        if right or right == 0:
             self.right = 'right=%s' % (right)
         else:
             self.right = ''
