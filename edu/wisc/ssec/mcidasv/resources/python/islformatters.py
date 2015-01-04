@@ -399,7 +399,8 @@ class Colorbar(ImageFormatting):
         else:
             self.showUnit = ''
             
-        if transparency:
+        if transparency or transparency == False:
+            # need to make False check explicit
             self.transparency = 'transparency=%s' % (transparency)
         else:
             self.transparency = ''
