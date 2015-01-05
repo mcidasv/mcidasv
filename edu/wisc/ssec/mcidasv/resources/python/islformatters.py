@@ -252,37 +252,37 @@ class Clip(ImageFormatting):
         else:
             self.display = ''
             
-        if space:
+        if space or space == 0:
             self.space = 'space=%s' % (space)
         else:
             self.space = ''
             
-        if hspace:
+        if hspace or hspace == 0:
             self.hspace = 'hspace=%s' % (hspace)
         else:
             self.hspace = ''
             
-        if vspace:
+        if vspace or vspace == 0:
             self.vspace = 'vspace=%s' % (vspace)
         else:
             self.vspace = ''
             
-        if spaceLeft:
+        if spaceLeft or spaceLeft == 0:
             self.spaceLeft = 'space_left=%s' % (spaceLeft)
         else:
             self.spaceLeft = ''
             
-        if spaceRight:
+        if spaceRight or spaceRight == 0:
             self.spaceRight = 'space_right=%s' % (spaceRight)
         else:
             self.spaceRight = ''
             
-        if spaceTop:
+        if spaceTop or spaceTop == 0:
             self.spaceTop = 'space_top=%s' % (spaceTop)
         else:
             self.spaceTop = ''
             
-        if spaceBottom:
+        if spaceBottom or spaceBottom == 0:
             self.spaceBottom = 'space_bottom=%s' % (spaceBottom)
         else:
             self.spaceBottom = ''
