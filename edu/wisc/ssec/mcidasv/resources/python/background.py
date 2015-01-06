@@ -3002,7 +3002,7 @@ def loadGrid(filename=None, field=None, level='all',
     if field:
         geogrid = gridDataset.findGridByName(field)
         if not geogrid:
-            raise ValueError('Failed to create geogrid.  Make sure the field you specified exists in the file (use loadGridListFieldsInFile): ' + field)
+            raise ValueError('Failed to create geogrid.  Make sure the field you specified exists in the file (use listGridFieldsInFile): ' + field)
     else:
         raise ValueError('no field name provided')
     
@@ -3127,7 +3127,11 @@ def makeFlatFieldSequence(sequence):
         fi.setSample(i, ff)
     return fi
 
-def loadGridListFieldsInFile(filename):
+def loadGridListFieldsInFile(*args, **kwargs):
+    """Placeholder to redirect user to renamed function."""
+    raise NotImplementedError("The name of loadGridListFieldsInFile has changed to listGridFieldsInFile!")
+
+def listGridFieldsInFile(filename):
     """Print and return a list of all fields in a NetCDF/HDF/grib2 file."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
@@ -3137,7 +3141,11 @@ def loadGridListFieldsInFile(filename):
     gridDataset.close()
     return names
 
-def loadGridListLevelsInField(filename, field):
+def loadGridListLevelsInField(*args, **kwargs):
+    """Placeholder to redirect user to renamed function."""
+    raise NotImplementedError("The name of loadGridListLevelsInField has changed to listGridLevelsInField!")
+
+def listGridLevelsInField(filename, field):
     """Print and return a list of all levels in a NetCDF/HDF/grib2 field."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
@@ -3150,7 +3158,11 @@ def loadGridListLevelsInField(filename, field):
     gridDataset.close()
     return levels
 
-def loadGridListTimesInField(filename, field):
+def loadGridListTimesInField(*args, **kwargs):
+    """Placeholder to redirect user to renamed function."""
+    raise NotImplementedError("The name of loadGridListTimesInField has changed to listGridTimesInField!")
+
+def listGridTimesInField(filename, field):
     """Print and return a list of all times in a NetCDF/HDF/grib2 field."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
