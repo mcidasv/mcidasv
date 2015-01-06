@@ -3186,8 +3186,14 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
     field:  the name of the field you want to display, as shown in the Field 
             Selector, e.g., 'VIIRS-M15-SDR_ALL/BrightnessTemperature'
  
-    stride: Optional; set the stride.  Default is full-res (1).  Larger
-            than 1 will give you a lower resolution
+    xStride: Optional; set the stride in the cross-track direction.  Default
+             is full-res (1).  Must be >= 1.
+
+    yStride: Optional; set the stride in the along-track direction.  Default
+             is full-res (1).  Must be >= 1.
+
+    stride: Optional; set both xStride and yStride. Mainly keeping this for
+            backward compatibility.
     """
     from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
