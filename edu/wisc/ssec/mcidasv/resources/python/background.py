@@ -3176,7 +3176,7 @@ def getVIIRSImage(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of getVIIRSImage has changed to loadVIIRSImage.  You'll need to update your scripts.  Sorry for the hassle!")
 
-def loadVIIRSImage(file_list, field, stride=1, **kwargs):
+def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
     """Experimental function for loading VIIRS imagery.
 
     file_list: list of NPP *data* files.  You need to have geolocation files
@@ -3190,14 +3190,21 @@ def loadVIIRSImage(file_list, field, stride=1, **kwargs):
             than 1 will give you a lower resolution
     """
     from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
+    from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
 
     # try some quick input validation before doing any real work
     if not file_list:
         raise ValueError('File list must contain at least one file.')
     
-    from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
-    if stride < 1:
-        raise ValueError("stride must be greater than zero")
+    if xStride < 1 or yStride < 1:
+        raise ValueError("xStride and yStride must be greater than zero")
+
+    # if stride is specified, let it set both xStride and yStride.
+    if stride:
+        if stride < 1:
+            raise ValueError("stride must be greater than zero")
+        xStride = stride
+        yStride = stride
 
     # First, need to create the data source:
     # TODO: how to avoid re-creating identical data sources?
@@ -3232,12 +3239,17 @@ def loadVIIRSImage(file_list, field, stride=1, **kwargs):
         if isinstance(thing, MultiDimensionSubset):
             multi_dimension_subset = thing
             break
-    multi_dimension_subset.coords[0][2] = stride
-    multi_dimension_subset.coords[1][2] = stride
+    #print 'xStride: ', xStride, 'yStride: ', yStride
+    multi_dimension_subset.coords[0][2] = xStride
+    multi_dimension_subset.coords[1][2] = yStride
 
-    # get the flatfield; we *want* to pass in a null dataSelection; category and
-    # request properties don't really seem to matter so we pass in null as well.
-    ff = data_source.getData(data_choice, None, None, None).getSample(0)
+    fi = data_source.getData(data_choice, None, None, None)
+    if not fi:
+        # For certain (somewhat unpredictable) values of stride, SwathNavigation.createInterpSet
+        # fails.  unfortunately the data source doesn't propagate the InvalidRangeException
+        # so we have just check for a null flatfield here.
+        raise ValueError("Failed to get data. Please try a different stride value; certain values fail due to a possible bug in the subsetting code.")
+    ff = fi.getSample(0)
 
     # make a _MappedFlatField.
     mapped_ff = _MappedVIIRSFlatField(ff, field)
