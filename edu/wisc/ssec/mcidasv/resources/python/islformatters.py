@@ -1,10 +1,5 @@
 """Classes for 'Pythonic' usage of ISL formatting capabilities."""
 
-def _isValidInput(value):
-    # some ISL tags want (some) attributes to be *specified* as false or zero, 
-    # so simply checking for "if value" doesn't suffice.
-    return value or value == 0 or value == False
-    
 class ImageFormatting(object):
     
     """Base class for ISL formatting objects."""
@@ -30,42 +25,42 @@ class Matte(ImageFormatting):
             hspace: Pixel spacing.
             vspace: Pixel spacing.
         """
-        if background:
+        if background is not None:
             self.background = 'background=%s' % (background)
         else:
             self.background = ''
             
-        if top:
+        if top is not None:
             self.top = 'top=%s' % (top)
         else:
             self.top = ''
             
-        if bottom:
+        if bottom is not None:
             self.bottom = 'bottom=%s' % (bottom)
         else:
             self.bottom = ''
             
-        if left:
+        if left is not None:
             self.left = 'left=%s' % (left)
         else:
             self.left = ''
             
-        if right:
+        if right is not None:
             self.right = 'right=%s' % (right)
         else:
             self.right = ''
             
-        if space:
+        if space is not None:
             self.space = 'space=%s' % (space)
         else:
             self.space = ''
             
-        if hspace:
+        if hspace is not None:
             self.hspace = 'hspace=%s' % (hspace)
         else:
             self.hspace = ''
             
-        if vspace:
+        if vspace is not None:
             self.vspace = 'vspace=%s' % (vspace)
         else:
             self.vspace = ''
@@ -89,27 +84,27 @@ class ImageOverlay(ImageFormatting):
             transparency: Transparency percentage. Values should be 0 - 1.0.
             scale: Not currently functional.
         """
-        if image:
+        if image is not None:
             self.image = 'image=%s' % (image)
         else:
             self.image = ''
             
-        if place:
+        if place is not None:
             self.place = 'place=%s' % (place)
         else:
             self.place = ''
             
-        if anchor:
+        if anchor is not None:
             self.anchor = 'anchor=%s' % (anchor)
         else:
             self.anchor = ''
             
-        if transparency:
+        if transparency is not None:
             self.transparency = 'transparency=%s' % (transparency)
         else:
             self.transparency = ''
             
-        if scale:
+        if scale is not None:
             self.scale = 'scale=%s' % (scale)
         else:
             self.scale = ''
@@ -137,47 +132,47 @@ class TextOverlay(ImageFormatting):
             transparency: Transparency percentage. Values should be 0-1.0.
             scale: Not currently functional.
         """
-        if text:
+        if text is not None:
             self.text = 'text=%s' % (text)
         else:
             self.text = ''
             
-        if place:
+        if place is not None:
             self.place = 'place=%s' % (place)
         else:
             self.place = ''
             
-        if anchor:
+        if anchor is not None:
             self.anchor = 'anchor=%s' % (anchor)
         else:
             self.anchor = ''
             
-        if fontSize:
+        if fontSize is not None:
             self.fontSize = 'fontsize=%s' % (fontSize)
         else:
             self.fontSize = ''
             
-        if fontFace:
+        if fontFace is not None:
             self.fontFace = 'fontface=%s' % (fontFace)
         else:
             self.fontFace = ''
             
-        if color:
+        if color is not None:
             self.color = 'color=%s' % (color)
         else:
             self.color = ''
             
-        if background:
+        if background is not None:
             self.background = 'background=%s' % (background)
         else:
             self.background = ''
             
-        if transparency:
+        if transparency is not None:
             self.transparency = 'transparency=%s' % (transparency)
         else:
             self.transparency = ''
             
-        if scale:
+        if scale is not None:
             self.scale = 'scale=%s' % (scale)
         else:
             self.scale = ''
@@ -212,82 +207,82 @@ class Clip(ImageFormatting):
             spaceTop: Padding.
             spaceBottom: Padding.
         """
-        if north:
+        if north is not None:
             self.north = 'north=%s' % (north)
         else:
             self.north = ''
             
-        if south:
+        if south is not None:
             self.south = 'south=%s' % (south)
         else:
             self.south = ''
             
-        if east:
+        if east is not None:
             self.east = 'east=%s' % (east)
         else:
             self.east = ''
             
-        if west:
+        if west is not None:
             self.west = 'west=%s' % (west)
         else:
             self.west = ''
             
-        if _isValidInput(top):
+        if top is not None:
             self.top = 'top=%s' % (top)
         else:
             self.top = ''
             
-        if _isValidInput(bottom):
+        if bottom is not None:
             self.bottom = 'bottom=%s' % (bottom)
         else:
             self.bottom = ''
             
-        if _isValidInput(left):
+        if left is not None:
             self.left = 'left=%s' % (left)
         else:
             self.left = ''
             
-        if _isValidInput(right):
+        if right is not None:
             self.right = 'right=%s' % (right)
         else:
             self.right = ''
             
-        if display:
+        if display is not None:
             self.display = 'display=%s' % (display)
         else:
             self.display = ''
             
-        if _isValidInput(space):
+        if space is not None:
             self.space = 'space=%s' % (space)
         else:
             self.space = ''
             
-        if _isValidInput(hspace):
+        if hspace is not None:
             self.hspace = 'hspace=%s' % (hspace)
         else:
             self.hspace = ''
             
-        if _isValidInput(vspace):
+        if vspace is not None:
             self.vspace = 'vspace=%s' % (vspace)
         else:
             self.vspace = ''
             
-        if _isValidInput(spaceLeft):
+        if spaceLeft is not None:
             self.spaceLeft = 'space_left=%s' % (spaceLeft)
         else:
             self.spaceLeft = ''
             
-        if _isValidInput(spaceRight):
+        if spaceRight is not None:
             self.spaceRight = 'space_right=%s' % (spaceRight)
         else:
             self.spaceRight = ''
             
-        if _isValidInput(spaceTop):
+        if spaceTop is not None:
             self.spaceTop = 'space_top=%s' % (spaceTop)
         else:
             self.spaceTop = ''
             
-        if _isValidInput(spaceBottom):
+        if spaceBottom is not None:
             self.spaceBottom = 'space_bottom=%s' % (spaceBottom)
         else:
             self.spaceBottom = ''
@@ -334,87 +329,87 @@ class Colorbar(ImageFormatting):
             color: Label color.
             lineColor: Line color.
         """
-        if display:
+        if display is not None:
             self.displayObj = display
             display._ensureIslId()
             self.display = 'display=%s' % (display.getJavaInstance().getId())
         else:
             self.display = ''
             
-        if width:
+        if width is not None:
             self.width = 'width=%s' % (width)
         else:
             self.width = ''
             
-        if height:
+        if height is not None:
             self.height = 'height=%s' % (height)
         else:
             self.height = ''
             
-        if orientation:
+        if orientation is not None:
             self.orientation = 'orientation=%s' % (orientation)
         else:
             self.orientation = ''
             
-        if tickMarks:
+        if tickMarks is not None:
             self.tickMarks = 'tickmarks=%s' % (tickMarks)
         else:
             self.tickMarks = ''
             
-        if interval:
+        if interval is not None:
             self.interval = 'interval=%s' % (interval)
         else:
             self.interval = ''
             
-        if values:
+        if values is not None:
             self.values = 'values=%s' % (values)
         else:
             self.values = ''
             
-        if place:
+        if place is not None:
             self.place = 'place=%s' % (place)
         else:
             self.place = ''
             
-        if anchor:
+        if anchor is not None:
             self.anchor = 'anchor=%s' % (anchor)
         else:
             self.anchor = ''
             
-        if showLines:
+        if showLines is not None:
             self.showLines = 'showlines=%s' % (showLines)
         else:
             self.showLines = ''
             
-        if suffix:
+        if suffix is not None:
             self.suffix = 'suffix=%s' % (suffix)
         else:
             self.suffix = ''
             
-        if suffixFrequency:
+        if suffixFrequency is not None:
             self.suffixFrequency = 'suffixfrequency=%s' % (suffixFrequency)
         else:
-            if suffix or showUnit:
+            if suffix is not None or showUnit is not None:
                 self.suffixFrequency = 'suffixfrequency=last'
             else:
                 self.suffixFrequency = ''
             
-        if showUnit:
+        if showUnit is not None:
             self.showUnit = 'showunit=%s' % (showUnit)
         else:
             self.showUnit = ''
             
-        if _isValidInput(transparency):
+        if transparency is not None:
             self.transparency = 'transparency=%s' % (transparency)
         else:
             self.transparency = ''
             
-        if color:
+        if color is not None:
             self.color = 'color=%s' % (color)
         else:
             self.color = ''
             
-        if lineColor:
+        if lineColor is not None:
             self.lineColor = 'linecolor=%s' % (lineColor)
         else:
             self.lineColor = ''
