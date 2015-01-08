@@ -1,5 +1,10 @@
 """Classes for 'Pythonic' usage of ISL formatting capabilities."""
 
+def _isValidInput(value):
+    # some ISL tags want (some) attributes to be *specified* as false or zero, 
+    # so simply checking for "if value" doesn't suffice.
+    return value or value == 0 or value == False
+    
 class ImageFormatting(object):
     
     """Base class for ISL formatting objects."""
@@ -227,22 +232,22 @@ class Clip(ImageFormatting):
         else:
             self.west = ''
             
-        if top or top == 0:
+        if _isValidInput(top):
             self.top = 'top=%s' % (top)
         else:
             self.top = ''
             
-        if bottom or bottom == 0:
+        if _isValidInput(bottom):
             self.bottom = 'bottom=%s' % (bottom)
         else:
             self.bottom = ''
             
-        if left or left == 0:
+        if _isValidInput(left):
             self.left = 'left=%s' % (left)
         else:
             self.left = ''
             
-        if right or right == 0:
+        if _isValidInput(right):
             self.right = 'right=%s' % (right)
         else:
             self.right = ''
@@ -252,37 +257,37 @@ class Clip(ImageFormatting):
         else:
             self.display = ''
             
-        if space or space == 0:
+        if _isValidInput(space):
             self.space = 'space=%s' % (space)
         else:
             self.space = ''
             
-        if hspace or hspace == 0:
+        if _isValidInput(hspace):
             self.hspace = 'hspace=%s' % (hspace)
         else:
             self.hspace = ''
             
-        if vspace or vspace == 0:
+        if _isValidInput(vspace):
             self.vspace = 'vspace=%s' % (vspace)
         else:
             self.vspace = ''
             
-        if spaceLeft or spaceLeft == 0:
+        if _isValidInput(spaceLeft):
             self.spaceLeft = 'space_left=%s' % (spaceLeft)
         else:
             self.spaceLeft = ''
             
-        if spaceRight or spaceRight == 0:
+        if _isValidInput(spaceRight):
             self.spaceRight = 'space_right=%s' % (spaceRight)
         else:
             self.spaceRight = ''
             
-        if spaceTop or spaceTop == 0:
+        if _isValidInput(spaceTop):
             self.spaceTop = 'space_top=%s' % (spaceTop)
         else:
             self.spaceTop = ''
             
-        if spaceBottom or spaceBottom == 0:
+        if _isValidInput(spaceBottom):
             self.spaceBottom = 'space_bottom=%s' % (spaceBottom)
         else:
             self.spaceBottom = ''
@@ -399,8 +404,7 @@ class Colorbar(ImageFormatting):
         else:
             self.showUnit = ''
             
-        if transparency or transparency == False:
-            # need to make False check explicit
+        if _isValidInput(transparency):
             self.transparency = 'transparency=%s' % (transparency)
         else:
             self.transparency = ''
