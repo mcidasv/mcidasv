@@ -52,7 +52,164 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       <td valign="top">quality=</td>
       <td>quality of jpg file (0.0 to 1.0); default=1.0;    not used with other formats</td>
     </tr>
+    <tr>
+      <td valign="top">formatting=</td>
+      <td>various formatting options to apply to the output image</td>
+    </tr>
   </table></div>
+<p>Here is a list of keywords for the <strong>formatting</strong> keyword of captureImage:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Clip -</strong> Clips the output image at a specific latitude/longitude location or at specific spacing into the image. By default, no clipping is done.</li>
+    <ul class="propertylist">
+      <li class="propertylistitem"><strong>north -</strong> Sets the north latitude to clip the image at.</li>
+      <li class="propertylistitem"><strong>south -</strong> Sets the south latitude to clip the image at.</li>
+      <li class="propertylistitem"><strong>east -</strong> Sets the east longitude to clip the image at.</li>
+      <li class="propertylistitem"><strong>west -</strong> Sets the west longitude to clip the image at.</li>
+      <li class="propertylistitem"><strong>space -</strong> Sets a pixel spacing in each direction to clip into the image.<br>Example: <em>space=-50</em><br>
+      Clips 50 pixels into the image in all four directions.</li>
+      <li class="propertylistitem"><strong>hspace -</strong> Sets a pixel spacing in the horizontal to clip into the image.<br>
+        Example: <em>hSpace=50</em><br>
+        Clips 50 pixels into the image in both horizontal directions (left and right).</li>
+      <li class="propertylistitem"><strong>vspace -</strong> Sets a pixel spacing in the vertical to clip into the image.<br>
+        Example: <em>vSpace=20</em><br>
+        Clips 20 pixels into the image in both vertical directions (top and bottom).</li>
+    </ul>
+  <li class="propertylistitem"><strong>Colorbar -</strong> Adds a colorbar to the output image. By default, no colorbar is added to the image.</li>
+    <ul class="propertylist">
+      <li class="propertylistitem"><strong>display -</strong> Sets the display to add the colorbar for. This is the name given to the layer at createLayer.</li>
+      <li class="propertylistitem"><strong>width -</strong> Sets the horizontal width of the colorbar in pixels.</li>
+      <li class="propertylistitem"><strong>height -</strong> Sets the vertical height of the colorbar in pixels.</li>
+      <li class="propertylistitem"><strong>orientation -</strong> Sets the location of the tickmarks and labels with respect to the colorbar. Valid options for this keyword are &quot;top&quot;, &quot;bottom&quot;, &quot;left&quot;, and &quot;right&quot;. Default=&quot;bottom&quot;.</li>
+      <li class="propertylistitem"><strong>tickmarks -</strong> Sets the number of tickmarks and labels to add to the colorbar. By default, no tickmarks or labels are added to the colorbar.</li>
+      <li class="propertylistitem"><strong>interval -</strong> Sets the numerical interval to use between tickmarks and labels on the colorbar. By default, no tickmarks or labels are added to the colorbar.</li>
+      <li class="propertylistitem"><strong>values -</strong> Sets specific numerical values to use for tickmarks and labels on the colorbar. By default, no tickmarks or labels are added to the colorbar.</li>
+      <li class="propertylistitem"><strong>place -</strong> Sets the location the colorbar on the image along with x and y pixel offsets.  Valid options are:<br>
+<table class="noborder">
+    <tr>
+      <td width="150"><strong>UL -</strong> Upper Left</td>
+      <td width="150"><strong>UM -</strong> Upper Middle</td>
+      <td width="150"><strong>UR -</strong> Upper Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>ML -</strong> Middle Left</td>
+      <td width="150"><strong>MM -</strong> Middle Middle</td>
+      <td width="150"><strong>MR -</strong> Middle Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>LL -</strong> Lower Left</td>
+      <td width="150"><strong>LM -</strong> Lower Middle</td>
+      <td width="150"><strong>LR -</strong> Lower Right</td>
+    </tr>
+  </table>
+  Example: <em>place=&quot;LM,0,-30&quot;</em><br>
+  Places the colorbar in the lower middle and raises it 30 pixels from the bottom of the image.<br>
+  Example: <em>place=&quot;ML,50,0&quot;</em><br>
+  Places the colorbar in the middle left and indents it 50 pixels from the left of the image.</li>
+      <li class="propertylistitem"><strong>anchor -</strong> Sets the location on the colorbar to center at the <strong>place</strong>. Valid options are:<br>
+      <table class="noborder">
+    <tr>
+      <td width="150"><strong>UL -</strong> Upper Left</td>
+      <td width="150"><strong>UM -</strong> Upper Middle</td>
+      <td width="150"><strong>UR -</strong> Upper Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>ML -</strong> Middle Left</td>
+      <td width="150"><strong>MM -</strong> Middle Middle</td>
+      <td width="150"><strong>MR -</strong> Middle Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>LL -</strong> Lower Left</td>
+      <td width="150"><strong>LM -</strong> Lower Middle</td>
+      <td width="150"><strong>LR -</strong> Lower Right</td>
+    </tr>
+  </table>
+  Example: <em>anchor="UM"</em><br>
+  Sets the upper middle of the colorbar to be centered at the <strong>place</strong> specified.</li>
+      <li class="propertylistitem"><strong>ShowLines -</strong> Includes lines on the colorbar at the tickmark and label locations. Valid options are &quot;true&quot; and &quot;false&quot;. Default=&quot;false&quot;.</li>
+      <li class="propertylistitem"><strong>showUnit</strong> - Includes a unit with the numerical labels on the colorbar. Valid options are &quot;true&quot; and &quot;false&quot;. Default=&quot;false&quot;.</li>
+      <li class="propertylistitem"><strong>suffix -</strong> Sets a label for the numerical labels on the colorbar. Note that this cannot be used in conjunction with <strong>showUnit</strong>.<br>
+      Example: <em>suffix="H"</em><br>
+      Sets the labels on the colorbar to be "H".</li>
+      <li class="propertylistitem"><strong>suffixFrequency -</strong> Sets which labels on the colorbar will show the unit or suffix. Valid options are &quot;first&quot;, &quot;last&quot;, and &quot;all&quot;. Default=&quot;last&quot;.</li>
+      <li class="propertylistitem"><strong>color -</strong> Sets the colors of the labels and lines. Default=&quot;black&quot;.<br>
+      </li>
+      <li class="propertylistitem"><strong>lineColor -</strong> Sets the color of the lines on the colorbar, assuming<strong> ShowLines</strong> is set to true. Default=<strong>color</strong> or &quot;black&quot; if <strong>color</strong> has not been set.</li>
+    </ul>
+  <li class="propertylistitem"><strong>ImageOverlay -</strong> Adds an image, such as a logo, to the output image.</li>
+    <ul class="propertylist">
+      <li class="propertylistitem"><strong>image -</strong> Specifies the image to add to the output image.</li>
+      <li class="propertylistitem"><strong>place -</strong> Sets the location of the image along with x and y pixel offsets.  Valid options are:<br>
+      <table class="noborder">
+    <tr>
+      <td width="150"><strong>UL -</strong> Upper Left</td>
+      <td width="150"><strong>UM -</strong> Upper Middle</td>
+      <td width="150"><strong>UR -</strong> Upper Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>ML -</strong> Middle Left</td>
+      <td width="150"><strong>MM -</strong> Middle Middle</td>
+      <td width="150"><strong>MR -</strong> Middle Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>LL -</strong> Lower Left</td>
+      <td width="150"><strong>LM -</strong> Lower Middle</td>
+      <td width="150"><strong>LR -</strong> Lower Right</td>
+    </tr>
+  </table>
+  Example: <em>place=&quot;UL,20,20&quot;</em><br>
+  Adds the image to the upper left brought down 20 pixels from the top and brought in 20 pixels from the left.</li>
+      <li class="propertylistitem"><strong>anchor -</strong> Sets the location on the image to center at the <strong>place</strong>. Valid options are:<br>
+      <table class="noborder">
+    <tr>
+      <td width="150"><strong>UL -</strong> Upper Left</td>
+      <td width="150"><strong>UM -</strong> Upper Middle</td>
+      <td width="150"><strong>UR -</strong> Upper Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>ML -</strong> Middle Left</td>
+      <td width="150"><strong>MM -</strong> Middle Middle</td>
+      <td width="150"><strong>MR -</strong> Middle Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>LL -</strong> Lower Left</td>
+      <td width="150"><strong>LM -</strong> Lower Middle</td>
+      <td width="150"><strong>LR -</strong> Lower Right</td>
+    </tr>
+  </table>
+  Example: <em>anchor="UM"</em><br>
+  Sets the upper middle of the image to be centered at the <strong>place</strong> specified.</li>
+      <li class="propertylistitem"><strong>transparency -</strong> Sets the transparency of the image. The valid values range from 0 to 1, with 0 being 100% transparent, and 1 being completely opaque. Default=1.</li>
+      </ul>
+  <li class="propertylistitem"><strong>Matte -</strong> Adds a matte to the output image.  By default, no matte is added to the image.</li>
+    <ul class="propertylist">
+      <li class="propertylistitem"><strong>Background -</strong> Sets the background color of the matte.  Default="white"</li>
+      <li class="propertylistitem"><strong>top -</strong> Sets the size of the matte on the top of the image. Default=0.<br>
+      Example: <em>top=20</em><br>
+      Adds a 20 pixel matte to the top of the image.</li>
+      <li class="propertylistitem"><strong>bottom -</strong> Sets the size of the matte on the bottom of the image.  Default=0.<br>
+      Example: <em>bottom=20</em><br>
+      Adds a 20 pixel matte to the bottom of the image.</li>
+      <li class="propertylistitem"><strong>left -</strong> Sets the size of the matte on the left of the image.  Default=0.<br>
+      Example: <em>left=50</em><br>
+      Adds a 50 pixel matte to the left of the image.</li>
+      <li class="propertylistitem"><strong>right -</strong> Sets the size of the matte on the right of the image. Default=0.<br>
+      Example: <em>right=50</em><br>
+      Adds a 50 pixel matte to the right of the image.</li>
+      <li class="propertylistitem"><strong>space -</strong> Sets the size of the matte on all sides of the image.  Default=0.<br>
+      Example: <em>space=25</em><br>
+      Adds a 25 pixel matte to all sides of the image.</li>
+      <li class="propertylistitem"><strong>hspace -</strong> Sets the size of the matte on the left and right sides of the image.  Default=0.<br>
+      Example: <em>hspace=10</em><br>
+      Adds a 10 pixel matte to the left and right sides of the image.</li>
+      <li class="propertylistitem"><strong>vspace -</strong> Sets the size of the matte on the top and bottom of the image.<br>
+      Example: <em>vspace=20</em><br>
+      Adds a 20 pixel matte to the top and bottom of the image.</li>
+    </ul>
+  <li class="propertylistitem"><strong>Resize -</strong> Resizes the output image.</li>
+  <li class="propertylistitem"><strong>TextOverlay -</strong> Adds text to the output image.</li>
+  <li class="propertylistitem"><strong>TransparentBackground -</strong> Sets the background of the image to be transparent in the output image.</li>
+  <li class="propertylistitem"><strong>TransparentColor -</strong> Sets individual color or colors to be transparent in the output image.</li>
+</ul>
 <div class="OneTabIndent">Remarks:</div>
 <div class="TwoTabIndent">If captureImage is used to save a panel that was created
   with openBundle, the sizes default to size of the display window when the bundle
