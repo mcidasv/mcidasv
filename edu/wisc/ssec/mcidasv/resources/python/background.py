@@ -2941,7 +2941,7 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
 
 
 def loadGrid(filename=None, field=None, level='all',
-        time=None, xStride=1, yStride=1, 
+        time=None, stride=None, xStride=1, yStride=1, 
         xRange=None, yRange=None, latLonBounds=None, **kwargs): 
     """Load gridded fields; analagous to the "Gridded Data" chooser.
     
@@ -2957,6 +2957,8 @@ def loadGrid(filename=None, field=None, level='all',
                          default is zero.
         xStride (optional): integer stride value for reduced resolution loading.
         yStride (optional): integer stride value for reduced resolution loading.
+        stride (optional): set both xStride and yStride. if specified, xStride and
+                           yStride have no effect.
         xRange (optional): integer for subsetting by grid indices.
         yRange (optional): integer for subsetting by grid indices.
         latLonBounds (optional): specify a rectangle for subsetting the part of the grid
@@ -2981,6 +2983,13 @@ def loadGrid(filename=None, field=None, level='all',
 
     if (xStride < 1) or (yStride < 1):
         raise ValueError("xStride and yStride must be 1 or greater")
+
+    # if stride is specified, let it set both xStride and yStride.
+    if stride:
+        if stride < 1:
+            raise ValueError("stride must be greater than zero")
+        xStride = stride
+        yStride = stride
 
     dataType = 'Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)'
 
@@ -3191,8 +3200,8 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
     yStride: Optional; set the stride in the along-track direction.  Default
              is full-res (1).  Must be >= 1.
 
-    stride: Optional; set both xStride and yStride. Mainly keeping this for
-            backward compatibility.
+    stride: Optional; set both xStride and yStride. If specified, xStride and
+            yStride have no effect.
     """
     from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
