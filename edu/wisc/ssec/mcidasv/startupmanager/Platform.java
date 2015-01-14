@@ -28,6 +28,7 @@
 package edu.wisc.ssec.mcidasv.startupmanager;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -126,18 +127,19 @@ public enum Platform {
 
         // TODO(jon): or would tmp.isFile() suffice?
         if (tmp.exists() && !tmp.isDirectory()) {
-            throw new IllegalArgumentException("'"+path+"' is not a directory.");
+            throw new IllegalArgumentException('\'' +path+"' is not a directory.");
         }
 
-        boolean canRead = tmp.canRead();
-        boolean canWrite = tmp.canWrite();
+        Path p = tmp.toPath();
+        boolean canRead = Files.isReadable(p);
+        boolean canWrite = Files.isWritable(p);
 
         if (!canRead && !canWrite) {
-            throw new IllegalArgumentException("'"+path+"' must be both readable and writable by McIDAS-V.");
+            throw new IllegalArgumentException('\''+path+"' must be both readable and writable by McIDAS-V.");
         } else if (!canRead) {
-            throw new IllegalArgumentException("'"+path+"' must be readable by McIDAS-V.");
+            throw new IllegalArgumentException('\''+path+"' must be readable by McIDAS-V.");
         } else if (!canWrite) {
-            throw new IllegalArgumentException("'"+path+"' must be writable by McIDAS-V.");
+            throw new IllegalArgumentException('\''+path+"' must be writable by McIDAS-V.");
         }
 
         userDirectory = path;
@@ -148,7 +150,7 @@ public enum Platform {
      * Sets the amount of available memory. {@code megabytes} must be 
      * greater than or equal to zero.
      * 
-     * @param megabytes Memory in megabytes
+     * @param megabytes Memory in megabytes.
      * 
      * @throws NullPointerException if {@code megabytes} is {@code null}.
      * @throws IllegalArgumentException if {@code megabytes} is less than
