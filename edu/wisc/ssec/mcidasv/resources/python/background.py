@@ -95,7 +95,6 @@ def managedDataSource(path, cleanup=True, dataType=None):
     # how do i grab the ref to the actual datasource that got
     # created?
     dataSource = getStaticMcv().makeOneDataSource(path, dataType, None)
-    getstat
     # TODO(jon): perhaps write another generator that takes a varname?
     #actualData = getData(dataSource.getName(), variableName)
     try:
