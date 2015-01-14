@@ -1637,11 +1637,6 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public static void main(String[] args) throws Exception {
         startTime = System.nanoTime();
-        
-/* DJP: Temprorarily retracted--was preventing local servers from starting
-        String mcvUserPath = System.getProperty("mcv.userpath");
-        System.setProperty("user.dir", mcvUserPath);
- */
 
         try {
             applyArgs(args);
@@ -1674,7 +1669,14 @@ public class McIDASV extends IntegratedDataViewer {
 
             McIDASV myself = new McIDASV(args);
         } catch (IllegalArgumentException e) {
-            System.err.println("McIDAS-V could not initialize itself. "+e.getMessage());
+            String msg = "McIDAS-V could not initialize itself. ";
+            String osName = System.getProperty("os.name");
+            if (osName.contains("Windows")) {
+                LogUtil.userErrorMessage(msg+'\n'+e.getMessage());
+            } else {
+                System.err.println(msg+e.getMessage());
+            }
+
         }
     }
 
