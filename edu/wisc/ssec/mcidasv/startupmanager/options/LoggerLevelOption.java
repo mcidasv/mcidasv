@@ -89,7 +89,7 @@ public class LoggerLevelOption extends AbstractOption {
      * {@code JComboBox} that will eventually contain logging levels to 
      * select. May be {@code null}. 
      */
-    private JComboBox comboBox;
+    private JComboBox<String> comboBox;
     
     /** 
      * {@code String} representation of the user's selection, or the default
@@ -125,8 +125,8 @@ public class LoggerLevelOption extends AbstractOption {
      * 
      * @return {@code JComboBox} to present to the user.
      */
-    public JComboBox getComponent() {
-        comboBox = new JComboBox(new String[] { TRACE, DEBUG, INFO, WARN, ERROR, OFF });
+    @Override public JComboBox<String> getComponent() {
+        comboBox = new JComboBox<>(new String[] { TRACE, DEBUG, INFO, WARN, ERROR, OFF });
         comboBox.setSelectedItem(currentChoice);
         comboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -143,7 +143,7 @@ public class LoggerLevelOption extends AbstractOption {
      * 
      * @return Current selection or default value.
      */
-    public String getValue() {
+    @Override public String getValue() {
         return currentChoice;
     }
     
@@ -160,7 +160,7 @@ public class LoggerLevelOption extends AbstractOption {
      * @throws IllegalArgumentException if {@code value} failed
      * {@link #isValidValue(String)}.
      */
-    public void setValue(String value) {
+    @Override public void setValue(String value) {
         if (!isValidValue(value)) {
             throw new IllegalArgumentException("Value '"+value+"' is not one of: TRACE, DEBUG, INFO, WARN, ERROR, or OFF.");
         }
@@ -168,7 +168,7 @@ public class LoggerLevelOption extends AbstractOption {
         Logger rootLogger = (Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(stringToLogback(value));
         SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
+            @Override public void run() {
                 if (comboBox != null) {
                     comboBox.setSelectedItem(currentChoice);
                 }

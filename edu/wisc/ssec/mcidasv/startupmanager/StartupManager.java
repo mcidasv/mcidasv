@@ -324,7 +324,9 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         
         JCheckBox useNpotCheckBox = useNpot.getComponent();
         useNpotCheckBox.setText(useNpot.getLabel());
-        
+
+        // this is a JComboBox<String>; kinda struggling to represent this
+        // in java's type system.
         JComboBox logLevelComboBox = logLevel.getComponent();
 
         JPanel logLevelPanel = McVGuiUtils.makeLabeledComponent(logLevel.getLabel()+':', logLevelComboBox);
