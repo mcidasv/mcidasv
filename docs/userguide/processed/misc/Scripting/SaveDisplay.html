@@ -57,8 +57,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       <td>various formatting options to apply to the output image</td>
     </tr>
   </table></div>
-<p>Here is a list of keywords for the <strong>formatting</strong> keyword of captureImage:</p>
 <ul class="propertylist">
+  <li class="propertylistitem">There are a variety of keywords that can be passed through the keyword parameter of captureImage. Below is a list of these formatting keywords and options for each of them. See the second example below for an example of passing various formatting options through captureImage with a dictionary.</li>
+  <ul class="propertylist">
   <li class="propertylistitem"><strong>Clip -</strong> Clips the output image at a specific latitude/longitude location or at specific spacing into the image. By default, no clipping is done.</li>
     <ul class="propertylist">
       <li class="propertylistitem"><strong>north -</strong> Sets the north latitude to clip the image at.</li>
@@ -178,7 +179,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
   </table>
   Example: <em>anchor="UM"</em><br>
   Sets the upper middle of the image to be centered at the <strong>place</strong> specified.</li>
-      <li class="propertylistitem"><strong>transparency -</strong> Sets the transparency of the image. The valid values range from 0 to 1, with 0 being 100% transparent, and 1 being completely opaque. Default=1.</li>
+      <li class="propertylistitem"><strong>transparency -</strong> Sets the transparency of the image. The valid values range from 0 to 1, 0 being completely opaque and 1 being 100% transparent. Default=0.</li>
       </ul>
   <li class="propertylistitem"><strong>Matte -</strong> Adds a matte to the output image.  By default, no matte is added to the image.</li>
     <ul class="propertylist">
@@ -205,18 +206,104 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       Example: <em>vspace=20</em><br>
       Adds a 20 pixel matte to the top and bottom of the image.</li>
     </ul>
-  <li class="propertylistitem"><strong>Resize -</strong> Resizes the output image.</li>
-  <li class="propertylistitem"><strong>TextOverlay -</strong> Adds text to the output image.</li>
-  <li class="propertylistitem"><strong>TransparentBackground -</strong> Sets the background of the image to be transparent in the output image.</li>
-  <li class="propertylistitem"><strong>TransparentColor -</strong> Sets individual color or colors to be transparent in the output image.</li>
-</ul>
+  <li class="propertylistitem"><strong>Resize -</strong> Resizes the output image. By default, no resize is done to the output image, and the image will be the same size as the display window.</li>
+    <ul class="propertylist">
+      <li class="propertylistitem"><strong>dimensions -</strong> Sets the size of the output image in either a pixel count or a percentage of the display window.<br>
+      Example: <em>dimensions=("400","300")</em><br>
+      Creates a 400x300 pixel image.<br>
+      Example: <em>dimensions=("60%","80%")</em><br>
+      Creates an image that is 60% in the x of the original display, and 80% in the y of the original display.</li>
+    </ul>
+  <li class="propertylistitem"><strong>TextOverlay -</strong> Adds text to the output image. By default, no text is added to the output image.</li>
+    <ul class="propertylist">
+      <li class="propertylistitem"><strong>text -</strong> Sets the text string to add to the output image.<br>
+      Example: <em>text="GOES East Image"</em><br>
+      Adds the text of "GOES East Image" to the output image.</li>
+            <li class="propertylistitem"><strong>place -</strong> Sets the location of the text along with x and y pixel offsets.  Valid options are:<br>
+      <table class="noborder">
+    <tr>
+      <td width="150"><strong>UL -</strong> Upper Left</td>
+      <td width="150"><strong>UM -</strong> Upper Middle</td>
+      <td width="150"><strong>UR -</strong> Upper Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>ML -</strong> Middle Left</td>
+      <td width="150"><strong>MM -</strong> Middle Middle</td>
+      <td width="150"><strong>MR -</strong> Middle Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>LL -</strong> Lower Left</td>
+      <td width="150"><strong>LM -</strong> Lower Middle</td>
+      <td width="150"><strong>LR -</strong> Lower Right</td>
+    </tr>
+  </table>
+  Example: <em>place=&quot;UL,20,20&quot;</em><br>
+  Adds the text to the upper left brought down 20 pixels from the top and brought in 20 pixels from the left.</li>
+      <li class="propertylistitem"><strong>anchor -</strong> Sets the location on the text to center at the <strong>place</strong>. Valid options are:<br>
+      <table class="noborder">
+    <tr>
+      <td width="150"><strong>UL -</strong> Upper Left</td>
+      <td width="150"><strong>UM -</strong> Upper Middle</td>
+      <td width="150"><strong>UR -</strong> Upper Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>ML -</strong> Middle Left</td>
+      <td width="150"><strong>MM -</strong> Middle Middle</td>
+      <td width="150"><strong>MR -</strong> Middle Right</td>
+    </tr>
+    <tr>
+      <td width="150"><strong>LL -</strong> Lower Left</td>
+      <td width="150"><strong>LM -</strong> Lower Middle</td>
+      <td width="150"><strong>LR -</strong> Lower Right</td>
+    </tr>
+  </table>
+  Example: <em>anchor="UM"</em><br>
+  Sets the upper middle of the text string to be centered at the <strong>place</strong> specified.</li>
+      <li class="propertylistitem"><strong>fontSize -</strong> Sets the size of the text.</li>
+      <li class="propertylistitem"><strong>fontFace -</strong> Sets the font to use for the text.</li>
+      <li class="propertylistitem"><strong>color -</strong> Sets the color of the text.</li>
+      <li class="propertylistitem"><strong>background -</strong> Sets the background color for the text string.  By default, this is not defined and there is no background for the text.</li>
+      <li class="propertylistitem"><strong>transparency -</strong> Sets the transparency of the text. The valid values range from 0 to 1, 0 being completely opaque and 1 being 100% transparent. Default=0.</li>
+    </ul>
+  <li class="propertylistitem"><strong>TransparentBackground -</strong> Sets the background of the image to be transparent in the output image. By default, the background is not transparent. To capture an image with a transparent background, specify <em>TransparentBackground()</em> in the <strong>formatting</strong> keyword of captureImage.</li>
+</ul></ul>
 <div class="OneTabIndent">Remarks:</div>
 <div class="TwoTabIndent">If captureImage is used to save a panel that was created
   with openBundle, the sizes default to size of the display window when the bundle
   was saved. If data was loaded using createLayer, the sizes default to those
   defined in buildWindow.</div>
-  <div class="OneTabIndent">Example:</div>
+  <div class="OneTabIndent">Example without formatting:</div>
   <div class="TwoTabIndent"><em>panel[0].captureImage('C:\\Users\\myuser\\Image.png'</em>)</div>
+  <div class="OneTabIndent">Example with formatting:</div>
+  <div class="TwoTabIndent"><em>myFormatting = [</em></div>
+    <div class="ThreeTabIndent"><em>Matte(</em></div>
+      <div class="FourTabIndent"><em>bottom="80",</em></div>
+      <div class="FourTabIndent"><em>top="80",</em></div>
+      <div class="FourTabIndent"><em>space="100",</em></div>
+    <div class="ThreeTabIndent"><em>),</em></div>
+    <div class="ThreeTabIndent"><em>Colorbar(</em></div>
+      <div class="FourTabIndent"><em>display=imLayer,</em></div>
+      <div class="FourTabIndent"><em>place="ML,50,0",</em></div>
+      <div class="FourTabIndent"><em>anchor="ML",</em></div>
+      <div class="FourTabIndent"><em>orientation="left",</em></div>
+      <div class="FourTabIndent"><em>interval="10",</em></div>
+      <div class="FourTabIndent"><em>width="25",</em></div>
+      <div class="FourTabIndent"><em>height="400",</em></div>
+    <div class="ThreeTabIndent"><em>),</em></div>
+    <div class="ThreeTabIndent"><em>ImageOverlay(</em></div>
+      <div class="FourTabIndent"><em>image='C:\\Users\\myuser\\logo3.png',</em></div>
+      <div class="FourTabIndent"><em>place="UR,-20,10",</em></div>
+      <div class="FourTabIndent"><em>anchor="UR",</em></div>
+    <div class="ThreeTabIndent"><em>),</em></div>
+    <div class="ThreeTabIndent"><em>TextOverlay(</em></div>
+      <div class="FourTabIndent"><em>text="GOES East Image",</em></div>
+      <div class="FourTabIndent"><em>place="LM,0,-40",</em></div>
+      <div class="FourTabIndent"><em>anchor="LM",</em></div>
+      <div class="FourTabIndent"><em>fontSize="30",</em></div>
+      <div class="FourTabIndent"><em>color="black",</em></div>
+    <div class="ThreeTabIndent"><em>),</em></div>
+  <div class="TwoTabIndent"><em>]</em></div>
+  <div class="TwoTabIndent"><em>panel[0].captureImage('C:\\Users\\myuser\\formattingExample.gif',formatting=myFormatting)</em></div>
 <p><strong><a name="writeMovie" id="writeMovie"></a>writeMovie -</strong> Writes
   an image sequence to a movie file (ISL function) <br>
 <div class="OneTabIndent">Usage:<em> writeMovie(keywords) </em></div>
