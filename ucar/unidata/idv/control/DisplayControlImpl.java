@@ -3685,14 +3685,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
       	    Rectangle2D bbox = navDisplay.getLatLonBox();
 //            logger.trace("after grabbing bbox={} bbox={} latlonrect={}", dataSelection, bbox, geoSelection.getLatLonRect());
             LatLonRect origbbox = geoSelection.getLatLonRect();
-            logger.trace("origbbox='{}'", origbbox);
-            if (!isRectBad(bbox)) {
-                logger.trace("bbox is valid, replacing geoselection latlonrect='{}' with '{}'", origbbox, bbox);
-                geoSelection.setLatLonRect(bbox);
-            } else {
-                logger.trace("bbox is invalid; keeping geoselection latlonrect='{}'", origbbox);
-            }
-            logger.trace("after setLatLonRect={} latlonrect={} isRectBad={}", dataSelection, geoSelection.getLatLonRect(), isRectBad(bbox));
+            logger.trace("*** HEADS UP: NO LONGER REPLACING BBOX; THIS MAY NEED TO BE BACKED OUT!");
+//            logger.trace("origbbox='{}'", origbbox);
+//            if (!isRectBad(bbox)) {
+//                logger.trace("bbox is valid, replacing geoselection latlonrect='{}' with '{}'", origbbox, bbox);
+//                geoSelection.setLatLonRect(bbox);
+//            } else {
+//                logger.trace("bbox is invalid; keeping geoselection latlonrect='{}'", origbbox);
+//            }
+//            logger.trace("after setLatLonRect={} latlonrect={} isRectBad={}", dataSelection, geoSelection.getLatLonRect(), isRectBad(bbox));
             geoSelection.setUseViewBounds(true);
             logger.trace("after setUseViewBounds(true)={}", dataSelection);
             dataSelection.setGeoSelection(geoSelection);
