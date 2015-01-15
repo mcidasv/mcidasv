@@ -1753,7 +1753,7 @@ class _Layer(_JavaProxy):
             shortName = (ctName.split('>'))[-1]
             newct = ctm.getColorTable(shortName)
 
-        if transparency:
+        if transparency or transparency == 0:
             if (transparency > 1.0) or (transparency < 0.0):
                 raise ValueError('transparency must be between 0 and 1')
             newct.setTransparency(transparency)
