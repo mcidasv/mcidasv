@@ -53,9 +53,12 @@ import javax.swing.SpinnerNumberModel;
  *
  * @author   IDV Development Team
  */
+
 public class VertScaleDialog extends JPanel implements ActionListener {
 
-    /** The control */
+	private static final long serialVersionUID = 1L;
+
+	/** The control */
     ViewpointControl control;
 
     /** The dialog when in dialog mode */
@@ -112,11 +115,6 @@ public class VertScaleDialog extends JPanel implements ActionListener {
     	
         setLayout(new BorderLayout());
         GuiUtils.tmpInsets = new Insets(5, 5, 0, 0);
-        
-        // Unit dropdown created in past, probably won't be used going forward
-        unitCombo = GuiUtils.getEditableBox(Misc.toList(new String[] {
-        		"m", "km", "feet", "fathoms"	
-        }), null);
 
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         
@@ -128,7 +126,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
             GuiUtils.rLabel("Axis Label: "), jtfAxisLabel,
             GuiUtils.rLabel("Units: "),
             unitCombo = GuiUtils.getEditableBox(Misc.toList(new String[] {
-                "meters", "km", "feet", "fathoms" }), null),
+                "m", "km", "feet", "fathoms" }), null),
             GuiUtils.rLabel("Major Increment: "),
             vertIncrement = new JTextField(),
             GuiUtils.rLabel("Minor Division: "),
@@ -169,9 +167,10 @@ public class VertScaleDialog extends JPanel implements ActionListener {
             if ((tmpStr == null) || (tmpStr.isEmpty())) {
             	tmpStr = VertScaleInfo.DEFAULT_AXIS_LABEL;
             } else {
-            	// Actual Axis label will have units, strip this off for UI text field
-            	if (tmpStr.indexOf('(') > 0) {
-            		tmpStr = tmpStr.substring(0 , tmpStr.indexOf('('));
+            	// Actual Axis label will have units in parentheses, 
+            	// strip this off for UI text field
+            	if (tmpStr.indexOf(" (") > 0) {
+            		tmpStr = tmpStr.substring(0 , tmpStr.indexOf(" ("));
             	}
             }
             jtfAxisLabel.setText(tmpStr);
@@ -241,9 +240,10 @@ public class VertScaleDialog extends JPanel implements ActionListener {
         if ((tmpStr == null) || (tmpStr.isEmpty())) {
         	tmpStr = VertScaleInfo.DEFAULT_AXIS_LABEL;
         } else {
-        	// Actual Axis label will have units, strip this off for UI text field
-        	if (tmpStr.indexOf('(') > 0) {
-        		tmpStr = tmpStr.substring(0 , tmpStr.indexOf('('));
+        	// Actual Axis label will have units in parentheses, 
+        	// strip this off for UI text field
+        	if (tmpStr.indexOf(" (") > 0) {
+        		tmpStr = tmpStr.substring(0 , tmpStr.indexOf(" ("));
         	}
         }
         jtfAxisLabel.setText(tmpStr);
