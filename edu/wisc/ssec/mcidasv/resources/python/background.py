@@ -1753,7 +1753,7 @@ class _Layer(_JavaProxy):
             shortName = (ctName.split('>'))[-1]
             newct = ctm.getColorTable(shortName)
 
-        if transparency or transparency == 0:
+        if transparency is not None:
             if (transparency > 1.0) or (transparency < 0.0):
                 raise ValueError('transparency must be between 0 and 1')
             newct.setTransparency(transparency)
@@ -2985,7 +2985,7 @@ def loadGrid(filename=None, field=None, level='all',
         raise ValueError("xStride and yStride must be 1 or greater")
 
     # if stride is specified, let it set both xStride and yStride.
-    if stride:
+    if stride is not None:
         if stride < 1:
             raise ValueError("stride must be greater than zero")
         xStride = stride
@@ -3015,7 +3015,7 @@ def loadGrid(filename=None, field=None, level='all',
         raise ValueError('no field name provided')
     
     levelReal = None
-    if level and level.lower() != 'all':
+    if level is not None and level.lower() != 'all':
         # expecting string specifying value and units, e.g. "1000 hPa"
         try:
             levelWanted = Util.toReal(level)
@@ -3032,7 +3032,7 @@ def loadGrid(filename=None, field=None, level='all',
                 levelReal = curLevelReal
                 break
 
-    if time: 
+    if time is not None: 
         if isinstance(time, str):
             foundTime = False
             # make a visad DateTime out of the string, and compare to the 
@@ -3053,10 +3053,10 @@ def loadGrid(filename=None, field=None, level='all',
         # default to first time step...
         geogrid = geogrid.subset(Range(0, 0), None, None, None)
 
-    if xRange or yRange: 
-        if xRange:
+    if xRange is not None or yRange is not None: 
+        if xRange is not None:
             xRange = Range(xRange[0], xRange[1])
-        if yRange:
+        if yRange is not None:
             yRange = Range(yRange[0], yRange[1])
         geogrid = geogrid.subset(None, None, yRange, xRange)
 
@@ -3081,7 +3081,7 @@ def loadGrid(filename=None, field=None, level='all',
     
     # if FF is 2D, running it through make2D will avoid VisAD "manifold 
     # dimension" errors if it gets used in an IDV formula later on...
-    if level and level.lower() != 'all':
+    if level is not None and level.lower() != 'all':
         ff = make2D(ff)
     # make the 'mega-object'
     mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field, levelReal, dataSource.toString())
@@ -3214,7 +3214,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
         raise ValueError("xStride and yStride must be greater than zero")
 
     # if stride is specified, let it set both xStride and yStride.
-    if stride:
+    if stride is not None:
         if stride < 1:
             raise ValueError("stride must be greater than zero")
         xStride = stride
