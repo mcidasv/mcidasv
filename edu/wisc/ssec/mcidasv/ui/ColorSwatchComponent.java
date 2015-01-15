@@ -185,7 +185,7 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
         if (GuiUtils.showOkCancelDialog(null, label, chooser, null)) {
             comp.userSelectedNewColor(chooser.getColor());
         }
-        return tracker.getMostRecentColor();
+        return comp.getBackground();
     }
 
     /**
