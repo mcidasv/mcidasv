@@ -252,9 +252,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>desc = getLocalADDEEntry(dataset='AREA',imageType='Area files')</em></div>
-<p><strong><a name="getADDEImage" id="getADDEImage"></a>getADDEImage -</strong> Requests
-  data from an ADDE Image server - returns both data and metadata objects</p>
-<div class="OneTabIndent">Usage: Local: <em>metadataLocal,dataLocal=getADDEImage(keywords)</em></div>
+<p><strong><a name="loadADDEImage" id="loadADDEImage"></a>loadADDEImage -</strong> Requests
+  data from an ADDE Image server - returns one object containing both data and metadata</p>
+<div class="OneTabIndent">Usage: Local: <em>dataLocal=loadADDEImage(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required (local):</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
@@ -337,16 +337,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td valign="top">track=</td>
       <td>
       True = with real-time data, will wait until the most recent image is complete before pulling it in<br>
-      False = with real-time data, will not wait until the most recent image is complete before pulling it in. Dependent on when the getADDEImage command is run, this may result in an incomplete image.<br>
+      False = with real-time data, will not wait until the most recent image is complete before pulling it in. Dependent on when the loadADDEImage command is run, this may result in an incomplete image.<br>
       default=False</td>
     </tr>
         <tr>
 </table></div>
 <div class="OneTabIndent">Examples:</div>
-  <div class="TwoTabIndent"><em>metadataLocal,dataLocal = getADDEImage(localEntry=desc, size='ALL', mag=(1,1), unit='BRIT',debug=True)</em></div>
-<div class="TwoTabIndent"><em>metadataRemote,dataRemote = getADDEImage(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',band=4,unit='TEMP')</em></div>
+  <div class="TwoTabIndent"><em>dataLocal = loadADDEImage(localEntry=desc, size='ALL', mag=(1,1), unit='BRIT',debug=True)</em></div>
+<div class="TwoTabIndent"><em>dataRemote = loadADDEImage(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',band=4,unit='TEMP')</em></div>
   <p><strong><a name="listADDEImages" id="listADDEImages"></a>listADDEImages -</strong> Lists
-  data from an ADDE Image server that matches the keywords in the request - returns  metadata objects which can be passed into getADDEImage</p>
+  data from an ADDE Image server that matches the keywords in the request - returns  metadata objects which can be passed into loadADDEImage</p>
 <div class="OneTabIndent">Usage: <em>directoryList = listADDEImages(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required (local):</div>
 <div class="ThreeTabIndent2"><table class="noborder">
@@ -462,6 +462,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <div class="OneTabIndent">Examples:</div>
   <div class="TwoTabIndent"><em>print listADDEImageTimes(localEntry=desc, position=-5)</em><br>
 <em>print listADDEImageTimes(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',time=('02:00','04:00'),position='ALL')</em></div>
+<p><strong><a name="loadGrid" id="loadGrid"></a>loadGrid -</strong> Loads local netCDF, hdf, and grib files.</p>
+<p><strong><a name="listGridFields" id="listGridFields"></a>listGridFieldsInFile -</strong> Lists the fields in a file brought in with <strong>loadGrid</strong>.</p>
+<p><strong><a name="listFieldLevels" id="listFieldLevels"></a>listGridLevelsInField -</strong> Lists the vertical levels included in a field of a <strong>loadGrid</strong> file.</p>
+<p><strong><a name="listFieldTimes" id="listFieldTimes"></a>listGridTimesInField -</strong> Lists the times included in a field of a <strong>loadGrid</strong> file.</p>
 <p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
   a new data layer in a panel</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer = panel[0].createLayer(keywords)</em></div>
@@ -474,7 +478,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
     <tr>
       <td valign="top">myData=</td>
-      <td>data object to display (from getADDEImage)</td>
+      <td>data object to display (from loadADDEImage)</td>
     </tr>
 </table></div>
 <div class="OneTabIndent">Example:</div>
