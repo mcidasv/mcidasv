@@ -452,7 +452,7 @@ class TransparentColor(ImageFormatting):
             if index >= 0:
                 vals = [x.strip() for x in color.split(',') if len(x.strip()) != 0]
                 
-                if len(vals) == 3 and all(int(x) >= 0 or x <= 255 for x in vals):
+                if len(vals) == 3 and all(x.lstrip('-+').isdigit() for x in vals) and all(int(x) >= 0 or x <= 255 for x in vals):
                     self.colorList = [ color ]
                 elif not any(x.lstrip('-+').isdigit() for x in vals):
                     self.colorList = vals
