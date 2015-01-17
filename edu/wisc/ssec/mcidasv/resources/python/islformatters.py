@@ -12,7 +12,7 @@ class Matte(ImageFormatting):
     
     """The Matte formatter allows you to add a space around any of the sides of an image."""
     
-    def __init__(self, background=None, top=None, bottom=None, left=None, right=None, space=None, hspace=None, vspace=None):
+    def __init__(self, background=None, top=None, bottom=None, left=None, right=None, space=None, hSpace=None, vSpace=None):
         """Create a new Matte ISL formatting object.
         
         Optional Args:
@@ -22,8 +22,8 @@ class Matte(ImageFormatting):
             left: Pixel spacing.
             right: Pixel spacing.
             space: Pixel spacing.
-            hspace: Pixel spacing.
-            vspace: Pixel spacing.
+            hSpace: Pixel spacing.
+            vSpace: Pixel spacing.
         """
         if background is not None:
             self.background = 'background=%s' % (background)
@@ -55,19 +55,19 @@ class Matte(ImageFormatting):
         else:
             self.space = ''
             
-        if hspace is not None:
-            self.hspace = 'hspace=%s' % (hspace)
+        if hSpace is not None:
+            self.hSpace = 'hspace=%s' % (hSpace)
         else:
-            self.hspace = ''
+            self.hSpace = ''
             
-        if vspace is not None:
-            self.vspace = 'vspace=%s' % (vspace)
+        if vSpace is not None:
+            self.vSpace = 'vspace=%s' % (vSpace)
         else:
-            self.vspace = ''
+            self.vSpace = ''
             
     def toIsl(self):
         """Return the ISL string representing this Matte instance."""
-        islString = "matte %s %s %s %s %s %s %s %s" % (self.background, self.top, self.bottom, self.left, self.right, self.space, self.hspace, self.vspace)
+        islString = "matte %s %s %s %s %s %s %s %s" % (self.background, self.top, self.bottom, self.left, self.right, self.space, self.hSpace, self.vSpace)
         return islString.strip() + '; '
         
 class ImageOverlay(ImageFormatting):
@@ -186,7 +186,7 @@ class Clip(ImageFormatting):
     
     """The Clip formatter allows you to clip the image."""
     
-    def __init__(self, north=None, south=None, east=None, west=None, top=None, bottom=None, left=None, right=None, display=None, space=None, hspace=None, vspace=None, spaceLeft=None, spaceRight=None, spaceTop=None, spaceBottom=None):
+    def __init__(self, north=None, south=None, east=None, west=None, top=None, bottom=None, left=None, right=None, display=None, space=None, hSpace=None, vSpace=None, spaceLeft=None, spaceRight=None, spaceTop=None, spaceBottom=None):
         """Create a new Clip ISL formatting object.
         
         Optional Args:
@@ -200,8 +200,8 @@ class Clip(ImageFormatting):
             right: Pixels or percentage.
             display: ID of a display which we use its data's map projection to clip with.
             space: When clipping at the box pad outwards this number of pixels.
-            hspace: When clipping at the box pad horiz.
-            vspace: When clipping at the box pad vertically.
+            hSpace: When clipping at the box pad horiz.
+            vSpace: When clipping at the box pad vertically.
             spaceLeft: Padding.
             spaceRight: Padding.
             spaceTop: Padding.
@@ -257,15 +257,15 @@ class Clip(ImageFormatting):
         else:
             self.space = ''
             
-        if hspace is not None:
-            self.hspace = 'hspace=%s' % (hspace)
+        if hSpace is not None:
+            self.hSpace = 'hspace=%s' % (hSpace)
         else:
-            self.hspace = ''
+            self.hSpace = ''
             
-        if vspace is not None:
-            self.vspace = 'vspace=%s' % (vspace)
+        if vSpace is not None:
+            self.vSpace = 'vspace=%s' % (vSpace)
         else:
-            self.vspace = ''
+            self.vSpace = ''
             
         if spaceLeft is not None:
             self.spaceLeft = 'space_left=%s' % (spaceLeft)
@@ -289,7 +289,7 @@ class Clip(ImageFormatting):
             
     def toIsl(self):
         """Return the ISL string representing this Clip instance."""
-        islString = "clip %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s" % (self.north, self.south, self.east, self.west, self.top, self.bottom, self.left, self.right, self.display, self.space, self.hspace, self.vspace, self.spaceLeft, self.spaceRight, self.spaceTop, self.spaceBottom)
+        islString = "clip %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s" % (self.north, self.south, self.east, self.west, self.top, self.bottom, self.left, self.right, self.display, self.space, self.hSpace, self.vSpace, self.spaceLeft, self.spaceRight, self.spaceTop, self.spaceBottom)
         return islString.strip() + '; '
         
 class Colorbar(ImageFormatting):
