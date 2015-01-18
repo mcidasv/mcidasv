@@ -3566,111 +3566,111 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                                        PROP_ENSLIST));
 
 
-//        List dataSources = (List) ht.get(ID_DATASOURCES);
-//        if (dataSources != null) {
-//            if ( !updateDataPaths(dataSources, letUserChangeData)) {
-//                return;
-//            }
-//
-//            List localFileMapping = null;
-//            if ((fileMapping != null) && (fileMapping.size() > 0)) {
-//                localFileMapping = new ArrayList(fileMapping);
-//            }
-//
-//            final ThreadManager threadManager =
-//                new ThreadManager("Data source initialization");
-//            for (int i = 0; i < dataSources.size(); i++) {
-//                final DataSource dataSource = (DataSource) dataSources.get(i);
-//                //Clear the error flag
-//                dataSource.setInError(false);
-//                loadDialog.setMessage1("Loading data source " + (i + 1)
-//                                       + " of " + dataSources.size());
-//                loadDialog.setMessage2(
-//                    "(" + DataSelector.getNameForDataSource(dataSource)
-//                    + ")");
-//                if (localFileMapping != null) {
-//                    for (int mappingIdx = 0;
-//                            mappingIdx < localFileMapping.size();
-//                            mappingIdx++) {
-//                        ObjectPair pair =
-//                            (ObjectPair) localFileMapping.get(mappingIdx);
-//                        String identifier = (String) pair.getObject1();
-//                        List   files      = (List) pair.getObject2();
-//                        if (dataSource.identifiedByName(identifier)) {
-//                            //Remove this data source's local files
-//                            localFileMapping.remove(mappingIdx);
-//                            dataSource.setNewFiles(files);
-//                            break;
-//                        }
-//                    }
-//                }
-//                long t1 = System.currentTimeMillis();
-//                threadManager.addRunnable(new ThreadManager.MyRunnable() {
-//                    public void run() throws Exception {
-//                        dataSource.initAfterUnpersistence();
-//                    }
-//                });
-//            }
-//
-//            long t1 = System.currentTimeMillis();
-//            try {
-//                //Don't run in parallel for now since it screws up the ordering
-//                //of the displays
-//                //threadManager.runAllParallel();
-//                threadManager.runInParallel(getIdv().getMaxDataThreadCount());
-//            } catch (Exception exc) {
-//                //Catch any exceptions thrown but then get all of them and show them to the user
-//                List<Exception> exceptions = threadManager.getExceptions();
-//                if (exceptions.size() == 0) {
-//                    //This shouldn't happen
-//                    exceptions.add(exc);
-//                }
-//                LogUtil.printExceptions(exceptions);
-//            }
-//            long t2 = System.currentTimeMillis();
-//            //            System.err.println ("time to init data sources:" + (t2-t1));
-//
-//
-//            for (int i = 0; i < dataSources.size(); i++) {
-//                final DataSource dataSource = (DataSource) dataSources.get(i);
-//                if (overrideTimes != null) {
-//                    dataSource.setDateTimeSelection(overrideTimes);
-//                }
-//                if ((overrideEnsMembers != null)
-//                        && (dataSource instanceof GridDataSource)) {
-//                    ((GridDataSource) dataSource).setEnsembleSelection(
-//                        overrideEnsMembers);
-//                }
-//                if ( !loadDialog.okToRun()) {
-//                    return;
-//                }
-//                if (dataSource.getInError()) {
-//                    continue;
-//                }
-//                if (getDataManager().addDataSource(dataSource)) {
-//                    loadDialog.addDataSource(dataSource);
-//                }
-//            }
-//
-//
-//
-//            if ((localFileMapping != null) && (localFileMapping.size() > 0)) {
-//                throw new IllegalArgumentException(
-//                    "Did not find the data source to use for the file override: "
-//                    + localFileMapping);
-//            }
-//            clearDataSourcesState(dataSources);
-//            clearFileMapping();
-//        }
-//        if ( !loadDialog.okToRun()) {
-//            //TODO
-//            return;
-//        }
-//
-//        if ( !fromCollab) {
-//            getIdvUIManager().applyDataHolderState(
-//                (Hashtable) ht.get(ID_MISCHASHTABLE));
-//        }
+        List dataSources = (List) ht.get(ID_DATASOURCES);
+        if (dataSources != null) {
+            if ( !updateDataPaths(dataSources, letUserChangeData)) {
+                return;
+            }
+
+            List localFileMapping = null;
+            if ((fileMapping != null) && (fileMapping.size() > 0)) {
+                localFileMapping = new ArrayList(fileMapping);
+            }
+
+            final ThreadManager threadManager =
+                new ThreadManager("Data source initialization");
+            for (int i = 0; i < dataSources.size(); i++) {
+                final DataSource dataSource = (DataSource) dataSources.get(i);
+                //Clear the error flag
+                dataSource.setInError(false);
+                loadDialog.setMessage1("Loading data source " + (i + 1)
+                                       + " of " + dataSources.size());
+                loadDialog.setMessage2(
+                    "(" + DataSelector.getNameForDataSource(dataSource)
+                    + ")");
+                if (localFileMapping != null) {
+                    for (int mappingIdx = 0;
+                            mappingIdx < localFileMapping.size();
+                            mappingIdx++) {
+                        ObjectPair pair =
+                            (ObjectPair) localFileMapping.get(mappingIdx);
+                        String identifier = (String) pair.getObject1();
+                        List   files      = (List) pair.getObject2();
+                        if (dataSource.identifiedByName(identifier)) {
+                            //Remove this data source's local files
+                            localFileMapping.remove(mappingIdx);
+                            dataSource.setNewFiles(files);
+                            break;
+                        }
+                    }
+                }
+                long t1 = System.currentTimeMillis();
+                threadManager.addRunnable(new ThreadManager.MyRunnable() {
+                    public void run() throws Exception {
+                        dataSource.initAfterUnpersistence();
+                    }
+                });
+            }
+
+            long t1 = System.currentTimeMillis();
+            try {
+                //Don't run in parallel for now since it screws up the ordering
+                //of the displays
+                //threadManager.runAllParallel();
+                threadManager.runInParallel(getIdv().getMaxDataThreadCount());
+            } catch (Exception exc) {
+                //Catch any exceptions thrown but then get all of them and show them to the user
+                List<Exception> exceptions = threadManager.getExceptions();
+                if (exceptions.size() == 0) {
+                    //This shouldn't happen
+                    exceptions.add(exc);
+                }
+                LogUtil.printExceptions(exceptions);
+            }
+            long t2 = System.currentTimeMillis();
+            //            System.err.println ("time to init data sources:" + (t2-t1));
+
+
+            for (int i = 0; i < dataSources.size(); i++) {
+                final DataSource dataSource = (DataSource) dataSources.get(i);
+                if (overrideTimes != null) {
+                    dataSource.setDateTimeSelection(overrideTimes);
+                }
+                if ((overrideEnsMembers != null)
+                        && (dataSource instanceof GridDataSource)) {
+                    ((GridDataSource) dataSource).setEnsembleSelection(
+                        overrideEnsMembers);
+                }
+                if ( !loadDialog.okToRun()) {
+                    return;
+                }
+                if (dataSource.getInError()) {
+                    continue;
+                }
+                if (getDataManager().addDataSource(dataSource)) {
+                    loadDialog.addDataSource(dataSource);
+                }
+            }
+
+
+
+            if ((localFileMapping != null) && (localFileMapping.size() > 0)) {
+                throw new IllegalArgumentException(
+                    "Did not find the data source to use for the file override: "
+                    + localFileMapping);
+            }
+            clearDataSourcesState(dataSources);
+            clearFileMapping();
+        }
+        if ( !loadDialog.okToRun()) {
+            //TODO
+            return;
+        }
+
+        if ( !fromCollab) {
+            getIdvUIManager().applyDataHolderState(
+                (Hashtable) ht.get(ID_MISCHASHTABLE));
+        }
 
 
         //        ProjectionImpl dfltProjection = null;
@@ -3896,111 +3896,111 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
             getStateManager().putProperty(PROP_USE_DISPLAYAREA, false);
         }
 
-        List dataSources = (List) ht.get(ID_DATASOURCES);
-        if (dataSources != null) {
-            if ( !updateDataPaths(dataSources, letUserChangeData)) {
-                return;
-            }
-
-            List localFileMapping = null;
-            if ((fileMapping != null) && (fileMapping.size() > 0)) {
-                localFileMapping = new ArrayList(fileMapping);
-            }
-
-            final ThreadManager threadManager =
-                new ThreadManager("Data source initialization");
-            for (int i = 0; i < dataSources.size(); i++) {
-                final DataSource dataSource = (DataSource) dataSources.get(i);
-                //Clear the error flag
-                dataSource.setInError(false);
-                loadDialog.setMessage1("Loading data source " + (i + 1)
-                    + " of " + dataSources.size());
-                loadDialog.setMessage2(
-                    "(" + DataSelector.getNameForDataSource(dataSource)
-                        + ")");
-                if (localFileMapping != null) {
-                    for (int mappingIdx = 0;
-                         mappingIdx < localFileMapping.size();
-                         mappingIdx++) {
-                        ObjectPair pair =
-                            (ObjectPair) localFileMapping.get(mappingIdx);
-                        String identifier = (String) pair.getObject1();
-                        List   files      = (List) pair.getObject2();
-                        if (dataSource.identifiedByName(identifier)) {
-                            //Remove this data source's local files
-                            localFileMapping.remove(mappingIdx);
-                            dataSource.setNewFiles(files);
-                            break;
-                        }
-                    }
-                }
-                long t1 = System.currentTimeMillis();
-                threadManager.addRunnable(new ThreadManager.MyRunnable() {
-                    public void run() throws Exception {
-                        dataSource.initAfterUnpersistence();
-                    }
-                });
-            }
-
-            long t1 = System.currentTimeMillis();
-            try {
-                //Don't run in parallel for now since it screws up the ordering
-                //of the displays
-                //threadManager.runAllParallel();
-                threadManager.runInParallel(getIdv().getMaxDataThreadCount());
-            } catch (Exception exc) {
-                //Catch any exceptions thrown but then get all of them and show them to the user
-                List<Exception> exceptions = threadManager.getExceptions();
-                if (exceptions.size() == 0) {
-                    //This shouldn't happen
-                    exceptions.add(exc);
-                }
-                LogUtil.printExceptions(exceptions);
-            }
-            long t2 = System.currentTimeMillis();
-            //            System.err.println ("time to init data sources:" + (t2-t1));
-
-
-            for (int i = 0; i < dataSources.size(); i++) {
-                final DataSource dataSource = (DataSource) dataSources.get(i);
-                if (overrideTimes != null) {
-                    dataSource.setDateTimeSelection(overrideTimes);
-                }
-                if ((overrideEnsMembers != null)
-                    && (dataSource instanceof GridDataSource)) {
-                    ((GridDataSource) dataSource).setEnsembleSelection(
-                        overrideEnsMembers);
-                }
-                if ( !loadDialog.okToRun()) {
-                    return;
-                }
-                if (dataSource.getInError()) {
-                    continue;
-                }
-                if (getDataManager().addDataSource(dataSource)) {
-                    loadDialog.addDataSource(dataSource);
-                }
-            }
-
-
-
-            if ((localFileMapping != null) && (localFileMapping.size() > 0)) {
-                throw new IllegalArgumentException(
-                    "Did not find the data source to use for the file override: "
-                        + localFileMapping);
-            }
-            clearDataSourcesState(dataSources);
-            clearFileMapping();
-        }
-        if ( !loadDialog.okToRun()) {
-            //TODO
-            return;
-        }
-
-        if ( !fromCollab) {
-            getIdvUIManager().applyDataHolderState(
-                (Hashtable) ht.get(ID_MISCHASHTABLE));
-        }
+//        List dataSources = (List) ht.get(ID_DATASOURCES);
+//        if (dataSources != null) {
+//            if ( !updateDataPaths(dataSources, letUserChangeData)) {
+//                return;
+//            }
+//
+//            List localFileMapping = null;
+//            if ((fileMapping != null) && (fileMapping.size() > 0)) {
+//                localFileMapping = new ArrayList(fileMapping);
+//            }
+//
+//            final ThreadManager threadManager =
+//                new ThreadManager("Data source initialization");
+//            for (int i = 0; i < dataSources.size(); i++) {
+//                final DataSource dataSource = (DataSource) dataSources.get(i);
+//                //Clear the error flag
+//                dataSource.setInError(false);
+//                loadDialog.setMessage1("Loading data source " + (i + 1)
+//                    + " of " + dataSources.size());
+//                loadDialog.setMessage2(
+//                    "(" + DataSelector.getNameForDataSource(dataSource)
+//                        + ")");
+//                if (localFileMapping != null) {
+//                    for (int mappingIdx = 0;
+//                         mappingIdx < localFileMapping.size();
+//                         mappingIdx++) {
+//                        ObjectPair pair =
+//                            (ObjectPair) localFileMapping.get(mappingIdx);
+//                        String identifier = (String) pair.getObject1();
+//                        List   files      = (List) pair.getObject2();
+//                        if (dataSource.identifiedByName(identifier)) {
+//                            //Remove this data source's local files
+//                            localFileMapping.remove(mappingIdx);
+//                            dataSource.setNewFiles(files);
+//                            break;
+//                        }
+//                    }
+//                }
+//                long t1 = System.currentTimeMillis();
+//                threadManager.addRunnable(new ThreadManager.MyRunnable() {
+//                    public void run() throws Exception {
+//                        dataSource.initAfterUnpersistence();
+//                    }
+//                });
+//            }
+//
+//            long t1 = System.currentTimeMillis();
+//            try {
+//                //Don't run in parallel for now since it screws up the ordering
+//                //of the displays
+//                //threadManager.runAllParallel();
+//                threadManager.runInParallel(getIdv().getMaxDataThreadCount());
+//            } catch (Exception exc) {
+//                //Catch any exceptions thrown but then get all of them and show them to the user
+//                List<Exception> exceptions = threadManager.getExceptions();
+//                if (exceptions.size() == 0) {
+//                    //This shouldn't happen
+//                    exceptions.add(exc);
+//                }
+//                LogUtil.printExceptions(exceptions);
+//            }
+//            long t2 = System.currentTimeMillis();
+//            //            System.err.println ("time to init data sources:" + (t2-t1));
+//
+//
+//            for (int i = 0; i < dataSources.size(); i++) {
+//                final DataSource dataSource = (DataSource) dataSources.get(i);
+//                if (overrideTimes != null) {
+//                    dataSource.setDateTimeSelection(overrideTimes);
+//                }
+//                if ((overrideEnsMembers != null)
+//                    && (dataSource instanceof GridDataSource)) {
+//                    ((GridDataSource) dataSource).setEnsembleSelection(
+//                        overrideEnsMembers);
+//                }
+//                if ( !loadDialog.okToRun()) {
+//                    return;
+//                }
+//                if (dataSource.getInError()) {
+//                    continue;
+//                }
+//                if (getDataManager().addDataSource(dataSource)) {
+//                    loadDialog.addDataSource(dataSource);
+//                }
+//            }
+//
+//
+//
+//            if ((localFileMapping != null) && (localFileMapping.size() > 0)) {
+//                throw new IllegalArgumentException(
+//                    "Did not find the data source to use for the file override: "
+//                        + localFileMapping);
+//            }
+//            clearDataSourcesState(dataSources);
+//            clearFileMapping();
+//        }
+//        if ( !loadDialog.okToRun()) {
+//            //TODO
+//            return;
+//        }
+//
+//        if ( !fromCollab) {
+//            getIdvUIManager().applyDataHolderState(
+//                (Hashtable) ht.get(ID_MISCHASHTABLE));
+//        }
 
         loadDialog.setMessage("Activating displays");
         Trace.msg("Decode.end");
