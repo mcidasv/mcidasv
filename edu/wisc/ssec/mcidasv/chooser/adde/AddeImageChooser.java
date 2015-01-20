@@ -1037,8 +1037,7 @@ public class AddeImageChooser extends AddeChooser implements
      * Set the relative and absolute extra components.
      */
     @Override protected JPanel makeTimesPanel() {
-        // don't show timedriver stuff for the mcv image chooser.
-        JPanel timesPanel = super.makeTimesPanel(false, true, false);
+        JPanel timesPanel = super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
 
         // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
         Component[] comps = timesPanel.getComponents();
