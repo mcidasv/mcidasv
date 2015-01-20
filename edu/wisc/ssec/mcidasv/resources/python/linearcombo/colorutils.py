@@ -7,7 +7,7 @@ from visad import Display
 
 _color_cache = {}
 
-_cnames = {
+cnames = {
     'aliceblue'            : '#f0f8ff',
     'antiquewhite'         : '#faebd7',
     'aqua'                 : '#00ffff',
@@ -191,9 +191,9 @@ def _convertNamedColor(name):
     Raises:
         ValueError: If color did not correspond to a known color.
     """
-    if name not in _cnames:
+    if name not in cnames:
         raise ValueError('Bad color string:', name)
-    return _convertHexColor(_cnames[name])
+    return _convertHexColor(cnames[name])
     
 def _convert_color_component(x):
     """Convert RGB value into a float.
@@ -310,5 +310,5 @@ def convertColorToJava(color='green'):
     
 def listColorNames():
     """List available color names."""
-    for k in sorted(_cnames.keys()):
+    for k in sorted(cnames.keys()):
         print k
