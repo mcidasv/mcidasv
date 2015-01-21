@@ -1694,18 +1694,27 @@ class _Layer(_JavaProxy):
         pass
         
     @gui_invoke_later
-    def setEnhancement(self, name=None, range=None):
+    def setEnhancement(self, name=None, range=None, transparency=None):
         """Wrapper for setEnhancementTable and setDataRange.
         
         Args:
-           Name: the name of the enhancement table.  Don't need to specify
+           name: the name of the enhancement table.  Don't need to specify
                  "parent" directories like setProjection, but will work if you 
                  do. Case sensitive!
-           Range: 2-element list specifying min and max data range.
+           range: 2-element list specifying min and max data range.
+           transparency: value between 0 and 1 to set transparency of layer.
+                         Note, if you specify name and not transparency,
+                         the current transparency will NOT be retained. If you
+                         specify transparency and not name, the current name
+                         will be retained.
+
         """
         didSomething = False
-        if name is not None:  # leave as-is if not specified
-            self.setEnhancementTable(name)
+        if name is not None or transparency is not None:
+            if name is None:
+                name = self.getEnhancementTable().getName()
+            # TODO how to get current transparency if not specified
+            self.setEnhancementTable(name, transparency)
             didSomething = True
             
         # but 'range' is a Python built-in.........
@@ -1735,7 +1744,7 @@ class _Layer(_JavaProxy):
                      (but it will work if you do).  However, this is
                      CASE SENSITIVE!  Can't really help this because IDV stores
                      color table names case-sensitively.
-            transparency:  set the overall transparency of the color table
+            transparency:  set the overall transparency of the color table.
                      
         Raises:
             ValueError:  couldn't find ctName or transparency invalid value
