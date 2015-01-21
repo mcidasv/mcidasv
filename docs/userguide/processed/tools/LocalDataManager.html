@@ -66,6 +66,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
         <li>McIDAS AREA</li>
         <li>McIDAS MD</li>
         <li>Meteosat OpenMTP</li>
+          <ul>
+            <li>Note: There is a very specific file name convention that must be used for this server. This file name format differs from that of data ordered from EUMETSAT. For example, Meteosat-7 OpenMTP data ordered from EUMETSAT has these file name conventions for IR, VIS, and WV bands:
+              <blockquote>
+            IR   - OpenMTP_2015-01-15_25_712345_1_1_1.IR<br>
+            VIS - OpenMTP_2015-01-15_25_712345_1_1_1.VISSN<br>
+            WV - OpenMTP_2015-01-15_25_712345_1_1_1.WV</blockquote>
+            These file names must be changed to:<br>
+            <blockquote>
+            IR   - aixxx_m07_d20150115_s120000_n40_cness.omf<br>
+            VIS - avxxx_m07_d20150115_s120000_n40_cness.omf<br>
+            WV - awxxx_m07_d20150115_s120000_n40_cness.omf</blockquote>
+            Note that the time information in the modified file names (s120000 for 12 UTC) is not included in the original file names.
+            </li>
+          </ul>
         <li>Metop AVHRR L 1b</li>
         <li>MODIS L1b MOD02 (MODIS Level 1b)</li>
         <li>MODIS L2 MOD04 (MODIS Level 2 Aerosol)</li>
