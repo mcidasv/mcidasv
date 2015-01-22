@@ -229,8 +229,12 @@ public interface Constants extends IdvConstants {
     /** Preference for saving image preview default */
     public static final String PREF_IMAGE_PREVIEW = "mcidasv.chooser.adde.preview";
     
-    /** Whether to show user VIIRS plugin compatibility check popup */
-    public static final String PREF_VIIRS_PLUGIN = "mcidasv.viirs.pluginversiondialog";
+    /** 
+     * Whether to show user VIIRS plugin compatibility check popup 
+     * Increment the counter below with each update of the plugin
+     */
+    public static final int VIIRS_PLUGIN_VERSION_NUMBER = 2;
+    public static final String PREF_VIIRS_PLUGIN = "mcidasv.viirs.pluginversion" + VIIRS_PLUGIN_VERSION_NUMBER;
 
     /** Whether or not to show the McIDAS-V {@literal "system"} bundles. */
     public static final String PREF_SHOW_SYSTEM_BUNDLES = "mcidasv.showsystembundles";
