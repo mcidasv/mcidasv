@@ -1706,7 +1706,7 @@ class _Layer(_JavaProxy):
                          Note, if you specify name and not transparency,
                          the current transparency will NOT be retained. If you
                          specify transparency and not name, the current name
-                         will be retained.
+                         will be retained.  0 is opaque and 1 is fully transparent. 
 
         """
         didSomething = False
@@ -1745,6 +1745,7 @@ class _Layer(_JavaProxy):
                      CASE SENSITIVE!  Can't really help this because IDV stores
                      color table names case-sensitively.
             transparency:  set the overall transparency of the color table.
+                           0 is opaque and 1 is fully transparent. 
                      
         Raises:
             ValueError:  couldn't find ctName or transparency invalid value
@@ -1765,7 +1766,9 @@ class _Layer(_JavaProxy):
         if transparency is not None:
             if (transparency > 1.0) or (transparency < 0.0):
                 raise ValueError('transparency must be between 0 and 1')
-            newct.setTransparency(transparency)
+            # note, 0.0 should be fully opaque and 1.0 is transparent,
+            # so we need to invert here.
+            newct.setTransparency(1.0 - transparency)
             
         if newct is not None:
             return self._JavaProxy__javaObject.setColorTable(newct)
