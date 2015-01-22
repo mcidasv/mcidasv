@@ -109,7 +109,7 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
             AddeFormat.TRMM,
-            AddeFormat.MCIDAS_MD
+//            AddeFormat.MCIDAS_MD
         });
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
