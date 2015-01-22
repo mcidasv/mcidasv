@@ -2785,7 +2785,7 @@ public class PluginManager extends IdvManager {
                 }
             } else if (obj instanceof Projection) {
                 label = "Projection" + suffix + (addObj
-                        ? obj.toString()
+                        ? ((Projection)obj).getName()
                         : "");
             } else if (obj instanceof DerivedDataDescriptor) {
                 label = "Formula" + suffix + (addObj
