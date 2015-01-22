@@ -15,13 +15,17 @@ SHIFT
 GOTO checkparameters
 
 :setuserpath
-SET MCV_USERPATH=%2
+setlocal DisableDelayedExpansion
+SET "MCV_USERPATH=%~2"
+setlocal EnableDelayedExpansion
 SHIFT
 SHIFT
 GOTO checkparameters
 
 :setlogpath
-SET MCV_LOGPATH=%2
+setlocal DisableDelayedExpansion
+SET "MCV_LOGPATH=%~2"
+setlocal EnableDelayedExpansion
 SHIFT
 SHIFT
 GOTO checkparameters
