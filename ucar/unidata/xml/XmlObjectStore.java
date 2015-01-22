@@ -740,7 +740,24 @@ public class XmlObjectStore implements PersistentStore {
         }
     }
 
+    /**
+     * Return a <b>copy</b> of the {@link Hashtable} used to store keys and
+     * values. Putting things plainly, because a copy is returned, any changes
+     * made to the copy <b>will not</b> be present in {@code table}.
+     *
+     * @return Copy of the key/value pairs in {@link #table}.
+     */
+    public synchronized Map<String, Object> getTable() {
+        return new HashMap<>(table);
+    }
 
+    public synchronized Set<String> getKeys() {
+        return new TreeSet<>(table.keySet());
+    }
+
+    public synchronized int getSize() {
+        return table.size();
+    }
 
     /**
      *   Save the store to disk.

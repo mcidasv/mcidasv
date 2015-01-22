@@ -34,6 +34,9 @@ import ucar.unidata.idv.IdvObjectStore;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * Wraps the application's {@link ucar.unidata.idv.IdvObjectStore} object and
  * provides methods that are safe to use from Jython scripts.
@@ -369,5 +372,46 @@ public class JythonObjectStore {
      */
     public void putLong(String key, long value) {
         idvStore.put(requireNonNull(key), value);
+    }
+
+
+    public Set<String> getKeys() {
+        // yeah, i don't like forwarding stuff like this either. but remember,
+        // the intent is to eventually move away from the IDV object store
+        // altogether (so this kinda redundant call may eventually go away).
+        return idvStore.getKeys();
+    }
+
+
+    public Set<String> getMatchingKeys(String substring) {
+        Set<String> allKeys = idvStore.getKeys();
+        Set<String> matches = new TreeSet<>();
+        for (String key : allKeys) {
+            if (key.contains(substring)) {
+                matches.add(key);
+            }
+        }
+        return matches;
+    }
+
+    public String listKeys() {
+        Set<String> keys = idvStore.getKeys();
+        // 128 is just a guess as to the typical key length
+        StringBuilder s = new StringBuilder(keys.size() * 128);
+        for (String key : keys) {
+            s.append(key).append('\n');
+        }
+        return s.toString();
+    }
+
+    public String listMatchingKeys(String substring) {
+        Set<String> keys = idvStore.getKeys();
+        StringBuilder s = new StringBuilder(keys.size() * 128);
+        for (String key : keys) {
+            if (key.contains(substring)) {
+                s.append(key).append('\n');
+            }
+        }
+        return s.toString();
     }
 }
