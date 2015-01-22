@@ -410,14 +410,14 @@ public class ProjectionManager implements ActionListener {
      */
     public void doExport() {
         List   projections = getProjections();
-        Vector v           = new Vector();
+
+        Vector<String> projectionNames = new Vector<>(projections.size());
         for (int i = 0; i < projections.size(); i++) {
             ProjectionImpl projection = (ProjectionImpl) projections.get(i);
-            v.add(projection);
-            //            v.add(tfo);
+            projectionNames.add(projection.getName());
         }
 
-        JList  jlist    = new JList(v);
+        JList<String>  jlist    = new JList<>(projectionNames);
         JPanel contents =
             GuiUtils
                 .topCenter(GuiUtils
@@ -429,15 +429,14 @@ public class ProjectionManager implements ActionListener {
             return;
         }
 
-        Object[] items = jlist.getSelectedValues();
-        if ((items == null) || (items.length == 0)) {
+        int[] indices = jlist.getSelectedIndices();
+        if ((indices == null) || (indices.length == 0)) {
             return;
         }
-        List selected = new ArrayList();
-        for (int i = 0; i < items.length; i++) {
-            selected.add(items[i]);
+        List<ProjectionImpl> selected = new ArrayList<>(indices.length);
+        for (int i = 0; i < indices.length; i++) {
+            selected.add((ProjectionImpl)projections.get(indices[i]));
         }
-
         String xml      = (new XmlEncoder()).toXml(selected);
         String filename = FileManager.getWriteFile(FileManager.FILTER_XML,
                               FileManager.SUFFIX_XML);
