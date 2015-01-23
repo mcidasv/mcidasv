@@ -5,7 +5,7 @@
 COPYRIGHT="../release/licenses/COPYRIGHT"
 HEADER="/tmp/copyright.header"
 
-DIRS="edu ucar"
+DIRS="edu ucar visad"
 MAX_CLIP=30
 
 TEMP="/tmp/copyright.temp"
