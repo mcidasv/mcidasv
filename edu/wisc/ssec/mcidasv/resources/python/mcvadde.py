@@ -738,7 +738,12 @@ def listADDEImageTimes(localEntry=None,
     #     location = '&%s=0 0' % (coordSys)
         
     if time:
-        time = '&TIME=%s %s I' % (time[0], time[1])
+        if isinstance(time, (str, unicode, String)):
+            time = '&TIME=%s %s I' % (str(time), str(time))
+        elif len(time) == 2:
+            time = '&TIME=%s %s I' % (str(time[0]), str(time[1]))
+        else:
+            raise ValueError("could not understand the given time value: %s" % (time))
     else:
         time = ''
         
@@ -945,7 +950,12 @@ def listADDEImages(localEntry=None,
     #     location = '&%s=0 0' % (coordSys)
         
     if time:
-        time = '&TIME=%s %s I' % (time[0], time[1])
+        if isinstance(time, (str, unicode, String)):
+            time = '&TIME=%s %s I' % (str(time), str(time))
+        elif len(time) == 2:
+            time = '&TIME=%s %s I' % (str(time[0]), str(time[1]))
+        else:
+            raise ValueError("could not understand the given time value: %s" % (time))
     else:
         time = ''
         
