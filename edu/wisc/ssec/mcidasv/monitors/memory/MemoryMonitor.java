@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2014
+ * Copyright 2007-2015
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
