@@ -89,9 +89,13 @@ Deep Convection'</td></tr></table></div>
       <td valign="top">range=</td>
       <td>(min,max) enhancement range; default = (min,max)    of data</td>
     </tr>
+    <tr>
+      <td valign="top">transparency=</td>
+      <td>transparency to apply to entire enhancement. The valid range is 0 - 1, with 0 being opaque and 1 being 100% transparent; default=1</td>
+    </tr>
 </table></div>
   <div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>layer.setEnhancement('Longwave Infrared Deep Convection',range=(20,250))</em></div>
+  <div class="TwoTabIndent"><em>layer.setEnhancement('Longwave Infrared Deep Convection',range=(20,250),transparency=0.2)</em></div>
 <p><strong><a name="setLayerLabel" id="setLayerLabel"></a>setLayerLabel -</strong> Toggles
   a layer label on/off and defines its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerLabel(keywords)</em></div>
