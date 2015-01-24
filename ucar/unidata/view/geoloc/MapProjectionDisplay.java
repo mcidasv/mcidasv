@@ -39,7 +39,6 @@ import ucar.unidata.geoloc.projection.LatLonProjection;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
 import ucar.unidata.util.Trace;
 
 import ucar.visad.GeoUtils;
@@ -82,7 +81,6 @@ import visad.georef.EarthLocationTuple;
 import visad.georef.MapProjection;
 import visad.georef.TrivialMapProjection;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -120,7 +118,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-
 /**
  * Provides a navigated VisAD DisplayImpl for displaying data.
  * The Projection or MapProjection provides the transformation from
@@ -133,6 +130,7 @@ import javax.swing.JToolBar;
  *
  * @author Don Murray
  */
+
 public abstract class MapProjectionDisplay extends NavigatedDisplay {
 
     /**
@@ -1017,18 +1015,19 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
 
     		majorTicks.add(rangeMap);
     		labelTable.put(rangeMap, labelFormat.format(bottom + (majorCount * majorIncrement)));
+    		majorCount++;
 
     		// do minor increment labeling, if needed
     		if (minorIncrement > 1) {
     			// only do these after one major tick has been labeled
     			if (majorCount > 0) {
     				tmpIncr = (Math.abs(rangeMap - prevMap)) / minorIncrement;
-    				for (int j = 1; j < minorIncrement; j++) {
+    				for (int j = 0; j < minorIncrement; j++) {
     					minorTicks.add(prevMap + (tmpIncr * j));
     				}
     			}
     		}
-    		majorCount++;
+
     		prevMap = rangeMap;
 
         }

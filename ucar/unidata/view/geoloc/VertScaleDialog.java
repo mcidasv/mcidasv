@@ -268,6 +268,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
      *
      * @return Was it successful
      */
+    
     public boolean doApply() {
     	
         float minValue = Float.NaN;
@@ -321,7 +322,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
         try {
             control.applyVerticalRange(vertScaleInfo);
         } catch (Exception exc) {
-            LogUtil.userMessage("An error has occurred:" + exc);
+            LogUtil.userMessage("An error has occurred: " + exc);
             return false;
         }
         //        }
@@ -334,6 +335,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
      *
      * @return true, if is axis visible
      */
+    
     public boolean isAxisVisible() {
         return jcbVisible.isSelected();
     }
@@ -343,6 +345,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
      *
      * @return the vert scale info
      */
+    
     public VertScaleInfo getVertScaleInfo() {
         return this.vertScaleInfo;
     }
