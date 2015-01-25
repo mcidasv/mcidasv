@@ -989,7 +989,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         List<Double> majorTicks   = new ArrayList<Double>();
         int          minorIncrement = getVertScaleInfo().getMinorDivision();
         List<Double> minorTicks   = new ArrayList<Double>();
-        int majorIncrement = (int) getVertScaleInfo().getMajorIncrement();
+        double majorIncrement = getVertScaleInfo().getMajorIncrement();
         
         Hashtable<Double, String> labelTable = new Hashtable<Double, String>();
 
@@ -1004,7 +1004,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         // map increment from previous major to next minor tick
         double tmpIncr = 0.0d;
 
-        for (int i = (int) bottom; i < top; i += majorIncrement) {
+        for (double i = bottom; i < top; i += majorIncrement) {
 
         	// Values that are not in this range are not visible.
         	if (i < bottom) {
@@ -1032,8 +1032,9 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
 
         }
         
-        // see if the top should be labeled too
-        if ((top % majorIncrement) == 0) {
+        // see if the top should be labeled too. will label if it's within a delta
+        // I have found elsewhere in this file
+        if ((top % majorIncrement) < 0.0001) {
     		majorTicks.add(maxmin[1]);
     		labelTable.put(maxmin[1], labelFormat.format(top));
     		// do minor increment labeling, if needed
