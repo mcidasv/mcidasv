@@ -62,6 +62,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import ucar.unidata.data.DataSource;
+import ucar.unidata.data.imagery.AddeImageDataSource;
+import ucar.unidata.data.imagery.ImageDataSource;
 import visad.Data;
 import visad.DateTime;
 import visad.FieldImpl;
@@ -234,6 +236,12 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         for (DataSource source : sources) {
             if ((source instanceof AddeImageParameterDataSource) || (source instanceof SuomiNPPDataSource)) {
                 return false;
+            } else if (source instanceof AddeImageDataSource) {
+                Hashtable props = ((AddeImageDataSource)source).getProperties();
+                String imageType = (String)props.get("prop.imagetype");
+                if (ImageDataSource.TYPE_RADAR.equals(imageType)) {
+                    return false;
+                }
             }
         }
         return true;
