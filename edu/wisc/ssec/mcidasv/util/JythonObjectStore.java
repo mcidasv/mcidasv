@@ -34,6 +34,7 @@ import ucar.unidata.idv.IdvObjectStore;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -410,6 +411,28 @@ public class JythonObjectStore {
         for (String key : keys) {
             if (key.contains(substring)) {
                 s.append(key).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    public String listItems() {
+        Set<String> keys = idvStore.getKeys();
+        Map<String, Object> table = idvStore.getTable();
+        StringBuilder s = new StringBuilder(keys.size() * 512);
+        for (String key : keys) {
+            s.append(key).append(":\t").append(table.get(key)).append('\n');
+        }
+        return s.toString();
+    }
+
+    public String listMatchingItems(String substring) {
+        Set<String> keys = idvStore.getKeys();
+        Map<String, Object> table = idvStore.getTable();
+        StringBuilder s = new StringBuilder(keys.size() * 512);
+        for (String key : keys) {
+            if (key.contains(substring)) {
+                s.append(key).append(":\t").append(table.get(key)).append('\n');
             }
         }
         return s.toString();
