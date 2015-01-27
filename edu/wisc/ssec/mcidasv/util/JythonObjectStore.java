@@ -34,6 +34,7 @@ import ucar.unidata.idv.IdvObjectStore;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -376,7 +377,7 @@ public class JythonObjectStore {
     }
 
 
-    public Set<String> getKeys() {
+    public Set<String> keys() {
         // yeah, i don't like forwarding stuff like this either. but remember,
         // the intent is to eventually move away from the IDV object store
         // altogether (so this kinda redundant call may eventually go away).
@@ -384,12 +385,28 @@ public class JythonObjectStore {
     }
 
 
-    public Set<String> getMatchingKeys(String substring) {
+    public Set<String> keys(String substring) {
         Set<String> allKeys = idvStore.getKeys();
         Set<String> matches = new TreeSet<>();
         for (String key : allKeys) {
             if (key.contains(substring)) {
                 matches.add(key);
+            }
+        }
+        return matches;
+    }
+
+    public Map<String, Object> items() {
+        return idvStore.getTable();
+    }
+
+    public Map<String, Object> items(String substring) {
+        Map<String, Object> allItems = idvStore.getTable();
+        Map<String, Object> matches = new LinkedHashMap<>(allItems.size());
+        for (Map.Entry<String, Object> entry : allItems.entrySet()) {
+            String key = entry.getKey();
+            if (key.contains(substring)) {
+                matches.put(key, entry.getValue());
             }
         }
         return matches;
