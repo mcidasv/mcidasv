@@ -30,11 +30,21 @@ package edu.wisc.ssec.mcidasv.util;
 
 import static java.util.Objects.requireNonNull;
 
+import org.python.core.Py;
+import org.python.core.PyDictProxy;
+import org.python.core.PyDictionary;
+import org.python.core.PyDictionaryDerived;
+import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.core.PyTuple;
 import ucar.unidata.idv.IdvObjectStore;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -388,28 +398,36 @@ public class JythonObjectStore {
     public Set<String> keys(String substring) {
         Set<String> allKeys = idvStore.getKeys();
         Set<String> matches = new TreeSet<>();
+        String lowerCase = substring.toLowerCase();
         for (String key : allKeys) {
-            if (key.contains(substring)) {
+            if (key.toLowerCase().contains(lowerCase)) {
                 matches.add(key);
             }
         }
         return matches;
     }
 
-    public Map<String, Object> items() {
-        return idvStore.getTable();
+    public List<PyTuple> items() {
+        Map<String, Object> table = idvStore.getTable();
+        List<PyTuple> l = new ArrayList<>(table.size());
+        for (Map.Entry<String, Object> entry : table.entrySet()) {
+            l.add(new PyTuple(new PyString(entry.getKey()), Py.java2py(entry.getValue())));
+        }
+        return l;
     }
 
-    public Map<String, Object> items(String substring) {
+    public List<PyTuple> items(String substring) {
         Map<String, Object> allItems = idvStore.getTable();
-        Map<String, Object> matches = new LinkedHashMap<>(allItems.size());
+        List<PyTuple> l = new ArrayList<>(allItems.size());
+        String lowerCase = substring.toLowerCase();
         for (Map.Entry<String, Object> entry : allItems.entrySet()) {
             String key = entry.getKey();
-            if (key.contains(substring)) {
-                matches.put(key, entry.getValue());
+            if (key.toLowerCase().contains(lowerCase)) {
+                l.add(new PyTuple(new PyString(key), Py.java2py(entry.getValue())));
+
             }
         }
-        return matches;
+        return l;
     }
 
     public String listKeys() {
@@ -425,8 +443,9 @@ public class JythonObjectStore {
     public String listMatchingKeys(String substring) {
         Set<String> keys = idvStore.getKeys();
         StringBuilder s = new StringBuilder(keys.size() * 128);
+        String lowerCase = substring.toLowerCase();
         for (String key : keys) {
-            if (key.contains(substring)) {
+            if (key.toLowerCase().contains(lowerCase)) {
                 s.append(key).append('\n');
             }
         }
@@ -438,7 +457,7 @@ public class JythonObjectStore {
         Map<String, Object> table = idvStore.getTable();
         StringBuilder s = new StringBuilder(keys.size() * 512);
         for (String key : keys) {
-            s.append(key).append(":\t").append(table.get(key)).append('\n');
+            s.append(key).append(": ").append(table.get(key)).append('\n');
         }
         return s.toString();
     }
@@ -446,10 +465,11 @@ public class JythonObjectStore {
     public String listMatchingItems(String substring) {
         Set<String> keys = idvStore.getKeys();
         Map<String, Object> table = idvStore.getTable();
+        String lowerCase = substring.toLowerCase();
         StringBuilder s = new StringBuilder(keys.size() * 512);
         for (String key : keys) {
-            if (key.contains(substring)) {
-                s.append(key).append(":\t").append(table.get(key)).append('\n');
+            if (key.toLowerCase().contains(lowerCase)) {
+                s.append(key).append(": ").append(table.get(key)).append('\n');
             }
         }
         return s.toString();
