@@ -74,6 +74,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <strong></strong>
 <div class="faq-category">
   <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#adaptiveResolution1.5">Adaptive Resolution</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#timeMatching1.5">Time Matching</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#scripting1.5">Scripting</a></strong></li>
     <li><strong><a class="faq-question-link" href="#java1.5">Java and Java 3D Version</a></strong></li>
     <li><strong><a class="faq-question-link" href="#sample1.5">Sample Bundles</a></strong></li>
   </ul>
@@ -124,6 +127,28 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 </div>
 <div class="faq-category-title"><a name="faq1_cat4_1.5" id="faq1_cat2_1.5"></a>Other
   Changes</div>
+  <div class="faq-category"><a name="adaptiveResolution1.5" id="adaptiveResolution1.5"></a>
+  <h4>Adaptive Resolution</h4>
+<div class="faq-answer">
+  <p>Added a new feature called Adaptive Resolution. This feature is used when displaying high-resolution data. McIDAS-V will look at the size of the Main Display window, and display the highest resolution of data that can be viewed in the current state of the Main Display. Dependent on the resolution of the data, this may sample the data by not displaying every data point. This sampling can be seen in the Legend of the Main Display, which may read out &quot;Data Sampling: every x grid point&quot; if the data was sampled, or no sampling text will be in the Legend if the data is at full resolution. This feature allows for generating quick displays of data, without taking time to display higher resolution data than can be displayed with the current view.</p>
+  <p>Another concept associated with Adaptive Resolution is matching the display region. When displayed using the Match Display Region dropdown in the Region tab of the Field Selector, the only data displayed will be data that fits in your current Main Display window view. This helps to create quicker displays without displaying more data than necessary. This Match Display Region dropdown can be used in conjunction with Adaptive Resolution, where only the highest resolution that can be viewed in the Main Display window will be displayed.</p>
+  <p>After generating the initial display of data, a user can zoom in on a particular location using Shift+left-click+drag. This resamples the data to the new domain and displays the highest resolution that can be viewed in the current display, while at the same time sampling the domain of the data to only display data in the current view. Another way of resampling the data to a new domain is by changing the projection.</p>
+  <p>Adaptive Resolution can be turned on or off through the Display Window tab of the User Preferences. This feature can be turned on or off for a display through the Projections menu. Apart from setting Adaptive Resolution being on or off for the entire view, each layer that uses Adaptive Resolution can be set individually through the Resolution Control button next to the layer name in the Legend. Only layers capable of utilizing Adaptive Resolution will have this button.</p>
+</div></div>
+<div class="faq-category"><a name="timeMatching1.5" id="timeMatching1.5"></a>
+  <h4>Time Matching</h4>
+<div class="faq-answer">
+  <p>Added a new feature called Time Matching. This feature allows users to easily create loops of various data with differing   temporal frequencies.&nbsp;An example case of where time matching may be   useful is if a user wants to create a 4-hour loop of satellite data, and   overlay radar data on the satellite images.&nbsp;This data may have  different frequencies (ex: Satellite data may come in 2 times an hour,   while Radar data may come in 8 times an hour). In the past, a user would   have to go into the Absolute Times tab of the radar data and   individually select every time that matched up with the satellite data.   With&nbsp;Time Matching, this is no longer necessary.</p>
+  <p>Now, a user can set one layer to be the time driver, and other layers can then be selected to match the time driver times. For more on time matching, see <a href="misc/TimeMatching.html">Time Matching</a>.</p>
+</div></div>
+<div class="faq-category"><a name="scripting1.5" id="scripting1.5"></a>
+  <h4>Scripting</h4>
+<div class="faq-answer">
+  <p>Changed the name of getADDEImage to loadADDEImage. The name change was made for consistency with other functions in both naming as well as what is returned from the function. In the past, getADDEImage returned two objects: metadata, and one object containing both data and metadata. Now, loadADDEImage only returns the one object containing both the data and metadata. Users can call the single object returned from loadADDEImage in the same way the metadata object from getADDEImage was returned in the past. Scripts using getADDEImage will continue to work. For more information, see <a href="misc/Scripting/CreateObject.html#loadADDEImage">loadADDEImage</a>.</p>
+  <p>Added new functions for working with gridded data, including netCDF, hdf, and grib formats. This function is called loadGrid. There are also a variety of new lister functions to give users information about the file loaded in via loadGrid, including loadGridFieldsInFile, loadGridLevelsInField, and loadGridTimesInField. For more information, see <a href="misc/Scripting/CreateObject.html#loadGrid">loadGrid</a>.</p>
+  <p>Added additional features to captureImage. This includes a new bgtransparent keyword to set the background of the image transparent, as well as a variety of new formatting options for the output image. These formatting options include adding a matte, colorbar, image overlay and text overlay to the output image. New output formats are also now supported, including *.pdf, *.ps, *.svg, *.kml, and *.kmz. For more information, see <a href="misc/Scripting/SaveDisplay.html#captureImage">captureImage</a>.</p>
+  <p>Added a new transparency keyword to setEnhancement. This allows for setting a transparency value across an entire enhancement. For more information, see <a href="misc/Scripting/ModifyLayerObject.html#setEnhancement">setEnhancement</a>.</p>
+</div></div>
 <div class="faq-category"><a name="java1.5" id="java1.5"></a>
   <h4>Java and Java 3D Versions</h4>
 <div class="faq-answer">Updated from Java version 1.6.0_31 to 1.7.0_60. Updated Java 3D version from 1.5.2 to 1.6.0.</div></div>

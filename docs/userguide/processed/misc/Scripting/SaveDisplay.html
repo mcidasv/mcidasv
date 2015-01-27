@@ -35,7 +35,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">file=</td>
-      <td>name of file, file format determined by file extension; valid options: .jpg, .gif, .png<!---, .pdf, .svg, .kml, .kmz---></td>
+      <td>name of file, file format determined by file extension; valid options: .jpg, .gif, .png, .ps, .pdf, .svg, .kml, and .kmz<!---, .pdf, .svg, .kml, .kmz---></td>
     </tr>
 </table></div>
 <div class="TwoTabIndent">Keywords - optional:</div>
@@ -51,6 +51,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
     <tr>
       <td valign="top">quality=</td>
       <td>quality of jpg file (0.0 to 1.0); default=1.0;    not used with other formats</td>
+    </tr>
+    <tr>
+      <td valign="top">bgtransparent=</td>
+      <td>captures image with transparent background; default=False</td>
     </tr>
     <tr>
       <td valign="top">formatting=</td>
