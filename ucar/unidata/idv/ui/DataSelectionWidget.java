@@ -749,8 +749,8 @@ public class DataSelectionWidget {
             selectionTab.addAncestorListener (new AncestorListener() {
                 @Override public void ancestorAdded(AncestorEvent event) {
                     // Component added somewhere
-                    logger.trace("added!");
-                    if (autoTabChange) {
+                    String osName = System.getProperty("os.name", "");
+                    if (autoTabChange && osName.startsWith("Mac OS X")) {
                         logger.trace("{}: restoring tab", selectionTab.hashCode());
                         selectionTab.setSelectedIndex(originalTabIndex);
                         autoTabChange = false;
@@ -758,7 +758,17 @@ public class DataSelectionWidget {
                     }
                 }
 
-                @Override public void ancestorRemoved(AncestorEvent event) { }
+                @Override public void ancestorRemoved(AncestorEvent event) {
+                    // Component removed somewhere
+                    int index = selectionTab.getSelectedIndex();
+                    String osName = System.getProperty("os.name", "");
+                    if (osName.startsWith("Mac OS X") && selectionTab.getTitleAt(index).equals("Region")) {
+                        logger.trace("{}: changing tab", selectionTab.hashCode());
+                        autoTabChange = true;
+                        selectionTab.setSelectedIndex(0);
+                        originalTabIndex = index;
+                    }
+                }
 
                 @Override public void ancestorMoved(AncestorEvent event) { }
             });
@@ -930,10 +940,11 @@ public class DataSelectionWidget {
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
+                // change to the first tab if we're the region tab
+                // (to prevent the persistent image preview bug on OS X)
                 int index = selectionTab.getSelectedIndex();
-                logger.trace("selComp={}", selectionTab.getTitleAt(index));
-                logger.trace("geoPanel={}", geoSelectionPanel);
-                if (selectionTab.getTitleAt(index).equals("Region")) {
+                String osName = System.getProperty("os.name", "");
+                if (osName.startsWith("Mac OS X") && selectionTab.getTitleAt(index).equals("Region")) {
                     logger.trace("{}: changing tab", selectionTab.hashCode());
                     autoTabChange = true;
                     selectionTab.setSelectedIndex(0);
