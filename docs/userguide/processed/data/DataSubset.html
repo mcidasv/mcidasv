@@ -41,14 +41,23 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSubset.h
       </ul>
   <p>The <strong>Level</strong> tab allows for subsetting levels for 3D grids. This sets the level in the atmosphere that will be used to plot the data in the Main Display window:</p>
   <div class="images"><img src="images/SelectorStep5.gif" alt="Image 2: Level Tab of the Subset Panel in the Field Selector"><br>
-<span class="caption">Image 2: Level of the Subset Panel in the Field Selector</span></div>
+<span class="caption">Image 2: Level Tab of the Subset Panel in the Field Selector</span></div>
 <p>For images, optionally subset the spatial area to be displayed. Use the
 <strong>Region </strong>tab to left-click and drag to select a geographical region to display. In the Main Display window, the display will be centered around your box and no data will be plotted outside of it. Note that before subsetting a region, you may have to uncheck the <strong>Use Default</strong> checkbox:</p>
-    <div class="images"><img src="../quickstart/images/RegionTab.gif" alt="Image 3: Region Tab of the Subset Panel in the Field Selector" width="294" height="222"><br>
-<span class="caption">Image 3: Region of the Subset Panel in the Field Selector</span></div>
+    <div class="images"><img src="../quickstart/images/RegionTab.gif" alt="Image 3: Region Tab of the Subset Panel in the Field Selector (Satellite)" width="294" height="222"><br>
+<span class="caption">Image 3: Region Tab of the Subset Panel in the Field Selector (Satellite)</span></div>
+  <p>Note that the <strong>Region</strong> tab is different for some data sources. For example, here is the <strong>Region</strong> tab when working with gridded data:</p>
+  <div class="images"><img src="images/RegionGrid.gif" width="323" height="260" alt="Image 4: Region Tab of the Subset Panel in the Field Selector (Grid)"><br>
+  <span class="caption">Image 4: Region Tab of the Subset Panel in the Field Selector (Grid)</span></div>
+  <p>Use the dropdown menu to select what geographical region to display the data over:</p>
+  <ul class="propertylist">
+    <li class="propertylistitem"><strong>Use Default Region -</strong> Displays the default, full geographical region of the data.</li>
+    <li class="propertylistitem"><strong>Select A Region -</strong> Allows for drawing a bounding box for where to display the data.</li>
+    <li class="propertylistitem"><strong>Match Display Region -</strong> Displays only data that fits within the geographic boundaries of the active panel in the Main Display window.</li>
+  </ul>
   <p>Use the <strong>Advanced</strong> tab to further refine the data selection and refer back to the <strong>Region</strong> tab to view the image you've selected:</p>
-  <div class="images"><img src="../quickstart/images/AdvancedTab.gif" alt="Image 4: Advanced Tab in the Subset Panel of the Field Selector" width="475" height="358"><br>
-<span class="caption">Image 4: Advanced Tab of the Subset Panel in the Field Selector</span></div>
+  <div class="images"><img src="../quickstart/images/AdvancedTab.gif" alt="Image 5: Advanced Tab in the Subset Panel of the Field Selector" width="475" height="358"><br>
+<span class="caption">Image 5: Advanced Tab of the Subset Panel in the Field Selector</span></div>
     <div class="pagesubtitle">Properties</div>
 <p>The image properties in the <strong>Advanced</strong> tab allow for overriding the default properties McIDAS-V uses to specify aspects of the image data. The widgets show the defaults McIDAS-V will use. Changing any of the widgets can override the default value. </p>
     <ul class="propertylist">

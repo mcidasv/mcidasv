@@ -32,7 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
 <div class="pagetitle">Choosing Satellite Imagery</div>
 <p>The <strong>Satellite-&gt;Imagery</strong> chooser allows you to access satellite imagery on local or remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/Satellite.html">Getting Started - Displaying Satellite Imagery</a>.</p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/ImageChooser.gif" width="1010" height="499" alt="Image 1: Satellite Imagery Chooser"><br>
+<div class="images"><img src="images/ImageChooser.gif" width="1010" height="497" alt="Image 1: Satellite Imagery Chooser"><br>
 <span class="caption">Image 1: Satellite Imagery Chooser</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
@@ -44,6 +44,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
     <li class="propertylistitem"><strong>Image Type</strong> - Selects the image type.</li>
     <li class="propertylistitem"><strong>Times: Relative</strong> - Allows you to select a group of up to the last 100 times.</li>
     <li class="propertylistitem"><strong>Times: Absolute</strong> - Allows you to select one or more absolute times. When choosing absolute times for the first time, McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Ctrl+click or Shift+click. See the <a href="../../display_controls/Timeline.html">Timeline Controls</a> section for details on its use. Click on the <img src="images/SelectDay1.gif" alt="Select Archive Day button" width="16" height="16"align=absmiddle> <strong>Select  Day</strong> button to narrow down a large dataset to one day.</li>
+    <li class="propertylistitem"><strong>Match Time Driver -</strong> Selects times that match the time driver, assuming one has been set. For more on this feature, see <a href="../../misc/TimeMatching.html">Time Matching</a>.</li>
     <li class="propertylistitem"><strong>Navigation</strong> - Selects one of the available navigation types. Use Default for most images, and Lat/Lon if LALO navigation should be used. Level 1b servers and POES servers often require Lat/Lon navigation to be used. </li>
     <li class="propertylistitem"><strong>Preview</strong> - Displays a preview of the image in the <strong>Region</strong> tab of the <strong>Field Selector</strong>. If this box is unchecked, then only a map of the image coverage area will be shown without any data. </li>
     <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align=absmiddle> <strong> Help</strong> - Brings up this help page.</li>
