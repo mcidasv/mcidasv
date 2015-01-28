@@ -66,6 +66,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
@@ -746,34 +747,20 @@ public class DataSelectionWidget {
                     selectionTab.addTab(comp.getName(), comp.getContents());
             }
             selectionTab.addAncestorListener (new AncestorListener() {
-                public void ancestorAdded(AncestorEvent event) {
+                @Override public void ancestorAdded(AncestorEvent event) {
                     // Component added somewhere
                     logger.trace("added!");
-                    Component[] comps       = selectionTab.getComponents();
-                    int         selectedIdx = selectionTab.getSelectedIndex();
-                    for (int i = 0; i < comps.length; i++) {
-                        GuiUtils.toggleHeavyWeightComponents(comps[i], i == selectedIdx);
+                    if (autoTabChange) {
+                        logger.trace("{}: restoring tab", selectionTab.hashCode());
+                        selectionTab.setSelectedIndex(originalTabIndex);
+                        autoTabChange = false;
+                        originalTabIndex = -1;
                     }
-                    selectionContainer.revalidate();
-                    selectionContainer.repaint();
                 }
 
-                public void ancestorRemoved(AncestorEvent event) {
-                    // Component removed from container
-                    logger.trace("removed!");
-                    Component[] comps       = selectionTab.getComponents();
-                    int         selectedIdx = selectionTab.getSelectedIndex();
-                    for (int i = 0; i < comps.length; i++) {
-                        GuiUtils.toggleHeavyWeightComponents(comps[i], false);
-                    }
-                    selectionContainer.revalidate();
-                    selectionContainer.repaint();
-                }
+                @Override public void ancestorRemoved(AncestorEvent event) { }
 
-                public void ancestorMoved(AncestorEvent event) {
-                    // Component container moved
-                    logger.trace("moved!");
-                }
+                @Override public void ancestorMoved(AncestorEvent event) { }
             });
         }
 
@@ -791,8 +778,6 @@ public class DataSelectionWidget {
 
         return newDataSource;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(DataSelectionWidget.class);
 
     /**
      * Create the data selection from everything selected by the user
@@ -943,9 +928,28 @@ public class DataSelectionWidget {
             dataSelection.putProperty("prop.gridmembers", selectedMembers);
         }
 
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override public void run() {
+                int index = selectionTab.getSelectedIndex();
+                logger.trace("selComp={}", selectionTab.getTitleAt(index));
+                logger.trace("geoPanel={}", geoSelectionPanel);
+                if (selectionTab.getTitleAt(index).equals("Region")) {
+                    logger.trace("{}: changing tab", selectionTab.hashCode());
+                    autoTabChange = true;
+                    selectionTab.setSelectedIndex(0);
+                    originalTabIndex = index;
+                }
+            }
+        });
+
+
         return dataSelection;
 
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(DataSelectionWidget.class);
+    private boolean autoTabChange = false;
+    private int originalTabIndex = -1;
 
     public boolean getIsProgressiveResolution() {
         boolean usePR = false;
