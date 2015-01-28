@@ -12,6 +12,7 @@ from javax.swing import SwingUtilities
 
 from visad import Field
 from visad import FlatField
+from visad import FieldImpl
 from visad.meteorology import ImageSequenceImpl
 from visad.meteorology import SingleBandedImage
 

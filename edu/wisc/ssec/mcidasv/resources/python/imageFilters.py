@@ -5,6 +5,7 @@ from ucar.unidata.data.grid import GridUtil
 
 from decorators import transform_flatfields
 
+@transform_flatfields
 def cloudFilter(sdataset1, sdataset2, user_replace='Default', user_constant=0, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Cloud filter from McIDAS-X - requires 2 source datasets.
     
@@ -72,6 +73,7 @@ def cloudFilter(sdataset1, sdataset2, user_replace='Default', user_constant=0, u
         
     return data1
     
+@transform_flatfields
 def replaceFilter(sdataset, user_replaceVal=0, user_sourceval='Default', user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Replace filter from McIDAS-X.
     
@@ -303,6 +305,7 @@ def cleanFilter(sdataset, user_fill='Average', user_bline='Default', user_eline=
         
     return newData
     
+@transform_flatfields
 def shotFilter(sdataset, user_bline='Default', user_eline='Default', user_pdiff=15, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Shot noise filter from McIDAS-X.
     
@@ -372,6 +375,7 @@ def spotFilter(sdataset, omcon=0, oacon=0, imcon=0, iacon=0, cmin=0, cmax=0, use
     newData = sdataset.clone()
     return newData
     
+@transform_flatfields
 def coreFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='Default', user_replace1='Default', user_replace2='Default', user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Core filter from McIDAS-X.
     
@@ -466,6 +470,7 @@ def coreFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='D
         
     return data1
     
+@transform_flatfields
 def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,user_stretchval='Contrast',user_britlo=0,user_brithi=255):
     """Shot noise filter from McIDAS-X.
     
@@ -529,6 +534,7 @@ def shotFilter(sdataset,user_bline='Default',user_eline='Default',user_pdiff=15,
     
     return newData
     
+@transform_flatfields
 def discriminateFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='Default', user_brkpoint3='Default', user_brkpoint4='Default', user_replace='Default', user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Discriminate filter from McIDAS-X.
     
@@ -621,6 +627,7 @@ def discriminateFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkp
         
     return data1
     
+@transform_flatfields
 def mergeFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='Default', user_constant=0, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Merge filter from McIDAS-X.
     
@@ -701,6 +708,7 @@ def mergeFilter(sdataset1, sdataset2, user_brkpoint1='Default', user_brkpoint2='
         
     return data1
     
+@transform_flatfields
 def gradientFilter(sdataset, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Gradient filter from McIDAS-X.
     
@@ -747,6 +755,7 @@ def gradientFilter(sdataset, user_stretchval='Contrast', user_britlo=0, user_bri
     return newData
 
 
+@transform_flatfields
 def passFilter(sdataset, user_passname, user_radius=50, user_leak=100, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Used by one-dimensional low-pass and high-pass filters from McIDAS-X.
     
@@ -829,6 +838,7 @@ def passFilter(sdataset, user_passname, user_radius=50, user_leak=100, user_stre
         
     return newData
     
+@transform_flatfields
 def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Two dimensional low pass filter from McIDAS-X.
     
@@ -912,6 +922,7 @@ def lowPass2DFilter(sdataset, user_linecoef=0.5, user_elecoef=0.5, user_stretchv
         
     return newData
     
+@transform_flatfields
 def highPass2DFilter(sdataset, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Two dimensional high pass filter from McIDAS-X.
     
@@ -973,6 +984,7 @@ def highPass2DFilter(sdataset, user_stretchval='Contrast', user_britlo=0, user_b
         
     return newData
     
+@transform_flatfields
 def holeFilter(sdataset, user_brkpoint1=0, user_brkpoint2=1, user_stretchval='Contrast', user_britlo=0, user_brithi=255):
     """Hole filter from McIDAS-X.
     
@@ -1149,6 +1161,7 @@ def makeHistogram(vals, element_size, line_size, minimum, nbins):
                 
     return hist
     
+@transform_flatfields
 def printValueDiff(sdataset1, sdataset2):
     """Debug function that prints value differences between two datasets."""
     data1 = sdataset1.clone()
@@ -1167,6 +1180,7 @@ def printValueDiff(sdataset1, sdataset2):
             for j in xrange(element_size):
                 print i, j, vals1[0][i * element_size + j] - vals2[0][i * element_size + j]
                 
+@transform_flatfields
 def printVals(sdataset):
     """Debug function that prints the values in a dataset."""
     data = sdataset.clone()
