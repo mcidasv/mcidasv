@@ -21,6 +21,8 @@
 package ucar.unidata.idv.ui;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.*;
 import ucar.unidata.data.imagery.AddeImageAdvancedPanel;
 import ucar.unidata.data.imagery.AddeImageDataSource;
@@ -64,8 +66,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ListSelectionModel;
-
-
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 
 /**
@@ -743,6 +745,36 @@ public class DataSelectionWidget {
                 if(comp != null)
                     selectionTab.addTab(comp.getName(), comp.getContents());
             }
+            selectionTab.addAncestorListener (new AncestorListener() {
+                public void ancestorAdded(AncestorEvent event) {
+                    // Component added somewhere
+                    logger.trace("added!");
+                    Component[] comps       = selectionTab.getComponents();
+                    int         selectedIdx = selectionTab.getSelectedIndex();
+                    for (int i = 0; i < comps.length; i++) {
+                        GuiUtils.toggleHeavyWeightComponents(comps[i], i == selectedIdx);
+                    }
+                    selectionContainer.revalidate();
+                    selectionContainer.repaint();
+                }
+
+                public void ancestorRemoved(AncestorEvent event) {
+                    // Component removed from container
+                    logger.trace("removed!");
+                    Component[] comps       = selectionTab.getComponents();
+                    int         selectedIdx = selectionTab.getSelectedIndex();
+                    for (int i = 0; i < comps.length; i++) {
+                        GuiUtils.toggleHeavyWeightComponents(comps[i], false);
+                    }
+                    selectionContainer.revalidate();
+                    selectionContainer.repaint();
+                }
+
+                public void ancestorMoved(AncestorEvent event) {
+                    // Component container moved
+                    logger.trace("moved!");
+                }
+            });
         }
 
 
@@ -760,6 +792,7 @@ public class DataSelectionWidget {
         return newDataSource;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(DataSelectionWidget.class);
 
     /**
      * Create the data selection from everything selected by the user
