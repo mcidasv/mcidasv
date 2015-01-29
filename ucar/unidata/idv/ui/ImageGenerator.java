@@ -5159,8 +5159,7 @@ public class ImageGenerator extends IdvManager {
                     Image overlay = ImageUtils.readImage(imagePath);
                     if (overlay != null) {
                         if (transparency > 0) {
-                            overlay = ImageUtils.setAlpha(overlay,
-                                    transparency);
+                            overlay = ImageUtils.setAlpha(overlay, transparency);
                         }
 
                         int width = overlay.getWidth(null);
