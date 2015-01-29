@@ -435,7 +435,7 @@ public class JythonObjectStore {
         // 128 is just a guess as to the typical key length
         StringBuilder s = new StringBuilder(keys.size() * 128);
         for (String key : keys) {
-            s.append(key).append('\n');
+            s.append('"').append(key).append('"').append('\n');
         }
         return s.toString();
     }
@@ -446,7 +446,7 @@ public class JythonObjectStore {
         String lowerCase = substring.toLowerCase();
         for (String key : keys) {
             if (key.toLowerCase().contains(lowerCase)) {
-                s.append(key).append('\n');
+                s.append('"').append(key).append('"').append('\n');
             }
         }
         return s.toString();
@@ -457,7 +457,9 @@ public class JythonObjectStore {
         Map<String, Object> table = idvStore.getTable();
         StringBuilder s = new StringBuilder(keys.size() * 512);
         for (String key : keys) {
-            s.append(key).append(": ").append(table.get(key)).append('\n');
+            Object value = table.get(key);
+            String type = value.getClass().getName();
+            s.append('"').append(key).append("\", ").append(type).append(':').append(value).append('\n');
         }
         return s.toString();
     }
@@ -469,7 +471,9 @@ public class JythonObjectStore {
         StringBuilder s = new StringBuilder(keys.size() * 512);
         for (String key : keys) {
             if (key.toLowerCase().contains(lowerCase)) {
-                s.append(key).append(": ").append(table.get(key)).append('\n');
+                Object value = table.get(key);
+                String type = value.getClass().getName();
+                s.append('"').append(key).append("\", ").append(type).append(':').append(value).append('\n');
             }
         }
         return s.toString();
