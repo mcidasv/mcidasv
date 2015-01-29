@@ -1216,6 +1216,10 @@ class _Display(_JavaProxy):
             raise ValueError("Position '%s' is not valid. Please provide one of 'Lower Left', 'Upper Left', 'Upper Right', 'Lower Right', or 'Center'." % (position))
             
     @gui_invoke_later
+    def setLogoVisibility(self, visibility):
+        self._JavaProxy__javaObject.setLogoVisibility(visibility)
+        
+    @gui_invoke_later
     def setBackgroundColor(self, color=java.awt.Color.CYAN):
         """Set display's background color to the given AWT color (defaults to cyan)."""
         self._JavaProxy__javaObject.getMapDisplay().setBackground(color)
@@ -1466,8 +1470,8 @@ class _Display(_JavaProxy):
             logoFile = self._JavaProxy__javaObject.getLogoFile()
             logoPosition = self._JavaProxy__javaObject.getLogoPosition().upper()
             logoAnchor = logoPosition[0:2]
-            # logoScale = self._JavaProxy__javaObject.getLogoScale()
-            logoIsl = 'overlay image=%s anchor=%s place=%s; ' % (logoFile, logoAnchor, logoPosition)
+            logoScale = self._JavaProxy__javaObject.getLogoScale()
+            logoIsl = 'overlay image=%s anchor=%s place=%s scale=%s; ' % (logoFile, logoAnchor, logoPosition, logoScale)
             isl += logoIsl
             
         # print 'isl=%s' % (isl[:-2])

@@ -100,9 +100,12 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
+import java.awt.image.BufferedImageOp;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -5102,9 +5105,11 @@ public class ImageGenerator extends IdvManager {
             } else if (tagName.equals(TAG_OVERLAY)) {
                 double transparency = applyMacros(child, ATTR_TRANSPARENCY,
                                           0.0);
-                Graphics2D g = (Graphics2D) image.getGraphics();
+                Graphics2D g = image.createGraphics();
                 String imagePath = applyMacros(child, ATTR_IMAGE,
                                        (String) null);
+
+                float scale = (float) applyMacros(child, ATTR_SCALE, 1.0);
 
                 Rectangle imageRect = new Rectangle(0, 0, imageWidth,
                                           imageHeight);
@@ -5157,14 +5162,18 @@ public class ImageGenerator extends IdvManager {
                             overlay = ImageUtils.setAlpha(overlay,
                                     transparency);
                         }
-                        int width  = overlay.getWidth(null);
+
+                        int width = overlay.getWidth(null);
                         int height = overlay.getHeight(null);
+                        int scaledWidth  = Math.round(width * scale);
+                        int scaledHeight = Math.round(height * scale);
+
+                        Image scaled = getScaledImage(overlay, scaledWidth, scaledHeight);
+                        Rectangle overlayRect = new Rectangle(0, 0, scaledWidth, scaledHeight);
                         Point ap = ImageUtils.parsePoint(applyMacros(child,
                                        ATTR_ANCHOR,
-                                       "lr,-10,-10"), new Rectangle(0, 0,
-                                           width, height));
-                        g.drawImage(overlay, pp.x - ap.x, pp.y - ap.y, bg,
-                                    null);
+                                       "lr,-10,-10"), overlayRect);
+                        g.drawImage(scaled, pp.x - ap.x, pp.y - ap.y, bg, null);
                     }
                 }
             } else {
@@ -5219,6 +5228,37 @@ public class ImageGenerator extends IdvManager {
             }
         }
         return image;
+    }
+
+    /**
+     * Scale the given {@code source} {@link Image}.
+     *
+     * @param source Source image.
+     * @param width New width.
+     * @param height New height.
+     *
+     * @return Scaled {@code source} image (uses bilinear interpolation).
+     */
+    public static BufferedImage getScaledImage(Image source, int width, int height) {
+        // convert the given Image into a BufferedImage if needed--makes things a
+        // little easier.
+        BufferedImage image;
+        if (source instanceof BufferedImage) {
+            image = (BufferedImage)source;
+        } else {
+            image = new BufferedImage(source.getWidth(null), source.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = image.createGraphics();
+            g.drawImage(source, 0, 0, null);
+            g.dispose();
+        }
+
+        int imageWidth  = image.getWidth();
+        int imageHeight = image.getHeight();
+        double scaleX = (double)width / imageWidth;
+        double scaleY = (double)height / imageHeight;
+        AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
+        BufferedImageOp op = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+        return op.filter(image, new BufferedImage(width, height, image.getType()));
     }
 
     /**
