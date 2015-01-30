@@ -28,8 +28,6 @@
 
 package ucar.unidata.view.geoloc;
 
-
-
 import ucar.unidata.geoloc.Bearing;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.geoloc.ProjectionImpl;
@@ -972,6 +970,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
      * @throws VisADException   problem creating some VisAD object
      * @throws RemoteException   problem creating remote object
      */
+    
     private void updateVertScale(AxisScale scale, String title,
                                  double[] maxmin, double bottom, double top)
             throws VisADException, RemoteException {
@@ -1003,6 +1002,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         double prevMap = 0;
         // map increment from previous major to next minor tick
         double tmpIncr = 0.0d;
+        double rangeMap = 0.0d;
 
         for (double i = bottom; i < top; i += majorIncrement) {
 
@@ -1011,7 +1011,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         		continue;
         	}
 
-        	double rangeMap = maxmin[0] + (maxmin[1] - maxmin[0]) / (top - bottom) * (i - bottom);
+        	rangeMap = maxmin[0] + (maxmin[1] - maxmin[0]) / (top - bottom) * (i - bottom);
 
     		majorTicks.add(rangeMap);
     		labelTable.put(rangeMap, labelFormat.format(bottom + (majorCount * majorIncrement)));
@@ -1022,8 +1022,11 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
     			// only do these after one major tick has been labeled
     			if (majorCount > 0) {
     				tmpIncr = (Math.abs(rangeMap - prevMap)) / minorIncrement;
-    				for (int j = 0; j < minorIncrement; j++) {
-    					minorTicks.add(prevMap + (tmpIncr * j));
+    				// skip minor increments if major increment is the max
+    				if ((top != majorIncrement)) {
+	    				for (int j = 0; j < minorIncrement; j++) {
+	    					minorTicks.add(prevMap + (tmpIncr * j));
+	    				}
     				}
     			}
     		}
@@ -1040,6 +1043,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
     		// do minor increment labeling, if needed
     		if (minorIncrement > 1) {
     			if (majorCount > 0) {
+    				tmpIncr = (Math.abs(maxmin[1] - prevMap)) / minorIncrement;
     				for (int j = 1; j < minorIncrement; j++) {
     					minorTicks.add(prevMap + (tmpIncr * j));
     				}
