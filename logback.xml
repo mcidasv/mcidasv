@@ -80,6 +80,7 @@
   <logger name="uk.org.lidalia.sysoutslf4j" level="OFF" />
   
   <!-- Let's use this section of the file to group loggers that spew *way* too much output. -->
+  <logger name="ucar.nc2" level="OFF" />
   <logger name="java" level="OFF" />
   <logger name="sun" level="OFF" />
   <logger name="javax" level="OFF" />
