@@ -108,6 +108,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
      * @param control The control
      * @param vertScaleInfo The info to use
      */
+    
     public VertScaleDialog(JFrame parent, ViewpointControl control,
                            VertScaleInfo vertScaleInfo) {
         this.control       = control;
@@ -119,6 +120,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
     /**
      * Make the widget contents (UI)
      */
+    
     protected void doMakeContents() {
     	
         setLayout(new BorderLayout());
@@ -129,8 +131,8 @@ public class VertScaleDialog extends JPanel implements ActionListener {
         jtfAxisLabel = new JTextField(20);
         
         JPanel vertPanel = GuiUtils.doLayout(new Component[] {
-            GuiUtils.rLabel("Min value: "), min = new JTextField(""),
-            GuiUtils.rLabel("Max value: "), max = new JTextField(""),
+            GuiUtils.rLabel("Min Value: "), min = new JTextField(""),
+            GuiUtils.rLabel("Max Value: "), max = new JTextField(""),
             GuiUtils.rLabel("Axis Label: "), jtfAxisLabel,
             GuiUtils.rLabel("Units: "),
             unitCombo = GuiUtils.getEditableBox(Misc.toList(new String[] {
@@ -194,6 +196,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
      *
      * @param evt  event to handle
      */
+    
     public void actionPerformed(ActionEvent evt) {
         String cmd = evt.getActionCommand();
 
