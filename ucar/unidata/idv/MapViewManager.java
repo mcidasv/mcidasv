@@ -204,7 +204,7 @@ public class MapViewManager extends NavigatedViewManager {
     	"View.UseProgressiveResolution";
 
     /** label for progressive resolution/disclosure/whatever we call it */
-    public static final String PR_LABEL = "Enable Adaptive Resolution";
+    public static final String PR_LABEL = "Enable Adaptive Resolution (Under Development)";
 
     /** Preference for showing the globe background */
     public static final String PREF_SHOWGLOBEBACKGROUND =
