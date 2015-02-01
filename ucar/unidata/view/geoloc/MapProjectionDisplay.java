@@ -999,7 +999,7 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         
         int majorCount = 0;
         // scale mapping for previous pass through loop
-        double prevMap = 0;
+        double prevMap = maxmin[0];
         // map increment from previous major to next minor tick
         double tmpIncr = 0.0d;
         double rangeMap = 0.0d;
@@ -1019,16 +1019,13 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
 
     		// do minor increment labeling, if needed
     		if (minorIncrement > 1) {
-    			// only do these after one major tick has been labeled
-    			if (majorCount > 0) {
-    				tmpIncr = (Math.abs(rangeMap - prevMap)) / minorIncrement;
-    				// skip minor increments if major increment is the max
-    				if ((top != majorIncrement)) {
-	    				for (int j = 0; j < minorIncrement; j++) {
-	    					minorTicks.add(prevMap + (tmpIncr * j));
-	    				}
+				tmpIncr = (Math.abs(rangeMap - prevMap)) / minorIncrement;
+				// skip minor increments if major increment is the max
+				if ((top != majorIncrement)) {
+    				for (int j = 0; j < minorIncrement; j++) {
+    					minorTicks.add(prevMap + (tmpIncr * j));
     				}
-    			}
+				}
     		}
 
     		prevMap = rangeMap;
