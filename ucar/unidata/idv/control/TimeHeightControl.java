@@ -201,6 +201,10 @@ public class TimeHeightControl extends LineProbeControl {
         return FLAG_COLORTABLE | FLAG_DISPLAYUNIT;
     }
 
+    @Override protected boolean canDoProgressiveResolution() {
+        return false;
+    }
+
     /**
      * Create the default data display if not showAsContours
      *
