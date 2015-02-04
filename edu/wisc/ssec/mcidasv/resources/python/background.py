@@ -1706,11 +1706,13 @@ class _Layer(_JavaProxy):
                  "parent" directories like setProjection, but will work if you 
                  do. Case sensitive!
            range: 2-element list specifying min and max data range.
-           transparency: value between 0 and 1 to set transparency of layer.
+           transparency: value between 0 and 100 to set transparency of layer
+                         in percent.
                          Note, if you specify name and not transparency,
                          the current transparency will NOT be retained. If you
                          specify transparency and not name, the current name
-                         will be retained.  0 is opaque and 1 is fully transparent. 
+                         will be retained.  0 is opaque and 100(%) is fully 
+                         transparent.
 
         """
         didSomething = False
@@ -1749,7 +1751,7 @@ class _Layer(_JavaProxy):
                      CASE SENSITIVE!  Can't really help this because IDV stores
                      color table names case-sensitively.
             transparency:  set the overall transparency of the color table.
-                           0 is opaque and 1 is fully transparent. 
+                           0 is opaque and 100(%) is fully transparent. 
                      
         Raises:
             ValueError:  couldn't find ctName or transparency invalid value
@@ -1768,11 +1770,11 @@ class _Layer(_JavaProxy):
             newct = ctm.getColorTable(shortName)
 
         if transparency is not None:
-            if (transparency > 1.0) or (transparency < 0.0):
-                raise ValueError('transparency must be between 0 and 1')
+            if (transparency > 100.0) or (transparency < 0.0):
+                raise ValueError('please specify transparency as a percent between 0 and 100')
             # note, 0.0 should be fully opaque and 1.0 is transparent,
-            # so we need to invert here.
-            newct.setTransparency(1.0 - transparency)
+            # so we need to invert here. and, convert percent to 0.0-1.0 range.
+            newct.setTransparency(1.0 - transparency/100.0)
             
         if newct is not None:
             return self._JavaProxy__javaObject.setColorTable(newct)
