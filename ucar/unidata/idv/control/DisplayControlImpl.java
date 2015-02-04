@@ -6140,10 +6140,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (getIdv().getUseTimeDriver()) {
             dsd.addPropertyValue(new Boolean(getIsTimeDriver()),
                                  "isTimeDriver",
-                                 "Drive Times with this Display",
+                                 "Set As Time Driver",
                                  SETTINGS_GROUP_FLAGS);
             dsd.addPropertyValue(new Boolean(getUsesTimeDriver()),
-                                 "usesTimeDriver", "Use Time Driver Times",
+                                 "usesTimeDriver", "Match Time Driver",
                                  SETTINGS_GROUP_FLAGS);
         }
 
