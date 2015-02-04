@@ -762,7 +762,7 @@ public class DataSelectionWidget {
                     // Component removed somewhere
                     int index = selectionTab.getSelectedIndex();
                     String osName = System.getProperty("os.name", "");
-                    if (osName.startsWith("Mac OS X") && selectionTab.getTitleAt(index).equals("Region")) {
+                    if ((index >= 0) && osName.startsWith("Mac OS X") && selectionTab.getTitleAt(index).equals("Region")) {
                         logger.trace("{}: changing tab", selectionTab.hashCode());
                         autoTabChange = true;
                         selectionTab.setSelectedIndex(0);
