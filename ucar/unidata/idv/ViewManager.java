@@ -30,6 +30,7 @@ package ucar.unidata.idv;
 
 /**** BEGIN MCV ADDONS ****/
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**** END MCV ADDONS ****/
@@ -4518,7 +4519,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 dirty = true;
             }
         }
-
+        EventBus.publish("TimeDrivers.Update", displayInfo.getDisplayControl());
         return true;
     }
 

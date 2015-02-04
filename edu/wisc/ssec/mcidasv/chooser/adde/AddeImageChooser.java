@@ -68,6 +68,8 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.w3c.dom.Element;
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
@@ -78,6 +80,8 @@ import edu.wisc.ssec.mcidas.adde.AddeSatBands;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 
 import ucar.unidata.data.DataSelection;
+import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.control.DisplayControlImpl;
 import visad.DateTime;
 import visad.Gridded1DSet;
 import visad.VisADException;
@@ -378,7 +382,7 @@ public class AddeImageChooser extends AddeChooser implements
      */
     public AddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-
+        AnnotationProcessor.process(this);
         addDescComp(loadButton);
 
         archiveDayBtn = GuiUtils.makeImageButton(
@@ -1042,6 +1046,18 @@ public class AddeImageChooser extends AddeChooser implements
         // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
         Component[] comps = timesPanel.getComponents();
 
+        boolean atLeastOne = false;
+        List<DisplayControl> controls = getIdv().getDisplayControls();
+        for (DisplayControl control : controls) {
+            logger.trace("control={}", control);
+            if (control.getIsTimeDriver()) {
+                atLeastOne = true;
+                break;
+            }
+        }
+
+        drivercbx.setEnabled(atLeastOne);
+
         if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
             timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
             timesCardPanelExtra.add(new JPanel(), "relative");
@@ -1049,6 +1065,24 @@ public class AddeImageChooser extends AddeChooser implements
             timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
         }
         return timesPanel;
+    }
+
+    @EventTopicSubscriber(topic="TimeDrivers.Update")
+    public void handleTimeDriverUpdate(final String topic, final DisplayControlImpl changed) {
+        logger.trace("fired");
+        if (drivercbx != null) {
+            boolean atLeastOne = false;
+            List<DisplayControl> controls = getIdv().getDisplayControls();
+            for (DisplayControl control : controls) {
+                logger.trace("control={}", control);
+                if (control.getIsTimeDriver()) {
+                    atLeastOne = true;
+                    break;
+                }
+            }
+            logger.trace("atLeastOne={}", atLeastOne);
+            drivercbx.setEnabled(atLeastOne);
+        }
     }
 
     /**

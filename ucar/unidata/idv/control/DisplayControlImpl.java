@@ -32,6 +32,7 @@ package ucar.unidata.idv.control;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
+import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1042,6 +1043,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         this.usesTimeDriver =
             this.dataSelection.getProperty(DataSelection.PROP_USESTIMEDRIVER,
                                            false);
+        logger.trace("properties='{}'", properties);
+        EventBus.publish("TimeDrivers.Update", this);
         if ( !this.isTimeDriver) {
             this.isTimeDriver = this.dataSelection.getProperty(
                 DataSelection.PROP_ASTIMEDRIVER, false);
@@ -12719,6 +12722,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *  @param value The new value for IsTimeDriver
      */
     public void setIsTimeDriver(boolean value) {
+        EventBus.publish("TimeDrivers.Update", this);
         this.isTimeDriver = value;
         if (haveInitialized && value) {
             ViewManager vm = getViewManager();
