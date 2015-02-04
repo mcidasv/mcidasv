@@ -1499,6 +1499,10 @@ public class DataSelectionWidget {
             public void itemStateChanged(ItemEvent e) {
                 String selectedObj =
                     (String) timeOptionLabelBox.getSelectedItem();
+                if (selectedObj.equals(getTimeOption())) {
+//                    logger.trace("bailing early; selectedObj='{}' timeOpt='{}'", selectedObj, getTimeOption());
+                    return;
+                }
                 setTimeOptions(selectedObj, true);
                 if ( !selectedObj.equals(USE_DRIVERTIMES)) {
                     chooserDoTimeMatching = false;
@@ -1653,8 +1657,8 @@ public class DataSelectionWidget {
         } else {
             LogUtil.userErrorMessage(
                 new JLabel(
-                    "<html>Error: there is no time driver in the current active view window, please select or set"
-                    + " the view window with time driver! </html>"));
+                    "<html>Error: there is no time driver in the currently active display, please select or set"
+                    + " the display with time driver! </html>"));
             return false;
         }
 
