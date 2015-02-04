@@ -1499,7 +1499,7 @@ public class DataSelectionWidget {
             public void itemStateChanged(ItemEvent e) {
                 String selectedObj =
                     (String) timeOptionLabelBox.getSelectedItem();
-                setTimeOptions(selectedObj);
+                setTimeOptions(selectedObj, true);
                 if ( !selectedObj.equals(USE_DRIVERTIMES)) {
                     chooserDoTimeMatching = false;
                 } else {
@@ -1552,23 +1552,20 @@ public class DataSelectionWidget {
         }
     }
 
-    /**
-     * Set the time option from the selected object
-     *
-     * @param selectedObject  the selected time mode
-     */
-    public void setTimeOptions(String selectedObject) {
+    public void setTimeOptions(String selectedObject, boolean fromEvent) {
         if (timesList == null) {
             return;
         }
+//        logger.trace("selectedObject='{}' fromEvent={}", selectedObject, fromEvent);
         timeOption = selectedObject.toString();
+        boolean didSomething = true;
         if (selectedObject.equals(USE_DEFAULTTIMES)) {
             //selectIdx = 0;
             timesList.setVisible(true);
             timesList.setEnabled(false);
             if (lastDataChoice != null) {
                 lastDataChoice.setProperty(DataSelection.PROP_TIMESUBSET,
-                                           false);
+                    false);
             }
         } else if (selectedObject.equals(USE_SELECTEDTIMES)) {
             //selectIdx = 1;
@@ -1577,7 +1574,7 @@ public class DataSelectionWidget {
             chooserDoTimeMatching = false;
             if (lastDataChoice != null) {
                 lastDataChoice.setProperty(DataSelection.PROP_TIMESUBSET,
-                                           true);
+                    true);
             }
         } else if (selectedObject.equals(USE_DRIVERTIMES)) {
             //selectIdx = 2;
@@ -1585,9 +1582,9 @@ public class DataSelectionWidget {
             timesList.setEnabled(false);
             if (lastDataChoice != null) {
                 lastDataChoice.setProperty(DataSelection.PROP_USESTIMEDRIVER,
-                                           true);
+                    true);
                 lastDataChoice.setProperty(DataSelection.PROP_TIMESUBSET,
-                                           false);
+                    false);
             }
         } else if (selectedObject.equals(AS_DRIVERTIMES)) {
             //selectIdx = 1;
@@ -1596,11 +1593,26 @@ public class DataSelectionWidget {
             chooserDoTimeMatching = false;
             if (lastDataChoice != null) {
                 lastDataChoice.setProperty(DataSelection.PROP_ASTIMEDRIVER,
-                                           true);
+                    true);
                 lastDataChoice.setProperty(DataSelection.PROP_TIMESUBSET,
-                                           false);
+                    false);
             }
+        } else {
+            didSomething = false;
         }
+
+        if (didSomething && !fromEvent) {
+            timeOptionLabelBox.setSelectedItem(selectedObject);
+        }
+    }
+
+    /**
+     * Set the time option from the selected object
+     *
+     * @param selectedObject  the selected time mode
+     */
+    public void setTimeOptions(String selectedObject) {
+        setTimeOptions(selectedObject, false);
     }
 
     /**

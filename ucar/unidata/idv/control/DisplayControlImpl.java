@@ -5957,17 +5957,30 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         }
 
+        String timeOption = null;
+        if (dataSelectionWidget != null) {
+            timeOption = dataSelectionWidget.getTimeOption();
+        }
 
+        // added this extra check because dataSelectionWidget.getTimeOption()
+        // could return null;
+        if (timeOption == null) {
+            timeOption = "";
+        }
+        // err, ok...
         dataSelectionWidget = null;
         if ( /*selectedTimes!=null && */myDataChoices.size() == 1) {
+
             DataChoice dataChoice = (DataChoice) myDataChoices.get(0);
             List       allTimes   = dataChoice.getAllDateTimes();
             if ((allTimes != null) && (allTimes.size() > 0)) {
+
                 dataSelectionWidget = new DataSelectionWidget(getIdv());
                 jtp.add("Times", dataSelectionWidget.getTimesList());
                 dataSelectionWidget.setTimes(allTimes, selectedTimes);
                 if (selectedTimes != null) {
                     dataSelectionWidget.setUseAllTimes(false);
+                    dataSelectionWidget.setTimeOptions(timeOption);
                 }
             }
         }
@@ -6277,6 +6290,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 }
             }
             if (dataSelectionWidget != null) {
+//                logger.trace("existing selection props='{}'", getDataSelection().getProperties());
+//                logger.trace("existing choice props='{}'", getDataChoice().getProperties());
+                handleTimeOption();
+//                logger.trace("new selection props='{}'", getDataSelection().getProperties());
+//                logger.trace("new choice props='{}'", getDataChoice().getProperties());
                 List oldSelectedTimes = getDataSelection().getTimes();
                 List selectedTimes =
                     dataSelectionWidget.getSelectedDateTimes();
@@ -6299,6 +6317,62 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         return true;
     }
 
+
+    private void handleTimeOption() {
+        String timeOption = dataSelectionWidget.getTimeOption();
+        DataChoice choice = getDataChoice();
+        DataSelection selection = getDataSelection();
+
+        if ((timeOption != null) && (choice != null) && (selection != null)) {
+            switch (timeOption) {
+                case DataSelectionWidget.USE_DEFAULTTIMES:
+                    choice.setProperty(DataSelection.PROP_TIMESUBSET, false);
+                    selection.putProperty(DataSelection.PROP_USESTIMEDRIVER, false);
+                    selection.putProperty(DataSelection.PROP_ASTIMEDRIVER, false);
+                    setIsTimeDriver(false);
+                    setUsesTimeDriver(false);
+                    // do I need to set this in the selection?
+                    break;
+                case DataSelectionWidget.USE_SELECTEDTIMES:
+                    choice.setProperty(DataSelection.PROP_TIMESUBSET, true);
+                    selection.putProperty(DataSelection.PROP_USESTIMEDRIVER, false);
+                    selection.putProperty(DataSelection.PROP_ASTIMEDRIVER, false);
+                    setIsTimeDriver(false);
+                    setUsesTimeDriver(false);
+                    // do I need to set this in the selection?
+                    break;
+                case DataSelectionWidget.USE_DRIVERTIMES:
+                    choice.setProperty(DataSelection.PROP_USESTIMEDRIVER, true);
+                    choice.setProperty(DataSelection.PROP_TIMESUBSET, false);
+                    selection.putProperty(DataSelection.PROP_USESTIMEDRIVER, true);
+                    selection.putProperty(DataSelection.PROP_ASTIMEDRIVER, false);
+                    setIsTimeDriver(true);
+                    setUsesTimeDriver(false);
+                    break;
+                case DataSelectionWidget.AS_DRIVERTIMES:
+                    choice.setProperty(DataSelection.PROP_ASTIMEDRIVER, true);
+                    choice.setProperty(DataSelection.PROP_TIMESUBSET, false);
+                    selection.putProperty(DataSelection.PROP_USESTIMEDRIVER, false);
+                    selection.putProperty(DataSelection.PROP_ASTIMEDRIVER, true);
+                    setIsTimeDriver(false);
+                    setUsesTimeDriver(true);
+                    break;
+                default:
+                    logger.trace("unknown time option '{}'", timeOption);
+                    break;
+            }
+        } else {
+            if (timeOption == null) {
+                logger.warn("dataSelectionWidget returned null time option");
+            }
+            if (choice == null) {
+                logger.warn("getDataChoice() returned null");
+            }
+            if (selection == null) {
+                logger.warn("getDataSelection() returned null");
+            }
+        }
+    }
 
     /**
      * Apply the properties
