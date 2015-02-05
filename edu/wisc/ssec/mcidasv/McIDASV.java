@@ -327,9 +327,8 @@ public class McIDASV extends IntegratedDataViewer {
         encoder.addDelegateForClass(ShellHistoryEntry.class, new XmlDelegateImpl() {
             @Override public Element createElement(XmlEncoder e, Object o) {
                 ShellHistoryEntry entry = (ShellHistoryEntry)o;
-                List args = Misc.newList(entry.getEntryText(), entry.getInputMode().toString());
-                List types = Misc.newList(String.class, String.class);
-                return e.createObjectConstructorElement(o, args, types);
+                List args = Misc.newList(entry.getEntryBytes(), entry.getInputMode().toString());
+                return e.createObjectConstructorElement(o, args);
             }
         });
 

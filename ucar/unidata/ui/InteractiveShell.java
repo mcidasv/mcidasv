@@ -51,6 +51,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -769,13 +770,56 @@ public class InteractiveShell implements HyperlinkListener {
         private final ShellHistoryMode inputMode;
 
         /**
+         * Creates a new history entry from the given byte array. The encoding
+         * of the byte array is assumed to be UTF-8, and the method will use
+         * {@link #detectInputMode(String)} in an attempt to determine the
+         * input mode.
+         *
+         * @param bytes Entry text as UTF-8 byte array. Cannot be {@code null}.
+         */
+        public ShellHistoryEntry(final byte[] bytes) {
+            String s = new String(bytes, Charset.forName("UTF-8"));
+            this.entryText = s;
+            this.inputMode = detectInputMode(s);
+        }
+
+        /**
+         * Creates a new history entry from the given byte array and attempts
+         * to convert {@code inputMode} into one of the types of
+         * {@link ShellHistoryMode}.
+         *
+         * <p>This method is useful for deserializing
+         * {@link ucar.unidata.xml.XmlEncoder XmlEncoder} results.</p>
+         *
+         * @param bytes Entry text as UTF-8 byte array. Cannot be {@code null}.
+         * @param inputMode {@code String} representation of a
+         * {@code ShellHistoryMode}. Cannot be {@code null}.
+         */
+        public ShellHistoryEntry(final byte[] bytes, final String inputMode) {
+            this.entryText = new String(bytes, Charset.forName("UTF-8"));
+            this.inputMode = strToShellHistoryMode(inputMode);
+        }
+
+        /**
+         * Creates a new history entry from the given byte array and its input
+         * mode.
+         *
+         * @param bytes Entry text as UTF-8 byte array. Cannot be {@code null}.
+         * @param inputMode Input mode from when the text was entered.
+         */
+        public ShellHistoryEntry(final byte[] bytes, final ShellHistoryMode inputMode) {
+            this.entryText = new String(bytes, Charset.forName("UTF-8"));
+            this.inputMode = inputMode;
+        }
+
+        /**
          * Creates a new history entry from the given text. This method will
          * use {@link #detectInputMode(String)} to try determining the input
          * mode.
          *
-         * <p>This method is mostly used when converting old-style {@code String}
-         * history entries into {@code ShellHistoryEntry} entries.
-         * </p>
+         * <p>This method is mostly used when converting old-style
+         * {@code String} history entries into {@code ShellHistoryEntry}
+         * entries.</p>
          *
          * @param entryText Entry text. Cannot be {@code null}.
          */
@@ -810,12 +854,23 @@ public class InteractiveShell implements HyperlinkListener {
         }
 
         /**
-         * Get the text of the history entry.
+         * Get the text of the history entry. Note: <b>do not</b> use this
+         * method to write entry text to {@literal "main.xml"}. Please use
+         * {@link #getEntryBytes()} instead.
          *
          * @return Text of the user's input.
          */
         public String getEntryText() {
             return entryText;
+        }
+
+        /**
+         * Get the contents of this history entry as a UTF-8 byte array.
+         *
+         * @return This history entry as a UTF-8 byte array.
+         */
+        public byte[] getEntryBytes() {
+            return entryText.getBytes(Charset.forName("UTF-8"));
         }
 
         /**
