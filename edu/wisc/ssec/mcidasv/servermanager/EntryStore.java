@@ -307,6 +307,8 @@ public class EntryStore {
     protected String[] getUnixAddeEnv() {
         return new String[] {
             "PATH=" + ADDE_BIN,
+            "HOME=" + System.getenv("HOME"),
+            "USER=" + System.getenv("USER"),
             "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
             "MCUSERDIR=" + USER_DIRECTORY,
             "LD_LIBRARY_PATH=" + ADDE_BIN,
