@@ -187,7 +187,14 @@ public class ColorScaleDialog implements ActionListener {
         myInfo.setLabelFont(fontSelector.getFont());
         try {
             if (displayControl != null) {
-                myInfo.setUnit(displayControl.getDisplayUnit());
+                if (displayControl.getColorUnit() != null) {
+                    // mjh inq 1925: use colorUnit instead of displayUnit
+                    // if available; this fixes unit label when using the
+                    // "color by another value" displays.
+                    myInfo.setUnit(displayControl.getColorUnit());
+                } else {
+                    myInfo.setUnit(displayControl.getDisplayUnit());
+                }
                 displayControl.setColorScaleInfo(
                     new ColorScaleInfo(getInfo()));
             }
