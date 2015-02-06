@@ -884,6 +884,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       }
 
       private void updateReadout() {
+          if ((readoutLabels.length == 0) || latLonLbls.isEmpty()) {
+              return;
+          }
           int numCols = 7;
           for (int i=0; i<5; i++) {
               String str = readoutLabels[i] +
