@@ -1046,17 +1046,7 @@ public class AddeImageChooser extends AddeChooser implements
         // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
         Component[] comps = timesPanel.getComponents();
 
-        boolean atLeastOne = false;
-        List<DisplayControl> controls = getIdv().getDisplayControls();
-        for (DisplayControl control : controls) {
-            logger.trace("control={}", control);
-            if (control.getIsTimeDriver()) {
-                atLeastOne = true;
-                break;
-            }
-        }
-
-        drivercbx.setEnabled(atLeastOne);
+        drivercbx.setEnabled(anyTimeDrivers());
 
         if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
             timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
@@ -1067,21 +1057,26 @@ public class AddeImageChooser extends AddeChooser implements
         return timesPanel;
     }
 
+    protected boolean anyTimeDrivers() {
+//        logger.trace("fired");
+        List<DisplayControl> controls = getIdv().getDisplayControls();
+        boolean anyTimeDrivers = false;
+        for (DisplayControl control : controls) {
+//            logger.trace("control={} isTimeDriver={}", control, control.getIsTimeDriver());
+            if (control.getIsTimeDriver()) {
+                anyTimeDrivers = true;
+                break;
+            }
+        }
+//        logger.trace("anyTimeDrivers={}", anyTimeDrivers);
+        return anyTimeDrivers;
+    }
+
     @EventTopicSubscriber(topic="TimeDrivers.Update")
     public void handleTimeDriverUpdate(final String topic, final DisplayControlImpl changed) {
-        logger.trace("fired");
+//        logger.trace("fired");
         if (drivercbx != null) {
-            boolean atLeastOne = false;
-            List<DisplayControl> controls = getIdv().getDisplayControls();
-            for (DisplayControl control : controls) {
-                logger.trace("control={}", control);
-                if (control.getIsTimeDriver()) {
-                    atLeastOne = true;
-                    break;
-                }
-            }
-            logger.trace("atLeastOne={}", atLeastOne);
-            drivercbx.setEnabled(atLeastOne);
+            drivercbx.setEnabled(anyTimeDrivers());
         }
     }
 
