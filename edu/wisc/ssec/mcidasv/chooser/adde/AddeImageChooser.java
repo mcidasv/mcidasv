@@ -1076,7 +1076,8 @@ public class AddeImageChooser extends AddeChooser implements
     public void handleTimeDriverUpdate(final String topic, final DisplayControlImpl changed) {
 //        logger.trace("fired");
         if (drivercbx != null) {
-            drivercbx.setEnabled(anyTimeDrivers());
+            boolean validChooserState = (getState() == STATE_CONNECTED) && canReadTimes();
+            drivercbx.setEnabled(anyTimeDrivers() && validChooserState);
         }
     }
 
@@ -1180,7 +1181,8 @@ public class AddeImageChooser extends AddeChooser implements
                 !getDoAbsoluteTimes() && descriptorState);
 
         if (drivercbx != null) {
-            drivercbx.setEnabled(anyTimeDrivers());
+            logger.trace("set drivercbx={}", anyTimeDrivers() && descriptorState);
+            drivercbx.setEnabled(anyTimeDrivers() && descriptorState);
         }
         revalidate();
     }
