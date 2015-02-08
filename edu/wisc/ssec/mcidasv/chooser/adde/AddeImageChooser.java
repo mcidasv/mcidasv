@@ -1179,6 +1179,9 @@ public class AddeImageChooser extends AddeChooser implements
         getRelativeTimesChooser().setEnabled(
                 !getDoAbsoluteTimes() && descriptorState);
 
+        if (drivercbx != null) {
+            drivercbx.setEnabled(anyTimeDrivers());
+        }
         revalidate();
     }
 
