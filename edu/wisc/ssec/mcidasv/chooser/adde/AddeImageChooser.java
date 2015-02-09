@@ -1057,24 +1057,27 @@ public class AddeImageChooser extends AddeChooser implements
         return timesPanel;
     }
 
+    /**
+     * Determine whether or not the application has any
+     * {@literal "time drivers"}.
+     *
+     * @return {@code true} if at least one {@link DisplayControl} is a time
+     * driver.
+     */
     protected boolean anyTimeDrivers() {
-//        logger.trace("fired");
         List<DisplayControl> controls = getIdv().getDisplayControls();
         boolean anyTimeDrivers = false;
         for (DisplayControl control : controls) {
-//            logger.trace("control={} isTimeDriver={}", control, control.getIsTimeDriver());
             if (control.getIsTimeDriver()) {
                 anyTimeDrivers = true;
                 break;
             }
         }
-//        logger.trace("anyTimeDrivers={}", anyTimeDrivers);
         return anyTimeDrivers;
     }
 
     @EventTopicSubscriber(topic="TimeDrivers.Update")
     public void handleTimeDriverUpdate(final String topic, final DisplayControlImpl changed) {
-//        logger.trace("fired");
         if (drivercbx != null) {
             boolean validChooserState = (getState() == STATE_CONNECTED) && canReadTimes();
             drivercbx.setEnabled(anyTimeDrivers() && validChooserState);
