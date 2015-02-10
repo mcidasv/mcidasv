@@ -6357,13 +6357,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     choice.setProperty(DataSelection.PROP_TIMESUBSET, false);
                     selection.putProperty(DataSelection.PROP_USESTIMEDRIVER, false);
                     selection.putProperty(DataSelection.PROP_ASTIMEDRIVER, true);
-                    setIsTimeDriver(false);
-                    setUsesTimeDriver(true);
+                    setIsTimeDriver(true);
+                    setUsesTimeDriver(false);
                     break;
                 default:
                     logger.trace("unknown time option '{}'", timeOption);
                     break;
             }
+            EventBus.publish("TimeDrivers.Update", this);
         } else {
             if (timeOption == null) {
                 logger.warn("dataSelectionWidget returned null time option");
@@ -12722,8 +12723,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *  @param value The new value for IsTimeDriver
      */
     public void setIsTimeDriver(boolean value) {
-        EventBus.publish("TimeDrivers.Update", this);
         this.isTimeDriver = value;
+        EventBus.publish("TimeDrivers.Update", this);
         if (haveInitialized && value) {
             ViewManager vm = getViewManager();
             vm.ensureOnlyOneTimeDriver(this);
