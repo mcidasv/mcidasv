@@ -6598,10 +6598,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 JMenu jm = new JMenu("Times");
                 jm.add(jcmi);
                 jm.add(GuiUtils.makeCheckboxMenuItem(
-                    "Drive Times with this Display", this, "isTimeDriver",
+                    "Set As Time Driver", this, "isTimeDriver",
                     null));
                 jm.add(GuiUtils.makeCheckboxMenuItem(
-                    "Uses Time Driver Times", this, "usesTimeDriver",
+                    "Match Time Driver", this, "usesTimeDriver",
                     usesTimeDriver, null));
                 items.add(jm);
             } else {
