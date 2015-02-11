@@ -2901,7 +2901,7 @@ public class FieldImpl extends FunctionImpl implements Field {
     FunctionType func_type = new FunctionType(domain_type, range_type);
     Field field = new FieldImpl(func_type, set);
     // Field field = new FieldImpl((FunctionType) Type, set);
-    logger.info("FieldImpl resample setting metadata map");
+    logger.trace("FieldImpl resample setting metadata map");
     // TODO mjh ... add setMetadataMap declaration to "Field"?
     ((FieldImpl)field).setMetadataMap(getMetadataMap());
     if (isMissing()) return field;
