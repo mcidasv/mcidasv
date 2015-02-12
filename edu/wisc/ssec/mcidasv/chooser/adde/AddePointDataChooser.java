@@ -493,6 +493,11 @@ public class AddePointDataChooser extends AddeChooser {
         getRelativeTimesChooser().setEnabled( !getDoAbsoluteTimes()
                 && descriptorState);
 
+        if (drivercbx != null) {
+//            logger.trace("set drivercbx={}", anyTimeDrivers() && descriptorState);
+            drivercbx.setEnabled(anyTimeDrivers() && descriptorState);
+        }
+
         revalidate();
     }
     

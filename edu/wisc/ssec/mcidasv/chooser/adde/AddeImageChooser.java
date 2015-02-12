@@ -382,7 +382,7 @@ public class AddeImageChooser extends AddeChooser implements
      */
     public AddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-        AnnotationProcessor.process(this);
+//        AnnotationProcessor.process(this);
         addDescComp(loadButton);
 
         archiveDayBtn = GuiUtils.makeImageButton(
@@ -1046,8 +1046,6 @@ public class AddeImageChooser extends AddeChooser implements
         // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
         Component[] comps = timesPanel.getComponents();
 
-        drivercbx.setEnabled(anyTimeDrivers());
-
         if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
             timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
             timesCardPanelExtra.add(new JPanel(), "relative");
@@ -1055,33 +1053,6 @@ public class AddeImageChooser extends AddeChooser implements
             timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
         }
         return timesPanel;
-    }
-
-    /**
-     * Determine whether or not the application has any
-     * {@literal "time drivers"}.
-     *
-     * @return {@code true} if at least one {@link DisplayControl} is a time
-     * driver.
-     */
-    protected boolean anyTimeDrivers() {
-        List<DisplayControl> controls = getIdv().getDisplayControls();
-        boolean anyTimeDrivers = false;
-        for (DisplayControl control : controls) {
-            if (control.getIsTimeDriver()) {
-                anyTimeDrivers = true;
-                break;
-            }
-        }
-        return anyTimeDrivers;
-    }
-
-    @EventTopicSubscriber(topic="TimeDrivers.Update")
-    public void handleTimeDriverUpdate(final String topic, final DisplayControlImpl changed) {
-        if (drivercbx != null) {
-            boolean validChooserState = (getState() == STATE_CONNECTED) && canReadTimes();
-            drivercbx.setEnabled(anyTimeDrivers() && validChooserState);
-        }
     }
 
     /**
@@ -1184,7 +1155,7 @@ public class AddeImageChooser extends AddeChooser implements
                 !getDoAbsoluteTimes() && descriptorState);
 
         if (drivercbx != null) {
-            logger.trace("set drivercbx={}", anyTimeDrivers() && descriptorState);
+//            logger.trace("set drivercbx={}", anyTimeDrivers() && descriptorState);
             drivercbx.setEnabled(anyTimeDrivers() && descriptorState);
         }
         revalidate();

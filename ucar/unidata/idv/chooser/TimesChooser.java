@@ -21,6 +21,10 @@
 package ucar.unidata.idv.chooser;
 
 
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataSource;
@@ -28,6 +32,7 @@ import ucar.unidata.data.DataUtil;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvTimeline;
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.ui.Timeline;
@@ -120,13 +125,13 @@ public class TimesChooser extends IdvChooser {
     private IdvTimeline popupTimeline;
 
     /** The in gui timeline */
-    private IdvTimeline timeline;
+    protected IdvTimeline timeline;
 
     /** the times tab */
-    private JTabbedPane timesTab;
+    protected JTabbedPane timesTab;
 
     /** times card panel */
-    private GuiUtils.CardLayoutPanel timesCardPanel;
+    protected GuiUtils.CardLayoutPanel timesCardPanel;
 
     /** times container */
     protected JComponent timesContainer;
@@ -178,7 +183,7 @@ public class TimesChooser extends IdvChooser {
     public JCheckBox drivercbx = null;
 
     /** the time driver component */
-    JComponent timeDriverComp = null;
+    protected JComponent timeDriverComp = null;
 
     /**
      * Create me.
@@ -189,6 +194,7 @@ public class TimesChooser extends IdvChooser {
      */
     public TimesChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
+        AnnotationProcessor.process(this);
         setTimeDrivers(new ArrayList());
     }
 
@@ -1475,9 +1481,10 @@ public class TimesChooser extends IdvChooser {
         if (timesCardPanel == null) {
             return;
         }
+
         GuiUtils.enableTree(timesTab, true);
         GuiUtils.enableTree(timeline, true);
-        drivercbx.setSelected(false);
+        drivercbx.setEnabled(anyTimeDrivers() && getHaveData());
         checkTimesLists();
 
     }
@@ -1494,8 +1501,7 @@ public class TimesChooser extends IdvChooser {
         timesCardPanel.setEnabled(false);
         GuiUtils.enableTree(timesTab, false);
         GuiUtils.enableTree(timeline, false);
-        GuiUtils.enableTree(timeDriverComp, true);
-
+        GuiUtils.enableTree(timeDriverComp, anyTimeDrivers() && getHaveData());
     }
 
     /**
@@ -1676,7 +1682,52 @@ public class TimesChooser extends IdvChooser {
         }
     }
 
+    /**
+     * Determine whether or not the application has any
+     * {@literal "time drivers"}.
+     *
+     * @return {@code true} if at least one {@link DisplayControl} is a time
+     * driver.
+     */
+    protected boolean anyTimeDrivers() {
+        List<DisplayControl> controls = getIdv().getDisplayControls();
+        boolean anyTimeDrivers = false;
+        for (DisplayControl control : controls) {
+            if (control.getIsTimeDriver()) {
+                anyTimeDrivers = true;
+                break;
+            }
+        }
+        return anyTimeDrivers;
+    }
 
+    @EventTopicSubscriber(topic="TimeDrivers.Update")
+    public void handleTimeDriverUpdate(final String topic, final DisplayControlImpl changed) {
+        if (drivercbx != null) {
+            boolean hasDrivers = anyTimeDrivers();
+            drivercbx.setEnabled(hasDrivers && getHaveData());
+
+            if (getHaveData()) {
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        if (drivercbx.isEnabled()) {
+                            if (timesCardPanel == null) {
+                                return;
+                            }
+
+                            GuiUtils.enableTree(timesTab, !drivercbx.isSelected());
+                            GuiUtils.enableTree(timeline, !drivercbx.isSelected());
+                        } else {
+                            // this should be safe, since this will only ever
+                            // happen when getHaveData() is true.
+                            GuiUtils.enableTree(timesTab, true);
+                            GuiUtils.enableTree(timeline, true);
+                        }
+                    }
+                });
+            }
+        }
+    }
 
 
 }

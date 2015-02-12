@@ -1749,6 +1749,11 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
                     GuiUtils.enableTree(comp, newEnabledState);
                 }
             }
+            if (drivercbx != null) {
+                boolean descriptorState = newEnabledState && haveDescriptorSelected();
+//                logger.trace("hrm set drivercbx={}", anyTimeDrivers() && descriptorState);
+                drivercbx.setEnabled(anyTimeDrivers() && descriptorState);
+            }
         }
     }
     
@@ -1817,15 +1822,24 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Set the relative and absolute extra components.
      */
     protected JPanel makeTimesPanel(JComponent relativeCard, JComponent absoluteCard) {
-        JPanel timesPanel = super.makeTimesPanel(false, true);
+//        JPanel timesPanel = super.makeTimesPanel(false, true);
+        JPanel timesPanel = super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
 
         // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
         Component[] comps = timesPanel.getComponents();
 
-        if (comps.length==1 && comps[0] instanceof JTabbedPane) {
+//        if (drivercbx != null) {
+//            drivercbx.setEnabled(anyTimeDrivers());
+//        }
+
+        if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
             timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
-            if (relativeCard == null) relativeCard = new JPanel();
-            if (absoluteCard == null) absoluteCard = new JPanel();
+            if (relativeCard == null) {
+                relativeCard = new JPanel();
+            }
+            if (absoluteCard == null) {
+                absoluteCard = new JPanel();
+            }
             timesCardPanelExtra.add(relativeCard, "relative");
             timesCardPanelExtra.add(absoluteCard, "absolute");
             timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
