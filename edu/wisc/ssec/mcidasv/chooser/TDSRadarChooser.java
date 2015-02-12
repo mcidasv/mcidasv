@@ -734,20 +734,24 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      * Set the relative and absolute extra components
      */
     protected JPanel makeTimesPanel(JComponent relativeCard, JComponent absoluteCard) {
-        JPanel timesPanel = super.makeTimesPanel(false,true);
-                
+        JPanel timesPanel = super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
+
         // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
         Component[] comps = timesPanel.getComponents();
-        if (comps.length==2 && comps[0] instanceof JTabbedPane && comps[1] instanceof JLabel) {         
+
+        if ((comps.length == 2) && (comps[0] instanceof JTabbedPane) && (comps[1] instanceof JLabel)) {
             timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
-            if (relativeCard == null) relativeCard = new JPanel();
-            if (absoluteCard == null) absoluteCard = new JPanel();
+            if (relativeCard == null) {
+                relativeCard = new JPanel();
+            }
+            if (absoluteCard == null) {
+                absoluteCard = new JPanel();
+            }
             absoluteCard = GuiUtils.hbox(comps[1], GuiUtils.right(absoluteCard));
             timesCardPanelExtra.add(relativeCard, "relative");
             timesCardPanelExtra.add(absoluteCard, "absolute");
             timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
         }
-        
         return timesPanel;
     }
     
