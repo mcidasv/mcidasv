@@ -21,6 +21,7 @@
 package ucar.visad.display;
 
 
+import org.bushe.swing.event.EventBus;
 import ucar.visad.data.CalendarDateTime;
 
 import visad.DateTime;
@@ -583,6 +584,7 @@ public class AnimationSetInfo {
      */
     public void setIsTimeDriver(boolean yesorno) {
         isTimeDriver = yesorno;
+        EventBus.publish("TimeDrivers.Update", this);
     }
 
 }

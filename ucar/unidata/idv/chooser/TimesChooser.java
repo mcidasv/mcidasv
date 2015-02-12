@@ -1698,11 +1698,28 @@ public class TimesChooser extends IdvChooser {
                 break;
             }
         }
+        if (!anyTimeDrivers) {
+            List<ViewManager> vms = getIdv().getVMManager().getViewManagers();
+
+            for (ViewManager vm : vms) {
+                // yeah, you probably need to do the try-catch *within* the
+                // loop. :(
+                try {
+                    if (vm.getTimeDriverTimes() != null) {
+                        anyTimeDrivers = true;
+                        break;
+                    }
+                } catch (Exception e) {
+                    // not much to do...
+                    logger.warn("Problem calling getTimeDriverTimes!", e);
+                }
+            }
+        }
         return anyTimeDrivers;
     }
 
     @EventTopicSubscriber(topic="TimeDrivers.Update")
-    public void handleTimeDriverUpdate(final String topic, final DisplayControlImpl changed) {
+    public void handleTimeDriverUpdate(final String topic, final Object changed) {
         if (drivercbx != null) {
             boolean hasDrivers = anyTimeDrivers();
             drivercbx.setEnabled(hasDrivers && getHaveData());
@@ -1729,5 +1746,5 @@ public class TimesChooser extends IdvChooser {
         }
     }
 
-
+    private static final Logger logger = LoggerFactory.getLogger(TimesChooser.class);
 }
