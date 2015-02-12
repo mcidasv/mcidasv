@@ -228,6 +228,9 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
             }
         }
         GuiUtils.enableTree(loadButton, getHaveData());
+        if (drivercbx != null) {
+            drivercbx.setEnabled(anyTimeDrivers() && getHaveData());
+        }
     }
 
 
@@ -313,6 +316,9 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         GuiUtils.enableComponents(level3CompsThatNeedServer, false);
         productPanel.setVisible(false);
         GuiUtils.enableComponents(compsThatNeedServer, true);
+        if (drivercbx != null) {
+            drivercbx.setEnabled(anyTimeDrivers() && getHaveData());
+        }
         setAbsoluteTimes(new ArrayList());
         selectedProduct = null;
         selectedStation = null;
@@ -329,6 +335,9 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         GuiUtils.enableComponents(level3CompsThatNeedServer, true);
         productPanel.setVisible(true);
         GuiUtils.enableComponents(compsThatNeedServer, true);
+        if (drivercbx != null) {
+            drivercbx.setEnabled(anyTimeDrivers() && getHaveData());
+        }
         setAbsoluteTimes(new ArrayList());
         selectedProduct = null;
         selectedStation = null;
