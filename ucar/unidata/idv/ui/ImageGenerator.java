@@ -4202,7 +4202,7 @@ public class ImageGenerator extends IdvManager {
                 new BufferedImage(applyMacros(scriptingNode, ATTR_WIDTH,
                     300), applyMacros(scriptingNode, ATTR_HEIGHT, 300),
                           BufferedImage.TYPE_INT_RGB);
-            String loopFilename = applyMacros(filename);
+            String loopFilename = applyMacrosFilename(filename);
             lastImage = processImage((BufferedImage) tmpImage, loopFilename,
                                      scriptingNode, getAllProperties(), null,
                                      imageProperties);
@@ -4218,7 +4218,7 @@ public class ImageGenerator extends IdvManager {
                 throw new IllegalArgumentException("Could not find display:"
                         + XmlUtil.toString(scriptingNode));
             }
-            String loopFilename = applyMacros(filename);
+            String loopFilename = applyMacrosFilename(filename);
             String what = applyMacros(scriptingNode, ATTR_WHAT,
                                       (String) null);
 
@@ -4274,7 +4274,7 @@ public class ImageGenerator extends IdvManager {
                         //                    Misc.sleep(100);
                     }
                 }
-                String loopFilename = applyMacros(fname);
+                String loopFilename = applyMacrosFilename(fname);
                 if (scriptingNode == null) {
                     File imageFile = null;
                     if (loopFilename != null) {
@@ -4304,7 +4304,7 @@ public class ImageGenerator extends IdvManager {
             boolean combine = XmlUtil.getAttribute(scriptingNode,
                                   ATTR_COMBINE, false);
             if (combine) {
-                String          combineFilename = applyMacros(filename);
+                String          combineFilename = applyMacrosFilename(filename);
                 List<Component> components      = new LinkedList<Component>();
                 for (ViewManager vm : viewManagers) {
                     components.add(vm.getComponent());
@@ -5258,6 +5258,20 @@ public class ImageGenerator extends IdvManager {
         AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
         BufferedImageOp op = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
         return op.filter(image, new BufferedImage(width, height, image.getType()));
+    }
+
+    /**
+     * Perform macro substitution, much like {@link #applyMacros(String)}. The
+     * difference is that this method reverts the strange replacement of
+     * {@code \\n} with {@code \n}, and so it is safe to use with Windows file
+     * paths.
+     *
+     * @param filename {@code String} that potentially contains macros.
+     *
+     * @return The expanded {@code String}.
+     */
+    private String applyMacrosFilename(String filename) {
+        return applyMacros(filename).replace("\n", "\\n");
     }
 
     /**
