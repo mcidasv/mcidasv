@@ -232,6 +232,7 @@
         <mapID target="idv.license"                                  url="License.html" />
         <mapID target="idv.mcidasv"	   			                     url="mcidasv.html" />
         <mapID target="idv.misc.actions"                             url="misc/Actions.html" />
+		<mapID target="idv.misc.adaptiveresolution"					 url="misc/AdaptiveResolution.html" />
         <mapID target="idv.misc.commandlinearguments"                url="misc/CommandLineArguments.html" />
         <mapID target="idv.misc.commandlinearguments.datatype"       url="misc/CommandLineArguments.html#datatype" />
 		<mapID target="idv.misc.console"                             url="misc/Console.html" />

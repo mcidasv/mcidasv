@@ -180,6 +180,7 @@
 <tocitem text="Miscellaneous" target="idv.page_miscellaneous">
     <tocitem text="Bundles" target="idv.bundles"/>
 	<tocitem text="Time Matching" target="idv.misc.timematching"/>
+	<tocitem text="Adaptive Resolution" target="idv.misc.adaptiveresolution"/>
 	<tocitem text="Scripting" target="idv.misc.scripting.scripting">
 	    <tocitem text="Create an Object" target="idv.misc.scripting.createobject"/>
 		<tocitem text="Modify the Display Object" target="idv.misc.scripting.modifydisplayobject"/>
