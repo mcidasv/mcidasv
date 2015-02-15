@@ -823,6 +823,14 @@
       <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
       <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" />
       <jvmarg value="-XX:MaxPermSize=512m" />
+      <!-- 
+        these tiered compilation flags are apparently equivalent to -client.
+        that said, i am deeply ambivalent about encouraging their use, as the
+        "client" JIT is nowhere near as smart as the "server" JIT…despite the
+        faster startup times with -client.
+      -->
+      <!-- <jvmarg value="-XX:+TieredCompilation" /> -->
+      <!-- <jvmarg value="-XX:TieredStopAtLevel=1" /> -->
       <jvmarg value="-noverify" />
       <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
       <!-- 
@@ -923,7 +931,65 @@
             <arg value="/Users/jbeavers/Documents/McIDAS-V" />
         </java>
     </target>-->
-
+  
+  <!-- Build McIDAS-V and run a Jython script (large memory). -->
+  <!-- TODO: need a way to generalize these run.* targets...  -->
+  <target name="jar.runscript" depends="jar" description="Build McIDAS-V and run a Jython script (large memory).">
+    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
+      <classpath refid="app.classpath" />
+      <assertions refid="mcv.assertions"/>
+      <jvmarg value="-XX:+UseConcMarkSweepGC" />
+      <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
+      <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" />
+      <jvmarg value="-XX:MaxPermSize=512m" />
+      <!-- 
+        these tiered compilation flags are apparently equivalent to -client.
+        that said, i am deeply ambivalent about encouraging their use, as the
+        "client" JIT is nowhere near as smart as the "server" JIT…despite the
+        faster startup times with -client.
+      -->
+      <!-- <jvmarg value="-XX:+TieredCompilation" /> -->
+      <!-- <jvmarg value="-XX:TieredStopAtLevel=1" /> -->
+      <jvmarg value="-noverify" />
+      <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
+      <!-- 
+        The following two lines will allow the JVM to dump the heap's 
+        contents on an OutOfMemory exception (very helpful!).
+        ${heap.dir} defaults to "/tmp/mcidasv-heapdump.hprof" but feel free 
+        to change it.
+      --> 
+      <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+      <!--
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+      <sysproperty key="debug.adde.reqs" value="false" />
+      -->
+      <!--<sysproperty key="textureWidthMax" value="${visad.texturemax}" />-->
+      <sysproperty key="java.ext.dirs" value="${java.home}/lib/ext" />
+      <sysproperty key="java.library.path" value="${java.home}/lib/ext" />
+      <sysproperty key="loglevel" value="${run.log.level}" />
+      <sysproperty key="mcv.userpath" value="${userpath.dir}" />
+      <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
+      <sysproperty key="debug.adde.reqs" value="true" />
+      <sysproperty key="idv.usetimedriver" value="true" />
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+      
+      <sysproperty key="visad.java3d.textureNpot" value="true" />
+      <sysproperty key="visad.java3d.imageByRef" value="true" />
+      <sysproperty key="visad.java3d.geometryByRef" value="true" />
+      <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+      <!--
+      <sysproperty key="sun.java2d.opengl" value="True" />
+      <sysproperty key="sun.java2d.trace" value="log,timestamp,count,out:./java2d.log,verbose" />
+      -->
+      <arg value="-forceaqua" />
+      <arg value="-userpath" />
+      <arg value="${userpath.dir}" />
+      <arg value="-script" />
+      <arg value="${pyfile}" />
+    </java>
+  </target>
 
     <!-- Run McIDAS-V application (small memory) -->
     <target name="run" description="Run McIDAS-V application (small memory)">
