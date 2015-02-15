@@ -909,28 +909,6 @@
       <arg value="${userpath.dir}" />
     </java>
   </target>
-
-    <!--<target name="debug.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
-        <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-            <classpath>
-                <path refid="app.classpath" />
-                <pathelement location="${dist.dir}/${app.jarname}" />
-            </classpath>
-            <assertions refid="mcv.assertions"/>
-            <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
-            <jvmarg value="-Xserver" />
-            <jvmarg value="-noverify" />
-            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-            <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-            <jvmarg value="-Xdebug"/>
-            <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8000,suspend=y"/>
-            <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
-            <sysproperty key="debug.adde.reqs" value="false" />
-            <arg value="-forceaqua" />
-            <arg value="-userpath" />
-            <arg value="/Users/jbeavers/Documents/McIDAS-V" />
-        </java>
-    </target>-->
   
   <!-- Build McIDAS-V and run a Jython script (large memory). -->
   <!-- TODO: need a way to generalize these run.* targets...  -->
