@@ -814,6 +814,8 @@
         </java>
     </target>
 
+  <!-- TODO: need a way to generalize these run.* targets...  -->
+
   <!-- Build and run McIDAS-V application (large memory) -->
   <target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
     <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
@@ -911,7 +913,16 @@
   </target>
   
   <!-- Build McIDAS-V and run a Jython script (large memory). -->
-  <!-- TODO: need a way to generalize these run.* targets...  -->
+  <!-- Here's an example shell function (should work in bash/zsh):
+    
+    function freshmcv {
+      if [ -z "$1" ]; then
+        ant jar.runlarge
+      else
+        ant -Dpyfile="${1}" jar.runscript
+      fi
+    }
+  -->
   <target name="jar.runscript" depends="jar" description="Build McIDAS-V and run a Jython script (large memory).">
     <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
       <classpath refid="app.classpath" />
