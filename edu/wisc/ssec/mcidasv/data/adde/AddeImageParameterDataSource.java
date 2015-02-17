@@ -39,7 +39,9 @@ import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -71,6 +73,8 @@ import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.util.Misc;
+import ucar.visad.UtcDate;
+import visad.CommonUnit;
 import visad.Data;
 import visad.DateTime;
 import visad.FlatField;
@@ -238,7 +242,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                                Hashtable properties)
             throws VisADException {
         super(descriptor, new String[] { image }, properties);
-        logger.trace("desc={}, image={}, properties={}", new Object[] { descriptor, image, properties });
+        logger.trace("1: desc={}, image={}, properties={}", new Object[] { descriptor, image, properties });
     }
 
     /**
@@ -254,7 +258,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, String[] images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
-        logger.trace("desc={}, images={}, properties={}", new Object[] { descriptor, images, properties });
+        logger.trace("2: desc={}, images={}, properties={}", new Object[] { descriptor, images, properties });
     }
 
     /**
@@ -271,7 +275,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, List images,
                            Hashtable properties) throws VisADException {
         super(descriptor, images, properties);
-        logger.trace("desc={}, images={}, properties={}", new Object[] { descriptor, images, properties });
+        logger.trace("3: desc={}, images={}, properties={}", new Object[] { descriptor, images, properties });
     }
 
     /**
@@ -286,7 +290,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, ImageDataset ids,
                            Hashtable properties) throws VisADException {
         super(descriptor, ids, properties);
-        logger.trace("desc={}, ids={}, properties={}", new Object[] { descriptor, ids, properties });
+        logger.trace("4: desc={}, ids={}, properties={}", new Object[] { descriptor, ids, properties });
         this.sourceProps = properties;
         if (properties.containsKey((Object)PREVIEW_KEY)) {
             this.showPreview = (Boolean)(properties.get((Object)PREVIEW_KEY));
@@ -2254,6 +2258,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         int newEleRes = eleRes;
 //        List<TwoFacedObject> times = getTimesFromDataSelection(subset, dataChoice);
         List times = getTimesFromDataSelection(subset, dataChoice);
+        boolean usingTimeDriver = ((subset != null) && (subset.getTimeDriverTimes() != null));
+        if (usingTimeDriver) {
+            times = subset.getTimeDriverTimes();
+        }
+
 //        if (dataChoice.getDataSelection() == null) {
 //            logger.trace("setting datasel!");
 //            dataChoice.setDataSelection(subset);
@@ -2267,6 +2276,120 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //        if (choiceId instanceof BandInfo) {
 //            
 //        }
+        if (usingTimeDriver) {
+            if (imageList.isEmpty()) {
+                return imageList;
+            }
+            AddeImageDescriptor aid = getDescriptor(imageList.get(0));
+            if (aid.getImageInfo() != null) {
+                try {
+                    AddeImageInfo aii =
+                        (AddeImageInfo) aid.getImageInfo().clone();
+                    // set the start and end dates
+                    Collections.sort(times);
+                    DateTime start = (DateTime) times.get(0);
+                    DateTime end   = (DateTime) times.get(times.size() - 1);
+                    // In ADDE, you can't specify something like DAY=2011256 2011257 TIME=23:45:00 01:45:00
+                    // and expect that to be 2011256/23:45 to 2011257 01:45.  Time ranges are on a per day
+                    // basis.  So, we see if the starting time is a different day than the ending day and if so,
+                    // we set the start time to be 00Z on the first day an 23:59Z on the end day.
+                    // Even worse is that for archive datasets, you can't span multiple days.  So make separate
+                    // requests for each day.
+                    String       startDay = UtcDate.getYMD(start);
+                    String       endDay   = UtcDate.getYMD(end);
+                    List<String> days     = new ArrayList<>(times.size());
+                    if (!startDay.equals(endDay)) {
+                        days = getUniqueDayStrings(times);
+                    } else {
+                        days.add(startDay);
+                    }
+                    Map<DateTime, AreaDirectory> dateDir = new HashMap<>(days.size());
+                    List<DateTime> dirTimes = new ArrayList<>(days.size() * 10);
+                    for (String day : days) {
+                        startDay = day + " 00:00:00";
+                        endDay   = day + " 23:59:59";
+                        start = DateTime.createDateTime(startDay,
+                            DateTime.DEFAULT_TIME_FORMAT);
+                        end = UtcDate.createDateTime(endDay,
+                            DateTime.DEFAULT_TIME_FORMAT);
+                        aii.setStartDate(new Date((long) (start
+                            .getValue(CommonUnit
+                                .secondsSinceTheEpoch) * 1000)));
+                        aii.setEndDate(new Date((long) (end
+                            .getValue(CommonUnit
+                                .secondsSinceTheEpoch) * 1000)));
+                        // make the request for the times (AreaDirectoryList)
+                        aii.setRequestType(aii.REQ_IMAGEDIR);
+                        AreaDirectoryList ad;
+                        try {  // we may be asking for a date that doesn't exist
+                            ad = new AreaDirectoryList(aii.getURLString());
+                        } catch (AreaFileException afe) {
+                            // If there's an error, we just ignore it.  In the
+                            // end, the descriptor list will be empty if there is no
+                            // data for any of the days.
+                            continue;
+
+                            // TODO: This is a hack because different servers return different
+                            // messages.  AREA and GINI servers seem to have "no images" in the
+                            // exception message when there are no images.
+                            //String message = afe.getMessage().toLowerCase();
+                            //if (message.indexOf("no images") >= 0 ||
+                            //    message.indexOf("error generating list of files") >= 0) {
+                            //    continue;
+                            //} else {
+                            //    throw afe;
+                            //}
+
+                        }
+                        AreaDirectory[][] dirs = ad.getSortedDirs();
+                        for (int d = 0; d < dirs.length; d++) {
+                            AreaDirectory dir = dirs[d][0];
+                            DateTime dirTime =
+                                new DateTime(dir.getNominalTime());
+                            dateDir.put(dirTime, dir);
+                            dirTimes.add(dirTime);
+                        }
+                    }
+                    List<DateTime> matchedTimes = selectTimesFromList(subset,
+                        dirTimes, times);
+                    for (DateTime dirTime : matchedTimes) {
+                        AreaDirectory dir = dateDir.get(dirTime);
+                        // shouldn't happen, but what the hey
+                        if (dir == null) {
+                            continue;
+                        }
+                        AddeImageInfo newaii =
+                            (AddeImageInfo) aid.getImageInfo().clone();
+                        newaii.setRequestType(aii.REQ_IMAGEDATA);
+                        newaii.setStartDate(dir.getNominalTime());
+                        newaii.setEndDate(dir.getNominalTime());
+                        setBandInfo(dataChoice, newaii);
+                        AddeImageDescriptor newaid =
+                            new AddeImageDescriptor(dir,
+                                newaii.getURLString(), newaii);
+                        newaid.setIsRelative(false);
+                        descriptors.add(newaid);
+                    }
+                } catch (CloneNotSupportedException cnse) {
+                    System.out.println("unable to clone aii");
+                } catch (VisADException vader) {
+                    System.out.println("unable to get date values");
+                } catch (AreaFileException afe) {
+                    System.out.println("unable to make request");
+                } catch (Exception excp) {
+                    System.out.println("Got an exception: "
+                        + excp.getMessage());
+                }
+                // we do this so save data local will work.  However, if
+                // this then gets set to be the time driver, it would not
+                // necessarily be correct
+                imageList = descriptors;
+                return descriptors;
+            } else if (imageList != null) {
+                return imageList;
+            }
+        }
+
         int choiceBandNum = ((BandInfo)dataChoice.getId()).getBandNumber();
         int choiceSensorId = ((BandInfo)dataChoice.getId()).getSensor();
         String choicePrefUnit = ((BandInfo)dataChoice.getId()).getPreferredUnit();

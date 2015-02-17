@@ -1680,7 +1680,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
      *
      * @return  the list of unique strings
      */
-    private List<String> getUniqueDayStrings(List<DateTime> times) {
+    protected List<String> getUniqueDayStrings(List<DateTime> times) {
         List<String> days = new ArrayList<String>();
         for (DateTime time : times) {
             String dateString = UtcDate.getYMD(time);
@@ -1698,7 +1698,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
      * @param dataChoice  the data choice
      * @param aii  the AddeImageInfo with the image stuff
      */
-    private void setBandInfo(DataChoice dataChoice, AddeImageInfo aii) {
+    protected void setBandInfo(DataChoice dataChoice, AddeImageInfo aii) {
         BandInfo bi = (BandInfo) dataChoice.getId();
         List<BandInfo> bandInfos =
             (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
