@@ -2313,11 +2313,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         end = UtcDate.createDateTime(endDay,
                             DateTime.DEFAULT_TIME_FORMAT);
                         aii.setStartDate(new Date((long) (start
-                            .getValue(CommonUnit
-                                .secondsSinceTheEpoch) * 1000)));
+                            .getValue(CommonUnit.secondsSinceTheEpoch) * 1000)));
                         aii.setEndDate(new Date((long) (end
-                            .getValue(CommonUnit
-                                .secondsSinceTheEpoch) * 1000)));
+                            .getValue(CommonUnit.secondsSinceTheEpoch) * 1000)));
                         // make the request for the times (AreaDirectoryList)
                         aii.setRequestType(aii.REQ_IMAGEDIR);
                         AreaDirectoryList ad;
@@ -2371,14 +2369,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         descriptors.add(newaid);
                     }
                 } catch (CloneNotSupportedException cnse) {
-                    System.out.println("unable to clone aii");
+                    logger.error("Unable to clone AddeImageInfo (aii)", cnse);
                 } catch (VisADException vader) {
-                    System.out.println("unable to get date values");
+                    logger.error("Unable to get date values", vader);
                 } catch (AreaFileException afe) {
-                    System.out.println("unable to make request");
+                    logger.error("Unable to make ADDE request", afe);
                 } catch (Exception excp) {
-                    System.out.println("Got an exception: "
-                        + excp.getMessage());
+                    logger.error("Exception occurred while handling time driver", excp);
                 }
                 // we do this so save data local will work.  However, if
                 // this then gets set to be the time driver, it would not
