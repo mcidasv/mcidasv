@@ -929,7 +929,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES, Boolean.valueOf(mappy.getTransectLabelsVisible()) },
             { "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, Boolean.valueOf(mappy.getWaitMessageVisible()) },
             { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
-            { MapViewManager.PR_LABEL, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION }
+            { MapViewManager.PR_LABEL, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) }
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
         panelPanel.setBorder(BorderFactory.createTitledBorder("Panel Configuration"));
@@ -1134,7 +1134,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         PreferenceManager miscManager = new PreferenceManager() {
             // applyWidgets called the same way the IDV does it.
             public void applyPreference(XmlObjectStore theStore, Object data) {
-                IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
+//                IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
+                savePrefsFromWidgets((Hashtable)data, theStore);
 
                 Object projBoxSelection = projBox.getSelectedItem();
                 if (projBoxSelection instanceof String) {
@@ -1161,11 +1162,23 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                              logoScaleSlider.getValue() / 10f);
                 theStore.put(MapViewManager.PREF_DISPLAYLISTCOLOR, dlColorWidget.getSwatchColor());
                 theStore.put(MapViewManager.PREF_GLOBEBACKGROUND, globeBg[0].getBackground());
+//                theStore.put(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, )
                 ViewManager.setHighlightBorder(border[0].getBackground());
             }
         };
         
         this.add(Constants.PREF_LIST_VIEW, "Display Window Preferences", miscManager, outerPanel, widgets);
+    }
+
+    private static void savePrefsFromWidgets(Hashtable widgets, XmlObjectStore store) {
+        IdvPreferenceManager.applyWidgets(widgets, store);
+        for (Enumeration keys = widgets.keys(); keys.hasMoreElements(); ) {
+            String key = (String) keys.nextElement();
+            Object widget = widgets.get(key);
+            if (MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION.equals(key)) {
+                store.put(key, ((JCheckBox)widget).isSelected());
+            }
+        }
     }
 
     /**
