@@ -4166,6 +4166,7 @@ public class ImageGenerator extends IdvManager {
      */
     public Image getImage() throws Exception {
         //        updateViewManagers();
+        logger.trace("trying to get image from viewManagers...");
         List viewManagers = getVMManager().getViewManagers();
         for (int i = 0; i < viewManagers.size(); i++) {
             ViewManager viewManager = (ViewManager) viewManagers.get(i);
@@ -4176,11 +4177,17 @@ public class ImageGenerator extends IdvManager {
                     viewManager.toFront();
                 }
             }
-            return viewManager.getMaster().getImage(false);
+            logger.trace("getting image from viewManager={}", viewManager);
+            Image img = viewManager.getMaster().getImage(false);
+            logger.trace("result: {}", img);
+            return img;
+//            return viewManager.getMaster().getImage(false);
         }
+        logger.trace("returning null");
         return null;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(ImageGenerator.class);
 
     /**
      * Capture the image
@@ -4227,11 +4234,14 @@ public class ImageGenerator extends IdvManager {
                 viewManager.updateDisplayIfNeeded();
                 viewManagers = (List<ViewManager>) Misc.newList(viewManager);
             } else {
+                logger.trace("calling display control getImage ('{}')...", what);
                 lastImage = display.getImage(what);
+                logger.trace("result: {}; passing to processImage...", lastImage);
                 lastImage = processImage((BufferedImage) lastImage,
                                          loopFilename, scriptingNode,
                                          getAllProperties(), null,
                                          imageProperties);
+                logger.trace("result: {}", lastImage);
                 return;
             }
         }
@@ -4288,14 +4298,18 @@ public class ImageGenerator extends IdvManager {
                         new VectorGraphicsRenderer(viewManager);
                     vectorRenderer.renderTo(loopFilename);
                 } else {
+                    logger.trace("waiting until displays are 'done'...");
                     getIdv().getIdvUIManager().waitUntilDisplaysAreDone(
                         getIdv().getIdvUIManager(), 1000);
+                    logger.trace("done; calling viewManager getImage...");
                     lastImage       = viewManager.getMaster().getImage(true);
+                    logger.trace("done (next step is processImage); result: {}", lastImage);
                     imageProperties = new Hashtable();
                     lastImage = processImage((BufferedImage) lastImage,
                                              loopFilename, scriptingNode,
                                              getAllProperties(), viewManager,
                                              imageProperties);
+                    logger.trace("processImage done; result: {}", lastImage);
                 }
                 images.add(lastImage);
                 idx++;
@@ -5182,13 +5196,17 @@ public class ImageGenerator extends IdvManager {
                 String newFileName = applyMacros(child, ATTR_FILE,
                                          (String) null);
                 if (shouldIterateChildren) {
+                    logger.trace("newFileName='{}' viewManager={} newImage={}", newFileName, viewManager, newImage);
                     newImage = processImage(newImage, newFileName, child,
                                             null, viewManager,
                                             new Hashtable());
+                    logger.trace("finished processImage; result: {}", newImage);
                 }
                 if (newFileName != null) {
+                    logger.trace("calling writeImageToFile...");
                     ImageUtils.writeImageToFile(newImage,
                             getImageFileName(newFileName));
+                    logger.trace("finished writeImageToFile");
                     debug("Writing image:" + newFileName);
                 }
                 if ( !applyMacros(child, ATTR_COPY, false)) {
@@ -5222,10 +5240,13 @@ public class ImageGenerator extends IdvManager {
                             null, 1);
                     }
                 } else {
+                    logger.trace("another writeImageToFile call...");
                     ImageUtils.writeImageToFile(image, file, quality);
+                    logger.trace("and it's done.");
                 }
             }
         }
+        logger.trace("result: {}", image);
         return image;
     }
 

@@ -4723,14 +4723,20 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @throws Exception problem getting image
      */
     public Image getImage(String what) throws Exception {
+        logger.trace("what={}", what);
         if (what != null) {
-            System.err.println("Unknown image capture component:" + what);
+            logger.warn("unknown image capture component '"+what+'\'');
+//            System.err.println("Unknown image capture component:" + what);
         }
         setMainPanelDimensions();
         if ( !getIdv().getArgsManager().getIsOffScreen()) {
             GuiUtils.showComponentInTabs(mainPanel);
         }
-        return ImageUtils.getImage(mainPanel);
+        logger.trace("calling getImage with mainPanel={}", mainPanel);
+        Image result = ImageUtils.getImage(mainPanel);
+        logger.trace("result: {}", result);
+        return result;
+//        return ImageUtils.getImage(mainPanel);
     }
 
 

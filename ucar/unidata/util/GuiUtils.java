@@ -30,6 +30,8 @@ package ucar.unidata.util;
 
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -1216,7 +1218,9 @@ public class GuiUtils extends LayoutUtil {
      */
     public static Image getImage(String file, Class c, boolean cache,
                                  boolean returnNullIfNotFound) {
+        logger.trace("file='{}' class='{}' cache param={} returnNullIfNotFound={}", file, c.getCanonicalName(), cache, returnNullIfNotFound);
         if ( !CacheManager.getDoCache()) {
+            logger.trace("CacheManager is disabled; disabling cache param");
             cache = false;
         }
 
@@ -1232,7 +1236,10 @@ public class GuiUtils extends LayoutUtil {
         if (cache) {
             image = (Image) imageCache.get(key);
             if (image != null) {
+                logger.trace("cache key='{}' found a cached image={}", key, image);
                 return image;
+            } else {
+                logger.trace("cache key='{}' did not find a cached image", key);
             }
         }
 
@@ -1240,29 +1247,39 @@ public class GuiUtils extends LayoutUtil {
             InputStream is = IOUtil.getInputStream(file, c);
             if (is != null) {
                 byte[] bytes = IOUtil.readBytes(is);
+                logger.trace("read {} bytes", bytes.length);
                 image = Toolkit.getDefaultToolkit().createImage(bytes);
                 if (cache) {
+                    logger.trace("caching image using key='{}'", key);
                     imageCache.put(key, image);
+                } else {
+                    logger.trace("not caching image");
                 }
                 return image;
+            } else {
+                logger.trace("could not create input stream from '{}'", file);
             }
             if (returnNullIfNotFound) {
                 return null;
             }
         } catch (Exception exc) {
+            logger.error("Problem occurred when getting image", exc);
             if (returnNullIfNotFound) {
                 return null;
             }
-            System.err.println(exc + " getting image ");
+//            System.err.println(exc + " getting image ");
         }
 
-        System.err.println("Unable to find image:" + file);
+//        System.err.println("Unable to find image:" + file);
+        logger.warn("Unable to find image '{}'", file);
         URL url = Misc.getURL(MISSING_IMAGE, GuiUtils.class);
         if (url == null) {
-            System.err.println("Whoah, could not load missing image:"
-                               + MISSING_IMAGE);
+            logger.error("Could not load missing image '"+MISSING_IMAGE+'\'');
+//            System.err.println("Whoah, could not load missing image:"
+//                               + MISSING_IMAGE);
             return null;
         }
+        logger.trace("creating image from url '{}'", url);
         return Toolkit.getDefaultToolkit().createImage(url);
     }
 
@@ -4062,6 +4079,7 @@ public class GuiUtils extends LayoutUtil {
      * @throws Exception
      */
     public static Image getImage(Component component) throws Exception {
+        logger.trace("component='{}'", component);
         RepaintManager manager = RepaintManager.currentManager(component);
         //        Image image = manager.getOffscreenBuffer(component, component.getWidth (), component.getHeight ());
         double w = component.getWidth();
@@ -4070,6 +4088,7 @@ public class GuiUtils extends LayoutUtil {
                                   BufferedImage.TYPE_INT_RGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
         component.paint(g);
+        logger.trace("returning image={}", image);
         return image;
     }
 
@@ -5905,12 +5924,13 @@ public class GuiUtils extends LayoutUtil {
             final JTabbedPane tab) {
         tab.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
+                logger.trace("tab changed: e='{}' isViz={}", e, tab.isVisible());
                 checkHeavyWeightComponents(tab);
             }
         });
     }
 
-
+    private static final Logger logger = LoggerFactory.getLogger(GuiUtils.class);
 
 
 

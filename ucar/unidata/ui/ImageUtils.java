@@ -29,6 +29,8 @@
 package ucar.unidata.ui;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -196,6 +198,8 @@ public class ImageUtils {
         return readImage(imagePath, cache, false);
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(ImageUtils.class);
+
     /**
      * Read and image
      *
@@ -209,13 +213,16 @@ public class ImageUtils {
                                   boolean returnNullIfNotFound) {
 
         // System.err.println ("getImage");
+        logger.trace("calling GuiUtils.getImage(...)");
         Image image = GuiUtils.getImage(imagePath, ImageUtils.class, cache,
                                         returnNullIfNotFound);
 
         // System.err.println ("waiting");
+        logger.trace("calling waitOnImage for image={}", image);
         image = waitOnImage(image);
 
         // System.err.println ("done waiting");
+        logger.trace("return image={}", image);
         return image;
     }
 
@@ -227,17 +234,19 @@ public class ImageUtils {
      */
     public static Image waitOnImage(Image image) {
         if (image == null) {
+            logger.trace("image is null; returning null");
             return null;
         }
 
         // System.err.println ("waitOnImage");
         MyImageObserver mio = new MyImageObserver();
-
+        logger.trace("creating observer using image={}: {}", image, mio);
         mio.setImage(image);
-
+        logger.trace("done with setImage: {}", mio);
         int heightOkCnt = 0;
 
         // Wait at most 2 seconds
+        logger.trace("starting wait loop: {}", mio);
         while ( !mio.badImage && !mio.allBits && (heightOkCnt < 20)) {
             Misc.sleep(5);
 
@@ -249,10 +258,14 @@ public class ImageUtils {
             }
         }
 
+        logger.trace("done with wait loop (heightOkCnt={}): {}", heightOkCnt, mio);
+
         if (mio.badImage) {
+            logger.trace("badImage is true; returning null (mio={})", mio);
             return null;
         }
 
+        logger.trace("return image={} (mio={})", image, mio);
         return image;
     }
 
@@ -1016,6 +1029,7 @@ public class ImageUtils {
     public static void writeImageToFile(Image image, String saveFile,
                                         OutputStream os, float quality)
             throws Exception {
+        logger.trace("image={} saveFile='{}' os={} quality={}", image, saveFile, os, quality);
         RenderedImage renderedImage = null;
         File          file          = new File(saveFile);
 
@@ -1055,8 +1069,10 @@ public class ImageUtils {
         ImageOutputStream ios;
 
         if (os != null) {
+            logger.trace("creating image outputstream from os param");
             ios = ImageIO.createImageOutputStream(os);
         } else {
+            logger.trace("creating image outputstream from saveFile param");
             ios = ImageIO.createImageOutputStream(file);
         }
 
@@ -1080,8 +1096,10 @@ public class ImageUtils {
         if (saveFile.toLowerCase().endsWith(".jpg")
                 || saveFile.toLowerCase().endsWith(".jpeg")) {
             if (ImageUtils.hasAlpha(image)) {
+                logger.trace("calling toBufferedImage...");
                 renderedImage = ImageUtils.toBufferedImage(image,
                         BufferedImage.TYPE_INT_RGB);
+                logger.trace("toBufferedImage result: {}", renderedImage);
                 image = (Image) renderedImage;
             }
         }
@@ -1090,17 +1108,25 @@ public class ImageUtils {
             if (image instanceof RenderedImage) {
                 renderedImage = (RenderedImage) image;
             } else {
+                logger.trace("renderedImage is null; calling toBufferedImage with {}", image);
                 renderedImage = ImageUtils.toBufferedImage(image);
+                logger.trace("result: {}", renderedImage);
             }
         }
 
+        logger.trace("creating ImageIO image and writing...");
         // Write the image
         writer.write(null, new IIOImage(renderedImage, null, null), iwparam);
+        logger.trace("write finished");
 
         // Cleanup
+        logger.trace("calling flush...");
         ios.flush();
+        logger.trace("flushed; disposing of writer...");
         writer.dispose();
+        logger.trace("disposed; closing stream...");
         ios.close();
+        logger.trace("closed; time to exit!");
     }
 
     /**
@@ -1541,10 +1567,24 @@ public class ImageUtils {
         /** flag for updates */
         boolean receivedUpdate = false;
 
+        boolean properties = false;
+
+        int someBits = 0;
+
+        boolean frameBits = false;
+
+        boolean error = false;
+
+        boolean abort = false;
+
         /**
          * Ctor
          */
         public MyImageObserver() {}
+
+        public String toString() {
+            return String.format("[MyImageObserver@%x: badImage=%s allBits=%s gotWidth=%s gotHeight=%s receivedUpdate=%s]", hashCode(), badImage,allBits, gotWidth, gotHeight, receivedUpdate);
+        }
 
         /**
          * Set the image to observe
@@ -1555,10 +1595,11 @@ public class ImageUtils {
 
             // Humm, is this good enough?
             if ((i.getWidth(null) > 0) && (i.getHeight(null) > 0)) {
-
+                logger.trace("setting allBits to true; state={}", this);
                 // i.getWidth(this);
                 allBits = true;
             } else {
+                logger.trace("explicitly calling getWidth; state={}", this);
                 i.getWidth(this);
             }
         }
@@ -1579,6 +1620,7 @@ public class ImageUtils {
                                    int width, int height) {
             boolean debug = false;
 
+            logger.trace("flags={} x={} y={} width={} height={}; state={}", flags, x, y, width, height, this);
             if (debug) {
                 System.err.println("imageUpdate " + flags + " " + width + "X"
                                    + height);
@@ -1587,6 +1629,7 @@ public class ImageUtils {
             receivedUpdate = true;
 
             if ((flags & ImageObserver.WIDTH) != 0) {
+                logger.trace("received image width ({}); state={}", width, this);
                 if (debug) {
                     System.err.println("got width");
                 }
@@ -1595,6 +1638,7 @@ public class ImageUtils {
             }
 
             if ((flags & ImageObserver.HEIGHT) != 0) {
+                logger.trace("received image height ({}); state={}", height, this);
                 if (debug) {
                     System.err.println("got height");
                 }
@@ -1607,11 +1651,18 @@ public class ImageUtils {
                 // allBits = gotWidth && gotHeight;
             }
 
+            if ((flags & ImageObserver.PROPERTIES) != 0) {
+                logger.trace("received properties; state={}", this);
+                properties = true;
+            }
+
             if (flags == 0) {
+                logger.trace("setting allBits to true (flags==0); state={}", this);
                 allBits = true;
             }
 
             if ((flags & ImageObserver.FRAMEBITS) != 0) {
+                logger.trace("received framebits; state={}", this);
                 if (debug) {
                     System.err.println("got FRAMEBITS");
                 }
@@ -1620,6 +1671,7 @@ public class ImageUtils {
             }
 
             if ((flags & ImageObserver.ALLBITS) != 0) {
+                logger.trace("received allbits; state={}", this);
                 if (debug) {
                     System.err.println("got ALLBITS");
                 }
@@ -1628,37 +1680,44 @@ public class ImageUtils {
             }
 
             if ((flags & ImageObserver.SOMEBITS) != 0) {
+                logger.trace("received somebits; state={}", this);
                 if (debug) {
                     System.err.println("got SOMEBITS");
                 }
-
+                someBits++;
                 // System.err.println (id + "\timageUpdate-SOMEBITS");
             }
 
             if ((flags & ImageObserver.ERROR) != 0) {
+                logger.trace("received error; state={}", this);
                 if (debug) {
                     System.err.println("got ERROR");
                 }
-
+                error = true;
                 // System.err.println (id + "\timageUpdate-ERROR");
                 badImage = true;
             }
 
             if ((flags & ImageObserver.ABORT) != 0) {
+                logger.trace("received abort; state={}", this);
                 if (debug) {
                     System.err.println("got ABORT");
                 }
-
+                abort = true;
                 // System.err.println (id + "\timageUpdate-ABORT");
                 badImage = true;
             }
 
+            logger.trace("exit: {}", this);
             if (debug) {
 
                 // System.err.println("all bits:" + allBits + " badImage:" + badImage);
             }
 
-            return !(allBits || badImage);
+            boolean retval = !(allBits || badImage);
+            logger.trace("returning {}", retval);
+            return retval;
+//            return !(allBits || badImage);
         }
     }
 }
