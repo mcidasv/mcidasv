@@ -218,6 +218,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
      *
      * @param v Is visible
      */
+    
     public void setVisible(boolean v) {
         if (dialog != null) {
             dialog.setVisible(v);
@@ -229,6 +230,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
      *
      * @param transfer   default values for the dialog
      */
+    
     public void showDialog(VertScaleInfo transfer) {
 
         if (dialog == null) {
@@ -245,6 +247,13 @@ public class VertScaleDialog extends JPanel implements ActionListener {
         min.setText(Misc.format(transfer.minVertRange));
         max.setText(Misc.format(transfer.maxVertRange));
         unitCombo.setSelectedItem(transfer.unit.toString());
+        
+        // minor increment
+        vertMinorSpinner.setValue(transfer.getMinorDivision());
+        
+        // font
+        fontSelector.setFont(transfer.getFont());
+        
         // In the text field, don't show units
         String tmpStr = transfer.getLabel();
         
