@@ -3572,6 +3572,10 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
 
         getVMManager().setDisplayMastersInactive();
 
+        // the "bundle processing" order differs from the IDV, mostly as a way
+        // to handle match display regions properly. search for "*** Step" to
+        // locate where a given step begins.
+        // *** Step 1: Bring up the bundled view managers.
         try {
             List<ViewManager> currentViewManagers =
                 getVMManager().getViewManagers();
@@ -3625,7 +3629,6 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                 }
             }
 
-
             if (newViewManagers != null) {
                 if (getArgsManager().getIsOffScreen()) {
                     Trace.call1("Decode.addViewManagers");
@@ -3640,8 +3643,6 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                     }
                 }
             }
-
-
 
             //Have this here to handle old legacy bundles.
             //We know they are old if we don't have a windows list
@@ -3688,16 +3689,106 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                         }
                     }
                 }
-
             } else if (newViewManagers != null) {
                 //Add any remainders in
                 getVMManager().addViewManagers(newViewManagers);
             }
 
-
-
-
             if (loadDialog.okToRun()) {
+                // *** Step 2: Reinstantiate the bundled data sources
+                if (dataSources != null) {
+                    List localFileMapping = null;
+                    if ((fileMapping != null) && (fileMapping.size() > 0)) {
+                        localFileMapping = new ArrayList(fileMapping);
+                    }
+
+                    final ThreadManager threadManager =
+                        new ThreadManager("Data source initialization");
+                    for (int i = 0; i < dataSources.size(); i++) {
+                        final DataSource dataSource = (DataSource) dataSources.get(i);
+                        //Clear the error flag
+                        dataSource.setInError(false);
+                        loadDialog.setMessage1("Loading data source " + (i + 1)
+                            + " of " + dataSources.size());
+                        loadDialog.setMessage2(
+                            "(" + DataSelector.getNameForDataSource(dataSource)
+                                + ")");
+                        if (localFileMapping != null) {
+                            for (int mappingIdx = 0;
+                                 mappingIdx < localFileMapping.size();
+                                 mappingIdx++) {
+                                ObjectPair pair =
+                                    (ObjectPair) localFileMapping.get(mappingIdx);
+                                String identifier = (String) pair.getObject1();
+                                List   files      = (List) pair.getObject2();
+                                if (dataSource.identifiedByName(identifier)) {
+                                    //Remove this data source's local files
+                                    localFileMapping.remove(mappingIdx);
+                                    dataSource.setNewFiles(files);
+                                    break;
+                                }
+                            }
+                        }
+                        long t1 = System.currentTimeMillis();
+                        threadManager.addRunnable(new ThreadManager.MyRunnable() {
+                            public void run() throws Exception {
+                                dataSource.initAfterUnpersistence();
+                            }
+                        });
+                    }
+
+                    long t1 = System.currentTimeMillis();
+                    try {
+                        //Don't run in parallel for now since it screws up the ordering
+                        //of the displays
+                        //threadManager.runAllParallel();
+                        threadManager.runInParallel(getIdv().getMaxDataThreadCount());
+                    } catch (Exception exc) {
+                        //Catch any exceptions thrown but then get all of them and show them to the user
+                        List<Exception> exceptions = threadManager.getExceptions();
+                        if (exceptions.size() == 0) {
+                            //This shouldn't happen
+                            exceptions.add(exc);
+                        }
+                        LogUtil.printExceptions(exceptions);
+                    }
+                    long t2 = System.currentTimeMillis();
+                    //            System.err.println ("time to init data sources:" + (t2-t1));
+
+
+                    for (int i = 0; i < dataSources.size(); i++) {
+                        final DataSource dataSource = (DataSource) dataSources.get(i);
+                        if (overrideTimes != null) {
+                            dataSource.setDateTimeSelection(overrideTimes);
+                        }
+                        if ((overrideEnsMembers != null)
+                            && (dataSource instanceof GridDataSource)) {
+                            ((GridDataSource) dataSource).setEnsembleSelection(
+                                overrideEnsMembers);
+                        }
+                        if ( !loadDialog.okToRun()) {
+                            return;
+                        }
+                        if (dataSource.getInError()) {
+                            continue;
+                        }
+                        if (getDataManager().addDataSource(dataSource)) {
+                            loadDialog.addDataSource(dataSource);
+                        }
+                    }
+
+
+
+                    if ((localFileMapping != null) && (localFileMapping.size() > 0)) {
+                        throw new IllegalArgumentException(
+                            "Did not find the data source to use for the file override: "
+                                + localFileMapping);
+                    }
+                    clearDataSourcesState(dataSources);
+                    clearFileMapping();
+                }
+
+                // *** Step 3: bring up the bundled controls
                 if (newControls != null) {
                     if (getIdv().getArgsManager().getIsOffScreen()) {
                         //                    System.err.println ("initializing displays");
@@ -3759,7 +3850,6 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                         }
                     }
 
-
                     long tt1 = System.currentTimeMillis();
                     displaysThreadManager.runSequentially();
                     //                    displaysThreadManager.runInParallel();
@@ -3791,97 +3881,6 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
             getStateManager().putProperty(PROP_USE_DISPLAYAREA, false);
         }
 
-        if (dataSources != null) {
-            List localFileMapping = null;
-            if ((fileMapping != null) && (fileMapping.size() > 0)) {
-                localFileMapping = new ArrayList(fileMapping);
-            }
-
-            final ThreadManager threadManager =
-                new ThreadManager("Data source initialization");
-            for (int i = 0; i < dataSources.size(); i++) {
-                final DataSource dataSource = (DataSource) dataSources.get(i);
-                //Clear the error flag
-                dataSource.setInError(false);
-                loadDialog.setMessage1("Loading data source " + (i + 1)
-                    + " of " + dataSources.size());
-                loadDialog.setMessage2(
-                    "(" + DataSelector.getNameForDataSource(dataSource)
-                        + ")");
-                if (localFileMapping != null) {
-                    for (int mappingIdx = 0;
-                         mappingIdx < localFileMapping.size();
-                         mappingIdx++) {
-                        ObjectPair pair =
-                            (ObjectPair) localFileMapping.get(mappingIdx);
-                        String identifier = (String) pair.getObject1();
-                        List   files      = (List) pair.getObject2();
-                        if (dataSource.identifiedByName(identifier)) {
-                            //Remove this data source's local files
-                            localFileMapping.remove(mappingIdx);
-                            dataSource.setNewFiles(files);
-                            break;
-                        }
-                    }
-                }
-                long t1 = System.currentTimeMillis();
-                threadManager.addRunnable(new ThreadManager.MyRunnable() {
-                    public void run() throws Exception {
-                        dataSource.initAfterUnpersistence();
-                    }
-                });
-            }
-
-            long t1 = System.currentTimeMillis();
-            try {
-                //Don't run in parallel for now since it screws up the ordering
-                //of the displays
-                //threadManager.runAllParallel();
-                threadManager.runInParallel(getIdv().getMaxDataThreadCount());
-            } catch (Exception exc) {
-                //Catch any exceptions thrown but then get all of them and show them to the user
-                List<Exception> exceptions = threadManager.getExceptions();
-                if (exceptions.size() == 0) {
-                    //This shouldn't happen
-                    exceptions.add(exc);
-                }
-                LogUtil.printExceptions(exceptions);
-            }
-            long t2 = System.currentTimeMillis();
-            //            System.err.println ("time to init data sources:" + (t2-t1));
-
-
-            for (int i = 0; i < dataSources.size(); i++) {
-                final DataSource dataSource = (DataSource) dataSources.get(i);
-                if (overrideTimes != null) {
-                    dataSource.setDateTimeSelection(overrideTimes);
-                }
-                if ((overrideEnsMembers != null)
-                    && (dataSource instanceof GridDataSource)) {
-                    ((GridDataSource) dataSource).setEnsembleSelection(
-                        overrideEnsMembers);
-                }
-                if ( !loadDialog.okToRun()) {
-                    return;
-                }
-                if (dataSource.getInError()) {
-                    continue;
-                }
-                if (getDataManager().addDataSource(dataSource)) {
-                    loadDialog.addDataSource(dataSource);
-                }
-            }
-
-
-
-            if ((localFileMapping != null) && (localFileMapping.size() > 0)) {
-                throw new IllegalArgumentException(
-                    "Did not find the data source to use for the file override: "
-                        + localFileMapping);
-            }
-            clearDataSourcesState(dataSources);
-            clearFileMapping();
-        }
         if ( !loadDialog.okToRun()) {
             //TODO
             return;
