@@ -152,7 +152,7 @@ public class JythonObjectStore {
      *
      * @throws NullPointerException if {@code key} is {@code null}.
      */
-    public char getChar(String key, char defaultValue) {
+    public char getCharacter(String key, char defaultValue) {
         return idvStore.get(requireNonNull(key), defaultValue);
     }
 
@@ -237,7 +237,7 @@ public class JythonObjectStore {
      *
      * @throws NullPointerException if {@code key} is {@code null}.
      */
-    public int getInt(String key, int defaultValue) {
+    public int getInteger(String key, int defaultValue) {
         return idvStore.get(requireNonNull(key), defaultValue);
     }
 
@@ -297,7 +297,7 @@ public class JythonObjectStore {
      * @throws NullPointerException if either {@code key} or {@code value} is
      * {@code null}.
      */
-    public void putChar(String key, char value) {
+    public void putCharacter(String key, char value) {
         idvStore.put(requireNonNull(key), value);
     }
 
@@ -368,7 +368,7 @@ public class JythonObjectStore {
      * @throws NullPointerException if either {@code key} or {@code value} is
      * {@code null}.
      */
-    public void putInt(String key, int value) {
+    public void putInteger(String key, int value) {
         idvStore.put(requireNonNull(key), value);
     }
 
