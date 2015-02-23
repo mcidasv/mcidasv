@@ -4723,7 +4723,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @throws Exception problem getting image
      */
     public Image getImage(String what) throws Exception {
-        logger.trace("what={}", what);
         if (what != null) {
             logger.warn("unknown image capture component '"+what+'\'');
 //            System.err.println("Unknown image capture component:" + what);
@@ -4732,11 +4731,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if ( !getIdv().getArgsManager().getIsOffScreen()) {
             GuiUtils.showComponentInTabs(mainPanel);
         }
-        logger.trace("calling getImage with mainPanel={}", mainPanel);
-        Image result = ImageUtils.getImage(mainPanel);
-        logger.trace("result: {}", result);
-        return result;
-//        return ImageUtils.getImage(mainPanel);
+        return ImageUtils.getImage(mainPanel);
     }
 
 
@@ -6656,6 +6651,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     // to me this implies that adaptive resolution is still being
                     // used.
                     menuItem.setSelected(false);
+                } else {
+                    if (adaptiveRezOffItem != null) {
+                        menuItem.setSelected(adaptiveRezOnItem.isSelected());
+                    }
                 }
                 items.add(menuItem);
                 // makeCheckboxMenuItem will call both getMatchDisplayRegion()
