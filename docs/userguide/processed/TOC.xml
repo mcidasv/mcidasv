@@ -137,7 +137,7 @@
 	<tocitem text="Timeline Controls" target="idv.display_controls.timeline"/>
 </tocitem>
 <tocitem text="Tools" target="idv.page_tools">
-    <tocitem text="User Preferences" target="idv.tools.preferences">
+    <tocitem text="User Preferences" target="idv.tools.preferences.preferences">
         <tocitem text="General Preferences" target="idv.tools.preferences.generalpreferences"/>
         <tocitem text="Display Window Preferences" target="idv.tools.preferences.displaywindowpreferences"/>
         <tocitem text="Toolbar Options Preferences" target="idv.tools.preferences.toolbarpreferences"/>
@@ -163,8 +163,8 @@
 		<tocitem text="Derived Data" target="idv.tools.deriveddata"/>
         <tocitem text="Native Formulas" target="idv.tools.nativeformulas">
             <tocitem text="Description of Formulas - Maps" target="idv.tools.mapformulas"/>
+			<tocitem text="Description of Formulas - Grids" target="idv.tools.gridformulas"/>
             <tocitem text="Description of Formulas - Miscellaneous" target="idv.tools.miscellaneousformulas"/>
-            <tocitem text="Description of Formulas - Grids" target="idv.tools.gridformulas"/>
             <tocitem text="Description of Formulas - Image Filters" target="idv.tools.imagefilterformulas"/>
             <tocitem text="Description of Formulas - Export" target="idv.tools.exportformulas"/>
             <tocitem text="Description of Formulas - Imagery" target="idv.tools.imageryformulas"/>
