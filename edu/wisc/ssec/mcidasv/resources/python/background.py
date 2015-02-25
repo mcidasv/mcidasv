@@ -3164,7 +3164,7 @@ def listGridFieldsInFile(filename):
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     for grid in gridDataset.getGrids():
-        print '%s ; %s' % (grid.getName(), grid.getDescription())
+        print '%s ; %s' % (grid.getName().encode('utf_8'), grid.getDescription().encode('utf_8'))
     names = [grid.getName() for grid in gridDataset.getGrids()]
     gridDataset.close()
     return names
@@ -3179,7 +3179,7 @@ def listGridLevelsInField(filename, field):
     gridDataset = GridDataset.open(filename)
     geogrid = gridDataset.findGridByName(field)
     for level in geogrid.getLevels():
-        print '%s %s' % (level.getName(), level.getDescription())
+        print '%s %s' % (level.getName().encode('utf_8'), level.getDescription().encode('utf_8'))
     levels = [level.getName() for level in geogrid.getLevels()]
     if not levels:
         print 'No levels found for specified field: %s' % field
