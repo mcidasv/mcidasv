@@ -3055,7 +3055,9 @@ def loadGrid(filename=None, field=None, level='all',
             foundTime = False
             # make a visad DateTime out of the string, and compare to the 
             # times in the file by creating visad DateTime's out of those.
-            dateTime = DateTime.createDateTime(time)
+            # Note, we assume time user time string is in format given by
+            # 'listGridTimesInField'.
+            dateTime = DateTime.createDateTime(time, 'yyyy-MM-dd HH:mm:ss')
             dateTimesInFile = DataUtil.makeDateTimes(geogrid.getCoordinateSystem().getTimeAxis1D())
             for i, timeInFile in enumerate(dateTimesInFile):
                 if dateTime.equals(timeInFile):
