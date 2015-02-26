@@ -636,6 +636,15 @@ public class WMSControl extends ImageControl implements ImageObserver {
     }
 
     /**
+     * Disable progressive resolution for this control.
+     *
+     * @return Always {@code false}.
+     */
+    @Override protected boolean canDoProgressiveResolution() {
+        return false;
+    }
+
+    /**
      * Ask the user for an image xml file name and write the image to it
      */
     public void writeImageXml() {
