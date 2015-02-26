@@ -3469,10 +3469,13 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Add the station menu into the display menu
+     * Add the station menu into the display menu.
      *
-     * @param displayMenu The display menu
-     * @param makeNew  if true, make a new menu
+     * <p>Overridden by McIDAS-V to ensure the {@link ControlDescriptor} being
+     * used is {@link Constants#CONTROL_MCV_STATIONLOCATION}.</p>
+     *
+     * @param displayMenu Display menu.
+     * @param makeNew If {@code true}, make a new menu.
      */
     @Override protected void processStationMenu(JMenu displayMenu, boolean makeNew) {
         ControlDescriptor locationDescriptor =
