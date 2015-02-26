@@ -3140,9 +3140,9 @@ def makeFlatFieldSequence(sequence):
         if sequence[0].getMetadataMap().get('times'):
             # this was a _MappedGeoGridFlatField
             for ff in sequence:
-                # should be a visad.DateTime:
+                # convert ucar.nc2.util.NamedAnything to a visad.DateTime:
                 timeStr = ff.getMetadataMap().get('times')[0].toString() 
-                dateTimes.append(DateTime.createDateTime(timeStr))
+                dateTimes.append(DateTime.createDateTime(timeStr, 'yyyy-MM-dd HH:mm:ss'))
         elif sequence[0].getMetadataMap().get('nominal-time'):
             # this was a _MappedAreaImageFlatField
             for ff in sequence:
