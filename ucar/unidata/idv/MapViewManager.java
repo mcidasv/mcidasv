@@ -31,6 +31,8 @@ package ucar.unidata.idv;
 
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.unidata.collab.Sharable;
@@ -357,7 +359,9 @@ public class MapViewManager extends NavigatedViewManager {
     /**
      *  Default constructor
      */
-    public MapViewManager() {}
+    public MapViewManager() {
+        AnnotationProcessor.process(this);
+    }
 
 
     /**
@@ -367,6 +371,7 @@ public class MapViewManager extends NavigatedViewManager {
      */
     public MapViewManager(ViewContext viewContext) {
         super(viewContext);
+        AnnotationProcessor.process(this);
     }
 
     /**
@@ -382,6 +387,7 @@ public class MapViewManager extends NavigatedViewManager {
                           String properties)
             throws VisADException, RemoteException {
         super(viewContext, desc, properties);
+        AnnotationProcessor.process(this);
     }
 
 
@@ -1762,7 +1768,7 @@ public class MapViewManager extends NavigatedViewManager {
         pipPanel.setPreferredSize(new Dimension(100, 100));
         JButton closeBtn =
             GuiUtils.makeImageButton("/auxdata/ui/icons/Cancel16.gif", this,
-                                     "hidePip");
+                "hidePip");
         pipPanelWrapper = GuiUtils.topCenter(GuiUtils.right(closeBtn),
                                              pipPanel);
         if ( !getShowPip()) {
@@ -1854,7 +1860,7 @@ public class MapViewManager extends NavigatedViewManager {
                     "showTimeline"), "/auxdata/ui/icons/timeline_marker.png"));
 
         viewMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Flythrough",
-                this, "showFlythrough"), "/auxdata/ui/icons/plane.png"));
+            this, "showFlythrough"), "/auxdata/ui/icons/plane.png"));
 
         viewMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Properties",
             this,
@@ -3239,18 +3245,33 @@ public class MapViewManager extends NavigatedViewManager {
             createCBMI(projMenu, PREF_PROJ_USEFROMDATA).setToolTipText(
                 "Automatically change viewpoint to the native data projection of new displays");
         }
-        JCheckBoxMenuItem tmp = createCBMI(projMenu, PREF_USE_PROGRESSIVE_RESOLUTION);
-        tmp.setToolTipText("Adapt the data resolution to match the display resolution");
+        if (progRezCBMI == null) {
+            progRezCBMI = createCBMI(projMenu, PREF_USE_PROGRESSIVE_RESOLUTION);
+        }
+        progRezCBMI.setToolTipText("Adapt the data resolution to match the display resolution");
         boolean status = getStore().get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
-        tmp.setEnabled(status);
+        progRezCBMI.setEnabled(status);
         if (!status) {
-            tmp.setSelected(false);
+            progRezCBMI.setSelected(false);
         }
 
         createCBMI(projMenu, PREF_SHAREVIEWS);
         projMenu.add(GuiUtils.makeMenuItem("Set Share Group", this,
                                            "showSharableDialog"));
         return projMenu;
+    }
+
+    private JCheckBoxMenuItem progRezCBMI;
+
+    @EventTopicSubscriber(topic="McvPreference.ProgRez")
+    public void handleProgressiveResolutionPrefChange(final String topic, final Boolean value) {
+        if (progRezCBMI != null) {
+            boolean status = getStore().get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
+            progRezCBMI.setEnabled(status);
+            if (!status) {
+                progRezCBMI.setSelected(false);
+            }
+        }
     }
 
     /**
