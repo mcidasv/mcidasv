@@ -29,7 +29,10 @@
 package ucar.unidata.idv;
 
 
+import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.grid.GridUtil;
@@ -120,6 +123,7 @@ import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -1522,6 +1526,7 @@ public class MapViewManager extends NavigatedViewManager {
         Hashtable  widgets     = new Hashtable();
         ArrayList  miscList    = new ArrayList();
 
+        boolean status = getStore().get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
 
         Object[][] miscObjects = {
             { "View:", null, null },
@@ -1541,8 +1546,7 @@ public class MapViewManager extends NavigatedViewManager {
             { "Show \"Please Wait\" Message", PREF_WAITMSG,
               new Boolean(getWaitMessageVisible()) },
             { "Reset Projection With New Data", PREF_PROJ_USEFROMDATA },
-            { PR_LABEL, PREF_USE_PROGRESSIVE_RESOLUTION,
-            	new Boolean(getUseProgressiveResolution())},
+            { PR_LABEL + " !LOL!", PREF_USE_PROGRESSIVE_RESOLUTION, status },
             { "Use 3D View", PREF_DIMENSION },
             { "Show Globe Background", PREF_SHOWGLOBEBACKGROUND,
               new Boolean(getStore().get(PREF_SHOWGLOBEBACKGROUND,
@@ -1580,7 +1584,19 @@ public class MapViewManager extends NavigatedViewManager {
         };
 
         JPanel miscPanel = IdvPreferenceManager.makePrefPanel(miscObjects,
-                               widgets, getStore());
+            widgets, getStore());
+
+        JCheckBox progRezBox = (JCheckBox)widgets.get(PREF_USE_PROGRESSIVE_RESOLUTION);
+        if (progRezBox != null) {
+            progRezBox.setEnabled(status);
+            if (!status) {
+                progRezBox.setSelected(false);
+            }
+            logger.trace("progRezBox={}", progRezBox);
+        } else {
+            logger.trace("progRezBox is null! widgets={}", widgets);
+        }
+
         JPanel legendPanel =
             IdvPreferenceManager.makePrefPanel(legendObjects, widgets,
                 getStore());
@@ -1615,6 +1631,8 @@ public class MapViewManager extends NavigatedViewManager {
 
     }
 
+
+    private static final Logger logger = LoggerFactory.getLogger(MapViewManager.class);
 
     /**
      * Go the a street address
@@ -1839,8 +1857,8 @@ public class MapViewManager extends NavigatedViewManager {
                 this, "showFlythrough"), "/auxdata/ui/icons/plane.png"));
 
         viewMenu.add(GuiUtils.setIcon(GuiUtils.makeMenuItem("Properties",
-                this,
-                "showPropertiesDialog"), "/auxdata/ui/icons/information.png"));
+            this,
+            "showPropertiesDialog"), "/auxdata/ui/icons/information.png"));
     }
 
     /**
@@ -3221,14 +3239,19 @@ public class MapViewManager extends NavigatedViewManager {
             createCBMI(projMenu, PREF_PROJ_USEFROMDATA).setToolTipText(
                 "Automatically change viewpoint to the native data projection of new displays");
         }
-        createCBMI(projMenu, PREF_USE_PROGRESSIVE_RESOLUTION).setToolTipText("" +
-        		"Adapt the data resolution to match the display resolution");
+        JCheckBoxMenuItem tmp = createCBMI(projMenu, PREF_USE_PROGRESSIVE_RESOLUTION);
+        tmp.setToolTipText("Adapt the data resolution to match the display resolution");
+        boolean status = getStore().get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
+        tmp.setEnabled(status);
+        if (!status) {
+            tmp.setSelected(false);
+        }
+
         createCBMI(projMenu, PREF_SHAREVIEWS);
         projMenu.add(GuiUtils.makeMenuItem("Set Share Group", this,
                                            "showSharableDialog"));
         return projMenu;
     }
-
 
     /**
      * Have this so we don't get warnings on unpersisting old bundles
@@ -3338,6 +3361,7 @@ public class MapViewManager extends NavigatedViewManager {
      * @param props the list of properties
      */
     protected void getInitialBooleanProperties(List props) {
+
         super.getInitialBooleanProperties(props);
         props.add(new BooleanProperty(PREF_SHOWSCALES, "Show Display Scales",
                                       "Show Display Scales", false));
@@ -3358,9 +3382,10 @@ public class MapViewManager extends NavigatedViewManager {
         props.add(new BooleanProperty(PREF_SHOWPIP, "Show Overview Map",
                                       "Show Overview Map", false));
 
+        boolean status = getStore().get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
         props.add(new BooleanProperty(PREF_USE_PROGRESSIVE_RESOLUTION, 
         		                      PR_LABEL,
-                                      PR_LABEL, true));
+                                      PR_LABEL, status));
 
         if (useGlobeDisplay) {
             props.add(new BooleanProperty(PREF_SHOWGLOBEBACKGROUND,

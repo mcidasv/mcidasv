@@ -1394,6 +1394,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
             BooleanProperty bp  = (BooleanProperty) booleanProperties.get(i);
             JCheckBox       cbx = new JCheckBox(bp.getName(), bp.getValue());
 
+            if (MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION.equals(bp.getId())) {
+                boolean status = getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false);
+                cbx.setEnabled(status);
+                if (!status) {
+                    cbx.setSelected(false);
+                }
+            }
             propertiesMap.put(cbx, bp);
             props.add(GuiUtils.left(cbx));
         }
