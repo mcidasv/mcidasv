@@ -376,4 +376,6 @@ public interface Constants extends IdvConstants {
     
     /** Default user directory name */
     public static final String USER_DIRECTORY_NAME = "McIDAS-V";
+
+    public static final String CONTROL_MCV_STATIONLOCATION = "mcvlocationcontrol";
 }
