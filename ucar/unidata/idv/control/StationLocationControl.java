@@ -256,6 +256,15 @@ public class StationLocationControl extends StationModelControl {
         stationTableNames = new ArrayList();
     }
 
+    /**
+     * Overridden to disable the progressive resolution menu items in the
+     * layer controls.
+     *
+     * @return Always returns {@code false}.
+     */
+    @Override protected boolean canDoProgressiveResolution() {
+        return false;
+    }
 
 
     /**
