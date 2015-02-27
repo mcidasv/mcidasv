@@ -3428,7 +3428,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         mi.setText("Add Location Indicator");
         displayMenu.add(mi);
 
-        ControlDescriptor locationDescriptor = idv.getControlDescriptor(Constants.CONTROL_MCV_STATIONLOCATION);
+        ControlDescriptor locationDescriptor = idv.getControlDescriptor("locationcontrol");
         if (locationDescriptor != null) {
             List stations = idv.getLocationList();
             ObjectListener listener = new ObjectListener(locationDescriptor) {
@@ -3466,42 +3466,6 @@ public class UIManager extends IdvUIManager implements ActionListener {
         });
         displayMenu.add(mi);
         Msg.translateTree(displayMenu);
-    }
-
-    /**
-     * Add the station menu into the display menu.
-     *
-     * <p>Overridden by McIDAS-V to ensure the {@link ControlDescriptor} being
-     * used is {@link Constants#CONTROL_MCV_STATIONLOCATION}.</p>
-     *
-     * @param displayMenu Display menu.
-     * @param makeNew If {@code true}, make a new menu.
-     */
-    @Override protected void processStationMenu(JMenu displayMenu, boolean makeNew) {
-        ControlDescriptor locationDescriptor =
-            getIdv().getControlDescriptor(Constants.CONTROL_MCV_STATIONLOCATION);
-
-        if (locationDescriptor == null) {
-            return;
-        }
-        List<JMenuItem> stationMenuItems = null;
-        if (stationMenuItems == null) {
-            List           stations = getIdv().getLocationList();
-            ObjectListener listener = new ObjectListener(locationDescriptor) {
-                public void actionPerformed(ActionEvent ae, Object obj) {
-                    addStationDisplay((NamedStationTable) obj,
-                        (ControlDescriptor) theObject);
-                }
-            };
-            stationMenuItems = NamedStationTable.makeMenuItems(stations,
-                listener);
-        }
-        if (makeNew) {
-            displayMenu.add(GuiUtils.setIcon(GuiUtils.makeMenu("Locations",
-                stationMenuItems), "/auxdata/ui/icons/world_loc.png"));
-        } else {
-            GuiUtils.makeMenu(displayMenu, stationMenuItems);
-        }
     }
 
     /**

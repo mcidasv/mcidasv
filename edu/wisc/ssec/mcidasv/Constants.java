@@ -377,10 +377,4 @@ public interface Constants extends IdvConstants {
     
     /** Default user directory name */
     public static final String USER_DIRECTORY_NAME = "McIDAS-V";
-
-    /**
-     * Defined in {@code controls.xml}. Current use is to disable progressive
-     * resolution for {@link ucar.unidata.idv.control.StationLocationControl}.
-     */
-    public static final String CONTROL_MCV_STATIONLOCATION = "mcvlocationcontrol";
 }
