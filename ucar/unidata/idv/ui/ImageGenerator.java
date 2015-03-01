@@ -28,6 +28,7 @@
 
 package ucar.unidata.idv.ui;
 
+import java.awt.image.*;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -102,10 +103,7 @@ import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 
-import java.awt.image.BufferedImageOp;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -4302,7 +4300,25 @@ public class ImageGenerator extends IdvManager {
                     getIdv().getIdvUIManager().waitUntilDisplaysAreDone(
                         getIdv().getIdvUIManager(), 1000);
                     logger.trace("done; calling viewManager getImage...");
-                    lastImage       = viewManager.getMaster().getImage(true);
+                    BufferedImage bufferedImage;
+                    int count = 0;
+                    do {
+                        // been a "while" since i've written a do-while!
+                        // yuck, yuck
+                        // anyway, i plead my case in the isNotBlank(...) comments
+                        bufferedImage = viewManager.getMaster().getImage(true);
+                        ColorModel model = bufferedImage.getColorModel();
+                        DataBuffer buf = bufferedImage.getData().getDataBuffer();
+                        int first = buf.getElem(0);
+                        int middle = buf.getElem(buf.getSize() / 2);
+                        int last = buf.getElem(buf.getSize() - 1);
+                        logger.trace("first='{}' middle='{}' last='{}'", getCompString(model, first), getCompString(model, middle), getCompString(model, last));
+                        count++;
+                    } while (!isNotBlank(bufferedImage));
+                    int width = bufferedImage.getWidth();
+                    int height = bufferedImage.getHeight();
+                    logger.trace("*** ATTEMPTS: {} BEFORE NON-BLANK IMAGE! ({} * {}) * {} = {} iterations!", count, width, height, count, ((width*height)*count));
+                    lastImage = bufferedImage;
                     logger.trace("done (next step is processImage); result: {}", lastImage);
                     imageProperties = new Hashtable();
                     lastImage = processImage((BufferedImage) lastImage,
@@ -4344,6 +4360,33 @@ public class ImageGenerator extends IdvManager {
         }
 
         popProperties();
+    }
+
+    private static boolean isNotBlank(BufferedImage image) {
+        // yes, i know this is bonkers. yes, the next step is to try sampling
+        // to avoid iterating over each pixel.
+        // tests on my linux machine typically find a non-blank pixel within the
+        // first 100 iterations, and fewer than 5 retries to get a non-blank *image*
+        // (typically 1-2 retries though)
+        DataBuffer buf = image.getRaster().getDataBuffer();
+        ColorModel model = image.getColorModel();
+        boolean result = false;
+        int i;
+        for (i = 0; i < buf.getSize(); i++) {
+            int rgb = model.getRGB(buf.getElem(i));
+            if (rgb != -16777216) {
+                logger.trace("found non-blank value '{}' at index {}", rgb, i);
+                result = true;
+                break;
+            }
+        }
+        logger.trace("{} iterations to return {}", i, result);
+        return result;
+    }
+
+    private static String getCompString(ColorModel m, int p) {
+        int n = m.getRGB(p);
+        return "n:"+n+" bin:"+Integer.toBinaryString(n)+" (a:"+m.getAlpha(p)+" r:"+m.getRed(p)+" g:"+m.getGreen(p)+" b:"+m.getBlue(p)+')';
     }
 
     /**
