@@ -4368,13 +4368,18 @@ public class ImageGenerator extends IdvManager {
         // yes, i know this is bonkers. yes, the next step is to try sampling
         // to avoid iterating over each pixel.
         // tests on my linux machine typically find a non-blank pixel within the
-        // first 100 iterations, and fewer than 5 retries to get a non-blank *image*
-        // (typically 1-2 retries though)
+        // first 100 iterations, and fewer than 5 retries to get a non-blank
+        // *image* (typically 1-2 retries though)
         DataBuffer buf = image.getRaster().getDataBuffer();
         ColorModel model = image.getColorModel();
         boolean result = false;
         int i;
         for (i = 0; i < buf.getSize(); i++) {
+            // it's apparently not sufficient to simply grab the value directly;
+            // Linux seems to store the "blank" value as -16777216 (-2^24, which
+            // makes a lot of sense for images), while on OS X the blank value
+            // is simply 0. i suspect the getRGB stuff is a candidate for
+            // inlining by the JIT, but profiling is needed.
             int rgb = model.getRGB(buf.getElem(i));
             if (rgb != -16777216) {
                 logger.trace("found non-blank value '{}' at index {}", rgb, i);
