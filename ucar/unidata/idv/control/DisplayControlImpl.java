@@ -11796,6 +11796,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
     protected JButton makeMiscButton() {
         final JPopupMenu popup = new JPopupMenu();
+        JMenuItem label = new JMenuItem("Features Under Development");
+        label.setEnabled(false);
+        popup.add(label);
+        popup.addSeparator();
         ButtonGroup group = new ButtonGroup();
         adaptiveRezOffItem = new JRadioButtonMenuItem("AR Off");
         adaptiveRezOnItem = new JRadioButtonMenuItem("AR On");
@@ -11861,7 +11865,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 //        popup.add(fullRezItem);
 
         final JButton button = GuiUtils.getImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/emblem-system16.png", DisplayControlImpl.class);
-        button.setToolTipText(Msg.msg("Resolution Control"));
+        button.setToolTipText(Msg.msg("Resolution Control (Under Development)"));
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
                 popup.show(button, button.getBounds().x, button.getBounds().y
