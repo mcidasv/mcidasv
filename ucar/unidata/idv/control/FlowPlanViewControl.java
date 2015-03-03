@@ -202,6 +202,11 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
 		super.changeColorUnit();
 		try {
 			getPlanDisplay().setDisplayUnit(getColorUnit());
+            // MJH make sure the displayable updates, a la applySkipFactor:
+            if ((getGridDisplayable() != null) && (currentSlice != null)) {
+                getGridDisplayable().loadData(
+                    getSliceForDisplay(currentSlice));
+            }
             // MJH the colorScaleInfo stuff makes sure the display's color
             // table unit label gets updated properly also, for inq 1925.
             getColorScaleInfo().setUnit(getColorUnit());
