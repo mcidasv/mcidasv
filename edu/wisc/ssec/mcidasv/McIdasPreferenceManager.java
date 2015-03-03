@@ -91,6 +91,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;
@@ -407,10 +408,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     
     /**
      * Apply the preferences (taken straight from IDV). 
-     * TODO: bug Unidata about making managers and dataList protected instead of private
-     * 
+     *
      * @return Whether or not each of the preference managers applied properly.
      */
+    // TODO(jon?): bug Unidata about making managers and dataList protected instead of private
     @Override public boolean apply() {
         try {
             for (String id : labelSet) {
@@ -899,7 +900,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     
     protected void addDisplayWindowPreferences() {
         
-        Hashtable<String, JCheckBox> widgets = new Hashtable<String, JCheckBox>();
+        Hashtable<String, JCheckBox> widgets = new Hashtable<>();
         MapViewManager mappy = new MapViewManager(getIdv());
         
         Object[][] legendObjects = {
@@ -1164,6 +1165,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 theStore.put(MapViewManager.PREF_GLOBEBACKGROUND, globeBg[0].getBackground());
 //                theStore.put(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, )
                 ViewManager.setHighlightBorder(border[0].getBackground());
+                EventBus.publish("McvPreference.ProgRez", theStore.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false));
             }
         };
         
