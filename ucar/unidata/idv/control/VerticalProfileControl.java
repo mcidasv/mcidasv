@@ -183,6 +183,14 @@ public class VerticalProfileControl extends LineProbeControl {
         }
     }
 
+    /**
+     * Disable progressive resolution for this control.
+     *
+     * @return Always {@code false}.
+     */
+    @Override protected boolean canDoProgressiveResolution() {
+        return false;
+    }
 
     /**
      * Assume that any display controls that have a color table widget

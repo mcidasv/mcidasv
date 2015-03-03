@@ -243,6 +243,15 @@ public class TrackControl extends GridDisplayControl {
                           | FLAG_DISPLAYUNIT | FLAG_TIMERANGE);
     }
 
+    /**
+     * Disable progressive resolution for this control.
+     *
+     * @return Always {@code false}.
+     */
+    @Override protected boolean canDoProgressiveResolution() {
+        return false;
+    }
+
 
     /**
      * Do we have good data

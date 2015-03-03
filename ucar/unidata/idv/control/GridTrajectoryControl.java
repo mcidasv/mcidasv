@@ -249,6 +249,14 @@ public class GridTrajectoryControl extends DrawingControl {
                                 | FLAG_GRIDTRAJECTORY);
     }
 
+    /**
+     * Disable progressive resolution for this control.
+     *
+     * @return Always {@code false}.
+     */
+    @Override protected boolean canDoProgressiveResolution() {
+        return false;
+    }
 
     /**
      * Class MyRadarSweepControl _more_
