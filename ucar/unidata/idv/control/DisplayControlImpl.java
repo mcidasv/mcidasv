@@ -4124,11 +4124,12 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @return component containing buttons
      */
     public JComponent getLegendButtons(int legendType) {
-
+//        logger.trace("fired: pref value={}", getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false));
+        // TODO: this logic really needs to be reworked.
         if (legendType == SIDE_LEGEND) {
             if (sideLegendButtonPanel == null) {
                 //                DndImageButton dndBtn = new DndImageButton(this, "control");
-                if (canDoProgressiveResolution()) {
+                if (canDoProgressiveResolution() && getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) {
                     miscButton = makeMiscButton();
                     sideLegendButtonPanel = GuiUtils.hbox(  /*dndBtn,*/
                         miscButton, makeLockButton(), makeRemoveButton(), 2);
@@ -4141,9 +4142,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
             return sideLegendButtonPanel;
         }
-
         if (bottomLegendButtonPanel == null) {
-            if (canDoProgressiveResolution()) {
+            if (canDoProgressiveResolution() && getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) {
                 bottomLegendButtonPanel = GuiUtils.hbox(makeMiscButton(),
                     makeLockButton(), makeRemoveButton(), 2);
             } else {
@@ -11787,7 +11787,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     private JButton miscButton;
     private JRadioButtonMenuItem adaptiveRezOffItem;
     private JRadioButtonMenuItem adaptiveRezOnItem;
-    private JRadioButtonMenuItem fullRezItem;
+//    private JRadioButtonMenuItem fullRezItem;
 
     protected static boolean dataSelectionAdaptiveResolution(DataSelection s) {
         String p = s.getProperty(DataSelection.PROP_REGIONOPTION, DataSelection.PROP_USEDEFAULTAREA);
@@ -11799,11 +11799,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         ButtonGroup group = new ButtonGroup();
         adaptiveRezOffItem = new JRadioButtonMenuItem("AR Off");
         adaptiveRezOnItem = new JRadioButtonMenuItem("AR On");
-        fullRezItem = new JRadioButtonMenuItem("Full Res");
+//        fullRezItem = new JRadioButtonMenuItem("Full Res");
 
         group.add(adaptiveRezOffItem);
         group.add(adaptiveRezOnItem);
-        group.add(fullRezItem);
+//        group.add(fullRezItem);
 
         boolean fromSelection = dataSelectionAdaptiveResolution(dataSelection);
 
@@ -11819,10 +11819,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             adaptiveRezOffItem.setSelected(true);
         }
 
-        if (dataSelection != null && dataSelection.getGeoSelection().getUseFullBounds()) {
-            logger.trace("full rez on");
-            fullRezItem.setSelected(true);
-        }
+//        if (dataSelection != null && dataSelection.getGeoSelection().getUseFullBounds()) {
+//            logger.trace("full rez on");
+//            fullRezItem.setSelected(true);
+//        }
 
         adaptiveRezOffItem.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
@@ -11845,20 +11845,20 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         });
         popup.add(adaptiveRezOnItem);
 
-        fullRezItem.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                logger.trace("need some way to force a fullrez load: fullRezItem='{}'", fullRezItem.isSelected());
-                if (fullRezItem.isSelected()) {
-                    setMatchDisplayRegion(false);
-                    if (dataSelection != null) {
-                        logger.trace("trying to force full rez");
-                        dataSelection.getGeoSelection(true).setUseFullBounds(true);
-                        dataChanged();
-                    }
-                }
-            }
-        });
-        popup.add(fullRezItem);
+//        fullRezItem.addActionListener(new ActionListener() {
+//            @Override public void actionPerformed(ActionEvent e) {
+//                logger.trace("need some way to force a fullrez load: fullRezItem='{}'", fullRezItem.isSelected());
+//                if (fullRezItem.isSelected()) {
+//                    setMatchDisplayRegion(false);
+//                    if (dataSelection != null) {
+//                        logger.trace("trying to force full rez");
+//                        dataSelection.getGeoSelection(true).setUseFullBounds(true);
+//                        dataChanged();
+//                    }
+//                }
+//            }
+//        });
+//        popup.add(fullRezItem);
 
         final JButton button = GuiUtils.getImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/emblem-system16.png", DisplayControlImpl.class);
         button.setToolTipText(Msg.msg("Resolution Control"));
@@ -11873,13 +11873,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
     protected void updateMiscButton() {
         logger.trace("firing");
-        if (miscButton == null) {
-            miscButton = makeMiscButton();
-        }
-        if (matchDisplayRegion) {
-            adaptiveRezOnItem.setSelected(true);
-        } else {
-            adaptiveRezOffItem.setSelected(false);
+        if (getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) {
+            if (miscButton == null) {
+                miscButton = makeMiscButton();
+            }
+            if (matchDisplayRegion) {
+                adaptiveRezOnItem.setSelected(true);
+            } else {
+                adaptiveRezOffItem.setSelected(false);
+            }
         }
     }
 
