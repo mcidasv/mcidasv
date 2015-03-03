@@ -425,14 +425,18 @@ public class AddeImageDataSource extends ImageDataSource {
             subset.getProperty(DataSelection.PROP_PROGRESSIVERESOLUTION,
                                true);
 
-        if( fromBundle && !isProgressiveResolution){
-            dlMag = getLineMag();
-            deMag = getEleMag();
-            addeImageDataSelection.getAdvancedPanel().setLineMagSlider(dlMag);
-            addeImageDataSelection.getAdvancedPanel().setElementMagSlider(deMag);
-        } else if ( !isProgressiveResolution) {
-            dlMag = addeImageDataSelection.getAdvancedPanel().getLineMagValue();
-            deMag = addeImageDataSelection.getAdvancedPanel().getElementMagValue();
+        if (addeImageDataSelection != null) {
+            if (fromBundle && !isProgressiveResolution) {
+                dlMag = getLineMag();
+                deMag = getEleMag();
+                addeImageDataSelection.getAdvancedPanel().setLineMagSlider(dlMag);
+                addeImageDataSelection.getAdvancedPanel().setElementMagSlider(deMag);
+            } else if (!isProgressiveResolution) {
+                dlMag = addeImageDataSelection.getAdvancedPanel().getLineMagValue();
+                deMag = addeImageDataSelection.getAdvancedPanel().getElementMagValue();
+            }
+        } else {
+            logger.trace("null addeImageDataSelection...");
         }
 
 
