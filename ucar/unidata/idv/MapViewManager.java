@@ -3403,11 +3403,15 @@ public class MapViewManager extends NavigatedViewManager {
         props.add(new BooleanProperty(PREF_SHOWPIP, "Show Overview Map",
                                       "Show Overview Map", false));
 
-        boolean status = getStore().get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
-        props.add(new BooleanProperty(PREF_USE_PROGRESSIVE_RESOLUTION, 
-        		                      PR_LABEL,
-                                      PR_LABEL, status));
-
+        boolean status = false;
+        XmlObjectStore store = getStore();
+        if (store != null) {
+            status = store.get(PREF_USE_PROGRESSIVE_RESOLUTION, false);
+        }
+        props.add(new BooleanProperty(PREF_USE_PROGRESSIVE_RESOLUTION,
+                                      PR_LABEL,
+                                      PR_LABEL,
+                                      status));
         if (useGlobeDisplay) {
             props.add(new BooleanProperty(PREF_SHOWGLOBEBACKGROUND,
                                           "Show Globe Background",
