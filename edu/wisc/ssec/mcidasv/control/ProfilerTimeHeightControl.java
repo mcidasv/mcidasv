@@ -29,6 +29,7 @@ package edu.wisc.ssec.mcidasv.control;
 
 import java.rmi.RemoteException;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import ucar.unidata.data.DataChoice;
 
 import visad.VisADException;
@@ -78,7 +79,12 @@ public class ProfilerTimeHeightControl
      */
     @Override public void setLatestOnLeft(final boolean yesorno) {
         isLatestOnLeft = yesorno;
-        getIdv().getObjectStore().put(PREF_WIND_PROFILER_LATEST_LEFT, yesorno);
+        McIDASV mcv = McIDASV.getStaticMcv();
+        if (getHaveInitialized() && (getIdv() != null)) {
+            getIdv().getObjectStore().put(PREF_WIND_PROFILER_LATEST_LEFT, yesorno);
+        } else if ((mcv != null) && mcv.getHaveInitialized()) {
+            mcv.getObjectStore().put(PREF_WIND_PROFILER_LATEST_LEFT, yesorno);
+        }
     }
 
     /**
