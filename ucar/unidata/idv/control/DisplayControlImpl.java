@@ -6659,13 +6659,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 items.add(menuItem);
                 // makeCheckboxMenuItem will call both getMatchDisplayRegion()
                 // as well as setMatchDisplayRegion()
-                menuItem = GuiUtils.makeCheckboxMenuItem("Match Display Region", this, "matchDisplayRegion", null);
-                menuItem.addActionListener(new ActionListener() {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        logger.trace("firing!");
-                        updateMiscButton();
-                    }
-                });
+//                menuItem = GuiUtils.makeCheckboxMenuItem("Match Display Region", this, "matchDisplayRegion", null);
+//                menuItem.addActionListener(new ActionListener() {
+//                    @Override public void actionPerformed(ActionEvent e) {
+//                        logger.trace("firing!");
+//                        updateMiscButton();
+//                    }
+//                });
                 items.add(menuItem);
             }
         }
