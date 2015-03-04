@@ -2746,8 +2746,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public void viewpointChanged() {
     	//System.out.println("viewpointChanged");
-        logger.trace("matchDisplayRegion={} reloadFromBounds={}", getMatchDisplayRegion(), reloadFromBounds);
-        if (getMatchDisplayRegion()) {
+        boolean prefStatus = getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false);
+        logger.trace("matchDisplayRegion={} ar={} reloadFromBounds={}", getMatchDisplayRegion(), prefStatus, reloadFromBounds);
+        if (prefStatus && getMatchDisplayRegion()) {
             if (reloadFromBounds) {
             	loadDataFromViewBounds();
                 reloadFromBounds = false;
