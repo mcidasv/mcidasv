@@ -20,6 +20,7 @@ adirserv agetserv
 areaadir areaaget
 fsdxadir fsdxaget
 gvaradir gvaraget
+instadir instaget
 lv1badir lv1baget
 mod4adir mod4aget
 modradir modraget
@@ -29,6 +30,7 @@ msgtadir msgtaget
 msgxadir msgxaget
 omtpadir omtpaget
 poesadir poesaget
+wariadir wariaget
 
 amseadir amseaget
 amsradir amsraget

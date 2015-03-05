@@ -111,6 +111,9 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
             AddeFormat.TRMM,
+            AddeFormat.INST_IMAGER,
+            AddeFormat.INST_SOUNDER,
+            AddeFormat.HIMAWARI8
 //            AddeFormat.MCIDAS_MD
         });
 
