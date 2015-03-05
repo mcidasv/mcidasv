@@ -611,7 +611,10 @@
             <os family="windows" arch="x86" />
         </condition>
         <condition property="isWindows.x86_64">
-            <os family="windows" arch="x86_64" />
+            <or>
+                <os family="windows" arch="x86_64" />
+                <os family="windows" arch="amd64" />
+            </or>
         </condition>
         <condition property="isMac">
             <os family="mac" />
