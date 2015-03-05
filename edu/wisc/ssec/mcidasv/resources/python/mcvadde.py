@@ -186,10 +186,10 @@ _formats = {
     "TRMM":                                                    AddeFormat.TRMM,
     "TMIN":                                                    AddeFormat.TRMM,
     "GINI":                                                    AddeFormat.GINI,
-    "INST_IMAGER":                                             AddeFormat.INST_IMAGER,
-    "INSAT-3D Imager":                                         AddeFormat.INST_IMAGER,
-    "INST_SOUNDER":                                            AddeFormat.INST_SOUNDER,
-    "INSAT-3D Sounder":                                        AddeFormat.INST_SOUNDER,
+    "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
+    "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
+    "INSAT3D_SOUNDER":                                         AddeFormat.INSAT3D_SOUNDER,
+    "INSAT-3D Sounder":                                        AddeFormat.INSAT3D_SOUNDER,
     "Himawari-8":                                              AddeFormat.HIMAWARI8,
 }
 

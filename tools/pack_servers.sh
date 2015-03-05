@@ -20,6 +20,7 @@ adirserv agetserv
 areaadir areaaget
 fsdxadir fsdxaget
 gvaradir gvaraget
+indsadir indsaget
 instadir instaget
 lv1badir lv1baget
 mod4adir mod4aget
