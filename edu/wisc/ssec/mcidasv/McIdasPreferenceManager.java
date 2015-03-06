@@ -83,6 +83,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -918,7 +919,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         };
         JPanel navigationPanel = makePrefPanel(navigationObjects, widgets, getStore());
         navigationPanel.setBorder(BorderFactory.createTitledBorder("Navigation Toolbars"));
-        
+
+        String arLabel = "<html>"+MapViewManager.PR_LABEL+"<p>Changes do not affect current displays/layers.</html>";
+
         Object[][] panelObjects = {
             { "Show Globe Background", MapViewManager.PREF_SHOWGLOBEBACKGROUND, Boolean.valueOf(getStore().get(MapViewManager.PREF_SHOWGLOBEBACKGROUND, false)) },
             { "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, Boolean.valueOf(mappy.getWireframe()) },
@@ -930,9 +933,12 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES, Boolean.valueOf(mappy.getTransectLabelsVisible()) },
             { "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, Boolean.valueOf(mappy.getWaitMessageVisible()) },
             { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
-            { MapViewManager.PR_LABEL, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) }
+            { arLabel, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) }
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
+        JCheckBox adaptiveRezCheckBox = widgets.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION);
+        adaptiveRezCheckBox.setVerticalTextPosition(SwingConstants.TOP);
+
         panelPanel.setBorder(BorderFactory.createTitledBorder("Panel Configuration"));
 
         XmlObjectStore store = getStore();
