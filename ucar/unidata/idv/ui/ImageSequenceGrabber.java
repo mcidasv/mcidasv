@@ -2308,12 +2308,10 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                           Element scriptingNode) {
         String tail = IOUtil.getFileTail(movieFile);
         String kmlFile = IOUtil.stripExtension(tail) + FileManager.SUFFIX_KML;
-        Path kmlPath;
-        if (images.isEmpty()) {
-            kmlPath = idv.getStore().getUniqueTmpDirectory().toPath().resolve(kmlFile);
-        } else {
-            kmlPath = Paths.get(images.get(0).getPath()).getParent().resolve(kmlFile);
-        }
+        Path kmlDir = images.isEmpty()
+                    ? idv.getStore().getUniqueTmpDirectory().toPath()
+                    : Paths.get(images.get(0).getPath()).getParent();
+        Path kmlPath = kmlDir.resolve(kmlFile);
         createKml(kmlPath.toString(), images, scriptingNode);
         try {
             directoryToKmz(kmlPath.toString(), movieFile);
@@ -2346,7 +2344,9 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     ATTR_KML_OPEN, open);
             }
 
-            sb.append("<Folder>\n").append("<open>").append(open).append("</open>\n").append(XmlUtil.tag(TAG_VISIBILITY, "", visibility));
+            sb.append("<Folder>\n")
+              .append("<open>").append(open).append("</open>\n")
+              .append(XmlUtil.tag(TAG_VISIBILITY, "", visibility));
 
             if (scriptingNode != null) {
                 String folderName = imageGenerator.applyMacros(scriptingNode,
@@ -2448,8 +2448,10 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
                     throws IOException {
-                    zos.putNextEntry(new ZipEntry(directory.relativize(file).toString()));
-                    byte[] bytes = IOUtil.readBytes(IOUtil.getInputStream(file.toString()));
+                    String zipEntry = directory.relativize(file).toString();
+                    String f = file.toString();
+                    zos.putNextEntry(new ZipEntry(zipEntry));
+                    byte[] bytes = IOUtil.readBytes(IOUtil.getInputStream(f));
                     zos.write(bytes, 0, bytes.length);
                     return FileVisitResult.CONTINUE;
                 }
