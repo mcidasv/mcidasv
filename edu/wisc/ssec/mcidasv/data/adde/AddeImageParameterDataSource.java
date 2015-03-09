@@ -812,87 +812,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         baseSource = addeCmdBuff;
     }
 
-    public static class PreviewParameters {
-        private final DataSourceImpl dataSource;
-        private final DataChoice dataChoice;
-        private final FlatField image;
-        private final GeoLatLonSelection laLoSel;
-        private final MapProjection sample;
-        private final int lMag;
-        private final int eMag;
-        private final boolean showPreview;
-
-        public PreviewParameters(DataSourceImpl dataSource,
-                                 DataChoice dataChoice, FlatField image,
-                                 GeoLatLonSelection laLoSel,
-                                 MapProjection sample, int lMag, int eMag, boolean showPreview) {
-            this.dataSource = dataSource;
-            this.dataChoice = dataChoice;
-            this.image = image;
-            this.laLoSel = laLoSel;
-            this.sample = sample;
-            this.lMag = lMag;
-            this.eMag = eMag;
-            this.showPreview = showPreview;
-        }
-
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            PreviewParameters that = (PreviewParameters) o;
-
-            if (eMag != that.eMag) return false;
-            if (lMag != that.lMag) return false;
-            if (showPreview != that.showPreview) return false;
-            if (dataChoice != null ? !dataChoice.equals(that.dataChoice) : that.dataChoice != null)
-                return false;
-            if (dataSource != null ? !dataSource.equals(that.dataSource) : that.dataSource != null)
-                return false;
-            if (image != null ? !image.equals(that.image) : that.image != null)
-                return false;
-            if (laLoSel != null ? !laLoSel.equals(that.laLoSel) : that.laLoSel != null)
-                return false;
-            if (sample != null ? !sample.equals(that.sample) : that.sample != null)
-                return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = dataSource != null ? dataSource.hashCode() : 0;
-            result = 31 * result + (dataChoice != null ? dataChoice.hashCode() : 0);
-            result = 31 * result + (image != null ? image.hashCode() : 0);
-            result = 31 * result + (laLoSel != null ? laLoSel.hashCode() : 0);
-            result = 31 * result + (sample != null ? sample.hashCode() : 0);
-            result = 31 * result + lMag;
-            result = 31 * result + eMag;
-            result = 31 * result + (showPreview ? 1 : 0);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            final StringBuilder sb = new StringBuilder("PreviewParameters@").append(Integer.toHexString(hashCode()));
-            sb.append("{dataSource=").append(dataSource);
-            sb.append(", dataChoice=").append(dataChoice);
-//            sb.append(", image=").append(image);
-            sb.append(", image=").append(Integer.toHexString(image.hashCode()));
-            sb.append(", laLoSel=").append(laLoSel);
-            sb.append(", sample=").append(sample);
-            sb.append(", lMag=").append(lMag);
-            sb.append(", eMag=").append(eMag);
-            sb.append(", showPreview=").append(showPreview);
-            sb.append('}');
-            return sb.toString();
-        }
-    }
-
-//    private List<PreviewParameters> previews = new ArrayList<>();
-
     protected void initDataSelectionComponents(
         List components, final DataChoice dataChoice)
     {
@@ -932,11 +851,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //                                     this.laLoSel, this.previewProjection,
 //                                     this.lineMag, this.elementMag, this.showPreview);
                         logger.trace("1: creating geopreviewselection: has geoprevsel: {}", this.previewSel!=null);
-//                        PreviewParameters pp = new PreviewParameters(this, dataChoice, this.previewImage,
-//                            this.laLoSel, this.previewProjection,
-//                            this.lineMag, this.elementMag, true);
-//                        previews.add(pp);
-//                        logger.trace("previews={}", previews);
                         this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage,
                             this.laLoSel, this.previewProjection,
                             this.lineMag, this.elementMag, true);
@@ -949,11 +863,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 ////                                     this.laLoSel, this.previewProjection,
 ////                                     this.lineMag, this.elementMag, this.showPreview);
 //                    logger.trace("1: creating geopreviewselection: has geoprevsel: {}", this.previewSel!=null);
-//                    PreviewParameters pp = new PreviewParameters(this, dataChoice, this.previewImage,
-//                        this.laLoSel, this.previewProjection,
-//                        this.lineMag, this.elementMag, true);
-//                    previews.add(pp);
-//                    logger.trace("previews={}", previews);
 //                    this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage,
 //                            this.laLoSel, this.previewProjection,
 //                            this.lineMag, this.elementMag, true);
