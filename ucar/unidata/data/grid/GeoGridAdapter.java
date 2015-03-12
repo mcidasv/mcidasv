@@ -1835,6 +1835,14 @@ public class GeoGridAdapter {
         CalendarDateTime time = null;
         if (ncFile != null) {
             Variable timeVar = ncFile.findVariable("base_time");
+            if (timeVar == null) {
+                // MJH if timeVar is still null, also look for just "t".
+                // (This is a fix for "DOE" format simulated ABI files).
+                // (TODO: verify that if there is an unrelated variable named
+                //        "t", for e.g. temperature, a VisADException gets
+                //        thrown below and null is returned harmlessly.)
+            	timeVar = ncFile.findVariable("t");
+            }
             if (timeVar != null) {  // found it
                 try {
                     time = new CalendarDateTime(
