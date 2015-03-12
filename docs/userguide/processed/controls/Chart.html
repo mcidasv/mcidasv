@@ -51,15 +51,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Chart.ht
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Full Plot -</strong> Toggles the visibility of the data displayed on the chart on or off.</li>
   <li class="propertylistitem"><strong>Axis -</strong> Toggles the visibility of the axis on or off.</li>
-  <li class="propertylistitem"><strong>Legend Label -</strong> Changes the name of the selected parameter, both in the parameters list, and on any axes labels. This can be changed by typing in the field.</li>
-  <li class="propertylistitem"><strong>Chart Name -</strong> Select a chart name from the pull down menu, or create a new  by entering
+  <li class="propertylistitem"><strong>Legend Label -</strong> Sets the name of the selected parameter, both in the parameters list, and on any axes labels.</li>
+  <li class="propertylistitem"><strong>Chart Name -</strong> Select a chart name from the pull down menu, or create a new  by typing
     a new name in the field. The display will automatically create a new chart
     with the new name.</li>
-  <li class="propertylistitem"><strong>Axis Side -</strong> Specifies what side of the chart the axis and axis
+  <li class="propertylistitem"><strong>Axis Side -</strong> Sets the side of the chart the axis and axis
     label is shown.</li>
   <li class="propertylistitem"><strong>Range -</strong> Fixes the axis range to remain constant
     as the chart values change.</li>
-  <li class="propertylistitem"><img src="images/ChartPropertiesDots.gif" alt="Specify the initial range values button" width="43" height="26" align="absmiddle"> <strong> -</strong> Allows you to specify the initial range values for the selected parameter.</li>
+  <li class="propertylistitem"><img src="images/ChartPropertiesDots.gif" alt="Specify the initial range values button" width="43" height="26" align="absmiddle"> <strong> -</strong> Allows for specifying the initial range values for the selected parameter.</li>
   <li class="propertylistitem"><strong>Includes Zero -</strong> Includes zero on the axis range.</li>
   <li class="propertylistitem"><strong>Type -</strong> Specifies the display of the data in the chart. It can be displayed as Lines, Lines and
     Shapes, Shapes, Area, Area and Shapes, or a Bar Chart.</li>
@@ -78,15 +78,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/Chart.ht
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Name -</strong> Sets the name of the chart.</li>
   <li class="propertylistitem"><strong>Color -</strong> Sets the background and chart colors.</li>
-  <li class="propertylistitem"><strong>Domain Lines -</strong> Changes the domain lines properties including the stroke, width,
+  <li class="propertylistitem"><strong>Domain Lines -</strong> Sets the domain lines properties including the stroke, width,
     and color. The visibility of the domain lines can also be toggled on and
     off with the <strong>Visible</strong> checkbox.</li>
-  <li class="propertylistitem"><strong>Legend Label -</strong> Changes the Legend Label along the Domain Lines.</li>
-  <li class="propertylistitem"><strong>Range Lines -</strong> Changes the range lines properties including the stroke, width,
+  <li class="propertylistitem"><strong>Legend Label -</strong> Sets the label along the domain axis.</li>
+  <li class="propertylistitem"><strong>Range Lines -</strong> Sets the range lines properties including the stroke, width,
     and color. The visibility of the range lines can also be toggled on and off
     with the <strong>Visible</strong> checkbox.</li>
-  <li class="propertylistitem"><strong>Legend Label -</strong> Changes the Legend Label along the Range Lines.</li>
-  <li class="propertylistitem"><strong>Title -</strong> Sets the visibility of the Name on
+  <li class="propertylistitem"><strong>Legend Label -</strong> Sets the label along the range axis.</li>
+  <li class="propertylistitem"><strong>Title -</strong> Sets the visibility of the name on
     the chart.</li>
 <li class="propertylistitem"><strong>Date Format -</strong> Sets the format of the date/time labeling on the chart along the axis representing time.</li>
 </ul>
@@ -98,44 +98,42 @@ on the chart:</p>
   <li> Up/Down/Left/Right Arrows: Pan p</li>
   <li> Left mouse drag - zoom</li>
 </ul>
-<!--
-<a name="chartproperties"></a>
 <div class="pagesubtitle">Chart Properties</div>
 <p>There are several chart properties that can be changed through the Chart Properties
   dialog box. This is accessed by right clicking on the chart and selecting &quot;Properties.&quot; The
   Chart Properties dialog box consists of three tabs: <strong>Title</strong>, <strong>Plot</strong>, and <strong>Other</strong>. The <strong>Plot</strong> tab includes three tabs within itself: <strong>Domain Axis</strong>, <strong>Range Axis</strong>, and <strong>Appearance</strong>.</p>
-<p>The <strong>Title</strong> tab deals with
+<p>The <strong>Title</strong> tab sets
   the chart's title and its attributes. </p>
 <div class="images"><img src="images/ChartPropertiesTitle.gif" alt="Image 3: Title Tab of the Chart Properties Dialog"><br>
 <span class="caption">Image 3: Title Tab of the Chart Properties Dialog</span></div>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Show Title -</strong> Displays the title on the chart in the <strong>Layer Controls</strong> tab of the Data Explorer.</li>
   <li class="propertylistitem"><strong>Text -</strong> Lists the current title for the chart. This can be changed by typing in the field.</li>
-  <li class="propertylistitem"><strong>Font -</strong> Changes the font style and size of the title.</li>
-  <li class="propertylistitem"><strong>Color -</strong> Changes the color of the title.</li>
+  <li class="propertylistitem"><strong>Font -</strong> Sets the font style and size of the title.</li>
+  <li class="propertylistitem"><strong>Color -</strong> Sets the color of the title.</li>
   </ul>
-<p>The <strong>Domain Axis</strong> tab allows for customization of the Domain Axis.</p>
+<p>The <strong>Domain Axis</strong> tab allows for customization of the domain axis.</p>
 <div class="images"><img src="images/ChartPropertiesPlot.gif" alt="Image 4: Domain Axis Tab in the Plot Tab of the Chart Properties Dialog" width="451" height="437"><br>
 <span class="caption">Image 4: Domain Axis Tab in the Plot Tab of the Chart Properties Dialog</span></div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Label -</strong> Sets the label for the Domain Axis.</li>
+  <li class="propertylistitem"><strong>Label -</strong> Sets the label for the domain axis.</li>
   <li class="propertylistitem"><strong>Font -</strong> Sets the font style and size of the title.</li>
   <li class="propertylistitem"><strong>Paint -</strong> Sets the color of the title.</li>
-  <li class="propertylistitem"><strong>Show tick labels -</strong> Displays labels below the tick marks on the Domain Axis.</li>
+  <li class="propertylistitem"><strong>Show tick labels -</strong> Displays labels below the tick marks on the domain axis.</li>
   <li class="propertylistitem"><strong>Tick label font -</strong> Sets the font size and style of the tick labels.</li>
-  <li class="propertylistitem"><strong>Show tick marks -</strong> Displays   tick marks, which extend just beyond the boundaries of the chart on the Domain Axis.</li>
+  <li class="propertylistitem"><strong>Show tick marks -</strong> Displays  tick marks, which extend just beyond the boundaries of the chart on the domain axis.</li>
 </ul>
-<p>The <strong>Range Axis</strong> tab allows for customization of the Range Axis.</p>
+<p>The <strong>Range Axis</strong> tab allows for customization of the range axis.</p>
 <div class="images"><img src="images/ChartPropertiesPlotRange.gif" alt="Image 5: Range Axis  Tab in the Plot Tab of the Chart Properties Dialog" width="451" height="437"><br>
 <span class="caption">Image 5: Range Axis Tab in the Plot Tab of the Chart Properties Dialog</span></div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Label -</strong> Sets the label for the Range Axis.</li>
+  <li class="propertylistitem"><strong>Label -</strong> Sets the label for the range axis.</li>
   <li class="propertylistitem"><strong>Font -</strong> Sets the font style and size of the label.</li>
   <li class="propertylistitem"><strong>Paint -</strong> Sets the color of the label.</li>
-  <li class="propertylistitem"><strong>Show tick labels -</strong> Displays labels next to the tick marks on the Range Axis.</li>
+  <li class="propertylistitem"><strong>Show tick labels -</strong> Displays labels next to the tick marks on the range axis.</li>
   <li class="propertylistitem"><strong>Tick label font -</strong> Sets the font size and style of the tick labels.</li>
-  <li class="propertylistitem"><strong>Show tick marks -</strong> Displays tick marks, which extend just beyond the boundaries of the chart on the Range Axis.</li>
-  <li class="propertylistitem"><strong>Auto-adjust range -</strong> Computes the minimum and maximum values of the Range Axis automatically when checked.
+  <li class="propertylistitem"><strong>Show tick marks -</strong> Displays tick marks, which extend just beyond the boundaries of the chart on the range axis.</li>
+  <li class="propertylistitem"><strong>Auto-adjust range -</strong> Computes the minimum and maximum values of the range axis automatically when checked.
     When unchecked, you can enter in a minimum and maximum value to set the range.
     This option exists  under the <strong>Range</strong> tab
     of the <strong>Other</strong> tab.</li>
@@ -149,7 +147,7 @@ on the chart:</p>
   <li class="propertylistitem"><strong>Background paint -</strong> Sets the color of the chart plot background.</li>
   <li class="propertylistitem"><strong>Orientation -</strong> Sets the orientation of the chart.</li>
 </ul>
-<p>The <strong>Other</strong> tab deals with general chart properties. </p>
+<p>The <strong>Other</strong> tab sets general chart properties.</p>
 <div class="images"><img src="images/ChartPropertiesOther.gif" alt="Image 7: Other Tab of the Chart Properties Dialog"><br>
 <span class="caption">Image 7: Other Tab of the Chart Properties Dialog</span></div>
 <ul class="propertylist">
@@ -158,9 +156,8 @@ on the chart:</p>
   <li class="propertylistitem"><strong>Series -</strong> Series and Series Outline options are not implemented at this time.</li>
 </ul>
 <a name="chartlayout"></a>
--->
 <div class="pagesubtitle">Chart Layout</div>
-<p>When you have multiple charts, you can define different layouts for them using
+<p>With multiple charts, different layouts can be set using
 the <strong>View-&gt;Chart-&gt;Layout</strong> menu item. There are a number
 of pre-defined layouts: Grid, Vertical, Horizontal, 2 Column, 3 Column, Tabs. The Grid
 Layout allows for much flexibility in how the charts are organized and laid out.
@@ -185,7 +182,7 @@ are several menu options that are unique to the Data Probe/Time Series display.<
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Change Display Format -</strong> Changes how the data is displayed in the table. This template is HTML with   macros        that get replaced with the display value, unit, raw value and raw   data        unit.</li>
   <li class="propertylistitem"><strong>Probe Color -</strong> Changes the color of the probe in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Add Parameter -</strong> Opens a Field Selector window with the option to add another parameter   to the display from one of your loaded Data Sources.</li>
+  <li class="propertylistitem"><strong>Add Parameter -</strong> Opens a Field Selector window with the option to add another parameter   to the display from one of the loaded data sources.</li>
 </ul>
 <p>The <strong>View</strong> menu has these unique options:
 </p>

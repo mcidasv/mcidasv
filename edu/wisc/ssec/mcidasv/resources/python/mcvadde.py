@@ -186,6 +186,11 @@ _formats = {
     "TRMM":                                                    AddeFormat.TRMM,
     "TMIN":                                                    AddeFormat.TRMM,
     "GINI":                                                    AddeFormat.GINI,
+    "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
+    "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
+    "INSAT3D_SOUNDER":                                         AddeFormat.INSAT3D_SOUNDER,
+    "INSAT-3D Sounder":                                        AddeFormat.INSAT3D_SOUNDER,
+    "Himawari-8":                                              AddeFormat.HIMAWARI8,
 }
 
 DEFAULT_ACCOUNTING = ('idv', '0')

@@ -103,7 +103,7 @@ public class LocalAddeEntry implements AddeEntry {
         // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
         // in mcvadde.py.
         AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
-        MODR, MSGT, MTST, SMIN, TMIN, MD, INVALID;
+        MODR, MSGT, MTST, SMIN, TMIN, MD, INST, WARI, INVALID;
     }
 
     /**
@@ -131,6 +131,9 @@ public class LocalAddeEntry implements AddeEntry {
         AMSRE_L2A(ServerName.AMSE, "AMSR-E L 2a", "AMSR-E Level 2a"),
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),
         GINI(ServerName.GINI, "GINI"),
+        INSAT3D_IMAGER(ServerName.INST, "INSAT-3D Imager", "INSAT-3D Imager"),
+        INSAT3D_SOUNDER(ServerName.INST, "INSAT-3D Sounder", "INSAT-3D Sounder"),
+        HIMAWARI8(ServerName.WARI, "Himawari 8", "Himawari 8"),
         LRIT_GOES9(ServerName.FSDX, "LRIT GOES-9", "EUMETCast LRIT GOES-9"),
         LRIT_GOES10(ServerName.FSDX, "LRIT GOES-10", "EUMETCast LRIT GOES-10"),
         LRIT_GOES11(ServerName.FSDX, "LRIT GOES-11", "EUMETCast LRIT GOES-11"),
