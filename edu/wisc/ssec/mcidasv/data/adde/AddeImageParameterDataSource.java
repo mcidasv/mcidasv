@@ -1267,12 +1267,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         this.previewLineRes = lMag;
         this.previewEleRes = eMag;
         String uLStr = "0 0 F";
-        try {
-            int startLine = previewDir.getValue(AreaFile.AD_STLINE);
-            int startEle = previewDir.getValue(AreaFile.AD_STELEM);
-            uLStr = startLine + " " + startEle + " I";
-        } catch (Exception e) {
-        }
+        // MJH getting uLStr from previewDir here breaks Himawari-8,
+        // and is apparently unnecessary in general, so just use "0 0 F" always.
+        // try {
+        //     int startLine = previewDir.getValue(AreaFile.AD_STLINE);
+        //     int startEle = previewDir.getValue(AreaFile.AD_STELEM);
+        //     uLStr = startLine + " " + startEle + " I";
+        // } catch (Exception e) {
+        // }
 //        String src = aid.getSource();
         String src = previewDescriptor.getSource();
         logger.trace("building preview request from src={}", src);
