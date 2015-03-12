@@ -1358,9 +1358,8 @@ class _Display(_JavaProxy):
             if hm.containsKey('defaultlayerlabel'):
                 defaultLabel = hm.get('defaultlayerlabel')
         except AttributeError:
-            # no metadataMap
-            pass
-
+            hm = None
+            
         # first param of DataDataChoice constructor is %shortname% macro
         try: 
             ddc = DataDataChoice(shortname, data)
