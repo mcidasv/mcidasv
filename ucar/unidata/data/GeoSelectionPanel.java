@@ -44,6 +44,7 @@ import java.awt.geom.*;
 
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.*;
@@ -146,6 +147,9 @@ public class GeoSelectionPanel extends JPanel {
 
     /** for properties */
     private JCheckBox useDisplayAreaCbx;
+
+    private Hashtable selectionProperties;
+
     /**
      * ctor
      *
@@ -161,14 +165,16 @@ public class GeoSelectionPanel extends JPanel {
                              boolean enabled, boolean doStride,
                              boolean doBoundingBox,
                              ProjectionImpl sampleProjection,
-                             JComponent extraComponent) {
-        this.geoSelection   = geoSelection;
-        this.extraComponent = extraComponent;
-        this.enabled        = enabled;
+                             JComponent extraComponent,
+                             Hashtable selectionProperties) {
+        this.geoSelection        = geoSelection;
+        this.extraComponent      = extraComponent;
+        this.enabled             = enabled;
+        this.selectionProperties = selectionProperties;
         setLayout(new BorderLayout());
         this.add(BorderLayout.CENTER,
-                 makePanel(fullVersion, doStride, doBoundingBox,
-                           sampleProjection));
+            makePanel(fullVersion, doStride, doBoundingBox,
+                sampleProjection));
         if (enabledCbx != null) {
             GuiUtils.enableTree(this, enabled);
             GuiUtils.enableTree(enabledCbx, true);
