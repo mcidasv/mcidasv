@@ -3681,7 +3681,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         boolean levelChanged = dataSelection.getProperty("levelChanged", false);
         //if (Misc.equals(dataSelection.getProperty(DataSelection.PROP_REGIONOPTION), 
         //		DataSelection.PROP_USEDISPLAYAREA) && !levelChanged) {
-        logger.trace("*** 1826: matchDisplayRegion={} !levelChanged={} useFullBounds={}", getMatchDisplayRegion(), !levelChanged, geoSelection.getUseFullBounds());
+        logger.trace("*** 1826: matchDisplayRegion={} !levelChanged={} useFullBounds={} hasSpatialSubset={}", getMatchDisplayRegion(), !levelChanged, geoSelection.getUseFullBounds(), dataSelection.getGeoSelection().hasSpatialSubset());
         if (getMatchDisplayRegion() && !levelChanged) {
             logger.trace("enter block={}", dataSelection);
             getViewManager().setProjectionFromData(false);
@@ -3713,8 +3713,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             logger.trace("before putProp={}", dataSelection);
             dataSelection.putProperty("centerPosition", llpi);
             logger.trace("after putProp={}", dataSelection);
-        } else if (dataSelection.getGeoSelection().getUseFullBounds()) {
-            logger.trace("trying to work with full bounds");
+        } else if (dataSelection.getGeoSelection().getUseFullBounds() && !dataSelection.getGeoSelection().hasSpatialSubset()) {
+            logger.trace("trying to work with full bounds: geoSel.hasSpatialSubset={}", dataSelection.getGeoSelection().hasSpatialSubset());
             getViewManager().setProjectionFromData(true);
             Rectangle2D bbox = navDisplay.getLatLonBox();
             geoSelection.setLatLonRect(bbox);
