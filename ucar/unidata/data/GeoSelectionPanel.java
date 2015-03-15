@@ -165,12 +165,10 @@ public class GeoSelectionPanel extends JPanel {
                              boolean enabled, boolean doStride,
                              boolean doBoundingBox,
                              ProjectionImpl sampleProjection,
-                             JComponent extraComponent,
-                             Hashtable selectionProperties) {
+                             JComponent extraComponent) {
         this.geoSelection        = geoSelection;
         this.extraComponent      = extraComponent;
         this.enabled             = enabled;
-        this.selectionProperties = selectionProperties;
         setLayout(new BorderLayout());
         this.add(BorderLayout.CENTER,
             makePanel(fullVersion, doStride, doBoundingBox,
@@ -563,7 +561,13 @@ public class GeoSelectionPanel extends JPanel {
         return new GeoSelection(geoSelection);
     }
 
+    public void setSelectionProperties(Hashtable selectionProperties) {
+        this.selectionProperties = selectionProperties;
+    }
 
+    public Hashtable getSelectionProperties() {
+        return selectionProperties;
+    }
 
     /**
      * Apply the properties
