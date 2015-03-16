@@ -315,21 +315,26 @@ public class GeoSelectionPanel extends JPanel {
             strideComps.add(GuiUtils.left(zStrideBox));
         }
 
-        {
-            useDisplayAreaCbx = new JCheckBox("", geoSelection.getUseViewBounds());
-            useDisplayAreaCbx.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    boolean showMap =
-                            !((JCheckBox) e.getSource()).isSelected();
-                    GuiUtils.enablePanel(mapPanel, showMap);
-                    //mapPanel.setEnabled(showMap);
-                }
-            });
-            useDisplayAreaComps.add(
-                GuiUtils.rLabel("Match Display Region:"));
-            useDisplayAreaComps.add(GuiUtils.left(useDisplayAreaCbx));
+        // is view bounds even right!?
+        boolean mdrStatus = geoSelection.getUseViewBounds();
+        if (selectionProperties != null && selectionProperties.containsKey(DataSelection.PROP_REGIONOPTION)) {
+            String value = selectionProperties.get(DataSelection.PROP_REGIONOPTION).toString();
+            mdrStatus = DataSelection.PROP_USEDISPLAYAREA.equals(value);
         }
+        useDisplayAreaCbx = new JCheckBox("", mdrStatus);
+        useDisplayAreaCbx.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean showMap =
+                    !((JCheckBox) e.getSource()).isSelected();
+                GuiUtils.enablePanel(mapPanel, showMap);
+                //mapPanel.setEnabled(showMap);
+            }
+        });
+        useDisplayAreaComps.add(
+            GuiUtils.rLabel("Match Display Region:"));
+        useDisplayAreaComps.add(GuiUtils.left(useDisplayAreaCbx));
+
         if (doBoundingBox) {
             ActionListener actionListener = new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
@@ -628,6 +633,12 @@ public class GeoSelectionPanel extends JPanel {
             return useDisplayAreaCbx.isSelected();
         } else {
             return false;
+        }
+    }
+
+    public void setUseDisplayArea(boolean status) {
+        if (useDisplayAreaCbx != null) {
+            useDisplayAreaCbx.setSelected(status);
         }
     }
 

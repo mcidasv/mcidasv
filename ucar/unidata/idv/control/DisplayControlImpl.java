@@ -6001,6 +6001,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 geoSelectionPanel =
                     ((DataSourceImpl) dataSource).doMakeGeoSelectionPanel(
                         true, geoSelection);
+                Hashtable props = dataSelection.getProperties();
+                if (props != null && props.containsKey(DataSelection.PROP_REGIONOPTION)) {
+                    String value = props.get(DataSelection.PROP_REGIONOPTION).toString();
+                    geoSelectionPanel.setUseDisplayArea(DataSelection.PROP_USEDISPLAYAREA.equals(value));
+                }
+
+                geoSelectionPanel.setSelectionProperties(dataSelection.getProperties());
+
                 jtp.add("Spatial Subset", geoSelectionPanel);
             }
 
