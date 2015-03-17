@@ -1552,7 +1552,7 @@ public class MapViewManager extends NavigatedViewManager {
             { "Show \"Please Wait\" Message", PREF_WAITMSG,
               new Boolean(getWaitMessageVisible()) },
             { "Reset Projection With New Data", PREF_PROJ_USEFROMDATA },
-            { PR_LABEL + " !LOL!", PREF_USE_PROGRESSIVE_RESOLUTION, status },
+            { PR_LABEL, PREF_USE_PROGRESSIVE_RESOLUTION, status },
             { "Use 3D View", PREF_DIMENSION },
             { "Show Globe Background", PREF_SHOWGLOBEBACKGROUND,
               new Boolean(getStore().get(PREF_SHOWGLOBEBACKGROUND,
