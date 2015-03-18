@@ -293,7 +293,7 @@ public abstract class DisplayRendererJ3D
     while (image == null) {
       try {
         synchronized (this) {
-          canvas.setDoubleBufferEnable(false);
+//          canvas.setDoubleBufferEnable(false);
           canvas.captureFlag = true;
           hasNotifyBeenCalled = false;
           if (canvas.getOffscreen()) {
@@ -330,14 +330,14 @@ public abstract class DisplayRendererJ3D
       } catch(InterruptedException e) {
         // note notify generates a normal return from wait rather
         // than an Exception - control doesn't normally come here
-        canvas.setDoubleBufferEnable(true); //- just in case
+//        canvas.setDoubleBufferEnable(true); //- just in case
         e.printStackTrace();
       }
       if(image==null) {
           image = canvas.captureImage;
       }
       canvas.captureImage = null;
-      canvas.setDoubleBufferEnable(true);
+//      canvas.setDoubleBufferEnable(true);
       if(image == null) {
           //What do we do here?
           //          break?;
