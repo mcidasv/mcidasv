@@ -683,7 +683,10 @@ public class RemoteAddeEntry implements AddeEntry {
                 entry.entryType = AddeEntry.EntryType.RADAR;
             }
             return AddeStatus.OK;
-        } else {
+        // TJJ - see Inq 1975, needed to add this hack because it seems
+        // imagery always technically validates as radar.
+        } else if (! type.equals("RADAR")) {
+      
             // try dsinfo
             String addeUrl = "adde://"+server+"/datasetinfo?group="+entry.getGroup()+"&type="+type+"&user="+username+"&proj="+project+"&compress=gzip&port=112&debug=true&version=1";
             logger.trace("dsinfo url: '{}'", addeUrl);
@@ -698,6 +701,10 @@ public class RemoteAddeEntry implements AddeEntry {
             }
 
             return AddeStatus.BAD_GROUP;
+            
+        // at this point can only be a bad group
+        } else {
+        	return AddeStatus.BAD_GROUP;
         }
     }
 
