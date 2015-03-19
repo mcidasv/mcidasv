@@ -37,7 +37,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +46,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.wisc.ssec.mcidas.adde.AddeServerInfo;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
+import edu.wisc.ssec.mcidas.adde.AddeURLException;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
@@ -679,6 +680,19 @@ public class RemoteAddeEntry implements AddeEntry {
             }
             return AddeStatus.OK;
         } else {
+            // try dsinfo
+            String addeUrl = "adde://"+server+"/datasetinfo?group="+entry.getGroup()+"&type="+type+"&user="+username+"&proj="+project+"&compress=gzip&port=112&debug=true&version=1";
+            logger.trace("dsinfo url: '{}'", addeUrl);
+            try {
+                DataSetInfo dsinfo = new DataSetInfo(addeUrl);
+                Map<?, ?> descriptionTable = dsinfo.getDescriptionTable();
+                if ((descriptionTable != null) && !descriptionTable.isEmpty()) {
+                    return AddeStatus.OK;
+                }
+            } catch (AddeURLException e) {
+                logger.trace("dsinfo failed for url: '{}'", addeUrl);
+            }
+
             return AddeStatus.BAD_GROUP;
         }
     }
