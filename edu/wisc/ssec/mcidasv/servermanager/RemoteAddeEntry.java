@@ -587,6 +587,10 @@ public class RemoteAddeEntry implements AddeEntry {
     public static boolean checkHost(final RemoteAddeEntry entry) {
         requireNonNull(entry, "entry cannot be null");
         String host = entry.getAddress();
+        if (host.startsWith("localhost:")) {
+            return true;
+        }
+
         Socket socket = null;
         boolean connected = false;
         try { 
