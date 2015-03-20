@@ -25,6 +25,7 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.servermanager;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
@@ -70,35 +71,12 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
  * {@link AddeEntry AddeEntries}, though there has been some talk of allowing
  * for reordering.
  */
+
 public class AddePreferences {
 
     public enum Selection { ALL_ENTRIES, SPECIFIED_ENTRIES };
 
     private static final Logger logger = LoggerFactory.getLogger(AddePreferences.class);
-
-    /** 
-     * Property ID for controlling the display of {@literal "site"} servers 
-     * in the server preferences. 
-     */
-    private static final String PREF_LIST_SITE_SERV = "mcv.servers.listsite";
-
-    /** 
-     * Property ID for controlling the display of {@literal "default mcv"} 
-     * servers in the server preferences. 
-     */
-    private static final String PREF_LIST_DEFAULT_SERV = "mcv.servers.listdefault";
-
-    /** 
-     * Property ID for controlling the display of {@literal "MCTABLE"} 
-     * servers in the server preferences. 
-     */
-    private static final String PREF_LIST_MCTABLE_SERV = "mcv.servers.listmcx";
-
-    /** 
-     * Property ID for controlling the display of {@literal "user"} servers 
-     * in the server preferences. 
-     */
-    private static final String PREF_LIST_USER_SERV = "mcv.servers.listuser";
 
     /**
      * Property ID that allows McIDAS-V to remember whether or not the user
@@ -270,16 +248,8 @@ public class AddePreferences {
         });
 
         // user wants to add a server! make it so.
-        final JButton addServer = new JButton("Add ADDE Servers...");
+        final JButton addServer = new JButton("ADDE Data Manager");
         addServer.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                mcv.showServerManager();
-            }
-        });
-
-        // import list of servers
-        final JButton importServers = new JButton("Import Servers...");
-        importServers.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent e) {
                 mcv.showServerManager();
             }
@@ -326,7 +296,7 @@ public class AddePreferences {
                 LayoutUtil.hbox(useAllBtn, useTheseBtn),
                 LayoutUtil.leftCenter(
                     LayoutUtil.inset(
-                        LayoutUtil.top(LayoutUtil.vbox(allOn, allOff, addServer, importServers)),
+                        LayoutUtil.top(LayoutUtil.vbox(allOn, allOff, addServer)),
                         4), cbScroller));
 
         JPanel entryPanel =
