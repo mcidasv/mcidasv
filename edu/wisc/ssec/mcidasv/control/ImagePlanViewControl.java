@@ -264,8 +264,15 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                 if (choice instanceof ComboDataChoice) {
                     return false;
                 }
-                if ((choice instanceof DataDataChoice) && (choice.getData(null) instanceof ImageSequence)) {
-                    return false;
+                if (choice instanceof DataDataChoice) {
+                    if (choice.getData(null) instanceof ImageSequence) {
+                        return false;
+                    } else {
+                        String className = choice.getData(null).getClass().getName();
+                        if (className.contains("_MappedVIIRSFlatField")) {
+                            return false;
+                        }
+                    }
                 }
             }
         } catch (Exception e) {
