@@ -114,7 +114,6 @@ public class SuomiNPPFilter extends FileFilter {
         	
         	String fileNameRelative = f.getName();
         	String fileNameAbsolute = f.getParent() + File.separatorChar + f.getName();
-        	logger.debug("examining filename: " + fileNameRelative);
         	
         	// null or empty filename
         	if ((fileNameRelative == null) || (fileNameRelative.equals(""))) return isSuomiNPP;
@@ -136,13 +135,12 @@ public class SuomiNPPFilter extends FileFilter {
         	String prodStr = fileNameRelative.substring(0, fileNameRelative.indexOf(JPSSUtilities.JPSS_FIELD_SEPARATOR));
             StringTokenizer st = new StringTokenizer(prodStr, PRODUCT_SEPARATOR);
             int numTokens = st.countTokens();
-            logger.debug("check for embedded GEO, tokenizing: " + prodStr);
+            logger.trace("check for embedded GEO, tokenizing: " + prodStr);
             while (st.hasMoreTokens()) {
             	String singleProd = st.nextToken();
-            	logger.debug("Next token: " + singleProd);
             	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
             		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
-            			logger.debug("Found embedded GEO: " + singleProd);
+            			logger.trace("Found embedded GEO: " + singleProd);
             			// if it's a single-product file, disqualify this as a GEO-only file!
             			if (numTokens == 1) {
             				return false;

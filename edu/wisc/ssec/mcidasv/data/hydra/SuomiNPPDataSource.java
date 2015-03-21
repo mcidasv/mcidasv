@@ -292,7 +292,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
         logger.debug("SNPPDS check for embedded GEO, tokenizing: " + prodStr);
         while (st.hasMoreTokens()) {
         	String singleProd = st.nextToken();
-        	logger.debug("Next token: " + singleProd);
         	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
         		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
         			logger.debug("Setting isCombinedProduct true, Found embedded GEO: " + singleProd);
@@ -352,7 +351,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     					List<Group> gl = rg.getGroups();
     					if (gl != null) {
     						for (Group g : gl) {
-    							logger.debug("Group name: " + g.getFullName());
+    							logger.trace("Group name: " + g.getFullName());
     							// when we find the Data_Products group, go down another group level and pull out 
     							// what we will use for nominal day and time (for now anyway).
     							// XXX TJJ fileCount check is so we don't count the GEO file in time array!
@@ -395,7 +394,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     											String baseName = axpp.getStringValue();
     											productName = baseName;
     											String productProfileFileName = nppPP.getProfileFileName(baseName);
-    											logger.debug("Found profile: " + productProfileFileName);
+    											logger.trace("Found profile: " + productProfileFileName);
     											if (productProfileFileName == null) {
     												throw new Exception("XML Product Profile not found in catalog");
     											}
@@ -419,7 +418,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     										if ((aDate != null) && (aTime != null)) {
     											String sDate = aDate.getStringValue();
     											String sTime = aTime.getStringValue();
-    											logger.debug("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
+    											logger.trace("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
     											Date d = sdf.parse(sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
     											theDate = d;
     											foundDateTime = true;
@@ -440,7 +439,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     						}
     					}
     				} catch (Exception e) {
-    					logger.debug("Exception during processing of file: " + fileAbsPath);
+    					logger.warn("Exception during processing of file: " + fileAbsPath);
     					throw (e);
     				} finally {
     					ncfile.close();
@@ -580,10 +579,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						// this is the geolocation data
     	    						String geoBaseName = subG.getShortName();
     	    						geoBaseName = geoBaseName.substring(0, geoBaseName.indexOf('_'));
-    	    						logger.debug("SHORT GEO NAME: " + geoBaseName);
     	    						if (! haveGeoMetaData) {
         	    						String geoProfileFileName = nppPP.getProfileFileName(geoBaseName);
-	    								// also add meta dataf from geolocation profile
+	    								// also add meta data from geolocation profile
 	    								nppPP.addMetaDataFromFile(geoProfileFileName);
     	    							haveGeoMetaData = true;
     	    						}
@@ -595,7 +593,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    								// get the dimensions of the lat variable
     	    								Dimension dAlongTrack = v.getDimension(0);
     	    								yDim = dAlongTrack.getLength();
-    	    								logger.debug("Lat along track dim: " + dAlongTrack.getLength());
     	    								Dimension dAcrossTrack = v.getDimension(1);
     	    								xDim = dAcrossTrack.getLength();
     	    								logger.debug("Lat across track dim: " + dAcrossTrack.getLength());
@@ -613,7 +610,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    								// get the dimensions of the lat variable
     	    								Dimension dAlongTrack = v.getDimension(0);
     	    								yDim = dAlongTrack.getLength();
-    	    								logger.debug("Lat along track dim: " + dAlongTrack.getLength());
     	    								Dimension dAcrossTrack = v.getDimension(1);
     	    								xDim = dAcrossTrack.getLength();
     	    								logger.debug("Lat across track dim: " + dAcrossTrack.getLength());
@@ -628,13 +624,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     	    				// second to identify displayable products
     	    				for (Group subG : adg) {
-    	    					logger.debug("Sub group name: " + subG.getFullName());
     	    					// this is the product data
     	    					List<Variable> vl = subG.getVariables();
     	    					for (Variable v : vl) {
     	    						boolean useThis = false;
     	    						String vName = v.getFullName();
-    	    						logger.debug("Variable: " + vName);
+    	    						logger.trace("Variable: " + vName);
     	    						String varShortName = vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1);
 
     	    						// Special code to handle quality flags. We throw out anything
@@ -642,7 +637,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						
     	    						if (varShortName.startsWith("QF")) {
     	    							
-    	    							logger.debug("Handling Quality Flag: " + varShortName);
+    	    							logger.trace("Handling Quality Flag: " + varShortName);
     	    							
         	    						// this check is done later for ALL variables, but we need
     	    							// it early here to weed out those quality flags that are 
@@ -653,7 +648,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	    						
         	    						// toss out > 2D Quality Flags 
         	    						if (dl.size() > 2) {
-        	    							logger.debug("SKIPPING QF, > 2D: " + varShortName);
+        	    							logger.trace("SKIPPING QF, > 2D: " + varShortName);
         	    							continue;
         	    						}
         	    						
@@ -669,7 +664,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	    						}
         	    						
         	    						if (! (xScanOk && yScanOk)) {
-        	    							logger.debug("SKIPPING QF, does not match geo bounds: " + varShortName);
+        	    							logger.trace("SKIPPING QF, does not match geo bounds: " + varShortName);
         	    							continue;
         	    						}
         	    						
@@ -701,7 +696,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						if (instrumentName.getStringValue().equals("CrIS")) {
     	    							if (! vName.contains("GEO")) {
 	    	    							if (! varShortName.startsWith(crisFilter)) {
-	    	    								logger.debug("Skipping variable: " + varShortName);
+	    	    								logger.trace("Skipping variable: " + varShortName);
 	    	    								continue;
 	    	    							}
     	    							} else {
@@ -725,27 +720,24 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						// for OMPS, only Radiance for now...
     	    						if (instrumentName.getStringValue().contains("OMPS")) {
     	    							if (! varShortName.startsWith(ompsFilter)) {
-    	    								logger.debug("Skipping variable: " + varShortName);
+    	    								logger.trace("Skipping OMPS variable: " + varShortName);
     	    								continue;
     	    							}
     	    						}
 
     	    						DataType dt = v.getDataType();
     	    						if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
-    	    							logger.debug("Skipping data of size: " + dt.getSize());
     	    							continue;
     	    						}
 
     	    						List<Dimension> dl = v.getDimensions();
     	    						if (dl.size() > 4) {
-    	    							logger.debug("Skipping data of dimension: " + dl.size());
     	    							continue;
     	    						}
 
     	    						// for now, skip any 3D VIIRS data
     	    						if (instrumentName.getStringValue().equals("VIIRS")) {
     	    							if (dl.size() == 3) {
-    	    								logger.debug("Skipping VIIRS 3D data for now...");
     	    								continue;
     	    							}
     	    						}
@@ -764,7 +756,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						}
 
     	    						if (xScanOk && yScanOk) {
-    	    							logger.debug("Will probably use this variable, a few more checks...");
     	    							useThis = true;
     	    						}
 
@@ -776,7 +767,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    								for (Dimension d : dl) {
     	    									if (d.getLength() == JPSSUtilities.ATMSChannelCenterFrequencies.length) {
     	    										isDisplayableATMS = true;
-    	    										logger.debug("This variable has a dimension matching num ATMS channels");
+    	    										logger.trace("This variable has a dimension matching num ATMS channels");
     	    										break;
     	    									}
     	    								}
@@ -810,13 +801,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							if (factorsVarName != null) {
     	    								for (Variable fV : vl) {
     	    									if (fV.getShortName().equals(factorsVarName)) {
-    	    										logger.debug("Pulling scale and offset values from variable: " + fV.getShortName());
+    	    										logger.trace("Pulling scale and offset values from variable: " + fV.getShortName());
     	    										ucar.ma2.Array a = fV.read();
     	    										float[] so = (float[]) a.copyTo1DJavaArray();
     	    										scaleVal = so[0];
-    	    										logger.debug("Scale value: " + scaleVal);
     	    										offsetVal = so[1];
-    	    										logger.debug("Offset value: " + offsetVal);
+    	    										logger.trace("Scale value: " + scaleVal + ", Offset value: " + offsetVal);
     	    										unpackFlag = true;
     	    										break;
     	    									}
@@ -835,8 +825,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							if (nppPP.hasNameAndMetaData(varShortName)) {
     	    								String rangeMin = nppPP.getRangeMin(varShortName);
     	    								String rangeMax = nppPP.getRangeMax(varShortName);
-    	    								logger.debug("range min: " + rangeMin);
-    	    								logger.debug("range max: " + rangeMax);
+    	    								logger.trace("range min: " + rangeMin + ", range max: " + rangeMax);
     	    								// only store range attribute if VALID range found
     	    								if ((rangeMin != null) && (rangeMax != null)) {
     	    									int [] shapeArr = new int [] { 2 };
@@ -878,7 +867,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    								if (! fval.isEmpty()) {
     	    									for (int fillIdx = 0; fillIdx < fval.size(); fillIdx++) {
     	    										afFill.setFloat(fillIdx, fval.get(fillIdx));
-    	    										logger.debug("Adding fill value (from XML): " + fval.get(fillIdx));
+    	    										logger.trace("Adding fill value (from XML): " + fval.get(fillIdx));
     	    									}
     	    								}
 
@@ -890,8 +879,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    									if (aUnsigned != null) {
     	    										if (aUnsigned.getStringValue().equals("true")) {
     	    											DataType fvdt = aFill.getDataType();
-    	    											logger.debug("Data String: " + aFill.toString());
-    	    											logger.debug("DataType primitive type: " + fvdt.getPrimitiveClassType());
+    	    											logger.trace("Data String: " + aFill.toString());
+    	    											logger.trace("DataType primitive type: " + fvdt.getPrimitiveClassType());
     	    											// signed byte that needs conversion?
     	    											if (fvdt.getPrimitiveClassType() == byte.class) {
     	    												fillValAsFloat = (float) Util.unsignedByteToInt(n.byteValue());
@@ -904,7 +893,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    										}
     	    									}
     	    									afFill.setFloat(fvArraySize - 1, fillValAsFloat);
-    	    									logger.debug("Adding fill value (from variable): " + fillValAsFloat);
+    	    									logger.trace("Adding fill value (from variable): " + fillValAsFloat);
     	    								}
     	    								Attribute fillAtt = new Attribute("_FillValue", afFill);
     	    								v.addAttribute(fillAtt);
@@ -912,7 +901,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     	    							Attribute aUnsigned = v.findAttribute("_Unsigned");
     	    							if (aUnsigned != null) {
-    	    								logger.debug("_Unsigned attribute value: " + aUnsigned.getStringValue());
     	    								unsignedFlags.put(v.getFullName(), aUnsigned.getStringValue());
     	    							} else {
     	    								unsignedFlags.put(v.getFullName(), "false");
@@ -999,9 +987,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	// array_name common to spectrum table
         	spectTable.put("array_name", pStr);
         	spectTable.put("product_name", productName);
-        	logger.debug("Product Name: " + productName);
-        	logger.debug("is3D? : " + is3D);
-        	logger.debug("instrumentName: " + instrumentName.getStringValue());
         	
         	if (is3D) {
 
@@ -1485,7 +1470,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
         try {
             HashMap subset = null;
             if (ginfo != null) {
-            	logger.debug("getting subset from lat-lon rect...");
             	subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
             			ginfo.getMinLon(), ginfo.getMaxLon(),
             			geoSelection.getXStride(),
@@ -1514,9 +1498,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 	  logger.debug("Props contains channel index key...");
                     double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
                     int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
-                    coords[0] = (double)idx;
-                    coords[1] = (double)idx;
-                    coords[2] = (double)1;
+                    coords[0] = (double) idx;
+                    coords[1] = (double) idx;
+                    coords[2] = (double) 1;
                   }
                 }
               }

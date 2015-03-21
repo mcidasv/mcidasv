@@ -370,8 +370,6 @@ public class SuomiNPPProductProfile {
 					
 					// only use range if min and max checked out
 					if ((rangeMinOk) && (rangeMaxOk)) {
-						logger.debug("Adding range min: " + rMin + " for product: " + name);
-						logger.debug("Adding range max: " + rMax + " for product: " + name);
 						rangeMin.put(name, rMin);
 						rangeMax.put(name, rMax);
 					}
@@ -383,17 +381,14 @@ public class SuomiNPPProductProfile {
 					}
 					
 					if ((name != null) && (sFactorName != null)) {
-						logger.debug("Adding scale factor name: " + sFactorName + " for product: " + name);
 						scaleFactorName.put(name, sFactorName);
 					}
 					
 					if ((name != null) && (! fValAL.isEmpty())) {
-						logger.debug("Adding fill value array for product: " + name);
 						fillValues.put(name, fValAL);
 					}
 					
 					if ((name != null) && (! qfAL.isEmpty())) {
-						logger.debug("Adding quality flags array for product: " + name);
 						qualityFlags.put(name, qfAL);
 					}
 				}

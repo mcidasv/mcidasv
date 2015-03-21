@@ -143,7 +143,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 
    public int[] getDimensionLengths(String array_name) {
 	   array_name = mapNameIfQualityFlag(array_name);
-	   logger.debug("For var " + array_name + ", sending back dim len: " + varAggrDimLengths.get(array_name));
 	   return varAggrDimLengths.get(array_name);
    }
 
@@ -151,12 +150,11 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   // only applies if name is from a packed quality flag
 	   // we pull data from the "mapped" variable name, a packed byte
 	   if (qfMap != null) {
-		   logger.debug("mapNameIfQualityFlag, checking key: " + array_name);
 		   if (qfMap.containsKey(array_name)) {
 			   origName = array_name;
 			   QualityFlag qf = qfMap.get(array_name);
 			   String mappedName = qf.getPackedName();
-			   logger.debug("Mapped to: " + mappedName);
+			   logger.debug("Key: " + array_name + " mapped to: " + mappedName);
 			   return mappedName;
 		   }
 	   }
@@ -274,7 +272,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   Iterator<Variable> varIter = ncfile.getVariables().iterator();
 		   while (varIter.hasNext()) {
 			   Variable var = varIter.next();
-			   logger.debug("Variable " + var.getShortName() + ", Rank: " + var.getRank());
+			   logger.trace("Variable " + var.getShortName() + ", Rank: " + var.getRank());
 			   varAggrDimLengths.put(var.getFullName(), new int[var.getRank()]);
 			   varGranInTrackLengths.put(var.getFullName(), new HashMap<Integer, Integer>()); 
 			   
@@ -284,7 +282,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   if (isEDR) {
 				   
-				   logger.debug("IS an EDR, need to look for fill scans...");
 				   // look through lat grid, look for missing scans
 				   String varName = var.getShortName();
 				   if ((varName.endsWith("Latitude")) || (varName.endsWith("Latitude_TC"))){
@@ -296,7 +293,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   alr.add(new Range(0, shape[0] - 1, 1));
 					   alr.add(new Range(0, 1, 1));
 					   Array a = var.read(alr);
-					   logger.debug("Lat shape: " + shape[0] + " by " + shape[1]);
 					   int scanLength = shape[1];
 					   Index index = a.getIndex();
 					   float fVal = 0.0f;
@@ -319,7 +315,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   if (someMissing) {
 							   hadCutRanges = true;
 							   cutScanCount++;
-							   logger.debug("Found a cut scan " + (i + 1)
+							   logger.trace("Found a cut scan " + (i + 1)
 									   + ", last val: " + fVal);
 							   if ((prvScanWasCut) || (i == 0)) {
 								   if (i == 0) {
@@ -330,10 +326,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 							   } else {
 								   try {
 									   // We are using 2D ranges
-									   logger.debug("Adding Range: " + rangeOffset
+									   logger.trace("Adding Range: " + rangeOffset
 											   + ", " + i + ", 1");
 									   al.add(new Range(rangeOffset, i, 1));
-									   logger.debug("Adding Range: " + 1 + ", "
+									   logger.trace("Adding Range: " + 1 + ", "
 											   + (scanLength - 1) + ", 1");
 									   al.add(new Range(0, scanLength - 1, 1));
 								   } catch (Exception e) {
@@ -359,7 +355,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   al.add(new Range(rangeOffset, rangeOffset + shape[0]
 								   - 1, 1));
 						   al.add(new Range(0, scanLength - 1, 1));
-						   logger.debug("Adding closing cut Range, offs: "
+						   logger.trace("Adding closing cut Range, offs: "
 								   + rangeOffset + ", len: " + rangeCount);
 					   }
 
@@ -375,7 +371,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   }
 			   } else {
 				   granCutScans.put(granuleIndex, new Integer(0));
-				   logger.debug("is NOT an EDR, no need to check for fill scans...");
 			   }
 		   }
 	   }
@@ -393,19 +388,17 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   while (varIter.hasNext()) {
 			   Variable var = (Variable) varIter.next();
 			   
-			   logger.debug("Working on variable: " + var.getFullName());
-			   
 			   boolean foundProduct = false;
 			   for (String s : products) {
 				   if (s.contains(var.getFullName())) {
-					   logger.debug("Valid product: " + var.getFullName());
+					   logger.trace("Valid product: " + var.getFullName());
 					   foundProduct = true;
 					   break;
 				   }
 			   }
 			   
 			   if (! foundProduct) {
-				   logger.debug("Skipping variable: " + var.getFullName());
+				   logger.trace("Skipping variable: " + var.getFullName());
 				   continue;
 			   }
 			   
@@ -418,7 +411,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   // bypass any less-than-2D variables for now...
 			   if (rank < 2) {
-				   logger.debug("Skipping 1D variable: " + var.getFullName());
 				   continue;
 			   }
 			   
@@ -516,7 +508,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 	    
 	   // typical sanity check
 	   if (v == null) return index;
-	   logger.debug("getInTrackIndex called for variable: " + v.getShortName());
 	   
 	   // lat/lon vars have different dimension names
 	   if ((v.getFullName().endsWith("Latitude")) || 
@@ -538,7 +529,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   // TJJ XXX it does get trickier, and we will have to expand this
 	   // to deal with for example CrIS data...
 	   int numDimensions = dList.size();
-	   logger.debug("Number of dimensions: " + numDimensions);
 	   
 	   // the only 4D data right now is CrIS, return 0
 	   if (numDimensions == 4) return 0;
@@ -556,7 +546,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   if (is2D) {
 			   // XXX TJJ - if empty name, in-track index is 0
 			   if ((dList.get(i).getShortName() == null) || (dList.get(i).getShortName().isEmpty())) {
-				   logger.debug("Empty dimension name!, assuming in-track dim is 0");
+				   logger.trace("Empty dimension name!, assuming in-track dim is 0");
 				   return 0;
 			   }
 			   if (dList.get(i).getShortName().equals(inTrackName)) {
@@ -624,9 +614,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   break;
 		   }
 	   }
-	   logger.debug("loGranuleId: " + loGranuleId);
-	   logger.debug("hiGranuleId: " + hiGranuleId);
-	   
 
 	   // next, we break out the offsets, counts, and strides for each granule
 	   int granuleSpan = hiGranuleId - loGranuleId + 1;
@@ -742,7 +729,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   int [] newShape = var.getShape();
 					   int cutScans = granCutScans.get(granuleIdx);
 					   newShape[0] = newShape[0] - cutScans;
-					   logger.debug("New Shape: " + newShape[0] + ", " + newShape[1]);
+					   logger.trace("New Shape: " + newShape[0] + ", " + newShape[1]);
 					   Array single = Array.factory(var.getDataType(), newShape);
 
 					   // now read variable chunk data into single contiguous array
@@ -751,7 +738,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   Array data = v.read();
 						   int [] tmpShape = v.getShape();
 						   for (int tIdx = 0; tIdx < tmpShape.length; tIdx++) {
-							   logger.debug("Shape[" + tIdx + "]: " + tmpShape[tIdx]);
+							   logger.trace("Shape[" + tIdx + "]: " + tmpShape[tIdx]);
 						   }
 						   IndexIterator ii = data.getIndexIterator();
 						   while (ii.hasNext()) {
