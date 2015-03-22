@@ -33,10 +33,12 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import static edu.wisc.ssec.mcidasv.util.Contract.checkArg;
 
 import java.io.IOException;
+
 import java.net.Socket;
 import java.net.UnknownHostException;
+
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,8 +74,8 @@ public class RemoteAddeEntry implements AddeEntry {
     public static final int ADDE_PORT = 112;
 
     /** 
-     * {@link java.lang.String#format(String, Object...)}-friendly string for 
-     * building a request to read a server's PUBLIC.SRV.
+     * {@link String#format(String, Object...)}-friendly string for building a
+     * request to read a server's {@literal "PUBLIC.SRV"}.
      */
     private static final String publicSrvFormat = "adde://%s/text?compress=gzip&port=112&debug=%s&version=1&user=%s&proj=%s&file=PUBLIC.SRV";
 
@@ -86,12 +88,8 @@ public class RemoteAddeEntry implements AddeEntry {
     /** The {@literal "dataset"} of this entry. */
     private final String group;
 
-    /** */
+    /** Whether or not this entry will persist between McIDAS-V sessions. */
     private final boolean isTemporary;
-
-//    /** Err... */
-//    // TODO(jon): wait, what is this?
-//    private final String description;
 
     /** This entry's type. */
     private EntryType entryType;
@@ -138,39 +136,39 @@ public class RemoteAddeEntry implements AddeEntry {
     /**
      * @return {@link #address}
      */
-    public String getAddress() {
+    @Override public String getAddress() {
         return address;
     }
 
     /**
      * @return {@link #group}
      */
-    public String getGroup() {
+    @Override public String getGroup() {
         return group;
     }
 
-    public String getName() {
+    @Override public String getName() {
         return "$";
     }
 
     /**
      * @return {@link #account}
      */
-    public AddeAccount getAccount() {
+    @Override public AddeAccount getAccount() {
         return account;
     }
 
     /**
      * @return {@link #entryType}
      */
-    public EntryType getEntryType() {
+    @Override public EntryType getEntryType() {
         return entryType;
     }
 
     /**
      * @return {@link #entryValidity}
      */
-    public EntryValidity getEntryValidity() {
+    @Override public EntryValidity getEntryValidity() {
         return entryValidity;
     }
 
@@ -181,33 +179,33 @@ public class RemoteAddeEntry implements AddeEntry {
     /**
      * @return {@link #entrySource}
      */
-    public EntrySource getEntrySource() {
+    @Override public EntrySource getEntrySource() {
         return entrySource;
     }
 
     /**
      * @return {@link #entryStatus}
      */
-    public EntryStatus getEntryStatus() {
+    @Override public EntryStatus getEntryStatus() {
         return entryStatus;
     }
 
-    public void setEntryStatus(EntryStatus newStatus) {
+    @Override public void setEntryStatus(EntryStatus newStatus) {
         entryStatus = newStatus;
     }
 
-    public String getEntryAlias() {
+    @Override public String getEntryAlias() {
         return entryAlias;
     }
 
-    public void setEntryAlias(final String newAlias) {
+    @Override public void setEntryAlias(final String newAlias) {
         if (newAlias == null) {
             throw new NullPointerException("Null aliases are not allowable.");
         }
         entryAlias = newAlias;
     }
 
-    public boolean isEntryTemporary() {
+    @Override public boolean isEntryTemporary() {
         return isTemporary;
     }
 
@@ -217,7 +215,7 @@ public class RemoteAddeEntry implements AddeEntry {
      * 
      * @return Alternate {@code String} representation of this entry.
      */
-    public String getEntryText() {
+    @Override public String getEntryText() {
         return address+'/'+group;
     }
 
@@ -303,7 +301,7 @@ public class RemoteAddeEntry implements AddeEntry {
         return result;
     }
 
-    public String asStringId() {
+    @Override public String asStringId() {
         if (asStringId == null) {
             asStringId = address+'!'+group+'!'+entryType.name();
         }
@@ -329,10 +327,13 @@ public class RemoteAddeEntry implements AddeEntry {
      * e = RemoteAddeEntry.Builder("adde.cool.com", "RTIMAGES").account("user", "1337").type(EntryType.IMAGE).build()
      * e = RemoteAddeEntry.Builder("a.c.com", "RTIMGS").validity(EntryValidity.VERIFIED).build();
      * </pre>
-     * 
      */
     public static class Builder {
+
+        /** Hostname or IP of the resulting entry. */
         private final String address;
+
+        /** ADDE group to use for the resulting entry. */
         private final String group;
 
         /** 
@@ -489,9 +490,10 @@ public class RemoteAddeEntry implements AddeEntry {
         }
 
         /**
+         * Optionally control whether or not the resulting entry is
+         * {@literal "temporary"}.
          * 
-         * 
-         * @param temporary
+         * @param temporary Whether or not the entry is temporary.
          * 
          * @return Current {@literal "builder"} for an ADDE entry.
          */
@@ -501,9 +503,10 @@ public class RemoteAddeEntry implements AddeEntry {
         }
 
         /**
+         * Optionally sets the {@literal "alias"} that can be used to refer to
+         * the resulting entry.
          * 
-         * 
-         * @param alias
+         * @param alias Alias for the resulting entry.
          * 
          * @return Current {@literal "builder"} for an ADDE entry.
          */
@@ -524,12 +527,12 @@ public class RemoteAddeEntry implements AddeEntry {
     }
 
     /**
-     * Tries to connect to a given {@link RemoteAddeEntry} and read the list
+     * Tries to connect to a given {@code RemoteAddeEntry} and read the list
      * of ADDE {@literal "groups"} available to the public.
      * 
      * @param entry The {@code RemoteAddeEntry} to query. Cannot be {@code null}.
      * 
-     * @return The {@link Set} of public groups on {@code entry}.
+     * @return {@link Set} of public groups on {@code entry}.
      * 
      * @throws NullPointerException if {@code entry} is {@code null}.
      * @throws IllegalArgumentException if the server address is an empty 
@@ -560,11 +563,11 @@ public class RemoteAddeEntry implements AddeEntry {
             for (String line : (List<String>)reader.getLinesOfText()) {
                 String[] pairs = line.trim().split(",");
                 for (String pair : pairs) {
-                    if (pair == null || pair.isEmpty() || !pair.startsWith("N1")) {
+                    if ((pair == null) || pair.isEmpty() || !pair.startsWith("N1")) {
                         continue;
                     }
                     String[] keyval = pair.split("=");
-                    if (keyval.length != 2 || keyval[0].isEmpty() || keyval[1].isEmpty() || !keyval[0].equals("N1")) {
+                    if ((keyval.length != 2) || keyval[0].isEmpty() || keyval[1].isEmpty() || !keyval[0].equals("N1")) {
                         continue;
                     }
                     groups.add(keyval[1]);
@@ -587,31 +590,30 @@ public class RemoteAddeEntry implements AddeEntry {
     public static boolean checkHost(final RemoteAddeEntry entry) {
         requireNonNull(entry, "entry cannot be null");
         String host = entry.getAddress();
-        if (host.startsWith("localhost:")) {
-            return true;
-        }
-
-        Socket socket = null;
         boolean connected = false;
-        try { 
-            socket = new Socket(host, ADDE_PORT);
+        if (host.startsWith("localhost:")) {
             connected = true;
-            socket.close();
-        } catch (UnknownHostException e) {
-            logger.debug("can't resolve IP for '{}'", entry.getAddress());
-            connected = false;
-        } catch (IOException e) {
-            logger.debug("IO problem while connecting to '{}': {}", entry.getAddress(), e.getMessage());
-            connected = false;
+        } else {
+            try (Socket socket = new Socket(host, ADDE_PORT)) {
+                connected = true;
+                // need to explicitly do the close.
+                socket.close();
+            } catch (UnknownHostException e) {
+                logger.debug("can't resolve IP for '{}'", entry.getAddress());
+                connected = false;
+            } catch (IOException e) {
+                logger.debug("IO problem while connecting to '{}': {}", entry.getAddress(), e.getMessage());
+                connected = false;
+            }
         }
-        logger.debug("host={} result={}", entry.getAddress(), connected);
+        logger.trace("host={} result={}", entry.getAddress(), connected);
         return connected;
     }
 
     /**
-     * Attempts to verify whether or not the information in a given 
-     * {@link RemoteAddeEntry} represents a valid remote ADDE server. If not,
-     * the method tries to determine which parts of the entry are invalid.
+     * Attempts to verify whether or not the information in a given
+     * RemoteAddeEntry represents a valid remote ADDE server. If not, the
+     * method tries to determine which parts of the entry are invalid.
      * 
      * <p>Note that this method uses {@code checkHost(RemoteAddeEntry)} to 
      * verify that the server is listening. To forego the check, simply call
@@ -632,8 +634,8 @@ public class RemoteAddeEntry implements AddeEntry {
 
     /**
      * Attempts to verify whether or not the information in a given 
-     * {@link RemoteAddeEntry} represents a valid remote ADDE server. If not,
-     * the method tries to determine which parts of the entry are invalid.
+     * RemoteAddeEntry represents a valid remote ADDE server. If not, the
+     * method tries to determine which parts of the entry are invalid.
      * 
      * @param checkHost {@code true} tries to connect to the remote ADDE server
      * before doing anything else.
@@ -683,10 +685,10 @@ public class RemoteAddeEntry implements AddeEntry {
                 entry.entryType = AddeEntry.EntryType.RADAR;
             }
             return AddeStatus.OK;
+        }
         // TJJ - see Inq 1975, needed to add this hack because it seems
         // imagery always technically validates as radar.
-        } else if (! type.equals("RADAR")) {
-      
+        else if (!"RADAR".equals(type)) {
             // try dsinfo
             String addeUrl = "adde://"+server+"/datasetinfo?group="+entry.getGroup()+"&type="+type+"&user="+username+"&proj="+project+"&compress=gzip&port=112&debug=true&version=1";
             logger.trace("dsinfo url: '{}'", addeUrl);
@@ -699,32 +701,87 @@ public class RemoteAddeEntry implements AddeEntry {
             } catch (AddeURLException e) {
                 logger.trace("dsinfo failed for url: '{}'", addeUrl);
             }
-
             return AddeStatus.BAD_GROUP;
-            
+        }
         // at this point can only be a bad group
-        } else {
-        	return AddeStatus.BAD_GROUP;
+        else {
+            return AddeStatus.BAD_GROUP;
         }
     }
 
+    /**
+     * Determine the types of ADDE data within the given {@code group} on
+     * {@code host}. This method uses the {@literal "default"} ADDE user name
+     * and project number.
+     *
+     * <p>Note: <b>parameters cannot be {@code null}.</b></p>
+     *
+     * @param host Host to check.
+     * @param group ADDE group.
+     *
+     * @return {@link EnumMap} that maps ADDE data type to whether or not it
+     * is available for the given {@code host} and {@code group}.
+     */
     public static Map<EntryType, AddeStatus> checkEntryTypes(final String host, final String group) {
         return checkEntryTypes(host, group, AddeEntry.DEFAULT_ACCOUNT.getUsername(), AddeEntry.DEFAULT_ACCOUNT.getProject());
     }
 
+    /**
+     * Determine the types of ADDE data within the given {@code group} on
+     * {@code host}.
+     *
+     * <p>Note: <b>parameters cannot be {@code null}.</b></p>
+     *
+     * @param host Host to check.
+     * @param group ADDE group.
+     * @param user ADDE user name.
+     * @param proj ADDE project number.
+     *
+     * @return {@link EnumMap} that maps ADDE data type to whether or not it
+     * is available for the given set of parameters.
+     *
+     * @see #checkEntry(boolean, RemoteAddeEntry)
+     */
     public static Map<EntryType, AddeStatus> checkEntryTypes(final String host, final String group, final String user, final String proj) {
-        Map<EntryType, AddeStatus> valid = new LinkedHashMap<>();
+        // current type count is six. doubling it to be safe.
+        Map<EntryType, AddeStatus> valid = new EnumMap<>(EntryType.class);
         RemoteAddeEntry entry = new Builder(host, group).account(user, proj).build();
         for (RemoteAddeEntry tmp : EntryTransforms.createEntriesFrom(entry)) {
-            valid.put(tmp.getEntryType(), checkEntry(true, tmp));
+            valid.put(tmp.entryType, checkEntry(true, tmp));
         }
         return valid;
     }
 
+    /**
+     * Attempts to determine the {@literal "public"} ADDE groups available on
+     * the given {@code host}.
+     *
+     * <p>Note: this method uses the {@literal "default"} ADDE user name and
+     * project number.</p>
+     *
+     *
+     * @param host Host from which public groups are to be read. Cannot be {@code null}.
+     *
+     * @return {@link Set} of the public groups on {@code host}. The
+     * {@code Set} will be empty if there are no groups.
+     */
     public static Set<String> readPublicGroups(final String host) {
         return readGroups(host, AddeEntry.DEFAULT_ACCOUNT.getUsername(), AddeEntry.DEFAULT_ACCOUNT.getProject());
     }
 
+    /**
+     * Attempts to determine which (if any) ADDE groups are available on the
+     * given {@code host}.
+     *
+     * <p>Note: <b>parameters cannot be {@code null}.</b></p>
+     *
+     * @param host Host from which public groups are to be read.
+     * @param user ADDE user name.
+     * @param proj ADDE project number.
+     *
+     * @return {@link Set} of the groups on {@code host}. The {@code Set} will
+     * be empty if there are no groups.
+     */
     public static Set<String> readGroups(final String host, final String user, final String proj) {
         RemoteAddeEntry entry = new Builder(host, "").account(user, proj).build();
         return readPublicGroups(entry);
