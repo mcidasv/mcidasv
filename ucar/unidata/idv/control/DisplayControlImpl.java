@@ -5329,11 +5329,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                                             this, "saveAsParameterDefaults"));
 
         }
-        items.addAll(GuiUtils.makeMenuItems(this, new String[][] {
-            { "Save Display as Favorite...", "saveAsFavorite", null,
-              "Save this display, without its data, as a favorite template" },
-            { "Save Display as Bundle...", "saveAsTemplate", null,
-              "Save this display, without its data, as a template" }
+        items.addAll(GuiUtils.makeMenuItems(this, new String[][]{
+            {"Save Display as Favorite...", "saveAsFavorite", null,
+                "Save this display, without its data, as a favorite template"},
+            {"Save Display as Bundle...", "saveAsTemplate", null,
+                "Save this display, without its data, as a template"}
             /*            { "Save Display State as Default", "saveAsPrototype", null,
               "Use the state of this display as the default for new displays of this type" },
             { "Clear Default", "clearPrototype", null,
@@ -6263,8 +6263,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         comps.add(cbx);
 
         methodNameToSettingsMap.put("setShowNoteText",
-                                    cbx = new JCheckBox("Show Note Text",
-                                        getShowNoteText()));
+            cbx = new JCheckBox("Show Note Text",
+                getShowNoteText()));
         comps.add(cbx);
 
 
@@ -6650,7 +6650,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             });
             items.add(mi);
             if (canDoProgressiveResolution()) {
-                JCheckBoxMenuItem menuItem = GuiUtils.makeCheckboxMenuItem(MapViewManager.PR_LABEL, this, "isProgressiveResolution", null);
+                final JCheckBoxMenuItem menuItem = GuiUtils.makeCheckboxMenuItem(MapViewManager.PR_LABEL, this, "isProgressiveResolution", null);
                 Boolean enableAdaptiveRez = getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false);
                 menuItem.setEnabled(enableAdaptiveRez);
                 if (!enableAdaptiveRez) {
@@ -6663,6 +6663,23 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 } else {
                     if (adaptiveRezOffItem != null) {
                         menuItem.setSelected(adaptiveRezOnItem.isSelected());
+                        menuItem.addActionListener(new ActionListener() {
+                            @Override public void actionPerformed(ActionEvent e) {
+                                boolean selected = menuItem.isSelected();
+                                setMatchDisplayRegion(selected);
+                                if (adaptiveRezOnItem != null && adaptiveRezOffItem != null) {
+                                    if (selected) {
+                                        adaptiveRezOnItem.setSelected(true);
+                                        adaptiveRezOffItem.setSelected(false);
+                                    } else {
+                                        adaptiveRezOnItem.setSelected(false);
+                                        adaptiveRezOffItem.setSelected(true);
+                                    }
+                                } else {
+                                    logger.warn("popup menu items are null! adaptiveRezOn==null: {}, adaptiveRezOffItem==null: {}", adaptiveRezOnItem == null,  adaptiveRezOffItem == null);
+                                }
+                            }
+                        });
                     }
                 }
                 items.add(menuItem);
@@ -6676,6 +6693,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 //                    }
 //                });
                 items.add(menuItem);
+
             }
         }
 
