@@ -646,7 +646,7 @@ public class AddePointDataChooser extends AddeChooser {
                     tryWithoutSampling = false;
                     readTimesInner();
                     // Try again, this time not sampling by LAT/LON
-                    if (!gotObs) {
+                    if (haveDescriptorSelected() && !gotObs) {
                         tryWithoutSampling = true;
                         readTimesInner();
                     }
