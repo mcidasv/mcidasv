@@ -419,7 +419,7 @@ public class AddeImageChooser extends AddeChooser implements
             if (taskOk(readTimesTask)) {
                 setStatus("Reading available times from server");
             }
-        } else if (getDoAbsoluteTimes() && !haveTimeSelected()) {
+        } else if ((getState() == STATE_CONNECTED) && getDoAbsoluteTimes() && !haveTimeSelected() && haveDescriptorSelected()) {
             setStatus(MSG_TIMES);
         }
         enableWidgets();
@@ -1342,10 +1342,14 @@ public class AddeImageChooser extends AddeChooser implements
             }
             setState(STATE_CONNECTED);
         } catch (McIDASException e) {
-            logger.warn("Exception from loadImages", e);
+            logger.warn("Exception while reading times from server", e);
             stopTask(task);
             readTimesTask = null;
             handleConnectionError(e);
+            // you want this step because readTimes() will call updateStatus(),
+            // and since we already have a server and dataset, all the user needs
+            // to do is select an image type (descriptor).
+            setState(STATE_CONNECTED);
         }
     }
 
@@ -2519,12 +2523,14 @@ public class AddeImageChooser extends AddeChooser implements
      * @param e Exception to be handled.
      */
     @Override protected void handleConnectionError(Exception e) {
-        if (e != null && e.getMessage() != null) {
+        if ((e != null) && (e.getMessage() != null)) {
             Throwable cause = e.getCause();
-            String msg = cause.getMessage().toLowerCase();
-            if ((cause instanceof AddeURLException) && msg.contains("must be used with archived datasets")) {
-                getArchiveDay();
-                return;
+            if (cause.getMessage() != null) {
+                String msg = cause.getMessage().toLowerCase();
+                if ((cause instanceof AddeURLException) && msg.contains("must be used with archived datasets")) {
+                    getArchiveDay();
+                    return;
+                }
             }
         }
         super.handleConnectionError(e);

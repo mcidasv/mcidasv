@@ -63,6 +63,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.GroupLayout;
@@ -816,29 +817,50 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         connectToServer();
         handleUpdate();
     }
-    
+
+    /**
+     * Show the user a descriptive error message in a dialog (if in foreground
+     * mode) depending on the state of {@code e}.
+     *
+     * @param e Exception to handle. Cannot be {@code null}.
+     *
+     * @throws NullPointerException if {@code e} is {@code null}.
+     */
     @Override protected void handleConnectionError(Exception e) {
-        logger.error("handling connection error", e);
-        if (e != null && e.getMessage() != null) {
+        Objects.requireNonNull(e, "Cannot handle null exception");
+        logger.error("attempting to handle connection error", e);
+
+        boolean isError = true;
+        if (e.getMessage() != null) {
             String msg = e.getMessage();
             int msgPos = msg.indexOf("AddeURLException:");
-            if (msgPos >= 0 && msg.length() > 18) {
+            if ((msgPos >= 0) && (msg.length() > 18)) {
                 msg = msg.substring(msgPos + 18);
-                setState(STATE_UNCONNECTED);
-                setHaveData(false);
-                resetDescriptorBox();
                 GuiUtils.showDialog("ADDE Error", new JLabel(msg));
-                return;
-            }
-            if (msg.indexOf("Connecting to server:localhost:") >= 0) {
-                setState(STATE_UNCONNECTED);
-                setHaveData(false);
-                resetDescriptorBox();
+            } else if (msg.indexOf("Connecting to server:localhost:") >= 0) {
                 GuiUtils.showDialog("ADDE Error", new JLabel("Local server is not responding"));
-                return;
+            } else if (msg.toLowerCase().contains("unknownhostexception")) {
+                LogUtil.userErrorMessage("Could not access server: " + getServer());
+            } else if ((e instanceof AddeURLException) || msg.toLowerCase().contains("server unable to resolve this dataset")) {
+                handleUnknownDataSetError();
+            } else if ((msg.toLowerCase().contains("no images satisfy"))
+                    || (msg.toLowerCase().contains("error generating list of files")))
+            {
+                LogUtil.userErrorMessage("No data available for the selection");
+                isError = false;
+            } else {
+                LogUtil.logException("Error connecting to: " + getServer(), e);
             }
+        } else {
+            LogUtil.userErrorMessage("Encountered a problem (server: '"+getServer()+"'):\n"+e);
         }
-        super.handleConnectionError(e);
+
+        if (isError && (getState() == STATE_CONNECTED)) {
+            setHaveData(false);
+            resetDescriptorBox();
+            updateStatus();
+            setState(STATE_UNCONNECTED);
+        }
     }
 
     /**
