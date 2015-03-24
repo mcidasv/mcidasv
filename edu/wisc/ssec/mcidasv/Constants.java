@@ -377,4 +377,7 @@ public interface Constants extends IdvConstants {
     
     /** Default user directory name */
     public static final String USER_DIRECTORY_NAME = "McIDAS-V";
+
+    /** Tooltip for adaptive resolution menu items. */
+    public static final String TOOLTIP_PROGRESSIVE_RESOLUTION = "This feature can be turned on or off in the \"Display Window\" section of the User Preferences.";
 }

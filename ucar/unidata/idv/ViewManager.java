@@ -29,6 +29,7 @@
 package ucar.unidata.idv;
 
 /**** BEGIN MCV ADDONS ****/
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
@@ -975,7 +976,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
             AnimationSetInfo asi = getAnimationInfo().getAnimationSetInfo();
             if (asi.getActive() && asi.getIsTimeDriver()) {
                 DateTime[] times = getAnimationTimes();
-                return (List<DateTime>) Misc.toList(times);
+                List<DateTime> timesList;
+                if (times == null) {
+                    timesList = Collections.emptyList();
+                } else {
+                    timesList = (List<DateTime>) Misc.toList(times);
+                }
+                return timesList;
             }
         }
         for (DisplayControl control : (List<DisplayControl>) getControls()) {
@@ -1400,6 +1407,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 if (!status) {
                     cbx.setSelected(false);
                 }
+                cbx.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
             }
             propertiesMap.put(cbx, bp);
             props.add(GuiUtils.left(cbx));

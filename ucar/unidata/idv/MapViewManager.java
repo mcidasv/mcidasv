@@ -29,6 +29,7 @@
 package ucar.unidata.idv;
 
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -3254,6 +3255,7 @@ public class MapViewManager extends NavigatedViewManager {
         if (!status) {
             progRezCBMI.setSelected(false);
         }
+        progRezCBMI.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
 
         createCBMI(projMenu, PREF_SHAREVIEWS);
         projMenu.add(GuiUtils.makeMenuItem("Set Share Group", this,

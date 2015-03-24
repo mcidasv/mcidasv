@@ -36,10 +36,12 @@ import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.unidata.data.*;
 import ucar.unidata.geoloc.*;
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.NavigatedViewManager;
 import ucar.unidata.idv.VMManager;
@@ -2292,7 +2294,8 @@ public class AddeImageDataSelection {
             labelsPanel.setLayout(new BoxLayout(labelsPanel, 2));
 //            labelsPanel.add(getRegionsList());
 
-            enableAdaptiveRezBox = new JCheckBox("Adaptive Resolution", getIsProgressiveResolution());
+            enableAdaptiveRezBox = new JCheckBox("Adaptive Resolution (Under Development)", getIsProgressiveResolution());
+            enableAdaptiveRezBox.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
             enableAdaptiveRezBox.addActionListener(new ActionListener() {
                 @Override public void actionPerformed(ActionEvent e) {
                     boolean status = enableAdaptiveRezBox.isSelected();
@@ -2305,6 +2308,11 @@ public class AddeImageDataSelection {
 //                    logger.trace("status='{}'", getRegionOptions());
                 }
             });
+            IdvObjectStore store = vmManager.getIdv().getStore();
+            if (store != null) {
+                Boolean enableAdaptiveRez = store.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false);
+                enableAdaptiveRezBox.setEnabled(enableAdaptiveRez);
+            }
 
             JToolBar navToolBar = display.getNavigatedPanel().getNavToolBar();
             navToolBar.add(activeViewButton, 0);

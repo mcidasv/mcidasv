@@ -6653,6 +6653,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 final JCheckBoxMenuItem menuItem = GuiUtils.makeCheckboxMenuItem(MapViewManager.PR_LABEL, this, "isProgressiveResolution", null);
                 Boolean enableAdaptiveRez = getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false);
                 menuItem.setEnabled(enableAdaptiveRez);
+                menuItem.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
                 if (!enableAdaptiveRez) {
                     // not so sure about this choice. without it, when the user
                     // *does not* have the adaptive rez preference enabled, the
@@ -6692,7 +6693,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 //                        updateMiscButton();
 //                    }
 //                });
-                items.add(menuItem);
+//                items.add(menuItem);
 
             }
         }
