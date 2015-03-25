@@ -34,11 +34,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
-
 /**
- * 
- * 
  *
  */
 public class LocalAddeEntry implements AddeEntry {
@@ -53,13 +49,13 @@ public class LocalAddeEntry implements AddeEntry {
     /** Represents a {@literal "bad"} collection of local ADDE entries. */
     public static final List<LocalAddeEntry> INVALID_ENTRIES = Collections.singletonList(INVALID_ENTRY);
 
-    /** */
+    /** This prefix is Cygwin abstraction that allows access to arbitrary drives. */
     private static final String CYGWIN_PREFIX = "/cygdrive/";
 
-    /** */
+    /** Length of {@link #CYGWIN_PREFIX}. */
     private static final int CYGWIN_PREFIX_LEN = CYGWIN_PREFIX.length();
 
-    /** */
+    /** Status of this entry. */
     private EntryStatus entryStatus = EntryStatus.INVALID;
 
     // RESOLV.SRV FIELDS
@@ -91,10 +87,10 @@ public class LocalAddeEntry implements AddeEntry {
 
     private String asStringId;
 
-    /** */
+    /** Whether or not this entry is temporary. */
     private final boolean isTemporary;
 
-    /** */
+    /** Allows the user to refer to this entry with an arbitrary name. */
     private String entryAlias;
 
     public enum ServerName {

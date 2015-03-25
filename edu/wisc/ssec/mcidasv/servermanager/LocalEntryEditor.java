@@ -65,12 +65,13 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 /**
- * A dialog that allows the user to define or modify {@link LocalAddeEntry}s.
+ * A dialog that allows the user to define or modify
+ * {@link LocalAddeEntry LocalAddeEntries}.
  */
 @SuppressWarnings("serial")
 public class LocalEntryEditor extends JDialog {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalEntryEditor.class);
+//    private static final Logger logger = LoggerFactory.getLogger(LocalEntryEditor.class);
 
     /** Property ID for the last directory selected. */
     private static final String PROP_LAST_PATH = "mcv.localdata.lastpath";
