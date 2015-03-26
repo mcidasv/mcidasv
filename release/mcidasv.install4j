@@ -276,7 +276,7 @@
           </screen>
         </startup>
         <screens>
-          <screen name="Java version warning" id="7945" customizedId="" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+          <screen name="Java version warning" id="7945" customizedId="" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="false" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
             <serializedBean>
               <java class="java.beans.XMLDecoder">
                 <object class="com.install4j.runtime.beans.screens.FormScreen">
