@@ -1345,7 +1345,7 @@ public class AddeImageChooser extends AddeChooser implements
             logger.warn("Exception while reading times from server", e);
             stopTask(task);
             readTimesTask = null;
-            handleConnectionError(e);
+            handleConnectionError("\nError reading times", e);
             // you want this step because readTimes() will call updateStatus(),
             // and since we already have a server and dataset, all the user needs
             // to do is select an image type (descriptor).
