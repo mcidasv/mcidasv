@@ -1115,9 +1115,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 aid = new AddeImageDescriptor(this.source);
             } catch (Exception excp) {
                 msgFlag = true;
-                if (bandIdx > bandInfos.size()) {
+                if (bandIdx > (bandInfos.size() - 1)) {
+                	getIdv().showNormalCursor();
                     return false;
                 }
+                
                 bi = bandInfos.get(bandIdx);
                 logger.trace("replacing band: new={} from={}", bi.getBandNumber(), source);
 //                source = replaceKey(source, BAND_KEY, (Object)(bi.getBandNumber()));
@@ -2566,13 +2568,41 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         List<String> previewUrls = new ArrayList<String>(times);
 
         if (isRelative) {
-            int maxIndex = Integer.MIN_VALUE;
-            for (TwoFacedObject tfo : (List<TwoFacedObject>)getAllDateTimes()) {
-                int relativeIndex = ((Integer)tfo.getId()).intValue();
-                if (relativeIndex > maxIndex) {
-                    maxIndex = relativeIndex;
-                }
-            }
+        	
+        	// TJJ Mar 2015 - (1891, R14)
+        	// Iterate through list to determine relative position diffferent
+        	// if the objects are VisAD DateTime instead of TwoFacedObject
+        	
+        	boolean isTwoFaced = false;
+        	List<?> tmpList = getAllDateTimes();
+        	if ((tmpList != null) && (! tmpList.isEmpty())) {
+        		Object firstItem = tmpList.get(0);
+        		if (firstItem instanceof TwoFacedObject) isTwoFaced = true;
+        	}
+        	
+        	int maxIndex;
+			if (isTwoFaced) {
+				maxIndex = Integer.MIN_VALUE;
+				for (TwoFacedObject tfo : (List<TwoFacedObject>) getAllDateTimes()) {
+					int relativeIndex = ((Integer) tfo.getId()).intValue();
+					if (relativeIndex > maxIndex) {
+						maxIndex = relativeIndex;
+					}
+				}
+			} else {
+				maxIndex = Integer.MIN_VALUE;
+				int relativeIndex = 0;
+				double maxTime = Double.MIN_VALUE;
+				for (DateTime dt : (List<DateTime>) getAllDateTimes()) {
+					double d = dt.getValue();
+					if (d > maxTime) {
+						maxIndex = relativeIndex;
+						maxTime = d;
+					}
+					relativeIndex++;
+				}
+			}
+            
 //            TwoFacedObject tfo = (TwoFacedObject)this.getAllDateTimes().get(0);
             // negate maxIndex so we can get things like POS=0 or POS=-4
             maxIndex = 0 - maxIndex;
