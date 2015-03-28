@@ -214,7 +214,8 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          * Gets the McIDAS-X {@link ServerName} for this format.
          *
-         * @return Either the name of this format's McIDAS-X server, or {@link ServerName#INVALID}.
+         * @return Either the name of this format's McIDAS-X server, or
+         * {@link ServerName#INVALID}.
          */
         public ServerName getServerName() {
             return servName;
@@ -235,7 +236,8 @@ public class LocalAddeEntry implements AddeEntry {
          * Gets the type of data used by this format. This value dictates the
          * chooser(s) where this format can appear.
          *
-         * @return One of {@link EntryType}, or {@link EntryType#INVALID}.
+         * @return One of {@link AddeEntry.EntryType EntryType}, or
+         * {@link AddeEntry.EntryType#INVALID INVALID}.
          */
         public EntryType getType() {
             return type;
@@ -244,7 +246,8 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          * Gets the string used to filter out files that match this format.
          *
-         * @return Either a specialized {@code String}, like {@literal "*PRO*"} or {@literal "*"}.
+         * @return Either a specialized {@code String}, like {@literal "*PRO*"}
+         * or {@literal "*"}.
          */
         public String getFileFilter() {
             return fileFilter;
@@ -580,13 +583,13 @@ public class LocalAddeEntry implements AddeEntry {
         private String end = "999999";
 
         /**
-         * Defaults to {@link edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus#INVALID}.
+         * Defaults to {@link AddeEntry.EntryStatus#INVALID}.
          */
         private EntryStatus status = EntryStatus.INVALID;
 
         /**
          * Corresponds to RESOLV.SRV's {@literal "TYPE"} section.
-         * Defaults to {@link EntryType#IMAGE}.
+         * Defaults to {@link AddeEntry.EntryType#IMAGE IMAGE}.
          */
         private EntryType type = EntryType.IMAGE;
 
