@@ -372,7 +372,7 @@
             datasourceid="TLE" class="edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser" />
     </panel>
 
-    <panel title="Imagery - Compatibility Testing" category="Under Development" layout="border" tabtooltip="Please do not use this just yet.">
+    <panel title="Imagery - Satellite" category="Under Development" layout="border" tabtooltip="Please do not use this just yet.">
         <chooser id="chooser.image"
                  title="Image Chooser Compatibility Testing"
                  menutitle="Compatibility Testing"
