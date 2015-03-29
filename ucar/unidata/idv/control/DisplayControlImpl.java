@@ -6065,7 +6065,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         dsd.addPropertyValue(getExtraLabelTemplate(), "extraLabelTemplate",
                              "Extra Legend Labels", "Labels");
         dsd.addPropertyValue(getDisplayListTemplate(), "displayListTemplate",
-                             "Display Label", "Labels");
+                             "Layer Label", "Labels");
 
 
         if (displayUnit != null) {
