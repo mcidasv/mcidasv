@@ -374,7 +374,16 @@ public class AddePointDataChooser extends AddeChooser {
         
         return McVGuiUtils.makeLabeledComponent(relTimeIncLabel, relTimeIncBox, McVGuiUtils.Position.LEFT);
     }
-    
+
+    /**
+     * Overridden in McIDAS-V to get a nicer set of interval combo box options.
+     *
+     * @return {@code JPanel} containing a label and the interval combo box.
+     */
+    @Override protected JComponent getExtraRelativeTimeComponent() {
+        return getExtraTimeComponentRelative();
+    }
+
     /**
      * Get the time popup widget
      * 
