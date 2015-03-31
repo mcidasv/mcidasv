@@ -2274,7 +2274,7 @@ public class PluginManager extends IdvManager {
 
         String[] keys = {
             "/auxdata/ui/icons/add.png", "Install Plugin",
-            "/auxdata/ui/icons/plugin_delete.png", "Delete Plugin",
+            "/auxdata/ui/icons/plugin_delete.png", "Uninstall Plugin",
             "/auxdata/ui/icons/DocumentOpen16.png", "Send to Plugin Creator",
             "/auxdata/ui/icons/FindAgain16.gif", "View Contents"
         };
