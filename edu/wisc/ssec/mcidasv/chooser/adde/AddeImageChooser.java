@@ -2519,10 +2519,28 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Show the given error to the user. If it was an ADDE exception that was
      * a bad server error then print out a nice message.
-     * 
-     * @param e Exception to be handled.
+     *
+     * <p>Overridden in McIDAS-V to work with ADDE {@literal "archive"}
+     * servers (servers that require a {@literal "DAY="} parameter).</p>
+     *
+     * @param e Exception to be handled. Cannot be {@code null}.
      */
     @Override protected void handleConnectionError(Exception e) {
+        handleConnectionError("", e);
+    }
+
+    /**
+     * Show the given error to the user. If it was an ADDE exception that was
+     * a bad server error then print out a nice message.
+     *
+     * <p>Overridden in McIDAS-V to work with ADDE {@literal "archive"}
+     * servers (servers that require a {@literal "DAY="} parameter).</p>
+     * 
+     * @param details Details about the context of {@code e}. {@code null}
+     * will be treated as an empty {@code String}.
+     * @param e Exception to be handled. Cannot be {@code null}.
+     */
+    @Override protected void handleConnectionError(String details, Exception e) {
         if ((e != null) && (e.getMessage() != null)) {
             Throwable cause = e.getCause();
             if (cause.getMessage() != null) {
@@ -2533,7 +2551,7 @@ public class AddeImageChooser extends AddeChooser implements
                 }
             }
         }
-        super.handleConnectionError(e);
+        super.handleConnectionError(details, e);
     }
 
     /**
