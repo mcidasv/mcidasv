@@ -1245,8 +1245,11 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
 
         doInitialUpdateLegendAndList();
-
-
+        
+        if (matchDisplayRegion && !getShoulDoProgressiveResolution()) {
+            matchDisplayRegion = false;
+        }
+        updateMiscButton();
     }
 
 
@@ -11917,7 +11920,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             if (matchDisplayRegion) {
                 adaptiveRezOnItem.setSelected(true);
             } else {
-                adaptiveRezOffItem.setSelected(false);
+                adaptiveRezOffItem.setSelected(true);
             }
         }
     }
