@@ -65,17 +65,23 @@ associated with it.
     <!-- or Web Start JNLP file-->
   <li class=propertylistitem><strong><a name="defaultlayout" id="defaultlayout"></a>
     Default Layout -</strong> Allows
-    for managing the default layout of McIDAS-V. The default layout saves the
-    window placement and the number of tabs and panels.</li>
+    for managing the default layout of McIDAS-V. See a list of the display settings stored in the default layout below.</li>
     <ul class=propertylist>
       <li class=propertylistitem><strong>Save -</strong> Saves the current layout as the default layout. This creates a layout.mcv file in the McIDAS-V directory.</li>
       <li class=propertylistitem><strong>Remove -</strong> Removes the currently saved default layout.</li>
+      <li class=propertylistitem>Below is a list of the items contained in the default layout:</li>
+      <ul class="propertylist">
+      <li class="propertylistitem">All items in every tab of the <a href="PropertiesDialog.html">Properties dialog</a> of the panels.</li>
+      <li class="propertylistitem">The projection used in the panels.</li>
+      <li class="propertylistitem">Rotation and zoom level in the panels.</li>
+      <li class="propertylistitem">Panel and tab names.</li>
+      <li class="propertylistitem">Main Display window location, size, and tab/panel configuration.</li>
+      <li class="propertylistitem">Data Explorer window location and size.</li>
+      </ul>
 <li class=propertylistitem>Note: Saving the default layout does not affect the maps displayed in
       each panel or the data loaded at the beginning of each McIDAS-V session.
       Map defaults can be set in the <strong>Layer Controls</strong> tab of the Data Explorer in the <a href="../controls/MapDisplayControl.html">Map Controls</a>. To change map defaults, use the <strong>File-&gt;Default Maps-&gt;Save as the Default Map
-      Set</strong> menu item. Change the default projection in the <a href="../tools/preferences/DisplayWindowPreferences.html"><strong>Display
-      Window</strong></a> tab of the User Preferences window, or automatically load a <a href="../Bundles.html#favorites">Favorite bundle</a> by selecting
-      a <a href="../tools/preferences/AvailableDisplaysPreferences.html#defaultbundle">default bundle</a> in the <strong>Defaults</strong> panel of the <strong>Advanced</strong> tab of the User Preferences window.</li>
+      Set</strong> menu item. To load data automatically, set a <a href="http://www.ssec.wisc.edu/mcidas/doc/mcv_guide/working/tools/preferences/AdvancedPreferences.html#defaultbundle">default bundle</a> by selecting a <a href="http://www.ssec.wisc.edu/mcidas/doc/mcv_guide/working/Bundles.html#favorites">Favorite bundle</a> in the <strong>Defaults</strong> panel of the <strong>Advanced</strong> tab of the User Preferences window.</li>
     </ul>
   <li class=propertylistitem><strong>Exit -</strong> Exits McIDAS-V.</li>
 </ul>
