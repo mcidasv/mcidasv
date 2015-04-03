@@ -316,11 +316,11 @@ public class OptionMaster {
         final Collection<OptionPlatform> platforms) 
     {
         if (platforms == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("must specify platforms");
         }
         Collection<Option> allOptions = getAllOptions();
         List<Option> filteredOptions = 
-            new ArrayList<Option>(allOptions.size());
+            new ArrayList<>(allOptions.size());
         for (Option option : allOptions) {
             if (platforms.contains(option.getOptionPlatform())) {
                 filteredOptions.add(option);
@@ -340,11 +340,11 @@ public class OptionMaster {
      */
     public List<Option> optionsByType(final Collection<Type> types) {
         if (types == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("must specify types");
         }
         Collection<Option> allOptions = getAllOptions();
         List<Option> filteredOptions = 
-            new ArrayList<Option>(allOptions.size());
+            new ArrayList<>(allOptions.size());
         for (Option option : allOptions) {
             if (types.contains(option.getOptionType())) {
                 filteredOptions.add(option);
@@ -366,11 +366,11 @@ public class OptionMaster {
         final Collection<Visibility> visibilities) 
     {
         if (visibilities == null) {
-            throw new NullPointerException();
+            throw new NullPointerException("must specify visibilities");
         }
         Collection<Option> allOptions = getAllOptions();
         List<Option> filteredOptions = 
-            new ArrayList<Option>(allOptions.size());
+            new ArrayList<>(allOptions.size());
         for (Option option : allOptions) {
             if (visibilities.contains(option.getOptionVisibility())) {
                 filteredOptions.add(option);
@@ -448,7 +448,7 @@ public class OptionMaster {
         for (Object[] arrayOption : blahblah) {
             Option option = getOption((String)arrayOption[0]);
             OptionPlatform platform = option.getOptionPlatform();
-            if (platform == OptionPlatform.ALL || platform == currentPlatform) {
+            if ((platform == OptionPlatform.ALL) || (platform == currentPlatform)) {
                 contents.append(option.toPrefsFormat()).append(newLine);
             }
         }

@@ -173,7 +173,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     }
     
     /**
-     * Figures out the type of platform. Queries the &quot;os.name&quot; 
+     * Figures out the type of platform. Queries the {@literal "os.name"}
      * system property to determine the platform type.
      * 
      * @return {@link Platform#UNIXLIKE} or {@link Platform#WINDOWS}.
@@ -183,11 +183,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         if (os == null) {
             throw new RuntimeException();
         }
-        if (os.startsWith("Windows")) {
-            return Platform.WINDOWS;
-        } else {
-            return Platform.UNIXLIKE;
-        }
+        return os.startsWith("Windows") ? Platform.WINDOWS : Platform.UNIXLIKE;
     }
     
     /** 
