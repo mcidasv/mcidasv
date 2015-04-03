@@ -41,9 +41,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -54,38 +57,49 @@ import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
 
-public class DirectoryOption extends AbstractOption {
+/**
+ * Represents a startup option that should be selected from the contents of a
+ * given directory. The visual representation of this class is a tree.
+ */
+public final class DirectoryOption extends AbstractOption {
+
+    /** Selected tree node. Value may be {@code null}. */
     private DefaultMutableTreeNode selected = null;
-    
+
+    /** Current option value. Empty {@code String} signifies no selection. */
     private String value = "";
-    
+
+    /** Default value of this option. */
     private final String defaultValue;
-    
+
     public DirectoryOption(final String id, final String label, final String defaultValue, final OptionPlatform optionPlatform, final Visibility optionVisibility) {
         super(id, label, Type.DIRTREE, optionPlatform, optionVisibility);
         this.defaultValue = defaultValue;
         setValue(defaultValue);
     }
-    
+
     private void exploreDirectory(final String directory, final DefaultMutableTreeNode parent) {
         assert directory != null : "Cannot traverse a null directory";
-        
+
         File dir = new File(directory);
         assert dir.exists() : "Cannot traverse a directory that does not exist";
-        
-        for (File f : dir.listFiles()) {
+
+        File[] files = dir.listFiles();
+        assert files != null;
+        for (File f : files) {
             DefaultMutableTreeNode current = new DefaultMutableTreeNode(f);
             if (f.isDirectory()) {
                 parent.add(current);
                 exploreDirectory(f.getPath(), current);
-            } else if (ArgumentManager.isBundle(f.getPath())){
+            } else if (ArgumentManager.isBundle(f.getPath())) {
                 parent.add(current);
-                if (f.getPath().equals(getUnquotedValue()))
+                if (f.getPath().equals(getUnquotedValue())) {
                     selected = current;
+                }
             }
         }
     }
-    
+
     private DefaultMutableTreeNode getRootNode(final String path) {
         File bundleDir = new File(path);
         if (bundleDir.isDirectory()) {
@@ -94,7 +108,7 @@ public class DirectoryOption extends AbstractOption {
         }
         return null;
     }
-    
+
     private void useSelectedTreeValue(final JTree tree) {
         assert tree != null : "cannot use a null JTree";
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
@@ -110,26 +124,25 @@ public class DirectoryOption extends AbstractOption {
         tree.setSelectionPath(nodePath);
         tree.scrollPathToVisible(nodePath);
     }
-    
-    public JPanel getComponent() {
+
+    @Override public JPanel getComponent() {
         
         JPanel panel = new JPanel(new BorderLayout());
         
-        String path = StartupManager.getInstance().getPlatform().getUserBundles();
-        DefaultMutableTreeNode root = getRootNode(path);
+        final String path = StartupManager.getInstance().getPlatform().getUserBundles();
+        final DefaultMutableTreeNode root = getRootNode(path);
         if (root == null) {
             return panel;
         }
         
         final JTree tree = new JTree(root);
         tree.addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(final TreeSelectionEvent e) {
+            @Override public void valueChanged(final TreeSelectionEvent e) {
                 useSelectedTreeValue(tree);
             }
         });
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         JScrollPane scroller = new JScrollPane(tree);
-        exploreDirectory(path, root);
         
         ToolTipManager.sharedInstance().registerComponent(tree);
         tree.setCellRenderer(new TreeCellRenderer());
@@ -144,33 +157,52 @@ public class DirectoryOption extends AbstractOption {
         
         final JCheckBox enabled = new JCheckBox("Specify default bundle:", true);
         enabled.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
+            @Override public void actionPerformed(final ActionEvent e) {
                 tree.setEnabled(enabled.isSelected());
-                if (!tree.isEnabled()) {
-                    setValue(defaultValue);
-                } else {
+                if (tree.isEnabled()) {
                     useSelectedTreeValue(tree);
+                } else {
+                    setValue(defaultValue);
                 }
             }
         });
-        
+
+        // this listener is what creates (and destroys) the bundle tree.
+        // ancestorAdded is triggered when "tree" becomes visible, and
+        // ancestorRemoved is triggered when "tree" is no longer visible.
+        tree.addAncestorListener(new AncestorListener() {
+            @Override public void ancestorAdded(AncestorEvent event) {
+                exploreDirectory(path, root);
+                DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+                model.reload();
+            }
+
+            @Override public void ancestorRemoved(AncestorEvent event) {
+                root.removeAllChildren();
+                DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
+                model.reload();
+            }
+
+            @Override public void ancestorMoved(AncestorEvent event) { }
+        });
+
         panel.add(enabled, BorderLayout.PAGE_START);
         panel.add(scroller, BorderLayout.PAGE_END);
         return panel;
     }
-    
-    public String getValue() {
-        return "\"" + value + "\"";
+
+    @Override public String getValue() {
+        return '"' + value + '"';
     }
-    
+
     public String getUnquotedValue() {
         return value;
     }
-    
-    public void setValue(final String newValue) {
+
+    @Override public void setValue(final String newValue) {
         value = newValue.replaceAll("\"", "");
     }
-    
+
     public String toString() {
         return String.format("[DirectoryOption@%x: optionId=%s, value=%s]", hashCode(), getOptionId(), getValue());
     }
