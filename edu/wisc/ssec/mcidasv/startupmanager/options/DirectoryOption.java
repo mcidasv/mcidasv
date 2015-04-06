@@ -33,6 +33,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.regex.Pattern;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -56,12 +57,19 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager.TreeCellRenderer;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents a startup option that should be selected from the contents of a
  * given directory. The visual representation of this class is a tree.
  */
 public final class DirectoryOption extends AbstractOption {
+
+    private static final Logger logger = LoggerFactory.getLogger(DirectoryOption.class);
+
+    /** Regular expression pattern for ensuring that no quote marks are present in {@link #value}. */
+    private static final Pattern CLEAN_VALUE_REGEX = Pattern.compile("\"");
 
     /** Selected tree node. Value may be {@code null}. */
     private DefaultMutableTreeNode selected = null;
@@ -89,13 +97,17 @@ public final class DirectoryOption extends AbstractOption {
         for (File f : files) {
             DefaultMutableTreeNode current = new DefaultMutableTreeNode(f);
             if (f.isDirectory()) {
+                logger.trace("{}: directory!", f);
                 parent.add(current);
                 exploreDirectory(f.getPath(), current);
             } else if (ArgumentManager.isBundle(f.getPath())) {
+                logger.trace("{}: bundle!", f);
                 parent.add(current);
                 if (f.getPath().equals(getUnquotedValue())) {
                     selected = current;
                 }
+            } else {
+                logger.trace("{}: neither! :(", f);
             }
         }
     }
@@ -112,21 +124,22 @@ public final class DirectoryOption extends AbstractOption {
     private void useSelectedTreeValue(final JTree tree) {
         assert tree != null : "cannot use a null JTree";
         DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-        
-        File f = (File)node.getUserObject();
-        if (f.isDirectory()) {
-            setValue(defaultValue);
-        } else {
-            setValue(node.toString());
+
+        if (node != null) {
+            File f = (File) node.getUserObject();
+            if (f.isDirectory()) {
+                setValue(defaultValue);
+            } else {
+                setValue(node.toString());
+            }
+
+            TreePath nodePath = new TreePath(node.getPath());
+            tree.setSelectionPath(nodePath);
+            tree.scrollPathToVisible(nodePath);
         }
-        
-        TreePath nodePath = new TreePath(node.getPath());
-        tree.setSelectionPath(nodePath);
-        tree.scrollPathToVisible(nodePath);
     }
 
     @Override public JPanel getComponent() {
-        
         JPanel panel = new JPanel(new BorderLayout());
         
         final String path = StartupManager.getInstance().getPlatform().getUserBundles();
@@ -172,12 +185,15 @@ public final class DirectoryOption extends AbstractOption {
         // ancestorRemoved is triggered when "tree" is no longer visible.
         tree.addAncestorListener(new AncestorListener() {
             @Override public void ancestorAdded(AncestorEvent event) {
+                logger.trace("tree visible!");
                 exploreDirectory(path, root);
                 DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
                 model.reload();
+//                tree.revalidate();
             }
 
             @Override public void ancestorRemoved(AncestorEvent event) {
+                logger.trace("tree hidden!");
                 root.removeAllChildren();
                 DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
                 model.reload();
@@ -200,7 +216,7 @@ public final class DirectoryOption extends AbstractOption {
     }
 
     @Override public void setValue(final String newValue) {
-        value = newValue.replaceAll("\"", "");
+        value = CLEAN_VALUE_REGEX.matcher(newValue).replaceAll("");
     }
 
     public String toString() {
