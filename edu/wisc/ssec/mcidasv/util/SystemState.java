@@ -344,7 +344,7 @@ public class SystemState {
         try {
             input = new BufferedReader(new InputStreamReader(getResourceAsStream("DATE")));
             String contents = input.readLine();
-            // string should look like: Thu Mar 22 13:01:31 CDT 2012  Rev:5952
+            // string should look like: Thu Mar 22 13:01:31 CDT 2012  Rev:5952
             String splitAt = "  Rev:";
             int index = contents.indexOf(splitAt);
             String buildDate = "ERROR";
