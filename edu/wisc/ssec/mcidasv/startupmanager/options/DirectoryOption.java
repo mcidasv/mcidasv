@@ -88,7 +88,7 @@ public final class DirectoryOption extends AbstractOption {
 
     private void exploreDirectory(final String directory, final DefaultMutableTreeNode parent) {
         assert directory != null : "Cannot traverse a null directory";
-
+        System.err.println("scanning bundle directory: '"+directory+'\'');
         File dir = new File(directory);
         assert dir.exists() : "Cannot traverse a directory that does not exist";
 
@@ -97,17 +97,17 @@ public final class DirectoryOption extends AbstractOption {
         for (File f : files) {
             DefaultMutableTreeNode current = new DefaultMutableTreeNode(f);
             if (f.isDirectory()) {
-                logger.trace("{}: directory!", f);
+                System.err.println(f+": directory!");
                 parent.add(current);
                 exploreDirectory(f.getPath(), current);
             } else if (ArgumentManager.isBundle(f.getPath())) {
-                logger.trace("{}: bundle!", f);
+                System.err.println(f+": bundle!");
                 parent.add(current);
                 if (f.getPath().equals(getUnquotedValue())) {
                     selected = current;
                 }
             } else {
-                logger.trace("{}: neither! :(", f);
+                System.err.println(f+": neither! :(");
             }
         }
     }
@@ -185,15 +185,16 @@ public final class DirectoryOption extends AbstractOption {
         // ancestorRemoved is triggered when "tree" is no longer visible.
         tree.addAncestorListener(new AncestorListener() {
             @Override public void ancestorAdded(AncestorEvent event) {
-                logger.trace("tree visible!");
+                System.err.println("tree visible! calling exploreDirectory: path='"+path+"' root='"+root+'\'');
                 exploreDirectory(path, root);
+                System.err.println("exploreDirectory finished");
                 DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
                 model.reload();
-//                tree.revalidate();
+                tree.revalidate();
             }
 
             @Override public void ancestorRemoved(AncestorEvent event) {
-                logger.trace("tree hidden!");
+                System.err.println("tree hidden!");
                 root.removeAllChildren();
                 DefaultTreeModel model = (DefaultTreeModel)tree.getModel();
                 model.reload();
