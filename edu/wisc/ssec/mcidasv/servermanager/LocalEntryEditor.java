@@ -110,8 +110,14 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
             AddeFormat.TRMM,
-            AddeFormat.INSAT3D_IMAGER,
-            AddeFormat.INSAT3D_SOUNDER,
+            
+            // TJJ Apr 2015 - temporarily comment out INSAT-3D, since the ADDE
+            // servers had not passed testing and been released prior to the
+            // McIDAS-V 1.5 release
+            
+//            AddeFormat.INSAT3D_IMAGER,
+//            AddeFormat.INSAT3D_SOUNDER,
+            
             AddeFormat.HIMAWARI8
 //            AddeFormat.MCIDAS_MD
         });
