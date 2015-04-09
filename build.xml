@@ -141,7 +141,7 @@
     <!-- run.log.levels may be one of: TRACE, DEBUG, INFO, WARN, ERROR or OFF -->
     <property name="run.log.level" value="INFO" />
     <property name="run.smallheap" value="1024m" />
-    <property name="run.largeheap" value="2048m" />
+    <property name="run.largeheap" value="6656m" />
     
     <property name="logback.default.config" value="${userpath.dir}/logback.xml" />
 
