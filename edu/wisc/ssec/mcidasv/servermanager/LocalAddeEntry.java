@@ -135,7 +135,12 @@ public class LocalAddeEntry implements AddeEntry {
         // INSAT3D_IMAGER(ServerName.INST, "INSAT-3D Imager", "INSAT-3D Imager"),
         // INSAT3D_SOUNDER(ServerName.INST, "INSAT-3D Sounder", "INSAT-3D Sounder"),
         
-        HIMAWARI8(ServerName.WARI, "Himawari 8", "Himawari 8"),
+        // TJJ Apr 2015 - temporarily comment out Himawari-8, since the ADDE
+        // servers had not passed testing and been released prior to the
+        // McIDAS-V 1.5 release
+        
+        // HIMAWARI8(ServerName.WARI, "Himawari 8", "Himawari 8"),
+        
         LRIT_GOES9(ServerName.FSDX, "LRIT GOES-9", "EUMETCast LRIT GOES-9"),
         LRIT_GOES10(ServerName.FSDX, "LRIT GOES-10", "EUMETCast LRIT GOES-10"),
         LRIT_GOES11(ServerName.FSDX, "LRIT GOES-11", "EUMETCast LRIT GOES-11"),

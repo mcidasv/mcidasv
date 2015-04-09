@@ -110,7 +110,7 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.MTSAT_HRIT,
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
-            AddeFormat.TRMM,
+            AddeFormat.TRMM
             
             // TJJ Apr 2015 - temporarily comment out INSAT-3D, since the ADDE
             // servers had not passed testing and been released prior to the
@@ -119,7 +119,8 @@ public class LocalEntryShortcut extends JDialog {
             // AddeFormat.INSAT3D_IMAGER,
             // AddeFormat.INSAT3D_SOUNDER,
             
-            AddeFormat.HIMAWARI8
+            // AddeFormat.HIMAWARI8
+            
 //            AddeFormat.MCIDAS_MD
         });
 
