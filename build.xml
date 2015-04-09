@@ -141,7 +141,7 @@
     <!-- run.log.levels may be one of: TRACE, DEBUG, INFO, WARN, ERROR or OFF -->
     <property name="run.log.level" value="INFO" />
     <property name="run.smallheap" value="1024m" />
-    <property name="run.largeheap" value="6656m" />
+    <property name="run.largeheap" value="2048m" />
     
     <property name="logback.default.config" value="${userpath.dir}/logback.xml" />
 
@@ -583,7 +583,7 @@
             <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
         </copy>
         
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+        <javac fork="true" srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
             debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
             <compilerarg value="-Xlint:${xlint}" />
             <classpath refid="app.classpath" />
