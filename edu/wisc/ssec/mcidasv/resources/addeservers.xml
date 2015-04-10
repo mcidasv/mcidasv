@@ -24,8 +24,14 @@ This file overrides IDV addeservers.xml
             names="RTNEXRAD, NEXRALL"
             type="radar"/>
     <group
+            names="RTPTSRC"
+            type="point"/>
+    <group
             names="RTWXTEXT"
             type="wxtext"/>
+    <group
+            names="RTWXTEXT"
+            type="text"/>
   </server>
   
   <!-- NON-SSEC servers below -->
