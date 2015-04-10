@@ -344,7 +344,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 </table></div>
 <div class="OneTabIndent">Examples:</div>
   <div class="TwoTabIndent"><em>dataLocal = loadADDEImage(localEntry=desc, size='ALL', mag=(1,1), unit='BRIT',debug=True)</em></div>
-<div class="TwoTabIndent"><em>dataRemote = loadADDEImage(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',band=4,unit='TEMP')</em></div>
+<div class="TwoTabIndent"><em>dataRemote = loadADDEImage(server='adde.ssec.wisc.edu',dataset='RTIMAGES',descriptor='GE-IR',band=4,unit='TEMP')</em></div>
   <p><strong><a name="listADDEImages" id="listADDEImages"></a>listADDEImages -</strong> Lists
   data from an ADDE Image server that matches the keywords in the request - returns  metadata objects which can be passed into loadADDEImage</p>
 <div class="OneTabIndent">Usage: <em>directoryList = listADDEImages(keywords)</em></div>
@@ -403,7 +403,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 </table></div>
 <div class="OneTabIndent">Examples:</div>
   <div class="TwoTabIndent"><em>directoryListLocal = listADDEImages(localEntry=desc, band=4, unit='TEMP')</em><br>
-<em>directoryListRemote = listADDEImages(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-VIS',unit='RAW')</em></div>
+<em>directoryListRemote = listADDEImages(server='adde.ssec.wisc.edu',dataset='RTIMAGES',descriptor='GE-VIS',unit='RAW')</em></div>
     <p><strong><a name="listADDEImageTimes" id="listADDEImageTimes"></a>listADDEImageTimes -</strong> Returns a list of available dates and times of data that match the keywords in the request</p>
 <div class="OneTabIndent">Usage: <em>directoryList = listADDEImageTimes(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required (local):</div>
@@ -461,7 +461,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 </table></div>
 <div class="OneTabIndent">Examples:</div>
   <div class="TwoTabIndent"><em>print listADDEImageTimes(localEntry=desc, position=-5)</em><br>
-<em>print listADDEImageTimes(server='adde.ucar.edu',dataset='RTIMAGES',descriptor='GE-IR',time=('02:00','04:00'),position='ALL')</em></div>
+<em>print listADDEImageTimes(server='adde.ssec.wisc.edu',dataset='RTIMAGES',descriptor='GE-IR',time=('02:00','04:00'),position='ALL')</em></div>
 <p><strong><a name="loadGrid" id="loadGrid"></a>loadGrid -</strong> Loads local netCDF, hdf, and grib files.</p>
 <div class="OneTabIndent">Usage: <em>myData = loadGrid(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
