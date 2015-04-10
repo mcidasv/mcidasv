@@ -8,7 +8,7 @@
                     <property name="Sources">
                         <object class="java.util.ArrayList">
                             <method name="add">
-                                <string><![CDATA[adde://adde.ucar.edu/pointdata?compress=gzip&port=112&debug=false&version=1&user=idv&proj=0&group=RTPTSRC&user=idv&proj=0&descr=SFCHOURLY&select='%relative%;type 0;%latlonbox%'&num=ALL&pos=ALL]]></string>
+                                <string><![CDATA[adde://adde.ssec.wisc.edu/pointdata?compress=gzip&port=112&debug=false&version=1&user=RMC&proj=6999&group=RTPTSRC&user=RMC&proj=6999&descr=SFCHOURLY&select='%relative%;type 0;%latlonbox%'&num=ALL&pos=ALL]]></string>
                             </method>
                         </object>
                     </property>
@@ -41,7 +41,7 @@
                         <object class="java.util.Hashtable">
                             <method name="put">
                                 <string><![CDATA[number of relative times]]></string>
-                                <parray class="int" length="3">0,1,2</parray>
+                                <parray class="int" length="5">0,1,2,3,4</parray>
                             </method>
                             <method name="put">
                                 <string><![CDATA[data name]]></string>
@@ -58,6 +58,10 @@
                             <method name="put">
                                 <string><![CDATA[prop.stationmodelname]]></string>
                                 <string><![CDATA[Observations>METAR]]></string>
+                            </method>
+                            <method name="put">
+                                <string><![CDATA[Chooser_Do_Time_Matching]]></string>
+                                <java.lang.Boolean>false</java.lang.Boolean>
                             </method>
                             <method name="put">
                                 <string><![CDATA[relative time increment]]></string>
@@ -86,7 +90,7 @@
                         </object>
                     </property>
                     <property name="UniqueId">
-                        <string><![CDATA[sharable_1406230045927_0_686708902907551_25]]></string>
+                        <string><![CDATA[sharable_1428595336895_0_5777437067712643_85]]></string>
                     </property>
                 </object>
             </method>
@@ -104,20 +108,23 @@
                     <property name="Bounds">
                         <object class="java.awt.Rectangle">
                             <constructor>
-                                <int>1</int>
-                                <int>0</int>
-                                <int>1251</int>
+                                <int>375</int>
+                                <int>139</int>
+                                <int>1248</int>
                                 <int>905</int>
                             </constructor>
                         </object>
+                    </property>
+                    <property name="ViewManagers">
+                        <object class="java.util.ArrayList"/>
                     </property>
                     <property name="PersistentComponents">
                         <object class="java.util.Hashtable">
                             <method name="put">
                                 <string><![CDATA[nodeid3]]></string>
-                                <object class="edu.wisc.ssec.mcidasv.ui.McvComponentGroup" id="id16">
+                                <object class="edu.wisc.ssec.mcidasv.ui.McvComponentGroup" id="id17">
                                     <property name="ActiveComponentHolder">
-                                        <object class="edu.wisc.ssec.mcidasv.ui.McvComponentHolder" id="id17">
+                                        <object class="edu.wisc.ssec.mcidasv.ui.McvComponentHolder" id="id18">
                                             <property name="Category">
                                                 <string><![CDATA[IDV User Interface]]></string>
                                             </property>
@@ -136,70 +143,20 @@
                                             <property name="ViewManagers">
                                                 <object class="java.util.ArrayList">
                                                     <method name="add">
-                                                        <object class="ucar.unidata.idv.MapViewManager" id="id19">
-                                                            <property name="MainProjectionName">
-                                                                <string><![CDATA[TrivialMapProjection from: Point Data Plot]]></string>
-                                                            </property>
-                                                            <property name="UseProjectionFromData">
-                                                                <boolean>false</boolean>
-                                                            </property>
-                                                            <property name="LatAxisScaleInfo">
-                                                                <object class="ucar.unidata.view.geoloc.LatLonAxisScaleInfo">
-                                                                    <property name="MinorDivision">
-                                                                        <int>1</int>
-                                                                    </property>
-                                                                    <property name="CoordFormat">
-                                                                        <string><![CDATA[DDH]]></string>
-                                                                    </property>
-                                                                    <property name="Increment">
-                                                                        <double>5.0</double>
-                                                                    </property>
-                                                                    <property name="BaseLabel">
-                                                                        <double>20.0</double>
-                                                                    </property>
-                                                                    <property name="Visible">
-                                                                        <boolean>true</boolean>
-                                                                    </property>
-                                                                    <property name="Label">
-                                                                        <string><![CDATA[Latitude]]></string>
-                                                                    </property>
-                                                                </object>
-                                                            </property>
-                                                            <property name="LonAxisScaleInfo">
-                                                                <object class="ucar.unidata.view.geoloc.LatLonAxisScaleInfo">
-                                                                    <property name="MinorDivision">
-                                                                        <int>1</int>
-                                                                    </property>
-                                                                    <property name="CoordFormat">
-                                                                        <string><![CDATA[DDH]]></string>
-                                                                    </property>
-                                                                    <property name="Increment">
-                                                                        <double>5.0</double>
-                                                                    </property>
-                                                                    <property name="BaseLabel">
-                                                                        <double>-120.0</double>
-                                                                    </property>
-                                                                    <property name="Visible">
-                                                                        <boolean>true</boolean>
-                                                                    </property>
-                                                                    <property name="Label">
-                                                                        <string><![CDATA[Longitude]]></string>
-                                                                    </property>
-                                                                </object>
-                                                            </property>
+                                                        <object class="ucar.unidata.idv.MapViewManager" id="id20">
                                                             <property name="MainProjection">
                                                                 <object class="visad.georef.TrivialMapProjection">
                                                                     <constructor>
                                                                         <object class="visad.RealTupleType">
                                                                             <constructor>
                                                                                 <array class="visad.RealType" length="2">
-                                                                                    <object class="visad.data.netcdf.Quantity">
+                                                                                    <object class="visad.RealType">
                                                                                         <object class="java.util.ArrayList">
                                                                                             <method name="add">
                                                                                                 <string><![CDATA[Longitude]]></string>
                                                                                             </method>
                                                                                             <method name="add">
-                                                                                                <object amount="0.017453292519943295" class="visad.ScaledUnit" id="id24" name="deg">
+                                                                                                <object amount="0.017453292519943295" class="visad.ScaledUnit" id="id23" name="deg">
                                                                                                     <object class="visad.BaseUnit" name="rad">
                                                                                                         <string><![CDATA[rad]]></string>
                                                                                                     </object>
@@ -213,13 +170,13 @@
                                                                                             </method>
                                                                                         </object>
                                                                                     </object>
-                                                                                    <object class="visad.data.netcdf.Quantity">
+                                                                                    <object class="visad.RealType">
                                                                                         <object class="java.util.ArrayList">
                                                                                             <method name="add">
                                                                                                 <string><![CDATA[Latitude]]></string>
                                                                                             </method>
                                                                                             <method name="add">
-                                                                                                <object idref="id24"/>
+                                                                                                <object idref="id23"/>
                                                                                             </method>
                                                                                             <method name="add">
                                                                                                 <null/>
@@ -236,13 +193,60 @@
                                                                         </object>
                                                                         <object class="java.awt.geom.Rectangle2D$Float">
                                                                             <constructor>
-                                                                                <float>-112.5999</float>
-                                                                                <float>25.3</float>
-                                                                                <float>28.6166</float>
-                                                                                <float>28.6166</float>
+                                                                                <float>-114.2149</float>
+                                                                                <float>21.9937</float>
+                                                                                <float>34.2983</float>
+                                                                                <float>34.2983</float>
                                                                             </constructor>
                                                                         </object>
                                                                     </constructor>
+                                                                </object>
+                                                            </property>
+                                                            <property name="MainProjectionName">
+                                                                <string><![CDATA[TrivialMapProjection from: Point Data Plot]]></string>
+                                                            </property>
+                                                            <property name="LatAxisScaleInfo">
+                                                                <object class="ucar.unidata.view.geoloc.LatLonAxisScaleInfo">
+                                                                    <property name="Increment">
+                                                                        <double>5.0</double>
+                                                                    </property>
+                                                                    <property name="BaseLabel">
+                                                                        <double>20.0</double>
+                                                                    </property>
+                                                                    <property name="MinorDivision">
+                                                                        <int>1</int>
+                                                                    </property>
+                                                                    <property name="CoordFormat">
+                                                                        <string><![CDATA[DDH]]></string>
+                                                                    </property>
+                                                                    <property name="Visible">
+                                                                        <boolean>true</boolean>
+                                                                    </property>
+                                                                    <property name="Label">
+                                                                        <string><![CDATA[Latitude]]></string>
+                                                                    </property>
+                                                                </object>
+                                                            </property>
+                                                            <property name="LonAxisScaleInfo">
+                                                                <object class="ucar.unidata.view.geoloc.LatLonAxisScaleInfo">
+                                                                    <property name="Increment">
+                                                                        <double>5.0</double>
+                                                                    </property>
+                                                                    <property name="BaseLabel">
+                                                                        <double>-120.0</double>
+                                                                    </property>
+                                                                    <property name="MinorDivision">
+                                                                        <int>1</int>
+                                                                    </property>
+                                                                    <property name="CoordFormat">
+                                                                        <string><![CDATA[DDH]]></string>
+                                                                    </property>
+                                                                    <property name="Visible">
+                                                                        <boolean>true</boolean>
+                                                                    </property>
+                                                                    <property name="Label">
+                                                                        <string><![CDATA[Longitude]]></string>
+                                                                    </property>
                                                                 </object>
                                                             </property>
                                                             <property name="VerticalRangeUnit">
@@ -278,116 +282,6 @@
                                                             </property>
                                                             <property name="Foreground">
                                                                 <object class="java.awt.Color">
-                                                                    <constructor>
-                                                                        <int>255</int>
-                                                                        <int>255</int>
-                                                                        <int>255</int>
-                                                                    </constructor>
-                                                                </object>
-                                                            </property>
-                                                            <property name="BooleanPropertiesForPersistence">
-                                                                <object class="java.util.Hashtable">
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.UseProgressiveResolution]]></string>
-                                                                        <java.lang.Boolean>true</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[idv.viewmanager.logo.visible]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.ShowCursor]]></string>
-                                                                        <java.lang.Boolean>true</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.WaitVisible]]></string>
-                                                                        <java.lang.Boolean>true</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.AniReadout]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.TopBarVisible]]></string>
-                                                                        <java.lang.Boolean>true</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.ShowEarthNavPanel]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.ShowPip]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.Wireframe]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.ShareViews]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.PerspectiveView]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.ShowTransectScales]]></string>
-                                                                        <java.lang.Boolean>true</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.3Dclip]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.AutoRotate]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.UseFromData]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.ShowScales]]></string>
-                                                                        <java.lang.Boolean>false</java.lang.Boolean>
-                                                                    </method>
-                                                                    <method name="put">
-                                                                        <string><![CDATA[View.ShowDisplayList]]></string>
-                                                                        <java.lang.Boolean>true</java.lang.Boolean>
-                                                                    </method>
-                                                                </object>
-                                                            </property>
-                                                            <property name="Wireframe">
-                                                                <boolean>false</boolean>
-                                                            </property>
-                                                            <property name="UniqueId">
-                                                                <string><![CDATA[view_1421174430429_0_8725751791325838_24]]></string>
-                                                            </property>
-                                                            <property name="Aliases">
-                                                                <object class="java.util.ArrayList">
-                                                                    <method name="add">
-                                                                        <object class="ucar.unidata.idv.ViewDescriptor" id="id37">
-                                                                            <property name="Name">
-                                                                                <string><![CDATA[view_1421174430429_0_8725751791325838_24]]></string>
-                                                                            </property>
-                                                                        </object>
-                                                                    </method>
-                                                                </object>
-                                                            </property>
-                                                            <property name="ViewDescriptor">
-                                                                <object idref="id37"/>
-                                                            </property>
-                                                            <property name="DisplayListFont">
-                                                                <object class="java.awt.Font" id="id38">
-                                                                    <constructor>
-                                                                        <string><![CDATA[Default]]></string>
-                                                                        <int>0</int>
-                                                                        <int>8</int>
-                                                                    </constructor>
-                                                                </object>
-                                                            </property>
-                                                            <property name="DisplayListColor">
-                                                                <object class="java.awt.Color" id="id39">
                                                                     <constructor>
                                                                         <int>255</int>
                                                                         <int>255</int>
@@ -434,21 +328,21 @@
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
-                                                                            <property name="Color">
-                                                                                <object class="javax.vecmath.Color3f">
-                                                                                    <constructor>
-                                                                                        <float>0.0</float>
-                                                                                        <float>0.0</float>
-                                                                                        <float>0.0</float>
-                                                                                    </constructor>
-                                                                                </object>
-                                                                            </property>
                                                                             <property name="Direction">
                                                                                 <object class="javax.vecmath.Vector3f">
                                                                                     <constructor>
                                                                                         <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                         <float>1.0</float>
+                                                                                    </constructor>
+                                                                                </object>
+                                                                            </property>
+                                                                            <property name="Color">
+                                                                                <object class="javax.vecmath.Color3f">
+                                                                                    <constructor>
+                                                                                        <float>0.0</float>
+                                                                                        <float>0.0</float>
+                                                                                        <float>0.0</float>
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
@@ -468,21 +362,21 @@
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
-                                                                            <property name="Color">
-                                                                                <object class="javax.vecmath.Color3f">
-                                                                                    <constructor>
-                                                                                        <float>0.0</float>
-                                                                                        <float>0.0</float>
-                                                                                        <float>0.0</float>
-                                                                                    </constructor>
-                                                                                </object>
-                                                                            </property>
                                                                             <property name="Direction">
                                                                                 <object class="javax.vecmath.Vector3f">
                                                                                     <constructor>
                                                                                         <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                         <float>-1.0</float>
+                                                                                    </constructor>
+                                                                                </object>
+                                                                            </property>
+                                                                            <property name="Color">
+                                                                                <object class="javax.vecmath.Color3f">
+                                                                                    <constructor>
+                                                                                        <float>0.0</float>
+                                                                                        <float>0.0</float>
+                                                                                        <float>0.0</float>
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
@@ -502,20 +396,20 @@
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
-                                                                            <property name="Color">
-                                                                                <object class="javax.vecmath.Color3f">
-                                                                                    <constructor>
-                                                                                        <float>0.0</float>
-                                                                                        <float>0.0</float>
-                                                                                        <float>0.0</float>
-                                                                                    </constructor>
-                                                                                </object>
-                                                                            </property>
                                                                             <property name="Direction">
                                                                                 <object class="javax.vecmath.Vector3f">
                                                                                     <constructor>
                                                                                         <float>0.0</float>
                                                                                         <float>-1.0</float>
+                                                                                        <float>0.0</float>
+                                                                                    </constructor>
+                                                                                </object>
+                                                                            </property>
+                                                                            <property name="Color">
+                                                                                <object class="javax.vecmath.Color3f">
+                                                                                    <constructor>
+                                                                                        <float>0.0</float>
+                                                                                        <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                     </constructor>
                                                                                 </object>
@@ -536,20 +430,20 @@
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
-                                                                            <property name="Color">
-                                                                                <object class="javax.vecmath.Color3f">
-                                                                                    <constructor>
-                                                                                        <float>0.0</float>
-                                                                                        <float>0.0</float>
-                                                                                        <float>0.0</float>
-                                                                                    </constructor>
-                                                                                </object>
-                                                                            </property>
                                                                             <property name="Direction">
                                                                                 <object class="javax.vecmath.Vector3f">
                                                                                     <constructor>
                                                                                         <float>0.0</float>
                                                                                         <float>1.0</float>
+                                                                                        <float>0.0</float>
+                                                                                    </constructor>
+                                                                                </object>
+                                                                            </property>
+                                                                            <property name="Color">
+                                                                                <object class="javax.vecmath.Color3f">
+                                                                                    <constructor>
+                                                                                        <float>0.0</float>
+                                                                                        <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                     </constructor>
                                                                                 </object>
@@ -570,19 +464,19 @@
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
-                                                                            <property name="Color">
-                                                                                <object class="javax.vecmath.Color3f">
+                                                                            <property name="Direction">
+                                                                                <object class="javax.vecmath.Vector3f">
                                                                                     <constructor>
-                                                                                        <float>0.0</float>
+                                                                                        <float>1.0</float>
                                                                                         <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
-                                                                            <property name="Direction">
-                                                                                <object class="javax.vecmath.Vector3f">
+                                                                            <property name="Color">
+                                                                                <object class="javax.vecmath.Color3f">
                                                                                     <constructor>
-                                                                                        <float>1.0</float>
+                                                                                        <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                     </constructor>
@@ -604,19 +498,19 @@
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
-                                                                            <property name="Color">
-                                                                                <object class="javax.vecmath.Color3f">
+                                                                            <property name="Direction">
+                                                                                <object class="javax.vecmath.Vector3f">
                                                                                     <constructor>
-                                                                                        <float>0.0</float>
+                                                                                        <float>-1.0</float>
                                                                                         <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                     </constructor>
                                                                                 </object>
                                                                             </property>
-                                                                            <property name="Direction">
-                                                                                <object class="javax.vecmath.Vector3f">
+                                                                            <property name="Color">
+                                                                                <object class="javax.vecmath.Color3f">
                                                                                     <constructor>
-                                                                                        <float>-1.0</float>
+                                                                                        <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                         <float>0.0</float>
                                                                                     </constructor>
@@ -629,13 +523,28 @@
                                                             <property name="LogoScale">
                                                                 <float>1.0</float>
                                                             </property>
-                                                            <property name="SideDividerLocation">
-                                                                <int>878</int>
+                                                            <property name="DisplayListFont">
+                                                                <object class="java.awt.Font" id="id63">
+                                                                    <constructor>
+                                                                        <string><![CDATA[Default]]></string>
+                                                                        <int>0</int>
+                                                                        <int>8</int>
+                                                                    </constructor>
+                                                                </object>
                                                             </property>
-                                                            <property name="AnimationInfo">
-                                                                <object class="ucar.visad.display.AnimationInfo">
-                                                                    <property name="AnimationSetInfo">
-                                                                        <object class="ucar.visad.display.AnimationSetInfo"/>
+                                                            <property name="DisplayListColor">
+                                                                <object class="java.awt.Color" id="id64">
+                                                                    <constructor>
+                                                                        <int>255</int>
+                                                                        <int>255</int>
+                                                                        <int>255</int>
+                                                                    </constructor>
+                                                                </object>
+                                                            </property>
+                                                            <property name="ViewDescriptor">
+                                                                <object class="ucar.unidata.idv.ViewDescriptor" id="id65">
+                                                                    <property name="Name">
+                                                                        <string><![CDATA[view_1428595336895_0_5777437067712643_81]]></string>
                                                                     </property>
                                                                 </object>
                                                             </property>
@@ -644,32 +553,131 @@
                                                                     <constructor>
                                                                         <int>0</int>
                                                                         <int>0</int>
-                                                                        <int>869</int>
+                                                                        <int>865</int>
                                                                         <int>712</int>
                                                                     </constructor>
                                                                 </object>
                                                             </property>
                                                             <property name="DisplayMatrix">
-                                                                <parray class="double" length="16">0.6140865941417817,0.0,0.0,-0.033491388713862195,0.0,0.6140865941417817,0.0,0.0,0.0,0.0,0.2456346376567126,0.0,0.0,0.0,0.0,1.0</parray>
+                                                                <parray class="double" length="16">1.0717944050000008,0.0,0.0,0.0,0.0,1.0717944050000008,0.0,0.0,0.0,0.0,0.4287177620000002,0.0,0.0,0.0,0.0,1.0</parray>
                                                             </property>
                                                             <property name="AspectRatio">
                                                                 <parray class="double" length="3">1.0,1.0,0.4</parray>
                                                             </property>
                                                             <property name="SplitPaneLocation">
-                                                                <int>878</int>
+                                                                <int>874</int>
                                                             </property>
                                                             <property name="LogoPosition">
                                                                 <string><![CDATA[ll,0,0]]></string>
+                                                            </property>
+                                                            <property name="SideDividerLocation">
+                                                                <int>874</int>
+                                                            </property>
+                                                            <property name="AnimationInfo">
+                                                                <object class="ucar.visad.display.AnimationInfo">
+                                                                    <property name="AnimationSetInfo">
+                                                                        <object class="ucar.visad.display.AnimationSetInfo">
+                                                                            <property name="StartFixedTime">
+                                                                                <long>1428595982381</long>
+                                                                            </property>
+                                                                            <property name="EndFixedTime">
+                                                                                <long>1428595982381</long>
+                                                                            </property>
+                                                                        </object>
+                                                                    </property>
+                                                                </object>
+                                                            </property>
+                                                            <property name="UniqueId">
+                                                                <string><![CDATA[view_1428595336895_0_5777437067712643_81]]></string>
+                                                            </property>
+                                                            <property name="Aliases">
+                                                                <object class="java.util.ArrayList">
+                                                                    <method name="add">
+                                                                        <object idref="id65"/>
+                                                                    </method>
+                                                                </object>
+                                                            </property>
+                                                            <property name="BooleanPropertiesForPersistence">
+                                                                <object class="java.util.Hashtable">
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.UseProgressiveResolution]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[idv.viewmanager.logo.visible]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.ShowCursor]]></string>
+                                                                        <java.lang.Boolean>true</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.WaitVisible]]></string>
+                                                                        <java.lang.Boolean>true</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.AniReadout]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.TopBarVisible]]></string>
+                                                                        <java.lang.Boolean>true</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.ShowEarthNavPanel]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.ShowPip]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.Wireframe]]></string>
+                                                                        <java.lang.Boolean>true</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.ShareViews]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.PerspectiveView]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.ShowTransectScales]]></string>
+                                                                        <java.lang.Boolean>true</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.3Dclip]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.AutoRotate]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.UseFromData]]></string>
+                                                                        <java.lang.Boolean>true</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.ShowScales]]></string>
+                                                                        <java.lang.Boolean>false</java.lang.Boolean>
+                                                                    </method>
+                                                                    <method name="put">
+                                                                        <string><![CDATA[View.ShowDisplayList]]></string>
+                                                                        <java.lang.Boolean>true</java.lang.Boolean>
+                                                                    </method>
+                                                                </object>
                                                             </property>
                                                         </object>
                                                     </method>
                                                 </object>
                                             </property>
                                             <property name="Parent">
-                                                <object idref="id16"/>
+                                                <object idref="id17"/>
                                             </property>
                                             <property name="UniqueId">
-                                                <string><![CDATA[sharable_1406230045927_0_686708902907551_32]]></string>
+                                                <string><![CDATA[sharable_1428595336895_0_5777437067712643_91]]></string>
                                             </property>
                                         </object>
                                     </property>
@@ -685,7 +693,7 @@
                                     <property name="DisplayComponents">
                                         <object class="java.util.ArrayList">
                                             <method name="add">
-                                                <object idref="id17"/>
+                                                <object idref="id18"/>
                                             </method>
                                         </object>
                                     </property>
@@ -693,7 +701,7 @@
                                         <string><![CDATA[Group]]></string>
                                     </property>
                                     <property name="UniqueId">
-                                        <string><![CDATA[sharable_1421175047116_0_29783394408040886_155]]></string>
+                                        <string><![CDATA[sharable_1428595336895_0_5777437067712643_25]]></string>
                                     </property>
                                 </object>
                             </method>
@@ -702,14 +710,11 @@
                     <property name="IsAMainWindow">
                         <boolean>true</boolean>
                     </property>
-                    <property name="ViewManagers">
-                        <object class="java.util.ArrayList"/>
-                    </property>
                     <property name="Title">
                         <string><![CDATA[McIDAS-V - Surface Observations]]></string>
                     </property>
                     <property name="SkinPath">
-                        <string><![CDATA[/edu/wisc/ssec/mcidasv/resources/skins/window/map/onemapview.xml]]></string>
+                        <string><![CDATA[/edu/wisc/ssec/mcidasv/resources/skins/window/globe/oneview.xml]]></string>
                     </property>
                 </object>
             </method>
@@ -719,7 +724,7 @@
         <string><![CDATA[viewmanagers]]></string>
         <object class="java.util.ArrayList">
             <method name="add">
-                <object idref="id19"/>
+                <object idref="id20"/>
             </method>
         </object>
     </method>
@@ -732,68 +737,6 @@
         <object class="java.util.ArrayList">
             <method name="add">
                 <object class="ucar.unidata.idv.control.MapDisplayControl">
-                    <property name="InitialMapDescription">
-                        <string><![CDATA[World Coastlines]]></string>
-                    </property>
-                    <property name="LatLabelState">
-                        <object class="ucar.unidata.idv.control.MapDisplayControl$LatLonLabelState">
-                            <property name="MaxValue">
-                                <float>90.0</float>
-                            </property>
-                            <property name="MinValue">
-                                <float>-90.0</float>
-                            </property>
-                            <property name="Alignment">
-                                <string><![CDATA[UL]]></string>
-                            </property>
-                            <property name="Interval">
-                                <float>15.0</float>
-                            </property>
-                            <property name="Visible">
-                                <boolean>false</boolean>
-                            </property>
-                            <property name="FastRendering">
-                                <boolean>true</boolean>
-                            </property>
-                            <property name="LabelLines">
-                                <parray class="float" length="1">0.0</parray>
-                            </property>
-                        </object>
-                    </property>
-                    <property name="LonLabelState">
-                        <object class="ucar.unidata.idv.control.MapDisplayControl$LatLonLabelState">
-                            <property name="MaxValue">
-                                <float>180.0</float>
-                            </property>
-                            <property name="MinValue">
-                                <float>-180.0</float>
-                            </property>
-                            <property name="Alignment">
-                                <string><![CDATA[UR]]></string>
-                            </property>
-                            <property name="Interval">
-                                <float>15.0</float>
-                            </property>
-                            <property name="Visible">
-                                <boolean>false</boolean>
-                            </property>
-                            <property name="FastRendering">
-                                <boolean>true</boolean>
-                            </property>
-                            <property name="LabelLines">
-                                <parray class="float" length="1">0.0</parray>
-                            </property>
-                            <property name="IsLatitude">
-                                <boolean>false</boolean>
-                            </property>
-                        </object>
-                    </property>
-                    <property name="IsDefaultMap">
-                        <boolean>true</boolean>
-                    </property>
-                    <property name="MapPosition">
-                        <double>-0.9900000095367432</double>
-                    </property>
                     <property name="InitialMap">
                         <string><![CDATA[/auxdata/maps/OUTLSUPW]]></string>
                     </property>
@@ -816,6 +759,9 @@
                                             </constructor>
                                         </object>
                                     </property>
+                                    <property name="Visible">
+                                        <boolean>true</boolean>
+                                    </property>
                                 </object>
                             </method>
                             <method name="add">
@@ -834,6 +780,9 @@
                                                 <int>204</int>
                                             </constructor>
                                         </object>
+                                    </property>
+                                    <property name="Visible">
+                                        <boolean>true</boolean>
                                     </property>
                                 </object>
                             </method>
@@ -854,6 +803,9 @@
                                             </constructor>
                                         </object>
                                     </property>
+                                    <property name="Visible">
+                                        <boolean>true</boolean>
+                                    </property>
                                 </object>
                             </method>
                             <method name="add">
@@ -867,14 +819,11 @@
                                     <property name="Color">
                                         <object class="java.awt.Color">
                                             <constructor>
-                                                <int>255</int>
+                                                <int>0</int>
                                                 <int>255</int>
                                                 <int>255</int>
                                             </constructor>
                                         </object>
-                                    </property>
-                                    <property name="Visible">
-                                        <boolean>true</boolean>
                                     </property>
                                 </object>
                             </method>
@@ -977,17 +926,14 @@
                     </property>
                     <property name="LatState">
                         <object class="ucar.unidata.idv.control.MapDisplayControl$LatLonState">
+                            <property name="LineWidth">
+                                <float>1.0</float>
+                            </property>
                             <property name="MaxValue">
                                 <float>90.0</float>
                             </property>
                             <property name="MinValue">
                                 <float>-90.0</float>
-                            </property>
-                            <property name="LineWidth">
-                                <float>1.0</float>
-                            </property>
-                            <property name="Visible">
-                                <boolean>false</boolean>
                             </property>
                             <property name="LineStyle">
                                 <int>1</int>
@@ -995,21 +941,21 @@
                             <property name="Spacing">
                                 <float>15.0</float>
                             </property>
+                            <property name="Visible">
+                                <boolean>false</boolean>
+                            </property>
                         </object>
                     </property>
                     <property name="LonState">
                         <object class="ucar.unidata.idv.control.MapDisplayControl$LatLonState">
+                            <property name="LineWidth">
+                                <float>1.0</float>
+                            </property>
                             <property name="MaxValue">
                                 <float>180.0</float>
                             </property>
                             <property name="MinValue">
                                 <float>-180.0</float>
-                            </property>
-                            <property name="LineWidth">
-                                <float>1.0</float>
-                            </property>
-                            <property name="Visible">
-                                <boolean>false</boolean>
                             </property>
                             <property name="LineStyle">
                                 <int>1</int>
@@ -1020,19 +966,84 @@
                             <property name="IsLatitude">
                                 <boolean>false</boolean>
                             </property>
+                            <property name="Visible">
+                                <boolean>false</boolean>
+                            </property>
                         </object>
+                    </property>
+                    <property name="InitialMapDescription">
+                        <string><![CDATA[World Coastlines]]></string>
+                    </property>
+                    <property name="LatLabelState">
+                        <object class="ucar.unidata.idv.control.MapDisplayControl$LatLonLabelState">
+                            <property name="Alignment">
+                                <string><![CDATA[UL]]></string>
+                            </property>
+                            <property name="MaxValue">
+                                <float>90.0</float>
+                            </property>
+                            <property name="MinValue">
+                                <float>-90.0</float>
+                            </property>
+                            <property name="Interval">
+                                <float>15.0</float>
+                            </property>
+                            <property name="LabelLines">
+                                <parray class="float" length="1">0.0</parray>
+                            </property>
+                            <property name="Visible">
+                                <boolean>false</boolean>
+                            </property>
+                            <property name="FastRendering">
+                                <boolean>true</boolean>
+                            </property>
+                        </object>
+                    </property>
+                    <property name="LonLabelState">
+                        <object class="ucar.unidata.idv.control.MapDisplayControl$LatLonLabelState">
+                            <property name="Alignment">
+                                <string><![CDATA[UR]]></string>
+                            </property>
+                            <property name="MaxValue">
+                                <float>180.0</float>
+                            </property>
+                            <property name="MinValue">
+                                <float>-180.0</float>
+                            </property>
+                            <property name="Interval">
+                                <float>15.0</float>
+                            </property>
+                            <property name="LabelLines">
+                                <parray class="float" length="1">0.0</parray>
+                            </property>
+                            <property name="IsLatitude">
+                                <boolean>false</boolean>
+                            </property>
+                            <property name="Visible">
+                                <boolean>false</boolean>
+                            </property>
+                            <property name="FastRendering">
+                                <boolean>true</boolean>
+                            </property>
+                        </object>
+                    </property>
+                    <property name="IsDefaultMap">
+                        <boolean>true</boolean>
+                    </property>
+                    <property name="MapPosition">
+                        <double>-0.9900000095367432</double>
                     </property>
                     <property name="DisplayName">
                         <string><![CDATA[Default Background Maps]]></string>
                     </property>
-                    <property name="DisplayCategory">
-                        <string><![CDATA[Maps]]></string>
+                    <property name="CanDoRemoveAll">
+                        <boolean>false</boolean>
                     </property>
                     <property name="DataChoices">
                         <object class="java.util.ArrayList" id="id98"/>
                     </property>
-                    <property name="CanDoRemoveAll">
-                        <boolean>false</boolean>
+                    <property name="DisplayCategory">
+                        <string><![CDATA[Maps]]></string>
                     </property>
                     <property name="Categories">
                         <object class="java.util.ArrayList">
@@ -1054,6 +1065,9 @@
                                 </object>
                             </method>
                         </object>
+                    </property>
+                    <property name="DisplayId">
+                        <string><![CDATA[mapdisplay]]></string>
                     </property>
                     <property name="DataSelection">
                         <object class="ucar.unidata.data.DataSelection">
@@ -1081,42 +1095,6 @@
                             </property>
                         </object>
                     </property>
-                    <property name="InitDataChoices">
-                        <object idref="id98"/>
-                    </property>
-                    <property name="MainPanelSize">
-                        <object class="java.awt.Dimension">
-                            <constructor>
-                                <int>944</int>
-                                <int>729</int>
-                            </constructor>
-                        </object>
-                    </property>
-                    <property name="DefaultView">
-                        <string><![CDATA[view_1421174430429_0_8725751791325838_24]]></string>
-                    </property>
-                    <property name="ColorScaleInfo">
-                        <object class="ucar.visad.display.ColorScaleInfo">
-                            <property name="Name">
-                                <string null="true"/>
-                            </property>
-                            <property name="LabelColor">
-                                <object class="java.awt.Color">
-                                    <constructor>
-                                        <int>192</int>
-                                        <int>192</int>
-                                        <int>192</int>
-                                    </constructor>
-                                </object>
-                            </property>
-                            <property name="LabelFont">
-                                <object idref="id38"/>
-                            </property>
-                        </object>
-                    </property>
-                    <property name="DisplayId">
-                        <string><![CDATA[mapdisplay]]></string>
-                    </property>
                     <property name="ExpandedInTabs">
                         <boolean>true</boolean>
                     </property>
@@ -1128,6 +1106,28 @@
                     </property>
                     <property name="ZPosition">
                         <double>-0.9900000095367432</double>
+                    </property>
+                    <property name="DefaultView">
+                        <string><![CDATA[view_1428595336895_0_5777437067712643_81]]></string>
+                    </property>
+                    <property name="ColorScaleInfo">
+                        <object class="ucar.visad.display.ColorScaleInfo">
+                            <property name="Name">
+                                <string null="true"/>
+                            </property>
+                            <property name="LabelColor">
+                                <object class="java.awt.Color" id="id107">
+                                    <constructor>
+                                        <int>192</int>
+                                        <int>192</int>
+                                        <int>192</int>
+                                    </constructor>
+                                </object>
+                            </property>
+                            <property name="LabelFont">
+                                <object idref="id63"/>
+                            </property>
+                        </object>
                     </property>
                     <property name="ViewManagerClassNames">
                         <string><![CDATA[ucar.unidata.idv.MapViewManager]]></string>
@@ -1141,8 +1141,19 @@
                     <property name="ExtraLabelTemplate">
                         <string stringvalue=""/>
                     </property>
+                    <property name="InitDataChoices">
+                        <object idref="id98"/>
+                    </property>
+                    <property name="MainPanelSize">
+                        <object class="java.awt.Dimension">
+                            <constructor>
+                                <int>836</int>
+                                <int>597</int>
+                            </constructor>
+                        </object>
+                    </property>
                     <property name="UniqueId">
-                        <string><![CDATA[sharable_1421175047116_0_29783394408040886_236]]></string>
+                        <string><![CDATA[sharable_1428595336895_0_5777437067712643_94]]></string>
                     </property>
                     <field name="isProgressiveResolution">
                         <java.lang.Boolean>false</java.lang.Boolean>
@@ -1157,41 +1168,38 @@
             </method>
             <method name="add">
                 <object class="ucar.unidata.idv.control.ContourPlanViewControl" id="id109">
+                    <property name="ColorFill">
+                        <boolean>true</boolean>
+                    </property>
+                    <property name="IsRaster">
+                        <boolean>true</boolean>
+                    </property>
                     <property name="ContourInfo">
                         <object class="ucar.unidata.util.ContourInfo">
-                            <property name="Max">
-                                <float>150.0</float>
-                            </property>
                             <property name="Min">
-                                <float>-130.0</float>
+                                <float>-90.0</float>
                             </property>
-                            <property name="Base">
-                                <float>30.0</float>
-                            </property>
-                            <property name="Interval">
-                                <float>4.0</float>
+                            <property name="Max">
+                                <float>45.0</float>
                             </property>
                             <property name="IsLabeled">
                                 <boolean>false</boolean>
+                            </property>
+                            <property name="Interval">
+                                <float>5.0</float>
                             </property>
                             <property name="IsFilled">
                                 <boolean>true</boolean>
                             </property>
                         </object>
                     </property>
-                    <property name="IsRaster">
-                        <boolean>true</boolean>
-                    </property>
                     <property name="ColorByMember">
                         <boolean>false</boolean>
                     </property>
-                    <property name="ColorFill">
-                        <boolean>true</boolean>
-                    </property>
                     <property name="Level">
-                        <object class="ucar.unidata.util.TwoFacedObject">
+                        <object class="ucar.unidata.util.TwoFacedObject" id="id111">
                             <property name="Id">
-                                <object class="visad.Real" id="id117">
+                                <object class="visad.Real">
                                     <constructor>
                                         <object class="visad.data.netcdf.Quantity" id="id114">
                                             <object class="java.util.ArrayList">
@@ -1226,14 +1234,11 @@
                             </property>
                         </object>
                     </property>
-                    <property name="Id">
-                        <string stringvalue=""/>
-                    </property>
                     <property name="DisplayName">
                         <string><![CDATA[Color-Filled Contour Plan View]]></string>
                     </property>
-                    <property name="DisplayCategory">
-                        <string><![CDATA[Plan Views]]></string>
+                    <property name="DisplayListColor">
+                        <object idref="id64"/>
                     </property>
                     <property name="DataChoices">
                         <object class="java.util.ArrayList" id="id118">
@@ -1358,6 +1363,12 @@
                             </method>
                         </object>
                     </property>
+                    <property name="DisplayCategory">
+                        <string><![CDATA[Plan Views]]></string>
+                    </property>
+                    <property name="UseFastRendering">
+                        <boolean>true</boolean>
+                    </property>
                     <property name="Categories">
                         <object class="java.util.ArrayList">
                             <method name="add">
@@ -1422,6 +1433,9 @@
                             <property name="Name">
                                 <string><![CDATA[Temperature]]></string>
                             </property>
+                            <property name="Id">
+                                <string><![CDATA[Temperature]]></string>
+                            </property>
                             <property name="Table">
                                 <array class="[F" length="4">
                                     <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9tu/UPjbv1D6JM98+tu/UPuSryT8JM98/IBHZPzbv1D9Nzc4/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAA</parray>
@@ -1457,32 +1471,31 @@
                                     </method>
                                 </object>
                             </property>
+                            <property name="ScaleFactor">
+                                <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAACHP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAA</parray>
+                            </property>
                         </object>
                     </property>
-                    <property name="DisplayListColor">
-                        <object idref="id39"/>
+                    <property name="Range">
+                        <object class="ucar.unidata.util.Range">
+                            <property name="Min">
+                                <double>-90.0</double>
+                            </property>
+                            <property name="Max">
+                                <double>45.0</double>
+                            </property>
+                        </object>
                     </property>
-                    <property name="UseFastRendering">
-                        <boolean>true</boolean>
+                    <property name="DisplayId">
+                        <string><![CDATA[planviewcontourfilled]]></string>
                     </property>
                     <property name="DataSelection">
                         <object class="ucar.unidata.data.DataSelection">
                             <property name="Properties">
                                 <object class="java.util.Hashtable">
                                     <method name="put">
-                                        <string><![CDATA[centerPosition]]></string>
-                                        <object class="ucar.unidata.geoloc.LatLonPointImpl">
-                                            <property name="Latitude">
-                                                <double>39.55467224121094</double>
-                                            </property>
-                                            <property name="Longitude">
-                                                <double>-97.53805541992188</double>
-                                            </property>
-                                        </object>
-                                    </method>
-                                    <method name="put">
                                         <string><![CDATA[Use_Progressive_Resolution]]></string>
-                                        <java.lang.Boolean>true</java.lang.Boolean>
+                                        <java.lang.Boolean>false</java.lang.Boolean>
                                     </method>
                                     <method name="put">
                                         <string><![CDATA[Region_Selection_Option]]></string>
@@ -1494,30 +1507,24 @@
                                     </method>
                                 </object>
                             </property>
-                            <property name="FromLevel">
-                                <object idref="id117"/>
-                            </property>
                             <property name="ToLevel">
-                                <object idref="id117"/>
+                                <object idref="id111"/>
                             </property>
                             <property name="GeoSelection">
                                 <object class="ucar.unidata.data.GeoSelection">
-                                    <property name="UseViewBounds">
-                                        <boolean>true</boolean>
-                                    </property>
                                     <property name="BoundingBox">
                                         <object class="ucar.unidata.data.GeoLocationInfo">
                                             <property name="MaxLat">
-                                                <double>62.45262145996094</double>
+                                                <double>47.30617345476192</double>
                                             </property>
                                             <property name="MinLat">
-                                                <double>16.656728744506836</double>
+                                                <double>31.352150912726565</double>
                                             </property>
                                             <property name="MaxLon">
-                                                <double>-68.48286636352539</double>
+                                                <double>-80.31814185502132</double>
                                             </property>
                                             <property name="MinLon">
-                                                <double>-126.5396174621582</double>
+                                                <double>-112.4898897910265</double>
                                             </property>
                                         </object>
                                     </property>
@@ -1526,49 +1533,46 @@
                                             <constructor>
                                                 <int>0</int>
                                                 <int>0</int>
-                                                <int>869</int>
+                                                <int>865</int>
                                                 <int>712</int>
                                             </constructor>
                                         </object>
                                     </property>
                                 </object>
                             </property>
-                        </object>
-                    </property>
-                    <property name="Range">
-                        <object class="ucar.unidata.util.Range">
-                            <property name="Max">
-                                <double>120.0</double>
-                            </property>
-                            <property name="Min">
-                                <double>-20.0</double>
+                            <property name="FromLevel">
+                                <object idref="id111"/>
                             </property>
                         </object>
                     </property>
-                    <property name="InitDataChoices">
-                        <object idref="id118"/>
+                    <property name="ExpandedInTabs">
+                        <boolean>true</boolean>
                     </property>
-                    <property name="MainPanelSize">
-                        <object class="java.awt.Dimension">
-                            <constructor>
-                                <int>944</int>
-                                <int>729</int>
-                            </constructor>
-                        </object>
+                    <property name="DisplayUnitName">
+                        <string><![CDATA[celsius]]></string>
+                    </property>
+                    <property name="Viewer">
+                        <object idref="idv"/>
+                    </property>
+                    <property name="MakeWindow">
+                        <boolean>false</boolean>
+                    </property>
+                    <property name="ZPosition">
+                        <double>-1.0</double>
                     </property>
                     <property name="DefaultView">
-                        <string><![CDATA[view_1421174430429_0_8725751791325838_24]]></string>
+                        <string><![CDATA[view_1428595336895_0_5777437067712643_81]]></string>
                     </property>
                     <property name="ColorUnitName">
-                        <string><![CDATA[Fahrenheit]]></string>
+                        <string><![CDATA[celsius]]></string>
                     </property>
                     <property name="SelectRange">
                         <object class="ucar.unidata.util.Range">
-                            <property name="Max">
-                                <double>112.32537353515619</double>
-                            </property>
                             <property name="Min">
-                                <double>48.01289184570311</double>
+                                <double>-10.284002685546852</double>
+                            </property>
+                            <property name="Max">
+                                <double>29.655084228515648</double>
                             </property>
                         </object>
                     </property>
@@ -1577,31 +1581,16 @@
                             <property name="Name">
                                 <string><![CDATA[T]]></string>
                             </property>
-                            <property name="IsVisible">
-                                <boolean>true</boolean>
-                            </property>
                             <property name="Unit">
-                                <object class="visad.OffsetUnit" name="Fahrenheit">
-                                    <string><![CDATA[fahrenheit @ 0.0]]></string>
+                                <object class="visad.OffsetUnit" name="celsius">
+                                    <string><![CDATA[Cel @ 0.0]]></string>
                                 </object>
                             </property>
                             <property name="LabelColor">
-                                <object class="java.awt.Color">
-                                    <constructor>
-                                        <int>255</int>
-                                        <int>255</int>
-                                        <int>255</int>
-                                    </constructor>
-                                </object>
+                                <object idref="id107"/>
                             </property>
                             <property name="LabelFont">
-                                <object class="java.awt.Font">
-                                    <constructor>
-                                        <string><![CDATA[Default]]></string>
-                                        <int>0</int>
-                                        <int>20</int>
-                                    </constructor>
-                                </object>
+                                <object idref="id63"/>
                             </property>
                             <property name="ColorPalette">
                                 <array class="[F" length="4">
@@ -1616,29 +1605,11 @@
                     <property name="HadDataChoices">
                         <boolean>true</boolean>
                     </property>
-                    <property name="DisplayId">
-                        <string><![CDATA[planviewcontourfilled]]></string>
-                    </property>
-                    <property name="ExpandedInTabs">
-                        <boolean>true</boolean>
-                    </property>
-                    <property name="DisplayUnitName">
-                        <string><![CDATA[Fahrenheit]]></string>
-                    </property>
-                    <property name="Viewer">
-                        <object idref="idv"/>
-                    </property>
-                    <property name="MakeWindow">
-                        <boolean>false</boolean>
-                    </property>
-                    <property name="ZPosition">
-                        <double>-1.0</double>
-                    </property>
                     <property name="ViewManagerClassNames">
                         <string><![CDATA[ucar.unidata.idv.MapViewManager]]></string>
                     </property>
                     <property name="DisplayListTemplate">
-                        <string><![CDATA[%longname% - %displayname% %timestamp%]]></string>
+                        <string><![CDATA[%datasourcename% - %displayname% %timestamp%]]></string>
                     </property>
                     <property name="LegendLabelTemplate">
                         <string><![CDATA[%datasourcename% - %displayname%]]></string>
@@ -1646,24 +1617,73 @@
                     <property name="ExtraLabelTemplate">
                         <string><![CDATA[%resolution%]]></string>
                     </property>
-                    <property name="IsProgressiveResolution">
-                        <boolean>true</boolean>
+                    <property name="InitDataChoices">
+                        <object idref="id118"/>
                     </property>
-                    <property name="MatchDisplayRegion">
-                        <boolean>true</boolean>
+                    <property name="MainPanelSize">
+                        <object class="java.awt.Dimension">
+                            <constructor>
+                                <int>836</int>
+                                <int>597</int>
+                            </constructor>
+                        </object>
                     </property>
                     <property name="UniqueId">
-                        <string><![CDATA[sharable_1406230045927_0_686708902907551_38]]></string>
+                        <string><![CDATA[sharable_1428595336895_0_5777437067712643_96]]></string>
                     </property>
+                    <field name="isProgressiveResolution">
+                        <java.lang.Boolean>false</java.lang.Boolean>
+                    </field>
                     <field name="reloadFromBounds">
+                        <java.lang.Boolean>false</java.lang.Boolean>
+                    </field>
+                    <field name="matchDisplayRegion">
                         <java.lang.Boolean>false</java.lang.Boolean>
                     </field>
                 </object>
             </method>
             <method name="add">
-                <object class="ucar.unidata.idv.control.StationModelControl" id="id158">
+                <object class="ucar.unidata.idv.control.StationModelControl" id="id155">
                     <property name="StationModelName">
                         <string><![CDATA[Observations>METAR]]></string>
+                    </property>
+                    <property name="TimeSeries">
+                        <object class="ucar.unidata.idv.control.chart.TimeSeriesChart" id="id156">
+                            <property name="ShowAnimationTime">
+                                <boolean>true</boolean>
+                            </property>
+                            <property name="ChartHolders">
+                                <object class="java.util.ArrayList">
+                                    <method name="add">
+                                        <object class="ucar.unidata.idv.control.chart.ChartHolder">
+                                            <property name="DomainLineState">
+                                                <object class="ucar.unidata.idv.control.chart.LineState"/>
+                                            </property>
+                                            <property name="RangeLineState">
+                                                <object class="ucar.unidata.idv.control.chart.LineState"/>
+                                            </property>
+                                            <property name="PreferredSize">
+                                                <object class="java.awt.Dimension">
+                                                    <constructor>
+                                                        <int>300</int>
+                                                        <int>200</int>
+                                                    </constructor>
+                                                </object>
+                                            </property>
+                                            <property name="ChartManager">
+                                                <object idref="id156"/>
+                                            </property>
+                                        </object>
+                                    </method>
+                                </object>
+                            </property>
+                            <property name="Control">
+                                <object idref="id155"/>
+                            </property>
+                            <property name="ShowThumb">
+                                <boolean>true</boolean>
+                            </property>
+                        </object>
                     </property>
                     <property name="TheStationModel">
                         <object class="ucar.unidata.ui.symbol.StationModel">
@@ -1691,19 +1711,12 @@
                                                 </array>
                                             </property>
                                             <property name="RotateXInfo">
-                                                <object class="ucar.unidata.ui.symbol.RotateInfo">
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
-                                                </object>
+                                                <object class="ucar.unidata.ui.symbol.RotateInfo"/>
                                             </property>
                                             <property name="RotateYInfo">
                                                 <object class="ucar.unidata.ui.symbol.RotateInfo">
                                                     <property name="Type">
                                                         <int>1</int>
-                                                    </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
                                                     </property>
                                                 </object>
                                             </property>
@@ -1712,16 +1725,19 @@
                                                     <property name="Type">
                                                         <int>2</int>
                                                     </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
                                                 </object>
-                                            </property>
-                                            <property name="ColorMappings">
-                                                <object class="java.util.ArrayList"/>
                                             </property>
                                             <property name="Id">
                                                 <string><![CDATA[ID-1038334515283-0]]></string>
+                                            </property>
+                                            <property name="Foreground">
+                                                <object class="java.awt.Color" id="id168">
+                                                    <constructor>
+                                                        <int>255</int>
+                                                        <int>0</int>
+                                                        <int>255</int>
+                                                    </constructor>
+                                                </object>
                                             </property>
                                             <property name="Filled">
                                                 <boolean>true</boolean>
@@ -1761,9 +1777,6 @@
                                             <property name="NumberFormatString">
                                                 <string><![CDATA[####]]></string>
                                             </property>
-                                            <property name="RectPoint">
-                                                <string><![CDATA[LR]]></string>
-                                            </property>
                                             <property name="ParamIds">
                                                 <array class="string" length="1">
                                                     <string><![CDATA[TEMP]]></string>
@@ -1773,6 +1786,9 @@
                                                 <array class="string" length="1">
                                                     <string><![CDATA[Value parameter]]></string>
                                                 </array>
+                                            </property>
+                                            <property name="RectPoint">
+                                                <string><![CDATA[LR]]></string>
                                             </property>
                                             <property name="RotateXInfo">
                                                 <object class="ucar.unidata.ui.symbol.RotateInfo"/>
@@ -1847,57 +1863,6 @@
                                             <property name="NumberFormatString">
                                                 <string><![CDATA[####]]></string>
                                             </property>
-                                            <property name="ColorTable">
-                                                <object class="ucar.unidata.util.ColorTable" id="id174">
-                                                    <property name="Name">
-                                                        <string><![CDATA[Black]]></string>
-                                                    </property>
-                                                    <property name="Id">
-                                                        <string><![CDATA[Black]]></string>
-                                                    </property>
-                                                    <property name="Table">
-                                                        <array class="[F" length="4">
-                                                            <parray class="float" length="5">0.0,0.0,0.0,0.0,0.0</parray>
-                                                            <parray class="float" length="5">0.0,0.0,0.0,0.0,0.0</parray>
-                                                            <parray class="float" length="5">0.0,0.0,0.0,0.0,0.0</parray>
-                                                            <parray class="float" length="5">1.0,1.0,1.0,1.0,1.0</parray>
-                                                        </array>
-                                                    </property>
-                                                    <property name="Category">
-                                                        <string><![CDATA[System>Solid Colors]]></string>
-                                                    </property>
-                                                    <property name="Range">
-                                                        <object class="ucar.unidata.util.Range">
-                                                            <property name="Max">
-                                                                <double>0.0</double>
-                                                            </property>
-                                                            <field name="min">
-                                                                <java.lang.Double>0.0</java.lang.Double>
-                                                            </field>
-                                                        </object>
-                                                    </property>
-                                                    <property name="ScaleFactor">
-                                                        <parray class="float" length="5">1.0,1.0,1.0,1.0,1.0</parray>
-                                                    </property>
-                                                    <property name="Breakpoints">
-                                                        <object class="java.util.ArrayList">
-                                                            <method name="add">
-                                                                <object class="ucar.unidata.util.ColorTable$Breakpoint"/>
-                                                            </method>
-                                                            <method name="add">
-                                                                <object class="ucar.unidata.util.ColorTable$Breakpoint">
-                                                                    <property name="Value">
-                                                                        <double>1.0</double>
-                                                                    </property>
-                                                                </object>
-                                                            </method>
-                                                        </object>
-                                                    </property>
-                                                </object>
-                                            </property>
-                                            <property name="RectPoint">
-                                                <string><![CDATA[UR]]></string>
-                                            </property>
                                             <property name="ParamIds">
                                                 <array class="string" length="1">
                                                     <string><![CDATA[DEWPOINT]]></string>
@@ -1908,20 +1873,16 @@
                                                     <string><![CDATA[Value parameter]]></string>
                                                 </array>
                                             </property>
+                                            <property name="RectPoint">
+                                                <string><![CDATA[UR]]></string>
+                                            </property>
                                             <property name="RotateXInfo">
-                                                <object class="ucar.unidata.ui.symbol.RotateInfo">
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
-                                                </object>
+                                                <object class="ucar.unidata.ui.symbol.RotateInfo"/>
                                             </property>
                                             <property name="RotateYInfo">
                                                 <object class="ucar.unidata.ui.symbol.RotateInfo">
                                                     <property name="Type">
                                                         <int>1</int>
-                                                    </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
                                                     </property>
                                                 </object>
                                             </property>
@@ -1930,19 +1891,22 @@
                                                     <property name="Type">
                                                         <int>2</int>
                                                     </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
                                                 </object>
-                                            </property>
-                                            <property name="ColorMappings">
-                                                <object class="java.util.ArrayList"/>
                                             </property>
                                             <property name="DisplayUnitName">
                                                 <string><![CDATA[Fahrenheit]]></string>
                                             </property>
                                             <property name="Id">
                                                 <string><![CDATA[ID-1038334515283-2]]></string>
+                                            </property>
+                                            <property name="Foreground">
+                                                <object class="java.awt.Color">
+                                                    <constructor>
+                                                        <int>0</int>
+                                                        <int>255</int>
+                                                        <int>0</int>
+                                                    </constructor>
+                                                </object>
                                             </property>
                                             <property name="Stretchy">
                                                 <boolean>false</boolean>
@@ -1959,7 +1923,7 @@
                                                         <int>-24</int>
                                                         <int>16</int>
                                                         <int>14</int>
-                                                        <int>17</int>
+                                                        <int>16</int>
                                                     </constructor>
                                                 </object>
                                             </field>
@@ -1985,12 +1949,6 @@
                                             <property name="NumberFormatString">
                                                 <string><![CDATA[000]]></string>
                                             </property>
-                                            <property name="ColorTable">
-                                                <object idref="id174"/>
-                                            </property>
-                                            <property name="RectPoint">
-                                                <string><![CDATA[LL]]></string>
-                                            </property>
                                             <property name="ParamIds">
                                                 <array class="string" length="1">
                                                     <string><![CDATA[=PRESSURE*10%1000]]></string>
@@ -2001,20 +1959,16 @@
                                                     <string><![CDATA[Value parameter]]></string>
                                                 </array>
                                             </property>
+                                            <property name="RectPoint">
+                                                <string><![CDATA[LL]]></string>
+                                            </property>
                                             <property name="RotateXInfo">
-                                                <object class="ucar.unidata.ui.symbol.RotateInfo">
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
-                                                </object>
+                                                <object class="ucar.unidata.ui.symbol.RotateInfo"/>
                                             </property>
                                             <property name="RotateYInfo">
                                                 <object class="ucar.unidata.ui.symbol.RotateInfo">
                                                     <property name="Type">
                                                         <int>1</int>
-                                                    </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
                                                     </property>
                                                 </object>
                                             </property>
@@ -2023,19 +1977,16 @@
                                                     <property name="Type">
                                                         <int>2</int>
                                                     </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
                                                 </object>
-                                            </property>
-                                            <property name="ColorMappings">
-                                                <object class="java.util.ArrayList"/>
                                             </property>
                                             <property name="DisplayUnitName">
                                                 <string><![CDATA[Millibars]]></string>
                                             </property>
                                             <property name="Id">
                                                 <string><![CDATA[ID-1038334515283-3]]></string>
+                                            </property>
+                                            <property name="Foreground">
+                                                <object idref="id168"/>
                                             </property>
                                             <property name="Stretchy">
                                                 <boolean>false</boolean>
@@ -2051,8 +2002,8 @@
                                                     <constructor>
                                                         <int>15</int>
                                                         <int>-37</int>
-                                                        <int>28</int>
-                                                        <int>17</int>
+                                                        <int>38</int>
+                                                        <int>16</int>
                                                     </constructor>
                                                 </object>
                                             </field>
@@ -2072,18 +2023,6 @@
                                             <property name="Value">
                                                 <string><![CDATA[stn_id]]></string>
                                             </property>
-                                            <property name="FontSize">
-                                                <int>8</int>
-                                            </property>
-                                            <property name="CurrFontNo">
-                                                <int>0</int>
-                                            </property>
-                                            <property name="ColorTable">
-                                                <object idref="id174"/>
-                                            </property>
-                                            <property name="RectPoint">
-                                                <string><![CDATA[UM]]></string>
-                                            </property>
                                             <property name="ParamIds">
                                                 <array class="string" length="1">
                                                     <string><![CDATA[ID]]></string>
@@ -2094,20 +2033,16 @@
                                                     <string><![CDATA[Parameter]]></string>
                                                 </array>
                                             </property>
+                                            <property name="RectPoint">
+                                                <string><![CDATA[UM]]></string>
+                                            </property>
                                             <property name="RotateXInfo">
-                                                <object class="ucar.unidata.ui.symbol.RotateInfo">
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
-                                                </object>
+                                                <object class="ucar.unidata.ui.symbol.RotateInfo"/>
                                             </property>
                                             <property name="RotateYInfo">
                                                 <object class="ucar.unidata.ui.symbol.RotateInfo">
                                                     <property name="Type">
                                                         <int>1</int>
-                                                    </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
                                                     </property>
                                                 </object>
                                             </property>
@@ -2116,16 +2051,19 @@
                                                     <property name="Type">
                                                         <int>2</int>
                                                     </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
                                                 </object>
-                                            </property>
-                                            <property name="ColorMappings">
-                                                <object class="java.util.ArrayList"/>
                                             </property>
                                             <property name="Id">
                                                 <string><![CDATA[ID-1038886400195-0]]></string>
+                                            </property>
+                                            <property name="Foreground">
+                                                <object class="java.awt.Color">
+                                                    <constructor>
+                                                        <int>254</int>
+                                                        <int>0</int>
+                                                        <int>255</int>
+                                                    </constructor>
+                                                </object>
                                             </property>
                                             <property name="Stretchy">
                                                 <boolean>false</boolean>
@@ -2139,10 +2077,10 @@
                                             <field name="bounds">
                                                 <object class="java.awt.Rectangle">
                                                     <constructor>
-                                                        <int>10</int>
-                                                        <int>13</int>
-                                                        <int>30</int>
-                                                        <int>11</int>
+                                                        <int>-17</int>
+                                                        <int>38</int>
+                                                        <int>34</int>
+                                                        <int>16</int>
                                                     </constructor>
                                                 </object>
                                             </field>
@@ -2159,17 +2097,14 @@
                                     </method>
                                     <method name="add">
                                         <object class="ucar.unidata.ui.symbol.WindBarbSymbol">
-                                            <property name="WindDirection">
-                                                <double>135.0</double>
-                                            </property>
                                             <property name="Stretchy">
                                                 <boolean>true</boolean>
                                             </property>
                                             <property name="WindSpeed">
                                                 <double>65.0</double>
                                             </property>
-                                            <property name="ColorTable">
-                                                <object idref="id174"/>
+                                            <property name="WindDirection">
+                                                <double>135.0</double>
                                             </property>
                                             <property name="ParamIds">
                                                 <array class="string" length="2">
@@ -2184,19 +2119,12 @@
                                                 </array>
                                             </property>
                                             <property name="RotateXInfo">
-                                                <object class="ucar.unidata.ui.symbol.RotateInfo">
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
-                                                </object>
+                                                <object class="ucar.unidata.ui.symbol.RotateInfo"/>
                                             </property>
                                             <property name="RotateYInfo">
                                                 <object class="ucar.unidata.ui.symbol.RotateInfo">
                                                     <property name="Type">
                                                         <int>1</int>
-                                                    </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
                                                     </property>
                                                 </object>
                                             </property>
@@ -2205,13 +2133,7 @@
                                                     <property name="Type">
                                                         <int>2</int>
                                                     </property>
-                                                    <property name="Param">
-                                                        <string stringvalue=""/>
-                                                    </property>
                                                 </object>
-                                            </property>
-                                            <property name="ColorMappings">
-                                                <object class="java.util.ArrayList"/>
                                             </property>
                                             <property name="Id">
                                                 <string><![CDATA[ID-1038887200005-0]]></string>
@@ -2219,9 +2141,9 @@
                                             <property name="Foreground">
                                                 <object class="java.awt.Color">
                                                     <constructor>
-                                                        <int>255</int>
-                                                        <int>255</int>
-                                                        <int>255</int>
+                                                        <int>166</int>
+                                                        <int>166</int>
+                                                        <int>166</int>
                                                     </constructor>
                                                 </object>
                                             </property>
@@ -2234,8 +2156,8 @@
                                             <field name="bounds">
                                                 <object class="java.awt.Rectangle">
                                                     <constructor>
-                                                        <int>-10</int>
-                                                        <int>-11</int>
+                                                        <int>-13</int>
+                                                        <int>-13</int>
                                                         <int>26</int>
                                                         <int>26</int>
                                                     </constructor>
@@ -2256,55 +2178,14 @@
                             </property>
                         </object>
                     </property>
-                    <property name="TimeSeries">
-                        <object class="ucar.unidata.idv.control.chart.TimeSeriesChart" id="id203">
-                            <property name="ShowAnimationTime">
-                                <boolean>true</boolean>
-                            </property>
-                            <property name="Control">
-                                <object idref="id158"/>
-                            </property>
-                            <property name="ShowThumb">
-                                <boolean>true</boolean>
-                            </property>
-                            <property name="ChartHolders">
-                                <object class="java.util.ArrayList">
-                                    <method name="add">
-                                        <object class="ucar.unidata.idv.control.chart.ChartHolder">
-                                            <property name="PreferredSize">
-                                                <object class="java.awt.Dimension">
-                                                    <constructor>
-                                                        <int>300</int>
-                                                        <int>200</int>
-                                                    </constructor>
-                                                </object>
-                                            </property>
-                                            <property name="DomainLineState">
-                                                <object class="ucar.unidata.idv.control.chart.LineState"/>
-                                            </property>
-                                            <property name="RangeLineState">
-                                                <object class="ucar.unidata.idv.control.chart.LineState"/>
-                                            </property>
-                                            <property name="ChartManager">
-                                                <object idref="id203"/>
-                                            </property>
-                                        </object>
-                                    </method>
-                                </object>
-                            </property>
-                        </object>
-                    </property>
-                    <property name="Id">
-                        <string stringvalue=""/>
-                    </property>
                     <property name="DisplayName">
                         <string><![CDATA[Point Data Plot]]></string>
                     </property>
-                    <property name="DisplayCategory">
-                        <string><![CDATA[Point Data]]></string>
+                    <property name="DisplayListColor">
+                        <object idref="id64"/>
                     </property>
                     <property name="DataChoices">
-                        <object class="java.util.ArrayList" id="id209">
+                        <object class="java.util.ArrayList" id="id199">
                             <method name="add">
                                 <object class="ucar.unidata.data.DirectDataChoice">
                                     <property name="DataSource">
@@ -2336,7 +2217,7 @@
                                         <string><![CDATA[Point Data]]></string>
                                     </property>
                                     <property name="Categories">
-                                        <object class="java.util.ArrayList" id="id212">
+                                        <object class="java.util.ArrayList" id="id202">
                                             <method name="add">
                                                 <object class="ucar.unidata.data.DataCategory">
                                                     <property name="Name">
@@ -2370,19 +2251,25 @@
                                         </object>
                                     </property>
                                     <property name="DataCategories">
-                                        <object idref="id212"/>
+                                        <object idref="id202"/>
                                     </property>
                                     <property name="FixedRequestProperties">
                                         <object class="java.util.Hashtable">
                                             <method name="put">
                                                 <string><![CDATA[prop.requester]]></string>
-                                                <object idref="id158"/>
+                                                <object idref="id155"/>
                                             </method>
                                         </object>
                                     </property>
                                 </object>
                             </method>
                         </object>
+                    </property>
+                    <property name="DisplayCategory">
+                        <string><![CDATA[Point Data]]></string>
+                    </property>
+                    <property name="UseFastRendering">
+                        <boolean>true</boolean>
                     </property>
                     <property name="Categories">
                         <object class="java.util.ArrayList">
@@ -2425,30 +2312,16 @@
                             </method>
                         </object>
                     </property>
-                    <property name="DisplayListColor">
-                        <object idref="id39"/>
-                    </property>
-                    <property name="UseFastRendering">
-                        <boolean>true</boolean>
+                    <property name="DisplayId">
+                        <string><![CDATA[stationmodelcontrol]]></string>
                     </property>
                     <property name="DataSelection">
                         <object class="ucar.unidata.data.DataSelection">
                             <property name="Properties">
                                 <object class="java.util.Hashtable">
                                     <method name="put">
-                                        <string><![CDATA[centerPosition]]></string>
-                                        <object class="ucar.unidata.geoloc.LatLonPointImpl">
-                                            <property name="Latitude">
-                                                <double>39.55467224121094</double>
-                                            </property>
-                                            <property name="Longitude">
-                                                <double>-97.53805541992188</double>
-                                            </property>
-                                        </object>
-                                    </method>
-                                    <method name="put">
                                         <string><![CDATA[Use_Progressive_Resolution]]></string>
-                                        <java.lang.Boolean>true</java.lang.Boolean>
+                                        <java.lang.Boolean>false</java.lang.Boolean>
                                     </method>
                                     <method name="put">
                                         <string><![CDATA[prop.stationmodelname]]></string>
@@ -2464,8 +2337,8 @@
                                     </method>
                                 </object>
                             </property>
-                            <property name="FromLevel">
-                                <object class="ucar.unidata.util.TwoFacedObject" id="id225">
+                            <property name="ToLevel">
+                                <object class="ucar.unidata.util.TwoFacedObject" id="id214">
                                     <property name="Id">
                                         <object class="visad.Real">
                                             <constructor>
@@ -2481,27 +2354,21 @@
                                     </property>
                                 </object>
                             </property>
-                            <property name="ToLevel">
-                                <object idref="id225"/>
-                            </property>
                             <property name="GeoSelection">
                                 <object class="ucar.unidata.data.GeoSelection">
-                                    <property name="UseViewBounds">
-                                        <boolean>true</boolean>
-                                    </property>
                                     <property name="BoundingBox">
                                         <object class="ucar.unidata.data.GeoLocationInfo">
                                             <property name="MaxLat">
-                                                <double>62.45262145996094</double>
+                                                <double>48.14310051658664</double>
                                             </property>
                                             <property name="MinLat">
-                                                <double>16.656728744506836</double>
+                                                <double>30.09351711365493</double>
                                             </property>
                                             <property name="MaxLon">
-                                                <double>-68.48286636352539</double>
+                                                <double>-79.89727702587935</double>
                                             </property>
                                             <property name="MinLon">
-                                                <double>-126.5396174621582</double>
+                                                <double>-114.29765951146682</double>
                                             </property>
                                         </object>
                                     </property>
@@ -2510,67 +2377,17 @@
                                             <constructor>
                                                 <int>0</int>
                                                 <int>0</int>
-                                                <int>869</int>
+                                                <int>865</int>
                                                 <int>712</int>
                                             </constructor>
                                         </object>
                                     </property>
                                 </object>
                             </property>
-                        </object>
-                    </property>
-                    <property name="InitDataChoices">
-                        <object idref="id209"/>
-                    </property>
-                    <property name="MainPanelSize">
-                        <object class="java.awt.Dimension">
-                            <constructor>
-                                <int>944</int>
-                                <int>729</int>
-                            </constructor>
-                        </object>
-                    </property>
-                    <property name="DefaultView">
-                        <string><![CDATA[view_1421174430429_0_8725751791325838_24]]></string>
-                    </property>
-                    <property name="ColorScaleInfo">
-                        <object class="ucar.visad.display.ColorScaleInfo">
-                            <property name="Name">
-                                <string><![CDATA[SFCHOURLY]]></string>
-                            </property>
-                            <property name="LabelColor">
-                                <object class="java.awt.Color">
-                                    <constructor>
-                                        <int>192</int>
-                                        <int>192</int>
-                                        <int>192</int>
-                                    </constructor>
-                                </object>
-                            </property>
-                            <property name="LabelFont">
-                                <object class="java.awt.Font">
-                                    <constructor>
-                                        <string><![CDATA[Default]]></string>
-                                        <int>0</int>
-                                        <int>8</int>
-                                    </constructor>
-                                </object>
-                            </property>
-                            <property name="ColorPalette">
-                                <array class="[F" length="4">
-                                    <parray class="float" length="5">0.0,0.0,0.0,0.0,0.0</parray>
-                                    <parray class="float" length="5">0.0,0.0,0.0,0.0,0.0</parray>
-                                    <parray class="float" length="5">0.0,0.0,0.0,0.0,0.0</parray>
-                                    <parray class="float" length="5">1.0,1.0,1.0,1.0,1.0</parray>
-                                </array>
+                            <property name="FromLevel">
+                                <object idref="id214"/>
                             </property>
                         </object>
-                    </property>
-                    <property name="HadDataChoices">
-                        <boolean>true</boolean>
-                    </property>
-                    <property name="DisplayId">
-                        <string><![CDATA[stationmodelcontrol]]></string>
                     </property>
                     <property name="ExpandedInTabs">
                         <boolean>true</boolean>
@@ -2584,8 +2401,33 @@
                     <property name="ZPosition">
                         <double>-1.0</double>
                     </property>
+                    <property name="DefaultView">
+                        <string><![CDATA[view_1428595336895_0_5777437067712643_81]]></string>
+                    </property>
+                    <property name="ColorScaleInfo">
+                        <object class="ucar.visad.display.ColorScaleInfo">
+                            <property name="Name">
+                                <string><![CDATA[SFCHOURLY]]></string>
+                            </property>
+                            <property name="LabelColor">
+                                <object idref="id107"/>
+                            </property>
+                            <property name="LabelFont">
+                                <object idref="id63"/>
+                            </property>
+                        </object>
+                    </property>
+                    <property name="HadDataChoices">
+                        <boolean>true</boolean>
+                    </property>
                     <property name="DataTimeRange">
                         <object class="ucar.unidata.data.DataTimeRange">
+                            <property name="StartFixedTime">
+                                <long>1428595982401</long>
+                            </property>
+                            <property name="EndFixedTime">
+                                <long>1428595982401</long>
+                            </property>
                             <property name="TimeModeLabel">
                                 <object class="javax.swing.JLabel">
                                     <property name="Text">
@@ -2646,16 +2488,10 @@
                                     </property>
                                 </object>
                             </property>
-                            <property name="StartFixedTime">
-                                <long>1421174357665</long>
-                            </property>
-                            <property name="EndFixedTime">
-                                <long>1421174357665</long>
-                            </property>
                         </object>
                     </property>
                     <property name="DisplayListTemplate">
-                        <string><![CDATA[METAR - %displayname% %timestamp%]]></string>
+                        <string><![CDATA[%datasourcename% - %displayname% %timestamp%]]></string>
                     </property>
                     <property name="LegendLabelTemplate">
                         <string><![CDATA[%datasourcename% - %displayname%]]></string>
@@ -2663,16 +2499,27 @@
                     <property name="ExtraLabelTemplate">
                         <string><![CDATA[%resolution%]]></string>
                     </property>
-                    <property name="IsProgressiveResolution">
-                        <boolean>true</boolean>
+                    <property name="InitDataChoices">
+                        <object idref="id199"/>
                     </property>
-                    <property name="MatchDisplayRegion">
-                        <boolean>true</boolean>
+                    <property name="MainPanelSize">
+                        <object class="java.awt.Dimension">
+                            <constructor>
+                                <int>836</int>
+                                <int>597</int>
+                            </constructor>
+                        </object>
                     </property>
                     <property name="UniqueId">
-                        <string><![CDATA[sharable_1406230045927_0_686708902907551_40]]></string>
+                        <string><![CDATA[sharable_1428595336895_0_5777437067712643_98]]></string>
                     </property>
+                    <field name="isProgressiveResolution">
+                        <java.lang.Boolean>false</java.lang.Boolean>
+                    </field>
                     <field name="reloadFromBounds">
+                        <java.lang.Boolean>false</java.lang.Boolean>
+                    </field>
+                    <field name="matchDisplayRegion">
                         <java.lang.Boolean>false</java.lang.Boolean>
                     </field>
                 </object>
@@ -2688,7 +2535,7 @@
             </method>
             <method name="put">
                 <string><![CDATA[visad.version.build]]></string>
-                <string><![CDATA[Mon Dec 08 00:32:17 CST 2014]]></string>
+                <string><![CDATA[Tue Mar 17 00:31:23 CDT 2015]]></string>
             </method>
             <method name="put">
                 <string><![CDATA[idv.version.general]]></string>
@@ -2700,11 +2547,11 @@
             </method>
             <method name="put">
                 <string><![CDATA[mcv.version.build]]></string>
-                <string><![CDATA[2015-01-13 10:30 ]]></string>
+                <string><![CDATA[2015-04-09 09:30 ]]></string>
             </method>
             <method name="put">
                 <string><![CDATA[visad.version.general]]></string>
-                <string><![CDATA[r]]></string>
+                <string><![CDATA[r6116]]></string>
             </method>
         </object>
     </method>
