@@ -4299,9 +4299,9 @@ public class ImageGenerator extends IdvManager {
                         new VectorGraphicsRenderer(viewManager);
                     vectorRenderer.renderTo(loopFilename);
                 } else {
-//                    logger.trace("waiting until displays are 'done'...");
-//                    getIdv().getIdvUIManager().waitUntilDisplaysAreDone(
-//                        getIdv().getIdvUIManager(), 1000);
+                    logger.trace("waiting until displays are 'done'...");
+                    getIdv().getIdvUIManager().waitUntilDisplaysAreDone(
+                        getIdv().getIdvUIManager(), 1000);
                     logger.trace("done; calling viewManager getImage...");
                     BufferedImage bufferedImage = viewManager.getMaster().getImage(true);
                     if (!isNotBlank(bufferedImage)) {
