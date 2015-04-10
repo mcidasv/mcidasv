@@ -58,7 +58,7 @@ public class OptionMaster {
         { "JOGL_TOGL", "Enable JOGL", "1", Type.BOOLEAN, OptionPlatform.UNIXLIKE, Visibility.VISIBLE },
         { "USE_3DSTUFF", "Enable 3D controls", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "DEFAULT_LAYOUT", "Load default layout", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
-        { "STARTUP_BUNDLE", "Defaults", "", Type.DIRTREE, OptionPlatform.ALL, Visibility.VISIBLE },
+        { "STARTUP_BUNDLE", "Defaults", "", Type.FILE, OptionPlatform.ALL, Visibility.VISIBLE },
         // mcidasv enables this (the actual property is "visad.java3d.geometryByRef")
         // by default in mcidasv.properties.
         { "USE_GEOBYREF", "Enable access to geometry by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
@@ -87,8 +87,9 @@ public class OptionMaster {
      * @see DirectoryOption
      * @see SliderOption
      * @see LoggerLevelOption
+     * @see FileOption
      */
-    public enum Type { TEXT, BOOLEAN, MEMORY, DIRTREE, SLIDER, LOGLEVEL };
+    public enum Type { TEXT, BOOLEAN, MEMORY, DIRTREE, SLIDER, LOGLEVEL, FILE };
     
     /** 
      * Different ways that an {@link Option} might be displayed.
@@ -127,7 +128,7 @@ public class OptionMaster {
     private Map<String, Option> buildOptions(final Object[][] options) {
         // TODO(jon): seriously, get that zip stuff working! this array 
         // stuff is BAD.
-        Map<String, Option> optMap = new HashMap<String, Option>(options.length);
+        Map<String, Option> optMap = new HashMap<>(options.length);
         
         for (Object[] arrayOption : options) {
             String id = (String)arrayOption[0];
@@ -155,6 +156,9 @@ public class OptionMaster {
                     break;
                 case LOGLEVEL:
                     optMap.put(id, new LoggerLevelOption(id, label, defaultValue, platform, visibility));
+                    break;
+                case FILE:
+                    optMap.put(id, new FileOption(id, label, defaultValue, platform, visibility));
                     break;
                 default:
                      throw new AssertionError(type + 
@@ -201,6 +205,7 @@ public class OptionMaster {
      * @see #getSliderOption
      * @see #getTextOption
      * @see #getLoggerLevelOption
+     * @see #getFileOption
      */
     private Option getOption(final String id) {
         return optionMap.get(id);
@@ -289,7 +294,11 @@ public class OptionMaster {
     public LoggerLevelOption getLoggerLevelOption(final String id) {
         return (LoggerLevelOption)optionMap.get(id);
     }
-    
+
+    public FileOption getFileOption(final String id) {
+        return (FileOption)optionMap.get(id);
+    }
+
     // TODO(jon): getAllOptions and optionsBy* really need some work.
     // I want to eventually do something like:
     // Collection<Option> = getOpts().byPlatform(WINDOWS, ALL).byType(BOOLEAN).byVis(HIDDEN)

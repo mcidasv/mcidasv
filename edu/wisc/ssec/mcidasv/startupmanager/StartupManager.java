@@ -57,6 +57,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -74,6 +75,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import edu.wisc.ssec.mcidasv.startupmanager.options.FileOption;
 import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -280,7 +282,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         BooleanOption useNpot = optMaster.getBooleanOption("USE_NPOT");
         BooleanOption useGeometryByRef = optMaster.getBooleanOption("USE_GEOBYREF");
         BooleanOption useImageByRef = optMaster.getBooleanOption("USE_IMAGEBYREF");
-        DirectoryOption startupBundle = optMaster.getDirectoryOption("STARTUP_BUNDLE");
+        FileOption startupBundle = optMaster.getFileOption("STARTUP_BUNDLE");
         TextOption jvmArgs = optMaster.getTextOption("JVM_OPTIONS");
         LoggerLevelOption logLevel = optMaster.getLoggerLevelOption("LOG_LEVEL");
         TextOption textureWidth = optMaster.getTextOption("TEXTURE_WIDTH");
@@ -303,7 +305,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JPanel j3dPanel = McVGuiUtils.makeLabeledComponent("3D:", internalPanel);
         
         // Build the bundle panel
-        JPanel startupBundlePanel = startupBundle.getComponent();
+        JComponent startupBundlePanel = startupBundle.getComponent();
         JCheckBox defaultBundleCheckBox = defaultBundle.getComponent();
         defaultBundleCheckBox.setText(defaultBundle.getLabel());
         JPanel bundlePanel = McVGuiUtils.makeLabeledComponent(startupBundle.getLabel()+ ':',
