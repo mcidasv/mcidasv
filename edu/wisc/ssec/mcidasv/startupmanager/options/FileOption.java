@@ -24,14 +24,20 @@ public final class FileOption extends AbstractOption {
     /** Label for {@link #browseButton}. */
     private static final String BUTTON_LABEL = "Browse...";
 
-    /** Regular expression pattern for ensuring that no quote marks are present in {@link #value}. */
+    /**
+     * Regular expression pattern for ensuring that no quote marks are present
+     * in {@link #value}.
+     */
     private static final Pattern CLEAN_VALUE_REGEX = Pattern.compile("\"");
 
     /** Formatting string used by {@link #toString()}. */
-    private static final String FORMAT = "[FileOption@%x: optionId=%s, value=%s]";
+    private static final String FORMAT =
+        "[FileOption@%x: optionId=%s, value=%s]";
 
     /** Tool tip used by {@link #bundleField}. */
-    public static final String BUNDLE_FIELD_TIP = "Path to default bundle. An empty path signifies that there is no default bundle in use.";
+    public static final String BUNDLE_FIELD_TIP =
+        "Path to default bundle. An empty path signifies that there is no"
+        + " default bundle in use.";
 
     /** Default option value. See {@link OptionMaster#blahblah}. */
     private final String defaultValue;
@@ -45,21 +51,56 @@ public final class FileOption extends AbstractOption {
     /** Current value of this option. */
     private String value;
 
-    public FileOption(final String id, final String label, final String defaultValue,final OptionMaster.OptionPlatform optionPlatform, final OptionMaster.Visibility optionVisibility) {
+    /**
+     * Create a new {@literal "file option"} that allows the user to select
+     * a file.
+     *
+     * @param id Option ID.
+     * @param label Option label (used in GUI).
+     * @param defaultValue Default option value.
+     * @param optionPlatform Platform restrictions for the option.
+     * @param optionVisibility Visibility restrictions for the option.
+     */
+    public FileOption(
+        final String id,
+        final String label,
+        final String defaultValue,
+        final OptionMaster.OptionPlatform optionPlatform,
+        final OptionMaster.Visibility optionVisibility)
+    {
         super(id, label, OptionMaster.Type.DIRTREE, optionPlatform, optionVisibility);
         this.defaultValue = defaultValue;
         setValue(defaultValue);
     }
 
+    /**
+     * Handles the user clicking on the {@link #browseButton}.
+     *
+     * @param event Currently ignored.
+     */
     private void browseButtonActionPerformed(ActionEvent event) {
-        String bundlePath = StartupManager.getInstance().getPlatform().getUserBundles();
-        setValue(getDataDirectory(bundlePath));
+        String bundleDir =
+            StartupManager.getInstance().getPlatform().getUserBundles();
+        setValue(selectBundle(bundleDir));
     }
 
-    private String getDataDirectory(final String bundlePath) {
+    /**
+     * Show a {@code JFileChooser} dialog that allows the user to select a
+     * bundle.
+     *
+     * @param bundleDirectory Initial directory for the {@code JFileChooser}.
+     *
+     * @return Either the path to the user's chosen bundle, or
+     * {@link #defaultValue} if the user cancelled.
+     */
+    private String selectBundle(final String bundleDirectory) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setCurrentDirectory(new File(bundlePath));
+        if ((value != null) && !value.isEmpty()) {
+            fileChooser.setSelectedFile(new File(value));
+        } else {
+            fileChooser.setCurrentDirectory(new File(bundleDirectory));
+        }
         String result = defaultValue;
         switch (fileChooser.showOpenDialog(null)) {
             case JFileChooser.APPROVE_OPTION:
@@ -72,17 +113,17 @@ public final class FileOption extends AbstractOption {
     /**
      * Returns the GUI component that represents the option.
      *
-     * @return The GUI representation of this option.
+     * @return GUI representation of this option.
      */
     @Override public JComponent getComponent() {
-        String val = getUnquotedValue();
-        bundleField = new JTextField(val);
+        bundleField = new JTextField(value);
         bundleField.setColumns(30);
         bundleField.setToolTipText(BUNDLE_FIELD_TIP);
 
         browseButton = new JButton(BUTTON_LABEL);
         browseButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 browseButtonActionPerformed(e);
             }
         });
@@ -121,6 +162,14 @@ public final class FileOption extends AbstractOption {
         });
     }
 
+    /**
+     * Returns {@link #value} without quotation marks. Since the values being
+     * returned will be paths, you may want to consider using
+     * {@link #getValue()} instead.
+     *
+     * @return This option's current {@literal "value"}. May be {@code null}
+     * or empty.
+     */
     public String getUnquotedValue() {
         return value;
     }
