@@ -30,14 +30,18 @@ package edu.wisc.ssec.mcidasv.startupmanager.options;
 
 import java.io.File;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -51,6 +55,15 @@ public final class FileOption extends AbstractOption {
 
     /** Label for {@link #browseButton}. */
     private static final String BUTTON_LABEL = "Browse...";
+
+    /** Label for {@link #enableCheckBox}. */
+    private static final String CHECKBOX_LABEL = "Specify default bundle:";
+
+    /** System property that points to the McIDAS-V user path. */
+    private static final String USERPATH = "mcv.userpath";
+
+    /** Name of the {@literal "bundle"} subdirectory of the user path. */
+    private static final String BUNDLE_DIR = "bundles";
 
     /**
      * Regular expression pattern for ensuring that no quote marks are present
@@ -75,6 +88,9 @@ public final class FileOption extends AbstractOption {
 
     /** Used to pop up a {@link JFileChooser}. */
     private JButton browseButton;
+
+    /** Whether or not the default bundle should be used. */
+    private JCheckBox enableCheckBox;
 
     /** Current value of this option. */
     private String value;
@@ -107,9 +123,11 @@ public final class FileOption extends AbstractOption {
      * @param event Currently ignored.
      */
     private void browseButtonActionPerformed(ActionEvent event) {
-        String bundleDir =
+        String defaultPath =
             StartupManager.getInstance().getPlatform().getUserBundles();
-        setValue(selectBundle(bundleDir));
+        String userPath = System.getProperty(USERPATH, defaultPath);
+        String bundlePath = Paths.get(userPath, BUNDLE_DIR).toString();
+        setValue(selectBundle(bundlePath));
     }
 
     /**
@@ -150,12 +168,21 @@ public final class FileOption extends AbstractOption {
 
         browseButton = new JButton(BUTTON_LABEL);
         browseButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 browseButtonActionPerformed(e);
             }
         });
-        return McVGuiUtils.sideBySide(bundleField, browseButton);
+
+        enableCheckBox = new JCheckBox(CHECKBOX_LABEL, true);
+        enableCheckBox.addActionListener(new ActionListener() {
+            @Override public void actionPerformed(ActionEvent e) {
+                boolean status = enableCheckBox.isSelected();
+                bundleField.setEnabled(status);
+                browseButton.setEnabled(status);
+            }
+        });
+        JPanel bottom = McVGuiUtils.sideBySide(bundleField, browseButton);
+        return McVGuiUtils.topBottom(enableCheckBox, bottom, McVGuiUtils.Prefer.NEITHER);
     }
 
     /**
@@ -169,7 +196,7 @@ public final class FileOption extends AbstractOption {
      * @return The current value of the option.
      */
     @Override public String getValue() {
-        return (value == null) ? defaultValue : '"' + value + '"';
+        return '"' + getUnquotedValue() + '"';
     }
 
     /**
@@ -199,7 +226,11 @@ public final class FileOption extends AbstractOption {
      * or empty.
      */
     public String getUnquotedValue() {
-        return value;
+        String result = defaultValue;
+        if ((enableCheckBox != null) && enableCheckBox.isSelected()) {
+            result = value;
+        }
+        return result;
     }
 
     /**
