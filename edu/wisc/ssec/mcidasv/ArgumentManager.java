@@ -45,6 +45,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import edu.wisc.ssec.mcidasv.startupmanager.options.FileOption;
 import visad.VisADException;
 
 import ucar.unidata.idv.IdvConstants;
@@ -171,6 +172,14 @@ public class ArgumentManager extends ArgsManager {
             String argValue = args[idx++];
             persistentCommandLineArgs.add(ARG_LOGPATH);
             persistentCommandLineArgs.add(argValue);
+        } else if (checkArg(arg, ARG_BUNDLE, args, idx, 1)) {
+            String argValue = args[idx++];
+            String[] results = FileOption.parseFormat(argValue);
+            if (FileOption.booleanFromFormat(results[0])) {
+                argXidvFiles.add(results[1]);
+            }
+            System.err.println("result[0]: "+FileOption.booleanFromFormat(results[0]));
+            System.err.println("result[1]: '"+results[1]+'\'');
         } else {
             if (ARG_ISLINTERACTIVE.equals(arg) || ARG_B64ISL.equals(arg) || ARG_ISLFILE.equals(arg) || isIslFile(arg)) {
                 System.err.println("*** WARNING: ISL is being deprecated!");

@@ -83,6 +83,10 @@ public final class FileOption extends AbstractOption {
     /** Default option value. See {@link OptionMaster#blahblah}. */
     private final String defaultValue;
 
+    private final boolean defaultCheckBox;
+
+    private final String defaultBundle;
+
     /** Shows current default bundle. Empty means there isn't one. */
     private JTextField bundleField;
 
@@ -94,6 +98,10 @@ public final class FileOption extends AbstractOption {
 
     /** Current value of this option. */
     private String value;
+
+    private boolean checkbox;
+
+    private String path;
 
     /**
      * Create a new {@literal "file option"} that allows the user to select
@@ -114,6 +122,9 @@ public final class FileOption extends AbstractOption {
     {
         super(id, label, OptionMaster.Type.DIRTREE, optionPlatform, optionVisibility);
         this.defaultValue = defaultValue;
+        String[] defaults = parseFormat(defaultValue);
+        this.defaultCheckBox = booleanFromFormat(defaults[0]);
+        this.defaultBundle = defaults[1];
         setValue(defaultValue);
     }
 
@@ -153,7 +164,7 @@ public final class FileOption extends AbstractOption {
                 result = fileChooser.getSelectedFile().getAbsolutePath();
                 break;
         }
-        return result;
+        return '"' + getCheckBoxValue() + ';' + result + '"';
     }
 
     /**
@@ -162,20 +173,23 @@ public final class FileOption extends AbstractOption {
      * @return GUI representation of this option.
      */
     @Override public JComponent getComponent() {
-        bundleField = new JTextField(value);
+        bundleField = new JTextField(path);
         bundleField.setColumns(30);
         bundleField.setToolTipText(BUNDLE_FIELD_TIP);
+        bundleField.setEnabled(checkbox);
 
         browseButton = new JButton(BUTTON_LABEL);
+        browseButton.setEnabled(checkbox);
         browseButton.addActionListener(new ActionListener() {
             @Override public void actionPerformed(ActionEvent e) {
                 browseButtonActionPerformed(e);
             }
         });
 
-        enableCheckBox = new JCheckBox(CHECKBOX_LABEL, true);
+        enableCheckBox = new JCheckBox(CHECKBOX_LABEL, checkbox);
         enableCheckBox.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 boolean status = enableCheckBox.isSelected();
                 bundleField.setEnabled(status);
                 browseButton.setEnabled(status);
@@ -186,17 +200,27 @@ public final class FileOption extends AbstractOption {
     }
 
     /**
-     * Returns the value of the option. <b>THE RESULT WILL HAVE QUOTE MARKS
-     * AT THE BEGINNING AND END</b>. This was done to make handling paths with
-     * spaces a bit more safe.
-     *
-     * <p>If you need the unquoted value, please try
-     * {@link #getUnquotedValue()} instead.</p>
      *
      * @return The current value of the option.
      */
     @Override public String getValue() {
-        return '"' + getUnquotedValue() + '"';
+        return '"' + getCheckBoxValue() + ';' + getBundlePath() + '"';
+    }
+
+    public String getCheckBoxValue() {
+        boolean status = defaultCheckBox;
+        if (enableCheckBox != null) {
+            status = enableCheckBox.isSelected();
+        }
+        return status ? "1" : "0";
+    }
+
+    public String getBundlePath() {
+        String result = defaultBundle;
+        if (bundleField != null) {
+            result = bundleField.getText();
+        }
+        return result;
     }
 
     /**
@@ -205,32 +229,31 @@ public final class FileOption extends AbstractOption {
      * @param newValue New value to use.
      */
     @Override public void setValue(final String newValue) {
-        value = CLEAN_VALUE_REGEX.matcher(newValue).replaceAll("");
+//        value = CLEAN_VALUE_REGEX.matcher(newValue).replaceAll("");
+        String[] results = parseFormat(newValue);
+        checkbox = booleanFromFormat(results[0]);
+        path = results[1];
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
+                String[] results = parseFormat(newValue);
+                checkbox = booleanFromFormat(results[0]);
+                path = results[1];
+                if (enableCheckBox != null) {
+                    enableCheckBox.setSelected(checkbox);
+                }
+
                 // defaultValue check is to avoid blanking out the field
                 // when the user hits cancel
-                if ((bundleField != null) && !defaultValue.equals(value)) {
-                    bundleField.setText(value);
+                if ((bundleField != null) && !defaultBundle.equals(path)) {
+                    bundleField.setEnabled(checkbox);
+                    bundleField.setText(path);
+                }
+
+                if (browseButton != null) {
+                    browseButton.setEnabled(checkbox);
                 }
             }
         });
-    }
-
-    /**
-     * Returns {@link #value} without quotation marks. Since the values being
-     * returned will be paths, you may want to consider using
-     * {@link #getValue()} instead.
-     *
-     * @return This option's current {@literal "value"}. May be {@code null}
-     * or empty.
-     */
-    public String getUnquotedValue() {
-        String result = defaultValue;
-        if ((enableCheckBox != null) && enableCheckBox.isSelected()) {
-            result = value;
-        }
-        return result;
     }
 
     /**
@@ -240,5 +263,35 @@ public final class FileOption extends AbstractOption {
      */
     @Override public String toString() {
         return String.format(FORMAT, hashCode(), getOptionId(), getValue());
+    }
+
+    public static String[] parseFormat(String format) {
+        format = CLEAN_VALUE_REGEX.matcher(format).replaceAll("");
+        String checkBox = "1";
+        String path;
+        int splitAt = format.indexOf(';');
+        if (splitAt == -1) {
+            // string was something like "/path/goes/here.mcv"
+            path = format;
+        } else if (splitAt == 0) {
+            // string was something like ";/path/goes/here.mcv"
+            path = format.substring(1);
+        } else {
+            // string was something like "1;/path/goes/here.mcv"
+            checkBox = format.substring(0, splitAt);
+            path = format.substring(splitAt + 1);
+        }
+        if (path.isEmpty()) {
+            checkBox = "0";
+        }
+        return new String[] { checkBox, path };
+    }
+
+    public static boolean booleanFromFormat(String value) {
+        boolean result = false;
+        if ("1".equals(value)) {
+            result = true;
+        }
+        return result;
     }
 }

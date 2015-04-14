@@ -147,8 +147,6 @@ SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.texture
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF NOT DEFINED STARTUP_BUNDLE GOTO endbundle
 
-IF NOT EXIST %STARTUP_BUNDLE% GOTO endbundle
-
 SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%
 
 :endbundle

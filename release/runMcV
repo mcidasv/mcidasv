@@ -174,11 +174,8 @@ fi
 
 # get the default bundle represented so that Mcv can use it
 if [ -n "${STARTUP_BUNDLE}" ]; then
-    if [ -f "${STARTUP_BUNDLE}" ]; then
-        DEFAULT_BUNDLE="-bundle \"${STARTUP_BUNDLE}\""
-    else
-        DEFAULT_BUNDLE=""
-    fi
+    # the existence check is now handled within mcidasv
+    DEFAULT_BUNDLE="-bundle \"${STARTUP_BUNDLE}\""
 else
     DEFAULT_BUNDLE=""
 fi

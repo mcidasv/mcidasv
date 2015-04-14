@@ -58,7 +58,7 @@ public class OptionMaster {
         { "JOGL_TOGL", "Enable JOGL", "1", Type.BOOLEAN, OptionPlatform.UNIXLIKE, Visibility.VISIBLE },
         { "USE_3DSTUFF", "Enable 3D controls", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "DEFAULT_LAYOUT", "Load default layout", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
-        { "STARTUP_BUNDLE", "Defaults", "", Type.FILE, OptionPlatform.ALL, Visibility.VISIBLE },
+        { "STARTUP_BUNDLE", "Defaults", "0;", Type.FILE, OptionPlatform.ALL, Visibility.VISIBLE },
         // mcidasv enables this (the actual property is "visad.java3d.geometryByRef")
         // by default in mcidasv.properties.
         { "USE_GEOBYREF", "Enable access to geometry by reference", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
