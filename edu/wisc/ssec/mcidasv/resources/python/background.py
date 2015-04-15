@@ -1465,14 +1465,14 @@ class _Display(_JavaProxy):
             if bgtransparent:
                 isl += 'backgroundtransparent; '
                 
-        if not ignoreLogo and self._JavaProxy__javaObject.getLogoVisibility():
-            logoFile = self._JavaProxy__javaObject.getLogoFile()
-            logoPosition = self._JavaProxy__javaObject.getLogoPosition().upper()
-            logoAnchor = logoPosition[0:2]
-            logoScale = self._JavaProxy__javaObject.getLogoScale()
-            logoIsl = 'overlay image=%s anchor=%s place=%s scale=%s; ' % (logoFile, logoAnchor, logoPosition, logoScale)
-            isl += logoIsl
-            
+        # if not ignoreLogo and self._JavaProxy__javaObject.getLogoVisibility():
+        #     logoFile = self._JavaProxy__javaObject.getLogoFile()
+        #     logoPosition = self._JavaProxy__javaObject.getLogoPosition().upper()
+        #     logoAnchor = logoPosition[0:2]
+        #     logoScale = self._JavaProxy__javaObject.getLogoScale()
+        #     logoIsl = 'overlay image=%s anchor=%s place=%s scale=%s; ' % (logoFile, logoAnchor, logoPosition, logoScale)
+        #     isl += logoIsl
+        # 
         # print 'isl=%s' % (isl[:-2])
         
         islAsXml = ImageGenerator.makeXmlFromString(isl[:-2])
