@@ -83,24 +83,30 @@ public final class FileOption extends AbstractOption {
     /** Default option value. See {@link OptionMaster#blahblah}. */
     private final String defaultValue;
 
+    /** Default state of {@link #enableCheckBox}. */
     private final boolean defaultCheckBox;
 
+    /** Default path for {@link #bundleField}. */
     private final String defaultBundle;
 
-    /** Shows current default bundle. Empty means there isn't one. */
+    /**
+     * Shows current default bundle. Empty means there isn't one. May be
+     * {@code null}!
+     */
     private JTextField bundleField;
 
-    /** Used to pop up a {@link JFileChooser}. */
+    /** Used to pop up a {@link JFileChooser}. May be {@code null}! */
     private JButton browseButton;
 
-    /** Whether or not the default bundle should be used. */
+    /**
+     * Whether or not the default bundle should be used. May be {@code null}!
+     */
     private JCheckBox enableCheckBox;
 
-    /** Current value of this option. */
-    private String value;
-
+    /** Current state of {@link #enableCheckBox}. */
     private boolean checkbox;
 
+    /** Current contents of {@link #bundleField}. Value may be {@code null}! */
     private String path;
 
     /**
@@ -153,8 +159,8 @@ public final class FileOption extends AbstractOption {
     private String selectBundle(final String bundleDirectory) {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        if ((value != null) && !value.isEmpty()) {
-            fileChooser.setSelectedFile(new File(value));
+        if ((path != null) && !path.isEmpty()) {
+            fileChooser.setSelectedFile(new File(path));
         } else {
             fileChooser.setCurrentDirectory(new File(bundleDirectory));
         }
@@ -162,6 +168,9 @@ public final class FileOption extends AbstractOption {
         switch (fileChooser.showOpenDialog(null)) {
             case JFileChooser.APPROVE_OPTION:
                 result = fileChooser.getSelectedFile().getAbsolutePath();
+                break;
+            default:
+                result = path;
                 break;
         }
         return '"' + getCheckBoxValue() + ';' + result + '"';
@@ -229,7 +238,6 @@ public final class FileOption extends AbstractOption {
      * @param newValue New value to use.
      */
     @Override public void setValue(final String newValue) {
-//        value = CLEAN_VALUE_REGEX.matcher(newValue).replaceAll("");
         String[] results = parseFormat(newValue);
         checkbox = booleanFromFormat(results[0]);
         path = results[1];
