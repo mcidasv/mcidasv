@@ -5,6 +5,9 @@ SET MCV_LOGPATH=%MCV_USERPATH%\mcidasv.log
 SET MCV_PARAMS=%*
 SET USE_TEMPUSERPATH=0
 
+REM If _JAVA_OPTIONS is set it takes precedence over command line
+SET _JAVA_OPTIONS=
+
 REM Check for -userpath parameter
 :checkparameters
 IF '%1' == '' GOTO endparameters
