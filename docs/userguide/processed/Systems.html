@@ -160,8 +160,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
 <h3><br>
     Java Versions<a name="java" id="java"></a></h3>McIDAS-V runs on any platform that supports:
 <ul>
-  <li><b>Java</b> version 1.6+ (non-beta versions only) <b>AND</b> </li>
-  <li><b>Java 3D</b> version 1.3.1+</li>
+  <li><b>Java</b> version 1.7+ (non-beta versions only) <b>AND</b> </li>
+  <li><b>Java 3D</b> version 1.6+; <strong>JOGL</strong> 2.2.1</li>
 </ul>
 <p> McIDAS-V is packaged with the following versions included:</p>
 <table border="1" style="margin-left:20px; " width="75%">
@@ -178,63 +178,45 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
   <tr>
     <td><b><b>Linux<sup><b>(1)</b></sup></b></b></td>
 
+    <td><div align="center">1.7.0</div></td>
     <td><div align="center">1.6.0</div></td>
-    <td><div align="center">1.5.2</div></td>
-    <td><div align="center">n/a</div></td>
+    <td><div align="center">2.2.1</div></td>
   </tr>
   <tr>
     <td><strong>Mac OS X</strong></td>
-    <td><div align="center">included with Mac OS X<sup>(2)</sup></div></td>
+    <td><div align="center">1.7.0<sup></sup></div></td>
 
-    <td><div align="center">1.5.2</div></td>
-    <td><div align="center">1.1.1</div></td>
+    <td><div align="center">1.6.0</div></td>
+    <td><div align="center">2.2.1</div></td>
   </tr>
   <tr>
-    <td><b><b>Windows<sup><b>(3)</b></sup></b></b></td>
+    <td><b><b>Windows</b></b></td>
 
-    <td><div align="center">1.6.0<br>
+    <td><div align="center">1.7.0<br>
     </div></td>
-    <td><div align="center">1.5.2</div></td>
-    <td><div align="center">n/a</div></td>
+    <td><div align="center">1.6.0</div></td>
+    <td><div align="center">2.2.1</div></td>
   </tr>
   <tr>
     <td><strong>other unix</strong></td>
 
     <td><div align="center">none</div></td>
-    <td><div align="center">none</div></td>
-    <td><div align="center">n/a</div></td>
+    <td><div align="center">1.6.0</div></td>
+    <td><div align="center">2.2.1</div></td>
   </tr>
 </table>
 <p>The necessary versions of the JRE, Java3D and JOGL are included with the
-    Linux, Mac OS X, and Windows installers. On other platforms, you
-    will need to install Java and Java3D before installing McIDAS-V. If other
-    platforms fully support Java version 1.6+ and Java 3D version 1.3.1+ (e.g.
-  AIX, IRIX), they should also work, but have not been tested. </p>
+    Linux, Mac OS X, and Windows installers. If other
+  platforms fully support Java version 1.7+, Java 3D version 1.6+, and JOGL 2.2.1 they should also work, but have not been tested.</p>
 <blockquote>
 
   <p><b>Notes:</b> <br>
       <b><sup>(1)</sup></b>The version of the Mesa library that comes with
         Red Hat Linux may be incompatible with Java 3D packaged with McIDAS-V.
         If you experience X server crashes when exiting McIDAS-V, you will need
-        to build and install Mesa from source available at <a href="http://www.mesa3d.org" target="_blank"> http://www.mesa3d.org</a>. <br>
-		<b><sup>(2)</sup></b>To find and/or update your default Java version, follow these steps:
-  <ol>
-		<li>Open the &quot;Java Preferences&quot; application located in /Applications/Utilities</li>
-		<li>Look for &quot;Java SE 6&quot; in the &quot;Java Applications&quot; section </li>
-		<li>The version at the top of the &quot;Java Applications&quot; list is the
-		  version being used by McIDAS-V. If &quot;Java SE 6&quot; is not at the top
-		  of the list, click and drag it to the top of the list (using the 64-bit
-		  option, if available). If &quot;Java SE 6&quot; is not in the &quot;Java Applications&quot;
-		  list, you may need to manually run the Software Update feature in the
-		  Apple Menu. </li>
-  </ol>
-          <b><sup>(3)</sup></b>You must have DirectX version 8.0+ installed
-            on your Windows system if you use the DirectX rendering mode of Java
-          3D (the default is to use OpenGL).</p>
-
-</blockquote>
+to build and install Mesa from source available at <a href="http://www.mesa3d.org" target="_blank"> http://www.mesa3d.org</a>. </blockquote>
 <h3> 
-System Memory and Processor Speed<a name="memory"></a></h3>
+<a name="memory"></a></h3>
   <p>McIDAS-V can be demanding of hardware speed and memory depending on the
     size of the datasets you wish to work with. It is recommended that the system
     have a <b>minimum</b> of
