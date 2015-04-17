@@ -5987,13 +5987,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * for a filename and save the image to it.
      */
     public void doSaveImageInThread() {
-        // begin inquiry 2025 changes
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                doSaveImage();
-            }
-        });
-        // end inquiry 2025 changes
+        Misc.run(this, "doSaveImage");
     }
 
     /**
@@ -6184,12 +6178,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         views.add(getContents());
                         whichComponent = "contents";
                     }
-
-                    // begin changes for inquiry 2025
-                    // introduce a minimal wait in an attempt to give the
-                    // file choosing dialog a chance to close itself.
-                    Thread.sleep(500);
-                    // end inquiry 2025 changes
 
                     List<BufferedImage> images = makeBufferedImages(views,
                                                      whichComponent);
