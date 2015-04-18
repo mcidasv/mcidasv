@@ -1,0 +1,415 @@
+body {
+  background-color: #FFFFFF;
+}       
+
+.xmlcomment {
+  background-color: lightgray;
+}
+.xmlcdata {
+  background-color: #6495ed;
+}
+.xmlattr {
+  font-weight: bold;
+}
+
+.images {
+	margin-top: 10px;
+	margin-right: 10px;
+	margin-bottom: 15px;
+	margin-left: 22px;
+}
+
+.images img {
+	margin-bottom: 5px;
+}
+
+/*this is for beta1 version - they can be removed once beta1 is done*/
+
+.cimg {
+	float: left;
+	text-align: center;
+	padding: 10px;
+	margin: 10px;
+	padding-right: 100%;
+}
+
+.imagecaption {
+	float: left;
+	text-align: center;	
+	padding: 10px;
+	margin: 10px;
+	padding-right: 100%;
+}
+
+.imagecaption, .cimg img {
+  margin-bottom: 5px;
+}
+
+/* end of beta1 section */
+
+.imagesmall {
+  text-align: center;
+}
+
+.imagesmall img {
+  border: 1px solid black;
+  background-color: #DDDDDE;
+  font-size: 90%;
+  padding: 0px;
+  margin: 10px;
+}
+
+A:link {
+  color: blue;
+  text-decoration: underline;
+}
+A:visited {
+  color: red;
+  text-decoration: underline;
+}
+A:active {
+  color: purple;
+  text-decoration: underline;
+}
+
+A.faq-category-link {
+  text-decoration: none;
+  color: #000000;
+}
+.OneTabIndent {
+	padding-left: 40px;
+}
+.TwoTabIndent {
+	padding-left: 80px;
+}
+.ThreeTabIndent {
+	padding-left: 145px;
+	text-indent: -25px;
+}
+.ThreeTabIndent2 {
+	padding-left: 120px;
+}
+
+.FourTabIndent {
+	padding-left: 160px;
+}
+
+A.faq-category-link:hover {
+  text-decoration: underline;
+}
+A.faq-question-link {
+  text-decoration: none;
+  color: black;
+}
+A.faq-question-link:hover {
+  text-decoration: underline;
+}
+
+.faq-category-title {
+  margin-top:10px;
+  color: #000000;
+  font-size: 16pt;
+  font-weight: bold;
+}
+.faq-bottom {
+  margin-top:20px;
+}
+.faq-bottom .faq-question {
+  font-weight:bold;
+  margin-top:35px;
+}
+.faq-category {
+  margin-left:20px;
+}
+
+/*Since applying styles to span tags does not seem to work we use <code class="command">*/
+
+code.command {
+  font-weight: bold;
+}
+code.menu {
+  font-weight: bold;
+}
+
+.pagetitle {
+  font-size: 18pt;
+  font-weight: bold;
+  color: #000000;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.pagesubtitle {
+  font-size: 14pt;
+  font-weight: bold;
+  color: #000000;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+.pagesubsubtitle {
+  font-size: 12pt;
+  font-weight: bold;
+  color: #000000;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.preferencegroup {
+  margin-left: 20px;
+}
+.preferencegrouptitle {
+  border-bottom: solid thin;
+  margin-top: 10px;
+  margin-bottom: 2px;
+  font-size: 12pt;
+  font-weight: bold;
+  color: #000000;
+}
+
+.propertylist {
+  list-style-type:none;
+}
+  
+.propertylistitem {
+  padding-bottom:10px;
+}
+
+.propertylistitemfirst {
+  padding-bottom:10px;
+  padding-top:10px;
+}
+
+p {
+  clear: left;
+  margin-top: 10px;
+  margin-bottom: 0px;
+}
+
+p.code {
+  font-family: Monospaced;
+  margin-left: 22px;
+}
+
+.childlist {
+  margin: 10px;
+  margin-left: 30px;
+}
+
+.childlist-level {
+  font-weight:bold;
+  font-size: 14pt;
+  color: #000000;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+p.indent1 {
+  margin-left: 3px;
+}
+p.indent2 {
+  margin-left: 12px;
+}
+p.indent3 {
+  margin-left: 32px;
+}
+p.note {
+  margin-top: -19px;
+  margin-left: 22px;
+}
+p.table {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+blockquote.menu {
+  margin-left: 18px;
+  margin-top: 10px;
+}
+
+center {
+  margin-top: 10px;
+}
+
+table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+table.noborder {
+	border: 0px;
+	margin-top: -2px;
+	margin-bottom: -2px;
+  }
+  
+td {
+  padding-left: 1px;
+  padding-right: 1px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+} 
+
+tableold {
+  border: none;
+  border-color: white;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+tdold {
+  padding-left: 1px;
+  padding-right: 1px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+} 
+
+th {
+  padding-left: 1px;
+  padding-right: 1px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+small {
+  font-size: x-small;
+}
+
+dl.see_also {
+  margin-left: 0px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+a.nounderline {
+  text-decoration: none;
+}
+
+pre {
+  font-family: Monospaced, "Courier New", Courier, mono;
+}
+
+code {
+  font-family: Monospaced, "Courier New", Courier, mono;
+}
+
+.menudesc {
+  margin: 0px;
+  margin-left: 0px;
+  margin-bottom: 10px;
+}
+
+.small {
+  font-size: small;
+}
+
+.toggle {
+  cursor: pointer;
+  font-family: Monospaced, "Courier New", Courier, mono;
+  font-weight: bold;
+  position: static;
+  float: left;
+  margin-left: -12px;
+  margin-top: -1px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+div.indented {
+  padding-bottom: 6px;
+  display: none;
+  padding-left: 12px;
+}
+
+td.selected {
+  border: 0px;
+  background-color: #9AB;
+  color: #000;
+  text-align: center;
+}
+td.unselected {
+  border: 0px;
+  background-color: #CDE;
+  color: #666;
+  text-align: center;
+}
+
+span.link {
+  cursor: pointer;
+}
+span.hilited {
+  text-decoration: underline;
+}
+span.selected {
+  font-weight: bold;
+}
+
+div.top {
+  position: absolute;
+  top: 0px;
+  height: 120px;
+  left: 0px;
+  right: 0px;
+  background-color: #DEF;
+}
+div.left {
+  position: absolute;
+  top: 120px;
+  bottom: 0px;
+  left: 0px;
+  width: 300px;
+  background-color: #DEF;
+}
+div.right {
+  position: absolute;
+  top: 120px;
+  bottom: 0px;
+  left: 300px;
+  right: 0px;
+  overflow: hidden;
+  border: 0px;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+}
+div.bookmark {
+  position: absolute;
+  top: 120px;
+  margin-top: -1.5em;
+  right: 0.5em;
+  font-size: 75%;
+}
+div.menu {
+  position:absolute;
+  top: 30px;
+  bottom: 0px;
+  width: 292px;
+  left: 8px;
+  padding-top: 8px;
+  overflow: auto;
+}
+
+iframe.right {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  border: 0px;
+  overflow: auto;
+}
+.propertylistitem img {
+
+}
+.images .caption {
+	font-size: 12px;
+	font-style: italic;
+}
+.FiveTabIndent {
+	padding-left: 200px;
+}
+.SixTabIndent {
+	padding-left: 240px;
+}
