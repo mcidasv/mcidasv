@@ -184,7 +184,7 @@ public class RemoteEntryEditor extends JDialog {
 //        this.manager = manager;
         this.serverText = null;
         this.datasetText = null;
-        if (entries.equals(RemoteAddeEntry.INVALID_ENTRIES)) {
+        if (! entries.equals(RemoteAddeEntry.INVALID_ENTRIES)) {
             currentEntries.addAll(entries);
         }
         initComponents(entries);
