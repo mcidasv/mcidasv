@@ -245,7 +245,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         		subset.put(SpectrumAdapter.channelIndex_name, new double[] {793,793,1});
         		defaultSubset = subset;
 
-        		MultiSpectralData multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter);
+        		multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter);
         		// Need to change paramater and range for Radiance, default is Brightness Temp, so
         		// do nothing for 2nd time through loop
         		if (i == 0) {
