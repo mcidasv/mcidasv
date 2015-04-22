@@ -131,7 +131,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category"><a name="timeMatching1.5" id="timeMatching1.5"></a>
   <h4>Time Matching</h4>
 <div class="faq-answer">
-  <p>Added a new feature called Time Matching. This feature allows users to easily create loops of various data with differing   temporal frequencies.&nbsp;An example case of where time matching may be   useful is if a user wants to create a 4-hour loop of satellite data, and   overlay radar data with matching times.&nbsp;This data may have  different frequencies (e.g., satellite data may come in 2 times an hour,   while radar data may come in 8 times an hour). In the past, a user would   have to go into the Absolute Times tab of the radar data and   individually select every time that matched up with the satellite data.   With&nbsp;Time Matching, this is no longer necessary. Now, a user can set one layer to be the time driver, and other layers can then be selected to match the time driver times. For more on time matching, see <a href="misc/TimeMatching.html">Time Matching</a>.</p>
+  <p>Added a new feature called Time Matching that is designed to create loops that accommodate data with differing
+     temporal frequencies. An example where time matching would be useful is if a user wants to create a loop of
+     satellite data overlaid with radar data but they have different frequencies (e.g., the satellite data comes
+     in twice an hour while the radar data comes in eight times an hour). In the past, a user would have to use the
+     Absolute Times tab of the radar data and individually select the times closest to those of the satellite data.
+     With time matching, this is no longer necessary. Now, a user can set one layer to be the time driver, and
+     other layers can then be selected to match the time driver times.
+     For more on time matching, see <a href="misc/TimeMatching.html">Time Matching</a>.</p>
 </div></div>
 <div class="faq-category"><a name="mdr1.5" id="mdr1.5"></a>
   <h4>Match Display Region</h4>
@@ -165,7 +172,7 @@ Development</div>
   <h4>Adaptive Resolution</h4>
 <div class="faq-answer">
   <p>By default, adaptive resolution is disabled. In            order to use adaptive resolution, it must be enabled through            the Display Window tab of the <a href="tools/preferences/DisplayWindowPreferences.html#enableAdaptiveResolution">User Preferences</a>. Adaptive resolution is still under            development so there may be bugs and there could            implementation changes in the future. For this release,            adaptive resolution is available in the Gridded Data, Point            Observations, General Files/Directories, and the Under            Development &gt; Imagery - Satellite choosers.</p>
-  <p>Adaptive resolution is a feature designed to load high            resolution data efficiently by obtaining and loading only the            minimum amount of data needed to display all of the observable            features in the given display size and domain. If the display            domain is subsequently changed by using either            Shift+left-click+drag or the Projections menu, adaptive            resolution automatically reloads the data at a higher            resolution (if available) if the user zoomed in to a more            detailed view, or reloads the data at a lower resolution if            the user zoomed out to a wider view.  For more on adaptive resolution, see <a href="misc/AdaptiveResolution.html">Adaptive Resolution</a>.</p>
+  <p>Adaptive resolution is a feature designed to load high            resolution data efficiently by obtaining and loading only the            minimum amount of data needed to display all of the observable            features in the given display size and geographic domain. If the domain is subsequently changed by using either            Shift+left-click+drag or the Projections menu, adaptive            resolution automatically reloads the data at a higher            resolution (if available) if the user zoomed in to a more            detailed view, or reloads the data at a lower resolution if            the user zoomed out to a wider view.  For more on adaptive resolution, see <a href="misc/AdaptiveResolution.html">Adaptive Resolution</a>.</p>
 </div></div>
 <div class="faq-category"><a name="npp1.5" id="npp1.5"></a>
   <h4>Suomi NPP Chooser</h4>
