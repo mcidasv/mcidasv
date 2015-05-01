@@ -13,6 +13,7 @@ WEB="
 /var/apache/www/htdocs/mcidas/doc/mcv_guide/working/License.html
 /var/apache/www/htdocs/mcidas/doc/mcv_guide/working/TOC.xml
 /var/apache/www/htdocs/mcidas/doc/mcv_guide/working/toc.html
+/var/apache/www/htdocs/mcidas/doc/mcv_guide/working/ReleaseNotes.html
 "
 
 echo ""
