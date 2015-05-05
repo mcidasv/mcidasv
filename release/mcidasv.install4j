@@ -209,7 +209,7 @@
     <launcher name="runMcV.bat" id="844" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
     <launcher name="runMcV-Config.bat" id="1335" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config.bat" />
   </launchers>
-  <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="false" autoUpdateDescriptorUrl="" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
+  <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
     <customCode />
     <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
       <commentFiles />
