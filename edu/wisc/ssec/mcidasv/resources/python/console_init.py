@@ -1,6 +1,7 @@
 """Module responsible for initializing McIDAS-V Jython environment."""
 
 from __future__ import with_statement
+
 import sys
 import os
 
@@ -11,13 +12,14 @@ from java.lang import Integer, System
 # want to import a non-compiled python module contained in a JAR, sys.path
 # must contain something like "/path/to/your.jar/path/to/module"
 def _mcvinit_classpath_hack():
-    r"""Attempt location of mcidasv.jar, idv.jar, and visad.jar.
+    """Attempt location of mcidasv.jar, idv.jar, and visad.jar.
     
     This function will look for the JARs within the classpath, but will also
-    try within the following (platform-dependent) paths:
+    try searching within the current working directory. The default current 
+    working directories are platform-specific:
         Windows: "C:\Program Files\McIDAS-V-System"
         OS X: "/Applications/McIDAS-V-System"
-        Linux: ""
+        Linux: "~/McIDAS-V-System"
         
     Returns:
         A dictionary with "mcidasv", "idv", and "visad" keys.
@@ -119,9 +121,9 @@ except ImportError, e:
         print i, path
         
 # _isInteractive's value is controlled by code that calls JythonManager's 
-# "initJythonEnvironment" method. the reasoning behind assuming that the value
-# should *default* to True is because the interactive mode works for every case
-# (though it will pollute the procedure submenus in the Jython Shell).
+# "initJythonEnvironment" method. McIDAS-V has the value of _isInteractive
+# *default* to True so that the "interactive mode" will work in every case.
+# (though it will pollute the procedure submenus in the Jython Shell)
 try:
     _isInteractive
 except NameError:
