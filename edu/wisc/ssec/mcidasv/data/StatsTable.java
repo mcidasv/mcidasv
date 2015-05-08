@@ -304,7 +304,7 @@ public class StatsTable extends AbstractTableModel {
         if (isShowing) statsWindow.setVisible(true);
       }
 
-      private String fmtMe(double val) {
+      public static String fmtMe(double val) {
 
         if (Math.abs(val) == 0.0) {
           return "0.00";
