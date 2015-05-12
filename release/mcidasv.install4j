@@ -16,11 +16,11 @@
       <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../IDV/lib" description="Directory containing IDV JAR files." category="" />
       <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" category="" />
       <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../adde" description="Directory containing the local ADDE server ZIP files." category="" />
-      <variable name="SLF4J_VERSION" value="1.7.7" description="Version number used with jul-to-slf4j, log4j-over-slf4j, and slf4j-api." category="" />
-      <variable name="LOGBACK_VERSION" value="1.1.2" description="Version number used with logback-classic and logback-core." category="" />
-      <variable name="MIGLAYOUT_VERSION" value="4.2" description="Version number used with miglayout-core and miglayout-swing." category="" />
-      <variable name="JOGAMP_VERSION" value="2.2.1" description="Version number used with gluegen, gluegen-rt, joal, jocl, jogl-all, and the various native JARs." category="" />
-      <variable name="JAVA3D_VERSION" value="1.6.0-pre11" description="Version number used with j3dcore, j3dutils, and vecmath." category="" />
+      <variable name="SLF4J_VERSION" value="1.7.12" description="Version number used with jul-to-slf4j, log4j-over-slf4j, and slf4j-api." category="" />
+      <variable name="LOGBACK_VERSION" value="1.1.3" description="Version number used with logback-classic and logback-core." category="" />
+      <variable name="MIGLAYOUT_VERSION" value="5.0" description="Version number used with miglayout-core and miglayout-swing." category="" />
+      <variable name="JOGAMP_VERSION" value="2.3.1" description="Version number used with gluegen, gluegen-rt, joal, jocl, jogl-all, and the various native JARs." category="" />
+      <variable name="JAVA3D_VERSION" value="1.6.0-pre12" description="Version number used with j3dcore, j3dutils, and vecmath." category="" />
     </variables>
     <mergedProjects />
     <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pvkAndSpc" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
