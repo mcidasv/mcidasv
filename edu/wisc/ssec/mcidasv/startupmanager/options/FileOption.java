@@ -28,9 +28,11 @@
 
 package edu.wisc.ssec.mcidasv.startupmanager.options;
 
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.sideBySide;
+import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.topBottom;
+
 import java.io.File;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
@@ -65,9 +67,14 @@ public final class FileOption extends AbstractOption {
     /** Name of the {@literal "bundle"} subdirectory of the user path. */
     private static final String BUNDLE_DIR = "bundles";
 
+    /** Constant that represents string version of the {@code 1} boolean. */
+    private static final String TRUE_STRING = "1";
+
+    /** Constant that represents string version of the {@code 0} boolean. */
+    private static final String FALSE_STRING = "0";
+
     /**
-     * Regular expression pattern for ensuring that no quote marks are present
-     * in {@link #value}.
+     * Regular expression pattern for ensuring that no quote marks are present.
      */
     private static final Pattern CLEAN_VALUE_REGEX = Pattern.compile("\"");
 
@@ -116,17 +123,17 @@ public final class FileOption extends AbstractOption {
      * @param id Option ID.
      * @param label Option label (used in GUI).
      * @param defaultValue Default option value.
-     * @param optionPlatform Platform restrictions for the option.
-     * @param optionVisibility Visibility restrictions for the option.
+     * @param platform Platform restrictions for the option.
+     * @param visibility Visibility restrictions for the option.
      */
     public FileOption(
         final String id,
         final String label,
         final String defaultValue,
-        final OptionMaster.OptionPlatform optionPlatform,
-        final OptionMaster.Visibility optionVisibility)
+        final OptionMaster.OptionPlatform platform,
+        final OptionMaster.Visibility visibility)
     {
-        super(id, label, OptionMaster.Type.DIRTREE, optionPlatform, optionVisibility);
+        super(id, label, OptionMaster.Type.DIRTREE, platform, visibility);
         this.defaultValue = defaultValue;
         String[] defaults = parseFormat(defaultValue);
         this.defaultCheckBox = booleanFromFormat(defaults[0]);
@@ -197,33 +204,48 @@ public final class FileOption extends AbstractOption {
 
         enableCheckBox = new JCheckBox(CHECKBOX_LABEL, checkbox);
         enableCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 boolean status = enableCheckBox.isSelected();
                 bundleField.setEnabled(status);
                 browseButton.setEnabled(status);
             }
         });
-        JPanel bottom = McVGuiUtils.sideBySide(bundleField, browseButton);
-        return McVGuiUtils.topBottom(enableCheckBox, bottom, McVGuiUtils.Prefer.NEITHER);
+        JPanel bottom = sideBySide(bundleField, browseButton);
+        return topBottom(enableCheckBox, bottom, McVGuiUtils.Prefer.NEITHER);
     }
 
     /**
+     * Returns a string containing the state of {@link #enableCheckBox} and
+     * {@link #bundleField}.
      *
-     * @return The current value of the option.
+     * <p>Results should look like {@code 0;/path/to/bundle.mcv}.</p>
+     *
+     * @return Current value of the option.
      */
     @Override public String getValue() {
         return '"' + getCheckBoxValue() + ';' + getBundlePath() + '"';
     }
 
+    /**
+     * Returns a string representation of {@link #enableCheckBox}.
+     *
+     * @return Either {@code 1} or {@code 0} depending upon the state of
+     * {@link #enableCheckBox}.
+     */
     public String getCheckBoxValue() {
         boolean status = defaultCheckBox;
         if (enableCheckBox != null) {
             status = enableCheckBox.isSelected();
         }
-        return status ? "1" : "0";
+        return status ? TRUE_STRING : FALSE_STRING;
     }
 
+    /**
+     * Returns a string representating the path to the startup bundle.
+     *
+     * @return If {@link #bundleField} is {@code null}, {@link #defaultBundle}
+     * is returned. Otherwise the contents of the text field are returned.
+     */
     public String getBundlePath() {
         String result = defaultBundle;
         if (bundleField != null) {
@@ -273,9 +295,29 @@ public final class FileOption extends AbstractOption {
         return String.format(FORMAT, hashCode(), getOptionId(), getValue());
     }
 
+    /**
+     * Attempt to extract something sensible from the value given in
+     * {@literal "runMcV-Prefs"}.
+     *
+     * <p>Expected format is something like {@code "0;/path/to/bundle.mcv"} or
+     * {@code "1;"}. The first example would signify that
+     * {@link #enableCheckBox} is not selected, and the contents of
+     * {@link #bundleField} are {@code /path/to/bundle.mcv}. The second
+     * example would signify that {@link #enableCheckBox} is selected, and the
+     * contents of {@link #bundleField} should be an empty string.</p>
+     *
+     * @param format See method description for details. {@code null} not
+     * allowed.
+     *
+     * @return Two element array where the first element is the state of
+     * {@link #enableCheckBox} and the second is the bundle path. Note that
+     * the bundle path may be empty.
+     *
+     * @see #booleanFromFormat(String)
+     */
     public static String[] parseFormat(String format) {
         format = CLEAN_VALUE_REGEX.matcher(format).replaceAll("");
-        String checkBox = "1";
+        String checkBox = TRUE_STRING;
         String path;
         int splitAt = format.indexOf(';');
         if (splitAt == -1) {
@@ -290,14 +332,23 @@ public final class FileOption extends AbstractOption {
             path = format.substring(splitAt + 1);
         }
         if (path.isEmpty()) {
-            checkBox = "0";
+            checkBox = FALSE_STRING;
         }
         return new String[] { checkBox, path };
     }
 
+    /**
+     * Convert the strings {@code 1} and {@code 0} to their corresponding
+     * boolean values.
+     *
+     * @param value String to convert. {@code null} or empty strings accepted.
+     *
+     * @return Returns {@code true} if {@code value} is {@code 1}. Otherwise
+     * returns {@code false}.
+     */
     public static boolean booleanFromFormat(String value) {
         boolean result = false;
-        if ("1".equals(value)) {
+        if (TRUE_STRING.equals(value)) {
             result = true;
         }
         return result;
