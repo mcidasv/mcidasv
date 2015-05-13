@@ -215,10 +215,13 @@
         <include name="auxdata.jar" />
         <include name="local-visad.jar" />
         <include name="visad.jar" />
+        <include name="commons-net-1.4.1.jar" />
         <include name="external.jar" />
+        <include name="extra.jar" />
+        <include name="jcommon.jar" />
         <include name="ncIdv.jar" />
+        <include name="texttonc.jar" />
         <include name="idv.jar" />
-        <include name="repositorytds.jar" />
     </fileset>
 
     <fileset id="linux_x64.libs" dir="${dist.dir}">
@@ -583,7 +586,10 @@
         <mkdir dir="${build.dir}" />
         <mkdir dir="${dist.dir}" />
         <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${idvlib.dir}" includes="**/*.jar" />
+            <fileset dir="${idvlib.dir}">
+                <include name="**/*.jar" />
+                <exclude name="**/jython.jar" />
+            </fileset>
             <!--<fileset dir="${lib.dir}" includes="**/*.jar" />-->
             <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
         </copy>
