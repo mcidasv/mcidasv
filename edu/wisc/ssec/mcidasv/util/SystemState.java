@@ -138,12 +138,14 @@ public class SystemState {
      */
     public static Map<Object, Object> queryJythonProps() {
         Map<Object, Object> properties = newLinkedHashMap(PySystemState.registry);
-        properties.put("sys.argv", Py.getSystemState().argv.toString());
+        try (PySystemState systemState = Py.getSystemState()) {
+            properties.put("sys.argv", systemState.argv.toString());
+            properties.put("sys.path", systemState.path);
+            properties.put("sys.platform", systemState.platform.toString());
+        }
         properties.put("sys.builtin_module_names", PySystemState.builtin_module_names.toString());
         properties.put("sys.byteorder", PySystemState.byteorder);
         properties.put("sys.isPackageCacheEnabled", PySystemState.isPackageCacheEnabled());
-        properties.put("sys.path", Py.getSystemState().path);
-        properties.put("sys.platform", PySystemState.platform.toString());
         properties.put("sys.version", PySystemState.version);
         properties.put("sys.version_info", PySystemState.version_info);
         return properties;

@@ -207,6 +207,7 @@
         <include name="jocl-${jogamp.version}.jar" />
         <include name="jogl-all-noawt.jar" />
         <include name="jogl-all-${jogamp.version}.jar" />
+        <include name="jython-standalone-2.7.0.jar" />
     </fileset>
     
     <!-- List of IDV jars -->
@@ -214,7 +215,6 @@
         <include name="auxdata.jar" />
         <include name="local-visad.jar" />
         <include name="visad.jar" />
-        <include name="jython.jar" />
         <include name="external.jar" />
         <include name="ncIdv.jar" />
         <include name="idv.jar" />

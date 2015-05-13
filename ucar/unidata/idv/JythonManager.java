@@ -262,48 +262,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                 logException("Moving jython lib", exc);
             }
         }
-        writeJythonLib();
         initPython();
-    }
-    
-    /**
-     * write out the jython library
-     */
-    private void writeJythonLib() {
-        try {
-            String pythonLibDir = joinDir(getStore().getJythonCacheDir(), "Lib");
-            //double version     = 2.5;
-            //String versionFile = IOUtil.joinDir(pythonLibDir, "version.txt");
-            if (new File(pythonLibDir).exists()) {
-                //if (new File(versionFile).exists()) {
-                // check to see if we need a new version
-                //    double oldVersion =
-                //        new Double(IOUtil.readContents(versionFile,
-                //            getClass(), "" + version)).doubleValue();
-                //    if (oldVersion >= version) {
-                return;
-                //    }
-                //}
-            }
-            makeDir(pythonLibDir);
-            InputStream is = getInputStream("/jythonlib.jar", getClass());
-            ZipInputStream zin = new ZipInputStream(is);
-            ZipEntry ze = null;
-            while ((ze = zin.getNextEntry()) != null) {
-                String entryName = ze.getName();
-                //                System.err.println("writing:" + entryName);
-                String dest = joinDir(pythonLibDir, entryName);
-                if (ze.isDirectory()) {
-                    makeDir(dest);
-                } else {
-                    writeTo(zin, new FileOutputStream(dest));
-                }
-            }
-            //Now, write out the version file
-            //IOUtil.writeFile(versionFile, "" + version);
-        } catch (Exception exc) {
-            logException("Making jython lib directory", exc);
-        }
     }
     
     /**
@@ -383,7 +342,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         List<PyFunction> procedures = findJythonMethods(true);
         for (int i = 0; i < procedures.size(); i++) {
             PyFunction func = procedures.get(i);
-            PyObject docString = func.getFuncDoc();
+            PyObject docString = func.__doc__;
             if (docString == Py.None) {
                 continue;
             }
@@ -1989,7 +1948,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                             continue;
                         }
                         JMenuItem menuItem = makeMenuItem(s, object, method, s);
-                        PyObject docString = func.getFuncDoc();
+                        PyObject docString = func.__doc__;
                         if (docString != Py.None) {
                             menuItem.setToolTipText("<html><pre>" + docString.toString().trim() + "</pre></html>");
                         }
@@ -2019,7 +1978,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      */
     private String makeCallString(PyFunction func, Map<String, String> props) {
         StringBuilder sb = new StringBuilder(func.__name__).append('(');
-        PyTableCode tc = (PyTableCode)func.func_code;
+        PyTableCode tc = (PyTableCode)func.__code__;
         for (int argIdx = 0; argIdx < tc.co_argcount; argIdx++) {
             if (argIdx > 0) {
                 sb.append(", ");
