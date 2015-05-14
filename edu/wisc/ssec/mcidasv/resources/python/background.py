@@ -2408,6 +2408,46 @@ def allColorTables():
     return [_ColorTable(colorTable) for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
     
 @gui_invoke_later
+def importColorTable(path, name=None, category=None):
+    """Import color table using the given path.
+    
+    If the color table in question was exported from the Color Table Manager,
+    the name and category parameters will be set to values within the file.
+    
+    If the name already exists within the category, a unique name will be
+    generated. The format is <name>_<integer>.
+    
+    Args:
+        path: Path to color table to import.
+        
+        name: Name of the color table. If not specified, name will be the 
+              "base" filename without an extension (e.g. foo.et becomes foo).
+              
+        category: Category of the color table. If not specified, the category
+                  will default to Basic.
+                  
+    Returns:
+        Either the imported color table or nothing if there was a problem.
+        
+    """
+    from ucar.unidata.util import IOUtil
+    from ucar.unidata.util import ResourceManager
+    from ucar.unidata.xml import XmlEncoder
+    
+    mcv = getStaticMcv()
+    if mcv:
+        ctm = mcv.getColorTableManager()
+        
+        tables = ctm.processSpecial(path, name, category)
+        if tables:
+            return _ColorTable(ctm.doImport(tables, True))
+        else: 
+            xml = IOUtil.readContents(path, ResourceManager.__class__)
+            if xml:
+                obj = XmlEncoder().toObject(xml)
+                return _ColorTable(ctm.doImport(obj, True))
+                
+@gui_invoke_later
 def firstWindow():
     """Return the first window created during the current McIDAS-V session."""
     return _Window(IdvWindow.getMainWindows()[0])
