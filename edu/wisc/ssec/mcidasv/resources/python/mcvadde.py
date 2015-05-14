@@ -1273,7 +1273,7 @@ def _getADDEImage(localEntry=None,
         day = ''
         
     if size:
-        if size == 'ALL':
+        if size.upper() == 'ALL':
             size = '&SIZE=99999 99999'
         else:
             if int(size[0]) <= 0 or int(size[1]) <= 0:
