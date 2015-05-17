@@ -28,13 +28,22 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import static edu.wisc.ssec.mcidasv.data.StatsTable.fmtMe;
+import static java.util.Arrays.asList;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
+import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.StatUtils;
 
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.Data;
 import visad.FlatField;
 import visad.FunctionType;
@@ -47,6 +56,8 @@ import visad.TupleType;
 import visad.VisADException;
 
 public class Statistics {
+
+    private static final List<Character> CHARS = asList('\u2581', '\u2582', '\u2583', '\u2584', '\u2585', '\u2586', '\u2587', '\u2588');
 
    DescriptiveStatistics[] descriptiveStats = null;
    double[][] values_x;
@@ -296,6 +307,19 @@ public class Statistics {
      }
    }
 
+    public static Long[] histogram(FlatField field, int bins) throws VisADException, RemoteException {
+        Long[] histogram = new Long[bins];
+        EmpiricalDistribution distribution = new EmpiricalDistribution(bins);
+        distribution.load(field.getValues(false)[0]);
+        int k = 0;
+        for (SummaryStatistics stats: distribution.getBinStats()) {
+            histogram[k++] = stats.getN();
+        }
+        return histogram;
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(Statistics.class);
+
    public static String describe(FlatField field) throws VisADException, RemoteException {
      StringBuilder sb = new StringBuilder(1024);
      Statistics s = new Statistics(field);
@@ -304,6 +328,7 @@ public class Statistics {
      double q1 = ((Real)s.percentile(25.0)).getValue();
      double q3 = ((Real)s.percentile(75.0)).getValue();
      double[] modes = StatUtils.mode(field.getValues(false)[0]);
+     Long[] histogram = histogram(field, 20);
 
      StringBuilder tmp = new StringBuilder(128);
      for (int i = 0; i < modes.length; i++) {
@@ -314,7 +339,8 @@ public class Statistics {
      }
 
      char endl = '\n';
-       sb.append("Length    :  ").append(String.format("%d", s.numPoints())).append(endl)
+     sb.append("Histogram :  ").append(sparkline(histogram)).append(endl)
+       .append("Length    :  ").append(String.format("%d", s.numPoints())).append(endl)
        .append("Min       :  ").append(fmtMe(((Real) s.min()).getValue())).append(endl)
        .append("Max       :  ").append(fmtMe(((Real) s.max()).getValue())).append(endl)
        .append("Range     :  ").append(fmtMe(max - min)).append(endl)
@@ -330,4 +356,18 @@ public class Statistics {
        .append("Variance  :  ").append(fmtMe(((Real)s.variance()).getValue())).append(endl);
      return sb.toString();
    }
+
+    public static String sparkline(Long... values) {
+        Collection<Long> collection = asList(values);
+        long max = Collections.max(collection);
+        long min = Collections.min(collection);
+        float scale = (max - min) / 7f;
+        final StringBuilder buf = new StringBuilder(values.length);
+        for (Long value : values) {
+            int index = Math.round((value - min) / scale);
+            buf.append(CHARS.get(index));
+        }
+        return buf.toString();
+    }
+
 }
