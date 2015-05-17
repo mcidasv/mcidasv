@@ -62,12 +62,15 @@ def editFile(path, cleanup=False):
                  calls to removeAllData() and removeAllLayers() are added to the 
                  beginning of the Jython Shell input text field.
     """
-    fp = open(expandpath(path), 'r')
+    from edu.wisc.ssec.mcidasv.util import DetectCharset
+    import codecs
+    filepath = expandpath(path)
+    fp = codecs.open(filepath, 'r', encoding=DetectCharset.detect(filepath))
     try:
         shell = getStaticMcv().getJythonManager().getShell()
         lines = ''
         if cleanup:
-            lines += '# removeAllData and removeAllLayers were added because editFile was called with "cleanup" set to True.\nremoveAllData()\nremoveAllLayers()\n\n'
+            lines += u'# removeAllData and removeAllLayers were added because editFile was called with "cleanup" set to True.\nremoveAllData()\nremoveAllLayers()\n\n'
         for line in fp:
             lines += line
         shell.setMultilineText(lines)

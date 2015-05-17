@@ -173,14 +173,17 @@
     <property name="commons-math.version" value="3.5" />
     <property name="rsyntaxtextarea.version" value="2.5.6" />
     <property name="sysout.version" value="1.0.2" />
+    <property name="jython.version" value="2.7.0" />
+    <property name="juniversalchardet.version" value="1.0.3" />
+
     <!-- note that the J3D JARs available from http://jogamp.org/deployment/java3d/
          do not (as of 20140915) have the version string in the filenames.
          this must be done manually for now. -->
     <property name="java3d.version" value="1.6.0-pre12" />
 
     <!-- The CLASSPATH specified within McV's manifest -->
-    <property name="jar.base.classpath" value="gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar" />
-    
+    <property name="jar.base.classpath" value="gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar" />
+        
     <!-- List of McIDAS-V jars -->
     <fileset id="mcv.libs" dir="${dist.dir}">
         <include name="swingx-common-${swingx.version}.jar" />
@@ -207,9 +210,10 @@
         <include name="jocl-${jogamp.version}.jar" />
         <include name="jogl-all-noawt.jar" />
         <include name="jogl-all-${jogamp.version}.jar" />
-        <include name="jython-standalone-2.7.0.jar" />
+        <include name="jython-standalone-${jython.version}.jar" />
+        <include name="juniversalchardet-${juniversalchardet.version}.jar" />
     </fileset>
-    
+        
     <!-- List of IDV jars -->
     <fileset id="idv.libs" dir="${dist.dir}">
         <include name="auxdata.jar" />
