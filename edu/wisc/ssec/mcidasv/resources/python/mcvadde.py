@@ -1273,8 +1273,9 @@ def _getADDEImage(localEntry=None,
         day = ''
         
     if size:
-        if size.upper() == 'ALL':
-            size = '&SIZE=99999 99999'
+        if isinstance(size, (str, unicode, String)):
+            if str(size).upper() == 'ALL':
+                size = '&SIZE=99999 99999'
         else:
             if int(size[0]) <= 0 or int(size[1]) <= 0:
                 raise ValueError("Invalid size: each size value must be a value from 1 to 9999999 (or size must be 'ALL').")
