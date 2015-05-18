@@ -51,12 +51,16 @@ def checkLocalServerStatus():
         return mcv.getServerManager().testLocalServer()
     raise RuntimeError('Could not get reference to McIDAS-V!')
         
-def editFile(path, cleanup=False):
+def editFile(path, encoding=None, cleanup=False):
     """Import file contents into the Jython Shell input field.
     
     Args:
         path: Required string value that represents a path to a file. The string
               is validated with expandpath, so paths like "~/test.py" will work.
+              
+        encoding: Optional string value that defaults to None. If given a value,
+                  no attempt will be made to check the encoding of the given
+                  file.
               
         cleanup: Optional boolean value that defaults to False. If set to True,
                  calls to removeAllData() and removeAllLayers() are added to the 
@@ -64,18 +68,39 @@ def editFile(path, cleanup=False):
     """
     from edu.wisc.ssec.mcidasv.util import DetectCharset
     import codecs
+    
     filepath = expandpath(path)
-    fp = codecs.open(filepath, 'r', encoding=DetectCharset.detect(filepath))
+    encoding = encoding or DetectCharset.detect(filepath)
+    
+    # detection may have failed
+    if not encoding:
+        raise RuntimeError('Could not detect encoding of "%s". Please verify the file\'s encoding and then run "editFile(\'%s\', encoding=\'ENCODING_HERE\', cleanup=%s)".' % (path, path, cleanup))
+        
+    fp = codecs.open(filepath, 'r', encoding=encoding)
     try:
         shell = getStaticMcv().getJythonManager().getShell()
-        lines = ''
+        lines = u''
         if cleanup:
             lines += u'# removeAllData and removeAllLayers were added because editFile was called with "cleanup" set to True.\nremoveAllData()\nremoveAllLayers()\n\n'
+        once = False
         for line in fp:
             lines += line
         shell.setMultilineText(lines)
+    except UnicodeDecodeError:
+        detected = DetectCharset.detect(filepath)
+        raise RuntimeError('Could not decode contents of "%s" using "%s"! You may want to retry by running "editFile(\'%s\', encoding=\'%s\', cleanup=%s)".' % (path, encoding, path, detected, cleanup))
     finally:
         fp.close()
+        
+def detectEncoding(path):
+    """Attempt automatic detection of the given file's encoding.
+    
+    Returns:
+        Either the encoding as a string (suitable for passing to editFile or 
+        codecs.open), or None if the automatic detection failed.
+    """
+    from edu.wisc.ssec.mcidasv.util import DetectCharset
+    return str(DetectCharset.detect(expandpath(path)))
         
 def today(dateFormat=None):
     """Return today's date in either the user's specified format, or YYYYDDD (default)."""
