@@ -129,7 +129,6 @@ except ImportError, e:
 try:
     _isInteractive
 except NameError:
-    print '*** _isInteractive has not been set; assuming value is True'
     _isInteractive = True
     
 if _isInteractive:
