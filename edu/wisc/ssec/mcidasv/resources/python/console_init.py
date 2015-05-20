@@ -91,6 +91,7 @@ islInterpreter = ImageGenerator(_mcv)
 from edu.wisc.ssec.mcidasv.data.hydra import Statistics
 
 from edu.wisc.ssec.mcidasv.data.hydra.Statistics import describe
+from edu.wisc.ssec.mcidasv.data.hydra.Statistics import sparkline
 
 # TODO(jon): is this really what we want!?
 from visad.python.JPythonMethods import *

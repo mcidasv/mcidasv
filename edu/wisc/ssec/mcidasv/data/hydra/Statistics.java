@@ -320,44 +320,53 @@ public class Statistics {
 
     private static final Logger logger = LoggerFactory.getLogger(Statistics.class);
 
-   public static String describe(FlatField field) throws VisADException, RemoteException {
-     StringBuilder sb = new StringBuilder(1024);
-     Statistics s = new Statistics(field);
-     double max = ((Real)s.max()).getValue();
-     double min = ((Real)s.min()).getValue();
-     double q1 = ((Real)s.percentile(25.0)).getValue();
-     double q3 = ((Real)s.percentile(75.0)).getValue();
-     double[] modes = StatUtils.mode(field.getValues(false)[0]);
-     Long[] histogram = histogram(field, 20);
+    public static String describe(FlatField field) throws VisADException, RemoteException {
+        StringBuilder sb = new StringBuilder(1024);
+        Statistics s = new Statistics(field);
+        double max = ((Real)s.max()).getValue();
+        double min = ((Real)s.min()).getValue();
+        double q1 = ((Real)s.percentile(25.0)).getValue();
+        double q3 = ((Real)s.percentile(75.0)).getValue();
+        double[] modes = StatUtils.mode(field.getValues(false)[0]);
 
-     StringBuilder tmp = new StringBuilder(128);
-     for (int i = 0; i < modes.length; i++) {
-       tmp.append(fmtMe(modes[i]));
-       if ((i+1) < modes.length) {
-         tmp.append(", ");
-       }
-     }
+        StringBuilder tmp = new StringBuilder(128);
+        for (int i = 0; i < modes.length; i++) {
+            tmp.append(fmtMe(modes[i]));
+            if ((i+1) < modes.length) {
+                tmp.append(", ");
+            }
+        }
 
-     char endl = '\n';
-     sb.append("Histogram :  ").append(sparkline(histogram)).append(endl)
-       .append("Length    :  ").append(String.format("%d", s.numPoints())).append(endl)
-       .append("Min       :  ").append(fmtMe(((Real) s.min()).getValue())).append(endl)
-       .append("Max       :  ").append(fmtMe(((Real) s.max()).getValue())).append(endl)
-       .append("Range     :  ").append(fmtMe(max - min)).append(endl)
-       .append("Q1        :  ").append(fmtMe(q1)).append(endl)
-       .append("Q2        :  ").append(fmtMe(((Real)s.percentile(50.0)).getValue())).append(endl)
-       .append("Q3        :  ").append(fmtMe(q3)).append(endl)
-       .append("IQR       :  ").append(fmtMe(q3 - q1)).append(endl)
-       .append("Mean      :  ").append(fmtMe(((Real)s.mean()).getValue())).append(endl)
-       .append("Mode      :  ").append(tmp.toString()).append(endl)
-       .append("Kurtosis  :  ").append(fmtMe(((Real)s.kurtosis()).getValue())).append(endl)
-       .append("Skewness  :  ").append(fmtMe(((Real)s.skewness()).getValue())).append(endl)
-       .append("Std Dev   :  ").append(fmtMe(((Real)s.standardDeviation()).getValue())).append(endl)
-       .append("Variance  :  ").append(fmtMe(((Real)s.variance()).getValue())).append(endl);
-     return sb.toString();
-   }
+        char endl = '\n';
+        sb.append("Histogram :  ").append(sparkline(field)).append(endl)
+            .append("Length    :  ").append(String.format("%d", s.numPoints())).append(endl)
+            .append("Min       :  ").append(fmtMe(((Real) s.min()).getValue())).append(endl)
+            .append("Max       :  ").append(fmtMe(((Real) s.max()).getValue())).append(endl)
+            .append("Range     :  ").append(fmtMe(max - min)).append(endl)
+            .append("Q1        :  ").append(fmtMe(q1)).append(endl)
+            .append("Q2        :  ").append(fmtMe(((Real)s.percentile(50.0)).getValue())).append(endl)
+            .append("Q3        :  ").append(fmtMe(q3)).append(endl)
+            .append("IQR       :  ").append(fmtMe(q3 - q1)).append(endl)
+            .append("Mean      :  ").append(fmtMe(((Real)s.mean()).getValue())).append(endl)
+            .append("Mode      :  ").append(tmp.toString()).append(endl)
+            .append("Kurtosis  :  ").append(fmtMe(((Real)s.kurtosis()).getValue())).append(endl)
+            .append("Skewness  :  ").append(fmtMe(((Real)s.skewness()).getValue())).append(endl)
+            .append("Std Dev   :  ").append(fmtMe(((Real)s.standardDeviation()).getValue())).append(endl)
+            .append("Variance  :  ").append(fmtMe(((Real)s.variance()).getValue())).append(endl);
+        return sb.toString();
+    }
 
-    public static String sparkline(Long... values) {
+    public static String describe(FlatField... fields) throws VisADException, RemoteException {
+        // 350 is just slightly more than required
+        StringBuilder buf = new StringBuilder(350 * fields.length);
+        for (FlatField field : fields) {
+            buf.append(describe(field)).append('\n');
+        }
+        return buf.toString();
+    }
+
+    public static String sparkline(FlatField field) throws VisADException, RemoteException {
+        Long[] values = histogram(field, 20);
         Collection<Long> collection = asList(values);
         long max = Collections.max(collection);
         long min = Collections.min(collection);
@@ -370,4 +379,12 @@ public class Statistics {
         return buf.toString();
     }
 
+    public static String sparkline(FlatField... fields) throws VisADException, RemoteException {
+        // assumming sparkline is only using 20 bins
+        StringBuilder sb = new StringBuilder(25 * fields.length);
+        for (FlatField field : fields) {
+            sb.append(sparkline(field)).append('\n');
+        }
+        return sb.toString();
+    }
 }
