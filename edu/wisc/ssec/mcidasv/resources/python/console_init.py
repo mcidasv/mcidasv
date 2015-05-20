@@ -71,6 +71,9 @@ for jythonpath in _mcvinit_jythonpaths():
     if not jythonpath in sys.path:
         sys.path.append(jythonpath)
         
+# fix for see module
+sys.ps1 = '>>>'
+        
 # this is intentionally the first IDV/McV thing imported
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
