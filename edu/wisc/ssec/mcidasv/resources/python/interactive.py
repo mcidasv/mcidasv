@@ -117,9 +117,9 @@ def yesterday(dateFormat=None):
     dateFormat = dateFormat or '%Y%j'
     return (datetime.date.today() - datetime.timedelta(days=1)).strftime(dateFormat)
     
-def expandpath(path):
+def expandPath(path, *paths):
     """Expand ENV variables, fixes things like '~', and then normalizes the given path."""
-    return os.path.normpath(os.path.expanduser(os.path.expandvars(path)))
+    return os.path.normpath(os.path.join(os.path.expanduser(os.path.expandvars(path)), *paths))
     
 @deprecated(today)
 def _today(dateFormat=None):
@@ -133,9 +133,13 @@ def _tomorrow(dateFormat=None):
 def _yesterday(dateFormat=None):
     return _yesterday(dateFormat)
     
-@deprecated(expandpath)
-def _expandpath(path):
-    return expandpath
+@deprecated(expandPath)
+def expandpath(path, *paths):
+    return expandPath
+    
+@deprecated(expandPath)
+def _expandpath(path, *paths):
+    return expandPath
     
 def getUserPath():
     """Return path to the user's McIDAS-V directory."""
