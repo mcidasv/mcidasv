@@ -574,8 +574,7 @@ public class AddeImageChooser extends AddeChooser implements
      */
     public void getArchiveDay() {
         final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
-        String timeZone = (String)getIdv().getPreference(PREF_TIMEZONE, DEFAULT_TIMEZONE);
-        final JCalendarPicker picker = new JCalendarPicker(null, timeZone, false);
+        final JCalendarPicker picker = new JCalendarPicker(false);
         if (archiveDay != null) {
             if (archiveDayFormatter == null) {
                 archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
@@ -599,10 +598,7 @@ public class AddeImageChooser extends AddeChooser implements
                     descriptorChanged();
                 } else if (cmd.equals(GuiUtils.CMD_OK)) {
                     try {
-                        DateTime dt = new DateTime(picker.getDate());
-                        archiveDay = UtcDate.getYMD(dt);
-                        // archiveDayLabel.setText(UtcDate.formatUtcDate(dt,
-                        // "MMM dd, yyyy"));
+                        archiveDay = picker.getUserSelectedDay();
                         archiveDayLabel.setText(archiveDay);
                     } catch (Exception e) {
                     }

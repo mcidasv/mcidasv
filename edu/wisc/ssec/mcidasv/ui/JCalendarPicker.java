@@ -177,4 +177,18 @@ public class JCalendarPicker extends JPanel {
         dateChooser.setDate(c.getTime());
         timeModel.setValue(date);
     }
+
+    /**
+     * Get the user's selection as a {@literal "YYYY-MM-DD"} string.
+     * <b>This method ignores time zones.</b>
+     *
+     * @return Selected date as a {@literal "YYYY-MM-DD"} string.
+     */
+    public String getUserSelectedDay() {
+        Calendar selectedDay = getCalendar(dateChooser.getDate());
+        int year = selectedDay.get(Calendar.YEAR);
+        int month = selectedDay.get(Calendar.MONTH) + 1; // zero-based
+        int day = selectedDay.get(Calendar.DAY_OF_MONTH);
+        return String.format("%d-%02d-%02d", year, month, day);
+    }
 }
