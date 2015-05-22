@@ -77,20 +77,31 @@ public final class WebBrowser {
      */
     public static void browse(final String url) {
         // if the user has taken the trouble to explicitly provide the path to 
-        // a web browser, we should probably use it. 
+        // a web browser, we should probably use it.
         if (tryUserSpecifiedBrowser(url)) {
             return;
         }
 
-        // determine whether or not we can use the 1.6 classes
-        if (canAttemptNewStyle()) {
-            if (openNewStyle(url)) {
-                return;
-            }
+        // try using the JDK-supported approach
+        if (openNewStyle(url)) {
+            return;
         }
 
         // if not, use the hacky stuff.
         openOldStyle(url);
+    }
+
+    /**
+     * Test whether or not a given URL should be opened in a web browser.
+     *
+     * @param url URL to test. Cannot be {@code null}.
+     *
+     * @return {@code true} if {@code url} begins with either {@literal "http:"}
+     * or {@literal "https:"}.
+     */
+    public static boolean useBrowserForUrl(final String url) {
+        String lowercase = url.toLowerCase();
+        return lowercase.startsWith("http:") || lowercase.startsWith("https:");
     }
 
     /**
@@ -166,7 +177,7 @@ public final class WebBrowser {
         boolean retVal = false;
         if (mcv != null) {
             String browserPath = mcv.getProperty("idv.browser.path", (String)null);
-            if (browserPath != null && !browserPath.trim().isEmpty()) {
+            if ((browserPath != null) && !browserPath.trim().isEmpty()) {
                 try {
                     Runtime.getRuntime().exec(browserPath+' '+url);
                     retVal = true;
@@ -176,20 +187,6 @@ public final class WebBrowser {
             }
         }
         return retVal;
-    }
-
-    /**
-     * There's supposedly a bug lurking that can hang the JVM on Linux if
-     * {@code java.net.useSystemProxies} is enabled. Detect whether or not our
-     * configuration may trigger the bug.
-     * 
-     * @return Either {@code true} if everything is ok, {@code false} 
-     * otherwise.
-     */
-    private static boolean canAttemptNewStyle() {
-        // remove this check if JDK's bug 6496491 is fixed or if we can
-        // assume ORBit >= 2.14.2 and gnome-vfs >= 2.16.1
-        return isUnix() && Boolean.valueOf(System.getProperty("java.net.useSystemProxies", "true"));
     }
 
     /**
@@ -222,6 +219,6 @@ public final class WebBrowser {
     }
 
     public static void main(String[] args) {
-        browse("http://www.haskell.org/"); // sassy!
+        browse("http://www.rust-lang.org/"); // sassy!
     }
 }
