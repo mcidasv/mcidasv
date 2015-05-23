@@ -455,7 +455,7 @@ public class Console implements Runnable, KeyListener {
     private boolean onLastLine() {
         int[] offsets = locateLastLine();
         int position = textPane.getCaretPosition();
-        return position >= offsets[0] && position <= offsets[1];
+        return (position >= offsets[0]) && (position <= offsets[1]);
     }
 
     /**
@@ -569,7 +569,7 @@ public class Console implements Runnable, KeyListener {
 
     public Set<String> getJythonReferencesTo(final Object obj) {
         requireNonNull(obj, "Cannot find references to a null object");
-        Set<String> refs = new TreeSet<String>();
+        Set<String> refs = new TreeSet<>();
         // TODO(jon): possibly inline getJavaInstances()?
         for (Map.Entry<String, Object> entry : getJavaInstances().entrySet()) {
             if (obj == entry.getValue()) {
@@ -586,8 +586,8 @@ public class Console implements Runnable, KeyListener {
      * @return Jython variable names mapped to their Java instantiation.
      */
     public Map<String, Object> getJavaInstances() {
-        Map<String, Object> javaMap = new HashMap<>();
         Map<String, PyObject> locals = getLocalNamespace();
+        Map<String, Object> javaMap = new HashMap<>(locals.size());
         for (Map.Entry<String, PyObject> entry : locals.entrySet()) {
             PyObject val = entry.getValue();
             if (val instanceof PyObjectDerived) {

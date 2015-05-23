@@ -44,6 +44,7 @@ import org.python.core.PyStringMap;
  * {@link Interpreter}.
  */
 public abstract class Command {
+
     /** Console that created this command. */
     protected Console console;
 
@@ -96,6 +97,7 @@ public abstract class Command {
  * These sorts of commands are only created by user input in a {@link Console}.
  */
 class LineCommand extends Command {
+
     /** The line of jython that needs to be passed to the interpreter */
     private String command;
 
@@ -181,6 +183,7 @@ class LineCommand extends Command {
 //    }
 //}
 class InjectCommand extends Command {
+
     /** Name Jython will use to refer to {@link #object}. */
     private String name;
 
@@ -227,6 +230,7 @@ class InjectCommand extends Command {
  * Jython objects, while {@link InjectCommand} may only inject Java objects.
  */
 class EjectCommand extends Command {
+
     /** Name of the Jython object to remove. */
     private String name;
 
@@ -262,7 +266,9 @@ class EjectCommand extends Command {
 // TODO(jon): when documenting this, make sure to note that the commands appear
 // in the console as "normal" user input.
 class BatchCommand extends Command {
+
     private final String bufferSource;
+
     private final List<String> commandBuffer;
 
     public BatchCommand(final Console console, final String bufferSource,
@@ -298,7 +304,9 @@ class BatchCommand extends Command {
 }
 
 class RegisterCallbackCommand extends Command {
+
     private final ConsoleCallback callback;
+
     public RegisterCallbackCommand(final Console console, final ConsoleCallback callback) {
         super(console);
         this.callback = callback;
@@ -319,6 +327,7 @@ class RegisterCallbackCommand extends Command {
  * and you may specify whatever namespace you like (be careful!).
  */
 class LoadFileCommand extends Command {
+
     /** Namespace to use when executing {@link #path}. */
     private String name;
 

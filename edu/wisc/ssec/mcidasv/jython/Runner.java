@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
-import org.python.core.PyObject;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 
@@ -46,15 +45,15 @@ import edu.wisc.ssec.mcidasv.jython.OutputStreamDemux.OutputType;
 
 /**
  * This class represents a specialized {@link Thread} that creates and executes 
- * {@link Command}s. A {@link BlockingQueue} is used to maintain thread safety
- * and to cause a {@code Runner} to wait when the queue is at capacity or has
- * no {@code Command}s to execute.
+ * {@link Command Commands}. A {@link BlockingQueue} is used to maintain
+ * thread safety and to cause a {@code Runner} to wait when the queue is at
+ * capacity or has no {@link Command Commands} to execute.
  */
-public class Runner extends Thread {
+public final class Runner extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(Runner.class);
 
-    /** The maximum number of {@link Command}s that can be queued. */
+    /** The maximum number of {@link Command Commands} that can be queued. */
     private static final int QUEUE_CAPACITY = 10;
 
     /** 
@@ -69,10 +68,10 @@ public class Runner extends Thread {
      */
     private final OutputStreamDemux STD_ERR;
 
-    /** Queue of {@link Command}s awaiting execution. */
+    /** Queue of {@link Command Commands} awaiting execution. */
     private final BlockingQueue<Command> queue;
 
-    /** */
+    /** {@code Console} that created this {@code Runner} instance. */
     private final Console console;
 
     /** */
@@ -85,19 +84,24 @@ public class Runner extends Thread {
     private boolean interrupted = false;
 
     /**
+     * Creates a new {@literal "console runner thread"} for a given
+     * {@link Console}.
      * 
-     * 
-     * @param console
+     * @param console {@code Console} responsible for adding user input and
+     * displaying output. Cannot be {@code null}.
      */
     public Runner(final Console console) {
         this(console, Collections.<String>emptyList());
     }
 
     /**
-     * 
-     * 
-     * @param console
-     * @param commands
+     * Creates a new {@literal "console runner thread"} for a given
+     * {@link Console} and supplies a {@link List} of initial
+     * {@literal "commands"} to be executed.
+     *
+     * @param console {@code Console} responsible for adding user input and
+     * displaying output. Cannot be {@code null}.
+     * @param commands Lines to be run right away. Cannot be {@code null}.
      */
     public Runner(final Console console, final List<String> commands) {
         requireNonNull(console);
@@ -119,7 +123,7 @@ public class Runner extends Thread {
      * 
      * @param newCallback The callback handler to register.
      */
-    protected void setCallbackHandler(final ConsoleCallback newCallback) {
+    void setCallbackHandler(final ConsoleCallback newCallback) {
         queueCommand(new RegisterCallbackCommand(console, newCallback));
     }
 
@@ -128,7 +132,7 @@ public class Runner extends Thread {
      * 
      * @return Copy of the interpreter's local namespace.
      */
-    protected PyStringMap copyLocals() {
+    PyStringMap copyLocals() {
         return ((PyStringMap)interpreter.getLocals()).copy();
     }
 
@@ -140,7 +144,7 @@ public class Runner extends Thread {
      * <p>Please note that this method <b>needs</b> to be the first method that
      * gets called after creating a {@code Runner}.
      */
-    public void run() {
+    @Override public void run() {
         synchronized (this) {
             STD_OUT.addStream(console, interpreter, OutputType.NORMAL);
             STD_ERR.addStream(console, interpreter, OutputType.ERROR);
@@ -164,9 +168,7 @@ public class Runner extends Thread {
      * @param source Batched command source. Anything but null is acceptable.
      * @param batch The actual commands to execute.
      */
-    public void queueBatch(final String source,
-        final List<String> batch) 
-    {
+    public void queueBatch(final String source, final List<String> batch) {
         queueCommand(new BatchCommand(console, source, batch));
     }
 
@@ -209,9 +211,7 @@ public class Runner extends Thread {
      * @param name {@code __name__} attribute to use for loading {@code path}.
      * @param path The path to the Jython file.
      */
-    public void queueFile(final String name,
-        final String path) 
-    {
+    public void queueFile(final String name, final String path) {
         queueCommand(new LoadFileCommand(console, name, path));
     }
 
