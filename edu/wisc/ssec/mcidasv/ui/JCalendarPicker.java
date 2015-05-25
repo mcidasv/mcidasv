@@ -129,6 +129,10 @@ public class JCalendarPicker extends JPanel {
         }
     }
 
+    public JDateChooser getDateChooser() {
+        return dateChooser;
+    }
+
     /**
      * Get the {@link Date} that has been set.
      *

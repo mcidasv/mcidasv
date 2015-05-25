@@ -32,14 +32,18 @@ import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.KeyStroke.getKeyStroke;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.IllegalComponentStateException;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,9 +69,12 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.toedter.calendar.IDateEditor;
+import edu.wisc.ssec.mcidasv.ui.JCalendarDateEditor;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.w3c.dom.Element;
@@ -609,6 +616,32 @@ public class AddeImageChooser extends AddeChooser implements
                 dialog.dispose();
             }
         };
+
+        final JCalendarDateEditor dateEditor =
+            (JCalendarDateEditor)picker.getDateChooser().getDateEditor();
+        dateEditor.getUiComponent().addKeyListener(new KeyListener() {
+            @Override public void keyTyped(KeyEvent e) { }
+
+            @Override public void keyPressed(KeyEvent e) { }
+
+            @Override public void keyReleased(KeyEvent e) {
+                if (!Color.RED.equals(dateEditor.getForeground())) {
+                    KeyStroke stroke =
+                        getKeyStroke(e.getKeyCode(), e.getModifiers());
+                    if (stroke.getKeyCode() == KeyEvent.VK_ENTER) {
+                        try {
+                            archiveDay = picker.getUserSelectedDay();
+                            archiveDayLabel.setText(archiveDay);
+                        } catch (Exception ex) {
+                            // nothing to do
+                        }
+                        setDoAbsoluteTimes(true);
+                        descriptorChanged();
+                        dialog.dispose();
+                    }
+                }
+            }
+        });
 
         JPanel buttons = GuiUtils.makeButtons(listener, new String[] {
                 GuiUtils.CMD_OK, GuiUtils.CMD_REMOVE, GuiUtils.CMD_CANCEL });
