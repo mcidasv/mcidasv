@@ -102,8 +102,8 @@ public class JCalendarPicker extends JPanel {
         Calendar calendar = getCalendar(null);
         jc.getDayChooser().setCalendar(calendar);
         jc.setCalendar(calendar);
-
-        dateChooser = new JDateChooser(jc, new Date(), null, null);
+        
+        dateChooser = new JDateChooser(jc, new Date(), null, new JCalendarDateEditor());
         setLayout(new BorderLayout());
 
         // Create a date spinner that controls the hours
