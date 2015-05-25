@@ -275,47 +275,6 @@ public class JCalendarDateEditor extends JFormattedTextField implements
         return result;
     }
 
-
-
-//     public void caretUpdate(CaretEvent event) {
-//         String text = getText().trim();
-//         String emptyMask = maskPattern.replace('#', placeholder);
-
-//         if (text.length() == 0 || text.equals(emptyMask)) {
-// //            try {
-// //                Date var4 = this.dateFormatter.parse(this.getText());
-// //                if (this.dateUtil.checkDate(var4)) {
-// //                    this.setForeground(this.darkGreen);
-// //                } else {
-// //                    String date = this.getText();
-// //                    boolean isJulian = isJulianDay(date);
-// //                    if (isJulian) {
-// //                        this.setForeground(this.darkGreen);
-// //                    } else {
-// //                        this.setForeground(Color.RED);
-// //                    }
-// //                }
-// //            } catch (Exception var5) {
-// //                String date = this.getText();
-// //                boolean isJulian = isJulianDay(date);
-// //                if (isJulian) {
-// //                    this.setForeground(this.darkGreen);
-// //                } else {
-// //                    this.setForeground(Color.RED);
-// //                }
-// ////                this.setForeground(Color.RED);
-// //            }
-//             Date parsed = attemptParsing(this.getText());
-//             if (parsed != null) {
-//                 this.setForeground(this.darkGreen);
-//             } else {
-//                 this.setForeground(Color.RED);
-//             }
-//         } else {
-//             this.setForeground(Color.BLACK);
-//         }
-//     }
-
     /**
      * After any user input, the value of the textfield is proofed. Depending on
      * being a valid date, the value is colored green or red.
