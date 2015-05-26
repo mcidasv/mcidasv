@@ -2408,7 +2408,7 @@ def allColorTables():
     return [_ColorTable(colorTable) for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
     
 @gui_invoke_later
-def importColorTable(path, name=None, category=None):
+def importColorTable(filename, name=None, category=None, overwrite=False):
     """Import color table using the given path.
     
     If the color table in question was exported from the Color Table Manager,
@@ -2417,8 +2417,13 @@ def importColorTable(path, name=None, category=None):
     If the name already exists within the category, a unique name will be
     generated. The format is <name>_<integer>.
     
+    If the given parameters match a system color table and overwriting is 
+    enabled, the specified color table will merely take precedence over the 
+    system color table. Removing the local color table will result in the 
+    system color table being made available.
+    
     Args:
-        path: Path to color table to import.
+        filename: Path to color table to import.
         
         name: Name of the color table. If not specified, name will be the 
               "base" filename without an extension (e.g. foo.et becomes foo).
@@ -2426,6 +2431,9 @@ def importColorTable(path, name=None, category=None):
         category: Category of the color table. If not specified, the category
                   will default to Basic.
                   
+        overwrite: Optional value that controls whether or not an existing
+                   color table that matches all the given parameters will be
+                   overwritten. Default value is False.
     Returns:
         Either the imported color table or nothing if there was a problem.
         
@@ -2436,16 +2444,16 @@ def importColorTable(path, name=None, category=None):
     
     mcv = getStaticMcv()
     if mcv:
+        makeUnique = not overwrite
         ctm = mcv.getColorTableManager()
-        
-        tables = ctm.processSpecial(path, name, category)
+        tables = ctm.processSpecial(filename, name, category)
         if tables:
-            return _ColorTable(ctm.doImport(tables, True))
+            return _ColorTable(ctm.doImport(tables, makeUnique))
         else: 
-            xml = IOUtil.readContents(path, ResourceManager.__class__)
+            xml = IOUtil.readContents(filename, ResourceManager.__class__)
             if xml:
                 obj = XmlEncoder().toObject(xml)
-                return _ColorTable(ctm.doImport(obj, True))
+                return _ColorTable(ctm.doImport(obj, makeUnique))
                 
 @gui_invoke_later
 def firstWindow():
