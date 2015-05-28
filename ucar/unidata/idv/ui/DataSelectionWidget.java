@@ -1,5 +1,5 @@
 /*
- * Copyright 1997-2014 Unidata Program Center/University Corporation for
+ * Copyright 1997-2015 Unidata Program Center/University Corporation for
  * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
  * support@unidata.ucar.edu.
  * 
@@ -1572,7 +1572,7 @@ public class DataSelectionWidget {
             timesList.setEnabled(false);
             if (lastDataChoice != null) {
                 lastDataChoice.setProperty(DataSelection.PROP_TIMESUBSET,
-                    false);
+                                           false);
             }
         } else if (selectedObject.equals(USE_SELECTEDTIMES)) {
             //selectIdx = 1;
@@ -1581,7 +1581,7 @@ public class DataSelectionWidget {
             chooserDoTimeMatching = false;
             if (lastDataChoice != null) {
                 lastDataChoice.setProperty(DataSelection.PROP_TIMESUBSET,
-                    true);
+                                           true);
             }
         } else if (selectedObject.equals(USE_DRIVERTIMES)) {
             //selectIdx = 2;
@@ -1589,9 +1589,9 @@ public class DataSelectionWidget {
             timesList.setEnabled(false);
             if (lastDataChoice != null) {
                 lastDataChoice.setProperty(DataSelection.PROP_USESTIMEDRIVER,
-                    true);
+                                           true);
                 lastDataChoice.setProperty(DataSelection.PROP_TIMESUBSET,
-                    false);
+                                           false);
             }
         } else if (selectedObject.equals(AS_DRIVERTIMES)) {
             //selectIdx = 1;
@@ -1600,9 +1600,9 @@ public class DataSelectionWidget {
             chooserDoTimeMatching = false;
             if (lastDataChoice != null) {
                 lastDataChoice.setProperty(DataSelection.PROP_ASTIMEDRIVER,
-                    true);
+                                           true);
                 lastDataChoice.setProperty(DataSelection.PROP_TIMESUBSET,
-                    false);
+                                           false);
             }
         } else {
             didSomething = false;

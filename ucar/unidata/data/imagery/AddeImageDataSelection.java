@@ -61,7 +61,7 @@ import visad.VisADException;
 import visad.data.mcidas.AREACoordinateSystem;
 import visad.data.mcidas.AreaAdapter;
 
-import visad.georef.*;
+import visad.georef.MapProjection;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -663,7 +663,7 @@ public class AddeImageDataSelection {
             newRect.setHeight(rect.getHeight());
             newRect.setWidth(rect.getWidth());
             LatLonRect latLonRectOld =
-                projectionImpl.getLatLonBoundingBox(rect);
+                projectionImpl.projToLatLonBB(rect);
 
             if (newPlace.equals("CENTER")) {
                 //move llr from ULEFT to CENTER
@@ -2180,8 +2180,6 @@ public class AddeImageDataSelection {
 
         /** _more_ */
         private JCheckBox chkUseFull;
-
-//        private JCheckBox chkAdaptResolution;
         //final AddeImageDataSource this;
 
         /** _more_ */
@@ -2264,7 +2262,8 @@ public class AddeImageDataSelection {
             JButton resetButton = new JButton("RESET");
             try {
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
-                final ProjectionRect rect = new ProjectionRect(acs.getDefaultMapArea());
+                Rectangle2D r = acs.getDefaultMapArea();
+                final ProjectionRect rect = new ProjectionRect(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY());
                 display.getNavigatedPanel().setSelectedRegion(rect);
                 resetButton.addActionListener(new ActionListener() {
                     @Override public void actionPerformed(ActionEvent e) {
@@ -2468,7 +2467,9 @@ public class AddeImageDataSelection {
                 AreaFile af = aAdapter.getAreaFile();
                 try {
                     AREACoordinateSystem acs = new AREACoordinateSystem(af);
-                    ProjectionRect rect = new ProjectionRect(acs.getDefaultMapArea());
+                    Rectangle2D r = acs.getDefaultMapArea();
+                    ProjectionRect rect =
+                        new ProjectionRect(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY());
                     display.getNavigatedPanel().setSelectedRegion(rect);
                     display.getNavigatedPanel().repaint();
                 } catch (Exception e) {
@@ -2732,26 +2733,25 @@ public class AddeImageDataSelection {
                 // no region subset, full image
                 ProjectionImpl projectionImpl = display.getProjectionImpl();
                 LatLonRect latLonRect =
-                    projectionImpl.getLatLonBoundingBox(rect);
+                    projectionImpl.projToLatLonBB(rect);
                 GeoLocationInfo gInfo;
                 if (latLonRect.getHeight() != latLonRect.getHeight()) {
                     //corner point outside the earth
 
-                    LatLonPointImpl cImpl =
-                        projectionImpl.projToLatLon(rect.x
-                            + rect.getWidth() / 2, rect.y
-                                + rect.getHeight() / 2);
-                    LatLonPointImpl urImpl =
-                        projectionImpl.projToLatLon(rect.x + rect.getWidth(),
-                            rect.y + rect.getHeight());
-                    LatLonPointImpl ulImpl =
-                        projectionImpl.projToLatLon(rect.x,
-                            rect.y + rect.getHeight());
-                    LatLonPointImpl lrImpl =
-                        projectionImpl.projToLatLon(rect.x + rect.getWidth(),
-                            rect.y);
-                    LatLonPointImpl llImpl =
-                        projectionImpl.projToLatLon(rect.x, rect.y);
+                    LatLonPoint cImpl = projectionImpl.projToLatLon(rect.getX()
+                            + rect.getWidth() / 2, rect.getY()
+                            + rect.getHeight() / 2);
+                    LatLonPoint urImpl =
+                        projectionImpl.projToLatLon(rect.getX() + rect.getWidth(),
+                            rect.getY() + rect.getHeight());
+                    LatLonPoint ulImpl =
+                        projectionImpl.projToLatLon(rect.getX(),
+                            rect.getY() + rect.getHeight());
+                    LatLonPoint lrImpl =
+                        projectionImpl.projToLatLon(rect.getX() + rect.getWidth(),
+                            rect.getY());
+                    LatLonPoint llImpl =
+                        projectionImpl.projToLatLon(rect.getX(), rect.getY());
 
                     double maxLat = Double.NaN;
                     double minLat = Double.NaN;
@@ -2782,10 +2782,10 @@ public class AddeImageDataSelection {
                         //upper right conner
                         maxLat = cImpl.getLatitude()
                                  + (cImpl.getLatitude()
-                            - llImpl.getLatitude());
+                                    - llImpl.getLatitude());
                         minLat = llImpl.getLatitude();
                         maxLon = cImpl.getLongitude()
-                            + (cImpl.getLongitude()
+                                 + (cImpl.getLongitude()
                                     - lrImpl.getLongitude());
                         minLon = lrImpl.getLongitude();
                     } else if (llImpl.getLatitude() != llImpl.getLatitude()) {

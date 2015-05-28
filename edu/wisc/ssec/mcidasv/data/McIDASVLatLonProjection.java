@@ -81,7 +81,7 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 	 * @param x
 	 */
 	public void setCenterX(double x) {
-		defaultMapArea.x = x - defaultMapArea.width/2;
+		defaultMapArea.setX(x - defaultMapArea.getWidth() / 2);
 	}
 	
 	/**
@@ -89,7 +89,8 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 	 * @param y
 	 */
 	public void setCenterY(double y) {
-		defaultMapArea.y = y - defaultMapArea.height/2;
+		defaultMapArea.setY(y - defaultMapArea.getHeight() / 2);
+//		defaultMapArea.y = y - defaultMapArea.height/2;
 	}
 	
 	/**
@@ -97,7 +98,8 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 	 * @param w
 	 */
 	public void setLonWidth(double w) {
-		defaultMapArea.width = w;
+//		defaultMapArea.width = w;
+		defaultMapArea.setWidth(w);
 	}
 	
 	/**
@@ -105,23 +107,27 @@ public class McIDASVLatLonProjection extends LatLonProjection {
 	 * @param h
 	 */
 	public void setLatHeight(double h) {
-		defaultMapArea.height = h;
+//		defaultMapArea.height = h;
+		defaultMapArea.setHeight(h);
 	}
 	
 	public double getCenterX() {
-		return defaultMapArea.x + defaultMapArea.width/2;
+//		return defaultMapArea.x + defaultMapArea.width/2;
+		return defaultMapArea.getCenterX() + defaultMapArea.getWidth() / 2;
 	}
 	
 	public double getCenterY() {
-		return defaultMapArea.y + defaultMapArea.height/2;
+//		return defaultMapArea.y + defaultMapArea.height/2;
+		return defaultMapArea.getCenterY() + defaultMapArea.getHeight() / 2;
 	}
 
 	public double getLonWidth() {
-		return defaultMapArea.width;
+//		return defaultMapArea.width;
+		return defaultMapArea.getWidth();
 	}
 	
 	public double getLatHeight() {
-		return defaultMapArea.height;
+		return defaultMapArea.getHeight();
 	}
 	
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 1997-2014 Unidata Program Center/University Corporation for
+ * Copyright 1997-2015 Unidata Program Center/University Corporation for
  * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
  * support@unidata.ucar.edu.
  * 
@@ -559,7 +559,7 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
         if (skipFactorWidget != null) {
             skipFactorWidget.setValue(value);
         }
-        if (fd != null) {
+        if(fd != null) {
             fd.setUseSpeedForColor(useSpeedForColor);
             if (useSpeedForColor) {
                 colorIndex = fd.getSpeedTypeIndex();
