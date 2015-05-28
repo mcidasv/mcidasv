@@ -63,19 +63,21 @@ public class Interpreter extends InteractiveInterpreter {
      * default so that the locals namespace makes sense.
      * 
      * @param state The system state you want to use with the interpreter.
-     * @param stdout The stream Jython will use for standard output.
-     * @param stderr The stream Jython will use for error output.
+     * @param standardOut The stream Jython will use for standard output.
+     * @param standardError The stream Jython will use for error output.
      */
     public Interpreter(final PySystemState state, 
-        final ByteArrayOutputStream stdout, 
-        final ByteArrayOutputStream stderr) 
+        final ByteArrayOutputStream standardOut,
+        final ByteArrayOutputStream standardError)
     {
         super(null, state);
-        this.stdout = stdout;
-        this.stderr = stderr;
-        this.callback = new DummyCallbackHandler();
-        this.moreInput = false;
-        this.thinking = false;
+        stdout = standardOut;
+        stderr = standardError;
+        callback = new DummyCallbackHandler();
+        moreInput = false;
+        thinking = false;
+
+        state.setdefaultencoding("utf-8");
 
         setOut(stdout);
         setErr(stderr);
