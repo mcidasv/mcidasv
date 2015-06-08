@@ -73,6 +73,8 @@ public class JCalendarDateEditor extends JFormattedTextField implements
 
     private static final Pattern yearDay = Pattern.compile("\\d{7}");
 
+    private static final Pattern badYearDay = Pattern.compile("\\d{5}");
+
     private static final Logger logger =
         LoggerFactory.getLogger(JCalendarDateEditor.class);
 
@@ -83,6 +85,8 @@ public class JCalendarDateEditor extends JFormattedTextField implements
     protected SimpleDateFormat dayOfYear;
 
     protected SimpleDateFormat yearAndDay;
+
+    protected SimpleDateFormat badYearAndDay;
 
     protected MaskFormatter maskFormatter;
 
@@ -126,7 +130,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
         dateFormatter = (SimpleDateFormat) getDateInstance(DateFormat.MEDIUM);
         dayOfYear = new SimpleDateFormat("DDD");
         yearAndDay = new SimpleDateFormat("yyyyDDD");
-
+        badYearAndDay = new SimpleDateFormat("yyDDD");
         dateFormatter.setLenient(false);
         dayOfYear.setLenient(false);
         yearAndDay.setLenient(false);
@@ -266,6 +270,8 @@ public class JCalendarDateEditor extends JFormattedTextField implements
                 result = yearAndDay.parse(full);
             } else if (yearDay.matcher(text).matches()) {
                 result = yearAndDay.parse(text);
+            } else if (badYearDay.matcher(text).matches()) {
+                result = badYearAndDay.parse(text);
             } else {
                 result = dateFormatter.parse(text);
             }
