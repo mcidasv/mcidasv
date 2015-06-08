@@ -98,5 +98,6 @@
   <logger name="org.apache.commons.logging.impl.SimpleLog" level="OFF" />
   <logger name="org.apache.fop" level="OFF" />
   <logger name="org.apache.xmlgraphics" level="OFF" />
+  <logger name="edu.wisc.ssec.mcidasv.jython" level="OFF" />
   <!-- End of verbose logger section -->
 </configuration>
