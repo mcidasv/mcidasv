@@ -63,16 +63,19 @@ import java.util.regex.Pattern;
 /**
  * This class is just a {@link com.toedter.calendar.JTextFieldDateEditor} that
  * allows the user to enter either the day within (current) year or a
- * McIDAS-X style {@literal "julian day"} (yyyyddd), in addition to the
- * formatting allowed by {@code JTextFieldDateEditor}.
+ * McIDAS-X style {@literal "julian day"} (yyyyddd or yyddd), in addition to
+ * the formatting allowed by {@code JTextFieldDateEditor}.
  */
 public class JCalendarDateEditor extends JFormattedTextField implements
     IDateEditor, CaretListener, FocusListener, ActionListener
 {
+    /** Match day of year. */
     private static final Pattern dayOnly = Pattern.compile("\\d{3}");
 
+    /** Match {@code YYYYDDD}. */
     private static final Pattern yearDay = Pattern.compile("\\d{7}");
 
+    /** Match {@code YYDDD} dates. */
     private static final Pattern badYearDay = Pattern.compile("\\d{5}");
 
     private static final Logger logger =
@@ -82,11 +85,11 @@ public class JCalendarDateEditor extends JFormattedTextField implements
 
     protected SimpleDateFormat dateFormatter;
 
-    protected SimpleDateFormat dayOfYear;
+    private final SimpleDateFormat dayOfYear;
 
-    protected SimpleDateFormat yearAndDay;
+    private final SimpleDateFormat yearAndDay;
 
-    protected SimpleDateFormat badYearAndDay;
+    private final SimpleDateFormat badYearAndDay;
 
     protected MaskFormatter maskFormatter;
 
@@ -127,7 +130,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
     public JCalendarDateEditor(boolean showMask, String datePattern,
                                String maskPattern, char placeholder)
     {
-        dateFormatter = (SimpleDateFormat) getDateInstance(DateFormat.MEDIUM);
+        dateFormatter = (SimpleDateFormat)getDateInstance(DateFormat.MEDIUM);
         dayOfYear = new SimpleDateFormat("DDD");
         yearAndDay = new SimpleDateFormat("yyyyDDD");
         badYearAndDay = new SimpleDateFormat("yyDDD");
@@ -166,7 +169,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see com.toedter.calendar.IDateEditor#getDate()
      */
-    public Date getDate() {
+    @Override public Date getDate() {
         try {
             calendar.setTime(dateFormatter.parse(getText()));
             calendar.set(Calendar.HOUR_OF_DAY, hours);
@@ -185,7 +188,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see com.toedter.calendar.IDateEditor#setDate(java.util.Date)
      */
-    public void setDate(Date date) {
+    @Override public void setDate(Date date) {
         setDate(date, true);
     }
 
@@ -229,13 +232,13 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see com.toedter.calendar.IDateEditor#setDateFormatString(java.lang.String)
      */
-    public void setDateFormatString(String dateFormatString) {
+    @Override public void setDateFormatString(String dateFormatString) {
         if (!ignoreDatePatternChange) {
             try {
                 dateFormatter.applyPattern(dateFormatString);
             } catch (RuntimeException e) {
                 dateFormatter =
-                    (SimpleDateFormat) getDateInstance(DateFormat.MEDIUM);
+                    (SimpleDateFormat)getDateInstance(DateFormat.MEDIUM);
                 dateFormatter.setLenient(false);
             }
             this.datePattern = dateFormatter.toPattern();
@@ -249,7 +252,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see com.toedter.calendar.IDateEditor#getDateFormatString()
      */
-    public String getDateFormatString() {
+    @Override public String getDateFormatString() {
         return datePattern;
     }
 
@@ -258,7 +261,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see com.toedter.calendar.IDateEditor#getUiComponent()
      */
-    public JComponent getUiComponent() {
+    @Override public JComponent getUiComponent() {
         return this;
     }
 
@@ -287,37 +290,36 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      *
      * @param event Caret event.
      */
-    public void caretUpdate(CaretEvent event) {
+    @Override public void caretUpdate(CaretEvent event) {
         String text = getText().trim();
         String emptyMask = maskPattern.replace('#', placeholder);
 
-        if (text.length() == 0 || text.equals(emptyMask)) {
+        if (text.isEmpty() || text.equals(emptyMask)) {
             setForeground(Color.BLACK);
             return;
         }
 
         Date parsed = attemptParsing(this.getText());
-        if (parsed != null && dateUtil.checkDate(parsed)) {
+        if ((parsed != null) && dateUtil.checkDate(parsed)) {
             this.setForeground(this.darkGreen);
         } else {
             this.setForeground(Color.RED);
         }
     }
 
-
     /*
      * (non-Javadoc)
      * 
      * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
      */
-    public void focusLost(FocusEvent focusEvent) {
+    @Override public void focusLost(FocusEvent focusEvent) {
         checkText();
     }
 
     private void checkText() {
-        Date date = attemptParsing(this.getText());
-        if (date != null) {
-            this.setDate(date, true);
+        Date parsedDate = attemptParsing(this.getText());
+        if (parsedDate != null) {
+            this.setDate(parsedDate, true);
         }
     }
 
@@ -326,7 +328,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
      */
-    public void focusGained(FocusEvent e) {
+    @Override public void focusGained(FocusEvent e) {
     }
 
     /*
@@ -334,54 +336,50 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see java.awt.Component#setLocale(java.util.Locale)
      */
-    public void setLocale(Locale locale) {
-        if ((locale == getLocale()) || ignoreDatePatternChange) {
-            return;
+    @Override public void setLocale(Locale locale) {
+        if (!locale.equals(getLocale()) || ignoreDatePatternChange) {
+            super.setLocale(locale);
+            dateFormatter =
+                (SimpleDateFormat) getDateInstance(DateFormat.MEDIUM, locale);
+            setToolTipText(dateFormatter.toPattern());
+            setDate(date, false);
+            doLayout();
         }
-
-        super.setLocale(locale);
-        dateFormatter =
-            (SimpleDateFormat)getDateInstance(DateFormat.MEDIUM, locale);
-        setToolTipText(dateFormatter.toPattern());
-
-        setDate(date, false);
-        doLayout();
     }
 
     /**
      * Creates a mask from a date pattern. This is a very simple (and
      * incomplete) implementation thet works only with numbers. A date pattern
-     * of "MM/dd/yy" will result in the mask "##/##/##". Probably you want to
-     * override this method if it does not fit your needs.
+     * of {@literal "MM/dd/yy"} will result in the mask "##/##/##". Probably
+     * you want to override this method if it does not fit your needs.
      *
-     * @param datePattern
-     *            the date pattern
+     * @param datePattern Date pattern.
      * @return the mask
      */
     public String createMaskFromDatePattern(String datePattern) {
         String symbols = "GyMdkHmsSEDFwWahKzZ";
-        String mask = "";
+        StringBuilder maskBuffer = new StringBuilder(datePattern.length() * 2);
         for (int i = 0; i < datePattern.length(); i++) {
             char ch = datePattern.charAt(i);
             boolean symbolFound = false;
             for (int n = 0; n < symbols.length(); n++) {
                 if (symbols.charAt(n) == ch) {
-                    mask += "#";
+                    maskBuffer.append('#');
                     symbolFound = true;
                     break;
                 }
             }
             if (!symbolFound) {
-                mask += ch;
+                maskBuffer.append(ch);
             }
         }
-        return mask;
+        return maskBuffer.toString();
     }
 
     /**
-     * Returns true, if the mask is visible.
+     * Returns {@code true}, if the mask is visible.
      *
-     * @return true, if the mask is visible
+     * @return {@code true}, if the mask is visible.
      */
     public boolean isMaskVisible() {
         return isMaskVisible;
@@ -412,17 +410,16 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * Returns the preferred size. If a date pattern is set, it is the size the
      * date pattern would take.
      */
-    public Dimension getPreferredSize() {
-        if (datePattern != null) {
-            return new JTextField(datePattern).getPreferredSize();
-        }
-        return super.getPreferredSize();
+    @Override public Dimension getPreferredSize() {
+        return (datePattern != null)
+               ? new JTextField(datePattern).getPreferredSize()
+               : super.getPreferredSize();
     }
 
     /**
      * Validates the typed date and sets it (only if it is valid).
      */
-    public void actionPerformed(ActionEvent e) {
+    @Override public void actionPerformed(ActionEvent e) {
         checkText();
     }
 
@@ -431,7 +428,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 4991597 and sets the background explicitely to a
      * TextField.inactiveBackground.
      */
-    public void setEnabled(boolean b) {
+    @Override public void setEnabled(boolean b) {
         super.setEnabled(b);
         if (!b) {
             super.setBackground(getColor("TextField.inactiveBackground"));
@@ -443,7 +440,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see com.toedter.calendar.IDateEditor#getMaxSelectableDate()
      */
-    public Date getMaxSelectableDate() {
+    @Override public Date getMaxSelectableDate() {
         return dateUtil.getMaxSelectableDate();
     }
 
@@ -452,7 +449,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see com.toedter.calendar.IDateEditor#getMinSelectableDate()
      */
-    public Date getMinSelectableDate() {
+    @Override public Date getMinSelectableDate() {
         return dateUtil.getMinSelectableDate();
     }
 
@@ -461,7 +458,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see com.toedter.calendar.IDateEditor#setMaxSelectableDate(java.util.Date)
      */
-    public void setMaxSelectableDate(Date max) {
+    @Override public void setMaxSelectableDate(Date max) {
         dateUtil.setMaxSelectableDate(max);
         checkText();
     }
@@ -471,7 +468,7 @@ public class JCalendarDateEditor extends JFormattedTextField implements
      * 
      * @see com.toedter.calendar.IDateEditor#setMinSelectableDate(java.util.Date)
      */
-    public void setMinSelectableDate(Date min) {
+    @Override public void setMinSelectableDate(Date min) {
         dateUtil.setMinSelectableDate(min);
         checkText();
     }
@@ -479,10 +476,9 @@ public class JCalendarDateEditor extends JFormattedTextField implements
     /*
      * (non-Javadoc)
      * 
-     * @see com.toedter.calendar.IDateEditor#setSelectableDateRange(java.util.Date,
-     *      java.util.Date)
+     * @see com.toedter.calendar.IDateEditor#setSelectableDateRange(java.util.Date,java.util.Date)
      */
-    public void setSelectableDateRange(Date min, Date max) {
+    @Override public void setSelectableDateRange(Date min, Date max) {
         dateUtil.setSelectableDateRange(min, max);
         checkText();
     }
