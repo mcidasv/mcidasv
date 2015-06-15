@@ -55,12 +55,10 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.plaf.FileChooserUI;
 
 import org.slf4j.Logger;
@@ -85,6 +83,7 @@ import ucar.unidata.xml.XmlObjectStore;
  *
  * @author Gail Dengel and Tommy Jasmin
  */
+
 public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
     private static final long serialVersionUID = 1L;

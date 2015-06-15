@@ -582,7 +582,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 		                    
                         	if (prvPoint != null) {
                         		distance = Util.distance(prvPoint, llt);
-                        		logger.debug("Distance: " + distance);
                         		if (distance < LABEL_DISTANCE_THRESHOLD) {
                                     latlon[0][i] = (float) dlat;
                                     latlon[1][i] = (float) dlon;
@@ -979,6 +978,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         			"Invalid time range selection, please correct", 
         			"Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
         	return false;
+        }
+        
+        // allow at most two full days of orbit tracks - more than this will
+        // at best clutter the display and at worst grind McV indefinitely
+        long timeDiff = potdc.getTrs().getTimeRangeInSeconds();
+        if (timeDiff >= (60 * 60 * 24 * 2)) {
+        	JOptionPane.showMessageDialog(null, 
+        			"Time range greater than two full days is not allowed, please correct", 
+        			"Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
+        	return false;        	
         }
         
     	// instantiate components we need to exist at initialization

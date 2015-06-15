@@ -33,18 +33,19 @@ import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
-import edu.wisc.ssec.mcidasv.Constants;
-
-import edu.wisc.ssec.mcidasv.data.dateChooser.*;
-
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import name.gano.astro.time.Time;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +54,13 @@ import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceImpl;
 
 import visad.VisADException;
+
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.data.dateChooser.JCalendar;
+import edu.wisc.ssec.mcidasv.data.dateChooser.JDateChooser;
+import edu.wisc.ssec.mcidasv.data.dateChooser.JDayChooser;
+import edu.wisc.ssec.mcidasv.data.dateChooser.JMonthChooser;
+import edu.wisc.ssec.mcidasv.data.dateChooser.JYearChooser;
 
 public class TimeRangeSelection extends DataSelectionComponent implements Constants {
 
@@ -204,6 +212,30 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         if ((mins < 0) || (mins > 59)) return false;
         if ((secs < 0) || (secs > 59)) return false;
         return true;
+    }
+    
+    /**
+     * TJJ Jun 2015
+     * Return the difference in seconds between the Calendar objects only!
+     * NOTE: this will only give you the number of days difference,
+     * the HH, MM, and SS data comes from a different UI widget.
+     * 
+     * We ompute seconds simply because that is easiest way to get an
+     * absolute time from Date object
+     */
+    
+    public long getTimeRangeInSeconds() {
+    	
+    	// make sure our widgets are set with a valid end time greater
+    	// than begin time
+    	if (! timeRangeOk()) {
+    		return -1;
+    	}
+    	
+    	long endTimeMs = endDay.getDate().getTime();
+    	long begTimeMs = begDay.getDate().getTime();
+    	return (endTimeMs - begTimeMs) / 1000;
+    	
     }
     
     public boolean timeRangeOk() {
