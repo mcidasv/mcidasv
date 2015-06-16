@@ -491,8 +491,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             try {
             	newAngle = Integer.parseInt(s);
             	if (newAngle != curAngle) {
-            		curAngle = newAngle;
-            		somethingChanged = true;
+            		// TJJ Jun 2015 range check
+            		if ((newAngle < DEFAULT_ANTENNA_ANGLE) ||
+            		    (newAngle > MAX_ANTENNA_ANGLE)) {
+            			throw new NumberFormatException();
+            		} else {
+	            		curAngle = newAngle;
+	            		somethingChanged = true;
+            		}
             	}
             } catch (NumberFormatException nfe) {
             	JOptionPane.showMessageDialog(latLonAltPanel, 
@@ -1132,8 +1138,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	JPanel jp = new JPanel(new MigLayout());
         jp.setBorder(BorderFactory.createTitledBorder(" Ground Station Controls "));
 
-        // line style for drawing coverage circles
-//        jcbStationLineStyle = new JComboBox(new String[] { "_____", "_ _ _", ".....", "_._._" });
         jcbStationLineStyle = new JComboBox(lineStyles);
         jcbStationLineStyle.addActionListener(this);
         jcbStationLineStyle.setSelectedIndex(1);
