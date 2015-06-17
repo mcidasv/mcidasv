@@ -146,6 +146,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private String station = "";
 
     private static final int SWATH_WIDTH_MIN = 1;
+    // swath width not applicable, e.g. GEO sensor
+    private static final String SWATH_NA = "N/A";
     // TJJ Feb 2014 - need to determine max of any sensor. VIIRS is over 3000 km
     private static final int SWATH_WIDTH_MAX = 4000;
     private static final int DEFAULT_ANTENNA_ANGLE = 5;
@@ -1257,6 +1259,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             satelliteName = new JLabel(dataChoice.getName());
         Integer isw = new Integer((int) curWidth);
         swathWidthFld = new JTextField(isw.toString(), 5);
+        if (curWidth == 0) swathWidthFld.setText(SWATH_NA);
 
         JPanel jp = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
@@ -1366,6 +1369,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	try {
     		val = Integer.parseInt(s);
     	} catch (NumberFormatException nfe) {
+    		// TJJ Jun 2015 - if GEO sensor, N/A means return invalid, but no warning msg needed
+    		if ((s != null) && (s.equals(SWATH_NA))) {
+    			return -1;
+    		}
     		// throw up a dialog to tell user the problem
     		JOptionPane.showMessageDialog(latLonAltPanel, 
     				"Invalid swath width: must be an integer value in km");

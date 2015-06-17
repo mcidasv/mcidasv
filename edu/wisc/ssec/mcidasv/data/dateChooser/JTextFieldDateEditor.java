@@ -178,6 +178,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * @param firePropertyChange
 	 *            true, if the date property should be fired.
 	 */
+	
 	protected void setDate(Date date, boolean firePropertyChange) {
 		Date oldDate = this.date;
 		this.date = date;
@@ -193,7 +194,6 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 
 			String formattedDate = dateFormatter.format(date);
 			try {
-				logger.debug("Setting text: " + formattedDate);
 				setText(formattedDate);
 			} catch (RuntimeException e) {
 				e.printStackTrace();
@@ -214,6 +214,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * 
 	 * @see com.toedter.calendar.IDateEditor#setDateFormatString(java.lang.String)
 	 */
+	
 	public void setDateFormatString(String dateFormatString) {
 		if (ignoreDatePatternChange) {
 			return;
@@ -235,6 +236,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * 
 	 * @see com.toedter.calendar.IDateEditor#getDateFormatString()
 	 */
+	
 	public String getDateFormatString() {
 		return datePattern;
 	}
@@ -244,6 +246,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * 
 	 * @see com.toedter.calendar.IDateEditor#getUiComponent()
 	 */
+	
 	public JComponent getUiComponent() {
 		return this;
 	}
@@ -255,6 +258,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * @param event
 	 *            the caret event
 	 */
+	
 	public void caretUpdate(CaretEvent event) {
 		String text = getText().trim();
 		String emptyMask = maskPattern.replace('#', placeholder);
@@ -281,6 +285,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * 
 	 * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent)
 	 */
+	
 	public void focusLost(FocusEvent focusEvent) {
 		checkText();
 	}
@@ -299,6 +304,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * 
 	 * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent)
 	 */
+	
 	public void focusGained(FocusEvent e) {
 	}
 
@@ -307,6 +313,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * 
 	 * @see java.awt.Component#setLocale(java.util.Locale)
 	 */
+	
 	public void setLocale(Locale locale) {
 		if (locale == getLocale() || ignoreDatePatternChange) {
 			return;
@@ -356,6 +363,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * 
 	 * @return true, if the mask is visible
 	 */
+	
 	public boolean isMaskVisible() {
 		return isMaskVisible;
 	}
@@ -366,6 +374,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * @param isMaskVisible
 	 *            true, if the mask should be visible
 	 */
+	
 	public void setMaskVisible(boolean isMaskVisible) {
 		this.isMaskVisible = isMaskVisible;
 		if (isMaskVisible) {
@@ -385,18 +394,20 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 	 * Returns the preferred size. If a date pattern is set, it is the size the
 	 * date pattern would take.
 	 */
+	
 	public Dimension getPreferredSize() {
 
-                Dimension ret = null;
+		Dimension ret = null;
 		if (datePattern != null) {
-			ret =(new JTextField(datePattern)).getPreferredSize();
-			//return new JTextField(datePattern).getPreferredSize();
+			ret = (new JTextField(datePattern)).getPreferredSize();
+			// return new JTextField(datePattern).getPreferredSize();
 		} else {
-		        ret = super.getPreferredSize();
-		//return super.getPreferredSize();
-                }
-                ret.setSize(90, 19);
-                return ret;
+			ret = super.getPreferredSize();
+			// return super.getPreferredSize();
+		}
+		ret.setSize(90, 19);
+		return ret;
+		
 	}
 
 	/**

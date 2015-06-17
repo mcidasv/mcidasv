@@ -220,7 +220,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
      * NOTE: this will only give you the number of days difference,
      * the HH, MM, and SS data comes from a different UI widget.
      * 
-     * We ompute seconds simply because that is easiest way to get an
+     * We compute seconds simply because that is easiest way to get an
      * absolute time from Date object
      */
     
@@ -238,9 +238,15 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
     	
     }
     
+    /**
+     * Make sure the end date/time exceeds the beginning date/time.
+     * 
+     * @return true if condition met, false otherwise
+     * 
+     */
+    
     public boolean timeRangeOk() {
     	
-    	logger.info("timeRangeOk...");
     	if (! begTimeOk()) return false;
     	if (! endTimeOk()) return false;
     	
@@ -294,8 +300,6 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
     }
     
     @Override public void applyToDataSelection(DataSelection dataSelection) {
-
-    	logger.info("applyToDataSelection...");
     	
     	if (! begTimeOk()) return;
     	if (! endTimeOk()) return;
@@ -376,5 +380,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         dataSelection.putProperty(PROP_ENDTIME, eTime.getDateTimeStr());
         dataSelection.putProperty(PROP_BTIME, begTimeStr);
         dataSelection.putProperty(PROP_ETIME, endTimeStr);
+        
     }
+    
 }
