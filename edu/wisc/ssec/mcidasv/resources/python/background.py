@@ -3252,7 +3252,7 @@ def getVIIRSImage(*args, **kwargs):
     raise NotImplementedError("The name of getVIIRSImage has changed to loadVIIRSImage.  You'll need to update your scripts.  Sorry for the hassle!")
 
 def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
-    """Experimental function for loading VIIRS imagery.
+    """Load VIIRS imagery.
 
     file_list: list of NPP *data* files.  You need to have geolocation files
                in the same *directory* as these files, but *do not* include
@@ -3337,3 +3337,38 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
 
     return mapped_ff
 
+def listVIIRSFieldsInFile(filename):
+    """Print and return a list of all fields in a VIIRS .h5 file."""
+    from ucar.nc2 import NetcdfFile
+    f = NetcdfFile.open(filename)
+    try:
+        variables = f.getVariables()
+        # Get rid of 'All_Data/' b/c we want to match what gets shown in
+        # Field Selector (which is also what loadVIIRSImage actually accepts)
+        names = [v.getFullName().replace('All_Data/', '') for v in variables]
+        for name in names:
+            print name
+    finally:
+        f.close()
+    return names
+
+def listVIIRSTimesInField(filename, field=None):
+    """Print and return timestamp associated with a VIIRS .h5 file.
+    
+    'field' is accepted as an arg to match signature of listGridLevelsInField
+    but it doesn't do anything right now.
+    """
+    from ucar.nc2 import NetcdfFile
+    f = NetcdfFile.open(filename)
+    try:
+        dprods_grps = f.getRootGroup().findGroup('Data_Products').getGroups()
+        for g in dprods_grps:
+            for v in g.getVariables():
+                if v.findAttribute('AggregateBeginningDate'):
+                    date = v.findAttribute('AggregateBeginningDate').getStringValue()
+                    time = v.findAttribute('AggregateBeginningTime').getStringValue()
+        datetime = '{} {}'.format(date, time)
+        print(datetime)
+    finally:
+        f.close()
+    return datetime
