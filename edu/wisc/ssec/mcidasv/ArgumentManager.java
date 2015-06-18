@@ -420,7 +420,7 @@ public class ArgumentManager extends ArgsManager {
      */
     @Override public List<PatternFileFilter> getBundleFileFilters() {
         List<PatternFileFilter> filters = new ArrayList<>(10);
-        Collections.addAll(filters, getXidvFileFilter(), getZidvFileFilter(), FILTER_JNLP);
+        Collections.addAll(filters, getXidvFileFilter(), getZidvFileFilter());
         return filters;
     }
 
@@ -430,8 +430,8 @@ public class ArgumentManager extends ArgsManager {
      * 
      * <p>If {@code fromOpen} is {@code true}, the 
      * returned list will contain {@code PatternFileFilter}s for bundles as 
-     * well as JNLP and ISL files. If {@code false}, the returned list will
-     * only contain filters for XML and zipped bundles.
+     * well as ISL files. If {@code false}, the returned list will only
+     * contain filters for XML and zipped bundles.
      * 
      * @param fromOpen Whether or not this has been called from an 
      * {@literal "open file"} dialog. 
@@ -442,7 +442,7 @@ public class ArgumentManager extends ArgsManager {
         List<PatternFileFilter> filters;
         if (fromOpen) {
             filters = new ArrayList<>(10);
-            Collections.addAll(filters, getXidvZidvFileFilter(), FILTER_JNLP, FILTER_ISL, super.getXidvZidvFileFilter());
+            Collections.addAll(filters, getXidvZidvFileFilter(), FILTER_ISL, super.getXidvZidvFileFilter());
         } else {
             filters = new ArrayList<>(getBundleFileFilters());
         }
