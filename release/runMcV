@@ -30,6 +30,10 @@ while [ "$1" != "" ]; do
   fi
 done
 
+if [ "${MCV_USERPATH}" != "${DOCUMENT_DIRECTORY}/McIDAS-V" ]; then
+  MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
+fi
+
 if [ "${USE_TEMPUSERPATH}" = "1" ]; then
   # first command is for Linux; it'll fail on OS X and then attempt the second
   MCV_USERPATH=`mktemp -d 2>/dev/null || mktemp -d -t 'mcidasv'`

@@ -43,6 +43,10 @@ GOTO checkparameters
 
 :endparameters
 
+IF NOT "%MCV_USERPATH%"=="%USERPROFILE%\McIDAS-V" (
+    SET MCV_LOGPATH="%MCV_USERPATH%\mcidasv.log"
+)
+
 IF "%USE_TEMPUSERPATH%"=="1" (
     SET MCV_USERPATH=%TEMPUSERPATH%
     SET MCV_LOGPATH=%TEMPUSERPATH%\mcidasv.log
