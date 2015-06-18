@@ -1514,7 +1514,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 logoSizeLabel.setText("" + logoSizer.getValue() / 10.f);
             }
         };
-        JComponent[] sliderComps = GuiUtils.makeSliderPopup(0, 20,
+        JComponent[] sliderComps = GuiUtils.makeSliderPopup(1, 20,
                                        (int) (getLogoScale() * 10), listener);
 
         logoSizer = (JSlider) sliderComps[1];

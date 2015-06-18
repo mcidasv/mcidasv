@@ -1066,7 +1066,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         		(float) mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO_SCALE,
         				1.0);
         final JLabel logoSizeLab = new JLabel("" + logoScaleFactor);
-        JComponent[] sliderComps = GuiUtils.makeSliderPopup(0, 20,
+        JComponent[] sliderComps = GuiUtils.makeSliderPopup(1, 20,
         		(int) (logoScaleFactor * 10), null);
         final JSlider  logoScaleSlider = (JSlider) sliderComps[1];
         ChangeListener listener        = new ChangeListener() {
