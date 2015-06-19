@@ -4025,6 +4025,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     Unit.convertTuple(samples, s.getSetUnits(),
                                       new Unit[] {
                                           CommonUnit.secondsSinceTheEpoch });
+                List fhour = null;
                 for (int i = 0; i < s.getLength(); i++) {
                     CalendarDateTime dt = new CalendarDateTime(samples[0][i],
                                               cal);
@@ -4032,7 +4033,21 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                         UtcDate.applyTimeMacro(template, dt,
                             getIdv().getPreferenceManager()
                                 .getDefaultTimeZone());
-                    label = applyForecastHourMacro(label, dt);
+                    if(i == 0 && hasForecastHourMacro(label)){
+                        String rtime = (String)this.getDataChoice().getProperty("RUNTIME");
+                        if(rtime != null && rtime.length() > 0)
+                            fhour = StringUtil.parseFloatListString(rtime);
+                    }
+                    if(hasForecastHourMacro(label) && fhour != null && fhour.size()== s.getLength()) {
+                        String v = "";
+                        float fh =(Float)fhour.get(i);
+                        if(fh==Math.round(fh))
+                            v = (int)fh + "";
+                        else
+                            v = fh + "";
+                        label = label.replace(MACRO_FHOUR2, v).replace(MACRO_FHOUR, v + "H");
+                    } else
+                        label = applyForecastHourMacro(label, dt);
                     Text t = new Text(tt, label);
                     fi.setSample(i, t, false);
                 }
@@ -4334,7 +4349,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *
      * @return modified string
      */
-    private String applyForecastHourMacro(String t, DateTime currentTime) {
+    protected String applyForecastHourMacro(String t, DateTime currentTime) {
         if (hasForecastHourMacro(t)) {
             String v = "";
             if (firstTime == null) {
@@ -4361,7 +4376,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param t  the string to check
      * @return true if it does
      */
-    private boolean hasForecastHourMacro(String t) {
+    protected boolean hasForecastHourMacro(String t) {
         return t.matches(".*(" + MACRO_FHOUR + "|" + MACRO_FHOUR2 +").*");
     }
 
@@ -7570,8 +7585,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             return null;
         }
         try {
+
             List l = getCursorReadoutInner(el, animationValue, animationStep,
                                            samples);
+            logger.trace("location={} results={}", el, l);
             return l;
         } catch (Exception exc) {
             LogUtil.consoleMessage("Error getting cursor readout");

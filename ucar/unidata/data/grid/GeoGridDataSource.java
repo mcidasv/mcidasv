@@ -2103,7 +2103,32 @@ public class GeoGridDataSource extends GridDataSource {
         }
         System.err.println("");
         */
+        /* forecast hour */
+        CoordinateAxis1DTime dd = geoGrid.getCoordinateSystem().getRunTimeAxis();
+        CoordinateAxis1DTime dt = geoGrid.getCoordinateSystem().getTimeAxis1D();
+        StringBuilder buf = new StringBuilder();
+        if(dd != null && dt != null) {
+            for(int i= 0; i < timeIndices.length; i++){
+                CalendarDate cd = dd.getCalendarDate(timeIndices[i]);
+                CalendarDate ct = dt.getCalendarDate(timeIndices[i]);
+                long diff = ct.getDifferenceInMsecs(cd);
+                float fh = diff/(1000.0f*3600.0f);
+                buf.append(fh + ",");
+            }
 
+        } else if (dt != null) {
+            CalendarDate ct0 = dt.getCalendarDate(0);
+            for(int i= 0; i < timeIndices.length; i++){
+                CalendarDate ct = dt.getCalendarDate(timeIndices[i]);
+                long diff = ct.getDifferenceInMsecs(ct0);
+                float fh = diff/(1000.0f*3600.0f);
+                buf.append(fh + ",");
+            }
+        }
+        if(buf.length() > 1) {
+            buf.deleteCharAt(buf.length()-1);
+            dataChoice.setProperty("RUNTIME", buf.toString());
+        }
         Trace.call1("GeoGridDataSource.getSequence");
         Object loadId = JobManager.getManager().startLoad("GeoGrid");
         if (adapter != null) {
