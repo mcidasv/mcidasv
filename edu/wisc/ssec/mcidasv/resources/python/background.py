@@ -108,6 +108,18 @@ def managedDataSource(path, cleanup=True, dataType=None):
         if cleanup:
             boomstick()
             
+@contextmanager
+def createWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
+    panels = buildWindow(width, height, rows, cols, panelTypes)
+    try:
+        yield panels
+    except:
+        raise
+    finally:
+        window = findWindow(panels[0])
+        if window:
+            window.close()
+            
 class _MappedData(object):
     
     """'Abstract' class for combined VisAD Data / Python dictionary objects.
