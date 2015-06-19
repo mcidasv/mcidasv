@@ -143,10 +143,11 @@ if _isInteractive:
     from background import (
         activeDisplay, allActions, allColorTables, allDisplays, allFontNames,
         allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
-        colorTableNames, firstDisplay, firstWindow, getColorTable, getProjection,
-        managedDataSource, pause, performAction, projectionNames, removeAllData,
-        removeAllLayers, setViewSize, _MappedAreaImageFlatField, writeImageAtIndex,
-        loadVIIRSImage, _MappedVIIRSFlatField,
+        colorTableNames, findWindow, firstDisplay, firstWindow, getColorTable, 
+        getProjection, listVIIRSFieldsInFile, listVIIRSTimesInField, 
+        managedDataSource, pause, performAction, projectionNames, 
+        removeAllData, removeAllLayers, setViewSize, _MappedAreaImageFlatField, 
+        writeImageAtIndex, loadVIIRSImage, _MappedVIIRSFlatField,
     )
     
     from mcvadde import (
@@ -158,9 +159,9 @@ if _isInteractive:
     )
     
     from interactive import (
-        describeActions, dumpObj, editFile, expandpath, ncdump, ncdumpToString,
-        today, tomorrow, yesterday, _expandpath, _today, _tomorrow, _yesterday,
-        getLogLevel, setLogLevel,
+        describeActions, dumpObj, editFile, expandPath, expandpath, ncdump, 
+        ncdumpToString, today, tomorrow, yesterday, _expandpath, _today, 
+        _tomorrow, _yesterday, getLogLevel, setLogLevel,
     )
     
     from islformatters import (

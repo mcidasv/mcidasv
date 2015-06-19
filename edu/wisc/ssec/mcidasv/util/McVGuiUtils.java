@@ -1105,6 +1105,28 @@ public class McVGuiUtils implements Constants {
         return vms;
     }
 
+    /**
+     * Attempt to find the {@link IdvWindow} that contains the given
+     * {@link ViewManager}.
+     *
+     * @param vm {@code ViewManager} whose {@code IdvWindow} is needed.
+     * Cannot be {@code null}.
+     *
+     * @return Either the {@code IdvWindow} containing {@code vm}, or
+     * {@code null}.
+     */
+    public static IdvWindow getWindowForViewManager(final ViewManager vm) {
+        IdvWindow result = null;
+        for (IdvWindow w : getAllDisplayWindows()) {
+            List<ViewManager> viewManagers = getViewManagers(w);
+            if (viewManagers.contains(vm)) {
+                result = w;
+                break;
+            }
+        }
+        return result;
+    }
+
     public static List<Object> getShareGroupsInWindow(final IdvWindow window) {
         List<ViewManager> vms = arrList(getVMCount());
         vms.addAll(window.getViewManagers());

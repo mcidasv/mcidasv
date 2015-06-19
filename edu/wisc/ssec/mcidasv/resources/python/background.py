@@ -671,8 +671,13 @@ class _Window(_JavaProxy):
         """
         rect = self._JavaProxy__javaObject.getBounds()
         return rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()
-
-
+        
+    @gui_invoke_later
+    def close(self):
+        """Close the window."""
+        if not self._JavaProxy__javaObject.doClose():
+            raise RuntimeError("could not close the window!")
+            
 class _Tab(_JavaProxy):
     def __init__(self, javaObject):
         """Blank for now.
@@ -2459,6 +2464,34 @@ def importColorTable(filename, name=None, category=None, overwrite=False):
 def firstWindow():
     """Return the first window created during the current McIDAS-V session."""
     return _Window(IdvWindow.getMainWindows()[0])
+    
+@gui_invoke_later
+def findWindow(display):
+    """Find the window containing the given display.
+    
+    Args:
+        display: Must be an instance of _Display or ViewManager.
+        
+    Returns:
+        Either a _Window wrapping the IdvWindow object that contains the given
+        display, or None.
+        
+    Raises:
+        ValueError: if display is not an instance of _Display or ViewManager.
+    """
+    from ucar.unidata.idv import ViewManager
+    from edu.wisc.ssec.mcidasv.util.McVGuiUtils import getWindowForViewManager
+    if isinstance(display, _Display):
+        display = display.getJavaInstance()
+        
+    if not isinstance(display, ViewManager):
+        raise ValueError("parameter type must be _Display or ViewManager (given: '%s')" % (type(display)))
+        
+    result = getWindowForViewManager(display)
+    if result:
+        result = _Window(result)
+    
+    return result
     
 @gui_invoke_later
 def allWindows():
