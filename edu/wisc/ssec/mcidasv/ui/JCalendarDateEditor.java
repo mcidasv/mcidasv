@@ -63,14 +63,14 @@ import java.util.regex.Pattern;
 /**
  * This class is just a {@link com.toedter.calendar.JTextFieldDateEditor} that
  * allows the user to enter either the day within (current) year or a
- * McIDAS-X style {@literal "julian day"} (yyyyddd or yyddd), in addition to
- * the formatting allowed by {@code JTextFieldDateEditor}.
+ * McIDAS-X style {@literal "julian day"} ({@code YYYYDDD} or {@code YYDDD}),
+ * in addition to the formatting allowed by {@code JTextFieldDateEditor}.
  */
 public class JCalendarDateEditor extends JFormattedTextField implements
     IDateEditor, CaretListener, FocusListener, ActionListener
 {
     /** Match day of year. */
-    private static final Pattern dayOnly = Pattern.compile("\\d{3}");
+    private static final Pattern dayOnly = Pattern.compile("\\d{1,3}");
 
     /** Match {@code YYYYDDD}. */
     private static final Pattern yearDay = Pattern.compile("\\d{7}");
@@ -85,10 +85,13 @@ public class JCalendarDateEditor extends JFormattedTextField implements
 
     protected SimpleDateFormat dateFormatter;
 
+    /** Parse {@code DDD} dates (even if they are one or two digits). */
     private final SimpleDateFormat dayOfYear;
 
+    /** Parse {@code YYYYDDD} dates. */
     private final SimpleDateFormat yearAndDay;
 
+    /** Parse {@code YYDDD} dates. */
     private final SimpleDateFormat badYearAndDay;
 
     protected MaskFormatter maskFormatter;
