@@ -53,6 +53,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -212,26 +214,40 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
             if ((urls.size() > 0)
                     && makeDataSource(urls, dataSourceId, properties)) {
                 closeChooser();
+                idv.getStore().put("mcidasv.chooser.url.multiurlcontents", textArea.getText());
             }
         }
     }
-        
+
+    private static final Logger logger = LoggerFactory.getLogger(UrlChooser.class);
+
     /**
      * Make the contents
      *
      * @return  the contents
      */
     protected JPanel doMakeInnerPanel() {
-        JRadioButton singleBtn = new JRadioButton("Single", true);
-        JRadioButton multipleBtn = new JRadioButton("Multiple", false);
+
+        String urlType = idv.getStore().get("mcidasv.chooser.url.urltype", "single");
+        if ("multiple".equals(urlType)) {
+            showBox = false;
+        }
+
+        final JRadioButton singleBtn = new JRadioButton("Single", showBox);
         singleBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                logger.trace("singleBtn: selected={}", singleBtn.isSelected());
+                idv.getStore().put("mcidasv.chooser.url.urltype", "single");
                 showBox = true;
                 switchFields();
             }
         });
+
+        final JRadioButton multipleBtn = new JRadioButton("Multiple", !showBox);
         multipleBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                logger.trace("multipleBtn: selected={}", multipleBtn.isSelected());
+                idv.getStore().put("mcidasv.chooser.url.urltype", "multiple");
                 showBox = false;
                 switchFields();
             }
@@ -271,6 +287,10 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         
         setHaveData(false);
         updateStatus();
+        if (!showBox) {
+            textArea.setText(idv.getStore().get("mcidasv.chooser.url.multiurlcontents", ""));
+            switchFields();
+        }
         return McVGuiUtils.makeLabeledComponent("URL:", showPanel);
     }
 
