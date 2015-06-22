@@ -115,6 +115,16 @@
       location="%APPPATH%/skins/window/transect/twoview.xml"/>
 
     <resource
+      skinid="mcv.skin.threeview.transect"
+      label="Transect Display&gt;Three Panels"
+      location="%APPPATH%/skins/window/transect/threeview.xml"/>
+
+    <resource
+      skinid="mcv.skin.fourview.transect"
+      label="Transect Display&gt;Four Panels"
+      location="%APPPATH%/skins/window/transect/fourview.xml"/>
+
+    <resource
       skinid="mcv.skin.twoview.transectmap"
       label="Misc&gt;Transect and Map"
       location="%APPPATH%/skins/window/misc/twoview.xml"/>
@@ -123,6 +133,16 @@
       skinid="mcv.skin.oneview.map2d"
       label="Misc&gt;2D Map Display"
       location="%APPPATH%/skins/window/misc/2Dview.xml"/>
+
+    <resource
+      skinid="mcv.skin.threeview.onemaptwotransect"
+      label="Misc&gt;1 Map and 2 Transect"
+      location="%APPPATH%/skins/window/misc/onemaptwotransect.xml"/>
+
+    <resource
+      skinid="mcv.skin.threeview.twomaponetransect"
+      label="Misc&gt;2 Map and 1 Transect"
+      location="%APPPATH%/skins/window/misc/twomaponetransect.xml"/>
 
     <resource
        skinid="idv.skin.oneview.map"
@@ -209,6 +229,24 @@
     </resource>
 
     <resource
+       skinid="idv.skin.threeview.transect"
+       label="Transect Display&gt;Three Panels"
+       location="%APPPATH%/skins/tabbed/threeviewskin.xml">
+      <property
+         name="view_class"
+         value="ucar.unidata.idv.TransectViewManager"/>
+    </resource>
+
+    <resource
+       skinid="idv.skin.fourview.transect"
+       label="Transect Display&gt;Four Panels"
+       location="%APPPATH%/skins/tabbed/fourviewskin.xml">
+      <property
+         name="view_class"
+         value="ucar.unidata.idv.TransectViewManager"/>
+    </resource>
+
+    <resource
        skinid="idv.skin.twoview.transectmap"
        label="Misc&gt;Transect and Map"
        location="%APPPATH%/skins/tabbed/twoviewskin.xml">
@@ -227,6 +265,24 @@
       <property
          name="view_class"
          value="ucar.unidata.idv.MapViewManager"/>
+    </resource>
+
+    <resource
+       skinid="idv.skin.threeview.onemaptwotransect"
+       location="%APPPATH%/skins/tabbed/oneandtwoskin.xml"
+       label="Misc&gt;1 Map and 2 Transects">
+     <property name="left_view_class" value="ucar.unidata.idv.MapViewManager"/>
+     <property name="right_upper_view_class" value="ucar.unidata.idv.TransectViewManager"/>
+     <property name="right_lower_view_class" value="ucar.unidata.idv.TransectViewManager"/>
+    </resource>
+
+    <resource
+       skinid="idv.skin.threeview.twomaponetransect"
+       location="%APPPATH%/skins/tabbed/oneandtwoskin.xml"
+       label="Misc&gt;2 Maps and 1 Transect">
+     <property name="left_view_class" value="ucar.unidata.idv.TransectViewManager"/>
+     <property name="right_upper_view_class" value="ucar.unidata.idv.MapViewManager"/>
+     <property name="right_lower_view_class" value="ucar.unidata.idv.MapViewManager"/>
     </resource>
   </resources> <!-- end idv.resource.skin -->
 
