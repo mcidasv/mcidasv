@@ -182,8 +182,8 @@
     <property name="java3d.version" value="1.6.0-pre12" />
 
     <!-- The CLASSPATH specified within McV's manifest -->
-    <property name="jar.base.classpath" value="gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar" />
-        
+    <property name="jar.base.classpath" value="ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar" />
+    
     <!-- List of McIDAS-V jars -->
     <fileset id="mcv.libs" dir="${dist.dir}">
         <include name="swingx-common-${swingx.version}.jar" />
@@ -213,7 +213,14 @@
         <include name="jython-standalone-${jython.version}.jar" />
         <include name="juniversalchardet-${juniversalchardet.version}.jar" />
     </fileset>
-        
+    
+    <!-- need to extract ncIdv.jar so that it comes first on the classpath. 
+         it turns out that both ncIdv.jar and external.jar ship different
+         versions of org.apache.http.impl.client.AbstractHttpClient! -->
+    <fileset id="netcdf.libs" dir="${dist.dir}">
+        <include name="ncIdv.jar"/>
+    </fileset>
+    
     <!-- List of IDV jars -->
     <fileset id="idv.libs" dir="${dist.dir}">
         <include name="auxdata.jar" />
@@ -223,7 +230,6 @@
         <include name="external.jar" />
         <include name="extra.jar" />
         <include name="jcommon.jar" />
-        <include name="ncIdv.jar" />
         <include name="texttonc.jar" />
         <include name="idv.jar" />
     </fileset>
@@ -273,6 +279,7 @@
         <pathelement location="${dist.dir}/mcidasv.jar" />
         <pathelement location="${dist.dir}/local-idv.jar" />
         <fileset refid="mcv.libs" />
+        <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
     </path>
 
@@ -280,6 +287,7 @@
         <pathelement location="${dist.dir}/mcidasv.jar" />
         <pathelement location="${dist.dir}/local-idv.jar" />
         <fileset refid="mcv.libs" />
+        <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
         <fileset refid="linux_x64.libs" />
     </path>
@@ -288,6 +296,7 @@
         <pathelement location="${dist.dir}/mcidasv.jar" />
         <pathelement location="${dist.dir}/local-idv.jar" />
         <fileset refid="mcv.libs" />
+        <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
         <fileset refid="linux_x86.libs" />
     </path>
@@ -296,6 +305,7 @@
         <pathelement location="${dist.dir}/mcidasv.jar" />
         <pathelement location="${dist.dir}/local-idv.jar" />
         <fileset refid="mcv.libs" />
+        <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
         <fileset refid="windows_x64.libs" />
     </path>
@@ -304,6 +314,7 @@
         <pathelement location="${dist.dir}/mcidasv.jar" />
         <pathelement location="${dist.dir}/local-idv.jar" />
         <fileset refid="mcv.libs" />
+        <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
         <fileset refid="windows_x86.libs" />
     </path>
@@ -312,6 +323,7 @@
         <pathelement location="${dist.dir}/mcidasv.jar" />
         <pathelement location="${dist.dir}/local-idv.jar" />
         <fileset refid="mcv.libs" />
+        <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
         <fileset refid="macosx.libs" />
     </path>
@@ -321,6 +333,7 @@
         <pathelement location="${dist.dir}/mcidasv.jar" />
         <pathelement location="${dist.dir}/local-idv.jar" />
         <fileset refid="mcv.libs" />
+        <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
     </path>
     
