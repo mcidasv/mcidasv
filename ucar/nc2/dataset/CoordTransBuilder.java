@@ -25,6 +25,7 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package ucar.nc2.dataset;
 
 import ucar.nc2.Variable;
@@ -46,28 +47,33 @@ import java.util.Formatter;
  */
 public class CoordTransBuilder {
   static private org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CoordTransBuilder.class);
-  static private List<Transform> transformList = new ArrayList<Transform>();
+  static private List<Transform> transformList = new ArrayList<>();
   static private boolean userMode = false;
 
-  static private boolean loadWarnings = false;
+  static private final boolean loadWarnings = false;
 
   // search in the order added
   static {
-    registerTransform("albers_conical_equal_area", AlbersEqualArea.class);
+    registerTransform(CF.ALBERS_CONICAL_EQUAL_AREA, AlbersEqualArea.class);
+    registerTransform(CF.AZIMUTHAL_EQUIDISTANT, AzimuthalEquidistant.class);
     registerTransform("flat_earth", FlatEarth.class);
-    registerTransform("lambert_azimuthal_equal_area", LambertAzimuthal.class);
-    registerTransform("lambert_conformal_conic", LambertConformalConic.class);
+    registerTransform(CF.GEOSTATIONARY, Geostationary.class);
+    registerTransform(CF.LAMBERT_AZIMUTHAL_EQUAL_AREA, LambertAzimuthal.class);
+    registerTransform(CF.LAMBERT_CONFORMAL_CONIC , LambertConformalConic.class);
+    registerTransform(CF.LAMBERT_CYLINDRICAL_EQUAL_AREA , LambertCylindricalEqualArea.class);
     registerTransformMaybe("mcidas_area", "ucar.nc2.iosp.mcidas.McIDASAreaTransformBuilder"); // optional - needs visad.jar
-    registerTransform("mercator", Mercator.class);
+    registerTransform(CF.MERCATOR, Mercator.class);
     registerTransform("MSGnavigation", MSGnavigation.class);
-    registerTransform("orthographic", Orthographic.class);
-    registerTransform("polar_stereographic", PolarStereographic.class);
-    registerTransform("rotated_latitude_longitude", RotatedPole.class);
+    registerTransform(CF.ORTHOGRAPHIC, Orthographic.class);
+    registerTransform(CF.POLAR_STEREOGRAPHIC, PolarStereographic.class);
+    registerTransform("polyconic", PolyconicProjection.class); // ghansham@sac.isro.gov.in 1/8/2012
+    registerTransform(CF.ROTATED_LATITUDE_LONGITUDE, RotatedPole.class);
     registerTransform("rotated_latlon_grib", RotatedLatLon.class);
-    registerTransform("stereographic", Stereographic.class);
-    registerTransform("transverse_mercator", TransverseMercator.class);
-    registerTransform("vertical_perspective", VerticalPerspective.class);
+    registerTransform(CF.SINUSOIDAL, Sinusoidal.class);
+    registerTransform(CF.STEREOGRAPHIC, Stereographic.class);
+    registerTransform(CF.TRANSVERSE_MERCATOR, TransverseMercator.class);
     registerTransform("UTM", UTM.class);
+    registerTransform(CF.VERTICAL_PERSPECTIVE, VerticalPerspective.class);
 
     // registerTransform("atmosphere_ln_pressure_coordinate", VAtmLnPressure.class); // DO NOT USE: see CF1Convention.makeAtmLnCoordinate()
     registerTransform("atmosphere_hybrid_height_coordinate", VAtmHybridHeight.class);
@@ -84,7 +90,7 @@ public class CoordTransBuilder {
 
     registerTransform("FGFProjection", FGFProjection.class);
     registerTransform("FGF Projection", FGFProjection.class);
-    registerTransform("geostationary", GEOSProjection.class);
+//    registerTransform("geostationary", GEOSProjection.class);
 
     // further calls to registerTransform are by the user
     userMode = true;
@@ -133,11 +139,12 @@ public class CoordTransBuilder {
    * @param className name of class that implements CoordTransBuilderIF.
    */
   static public void registerTransformMaybe( String transformName, String className) {
-    Class c = null;
+    Class c;
     try {
       c = Class.forName( className);
     } catch (ClassNotFoundException e) {
-      log.warn("Coordinate Transform Class "+className+" not found.");
+      if (loadWarnings) log.warn("Coordinate Transform Class "+className+" not found.");
+      return;
     }
     registerTransform( transformName, c);
   }
@@ -173,7 +180,7 @@ public class CoordTransBuilder {
       transform_name = ds.findAttValueIgnoreCase(ctv, CF.STANDARD_NAME, null);
 
     if (null == transform_name) {
-      parseInfo.format("**Failed to find Coordinate Transform name from Variable= %s\n", ctv);
+      parseInfo.format("**Failed to find Coordinate Transform name from Variable= %s%n", ctv);
       return null;
     }
 
@@ -188,7 +195,7 @@ public class CoordTransBuilder {
       }
     }
     if (null == builderClass) {
-      parseInfo.format("**Failed to find CoordTransBuilder name= %s from Variable= %s\n", transform_name, ctv);
+      parseInfo.format("**Failed to find CoordTransBuilder name= %s from Variable= %s%n", transform_name, ctv);
       return null;
     }
 
@@ -202,7 +209,7 @@ public class CoordTransBuilder {
       log.error("Cant access "+builderClass.getName(), e);
     }
     if (null == builder) { // cant happen - because this was tested in registerTransform()
-      parseInfo.format("**Failed to build CoordTransBuilder object from class= %s for Variable= %s\n", builderClass.getName(), ctv);
+      parseInfo.format("**Failed to build CoordTransBuilder object from class= %s for Variable= %s%n", builderClass.getName(), ctv);
       return null;
     }
 
@@ -210,7 +217,7 @@ public class CoordTransBuilder {
     CoordinateTransform ct = builder.makeCoordinateTransform(ds, ctv);
 
     if (ct != null) {
-      parseInfo.format(" Made Coordinate transform %s from variable %s: %s\n",transform_name, ctv.getFullName(), builder);
+      parseInfo.format(" Made Coordinate transform %s from variable %s: %s%n",transform_name, ctv.getFullName(), builder);
     }
 
     return ct;
