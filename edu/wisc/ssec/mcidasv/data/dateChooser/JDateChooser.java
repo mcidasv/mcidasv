@@ -200,9 +200,14 @@ public class JDateChooser extends JPanel implements ActionListener,
 		setLayout(new BorderLayout());
 
 		jcalendar.getDayChooser().addPropertyChangeListener("day", this);
+		
 		// always fire"day" property even if the user selects
 		// the already selected day again
-		jcalendar.getDayChooser().setAlwaysFireDayProperty(true);
+		// jcalendar.getDayChooser().setAlwaysFireDayProperty(true);
+		
+		// TJJ Jun 2015 - no, this was causing infinite loops of prop events
+		// between the two date pickers
+		jcalendar.getDayChooser().setAlwaysFireDayProperty(false);
 
 		setDateFormatString(dateFormatString);
 		setDate(date);
@@ -354,7 +359,7 @@ public class JDateChooser extends JPanel implements ActionListener,
 						logger.debug("Adjusting: Src date exceeds Dst date...");
 						jdcDst.setDay(srcCal.get(Calendar.DAY_OF_MONTH));
 						jdcDst.setMonth(srcCal.get(Calendar.MONTH));
-						jdcDst.setYear(srcCal.get(Calendar.YEAR) - 1900);
+						jdcDst.setYear(srcCal.get(Calendar.YEAR));
 						dateEditor.setDate(srcCal.getTime());
 						if (getParent() != null) {
 							getParent().invalidate();
@@ -377,7 +382,7 @@ public class JDateChooser extends JPanel implements ActionListener,
 						logger.debug("Adjusting: End date preceeds Src date...");
 						jdcDst.setDay(srcCal.get(Calendar.DAY_OF_MONTH));
 						jdcDst.setMonth(srcCal.get(Calendar.MONTH));
-						jdcDst.setYear(srcCal.get(Calendar.YEAR) - 1900);
+						jdcDst.setYear(srcCal.get(Calendar.YEAR));
 						dateEditor.setDate(srcCal.getTime());
 						if (getParent() != null) {
 							getParent().invalidate();
