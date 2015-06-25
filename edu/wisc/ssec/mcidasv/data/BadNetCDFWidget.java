@@ -147,14 +147,10 @@ public class BadNetCDFWidget implements Constants {
 
     
     // TODO: DO WE NEED THESE?
-    private JTextField textLatLonScale = new JTextField();
-    private JCheckBox checkEastPositive = new JCheckBox("East positive");
-    
-    
-    
-    
-    public BadNetCDFWidget(NetcdfDataset ncFile, IntegratedDataViewer idv)
-    {
+//    private JTextField textLatLonScale = new JTextField();
+//    private JCheckBox checkEastPositive = new JCheckBox("East positive");
+
+    public BadNetCDFWidget(NetcdfDataset ncFile, IntegratedDataViewer idv) {
         this.idv = idv;
         this.ncFile = ncFile;
         varList = ncFile.getVariables();  
@@ -163,8 +159,7 @@ public class BadNetCDFWidget implements Constants {
         
         //System.out.println("Our file has " + varList.size() + " variables named:");
         Iterator <Variable> varIt = varList.iterator();
-        while(varIt.hasNext())
-        {
+        while(varIt.hasNext()) {
             Variable ourVar = varIt.next();
             varNames.add(ourVar.getFullName());
             //System.out.println("Name: " + ourVar.getName());
@@ -175,16 +170,14 @@ public class BadNetCDFWidget implements Constants {
     // Passes through any exception from openDataset - this function
     // doesn't provide an IDV and should only be used for testing. (Some functionality
     // using the rest of the IDV won't work.)
-    public BadNetCDFWidget(String filepath) throws IOException
-    {
+    public BadNetCDFWidget(String filepath) throws IOException {
         this(NetcdfDataset.openDataset(filepath), null);
     }
     
     
     
     // Tester function to pick a file and send it through the paces.
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         String testfile = FileManager.getReadFile();        
         System.out.println(testfile);
         
@@ -192,9 +185,9 @@ public class BadNetCDFWidget implements Constants {
         
         
         BadNetCDFWidget bfReader;
-        try { bfReader = new BadNetCDFWidget(testfile); }
-        catch (Exception exe)
-        {
+        try {
+            bfReader = new BadNetCDFWidget(testfile);
+        } catch (Exception exe) {
             //System.out.println("This file cannot be read by the BadFileReader!");
             exe.printStackTrace();
             return;
@@ -210,40 +203,34 @@ public class BadNetCDFWidget implements Constants {
     // Displays our "main menu" of choices to fix the given file!
     // Everything else needed can get called from here.
     /////////////////////////////////////////////////////////
-    public void showChoices()
-    {
-      EventQueue.invokeLater(new Runnable() {
-          public void run() {
-              try {
-                  BadNetCDFDialog dialog = new BadNetCDFDialog();
-                  dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                  dialog.setVisible(true);
-                  dialog.toFront();
-              } catch (Exception e) {
-                  e.printStackTrace();
-              }
-          }
-      });
+    public void showChoices() {
+        EventQueue.invokeLater(() -> {
+            try {
+                BadNetCDFDialog dialog = new BadNetCDFDialog();
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.setVisible(true);
+                dialog.toFront();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /////////////////////////////////////////////////////////
     // Creates an editor for NcML and displays it in a window - includes buttons for saving just
     // the NcML and the full NetCDF file with the changes made.
     /////////////////////////////////////////////////////////
-    private void showNcMLEditor()
-    {
+    private void showNcMLEditor() {
         NcMLeditor = new JEditorPane();
         
         // We use this to store the actual ncml - 10000 is just the number toolsUI used
         ByteArrayOutputStream bos = new ByteArrayOutputStream(10000);
-        try
-        {
+        try {
             ncFile.writeNcML(bos, null);
             NcMLeditor.setText(bos.toString());
             NcMLeditor.setCaretPosition(0);
             
-        } catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
             ioe.printStackTrace();
             //setInError(true, false, "");  DataSourceImpl - doesn't work if we're not a data source
             return;
@@ -256,33 +243,33 @@ public class BadNetCDFWidget implements Constants {
         
         // Set the tab size
         NcMLeditor.getDocument().putProperty(PlainDocument.tabSizeAttribute, 2);
-        
 
         // Button to save NcML as text, 
         // popup allows them to specify where.
         JButton saveNcMLBtn = new JButton("Save NcML as text");
-        ActionListener saveAction = new ActionListener()
-        {
-            public void actionPerformed(ActionEvent ae)
-            {
+        ActionListener saveAction = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
                 // Begin with getting the filename we want to write to.
                 String ncLocation = ncFile.getLocation();
                 
-                if (ncLocation == null) ncLocation = "test";
+                if (ncLocation == null) {
+                    ncLocation = "test";
+                }
                 int pos = ncLocation.lastIndexOf(".");
-                if (pos > 0)
+                if (pos > 0) {
                     ncLocation = ncLocation.substring(0, pos);
-
+                }
                 String filename = FileManager.getWriteFile(ncLocation + ".ncml");  
-                if (filename == null) return;
+                if (filename == null) {
+                    return;
+                }
                // System.out.println("Write NcML to filename:" + filename);
                 
                 
                 // Once we have that, we can actually write to the file!
-                try{
+                try {
                     IOUtil.writeFile(new File(filename), NcMLeditor.getText());
-                } catch(Exception exc)
-                {
+                } catch(Exception exc) {
                     // TODO: Should probably add some kind of exception handling.
                     exc.printStackTrace();
                     return;
@@ -295,29 +282,29 @@ public class BadNetCDFWidget implements Constants {
         // Button to merge the NcML with NetCDF 
         // a'la ToolsUI and write it back out as NetCDF3.
         JButton saveNetCDFBtn = new JButton("Merge and save NetCDF");
-        ActionListener saveNetCDFAction = new ActionListener()
-        {
+        ActionListener saveNetCDFAction = new ActionListener() {
             public void actionPerformed(ActionEvent ae)
             {
                 // Begin with getting the filename we want to write to.
                 String ncLocation = ncFile.getLocation();
                 
-                if (ncLocation == null) ncLocation = "test";
+                if (ncLocation == null) {
+                    ncLocation = "test";
+                }
                 int pos = ncLocation.lastIndexOf(".");
-                if (pos > 0)
+                if (pos > 0) {
                     ncLocation = ncLocation.substring(0, pos);
-
+                }
                 String filename = FileManager.getWriteFile(ncLocation + ".nc");  
-                if (filename == null) return;
-              //  System.out.println("Write NetCDF to filename:" + filename);
-                
-                
+                if (filename == null) {
+                    return;
+                }
+
                 // Once we have that, we can actually write to the file!
                 try {
                     ByteArrayInputStream bis = new ByteArrayInputStream(NcMLeditor.getText().getBytes());
                     NcMLReader.writeNcMLToFile(bis, filename);
-                } catch(Exception exc)
-                {
+                } catch(Exception exc) {
                     // TODO: Should probably add some kind of exception handling.
                     exc.printStackTrace();
                     return;
@@ -326,28 +313,20 @@ public class BadNetCDFWidget implements Constants {
         };
         saveNetCDFBtn.addActionListener(saveNetCDFAction);
         
-        
         // Button to load this data into McV from NcML
         JButton sendToMcVBtn = new JButton("Attempt to load with this NcML");
-        ActionListener sendToMcVAction = new ActionListener()
-        {
-            public void actionPerformed(ActionEvent ae)
-            {
-                // TODO: save the current NcML into the NetcdfDataSource
-                createIDVdisplay();
-                return;
-            }
-        };
-        sendToMcVBtn.addActionListener(sendToMcVAction);
-        
-        
+        sendToMcVBtn.addActionListener(ae -> {
+            // TODO: save the current NcML into the NetcdfDataSource
+            createIDVdisplay();
+            return;
+        });
+
         JToolBar toolbar = new JToolBar("NcML Editor Controls");
 
         toolbar.add(saveNcMLBtn);
         toolbar.add(saveNetCDFBtn);
         toolbar.add(sendToMcVBtn);
-        
-        
+
         JScrollPane scrollPane = new JScrollPane(NcMLeditor,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -362,11 +341,7 @@ public class BadNetCDFWidget implements Constants {
 
       //  System.out.println("NcML Editor Created!");
     }
-    
-    
-    
-    
-    
+
     /////////////////////////////////////////////////////////
     // Takes our ncFile and puts it back into IDV (McV)
     /////////////////////////////////////////////////////////
@@ -408,47 +383,38 @@ public class BadNetCDFWidget implements Constants {
         ggds.initAfterCreation();
         this.idv.getDataManager().addDataSource(ggds);
     }
-    
-    
-    
-    
-    
+
     /////////////////////////////////////////////////////////
     // Shows a window that gives a choice of variables!
     /////////////////////////////////////////////////////////
-    private void showVarPicker()
-    {
+    private void showVarPicker() {
         // DataImpl
         //Array arr = var.read();
                 
         JComboBox varDD = new JComboBox();
         GuiUtils.setListData(varDD, varNames);
         
-        ActionListener getVarAction = new ActionListener()
-        {
-            public void actionPerformed(ActionEvent ae)
-            {
+        ActionListener getVarAction = new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
                 JComboBox cb = (JComboBox)ae.getSource();
                 Variable plotVar = varList.get(cb.getSelectedIndex());
                 String varName = (String) cb.getSelectedItem();
                 
                 
                 float [] varVals;
-                try{
+                try {
                     // TODO: Is there a better way to convert this?  Is there another function like reshape?
                     Array varArray = plotVar.read();
                     varVals  = (float[]) varArray.get1DJavaArray(float.class);
                     // TODO: Better exception handling
                 }
-                catch (IOException IOexe)
-                {
+                catch (IOException IOexe) {
                     IOexe.printStackTrace();
                     return;
                 }
                 
                     int size = plotVar.getDimensions().size();
-                    if( size != 2)
-                    {
+                    if( size != 2) {
                         //System.err.println("We should fail here because size != 2, size ==" + size);
                         JOptionPane.showMessageDialog(null, 
                                                     ("<html>Variables must have 2 dimensions to be displayed here.<br><br>\"" + varName + "\" has " + size + ".</html>"),
@@ -489,8 +455,7 @@ public class BadNetCDFWidget implements Constants {
                     System.out.println("Data sources: " + dataSources.length);  */ 
                }
                 // TODO: Better exception handling - throughout this whole file, really.
-                catch (Exception exe)
-                {
+                catch (Exception exe) {
                     exe.printStackTrace();
                     return;
 
@@ -503,8 +468,7 @@ public class BadNetCDFWidget implements Constants {
         //display.setDimension(BasicSSCell.JAVA3D_3D);
         
         // TODO: exception handling
-        try 
-        { 
+        try {
             // Heavily borrowed from VISAD's JPythonMethods
             display = new FancySSCell("Variable Viewer");
             display.setDimension(BasicSSCell.JAVA3D_3D);
@@ -523,17 +487,11 @@ public class BadNetCDFWidget implements Constants {
             final FancySSCell fdisp = (FancySSCell) display;
             fdisp.setAutoShowControls(false);
             
-            controls.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                  fdisp.showWidgetFrame();
-                }
-            });
+            controls.addActionListener(e -> fdisp.showWidgetFrame());
             
             frame.pack();
-           // frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             frame.setVisible(true);
             frame.toFront();
-                    
         }
         // TODO: Exception handling
         catch (Exception exe) {
@@ -648,33 +606,19 @@ public class BadNetCDFWidget implements Constants {
  
 
         
-        radioLatLonVars.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                checkSetLatLon();
-            }
-        });
+        radioLatLonVars.addActionListener(e -> checkSetLatLon());
         
-        radioLatLonBounds.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                checkSetLatLon();
-            }
-        });
-        
+        radioLatLonBounds.addActionListener(e -> checkSetLatLon());
         
         JButton goBtn = new JButton("Go!");
-        ActionListener goBtnAction = new ActionListener()
-        {
-            public void actionPerformed(ActionEvent ae)
-            {
-                boolean isVar = radioLatLonVars.isSelected();
-                if (isVar)
-                    navVarAction();
-                else 
-                    navCornersAction();
+        goBtn.addActionListener(ae -> {
+            boolean isVar = radioLatLonVars.isSelected();
+            if (isVar) {
+                navVarAction();
+            } else {
+                navCornersAction();
             }
-        };
-        goBtn.addActionListener(goBtnAction);
-        
+        });
         
         JPanel wholePanel = McVGuiUtils.topBottom(midPanel, goBtn, Prefer.NEITHER);
             
@@ -701,8 +645,7 @@ public class BadNetCDFWidget implements Constants {
      * (existing) variables so they can be used as lat/lon pairs.
      * 
      */
-    private void navVarAction()
-    {
+    private void navVarAction() {
         
     }
     
@@ -716,8 +659,7 @@ public class BadNetCDFWidget implements Constants {
      * 
      */
     
-    private void navCornersAction()
-    {
+    private void navCornersAction() {
         
     }
     
@@ -744,19 +686,17 @@ public class BadNetCDFWidget implements Constants {
             messageTextPane.setDragEnabled(false);
             messageTextPane.setText("<html>\n<body "+fontCss +">To verify if your file is CF-compliant, you can run your file through an online compliance checker (<a href=\"http://titania.badc.rl.ac.uk/cgi-bin/cf-checker.pl\">example CF-compliance utility</a>).<br/><br/> \n\nIf the checker indicates that your file is not compliant you can attempt to fix it using the NcML Editor provided in this window.<br/><br/>\n\nIn a future release of McIDAS-V, this interface will present you with choices for the variables necessary for McIDAS-V to display your data.<br/></font></body></html>");
             messageTextPane.setEditable(false);
-            messageTextPane.addHyperlinkListener(new HyperlinkListener() {
-                public void hyperlinkUpdate(HyperlinkEvent e) {
-                    if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
-                        return;
-                    }
-                    String url = null;
-                    if (e.getURL() == null) {
-                        url = e.getDescription();
-                    } else {
-                        url = e.getURL().toString();
-                    }
-                    WebBrowser.browse(url);
+            messageTextPane.addHyperlinkListener(e -> {
+                if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED) {
+                    return;
                 }
+                String url = null;
+                if (e.getURL() == null) {
+                    url = e.getDescription();
+                } else {
+                    url = e.getURL().toString();
+                }
+                WebBrowser.browse(url);
             });
             
 
@@ -779,29 +719,17 @@ public class BadNetCDFWidget implements Constants {
             JLabel editorLabel = new JLabel("Open the file in the NcML editor:");
             
             JButton editorButton = new JButton("NcML Editor");
-            editorButton.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
-                    showNcMLEditor();
-                }
-            });
+            editorButton.addActionListener(e -> showNcMLEditor());
             
             JLabel viewLabel = new JLabel("I just want to view one of the variables:");
             
             JButton viewButton = new JButton("View Variable");
-            viewButton.addActionListener(new ActionListener() {
-                @Override public void actionPerformed(ActionEvent e) {
-                    showVarPicker();
-                }
-            });
+            viewButton.addActionListener(e -> showVarPicker());
             
             JLabel noncompliantLabel = new JLabel("I have navigation variables, they just aren't CF-compliant: (FEATURE INCOMPLETE)");
             
             JButton noncompliantButton = new JButton("Choose Nav");
-            noncompliantButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    showNavChooser();
-                }
-            });
+            noncompliantButton.addActionListener(e -> showNavChooser());
             this.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     logger.trace("disposing of dialog");

@@ -37,6 +37,7 @@ import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Hashtable;
@@ -243,22 +244,18 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         }
 
         final JToggleButton singleBtn = new JRadioButton("Single", showBox);
-        singleBtn.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                getIdv().getStore().put(PROP_URL_TYPE, SINGLE_URL_VALUE);
-                showBox = true;
-                switchFields();
-            }
+        singleBtn.addActionListener(e -> {
+            getIdv().getStore().put(PROP_URL_TYPE, SINGLE_URL_VALUE);
+            showBox = true;
+            switchFields();
         });
 
         final JToggleButton multipleBtn =
             new JRadioButton("Multiple", !showBox);
-        multipleBtn.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                getIdv().getStore().put(PROP_URL_TYPE, MULTIPLE_URL_VALUE);
-                showBox = false;
-                switchFields();
-            }
+        multipleBtn.addActionListener(e -> {
+            getIdv().getStore().put(PROP_URL_TYPE, MULTIPLE_URL_VALUE);
+            showBox = false;
+            switchFields();
         });
         GuiUtils.buttonGroup(singleBtn, multipleBtn);
         JPanel radioPanel = LayoutUtil.hbox(singleBtn, multipleBtn);
@@ -266,22 +263,18 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         prefList = getPreferenceList(PREF_URLLIST);
         box = prefList.createComboBox(CMD_LOAD, this);
         boxEditor = (JTextField)box.getEditor().getEditorComponent();
-        boxEditor.addKeyListener(new KeyListener() {
-            @Override public void keyPressed(KeyEvent e) {}
+        boxEditor.addKeyListener(new KeyAdapter() {
             @Override public void keyReleased(KeyEvent e) {
                 updateStatus();
             }
-            @Override public void keyTyped(KeyEvent e) {}
         });
         
         textArea = new JTextArea(5, 30);
         textScroller = new JScrollPane(textArea);
-        textArea.addKeyListener(new KeyListener() {
-            @Override public void keyPressed(KeyEvent e) {}
+        textArea.addKeyListener(new KeyAdapter() {
             @Override public void keyReleased(KeyEvent e) {
                 updateStatus();
             }
-            @Override public void keyTyped(KeyEvent e) {}
         });
         
         urlPanel = LayoutUtil.top(box);
@@ -309,7 +302,7 @@ public class UrlChooser extends ucar.unidata.idv.chooser.UrlChooser implements C
         }
         statusLabel.setText(statusString);
     }
-        
+
     /**
      * Create a more McIDAS-V-like GUI layout
      */
