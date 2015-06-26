@@ -2109,20 +2109,24 @@ public class GeoGridDataSource extends GridDataSource {
         StringBuilder buf = new StringBuilder();
         if(dd != null && dt != null) {
             for(int i= 0; i < timeIndices.length; i++){
-                CalendarDate cd = dd.getCalendarDate(timeIndices[i]);
-                CalendarDate ct = dt.getCalendarDate(timeIndices[i]);
-                long diff = ct.getDifferenceInMsecs(cd);
-                float fh = diff/(1000.0f*3600.0f);
-                buf.append(fh + ",");
+                if (timeIndices[i] != -1) {
+                    CalendarDate cd = dd.getCalendarDate(timeIndices[i]);
+                    CalendarDate ct = dt.getCalendarDate(timeIndices[i]);
+                    long diff = ct.getDifferenceInMsecs(cd);
+                    float fh = diff / (1000.0f * 3600.0f);
+                    buf.append(fh + ",");
+                }
             }
 
         } else if (dt != null) {
             CalendarDate ct0 = dt.getCalendarDate(0);
             for(int i= 0; i < timeIndices.length; i++){
-                CalendarDate ct = dt.getCalendarDate(timeIndices[i]);
-                long diff = ct.getDifferenceInMsecs(ct0);
-                float fh = diff/(1000.0f*3600.0f);
-                buf.append(fh + ",");
+                if (timeIndices[i] != -1) {
+                    CalendarDate ct = dt.getCalendarDate(timeIndices[i]);
+                    long diff = ct.getDifferenceInMsecs(ct0);
+                    float fh = diff / (1000.0f * 3600.0f);
+                    buf.append(fh + ",");
+                }
             }
         }
         if(buf.length() > 1) {
