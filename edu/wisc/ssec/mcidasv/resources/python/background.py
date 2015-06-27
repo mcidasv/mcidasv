@@ -1938,14 +1938,29 @@ class _Layer(_JavaProxy):
         self._JavaProxy__javaObject.setColorScaleInfo(info)
         
     @gui_invoke_later
-    def setLayerVisible(self, status):
+    def setLayerVisible(self, *args, **kwargs):
         """Set visibility of this layer.
         
         Args:
-            status:  boolean for visibility of layer
+            visible: boolean for visibility of layer.
         """
-        self._JavaProxy__javaObject.setDisplayVisibility(status)
-        
+        foundVisibility = False
+        if len(args) == 1:
+            visible = args[0]
+            foundVisibility = True
+        elif len(args) == 0 and len(kwargs) >= 1:
+            if 'status' in kwargs:
+                visible = kwargs['status']
+                foundVisibility = True
+            if 'visible' in kwargs:
+                visible = kwargs['visible']
+                foundVisibility = True
+                
+        if foundVisibility:
+            self._JavaProxy__javaObject.setDisplayVisibility(visible)
+        else:
+            raise TypeError('setLayerVisible accepts a single boolean argument')
+            
     @gui_invoke_later
     def getLayerLabel(self):
         """Return current layer label text.
