@@ -108,18 +108,6 @@ def managedDataSource(path, cleanup=True, dataType=None):
         if cleanup:
             boomstick()
             
-@contextmanager
-def createWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
-    panels = buildWindow(width, height, rows, cols, panelTypes)
-    try:
-        yield panels
-    except:
-        raise
-    finally:
-        window = findWindow(panels[0])
-        if window:
-            window.close()
-            
 class _MappedData(object):
     
     """'Abstract' class for combined VisAD Data / Python dictionary objects.
@@ -840,7 +828,7 @@ class _Display(_JavaProxy):
         # other stuff.. wireframe, DisplayList properties... more?
         wireframe = curWindowObj.getWireframe()
         
-        newWindow = buildWindow(width, height)[0]
+        newWindow = _buildWindow(width, height)[0]
         newWindowObj = newWindow._JavaProxy__javaObject
         
         # this is somewhat akin to dragging layers in the GUI
@@ -2767,7 +2755,7 @@ MAP2D = _NoOp('MAP2D')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
-def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
+def _buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
     """Call _buildWindowInternal (from Jython Shell) or _buildWindowBackground (from background)."""
     def _buildWindowInternal(width, height, rows, cols, panelTypes):
         """Create a window with a user-specified layout of displays.
@@ -2870,6 +2858,45 @@ def buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
         if len(panelTypes) > 1:
             print '* WARNING: buildWindow will only build one panel when run from the background'
         return _buildWindowInternal(width, height, rows, cols, panelTypes)
+        
+class buildWindow(object):
+    def __init__(self, width=600, height=400, rows=1, cols=1, panelTypes=None):
+        self.panels = _buildWindow(width, height, rows, cols, panelTypes)
+        
+    # __enter__ and __exit__ are for with statement compatibility
+    def __enter__(self):
+        return self.panels
+        
+    def __exit__(self, type, value, traceback):
+        window = findWindow(self.panels[0])
+        if window:
+            window.close()
+            self.panels = None
+            
+    # "list-like" methods below
+    def __len__(self):
+        return len(self.panels)
+        
+    def __getitem__(self, key):
+        return self.panels[key]
+        
+    def __iter__(self):
+        return iter(self.panels)
+        
+    def __reversed__(self):
+        return reversed(self.panels)
+        
+    def __setitem__(self, key, value):
+        self.panels[key] = value
+        
+    def __delitem__(self, key):
+        del self.panels[key]
+        
+    def __repr__(self):
+        return repr(self.panels)
+        
+    def __str__(self):
+        return str(self.panels)
         
 def makeLogger(name):
     """Create an SLF4J logging object using the given name."""
