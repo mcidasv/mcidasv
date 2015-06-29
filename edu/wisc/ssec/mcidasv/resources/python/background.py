@@ -1943,6 +1943,14 @@ class _Layer(_JavaProxy):
         
         Args:
             visible: boolean for visibility of layer.
+            
+        Returns:
+            Nothing.
+            
+        Raises:
+            TypeError: if more than one positional parameter has been given, or
+                       a keyword argument other than 'status' or 'visible' has
+                       been given.
         """
         foundVisibility = False
         if len(args) == 1:
