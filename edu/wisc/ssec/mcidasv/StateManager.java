@@ -323,7 +323,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 
         String mcvBuild = props.getProperty(PROP_BUILD_DATE, "Unknown");
 
-        Hashtable<String, String> table = new Hashtable<String, String>();
+        Hashtable<String, String> table = new Hashtable<>();
         table.put("mcv.version.general", getMcIdasVersion());
         table.put("mcv.version.build", mcvBuild);
         table.put("idv.version.general", getVersion());
@@ -610,81 +610,139 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
 		}
 		
 	}
-	
-	public void checkForNotice(boolean notifyDialog) {
-		
-		/** Shortcut this whole process if we are processing offscreen */
-		if (super.getIdv().getArgsManager().getIsOffScreen())
-			return;
 
-		String thisNotice = getNoticeCached().trim();
-		String thatNotice = getNoticeLatest().trim();
-		String titleText = "New Notice";
-		String labelText = thatNotice;
-		
-		if (thatNotice.equals("")) {
-			setNoticeCached(thatNotice);
-			if (notifyDialog) {
-				titleText = "No Notice";
-				JLabel message = new JLabel("There is no current notice", JLabel.CENTER);
-				JOptionPane.showMessageDialog(null, message, titleText, 
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-			return;
-		}
-		else if (!thisNotice.equals(thatNotice)) {
-			setNoticeCached(thatNotice);
-			
-			JPanel backgroundColorGetterPanel = new JPanel();
-			JEditorPane messageText = new JEditorPane("text/html", labelText);
-			messageText.setBackground(backgroundColorGetterPanel.getBackground());
-			messageText.setEditable(false);
-			messageText.addHyperlinkListener(this);
+    public void checkForNotice(boolean notifyDialog) {
 
-//			JLabel message = new JLabel(labelText, JLabel.CENTER);
-			JOptionPane.showMessageDialog(null, messageText, titleText, 
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		else {
-			if (notifyDialog) {
-				titleText = "Previous Notice";
-				JLabel message = new JLabel(labelText, JLabel.CENTER);
-				JOptionPane.showMessageDialog(null, message, titleText, 
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-		}
-		
-	}
-	
-	private String getNoticePath() {
+        // Shortcut this whole process if we are processing offscreen
+        if (super.getIdv().getArgsManager().getIsOffScreen()) {
+            return;
+        }
+
+        String thisNotice = getNoticeCached().trim();
+        String thatNotice = getNoticeLatest().trim();
+        String titleText = "New Notice";
+        String labelText = thatNotice;
+
+        if (thatNotice.equals("")) {
+            setNoticeCached(thatNotice);
+            if (notifyDialog) {
+                titleText = "No Notice";
+                JLabel message = new JLabel("There is no current notice", JLabel.CENTER);
+                JOptionPane.showMessageDialog(null, message, titleText,
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+            return;
+        } else if (!thisNotice.equals(thatNotice)) {
+            setNoticeCached(thatNotice);
+
+            JPanel backgroundColorGetterPanel = new JPanel();
+            JEditorPane messageText = new JEditorPane("text/html", labelText);
+            messageText.setBackground(backgroundColorGetterPanel.getBackground());
+            messageText.setEditable(false);
+            messageText.addHyperlinkListener(this);
+            JOptionPane.showMessageDialog(null, messageText, titleText,
+                JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            if (notifyDialog) {
+                titleText = "Previous Notice";
+                JPanel bgPanel = new JPanel();
+                JEditorPane messageText =
+                    new JEditorPane("text/html", labelText);
+                messageText.setBackground(bgPanel.getBackground());
+                messageText.setEditable(false);
+                messageText.addHyperlinkListener(this);
+                JOptionPane.showMessageDialog(null, messageText, titleText,
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+    /**
+     * Debug a McIDAS-V {@literal "system notice"} before sending it to all
+     * users!
+     *
+     * @param noticeContents Contents of the notice.
+     * @param notifyDialog if {@code true}, show notice even if already seen.
+     * @param disableCache Whether or not {@code noticeContents} will be cached.
+     */
+    public void debugNotice(String noticeContents, boolean notifyDialog,
+                            boolean disableCache)
+    {
+        // Shortcut this whole process if we are processing offscreen
+        if (super.getIdv().getArgsManager().getIsOffScreen()) {
+            return;
+        }
+
+        String thisNotice;
+        thisNotice = disableCache ? "" : getNoticeCached().trim();
+        String thatNotice = noticeContents.trim();
+        String labelText = thatNotice;
+
+        if (thatNotice.isEmpty()) {
+            if (!disableCache) {
+                setNoticeCached(thatNotice);
+            }
+            if (notifyDialog) {
+                String titleText = "No Notice";
+                JLabel message = new JLabel("There is no current notice", JLabel.CENTER);
+                JOptionPane.showMessageDialog(null, message, titleText,
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else if (!thisNotice.equals(thatNotice)) {
+            if (!disableCache) {
+                setNoticeCached(thatNotice);
+            }
+            String titleText = "New Notice";
+            JPanel backgroundColorGetterPanel = new JPanel();
+            JEditorPane messageText = new JEditorPane("text/html", labelText);
+            messageText.setBackground(backgroundColorGetterPanel.getBackground());
+            messageText.setEditable(false);
+            messageText.addHyperlinkListener(this);
+            JOptionPane.showMessageDialog(null, messageText, titleText,
+                JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            if (notifyDialog) {
+                String titleText = "Previous Notice";
+                JPanel bgPanel = new JPanel();
+                JEditorPane messageText =
+                    new JEditorPane("text/html", labelText);
+                messageText.setBackground(bgPanel.getBackground());
+                messageText.setEditable(false);
+                messageText.addHyperlinkListener(this);
+                JOptionPane.showMessageDialog(null, messageText, titleText,
+                    JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
+    private String getNoticePath() {
         return StartupManager.getInstance().getPlatform().getUserFile("notice.txt");
-	}
+    }
 
-	private String getNoticeCached() {
-	    String notice = "";
-		try{
-			FileReader fstream = new FileReader(getNoticePath());
-			BufferedReader in = new BufferedReader(fstream);
-		    String line;
-		    while ((line = in.readLine()) != null) {
-		    	notice += line + '\n';
-		    }
-			in.close();
-		} catch (Exception e){
-			System.err.println("Error: " + e.getMessage());
-		}
-		return notice;
-	}
-	
-	private void setNoticeCached(String notice) {
-		try{
-			FileWriter fstream = new FileWriter(getNoticePath());
-			BufferedWriter out = new BufferedWriter(fstream);
-			out.write(notice);
-			out.close();
-		} catch (Exception e){
-			System.err.println("Error: " + e.getMessage());
-		}
-	}
-	
+    private String getNoticeCached() {
+        String notice = "";
+        try{
+            FileReader fstream = new FileReader(getNoticePath());
+            BufferedReader in = new BufferedReader(fstream);
+            String line;
+            while ((line = in.readLine()) != null) {
+                notice += line + '\n';
+            }
+            in.close();
+        } catch (Exception e){
+            System.err.println("Error: " + e.getMessage());
+        }
+        return notice;
+    }
+
+    private void setNoticeCached(String notice) {
+        try{
+            FileWriter fstream = new FileWriter(getNoticePath());
+            BufferedWriter out = new BufferedWriter(fstream);
+            out.write(notice);
+            out.close();
+        } catch (Exception e){
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
 }
