@@ -55,9 +55,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
@@ -161,7 +163,6 @@ public class Console implements Runnable, KeyListener {
         panel = new JPanel(new BorderLayout());
         textPane = new JTextPane() {
             @Override public void paste() {
-                
                 super.paste();
             }
         };
@@ -369,7 +370,7 @@ public class Console implements Runnable, KeyListener {
             return;
         }
 
-        SimpleAttributeSet style = new SimpleAttributeSet();
+        MutableAttributeSet style = new SimpleAttributeSet();
         style.addAttribute(StyleConstants.Foreground, color);
 
         try {
@@ -400,7 +401,7 @@ public class Console implements Runnable, KeyListener {
         int lineNumber = getCaretLine();
         String currentLine = getLineText(lineNumber);
         int[] offsets = getLineOffsets(lineNumber);
-        logger.debug("position={} offsets[0]={} promptLen={}", position, offsets[0], getPromptLength(currentLine));
+//        logger.debug("position={} offsets[0]={} promptLen={}", position, offsets[0], getPromptLength(currentLine));
         return (position - offsets[0]) >= getPromptLength(currentLine);
     }
 
@@ -619,16 +620,17 @@ public class Console implements Runnable, KeyListener {
     /**
      * Returns a copy of Jython's local namespace.
      * 
-     * @return Jython variable names mapped to {@link PyObject}s.
+     * @return Jython variable names mapped to {@link PyObject PyObjects}.
      */
     public Map<String, PyObject> getLocalNamespace() {
-        Map<String, PyObject> localsMap = new HashMap<>();
+        Map<String, PyObject> localsMap = Collections.emptyMap();
         PyStringMap jythonLocals = jythonRunner.copyLocals();
         if (jythonLocals != null) {
+            localsMap = new HashMap<>(jythonLocals.__len__());
             PyList items = jythonLocals.items();
             for (int i = 0; i < items.__len__(); i++) {
-                PyTuple tuple = (PyTuple)items.__finditem__(i);
-                String key = ((PyString)tuple.__finditem__(0)).toString();
+                PyObject tuple = items.__finditem__(i);
+                String key = tuple.__finditem__(0).toString();
                 PyObject val = tuple.__finditem__(1);
                 localsMap.put(key, val);
             }
@@ -781,9 +783,9 @@ public class Console implements Runnable, KeyListener {
      * Puts together the GUI once EventQueue has processed all other pending 
      * events.
      */
-    public void run() {
+    @Override public void run() {
         JFrame frame = new JFrame(windowTitle);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.getContentPane().add(getPanel());
         frame.getContentPane().setPreferredSize(new Dimension(600, 200));
         frame.pack();
@@ -793,12 +795,12 @@ public class Console implements Runnable, KeyListener {
     /**
      * Noop.
      */
-    public void keyPressed(final KeyEvent e) { }
+    @Override public void keyPressed(final KeyEvent e) { }
 
     /**
      * Noop.
      */
-    public void keyReleased(final KeyEvent e) { }
+    @Override public void keyReleased(final KeyEvent e) { }
 
     // this is weird: hasAction is always false
     // seems to work so long as the ConsoleActions fire first...
@@ -830,7 +832,7 @@ public class Console implements Runnable, KeyListener {
         ENTER("jython.enter", KeyEvent.VK_ENTER, 0),
         HOME("jython.home", KeyEvent.VK_HOME, 0),
         PASTE("jython.paste", KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()),
-        //        PASTE("jython.paste", KeyEvent.VK_V, KeyEvent.CTRL_MASK);
+//        PASTE("jython.paste", KeyEvent.VK_V, KeyEvent.CTRL_MASK);
 //        UP("jython.up", KeyEvent.VK_UP, 0),
 //        DOWN("jython.down", KeyEvent.VK_DOWN, 0);
         ;
@@ -888,34 +890,35 @@ public class Console implements Runnable, KeyListener {
     }
 
     private class PopupListener extends MouseAdapter {
-        public void mouseClicked(final MouseEvent e) {
+        @Override public void mouseClicked(final MouseEvent e) {
             checkPopup(e);
         }
 
-        public void mousePressed(final MouseEvent e) {
+        @Override public void mousePressed(final MouseEvent e) {
             checkPopup(e);
         }
 
-        public void mouseReleased(final MouseEvent e) {
+        @Override public void mouseReleased(final MouseEvent e) {
             checkPopup(e);
         }
 
         private void checkPopup(final MouseEvent e) {
-            if (!e.isPopupTrigger()) {
-                return;
+            if (e.isPopupTrigger()) {
+                JPopupMenu popup = menuWrangler.buildMenu();
+                popup.show(textPane, e.getX(), e.getY());
             }
-            JPopupMenu popup = menuWrangler.buildMenu();
-            popup.show(textPane, e.getX(), e.getY());
         }
     }
 
     public static String getUserPath(String[] args) {
+        String result = System.getProperty("user.home");
         for (int i = 0; i < args.length; i++) {
-            if ("-userpath".equals(args[i]) && (i+1) < args.length) {
-                return args[i+1];
+            if ("-userpath".equals(args[i]) && ((i + 1) < args.length)) {
+                result = args[i+1];
+                break;
             }
         }
-        return System.getProperty("user.home");
+        return result;
     }
 
     public static void main(String[] args) {
