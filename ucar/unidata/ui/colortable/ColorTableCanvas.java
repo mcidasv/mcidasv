@@ -3161,13 +3161,13 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
 
     public static Image getImage(ColorTable ct, int width, int height, boolean includeAlpha) {
         try {
-            final List<Color> colors  = (List<Color>) ct.getColorList(includeAlpha);
+            final List<Color> colors  = ct.forceGetColorList(includeAlpha);
             final Rectangle   box     = new Rectangle(0, 0, width, height);
-	    BufferedImage image = new BufferedImage((int) width, (int) height,
-						    BufferedImage.TYPE_INT_ARGB);
-	    Graphics2D g = (Graphics2D) image.getGraphics();
-	    paintColors(g, box, colors, false, false, true, null);
-	    return image;
+            BufferedImage image = new BufferedImage((int) width, (int) height,
+                BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = (Graphics2D) image.getGraphics();
+            paintColors(g, box, colors, false, false, true, null);
+            return image;
         } catch (Exception exc) {
             return null;
         }

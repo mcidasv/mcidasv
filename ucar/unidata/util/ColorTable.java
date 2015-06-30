@@ -579,6 +579,38 @@ public class ColorTable implements NamedObject {
     }
 
     /**
+     * <i>Always</i> convert the color table into a list of {@link Color Colors}.
+     *
+     * @param includeAlpha {@code true} to include alpha values.
+     *
+     * @return List of {@code Color} objects.
+     */
+    public List<Color> forceGetColorList(boolean includeAlpha) {
+        boolean haveAlpha = (tableArray.length == 4) && includeAlpha;
+        int length = tableArray[0].length;
+        List<Color> colors = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
+            Color c;
+            if (haveAlpha) {
+                c = new Color(
+                    tableArray[IDX_RED][i],
+                    tableArray[IDX_GREEN][i],
+                    tableArray[IDX_BLUE][i],
+                    tableArray[IDX_ALPHA][i]
+                );
+            } else {
+                c = new Color(
+                    tableArray[IDX_RED][i],
+                    tableArray[IDX_GREEN][i],
+                    tableArray[IDX_BLUE][i]
+                );
+            }
+            colors.add(c);
+        }
+        return colors;
+    }
+
+    /**
      * Wrapper around {@link #addAlpha(float[][])}.
      *
      * @param colorTable  color table to use
