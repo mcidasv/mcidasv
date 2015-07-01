@@ -1107,12 +1107,10 @@
             windowtitle="McIDAS-V ${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release} Developer Documentation">
             
             <classpath refid="app.classpath" />
-            <link href="http://download.java.net/media/java3d/javadoc/1.5.2/" />
-            <link href="http://docs.oracle.com/javase/7/docs/api/" />
+            <link href="http://docs.oracle.com/javase/8/docs/api/" />
             <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/" />
             <link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc/" />
-            <link href="http://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/v4.3/javadoc/" />
-            <link href="http://www.eventbus.org/api/" />
+            <link href="http://www.unidata.ucar.edu/software/thredds/v4.6/netcdf-java/javadocAll/" />
         </javadoc>
     </target>
     
