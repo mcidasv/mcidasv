@@ -564,16 +564,7 @@ public class ColorTable implements NamedObject {
      */
     public ArrayList<Color> getColorList(boolean includeAlpha) {
         if ((colorList == null) && (tableArray != null)) {
-            colorList = new ArrayList<Color>();
-            boolean haveAlpha = (tableArray.length == 4) && includeAlpha;
-            int     length    = tableArray[0].length;
-            for (int i = 0; i < length; i++) {
-                colorList.add(new Color(tableArray[IDX_RED][i],
-                                        tableArray[IDX_GREEN][i],
-                                        tableArray[IDX_BLUE][i], (haveAlpha
-                        ? tableArray[IDX_ALPHA][i]
-                        : 1.0f)));
-            }
+            colorList = (ArrayList<Color>)forceGetColorList(includeAlpha);
         }
         return colorList;
     }
