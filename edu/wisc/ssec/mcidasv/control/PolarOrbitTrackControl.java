@@ -85,7 +85,6 @@ import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.TextDisplayable;
 
 import visad.Data;
-import visad.DisplayRealType;
 import visad.Gridded2DSet;
 import visad.MathType;
 import visad.RealTuple;
@@ -518,21 +517,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		
     	}
 
-    }
-
-    /**
-     * Apply the map (height) position to the displays
-     */
-    
-    private void applyTrackPosition() {
-        try {
-            DisplayRealType dispType = navDsp.getDisplayAltitudeType();
-            trackDsp.setConstantPosition(trackZ, dispType);
-            timeLabelDsp.setConstantPosition(trackZ, dispType);
-            stationLabelDsp.setConstantPosition(gsZ, dispType);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void changeSwathWidth() {
@@ -1059,21 +1043,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         Data data = getData(getDataInstance());
         createTrackDisplay(data, true);
         dataSource = getDataSource();
-        try {
-            navDsp = getNavigatedDisplay();
-            float defaultZ = getMapViewManager().getDefaultMapPosition();
-            // we're just nudging a bit so tracks (and their labels) get drawn over
-            // ground stations (and their labels), which get drawn over default map level
-            // user can change this in map controls if they prefer maps on top
-            gsZ = defaultZ + 0.25f;
-            trackZ = defaultZ + 0.5f;
-            // range on "map level" stuff is -1 to 1, stay within these limits
-            if (trackZ > 1.0f) trackZ = 1.0f;
-            if (gsZ > 1.0f) gsZ = 1.0f;
-            applyTrackPosition();
-        } catch (Exception e) {
-            logger.error("get display center e=" + e);
-        }
 
         return result;
     }
