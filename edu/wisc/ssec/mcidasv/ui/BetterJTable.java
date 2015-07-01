@@ -29,8 +29,8 @@ package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -40,6 +40,10 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.TableColumnModelEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -142,6 +146,19 @@ public class BetterJTable extends JTable {
             // a column is resized. we do this because the extended grid
             // lines may need to be repainted. this could be cleaned up,
             // but for now, it works fine.
+            fTable.getColumnModel().addColumnModelListener(new TableColumnModelListener() {
+                @Override public void columnMarginChanged(ChangeEvent e) {
+                    repaint();
+                }
+
+                @Override public void columnAdded(TableColumnModelEvent e) {}
+
+                @Override public void columnRemoved(TableColumnModelEvent e) {}
+
+                @Override public void columnMoved(TableColumnModelEvent e) {}
+
+                @Override public void columnSelectionChanged(ListSelectionEvent e) {}
+            });
             PropertyChangeListener listener = createTableColumnWidthListener();
             for (int i = 0; i < fTable.getColumnModel().getColumnCount(); i++) {
                 fTable.getColumnModel().getColumn(i).addPropertyChangeListener(listener);
@@ -180,7 +197,7 @@ public class BetterJTable extends JTable {
                 g.setColor(getRowColor(currentRow));
                 g.fillRect(g.getClipBounds().x, topY, g.getClipBounds().width, bottomY);
                 topY = bottomY;
-                currentRow ++;
+                currentRow++;
             }
         }
 
