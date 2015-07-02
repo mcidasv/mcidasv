@@ -2259,6 +2259,7 @@ public class AddeImageDataSelection {
             AreaFile af = aAdapter.getAreaFile();
             JButton activeViewButton = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
             activeViewButton.addActionListener(new UseActiveDisplayRegion(this, vmManager));
+            activeViewButton.setToolTipText("Use region from active display.");
             JButton resetButton = new JButton("RESET");
             try {
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
