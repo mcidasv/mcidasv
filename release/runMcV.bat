@@ -142,6 +142,13 @@ SET TEXTURE_SIZE=%TEXTURE_WIDTH%
 SET TEXTURE_SIZE=4096
 )
 
+REM if the user has disabled loading layout.mcv we need to pass -nodefault
+if "%DEFAULT_LAYOUT%"=="0" (
+SET USE_LAYOUT_BUNDLE=-nodefault
+) ELSE (
+SET USE_LAYOUT_BUNDLE=
+)
+
 SET LOGBACK_CONFIG="%MCV_USERPATH%\logback.xml"
 
 REM Get the amount of system memorys
@@ -154,7 +161,7 @@ SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.texture
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF NOT DEFINED STARTUP_BUNDLE GOTO endbundle
 
-SET MCV_FLAGS=%MCV_FLAGS% -bundle %STARTUP_BUNDLE%
+SET MCV_FLAGS=%MCV_FLAGS% %USE_LAYOUT_BUNDLE% -bundle %STARTUP_BUNDLE%
 
 :endbundle
 
