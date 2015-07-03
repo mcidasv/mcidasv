@@ -44,11 +44,11 @@ public class GpmIosp extends AbstractIOServiceProvider {
     }
 
     @Override public String getFileTypeId() {
-        return null;
+        return "GPM-1C-R-CS";
     }
 
     @Override public String getFileTypeDescription() {
-        return null;
+        return "No Idea!";
     }
 
     @Override public void close() throws IOException {
