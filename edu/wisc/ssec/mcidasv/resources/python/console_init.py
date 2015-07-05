@@ -88,6 +88,8 @@ if argManager.hasJythonArguments():
 from ucar.unidata.idv.ui import ImageGenerator
 islInterpreter = ImageGenerator(_mcv)
 
+from edu.wisc.ssec.mcidasv.util import ErrorCodeAreaUtils
+
 from edu.wisc.ssec.mcidasv.data.hydra import Statistics
 
 from edu.wisc.ssec.mcidasv.data.hydra.Statistics import describe
