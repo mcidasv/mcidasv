@@ -33,6 +33,8 @@ from ucar.unidata.util import StringUtil
 
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 
+from edu.wisc.ssec.mcidasv.util import ErrorCodeAreaUtils
+
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from edu.wisc.ssec.mcidasv.servermanager import LocalAddeEntry
 from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryStatus
