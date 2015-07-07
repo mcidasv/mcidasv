@@ -214,11 +214,20 @@ public class GpmIosp extends AbstractIOServiceProvider {
             int channel = variableToChannel(variableName);
             logger.trace("trying to read '{}' channel={}", variableName, channel);
             Variable hdfVariable = hdfFile.findVariable(hdfGroup, "Tc");
-            return hdfVariable.read();
+            int[] counts = getLineElementCounts(hdfGroup);
+            return readChannel(hdfVariable, counts[0], counts[1], channel);
         }
 
         logger.trace("return null :(");
         return null;
+    }
+
+    private Array readChannel(Variable v, int lines, int elements, int channel)
+        throws IOException, InvalidRangeException
+    {
+        int[] origin = { 0, 0, channel };
+        int[] size = { lines, elements, 1};
+        return v.read(origin, size).reduce();
     }
 
     @Override public String getFileTypeId() {
