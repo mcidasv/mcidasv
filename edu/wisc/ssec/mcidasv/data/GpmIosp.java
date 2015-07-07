@@ -182,10 +182,42 @@ public class GpmIosp extends AbstractIOServiceProvider {
         }
     }
 
+    private static int variableToChannel(String variableName) {
+        int result = -1;
+        if (variableName.startsWith("Tc_")) {
+            String temp = variableName.substring(3);
+            result = Integer.valueOf(temp);
+        }
+        return result;
+    }
+
     @Override public Array readData(Variable variable, Section section)
         throws IOException, InvalidRangeException
     {
         logger.trace("variable='{}' group='{}' section='{}'", variable.getShortName(), variable.getParentGroup().getShortName(), section);
+//        String groupName = variable.getGroup().getShortName();
+        String variableName = variable.getShortName();
+
+        Group hdfGroup = hdfFile.findGroup(variable.getParentGroup().getFullName());
+        if (variableName.equals("latitude")) {
+
+            // case matters
+            Variable hdfVariable = hdfFile.findVariable(hdfGroup, "Latitude");
+            return hdfVariable.read();
+        }
+        if (variableName.equals("longitude")) {
+            // case matters
+            Variable hdfVariable = hdfFile.findVariable(hdfGroup, "Longitude");
+            return hdfVariable.read();
+        }
+        if (variableName.startsWith("Tc_")) {
+            int channel = variableToChannel(variableName);
+            logger.trace("trying to read '{}' channel={}", variableName, channel);
+            Variable hdfVariable = hdfFile.findVariable(hdfGroup, "Tc");
+            return hdfVariable.read();
+        }
+
+        logger.trace("return null :(");
         return null;
     }
 
