@@ -31,6 +31,7 @@ package edu.wisc.ssec.mcidasv;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
+import edu.wisc.ssec.mcidasv.data.GpmIosp;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.awt.Insets;
@@ -63,6 +64,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import ucar.nc2.NetcdfFile;
 import visad.VisADException;
 
 import ucar.unidata.data.DataManager;
@@ -1650,6 +1652,8 @@ public class McIDASV extends IntegratedDataViewer {
             SLF4JBridgeHandler.install();
 
             LogUtil.configure();
+
+            NetcdfFile.registerIOProvider(GpmIosp.class);
 
             long sysMem = Long.valueOf(SystemState.queryOpSysProps().get("opsys.memory.physical.total"));
             logger.info("=============================================================================");
