@@ -233,9 +233,12 @@ public abstract class MultiDimensionAdapter {
 
    public Object readArray(Object subset) throws Exception {
      Subset select = getIndexes((HashMap)subset);
-     int[] start = select.getStart();
-     int[] count = select.getCount();
-     int[] stride = select.getStride();
+//     int[] start = select.getStart();
+//     int[] count = select.getCount();
+//     int[] stride = select.getStride();
+     int[] start = {0, 25, 0};
+     int[] count = {318, 1, 176};
+     int[] stride = {1, 1, 1};
 
      return reader.getArray(arrayName, start, count, stride);
    }

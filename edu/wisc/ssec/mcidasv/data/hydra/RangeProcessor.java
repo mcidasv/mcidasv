@@ -61,6 +61,8 @@ public class RangeProcessor {
 					.get(ProfileAlongTrack.product_name);
 			if (product_name == "2B-GEOPROF") {
 				return new CloudSat_2B_GEOPROF_RangeProcessor(reader, metadata);
+			} else if (product_name == "NS") {
+				return new GPMNSRangeProcessor(reader, metadata);
 			} else {
 				return new RangeProcessor(reader, metadata);
 			}

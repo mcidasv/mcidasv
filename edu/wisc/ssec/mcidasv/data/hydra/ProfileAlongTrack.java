@@ -62,10 +62,10 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       int TrackLen;
       int VertLen;
 
-      private float[] vertLocs = null;
-      private float[] trackTimes = null;
-      private float[] trackLongitude = null;
-      private float[] trackLatitude = null;
+      protected float[] vertLocs = null;
+      protected float[] trackTimes = null;
+      protected float[] trackLongitude = null;
+      protected float[] trackLatitude = null;
 
       public static String longitude_name = "Longitude";
       public static String latitude_name  = "Latitude";
@@ -149,7 +149,8 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       }
 
 
-      private void init() {
+      protected void init() {
+    	  System.err.println("PAT init in...");
         for (int k=0; k<array_rank;k++) {
           if ( ((String)metadata.get(trackDim_name)).equals(array_dim_names[k]) ) {
             track_idx = k;
@@ -159,8 +160,14 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
           }
         }
 
+        // TJJ in case anon dimensions, make assumptions
+        if (track_idx < 0) track_idx = 0;
+        if (vert_idx < 0) vert_idx = 2;
+        
         int[] lengths = new int[2];
-
+        System.err.println("track_idx: " + track_idx);
+        System.err.println("vert_idx: " + vert_idx);
+        
         if (track_idx < vert_idx) {
           domainRealTypes[0] = vert;
           domainRealTypes[1] = track;
@@ -202,13 +209,19 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
           if (isVertDimAlt) {
             vertLocs = getVertBinAltitude();
           }
+          System.err.println("makeVerLocType()");
           vertLocType = makeVertLocType();
+          System.err.println("getTrackTimes()");
           trackTimes = getTrackTimes();
+          System.err.println("makeTrackTimeType()");
           trackTimeType = makeTrackTimeType();
+          System.err.println("getTrackLongitude()");
           trackLongitude = getTrackLongitude();
+          System.err.println("getTrackLatitude()");
           trackLatitude = getTrackLatitude();
         } 
         catch (Exception e) {
+        	e.printStackTrace();
           System.out.println(e);
         }
 

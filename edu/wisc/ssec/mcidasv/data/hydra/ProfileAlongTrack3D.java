@@ -85,13 +85,25 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
       count = new int[2];
       stride = new int[2];
 
-      start[vert_idx] = (int) 0;
-      count[vert_idx] = (int) 1;
-      stride[vert_idx] = (int) vert_coords[2];
+      String instrumentFlag = (String) ((HashMap)getMetadata()).get("instrument_name");
+      if ((instrumentFlag != null) && (instrumentFlag.equals("GPMDPR"))) {
+          start[1] = (int) 25;
+          count[1] = (int) 1;
+          stride[1] = 1;
+          start[track_idx] = (int) 0;
+          count[track_idx] = (int) 318;
+          stride[track_idx] = (int) 1;
+      } else {
+          start[vert_idx] = (int) 0;
+          count[vert_idx] = (int) 1;
+          stride[vert_idx] = (int) vert_coords[2];
+          start[track_idx] = (int) track_coords[0];
+          count[track_idx] = (int) ((track_coords[1] - track_coords[0])/track_coords[2] + 1f);
+          stride[track_idx] = (int) track_coords[2];
+      }
 
-      start[track_idx] = (int) track_coords[0];
-      count[track_idx] = (int) ((track_coords[1] - track_coords[0])/track_coords[2] + 1f);
-      stride[track_idx] = (int) track_coords[2];
+
+
     }
     else if (rank == 1) {
       start = new int[1];

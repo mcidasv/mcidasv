@@ -46,6 +46,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import visad.CellImpl;
 import visad.Data;
 import visad.FlatField;
@@ -75,7 +78,6 @@ import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.MapLines;
 import ucar.visad.display.RubberBandBox;
-
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
 
@@ -84,6 +86,9 @@ import edu.wisc.ssec.mcidasv.data.PreviewSelection;
  */
 
 public class MultiDimensionDataSource extends HydraDataSource {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(MultiDimensionDataSource.class);
 	
     /** Sources file */
     protected String filename;
@@ -458,6 +463,74 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
          hasTrackPreview = true;
        }
+       else if (name.startsWith("2A-CS")) {
+    	   System.err.println("Working on GPM data...");
+           adapters = new MultiDimensionAdapter[2];
+           defaultSubsets = new HashMap[2];
+           propsArray = new Hashtable[2];
+
+           System.err.println("Fill in props hashtable...");
+           HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
+           table.put("instrument_name", "GPMDPR");
+           table.put(ProfileAlongTrack.array_name, "NS/PRE/zFactorMeasured");
+           table.put(ProfileAlongTrack.range_name, "NS_RadarReflectivity");
+           table.put(ProfileAlongTrack.scale_name, "factor");
+           table.put(ProfileAlongTrack.offset_name, "offset");
+           table.put(ProfileAlongTrack.fill_value_name, "_FillValue");
+           table.put(ProfileAlongTrack.valid_range, "valid_range");
+           table.put(ProfileAlongTrack.trackDim_name, "nray");
+           table.put(ProfileAlongTrack.vertDim_name, "nbin");
+           table.put(ProfileAlongTrack.profileTime_name, "NS/Year");
+           table.put(ProfileAlongTrack.longitude_name, "NS/Longitude");
+           table.put(ProfileAlongTrack.latitude_name, "NS/Latitude");
+           table.put(ProfileAlongTrack.product_name, "NS");
+           
+           System.err.println("Create the adapters, GPM2D...");
+           ProfileAlongTrack adapter = new GPM2D(reader, table);
+           System.err.println("ProfileAlongTrack3D...");
+           ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
+           System.err.println("getDefaultSubset()...");
+           HashMap subset = adapter.getDefaultSubset();
+           adapters[0] = adapter3D;
+           defaultSubset = subset;
+           defaultSubsets[0] = defaultSubset;
+           DataCategory.createCategory("ProfileAlongTrack");
+           System.err.println("parseCategories()...");
+           categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
+
+           System.err.println("Lat, Lon, Elev...");
+           ArrayAdapter[] adapter_s = new ArrayAdapter[3];
+           table = ProfileAlongTrack.getEmptyMetadataTable();
+           table.put(ProfileAlongTrack.array_name, "NS/Latitude");
+           table.put(ProfileAlongTrack.range_name, "Latitude");
+           table.put(ProfileAlongTrack.trackDim_name, "nray");
+           adapter_s[0] = new ArrayAdapter(reader, table);
+
+           table = ProfileAlongTrack.getEmptyMetadataTable();
+           table.put(ProfileAlongTrack.array_name, "NS/PRE/elevation");
+           table.put(ProfileAlongTrack.range_name, "DEM_elevation");
+           table.put(ProfileAlongTrack.trackDim_name, "nray");
+           adapter_s[1] = new ArrayAdapter(reader, table);
+
+           table = ProfileAlongTrack.getEmptyMetadataTable();
+           table.put(ProfileAlongTrack.array_name, "NS/Longitude");
+           table.put(ProfileAlongTrack.range_name, "Longitude");
+           table.put(ProfileAlongTrack.trackDim_name, "nray");
+           adapter_s[2] = new ArrayAdapter(reader, table);
+
+           System.err.println("TrackDomain...");
+           TrackDomain track_domain = new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]);
+           track_adapter = new TrackAdapter(track_domain, adapter_s[1]);
+
+           adapters[1] = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0]), adapter_s[1]);
+           ((TrackAdapter)adapters[1]).setName("Track2D");
+           defaultSubsets[1] = adapters[1].getDefaultSubset();
+
+           properties.put("medianFilter", new String[] {Double.toString(6), Double.toString(14)});
+           properties.put("setBelowSfcMissing", new String[] {"true"});
+           hasTrackPreview = true;
+           System.err.println("And good!");
+         }        
        else if (name.indexOf("2B-GEOPROF") > 0) {
          adapters = new MultiDimensionAdapter[2];
          defaultSubsets = new HashMap[2];
@@ -925,6 +998,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            logger.error("getData exception", e);
             System.out.println("getData exception e=" + e);
         }
 
@@ -996,7 +1070,12 @@ public class MultiDimensionDataSource extends HydraDataSource {
       }
       if (hasTrackPreview) {
         try {
+        	System.err.println("track_adapter.getData(), track_adapter: " + track_adapter);
+        	if (track_adapter != null) {
+        		System.err.println("Def Subset: " + track_adapter.getDefaultSubset());
+        	}
           FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());
+          System.err.println("new TrackSelection()");
           components.add(new TrackSelection(dataChoice, track));
         } catch (Exception e) {
           System.out.println("Can't make PreviewSelection: "+e);

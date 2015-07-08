@@ -31,6 +31,9 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import visad.FlatField;
 import visad.FunctionType;
 import visad.Gridded3DSet;
@@ -41,6 +44,9 @@ import visad.VisADException;
 import visad.Set;
 
 public class TrackAdapter extends MultiDimensionAdapter {
+	
+	private static final Logger logger = LoggerFactory
+			.getLogger(TrackAdapter.class);
    RealTupleType domainType;
    ArrayAdapter rngAdapter;
    TrackDomain trackDomain;
@@ -65,15 +71,20 @@ public class TrackAdapter extends MultiDimensionAdapter {
      
      float[] rngValues = null;
 
+     System.err.println("trackDomain: " + trackDomain);
+
+     System.err.println("rngAdapter: " + rngAdapter);
+     
      Set set = trackDomain.makeDomain(subset);
 
      domainType = ((SetType)set.getType()).getDomain();
+     System.err.println("domainType: " + domainType);
 
      try {
        rngValues = (rngAdapter.getData(subset).getFloats())[0];
      }
      catch (Exception e) {
-       e.printStackTrace();
+       logger.error("Failed to create range values", e);
        return null;
      }
 
