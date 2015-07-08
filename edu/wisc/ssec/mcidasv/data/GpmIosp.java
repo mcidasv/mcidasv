@@ -1,3 +1,31 @@
+/*
+ * This file is part of McIDAS-V
+ *
+ * Copyright 2007-2015
+ * Space Science and Engineering Center (SSEC)
+ * University of Wisconsin - Madison
+ * 1225 W. Dayton Street, Madison, WI 53706, USA
+ * http://www.ssec.wisc.edu/mcidas
+ *
+ * All Rights Reserved
+ *
+ * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
+ * some McIDAS-V source code is based on IDV and VisAD source code.
+ *
+ * McIDAS-V is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * McIDAS-V is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses.
+ */
+
 package edu.wisc.ssec.mcidasv.data;
 
 import java.io.IOException;
@@ -5,10 +33,13 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.io.RandomAccessFile;
+
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.ma2.Section;
+
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
@@ -18,7 +49,6 @@ import ucar.nc2.constants.AxisType;
 import ucar.nc2.constants._Coordinate;
 import ucar.nc2.iosp.AbstractIOServiceProvider;
 import ucar.nc2.util.CancelTask;
-import ucar.unidata.io.RandomAccessFile;
 
 public class GpmIosp extends AbstractIOServiceProvider {
 
@@ -47,16 +77,6 @@ public class GpmIosp extends AbstractIOServiceProvider {
         try {
             hdfFile = NetcdfFile.open(raf.getLocation(), "ucar.nc2.iosp.hdf5.H5iosp", -1, (CancelTask)null, (Object)null);
 
-
-
-//            Variable group1Latitude = hdfGroup1.findVariable("Latitude");
-//            Variable group1Longitude = hdfGroup1.findVariable("Longitude");
-
-
-
-//            Variable group2Latitude = hdfGroup2.findVariable("Latitude");
-//            Variable group2Longitude = hdfGroup2.findVariable("Longitude");
-
             Group hdfGroup1 = hdfFile.findGroup("S1");
             int[] counts = getLineElementCounts(hdfGroup1);
             Group s1 = new Group(ncfile, null, "S1");
@@ -83,68 +103,46 @@ public class GpmIosp extends AbstractIOServiceProvider {
             Variable s2Lon = new Variable(ncfile, s2, null, "longitude", DataType.FLOAT, "line ele");
             s2Lon.addAttribute(new Attribute(_Coordinate.AxisType, AxisType.Lon.toString()));
 
-            Attribute s1Var0Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s1Var1Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s1Var2Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s1Var3Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s1Var4Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s1Var5Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s1Var6Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s1Var7Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s1Var8Attr = new Attribute("coordinates", "latitude longitude");
-
-            Attribute s2Var0Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s2Var1Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s2Var2Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s2Var3Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s2Var4Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s2Var5Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s2Var6Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s2Var7Attr = new Attribute("coordinates", "latitude longitude");
-            Attribute s2Var8Attr = new Attribute("coordinates", "latitude longitude");
+            Attribute attr = new Attribute("coordinates", "latitude longitude");
 
             Variable s1Var0 = new Variable(ncfile, s1, null, "Tc_0", DataType.FLOAT, "line ele");
-            s1Var0.addAttribute(s1Var0Attr);
+            s1Var0.addAttribute(attr);
             Variable s1Var1 = new Variable(ncfile, s1, null, "Tc_1", DataType.FLOAT, "line ele");
-            s1Var1.addAttribute(s1Var1Attr);
+            s1Var1.addAttribute(attr);
             Variable s1Var2 = new Variable(ncfile, s1, null, "Tc_2", DataType.FLOAT, "line ele");
-            s1Var2.addAttribute(s1Var2Attr);
+            s1Var2.addAttribute(attr);
             Variable s1Var3 = new Variable(ncfile, s1, null, "Tc_3", DataType.FLOAT, "line ele");
-            s1Var3.addAttribute(s1Var3Attr);
+            s1Var3.addAttribute(attr);
             Variable s1Var4 = new Variable(ncfile, s1, null, "Tc_4", DataType.FLOAT, "line ele");
-            s1Var4.addAttribute(s1Var4Attr);
+            s1Var4.addAttribute(attr);
             Variable s1Var5 = new Variable(ncfile, s1, null, "Tc_5", DataType.FLOAT, "line ele");
-            s1Var5.addAttribute(s1Var5Attr);
+            s1Var5.addAttribute(attr);
             Variable s1Var6 = new Variable(ncfile, s1, null, "Tc_6", DataType.FLOAT, "line ele");
-            s1Var6.addAttribute(s1Var6Attr);
+            s1Var6.addAttribute(attr);
             Variable s1Var7 = new Variable(ncfile, s1, null, "Tc_7", DataType.FLOAT, "line ele");
-            s1Var7.addAttribute(s1Var7Attr);
+            s1Var7.addAttribute(attr);
             Variable s1Var8 = new Variable(ncfile, s1, null, "Tc_8", DataType.FLOAT, "line ele");
-            s1Var8.addAttribute(s1Var8Attr);
+            s1Var8.addAttribute(attr);
 
             Variable s2Var0 = new Variable(ncfile, s2, null, "Tc_0", DataType.FLOAT, "line ele");
-            s2Var0.addAttribute(s2Var0Attr);
+            s2Var0.addAttribute(attr);
             Variable s2Var1 = new Variable(ncfile, s2, null, "Tc_1", DataType.FLOAT, "line ele");
-            s2Var1.addAttribute(s2Var1Attr);
+            s2Var1.addAttribute(attr);
             Variable s2Var2 = new Variable(ncfile, s2, null, "Tc_2", DataType.FLOAT, "line ele");
-            s2Var2.addAttribute(s2Var2Attr);
+            s2Var2.addAttribute(attr);
             Variable s2Var3 = new Variable(ncfile, s2, null, "Tc_3", DataType.FLOAT, "line ele");
-            s2Var3.addAttribute(s2Var3Attr);
+            s2Var3.addAttribute(attr);
             Variable s2Var4 = new Variable(ncfile, s2, null, "Tc_4", DataType.FLOAT, "line ele");
-            s2Var4.addAttribute(s2Var4Attr);
+            s2Var4.addAttribute(attr);
             Variable s2Var5 = new Variable(ncfile, s2, null, "Tc_5", DataType.FLOAT, "line ele");
-            s2Var5.addAttribute(s2Var5Attr);
+            s2Var5.addAttribute(attr);
             Variable s2Var6 = new Variable(ncfile, s2, null, "Tc_6", DataType.FLOAT, "line ele");
-            s2Var6.addAttribute(s2Var6Attr);
+            s2Var6.addAttribute(attr);
             Variable s2Var7 = new Variable(ncfile, s2, null, "Tc_7", DataType.FLOAT, "line ele");
-            s2Var7.addAttribute(s2Var7Attr);
+            s2Var7.addAttribute(attr);
             Variable s2Var8 = new Variable(ncfile, s2, null, "Tc_8", DataType.FLOAT, "line ele");
-            s2Var8.addAttribute(s2Var8Attr);
+            s2Var8.addAttribute(attr);
 
-//        List<Variable> s1Vars = new ArrayList<>(9);
-//        List<Variable> s2Vars = new ArrayList<>(9);
-//            rootGroup.addGroup(s1);
-//            rootGroup.addGroup(s2);
             ncfile.addGroup(null, s1);
             ncfile.addGroup(null, s2);
 
@@ -174,11 +172,11 @@ public class GpmIosp extends AbstractIOServiceProvider {
 
             ncfile.finish();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            logger.error("error loading HDF5 IOSP", e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            logger.error("java reflection error", e);
         } catch (InstantiationException e) {
-            e.printStackTrace();
+            logger.error("error instantiating", e);
         }
     }
 
@@ -240,6 +238,7 @@ public class GpmIosp extends AbstractIOServiceProvider {
 
     @Override public void close() throws IOException {
         logger.trace("getting called");
+        hdfFile.close();
     }
 
     public static void main(String args[]) throws IOException, IllegalAccessException, InstantiationException {
