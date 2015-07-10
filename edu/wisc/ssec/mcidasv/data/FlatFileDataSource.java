@@ -36,6 +36,8 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,6 +97,8 @@ public class FlatFileDataSource extends ucar.unidata.data.FilesDataSource {
                               String filename, Hashtable properties)
             throws VisADException {
         super(descriptor, filename, "Image flat file data source", properties);
+		Path p = Paths.get(filename);
+		setName(p.getName(p.getNameCount() - 1).toString());
         System.out.println("FlatFileDataSource.descriptor: " + descriptor.toString());
         System.out.println("FlatFileDataSource.filename: " + filename);
         System.out.println("FlatFileDataSource.properties: " + properties.toString());
