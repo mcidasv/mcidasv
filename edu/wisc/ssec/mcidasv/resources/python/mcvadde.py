@@ -131,6 +131,11 @@ def _normalizeUnits(units):
         normalized = ['BRIT']
     return normalized
     
+def _argHandler(explicit, implicit):
+    if not explicit[1]:
+        return implicit[1]
+    return explicit[1]
+    
 # note: if you are looking to add a new format you may need to make changes to 
 # LocalAddeEntry's ServerName and AddeFormat enums, and the format combo boxes 
 # in LocalEntryEditor and LocalEntryShortcut.
@@ -1187,7 +1192,7 @@ def _getADDEImage(localEntry=None,
     place=None,
     mag=(1, 1),
     position=0,
-    unit='BRIT',
+    unit=None,
     day=None,
     time=None,
     debug=False,
@@ -1295,16 +1300,27 @@ def _getADDEImage(localEntry=None,
     else:
         time = ''
         
-    if band:
+        
+    if band or kwargs.get('bandNumber'):
         try:
-            band = int(band)
+            result = _argHandler(explicit=('band', band), implicit=('bandNumber', kwargs.get('bandNumber')))
+            band = int(result)
             band = '&BAND=%s' % (str(band))
         except:
             raise ValueError("band must be a single integer value; could not convert '%s' to an integer." % (band))
     else:
         band = ''
         
-    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s&UNIT=%(unit)s%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s%(time)s&POS=%(position)s&TRACKING=%(track)d"
+    if unit or kwargs.get('unitType'):
+        try:
+            result = _argHandler(explicit=('unit', unit), implicit=('unitType', kwargs.get('unitType')))
+            unit = '&UNIT=%s' % (str(result))
+        except:
+            raise ValueError("unit must a str value; could not convert '%s' to to a str (type=%s)." % (unit, type(unit)))
+    else:
+        unit = '&UNIT=BRIT'
+        
+    addeUrlFormat = "adde://%(server)s/imagedata?&PORT=%(port)s&COMPRESS=gzip&USER=%(user)s&PROJ=%(proj)s&VERSION=1&DEBUG=%(debug)s&TRACE=0&GROUP=%(dataset)s&DESCRIPTOR=%(descriptor)s%(band)s%(location)s%(place)s%(size)s%(unit)s%(mag)s&SPAC=4&NAV=X&AUX=YES&DOC=X%(day)s%(time)s&POS=%(position)s&TRACKING=%(track)d"
     formatValues = {
         'server': server,
         'port': port,
