@@ -87,13 +87,11 @@ public final class RaobDataSource extends DataSourceImpl {
      */
     public RaobDataSource(DataSourceDescriptor descriptor, RaobDataSet rds,
                           Hashtable properties)
-            throws VisADException {
-        super(descriptor, "RAOB data: " + rds.getAdapterSource(),
-              "RAOB data source", properties);
+        throws VisADException {
+        super(descriptor, IOUtil.getFileTail(rds.getAdapterSource()),
+            "RAOB data source", properties);
         this.raobDataSet = rds;
     }
-
-
 
     /**
      * Constructs from a specification of the data-source.
@@ -105,9 +103,9 @@ public final class RaobDataSource extends DataSourceImpl {
      */
     public RaobDataSource(DataSourceDescriptor descriptor, String file,
                           Hashtable properties)
-            throws VisADException {
-        super(descriptor, "RAOB data: " + file, "RAOB data source",
-              properties);
+        throws VisADException {
+        super(descriptor, IOUtil.getFileTail(file), "RAOB data source",
+            properties);
         this.file        = file;
         this.raobDataSet = doMakeRaobDataSet();
     }
