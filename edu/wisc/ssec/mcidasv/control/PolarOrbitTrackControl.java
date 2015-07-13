@@ -85,6 +85,7 @@ import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.TextDisplayable;
 
 import visad.Data;
+import visad.DisplayRealType;
 import visad.Gridded2DSet;
 import visad.MathType;
 import visad.RealTuple;
@@ -519,6 +520,21 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     }
 
+    /**
+     * Apply the map (height) position to the displays
+     */
+    
+    private void applyTrackPosition() {
+        try {
+            DisplayRealType dispType = navDsp.getDisplayAltitudeType();
+            trackDsp.setConstantPosition(trackZ, dispType);
+            timeLabelDsp.setConstantPosition(trackZ, dispType);
+            stationLabelDsp.setConstantPosition(gsZ, dispType);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void changeSwathWidth() {
 
     	logger.debug("changeSwathWidth() in...");
@@ -814,7 +830,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             coverageCircle.setColor(getAntColor());
             coverageCircle.setData(uset);
             coverageCircle.setDrawingEnabled(false);
-            coverageCircle.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
+            if (! inGlobeDisplay()) 
+            	coverageCircle.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -1043,6 +1060,23 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         Data data = getData(getDataInstance());
         createTrackDisplay(data, true);
         dataSource = getDataSource();
+        try {
+            navDsp = getNavigatedDisplay();
+            float defaultZ = getMapViewManager().getDefaultMapPosition();
+            // we're just nudging a bit so tracks (and their labels) get drawn over
+            // ground stations (and their labels), which get drawn over default map level
+            // user can change this in map controls if they prefer maps on top
+            gsZ = defaultZ + 0.01f;
+            trackZ = defaultZ + 0.02f;
+            // range on "map level" stuff is -1 to 1, stay within these limits
+            if (trackZ > 1.0f) trackZ = 1.0f;
+            if (gsZ > 1.0f) gsZ = 1.0f;
+            if (! inGlobeDisplay()) {
+            	applyTrackPosition();
+            }
+        } catch (Exception e) {
+            logger.error("get display center e=" + e);
+        }
 
         return result;
     }
@@ -1097,7 +1131,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		Tuple tup = new Tuple(makeTupleType(STATION_MODS),
     				new Data[] { lonLat, new Text(gsTextType, str)});
     		groundStationDsp.setData(tup);
-    		groundStationDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
+    		if (! inGlobeDisplay()) 
+    			groundStationDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
     		stationLabelDsp.addDisplayable(groundStationDsp);
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -1284,7 +1319,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     		int numPlotted = jcbStationsPlotted.getItemCount();
             circleDsp = new CompositeDisplayable();
-            circleDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
+            if (! inGlobeDisplay()) 
+            	circleDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
     		for (int i = 0; i < numPlotted; i++) {
     			String s = (String) jcbStationsPlotted.getItemAt(i);
                 EarthLocationTuple elt = stationMap.get(s);
