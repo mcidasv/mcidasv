@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 import java.util.HashMap;
+
 import visad.Set;
 import visad.RealTupleType;
 import visad.RealType;
@@ -61,7 +62,45 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
   }
 
 
-  public Set makeDomain(Object subset) throws Exception {
+  /* (non-Javadoc)
+ * @see edu.wisc.ssec.mcidasv.data.hydra.MultiDimensionAdapter#readArray(java.lang.Object)
+ */
+@Override
+public Object readArray(Object subset) throws Exception {
+
+//    int[] start = null;
+//    int[] count = null;
+//    int[] stride = null;
+    
+    // XXX TJJ 
+	String instrumentFlag = (String) ((HashMap)getMetadata()).get("instrument_name");
+	if ((instrumentFlag != null) && (instrumentFlag.equals("GPMDPR"))) {
+		int[] start = {0, 25, 0};
+		int[] count = {318, 1, 176};
+		int[] stride = {1, 1, 1};
+		for (int i = 0; i < start.length; i++) {
+			System.err.println("TJJ start " + start[i]);
+			System.err.println("TJJ count " + start[i]);
+			System.err.println("TJJ stride " + start[i]);
+		}
+		return reader.getArray(arrayName, start, count, stride);
+	} else {
+		Subset select = getIndexes((HashMap)subset);
+		int[] start = select.getStart();
+		int[] count = select.getCount();
+		int[] stride = select.getStride();
+		for (int i = 0; i < start.length; i++) {
+			System.err.println("TJJ start " + start[i]);
+			System.err.println("TJJ count " + start[i]);
+			System.err.println("TJJ stride " + start[i]);
+		}
+		return reader.getArray(arrayName, start, count, stride);
+	}
+	
+  }
+
+public Set makeDomain(Object subset) throws Exception {
+	  System.err.println("TJJ PAT3D makeDomain() in...");
     double[] vert_coords = (double[]) ((HashMap)subset).get(ProfileAlongTrack.vertDim_name);
     double[] track_coords = (double[])  ((HashMap)subset).get(ProfileAlongTrack.trackDim_name);
 
@@ -81,6 +120,7 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
     int rank = (reader.getDimensionLengths(lonArrayName)).length;
 
     if (rank == 2) {
+    	System.err.println("TJJ rank 2...");
       start = new int[2];
       count = new int[2];
       stride = new int[2];
@@ -106,6 +146,7 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
 
     }
     else if (rank == 1) {
+    	System.err.println("TJJ rank 1...");
       start = new int[1];
       count = new int[1];
       stride = new int[1];
@@ -121,6 +162,8 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
 
     int vert_len = (int) ((vert_coords[1] - vert_coords[0])/vert_coords[2] + 1f);
     int track_len = count[track_idx];
+    System.err.println("vert_len: " + vert_len);
+    System.err.println("track_len: " + track_len);
 
     float[] altitudes = new float[vert_len];
     for (int k=0; k<vert_len;k++) {

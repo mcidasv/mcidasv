@@ -252,6 +252,7 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       }
                                                                                                                                                      
       public Set makeDomain(Object subset) throws Exception {
+    	  System.err.println("TJJ PAT makeDomain() in...");
         double[] first = new double[2];
         double[] last = new double[2];
         int[] length = new int[2];
@@ -265,6 +266,7 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
           double[] coords = (double[]) ((HashMap)subset).get(rtype.getName());
           first[kk] = coords[0];
           last[kk] = coords[1];
+          System.err.println("coords[0]: " + coords[0] + ", coords[1]: " + coords[1]);
           length[kk] = (int) ((last[kk] - first[kk])/coords[2] + 1);
           last[kk] = first[kk]+coords[2]*(length[kk]-1);
         }

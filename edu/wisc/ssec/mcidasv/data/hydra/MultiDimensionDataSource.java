@@ -503,20 +503,22 @@ public class MultiDimensionDataSource extends HydraDataSource {
            table = ProfileAlongTrack.getEmptyMetadataTable();
            table.put(ProfileAlongTrack.array_name, "NS/Latitude");
            table.put(ProfileAlongTrack.range_name, "Latitude");
-           table.put(ProfileAlongTrack.trackDim_name, "nray");
+           table.put(ProfileAlongTrack.trackDim_name, "anon");
            adapter_s[0] = new ArrayAdapter(reader, table);
 
            table = ProfileAlongTrack.getEmptyMetadataTable();
            table.put(ProfileAlongTrack.array_name, "NS/PRE/elevation");
            table.put(ProfileAlongTrack.range_name, "DEM_elevation");
-           table.put(ProfileAlongTrack.trackDim_name, "nray");
+           table.put(ProfileAlongTrack.trackDim_name, "anon");
            adapter_s[1] = new ArrayAdapter(reader, table);
 
            table = ProfileAlongTrack.getEmptyMetadataTable();
            table.put(ProfileAlongTrack.array_name, "NS/Longitude");
            table.put(ProfileAlongTrack.range_name, "Longitude");
-           table.put(ProfileAlongTrack.trackDim_name, "nray");
+           table.put(ProfileAlongTrack.trackDim_name, "anon");
            adapter_s[2] = new ArrayAdapter(reader, table);
+           
+           System.err.println("Lon Adapt: " + adapter_s[2]);
 
            System.err.println("TrackDomain...");
            TrackDomain track_domain = new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]);
@@ -973,26 +975,31 @@ public class MultiDimensionDataSource extends HydraDataSource {
         try {
             subset = null;
             if (ginfo != null) {
+            	System.err.println("TJJ getSubsetFromLonLatRect...");
               subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
                                                        ginfo.getMinLon(), ginfo.getMaxLon(),
                                                        geoSelection.getXStride(),
                                                        geoSelection.getYStride(),
                                                        geoSelection.getZStride());
               if (subset == null && select != null) {
+            	  System.err.println("TJJ select.getSubset()...");
                 subset = select.getSubset();
               }
             }
             else {
               if (select != null) {
+            	  System.err.println("TJJ subset NOT null, select.getSubset()...");
                 subset = select.getSubset();
               }
               
               if (dataSelection != null) {
+            	  System.err.println("TJJ dataSelection NOT null, dataSelection.getProperties()...");
                 Hashtable props = dataSelection.getProperties();
               }
             }
             
             if (subset != null) {
+            	System.err.println("TJJ subset NOT null, adapter.getData()...");
               data = adapter.getData(subset);
               data = applyProperties(data, dataChoiceProps, subset);
             }
@@ -1064,6 +1071,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           components.add(new PreviewSelection(dataChoice, image, null));
           //components.add(new edu.wisc.ssec.mcidasv.data.PreviewSelectionNew(dataChoice, image));
         } catch (Exception e) {
+        	logger.error("no preview", e);
           System.out.println("Can't make PreviewSelection: "+e);
           e.printStackTrace();
         }
@@ -1071,13 +1079,14 @@ public class MultiDimensionDataSource extends HydraDataSource {
       if (hasTrackPreview) {
         try {
         	System.err.println("track_adapter.getData(), track_adapter: " + track_adapter);
-        	if (track_adapter != null) {
-        		System.err.println("Def Subset: " + track_adapter.getDefaultSubset());
-        	}
+//        	if (track_adapter != null) {
+//        		System.err.println("Def Subset: " + track_adapter.getDefaultSubset());
+//        	}
           FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());
           System.err.println("new TrackSelection()");
           components.add(new TrackSelection(dataChoice, track));
         } catch (Exception e) {
+        	logger.error("no preview", e);
           System.out.println("Can't make PreviewSelection: "+e);
           e.printStackTrace();
         }

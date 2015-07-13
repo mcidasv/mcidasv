@@ -65,10 +65,12 @@ public class GPM2D extends ProfileAlongTrack {
     	  System.err.println("getVertBinAltitude in, VertLen: " + VertLen);
         float[] altitude = new float[VertLen];
         float tmpVal = 0.0f;
+        int j = 0;
         for (int i = VertLen - 1; i >= 0 ; i--) {
         	tmpVal = ((float) i * 1000) / 8.0f;
         	System.err.println("Alt idx " + i + ": " + tmpVal);
-        	altitude[i] = tmpVal;
+        	altitude[j] = tmpVal;
+        	j++;
         }
         return altitude;
       }
@@ -109,15 +111,15 @@ public class GPM2D extends ProfileAlongTrack {
         HashMap subset = ProfileAlongTrack.getEmptySubset();
 
         double[] coords = (double[])subset.get("TrackDim");
-        coords[0] = 1000.0;
-        coords[1] = (TrackLen - 1000.0) - 1;
-        coords[2] = 5.0;
+        coords[0] = 0.0;
+        coords[1] = TrackLen - 1;
+        coords[2] = 1.0;
         subset.put("TrackDim", coords);
 
         coords = (double[])subset.get("VertDim");
-        coords[0] = 10.0;
+        coords[0] = 0.0;
         coords[1] = (VertLen) - 1;
-        coords[2] = 2.0;
+        coords[2] = 1.0;
         subset.put("VertDim", coords);
         return subset;
       }
