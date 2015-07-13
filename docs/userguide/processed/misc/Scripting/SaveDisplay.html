@@ -72,12 +72,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       <li class="propertylistitem"><strong>west -</strong> Sets the west longitude to clip the image at.</li>
       <li class="propertylistitem"><strong>space -</strong> Sets a pixel spacing in each direction to clip into the image.<br>Example: <em>space=-50</em><br>
       Clips 50 pixels into the image in all four directions.</li>
-      <li class="propertylistitem"><strong>hSpace -</strong> Sets a pixel spacing in the horizontal to clip into the image.<br>
+      <li class="propertylistitem"><strong>hSpace -</strong> Sets a pixel spacing in the vertical to clip into the image.<br>
         Example: <em>hSpace=50</em><br>
-        Clips 50 pixels into the image in both horizontal directions (left and right).</li>
-      <li class="propertylistitem"><strong>vSpace -</strong> Sets a pixel spacing in the vertical to clip into the image.<br>
+        Clips 50 pixels into the image in both vertical directions (top and bottom).</li>
+      <li class="propertylistitem"><strong>vSpace -</strong> Sets a pixel spacing in the horizontal to clip into the image.<br>
         Example: <em>vSpace=20</em><br>
-        Clips 20 pixels into the image in both vertical directions (top and bottom).</li>
+        Clips 20 pixels into the image in both horizontal directions (left and right).</li>
     </ul>
   <li class="propertylistitem"><strong>Colorbar -</strong> Adds a colorbar to the output image. By default, no colorbar is added to the image.</li>
     <ul class="propertylist">
@@ -276,6 +276,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
   with openBundle, the sizes default to size of the display window when the bundle
   was saved. If data was loaded using createLayer, the sizes default to those
   defined in buildWindow.</div>
+<div class="TwoTabIndent">If running in a foreground session, the image capture is created from the display on the monitor.  Therefore, the user is limited to a window size that fits within the bounds of the monitor.  Any windows created with buildWindow must also include the Main Toolbar and Viewpoint Toolbar buttons in the window.  Therefore, there is also a minimum size the display window can be.  If a user wishes to capture larger or smaller images in a foreground session, they must use <strong>setFullScreenWidth()</strong>, <strong>setFullScreenHeight()</strong>, and <strong>toggleFullScreen()</strong>.  The setFullScreen functions accept numerical pixel values. From the background, buildWindow can be used for any size display.</div>
+<div class="ThreeTabIndent">Example of capturing a large image in a foreground session:</div>
+<div class="FourTabIndent"><em>panel=buildWindow()</em></div>
+<div class="FourTabIndent"><em>panel[0].setFullScreenWidth(1500)</em></div>
+<div class="FourTabIndent"><em>panel[0].setFullScreenHeight(1350)</em></div>
+<div class="FourTabIndent"><em>panel[0].toggleFullScreen()</em></div>
+<div class="FourTabIndent"><em>panel[0].captureImage('C:\\Users\\myuser\\Image.gif')</em></div>
   <div class="OneTabIndent">Example without formatting:</div>
   <div class="TwoTabIndent"><em>panel[0].captureImage('C:\\Users\\myuser\\Image.png'</em>)</div>
   <div class="OneTabIndent">Example with formatting:</div>
