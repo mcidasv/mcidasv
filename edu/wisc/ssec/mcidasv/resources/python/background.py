@@ -2942,6 +2942,18 @@ class buildWindow(object):
     def __str__(self):
         return str(self.panels)
         
+class getMcv(object):
+    def __init__(self):
+        self.mcv = getStaticMcv()
+        if not self.mcv:
+            raise TypeError("could not get reference to McIDAS-V!")
+            
+    def __enter__(self):
+        return self.mcv
+        
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.mcv = None
+        
 def makeLogger(name):
     """Create an SLF4J logging object using the given name."""
     return LoggerFactory.getLogger(name)
