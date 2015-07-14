@@ -2750,7 +2750,28 @@ def getJythonShellMaxHistoryLength():
     from ucar.unidata.idv.ui import JythonShell
     return JythonShell.loadMaxHistoryLength(
             getStaticMcv().getStore(), JythonShell.DEFAULT_MAX_HISTORY_LENGTH)
-
+            
+def getDataExplorer():
+    """Return reference to Data Explorer window.
+    
+    Be aware that this method will return None if the Data Explorer has not
+    been created.
+    """
+    mcv = getStaticMcv()
+    if mcv:
+        # setDashboard is private, otherwise I'd just write a getter
+        # note: within the codebase the "data explorer" is referred to as the
+        # "dashboard".
+        return mcv.getIdvUIManager().dashboard
+        
+def showDataExplorer(visibility):
+    """Control the visibility of the Data Explorer window."""
+    # note: within the codebase the "data explorer" is referred to as the
+    # "dashboard".
+    dashboard = getDataExplorer()
+    if dashboard:
+        dashboard.setVisible(visibility)
+        
 def _convertStringToNoOp(s):
     noopObj = None
     if isinstance(s, str):
