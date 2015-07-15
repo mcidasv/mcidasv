@@ -52,6 +52,12 @@ import ucar.nc2.util.CancelTask;
 
 public class GpmIosp extends AbstractIOServiceProvider {
 
+    private static final String LAT = "Latitude";
+
+    private static final String LON = "Longitude";
+
+    private static final String TC_PREFIX = "Tc_";
+
     private static final Logger logger = LoggerFactory.getLogger(GpmIosp.class);
 
     private NetcdfFile hdfFile;
@@ -59,6 +65,7 @@ public class GpmIosp extends AbstractIOServiceProvider {
     private static int[] getDimensionLengths(NetcdfFile hdf, String groupName) throws IOException {
         Group group = hdf.findGroup(groupName);
         Variable tc = group.findVariable("Tc");
+        
         return new int[] {
             tc.getDimension(0).getLength(),
             tc.getDimension(1).getLength(),
@@ -67,7 +74,8 @@ public class GpmIosp extends AbstractIOServiceProvider {
     }
 
     private static void addVar(NetcdfFile nc, Group g, int channel) {
-        Variable v = new Variable(nc, g, null, "Tc_"+channel, DataType.FLOAT, "line ele");
+        String varName = TC_PREFIX + channel;
+        Variable v = new Variable(nc, g, null, varName, DataType.FLOAT, "line ele");
         v.addAttribute(new Attribute("coordinates", "latitude longitude"));
         g.addVariable(v);
     }
@@ -82,13 +90,13 @@ public class GpmIosp extends AbstractIOServiceProvider {
     }
 
     private static void addLatitude(NetcdfFile nc, Group g) {
-        Variable lat = new Variable(nc, g, null, "Latitude", DataType.FLOAT, "line ele");
+        Variable lat = new Variable(nc, g, null, LAT, DataType.FLOAT, "line ele");
         lat.addAttribute(new Attribute(_Coordinate.AxisType, AxisType.Lat.toString()));
         g.addVariable(lat);
     }
 
     private static void addLongitude(NetcdfFile nc, Group g) {
-        Variable lon = new Variable(nc, g, null, "Longitude", DataType.FLOAT, "line ele");
+        Variable lon = new Variable(nc, g, null, LON, DataType.FLOAT, "line ele");
         lon.addAttribute(new Attribute(_Coordinate.AxisType, AxisType.Lon.toString()));
         g.addVariable(lon);
     }
@@ -139,25 +147,20 @@ public class GpmIosp extends AbstractIOServiceProvider {
     @Override public Array readData(Variable variable, Section section)
         throws IOException, InvalidRangeException
     {
-        logger.trace("variable='{}' group='{}' section='{}'", variable.getShortName(), variable.getParentGroup().getShortName(), section);
-
         String variableName = variable.getShortName();
         String groupName = variable.getParentGroup().getFullName();
         Group hdfGroup = hdfFile.findGroup(groupName);
         Array result;
 
-        if (variableName.equals("Latitude") || variableName.equals("Longitude")) {
+        if (variableName.equals(LAT) || variableName.equals(LON)) {
             Variable hdfVariable = hdfFile.findVariable(hdfGroup, variableName);
             result = hdfVariable.read();
         } else if (variableName.startsWith("Tc_")) {
             int channel = variableToChannel(variableName);
-            logger.trace("trying to read '{}' channel={}", variableName, channel);
-            Variable hdfVariable = hdfFile.findVariable(hdfGroup, "Tc");
-//            int[] counts = getLineElementCounts(hdfGroup);
             int[] counts = getDimensionLengths(hdfFile, groupName);
+            Variable hdfVariable = hdfFile.findVariable(hdfGroup, "Tc");
             result = readChannel(hdfVariable, counts[0], counts[1], channel);
         } else {
-            logger.trace("return null :(");
             result = null;
         }
         return result;
