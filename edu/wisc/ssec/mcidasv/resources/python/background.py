@@ -1005,7 +1005,8 @@ class _Display(_JavaProxy):
             mapDescription = str(mapState.getDescription()).lower()
             if description == mapDescription:
                 mapState.setVisible(visibility)
-                mapState.mapPanel.updateUI()
+                if mapState.mapPanel:
+                    mapState.mapPanel.updateUI()
                 return
         raise KeyError("No map matching '%s'" % originalDescription)
         
