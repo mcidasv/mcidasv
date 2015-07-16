@@ -1005,6 +1005,7 @@ class _Display(_JavaProxy):
             mapDescription = str(mapState.getDescription()).lower()
             if description == mapDescription:
                 mapState.setVisible(visibility)
+                # apparently there is no mapPanel when running from background!
                 if mapState.mapPanel:
                     mapState.mapPanel.updateUI()
                 return
