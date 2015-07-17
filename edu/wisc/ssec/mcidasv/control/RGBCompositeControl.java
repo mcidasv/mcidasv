@@ -204,7 +204,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
 
      setShowInDisplayList(true);
 
-     addDisplayable(imageDisplay, FLAG_COLORTABLE);
+     addDisplayable(imageDisplay, FLAG_COLORTABLE | FLAG_ZPOSITION);
 
      return true;
    }
@@ -468,12 +468,27 @@ public class RGBCompositeControl extends DisplayControlImpl {
    public float[][] getZeroOutArray(float[][] array) {
      float[][] newArray = new float[array.length][array[0].length];
      for (int i=0; i<newArray.length; i++) {
-       for (int j=0; j<newArray[0].length; j++) {
-         newArray[i][j] = 0f;
-       }
+         clear(newArray[i]);
+//       for (int j=0; j<newArray[0].length; j++) {
+//         newArray[i][j] = 0f;
+//       }
      }
      return newArray;
    }
+
+    // taken from https://github.com/RuedigerMoeller/fast-serialization
+    static float[] EmptyFloatArray = new float[10000];
+    public static void clear(float[] arr) {
+        int count = 0;
+        final int length = EmptyFloatArray.length;
+        while (arr.length - count > length) {
+            System.arraycopy(EmptyFloatArray, 0, arr, count, length);
+            count += length;
+        }
+        System.arraycopy(EmptyFloatArray, 0, arr, count, arr.length - count);
+    }
+
+
 
    protected ColorTable getInitialColorTable() {
      return getDisplayConventions().getParamColorTable("image");
@@ -645,10 +660,12 @@ public class RGBCompositeControl extends DisplayControlImpl {
      topPanel.add(Box.createHorizontalStrut(1), "span 5");
      topPanel.add(applyButton, "wrap");
      
-     JPanel bottomPanel = new JPanel(new MigLayout());
+     JPanel bottomPanel = new JPanel(new MigLayout("", "[align right][fill]"));
      bottomPanel.add(new JLabel("Common Gamma: "));
-     bottomPanel.add(gammaTxtFld);
-     bottomPanel.add(allGammaButton);
+     bottomPanel.add(gammaTxtFld, "flowx, split 2");
+     bottomPanel.add(allGammaButton, "alignx right, wrap");
+     bottomPanel.add(new JLabel("Vertical Position: "));
+     bottomPanel.add(doMakeZPositionSlider());
      
      JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
      mainPanel.add(topPanel);
