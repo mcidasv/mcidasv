@@ -54,6 +54,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel=buildWindow(height=600,width=800,panelTypes=GLOBE)</em></div>
 <div class="TwoTabIndent"><em>panel=buildWindow(height=600,width=800,panelTypes=MAP)</em></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">When working in a foreground session, it is possible to build a window that will close itself once it has completed the process assigned to it using Python's &quot;with statement&quot; functionality.  For example, a user can build a window, display a loop of satellite data, write a movie, then have the window close automatically when the movie capture is complete.  Here is an example of how to use this functionality with buildWindow.</div>
+<div class="ThreeTabIndent"><em>with buildWindow(height=1000,width=1200) as panel:</em></div>
+<div class="FourTabIndent"><em>layer = panel[0].createLayer('Image Sequence Display',myLoop)</em></div>
+<div class="FourTabIndent"><em>writeMovie('C:\\Users\\myUser\\myMovie.gif')</em></div>
 <p><strong><a name="openBundle" id="openBundle"></a>openBundle -</strong> Creates
   a new window and displays contents of a bundle</p>
 <div class="OneTabIndent">Usage: <em>openBundle(keywords)</em></div>
