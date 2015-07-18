@@ -2088,7 +2088,16 @@ class _Layer(_JavaProxy):
         newFont = _getNewFont(currentFont, fontName, style, size)
         vm.setDisplayListFont(newFont)
         self._getDisplayWrapper().labelDict['font'] = newFont
-
+        
+    @gui_invoke_later
+    def getVerticalPosition(self):
+        """Return the layer's current vertical position."""
+        from ucar.unidata.idv.control import MapDisplayControl
+        if isinstance(self._JavaProxy__javaObject, MapDisplayControl) and self._JavaProxy__javaObject.levelSlider:
+            return self._JavaProxy__javaObject.levelSlider.getValue()
+        else:
+            return self._JavaProxy__javaObject.getZPosition()
+            
     @gui_invoke_later
     def setVerticalPosition(self, verticalPosition):
         """Wrapper around DisplayControlImpl.setZPosition.
@@ -2099,10 +2108,16 @@ class _Layer(_JavaProxy):
         Raises:
             ValueError: if verticalPosition is not valid
         """
-        if (verticalPosition < -1.0 or verticalPosition > 1.0):
+        from ucar.unidata.idv.control import MapDisplayControl
+        if verticalPosition < -1.0 or verticalPosition > 1.0:
             raise ValueError('verticalPosition must be between -1.0 and 1.0')
-        self._JavaProxy__javaObject.setZPosition(verticalPosition)
-        
+            
+        if isinstance(self._JavaProxy__javaObject, MapDisplayControl) and self._JavaProxy__javaObject.levelSlider:
+            self._JavaProxy__javaObject.levelSlider.setValue(verticalPosition)
+            self._JavaProxy__javaObject.levelSlider.valueHasBeenSet()
+        else:
+            self._JavaProxy__javaObject.setZPosition(verticalPosition)
+            
     @gui_invoke_later
     def getLayoutModelName(self):
         if isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
