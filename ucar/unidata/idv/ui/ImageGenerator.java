@@ -83,6 +83,7 @@ import visad.georef.LatLonPoint;
 import visad.georef.MapProjection;
 
 import visad.util.BaseRGBMap;
+import visad.util.ColorMap;
 import visad.util.ColorPreview;
 
 
@@ -4690,9 +4691,21 @@ public class ImageGenerator extends IdvManager {
                         g.fillRect(0, 0, imageToDrawIn.getWidth(null),
                                    imageToDrawIn.getHeight(null));
                     }
+                    boolean includeAlpha = applyMacros(child, ATTR_TRANSPARENCY,
+                        true);
+
+                    float[][] ctValues;
+                    ColorMap colorMap;
+                    if (includeAlpha) {
+                        ctValues = colorTable.getAlphaTable();
+                        colorMap = new BaseRGBMap(ctValues, true);
+                    } else {
+                        ctValues = colorTable.getNonAlphaTable();
+                        colorMap = new BaseRGBMap(ctValues);
+                    }
                     ColorPreview preview =
                         new ColorPreview(
-                            new BaseRGBMap(colorTable.getNonAlphaTable()),
+                            colorMap,
                             (vertical
                              ? width
                              : height));
@@ -4701,27 +4714,23 @@ public class ImageGenerator extends IdvManager {
                     } else {
                         preview.setSize(new Dimension(width, height));
                     }
-                    Image previewImage = GuiUtils.getImage(preview);
-                    boolean includeAlpha = applyMacros(child, ATTR_TRANSPARENCY,
-                                               true);
-                    previewImage = ColorTableCanvas.getImage(colorTable,
+                    Image previewImage = ColorTableCanvas.getImage(colorTable,
                             (vertical
                              ? height
                              : width), (vertical
                                         ? width
                                         : height), includeAlpha);
 
-
                     if (vertical) {
+                        int imageType = includeAlpha
+                                        ? BufferedImage.TYPE_INT_ARGB
+                                        : BufferedImage.TYPE_INT_RGB;
+
                         BufferedImage tmpImage =
                             new BufferedImage(width, height,
-                                BufferedImage.TYPE_INT_RGB);
+                                imageType);
 
-                        BufferedImage tmpImagexxx =
-                            new BufferedImage(500, 500,
-                                BufferedImage.TYPE_INT_RGB);
-                        Graphics2D tmpG = (Graphics2D) tmpImage.getGraphics();
-                        tmpG.setColor(Color.red);
+                        Graphics2D tmpG = (Graphics2D)tmpImage.getGraphics();
                         tmpG.fillRect(0, 0, 1000, 1000);
                         tmpG.rotate(Math.toRadians(90.0));
                         tmpG.drawImage(previewImage, 0, 0 - width, null);
