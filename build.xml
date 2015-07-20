@@ -855,7 +855,7 @@
       <jvmarg value="-XX:+UseConcMarkSweepGC" />
       <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
       <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" />
-      <jvmarg value="-XX:MaxPermSize=512m" />
+      
       <!-- 
         these tiered compilation flags are apparently equivalent to -client.
         that said, i am deeply ambivalent about encouraging their use, as the
