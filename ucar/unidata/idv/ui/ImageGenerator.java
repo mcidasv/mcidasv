@@ -4695,14 +4695,13 @@ public class ImageGenerator extends IdvManager {
                         true);
 
                     float[][] ctValues;
-                    ColorMap colorMap;
+
                     if (includeAlpha) {
                         ctValues = colorTable.getAlphaTable();
-                        colorMap = new BaseRGBMap(ctValues, true);
                     } else {
                         ctValues = colorTable.getNonAlphaTable();
-                        colorMap = new BaseRGBMap(ctValues);
                     }
+                    ColorMap colorMap = new BaseRGBMap(ctValues);
                     ColorPreview preview =
                         new ColorPreview(
                             colorMap,
@@ -4731,7 +4730,6 @@ public class ImageGenerator extends IdvManager {
                                 imageType);
 
                         Graphics2D tmpG = (Graphics2D)tmpImage.getGraphics();
-                        tmpG.fillRect(0, 0, 1000, 1000);
                         tmpG.rotate(Math.toRadians(90.0));
                         tmpG.drawImage(previewImage, 0, 0 - width, null);
                         previewImage = tmpImage;
