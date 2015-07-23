@@ -781,7 +781,7 @@
     
     <!-- Include dependencies in single jar file -->
     <!-- this doesn't appear to work when j3d/jogl is included… -->
-    <target name="singlejar" depends="clean, auxdata.nodocs, ncidv.nolog, build"
+    <target name="singlejar" depends="clean, auxdata.nodocs, ncidv.nolog, external.nolog, build"
         description="Include dependencies in single jar file">
         
         <mkdir dir="${dist.dir}" />
@@ -820,7 +820,7 @@
     
     <!-- Create distribution product -->
     <target name="dist"
-        depends="auxdata.nodocs, ncidv.nolog, jar, startupmanager, javadoc.jar, userguide.jar"
+        depends="auxdata.nodocs, ncidv.nolog, external.nolog, jar, startupmanager, javadoc.jar, userguide.jar"
         description="Create distribution product" >
 <!--         <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
         <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" /> -->
@@ -830,7 +830,7 @@
     
     <!-- Create nightly webstart distribution product -->
     <target name="nightly"
-        depends="gitupdate, auxdata.nodocs, ncidv.nolog, jar.nightly, startupmanager, javadoc.jar, userguide.jar, source"
+        depends="gitupdate, auxdata.nodocs, ncidv.nolog, external.nolog, jar.nightly, startupmanager, javadoc.jar, userguide.jar, source"
         description="Create nightly webstart distribution product" />
         
     <!-- Build and run McIDAS-V application (small memory) -->
@@ -1172,6 +1172,16 @@
         <delete file="${idvlib.dir}/ncIdv.jar" failonerror="false" />
         
         <jar destfile="${idvlib.dir}/ncIdv.jar" basedir="${idvlib.dir}/tmp" index="true"/>
+        <delete dir="${idvlib.dir}/tmp" failonerror="false" />
+    </target>
+    
+    <!-- Remove the org/slf4j/ directory from external.jar -->
+    <target name="external.nolog" description="Remove the org/slf4j from external.jar">
+        <mkdir dir="${idvlib.dir}/tmp" />
+        <unzip src="${idvlib.dir}/external.jar" dest="${idvlib.dir}/tmp" />
+        <delete dir="${idvlib.dir}/tmp/org/slf4j" failonerror="false" />
+        <delete file="${idvlib.dir}/external.jar" failonerror="false" />
+        <jar destfile="${idvlib.dir}/external.jar" basedir="${idvlib.dir}/tmp" index="true"/>
         <delete dir="${idvlib.dir}/tmp" failonerror="false" />
     </target>
     
