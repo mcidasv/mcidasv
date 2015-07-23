@@ -40,10 +40,12 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.stream.Collectors;
 
 import edu.wisc.ssec.mcidasv.util.functional.Function;
 
@@ -72,6 +74,7 @@ public final class CollectionHelpers {
      * 
      * @return An array populated with each item from {@code ts}.
      */
+    @SafeVarargs
     public static <T> T[] arr(T... ts) { 
         return ts;
     }
@@ -88,6 +91,7 @@ public final class CollectionHelpers {
      * 
      * @return A {@code List} whose elements are each item within {@code elements}.
      */
+    @SafeVarargs
     public static <E> List<E> list(E... elements) {
         List<E> newList = arrList(elements.length);
         Collections.addAll(newList, elements);
@@ -109,6 +113,7 @@ public final class CollectionHelpers {
      * @return A {@code Set} containing the items in {@code elements}. Remember
      * that {@code Set}s only contain <i>unique</i> elements!
      */
+    @SafeVarargs
     public static <E> Set<E> set(E... elements) {
         Set<E> newSet = new LinkedHashSet<>(elements.length);
         Collections.addAll(newSet, elements);
@@ -170,32 +175,28 @@ public final class CollectionHelpers {
      */
     @SuppressWarnings({"WeakerAccess"})
     public static int len(final Object o) {
-        if (o == null) {
-            throw new NullPointerException("Null arguments do not have a length");
-        }
+        Objects.requireNonNull(o, "Null arguments do not have a length");
+        int len;
         if (o instanceof Collection<?>) {
-            return ((Collection<?>)o).size();
-        }
-        else if (o instanceof Map<?, ?>) {
-            return ((Map<?, ?>)o).size();
-        }
-        else if (o instanceof CharSequence) {
-            return ((CharSequence)o).length();
-        } 
-        else if (o instanceof Iterator<?>) {
+            len = ((Collection<?>)o).size();
+        } else if (o instanceof Map<?, ?>) {
+            len = ((Map<?, ?>)o).size();
+        } else if (o instanceof CharSequence) {
+            len = ((CharSequence)o).length();
+        } else if (o instanceof Iterator<?>) {
             int count = 0;
             Iterator<?> it = (Iterator<?>)o;
             while (it.hasNext()) {
                 it.next();
                 count++;
             }
-            return count;
+            len = count;
+        } else if (o instanceof Iterable<?>) {
+            len = len(((Iterable<?>)o).iterator());
+        } else {
+            throw new IllegalArgumentException("Don't know how to find the length of a " + o.getClass().getName());
         }
-        else if (o instanceof Iterable<?>) {
-            return len(((Iterable<?>)o).iterator());
-        }
-
-        throw new IllegalArgumentException("Don't know how to find the length of a "+o.getClass().getName());
+        return len;
     }
 
     /**
@@ -226,19 +227,14 @@ public final class CollectionHelpers {
     // TODO(jon:89): item should probably become an array/collection too...
     @SuppressWarnings({"WeakerAccess"})
     public static boolean contains(final Object collection, final Object item) {
-        if (collection == null) {
-            throw new NullPointerException("Cannot search a null object");
-        }
+        Objects.requireNonNull(collection, "Cannot search a null object.");
         if (collection instanceof Collection<?>) {
             return ((Collection<?>)collection).contains(item);
-        }
-        else if ((collection instanceof String) && (item instanceof CharSequence)) {
+        } else if ((collection instanceof String) && (item instanceof CharSequence)) {
             return ((String)collection).contains((CharSequence) item);
-        }
-        else if (collection instanceof Map<?, ?>) {
+        } else if (collection instanceof Map<?, ?>) {
             return ((Map<?, ?>)collection).containsKey(item);
-        }
-        else if (collection instanceof Iterator<?>) {
+        } else if (collection instanceof Iterator<?>) {
             Iterator<?> it = (Iterator<?>)collection;
             if (item == null) {
                 while (it.hasNext()) {
@@ -254,11 +250,9 @@ public final class CollectionHelpers {
                 }
             }
             return false;
-        }
-        else if (collection instanceof Iterable<?>) {
+        } else if (collection instanceof Iterable<?>) {
             return contains(((Iterable<?>) collection).iterator(), item);
-        }
-        else if (collection.getClass().isArray()) {
+        } else if (collection.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(collection); i++) {
                 if (Array.get(collection, i).equals(item)) {
                     return true;
@@ -274,12 +268,12 @@ public final class CollectionHelpers {
      * declaring fields as {@code final}.
      *
      * <p>Please consider using {@link #newHashSet(int)} or
-     * {@link #newHashSet(java.util.Collection)} instead of this method.
+     * {@link #newHashSet(Collection)} instead of this method.
      *
      * @return A new, empty {@code HashSet}.
      *
      * @see #newHashSet(int)
-     * @see #newHashSet(java.util.Collection)
+     * @see #newHashSet(Collection)
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <E> Set<E> newHashSet() {
@@ -316,12 +310,12 @@ public final class CollectionHelpers {
      * information and declaring fields as {@code final}.
      *
      * <p>Please consider using {@link #newLinkedHashSet(int)} or
-     * {@link #newLinkedHashSet(java.util.Collection)} instead of this method.
+     * {@link #newLinkedHashSet(Collection)} instead of this method.
      * 
      * @return A new, empty {@code LinkedHashSet}.
      *
      * @see #newLinkedHashSet(int)
-     * @see #newLinkedHashSet(java.util.Collection)
+     * @see #newLinkedHashSet(Collection)
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <E> Set<E> newLinkedHashSet() {
@@ -359,12 +353,12 @@ public final class CollectionHelpers {
      * declaring fields as {@code final}, while also reducing compiler warnings.
      *
      * <p>Please consider using {@link #newMap(int)} or
-     * {@link #newMap(java.util.Map)} instead of this method.
+     * {@link #newMap(Map)} instead of this method.
      *
      * @return A new, empty {@code HashMap}.
      *
      * @see #newMap(int)
-     * @see #newMap(java.util.Map)
+     * @see #newMap(Map)
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <K, V> Map<K, V> newMap() {
@@ -401,12 +395,12 @@ public final class CollectionHelpers {
      * declaring fields as {@code final}, while also reducing compiler warnings.
      *
      * <p>Please consider using {@link #newLinkedHashMap(int)} or
-     * {@link #newLinkedHashSet(java.util.Collection)} instead of this method.
+     * {@link #newLinkedHashSet(Collection)} instead of this method.
      *
      * @return A new, empty {@code LinkedHashMap}.
      *
      * @see #newLinkedHashMap(int)
-     * @see #newLinkedHashMap(java.util.Map)
+     * @see #newLinkedHashMap(Map)
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <K, V> Map<K, V> newLinkedHashMap() {
@@ -444,6 +438,7 @@ public final class CollectionHelpers {
      * 
      * @return Shiny and new {@code ConcurrentHashMap}
      */
+    @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <K, V> Map<K, V> concurrentMap() {
         return new ConcurrentHashMap<>();
     }
@@ -485,6 +480,7 @@ public final class CollectionHelpers {
      * @return A new {@code CopyOnWriteArrayList} that contains the incoming 
      * objects.
      */
+    @SafeVarargs
     public static <E> List<E> concurrentList(E... elems) {
         return new CopyOnWriteArrayList<>(elems);
     }
@@ -526,6 +522,7 @@ public final class CollectionHelpers {
      * @return A new {@code CopyOnWriteArraySet} that contains the incoming 
      * objects.
      */
+    @SafeVarargs
     public static <E> Set<E> concurrentSet(E... elems) {
         Set<E> set = new CopyOnWriteArraySet<>();
         Collections.addAll(set, elems);
@@ -549,12 +546,12 @@ public final class CollectionHelpers {
      * {@code List<String> listy = arrList();}
      *
      * <p>Please consider using {@link #arrList(int)} or
-     * {@link #arrList(java.util.Collection)} instead of this method.
+     * {@link #arrList(Collection)} instead of this method.
      * 
      * @return A new, empty {@code ArrayList}.
      *
      * @see #arrList(int)
-     * @see #arrList(java.util.Collection)
+     * @see #arrList(Collection)
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
     public static <E> List<E> arrList() {
@@ -649,11 +646,11 @@ public final class CollectionHelpers {
      * {@code keys[N], values[N]}.
      * 
      * @see #arr(Object...)
-     * @see #zipMap(java.util.Collection, java.util.Collection)
+     * @see #zipMap(Collection, Collection)
      */
     public static <K, V> Map<K, V> zipMap(K[] keys, V[] values) {
         Map<K, V> zipped = new LinkedHashMap<>(keys.length);
-        for (int i = 0; (i < keys.length && i < values.length); i++) {
+        for (int i = 0; (i < keys.length) && (i < values.length); i++) {
             zipped.put(keys[i], values[i]);
         }
         return zipped;
@@ -692,9 +689,7 @@ public final class CollectionHelpers {
      */
     public static <A, B> List<B> map(final Function<A, B> f, List<A> as) {
         List<B> bs = arrList(as.size());
-        for (A a : as) {
-            bs.add(f.apply(a));
-        }
+        bs.addAll(as.stream().map(f::apply).collect(Collectors.toList()));
         return bs;
     }
 
@@ -709,9 +704,7 @@ public final class CollectionHelpers {
      */
     public static <A, B> Set<B> map(final Function<A, B> f, Set<A> as) {
         Set<B> bs = newLinkedHashSet(as.size());
-        for (A a : as) {
-            bs.add(f.apply(a));
-        }
+        bs.addAll(as.stream().map(f::apply).collect(Collectors.toList()));
         return bs;
     }
 
