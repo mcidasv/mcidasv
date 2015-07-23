@@ -99,6 +99,6 @@
   <logger name="org.apache.fop" level="OFF" />
   <logger name="org.apache.xmlgraphics" level="OFF" />
   <logger name="edu.wisc.ssec.mcidasv.jython" level="OFF" />
-  <logger name="org.apache.http.wire" level="OFF" />
+  <logger name="org.apache.http" level="OFF" />
   <!-- End of verbose logger section -->
 </configuration>
