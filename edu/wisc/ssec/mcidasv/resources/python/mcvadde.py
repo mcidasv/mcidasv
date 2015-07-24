@@ -136,6 +136,21 @@ def _argHandler(explicit, implicit):
         return implicit[1]
     return explicit[1]
     
+def _lookupAccounting(server, dataset):
+    mcv = getStaticMcv()
+    if mcv:
+        sm = mcv.getServerManager()
+        types = sm.getTypes(server, dataset)
+        accounts = set()
+        for t in types:
+            temp = sm.getAccountingFor(server, dataset, t)
+            accounts.append((temp.getUsername(), temp.getProject()))
+        # there is the possibility that server+dataset+IMAGE will return 
+        # different accounting info than server+dataset+RADAR...
+        return accounts[0]
+    else:
+        return DEFAULT_ACCOUNTING
+        
 # note: if you are looking to add a new format you may need to make changes to 
 # LocalAddeEntry's ServerName and AddeFormat enums, and the format combo boxes 
 # in LocalEntryEditor and LocalEntryShortcut.
@@ -1186,7 +1201,7 @@ def getADDEImage(*args, **kwargs):
     
 def _getADDEImage(localEntry=None,
     server=None, dataset=None, descriptor=None,
-    accounting=DEFAULT_ACCOUNTING,
+    accounting=None,
     location=None,
     coordinateSystem=None,
     place=None,
@@ -1218,6 +1233,11 @@ def _getADDEImage(localEntry=None,
     
     # still need to handle dates+times
     # todo: don't break!
+    
+    if not accounting:
+        # this will return DEFAULT_ACCOUNTING if nothing was found
+        accounting = _lookupAccounting(server, dataset)
+        
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
