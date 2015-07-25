@@ -88,9 +88,9 @@ This file overrides IDV addeservers.xml
        type="text"/>
   </server> -->
   
-  <server name="rets1.ssec.wisc.edu">
+  <server name="rci.ssec.wisc.edu">
     <group
-       names="CIMSSP1"
+       names="CIMSSP"
        type="image"/>
   </server>
 
