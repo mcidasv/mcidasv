@@ -80,7 +80,6 @@ import edu.wisc.ssec.mcidasv.util.trie.PatriciaTrie;
  *
  * @see AddeThread
  */
-
 public class EntryStore {
 
     /** 
@@ -370,7 +369,8 @@ public class EntryStore {
      * @param store Object store that represents the user's preferences.
      * Cannot be {@code null}.
      * 
-     * @return Either the {@code AddeEntrys} stored in the prefs or an empty {@link java.util.Set Set}.
+     * @return Either the {@code AddeEntrys} stored in the prefs or an empty
+     * {@link Set}.
      */
     private Set<AddeEntry> extractPreferencesEntries(final IdvObjectStore store) {
         assert store != null;
@@ -397,7 +397,8 @@ public class EntryStore {
     /**
      * Responds to server manager events being passed with the event bus. 
      * 
-     * @param evt Event to which this method is responding. Cannot be {@code null}.
+     * @param evt Event to which this method is responding. Cannot be
+     * {@code null}.
      *
      * @throws NullPointerException if {@code evt} is {@code null}.
      */
@@ -436,13 +437,13 @@ public class EntryStore {
     }
 
     /**
-     * Searches the newest entries for the entries of the given {@link EntryType}.
+     * Searches the newest entries for the entries of the given
+     * {@link EntryType}.
      * 
      * @param type Look for entries matching this {@code EntryType}.
      * Cannot be {@code null}.
      * 
-     * @return Either a {@link java.util.List List} of entries or an empty
-     * {@code List}.
+     * @return Either a {@link List} of entries or an empty {@code List}.
      *
      * @throws NullPointerException if {@code type} is {@code null}.
      */
@@ -532,7 +533,7 @@ public class EntryStore {
                 newLinkedHashMap(EntryType.values().length);
         int size = trie.size();
         for (EntryType type : EntryType.values()) {
-            entryMap.put(type, new LinkedHashSet<AddeEntry>(size));
+            entryMap.put(type, new LinkedHashSet<>(size));
         }
 
         for (AddeEntry entry : trie.values()) {
@@ -676,7 +677,8 @@ public class EntryStore {
      * @see RemoteAddeEntry#equals(Object)
      */
     public AddeAccount getAccountingFor(final String address, final String group, EntryType type) {
-        Collection<AddeEntry> entries = trie.getPrefixedBy(address+'!'+group+'!'+type.name()).values();
+        Collection<AddeEntry> entries =
+            trie.getPrefixedBy(address+'!'+group+'!'+type.name()).values();
         for (AddeEntry entry : entries) {
             if (!isInvalidEntry(entry)) {
                 return entry.getAccount();
@@ -699,7 +701,8 @@ public class EntryStore {
      */
     public AddeAccount getAccountingFor(final AddeServer idvServer, String typeAsStr) {
         String address = idvServer.getName();
-        List<AddeServer.Group> groups = (List<AddeServer.Group>)idvServer.getGroups();
+        List<AddeServer.Group> groups =
+            (List<AddeServer.Group>)idvServer.getGroups();
         if ((groups != null) && !groups.isEmpty()) {
             EntryType type = EntryTransforms.strToEntryType(typeAsStr);
             return getAccountingFor(address, groups.get(0).getName(), type);
@@ -932,14 +935,14 @@ public class EntryStore {
 
     /**
      * Returns all enabled, valid {@link LocalAddeEntry LocalAddeEntries} as a
-     * collection of {@literal "IDV style"}
-     * {@link ucar.unidata.idv.chooser.adde.AddeServer.Group AddeServer.Group}
+     * collection of {@literal "IDV style"} {@link AddeServer.Group}
      * objects.
      *
      * @return {@link Set} of {@code AddeServer.Group} objects that corresponds
      * with the enabled, valid local ADDE entries.
      */
-    // if true, filters out disabled local groups; if false, returns all local groups
+    // if true, filters out disabled local groups; if false, returns all
+    // local groups
     public Set<AddeServer.Group> getIdvStyleLocalGroups() {
         Set<LocalAddeEntry> localEntries = getLocalEntries();
         Set<AddeServer.Group> idvGroups = newLinkedHashSet(localEntries.size());
@@ -975,7 +978,7 @@ public class EntryStore {
     /**
      * Returns the entries matching the given {@code server} and
      * {@code type} parameters as a collection of
-     * {@link ucar.unidata.idv.chooser.adde.AddeServer.Group AddeServer.Group}
+     * {@link AddeServer.Group}
      * objects.
      *
      * @param server Remote ADDE server. Should not be {@code null}.
