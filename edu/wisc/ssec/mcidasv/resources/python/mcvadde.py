@@ -684,7 +684,7 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     
 def listADDEImageTimes(localEntry=None,
     server=None, dataset=None, descriptor=None,
-    accounting=DEFAULT_ACCOUNTING,
+    accounting=None,
     location=None,
     coordinateSystem=None,
     place=None,
@@ -727,6 +727,10 @@ def listADDEImageTimes(localEntry=None,
         
     # server = '%s:%s' % (server, port)
     
+    if not accounting:
+        # this will return DEFAULT_ACCOUNTING if nothing was found
+        accounting = _lookupAccounting(server, dataset)
+        
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
@@ -896,7 +900,7 @@ def listADDEImageTimes(localEntry=None,
     
 def listADDEImages(localEntry=None,
     server=None, dataset=None, descriptor=None,
-    accounting=DEFAULT_ACCOUNTING,
+    accounting=None,
     location=None,
     coordinateSystem=None,
     place=None,
@@ -938,7 +942,10 @@ def listADDEImages(localEntry=None,
         port = "112"
         
     # server = '%s:%s' % (server, port)
-    
+    if not accounting:
+        # this will return DEFAULT_ACCOUNTING if nothing was found
+        accounting = _lookupAccounting(server, dataset)
+        
     user = accounting[0]
     proj = accounting[1]
     debug = str(debug).lower()
