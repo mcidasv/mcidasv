@@ -363,7 +363,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                     line = line.substring("@param".length()).trim();
                     String[] toks = split(line, " ", 2);
                     if (attrProps == null) {
-                        attrProps = new HashMap<String, String>();
+                        attrProps = new HashMap<>();
                     }
                     attrProps.put(toks[0], '[' + toks[1] + ']');
                 }
@@ -372,7 +372,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                 if (formulaId == null) {
                     formulaId = func.__name__;
                 }
-                List<DataCategory> categories = new ArrayList<DataCategory>();
+                List<DataCategory> categories = new ArrayList<>();
                 if (group != null) {
                     categories.add(DataCategory.parseCategory(group, true));
                 }
@@ -471,9 +471,9 @@ public class JythonManager extends IdvManager implements ActionListener {
                 return null;
             }
             treePanel  = new TreePanel();
-            libHolders = new ArrayList<LibHolder>(resources.size() * 10);
+            libHolders = new ArrayList<>(resources.size() * 10);
             int systemCnt = 1;
-            Map<String, String> seen = new HashMap<String, String>();
+            Map<String, String> seen = new HashMap<>();
             for (int i = 0; i < resources.size(); i++) {
                 String showInEditor = resources.getProperty("showineditor", i);
                 if ((showInEditor != null) && "false".equals(showInEditor)) {
@@ -982,17 +982,22 @@ public class JythonManager extends IdvManager implements ActionListener {
     public PythonInterpreter createInterpreter() {
         PythonInterpreter interp = new PythonInterpreter();
         addInterpreter(interp);
-        outputStream = new OutputStream() {
-            @Override public void write(byte[] b, int off, int len) {
-                print(new String(b, off, len));
-            }
-            private void print(final String output) {
-                jythonLogger.info("{}", output);
-            }
-            @Override public void write(int b) {}
-        };
-        interp.setOut(outputStream);
-        interp.setErr(outputStream);
+        // only needed for background output?
+        if (getArgsManager().getNoGui()) {
+            outputStream = new OutputStream() {
+                @Override public void write(byte[] b, int off, int len) {
+                    print(new String(b, off, len));
+                }
+
+                private void print(final String output) {
+                    jythonLogger.info("{}", output);
+                }
+
+                @Override public void write(int b) { }
+            };
+            interp.setOut(outputStream);
+            interp.setErr(outputStream);
+        }
         return interp;
     }
     
@@ -1210,7 +1215,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      */
     private boolean evaluateLibJython(boolean forWriting, LibHolder holderToWrite) {
         boolean ok   = false;
-        String  what = "";
+        String what = "";
         try {
             if (interpreters.isEmpty()) {
                 getDerivedDataInterpreter();
