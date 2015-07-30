@@ -99,12 +99,15 @@ import visad.util.DataUtility;
 
 
 
+
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Frame;
@@ -154,6 +157,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
@@ -850,6 +854,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
     /** slider for setting skip values */
     protected JSlider skipSlider;
+    
+    /** text field for setting skip values, complements slider */
+    protected JTextField skipTextField;
 
     /** z position slider */
     private ZSlider zPositionSlider;
@@ -12468,6 +12475,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @return  slider for setting skip factor
      */
     protected Component doMakeSkipFactorSlider() {
+    	
         skipSlider = new JSlider(0, 10, skipValue);
         skipSlider.setPaintTicks(true);
         skipSlider.setPaintLabels(true);
@@ -12479,6 +12487,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 if (skipSlider.getValueIsAdjusting()) {
                     return;
                 }
+                // Done adjusting, update text field
+                skipTextField.setText(Integer.toString(skipSlider.getValue()));
                 Misc.run(new Runnable() {
                     public void run() {
                         applySkipFactor();
@@ -12486,7 +12496,49 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 });
             }
         });
-        return GuiUtils.hgrid(skipSlider, GuiUtils.filler());
+        
+    	// TJJ Jul 2015, add text field to complement slider for UI consistency
+    	// Inq #1964
+        
+    	skipTextField = new JTextField(5);
+    	skipTextField.setText(Integer.toString(skipValue));
+		skipTextField.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String s = skipTextField.getText();
+				if ((s != null)) {
+					try {
+						int newSkipVal = Integer.parseInt(s);
+						if ((newSkipVal < skipSlider.getMinimum()) || (newSkipVal > skipSlider.getMaximum())) {
+							// show dialog
+							JOptionPane
+									.showMessageDialog(null,
+											"Invalid Skip Value, must be within slider range.");
+						} else {
+							skipSlider.setValue(newSkipVal);
+							// update slider and apply the new val
+							Misc.run(new Runnable() {
+								public void run() {
+									applySkipFactor();
+								}
+							});
+						}
+					} catch (NumberFormatException nfe) {
+						// just reset to last valid number
+						skipTextField.setText(Integer.toString(skipSlider
+								.getValue()));
+					}
+				}
+			}
+
+		});
+    	JPanel skipPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        skipPanel.add(skipSlider);
+        skipPanel.add(skipTextField);
+
+        return skipPanel;
     }
 
     /**
