@@ -3461,7 +3461,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
     #       for now.
     # Note2:  For some reason the MultiDimensionSubset isn't associated 
     #         with a key... so I can't think of a better way to do this...
-    for thing in data_choice.getProperties().values().toArray():
+    for thing in data_choice.getProperties().values():
         if isinstance(thing, MultiDimensionSubset):
             multi_dimension_subset = thing
             break
