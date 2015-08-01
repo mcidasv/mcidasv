@@ -169,6 +169,20 @@ public class ColorMap {
         return GuiUtils.hbox(swatchComps[0], swatchComps[2]);
     }
 
+    public JComponent[] getSwatchComps(XmlObjectStore store) {
+        this.store = store;
+        if (swatchComps == null) {
+            swatchComps = GuiUtils.makeColorSwatchWidget(store, color, "");
+        }
+        return swatchComps;
+    }
+
+    public JComponent getColorWidget(XmlObjectStore store) {
+        this.store = store;
+        getSwatchComps();
+        return GuiUtils.hbox(swatchComps[0], swatchComps[2]);
+    }
+
     /**
      * Pattern widget
      *

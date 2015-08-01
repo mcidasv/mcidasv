@@ -890,10 +890,11 @@ public class PropertiesDialog implements ActionListener {
         colorMappings = new ArrayList(mappings);
         colorMappings.add(new ColorMap());
         colorMappings.add(new ColorMap());
+        XmlObjectStore store = canvas.getStationModelManager().store;
         for (int i = 0; i < colorMappings.size(); i++) {
             ColorMap colorMap = (ColorMap) colorMappings.get(i);
             mappingComps.add(colorMap.getPatternWidget());
-            mappingComps.add(colorMap.getColorWidget());
+            mappingComps.add(colorMap.getColorWidget(store));
         }
         GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
         JPanel mappingPanel = GuiUtils.doLayout(mappingComps, 2,
