@@ -143,7 +143,7 @@ public class ColorMap {
         range   = null;
         pattern = patternFld.getText().trim();
         ColorSwatchComponent colorSwatch =
-            (ColorSwatchComponent) getSwatchComps()[0];
+            (ColorSwatchComponent) getSwatchComps(store)[0];
         color = colorSwatch.getSwatchColor();
     }
 
@@ -152,6 +152,7 @@ public class ColorMap {
      *
      * @return color swatch components
      */
+    @Deprecated
     public JComponent[] getSwatchComps() {
         if (swatchComps == null) {
             swatchComps = GuiUtils.makeColorSwatchWidget(store, color, "");
@@ -164,11 +165,22 @@ public class ColorMap {
      *
      * @return  color widget
      */
+    @Deprecated
     public JComponent getColorWidget() {
         getSwatchComps();
         return GuiUtils.hbox(swatchComps[0], swatchComps[2]);
     }
 
+    /**
+     * Get the color swatch components. If {@code swatchComps} is {@code null},
+     * this method will call
+     * {@link GuiUtils#makeColorSwatchWidget(XmlObjectStore, Color, String)}.
+     *
+     * @param store Application preferences. This allows the user to pick from
+     * a previously selected color.
+     *
+     * @return Color swatch components.
+     */
     public JComponent[] getSwatchComps(XmlObjectStore store) {
         this.store = store;
         if (swatchComps == null) {
@@ -177,9 +189,17 @@ public class ColorMap {
         return swatchComps;
     }
 
+    /**
+     * Make the color widget.
+     *
+     * @param store Application preferences. This allows the user to pick from
+     * a previously selected color.
+     *
+     * @return Color widget.
+     */
     public JComponent getColorWidget(XmlObjectStore store) {
         this.store = store;
-        getSwatchComps();
+        getSwatchComps(store);
         return GuiUtils.hbox(swatchComps[0], swatchComps[2]);
     }
 
