@@ -1041,9 +1041,28 @@ public class GuiUtils extends LayoutUtil {
         return new JComponent[] { swatch, swatch.setBtn, swatch.clearBtn };
     }
 
-    public static JComponent[] makeColorSwatchWidget(XmlObjectStore store, Color color, String label) {
-        ColorSwatchComponent swatch = new ColorSwatchComponent(store, color, label);
-        return new JComponent[] { swatch, swatch.getSetButton(), swatch.getClearButton() };
+    /**
+     * This makes a color swatch and a 'Set' button that is used to set the
+     * color. It returns a 3 element array holding the swatch, the
+     * {@literal "set"} button, and the {@literal "clear"} button.
+     *
+     * @oaram store Application preferences. This allows the user to pick from
+     * a previously selected color.
+     * @param color Initial color.
+     * @param label Label to use when popping up the color dialog.
+     *
+     * @return 3 element array that holds the swatch and the set button and
+     * the clear button.
+     */
+    public static JComponent[] makeColorSwatchWidget(XmlObjectStore store,
+            Color color, String label) {
+        ColorSwatchComponent swatch =
+            new ColorSwatchComponent(store, color, label);
+        return new JComponent[] {
+            swatch,
+            swatch.getSetButton(),
+            swatch.getClearButton()
+        };
     }
 
     /**
