@@ -34,8 +34,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -53,6 +51,9 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.MenuUtil;
@@ -62,12 +63,14 @@ import ucar.unidata.xml.XmlObjectStore;
 import edu.wisc.ssec.mcidasv.Constants;
 
 /**
- * This is largely the same as {@link ucar.unidata.util.GuiUtils.ColorSwatch},
- * but it remembers the user's recently selected colors.
+ * This is largely the same as {@link GuiUtils.ColorSwatch}, but it remembers
+ * the user's recently selected colors.
  */
 public class ColorSwatchComponent extends JPanel implements PropertyChangeListener {
 
-//    private static final Logger logger = LoggerFactory.getLogger(ColorSwatchComponent.class);
+    /** Logging object. */
+    private static final Logger logger =
+        LoggerFactory.getLogger(ColorSwatchComponent.class);
 
     /** Flag for alpha. */
     boolean doAlpha = false;
@@ -118,27 +121,14 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
         setBorder(BorderFactory.createLoweredBevelBorder());
 
         clearBtn = new JButton("Clear");
-        clearBtn.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent ae) {
-                ColorSwatchComponent.this.setBackground(null);
-            }
-        });
+        clearBtn.addActionListener(ae -> setBackground(null));
 
         setBtn = new JButton("Set");
-        setBtn.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent ae) {
-                setColorFromChooser();
-            }
-        });
-
+        setBtn.addActionListener(ae -> setColorFromChooser());
 
         this.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
-                Misc.run(new Runnable() {
-                    @Override public void run() {
-                        showColorChooser();
-                    }
-                });
+                showColorChooser();
             }
         });
     }
@@ -226,8 +216,15 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
             new ArrayList<>(Arrays.asList(chooser.getChooserPanels()));
         choosers.remove(0);
         PersistableSwatchChooserPanel swatch = new PersistableSwatchChooserPanel();
-        List<Color> savedColors =
-            (List<Color>)store.get(Constants.PROP_RECENT_COLORS);
+        List<Color> savedColors;
+        if (store != null) {
+            savedColors = (List<Color>)store.get(Constants.PROP_RECENT_COLORS);
+        } else {
+            // don't want to use Collections.emptyList, as the user may still
+            // attempt to add colors...they just won't be saved in this case. :(
+            savedColors = new ArrayList<>(10);
+            logger.warn("'store' field is null! colors cannot be saved between sessions.");
+        }
         if (savedColors != null) {
             tracker.setColors(savedColors);
         }
