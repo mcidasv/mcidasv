@@ -1694,7 +1694,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     public static IdvWindow buildDynamicSkin(int width, int height, int rows, int cols, List<PyObject> panelTypes) throws Exception {
-        Document doc = XmlUtil.getDocument(SIMPLE_SKIN_TEMPLATE);
+        Document doc = XmlUtil.getDocument(BUILDWINDOW_SKIN_TEMPLATE);
         Element root = doc.getDocumentElement();
         Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
         panel.setAttribute(DYNSKIN_ATTR_ROWS, Integer.toString(rows));
@@ -1703,7 +1703,7 @@ public class PersistenceManager extends IdvPersistenceManager {
         for (PyObject panelType : panelTypes) {
             String panelTypeRepr = panelType.__repr__().toString();
             Element node = doc.createElement(IdvUIManager.COMP_VIEW);
-            StringBuilder props = new StringBuilder(DYNSKIN_PROPS_GENERAL);
+            StringBuilder props = new StringBuilder(BUILDWINDOW_PROPS_GENERAL);
             props.append("size=").append(width).append(':').append(height).append(';');
 //            logger.trace("window props: {}", props);
             if ("MAP".equals(panelTypeRepr)) {
@@ -1743,6 +1743,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     private static final String DYNSKIN_ATTR_VIEWID = "viewid";
     private static final String DYNSKIN_PROPS_GLOBE = "useGlobeDisplay=true;initialMapResources=/edu/wisc/ssec/mcidasv/resources/maps.xml;";
     private static final String DYNSKIN_PROPS_GENERAL = "clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;showEarthNavPanel=false;showControlLegend=false;shareGroup=view%versionuid%;";
+    private static final String BUILDWINDOW_PROPS_GENERAL = "clickToFocus=true;showToolBars=false;TopBarVisible=false;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;showEarthNavPanel=false;showControlLegend=false;shareGroup=view%versionuid%;";
     private static final String DYNSKIN_ID_VALUE = "mcv.content";
 
     /** XML template for generating dynamic skins. */
@@ -1774,9 +1775,24 @@ public class PersistenceManager extends IdvPersistenceManager {
         "    <property name=\"icon.wait.wait\" value=\"/ucar/unidata/idv/images/wait.gif\"/>\n" +
         "  </properties>\n" +
         "</skin>\n";
-    
-    
-    
+
+    /** Dynamic skin template for buildWindow. */
+    private static final String BUILDWINDOW_SKIN_TEMPLATE =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<skin embedded=\"true\">\n" +
+        "  <ui>\n" +
+        "    <panel layout=\"border\" bgcolor=\"red\">\n" +
+        "      <panel layout=\"border\" place=\"Center\">\n" +
+        "        <panel embeddednode=\"true\" id=\"mcv.content\" layout=\"grid\" place=\"Center\">\n" +
+        "        </panel>" +
+        "      </panel>\n" +
+        "    </panel>\n" +
+        "  </ui>\n" +
+        "  <properties>\n" +
+        "    <property name=\"icon.wait.wait\" value=\"/ucar/unidata/idv/images/wait.gif\"/>\n" +
+        "  </properties>\n" +
+        "</skin>\n";
+
     /**
      * Write the parameter sets
      */
