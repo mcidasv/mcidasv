@@ -3,7 +3,7 @@
   <ui>
     <panel layout="border">
       <panel place="Center" layout="border">
-        <idv.component.group autoimportdisplays="false" border="empty" layout="tabs" name="Group" place="Center" />
+        <idv.component.group autoimportdisplays="false" border="empty" layout="tabs" name="Group" place="Center" hideTabArea="true"/>
       </panel>
     </panel>
   </ui>

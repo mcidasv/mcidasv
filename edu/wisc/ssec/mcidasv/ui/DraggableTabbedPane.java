@@ -569,6 +569,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
         super.addTab(title, new TabButton(), component);
     }
 
+    public static boolean showTabArea(McvComponentGroup group, JTabbedPane tabbedPane) {
+        return !group.getHideTabArea() || (tabbedPane.getTabCount() > 1);
+    }
+
     class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
         private int horizontalTextPosition = SwingConstants.LEFT;
 
@@ -614,18 +618,36 @@ public class DraggableTabbedPane extends JTabbedPane implements
             textRect.y += yNudge;
         }
 
+        @Override protected int calculateTabAreaHeight(int placement, int count, int height) {
+            return showTabArea(group, tabPane)
+                   ? super.calculateTabAreaHeight(placement, count, height)
+                   : 0;
+        }
+
+        @Override protected void paintTabBorder(Graphics g, int placement,
+                                                int idx,
+                                                int x, int y, int w, int h,
+                                                boolean isSel)
+        {
+            if (showTabArea(group, tabPane)) {
+                super.paintTabBorder(g, placement, idx, x, y, w, h, isSel);
+            }
+        }
+
         @Override protected void paintTabBackground(Graphics g,
-            int tabPlacement, int tabIndex, int x, int y, int w, int h,
+            int placement, int idx, int x, int y, int w, int h,
             boolean isSelected)
         {
-            if (isSelected) {
+            if (showTabArea(group, tabPane)) {
+                if (isSelected) {
+                    g.setColor(selected);
+                } else {
+                    g.setColor(unselected);
+                }
+                g.fillRect(x, y, w, h);
                 g.setColor(selected);
-            } else {
-                g.setColor(unselected);
+                g.drawLine(x, y, x, y + h);
             }
-            g.fillRect(x, y, w, h);
-            g.setColor(selected);
-            g.drawLine(x, y, x, y+h);
         }
     }
 
@@ -637,6 +659,32 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         public CloseableMetalTabbedPaneUI(int horizontalTextPosition) {
             this.horizontalTextPosition = horizontalTextPosition;
+        }
+
+        @Override protected void paintTabBorder(Graphics g, int placement,
+                                                int idx,
+                                                int x, int y, int w, int h,
+                                                boolean isSel)
+        {
+            if (showTabArea(group, tabPane)) {
+                super.paintTabBorder(g, placement, idx, x, y, w, h, isSel);
+            }
+        }
+
+        @Override protected void paintTabBackground(Graphics g, int placement,
+                                                    int idx,
+                                                    int x, int y, int w, int h,
+                                                    boolean isSel)
+        {
+            if (showTabArea(group, tabPane)) {
+                super.paintTabBackground(g, placement, idx, x, y, w, h, isSel);
+            }
+        }
+
+        @Override protected int calculateTabAreaHeight(int placement, int count, int height) {
+            return showTabArea(group, tabPane)
+                   ? super.calculateTabAreaHeight(placement, count, height)
+                   : 0;
         }
 
         @Override protected void layoutLabel(int tabPlacement, 

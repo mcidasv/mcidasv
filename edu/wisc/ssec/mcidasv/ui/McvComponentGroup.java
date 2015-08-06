@@ -45,9 +45,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -132,6 +135,12 @@ public class McvComponentGroup extends IdvComponentGroup {
     private boolean tabRenamed = false;
 
     /**
+     * Whether or not the {@literal "tab area"} should be visible if there is
+     * only a single tab (defaults to {@code false}).
+     */
+    private boolean hideTabArea;
+
+    /**
      * Default constructor for serialization.
      */
     public McvComponentGroup() {}
@@ -147,11 +156,12 @@ public class McvComponentGroup extends IdvComponentGroup {
     {
         super(idv, name);
         this.idv = idv;
+        hideTabArea = false;
         init();
     }
 
     /**
-     * This constructor catches the window that will be contain this group.
+     * This constructor catches the window that will be contained in this group.
      * 
      * @param idv The main IDV instance.
      * @param name Presumably the name of this component group?
@@ -163,7 +173,17 @@ public class McvComponentGroup extends IdvComponentGroup {
         super(idv, name);
         this.window = window;
         this.idv = idv;
+        hideTabArea = false;
         init();
+    }
+
+    public boolean getHideTabArea() {
+//        logger.trace("val: {}", hideTabArea);
+        return hideTabArea;
+    }
+
+    public void setHideTabArea(boolean hide) {
+        hideTabArea = hide;
     }
 
     /**
@@ -173,6 +193,7 @@ public class McvComponentGroup extends IdvComponentGroup {
         if (initDone) {
             return;
         }
+
         tabbedPane = new DraggableTabbedPane(window, idv, this);
 //        tabbedPane.addMouseListener(new TabPopupListener());
 
@@ -191,6 +212,15 @@ public class McvComponentGroup extends IdvComponentGroup {
         GuiUtils.handleHeavyWeightComponentsInTabs(tabbedPane);
         initDone = true;
     }
+
+    @Override public void initWith(Element node) {
+        boolean myhideTabArea = XmlUtil.getAttribute(node, "hideTabArea", false);
+//        logger.trace("node val: {} field: {}", myhideTabArea, hideTabArea);
+        hideTabArea = myhideTabArea;
+        super.initWith(node);
+    }
+
+//    private static final Logger logger = LoggerFactory.getLogger(McvComponentGroup.class);
 
     /**
      * Create and return the GUI contents. Overridden so that McV can implement
