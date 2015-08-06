@@ -1722,8 +1722,8 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
         panel.appendChild(view);
         UIManager uiManager = (UIManager)McIDASV.getStaticMcv().getIdvUIManager();
-        Element skinRoot = XmlUtil.getRoot(Constants.BLANK_COMP_GROUP, PersistenceManager.class);
-        IdvWindow window = uiManager.createNewWindow(null, false, "McIDAS-V", Constants.BLANK_COMP_GROUP, skinRoot, false, null);
+        Element skinRoot = XmlUtil.getRoot(BUILDWINDOW_COMP_GROUP, PersistenceManager.class);
+        IdvWindow window = uiManager.createNewWindow(null, false, "McIDAS-V", BUILDWINDOW_COMP_GROUP, skinRoot, false, null);
         ComponentGroup group = window.getComponentGroups().get(0);
         McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
         holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
@@ -1743,7 +1743,6 @@ public class PersistenceManager extends IdvPersistenceManager {
     private static final String DYNSKIN_ATTR_VIEWID = "viewid";
     private static final String DYNSKIN_PROPS_GLOBE = "useGlobeDisplay=true;initialMapResources=/edu/wisc/ssec/mcidasv/resources/maps.xml;";
     private static final String DYNSKIN_PROPS_GENERAL = "clickToFocus=true;showToolBars=true;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;showEarthNavPanel=false;showControlLegend=false;shareGroup=view%versionuid%;";
-    private static final String BUILDWINDOW_PROPS_GENERAL = "clickToFocus=true;showToolBars=false;TopBarVisible=false;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;showEarthNavPanel=false;showControlLegend=false;shareGroup=view%versionuid%;";
     private static final String DYNSKIN_ID_VALUE = "mcv.content";
 
     /** XML template for generating dynamic skins. */
@@ -1775,6 +1774,11 @@ public class PersistenceManager extends IdvPersistenceManager {
         "    <property name=\"icon.wait.wait\" value=\"/ucar/unidata/idv/images/wait.gif\"/>\n" +
         "  </properties>\n" +
         "</skin>\n";
+
+    private static final String BUILDWINDOW_COMP_GROUP =
+        "/edu/wisc/ssec/mcidasv/resources/skins/window/buildwindow.xml";
+
+    private static final String BUILDWINDOW_PROPS_GENERAL = "clickToFocus=true;showToolBars=false;TopBarVisible=false;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;showEarthNavPanel=false;showControlLegend=false;shareGroup=view%versionuid%;";
 
     /** Dynamic skin template for buildWindow. */
     private static final String BUILDWINDOW_SKIN_TEMPLATE =

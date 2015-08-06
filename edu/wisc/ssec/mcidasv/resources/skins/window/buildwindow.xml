@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<skin>
+  <ui>
+    <panel layout="border">
+      <panel place="Center" layout="border">
+        <idv.component.group autoimportdisplays="false" border="empty" layout="tabs" name="Group" place="Center" />
+      </panel>
+    </panel>
+  </ui>
+  <properties>
+    <property name="icon.wait.wait" value="/ucar/unidata/idv/images/wait.gif"/>
+  </properties>
+</skin>
