@@ -357,9 +357,17 @@ public class MultiFrame {
         }
     }
 
+    public void setUndecorated(boolean value) {
+        if (frame != null) {
+            frame.setUndecorated(value);
+        }
+    }
 
-
-
+    public void setExtendedState(int value) {
+        if (frame != null) {
+            frame.setExtendedState(value);
+        }
+     }
 
     /**
      * wrapper method

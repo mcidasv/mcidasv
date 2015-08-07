@@ -41,6 +41,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -140,6 +141,8 @@ public class McvComponentGroup extends IdvComponentGroup {
      */
     private boolean hideTabArea;
 
+    private boolean hideTitleBar;
+
     /**
      * Default constructor for serialization.
      */
@@ -157,6 +160,7 @@ public class McvComponentGroup extends IdvComponentGroup {
         super(idv, name);
         this.idv = idv;
         hideTabArea = false;
+        hideTitleBar = false;
         init();
     }
 
@@ -174,6 +178,7 @@ public class McvComponentGroup extends IdvComponentGroup {
         this.window = window;
         this.idv = idv;
         hideTabArea = false;
+        hideTitleBar = false;
         init();
     }
 
@@ -184,6 +189,15 @@ public class McvComponentGroup extends IdvComponentGroup {
 
     public void setHideTabArea(boolean hide) {
         hideTabArea = hide;
+    }
+
+    public boolean getHideTitleBar() {
+        return hideTitleBar;
+    }
+
+    public void setHideTitleBar(boolean hide) {
+        // note: you want to set this before "pack" is called!!
+        hideTitleBar = hide;
     }
 
     /**
@@ -215,8 +229,12 @@ public class McvComponentGroup extends IdvComponentGroup {
 
     @Override public void initWith(Element node) {
         boolean myhideTabArea = XmlUtil.getAttribute(node, "hideTabArea", false);
-//        logger.trace("node val: {} field: {}", myhideTabArea, hideTabArea);
+        boolean myhideTitleBar = XmlUtil.getAttribute(node, "hideTitleBar", false);
+//        logger.trace("node tabVal: {} tabField: {}", myhideTabArea, hideTabArea);
+//        logger.trace("node titleVal: {} titleField: {}", myhideTitleBar, hideTitleBar);
         hideTabArea = myhideTabArea;
+        hideTitleBar = myhideTitleBar;
+        window.setUndecorated(hideTitleBar);
         super.initWith(node);
     }
 
