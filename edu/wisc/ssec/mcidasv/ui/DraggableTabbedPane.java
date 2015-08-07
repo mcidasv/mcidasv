@@ -521,6 +521,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
             return;
         }
 
+        if (!showTabArea(group, this)) {
+            return;
+        }
+
         TabButton icon = (TabButton)getIconAt(tabIndex);
         if (icon == null) {
             return;
@@ -566,7 +570,11 @@ public class DraggableTabbedPane extends JTabbedPane implements
             displayNumber = 0;
         }
         title = "<html><font color=\"" + currentTabColor+"\">"+displayNumber+"</font>"+title+"</html>";
-        super.addTab(title, new TabButton(), component);
+        if (showTabArea(group, this)) {
+            super.addTab(title, new TabButton(), component);
+        } else {
+            super.addTab("", component);
+        }
     }
 
     public static boolean showTabArea(McvComponentGroup group, JTabbedPane tabbedPane) {
@@ -588,6 +596,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
             boolean isSelected) 
         {
             if (tabPane.getTabCount() == 0) {
+                return;
+            }
+
+            if (!showTabArea(group, tabPane)) {
                 return;
             }
 

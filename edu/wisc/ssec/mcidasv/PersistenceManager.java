@@ -1727,7 +1727,6 @@ public class PersistenceManager extends IdvPersistenceManager {
         ComponentGroup group = window.getComponentGroups().get(0);
         McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
         holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
-        holder.setName(DYNSKIN_TMPNAME);
         group.addComponent(holder);
         return window;
     }
