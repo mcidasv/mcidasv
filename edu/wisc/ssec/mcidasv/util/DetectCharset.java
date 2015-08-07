@@ -63,7 +63,6 @@ public final class DetectCharset {
                 logger.trace("no encoding detected!");
             }
 
-            // (5)
             detector.reset();
             return encoding;
         }

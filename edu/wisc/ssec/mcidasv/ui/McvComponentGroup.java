@@ -141,6 +141,7 @@ public class McvComponentGroup extends IdvComponentGroup {
      */
     private boolean hideTabArea;
 
+    /** Whether or not the title bar is hidden (defaults to {@code false}). */
     private boolean hideTitleBar;
 
     /**

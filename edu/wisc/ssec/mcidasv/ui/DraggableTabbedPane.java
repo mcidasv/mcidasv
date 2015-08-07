@@ -63,6 +63,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.plaf.metal.MetalTabbedPaneUI;
+import javax.swing.text.View;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -464,7 +465,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * window are handled with this method.
      */
     public void dragDropEnd(DragSourceDropEvent e) {
-        if (!e.getDropSuccess() && e.getDropAction() == 0) {
+        if (!e.getDropSuccess() && (e.getDropAction() == 0)) {
             newWindowDrag(removeDragged(), e.getLocation());
         }
 
@@ -472,7 +473,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
         // checks to see if we've got a blank window after a drag and drop; 
         // if so, dispose!
         List<ComponentHolder> comps = group.getDisplayComponents();
-        if (comps == null || comps.isEmpty()) {
+        if ((comps == null) || comps.isEmpty()) {
             window.dispose();
         }
     }
@@ -532,13 +533,13 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         int id = e.getID();
         Rectangle iconBounds = icon.getBounds();
-        if (!iconBounds.contains(eventX, eventY) || id == MouseEvent.MOUSE_EXITED) {
+        if (!iconBounds.contains(eventX, eventY) || (id == MouseEvent.MOUSE_EXITED)) {
             ButtonState state = icon.getState();
-            if (state == ButtonState.ROLLOVER || state == ButtonState.PRESSED) {
+            if ((state == ButtonState.ROLLOVER) || (state == ButtonState.PRESSED)) {
                 icon.setState(ButtonState.DEFAULT);
             }
 
-            if (e.getClickCount() >= 2 && !e.isPopupTrigger() && id == MouseEvent.MOUSE_CLICKED) {
+            if ((e.getClickCount() >= 2) && !e.isPopupTrigger() && (id == MouseEvent.MOUSE_CLICKED)) {
                 group.renameDisplay(tabIndex);
             }
 
@@ -546,7 +547,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
             return;
         }
 
-        if (id == MouseEvent.MOUSE_PRESSED && (e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+        if ((id == MouseEvent.MOUSE_PRESSED) && ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0)) {
             icon.setState(ButtonState.PRESSED);
         } else if (id == MouseEvent.MOUSE_CLICKED) {
             icon.setState(ButtonState.DEFAULT);
@@ -577,8 +578,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
         }
     }
 
-    public static boolean showTabArea(McvComponentGroup group, JTabbedPane tabbedPane) {
-        return !group.getHideTabArea() || (tabbedPane.getTabCount() > 1);
+    public static boolean showTabArea(McvComponentGroup mcvCompGroup,
+                                      JTabbedPane tabbedPane)
+    {
+        return !mcvCompGroup.getHideTabArea() || (tabbedPane.getTabCount() > 1);
     }
 
     class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
@@ -604,7 +607,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
             }
 
             textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
-            javax.swing.text.View v = getTextViewForTab(tabIndex);
+            View v = getTextViewForTab(tabIndex);
             if (v != null) {
                 tabPane.putClientProperty("html", v);
             }
@@ -669,8 +672,8 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         public CloseableMetalTabbedPaneUI() { }
 
-        public CloseableMetalTabbedPaneUI(int horizontalTextPosition) {
-            this.horizontalTextPosition = horizontalTextPosition;
+        public CloseableMetalTabbedPaneUI(int newHorizontalTextPosition) {
+            this.horizontalTextPosition = newHorizontalTextPosition;
         }
 
         @Override protected void paintTabBorder(Graphics g, int placement,
@@ -699,7 +702,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
                    : 0;
         }
 
-        @Override protected void layoutLabel(int tabPlacement, 
+        @Override protected void layoutLabel(int placement,
             FontMetrics metrics, int tabIndex, String title, Icon icon, 
             Rectangle tabRect, Rectangle iconRect, Rectangle textRect, 
             boolean isSelected) 
@@ -710,7 +713,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
                 iconRect.x = 0;
                 iconRect.y = 0;
 
-                javax.swing.text.View v = getTextViewForTab(tabIndex);
+                View v = getTextViewForTab(tabIndex);
                 if (v != null) {
                     tabPane.putClientProperty("html", v);
                 }
@@ -729,9 +732,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
                     textIconGap + 2);
 
                 int xNudge =
-                    getTabLabelShiftX(tabPlacement, tabIndex, isSelected);
+                    getTabLabelShiftX(placement, tabIndex, isSelected);
                 int yNudge =
-                    getTabLabelShiftY(tabPlacement, tabIndex, isSelected);
+                    getTabLabelShiftY(placement, tabIndex, isSelected);
                 iconRect.x += xNudge;
                 iconRect.y += yNudge;
                 textRect.x += xNudge;
@@ -743,7 +746,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
     public static class TabButton implements Icon {
 
         private static final EnumMap<ButtonState, String> iconPaths =
-            new EnumMap<ButtonState, String>(ButtonState.class);
+            new EnumMap<>(ButtonState.class);
 
         private ButtonState currentState = ButtonState.DEFAULT;
         private int iconWidth = 0;
