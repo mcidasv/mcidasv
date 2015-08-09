@@ -3245,18 +3245,20 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Bundles any compatible {@link ViewManager} states into {@link JMenuItem}s
-     * and adds said {@code JMenuItem}s to {@code menu}. Incompatible states are
-     * ignored.
+     * Bundles any compatible {@link ViewManager} states into
+     * {@link JMenuItem JMenuItem} and adds said menu items to {@code menu}.
+     * Incompatible states are ignored.
      * 
-     * <p>Each {@code JMenuItem} (except those under the {@literal "Delete"} menu--apologies)
-     * associates a {@literal "view state"} and an {@link ObjectListener}. 
-     * The {@code ObjectListener} uses this associated view state to attempt reinitialization
-     * of {@code vm}.
+     * <p>Each {@code JMenuItem} (except those under the {@literal "Delete"}
+     * menu--apologies) associates a {@literal "view state"} and an
+     * {@link ObjectListener}. The {@code ObjectListener} uses this associated
+     * view state to attempt reinitialization of {@code vm}.
      * 
      * <p>Override reasoning:
      * <ul>
-     *   <li>terminology ({@literal "views"} rather than {@literal "viewpoints"}).</li>
+     *   <li>
+     *     terminology ({@literal "views"} rather than {@literal "viewpoints"}).
+     *   </li>
      *   <li>
      *     use of {@link #filterVMMStatesWithVM(ViewManager, Collection)} to
      *     properly detect the {@literal "no saved views"} case.
@@ -3264,14 +3266,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * </ul>
      * 
      * @param menu Menu to populate. Should not be {@code null}.
-     * @param vm {@code ViewManager} that might get reinitialized. Should not be {@code null}. 
+     * @param vm {@code ViewManager} that might get reinitialized.
+     * Should not be {@code null}.
      * 
      * @see ViewManager#initWith(ViewManager, boolean)
      * @see ViewManager#initWith(ViewState)
-     * @see IdvUIManager#makeViewStateMenu(JMenu, ViewManager)
      */
     @Override public void makeViewStateMenu(final JMenu menu, final ViewManager vm) {
-        List<TwoFacedObject> vmStates = filterVMMStatesWithVM(vm, getVMManager().getVMState());
+        List<TwoFacedObject> vmStates =
+            filterVMMStatesWithVM(vm, getVMManager().getVMState());
         if (vmStates.isEmpty()) {
             JMenuItem item = new JMenuItem(Msg.msg("No Saved Views"));
             item.setEnabled(false);
@@ -3305,33 +3308,39 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 }
             });
         }
+
         // the "3" ensures that the "save viewpoint" menu item, the separator,
         // and the "delete" menu item are fixed at the top.
-//        logger.trace("building scroller!");
-        MenuScroller scroller = new MenuScroller(menu, menu, 125, 3);
-//        Point foo = menu.getLocationOnScreen();
-//        logger.trace("foo={}", foo);
-//        int xPos = menu.getX();
-//        int yPos = menu.getY();
-//        Point pt = new Point(xPos, yPos);
-//        int newScrollCount = MenuScroller.scrollCountForScreen(menu, pt, menu.getItem(0), scroller.getBottomFixedCount());
-//        scroller.setScrollCount(newScrollCount);
-//        logger.trace("menu stuff: scroll count={}", scroller.getScrollCount());
+        new MenuScroller(menu, menu, 125, 3);
     }
 
-//    private MenuScroller scroller;
+    /**
+     * Overridden by McIDAS-V to add menu scrolling functionality to the
+     * {@literal "delete"} submenu.
+     *
+     * @param menu {@literal "Delete"} submenu.
+     */
+    @Override public void makeDeleteViewsMenu(JMenu menu) {
+        super.makeDeleteViewsMenu(menu);
+        new MenuScroller(menu, menu, 125);
+    }
 
     /**
      * Returns a list of {@link TwoFacedObject}s that are known to be 
      * compatible with {@code vm}.
      * 
-     * <p>This method is currently capable of dealing with {@code TwoFacedObject}s and
-     * {@link ViewState}s within {@code states}. Any other types are ignored.
+     * <p>This method is currently capable of dealing with
+     * {@link TwoFacedObject TwoFacedObjects} and
+     * {@link ViewState ViewStates} within {@code states}. Any other types are
+     * ignored.
      * 
-     * @param vm {@link ViewManager} to use for compatibility tests. {@code null} is allowed.
-     * @param states Collection of objects to test against {@code vm}. {@code null} is allowed.
+     * @param vm {@link ViewManager} to use for compatibility tests.
+     * {@code null} is allowed.
+     * @param states Collection of objects to test against {@code vm}.
+     * {@code null} is allowed.
      * 
-     * @return Either a {@link List} of compatible {@literal "view states"} or an empty {@code List}.
+     * @return Either a {@link List} of compatible {@literal "view states"}
+     * or an empty {@code List}.
      * 
      * @see ViewManager#isCompatibleWith(ViewManager)
      * @see ViewManager#isCompatibleWith(ViewState)
