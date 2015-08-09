@@ -42,6 +42,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -3304,7 +3305,21 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 }
             });
         }
+        // the "3" ensures that the "save viewpoint" menu item, the separator,
+        // and the "delete" menu item are fixed at the top.
+//        logger.trace("building scroller!");
+        MenuScroller scroller = new MenuScroller(menu, menu, 125, 3);
+//        Point foo = menu.getLocationOnScreen();
+//        logger.trace("foo={}", foo);
+//        int xPos = menu.getX();
+//        int yPos = menu.getY();
+//        Point pt = new Point(xPos, yPos);
+//        int newScrollCount = MenuScroller.scrollCountForScreen(menu, pt, menu.getItem(0), scroller.getBottomFixedCount());
+//        scroller.setScrollCount(newScrollCount);
+//        logger.trace("menu stuff: scroll count={}", scroller.getScrollCount());
     }
+
+//    private MenuScroller scroller;
 
     /**
      * Returns a list of {@link TwoFacedObject}s that are known to be 
