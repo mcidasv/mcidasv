@@ -342,7 +342,7 @@ public class JythonShell extends InteractiveShell {
 //            JMenu historyMenu = makeMenu("History", historyItems);
             historyMenu = makeMenu("History", historyItems);
 //            historyMenu.setMenuLocation();
-            historyMenuScroller = new MenuScroller(historyMenu, 15, 125);
+            historyMenuScroller = new MenuScroller(cmdFld, historyMenu, 125);
             items.add(historyMenu);
         }
         
@@ -357,13 +357,13 @@ public class JythonShell extends InteractiveShell {
         JPopupMenu popup = GuiUtils.makePopupMenu(items);
         if (popup != null) {
             if (historyMenuScroller != null) {
-                Point pt = new Point(xPos, yPos);
-                int newScrollCount = MenuScroller.scrollCountForScreen(cmdFld, pt, dataMenuItems.get(0), historyMenuScroller.getBottomFixedCount());
+//                Point pt = new Point(xPos, yPos);
+//                int newScrollCount = MenuScroller.scrollCountForScreen(cmdFld, pt, dataMenuItems.get(0), historyMenuScroller.getBottomFixedCount());
 //                logger.trace("oldScrollCount={} newScrollCount={}", historyMenuScroller.getScrollCount(), newScrollCount);
 //                if (newScrollCount < historyMenuScroller.getScrollCount()) {
 //                    newScrollCount = historyMenuScroller.getScrollCount();
 //                }
-                historyMenuScroller.setScrollCount(newScrollCount);
+//                historyMenuScroller.setScrollCount(newScrollCount);
 
 //                int x;
 //                int y;
