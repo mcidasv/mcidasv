@@ -356,51 +356,6 @@ public class JythonShell extends InteractiveShell {
         items.add(makeMenu("Insert Idv Action", idv.getIdvUIManager().makeActionMenu(this, "insertText", true)));
         JPopupMenu popup = GuiUtils.makePopupMenu(items);
         if (popup != null) {
-            if (historyMenuScroller != null) {
-//                Point pt = new Point(xPos, yPos);
-//                int newScrollCount = MenuScroller.scrollCountForScreen(cmdFld, pt, dataMenuItems.get(0), historyMenuScroller.getBottomFixedCount());
-//                logger.trace("oldScrollCount={} newScrollCount={}", historyMenuScroller.getScrollCount(), newScrollCount);
-//                if (newScrollCount < historyMenuScroller.getScrollCount()) {
-//                    newScrollCount = historyMenuScroller.getScrollCount();
-//                }
-//                historyMenuScroller.setScrollCount(newScrollCount);
-
-//                int x;
-//                int y;
-//
-//                JPopupMenu pm = historyMenu.getPopupMenu();
-//                Dimension s = historyMenu.getSize();
-//                Dimension pmSize = pm.getSize();
-//                if (pmSize.width==0) {
-//                    pmSize = pm.getPreferredSize();
-//                }
-//                Point position = historyMenu.getLocationOnScreen();
-//                Toolkit toolkit = Toolkit.getDefaultToolkit();
-//                GraphicsConfiguration gc = historyMenu.getGraphicsConfiguration();
-//                Rectangle screenBounds = new Rectangle(toolkit.getScreenSize());
-//                int xOffset = UIManager.getInt("Menu.submenuPopupOffsetX");
-//                int yOffset = UIManager.getInt("Menu.submenuPopupOffsetY");
-//                x = s.width + xOffset;   // Prefer placement to the right
-//                if (position.x + x + pmSize.width >= screenBounds.width
-//                    + screenBounds.x &&
-//                    // popup doesn't fit - place it wherever there's more room
-//                    screenBounds.width - s.width < 2*(position.x
-//                        - screenBounds.x)) {
-//
-//                    x = 0 - xOffset - pmSize.width;
-//                }
-//
-//                y = yOffset;                     // Prefer dropping down
-//                if (position.y + y + pmSize.height >= screenBounds.height
-//                    + screenBounds.y &&
-//                    // popup doesn't fit - place it wherever there's more room
-//                    screenBounds.height - s.height < 2*(position.y
-//                        - screenBounds.y)) {
-//
-//                    y = s.height - yOffset - pmSize.height;
-//                }
-//                logger.trace("x={} y={}", x, y);
-            }
             popup.show(cmdFld, xPos, yPos);
         }
     }
