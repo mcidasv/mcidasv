@@ -1480,7 +1480,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             dateFormats.add(dateFormat);
         }
         
-        final JComboBox dateComboBox = McVGuiUtils.makeComboBox(dateFormats, dateFormat, Width.DOUBLE);
+        final JComboBox dateComboBox = McVGuiUtils.makeComboBox(dateFormats, dateFormat, Width.TRIPLE);
         widgets.put(PREF_DATE_FORMAT, dateComboBox);
         
         JComponent dateHelpButton = getIdv().makeHelpButton("idv.tools.preferences.dateformat");
@@ -1494,7 +1494,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         String[] zoneStrings = TimeZone.getAvailableIDs();
         Arrays.sort(zoneStrings);
         
-        final JComboBox timeComboBox = McVGuiUtils.makeComboBox(zoneStrings, timeString, Width.DOUBLE);
+        final JComboBox timeComboBox = McVGuiUtils.makeComboBox(zoneStrings, timeString, Width.TRIPLE);
         widgets.put(PREF_TIMEZONE, timeComboBox);
         
         JComponent timeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.dateformat");
@@ -1532,7 +1532,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JLabel latlonLabel = McVGuiUtils.makeLabelRight("Lat/Lon Format:", Width.ONEHALF);
         
         String latlonFormatString = getStore().get(PREF_LATLON_FORMAT, "##0.0");
-        JComboBox latlonComboBox = McVGuiUtils.makeComboBox(defaultLatLonFormats, latlonFormatString, Width.DOUBLE);
+        JComboBox latlonComboBox = McVGuiUtils.makeComboBox(defaultLatLonFormats, latlonFormatString, Width.TRIPLE);
         widgets.put(PREF_LATLON_FORMAT, latlonComboBox);
         
         JComponent latlonHelpButton = getIdv().makeHelpButton("idv.tools.preferences.latlonformat");
@@ -1566,7 +1566,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         String probeFormat = getStore().get(DisplayControl.PREF_PROBEFORMAT, DisplayControl.DEFAULT_PROBEFORMAT);
 //        List probeFormatsList = Misc.newList(DisplayControl.DEFAULT_PROBEFORMAT,
 //              "%rawvalue% [%rawunit%]", "%value%", "%rawvalue%", "%value% <i>%unit%</i>");
-        JComboBox probeComboBox = McVGuiUtils.makeComboBox(probeFormatsList, probeFormat, Width.DOUBLE);
+        JComboBox probeComboBox = McVGuiUtils.makeComboBox(probeFormatsList, probeFormat, Width.TRIPLE);
         widgets.put(DisplayControl.PREF_PROBEFORMAT, probeComboBox);
         
         JComponent probeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.probeformat");
@@ -1579,7 +1579,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             distanceUnit = ucar.visad.Util.parseUnit(getStore().get(PREF_DISTANCEUNIT, "km"));
         } catch (Exception exc) {}
         JComboBox distanceComboBox = getIdv().getDisplayConventions().makeUnitBox(distanceUnit, null);
-        McVGuiUtils.setComponentWidth(distanceComboBox, Width.DOUBLE);
+        McVGuiUtils.setComponentWidth(distanceComboBox, Width.TRIPLE);
         widgets.put(PREF_DISTANCEUNIT, distanceComboBox);
 
         // Locale stuff (largely ripped out of IDV prefs)
