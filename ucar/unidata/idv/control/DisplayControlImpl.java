@@ -936,6 +936,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public boolean matchDisplayRegion = false;
 
+    /** Color swatch button in properties window. Value may be {@code null}. */
+    private JPanel colorSwatch;
+
     /**
      * Default constructor. This is called when the control is
      * unpersisted through the {@link ucar.unidata.xml.XmlEncoder}
@@ -5916,18 +5919,17 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
         // display list properties
         displayListTemplateFld = new JTextField(displayListTemplate, width);
-        // color swatch  changer
-        JPanel colorSwatch = GuiUtils.wrap(new JLabel("     "));
+        // color swatch changer
+        colorSwatch = GuiUtils.wrap(new JLabel("     "));
         colorSwatch.setBackground(getDisplayListColor());
         colorSwatch.setToolTipText("Click to change display list color");
-        final JComponent theColorSwatch = colorSwatch;
         colorSwatch.addMouseListener(new ObjectListener(null) {
-            public void mouseClicked(MouseEvent me) {
-                popupDisplayListColorMenu(theColorSwatch);
-                theColorSwatch.setBackground(getDisplayListColor());
-                theColorSwatch.invalidate();
-                if (theColorSwatch.getParent() != null) {
-                    theColorSwatch.getParent().validate();
+            @Override public void mouseClicked(MouseEvent me) {
+                popupDisplayListColorMenu(colorSwatch);
+                colorSwatch.setBackground(getDisplayListColor());
+                colorSwatch.invalidate();
+                if (colorSwatch.getParent() != null) {
+                    colorSwatch.getParent().validate();
                 }
             }
         });
@@ -6135,9 +6137,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                                  "Skip Value", SETTINGS_GROUP_DISPLAY);
         }
         if (checkFlag(FLAG_ZPOSITION) && useZPosition()) {
+//            logger.trace("enabling zpos");
             dsd.addPropertyValue(new Double(getZPosition()), "zPosition",
                                  "Vertical Position", SETTINGS_GROUP_DISPLAY);
         }
+//        else {
+//            logger.trace("no zpos :(");
+//        }
         if (checkFlag(FLAG_COLOR) && (color != null)) {
             dsd.addPropertyValue(color, "color", getColorWidgetLabel(),
                                  SETTINGS_GROUP_DISPLAY);
@@ -10706,6 +10712,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         displayListColor = newColor;
         if (fromUser) {
             displayListUsesColor = false;
+        }
+
+        if (colorSwatch != null) {
+            colorSwatch.setBackground(displayListColor);
+            colorSwatch.invalidate();
+            if (colorSwatch.getParent() != null) {
+                colorSwatch.getParent().validate();
+            }
         }
     }
 
