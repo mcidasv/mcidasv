@@ -6425,6 +6425,18 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     }
 
     /**
+     * Force the view managers to use the display control's color.
+     *
+     * @param newColor Color to use.
+     */
+    public void setViewManagerDisplayListColor(Color newColor) {
+        List<ViewManager> vms = getViewManagers();
+        for (ViewManager vm : vms) {
+            vm.setDisplayListColor(newColor);
+        }
+    }
+
+    /**
      * Apply the properties
      *
      * @return true if successful
@@ -6445,6 +6457,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         setExtraLabelTemplate(extraLabelTemplateFld.getText().trim());
 
         setLegendLabelTemplate(legendLabelTemplateFld.getText());
+
+        setViewManagerDisplayListColor(displayListColor);
+
         if (hasTimeMacro(legendLabelTemplate)
                 || hasTimeMacro(extraLabelTemplate)
                 || hasTimeMacro(getDisplayListTemplate())) {
