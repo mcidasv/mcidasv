@@ -141,7 +141,7 @@ def _lookupAccounting(server, dataset):
     if mcv:
         sm = mcv.getServerManager()
         types = sm.getTypes(server, dataset)
-        accounts = set()
+        accounts = list()
         for t in types:
             temp = sm.getAccountingFor(server, dataset, t)
             accounts.append((temp.getUsername(), temp.getProject()))
