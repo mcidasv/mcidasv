@@ -145,6 +145,8 @@ def _lookupAccounting(server, dataset):
         for t in types:
             temp = sm.getAccountingFor(server, dataset, t)
             accounts.append((temp.getUsername(), temp.getProject()))
+        else:
+            accounts.append(DEFAULT_ACCOUNTING)
         # there is the possibility that server+dataset+IMAGE will return 
         # different accounting info than server+dataset+RADAR...
         return accounts[0]
