@@ -51,7 +51,7 @@ public class ReprojectSwath {
   public static final int BILINEAR_VISAD = 2;
   
   int numProc = Runtime.getRuntime().availableProcessors();
-  private static boolean doParallel = true;
+  private static boolean doParallel = false;
 
   private static ReprojectSwath lastReproject = null;
 
