@@ -70,20 +70,12 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
 
      FlatField swath = makeFlatField(domainSet, new_subset);
 
-     /**
-     visad.georef.MapProjection mp = MultiSpectralDataSource.getDataProjection(swath);
-
-     visad.Linear2DSet grid = MultiSpectralDataSource.makeGrid(mp, 11400);
-
-     return MultiSpectralDataSource.swathToGrid(grid, swath, 2.0);
-     */
-
      float[][] corners = MultiSpectralData.getLonLatBoundingCorners(swath.getDomainSet());
 
      visad.georef.MapProjection mp = MultiSpectralDataSource.getSwathProjection(swath, corners);
 
-     visad.Linear2DSet grid = MultiSpectralDataSource.makeGrid(mp, corners, 17000);
+     visad.Linear2DSet grid = MultiSpectralDataSource.makeGrid(mp, corners, 15000);
 
-     return MultiSpectralDataSource.swathToGrid(grid, swath, 2.0);
+     return ReprojectSwath.swathToGrid(grid, swath, 0);
    }
 }

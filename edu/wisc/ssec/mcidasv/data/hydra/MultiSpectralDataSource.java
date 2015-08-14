@@ -1227,26 +1227,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
      return grid;
   }
 
-  public static FlatField swathToGridOld(Linear2DSet grid, FlatField swath) throws Exception {
-    return swathToGridOld(grid, swath, 0.0);
-  }
 
   private static int count = 0;
 
-  public static FlatField swathToGridOld(Linear2DSet grid, FlatField[] swaths, double mode) throws Exception {
-    FunctionType ftype = (FunctionType) swaths[0].getType();
-    visad.Set domSet = swaths[0].getDomainSet();
-
-    FlatField swath = new FlatField(new FunctionType(ftype.getDomain(),
-        new RealTupleType(new RealType[] {RealType.getRealType("redimage_"+count), RealType.getRealType("greenimage_"+count), RealType.getRealType("blueimage_"+count)})), domSet);
-
-    swath.setSamples(new float[][] 
-        {swaths[0].getFloats(false)[0], swaths[1].getFloats(false)[0], swaths[2].getFloats(false)[0]});
-
-    count++;
-
-    return swathToGridOld(grid, swath, mode);
-  }
 
   public static FlatField swathToGrid(Linear2DSet grid, FlatField[] swaths, double mode) throws Exception {
     FunctionType ftype = (FunctionType) swaths[0].getType();
@@ -1271,155 +1254,14 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
     count++;
 
-    return swathToGrid(grid, swath, mode);
+    return ReprojectSwath.swathToGrid(grid, swath, (int)mode);
   }
 
-
-  public static FlatField swathToGridOld(Linear2DSet grid, FlatField swath, double mode) throws Exception {
-    FunctionType ftype = (FunctionType) swath.getType();
-    Linear2DSet swathDomain = (Linear2DSet) swath.getDomainSet();
-    int[] lens = swathDomain.getLengths();
-    float[][] swathRange = swath.getFloats(false);
-    int trackLen = lens[1];
-    int xtrackLen = lens[0];
-    int gridLen = grid.getLength();
-    lens = grid.getLengths();
-    int gridXLen = lens[0];
-    int gridYLen = lens[1];
-
-    CoordinateSystem swathCoordSys = swathDomain.getCoordinateSystem();
-    CoordinateSystem gridCoordSys = grid.getCoordinateSystem();
-
-    RealTupleType rtt = ((SetType)grid.getType()).getDomain();
-    FlatField grdFF = new FlatField(new FunctionType(rtt, ftype.getRange()), grid);
-    float[][] gridRange = grdFF.getFloats(false);
-    int rngTupDim = gridRange.length;
-
-    float[][] swathGridCoord = new float[2][gridLen];
-    java.util.Arrays.fill(swathGridCoord[0], Float.NaN);
-
-    int[] swathIndexAtGrid = null;
-    if (true) {
-      swathIndexAtGrid = new int[gridLen];
-    }
-
-    for (int j=0; j < trackLen; j++) {
-       for (int i=0; i < xtrackLen; i++) {
-         int swathIdx = j*xtrackLen + i;
-	 float val = swathRange[0][swathIdx];
-
-	 float[][] swathCoord = swathDomain.indexToValue(new int[] {swathIdx});
-	 float[][] swathEarthCoord = swathCoordSys.toReference(swathCoord);
-
-	 float[][] gridValue = gridCoordSys.fromReference(swathEarthCoord);
-         float[][] gridCoord = grid.valueToGrid(gridValue);
-         float g0 = gridCoord[0][0];
-         float g1 = gridCoord[1][0];
-         int grdIdx  = (g0 != g0 || g1 != g1) ? -1 : ((int) (g0 + 0.5)) + gridXLen * ((int) (g1 + 0.5));
-
-
-               int m=0;
-               int n=0;
-               int k = grdIdx + (m + n*gridXLen);
-
-               if ( !(Float.isNaN(val)) && ((k >=0) && (k < gridXLen*gridYLen)) ) { // val or val[rngTupDim] ?
-                 float grdVal = gridRange[0][k];
-
-                 if (Float.isNaN(grdVal)) {
-                   for (int t=0; t<rngTupDim; t++) {
-                     gridRange[t][k] = swathRange[t][swathIdx];
-                   }
-                   swathGridCoord[0][k] = gridCoord[0][0];
-                   swathGridCoord[1][k] = gridCoord[1][0];
-                   swathIndexAtGrid[k] = swathIdx;
-                 }
-                 else {
-                   /**
-                   // compare current to last distance
-                   float[][] gridLoc = grid.indexToValue(new int[] {k});
-                   gridLoc = grid.valueToGrid(gridLoc);
-                   
-                   float del_0 = swathGridCoord[0][k] - gridLoc[0][0];
-                   float del_1 = swathGridCoord[1][k] - gridLoc[1][0];
-                   float last_dst_sqrd = del_0*del_0 + del_1*del_1;
-
-                   del_0 = gridCoord[0][0] - gridLoc[0][0];
-                   del_1 = gridCoord[1][0] - gridLoc[1][0];
-                   float dst_sqrd = del_0*del_0 + del_1*del_1;
-
-                   if (dst_sqrd < last_dst_sqrd) {
-                     for (int t=0; t<rngTupDim; t++) {
-                       gridRange[t][k] = val;
-                     }
-                     swathGridCoord[0][k] = gridCoord[0][0];
-                     swathGridCoord[1][k] = gridCoord[1][0];
-                     swathIndexAtGrid[k] = swathIdx;
-                   }
-                   **/
-                 }
-
-               }
-       }
-    }
-
-
-    // 2nd pass weighted average
-    float[][] gCoord = new float[2][1];
-    if (mode > 0.0) {
-    float weight = 1f;
-    float[] sumValue = new float[rngTupDim];
-    for (int j=2; j<gridYLen-2; j++) {
-       for (int i=2; i<gridXLen-2; i++) {
-         int grdIdx = i + j*gridXLen;
-     
-         // dont do weighted average if a nearest neigbhor existed for the grid point
-         if (mode == 2.0) {
-           if (!Float.isNaN(gridRange[0][grdIdx])) {
-             continue;
-           }
-         }
-
-         gCoord[0][0] = swathGridCoord[0][grdIdx];
-         gCoord[1][0] = swathGridCoord[1][grdIdx];
-         float del_0 = gCoord[0][0] - (float) i;
-         float del_1 = gCoord[1][0] - (float) j;
-         float dst_sqrd = del_0*del_0 + del_1*del_1;
-         
-         int num = 0;
-         float sumWeights = 0f;
-         for (int t=0; t<rngTupDim; t++) sumValue[t] = 0f;
-         for (int n = -1; n < 2; n++) {
-            for (int m = -1; m < 2; m++) {
-               int k = grdIdx + (m + n*gridXLen);
-
-               if ( !Float.isNaN(swathGridCoord[0][k]) ) {
-
-                  gCoord[0][0] = swathGridCoord[0][k];
-                  gCoord[1][0] = swathGridCoord[1][k];
-                  del_0 = gCoord[0][0] - (float) i;
-                  del_1 = gCoord[1][0] - (float) j;
-                  dst_sqrd = del_0*del_0 + del_1*del_1;
-                  //weight = (float) (1.0/Math.exp((double)(dst_sqrd)*2.75f));
-                  weight = (float) (1.08/Math.exp((double)(dst_sqrd)*5.40f));
-
-                  for (int t=0; t<rngTupDim; t++) sumValue[t] += swathRange[t][swathIndexAtGrid[k]]*weight;
-                  sumWeights += weight;
-                  num++;
-               }
-            }
-          }
-          for (int t=0; t<rngTupDim; t++) {
-            gridRange[t][grdIdx] = sumValue[t]/sumWeights;
-          }
-       }
-      }
-    }
-
-   grdFF.setSamples(gridRange);
-
-   return grdFF;
- }
-
+  public static FlatField swathToGrid(Linear2DSet grid, FlatField swath, double mode) throws Exception {
+     return ReprojectSwath.swathToGrid(grid, swath, (int)mode);
+  }
+ 
+  /* keep in here for now.
   public static FlatField swathToGrid(Linear2DSet grid, FlatField swath, double mode) throws Exception {
     FunctionType ftype = (FunctionType) swath.getType();
     Linear2DSet swathDomain = (Linear2DSet) swath.getDomainSet();
@@ -1587,7 +1429,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
                   }
                   num++;
                }
-               }
+              }
             }
           }
 
@@ -1624,6 +1466,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
    return grdFF;
  }
+ */
 
  public static boolean validLonLat(float[][] lonlat) {
    float lon = lonlat[0][0];
