@@ -2612,6 +2612,33 @@ def allFontNames():
     return [font.toString() for font in ucar.unidata.util.GuiUtils.getFontList()]
     
 @gui_invoke_later
+def listFont(regex=None):
+    """
+       listFont() - lists all available fonts (so you might as well use print allFontNames(), 
+                    but forgetting a regex will not break it)
+       listFont(regex='Ariel*') - uses regular expressions to match a pattern for a font name
+    """
+    # credit for this function belongs to Joleen Feltz
+    import re
+    fontList = [font.toString() for font in ucar.unidata.util.GuiUtils.getFontList()]
+    
+    if isinstance(regex, str):
+        index = [i for i, x in enumerate(fontList) if re.search(regex, x)]
+        
+        if len(index) == 0:
+            print "There are no matches for "+regex+ " regular expression or string"
+        elif len(index) == 1:
+            print "There is one match for " + regex
+            print fontList[index[0]]
+        else:
+            print "There are " + str(len(index)) + " matches."
+            for x in index:
+                print fontList[x]
+    else:
+        for font in fontList:
+            print font
+            
+@gui_invoke_later
 def projectionNames():
     """Return list of the available projection names."""
     return [projection.getName() for projection in getStaticMcv().getIdvProjectionManager().getProjections()]
