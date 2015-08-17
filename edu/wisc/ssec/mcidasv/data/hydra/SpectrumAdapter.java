@@ -232,23 +232,6 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return sorted_range;
   }
 
-
-  public float[] processRange(float[] range, Object subset) {
-    return range;
-  }
-
-  public double[] processRange(double[] range, Object subset) {
-    return range;
-  }
-
-  public float[] processRange(short[] range, Object subset) {
-     return rangeProcessor.processAlongMultiScaleDim(range);
-  }
-
-  public float[] processRange(byte[] range, Object subset) {
-     return rangeProcessor.processAlongMultiScaleDim(range);
-  }
-
   public HashMap getDefaultSubset() {
     HashMap<String, double[]> subset = SpectrumAdapter.getEmptySubset();
     

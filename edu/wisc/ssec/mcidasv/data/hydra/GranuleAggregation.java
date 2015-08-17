@@ -817,40 +817,16 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   if (rngProcessor == null) {
 		   return values;
 	   }
-     else {
-        ((AggregationRangeProcessor)rngProcessor).setWhichRangeProcessor(granIdx);
+           else {
+                   ((AggregationRangeProcessor)rngProcessor).setWhichRangeProcessor(granIdx);
 
-        boolean processAlongMultiScaleDim = false;
+                   Object outArray = null;
 
-        if (rngProcessor.hasMultiDimensionScale()) { // this data variable has an array > 1 of scale/offsets.  For example, one for each band.
-           rngProcessor.setMultiScaleIndex(start[rngProcessor.getMultiScaleDimensionIndex()]);
-           if (count[rngProcessor.getMultiScaleDimensionIndex()] > 1) {  // if the multiScaleDim is > 1, use processAlongMultiScaleDim below
-              processAlongMultiScaleDim = true;
-           }
-        }
-
-        Object outArray = null;
-
-        if (processAlongMultiScaleDim) {
-
-           if (arrayType == Short.TYPE) {
-              outArray = rngProcessor.processAlongMultiScaleDim((short[])values);
-           } else if (arrayType == Byte.TYPE) {
-              outArray = rngProcessor.processAlongMultiScaleDim((byte[])values);
-           } else if (arrayType == Float.TYPE) {
-              outArray = values;
-           } else if (arrayType == Double.TYPE) {
-              outArray = values;
-           }
-
-        }
-        else {
-
-           if (arrayType == Short.TYPE) {
-              outArray = rngProcessor.processRange((short[]) values, null);
-           } else if (arrayType == Byte.TYPE) {
+                   if (arrayType == Short.TYPE) {
+                       outArray = rngProcessor.processRange((short[]) values, null);
+                   } else if (arrayType == Byte.TYPE) {
         	   // if variable is a bit-field quality flag, apply mask
-        	   if (qfMap.containsKey(origName)) {
+         	   if (qfMap.containsKey(origName)) {
         		   QualityFlag qf = qfMap.get(origName);
         		   outArray = rngProcessor.processRangeQualityFlag((byte[]) values, null, qf);
         	   } else {
@@ -862,7 +838,6 @@ public class GranuleAggregation implements MultiDimensionReader {
               outArray = rngProcessor.processRange((double[]) values, null);
            }
 
-        }
         
         return outArray;
      }

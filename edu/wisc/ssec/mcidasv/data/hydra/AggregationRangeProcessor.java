@@ -90,12 +90,4 @@ public class AggregationRangeProcessor extends RangeProcessor {
 	public synchronized double[] processRange(double[] values, HashMap subset) {
 		return rangeProcessors.get(rngIdx).processRange(values, subset);
 	}
-
-	public synchronized float[] processAlongMultiScaleDim(short[] values) {
-		return rangeProcessors.get(rngIdx).processAlongMultiScaleDim(values);
-	}
-
-	public synchronized float[] processAlongMultiScaleDim(byte[] values) {
-		return rangeProcessors.get(rngIdx).processAlongMultiScaleDim(values);
-	}
 }

@@ -98,12 +98,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
       }
     }
 
-    if (swathAdapter != null) {
-      this.swathSelect = swathAdapter.getDefaultSubset();
-      if (spectrumAdapter != null) {
-        spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
-      }
-    }
+    setSpectrumAdapterProcessor();
 
     this.sensorName = sensorName;
     this.platformName = platformName;
@@ -120,6 +115,14 @@ public class MultiSpectralData extends MultiDimensionAdapter {
 
   public MultiSpectralData() {
     this(null, null, null, null);
+  }
+
+  void setSpectrumAdapterProcessor() {
+     if (swathAdapter != null) {
+        if (spectrumAdapter != null) {
+          spectrumAdapter.setRangeProcessor(swathAdapter.getRangeProcessor());
+        }
+     }
   }
 
   public FlatField getSpectrum(int[] coords) 

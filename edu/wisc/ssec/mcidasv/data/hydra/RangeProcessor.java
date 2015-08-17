@@ -319,9 +319,13 @@ public class RangeProcessor {
 	 */
 	public float[] processRange(byte[] values, HashMap subset) {
 
+                int multiScaleDimLen = 1;
+
 		if (subset != null) {
 			if (subset.get(multiScaleDimName) != null) {
-				soIndex = (int) ((double[]) subset.get(multiScaleDimName))[0];
+                                double[] coords = (double[]) subset.get(multiScaleDimName);
+                                soIndex = (int) coords[0];
+                                multiScaleDimLen = (int) (coords[1] - coords[0] + 1.0);
 			}
 		}
 
@@ -373,11 +377,22 @@ public class RangeProcessor {
 			}
 
 			if (scale != null) {
-				if (unpack) {
-					new_values[k] = scale[soIndex] * (val) + offset[soIndex];
-				} else {
-					new_values[k] = scale[soIndex] * (val - offset[soIndex]);
-				}
+                                if (unpack) {
+                                        if (multiScaleDimLen == 1) {
+                                            new_values[k] = (scale[soIndex] * val) + offset[soIndex];
+                                        }
+                                        else {
+                                            new_values[k] = (scale[soIndex+k]*val) + offset[soIndex+k];
+                                        }
+                                } else {
+                                        if (multiScaleDimLen == 1) {
+                                            new_values[k] = scale[soIndex] * (val - offset[soIndex]);
+                                        }
+                                        else {
+                                            new_values[k] = scale[soIndex+k] * (val - offset[soIndex+k]);
+                                        }
+                                }
+
 			} else {
 				new_values[k] = val;
 			}
@@ -401,10 +416,14 @@ public class RangeProcessor {
 	 * @return Processed range.
 	 */
 	public float[] processRange(short[] values, HashMap subset) {
+ 
+                int multiScaleDimLen = 1;
 
 		if (subset != null) {
 			if (subset.get(multiScaleDimName) != null) {
-				soIndex = (int) ((double[]) subset.get(multiScaleDimName))[0];
+                                double[] coords = (double[]) subset.get(multiScaleDimName);
+                                soIndex = (int) coords[0];
+                                multiScaleDimLen = (int) (coords[1] - coords[0] + 1.0);
 			}
 		}
 
@@ -456,11 +475,22 @@ public class RangeProcessor {
 			}
 
 			if (scale != null) {
-				if (unpack) {
-					new_values[k] = (scale[soIndex] * val) + offset[soIndex];
-				} else {
-					new_values[k] = scale[soIndex] * (val - offset[soIndex]);
-				}
+                                if (unpack) {
+                                        if (multiScaleDimLen == 1) {
+                                            new_values[k] = (scale[soIndex] * val) + offset[soIndex];
+                                        }
+                                        else {
+                                            new_values[k] = (scale[soIndex+k]*val) + offset[soIndex+k];
+                                        }
+                                } else {
+                                        if (multiScaleDimLen == 1) {
+                                            new_values[k] = scale[soIndex] * (val - offset[soIndex]);
+                                        }
+                                        else {
+
+                                            new_values[k] = scale[soIndex+k] * (val - offset[soIndex+k]);
+                                        }
+                                }
 			} else {
 				new_values[k] = val;
 			}
@@ -560,142 +590,6 @@ public class RangeProcessor {
 			}
 		}
 
-		return new_values;
-	}
-
-	/**
-	 * Process a range of data from an array of byte values.
-	 */
-	public float[] processAlongMultiScaleDim(byte[] values) {
-
-		float[] new_values = new float[values.length];
-
-		// if we are working with unsigned data, need to convert missing vals to
-		// unsigned too
-		if (unsigned) {
-			if (missing != null) {
-				for (int i = 0; i < missing.length; i++) {
-					missing[i] = (float) Util.unsignedByteToInt((byte) missing[i]);
-				}
-			}
-		}
-
-		float val = 0f;
-		int i = 0;
-		boolean isMissing = false;
-
-		for (int k = 0; k < values.length; k++) {
-
-			val = (float) values[k];
-			if (unsigned) {
-				i = Util.unsignedByteToInt(values[k]);
-				val = (float) i;
-			}
-
-			// first, check the (possibly multiple) missing values
-			isMissing = false;
-			if (missing != null) {
-				for (int mvIdx = 0; mvIdx < missing.length; mvIdx++) {
-					if (val == missing[mvIdx]) {
-						isMissing = true;
-						break;
-					}
-				}
-			}
-
-			if (isMissing) {
-				new_values[k] = Float.NaN;
-				continue;
-			}
-
-			if (rangeCheckBeforeScaling) {
-				if ((val < valid_low) || (val > valid_high)) {
-					new_values[k] = Float.NaN;
-					continue;
-				}
-			}
-
-			if (unpack) {
-				new_values[k] = scale[k] * val + offset[k];
-			} else {
-				new_values[k] = scale[k] * (val - offset[k]);
-			}
-
-			// do valid range check AFTER scaling?
-			if (!rangeCheckBeforeScaling) {
-				if ((new_values[k] < valid_low) || (new_values[k] > valid_high)) {
-					new_values[k] = Float.NaN;
-				}
-			}
-		}
-		return new_values;
-	}
-
-	/**
-	 * Process a range of data from an array of short values.
-	 */
-	public float[] processAlongMultiScaleDim(short[] values) {
-
-		float[] new_values = new float[values.length];
-
-		// if we are working with unsigned data, need to convert missing vals to
-		// unsigned too
-		if (unsigned) {
-			if (missing != null) {
-				for (int i = 0; i < missing.length; i++) {
-					missing[i] = (float) Util.unsignedShortToInt((short) missing[i]);
-				}
-			}
-		}
-
-		float val = 0f;
-		int i = 0;
-		boolean isMissing = false;
-
-		for (int k = 0; k < values.length; k++) {
-
-			val = (float) values[k];
-			if (unsigned) {
-				i = Util.unsignedShortToInt(values[k]);
-				val = (float) i;
-			}
-
-			// first, check the (possibly multiple) missing values
-			isMissing = false;
-			if (missing != null) {
-				for (int mvIdx = 0; mvIdx < missing.length; mvIdx++) {
-					if (val == missing[mvIdx]) {
-						isMissing = true;
-						break;
-					}
-				}
-			}
-
-			if (isMissing) {
-				new_values[k] = Float.NaN;
-				continue;
-			}
-
-			if (rangeCheckBeforeScaling) {
-				if ((val < valid_low) || (val > valid_high)) {
-					new_values[k] = Float.NaN;
-					continue;
-				}
-			}
-
-			if (unpack) {
-				new_values[k] = scale[k] * val + offset[k];
-			} else {
-				new_values[k] = scale[k] * (val - offset[k]);
-			}
-
-			// do valid range check AFTER scaling?
-			if (!rangeCheckBeforeScaling) {
-				if ((new_values[k] < valid_low) || (new_values[k] > valid_high)) {
-					new_values[k] = Float.NaN;
-				}
-			}
-		}
 		return new_values;
 	}
 

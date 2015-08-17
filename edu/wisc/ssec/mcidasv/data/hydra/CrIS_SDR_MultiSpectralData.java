@@ -65,6 +65,9 @@ public class CrIS_SDR_MultiSpectralData extends MultiSpectralData {
      }
   }
 
+  void setSpectrumAdapterProcessor() {
+  }
+
   public FlatField getSpectrum(int[] coords) 
       throws Exception, VisADException, RemoteException {
     if (coords == null) return null;
