@@ -2843,9 +2843,9 @@ MAP2D = _NoOp('MAP2D')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
 
-def _buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
+def _buildWindow(width=600, height=400, rows=1, cols=1, widgets=True, panelTypes=None):
     """Call _buildWindowInternal (from Jython Shell) or _buildWindowBackground (from background)."""
-    def _buildWindowInternal(width, height, rows, cols, panelTypes):
+    def _buildWindowInternal(width, height, rows, cols, widgets, panelTypes):
         """Create a window with a user-specified layout of displays.
         
         This function will attempt to create a grid of displays with the dimensions
@@ -2874,7 +2874,7 @@ def _buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
         from edu.wisc.ssec.mcidasv import PersistenceManager
         
         try:
-            window = PersistenceManager.buildDynamicSkin(width, height, rows, cols, panelTypes)
+            window = PersistenceManager.buildDynamicSkin(width, height, rows, cols, widgets, panelTypes)
             if width > 0 and height > 0:
                 # print 'creating window: width=%d height=%d rows=%d cols=%d panelTypes=%s' % (width, height, rows, cols, panelTypes)
                 pass
@@ -2945,11 +2945,11 @@ def _buildWindow(width=600, height=400, rows=1, cols=1, panelTypes=None):
     else:
         if len(panelTypes) > 1:
             print '* WARNING: buildWindow will only build one panel when run from the background'
-        return _buildWindowInternal(width, height, rows, cols, panelTypes)
+        return _buildWindowInternal(width, height, rows, cols, widgets, panelTypes)
         
 class buildWindow(object):
-    def __init__(self, width=600, height=400, rows=1, cols=1, panelTypes=None):
-        self.panels = _buildWindow(width, height, rows, cols, panelTypes)
+    def __init__(self, width=600, height=400, rows=1, cols=1, widgets=True, panelTypes=None):
+        self.panels = _buildWindow(width, height, rows, cols, widgets, panelTypes)
         
     # __enter__ and __exit__ are for with statement compatibility
     def __enter__(self):

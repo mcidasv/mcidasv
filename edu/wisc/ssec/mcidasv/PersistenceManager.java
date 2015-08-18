@@ -1693,8 +1693,14 @@ public class PersistenceManager extends IdvPersistenceManager {
         return holder;
     }
 
-    public static IdvWindow buildDynamicSkin(int width, int height, int rows, int cols, List<PyObject> panelTypes) throws Exception {
-        Document doc = XmlUtil.getDocument(BUILDWINDOW_SKIN_TEMPLATE);
+    public static IdvWindow buildDynamicSkin(int width, int height, int rows, int cols, boolean showWidgets, List<PyObject> panelTypes) throws Exception {
+        String skinTemplate;
+        if (showWidgets) {
+            skinTemplate = SIMPLE_SKIN_TEMPLATE;
+        } else {
+            skinTemplate = BUILDWINDOW_SKIN_TEMPLATE;
+        }
+        Document doc = XmlUtil.getDocument(skinTemplate);
         Element root = doc.getDocumentElement();
         Element panel = XmlUtil.findElement(root, DYNSKIN_TAG_PANEL, DYNSKIN_ATTR_ID, DYNSKIN_ID_VALUE);
         panel.setAttribute(DYNSKIN_ATTR_ROWS, Integer.toString(rows));
@@ -1703,7 +1709,12 @@ public class PersistenceManager extends IdvPersistenceManager {
         for (PyObject panelType : panelTypes) {
             String panelTypeRepr = panelType.__repr__().toString();
             Element node = doc.createElement(IdvUIManager.COMP_VIEW);
-            StringBuilder props = new StringBuilder(BUILDWINDOW_PROPS_GENERAL);
+            StringBuilder props;
+            if (showWidgets) {
+                props = new StringBuilder(DYNSKIN_PROPS_GENERAL);
+            } else {
+                props = new StringBuilder(BUILDWINDOW_PROPS_GENERAL);
+            }
             props.append("size=").append(width).append(':').append(height).append(';');
 //            logger.trace("window props: {}", props);
             if ("MAP".equals(panelTypeRepr)) {
@@ -1722,8 +1733,15 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
         panel.appendChild(view);
         UIManager uiManager = (UIManager)McIDASV.getStaticMcv().getIdvUIManager();
-        Element skinRoot = XmlUtil.getRoot(BUILDWINDOW_COMP_GROUP, PersistenceManager.class);
-        IdvWindow window = uiManager.createNewWindow(null, false, "McIDAS-V", BUILDWINDOW_COMP_GROUP, skinRoot, false, null);
+        String skinPath;
+        if (showWidgets) {
+//            skinPath = BUILDWINDOW_COMP_GROUP_SHOW_WIDGETS;
+            skinPath = Constants.BLANK_COMP_GROUP;
+        } else {
+            skinPath = BUILDWINDOW_COMP_GROUP_HIDE_WIDGETS;
+        }
+        Element skinRoot = XmlUtil.getRoot(skinPath, PersistenceManager.class);
+        IdvWindow window = uiManager.createNewWindow(null, false, "McIDAS-V", skinPath, skinRoot, false, null);
         ComponentGroup group = window.getComponentGroups().get(0);
         McvComponentHolder holder = new McvComponentHolder(McIDASV.getStaticMcv(), XmlUtil.toString(root));
         holder.setType(McvComponentHolder.TYPE_DYNAMIC_SKIN);
@@ -1774,8 +1792,11 @@ public class PersistenceManager extends IdvPersistenceManager {
         "  </properties>\n" +
         "</skin>\n";
 
-    private static final String BUILDWINDOW_COMP_GROUP =
-        "/edu/wisc/ssec/mcidasv/resources/skins/window/buildwindow.xml";
+    private static final String BUILDWINDOW_COMP_GROUP_SHOW_WIDGETS =
+        "/edu/wisc/ssec/mcidasv/resources/skins/window/buildwindow-showwidgets.xml";
+
+    private static final String BUILDWINDOW_COMP_GROUP_HIDE_WIDGETS =
+        "/edu/wisc/ssec/mcidasv/resources/skins/window/buildwindow-hidewidgets.xml";
 
     private static final String BUILDWINDOW_PROPS_GENERAL = "clickToFocus=true;showToolBars=false;TopBarVisible=false;shareViews=true;showControlLegend=true;initialSplitPaneLocation=0.2;legendOnLeft=false;showEarthNavPanel=false;showControlLegend=false;shareGroup=view%versionuid%;";
 
