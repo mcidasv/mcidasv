@@ -1230,37 +1230,83 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
   private static int count = 0;
 
-
+  /**
+   * Resolution of grid should match the loweset of swaths.
+   * @param  grid  the new domain (target of reproject).
+   * @param  swaths  one or more swaths to be reprojected.
+   * @param  mode  See ReprojectSwath for details.
+   */
   public static FlatField swathToGrid(Linear2DSet grid, FlatField[] swaths, double mode) throws Exception {
-    FunctionType ftype = (FunctionType) swaths[0].getType();
-    visad.Set domSet = swaths[0].getDomainSet();
-
-    FlatField swath = new FlatField(new FunctionType(ftype.getDomain(),
-        new RealTupleType(new RealType[] {RealType.getRealType("redimage_"+count), RealType.getRealType("greenimage_"+count), RealType.getRealType("blueimage_"+count)})), domSet);
-
-    if (swaths[0].getFloats(false)[0].length == swaths[1].getFloats(false)[0].length &&
-            swaths[0].getFloats(false)[0].length == swaths[2].getFloats(false)[0].length) {
-        logger.trace("SKIPPING RESAMPLE; domains are the same length");
-        swath.setSamples(new float[][]
-                {swaths[0].getFloats(false)[0], swaths[1].getFloats(false)[0], swaths[2].getFloats(false)[0]});
-    } else {
-        logger.trace("DOING RESAMPLE; domains are different lengths");
-        visad.Field gResampled = swaths[1].resample(swaths[0].getDomainSet(), Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-        visad.Field bResampled = swaths[2].resample(swaths[0].getDomainSet(), Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-        
-        swath.setSamples(new float[][]
-            {swaths[0].getFloats(false)[0], gResampled.getFloats(false)[0], bResampled.getFloats(false)[0]});
-    } 
-
-    count++;
-
-    return ReprojectSwath.swathToGrid(grid, swath, (int)mode);
+     RealTupleType newRangeType = new RealTupleType(new RealType[] 
+           {RealType.getRealType("redimage_"+count), RealType.getRealType("greenimage_"+count), RealType.getRealType("blueimage_"+count)});
+     return swathToGrid(grid, swaths, newRangeType, mode);
   }
+
+  /**
+   * Resolution of grid should match the loweset of swaths.
+   * @param  grid  the new domain (target of reproject).
+   * @param  swaths  one or more swaths to be reprojected.
+   * @param  newRangeType user must supply.
+   * @param  mode  See ReprojectSwath for details.
+   */
+  public static FlatField swathToGrid(Linear2DSet grid, FlatField[] swaths, RealTupleType newRangeType, double mode) throws Exception {
+     int nSwths = swaths.length;
+     boolean equalDom = true;
+     for (int k=1; k<nSwths; k++) {
+        if (!(swaths[0].getDomainSet().equals(swaths[k]))) {
+           equalDom = false;
+           break;
+        }
+     }
+     int tupDim = newRangeType.getNumberOfRealComponents();
+     float[][] newRangeVals = new float[tupDim][];
+     if (equalDom) {
+         FunctionType ftype = (FunctionType) swaths[0].getType();
+         Gridded2DSet domSet = (Gridded2DSet) swaths[0].getDomainSet();
+         FlatField swath = new FlatField(new FunctionType(ftype.getDomain(), newRangeType), domSet);
+         int cnt = 0;
+         for (int k=0; k<nSwths; k++) {
+            float[][] rngVals = swaths[k].getFloats(false);
+            for (int t=0; t<rngVals.length; t++) {
+                newRangeVals[cnt] = rngVals[t];
+                cnt++;
+            }
+         }
+         swath.setSamples(newRangeVals, false);
+         
+         return swathToGrid(grid, swath, mode);
+     }
+     else {
+         FlatField newGrid = new FlatField(new FunctionType(grid.getType(), newRangeType), grid);
+         FlatField[] fltFlds = new FlatField[nSwths];
+         for (int k=0; k<nSwths; k++) {
+             fltFlds[k] = swathToGrid(grid, swaths[k], mode);
+         }
+         int cnt = 0;
+         for (int k=0; k<nSwths; k++) {
+            float[][] rngVals = fltFlds[k].getFloats(false);
+            for (int t=0; t<rngVals.length; t++) {
+                newRangeVals[cnt] = rngVals[t];
+                cnt++;
+            }
+         }
+         newGrid.setSamples(newRangeVals, false);
+         
+         return newGrid;
+     }
+  }
+
+  /**
+   * Grid and swath must both have a CoordinateSystem with an Earth Reference.
+   * @param  grid  the new domain (target of reproject).
+   * @param  swath swath to be reprojected.
+   * @param  mode  See ReprojectSwath for details.
+   */
 
   public static FlatField swathToGrid(Linear2DSet grid, FlatField swath, double mode) throws Exception {
      return ReprojectSwath.swathToGrid(grid, swath, (int)mode);
   }
- 
+
   /* keep in here for now.
   public static FlatField swathToGrid(Linear2DSet grid, FlatField swath, double mode) throws Exception {
     FunctionType ftype = (FunctionType) swath.getType();
