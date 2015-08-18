@@ -1131,7 +1131,10 @@ public class McVGuiUtils implements Constants {
         List<ViewManager> vms = arrList(getVMCount());
         vms.addAll(window.getViewManagers());
         for (IdvComponentHolder holder : getComponentHolders(window)) {
-            vms.addAll(holder.getViewManagers());
+            List<ViewManager> holderVms = holder.getViewManagers();
+            if (holderVms != null) {
+                vms.addAll(holderVms);
+            }
         }
         Set<Object> groupIds = newHashSet(vms.size());
         for (ViewManager vm : vms) {
@@ -1163,7 +1166,10 @@ public class McVGuiUtils implements Constants {
     public static List<ViewManager> getViewManagers(final WindowInfo info) {
         List<ViewManager> vms = arrList(getVMCount());
         for (IdvComponentHolder holder : getComponentHolders(info)) {
-            vms.addAll(holder.getViewManagers());
+            List<ViewManager> holderVms = holder.getViewManagers();
+            if (holderVms != null) {
+                vms.addAll(holderVms);
+            }
         }
         return vms;
     }
@@ -1172,7 +1178,10 @@ public class McVGuiUtils implements Constants {
         List<ViewManager> vms = arrList(getVMCount());
         vms.addAll(window.getViewManagers());
         for (IdvComponentHolder holder : getComponentHolders(window)) {
-            vms.addAll(holder.getViewManagers());
+            List<ViewManager> holderVms = holder.getViewManagers();
+            if (holderVms != null) {
+                vms.addAll(holderVms);
+            }
         }
         return vms;
     }
