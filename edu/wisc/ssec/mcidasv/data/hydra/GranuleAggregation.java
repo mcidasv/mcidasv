@@ -297,7 +297,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   Index index = a.getIndex();
 					   float fVal = 0.0f;
 
-					   int rangeOffset = 1;
+					   int rangeOffset = 0;
 					   int rangeCount = 0;
 					   boolean prvScanWasCut = false;
 					   boolean needClosingRange = false;
@@ -319,24 +319,24 @@ public class GranuleAggregation implements MultiDimensionReader {
 									   + ", last val: " + fVal);
 							   if ((prvScanWasCut) || (i == 0)) {
 								   if (i == 0) {
-									   rangeOffset = 1;
+									   rangeOffset = 0;
 								   } else {
-									   rangeOffset = i + 2;
+									   rangeOffset = i;
 								   }
 							   } else {
 								   try {
 									   // We are using 2D ranges
 									   logger.trace("Adding Range: " + rangeOffset
-											   + ", " + i + ", 1");
-									   al.add(new Range(rangeOffset, i, 1));
-									   logger.trace("Adding Range: " + 1 + ", "
+											   + ", " + (i - 1) + ", 1");
+									   al.add(new Range(rangeOffset, i - 1, 1));
+									   logger.trace("Adding Range: " + 0 + ", "
 											   + (scanLength - 1) + ", 1");
 									   al.add(new Range(0, scanLength - 1, 1));
 								   } catch (Exception e) {
 									   e.printStackTrace();
 								   }
 								   rangeCount = 0;
-								   rangeOffset = i + 1;
+								   rangeOffset = i;
 							   }
 							   prvScanWasCut = true;
 						   } else {
