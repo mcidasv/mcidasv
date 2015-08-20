@@ -2047,7 +2047,8 @@ class _Layer(_JavaProxy):
             ValueError: if status isn't a boolean
         """
         if isinstance(status, bool):
-            self._JavaProxy__javaObject.getViewManager().setShowDisplayList(status)
+            self._JavaProxy__javaObject.setShowInDisplayList(status)
+            # self._JavaProxy__javaObject.getViewManager().setShowDisplayList(status)
             self._getDisplayWrapper().labelDict['visible'] = status
         else:
             raise ValueError('parameter for setLayerLabelVisible must be boolean (either True or False')
@@ -2059,7 +2060,7 @@ class _Layer(_JavaProxy):
         Confusingly, these are per panel and not per layer.
         
         Args:
-            color can be rgb list or tuple, or string giving name of a color
+            color: can be rgb list or tuple, or string giving name of a color
         """
         import colorutils
         # rgb = colorutils.convertColor(color)
@@ -2068,8 +2069,9 @@ class _Layer(_JavaProxy):
         # b = rgb[2].getConstant()
         # newColor = java.awt.Color(r, g, b)
         newColor = colorutils.convertColorToJava(color)
-        
-        self._JavaProxy__javaObject.getViewManager().setDisplayListColor(newColor)
+        # self._JavaProxy__javaObject.getViewManager().setDisplayListColor(newColor)
+        # self._JavaProxy__javaObject.setViewManagerDisplayListColor(newColor)
+        self._JavaProxy__javaObject.setDisplayListColor(newColor, False)
         self._getDisplayWrapper().labelDict['color'] = newColor
         
     @gui_invoke_later
