@@ -53,11 +53,11 @@ ir_data = loadADDEImage(descriptor='G7-IR-4K',band=8,**adde_parms)
 #     Create some strings from the object to make it 
 #     easier to build our window and label the image.
 #
-bw_lines = ir_metadata['lines']/2
-bw_eles = ir_metadata['elements']/2
+bw_lines = ir_data['lines']/2
+bw_eles = ir_data['elements']/2
 ir_label = '%s %s' % (
-    ir_metadata['sensor-type'],
-    ir_metadata['nominal-time']
+    ir_data['sensor-type'],
+    ir_data['nominal-time']
     )
 
 
