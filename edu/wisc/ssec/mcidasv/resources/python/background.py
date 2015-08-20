@@ -428,11 +428,11 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         return defaultLabel
 
 class _MappedGeoGridFlatField(_MappedFlatField):
-    
     """Implements the 'mega-object' class for grids read with loadGrid."""
     
-    def __init__(self, ggff, geogrid, filename, field, levelReal, dataSourceName):
+    def __init__(self, ggff, geogrid, geogridAdapter, filename, field, levelReal, dataSourceName):
         self.geogrid = geogrid
+        self.geogridAdapter = geogridAdapter
         self.filename = filename
         self.field = field
         self.levelReal = levelReal
@@ -3176,21 +3176,20 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
     macros = islInterpreter.applyMacros(fname)
     islInterpreter.captureImage(macros, elem)
 
-
 def loadGrid(filename=None, field=None, level='all',
         time=None, stride=None, xStride=1, yStride=1, 
         xRange=None, yRange=None, latLonBounds=None, **kwargs): 
     """Load gridded fields; analagous to the "Gridded Data" chooser.
-    
-    Should be compatible with file formats handled by the netCDF-java library 
+
+    Should be compatible with file formats handled by the netCDF-java library
     (netCDF, HDF, GRIB...).
 
     Args:
         filename: path to local file, or an http/dods URL
         field: the "short name" of the variable to be loaded.
-        level (optional): string specifying value and units, e.g. "1000 hPa". 
+        level (optional): string specifying value and units, e.g. "1000 hPa".
                           default is all levels.
-        time (optional): integer representing index of time to be loaded. 
+        time (optional): integer representing index of time to be loaded.
                          default is zero.
         xStride (optional): integer stride value for reduced resolution loading.
         yStride (optional): integer stride value for reduced resolution loading.
@@ -3216,7 +3215,7 @@ def loadGrid(filename=None, field=None, level='all',
     from ucar.unidata.geoloc import LatLonRect
     from ucar.ma2 import Range
     from ucar.visad import Util
-    from visad import DateTime
+    from visad import DateTime, RealType
 
     if (xStride < 1) or (yStride < 1):
         raise ValueError("xStride and yStride must be 1 or greater")
@@ -3260,7 +3259,8 @@ def loadGrid(filename=None, field=None, level='all',
             raise ValueError("Please specify level as string containing level and unit, e.g. '1000 hPa', or do level='all' for all levels.")
         levels = geogrid.getLevels()
         for i, levelToTest in enumerate(levels):
-            levelString = '%s %s' % (levelToTest.getName(), levelToTest.getDescription())
+            levelString = '%s %s' % (levelToTest.getName(), 
+                                     levelToTest.getDescription())
             curLevelReal = Util.toReal(levelString)
             # actually utilize visad comparison magic!
             if levelWanted == curLevelReal:
@@ -3277,7 +3277,8 @@ def loadGrid(filename=None, field=None, level='all',
             # Note, we assume time user time string is in format given by
             # 'listGridTimesInField'.
             dateTime = DateTime.createDateTime(time, 'yyyy-MM-dd HH:mm:ss')
-            dateTimesInFile = DataUtil.makeDateTimes(geogrid.getCoordinateSystem().getTimeAxis1D())
+            dateTimesInFile = DataUtil.makeDateTimes(
+                    geogrid.getCoordinateSystem().getTimeAxis1D())
             for i, timeInFile in enumerate(dateTimesInFile):
                 if dateTime.equals(timeInFile):
                     geogrid = geogrid.subset(Range(i, i), None, None, None)
@@ -3290,7 +3291,11 @@ def loadGrid(filename=None, field=None, level='all',
             geogrid = geogrid.subset(Range(time, time), None, None, None)
     else:
         # default to first time step...
-        geogrid = geogrid.subset(Range(0, 0), None, None, None)
+        try:
+            geogrid = geogrid.subset(Range(0, 0), None, None, None)
+        except ucar.ma2.InvalidRangeException:
+            # Subset fails for ABI-DOE files due to odd handling of time dim.
+            pass
 
     if xRange is not None or yRange is not None: 
         if xRange is not None:
@@ -3310,9 +3315,20 @@ def loadGrid(filename=None, field=None, level='all',
     # TODO: if inputs == 1, eliminate this call?
     geogrid = geogrid.subset(None, None, latLonBounds, 1, yStride, xStride)
 
-    adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
+    try: 
+        # This way the adapter keeps a reference to the netcdf file, which is
+        # important to be able to extract times from ABI files later on.
+        adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid, 
+                gridDataset.getNetcdfFile())
+    except:
+        adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
 
-    adapterData = adapter.getData()
+    try:
+        adapterData = adapter.getData()
+    except java.lang.ClassCastException:
+        # fix for ABI DOE files
+        adapterData = adapter.getFlatField(0, "")
+
     if (GridUtil.isTimeSequence(adapterData)):
         ff = adapterData.getSample(0)
     else:
@@ -3322,8 +3338,10 @@ def loadGrid(filename=None, field=None, level='all',
     # dimension" errors if it gets used in an IDV formula later on...
     if level is not None and level.lower() != 'all':
         ff = make2D(ff)
+
     # make the 'mega-object'
-    mapped = _MappedGeoGridFlatField(ff, geogrid, filename, field, levelReal, dataSource.toString())
+    mapped = _MappedGeoGridFlatField(ff, geogrid, adapter, filename, field, 
+            levelReal, dataSource.toString())
 
     return mapped
 
@@ -3350,17 +3368,24 @@ def makeFlatFieldSequence(sequence):
             if ff.geogrid.getCoordinateSystem().hasTimeAxis1D():
                 timeAxis = ff.geogrid.getCoordinateSystem().getTimeAxis1D()
                 dateTimes.append(DataUtil.makeDateTimes(timeAxis)[0])
+            elif ff.geogridAdapter.getBaseTime() is not None:
+                dateTimes.append(ff.geogridAdapter.getBaseTime())
             else:
-                # fix for ABI data / data with no time coord: just return plain FF
-                # this will allow data to get displayed, but w/o time info
+                # Fix for data with no time coord: just return plain FF.
+                # this will allow data to get displayed, but w/o time info.
                 return ff
     except AttributeError:
         # no geogrid ... try to read from getMetadataMap
         if sequence[0].getMetadataMap().get('times'):
             # this was a _MappedGeoGridFlatField
             for ff in sequence:
-                # convert ucar.nc2.util.NamedAnything to a visad.DateTime:
+                # This is a ucar.nc2.util.NamedAnything so the best we can
+                # do is convert it from string to visad.DateTime...
                 timeStr = ff.getMetadataMap().get('times')[0].toString() 
+                # TODO why did the incoming time format change?
+                # createDateTime doesn't accept T in format:
+                timeStr = timeStr.replace('T', ' ')
+                timeStr = timeStr.replace('Z', '')
                 dateTimes.append(DateTime.createDateTime(timeStr, 'yyyy-MM-dd HH:mm:ss'))
         elif sequence[0].getMetadataMap().get('nominal-time'):
             # this was a _MappedAreaImageFlatField
