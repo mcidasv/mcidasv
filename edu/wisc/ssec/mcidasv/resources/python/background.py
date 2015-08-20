@@ -35,6 +35,7 @@ from java.util.concurrent import FutureTask
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
+from ucar.unidata.idv.control import StationModelControl
 from ucar.unidata.idv.control import ValuePlanViewControl
 from ucar.unidata.idv.control.drawing import TextGlyph
 from ucar.unidata.geoloc import LatLonPointImpl
@@ -2196,7 +2197,7 @@ class _Layer(_JavaProxy):
             NotImplementedError: if the underlying layer is not a 
                                  ValuePlanViewControl.
         """
-        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+        if not isinstance(self._JavaProxy__javaObject, (ValuePlanViewControl, StationModelControl)):
             raise NotImplementedError('decluttering not support for this layer type')
             
         if not self._JavaProxy__javaObject.getDeclutter():
@@ -2214,7 +2215,7 @@ class _Layer(_JavaProxy):
             NotImplementedError: if the underlying layer is not a 
                                  ValuePlanViewControl.
         """
-        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+        if not isinstance(self._JavaProxy__javaObject, (ValuePlanViewControl, StationModelControl)):
             raise NotImplementedError('decluttering not support for this layer type')
             
         if self._JavaProxy__javaObject.getDeclutter():
@@ -2232,7 +2233,7 @@ class _Layer(_JavaProxy):
             NotImplementedError: if the underlying layer is not a 
                                  ValuePlanViewControl.
         """
-        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+        if not isinstance(self._JavaProxy__javaObject, (ValuePlanViewControl, StationModelControl)):
             raise NotImplementedError('decluttering not support for this layer type')
             
         return self._JavaProxy__javaObject.getDeclutter()
@@ -2248,7 +2249,7 @@ class _Layer(_JavaProxy):
             NotImplementedError: if the underlying layer is not a 
                                  ValuePlanViewControl.
         """
-        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+        if not isinstance(self._JavaProxy__javaObject, (ValuePlanViewControl, StationModelControl)):
             raise NotImplementedError('decluttering not support for this layer type')
             
         return self._JavaProxy__javaObject.getDeclutterFilter()
@@ -2266,7 +2267,7 @@ class _Layer(_JavaProxy):
             NotImplementedError: if the underlying layer is not a 
                                  ValuePlanViewControl.
         """
-        if not isinstance(self._JavaProxy__javaObject, ValuePlanViewControl):
+        if not isinstance(self._JavaProxy__javaObject, (ValuePlanViewControl, StationModelControl)):
             raise NotImplementedError('decluttering not support for this layer type')
             
         if self._JavaProxy__javaObject.getDeclutterFilter() != filterFactor:
