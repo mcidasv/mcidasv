@@ -167,7 +167,7 @@ def describeActions(pattern=None):
     """
     # actions = _mcv.getIdvUIManager().getCachedActions().getAllActions()
     actions = getStaticMcv().getIdvUIManager().getCachedActions().getAllActions()
-    print sorted([action.getId() for action in actions])
+    print sorted([str(action.getId()) for action in actions])
     
 def getLogFile():
     """Return the file path of the McIDAS-V log file."""
