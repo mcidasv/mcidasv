@@ -1716,7 +1716,6 @@ public class PersistenceManager extends IdvPersistenceManager {
                 props = new StringBuilder(BUILDWINDOW_PROPS_GENERAL);
             }
             props.append("size=").append(width).append(':').append(height).append(';');
-//            logger.trace("window props: {}", props);
             if ("MAP".equals(panelTypeRepr)) {
                 node.setAttribute(IdvXmlUi.ATTR_CLASS, "ucar.unidata.idv.MapViewManager");
             } else if ("GLOBE".equals(panelTypeRepr)) {
@@ -1735,7 +1734,6 @@ public class PersistenceManager extends IdvPersistenceManager {
         UIManager uiManager = (UIManager)McIDASV.getStaticMcv().getIdvUIManager();
         String skinPath;
         if (showWidgets) {
-//            skinPath = BUILDWINDOW_COMP_GROUP_SHOW_WIDGETS;
             skinPath = Constants.BLANK_COMP_GROUP;
         } else {
             skinPath = BUILDWINDOW_COMP_GROUP_HIDE_WIDGETS;
@@ -1791,9 +1789,6 @@ public class PersistenceManager extends IdvPersistenceManager {
         "    <property name=\"icon.wait.wait\" value=\"/ucar/unidata/idv/images/wait.gif\"/>\n" +
         "  </properties>\n" +
         "</skin>\n";
-
-    private static final String BUILDWINDOW_COMP_GROUP_SHOW_WIDGETS =
-        "/edu/wisc/ssec/mcidasv/resources/skins/window/buildwindow-showwidgets.xml";
 
     private static final String BUILDWINDOW_COMP_GROUP_HIDE_WIDGETS =
         "/edu/wisc/ssec/mcidasv/resources/skins/window/buildwindow-hidewidgets.xml";
