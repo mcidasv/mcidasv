@@ -1017,6 +1017,7 @@ public class McIDASV extends IntegratedDataViewer {
      *   <li>Clearing out the automatic display creation arguments.</li>
      *   <li>Presence of certain properties on the commandline.</li>
      *   <li>Detection and handling of a crashed McIDAS-V session (searching for {@code SESSION_FILE}.</li>
+     *   <li>Running action specified by -doaction flag (if any).</li>
      * </ul>
      *
      * @see ArgumentManager#clearAutomaticDisplayArgs()

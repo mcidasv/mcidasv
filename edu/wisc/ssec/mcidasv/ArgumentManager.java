@@ -72,11 +72,16 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
  */
 public class ArgumentManager extends ArgsManager {
 
-    private static final Logger helpLogger = LoggerFactory.getLogger("mcvstdout");
+    private static final Logger helpLogger =
+        LoggerFactory.getLogger("mcvstdout");
 
-    /** McIDAS-V flag that signifies everything that follows is a Jython argument. */
+    /**
+     * McIDAS-V flag that signifies everything that follows is a Jython
+     * argument.
+     */
     public static final String ARG_JYTHONARGS = "-scriptargs";
 
+    /** Flag used to set the path to mcidasv.log. */
     public static final String ARG_LOGPATH = "-logpath";
 
     /** Flag that allows users to automatically run an action after startup. */
@@ -86,20 +91,32 @@ public class ArgumentManager extends ArgsManager {
     public static final String USAGE_MESSAGE =
         "Usage: runMcV [OPTIONS] <bundle/script files, e.g., .mcv, .mcvz, .py>";
 
-    /** {@literal "__name__"} to use when no Jython/Python script has been provided at startup. */
+    /**
+     * {@literal "__name__"} to use when no Jython/Python script has been
+     * provided at startup.
+     */
     public static final String NO_PYTHON_MODULE = "<none>";
 
     /** Jython arguments, if any. */
     private List<String> jythonArguments;
     
-    /** Jython script to execute, or {@literal "<none>"} if one was not given. */
+    /**
+     * Jython script to execute, or {@literal "<none>"} if one was not given.
+     */
     private String jythonScript;
 
-    /** Holds the ID of an action to automatically run after starting McV. */
+    /**
+     * Holds the ID of an action to automatically run after starting McV.
+     * Value may be null.
+     */
     private String startupAction;
 
-    /** Given by the "-user" argument. Alternative user path for bundles, resources, etc. */
-    String defaultUserDirectory = StartupManager.getInstance().getPlatform().getUserDirectory();
+    /**
+     * Given by the "-user" argument. Alternative user path for bundles,
+     * resources, etc.
+     */
+    String defaultUserDirectory =
+        StartupManager.getInstance().getPlatform().getUserDirectory();
 
     /**
      * Just bubblin' on up the inheritance hierarchy.
@@ -378,7 +395,8 @@ public class ArgumentManager extends ArgsManager {
             + msg(ARG_TRACE, "(Print out trace messages)")
             + msg(ARG_NOERRORSINGUI, "(Don't show errors in gui)")
             + msg(ARG_TRACEONLY, "<trace pattern> (Print out trace messages that match the pattern)")
-            + msg("-console", "[ fix for getting the console functionality in install4j launcher ]");
+            + msg(ARG_DOACTION, "<action id> (Run given action automatically after startup)");
+//            + msg("-console", "[ fix for getting the console functionality in install4j launcher ]");
     }
     
     /**
