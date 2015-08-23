@@ -79,6 +79,9 @@ public class ArgumentManager extends ArgsManager {
 
     public static final String ARG_LOGPATH = "-logpath";
 
+    /** Flag that allows users to automatically run an action after startup. */
+    public static final String ARG_DOACTION = "-doaction";
+
     /** Usage message. */
     public static final String USAGE_MESSAGE =
         "Usage: runMcV [OPTIONS] <bundle/script files, e.g., .mcv, .mcvz, .py>";
@@ -91,6 +94,9 @@ public class ArgumentManager extends ArgsManager {
     
     /** Jython script to execute, or {@literal "<none>"} if one was not given. */
     private String jythonScript;
+
+    /** Holds the ID of an action to automatically run after starting McV. */
+    private String startupAction;
 
     /** Given by the "-user" argument. Alternative user path for bundles, resources, etc. */
     String defaultUserDirectory = StartupManager.getInstance().getPlatform().getUserDirectory();
@@ -180,6 +186,8 @@ public class ArgumentManager extends ArgsManager {
             }
             System.err.println("result[0]: "+FileOption.booleanFromFormat(results[0]));
             System.err.println("result[1]: '"+results[1]+'\'');
+        } else if (checkArg(arg, ARG_DOACTION, args, idx, 1)) {
+            startupAction = args[idx++];
         } else {
             if (ARG_ISLINTERACTIVE.equals(arg) || ARG_B64ISL.equals(arg) || ARG_ISLFILE.equals(arg) || isIslFile(arg)) {
                 System.err.println("*** WARNING: ISL is being deprecated!");
@@ -192,6 +200,19 @@ public class ArgumentManager extends ArgsManager {
             return super.parseArg(arg, args, idx);
         }
         return idx;
+    }
+
+    /**
+     * Runs the action ID stored in {@link #startupAction}.
+     *
+     * Calling this method will result in the contents of {@code startupAction}
+     * being deleted.
+     */
+    public void runStartupAction() {
+        if ((startupAction != null) && !startupAction.isEmpty()) {
+            getIdv().handleAction("action:"+startupAction);
+            startupAction = null;
+        }
     }
 
     /**

@@ -1032,6 +1032,9 @@ public class McIDASV extends IntegratedDataViewer {
 
         estimate = System.nanoTime() - startTime;
         logger.info("estimated startup duration: {} ms", estimate / 1e6);
+
+        // handle the -doAction <action id> startup option.
+        ((ArgumentManager)getArgsManager()).runStartupAction();
     }
 
     /**
