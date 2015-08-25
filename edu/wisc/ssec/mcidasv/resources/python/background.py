@@ -1438,7 +1438,8 @@ class _Display(_JavaProxy):
             height, width: size of image
             
         Raises:
-            ValueError:  if filename is a directory
+            ValueError: if filename is a directory, or if the ViewManager 
+                        associated with this wrapper no longer exists.
         """
         from ucar.unidata.idv.ui import ImageGenerator
         from ucar.unidata.xml import XmlUtil
@@ -1485,8 +1486,10 @@ class _Display(_JavaProxy):
         
         islAsXml = ImageGenerator.makeXmlFromString(isl[:-2])
         index = self._getDisplayIndex()
-        if index:
+        if index >= 0:
             xml = '%s\n<image file="%s" quality="%s" view="#%s">%s</image>' % (XmlUtil.getHeader(), filename, quality, index, islAsXml)
+        elif index == -1:
+            raise ValueError('Underlying display could not be found (display may have been closed).')
         else:
             xml = '%s\n<image file="%s" quality="%s">%s</image>' % (XmlUtil.getHeader(), filename, quality, islAsXml)
         print 'isl2xml=%s' % (xml)
