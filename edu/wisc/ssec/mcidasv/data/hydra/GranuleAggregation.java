@@ -321,7 +321,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 								   if (i == 0) {
 									   rangeOffset = 0;
 								   } else {
-									   rangeOffset = i;
+									   rangeOffset = i + 1;
 								   }
 							   } else {
 								   try {
