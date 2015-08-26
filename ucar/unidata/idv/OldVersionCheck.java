@@ -75,32 +75,7 @@ public class OldVersionCheck {
      * @throws Exception the exception
      */
     public static void check(IntegratedDataViewer idv) throws Exception {
-
-
-
-        String oldVersionKey = "idv_old_version_"
-                               + getIDVVersion().stringForShell() + "_"
-                               + currentIDVVersion.stringForShell()
-                               + "_dontwarn";
-
-
-        Object oldVersionDontWarn = idv.getPreference(oldVersionKey);
-
-        boolean dontShowOldWarn = Boolean.parseBoolean((oldVersionDontWarn
-                                      == null)
-                ? false + ""
-                : oldVersionDontWarn.toString());
-
-        boolean dontShowOldWarnRsp = false;
-
-        if (isIDVold() && !dontShowOldWarn) {
-            dontShowOldWarnRsp = showOldVersionMessage();
-        }
-
-        //User said not to warn so must persist this information.
-        if (dontShowOldWarnRsp) {
-            idv.getStore().put(oldVersionKey, dontShowOldWarnRsp);
-        }
+        // no-op
     }
 
     /**
@@ -260,7 +235,7 @@ public class OldVersionCheck {
      * the checkbox event occurs, that object's appropriate
      * method is invoked.
      *
-     * @see CheckboxEvent
+     * @see ItemEvent
      */
     private static final class CheckboxListener implements ItemListener {
 
