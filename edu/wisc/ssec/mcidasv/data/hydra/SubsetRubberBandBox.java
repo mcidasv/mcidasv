@@ -54,8 +54,8 @@ import visad.VisADException;
 
 public class SubsetRubberBandBox extends LineDrawing {
 
-	private static final Logger logger = LoggerFactory.getLogger(SubsetRubberBandBox.class);
-	
+    private static final Logger logger = LoggerFactory.getLogger(SubsetRubberBandBox.class);
+
     /** x type for the box */
     private RealType xType;
 
@@ -173,9 +173,9 @@ public class SubsetRubberBandBox extends LineDrawing {
         float[] low = domainSet.getLow();
         float[] hi  = domainSet.getHi();
 
-        logger.debug("Element range: " + low[1] + " to " + hi[1]);
-        logger.debug("Line range: " + low[0] + " to " + hi[0]);
-        
+        logger.trace("{}: element range: {} to {}", hashCode(), low[1], hi[1]);
+        logger.trace("{}: line range: {} to {}", hashCode(), low[0], hi[0]);
+
         elemMax = (int) hi[1];
         lineMax = (int) hi[0];
         
