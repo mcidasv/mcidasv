@@ -2226,7 +2226,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     double  rate   = 1.0 / displayRate;
                     boolean useGCT = idv.getStateManager().getProperty(
                                          "idv.capture.gif.useGlobalTable",
-                                         false);
+                                         true);
 
                     AnimatedGifEncoder.createGif(movieFile,
                             ImageWrapper.makeFileList(images),
