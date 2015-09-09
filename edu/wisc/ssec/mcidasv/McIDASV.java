@@ -56,6 +56,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 
 import edu.wisc.ssec.mcidasv.util.SystemState;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -1016,8 +1017,9 @@ public class McIDASV extends IntegratedDataViewer {
      * <ul>
      *   <li>Clearing out the automatic display creation arguments.</li>
      *   <li>Presence of certain properties on the commandline.</li>
-     *   <li>Detection and handling of a crashed McIDAS-V session (searching for {@code SESSION_FILE}.</li>
-     *   <li>Running action specified by -doaction flag (if any).</li>
+     *   <li>Detection and handling of a crashed McIDAS-V session.</li>
+     *   <li>Run action specified by {@code -doaction} flag (if any).</li>
+     *   <li>Allowing tooltips to remain visible for more than 4 seconds.</li>
      * </ul>
      *
      * @see ArgumentManager#clearAutomaticDisplayArgs()
@@ -1036,6 +1038,9 @@ public class McIDASV extends IntegratedDataViewer {
 
         // handle the -doAction <action id> startup option.
         ((ArgumentManager)getArgsManager()).runStartupAction();
+
+        // disable idiotic tooltip dismissal (seriously, 4 seconds!?)
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
     }
 
     /**
