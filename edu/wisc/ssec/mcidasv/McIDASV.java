@@ -46,7 +46,16 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -92,6 +101,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.xml.XmlDelegateImpl;
 import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlUtil;
+
 import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
@@ -113,7 +123,6 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.LayerAnimationWindow;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
-import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.WebBrowser;
 
@@ -166,10 +175,15 @@ public class McIDASV extends IntegratedDataViewer {
     /** The http based monitor to dump stack traces and shutdown the IDV */
     private McIDASVMonitor mcvMonitor;
 
-    /** {@link MonitorManager} allows for relatively easy and efficient monitoring of various resources. */
+    /**
+     * {@link MonitorManager} allows for relatively easy and efficient
+     * monitoring of various resources.
+     */
     private final MonitorManager monitorManager = new MonitorManager();
 
-    /** Actions passed into {@link #handleAction(String, Hashtable, boolean)}. */
+    /**
+     * Actions passed into {@link #handleAction(String, Hashtable, boolean)}.
+     */
     private final List<String> actions = new LinkedList<>();
 
     private enum WarningResult { OK, CANCEL, SHOW, HIDE };
@@ -282,11 +296,11 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Start up the McIDAS-V monitor server. This is an http server on the port defined
-     * by the property idv.monitorport (8788).  It is only accessible to 127.0.0.1 (localhost)
+     * Start up the McIDAS-V monitor server. This is an http server on the
+     * port defined by the property {@code idv.monitorport} (8788).
+     *
+     * It is only accessible to 127.0.0.1 (localhost)
      */
-    // TODO: we probably don't want our own copy of this in the long run...
-    // all we did was change "IDV" to "McIDAS-V"
     @Override protected void startMonitor() {
         if (mcvMonitor != null) {
             return;
@@ -578,7 +592,7 @@ public class McIDASV extends IntegratedDataViewer {
      * list and {@code controlDescriptorMap}.
      * 
      * <p>This method differs from the IDV's in that McIDAS-V <b>overwrites</b>
-     * existing {@code ControlDescriptor}s if 
+     * existing {@code ControlDescriptor ControlDescriptors} if
      * {@link ControlDescriptor#getControlId()} matches.
      * 
      * @param cd The ControlDescriptor to add.
@@ -720,7 +734,8 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override public void removeAllDataSources() {
         IdvObjectStore store = getStore();
-        boolean showWarning = store.get(Constants.PREF_CONFIRM_REMOVE_DATA, true);
+        boolean showWarning =
+            store.get(Constants.PREF_CONFIRM_REMOVE_DATA, true);
         showWarning = removeAllData(showWarning);
         store.put(Constants.PREF_CONFIRM_REMOVE_DATA, showWarning);
     }
@@ -731,7 +746,8 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override public void removeAllDisplays() {
         IdvObjectStore store = getStore();
-        boolean showWarning = store.get(Constants.PREF_CONFIRM_REMOVE_LAYERS, true);
+        boolean showWarning =
+            store.get(Constants.PREF_CONFIRM_REMOVE_LAYERS, true);
         showWarning = removeAllLayers(showWarning);
         store.put(Constants.PREF_CONFIRM_REMOVE_LAYERS, showWarning);
     }
@@ -796,10 +812,11 @@ public class McIDASV extends IntegratedDataViewer {
      * @param okLabel Text of button that signals removal.
      * @param cancelLabel Text of button that signals cancelling removal.
      * 
-     * @return A {@code Set} of {@link WarningResult}s that describes what the
-     * user opted to do. Should always contain only <b>two</b> elements. One
-     * for whether or not {@literal "ok"} or {@literal "cancel"} was clicked,
-     * and one for whether or not the warning should continue to be displayed.
+     * @return A {@code Set} of {@link WarningResult WarningResults} that
+     * describes what the user opted to do. Should always contain only
+     * <b>two</b> elements. One for whether or not {@literal "ok"} or
+     * {@literal "cancel"} was clicked, and one for whether or not the warning
+     * should continue to be displayed.
      */
     private Set<WarningResult> showWarningDialog(final String title, 
         final String message, final String prefId, final String prefLabel, 
@@ -845,12 +862,13 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Overridden so that McIDAS-V doesn't have to create an entire new {@link ucar.unidata.idv.ui.IdvWindow}
-     * if {@link VMManager#findViewManager(ViewDescriptor)} can't find an appropriate
-     * ViewManager for {@code viewDescriptor}.
+     * Overridden so that McIDAS-V doesn't have to create an entire new
+     * {@link ucar.unidata.idv.ui.IdvWindow} if
+     * {@link VMManager#findViewManager(ViewDescriptor)} can't find an
+     * appropriate ViewManager for {@code viewDescriptor}.
      * 
      * <p>Not doing the above causes McIDAS-V to get stuck in a window creation
-     * loop.
+     * loop.</p>
      */
     @Override public ViewManager getViewManager(ViewDescriptor viewDescriptor,
         boolean newWindow, String properties) 
@@ -898,11 +916,7 @@ public class McIDASV extends IntegratedDataViewer {
      * bundle.
      */
     public void doSaveAsDefaultLayout() {
-        Misc.run(new Runnable() {
-            @Override public void run() {
-                ((PersistenceManager)getPersistenceManager()).doSaveAsDefaultLayout();
-            }
-        });
+        Misc.run(() -> ((PersistenceManager)getPersistenceManager()).doSaveAsDefaultLayout());
     }
 
     /**
@@ -1053,12 +1067,14 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Have the user select a bundle. If andRemove is true then we remove all data sources and displays.
+     * Have the user select a bundle. If andRemove is true then we remove all
+     * data sources and displays.
      *
      * Then we open the bundle and start doing unpersistence things.
      *
      * @param filename The filename to open
-     * @param checkUserPreference Should we show, if needed, the {@literal "open"} dialog
+     * @param checkUserPreference Should we show, if needed, the
+     * {@literal "open"} dialog
      * @param andRemove If true then first remove all data sources and displays
      */
     private void doOpenInThread(String filename, boolean checkUserPreference,
@@ -1100,10 +1116,10 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Factory method to create a McIDAS-V {@link McIdasChooserManager}. Here we create our own manager so it can do
-     * McV specific things.
+     * Factory method to create a McIDAS-V {@link McIdasChooserManager}.
+     * Here we create our own manager so it can do things specific to McIDAS-V.
      *
-     * @return The UI manager indicated by the startup properties.
+     * @return {@code McIdasChooserManager} indicated by the startup properties.
      * 
      * @see ucar.unidata.idv.IdvBase#doMakeIdvChooserManager()
      */
@@ -1116,8 +1132,8 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Factory method to create the {@link IdvUIManager}. Here we create our own UI manager so it can do McV
-     * specific things.
+     * Factory method to create the {@link IdvUIManager}. Here we create our
+     * own UI manager so it can do things specific to McIDAS-V.
      *
      * @return {@link UIManager} indicated by the startup properties.
      * 
@@ -1334,15 +1350,18 @@ public class McIDASV extends IntegratedDataViewer {
     /**
      * Invokes the main method for a given class. 
      * 
-     * <p>Note: this is rather limited so far as it doesn't pass in any arguments.
+     * <p>Note: this is rather limited so far as it doesn't pass in any
+     * arguments.</p>
      * 
-     * @param className Class whose main method is to be invoked. Cannot be {@code null}.
+     * @param className Class whose main method is to be invoked. Cannot be
+     * {@code null}.
      */
     public void runPluginMainMethod(final String className) {
         final String[] dummyArgs = { "" };
         try {
             Class<?> clazz = Misc.findClass(className);
-            Method mainMethod = Misc.findMethod(clazz, "main", new Class[] { dummyArgs.getClass() });
+            Class[] args = new Class[] { dummyArgs.getClass() };
+            Method mainMethod = Misc.findMethod(clazz, "main", args);
             if (mainMethod != null) {
                 mainMethod.invoke(null, new Object[] { dummyArgs });
             }
@@ -1379,10 +1398,10 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * Are we on a Mac?  Used to build the MRJ handlers, taken from TN2110.
+     * Are we on a Mac? Used to build the MRJ handlers, taken from TN2110.
      * 
-     * @return {@code true} if this session is running on top of OS X, {@code false}
-     * otherwise.
+     * @return {@code true} if this session is running on top of OS X,
+     * {@code false} otherwise.
      * 
      * @see <a href="http://developer.apple.com/technotes/tn2002/tn2110.html">TN2110</a>
      */
@@ -1616,7 +1635,7 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * This returns the set of {@link ControlDescriptor}s
+     * This returns the set of {@link ControlDescriptor ControlDescriptors}
      * that can be shown. The ordering of this list determines the
      * "default" controls shown in the Field Selector, so we override
      * here for control over the ordering.
@@ -1639,11 +1658,12 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
-     * The main. Configure the logging and create the McIdasV
-     * 
-     * @param args Command line arguments
-     * 
-     * @throws Exception When something untoward happens
+     * The main. Configure the logging and create the McIDAS-V object
+     * responsible for initializing the application session.
+     *
+     * @param args Command line arguments.
+     *
+     * @throws Exception When something untoward happens.
      */
     public static void main(String[] args) throws Exception {
         startTime = System.nanoTime();
