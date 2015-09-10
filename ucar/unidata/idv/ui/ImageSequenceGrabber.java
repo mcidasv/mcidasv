@@ -691,8 +691,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         return anime;
     }
 
-    private JCheckBox globalPaletteBox;
-
     /**
      * Initialize me. Create the windows, etc.
      */
@@ -853,17 +851,9 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         capturePanel.setBorder(BorderFactory.createTitledBorder("Capture"));
         GuiUtils.setHFill();
 
-        globalPaletteBox = new JCheckBox("Use 'global' GIF color palette", getGlobalPaletteValue());
-        globalPaletteBox.setToolTipText(GLOBAL_PALETTE_TOOLTIP);
-        globalPaletteBox.addActionListener(e -> {
-            boolean value = globalPaletteBox.isSelected();
-            idv.getStateManager().putProperty("idv.capture.gif.useGlobalTable", value);
-        });
-        Component[] hboxComp = new Component[] { globalPaletteBox };
-
         JPanel filePanel = GuiUtils.doLayout(null, new Component[] {
-            GuiUtils.top(GuiUtils.rLabel("Image Quality:")),
-            GuiUtils.left(GuiUtils.vbox(GuiUtils.hbox(hiBtn, medBtn, lowBtn), GuiUtils.hbox(hboxComp))),
+            GuiUtils.rLabel("Image Quality:"),
+            GuiUtils.left(GuiUtils.hbox(hiBtn, medBtn, lowBtn)),
             GuiUtils.filler(), GuiUtils.right(alternateDirCbx),
             // GuiUtils.filler(),
             // GuiUtils.filler(),
@@ -1471,14 +1461,11 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             writePositionsCbx.setToolTipText(
                 "Also save the viewpoint matrices as an 'xidv' file");
 
-            final JCheckBox otherGlobalPaletteBox = new JCheckBox("Use 'global' GIF color palette", getGlobalPaletteValue());
+            JCheckBox otherGlobalPaletteBox = new JCheckBox("Use 'global' GIF color palette", getGlobalPaletteValue());
             otherGlobalPaletteBox.setToolTipText(GLOBAL_PALETTE_TOOLTIP);
             otherGlobalPaletteBox.addActionListener(e -> {
                 boolean value = otherGlobalPaletteBox.isSelected();
                 idv.getStateManager().putProperty("idv.capture.gif.useGlobalTable", value);
-                // should be fine, but will result in the same value being
-                // stored twice
-                globalPaletteBox.setSelected(value);
             });
             List accessoryComps = new ArrayList();
 
