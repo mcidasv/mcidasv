@@ -31,15 +31,23 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 
+import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.TreeSet;
 
 import java.awt.DisplayMode;
@@ -47,6 +55,8 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.VirtualUniverse;
@@ -57,6 +67,7 @@ import org.python.core.PySystemState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.nc2.grib.GribConverterUtility;
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
 import ucar.unidata.util.ResourceCollection;
@@ -311,12 +322,25 @@ public class SystemState {
      * Gets a human-friendly representation of the version information embedded 
      * within VisAD's {@literal "DATE"} file.
      * 
-     * @return {@code String} that looks {@literal "VisAD version <b>revision</b> built <b>date</b>"}.
+     * @return {@code String} that looks
+     * {@literal "VisAD version <b>revision</b> built <b>date</b>"}.
      * For example: {@code VisAD version 5952 built Thu Mar 22 13:01:31 CDT 2012}.
      */
     public static String getVisadVersionString() {
         Map<String, String> props = queryVisadBuildProperties();
         return "VisAD version " + props.get(Constants.PROP_VISAD_REVISION) + " built " + props.get(Constants.PROP_VISAD_DATE);
+    }
+
+    /**
+     * Gets a human-friendly representation of the ncIdv.jar version
+     * information.
+     *
+     * @return {@code String} that looks like
+     * {@literal "netCDF-Java version <b>revision</b> <b>built</b>"}.
+     */
+    public static String getNcidvVersionString() {
+        Map<String, String> props = queryNcidvBuildProperties();
+        return "netCDF-Java version " + props.get("version") + " built " + props.get("buildDate");
     }
 
     /**
@@ -373,6 +397,52 @@ public class SystemState {
             }
         }
         return props;
+    }
+
+    /**
+     * Returns a {@link Map} containing {@code version} and {@code buildDate}
+     * keys.
+     *
+     * @return {@code Map} containing netCDF-Java version and build date.
+     */
+    public static Map<String, String> queryNcidvBuildProperties() {
+        // largely taken from LibVersionUtil's getBuildInfo method.
+        GribConverterUtility util = new GribConverterUtility();
+        HashMap<String, String> buildInfo = new HashMap<>(4);
+        // format from ncidv.jar
+        SimpleDateFormat formatIn =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        // format of output timestamp
+        SimpleDateFormat formatOut =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+        formatOut.setTimeZone(TimeZone.getTimeZone("UTC"));
+        try {
+            Enumeration<URL> resources =
+                util.getClass().getClassLoader().getResources(
+                    "META-INF/MANIFEST.MF");
+            while (resources.hasMoreElements()) {
+                Manifest manifest =
+                    new Manifest(resources.nextElement().openStream());
+                Attributes attrs = manifest.getMainAttributes();
+                if (attrs != null) {
+                    String implTitle = attrs.getValue("Implementation-Title");
+                    if ((implTitle != null) && implTitle.contains("ncIdv")) {
+                        buildInfo.put(
+                            "version",
+                            attrs.getValue("Implementation-Version"));
+                        String strDate = attrs.getValue("Built-On");
+                        Date date = formatIn.parse(strDate);
+                        buildInfo.put("buildDate", formatOut.format(date));
+                        break;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            logger.warn("exception occurred:", e);
+        } catch (ParseException pe) {
+            logger.warn("failed to parse build date from ncIdv.jar", pe);
+        }
+        return buildInfo;
     }
 
     /**
@@ -567,9 +637,10 @@ public class SystemState {
         String curMem = Long.toString(Long.valueOf(machineProps.get("opsys.memory.jvm.current")) / 1048576L);
 
         buf.append("# Software Versions:")
-            .append("\n# McIDAS-V: ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
-            .append("\n# VisAD:    ").append(versions.get("visad.version.general")).append(" (").append(versions.get("visad.version.build")).append(')')
-            .append("\n# IDV:      ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')')
+            .append("\n# McIDAS-V:    ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
+            .append("\n# VisAD:       ").append(versions.get("visad.version.general")).append(" (").append(versions.get("visad.version.build")).append(')')
+            .append("\n# IDV:         ").append(versions.get("idv.version.general")).append(" (").append(versions.get("idv.version.build")).append(')')
+            .append("\n# netcdf-Java: ").append(versions.get("netcdf.version.general")).append(" (").append(versions.get("netcdf.version.build")).append(')')
             .append("\n\n# Operating System:")
             .append("\n# Name:         ").append(sysProps.getProperty("os.name"))
             .append("\n# Version:      ").append(sysProps.getProperty("os.version"))

@@ -1691,6 +1691,7 @@ public class McIDASV extends IntegratedDataViewer {
             logger.info("{}", SystemState.getMcvVersionString());
             logger.info("{}", SystemState.getIdvVersionString());
             logger.info("{}", SystemState.getVisadVersionString());
+            logger.info("{}", SystemState.getNcidvVersionString());
             logger.info("{} MB system memory", Math.round(sysMem/1024/1024));
 
             if (!hadCleanExit(SESSION_FILE)) {

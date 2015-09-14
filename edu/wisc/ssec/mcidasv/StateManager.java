@@ -70,6 +70,12 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
     /** Lazily-loaded VisAD SVN revision number. */
     private String visadVersion;
 
+    /** Lazily-loaded {@code ncIdv.jar} build timestamp. */
+    private String netcdfDate;
+
+    /** Lazily-loaded {@code ncIdv.jar} version. */
+    private String netcdfVersion;
+
     private String version;
     private String versionAbout;
 
@@ -330,13 +336,44 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         table.put("idv.version.build", getBuildDate());
         table.put("visad.version.general", getVisadVersion());
         table.put("visad.version.build", getVisadDate());
+        table.put("netcdf.version.general", getNetcdfVersion());
+        table.put("netcdf.version.build", getNetcdfDate());
         return table;
     }
 
     /**
-     * Return the timestamp from visad.jar was created.
+     * Return the timestamp from when {@code ncIdv.jar} was created.
+     *
+     * @return {@code String} representation of the creation timestamp.
+     */
+    public String getNetcdfDate() {
+        if (netcdfDate == null) {
+            Map<String, String> props = SystemState.queryNcidvBuildProperties();
+            netcdfDate = props.get("buildDate");
+            netcdfVersion = props.get("version");
+        }
+        return netcdfDate;
+    }
+
+    /**
+     * Return the version information within {@code ncIdv.jar}.
+     *
+     * @return Version of {@code ncIdv.jar} shipped by McIDAS-V.
+     */
+    public String getNetcdfVersion() {
+        if (netcdfVersion == null) {
+            Map<String, String> props = SystemState.queryNcidvBuildProperties();
+            netcdfDate = props.get("buildDate");
+            netcdfVersion = props.get("version");
+        }
+        return netcdfVersion;
+    }
+
+    /**
+     * Return the timestamp from when visad.jar was created.
      * 
-     * @return {@code String} representation of the creation timestamp. Likely to change formatting over time.
+     * @return {@code String} representation of the creation timestamp.
+     * Likely to change formatting over time.
      */
     public String getVisadDate() {
         if (visadDate == null) {
@@ -354,7 +391,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
      * visad.jar was built. 
      */
     public String getVisadVersion() {
-        if (visadVersion== null) {
+        if (visadVersion == null) {
             Map<String, String> props = SystemState.queryVisadBuildProperties();
             visadDate = props.get(Constants.PROP_VISAD_DATE);
             visadVersion = props.get(Constants.PROP_VISAD_REVISION);
