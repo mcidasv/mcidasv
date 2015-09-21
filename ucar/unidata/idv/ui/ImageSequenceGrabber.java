@@ -31,6 +31,8 @@ package ucar.unidata.idv.ui;
 
 import ij.ImagePlus;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.GeoLocationInfo;
@@ -468,6 +470,10 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
      */
     private ViewManager viewManager;
 
+    private boolean hasGlobalPalette = false;
+
+    private boolean globalPalette = false;
+
     /**
      * Create me with the given {@link ucar.unidata.idv.ViewManager}
      *
@@ -539,9 +545,30 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                                 IntegratedDataViewer idv,
                                 ImageGenerator imageGenerator,
                                 Element scriptingNode) {
+        this(viewManager, filename, false, idv, imageGenerator, scriptingNode);
+    }
+
+    /**
+     *  This gets called when we automatically create a movie. It will not show the
+     *  dialog window and will start up the animation capture
+     *
+     * @param viewManager The view manager we are capturing images from
+     * @param globalPalette Whether or not to use a global animated GIF color palette.
+     * @param filename The file we are writing to
+     * @param idv The IDV
+     * @param scriptingNode The igml node
+     * @param imageGenerator  imageGenerator
+     */
+    public ImageSequenceGrabber(ViewManager viewManager, String filename,
+                                boolean globalPalette,
+                                IntegratedDataViewer idv,
+                                ImageGenerator imageGenerator,
+                                Element scriptingNode) {
         this.viewManager    = viewManager;
         this.imageGenerator = imageGenerator;
         this.scriptingNode  = scriptingNode;
+        this.hasGlobalPalette = true;
+        this.globalPalette  = globalPalette;
         movieFileName       = filename;
 
         if (scriptingNode != null) {
@@ -553,6 +580,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         init();
         startAnimationCapture();
     }
+
+
 
     /**
      *  This gets called when we automatically create a movie. It will not show the
@@ -925,8 +954,14 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
      * @return Value of {@code idv.capture.gif.useGlobalTable}.
      */
     private boolean getGlobalPaletteValue() {
-        IdvObjectStore store = idv.getStore();
-        return store.get(PREF_USE_GLOBAL_PALETTE, true);
+        boolean returnValue;
+        if (hasGlobalPalette) {
+            returnValue = globalPalette;
+        } else {
+            IdvObjectStore store = idv.getStore();
+            returnValue = store.get(PREF_USE_GLOBAL_PALETTE, true);
+        }
+        return returnValue;
     }
 
     /**
@@ -2194,6 +2229,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     scriptingNode, -1);
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(ImageSequenceGrabber.class);
+
     /**
      * actually create the movie
      *
@@ -2267,6 +2304,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                 // System.err.println("createMovie:" + movieFile);
                 if (movieFile.toLowerCase().endsWith(
                         FileManager.SUFFIX_GIF)) {
+                    // this should override pref
+                    XmlUtil.getAttribute(scriptingNode, "", true);
                     double  rate   = 1.0 / displayRate;
                     boolean useGCT = getGlobalPaletteValue();
                     AnimatedGifEncoder.createGif(movieFile,

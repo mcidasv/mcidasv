@@ -3575,3 +3575,6 @@ def listVIIRSTimesInField(filename, field=None):
     finally:
         f.close()
     return datetime
+
+def writeMovie(file, globalPalette=True, params=''):
+    islInterpreter.writeMovie(file, globalPalette, params)

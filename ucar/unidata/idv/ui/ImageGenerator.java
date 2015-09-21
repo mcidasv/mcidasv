@@ -2960,14 +2960,28 @@ public class ImageGenerator extends IdvManager {
      * @throws Exception On badness
      */
     public void writeMovie(String filename, String params) throws Exception {
+        writeMovie(filename, false, params);
+    }
+
+    /**
+     * Capture a movie and write it out. This is typically called by the jython scripting
+     *
+     * @param filename Movie filename.
+     * @param globalPalette Whether or not to use a {@literal "global"} color
+     * palette for animated GIF output.
+     * @param params XML parameters of the the form:
+     * {@literal "task arg=val arg2=val; task2 arg3=val"}.
+     *
+     * @throws Exception On badness
+     */
+    public void writeMovie(String filename, boolean globalPalette, String params) throws Exception {
+
         String isl = makeXmlFromString(params);
 
         String xml = XmlUtil.getHeader()+"\n<movie file=\"" + filename + "\" imagesuffix=\".png\">"
-                     + isl + "</movie>";
-        captureMovie(applyMacros(filename), makeElement(xml));
+            + isl + "</movie>";
+        captureMovie(applyMacros(filename), globalPalette, makeElement(xml));
     }
-
-
 
     /**
      * process the given node
@@ -5744,7 +5758,6 @@ public class ImageGenerator extends IdvManager {
         captureMovie(filename, null);
     }
 
-
     /**
      * Capture the movie
      *
@@ -5752,6 +5765,20 @@ public class ImageGenerator extends IdvManager {
      * @param scriptingNode Node form isl.
      */
     public synchronized void captureMovie(String filename,
+                                          Element scriptingNode) {
+        captureMovie(filename, false, scriptingNode);
+    }
+
+    /**
+     * Capture the movie
+     *
+     * @param filename The file
+     * @param globalPalette Whether or not animated GIF output should use a
+     * {@literal "global"} color palette.
+     * @param scriptingNode Node form isl.
+     */
+    public synchronized void captureMovie(String filename,
+                                          boolean globalPalette,
                                           Element scriptingNode) {
 
         if ((filename == null) && (scriptingNode != null)) {
@@ -5762,6 +5789,7 @@ public class ImageGenerator extends IdvManager {
             List files = findFiles(scriptingNode);
             if (files != null) {
                 debug("Making movie from existing images " + filename);
+                logger.trace("#1: creating '{}'", filename);
                 filename = applyMacros(filename);
                 Dimension size = new Dimension(applyMacros(scriptingNode,
                                      ATTR_WIDTH,
@@ -5844,9 +5872,10 @@ public class ImageGenerator extends IdvManager {
             }
             String loopFilename = applyMacros(filename);
             debug("Making movie:" + loopFilename);
+            logger.trace("#2: creating '{}'", filename);
             ImageSequenceGrabber isg = new ImageSequenceGrabber(viewManager,
-                                           loopFilename, getIdv(), this,
-                                           scriptingNode);
+                                           loopFilename, globalPalette,
+                                           getIdv(), this, scriptingNode);
             try {
                 wait();
             } catch (Exception exc) {
@@ -5879,9 +5908,11 @@ public class ImageGenerator extends IdvManager {
                 }
                 String loopFilename = applyMacros(filename);
                 debug("Making movie:" + loopFilename);
+                logger.trace("#3: creating '{}'", filename);
                 ImageSequenceGrabber isg =
                     new ImageSequenceGrabber(viewManager, loopFilename,
-                                             getIdv(), this, scriptingNode);
+                                             globalPalette, getIdv(), this,
+                                             scriptingNode);
                 try {
                     wait();
                 } catch (Exception exc) {
