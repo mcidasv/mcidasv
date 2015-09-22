@@ -470,8 +470,10 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
      */
     private ViewManager viewManager;
 
+    /** Whether or not {@link #globalPalette} has been set. */
     private boolean hasGlobalPalette = false;
 
+    /** Whether or not animated GIFs should use a global color palette. */
     private boolean globalPalette = false;
 
     /**
@@ -945,13 +947,17 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
     }
 
     /**
-     * Return the value of the {@literal "idv.capture.gif.useGlobalTable"}
-     * preference.
+     * Determine whether or not animated GIFs should use a global color
+     * palette.
+     *
+     * If {@link #hasGlobalPalette} is {@code true}, {@link #globalPalette}
+     * will be returned. Otherwise, the value of the
+     * {@literal "idv.capture.gif.useGlobalTable"} preference will get returned.
      *
      * <p>Note: if the preference is not set, the value will default to
      * {@code true}.</p>
      *
-     * @return Value of {@code idv.capture.gif.useGlobalTable}.
+     * @return Whether or not animated GIFs should use a global color palette.
      */
     private boolean getGlobalPaletteValue() {
         boolean returnValue;
