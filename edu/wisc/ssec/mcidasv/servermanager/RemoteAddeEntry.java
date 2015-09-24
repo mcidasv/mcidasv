@@ -60,7 +60,8 @@ import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
 public class RemoteAddeEntry implements AddeEntry {
 
     /** Typical logger object. */
-    private static final Logger logger = LoggerFactory.getLogger(RemoteAddeEntry.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(RemoteAddeEntry.class);
 
     /** Represents an invalid remote ADDE entry. */
     public static final RemoteAddeEntry INVALID_ENTRY = 
@@ -318,9 +319,10 @@ public class RemoteAddeEntry implements AddeEntry {
      * multiple {@code final} fields. 
      * 
      * <p>The only <i>required</i> parameters are
-     * the {@link RemoteAddeEntry#address} and {@link RemoteAddeEntry#group}.
+     * the {@link RemoteAddeEntry#address} and {@link RemoteAddeEntry#group}.</p>
      * 
-     * <p>Some examples:<br/>
+     * <p>Some examples:</p>
+     *
      * <pre>
      * RemoteAddeEntry e = RemoteAddeEntry.Builder("adde.cool.com", "RTIMAGES").build();
      * e = RemoteAddeEntry.Builder("adde.cool.com", "RTIMAGES").type(EntryType.IMAGE).account("user", "1337").build();
@@ -368,7 +370,10 @@ public class RemoteAddeEntry implements AddeEntry {
         /** Optional description of the entry. Defaults to {@literal ""}. */
         private String description = "";
 
-        /** Optional flag for whether or not the entry is temporary. Defaults to {@code false}. */
+        /**
+         * Optional flag for whether or not the entry is temporary.
+         * Defaults to {@code false}.
+         */
         private boolean temporary = false;
 
         /** Optional alias for the entry. Default to {@literal ""}. */

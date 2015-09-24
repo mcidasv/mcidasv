@@ -156,11 +156,7 @@ public class LocalEntryEditor extends JDialog {
         this.entryStore = entryStore;
         this.datasetText = group;
         this.currentEntry = null;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                initComponents(LocalAddeEntry.INVALID_ENTRY);
-            }
-        });
+        SwingUtilities.invokeLater(() -> initComponents(LocalAddeEntry.INVALID_ENTRY));
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
@@ -170,11 +166,7 @@ public class LocalEntryEditor extends JDialog {
         this.entryStore = store;
         this.datasetText = null;
         this.currentEntry = null;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                initComponents(LocalAddeEntry.INVALID_ENTRY);
-            }
-        });
+        SwingUtilities.invokeLater(() -> initComponents(LocalAddeEntry.INVALID_ENTRY));
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
@@ -184,11 +176,7 @@ public class LocalEntryEditor extends JDialog {
         this.entryStore = store;
         this.datasetText = null;
         this.currentEntry = entry;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                initComponents(entry);
-            }
-        });
+        SwingUtilities.invokeLater(() -> initComponents(entry));
     }
 
     /**
@@ -225,29 +213,19 @@ public class LocalEntryEditor extends JDialog {
         directoryField.setColumns(20);
 
         JButton browseButton = new JButton("Browse...");
-        browseButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent evt) {
-                browseButtonActionPerformed(evt);
-            }
-        });
+        browseButton.addActionListener(this::browseButtonActionPerformed);
 
         JButton saveButton = new JButton("Add Dataset");
-        saveButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent evt) {
-                if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
-                    saveButtonActionPerformed(evt);
-                } else {
-                    editButtonActionPerformed(evt);
-                }
+        saveButton.addActionListener(evt -> {
+            if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
+                saveButtonActionPerformed(evt);
+            } else {
+                editButtonActionPerformed(evt);
             }
         });
 
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
         if (initEntry == LocalAddeEntry.INVALID_ENTRY) {
             setTitle("Add Local Dataset");

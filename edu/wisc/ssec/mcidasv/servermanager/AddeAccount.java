@@ -122,9 +122,10 @@ public class AddeAccount {
     }
 
     /**
-     * Returns a string representation of this account. The formatting of
-     * this string is subject to change, but currently looks like:<br/>
-     * <pre>[AddeAccount@HASHCODE: username=..., project=...]</pre>
+     * Returns a string representation of this account.
+     *
+     * The formatting of this string is subject to change, but currently looks
+     * like {@code [AddeAccount@HASHCODE: username=..., project=...]}.
      * 
      * @return {@link String} representation of this ADDE account.
      */

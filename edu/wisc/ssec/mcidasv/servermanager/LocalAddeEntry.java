@@ -106,12 +106,12 @@ public class LocalAddeEntry implements AddeEntry {
      * The various kinds of local ADDE data understood by McIDAS-V, along with
      * some helpful metadata.
      * 
-     * <p><ul>
+     * <ul>
      * <li>{@literal "Human readable"} format names ({@link #friendlyName}).</li>
      * <li>Optional tooltip description ({@link #tooltip}).</li>
      * <li>Type of data ({@link #type}).</li>
      * <li>File naming pattern {@link #fileFilter}.</li>
-     * </ul></p>
+     * </ul>
      * 
      * <p>None of {@code AddeFormat}'s fields should contain {@code null}.</p>
      */
