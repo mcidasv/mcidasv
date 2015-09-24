@@ -181,11 +181,16 @@
          this must be done manually for now. -->
     <property name="java3d.version" value="1.6.0-pre12" />
 
-    <!-- The CLASSPATH specified within McV's manifest -->
-    <property name="jar.base.classpath" value="ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.1.jar" />
+    <!-- The CLASSPATH specified within McV's manifest 
+         Note: if you're going to modify this property, be sure to make similar
+         modifications to the "mcv.libs" fileset. -->
+    <property name="jar.base.classpath" value="ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.1.jar jnumeric-2.7.0_ra0.1.jar" />
 
-    <!-- List of McIDAS-V jars -->
+    <!-- List of McIDAS-V JAR files. 
+         Note: if you're going to modify this fileset, be sure to make similar
+         modifications to the "jar.base.classpath" property. -->
     <fileset id="mcv.libs" dir="${dist.dir}">
+        <include name="jnumeric-2.7.0_ra0.1.jar" />
         <include name="commons-httpclient-3.1.jar" />
         <include name="swingx-common-${swingx.version}.jar" />
         <include name="sysout-over-slf4j-${sysout.version}.jar" />
@@ -782,7 +787,7 @@
 
     <!-- Include dependencies in single jar file -->
     <!-- this doesn't appear to work when j3d/jogl is included… -->
-    <target name="singlejar" depends="clean, auxdata.nodocs, build, ncidv.nolog, external.nolog"
+    <target name="singlejar" depends="clean, auxdata.nodocs, build, ncidv.nolog, external.cleanup"
         description="Include dependencies in single jar file">
 
         <mkdir dir="${dist.dir}" />
@@ -821,17 +826,19 @@
 
     <!-- Create distribution product -->
     <target name="dist"
-        depends="auxdata.nodocs, jar, ncidv.nolog, external.nolog, startupmanager, javadoc.jar, userguide.jar"
-        description="Create distribution product" >
-<!--         <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
-        <copy file="${base.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" /> -->
-        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" tofile="${dist.dir}/GetMem.class" failonerror="false" />
-        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" tofile="${dist.dir}/GetVer.class" failonerror="false" />
+        depends="auxdata.nodocs, jar, ncidv.nolog, external.cleanup, startupmanager, javadoc.jar, userguide.jar"
+        description="Create distribution product">
+        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" 
+              tofile="${dist.dir}/GetMem.class" 
+              failonerror="false" />
+        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" 
+              tofile="${dist.dir}/GetVer.class" 
+              failonerror="false" />
     </target>
 
     <!-- Create nightly webstart distribution product -->
     <target name="nightly"
-        depends="gitupdate, auxdata.nodocs, jar.nightly, startupmanager, ncidv.nolog, external.nolog, javadoc.jar, userguide.jar, source"
+        depends="gitupdate, auxdata.nodocs, jar.nightly, startupmanager, ncidv.nolog, external.cleanup, javadoc.jar, userguide.jar, source"
         description="Create nightly webstart distribution product" />
 
     <!-- Build and run McIDAS-V application (small memory) -->
@@ -1179,12 +1186,20 @@
         <delete dir="${dist.dir}/tmp" failonerror="false" />
     </target>
 
-    <!-- Remove the org/slf4j directory from external.jar. -->
-    <target name="external.nolog" depends="build" description="Remove the org/slf4j from external.jar">
+    <!-- 
+    Removes the following from external.jar:
+        org/slf4j directory
+        JNumeric directory
+        Numeric.class
+    -->
+    <target name="external.cleanup" depends="build" description="Remove redundant/unneeded class files from external.jar">
         <mkdir dir="${dist.dir}/tmp" />
         <unzip src="${dist.dir}/external.jar" dest="${dist.dir}/tmp" />
         <delete dir="${dist.dir}/tmp/org/slf4j" failonerror="false" />
+        <delete file="${dist.dir}/tmp/Numeric.class" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/JNumeric" failonerror="false" />
         <delete file="${dist.dir}/external.jar" failonerror="false" />
+        
         <jar destfile="${dist.dir}/external.jar" 
              basedir="${dist.dir}/tmp" 
              index="true"
