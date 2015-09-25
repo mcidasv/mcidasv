@@ -850,12 +850,15 @@ public class EditCanvas extends DisplayCanvas implements MouseListener,
         cutBuffer    = selectionSet;
         selectionSet = new ArrayList();
         selectionChanged();
+        boolean canvasChanged = false;
         for (int i = 0; i < cutBuffer.size(); i++) {
             Glyph g = (Glyph) cutBuffer.get(i);
             if (g.getPersistent()) {
                 removeGlyph(g);
+                canvasChanged = true;
             }
         }
+        setHaveChanged(canvasChanged);
     }
 
     /**
