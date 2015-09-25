@@ -117,7 +117,7 @@ import edu.wisc.ssec.mcidasv.util.XmlUtil;
  * that may not contain component groups. Here's a list of the issues and how
  * they are resolved:
  * 
- * <p><ul>
+ * <ul>
  * <li>Bundles prior to alpha 9 use the {@code TabbedUIManager}. Each tab
  * is, internally, an IDV window. This is reflected in the contents of bundles,
  * so the IDV wants to create a new window for each tab upon loading. Alpha 10
@@ -125,7 +125,7 @@ import edu.wisc.ssec.mcidasv.util.XmlUtil;
  * done in {@link #injectComponentGroups(List)}.</li>
  * 
  * <li>The IDV allows users to save bundles that contain <i>both</i> 
- * {@link ucar.unidata.idv.ViewManager}s with component groups and without! 
+ * {@link ViewManager ViewManagers} with component groups and without!
  * This is actually only a problem when limiting the windows; 
  * {@code injectComponentGroups} has to wrap ViewManagers without
  * component groups in dynamic skins. These ViewManagers must be removed 
@@ -135,6 +135,7 @@ import edu.wisc.ssec.mcidasv.util.XmlUtil;
  * does not add them to the {@link ucar.unidata.idv.VMManager}. If limiting 
  * windows is off, everything will be caught properly by the unpersisting 
  * facilities in {@link edu.wisc.ssec.mcidasv.ui.UIManager}.</li>
+ * </ul>
  * 
  * @see IdvPersistenceManager
  * @see UIManager
@@ -1926,11 +1927,13 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * Add the directory
+     * Add the directory.
      *
-     * @param parameterType The type of parameter set
-     * @param category The category (really a ">" delimited string)
-     * @return true if the create was successful. False if there already is a category with that name
+     * @param parameterType Type of parameter set.
+     * @param category Category (really a {@literal ">"} delimited string).
+     *
+     * @return {@code true} if the create was successful. {@code false} if
+     * there already is a category with that name
      */
     public boolean addParameterSetCategory(String parameterType, String category) {
         logger.trace("parameter type: '{}' category: '{}'", parameterType, category);
@@ -1954,11 +1957,11 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * Delete the directory and all of its contents
-     * that the given category represents.
+     * Delete the directory and all of its contents that the given category
+     * represents.
      *
-     * @param parameterType The type of parameter set
-     * @param category The category (really a ">" delimited string)
+     * @param parameterType Type of parameter set.
+     * @param category Category (really a {@literal ">"} delimited string).
      */
     public void deleteParameterSetCategory(String parameterType, String category) {
         Element rootType = getParameterTypeNode(parameterType);
@@ -1969,7 +1972,7 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * Rename the parameter set
+     * Rename the parameter set.
      *
      * @param parameterType The type of parameter set
      * @param set The parameter set

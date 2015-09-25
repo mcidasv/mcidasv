@@ -697,36 +697,31 @@ public class FlatFileReader {
     }
         
     /**
-     * float array -> flatfield
+     * Convert {@link #floatData} into a {@link FlatField}.
+     *
+     * @return {@code floatData} converted into a VisAD {@code FlatField}.
      */
-    private FlatField getFlatField()
-    throws IOException, VisADException {
-    	
+    private FlatField getFlatField() throws IOException, VisADException {
         makeCoordinateSystem();
-        
-//    	RealType[]    unit 			= new RealType[] { RealType.Generic };
-//    	RealTupleType unitType       = new RealTupleType(unit);
-        
-        RealType	  unitType			= RealType.getRealType(unit);
 
-    	RealType      line              = RealType.getRealType("ImageLine");
+        RealType      unitType          = RealType.getRealType(unit);
+        RealType      line              = RealType.getRealType("ImageLine");
         RealType      element           = RealType.getRealType("ImageElement");
         RealType[]    domain_components = { element, line };
         RealTupleType image_domain      = new RealTupleType(domain_components, navigationCoords, null);
-        FunctionType  image_type 		= new FunctionType(image_domain, unitType);
-        Linear2DSet   domain_set 		= new Linear2DSet(image_domain,
-        		0.0, (float) (strideElements - 1.0), strideElements,
-        		0.0, (float) (strideLines - 1.0), strideLines);
+        FunctionType  image_type        = new FunctionType(image_domain, unitType);
+        Linear2DSet   domain_set        = new Linear2DSet(image_domain,
+                0.0, (float) (strideElements - 1.0), strideElements,
+                0.0, (float) (strideLines - 1.0), strideLines);
 
         FlatField    field      = new FlatField(image_type, domain_set);
-
         float[][]    samples    = new float[][] { this.floatData };
+
         try {
             field.setSamples(samples, false);
         } catch (RemoteException e) {
             throw new VisADException("Couldn't finish FlatField initialization");
         }
-        
         return field;
     }
         

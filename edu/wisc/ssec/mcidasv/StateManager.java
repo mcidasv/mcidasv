@@ -34,11 +34,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -321,11 +319,12 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
      * Returns information about the current version of McIDAS-V and the IDV,
      * along with their respective build dates.
      * 
-     * @return Hashtable containing versioning information.
+     * @return {@code Hashtable} containing versioning information.
      */
     public Hashtable<String, String> getVersionInfo() {
-        Properties props = new Properties();
-        props = Misc.readProperties((String) getProperty(Constants.PROP_VERSIONFILE), null, getClass());
+        String versionFile = (String)getProperty(Constants.PROP_VERSIONFILE);
+        Properties props =
+            Misc.readProperties(versionFile, null, getClass());
 
         String mcvBuild = props.getProperty(PROP_BUILD_DATE, "Unknown");
 
@@ -417,80 +416,100 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
         return "";
     }
 
-	/**
-	 * Connect to McIDAS website and look for latest stable version
-	 */
-	public String getMcIdasVersionStable() {
-		String offscreen = "0";
-		if (super.getIdv().getArgsManager().getIsOffScreen()) {
-			offscreen = "1";
-		}
+    /**
+     * Connect to McIDAS-V website and look for latest stable version.
+     *
+     * @return Latest stable version.
+     */
+    public String getMcIdasVersionStable() {
+        String offscreen = "0";
+        if (super.getIdv().getArgsManager().getIsOffScreen()) {
+            offscreen = "1";
+        }
 
-		String version = "";
-		try {
-			version = IOUtil.readContents(Constants.HOMEPAGE_URL+"/"+Constants.VERSION_HANDLER_URL+"?v="+getMcIdasVersion()+"&os="+getOSName()+"&off="+offscreen, "");
-		} catch (Exception e) {}
-		return version.trim();
-	}
+        String version = "";
+        try {
+            version = IOUtil.readContents(Constants.HOMEPAGE_URL+"/"+Constants.VERSION_HANDLER_URL+"?v="+getMcIdasVersion()+"&os="+getOSName()+"&off="+offscreen, "");
+        } catch (Exception e) {}
+        return version.trim();
+    }
 
-	/**
-	 * Connect to McIDAS website and look for latest prerelease version
-	 */
-	public String getMcIdasVersionPrerelease() {
-		String version = "";
-		try {
-			String htmlList = IOUtil.readContents(Constants.HOMEPAGE_URL+'/'+Constants.PRERELEASE_URL, "");
-			String lines[] = htmlList.split("\n");
-			for (int i=0; i<lines.length; i++) {
-				String line = lines[i].trim();
-				if (line.matches(".*McIDAS-V_\\d+\\.\\d+.*")) {
-					line = line.substring(line.indexOf("McIDAS-V_")+9);
-					String aVersion = line.substring(0, line.indexOf("_"));
-					if (version == "") {
-						version = aVersion;
-					}
-					else {
-						int comp = compareVersions(version, aVersion);
-						if (comp > 0) {
-							version = aVersion;
-						}
-					}
-				}
-			}
-		} catch (Exception e) {}
-		return version.trim();
-	}
+    /**
+     * Connect to McIDAS-V website and look for latest pre-release version.
+     *
+     * @return Latest pre-release version.
+     */
+    public String getMcIdasVersionPrerelease() {
+        String version = "";
+        try {
+            String htmlList = IOUtil.readContents(Constants.HOMEPAGE_URL+'/'+Constants.PRERELEASE_URL, "");
+            String lines[] = htmlList.split("\n");
+            for (int i=0; i<lines.length; i++) {
+                String line = lines[i].trim();
+                if (line.matches(".*McIDAS-V_\\d+\\.\\d+.*")) {
+                    line = line.substring(line.indexOf("McIDAS-V_")+9);
+                    String aVersion = line.substring(0, line.indexOf("_"));
+                    if (version == "") {
+                        version = aVersion;
+                    }
+                    else {
+                        int comp = compareVersions(version, aVersion);
+                        if (comp > 0) {
+                            version = aVersion;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {}
+        return version.trim();
+    }
 
-	/**
-	 * Connect to McIDAS website and look for latest notice
-	 */
-	public String getNoticeLatest() {
-		String notice = "";
-		try {
-			notice = IOUtil.readContents(Constants.HOMEPAGE_URL+"/"+Constants.NOTICE_URL+"?requesting="+getMcIdasVersion()+"&os="+getOSName(), "");
-		} catch (Exception e) {}
-		if (notice.indexOf("<notice>")<0) notice="";
-		notice = notice.replaceAll("<[/?]notice>","");
-		return notice.trim();
-	}
+    /**
+     * Connect to McIDAS website and look for latest notice.
+     *
+     * @return Contents of notice. String may be empty.
+     */
+    public String getNoticeLatest() {
+        String notice = "";
+        try {
+            notice = IOUtil.readContents(Constants.HOMEPAGE_URL+"/"+Constants.NOTICE_URL+"?requesting="+getMcIdasVersion()+"&os="+getOSName(), "");
+        } catch (Exception e) {}
+        if (notice.indexOf("<notice>")<0) notice="";
+        notice = notice.replaceAll("<[/?]notice>","");
+        return notice.trim();
+    }
 
-	/**
-	 * Compare version strings
-	 *  0: equal
-	 * <0: this version is greater
-	 * >0: that version is greater
-	 */
-	public static int compareVersions(String thisVersion, String thatVersion) {
-		int thisInt = versionToInteger(thisVersion);
-		int thatInt = versionToInteger(thatVersion);
-		return thatInt - thisInt;
-	}
-	
-	/**
-	 * Turn version strings of the form #.#(a#)
-	 *  where # is one or two digits, a is one of alpha or beta, and () is optional
-	 * Into an integer... (empty) > beta > alpha
-	 */
+    /**
+     * Compare version strings.
+     *
+     * <p>The logic is as follows.
+     * <pre>
+     *    0: thisVersion and thatVersion are equal.
+     *   &lt;0: thisVersion is greater.
+     *   &gt;0: thatVersion is greater.
+     * </pre>
+     *
+     * @param thisVersion First version string to compare.
+     * @param thatVersion Second version string to compare.
+     *
+     * @return Value indicating which of {@code thisVersion} and
+     * {@code thatVersion} is {@literal "greater"}.
+     */
+    public static int compareVersions(String thisVersion, String thatVersion) {
+        int thisInt = versionToInteger(thisVersion);
+        int thatInt = versionToInteger(thatVersion);
+        return thatInt - thisInt;
+    }
+
+    /**
+     * Turn version strings of the form {@code #.#(a#)}, where # is one or two
+     * digits, a is one of alpha or beta, and () is optional, into an integer
+     * value... (empty) &gt; beta &gt; alpha.
+     *
+     * @param version String representation of version number.
+     *
+     * @return Integer representation of {@code version}.
+     */
 	public static int versionToInteger(String version) {
 		int value = 0;
 		int p;

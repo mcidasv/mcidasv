@@ -363,8 +363,11 @@ public class ResourceManager extends IdvResourceManager {
      * 
      * <p>Files that reside on a webserver (these begin with {@literal "http:"})
      * may be inaccessible for a variety of reasons. McIDAS-V allows a RBI file
-     * to specify a {@literal "property"} named {@literal "default"} whose {@literal "value"}
-     * is a path to use as a backup. For example:<br/>
+     * to specify a {@literal "property"} named {@literal "default"} whose
+     * {@literal "value"} is a path to use as a backup.
+     *
+     * <p>For example:
+     *
      * <pre>
      * &lt;resources name="idv.resource.pluginindex"&gt;
      *   &lt;resource label="Plugin Index" location="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml"&gt;
@@ -372,14 +375,15 @@ public class ResourceManager extends IdvResourceManager {
      *   &lt;/resource&gt;
      * &lt;/resources&gt;
      * </pre>
-     * The {@code origPath} parameter will be the value of the {@literal "location"}
-     * attribute. If {@code origPath} is inaccessible, then the path given by
-     * the {@literal "default"} property will be used.
+     *
+     * The {@code origPath} parameter will be the value of the
+     * {@literal "location"} attribute. If {@code origPath} is inaccessible,
+     * then the path given by the {@literal "default"} property will be used.
      * 
      * @param origPath Typically the value of the {@literal "location"} 
      * attribute associated with a given resource. Cannot be {@code null}.
-     * @param props Contains the property {@code name:value} pairs associated with
-     * the resource whose path is being examined. Cannot be {@code null}.
+     * @param props Contains the property {@code name:value} pairs associated
+     * with the resource whose path is being examined. Cannot be {@code null}.
      * 
      * @return {@code List} of paths associated with a given resource.
      * 
