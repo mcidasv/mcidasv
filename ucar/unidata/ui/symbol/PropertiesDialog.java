@@ -142,6 +142,8 @@ public class PropertiesDialog implements ActionListener {
      */
     private JPanel mappingHolder;
 
+    /** Scroll pane that holds {@link #mappingHolder}. May be {@code null}. */
+    private JScrollPane mappingScroller;
 
     /** The unit for scaling */
     private JComboBox scaleUnitFld = null;
@@ -468,6 +470,9 @@ public class PropertiesDialog implements ActionListener {
         symbol.setParamDescs(descrs);
         canvas.repaint();
         updateMappings();
+        if (mappingScroller != null) {
+            mappingScroller.revalidate();
+        }
     }
 
 
@@ -745,7 +750,7 @@ public class PropertiesDialog implements ActionListener {
 
             mappingHolder = new JPanel(new BorderLayout());
             updateMappings();
-            JScrollPane mappingScroller = new JScrollPane(mappingHolder);
+            mappingScroller = new JScrollPane(mappingHolder);
             mappingScroller.setPreferredSize(new Dimension(400, 250));
             JViewport vp = mappingScroller.getViewport();
             vp.setViewSize(new Dimension(400, 250));
