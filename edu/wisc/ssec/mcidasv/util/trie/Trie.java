@@ -100,8 +100,8 @@ public interface Trie<K, V> extends SortedMap<K, V> {
      *  L = 1001100 <br>
      * <p>
      * If the Trie contained 'H' and 'L', a lookup of 'D' would return 'L',
-     * because the XOR distance between D & L is smaller than the XOR distance 
-     * between D & H. 
+     * because the XOR distance between D and L is smaller than the XOR distance
+     * between D and H.
      */
     public V select(K key);
     
@@ -147,7 +147,7 @@ public interface Trie<K, V> extends SortedMap<K, V> {
      * what to do next.
      * <p>
      * {@code Cursor} returns status/selection status might be:
-     * <table cellspace="5">
+     * <table summary="The various Cursor status values">
      * <tr><td><b>Return Value</b></td><td><b>Status</b></td></tr>
      * <tr><td>EXIT</td><td>Finish the Trie operation</td></tr>
      * <tr><td>CONTINUE</td><td>Look at the next element in the traversal</td></tr>

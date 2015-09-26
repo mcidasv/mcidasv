@@ -64,7 +64,7 @@ import java.util.SortedMap;
  * closeness is determined by the {@link KeyAnalyzer} returning true or 
  * false for a bit being set or not in a given key.
  * <p>
- * This PATRICIA Trie supports both variable length & fixed length keys.
+ * This PATRICIA Trie supports both variable length and fixed length keys.
  * Some methods, such as {@code getPrefixedBy(...)} are suited only to
  * variable length keys, whereas {@code getPrefixedByBits(...)} is suited
  * to fixed-size keys.
@@ -177,7 +177,7 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
     }
     
     /**
-     * Adds a new <key, value> pair to the Trie and if a pair already
+     * Adds a new {@code <key, value>} pair to the Trie and if a pair already
      * exists it will be replaced. In the latter case it will return
      * the old value.
      */
@@ -457,14 +457,14 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * a lookup of 'Lime' would return 'Lime', 'LimeRadio', and 'LimeWire'.
      * 
      * The view that this returns is optimized to have a very efficient
-     * Iterator. The firstKey, lastKey & size methods must iterate
-     * over all possible values in order to determine the results. This
-     * information is cached until the Patricia tree changes. All other
-     * methods (except Iterator) must compare the given key to the prefix
-     * to ensure that it is within the range of the view. The Iterator's
-     * remove method must also relocate the subtree that contains the
-     * prefixes if the entry holding the subtree is removed or changes.
-     * Changing the subtree takes O(K) time.
+     * Iterator. The {@link #firstKey()}, {@link #lastKey()}, and
+     * {@link #size()} methods must iterate over all possible values in order
+     * to determine the results. This information is cached until the Patricia
+     * tree changes. All other methods (except Iterator) must compare the
+     * given key to the prefix to ensure that it is within the range of
+     * the view. The Iterator's remove method must also relocate the subtree
+     * that contains the prefixes if the entry holding the subtree is removed
+     * or changes. Changing the subtree takes O(K) time.
      * 
      * @param key
      */
@@ -474,7 +474,7 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
 
     /**
      * Returns a view of this Trie of all elements that are
-     * prefixed by the length of the key.
+     * prefixed by the {@code length} of the {@code key}.
      * 
      * Fixed-keysize Tries will not support this operation
      * (because all keys will be the same length).
@@ -485,14 +485,14 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * return 'Lime', 'LimeRadio', and 'LimeWire'.
      * 
      * The view that this returns is optimized to have a very efficient
-     * Iterator.  The firstKey, lastKey & size methods must iterate
-     * over all possible values in order to determine the results.  This
-     * information is cached until the Patricia tree changes.  All other
-     * methods (except Iterator) must compare the given key to the prefix
-     * to ensure that it is within the range of the view.  The Iterator's
-     * remove method must also relocate the subtree that contains the
-     * prefixes if the entry holding the subtree is removed or changes.
-     * Changing the subtree takes O(K) time.
+     * Iterator.  The {@link #firstKey()}, {@link #lastKey()}, and
+     * {@link #size()} methods must iterate over all possible values in order
+     * to determine the results.  This information is cached until the
+     * Patricia tree changes.  All other methods (except Iterator) must
+     * compare the given key to the prefix to ensure that it is within the
+     * range of the view.  The Iterator's remove method must also relocate the
+     * subtree that contains the prefixes if the entry holding the subtree is
+     * removed or changes. Changing the subtree takes O(K) time.
      *  
      * @param key
      * @param length
@@ -503,7 +503,8 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
 
     /**
      * Returns a view of this Trie of all elements that are prefixed
-     * by the key, starting at the given offset and for the given length.
+     * by the {@code key}, starting at the given {@code offset} and for the
+     * given {@code length}.
      * 
      * Fixed-keysize Tries will not support this operation
      * (because all keys are the same length).
@@ -514,14 +515,14 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * length of 4 would return 'Lime', 'LimeRadio', and 'LimeWire'.
      * 
      * The view that this returns is optimized to have a very efficient
-     * Iterator.  The firstKey, lastKey & size methods must iterate
-     * over all possible values in order to determine the results.  This
-     * information is cached until the Patricia tree changes.  All other
-     * methods (except Iterator) must compare the given key to the prefix
-     * to ensure that it is within the range of the view.  The Iterator's
-     * remove method must also relocate the subtree that contains the
-     * prefixes if the entry holding the subtree is removed or changes.
-     * Changing the subtree takes O(K) time.
+     * Iterator.  The {@link #firstKey()}, {@link #lastKey()}, and
+     * {@link #size()} methods must iterate over all possible values in order
+     * to determine the results.  This information is cached until the
+     * Patricia tree changes.  All other methods (except Iterator) must
+     * compare the given key to the prefix to ensure that it is within the
+     * range of the view.  The Iterator's remove method must also relocate the
+     * subtree that contains the prefixes if the entry holding the subtree is
+     * removed or changes. Changing the subtree takes O(K) time.
      * 
      * @param key
      * @param offset
@@ -533,7 +534,7 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
 
     /**
      * Returns a view of this Trie of all elements that are prefixed
-     * by the number of bits in the given Key.
+     * by the number of bits in the given {@code key}.
      * 
      * Fixed-keysize Tries can support this operation as a way to do
      * lookups of partial keys.  That is, if the Trie is storing IP
@@ -542,14 +543,14 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * would return all addresses that begin with '192.168'.
      * 
      * The view that this returns is optimized to have a very efficient
-     * Iterator.  The firstKey, lastKey & size methods must iterate
-     * over all possible values in order to determine the results.  This
-     * information is cached until the Patricia tree changes.  All other
-     * methods (except Iterator) must compare the given key to the prefix
-     * to ensure that it is within the range of the view.  The Iterator's
-     * remove method must also relocate the subtree that contains the
-     * prefixes if the entry holding the subtree is removed or changes.
-     * Changing the subtree takes O(K) time.
+     * Iterator.  The {@link #firstKey()}, {@link #lastKey()}, and
+     * {@link #size()} methods must iterate over all possible values in order
+     * to determine the results.  This information is cached until the Patricia
+     * tree changes.  All other methods (except Iterator) must compare the
+     * given key to the prefix to ensure that it is within the range of the
+     * view.  The Iterator's remove method must also relocate the subtree that
+     * contains the prefixes if the entry holding the subtree is removed or
+     * changes. Changing the subtree takes O(K) time.
      * 
      * @param key
      * @param bitLength
@@ -560,18 +561,18 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
     
     /**
      * Returns a view of this map, with entries containing only those that
-     * are prefixed by a value whose bits matches the bits between 'offset'
-     * and 'length' in the given key.
+     * are prefixed by a value whose bits matches the bits between
+     * {@code offset} and {@code length} in the given {@code key}.
      * 
      * The view that this returns is optimized to have a very efficient
-     * Iterator.  The firstKey, lastKey & size methods must iterate
-     * over all possible values in order to determine the results.  This
-     * information is cached until the Patricia tree changes.  All other
-     * methods (except Iterator) must compare the given key to the prefix
-     * to ensure that it is within the range of the view.  The Iterator's
-     * remove method must also relocate the subtree that contains the
-     * prefixes if the entry holding the subtree is removed or changes.
-     * Changing the subtree takes O(K) time.
+     * Iterator.  The {@link #firstKey()}, {@link #lastKey()}, and
+     * {@link #size()} methods must iterate over all possible values in order
+     * to determine the results.  This information is cached until the
+     * Patricia tree changes.  All other methods (except Iterator) must
+     * compare the given key to the prefix to ensure that it is within the
+     * range of the view.  The Iterator's remove method must also relocate
+     * the subtree that contains the prefixes if the entry holding the
+     * subtree is removed or changes. Changing the subtree takes O(K) time.
      * 
      * @param key
      * @param offset
@@ -780,6 +781,8 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * Returns the node lexicographically before the given node (or null if none).
      * 
      * This follows four simple branches:
+     *
+     * <pre>
      *  - If the uplink that returned us was a right uplink:
      *      - If predecessor's left is a valid uplink from predecessor, return it.
      *      - Else, follow the right path from the predecessor's left.
@@ -788,10 +791,11 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      *        node != node.parent.left.
      *          - If node.parent.left is uplink from node.parent:
      *              - If node.parent.left is not root, return it.
-     *              - If it is root & root isEmpty, return null.
-     *              - If it is root & root !isEmpty, return root.
+     *              - If it is root &amp; root isEmpty, return null.
+     *              - If it is root &amp; root !isEmpty, return root.
      *          - If node.parent.left is not uplink from node.parent:
-     *              - Follow right path for first right child from node.parent.left   
+     *              - Follow right path for first right child from node.parent.left
+     * </pre>
      * 
      * @param start
      */
@@ -882,7 +886,7 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      *       Otherwise, use it.
      *    
      * 6) If the right child of the parent is the parent itself, we've
-     *    already found & returned the end of the Trie, so exit.
+     *    already found and returned the end of the Trie, so exit.
      *    
      * 7) Do Step 1 on the parent's right child.
      */
@@ -1215,10 +1219,10 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * returns the bit index where one key is different from another key (if 
      * the key and found key are equal than the return value is EQUAL_BIT_KEY).
      * <p>
-     * {@code KeyAnalyzer} defines:<br>
-     * <table cellspace="5">
+     * {@code KeyAnalyzer} defines:
+     * <table summary="KeyAnalyzer definitions">
      * <tr><td>NULL_BIT_KEY</td><td>When key's bits are all zero</td></tr>
-     * <tr><td> EQUAL_BIT_KEY </td><td>When keys are the same </td></tr>
+     * <tr><td>EQUAL_BIT_KEY</td><td>When keys are the same </td></tr>
      * </table>
      */
     public static interface KeyAnalyzer<K> extends Comparator<K>, Serializable {
@@ -1854,7 +1858,7 @@ public class PatriciaTrie<K, V> extends AbstractMap<K, V> implements Trie<K, V>,
      * Finds the subtree that contains the prefix.
      * 
      * This is very similar to getR but with the difference that
-     * we stop the lookup if h.bitIndex > keyLength.
+     * we stop the lookup if h.bitIndex &gt; keyLength.
      */
     private TrieEntry<K, V> subtree(K prefix, int offset, int length) {
         TrieEntry<K, V> current = root.left;
