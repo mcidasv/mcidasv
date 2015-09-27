@@ -38,17 +38,16 @@ import java.util.Hashtable;
 import java.net.InetAddress;
 import java.net.Socket;
 
-
-
 /**
- * This provides http based access to a stack trace and enables the user to shut down McIDAS-V.
- * This only is responsive to incoming requests from localhost
- * the urls this provides are:
- * http://localhost:<port>/stack.html
- * http://localhost:<port>/info.html
- * http://localhost:<port>/shutdown.html
+ * This provides http based access to a stack trace and enables the user to
+ * shut down McIDAS-V.
  *
- * @author IDV development team
+ * This only is responsive to incoming requests from localhost.
+ * The only URLs available are the following:
+ *
+ * http://localhost:&lt;port&gt;/stack.html
+ * http://localhost:&lt;port&gt;/info.html
+ * http://localhost:&lt;port&gt;/shutdown.html
  */
 public class McIDASVMonitor extends HttpServer {
 
@@ -63,11 +62,11 @@ public class McIDASVMonitor extends HttpServer {
     }
 
     /**
-     * Make the handler for this request. Check if the client is coming from localhost
-     * if not then return null.
+     * Make the handler for this request. Check if the client is coming from
+     * localhost, if not then return null.
      *
-     * @param socket incoming socket
-     * @return handler or null
+     * @param socket Incoming socket.
+     * @return handler or {@code null}.
      */
     protected RequestHandler doMakeRequestHandler(Socket socket)
             throws Exception {
@@ -75,25 +74,18 @@ public class McIDASVMonitor extends HttpServer {
             localHost = InetAddress.getLocalHost();
         }
         InetAddress inet = socket.getInetAddress();
-        if (! (inet.getHostAddress().equals("127.0.0.1") || inet.getHostName().equals("localhost"))) {
+        if (! (inet.getHostAddress().equals("127.0.0.1") ||
+               inet.getHostName().equals("localhost")))
+        {
             return null;
         }
         return new MonitorRequestHandler(idv, this, socket);
     }
 
-    /**
-     * Class OneInstanceRequestHandler the handler
-     *
-     *
-     * @author IDV Development Team
-     * @version $Revision$
-     */
     public class MonitorRequestHandler extends HttpServer.RequestHandler {
 
-        /** The idv */
         IntegratedDataViewer idv;
-        
-        /** The socket */
+
         Socket mysocket;
 
         /**
@@ -106,8 +98,9 @@ public class McIDASVMonitor extends HttpServer {
          * @throws Exception On badness
          */
         public MonitorRequestHandler(IntegratedDataViewer idv,
-                                         HttpServer server, Socket socket)
-                throws Exception {
+                                     HttpServer server, Socket socket)
+                throws Exception
+        {
             super(server, socket);
             this.idv = idv;
             this.mysocket = socket;
@@ -120,22 +113,22 @@ public class McIDASVMonitor extends HttpServer {
          */
         public void run() {
             try {
-            	int availableBytes = mysocket.getInputStream().available();
-            	if (availableBytes != 0) {
-            		super.run();
-            	}
-            	mysocket.close();
+                int availableBytes = mysocket.getInputStream().available();
+                if (availableBytes != 0) {
+                    super.run();
+                }
+                mysocket.close();
             } catch (Exception e) {
-            	System.err.println("HTTP server error");
+                System.err.println("HTTP server error");
             }
         }
         
         private void decorateHtml(StringBuffer sb) throws Exception {
             String header = "<h1>McIDAS-V HTTP monitor</h1><hr>" +
-            	"<a href=stack.html>Stack Trace</a>&nbsp;|&nbsp;" +
+                "<a href=stack.html>Stack Trace</a>&nbsp;|&nbsp;" +
                 "<a href=info.html>System Information</a>&nbsp;|&nbsp;" +
                 "<a href=shutdown.html>Shut Down</a><hr>";
-            writeResult(true,  header+sb.toString(),"text/html");
+            writeResult(true,  header+sb.toString(), "text/html");
         }
 
         /**
@@ -149,34 +142,30 @@ public class McIDASVMonitor extends HttpServer {
          */
         protected void handleRequest(String path, Hashtable formArgs,
                                      Hashtable httpArgs, String content)
-                throws Exception {
-        	if (path.equals("/stack.html")) {
-        		StringBuffer stack = LogUtil.getStackDump(true);
-        		decorateHtml(stack);
-        	}
-        	else if (path.equals("/info.html")) {
-        		StringBuffer extra   = idv.getIdvUIManager().getSystemInfo();
-        		extra.append("<H3>Data Sources</H3>");
-        		extra.append("<div style=\"margin-left:20px;\">");
-        		extra.append(idv.getDataManager().getDataSourceHtml());
-        		extra.append("</div>");
-        		extra.append(idv.getPluginManager().getPluginHtml());
-        		extra.append(idv.getResourceManager().getHtmlView());
-        		decorateHtml(extra);
-        	}
-        	else if (path.equals("/shutdown.html")) {
-        		decorateHtml(new StringBuffer("<a href=\"reallyshutdown.html\">Shut down McIDAS-V</a>"));
-        	}
-        	else if (path.equals("/reallyshutdown.html")) {
-        		writeResult(true, "McIDAS-V is shutting down","text/html");
-        		System.exit(0);
-        	}
-        	else if (path.equals("/") || path.equals("/index.html")) {
-        		decorateHtml(new StringBuffer(""));
-        	}
-        	else {
-        		decorateHtml(new StringBuffer("Unknown url:" + path));
-        	}
+                throws Exception
+        {
+            if (path.equals("/stack.html")) {
+                StringBuffer stack = LogUtil.getStackDump(true);
+                decorateHtml(stack);
+            } else if (path.equals("/info.html")) {
+                StringBuffer extra   = idv.getIdvUIManager().getSystemInfo();
+                extra.append("<H3>Data Sources</H3>");
+                extra.append("<div style=\"margin-left:20px;\">");
+                extra.append(idv.getDataManager().getDataSourceHtml());
+                extra.append("</div>");
+                extra.append(idv.getPluginManager().getPluginHtml());
+                extra.append(idv.getResourceManager().getHtmlView());
+                decorateHtml(extra);
+            } else if (path.equals("/shutdown.html")) {
+                decorateHtml(new StringBuffer("<a href=\"reallyshutdown.html\">Shut down McIDAS-V</a>"));
+            } else if (path.equals("/reallyshutdown.html")) {
+                writeResult(true, "McIDAS-V is shutting down","text/html");
+                System.exit(0);
+            } else if (path.equals("/") || path.equals("/index.html")) {
+                decorateHtml(new StringBuffer(""));
+            } else {
+                decorateHtml(new StringBuffer("Unknown url:" + path));
+            }
         }
     }
 
