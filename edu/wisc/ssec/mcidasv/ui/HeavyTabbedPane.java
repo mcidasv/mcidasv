@@ -63,13 +63,13 @@ public class HeavyTabbedPane extends JTabbedPane {
 	 * Components, in tab index order, that will be displayed when a
 	 * tab is selected.
 	 */
-	private List<Component> comps = new ArrayList<Component>();
+	private List<Component> comps = new ArrayList<>();
 	/**
 	 * Components, in tab index order, that will be displayed when a
 	 * tab is not selected. These should never actually be visible to the
 	 * user.
 	 */
-	private List<Component> blanks = new ArrayList<Component>();
+	private List<Component> blanks = new ArrayList<>();
 	
 	/**
 	 * Create and return the component to be used when a tab is not visible.
@@ -81,7 +81,8 @@ public class HeavyTabbedPane extends JTabbedPane {
 	
 	/**
 	 * Set the delay to wait before firing a state change event.
-	 * @param d If >= 0, no delay will be used.
+	 *
+	 * @param d If &gt;= 0, no delay will be used.
 	 */
 	protected void setHeavyWeightDeleay(long d) {
 		if (d < 0) d = 0;

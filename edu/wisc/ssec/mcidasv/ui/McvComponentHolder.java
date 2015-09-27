@@ -50,9 +50,11 @@ import ucar.unidata.xml.XmlUtil;
  * 
  * <p>
  * Instead of having something like "Panel 1" appearing in the layer controls,
- * we now have "ComponentHolder Name>Panel 1". Note: ComponentHolder names
- * always double as tab names! McV also intercepts ComponentHolder renaming and
- * updates the layer controls instantly.
+ * we now have {@literal "ComponentHolder Name>Panel 1"}.</p>
+ *
+ * <p>
+ * Note: ComponentHolder names always double as tab names! McIDAS-V also
+ * intercepts ComponentHolder renaming and updates the layer controls instantly.
  * </p>
  */
 public class McvComponentHolder extends IdvComponentHolder {

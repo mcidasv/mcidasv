@@ -179,13 +179,14 @@ import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
 
 /**
  * <p>Derive our own UI manager to do some specific things:
+ *
  * <ul>
  *   <li>Removing displays</li>
  *   <li>Showing the dashboard</li>
  *   <li>Adding toolbar customization options</li>
  *   <li>Implement the McIDAS-V toolbar as a JToolbar.</li>
  *   <li>Deal with bundles without component groups.</li>
- * </ul></p>
+ * </ul>
  */
 // TODO: investigate moving similar unpersisting code to persistence manager.
 public class UIManager extends IdvUIManager implements ActionListener {
@@ -3728,13 +3729,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         /**
          * This constructor is used to build a node that is considered a
-         * "parent." These nodes only have child nodes, no SavedBundles. This
+         * {@literal "parent"}.
+         *
+         * These nodes only have child nodes, no {@code SavedBundles}. This
          * was done so that distinguishing between bundles and bundle
          * subcategories would be easy.
          * 
          * @param name The name of this node. For a parent node with
-         *        "Toolbar>cat" as the path, the name parameter would contain
-         *        only "cat."
+         * {@literal "Toolbar>cat"} as the path, the name parameter would
+         * contain only {@literal "cat"}.
          */
         public BundleTreeNode(String name) {
             this(name, null);
@@ -3971,11 +3974,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         /**
-         * Returns a brief description of this ToolbarStyle. A typical 
-         * example:<br/>
+         * Returns a brief description of this {@code ToolbarStyle}.
+         *
+         * <p>A typical example:
          * {@code [ToolbarStyle@1337: label="Large Icons", size=32]}
          * 
          * <p>Note that the format and details provided are subject to change.
+         *
+         * @return String representation of this {@code ToolbarStyle} instance.
          */
         public String toString() {
             return String.format("[ToolbarStyle@%x: label=%s, size=%d]", 

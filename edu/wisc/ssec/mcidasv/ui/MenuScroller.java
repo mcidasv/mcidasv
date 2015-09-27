@@ -59,14 +59,14 @@ import javax.swing.event.PopupMenuListener;
  * A class that provides scrolling capabilities to a long menu dropdown or
  * popup menu. A number of items can optionally be frozen at the top of the menu.
  * <p>
- * <b>Implementation note:</B>  The default scrolling interval is 150 milliseconds.
+ * <b>Implementation note:</b>  The default scrolling interval is 150 milliseconds.
  * <p>
  * @author Darryl, https://tips4java.wordpress.com/2009/02/01/menu-scroller/
  * @since 4593
  *
  * MenuScroller.java    1.5.0 04/02/12
  * License: use / modify without restrictions (see https://tips4java.wordpress.com/about/)
- * Heavily modified for JOSM needs => drop unused features and replace static scrollcount approach by dynamic behaviour
+ * Heavily modified for JOSM needs =&gt; drop unused features and replace static scrollcount approach by dynamic behaviour
  */
 public class MenuScroller {
 

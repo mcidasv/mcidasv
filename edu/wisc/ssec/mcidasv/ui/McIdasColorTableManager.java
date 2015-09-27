@@ -63,27 +63,26 @@ public class McIdasColorTableManager extends ColorTableManager {
         new PatternFileFilter(".+\\.et", "McIDAS-X color table (*.et)", ".et");
 
     /**
-     * Create me
-     *
+     * Create the color table manager.
      */
     public McIdasColorTableManager() {
         super();
     }
 
     /**
-     * Filles the given list with menu items that represent that available 
+     * Fills the given list with menu items that represent that available
      * color tables.
      * 
-     * Overridden in McIDAS-V to force the presence of the "<local>" tag.
+     * Overridden in McIDAS-V to force presence of the {@literal "local"} tag.
      */
     @Override public void makeColorTableMenu(final ObjectListener listener, List l) {
         makeColorTableMenu(listener, l, true);
     }
 
     /**
-     * Return the file filters used for writing a file on an import
+     * Return the file filters used for writing a file on an import.
      *
-     * @return Read file  filters
+     * @return Read file filters.
      */
     @Override public List getReadFileFilters() {
         ColorTableManager ctm = new ColorTableManager();
@@ -94,7 +93,7 @@ public class McIdasColorTableManager extends ColorTableManager {
     }
 
     /**
-     * Import a color table
+     * Import a color table.
      *
      * @param makeUnique If true then we change the name of the color table so it is unique
      * @return The imported color table

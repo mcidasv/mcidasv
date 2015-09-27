@@ -211,7 +211,7 @@ public class StormAODT {
 	 * Routine to search for, identify, and set the eye and cloud temperature
 	 * values for the AODT library. Temperatures are set within AODT library.
 	 * Inputs : none Outputs: none Return : -51 : eye, CWcloud, or warmest
-	 * temperature <-100C or >+40C 0 : o.k.
+	 * temperature &lt; -100C or &gt; +40C 0 : o.k.
 	 * 
 	 * @param keyerM_v72
 	 *            _more_

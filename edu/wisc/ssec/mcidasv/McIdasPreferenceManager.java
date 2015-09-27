@@ -159,15 +159,16 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      * the preferences UI in some way? PREF_PANELS is your friend. Think of 
      * it like a really brain-dead SQLite.</p>
      * 
-     * <p>Each row is a panel, and <b>must</b> consist of three columns:
+     * <p>Each row is a panel, and <b>must</b> consist of three columns.</p>
+     *
      * <ol start="0">
      * <li>Name of the panel.</li>
      * <li>Path to the icon associated with the panel.</li>
      * <li>The panel's {@literal "help ID."}</li>
      * </ol>
-     * The {@link JList} in the preferences window will order the panels based
-     * upon {@code PREF_PANELS}.
-     * </p>
+     *
+     * <p>The {@link JList} in the preferences window will order the panels
+     * basedupon {@code PREF_PANELS}.</p>
      */
     public static final String[][] PREF_PANELS = {
         { Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-round32.png", "idv.tools.preferences.generalpreferences" },

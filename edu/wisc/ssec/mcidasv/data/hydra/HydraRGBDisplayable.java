@@ -673,7 +673,7 @@ public class HydraRGBDisplayable extends DisplayableData {
     /**
      * Set the curved size for textured displays
      *
-     * @param curvedSize size to use (> 0)
+     * @param curvedSize size to use (&gt; 0)
      *
      * @throws RemoteException  Java RMI error
      * @throws VisADException   problem creating VisAD object

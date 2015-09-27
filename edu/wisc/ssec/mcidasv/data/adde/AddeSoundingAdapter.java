@@ -362,7 +362,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     /**
      * Return the given String in single quotes
      *
-     * @param s   add single quotes to the string for select clauses
+     * @param s Add single quotes to the string for select clauses.
      * @return  single quoted string (ex:  'foo')
      */
     private String sQuote(String s) {
@@ -371,26 +371,27 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
 
 
     /**
-     * Assemble the url from the given url argument array. This turns around
-     * and calls makeUrl, passing in the URL_ROOT ("/point") and the
-     * urlRoot to use.
+     * Assemble the URL from the given URL argument array. This turns around
+     * and calls {@link #makeUrl(String, String[])}, passing in the
+     * {@link #URL_ROOT} ({@literal "/point"}) and the {@code URL_ROOT} to use.
      *
-     * @param args  URL arguments, key value pairs
-     *              (ex: arg[0]=arg[1]&arg[2]=arg[3]...)
-     * @return  associated URL
+     * @param args URL arguments, key value pairs
+     *             (ex: {@code arg[0]=arg[1]&arg[2]=arg[3]...})
+     * @return Associated URL.
      */
     private String makeUrl(String[] args) {
         return makeUrl(URL_ROOT, args);
     }
 
     /**
-     * Assemble the url from the given url root and url argument array.
+     * Assemble the url from the given {@code urlRoot} and URL argument array.
      * This returns:
-     * "URL_PROTOCOL://server urlRoot ?arg[0]=arg[1]&arg[2]=arg[3]...
+     * {@code "URL_PROTOCOL://server urlRoot ?arg[0]=arg[1]&arg[2]=arg[3]...}
      *
-     * @param urlRoot   root for the URL
-     * @param args      key/value pair arguments
-     * @return  ADDE URL
+     * @param urlRoot Root for the URL
+     * @param args    Key/value pair arguments.
+     *
+     * @return ADDE URL.
      */
     private String makeUrl(String urlRoot, String[] args) {
         return Misc.makeUrl(URL_PROTOCOL, server, urlRoot, args);
@@ -413,10 +414,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     /**
      * Initialize the times, stations and soundings lists.
      * Load the data into them.
-     *
-     * @throws AddeException   error accessing the data
      */
-
     private void loadStations() {
         times     = new ArrayList(8);
         stations  = new ArrayList(100);

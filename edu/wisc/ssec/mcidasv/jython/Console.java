@@ -210,8 +210,8 @@ public class Console implements Runnable, KeyListener {
      * Inserts the specified object into Jython's local namespace using the
      * specified name.
      * 
-     * <p><b>Example:</b><br/> 
-     * {@code console.injectObject("test", new PyJavaInstance("a test"))}<br/>
+     * <p><b>Example:</b>
+     * {@code console.injectObject("test", new PyJavaInstance("a test"))}
      * Allows the interpreter to refer to the {@link String} {@code "a test"}
      * as {@code test}.
      * 
@@ -528,15 +528,17 @@ public class Console implements Runnable, KeyListener {
      * Returns the {@literal "block depth"} of a given line of Jython.
      * 
      * <p>Examples:<pre>
-     * "print 'x'"         -> 0
-     * "    print 'x'"     -> 1
-     * "            die()" -> 3
+     * "print 'x'"         -&gt; 0
+     * "    print 'x'"     -&gt; 1
+     * "            die()" -&gt; 3
      * </pre>
      * 
      * @param line Line to test. Can't be {@code null}.
-     * @param whitespace The indent {@link String} used with {@code line}. Can't be {@code null}.
+     * @param whitespace The indent {@link String} used with {@code line}.
+     * Can't be {@code null}.
      * 
-     * @return Either the block depth ({@code >= 0}) or {@code -1} if there was an error.
+     * @return Either the block depth ({@code >= 0}) or {@code -1} if there
+     * was an error.
      */
     // TODO(jon): maybe need to explicitly use getLineJython?
     public static int getBlockDepth(final String line, final String whitespace) {

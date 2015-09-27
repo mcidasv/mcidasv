@@ -1567,11 +1567,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
     }
     
     /**
-     * Add Integer->String translations to IDV's
-     * "translations" resource, so they will be made available
-     * to the data probe of Image Display's.
+     * Add {@code Integer->String} translations to IDV's
+     * {@literal "translations"} resource, so they will be made available to
+     * the data probe of Image Display's.
      */
-    
     public void initQfTranslations() {
     	
         Map<String, Map<Integer, String>> translations =
