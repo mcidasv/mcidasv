@@ -192,6 +192,11 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
+     * Create a new persistence manager.
+     *
+     * @param idv Reference back to the application session.
+     *            Cannot be {@code null}.
+     *
      * @see ucar.unidata.idv.IdvPersistenceManager#IdvPersistenceManager(IntegratedDataViewer)
      */
     public PersistenceManager(IntegratedDataViewer idv) {
@@ -783,11 +788,22 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * <p>
      * Hijacks the second part of the IDV bundle loading pipeline so that
      * McIDAS-V can limit the number of new windows.
-     * </p>
-     * 
+     *
+     * @param xml XML within {@code xmlFile}.
+     * @param fromCollab Whether or not this bundle load was started by
+     *                   collaborator.
+     * @param xmlFile Bundled XML file.
+     * @param label Label to use in dialog title.
+     * @param showDialog Whether or not dialogs should be shown.
+     * @param shouldMerge Whether or not displays should be merged into
+     *                    existing displays.
+     * @param bundleProperties Mapping of bundle properties.
+     * @param removeAll Whether or not existing displays should be removed.
+     * @param letUserChangeData Whether or not users can alter data sources.
+     * @param limitWindows Whether or not multiple windows should be created.
+     *
      * @see IdvPersistenceManager#decodeXml(String, boolean,
      *      String, String, boolean, boolean, Hashtable, boolean, boolean)
      * @see #decodeXmlInner(String, boolean, String, String, boolean, boolean,
@@ -819,7 +835,20 @@ public class PersistenceManager extends IdvPersistenceManager {
     
     /**
      * <p>Hijacks the third part of the bundle loading pipeline.</p>
-     * 
+     *
+     * @param xml XML within {@code xmlFile}.
+     * @param fromCollab Whether or not this bundle load was started by
+     *                   collaborator.
+     * @param xmlFile Bundled XML file.
+     * @param label Label to use in dialog title.
+     * @param showDialog Whether or not dialogs should be shown.
+     * @param shouldMerge Whether or not displays should be merged into
+     *                    existing displays.
+     * @param bundleProperties Mapping of bundle properties.
+     * @param didRemoveAll Were existing displays removed?
+     * @param letUserChangeData Whether or not users can alter data sources.
+     * @param limitNewWindows Whether or not multiple windows should be created.
+     *
      * @see IdvPersistenceManager#decodeXmlInner(String, boolean, String, String, boolean, boolean, Hashtable, boolean, boolean)
      * @see #instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean, boolean)
      */
@@ -1082,7 +1111,7 @@ public class PersistenceManager extends IdvPersistenceManager {
      * holder stored in the incoming bundle.
      * 
      * @param windows The bundle's list of 
-     *                {@link ucar.unidata.idv.ui.WindowInfo}s.
+     *                {@link ucar.unidata.idv.ui.WindowInfo WindowInfos}.
      * 
      * @return List of WindowInfos that contains only one element/window.
      * 
@@ -1128,7 +1157,11 @@ public class PersistenceManager extends IdvPersistenceManager {
      * Builds an altered copy of {@code windows} that preserves the
      * number of windows while ensuring all displays are inside component
      * holders.
-     * 
+     *
+     * @param windows List of bundled windows. Cannot be {@code null}.
+     *
+     * @return {@code windows} with all displays inside component groups.
+     *
      * @throws Exception Bubble up dynamic skin exceptions.
      * 
      * @see #injectComponentGroups(List)
@@ -1169,7 +1202,11 @@ public class PersistenceManager extends IdvPersistenceManager {
     /**
      * Builds a list of component holders with all of {@code window}'s
      * displays.
-     * 
+     *
+     * @param window Window containing displays.
+     *
+     * @return {@code List} of component holders for {@code window}.
+     *
      * @throws Exception Bubble up any problems creating a dynamic skin.
      */
     // TODO: refactor
@@ -1374,7 +1411,9 @@ public class PersistenceManager extends IdvPersistenceManager {
      * @param letUserChangeData Allow changes to the data path?
      * 
      * @param limitNewWindows Only create one new window?
-     * 
+     *
+     * @throws Exception if there was a problem re-instantiating the bundle.
+     *
      * @see IdvPersistenceManager#instantiateFromBundle(Hashtable, boolean, LoadBundleDialog, boolean, Hashtable, boolean, boolean)
      */
     // TODO: check the accuracy of the bundleProperties javadoc above
@@ -1517,6 +1556,8 @@ public class PersistenceManager extends IdvPersistenceManager {
     /**
      * Alters {@code windows} so that no windows in the bundle contain
      * nested component groups.
+     *
+     * @param windows {@code List} of windows to {@literal "flatten"}.
      */
     protected void flattenWindows(final List<WindowInfo> windows) {
         for (WindowInfo window : windows) {
@@ -1536,6 +1577,10 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
+     * Alters {@code nested} so that there are no nested component groups.
+     *
+     * @param nested Component group to {@literal "flatten"}.
+     *
      * @return An altered version of {@code nested} that contains no
      *         nested component groups.
      */
@@ -1559,6 +1604,14 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
+     * Remove component holders that are {@literal "UI-only"}.
+     *
+     * <p>{@literal "UI-only"} refers to things like having the dashboard
+     * embedded in a component holder.</p>
+     *
+     * @param group Component group from which {@literal "UI-only"} holders will
+     *              be removed.
+     *
      * @return An altered {@code group} containing only component holders
      *         with displays.
      */
@@ -1578,6 +1631,10 @@ public class PersistenceManager extends IdvPersistenceManager {
     /**
      * Ensures that the lists corresponding to the ids in {@code ids}
      * actually exist in {@code table}, even if they are empty.
+     *
+     * @param ids IDs that should have a corresponding {@code List}.
+     * @param table Table that should be a mapping of {@code ids} to
+     *              {@code Lists}.
      */
     // TODO: not a fan of this method.
     protected static void populateEssentialLists(final String[] ids, final Hashtable<String, Object> table) {
@@ -1595,11 +1652,16 @@ public class PersistenceManager extends IdvPersistenceManager {
      * <p>The IDV allows users to embed HTML controls or things like the 
      * dashboard into component holders. This ability, while powerful, could
      * make for a confusing UI.</p>
+     *
+     * @param windows Windows from which {@literal "UI-only"} holders should be
+     *                removed.
+     *
+     * @return {@code List} of windows that contain displays.
      */
     protected static List<WindowInfo> removeUIHolders(
         final List<WindowInfo> windows) {
 
-        List<WindowInfo> newList = new ArrayList<WindowInfo>();
+        List<WindowInfo> newList = new ArrayList<>();
         for (WindowInfo window : windows) {
             // TODO: ought to write a WindowInfo cloning method
             WindowInfo newWin = new WindowInfo();
@@ -1610,8 +1672,7 @@ public class PersistenceManager extends IdvPersistenceManager {
             newWin.setTitle(window.getTitle());
 
             Hashtable<String, IdvComponentGroup> persist = 
-                new Hashtable<String, IdvComponentGroup>(
-                    window.getPersistentComponents()); 
+                new Hashtable<>(window.getPersistentComponents());
 
             for (Map.Entry<String, IdvComponentGroup> e : persist.entrySet()) {
 
@@ -1622,8 +1683,7 @@ public class PersistenceManager extends IdvPersistenceManager {
                     continue;
                 }
 
-                List<IdvComponentHolder> newHolders = 
-                    new ArrayList<IdvComponentHolder>();
+                List<IdvComponentHolder> newHolders = new ArrayList<>();
 
                 // filter out any holders that don't contain view managers
                 for (IdvComponentHolder holder : holders) {
@@ -1974,35 +2034,35 @@ public class PersistenceManager extends IdvPersistenceManager {
     /**
      * Rename the parameter set.
      *
-     * @param parameterType The type of parameter set
-     * @param set The parameter set
+     * @param parameterType Type of parameter set.
+     * @param set Parameter set.
      */
     public void renameParameterSet(String parameterType, ParameterSet set) {
-    	String name = set.getName();
-    	Element parameterElement = set.getElement();
+        String name = set.getName();
+        Element parameterElement = set.getElement();
 //        while (true) {
-            name = GuiUtils.getInput("Enter a new name", "Name: ", name);
-            if (name == null) {
-                return;
-            }
-			name = StringUtil.replaceList(name.trim(),
-					new String[] { "<", ">", "/", "\\", "\"" },
-					new String[] { "_", "_", "_", "_",  "_"  }
-			);
-            if (name.length() == 0) {
-                return;
-            }
+        name = GuiUtils.getInput("Enter a new name", "Name: ", name);
+        if (name == null) {
+            return;
+        }
+        name = StringUtil.replaceList(name.trim(),
+            new String[] { "<", ">", "/", "\\", "\"" },
+            new String[] { "_", "_", "_", "_",  "_"  }
+        );
+        if (name.length() == 0) {
+            return;
+        }
 //        }
-    	parameterElement.setAttribute("name", name);
-    	writeParameterSets();
+        parameterElement.setAttribute("name", name);
+        writeParameterSets();
     }
     
     /**
-     * Move the bundle to the given category area
+     * Move the bundle to the given category area.
      *
-     * @param parameterType The type of parameter set
-     * @param set The parameter set
-     * @param categories Where to move to
+     * @param parameterType Type of parameter set.
+     * @param set Parameter set.
+     * @param categories Where to move to.
      */
     public void moveParameterSet(String parameterType, ParameterSet set, List categories) {
         Element rootType = getParameterTypeNode(parameterType);
@@ -2015,11 +2075,11 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * Move the bundle category
+     * Move the bundle category.
      *
-     * @param parameterType The type of parameter set
-     * @param fromCategories The category to move
-     * @param toCategories Where to move to
+     * @param parameterType Type of parameter set.
+     * @param fromCategories Category to move.
+     * @param toCategories Where to move to.
      */
     public void moveParameterSetCategory(String parameterType, List fromCategories, List toCategories) {
         Element rootType = getParameterTypeNode(parameterType);
@@ -2032,7 +2092,12 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
 
     /**
-     * Show the Save Parameter Set dialog
+     * Show the Save Parameter Set dialog.
+     *
+     * @param parameterType Type of parameter set.
+     * @param parameterValues Values to save.
+     *
+     * @return Whether or not the parameter set was saved.
      */
     public boolean saveParameterSet(String parameterType, Hashtable parameterValues) {
         try {
