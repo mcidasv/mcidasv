@@ -53,6 +53,7 @@ import java.util.Map;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -62,6 +63,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
@@ -80,6 +82,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.IdvConstants;
+import ucar.visad.display.XYDisplay;
 import visad.DataReference;
 import visad.DataReferenceImpl;
 import visad.FlatField;
@@ -157,6 +160,11 @@ public class MultiSpectralControl extends HydraControl {
     private final JButton removeProbe = new JButton("Remove Probe");
     private JCheckBox use360Box;
 
+    private JRadioButton bgBlack;
+    private JRadioButton bgWhite;
+    private JLabel bgColorLabel;
+    private ButtonGroup bgColorGroup;
+
     public MultiSpectralControl() {
         super();
         setHelpUrl("idv.controls.hydra.multispectraldisplaycontrol");
@@ -207,23 +215,19 @@ public class MultiSpectralControl extends HydraControl {
         setProjectionInView(true);
 
         // handle the user trying to add a new probe
-        addProbe.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                addSpectrum(Color.YELLOW);
-                probeTable.revalidate();
-            }
+        addProbe.addActionListener(e -> {
+            addSpectrum(Color.YELLOW);
+            probeTable.revalidate();
         });
 
         // handle the user trying to remove an existing probe
-        removeProbe.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                int index = probeTable.getSelectedRow();
-                if (index == -1) {
-                    return;
-                }
-
-                removeSpectrum(index);
+        removeProbe.addActionListener(e -> {
+            int index = probeTable.getSelectedRow();
+            if (index == -1) {
+                return;
             }
+
+            removeSpectrum(index);
         });
         removeProbe.setEnabled(false);
 
@@ -233,26 +237,46 @@ public class MultiSpectralControl extends HydraControl {
         probeTable.setDefaultEditor(Color.class, new ColorEditor());
         probeTable.setPreferredScrollableViewportSize(new Dimension(500, 200));
         probeTable.setUI(new HackyDragDropRowUI());
-        probeTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(final ListSelectionEvent e) {
-                if (!probeTable.getSelectionModel().isSelectionEmpty()) {
-                    removeProbe.setEnabled(true);
-                } else {
-                    removeProbe.setEnabled(false);
-                }
+        probeTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!probeTable.getSelectionModel().isSelectionEmpty()) {
+                removeProbe.setEnabled(true);
+            } else {
+                removeProbe.setEnabled(false);
             }
         });
 
         final boolean use360 = getIdv().getStore().get(Constants.PROP_HYDRA_360, false);
         use360Box = new JCheckBox("0-360 Longitude Format", use360);
-        use360Box.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                getIdv().getStore().put(Constants.PROP_HYDRA_360, use360Box.isSelected());
-                ProbeTableModel model = (ProbeTableModel)probeTable.getModel();
-                model.updateWith(spectra);
-                model.fireTableDataChanged();
-            }
+        use360Box.addActionListener(e -> {
+            getIdv().getStore().put(Constants.PROP_HYDRA_360, use360Box.isSelected());
+            ProbeTableModel model = (ProbeTableModel)probeTable.getModel();
+            model.updateWith(spectra);
+            model.fireTableDataChanged();
         });
+
+        bgBlack = new JRadioButton("Black");
+        bgBlack.addActionListener(e -> {
+            logger.trace("selected black background");
+            XYDisplay master = display.getMaster();
+            master.setBackground(Color.black);
+            master.setForeground(Color.white);
+        });
+
+        bgWhite = new JRadioButton("White");
+        bgWhite.addActionListener(e -> {
+            logger.trace("selected white background");
+            XYDisplay master = display.getMaster();
+            master.setBackground(Color.white);
+            master.setForeground(Color.black);
+        });
+
+        bgColorLabel = new JLabel("Background Color:");
+
+        bgColorGroup = new ButtonGroup();
+        bgColorGroup.add(bgBlack);
+        bgColorGroup.add(bgWhite);
+
+        bgBlack.setSelected(true);
 
         setShowInDisplayList(false);
 
@@ -350,11 +374,11 @@ public class MultiSpectralControl extends HydraControl {
     }
 
     /**
-     * Uses a variable-length array of {@link Color}s to create new readout 
-     * probes using the specified colors.
+     * Uses a variable-length array of {@link Color Colors} to create new
+     * readout probes using the specified colors.
      * 
-     * @param colors Variable length array of {@code Color}s. Shouldn't be 
-     * {@code null}.
+     * @param colors Variable length array of {@code Colors}.
+     *               Shouldn't be {@code null}.
      */
     // TODO(jon): check for null.
     protected void addSpectra(final Color... colors) {
@@ -423,7 +447,7 @@ public class MultiSpectralControl extends HydraControl {
     }
 
     /**
-     * Iterates through the list of {@link Spectrum}s that manage each 
+     * Iterates through the list of {@link Spectrum Spectrums} that manage each
      * {@link ReadoutProbe} associated with this display control and calls
      * {@link Spectrum#removeValueDisplay()} in an effort to remove this 
      * control's probes.
@@ -616,8 +640,9 @@ public class MultiSpectralControl extends HydraControl {
     @Override protected JComponent doMakeWidgetComponent() {
         List<Component> widgetComponents;
         try {
-            List<ControlWidget> controlWidgets = new ArrayList<>(5);
+            List<ControlWidget> controlWidgets = new ArrayList<>(15);
             getControlWidgets(controlWidgets);
+            controlWidgets.add(new WrapperWidget(this, GuiUtils.rLabel("Background Color:"), GuiUtils.hbox(bgBlack, bgWhite)));
             controlWidgets.add(new WrapperWidget(this, GuiUtils.rLabel("Readout Probes:"), scrollPane));
             controlWidgets.add(new WrapperWidget(this, GuiUtils.rLabel(" "), GuiUtils.hbox(addProbe, removeProbe, GuiUtils.right(use360Box))));
             widgetComponents = ControlWidget.fillList(controlWidgets);
@@ -686,22 +711,18 @@ public class MultiSpectralControl extends HydraControl {
         if (display.getBandSelectComboBox() == null) {
           final JLabel nameLabel = GuiUtils.rLabel("Wavenumber: ");
 
-          wavenumbox.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                  String tmp = wavenumbox.getText().trim();
-                  updateImage(Float.valueOf(tmp));
-              }
+          wavenumbox.addActionListener(e -> {
+              String tmp = wavenumbox.getText().trim();
+              updateImage(Float.valueOf(tmp));
           });
           compList.add(nameLabel);
           compList.add(wavenumbox);
         } else {
           final JComboBox bandBox = display.getBandSelectComboBox();
-          bandBox.addActionListener(new ActionListener() {
-             public void actionPerformed(ActionEvent e) {
-                String bandName = (String) bandBox.getSelectedItem();
-                Float channel = (Float)display.getMultiSpectralData().getBandNameMap().get(bandName);
-                updateImage(channel.floatValue());
-             }
+          bandBox.addActionListener(e -> {
+             String bandName = (String) bandBox.getSelectedItem();
+             Float channel = (Float)display.getMultiSpectralData().getBandNameMap().get(bandName);
+             updateImage(channel.floatValue());
           });
           JLabel nameLabel = new JLabel("Band: ");
           compList.add(nameLabel);
@@ -725,28 +746,20 @@ public class MultiSpectralControl extends HydraControl {
         rangeComps.add(minBox);
         rangeComps.add(maxLabel);
         rangeComps.add(maxBox);
-        minBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                rangeMin = Float.valueOf(minBox.getText().trim());
-                rangeMax = Float.valueOf(maxBox.getText().trim());
-                histoWrapper.modifyRange((int)rangeMin, (int)rangeMax);
-            }
+        minBox.addActionListener(ae -> {
+            rangeMin = Float.valueOf(minBox.getText().trim());
+            rangeMax = Float.valueOf(maxBox.getText().trim());
+            histoWrapper.modifyRange((int)rangeMin, (int)rangeMax);
         });
-        maxBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                rangeMin = Float.valueOf(minBox.getText().trim());
-                rangeMax = Float.valueOf(maxBox.getText().trim());
-                histoWrapper.modifyRange((int)rangeMin, (int)rangeMax);
-            }
+        maxBox.addActionListener(ae -> {
+            rangeMin = Float.valueOf(minBox.getText().trim());
+            rangeMax = Float.valueOf(maxBox.getText().trim());
+            histoWrapper.modifyRange((int)rangeMin, (int)rangeMax);
         });
         JPanel rangePanel =
             GuiUtils.center(GuiUtils.doLayout(rangeComps, 5, GuiUtils.WT_N, GuiUtils.WT_N));
         JButton resetButton = new JButton("Reset");
-        resetButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                resetColorTable();
-            }
-        });
+        resetButton.addActionListener(ae -> resetColorTable());
 
         JPanel resetPanel = 
             GuiUtils.center(GuiUtils.inset(GuiUtils.wrap(resetButton), 4));

@@ -116,10 +116,9 @@ public class MultiSpectralDisplay implements DisplayListener {
 
     private float waveNumber;
 
-    private List<DataReference> displayedThings = new ArrayList<DataReference>();
-    private HashMap<String, DataReference> idToRef = new HashMap<String, DataReference>();
-    private HashMap<DataReference, ConstantMap[]> colorMaps = 
-        new HashMap<DataReference, ConstantMap[]>();
+    private List<DataReference> displayedThings = new ArrayList<>();
+    private HashMap<String, DataReference> idToRef = new HashMap<>();
+    private HashMap<DataReference, ConstantMap[]> colorMaps = new HashMap<>();
 
     private HydraControl displayControl;
 
@@ -154,18 +153,18 @@ public class MultiSpectralDisplay implements DisplayListener {
             if ((imageExpired) || (image == null)) {
                 imageExpired = false;
 
-              MultiDimensionSubset select = null;
-              Hashtable table = dataChoice.getProperties();
-              Enumeration keys = table.keys();
-              while (keys.hasMoreElements()) {
-                Object key = keys.nextElement();
-                if (key instanceof MultiDimensionSubset) {
-                  select = (MultiDimensionSubset) table.get(key);
+                MultiDimensionSubset select = null;
+                Hashtable table = dataChoice.getProperties();
+                Enumeration keys = table.keys();
+                while (keys.hasMoreElements()) {
+                    Object key = keys.nextElement();
+                    if (key instanceof MultiDimensionSubset) {
+                        select = (MultiDimensionSubset) table.get(key);
+                    }
                 }
-              }
-              HashMap subset = select.getSubset();
-              image = data.getImage(waveNumber, subset);
-              image = changeRangeType(image, uniqueRangeType);
+                HashMap subset = select.getSubset();
+                image = data.getImage(waveNumber, subset);
+                image = changeRangeType(image, uniqueRangeType);
             }
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralDisplay.getImageData", e);
@@ -181,10 +180,10 @@ public class MultiSpectralDisplay implements DisplayListener {
             Hashtable table = dataChoice.getProperties();
             Enumeration keys = table.keys();
             while (keys.hasMoreElements()) {
-              Object key = keys.nextElement();
-              if (key instanceof MultiDimensionSubset) {
-                select = (MultiDimensionSubset) table.get(key);
-              }
+                Object key = keys.nextElement();
+                if (key instanceof MultiDimensionSubset) {
+                    select = (MultiDimensionSubset) table.get(key);
+                }
             }
             HashMap subset = select.getSubset();
             imageData = data.getImage(channel, subset);
@@ -197,13 +196,16 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     private FlatField changeRangeType(FlatField image, RealType newRangeType) throws VisADException, RemoteException {
-      FunctionType ftype = (FunctionType)image.getType();
-      FlatField new_image = new FlatField(
-         new FunctionType(ftype.getDomain(), newRangeType), image.getDomainSet());
-      new_image.setSamples(image.getFloats(false), false);
-      return new_image;
+        FunctionType ftype = (FunctionType)image.getType();
+        FlatField new_image = new FlatField(
+            new FunctionType(ftype.getDomain(), newRangeType), image.getDomainSet());
+        new_image.setSamples(image.getFloats(false), false);
+        return new_image;
     }
    
+    public XYDisplay getMaster() {
+        return master;
+    }
 
     public LocalDisplay getDisplay() {
         return display;
@@ -234,17 +236,17 @@ public class MultiSpectralDisplay implements DisplayListener {
     }
 
     private void init() throws VisADException, RemoteException {
-    	
+
         HydraDataSource source = 
               (HydraDataSource) dataChoice.getDataSource();
 
         // TODO revisit this, may want to move method up to base class HydraDataSource
         if (source instanceof SuomiNPPDataSource) {
-        	data = ((SuomiNPPDataSource) source).getMultiSpectralData(dataChoice);
+            data = ((SuomiNPPDataSource) source).getMultiSpectralData(dataChoice);
         }
         
         if (source instanceof MultiSpectralDataSource) {
-        	data = ((MultiSpectralDataSource) source).getMultiSpectralData(dataChoice);
+            data = ((MultiSpectralDataSource) source).getMultiSpectralData(dataChoice);
         }
 
         waveNumber = data.init_wavenumber;
