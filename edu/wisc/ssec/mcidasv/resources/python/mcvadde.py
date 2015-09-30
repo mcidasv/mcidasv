@@ -890,6 +890,7 @@ def listADDEImageTimes(localEntry=None,
             d = { 
                 'day': str(dt.formattedString('yyyyDDD', tz)), 
                 'time': str(dt.formattedString('HH:mm:ss', tz)),
+                'datetime': dt,
             }
             times.append(d)
             uniques.add(dt)
@@ -1097,6 +1098,7 @@ def listADDEImages(localEntry=None,
     foundUnit = False
     for i, d in enumerate(areaDirectories):
         nominalTime = d.getNominalTime()
+        tempDateTime = DateTime(nominalTime)
         tempDay = str(dateFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
         tempTime = str(timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
         
@@ -1130,6 +1132,7 @@ def listADDEImages(localEntry=None,
                     'accounting': accounting,
                     'day': tempDay,
                     'time': tempTime,
+                    'datetime': tempDateTime,
                     'imageSize': (d.getLines(), d.getElements()),
                     'centerLocation': (d.getCenterLatitude(), d.getCenterLongitude()),
                     'resolution': (d.getCenterLatitudeResolution(), d.getCenterLongitudeResolution()),
