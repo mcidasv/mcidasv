@@ -277,8 +277,10 @@ public class ResourceManager extends IdvResourceManager {
      *
      * @param rsrc XML representation of a resource collection. Should not be 
      * {@code null}.
-     * @param name The {@literal "name"} to associate with the returned 
+     * @param name {@literal "name"} to associate with the returned
      * {@code ResourceCollection}. Should not be {@code null}.
+     *
+     * @return {@code ResourceCollection} represented by {@code rsrc}.
      */
     private ResourceCollection getCollection(final Element rsrc, final String name) {
         ResourceCollection rc = getResources(name);
@@ -420,6 +422,12 @@ public class ResourceManager extends IdvResourceManager {
 
     /**
      * Utility method that calls {@link StateManager#fixIds(String)}.
+     *
+     * @param resource Resource whose ID should be fixed.
+     *
+     * @return {@literal "Fixed"} ID for {@code resource}.
+     *
+     * @see StateManager#fixIds(String)
      */
     private static String fixId(final Element resource) {
         return StateManager.fixIds(getAttribute(resource, ATTR_NAME));

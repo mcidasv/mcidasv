@@ -84,7 +84,10 @@ public class ViewManagerManager extends VMManager {
     private UIManager uiManager;
 
     /**
-     * Yet another constructor.
+     * Create a ... manager of {@link ViewManager ViewManagers}.
+     *
+     * @param idv Reference to the application session.
+     *            Cannot be {@code null}.
      */
     public ViewManagerManager(IntegratedDataViewer idv) {
         super(idv);
@@ -263,6 +266,8 @@ public class ViewManagerManager extends VMManager {
     /**
      * Helper method that'll display the ordering of the stack and a helpful
      * debug message!
+     *
+     * @param msg Message to include in output.
      */
     private void inspectStack(String msg) {
         if (!DEBUG) {

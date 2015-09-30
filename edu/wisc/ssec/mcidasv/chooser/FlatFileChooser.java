@@ -393,8 +393,11 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
 
 	/**
-     * Special processing for a known data type
-     * This deals specifically with AXFORM header files
+     * Special processing for a known data type.
+     *
+     * <p>This deals specifically with AXFORM header files.</p>
+     *
+     * @param thisFile AXFORM header file.
      */
     private void processAxformHeaderFile(File thisFile) {
         bandNames.clear();
@@ -457,8 +460,11 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
 
     /**
-     * Special processing for a known data type
-     * This deals specifically with ENVI header files
+     * Special processing for a known data type.
+     *
+     * <p>This deals specifically with ENVI header files.</p>
+     *
+     * @param thisFile ENVI header file.
      */
     private void processEnviHeaderFile(File thisFile) {
         try {
@@ -533,8 +539,11 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
 
     /**
-     * Special processing for a known data type
-     * This deals specifically with XML header files
+     * Special processing for a known data type.
+     *
+     * <p>This deals specifically with XML header files.</p>
+     *
+     * @param thisFile XML header file.
      */
     private void processXmlHeaderFile(File thisFile) {
         try {
@@ -622,8 +631,11 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
 
     /**
-     * Special processing for a known data type
-     * This deals specifically with XML header files
+     * Special processing for a known data type.
+     *
+     * <p>This deals specifically with {@literal "image"} files.</p>
+     *
+     * @param thisFile Image file.
      */
     private void processImageFile(File thisFile) {
         try {
@@ -673,8 +685,11 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
 
     /**
-     * Special processing for an unknown data type
-     * Can we glean anything about the file by inspecting it more?
+     * Special processing for an unknown data type.
+     *
+     * <p>Can we glean anything about the file by inspecting it more?</p>
+     *
+     * @param thisFile Unknown file type.
      */
     private void processGenericFile(File thisFile) {
 
@@ -727,7 +742,11 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
     
     /**
-     * Ask the user for a data file
+     * Ask the user for a data file.
+     *
+     * @param thisFile File or directory to use as initial location.
+     *
+     * @return Selected data file.
      */
     private static File getDataFile(File thisFile) {
         JFileChooser fileChooser = new JFileChooser(thisFile);
@@ -803,10 +822,10 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
         
     /**
-     * User said go, we go. Simply get the list of images
-     * from the imageChooser and create the FILE.FLAT
-     * DataSource
+     * User said go, so we go.
      *
+     * <p>Simply get the list of images from the imageChooser and create the
+     * {@code FILE.FLAT} {@code DataSource}.</p>
      */
     public void doLoadInThread() {
         String definingObject = dataFileText.getText();
@@ -819,7 +838,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
     
     /**
-     * The dimensions inner panel
+     * Creates the dimensions inner panel.
+     *
+     * @return The {@literal "dimensions"} panel.
      */
     protected JPanel makeDimensionsPanel() {
         JPanel myPanel = new JPanel();
@@ -901,7 +922,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
 
     /**
-     * The navigation inner panel
+     * Creates the navigation inner panel.
+     *
+     * @return The {@literal "navigation"} panel.
      */
     protected JPanel makeNavigationPanel() {
         JPanel myPanel = new JPanel();
@@ -977,7 +1000,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
 
     /**
-     * The format inner panel
+     * Creates the format inner panel.
+     *
+     * @return The {@literal "format"} panel.
      */
     protected JPanel makeFormatPanel() {
         JPanel myPanel = new JPanel();
@@ -1062,7 +1087,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
 
     /**
-     * The main panel properties panel
+     * Creates the main panel properties panel.
+     *
+     * @return The {@literal "properties"} panel.
      */
     protected JPanel makePropertiesPanel() {
         JPanel topPanel = sideBySide(makeDimensionsPanel(), makeNavigationPanel());
@@ -1071,7 +1098,9 @@ public class FlatFileChooser extends IdvChooser implements Constants {
     }
     
     /**
-     * @return The gui of this chooser
+     * Builds the GUI of the flat file chooser.
+     *
+     * @return GUI of this chooser.
      */
     protected JComponent doMakeContents() {
 

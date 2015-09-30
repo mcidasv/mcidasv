@@ -240,6 +240,8 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     
     /**
      * Allow multiple file selection.  Override if necessary.
+     *
+     * @return Always returns {@code true}.
      */
     protected boolean getAllowMultiple() {
         return true;
