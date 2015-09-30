@@ -887,7 +887,7 @@
       <sysproperty key="debug.adde.reqs" value="false" />
       -->
       <!--<sysproperty key="textureWidthMax" value="${visad.texturemax}" />-->
-      <!-- <sysproperty key="java.ext.dirs" value="${java.home}/lib/ext" /> -->
+      <sysproperty key="java.ext.dirs" value="${java.home}/lib/ext" />
       <sysproperty key="java.library.path" value="${java.home}/lib/ext" />
       <sysproperty key="loglevel" value="${run.log.level}" />
       <sysproperty key="mcv.userpath" value="${userpath.dir}" />
