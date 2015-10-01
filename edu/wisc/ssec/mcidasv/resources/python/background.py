@@ -279,7 +279,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
                  'center-longitude-resolution', 'day', 'directory-block',
                  'elements', 'lines', 'memo-field', 'nominal-time',
                  'sensor-id', 'sensor-type', 'source-type', 'start-time',
-                 'url','satband-band-label', ]
+                 'datetime', 'url','satband-band-label', ]
                  
         _MappedData.__init__(self, keys)
         self.areaFile = areaFile
@@ -402,7 +402,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             return str(self.areaDirectory.getSensorType())
         elif key == 'source-type':
             return str(self.areaDirectory.getSourceType())
-        elif key == 'start-time':
+        elif key == 'start-time' or key == 'datetime':
             return DateTime(self.areaDirectory.getStartTime())
         elif key == 'url':
             return str(self.aid.getSource())
