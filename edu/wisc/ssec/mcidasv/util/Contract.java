@@ -49,7 +49,8 @@ public final class Contract {
     /**
      * Ensures that a parameter passed to the calling method is not 
      * {@code null}.
-     * 
+     *
+     * @param <T> Type of object to test.
      * @param object Object to test.
      * 
      * @return {@code object}, if it is not {@code null}.
@@ -67,7 +68,8 @@ public final class Contract {
     /**
      * Ensures that a parameter passed to the calling method is not 
      * {@code null}.
-     * 
+     *
+     * @param <T> Type of object to test.
      * @param object Object to test.
      * @param message Exception message to use if {@code object} is 
      * {@code null}.
@@ -87,7 +89,8 @@ public final class Contract {
     /**
      * Ensures that a parameter passed to the calling method is not 
      * {@code null}.
-     * 
+     *
+     * @param <T> Type of object to test.
      * @param object Object to test.
      * @param format Template used to create an exception if {@code object} is 
      * {@code null}. Uses {@link String#format(String, Object...)}.
