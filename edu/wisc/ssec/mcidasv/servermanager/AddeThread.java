@@ -173,22 +173,30 @@ public class AddeThread extends Thread {
 //    }
 
     /**
-     * Thread to read the stderr and stdout of mcservl
+     * Thread to read the stderr and stdout of mcservl.
      */
     private static class StreamReaderThread extends Thread {
-        /** */
+
+        /** stderr */
         private final StringBuilder mOut;
 
-        /** */
+        /** stdin */
         private final InputStreamReader mIn;
 
-        /** */
+        /**
+         * Create a thread for reading mcservl output.
+         *
+         * @param in Input {@literal "stream"}.
+         * @param out Output {@literal "stream"}.
+         */
         public StreamReaderThread(final InputStream in, final StringBuilder out) {
             mOut = out;
             mIn = new InputStreamReader(in);
         }
 
-        /** */
+        /**
+         * Reads {@link #mIn} and appends to {@link #mOut}.
+         */
         public void run() {
             int ch;
             try {

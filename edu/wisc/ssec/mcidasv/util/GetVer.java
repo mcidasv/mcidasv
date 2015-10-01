@@ -38,6 +38,9 @@ import java.util.Properties;
 
 /**
  * This class is really just a wrapper around {@link #getVersion()}.
+ *
+ * <p>Note: this class is likely to be used in contexts where we don't
+ * have logging set up, so {@link System#err} and {@link System#out} are used.
  */
 public class GetVer {
 
@@ -58,9 +61,11 @@ public class GetVer {
     /**
      * Extracts and returns McIDAS-V version information.
      * 
-     * @return {@code String} formatted like {@literal "McIDAS-V version VERSIONHERE built BUILDDATEHERE"}.
+     * @return {@code String} formatted like
+     * {@literal "McIDAS-V version VERSIONHERE built BUILDDATEHERE"}.
      * 
-     * @throws Exception
+     * @throws Exception if {@code build.properties} could not be loaded into
+     * a {@code Properties} object.
      */
     public static String getVersion() throws Exception {
         GetVer nonStaticInstance = new GetVer();

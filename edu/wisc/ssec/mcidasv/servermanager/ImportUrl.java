@@ -52,8 +52,7 @@ import org.slf4j.LoggerFactory;
 import net.miginfocom.swing.MigLayout;
 
 /**
- * 
- * 
+ * Class used to import from a remote {@literal "MCTABLE.TXT"} file.
  */
 public class ImportUrl extends JDialog implements ActionListener {
     
@@ -192,17 +191,17 @@ public class ImportUrl extends JDialog implements ActionListener {
     
     /**
      * Launch the application.
+     *
+     * @param args Ignored.
      */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    ImportUrl dialog = new ImportUrl();
-                    dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                    dialog.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        SwingUtilities.invokeLater(() -> {
+            try {
+                ImportUrl dialog = new ImportUrl();
+                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                dialog.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 

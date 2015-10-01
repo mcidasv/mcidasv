@@ -306,17 +306,26 @@ public class LocalEntryShortcut extends JDialog {
 
     /**
      * Triggered when the {@literal "add"} button is clicked.
+     *
+     * @param evt Ignored.
      */
     private void saveButtonActionPerformed(final ActionEvent evt) {
         addEntry();
     }
 
+    /**
+     * Triggered when the {@literal "edit"} button is clicked.
+     *
+     * @param evt Ignored.
+     */
     private void editButtonActionPerformed(final ActionEvent evt) {
         editEntry();
     }
 
     /**
      * Triggered when the {@literal "file picker"} button is clicked.
+     *
+     * @param evt Ignored.
      */
     private void browseButtonActionPerformed(final ActionEvent evt) {
         String lastPath = getLastPath();
@@ -363,6 +372,8 @@ public class LocalEntryShortcut extends JDialog {
 
     /**
      * Calls {@link #dispose} if the dialog is visible.
+     *
+     * @param evt Ignored.
      */
     private void cancelButtonActionPerformed(ActionEvent evt) {
         if (isDisplayable()) {
@@ -443,6 +454,10 @@ public class LocalEntryShortcut extends JDialog {
     }
 
     /**
+     * Returns the last {@link EditorAction} that was performed.
+     *
+     * @return Last editor action performed.
+     *
      * @see #editorAction
      */
     public EditorAction getEditorAction() {
@@ -450,6 +465,10 @@ public class LocalEntryShortcut extends JDialog {
     }
 
     /**
+     * Set the {@link EditorAction} that was performed.
+     *
+     * @param editorAction Action that was performed.
+     *
      * @see #editorAction
      */
     private void setEditorAction(final EditorAction editorAction) {

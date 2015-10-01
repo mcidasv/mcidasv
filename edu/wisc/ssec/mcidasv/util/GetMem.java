@@ -33,7 +33,10 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 
 /**
- * Wrapper for OperatingSystemMXBean
+ * Wrapper for OperatingSystemMXBean.
+ *
+ * <p>Note: this class is likely to be used in contexts where we don't
+ * have logging set up, so {@link System#err} and {@link System#out} are used.
  */
 public class GetMem {
 
@@ -42,10 +45,12 @@ public class GetMem {
      * the result. 
      * 
      * @param <T> Type of the expected return and {@code defaultValue}.
-     * @param methodName Name of the {@code OperatingSystemMXBean} method to call. Cannot be {@code null} or empty.
-     * @param defaultValue Value to return if the call to {@code methodName} fails.
+     * @param methodName Name of {@code OperatingSystemMXBean} method to call.
+     *                   Cannot be {@code null} or empty.
+     * @param defaultValue Value returned if {@code methodName} call fails.
      * 
-     * @return Either the value returned by the {@code methodName} call, or {@code defaultValue}.
+     * @return Either the value returned by the {@code methodName} call, or
+     * {@code defaultValue}.
      */
     private <T> T callMXBeanMethod(final String methodName, final T defaultValue) {
         assert methodName != null : "Cannot invoke a null method name";
@@ -71,13 +76,12 @@ public class GetMem {
      * limitation of 1.5GB.
      * 
      * @return {@code String} representation of the total amount of system 
-     * memory. 
-     * 
-     * @throws Exception
+     * memory.
      */
-    public static String getMemory() throws Exception {
+    public static String getMemory() {
         GetMem nonStaticInstance = new GetMem();
-        Object totalMemoryObject = nonStaticInstance.callMXBeanMethod("getTotalPhysicalMemorySize", 0);
+        Object totalMemoryObject =
+            nonStaticInstance.callMXBeanMethod("getTotalPhysicalMemorySize", 0);
         long totalMemory = ((Number)totalMemoryObject).longValue();
         boolean is64 = (System.getProperty("os.arch").indexOf("64") >= 0);
         int megabytes = (int)(Math.round(totalMemory/1024/1024));

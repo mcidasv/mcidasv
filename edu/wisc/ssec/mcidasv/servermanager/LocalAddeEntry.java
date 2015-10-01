@@ -275,9 +275,9 @@ public class LocalAddeEntry implements AddeEntry {
     }
 
     /**
+     * Creates a new local ADDE entry from the given {@code builder} object.
      *
-     *
-     * @param builder
+     * @param builder Builder that represents a local ADDE entry.
      * 
      * @see LocalAddeEntry.Builder
      */
@@ -647,10 +647,10 @@ public class LocalAddeEntry implements AddeEntry {
          * Creates a new {@code LocalAddeEntry} {@literal "builder"} with the 
          * required fields for a {@code LocalAddeEntry} object.
          * 
-         * @param name 
-         * @param group 
-         * @param mask 
-         * @param format
+         * @param name Name of the local ADDE dataset.
+         * @param group ADDE group name.
+         * @param mask Local file mask.
+         * @param format Type of data.
          */
         public Builder(final String name, final String group, final String mask, final AddeFormat format) {
             this.name = name;
@@ -662,7 +662,7 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          * This method is currently a no-op.
          *
-         * @param descriptor
+         * @param descriptor Local ADDE entry descriptor. Currently ignored.
          *
          * @return {@code LocalAddeEntry.Builder} with ADDE descriptor.
          */
@@ -676,7 +676,8 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          *
          *
-         * @param realtimeAsStr
+         * @param realtimeAsStr Whether or not the local ADDE entry is
+         *                      {@literal "real time"}.
          *
          * @return {@code LocalAddeEntry.Builder} with ADDE realtime flag.
          */
@@ -699,7 +700,8 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          *
          *
-         * @param realtime
+         * @param realtime Whether or not the local ADDE entry is
+         *                 {@literal "real time"}.
          *
          * @return {@code LocalAddeEntry.Builder} with ADDE realtime flag.
          */
@@ -711,7 +713,7 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          *
          *
-         * @param type
+         * @param type ADDE data type.
          *
          * @return {@code LocalAddeEntry.Builder} with ADDE data type.
          */
@@ -726,7 +728,7 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          *
          *
-         * @param kind
+         * @param kind ADDE server binary used to handle data.
          *
          * @return {@code LocalAddeEntry.Builder} with ADDE kind.
          */
@@ -748,9 +750,10 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          *
          *
-         * @param start
+         * @param start Beginning of local ADDE dataset.
          *
-         * @return {@code LocalAddeEntry.Builder} with ADDE dataset {@literal "start"}.
+         * @return {@code LocalAddeEntry.Builder} with ADDE dataset
+         * {@literal "start"}.
          */
         public Builder start(final String start) {
             if (start != null) {
@@ -762,9 +765,10 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          *
          *
-         * @param end
+         * @param end End of local ADDE dataset.
          *
-         * @return {@code LocalAddeEntry.Builder} with ADDE dataset {@literal "end"}.
+         * @return {@code LocalAddeEntry.Builder} with ADDE dataset
+         * {@literal "end"}.
          */
         public Builder end(final String end) {
             if (end != null) {
@@ -776,10 +780,11 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          *
          *
-         * @param start
-         * @param end
+         * @param start Beginning of local ADDE dataset.
+         * @param end End of local ADDE dataset.
          *
-         * @return {@code LocalAddeEntry.Builder} with ADDE dataset {@literal "start" and "end"} values.
+         * @return {@code LocalAddeEntry.Builder} with ADDE dataset
+         * {@literal "start" and "end"} values.
          */
         public Builder range(final String start, final String end) {
             if (start != null && end != null) {
@@ -792,9 +797,10 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          *
          *
-         * @param status
+         * @param status String representation of local ADDE entry status.
          *
-         * @return {@code LocalAddeEntry.Builder} with {@link AddeEntry.EntryStatus}.
+         * @return {@code LocalAddeEntry.Builder} with
+         * {@link AddeEntry.EntryStatus}.
          */
         public Builder status(final String status) {
             if (status != null && status.length() > 0) {
@@ -806,9 +812,10 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          * 
          * 
-         * @param status
+         * @param status Local ADDE entry status.
          * 
-         * @return {@code LocalAddeEntry.Builder} with {@link AddeEntry.EntryStatus}.
+         * @return {@code LocalAddeEntry.Builder} with
+         * {@link AddeEntry.EntryStatus}.
          */
         public Builder status(final EntryStatus status) {
             if (status != null) {
@@ -820,9 +827,11 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          * 
          * 
-         * @param temporary
+         * @param temporary Whether or not the local ADDE entry will be saved
+         *                  between application sessions.
          * 
-         * @return {@code LocalAddeEntry.Builder} with the specified temporary status.
+         * @return {@code LocalAddeEntry.Builder} with the specified temporary
+         * status.
          */
         public Builder temporary(final boolean temporary) {
             this.temporary = temporary;
@@ -837,7 +846,7 @@ public class LocalAddeEntry implements AddeEntry {
         /**
          * 
          * 
-         * @param alias 
+         * @param alias Set an alias to use for the local ADDE entry.
          * 
          * @return {@code LocalAddeEntry.Builder} with the specified alias.
          */

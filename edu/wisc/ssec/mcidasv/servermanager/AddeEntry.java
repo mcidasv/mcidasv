@@ -198,12 +198,16 @@ public interface AddeEntry {
 
     /**
      * Address of the server associated with the current entry. 
-     * {@link LocalAddeEntry}s will return {@code localhost}.
+     * {@link LocalAddeEntry LocalAddeEntries} will return {@code localhost}.
+     *
+     * @return Server address.
      */
     String getAddress();
 
     /**
      * Dataset/group located on the server.
+     *
+     * @return ADDE group.
      */
     String getGroup();
 
@@ -242,6 +246,8 @@ public interface AddeEntry {
      * Source that specified this entry. For example; allows you to 
      * distinguish {@literal "system"} entries (which cannot be removed, only 
      * disabled) from entries created by the user (full control).
+     *
+     * @return Source of this entry.
      */
     EntrySource getEntrySource();
 
@@ -249,12 +255,16 @@ public interface AddeEntry {
      * GUI status of the entry. Differs from {@link EntryValidity} in that 
      * {@code EntryStatus} controls this entry showing up in a chooser and has
      * nothing to do with whether or not the entry is a valid ADDE server.
+     *
+     * @return Status of this entry.
      */
     EntryStatus getEntryStatus();
 
     /**
      * Handy {@code String} representation of this ADDE entry. Currently looks
      * like {@code ADDRESS/GROUP}, but this is subject to change.
+     *
+     * @return Entry as a {@code String}.
      */
     String getEntryText();
 
@@ -267,17 +277,29 @@ public interface AddeEntry {
     // TODO(jon): should this be removed? this makes the entries mutable!
     void setEntryAlias(final String newAlias);
 
-    /** */
+    /**
+     * Determine whether or not this entry will be saved between application
+     * sessions.
+     *
+     * @return Whether or not this entry is saved for subsequent sessions.
+     */
     boolean isEntryTemporary();
 
     /**
      * Currently used as a identifier for convenient storage by the server 
      * manager.
+     *
+     * @return Identifier for this entry.
      */
     String asStringId();
 
     /**
      * String representation of this entry.
+     *
+     * <p>Output will typically contain internal details and as such will differ
+     * from {@link #getEntryText()}.</p>
+     *
+     * @return Entry as a {@code String}.
      */
     String toString();
 }

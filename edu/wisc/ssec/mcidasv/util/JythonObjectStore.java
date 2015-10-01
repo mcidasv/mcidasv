@@ -104,6 +104,7 @@ public class JythonObjectStore {
      * Returns the object associated with the given {@code key}. If {@code key}
      * does not exist, {@code defaultValue} is returned.
      *
+     * @param <T> Type of object that will be returned.
      * @param key Key whose associated object is to be returned.
      * Cannot be {@code null}.
      * @param defaultValue Value to be returned if {@code key} is not valid.
@@ -261,6 +262,7 @@ public class JythonObjectStore {
     /**
      * Associates the given {@code key} with the given object.
      *
+     * @param <T> Type of object to store.
      * @param key Key to associate with the given {@code value}.
      * Cannot be {@code null}.
      * @param value Object to associate with {@code key}. Cannot be

@@ -71,7 +71,6 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
  * {@link AddeEntry AddeEntries}, though there has been some talk of allowing
  * for reordering.
  */
-
 public class AddePreferences {
 
     public enum Selection { ALL_ENTRIES, SPECIFIED_ENTRIES };
@@ -375,6 +374,8 @@ public class AddePreferences {
     /**
      * Returns the value of the {@link #PREF_LIST_SPECIFY} preference. Defaults
      * to {@literal "ALL"}.
+     *
+     * @return Value of the {@code PREF_LIST_SPECIFY} preference.
      */
     private Selection getSpecifyServers() {
         String saved = entryStore.getIdvStore().get(PREF_LIST_SPECIFY, Selection.ALL_ENTRIES.toString());

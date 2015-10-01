@@ -67,7 +67,8 @@ public final class CollectionHelpers {
      * 
      * <p>Useful for doing things like:
      * {@code String[] strs = arr("hello", "how", "are", "you?");}
-     * 
+     *
+     * @param <T> Type of items to be converted into an array.
      * @param ts Items that will make up the elements of the returned array.
      * Cannot be {@code null}, and (for now) the items should be of the 
      * <i>same</i> type.
@@ -85,7 +86,8 @@ public final class CollectionHelpers {
      * 
      * <p>Used like so:
      * {@code List<String> listy = list("y", "helo", "thar");}
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param elements Items that will make up the elements of the returned
      * {@code List}.
      * 
@@ -105,7 +107,8 @@ public final class CollectionHelpers {
      * 
      * <p>Used like so:<pre>
      * for (String s : set("beep", "boop", "blorp")) { ... }</pre>
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param elements Items that will appear within the returned {@code Set}.
      * Cannot be {@code null}, and (for now) the items should be of the 
      * <i>same</i> type.
@@ -127,7 +130,8 @@ public final class CollectionHelpers {
      * or {@link #set(Object...)}.
      * 
      * <p>Example: {@code Collection<Integer> ints = collect(PriorityBlockingQueue.class, 1, 2, 3);}
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param cl A (non-abstract!) class that implements {@code Collection}. Cannot be {@code null}.
      * @param elements Objects that will be added to the collection.
      * 
@@ -270,6 +274,8 @@ public final class CollectionHelpers {
      * <p>Please consider using {@link #newHashSet(int)} or
      * {@link #newHashSet(Collection)} instead of this method.
      *
+     * @param <E> Type of items that will be added to the resulting collection.
+     *
      * @return A new, empty {@code HashSet}.
      *
      * @see #newHashSet(int)
@@ -283,6 +289,7 @@ public final class CollectionHelpers {
     /**
      * Creates an empty {@link HashSet} with a given initial capacity.
      *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param initialCapacity Initial capacity of the {@code HashSet}. Cannot
      * be negative.
      *
@@ -295,6 +302,7 @@ public final class CollectionHelpers {
     /**
      * Copies an existing {@link Collection} into a new {@link HashSet}.
      *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param original {@code Collection} to be copied. Cannot be {@code null}.
      *
      * @return A new {@code HashSet} whose contents are the same as
@@ -311,7 +319,9 @@ public final class CollectionHelpers {
      *
      * <p>Please consider using {@link #newLinkedHashSet(int)} or
      * {@link #newLinkedHashSet(Collection)} instead of this method.
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
+     *
      * @return A new, empty {@code LinkedHashSet}.
      *
      * @see #newLinkedHashSet(int)
@@ -325,6 +335,7 @@ public final class CollectionHelpers {
     /**
      * Creates an empty {@link LinkedHashSet} with a given initial capacity.
      *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param initialCapacity Initial capacity of the {@code LinkedHashSet}.
      * Cannot be negative.
      *
@@ -337,7 +348,8 @@ public final class CollectionHelpers {
 
     /**
      * Copies a {@link Collection} into a new {@link LinkedHashSet}.
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param original Collection to be copied. Cannot be {@code null}.
      * 
      * @return A new {@code LinkedHashSet} whose contents are the same as 
@@ -355,6 +367,9 @@ public final class CollectionHelpers {
      * <p>Please consider using {@link #newMap(int)} or
      * {@link #newMap(Map)} instead of this method.
      *
+     * @param <K> Type of keys that will be added to the {@code Map}.
+     * @param <V> Type of values that will be added to the {@code Map}.
+     *
      * @return A new, empty {@code HashMap}.
      *
      * @see #newMap(int)
@@ -368,6 +383,8 @@ public final class CollectionHelpers {
     /**
      * Creates an empty {@link HashSet} with a given initial capacity.
      *
+     * @param <K> Type of keys that will be added to the {@code Map}.
+     * @param <V> Type of values that will be added to the {@code Map}.
      * @param initialCapacity Initial capacity of the {@code HashMap}.
      * Cannot be negative.
      *
@@ -379,7 +396,9 @@ public final class CollectionHelpers {
 
     /**
      * Copies an existing {@link Map} into a new {@link HashMap}.
-     * 
+     *
+     * @param <K> Type of keys that will be added to the {@code Map}.
+     * @param <V> Type of values that will be added to the {@code Map}.
      * @param original Map to be copied. Cannot be {@code null}.
      * 
      * @return A new {@code HashMap} whose contents are the same as 
@@ -397,6 +416,9 @@ public final class CollectionHelpers {
      * <p>Please consider using {@link #newLinkedHashMap(int)} or
      * {@link #newLinkedHashSet(Collection)} instead of this method.
      *
+     * @param <K> Type of keys that will be added to the {@code Map}.
+     * @param <V> Type of values that will be added to the {@code Map}.
+     *
      * @return A new, empty {@code LinkedHashMap}.
      *
      * @see #newLinkedHashMap(int)
@@ -410,6 +432,8 @@ public final class CollectionHelpers {
     /**
      * Creates an empty {@link LinkedHashMap} with a given initial capacity.
      *
+     * @param <K> Type of keys that will be added to the {@code Map}.
+     * @param <V> Type of values that will be added to the {@code Map}.
      * @param initialCapacity Initial capacity of the {@code LinkedHashMap}.
      * Cannot be negative.
      *
@@ -422,7 +446,9 @@ public final class CollectionHelpers {
 
     /**
      * Copies an existing {@link Map} into a new {@link LinkedHashMap}.
-     * 
+     *
+     * @param <K> Type of keys that will be added to the {@code Map}.
+     * @param <V> Type of values that will be added to the {@code Map}.
      * @param original Map to be copied. Cannot be {@code null}.
      * 
      * @return A new {@code LinkedHashMap} whose contents are the same as 
@@ -435,7 +461,10 @@ public final class CollectionHelpers {
     /**
      * Abuses Java's sad {@literal "type"} implementation to create a new
      * {@link ConcurrentHashMap}.
-     * 
+     *
+     * @param <K> Type of keys that will be added to the {@code Map}.
+     * @param <V> Type of values that will be added to the {@code Map}.
+     *
      * @return Shiny and new {@code ConcurrentHashMap}
      */
     @SuppressWarnings({"CollectionWithoutInitialCapacity"})
@@ -447,7 +476,9 @@ public final class CollectionHelpers {
      * Creates an empty {@link CopyOnWriteArrayList}. Keep in mind that you 
      * only want to use {@code CopyOnWriteArrayList} for lists that are not 
      * going to be modified very often!
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
+     *
      * @return A new, empty {@code CopyOnWriteArrayList}.
      */
     public static <E> List<E> concurrentList() {
@@ -459,7 +490,8 @@ public final class CollectionHelpers {
      * elements in {@code original}. Keep in mind that you only want to use 
      * {@code CopyOnWriteArrayList} for lists that are not going to be 
      * modified very often!
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param original Collection to be copied into the new list.
      * 
      * @return A new {@code CopyOnWriteArrayList} whose contents are the same 
@@ -474,7 +506,8 @@ public final class CollectionHelpers {
      * {@literal "varargs"}. Keep in mind that you only want to use 
      * {@code CopyOnWriteArrayList} for lists that are not going to be modified 
      * very often!
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param elems Elements that will be contained in the resulting list.
      * 
      * @return A new {@code CopyOnWriteArrayList} that contains the incoming 
@@ -489,7 +522,9 @@ public final class CollectionHelpers {
      * Creates a new {@link CopyOnWriteArraySet}. Keep in mind that you only 
      * want to use a {@code CopyOnWriteArraySet} for sets that are not going to
      * be modified very often!
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
+     *
      * @return A new, empty {@code CopyOnWriteArraySet}.
      */
     public static <E> Set<E> concurrentSet() {
@@ -501,7 +536,8 @@ public final class CollectionHelpers {
      * elements in {@code original}. Keep in mind that you only want to use a 
      * {@code CopyOnWriteArraySet} for sets that are not going to be modified 
      * very often!
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param original Collection to be copied into the new set.
      * 
      * @return A new {@code CopyOnWriteArraySet} whose contents are the same as
@@ -516,7 +552,8 @@ public final class CollectionHelpers {
      * {@literal "varargs"}. Keep in mind that you only want to use a 
      * {@code CopyOnWriteArraySet} for sets that are not going to be modified 
      * very often!
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param elems Elements that will be contained in the resulting set.
      * 
      * @return A new {@code CopyOnWriteArraySet} that contains the incoming 
@@ -547,7 +584,9 @@ public final class CollectionHelpers {
      *
      * <p>Please consider using {@link #arrList(int)} or
      * {@link #arrList(Collection)} instead of this method.
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
+     *
      * @return A new, empty {@code ArrayList}.
      *
      * @see #arrList(int)
@@ -560,7 +599,8 @@ public final class CollectionHelpers {
 
     /**
      * Creates an empty {@link ArrayList} with a given capacity.
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param capacity The initial size of the returned {@code ArrayList}.
      * 
      * @return A new, empty {@code ArrayList} that has an initial capacity of
@@ -574,7 +614,8 @@ public final class CollectionHelpers {
 
     /**
      * Copies an existing {@link Collection} into a new {@link ArrayList}.
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param c {@code Collection} whose elements are to be placed into the 
      * returned {@code ArrayList}.
      * 
@@ -589,7 +630,8 @@ public final class CollectionHelpers {
     /**
      * Copies an existing {@link Collection} into a new (non-abstract!) 
      * {@code Collection} class.
-     * 
+     *
+     * @param <E> Type of items that will be added to the resulting collection.
      * @param cl Non-abstract {@code Collection} class.
      * @param old An existing {@code Collection}.
      * 
@@ -638,7 +680,9 @@ public final class CollectionHelpers {
      * 
      * <p>The latter approach also allows you to make {@code static final} 
      * {@link Map}s much more easily.
-     * 
+     *
+     * @param <K> Type of keys that will be added to the {@code Map}.
+     * @param <V> Type of values that will be added to the {@code Map}.
      * @param keys Array whose elements will be the keys in a {@code Map}.
      * @param values Array whose elements will the values in a {@code Map}.
      * 
@@ -659,7 +703,9 @@ public final class CollectionHelpers {
     /**
      * A version of {@link #zipMap(Object[], Object[])} that works with 
      * {@link Collection}s.
-     * 
+     *
+     * @param <K> Type of keys that will be added to the {@code Map}.
+     * @param <V> Type of values that will be added to the {@code Map}.
      * @param keys Items that will be the keys in the resulting {@code Map}.
      * @param values Items that will be the values in the result {@code Map}.
      * 
@@ -680,7 +726,9 @@ public final class CollectionHelpers {
 
     /**
      * Applies a given function to each item in a given list.
-     * 
+     *
+     * @param <A> Type of items that will be passed into {@code f}.
+     * @param <B> Type of items that will be in the resulting {@code List}.
      * @param f The {@link Function} to apply.
      * @param as The list whose items are to be fed into {@code f}.
      * 
@@ -695,7 +743,9 @@ public final class CollectionHelpers {
 
     /**
      * Applies a given function to each item in a given {@link Set}.
-     * 
+     *
+     * @param <A> Type of items that will be passed into {@code f}.
+     * @param <B> Type of items that will be in the resulting {@code Set}.
      * @param f The {@link Function} to apply to {@code as}.
      * @param as The {@code Set} whose items are to be fed into {@code f}.
      * 

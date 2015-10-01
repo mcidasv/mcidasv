@@ -680,8 +680,13 @@ public class EntryTransforms {
     }
 
     /**
-     * Converts a {@code String} containing a {@literal "RESOLV.SRV"} entry into
-     * a {@link LocalAddeEntry}.
+     * Converts a {@code String} containing a {@literal "RESOLV.SRV"} entry
+     * into a {@link LocalAddeEntry}.
+     *
+     * @param line Line from {@code RESOLV.SRV}.
+     *
+     * @return {@code LocalAddeEntry} that represents the given {@code line}
+     * from {@code RESOLV.SRV}.
      */
     public static LocalAddeEntry readResolvLine(String line) {
         boolean disabled = line.startsWith("#");
@@ -851,7 +856,14 @@ public class EntryTransforms {
 
     /**
      * De-munges file mask strings.
-     * 
+     *
+     * <p>This process is largely used to generate
+     * {@literal "Windows-friendly"} masks.</p>
+     *
+     * @param path File path to fix.
+     *
+     * @return {@code path} with Windows fixes applied.
+     *
      * @throws NullPointerException if {@code path} is {@code null}. 
      */
     public static String demungeFileMask(final String path) {
@@ -877,7 +889,12 @@ public class EntryTransforms {
      * 
      * <p>Munging is only needed for Windows users--the process converts 
      * back slashes into forward slashes and prefixes with {@literal "/cygdrive/"}.
-     * 
+     *
+     * @param mask File mask that may need to be fixed before storing in
+     *             {@code RESOLV.SRV}.
+     *
+     * @return Path suitable for storing in {@code RESOLV.SRV}.
+     *
      * @throws NullPointerException if {@code mask} is {@code null}.
      */
     public static String mungeFileMask(final String mask) {

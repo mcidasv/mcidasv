@@ -713,6 +713,8 @@ public class EntryStore {
 
     /**
      * Returns the complete {@link Set} of {@link AddeEntry AddeEntries}.
+     *
+     * @return All of the managed ADDE entries.
      */
     public Set<AddeEntry> getEntrySet() {
         return newLinkedHashSet(trie.values());

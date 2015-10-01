@@ -32,7 +32,6 @@ import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Collections;
 import java.util.Set;
@@ -51,9 +50,6 @@ import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 import net.miginfocom.swing.MigLayout;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ucar.unidata.xml.XmlObjectStore;
 
@@ -287,17 +283,26 @@ public class LocalEntryEditor extends JDialog {
 
     /**
      * Triggered when the {@literal "add"} button is clicked.
+     *
+     * @param evt Ignored.
      */
     private void saveButtonActionPerformed(final ActionEvent evt) {
         addEntry();
     }
 
+    /**
+     * Triggered when the {@literal "edit"} button is clicked.
+     *
+     * @param evt Ignored.
+     */
     private void editButtonActionPerformed(final ActionEvent evt) {
         editEntry();
     }
 
     /**
      * Triggered when the {@literal "file picker"} button is clicked.
+     *
+     * @param evt Ignored.
      */
     private void browseButtonActionPerformed(final ActionEvent evt) {
         String lastPath = getLastPath();
@@ -344,6 +349,8 @@ public class LocalEntryEditor extends JDialog {
 
     /**
      * Calls {@link #dispose} if the dialog is visible.
+     *
+     * @param evt Ignored.
      */
     private void cancelButtonActionPerformed(ActionEvent evt) {
         if (isDisplayable()) {
@@ -453,6 +460,10 @@ public class LocalEntryEditor extends JDialog {
     }
 
     /**
+     * Returns the last {@link EditorAction} that was performed.
+     *
+     * @return Last editor action performed.
+     *
      * @see #editorAction
      */
     public EditorAction getEditorAction() {
@@ -460,6 +471,10 @@ public class LocalEntryEditor extends JDialog {
     }
 
     /**
+     * Set the {@link EditorAction} that was performed.
+     *
+     * @param editorAction Action that was performed.
+     *
      * @see #editorAction
      */
     private void setEditorAction(final EditorAction editorAction) {
