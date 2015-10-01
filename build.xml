@@ -161,6 +161,7 @@
 
     <!-- Javadoc options -->
     <property name="javadoc.level" value="private" />
+    <property name="javadoc.warnings.maxnum" value="100" />
 
     <!-- Use these properties to make changing the versions of related JARs
         (see SLF4J or Logback) a bit less tedious. -->
@@ -1119,6 +1120,8 @@
             <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/" />
             <link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc/" />
             <link href="http://www.unidata.ucar.edu/software/thredds/v4.6/netcdf-java/javadocAll/" />
+            <arg value="-Xmaxwarns" />
+            <arg value="${javadoc.warnings.maxnum}"/>
         </javadoc>
     </target>
 
