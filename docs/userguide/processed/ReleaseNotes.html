@@ -62,6 +62,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#julian1.6">Julian Date with Archive Servers</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#animatedGif1.6">Animated GIF Global Color Palette Option</a></strong></li>
     <li><strong><a class="faq-question-link" href="#java1.6">Java Version</a></strong></li>
   </ul>
 </div>
@@ -100,7 +101,10 @@ Changes</div>
   </ul>
 <p>In the past, users were limited to entering dates such as 'Jun 19, 2015'.</p>
 </div></div>
-<div class="faq-category"><a name="java1.5" id="java1.6"></a>
+<div class="faq-category"><a name="animatedGif1.6" id="animatedGif1.6"></a>
+  <h4>Animated GIF Global Color Palette Option</h4>
+<div class="faq-answer">Added a '<strong>Use 'global' GIF color palette</strong>' option when saving a movie. This option is applicable for animated GIF movies, and it is enabled by default. Animated GIFs are limited to 256 colors, and this option uses the same   256 colors for every frame in the loop when the setting is enabled.   Enabling this option allows for certain display settings such as a color   scale to remain constant throughout the loop. If this option is   disabled, then each frame uses it's own color palette, so one color may   represent one value in one frame, and the same color may represent a   different value in the next frame. One circumstance where disabling this   option may be ideal is if the movie starts with a low-light scene (not   many colors) and there is no color scale in the display.</div></div>
+<div class="faq-category"><a name="java1.6" id="java1.6"></a>
   <h4>Java Version</h4>
 <div class="faq-answer">Updated Java version from 1.7.0_60 to 1.8.0_45.</div></div>
 <!-- InstanceEndEditable -->
