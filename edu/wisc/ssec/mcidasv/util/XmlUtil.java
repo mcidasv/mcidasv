@@ -38,50 +38,53 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * A collection of utilities for XML..
- *
+ * A collection of utilities for XML.
  */
 public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
 
     /**
      * Print all the attributes of the given node
      *
-     * @param parent
+     * @param parent Node whose attributes will be printed.
      */
     public static void printNode(Node parent) {
-        if (parent==null) {
+        if (parent == null) {
             System.out.println("null node!");
             return;
         }
         System.out.println(parent.getNodeName() + " node:");
         NamedNodeMap attrs = parent.getAttributes();
-        for(int i = 0 ; i<attrs.getLength() ; i++) {
+        for(int i = 0 ; i < attrs.getLength() ; i++) {
             Attr attribute = (Attr)attrs.item(i);
             System.out.println("  " + attribute.getName()+" = "+attribute.getValue());
         }
     }
 
     /**
-     *  Find all of the  descendant elements of the given parent Node
-     *  whose tag name.equals the given tag.
+     * Find all of the  descendant elements of the given parent Node whose tag
+     * name equals the given tag.
      *
-     *  @param parent The root of the xml dom tree to search.
-     *  @param tag The tag name to match.
-     *  @return The list of descendants that match the given tag.
+     * @param parent Root of the XML DOM tree to search.
+     * @param tag Tag name to match.
+     * @param separator String that separates tags into components.
+     *
+     * @return List of descendants that match the given tag.
      */
     public static List<String> findDescendantNamesWithSeparator(Node parent, String tag, String separator) {
         List<String> found = new ArrayList<>();
         findDescendantNamesWithSeparator(parent, tag, "", separator, found);
         return found;
     }
-    
+
     /**
-     *  Find all of the  descendant elements of the given parent Node
-     *  whose tag name equals the given tag.
+     * Find all of the descendant elements of the given parent Node whose
+     * tag name equals the given tag.
      *
-     *  @param parent The root of the xml dom tree to search.
-     *  @param tag The tag name to match.
-     *  @param found The list of descendants that match the given tag.
+     * @param parent Root of the XML DOM tree to search.
+     * @param tag Tag name to match.
+     * @param descendants Descendant elements.
+     * @param separator String separating tag components (also in descendants).
+     * @param found List of descendants that match the given tag.
      */
     private static void findDescendantNamesWithSeparator(Node parent, String tag, String descendants, String separator, List<String> found) {
             if (parent instanceof Element) {
@@ -102,12 +105,12 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
             findDescendantNamesWithSeparator(child, tag, descendants, separator, found);
         }
     }
-    
+
     /**
      * Find the element described by nameList (path).
      * 
-     * @param parent
-     * @param nameList
+     * @param parent Node at which the search should begin.
+     * @param nameList List of node names to search for (think xpath).
      *
      * @return {@code Element} described by the given path, or {@code null} if
      * there was a problem.
@@ -119,21 +122,24 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
     /**
      * Make the element described by nameList (path).
      * 
-     * @param parent
-     * @param nameList
+     * @param parent Node at which the search should begin.
+     * @param nameList List of node names to search for (think xpath).
+     * @param tagName Tag name to locate.
      *
      * @return {@code Element} described by the given path, or {@code null} if
      * there was a problem.
      */
-    public static Element makeElementAtNamedPath(Node parent, List<String> nameList, String tagname) {
-        return getMakeElementAtNamedPath(parent, nameList, tagname, true);
+    public static Element makeElementAtNamedPath(Node parent, List<String> nameList, String tagName) {
+        return getMakeElementAtNamedPath(parent, nameList, tagName, true);
     }
     
     /**
      * Find the element described by nameList (path).
      * 
-     * @param parent
-     * @param nameList
+     * @param parent Node at which the search should begin.
+     * @param nameList List of node names to search for (think xpath).
+     * @param tagName Tag name to locate.
+     * @param makeNew Whether or not a new {@code Element} should be created.
      *
      * @return {@code Element} described by the given path, or {@code null} if
      * there was a problem.
@@ -177,21 +183,21 @@ public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
         }
         return thisElement;
     }
-    
+
     /**
-     * Added by TJJ Feb 2014
-     * 
-     * This method ensures that the output String has only
-     * valid XML unicode characters as specified by the
-     * XML 1.0 standard. For reference, please see
+     * This method ensures that the output String has only valid XML unicode
+     * characters as specified by the XML 1.0 standard.
+     *
+     * <p>For reference, please see
      * <a href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char">the
      * standard</a>. This method will return an empty
      * String if the input is null or empty.
      *
-     * @param in The String whose non-valid characters we want to remove.
+     * @param in String whose non-valid characters we want to remove.
+     *
      * @return The in String, stripped of non-valid characters.
      */
-    
+    // Added by TJJ Feb 2014
     public static String stripNonValidXMLCharacters(String in) {
         if ((in == null) || in.isEmpty()) {
             return ""; // vacancy test.
