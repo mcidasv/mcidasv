@@ -332,6 +332,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       <td valign="top">resize width= height=</td>
       <td>size of image (default = height of window)</td>
     </tr>
+    <tr>
+      <td valign="top">globalPalette=</td>
+      <td>sets if the animated GIF will use the color palette of each individual image or if the same colors will be used in each frame. Setting this to true helps to mitigate the flickering effect that can sometimes be seen in the color scale attached to the image. One circumstance where disabling this option may be ideal is if the movie starts with a low-light scene (not many colors) and there is no color scale in the display. default=True</td>
+    </tr>
   </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>writeMovie('C:\\Users\\myuser\\movie.gif',params='resize width=600 height=800')</em></div>
