@@ -161,6 +161,21 @@
 
     <!-- Javadoc options -->
     <property name="javadoc.level" value="private" />
+    
+    <!-- Maximum number of errors javadoc should report.
+         
+         This value can be overridden by launching Ant like so:
+         $ ant -Djavadoc.errors.maxnum=31337 javadoc
+         
+         Higher values means javadoc will take longer to finish. -->
+    <property name="javadoc.errors.maxnum" value="100" />
+    
+    <!-- Maximum number of errors javadoc should report.
+         
+         This value can be overridden by launching Ant like so:
+         $ ant -Djavadoc.warnings.maxnum=31337 javadoc
+         
+         Higher values means javadoc will take longer to finish. -->
     <property name="javadoc.warnings.maxnum" value="100" />
 
     <!-- Use these properties to make changing the versions of related JARs
@@ -1120,6 +1135,8 @@
             <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/" />
             <link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc/" />
             <link href="http://www.unidata.ucar.edu/software/thredds/v4.6/netcdf-java/javadocAll/" />
+            <arg value="-Xmaxerrs" />
+            <arg value="${javadoc.errors.maxnum}"/>
             <arg value="-Xmaxwarns" />
             <arg value="${javadoc.warnings.maxnum}"/>
         </javadoc>
