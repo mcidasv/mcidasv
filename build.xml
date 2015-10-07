@@ -1211,6 +1211,7 @@
         org/slf4j directory
         JNumeric directory
         Numeric.class
+        jythonlib.jar
     -->
     <target name="external.cleanup" depends="build" description="Remove redundant/unneeded class files from external.jar">
         <mkdir dir="${dist.dir}/tmp" />
@@ -1218,6 +1219,7 @@
         <delete dir="${dist.dir}/tmp/org/slf4j" failonerror="false" />
         <delete file="${dist.dir}/tmp/Numeric.class" failonerror="false" />
         <delete dir="${dist.dir}/tmp/JNumeric" failonerror="false" />
+        <delete file="${dist.dir}/tmp/jythonlib.jar" failonerror="false" />
         <delete file="${dist.dir}/external.jar" failonerror="false" />
         
         <jar destfile="${dist.dir}/external.jar" 
