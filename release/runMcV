@@ -323,6 +323,6 @@ MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
 
 # Run it
 # ${JAVA_BIN} ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1
-EXEC_CMD="${JAVA_BIN} ${JAVA_FLAGS} -classpath \"${MCV_CLASSPATH}\" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
+EXEC_CMD="\"${JAVA_BIN}\" ${JAVA_FLAGS} -classpath \"${MCV_CLASSPATH}\" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
 echo "${EXEC_CMD}"
 eval "${EXEC_CMD}"
