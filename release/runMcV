@@ -154,7 +154,7 @@ if [ "${SHOW_WELCOME}" = "1" ]; then
         OSX_FLAGS=""
     fi
 
-    ${JAVA_BIN} ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
+    "${JAVA_BIN}" ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
     if [ $? -eq 1 ]; then
         exit 1
     fi
@@ -162,8 +162,8 @@ fi
 
 # Get the version and amount of system memory
 echo "Reading system configuration..."
-# SYS_VER=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2>/dev/null`
-SYS_MEM=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+# SYS_VER=`"${JAVA_BIN}" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2>/dev/null`
+SYS_MEM=`"${JAVA_BIN}" -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
 echo "sys mem: ${SYS_MEM}"
 
 # We have system memory, so try to set heap size if a percent was requested
@@ -322,7 +322,7 @@ MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
 # echo "Command line: ${JAVA_BIN} ${JAVA_FLAGS} -classpath ${MCV_CLASSPATH} -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
 
 # Run it
-# ${JAVA_BIN} ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1
+# "${JAVA_BIN}" ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1
 EXEC_CMD="\"${JAVA_BIN}\" ${JAVA_FLAGS} -classpath \"${MCV_CLASSPATH}\" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
 echo "${EXEC_CMD}"
 eval "${EXEC_CMD}"

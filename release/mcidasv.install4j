@@ -391,6 +391,9 @@ Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php
                   <void property="allowNewFolderCreation">
                     <boolean>true</boolean>
                   </void>
+                  <void property="allowSpacesOnUnix">
+                    <boolean>true</boolean>
+                  </void>
                   <void property="validationScript">
                     <object class="com.install4j.api.beans.ScriptProperty">
                       <void property="value">
