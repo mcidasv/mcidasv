@@ -287,6 +287,11 @@ Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not wo
           way to the right) and the pixel sampling set to 0 (slider all the way
           to the left).</p>
     </div>	  
+    <a name="maps" id="maps"></a>
+    <div class="faq-question">
+      <h4>Q. How do I change which maps are displayed by default?</h4>
+    </div>
+    <div class="faq-answer"><strong>A.</strong> By default, there are three maps that are displayed: 'North &amp; Central America', 'World Political Boundaries', and 'World Coastlines'. Other system maps are included with the <a href="controls/MapDisplayControl.html">Map Controls</a>, and their visibilities can be toggled on and off. Additional maps are contained in plugins that can be found under the Maps category in the <a href="tools/Plugins.html">Plugin Manager</a>. Users can add their own shapefile maps through the <strong>Edit -&gt; Add Your Own Map</strong> menu item in the <strong>Layer Controls</strong> of the Default Background Maps. To set a new group of maps as the default, use the <strong>File -&gt; Default Maps -&gt; Save as the Default Map Set</strong> menu item. This creates a maps.xml file in the McIDAS-V directory that includes which map layers are displayed, as well as different display settings including the line thickness, style, and color. Once the default map is saved, this will be used any time a new tab or window is created, and it will be persisted between sessions. To remove a default map setting that has been saved, use the <strong>File -&gt; Default Maps -&gt; Remove Local Map Defaults</strong> menu item. Removing the default map set requires a restart of McIDAS-V to take effect.</div>
 </div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
