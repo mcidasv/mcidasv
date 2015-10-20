@@ -5070,6 +5070,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
             GuiUtils.empty(fullContents, true);
         }
 
+        // mjh mcv inq 534
+        // If legend is floated it will hang around in an unusable state
+        // forever. above doRemove was not good enough; need doClose because it
+        // handles floating state explicitly.
+        if (sideLegend != null) {
+            sideLegend.doClose();
+        }
+
         // Be somewhat overly agressive about nulling out references, etc.
         timelineDialog          = null;
         propertiesDialog        = null;
