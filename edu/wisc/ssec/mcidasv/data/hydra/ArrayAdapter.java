@@ -28,28 +28,18 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
-import visad.FlatField;
-import visad.VisADException;
-import visad.CoordinateSystem;
-import visad.RealType;
-import visad.Real;
-import visad.MathType;
-import visad.IntegerNDSet;
+import java.util.HashMap;
+
+import visad.FunctionType;
 import visad.GriddedSet;
-import visad.LinearNDSet;
-import visad.LinearSet;
+import visad.IntegerNDSet;
 import visad.Linear1DSet;
 import visad.Linear2DSet;
 import visad.Linear3DSet;
+import visad.LinearNDSet;
+import visad.LinearSet;
 import visad.RealTupleType;
-import visad.SetType;
-import visad.FunctionType;
-import visad.Set;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-import java.util.Iterator;
-
+import visad.RealType;
 
 public class ArrayAdapter extends MultiDimensionAdapter {
 

@@ -407,18 +407,21 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.array_name, "Longitude");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
          adapter_s[0] = new ArrayAdapter(reader, table);
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "Latitude");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
          adapter_s[1] = new ArrayAdapter(reader, table);
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "DEM_Surface_Elevation");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
          adapter_s[2] = new ArrayAdapter(reader, table);
 
          TrackDomain track_domain = new TrackDomain(adapter_s[0], adapter_s[1], adapter_s[2]);
@@ -430,6 +433,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.array_name, "Layer_Top_Altitude");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
          ArrayAdapter layer_top_altitude = new ArrayAdapter(reader, table);
          RangeProcessor rngProcessor =
              new RangeProcessor(1.0f, 0.0f, -Float.MAX_VALUE, Float.MAX_VALUE, -9999.0f);

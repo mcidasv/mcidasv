@@ -31,15 +31,11 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 
-import visad.FlatField;
-import visad.FunctionType;
-import visad.Gridded3DSet;
 import visad.Gridded2DSet;
+import visad.Gridded3DSet;
 import visad.RealTupleType;
-import visad.RealType;
-import visad.VisADException;
 import visad.Set;
-
+import visad.VisADException;
 
 public class TrackDomain extends MultiDimensionAdapter {
    RealTupleType domainType;

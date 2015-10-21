@@ -33,12 +33,10 @@ import java.util.HashMap;
 
 import visad.FlatField;
 import visad.FunctionType;
-import visad.Gridded3DSet;
 import visad.RealTupleType;
-import visad.RealType;
+import visad.Set;
 import visad.SetType;
 import visad.VisADException;
-import visad.Set;
 
 public class TrackAdapter extends MultiDimensionAdapter {
    RealTupleType domainType;
