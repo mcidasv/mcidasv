@@ -48,6 +48,7 @@ import javax.swing.JTextField;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ucar.nc2.NetcdfFile;
 import visad.CellImpl;
 import visad.Data;
 import visad.FlatField;
@@ -404,38 +405,51 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
          ArrayAdapter[] adapter_s = new ArrayAdapter[3];
 
-         HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
-         table.put(ProfileAlongTrack.array_name, "Longitude");
-         table.put(ProfileAlongTrack.trackDim_name, "dim0");
-         table.put(ProfileAlongTrack.vertDim_name, "dim1");
-         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
-         adapter_s[0] = new ArrayAdapter(reader, table);
+//         String trackDimName = getTrackDimensionName("Longitude");
+//         String vertDimName = getVerticalDimensionName("Longitude");
+//         HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
+//         table.put(ProfileAlongTrack.array_name, "Longitude");
+//         table.put(ProfileAlongTrack.trackDim_name, trackDimName);
+//         table.put(ProfileAlongTrack.vertDim_name, vertDimName);
+//         table.put("array_dimension_names", new String[] { trackDimName, vertDimName });
+//         adapter_s[0] = new ArrayAdapter(reader, table);
+            adapter_s[0] = createArrayAdapter("Longitude");
 
-         table = ProfileAlongTrack.getEmptyMetadataTable();
-         table.put(ProfileAlongTrack.array_name, "Latitude");
-         table.put(ProfileAlongTrack.trackDim_name, "dim0");
-         table.put(ProfileAlongTrack.vertDim_name, "dim1");
-         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
-         adapter_s[1] = new ArrayAdapter(reader, table);
+//         table = ProfileAlongTrack.getEmptyMetadataTable();
+//         trackDimName = getTrackDimensionName("Latitude");
+//         vertDimName = getVerticalDimensionName("Latitude");
+//         table.put(ProfileAlongTrack.array_name, "Latitude");
+//         table.put(ProfileAlongTrack.trackDim_name, trackDimName);
+//         table.put(ProfileAlongTrack.vertDim_name, vertDimName);
+//         table.put("array_dimension_names", new String[] { trackDimName, vertDimName });
+//         adapter_s[1] = new ArrayAdapter(reader, table);
+            adapter_s[1] = createArrayAdapter("Latitude");
 
-         table = ProfileAlongTrack.getEmptyMetadataTable();
-         table.put(ProfileAlongTrack.array_name, "DEM_Surface_Elevation");
-         table.put(ProfileAlongTrack.trackDim_name, "dim0");
-         table.put(ProfileAlongTrack.vertDim_name, "dim1");
-         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
-         adapter_s[2] = new ArrayAdapter(reader, table);
+//         table = ProfileAlongTrack.getEmptyMetadataTable();
+//         trackDimName = getTrackDimensionName("DEM_Surface_Elevation");
+//         vertDimName = getVerticalDimensionName("DEM_Surface_Elevation");
+//         table.put(ProfileAlongTrack.array_name, "DEM_Surface_Elevation");
+//         table.put(ProfileAlongTrack.trackDim_name, trackDimName);
+//         table.put(ProfileAlongTrack.vertDim_name, vertDimName);
+//         table.put("array_dimension_names", new String[] { trackDimName, vertDimName });
+//         adapter_s[2] = new ArrayAdapter(reader, table);
+            adapter_s[2] = createArrayAdapter("DEM_Surface_Elevation");
 
          TrackDomain track_domain = new TrackDomain(adapter_s[0], adapter_s[1], adapter_s[2]);
          track_adapter = new TrackAdapter(track_domain, adapter_s[2]);
          adapters[1] = track_adapter;
          defaultSubsets[1] = track_adapter.getDefaultSubset();
 
-         table = ProfileAlongTrack.getEmptyMetadataTable();
-         table.put(ProfileAlongTrack.array_name, "Layer_Top_Altitude");
-         table.put(ProfileAlongTrack.trackDim_name, "dim0");
-         table.put(ProfileAlongTrack.vertDim_name, "dim1");
-         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
-         ArrayAdapter layer_top_altitude = new ArrayAdapter(reader, table);
+//         table = ProfileAlongTrack.getEmptyMetadataTable();
+//         trackDimName = getTrackDimensionName("Layer_Top_Altitude");
+//         vertDimName = getVerticalDimensionName("Layer_Top_Altitude");
+//         table.put(ProfileAlongTrack.array_name, "Layer_Top_Altitude");
+//         table.put(ProfileAlongTrack.trackDim_name, trackDimName);
+//         table.put(ProfileAlongTrack.vertDim_name, vertDimName);
+//         table.put("array_dimension_names", new String[] { trackDimName, vertDimName });
+//         ArrayAdapter layer_top_altitude = new ArrayAdapter(reader, table);
+            ArrayAdapter layer_top_altitude = createArrayAdapter("Layer_Top_Altitude");
+
          RangeProcessor rngProcessor =
              new RangeProcessor(1.0f, 0.0f, -Float.MAX_VALUE, Float.MAX_VALUE, -9999.0f);
          layer_top_altitude.setRangeProcessor(rngProcessor);
@@ -1003,6 +1017,52 @@ public class MultiDimensionDataSource extends HydraDataSource {
           logger.error("cannot make preview selection", e);
         }
       }
+    }
+
+    public String getTrackDimensionName(String variableName) {
+//        NetcdfFile ncfile = ((NetCDFFile)reader).getNetCDFFile();
+//        ucar.nc2.Variable v = ncfile.findVariable(variableName);
+//        String name = null;
+//        if (v != null) {
+//            name = v.getDimension(0).getFullName();
+//        }
+//        return name;
+        return getVariableDimensionName(variableName, 0);
+    }
+
+    public String getVerticalDimensionName(String variableName) {
+//        NetcdfFile ncfile = ((NetCDFFile)reader).getNetCDFFile();
+//        ucar.nc2.Variable v = ncfile.findVariable(variableName);
+//        String name = null;
+//        if (v != null) {
+//            name = v.getDimension(0).getFullName();
+//        }
+//        return name;
+        return getVariableDimensionName(variableName, 1);
+    }
+
+    public String getVariableDimensionName(String variableName, int dimension) {
+        NetcdfFile ncfile = ((NetCDFFile)reader).getNetCDFFile();
+        ucar.nc2.Variable v = ncfile.findVariable(variableName);
+        String name = null;
+        if (v != null) {
+            name = v.getDimension(dimension).getFullName();
+        }
+        return name;
+    }
+
+    public ArrayAdapter createArrayAdapter(String variableName) {
+        HashMap table = SwathAdapter.getEmptyMetadataTable();
+
+        String trackDimName = getTrackDimensionName(variableName);
+        String vertDimName = getVerticalDimensionName(variableName);
+
+        table.put(ProfileAlongTrack.array_name, variableName);
+        table.put(ProfileAlongTrack.trackDim_name, trackDimName);
+        table.put(ProfileAlongTrack.vertDim_name, vertDimName);
+        table.put("array_dimension_names", new String[] { trackDimName, vertDimName });
+
+        return new ArrayAdapter(reader, table);
     }
 }
 
