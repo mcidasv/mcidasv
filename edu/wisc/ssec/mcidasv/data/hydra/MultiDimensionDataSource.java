@@ -46,6 +46,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.CellImpl;
 import visad.Data;
 import visad.FlatField;
@@ -84,7 +86,9 @@ import edu.wisc.ssec.mcidasv.data.PreviewSelection;
  */
 
 public class MultiDimensionDataSource extends HydraDataSource {
-	
+
+    private static final Logger logger = LoggerFactory.getLogger(MultiDimensionDataSource.class);
+
     /** Sources file */
     protected String filename;
 
@@ -92,7 +96,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     protected MultiDimensionAdapter[] adapters = null;
     protected HashMap[] defaultSubsets = null;
-    private HashMap<String, MultiDimensionAdapter> adapterMap = new HashMap<String, MultiDimensionAdapter>();
+    private HashMap<String, MultiDimensionAdapter> adapterMap = new HashMap<>();
     protected Hashtable[] propsArray = null;
     protected List[] categoriesArray = null;
 
@@ -145,10 +149,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         try {
           setup();
-        }
-        catch (Exception e) {
-          e.printStackTrace();
-          throw new VisADException();
+        } catch (Exception e) {
+          logger.error("could not set up MultiDimensionDataSource", e);
+          throw new VisADException("could not set up MultiDimensionDataSource", e);
         }
     }
 
@@ -167,15 +170,13 @@ public class MultiDimensionDataSource extends HydraDataSource {
           else {
             reader = new NetCDFFile(filename);
           }
-        }
-        catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("cannot create NetCDF reader for file: "+filename);
+        } catch (Exception e) {
+          logger.error("cannot create NetCDF reader for file: "+filename, e);
         }
 
         adapters = new MultiDimensionAdapter[2];
         defaultSubsets = new HashMap[2]; 
-        Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
+        Hashtable<String, String[]> properties = new Hashtable<>();
         
         String name = (new File(filename)).getName();
 
@@ -757,8 +758,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
     public void initAfterUnpersistence() {
       try {
         setup();
-      } 
-      catch (Exception e) {
+      } catch (Exception e) {
+        logger.error("could not set up after unpersisting", e);
       }
     }
 
@@ -773,10 +774,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
                String arrayName = (adapters[idx] == null) ? "_     " : adapters[idx].getArrayName();
                choice = doMakeDataChoice(idx, arrayName);
                adapterMap.put(choice.getName(), adapters[idx]);
-             } 
-             catch (Exception e) {
-               e.printStackTrace();
-               System.out.println("doMakeDataChoice failed");
+             } catch (Exception e) {
+               logger.error("error making data choices", e);
              }
 
              if (choice != null) {
@@ -928,8 +927,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
               data = applyProperties(data, dataChoiceProps, subset);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("getData exception e=" + e);
+            logger.error("getData exception", e);
         }
 
         return data;
@@ -994,8 +992,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           components.add(new PreviewSelection(dataChoice, image, null));
           //components.add(new edu.wisc.ssec.mcidasv.data.PreviewSelectionNew(dataChoice, image));
         } catch (Exception e) {
-          System.out.println("Can't make PreviewSelection: "+e);
-          e.printStackTrace();
+          logger.error("cannot make preview selection", e);
         }
       }
       if (hasTrackPreview) {
@@ -1003,14 +1000,14 @@ public class MultiDimensionDataSource extends HydraDataSource {
           FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());
           components.add(new TrackSelection(dataChoice, track));
         } catch (Exception e) {
-          System.out.println("Can't make PreviewSelection: "+e);
-          e.printStackTrace();
+          logger.error("cannot make preview selection", e);
         }
       }
     }
 }
 
 class TrackSelection extends DataSelectionComponent {
+      private static final Logger logger = LoggerFactory.getLogger(TrackSelection.class);
       DataChoice dataChoice;
       FlatField track;
 
@@ -1050,10 +1047,9 @@ class TrackSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+            logger.error("cannot open map file: "+mapSource, excp);
         }
-                                                                                                                                                     
+
         mapLines  = new MapLines("maplines");
         mapSource =
         mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
@@ -1063,10 +1059,9 @@ class TrackSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+            logger.error("cannot open map file: "+mapSource, excp);
         }
-                                                                                                                                                     
+
         mapLines  = new MapLines("maplines");
         mapSource =
         mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
@@ -1076,8 +1071,7 @@ class TrackSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            System.out.println("Can't open map file " + mapSource);
-            System.out.println(excp);
+            logger.error("cannot open map file: "+mapSource, excp);
         }
 
         final LineDrawing selectBox = new LineDrawing("select");
@@ -1118,7 +1112,7 @@ class TrackSelection extends DataSelectionComponent {
          try {
            mp = new ProjectionCoordinateSystem(new LatLonProjection());
          } catch (Exception e) {
-             System.out.println(" getDataProjection"+e);
+             logger.error("error getting data projection", e);
          }
          return mp;
        }
@@ -1149,9 +1143,8 @@ class TrackSelection extends DataSelectionComponent {
           panel.add("South", stridePanel);
 
           return panel;
-        }
-        catch (Exception e) {
-          System.out.println(e);
+        } catch (Exception e) {
+          logger.error("error creating contents", e);
         }
         return null;
       }
