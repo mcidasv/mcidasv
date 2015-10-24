@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -96,8 +97,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
     protected MultiDimensionReader reader;
 
     protected MultiDimensionAdapter[] adapters = null;
-    protected HashMap[] defaultSubsets = null;
-    private HashMap<String, MultiDimensionAdapter> adapterMap = new HashMap<>();
+    protected Map[] defaultSubsets = null;
+    private Map<String, MultiDimensionAdapter> adapterMap = new HashMap<>();
     protected Hashtable[] propsArray = null;
     protected List[] categoriesArray = null;
 
@@ -106,7 +107,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     private static final String DATA_DESCRIPTION = "Multi Dimension Data";
 
-    private HashMap defaultSubset;
+    private Map<String, double[]> defaultSubset;
     public TrackAdapter track_adapter;
     private MultiSpectralData multiSpectData;
 
@@ -181,8 +182,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
         
         String name = (new File(filename)).getName();
 
-        if ( name.startsWith("MOD04") || name.startsWith("MYD04")) {
-          HashMap table = SwathAdapter.getEmptyMetadataTable();
+        if (name.startsWith("MOD04") || name.startsWith("MYD04")) {
+          Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
           table.put("array_name", "mod04/Data_Fields/Optical_Depth_Land_And_Ocean");
           table.put("lon_array_name", "mod04/Geolocation_Fields/Longitude");
           table.put("lat_array_name", "mod04/Geolocation_Fields/Latitude");
@@ -199,7 +200,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           defaultSubset = adapters[0].getDefaultSubset();
           defaultSubsets[0] = defaultSubset;
         }
-        else if ( name.startsWith("MOD06") || name.startsWith("MYD06")) {
+        else if (name.startsWith("MOD06") || name.startsWith("MYD06")) {
           hasImagePreview = true;
           String path = "mod06/Data_Fields/";
           String[] arrayNames = new String[] {"Cloud_Optical_Thickness", "Cloud_Effective_Radius", "Cloud_Water_Path"};
@@ -211,7 +212,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
           
           for (int k=0; k<arrayNames.length; k++) {
-            HashMap table = SwathAdapter.getEmptyMetadataTable();
+            Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
             table.put("array_name", path.concat(arrayNames[k]));
             table.put("lon_array_name", "mod06/Geolocation_Fields/Longitude");
             table.put("lat_array_name", "mod06/Geolocation_Fields/Latitude");
@@ -238,7 +239,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           }
 
           for (int k=0; k<arrayNames_5km.length; k++) {
-            HashMap table = SwathAdapter.getEmptyMetadataTable();
+            Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
             table.put("array_name", path.concat(arrayNames_5km[k]));
             table.put("lon_array_name", "mod06/Geolocation_Fields/Longitude");
             table.put("lat_array_name", "mod06/Geolocation_Fields/Latitude");
@@ -269,7 +270,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
 
           for (int k=0; k<arrayNames.length; k++) {
-            HashMap table = SwathAdapter.getEmptyMetadataTable();
+            Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
             table.put("array_name", arrayNames[k]);
             table.put("lon_array_name", "Longitude");
             table.put("lat_array_name", "Latitude");
@@ -299,7 +300,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           }
 
           for (int k=0; k<arrayNames_5km.length; k++) {
-            HashMap table = SwathAdapter.getEmptyMetadataTable();
+            Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
             table.put("array_name", arrayNames_5km[k]);
             table.put("lon_array_name", "Longitude");
             table.put("lat_array_name", "Latitude");
@@ -329,7 +330,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          propsArray = new Hashtable[4]; 
          
          
-         HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
+         Map<String, Object> table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "Total_Attenuated_Backscatter_532");
          table.put(ProfileAlongTrack.ancillary_file_name, "/edu/wisc/ssec/mcidasv/data/hydra/resources/calipso/altitude");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
@@ -340,7 +341,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put("array_dimension_names", new String[] {"dim0", "dim1"}); 
          ProfileAlongTrack adapter = new Calipso2D(reader, table);
          ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
-         HashMap subset = adapter.getDefaultSubset();
+         Map<String, double[]> subset = adapter.getDefaultSubset();
          adapters[0] = adapter3D;
          defaultSubset = subset;
          defaultSubsets[0] = defaultSubset;
@@ -448,7 +449,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          defaultSubsets = new HashMap[2];
          propsArray = new Hashtable[2];
 
-         HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
+         Map table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Data_Fields/Radar_Reflectivity");
          table.put(ProfileAlongTrack.range_name, "2B-GEOPROF_RadarReflectivity");
          table.put(ProfileAlongTrack.scale_name, "factor");
@@ -464,7 +465,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.product_name, "2B-GEOPROF");
          ProfileAlongTrack adapter = new CloudSat2D(reader, table);
          ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
-         HashMap subset = adapter.getDefaultSubset();
+         Map<String, double[]> subset = adapter.getDefaultSubset();
          adapters[0] = adapter3D;
          defaultSubset = subset;
          defaultSubsets[0] = defaultSubset;
@@ -509,7 +510,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          hasTrackPreview = true;
        }
        else if ( name.startsWith("MHSx_xxx_1B") && name.endsWith("h5")) {
-          HashMap table = SwathAdapter.getEmptyMetadataTable();
+          Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
           table.put("array_name", "U-MARF/EPS/MHSx_xxx_1B/DATA/Channel1");
           table.put("lon_array_name", "U-MARF/EPS/IASI_xxx_1C/DATA/IMAGE_LON_ARRAY");
           table.put("lat_array_name", "U-MARF/EPS/IASI_xxx_1C/DATA/IMAGE_LAT_ARRAY");
@@ -520,7 +521,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           table.put("product_name", "MHSx_xxx_1B");
           SwathAdapter swathAdapter = new SwathAdapter(reader, table);
           adapters[0] = swathAdapter;
-          HashMap subset = swathAdapter.getDefaultSubset();
+          Map<String, double[]> subset = swathAdapter.getDefaultSubset();
           defaultSubset = subset;
           defaultSubsets[0] = defaultSubset;
           categories = DataCategory.parseCategories("2D grid;GRID-2D;");
@@ -543,7 +544,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          propsArray = new Hashtable[arrayNames.length]; 
 
          for (int k=0; k<arrayNames.length; k++) {
-           HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
+           Map<String, Object> swthTable = SwathAdapter.getEmptyMetadataTable();
            swthTable.put("array_name", arrayNames[k]);
            swthTable.put("lon_array_name", "pixel_longitude");
            swthTable.put("lat_array_name", "pixel_latitude");
@@ -561,7 +562,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
            swthTable.put("unpack", "unpack");
 
            SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
-           HashMap subset = swathAdapter0.getDefaultSubset();
+           Map<String, double[]> subset = swathAdapter0.getDefaultSubset();
            defaultSubset = subset;
            adapters[k] = swathAdapter0;
            defaultSubsets[k] = defaultSubset;
@@ -577,7 +578,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          propsArray = new Hashtable[arrayNames.length];
          
          for (int k=0; k<arrayNames.length; k++) {
-           HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
+           Map<String, Object> swthTable = SwathAdapter.getEmptyMetadataTable();
            swthTable.put("array_name", arrayNames[k]);
            swthTable.put("lon_array_name", "Longitude");
            swthTable.put("lat_array_name", "Latitude");
@@ -591,7 +592,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
            SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
            swathAdapter0.setDefaultStride(5);
-           HashMap subset = swathAdapter0.getDefaultSubset();
+           Map<String, double[]> subset = swathAdapter0.getDefaultSubset();
            defaultSubset = subset;
            adapters[k] = swathAdapter0;
            defaultSubsets[k] = defaultSubset;
@@ -608,7 +609,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          propsArray = new Hashtable[arrayNames.length];
 
          for (int k=0; k<arrayNames.length; k++) {
-           HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
+           Map<String, Object> swthTable = SwathAdapter.getEmptyMetadataTable();
            swthTable.put("array_name", arrayNames[k]);
            swthTable.put("lon_array_name", "Longitude");
            swthTable.put("lat_array_name", "Latitude");
@@ -622,7 +623,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
            SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
            swathAdapter0.setDefaultStride(5);
-           HashMap subset = swathAdapter0.getDefaultSubset();
+           Map<String, double[]> subset = swathAdapter0.getDefaultSubset();
            defaultSubset = subset;
            adapters[k] = swathAdapter0;
            defaultSubsets[k] = defaultSubset;
@@ -639,7 +640,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          propsArray = new Hashtable[arrayNames.length];
 
          for (int k=0; k<arrayNames.length; k++) {
-           HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
+           Map<String, Object> swthTable = SwathAdapter.getEmptyMetadataTable();
            swthTable.put("array_name", arrayNames[k]);
            swthTable.put("lon_array_name", "Longitude");
            swthTable.put("lat_array_name", "Latitude");
@@ -658,7 +659,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
            SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
            swathAdapter0.setDefaultStride(5);
-           HashMap subset = swathAdapter0.getDefaultSubset();
+           Map<String, double[]> subset = swathAdapter0.getDefaultSubset();
            defaultSubset = subset;
            adapters[k] = swathAdapter0;
            defaultSubsets[k] = defaultSubset;
@@ -674,7 +675,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          propsArray = new Hashtable[arrayNames.length];
 
          for (int k=0; k<arrayNames.length; k++) {
-           HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
+           Map<String, Object> swthTable = SwathAdapter.getEmptyMetadataTable();
            swthTable.put("array_name", arrayNames[k]);
            swthTable.put("lon_array_name", "lon");
            swthTable.put("lat_array_name", "lat");
@@ -686,7 +687,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
            SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
            swathAdapter0.setDefaultStride(1);
-           HashMap subset = swathAdapter0.getDefaultSubset();
+           Map<String, double[]> subset = swathAdapter0.getDefaultSubset();
            defaultSubset = subset;
            adapters[k] = swathAdapter0;
            defaultSubsets[k] = defaultSubset;
@@ -704,7 +705,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          propsArray = new Hashtable[arrayNames.length]; 
 
          for (int k=0; k<arrayNames.length; k++) {
-           HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
+           Map<String, Object> swthTable = SwathAdapter.getEmptyMetadataTable();
            swthTable.put("array_name", arrayNames[k]);
            swthTable.put("lon_array_name", "pixel_longitude");
            swthTable.put("lat_array_name", "pixel_latitude");
@@ -723,7 +724,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
            SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
            swathAdapter0.setDefaultStride(2);
-           HashMap subset = swathAdapter0.getDefaultSubset();
+           Map<String, double[]> subset = swathAdapter0.getDefaultSubset();
            defaultSubset = subset;
            adapters[k] = swathAdapter0;
            defaultSubsets[k] = defaultSubset;
@@ -814,7 +815,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
       filename = name;
     }
 
-    public HashMap getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
+    public Map getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
       GeoLocationInfo ginfo = geoSelection.getBoundingBox();
       return adapters[0].getSubsetFromLonLatRect(select.getSubset(), ginfo.getMinLat(), ginfo.getMaxLat(),
                                         ginfo.getMinLon(), ginfo.getMaxLon());
@@ -867,7 +868,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           return data;
         }
 
-        HashMap subset = null;
+        Map subset = null;
         MultiDimensionSubset select = null;
 
         Hashtable table = dataChoice.getProperties();
@@ -913,8 +914,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
         return data;
     }
 
-    protected Data applyProperties(Data data, Hashtable requestProperties, HashMap subset) 
-          throws VisADException, RemoteException {
+    protected Data applyProperties(Data data, Hashtable requestProperties, Map<String, double[]> subset)
+          throws VisADException, RemoteException, Exception {
       Data new_data = data;
 
       if (requestProperties == null) {
@@ -1004,7 +1005,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
     }
 
     private ArrayAdapter createTrackVertArrayAdapter(String variableName) {
-        HashMap table = SwathAdapter.getEmptyMetadataTable();
+        Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
 
         String trackDimName = getTrackDimensionName(variableName);
         String vertDimName = getVerticalDimensionName(variableName);

@@ -32,6 +32,7 @@ import ucar.unidata.data.DataSelection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -46,7 +47,7 @@ public class MultiDimensionSubset extends DataSelection {
     super();
   }
 
-  public MultiDimensionSubset(HashMap subset) {
+  public MultiDimensionSubset(Map<String, double[]> subset) {
     super();
     coords = new double[subset.size()][];
     keys = new String[subset.size()];
@@ -78,8 +79,8 @@ public class MultiDimensionSubset extends DataSelection {
     this.keys = keys;
   }
 
-  public HashMap getSubset() {
-    HashMap hmap = new HashMap();
+  public Map<String, double[]> getSubset() {
+    Map<String, double[]> hmap = new HashMap<>();
     for (int k=0; k<keys.length; k++) {
       double[] new_coords = new double[coords[k].length];
       System.arraycopy(coords[k],0,new_coords,0,new_coords.length);

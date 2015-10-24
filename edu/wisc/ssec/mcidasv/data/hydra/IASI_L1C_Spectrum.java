@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.StringTokenizer;
 import visad.Set;
 import visad.FlatField;
@@ -48,9 +49,9 @@ public class IASI_L1C_Spectrum extends SpectrumAdapter {
   //-public static int[][] ifov_order2 = new int[][] {new int[] {0,1}, new int[] {1,1}, new int[] {1,0}, new int[] {0,0}};
   public static int[][] ifov_order2 = new int[][] {new int[] {1,1}, new int[] {0,-1}, new int[] {0,0}, new int[] {-1,0}};
 
-  public HashMap new_subset = new HashMap();
+  public Map<String, double[]> new_subset = new HashMap<>();
 
-  public IASI_L1C_Spectrum(MultiDimensionReader reader, HashMap metadata) {
+  public IASI_L1C_Spectrum(MultiDimensionReader reader, Map<String, Object> metadata) {
     super(reader, metadata);
   }
 
@@ -68,11 +69,11 @@ public class IASI_L1C_Spectrum extends SpectrumAdapter {
   }
 
    
-  public FlatField getData(Object subset) throws Exception {
-     new_subset.putAll((HashMap) subset);
+  public FlatField getData(Map<String, double[]> subset) throws Exception {
+     new_subset.putAll(subset);
 
-     double[] xx = (double[]) ((HashMap)subset).get(SpectrumAdapter.x_dim_name);
-     double[] yy = (double[]) ((HashMap)subset).get(SpectrumAdapter.y_dim_name);
+     double[] xx = subset.get(SpectrumAdapter.x_dim_name);
+     double[] yy = subset.get(SpectrumAdapter.y_dim_name);
      double[] new_xx = new double[3];
      double[] new_yy = new double[3];
 
@@ -103,7 +104,7 @@ public class IASI_L1C_Spectrum extends SpectrumAdapter {
      return super.getData(new_subset);
    }
 
-  public float[] processRange(short[] range, Object subset) {
+  public float[] processRange(short[] range, Map<String, double[]> subset) {
     return IASI_L1C_Utility.getDecodedIASISpectra(range, null);
   }
 
