@@ -48,6 +48,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.awt.geom.Rectangle2D;
+import java.util.Map;
 
 import visad.georef.MapProjection;
 import visad.CachingCoordinateSystem;
@@ -84,8 +85,8 @@ public class MultiSpectralAggr extends MultiSpectralData {
 
     if (adapters[0].spectrumAdapter.hasBandNames()) {
       hasBandNames = true;
-      bandNameList = new ArrayList<String>();
-      bandNameMap = new HashMap<String, Float>();
+      bandNameList = new ArrayList<>();
+      bandNameMap = new HashMap<>();
       for (int k=0; k<numAdapters; k++) {
         bandNameList.addAll(adapters[k].spectrumAdapter.getBandNames());
         bandNameMap.putAll(adapters[k].spectrumAdapter.getBandNameMap());
@@ -159,7 +160,7 @@ public class MultiSpectralAggr extends MultiSpectralData {
     return spectrum;
   }
 
-  public FlatField getImage(HashMap subset) throws Exception {
+  public FlatField getImage(Map<String, double[]> subset) throws Exception {
     int channelIndex = (int) ((double[])subset.get(SpectrumAdapter.channelIndex_name))[0];
     
     int idx = sort_indexes[channelIndex];
@@ -177,7 +178,7 @@ public class MultiSpectralAggr extends MultiSpectralData {
     return image;
   }
 
-  public FlatField getImage(float channel, HashMap subset) throws Exception {
+  public FlatField getImage(float channel, Map<String, double[]> subset) throws Exception {
     int channelIndex = aggrDomain.valueToIndex(new float[][] {{channel}})[0];
 
     int idx = sort_indexes[channelIndex];
@@ -204,8 +205,8 @@ public class MultiSpectralAggr extends MultiSpectralData {
     return (aggrDomain.indexToValue(new int[] {index}))[0][0];
   }
 
-  public HashMap getDefaultSubset() {
-    HashMap subset = adapters[0].getDefaultSubset();
+  public Map<String, double[]> getDefaultSubset() {
+    Map<String, double[]> subset = adapters[0].getDefaultSubset();
     double chanIdx = 0;
     try {
       chanIdx = getChannelIndexFromWavenumber(init_wavenumber);

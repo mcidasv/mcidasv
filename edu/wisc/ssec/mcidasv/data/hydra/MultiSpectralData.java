@@ -33,6 +33,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import visad.CoordinateSystem;
 import visad.FlatField;
@@ -55,8 +57,8 @@ public class MultiSpectralData extends MultiDimensionAdapter {
   SpectrumAdapter spectrumAdapter = null;
   CoordinateSystem cs = null;
 
-  HashMap spectrumSelect = null;
-  HashMap swathSelect = null;
+  Map<String, double[]> spectrumSelect = null;
+  Map swathSelect = null;
 
   String sensorName = null;
   String platformName = null;
@@ -70,8 +72,8 @@ public class MultiSpectralData extends MultiDimensionAdapter {
   float[] dataRange = new float[] {180f, 320f};
 
   boolean hasBandNames = false;
-  ArrayList<String> bandNameList = null;
-  HashMap<String, Float> bandNameMap = null;
+  List<String> bandNameList = null;
+  Map<String, Float> bandNameMap = null;
 
   
   public MultiSpectralData(SwathAdapter swathAdapter, SpectrumAdapter spectrumAdapter,
@@ -148,7 +150,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     return convertSpectrum(spectrum, paramName);
   }
 
-  public FlatField getImage(HashMap subset) 
+  public FlatField getImage(Map<String, double[]> subset)
     throws Exception, VisADException, RemoteException {
     FlatField image = swathAdapter.getData(subset);
     cs = ((RealTupleType) ((FunctionType)image.getType()).getDomain()).getCoordinateSystem();
@@ -159,7 +161,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     return convertImage(image, channel, paramName);
   }
 
-  public FlatField getImage(float channel, HashMap subset) 
+  public FlatField getImage(float channel, Map<String, double[]> subset)
       throws Exception, VisADException, RemoteException {
     if (spectrumAdapter == null) return getImage(subset);
     int channelIndex = spectrumAdapter.getChannelIndexFromWavenumber(channel);
@@ -170,11 +172,11 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     return convertImage(image, channel, paramName);
   }
 
-  public FlatField getData(Object subset) throws Exception {
-    return getImage((HashMap)subset);
+  public FlatField getData(Map<String, double[]> subset) throws Exception {
+    return getImage(subset);
   }
 
-  public Set makeDomain(Object subset) throws Exception {
+  public Set makeDomain(Map<String, double[]> subset) throws Exception {
     throw new Exception("makeDomain unimplented");
   } 
 
@@ -273,11 +275,11 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     return hasBandNames;
   }
 
-  public ArrayList<String> getBandNames() {
+  public List<String> getBandNames() {
     return bandNameList;
   }
 
-  public HashMap<String, Float> getBandNameMap() {
+  public Map<String, Float> getBandNameMap() {
     return bandNameMap;
   }
 
@@ -342,7 +344,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     return null;
   }
 
-  public Rectangle2D getLonLatBoundingBox(HashMap subset) 
+  public Rectangle2D getLonLatBoundingBox(Map<String, double[]> subset)
       throws Exception {
     Set domainSet = swathAdapter.makeDomain(subset);
     return getLonLatBoundingBox(domainSet);
@@ -725,8 +727,8 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     return new_values;
   }
 
-  public HashMap getDefaultSubset() {
-    HashMap subset = swathAdapter.getDefaultSubset();
+  public Map<String, double[]> getDefaultSubset() {
+    Map subset = swathAdapter.getDefaultSubset();
     double chanIdx=0;
 
     try {
