@@ -28,7 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class RangeProcessor {
 			.getLogger(RangeProcessor.class);
 
 	static RangeProcessor createRangeProcessor(MultiDimensionReader reader,
-			HashMap metadata) throws Exception {
+			Map<String, Object> metadata) throws Exception {
 		if (reader instanceof GranuleAggregation) {
 			return new AggregationRangeProcessor((GranuleAggregation) reader,
 					metadata);
@@ -68,7 +68,7 @@ public class RangeProcessor {
 	}
 
 	MultiDimensionReader reader;
-	HashMap metadata;
+	Map<String, Object> metadata;
 
 	float[] scale = null;
 	float[] offset = null;
@@ -104,13 +104,13 @@ public class RangeProcessor {
 		this.valid_high = valid_high;
 	}
 
-	public RangeProcessor(MultiDimensionReader reader, HashMap metadata,
+	public RangeProcessor(MultiDimensionReader reader, Map<String, Object> metadata,
 			String multiScaleDimName) throws Exception {
 		this(reader, metadata);
 		this.multiScaleDimName = multiScaleDimName;
 	}
 
-	public RangeProcessor(MultiDimensionReader reader, HashMap metadata)
+	public RangeProcessor(MultiDimensionReader reader, Map<String, Object> metadata)
 			throws Exception {
 		this.reader = reader;
 		this.metadata = metadata;
@@ -225,7 +225,7 @@ public class RangeProcessor {
 	 *
 	 * @return Processed range.
 	 */
-	public float[] processRangeQualityFlag(byte[] values, HashMap subset,
+	public float[] processRangeQualityFlag(byte[] values, Map subset,
 			QualityFlag qf) {
 
 		if (subset != null) {
@@ -317,7 +317,7 @@ public class RangeProcessor {
 	 *
 	 * @return Processed range.
 	 */
-	public float[] processRange(byte[] values, HashMap subset) {
+	public float[] processRange(byte[] values, Map<String, double[]> subset) {
 
                 int multiScaleDimLen = 1;
 
@@ -415,7 +415,7 @@ public class RangeProcessor {
 	 *
 	 * @return Processed range.
 	 */
-	public float[] processRange(short[] values, HashMap subset) {
+	public float[] processRange(short[] values, Map<String, double[]> subset) {
  
                 int multiScaleDimLen = 1;
 
@@ -514,7 +514,7 @@ public class RangeProcessor {
 	 *
 	 * @return Processed array.
 	 */
-	public float[] processRange(float[] values, HashMap subset) {
+	public float[] processRange(float[] values, Map<String, double[]> subset) {
 
 		float[] new_values = null;
 
@@ -558,7 +558,7 @@ public class RangeProcessor {
 	 *
 	 * @return Processed array.
 	 */
-	public double[] processRange(double[] values, HashMap subset) {
+	public double[] processRange(double[] values, Map<String, double[]> subset) {
 
 		double[] new_values = null;
 

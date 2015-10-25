@@ -28,6 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 import java.util.HashMap;
+import java.util.Map;
+
 import visad.Set;
 import visad.RealTupleType;
 import visad.RealType;
@@ -43,7 +45,7 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
 
 
   public ProfileAlongTrack3D(ProfileAlongTrack adapter2D) {
-    super(adapter2D.getReader(), (HashMap) adapter2D.getMetadata());
+    super(adapter2D.getReader(), adapter2D.getMetadata());
     this.adapter2D = adapter2D;
     this.reader = adapter2D.getReader();
     rangeProcessor = adapter2D.getRangeProcessor();
@@ -61,9 +63,9 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
   }
 
 
-  public Set makeDomain(Object subset) throws Exception {
-    double[] vert_coords = (double[]) ((HashMap)subset).get(ProfileAlongTrack.vertDim_name);
-    double[] track_coords = (double[])  ((HashMap)subset).get(ProfileAlongTrack.trackDim_name);
+  public Set makeDomain(Map<String, double[]> subset) throws Exception {
+    double[] vert_coords = subset.get(ProfileAlongTrack.vertDim_name);
+    double[] track_coords = subset.get(ProfileAlongTrack.trackDim_name);
 
     int vert_idx = adapter2D.getVertIdx();
     int track_idx = adapter2D.getTrackIdx();
@@ -71,8 +73,8 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
     float[] lonValues = null;
     float[] latValues = null;
 
-    String lonArrayName = (String) ((HashMap)getMetadata()).get(ProfileAlongTrack.longitude_name);
-    String latArrayName = (String) ((HashMap)getMetadata()).get(ProfileAlongTrack.latitude_name);
+    String lonArrayName = (String)getMetadata().get(ProfileAlongTrack.longitude_name);
+    String latArrayName = (String)getMetadata().get(ProfileAlongTrack.latitude_name);
 
     int[] start = null;
     int[] count = null;
@@ -122,19 +124,19 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
   }
   
 
-  public HashMap getDefaultSubset() {
+  public Map<String, double[]> getDefaultSubset() {
     return adapter2D.getDefaultSubset();
   }
 
-  public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon) {
+  public Map<String, double[]> getSubsetFromLonLatRect(Map<String, double[]> subset, double minLat, double maxLat, double minLon, double maxLon) {
     return adapter2D.getSubsetFromLonLatRect(subset, minLat, maxLat, minLon, maxLon);
   }
 
-  public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
+  public Map<String, double[]> getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
     return adapter2D.getSubsetFromLonLatRect(minLat, maxLat, minLon, maxLon);
   }
 
-  public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon, int xStride, int yStride, int zStride) {
+  public Map<String, double[]> getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon, int xStride, int yStride, int zStride) {
     return adapter2D.getSubsetFromLonLatRect(minLat, maxLat, minLon, maxLon, xStride, yStride, zStride);
   }
 
