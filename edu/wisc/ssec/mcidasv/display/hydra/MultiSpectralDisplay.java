@@ -162,7 +162,7 @@ public class MultiSpectralDisplay implements DisplayListener {
                         select = (MultiDimensionSubset) table.get(key);
                     }
                 }
-                HashMap subset = select.getSubset();
+                Map<String, double[]> subset = select.getSubset();
                 image = data.getImage(waveNumber, subset);
                 image = changeRangeType(image, uniqueRangeType);
             }
@@ -185,7 +185,7 @@ public class MultiSpectralDisplay implements DisplayListener {
                     select = (MultiDimensionSubset) table.get(key);
                 }
             }
-            HashMap subset = select.getSubset();
+            Map<String, double[]> subset = select.getSubset();
             imageData = data.getImage(channel, subset);
             uniqueRangeType = RealType.getRealType(rangeType.getName()+"_"+cnt++);
             imageData = changeRangeType(imageData, uniqueRangeType);
@@ -297,7 +297,7 @@ public class MultiSpectralDisplay implements DisplayListener {
                     if (bandName == null)
                         return;
 
-                    HashMap<String, Float> bandMap = data.getBandNameMap();
+                    Map<String, Float> bandMap = data.getBandNameMap();
                     if (bandMap == null)
                         return;
 

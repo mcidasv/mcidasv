@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,19 +108,19 @@ public class SwathAdapter extends MultiDimensionAdapter {
       private Linear2DSet swathDomain;
       private Linear2DSet domainSet_save;
 
-      private Object last_subset;
+      private Map<String, double[]> last_subset;
 
       int default_stride = 1;
 
-      public static HashMap getEmptySubset() {
-        HashMap<String, double[]> subset = new HashMap<String, double[]>();
+      public static Map<String, double[]> getEmptySubset() {
+        Map<String, double[]> subset = new HashMap<>();
         subset.put(track_name, new double[3]);
         subset.put(xtrack_name, new double[3]);
         return subset;
       }
 
-      public static HashMap<String, Object> getEmptyMetadataTable() {
-    	  HashMap<String, Object> metadata = new HashMap<String, Object>();
+      public static Map<String, Object> getEmptyMetadataTable() {
+    	  Map<String, Object> metadata = new HashMap<>();
     	  metadata.put(array_name, null);
     	  metadata.put(array_dimension_names, null);
     	  metadata.put(track_name, null);
@@ -147,7 +148,7 @@ public class SwathAdapter extends MultiDimensionAdapter {
 
       }
 
-      public SwathAdapter(MultiDimensionReader reader, HashMap metadata) {
+      public SwathAdapter(MultiDimensionReader reader, Map<String, Object> metadata) {
         super(reader, metadata);
         this.init();
       }
@@ -261,7 +262,7 @@ public class SwathAdapter extends MultiDimensionAdapter {
         XTrackLen = len;
       }
 
-      public Set makeDomain(Object subset) throws Exception {
+      public Set makeDomain(Map<String, double[]> subset) throws Exception {
         if (last_subset != null) {
           if (spatialEquals(last_subset, subset)) return domainSet_save;
         }
@@ -270,9 +271,9 @@ public class SwathAdapter extends MultiDimensionAdapter {
         double[] last = new double[2];
         int[] length = new int[2];
 
-        HashMap<String, double[]> domainSubset = new HashMap<String, double[]>();
-        domainSubset.put(track_name, (double[]) ((HashMap)subset).get(track_name));
-        domainSubset.put(xtrack_name, (double[]) ((HashMap)subset).get(xtrack_name));
+        Map<String, double[]> domainSubset = new HashMap<>();
+        domainSubset.put(track_name, subset.get(track_name));
+        domainSubset.put(xtrack_name, subset.get(xtrack_name));
 
         domainSubset.put(track_name, new double[] {0,0,0});
         domainSubset.put(xtrack_name, new double[] {0,0,0});
@@ -281,7 +282,7 @@ public class SwathAdapter extends MultiDimensionAdapter {
         for (int kk=0; kk<2; kk++) {
           RealType rtype = domainRealTypes[kk];
           String name = rtype.getName();
-          double[] coords = (double[]) ((HashMap)subset).get(name);
+          double[] coords = subset.get(name);
           coords[0] = Math.ceil(coords[0]);
           coords[1] = Math.floor(coords[1]);
           first[kk] = coords[0];
@@ -322,9 +323,9 @@ public class SwathAdapter extends MultiDimensionAdapter {
         return swathDomain;
       }
       
-      public boolean spatialEquals(Object last_subset, Object subset) {
-        double[] last_coords = (double[]) ((HashMap)last_subset).get(track_name);
-        double[] coords = (double[]) ((HashMap)subset).get(track_name);
+      public boolean spatialEquals(Map<String, double[]> last_subset, Map<String, double[]> subset) {
+        double[] last_coords = last_subset.get(track_name);
+        double[] coords = subset.get(track_name);
 
         for (int k=0; k<coords.length; k++) {
           if (coords[k] != last_coords[k]) {
@@ -332,8 +333,8 @@ public class SwathAdapter extends MultiDimensionAdapter {
           }
         }
 
-        last_coords = (double[]) ((HashMap)last_subset).get(xtrack_name);
-        coords = (double[]) ((HashMap)subset).get(xtrack_name);
+        last_coords = last_subset.get(xtrack_name);
+        coords = subset.get(xtrack_name);
 
         for (int k=0; k<coords.length; k++) {
           if (coords[k] != last_coords[k]) { 
@@ -348,16 +349,16 @@ public class SwathAdapter extends MultiDimensionAdapter {
         default_stride = stride;
       }
 
-      public HashMap getDefaultSubset() {
-        HashMap subset = SwathAdapter.getEmptySubset();
+      public Map<String, double[]> getDefaultSubset() {
+        Map<String, double[]> subset = SwathAdapter.getEmptySubset();
 
-        double[] coords = (double[])subset.get("Track");
+        double[] coords = subset.get("Track");
         coords[0] = 0.0;
         coords[1] = TrackLen - 1;
         coords[2] = (double)default_stride;
         subset.put("Track", coords);
 
-        coords = (double[])subset.get("XTrack");
+        coords = subset.get("XTrack");
         coords[0] = 0.0;
         coords[1] = XTrackLen - 1 ;
         coords[2] = (double)default_stride;
