@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import visad.FunctionType;
 import visad.GriddedSet;
@@ -51,7 +52,7 @@ public class ArrayAdapter extends MultiDimensionAdapter {
    public ArrayAdapter() {
    }
 
-   public ArrayAdapter(MultiDimensionReader reader, HashMap metadata) {
+   public ArrayAdapter(MultiDimensionReader reader, Map<String, Object> metadata) {
      super(reader, metadata);
      init();
    }
@@ -91,7 +92,7 @@ public class ArrayAdapter extends MultiDimensionAdapter {
      return ftype;
    }
 
-   public GriddedSet makeDomain(Object subset) throws Exception {
+   public GriddedSet makeDomain(Map<String, double[]> subset) throws Exception {
      if (subset == null) {
         subset = getDefaultSubset();
      }
@@ -129,8 +130,8 @@ public class ArrayAdapter extends MultiDimensionAdapter {
      return new_domain;
    }
 
-   public HashMap getDefaultSubset() {
-     HashMap map = getEmptySubset();
+   public Map<String, double[]> getDefaultSubset() {
+     Map<String, double[]> map = getEmptySubset();
      for (int i=0; i<array_rank; i++) {
        double[] coords = (double[]) map.get(dimNameMap.get(array_dim_names[i]));
        coords[0] = 0;
@@ -140,8 +141,8 @@ public class ArrayAdapter extends MultiDimensionAdapter {
      return map;
    }
 
-   public HashMap getEmptySubset() {
-     HashMap<String, double[]> subset = new HashMap<String, double[]>();
+   public Map<String, double[]> getEmptySubset() {
+     Map<String, double[]> subset = new HashMap<>();
      for (int i=0; i<array_rank; i++) {
        subset.put(dimNameMap.get(array_dim_names[i]), new double[3]);
      }
