@@ -30,6 +30,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Map;
 
 import visad.Gridded2DSet;
 import visad.Gridded3DSet;
@@ -74,15 +75,15 @@ public class TrackDomain extends MultiDimensionAdapter {
      TrackLen = trackLongitude.length;
    }
 
-   public Set makeDomain(Object subset) throws VisADException, RemoteException {
+   public Set makeDomain(Map<String, double[]> subset) throws VisADException, RemoteException {
      
      float[] lonValues = null;
      float[] latValues = null;
      float[] altValues = null;
 
      double[] coords = (double[]) ((HashMap)subset).get("TrackDim");
-     HashMap newSubset = this.getDefaultSubset();
-     double[] newCoords = (double[])newSubset.get("TrackDim");
+     Map<String, double[]> newSubset = this.getDefaultSubset();
+     double[] newCoords = newSubset.get("TrackDim");
      System.arraycopy(coords, 0, newCoords, 0, coords.length);
      subset = newSubset;
 
@@ -169,8 +170,8 @@ public class TrackDomain extends MultiDimensionAdapter {
         return new int[] {low_idx, hi_idx};
    }
 
-   public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon) {
-      double[] coords = (double[])subset.get("TrackDim");
+   public Map<String, double[]> getSubsetFromLonLatRect(Map<String, double[]> subset, double minLat, double maxLat, double minLon, double maxLon) {
+      double[] coords = subset.get("TrackDim");
       int[] idxs = getTrackRangeInsideLonLatRect(minLat, maxLat, minLon, maxLon);
       coords[0] = (double) idxs[0];
       coords[1] = (double) idxs[1];
@@ -178,7 +179,7 @@ public class TrackDomain extends MultiDimensionAdapter {
       return subset;
    }
 
-   public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon,
+   public Map<String, double[]> getSubsetFromLonLatRect(Map<String, double[]> subset, double minLat, double maxLat, double minLon, double maxLon,
                                           int xStride, int yStride, int zStride) {
       double[] coords = (double[])subset.get("TrackDim");
       int[] idxs = getTrackRangeInsideLonLatRect(minLat, maxLat, minLon, maxLon);
@@ -193,7 +194,7 @@ public class TrackDomain extends MultiDimensionAdapter {
       return subset;
    }
 
-   public HashMap getDefaultSubset() {
+   public Map<String, double[]> getDefaultSubset() {
      return lonAdapter.getDefaultSubset();
    }
 }

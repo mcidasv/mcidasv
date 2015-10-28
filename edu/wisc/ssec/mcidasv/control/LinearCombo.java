@@ -200,7 +200,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
     @Override public MapProjection getDataProjection() {
         MapProjection mp = null;
-        HashMap subset = null;
+        Map<String, double[]> subset = null;
         Hashtable table = dataChoice.getProperties();
         MultiDimensionSubset dataSel =
            (MultiDimensionSubset)table.get(MultiDimensionSubset.key);

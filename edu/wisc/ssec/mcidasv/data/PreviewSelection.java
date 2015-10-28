@@ -36,6 +36,7 @@ import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -301,13 +302,13 @@ public class PreviewSelection extends DataSelectionComponent {
 
              if (hasSubset) {
                MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
-               HashMap map = select.getSubset();
+                 Map<String, double[]> map = select.getSubset();
 
-               double[] coords0 = (double[]) map.get("Track");
+               double[] coords0 = map.get("Track");
                coords0[0] = y_coords[0];
                coords0[1] = y_coords[1];
                coords0[2] = 1;
-               double[] coords1 = (double[]) map.get("XTrack");
+               double[] coords1 = map.get("XTrack");
                coords1[0] = x_coords[0];
                coords1[1] = x_coords[1];
                coords1[2] = 1;

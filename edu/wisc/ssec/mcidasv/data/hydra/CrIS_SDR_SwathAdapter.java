@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import visad.FlatField;
 import visad.Set;
@@ -38,7 +39,7 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
    public CrIS_SDR_SwathAdapter() {
    }
 
-   public CrIS_SDR_SwathAdapter(MultiDimensionReader reader, HashMap metadata) {
+   public CrIS_SDR_SwathAdapter(MultiDimensionReader reader, Map<String, Object> metadata) {
      super(reader, metadata);
    }
 
@@ -49,12 +50,13 @@ public class CrIS_SDR_SwathAdapter extends SwathAdapter {
      setXTrackLength(len *= 9);
    }
 
-   public FlatField getData(Object subset) throws Exception {
+   public FlatField getData(Map<String, double[]> subset) throws Exception {
 
      Set domainSet = makeDomain(subset);
 
-     HashMap new_subset = (HashMap) ((HashMap)subset).clone();
-     new_subset.putAll((HashMap)subset);
+//     HashMap new_subset = (HashMap) ((HashMap)subset).clone();
+//     new_subset.putAll((HashMap)subset);
+     Map<String, double[]> new_subset = new HashMap<>(subset);
 
      double[] coords = (double[]) new_subset.get(SwathAdapter.track_name);
      double[] new_coords = new double[] {0.0, coords[1], 1.0};

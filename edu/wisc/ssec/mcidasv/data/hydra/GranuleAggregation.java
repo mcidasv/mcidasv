@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,42 +69,42 @@ public class GranuleAggregation implements MultiDimensionReader {
 	private static final Logger logger = LoggerFactory.getLogger(GranuleAggregation.class);
 	
 	// this structure holds the NcML readers that get passed in 
-   ArrayList<NetcdfFile> nclist = new ArrayList<NetcdfFile>();
+   List<NetcdfFile> nclist = new ArrayList<>();
 
    // this holds the MultiDimensionReaders, here NetCDFFile
-   ArrayList<NetCDFFile> ncdfal = null;
+   List<NetCDFFile> ncdfal = null;
    
    // need an ArrayList for each variable hashmap structure
-   ArrayList<HashMap<String, Variable>> varMapList = new ArrayList<HashMap<String, Variable>>();
-   ArrayList<HashMap<String, String[]>> varDimNamesList = new ArrayList<HashMap<String, String[]>>();
-   ArrayList<HashMap<String, Class>> varDataTypeList = new ArrayList<HashMap<String, Class>>();
+   List<Map<String, Variable>> varMapList = new ArrayList<>();
+   List<Map<String, String[]>> varDimNamesList = new ArrayList<>();
+   List<Map<String, Class>> varDataTypeList = new ArrayList<>();
 
    // map of granule index and granule in-track length for each variable
-   HashMap<String, HashMap<Integer, Integer>> varGranInTrackLengths = new HashMap<String, HashMap<Integer, Integer>>();
-   HashMap<String, int[]> varAggrDimLengths = new HashMap<String, int[]>();
+   Map<String, Map<Integer, Integer>> varGranInTrackLengths = new HashMap<>();
+   Map<String, int[]> varAggrDimLengths = new HashMap<>();
    
    // this object is used to handle granules like VIIRS Imagery EDRs, where scan
    // gaps of varying sizes and locations in the granule must be removed.  If 
    // present, an initial read with these "cut" ranges will be done before subsetting
-   HashMap<Integer, ArrayList<Range>> granCutRanges = new HashMap<Integer, ArrayList<Range>>();
-   HashMap<Integer, Integer> granCutScans = new HashMap<Integer, Integer>();
+   Map<Integer, List<Range>> granCutRanges = new HashMap<>();
+   Map<Integer, Integer> granCutScans = new HashMap<>();
    
    // except quality flags - only need one hashmap per aggregation
    // it maps the broken out variable name back to the original packed variable name
-   HashMap<String, QualityFlag> qfMap = null;
+   Map<String, QualityFlag> qfMap = null;
 
    // variable can have bulk array processor set by the application
-   HashMap<String, RangeProcessor> varToRangeProcessor = new HashMap<String, RangeProcessor>();
+   Map<String, RangeProcessor> varToRangeProcessor = new HashMap<>();
    
    private int granuleCount = -1;
    private String inTrackDimensionName = null;
    private String inTrackGeoDimensionName = null;
    private String crossTrackDimensionName = null;
-   private LinkedHashSet<String> products;
+   private Set<String> products;
    private String origName = null;
    private boolean isEDR = false;
 
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, 
+   public GranuleAggregation(List<NetCDFFile> ncdfal, Set<String> products,
 		   String inTrackDimensionName, String inTrackGeoDimensionName, 
 		   String crossTrackDimensionName, boolean isEDR) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
@@ -115,18 +117,18 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   init(ncdfal);
    }
    
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, 
+   public GranuleAggregation(List<NetCDFFile> ncdfal, Set<String> products,
 		   String inTrackDimensionName, String inTrackGeoDimensionName, 
 		   String crossTrackDimensionName) throws Exception {
 	   this(ncdfal, products, inTrackDimensionName, inTrackGeoDimensionName, crossTrackDimensionName, false);
    }
    
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, 
+   public GranuleAggregation(List<NetCDFFile> ncdfal, Set<String> products,
 		   String inTrackDimensionName, String crossTrackDimensionName) throws Exception {
        this(ncdfal, products, inTrackDimensionName, inTrackDimensionName, crossTrackDimensionName, false);
    }
    
-   public GranuleAggregation(ArrayList<NetCDFFile> ncdfal, LinkedHashSet<String> products, 
+   public GranuleAggregation(List<NetCDFFile> ncdfal, Set<String> products,
 		   String inTrackDimensionName, String crossTrackDimensionName, boolean isEDR) throws Exception {
         this(ncdfal, products, inTrackDimensionName, inTrackDimensionName, crossTrackDimensionName, isEDR);
    }
@@ -241,7 +243,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   }
    }
 
-   private void init(ArrayList<NetCDFFile> ncdfal) throws Exception {
+   private void init(List<NetCDFFile> ncdfal) throws Exception {
 	   
 	   logger.debug("init in...");
 	   // make a NetCDFFile object from the NcML for each granule
@@ -263,7 +265,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   
 		   // good place to initialize the cut Range ArrayList for each granule
 		   Integer granuleIndex = new Integer(ncIdx);
-		   ArrayList<Range> al = new ArrayList<Range>();
+		   List<Range> al = new ArrayList<>();
 		   granCutRanges.put(granuleIndex, al);
 		   int cutScanCount = 0;
 		   
@@ -274,7 +276,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   Variable var = varIter.next();
 			   logger.trace("Variable " + var.getShortName() + ", Rank: " + var.getRank());
 			   varAggrDimLengths.put(var.getFullName(), new int[var.getRank()]);
-			   varGranInTrackLengths.put(var.getFullName(), new HashMap<Integer, Integer>()); 
+			   varGranInTrackLengths.put(var.getFullName(), new HashMap<>());
 			   
 			   // Here, let's try to check the data for EDR fill lines
 			   // and if found, try to handle it by simply adjusting the dimensions
@@ -289,7 +291,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   // NOTE: we only need to check the first column! so set
 					   // up an appropriate Range to cut the read down significantly
 					   int[] shape = var.getShape();
-					   ArrayList<Range> alr = new ArrayList<Range>();
+					   List<Range> alr = new ArrayList<>();
 					   alr.add(new Range(0, shape[0] - 1, 1));
 					   alr.add(new Range(0, 1, 1));
 					   Array a = var.read(alr);
@@ -379,14 +381,14 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   
 		   ncfile = nclist.get(ncIdx);
 		   
-		   HashMap<String, Variable> varMap = new HashMap<String, Variable>();
-		   HashMap<String, String[]> varDimNames = new HashMap<String, String[]>();
-		   HashMap<String, Class> varDataType = new HashMap<String, Class>();
+		   Map<String, Variable> varMap = new HashMap<>();
+		   Map<String, String[]> varDimNames = new HashMap<>();
+		   Map<String, Class> varDataType = new HashMap<>();
 		   
 		   Iterator<Variable> varIter = ncfile.getVariables().iterator();
 		   int varInTrackIndex = -1;
 		   while (varIter.hasNext()) {
-			   Variable var = (Variable) varIter.next();
+			   Variable var = varIter.next();
 			   
 			   boolean foundProduct = false;
 			   for (String s : products) {
@@ -474,7 +476,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   continue;
 			   }
 
-			   HashMap<Integer, Integer> granIdxToInTrackLen = varGranInTrackLengths.get(varName);
+			   Map<Integer, Integer> granIdxToInTrackLen = varGranInTrackLengths.get(varName);
 			   granIdxToInTrackLen.put(ncIdx, new Integer(dimLengths[varInTrackIndex]));
 			   
 			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] * granuleCount;
@@ -584,7 +586,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   int loGranuleId = 0;
 	   int hiGranuleId = 0;
 
-	   HashMap<Integer, Integer> granIdxToInTrackLen = varGranInTrackLengths.get(array_name);
+	   Map<Integer, Integer> granIdxToInTrackLen = varGranInTrackLengths.get(array_name);
 	   int numGrans = granIdxToInTrackLen.size();
 
 	   int[] vGranuleLengths = new int[numGrans];
@@ -694,7 +696,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   int totalLength = 0;
 	   int rangeListCount = 0;
-	   ArrayList<Array> arrayList = new ArrayList<Array>();
+	   List<Array> arrayList = new ArrayList<>();
 	   for (int granuleIdx = 0; granuleIdx < granuleCount; granuleIdx++) {
 		   if ((granuleIdx >= loGranuleId) && (granuleIdx <= hiGranuleId)) {
 			   Variable var = varMapList.get(loGranuleId + (granuleIdx-loGranuleId)).get(array_name);
@@ -702,7 +704,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   if (var instanceof Structure) {
 				   // what to do here?
 			   } else {
-				   ArrayList<Range> rangeList = new ArrayList<Range>();
+				   List<Range> rangeList = new ArrayList<>();
 				   for (int dimensionIdx = 0; dimensionIdx < dimensionCount; dimensionIdx++) {
 					   logger.debug("Creating new Range: " + startSet[rangeListCount][dimensionIdx] +
 							   ", " + (startSet[rangeListCount][dimensionIdx] + countSet[rangeListCount][dimensionIdx] - 1) + ", " + strideSet[rangeListCount][dimensionIdx]);
@@ -716,11 +718,11 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   rangeListCount++;
 				   
 				   // If there were chunks of fill data to remove...
-				   ArrayList<Range> al = granCutRanges.get(new Integer(granuleIdx));
+				   List<Range> al = granCutRanges.get(new Integer(granuleIdx));
 				   if (! al.isEmpty()) {
-					   ArrayList<Variable> varChunks = new ArrayList<Variable>();
+					   List<Variable> varChunks = new ArrayList<>();
 					   for (int rangeCount = 0; rangeCount < al.size(); rangeCount+=2) {
-						   ArrayList<Range> rl = new ArrayList<Range>();
+						   List<Range> rl = new ArrayList<>();
 						   rl.add(al.get(rangeCount));
 						   rl.add(al.get(rangeCount + 1));
 						   varChunks.add(var.section(rl));
@@ -799,15 +801,15 @@ public class GranuleAggregation implements MultiDimensionReader {
    /**
     * @param qfMap the qfMap to set
     */
-   public void setQfMap(HashMap<String, QualityFlag> qfMap) {
+   public void setQfMap(Map<String, QualityFlag> qfMap) {
 	   this.qfMap = qfMap;
    }
 
-   public HashMap getVarMap() {
+   public Map<String, Variable> getVarMap() {
 	   return varMapList.get(0);
    }
 
-   public ArrayList<NetCDFFile> getReaders() {
+   public List<NetCDFFile> getReaders() {
      return this.ncdfal;
    }
 

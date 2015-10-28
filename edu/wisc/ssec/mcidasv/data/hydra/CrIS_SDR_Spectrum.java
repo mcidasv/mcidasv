@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
                                                                                                                                                            
 import java.util.HashMap;
+import java.util.Map;
 
 public class CrIS_SDR_Spectrum extends SpectrumAdapter {
 
@@ -42,7 +43,7 @@ public class CrIS_SDR_Spectrum extends SpectrumAdapter {
   // Pick a wavelength for the preview where there is likely to be a decent visual slice
   private static final float DEFAULT_PREVIEW_WAVENUMBER = 902.25f;
 
-  public CrIS_SDR_Spectrum(MultiDimensionReader reader, HashMap metadata) {
+  public CrIS_SDR_Spectrum(MultiDimensionReader reader, Map<String, Object> metadata) {
     super(reader, metadata);
   }
   
