@@ -171,7 +171,7 @@ public enum Platform {
             }
             availableMemory = test;
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Could not convert \""+megabytes+"\" to a non-negative integer");
+            throw new IllegalArgumentException("Could not convert \""+megabytes+"\" to a non-negative integer", e);
         }
     }
     

@@ -1632,7 +1632,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             } catch (Exception eOpen) {
                 logger.error("could not open area file: {}", eOpen);
                 setInError(true);
-                throw new BadDataException("Opening area file: " + eOpen.getMessage());
+                throw new BadDataException("Opening area file: " + eOpen.getMessage(), eOpen);
             }
             try {
                 McIDASAreaProjection map = new McIDASAreaProjection(af);
@@ -1642,7 +1642,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             } catch (Exception e) {
                 logger.error("making area projection: {}", e);
                 setInError(true);
-                throw new BadDataException("Making area projection: " + e.getMessage());
+                throw new BadDataException("Making area projection: " + e.getMessage(), e);
             }
         }
         AREACoordinateSystem macs = (AREACoordinateSystem)sampleMapProjection;
@@ -2076,7 +2076,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             return result;
 
         } catch (java.io.IOException ioe) {
-            throw new VisADException("Creating AreaAdapter - " + ioe);
+            throw new VisADException("Error creating AreaAdapter", ioe);
         }
     }
     

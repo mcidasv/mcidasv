@@ -1510,7 +1510,7 @@ public class McIDASV extends IntegratedDataViewer {
             p = new PrintStream(out);
             p.println(new Date().getTime());
         } catch (Exception e) {
-            throw new AssertionError("Could not write to "+path+". Error message: "+e.getMessage());
+            throw new AssertionError("Could not write to "+path+". Error message: "+e.getMessage(), e);
         } finally {
             if (p != null) {
                 p.close();
@@ -1519,7 +1519,7 @@ public class McIDASV extends IntegratedDataViewer {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    throw new AssertionError("Could not close "+path+". Error message: "+e.getMessage());
+                    throw new AssertionError("Could not close "+path+". Error message: "+e.getMessage(), e);
                 }
             }
         }

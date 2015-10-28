@@ -1873,7 +1873,7 @@ public class McVGuiUtils implements Constants {
                 method = clazz.getMethod("is" + property);
             } catch (NoSuchMethodException ex1) {
                 throw new IllegalArgumentException("Property " + property +
-                    " not found in class " + clazz.getName());
+                    " not found in class " + clazz.getName(), ex1);
             }
         }
         try {
@@ -1886,15 +1886,15 @@ public class McVGuiUtils implements Constants {
         } catch (InvocationTargetException ex) {
             throw new IllegalArgumentException(
                 "Error accessing property " + property +
-                    " in class " + clazz.getName());
+                    " in class " + clazz.getName(), ex);
         } catch (IllegalAccessException ex) {
             throw new IllegalArgumentException(
                 "Property " + property +
-                    " cannot be accessed in class " + clazz.getName());
+                    " cannot be accessed in class " + clazz.getName(), ex);
         } catch (SecurityException ex) {
             throw new IllegalArgumentException(
                 "Property " + property +
-                    " cannot be accessed in class " + clazz.getName());
+                    " cannot be accessed in class " + clazz.getName(), ex);
         }
         return retVal;
     }

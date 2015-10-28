@@ -347,9 +347,9 @@ public class FlatFileReader {
             System.out.println("  read " + curPixel + " floats (expected " + readPixels + ")");
             
     	} catch (NumberFormatException exc) {
-    		throw new BadDataException("Error parsing binary file");
+    		throw new BadDataException("Error parsing binary file", exc);
     	} catch (Exception e) {
-    		throw new BadDataException("Error reading binary file: " + url + "\n" + e);
+    		throw new BadDataException("Error reading binary file: " + url, e);
     	}
     }
         
@@ -397,9 +397,9 @@ public class FlatFileReader {
             System.out.println("  read " + curPixel + " floats (expected " + readPixels + ")");
            
     	} catch (NumberFormatException exc) {
-    		throw new BadDataException("Error parsing ASCII file");
+    		throw new BadDataException("Error parsing ASCII file", exc);
     	} catch (Exception e) {
-    		throw new BadDataException("Error reading ASCII file: " + url + "\n" + e);
+    		throw new BadDataException("Error reading ASCII file: " + url, e);
     	}
     }
     
@@ -425,7 +425,7 @@ public class FlatFileReader {
 			return GridUtil.setSpatialDomain(field, navigationSet);
 			
     	} catch (Exception e) {
-    		throw new BadDataException("Error reading image file: " + url + "\n" + e);
+    		throw new BadDataException("Error reading image file: " + url, e);
     	}
     }
 
@@ -444,7 +444,7 @@ public class FlatFileReader {
 	    			ulLon / lonScale, lrLon / lonScale, navElements,
 	    			ulLat / latScale, lrLat / latScale, navLines);
 	    } catch (Exception e) {
-			throw new BadDataException("Error setting navigation bounds:\n" + e);
+			throw new BadDataException("Error setting navigation bounds", e);
 	    }
     }
 
@@ -565,9 +565,9 @@ public class FlatFileReader {
             		false, false);
             
     	} catch (NumberFormatException exc) {
-    		throw new BadDataException("Error parsing ASCII navigation file");
+    		throw new BadDataException("Error parsing ASCII navigation file", exc);
     	} catch (Exception e) {
-    		throw new BadDataException("Error setting navigation from file: " + url + "\n" + e);
+    		throw new BadDataException("Error setting navigation from file: " + url, e);
     	}
     }
         
@@ -720,7 +720,7 @@ public class FlatFileReader {
         try {
             field.setSamples(samples, false);
         } catch (RemoteException e) {
-            throw new VisADException("Couldn't finish FlatField initialization");
+            throw new VisADException("Couldn't finish FlatField initialization", e);
         }
         return field;
     }
