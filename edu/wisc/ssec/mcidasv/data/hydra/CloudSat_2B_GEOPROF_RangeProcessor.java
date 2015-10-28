@@ -43,7 +43,7 @@ public class CloudSat_2B_GEOPROF_RangeProcessor extends RangeProcessor {
 		}
 	}
 
-	public float[] processRange(short[] values, Map subset) {
+	public float[] processRange(short[] values, Map<String, double[]> subset) {
 		float[] new_values = new float[values.length];
 		for (int k = 0; k < values.length; k++) {
 			float val = (float) values[k];

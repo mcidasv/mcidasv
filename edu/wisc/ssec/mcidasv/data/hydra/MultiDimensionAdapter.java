@@ -64,7 +64,7 @@ public abstract class MultiDimensionAdapter {
      this.init();
    }
 
-   public abstract Map getDefaultSubset();
+   public abstract Map<String, double[]> getDefaultSubset();
 
    public abstract Set makeDomain(Map<String, double[]> subset) throws Exception;
 
@@ -87,9 +87,9 @@ public abstract class MultiDimensionAdapter {
        dimNameMap.put(array_dim_names[i], array_dim_names[i]);
      }
 
-     Iterator iter = metadata.keySet().iterator();
+     Iterator<String> iter = metadata.keySet().iterator();
      while (iter.hasNext()) {
-       String key = (String) iter.next();
+       String key = iter.next();
        Object val = metadata.get(key);
        if (!(val instanceof String)) continue;
        String name = (String) val; 
@@ -102,22 +102,22 @@ public abstract class MultiDimensionAdapter {
 
    }
 
-   public Subset getIndexes(Map select) {
+   public Subset getIndexes(Map<String, double[]> select) {
      Subset subset = new Subset(array_rank);
      int[] start = subset.getStart();
      int[] count = subset.getCount();
      int[] stride = subset.getStride();
 
-     Iterator iter = select.keySet().iterator();
+     Iterator<String> iter = select.keySet().iterator();
      while (iter.hasNext()) {
-       String key = (String) iter.next();
+       String key = iter.next();
        String name = (String) metadata.get(key);
 
        if (name == null) name = key;
 
        for (int kk=0; kk<array_rank; kk++) {
          if (array_dim_names[kk].equals(name)) {
-           double[] coords = (double[]) select.get(key);
+           double[] coords = select.get(key);
 
            if (array_dim_lengths[kk] == 1) {
              start[kk] = 0;
@@ -232,8 +232,8 @@ public abstract class MultiDimensionAdapter {
    }
 
 
-   public Object readArray(Object subset) throws Exception {
-     Subset select = getIndexes((Map)subset);
+   public Object readArray(Map<String, double[]> subset) throws Exception {
+     Subset select = getIndexes(subset);
      int[] start = select.getStart();
      int[] count = select.getCount();
      int[] stride = select.getStride();

@@ -449,7 +449,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          defaultSubsets = new HashMap[2];
          propsArray = new Hashtable[2];
 
-         Map table = ProfileAlongTrack.getEmptyMetadataTable();
+         Map<String, Object> table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Data_Fields/Radar_Reflectivity");
          table.put(ProfileAlongTrack.range_name, "2B-GEOPROF_RadarReflectivity");
          table.put(ProfileAlongTrack.scale_name, "factor");
@@ -815,7 +815,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
       filename = name;
     }
 
-    public Map getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
+    public Map<String, double[]> getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
       GeoLocationInfo ginfo = geoSelection.getBoundingBox();
       return adapters[0].getSubsetFromLonLatRect(select.getSubset(), ginfo.getMinLat(), ginfo.getMaxLat(),
                                         ginfo.getMinLon(), ginfo.getMaxLon());
@@ -868,7 +868,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           return data;
         }
 
-        Map subset = null;
+        Map<String, double[]> subset = null;
         MultiDimensionSubset select = null;
 
         Hashtable table = dataChoice.getProperties();

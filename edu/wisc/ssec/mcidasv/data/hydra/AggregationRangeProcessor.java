@@ -43,13 +43,13 @@ public class AggregationRangeProcessor extends RangeProcessor {
 			Map<String, Object> metadata) throws Exception {
 		super();
 
-		List readers = aggrReader.getReaders();
+		List<NetCDFFile> readers = aggrReader.getReaders();
 
 		int num = 0;
 
 		for (int rdrIdx = 0; rdrIdx < readers.size(); rdrIdx++) {
 			RangeProcessor rngProcessor = RangeProcessor.createRangeProcessor(
-					(MultiDimensionReader) readers.get(rdrIdx), metadata);
+					readers.get(rdrIdx), metadata);
 
 			if (rngProcessor.hasMultiDimensionScale()) {
 				num++;

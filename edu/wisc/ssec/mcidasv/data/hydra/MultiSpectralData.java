@@ -728,7 +728,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
   }
 
   public Map<String, double[]> getDefaultSubset() {
-    Map subset = swathAdapter.getDefaultSubset();
+    Map<String, double[]> subset = swathAdapter.getDefaultSubset();
     double chanIdx=0;
 
     try {
