@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -97,13 +99,13 @@ public class MultiSpectralDataSource extends HydraDataSource {
     private static final String DATA_DESCRIPTION = "Multi Dimension Data";
 
 
-    private HashMap defaultSubset;
+    private Map<String, double[]> defaultSubset;
     private SwathAdapter swathAdapter;
     private SpectrumAdapter spectrumAdapter;
     private MultiSpectralData multiSpectData;
 
-    private ArrayList<MultiSpectralData> multiSpectData_s = new ArrayList<MultiSpectralData>();
-    private HashMap<String, MultiSpectralData> adapterMap = new HashMap<String, MultiSpectralData>();
+    private List<MultiSpectralData> multiSpectData_s = new ArrayList<>();
+    private Map<String, MultiSpectralData> adapterMap = new HashMap<>();
 
     private List categories;
     private boolean hasImagePreview = false;
@@ -168,12 +170,11 @@ public class MultiSpectralDataSource extends HydraDataSource {
     public void setup() throws Exception {
         String name = (new File(filename)).getName();
     	// aggregations will use sets of NetCDFFile readers
-    	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
+    	List<NetCDFFile> ncdfal = new ArrayList<>();
 
         try {
           if (name.startsWith("NSS.HRPT.NP") && name.endsWith("obs.hdf")) { // get file union
-            String other = new String(filename);
-            other = other.replace("obs", "nav");
+            String other = filename.replace("obs", "nav");
             reader = NetCDFFile.makeUnion(filename, other);
           }
           /**
@@ -199,7 +200,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         	logger.error("Cannot create NetCDF reader for file: " + filename);
         }
                                                                                                                                                      
-        Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
+        Hashtable<String, String[]> properties = new Hashtable<>();
 
         multiSpectData_s.clear();
 
@@ -209,7 +210,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         	// index 0: Rad, index 1: BT
         	int choiceCount = 2;
         	for (int i = 0; i < choiceCount; i++) {
-        		HashMap table = SpectrumAdapter.getEmptyMetadataTable();
+                Map<String, Object> table = SpectrumAdapter.getEmptyMetadataTable();
         		if (i == 0) {
         			table.put(SpectrumAdapter.array_name, "L1B_AIRS_Science/Data_Fields/radiances");
         			table.put(SpectrumAdapter.range_name, "Radiance");
@@ -241,7 +242,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         		table.put(SpectrumAdapter.channelIndex_name, "Channel"); //- think about this?
 
         		SwathAdapter swathAdapter = new SwathAdapter(reader, table);
-        		HashMap subset = swathAdapter.getDefaultSubset();
+        		Map<String, double[]> subset = swathAdapter.getDefaultSubset();
         		subset.put(SpectrumAdapter.channelIndex_name, new double[] {793,793,1});
         		defaultSubset = subset;
 
@@ -262,7 +263,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         	}
         }
        else if ( name.startsWith("IASI_xxx_1C") && name.endsWith("h5")) {
-          HashMap table = SpectrumAdapter.getEmptyMetadataTable();
+          Map<String, Object> table = SpectrumAdapter.getEmptyMetadataTable();
           table.put(SpectrumAdapter.array_name, "U-MARF/EPS/IASI_xxx_1C/DATA/SPECT_DATA");
           table.put(SpectrumAdapter.channelIndex_name, "dim2");
           table.put(SpectrumAdapter.x_dim_name, "dim1");
@@ -280,7 +281,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           table.put("product_name", "IASI_L1C_xxx");
           table.put(SpectrumAdapter.channelIndex_name, "dim2");
           swathAdapter = new IASI_L1C_SwathAdapter(reader, table);
-          HashMap subset = swathAdapter.getDefaultSubset();
+          Map<String, double[]> subset = swathAdapter.getDefaultSubset();
           subset.put(SpectrumAdapter.channelIndex_name, new double[] {793,793,1});
           defaultSubset = subset;
           multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter);
@@ -291,7 +292,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           multiSpectData_s.add(multiSpectData);
        }
        else if ( name.startsWith("IASI")) {
-          HashMap table = SpectrumAdapter.getEmptyMetadataTable();
+          Map<String, Object> table = SpectrumAdapter.getEmptyMetadataTable();
           table.put(SpectrumAdapter.array_name, "observations");
           table.put(SpectrumAdapter.channelIndex_name, "obsChannelIndex");
           table.put(SpectrumAdapter.x_dim_name, "obsElement");
@@ -309,7 +310,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           table.put("geo_Track", "obsLine");
           table.put(SpectrumAdapter.channelIndex_name, "obsChannelIndex"); //- think about this?
           swathAdapter = new SwathAdapter(reader, table);
-          HashMap subset = swathAdapter.getDefaultSubset();
+          Map<String, double[]> subset = swathAdapter.getDefaultSubset();
           subset.put(SpectrumAdapter.channelIndex_name, new double[] {793,793,1});
           defaultSubset = subset;
           multiSpectData = new MultiSpectralData(swathAdapter, spectrumAdapter);
@@ -322,7 +323,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
        else if (name.startsWith("MOD021KM") || name.startsWith("MYD021KM") || 
                (name.startsWith("a1") && (name.indexOf("1000m") > 0)) || 
                (name.startsWith("t1") && (name.indexOf("1000m") > 0)) ) {
-         HashMap table = SwathAdapter.getEmptyMetadataTable();
+         Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
          table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_Emissive");
          table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
          table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
@@ -347,7 +348,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          
          // initialize the aggregation reader object
          logger.debug("Trying to create MODIS 1K GranuleAggregation reader...");
-         LinkedHashSet<String> products = new LinkedHashSet<String>();
+         Set<String> products = new LinkedHashSet<>();
          products.add((String) table.get("array_name"));
          products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_RefSB");
          products.add("MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr1km_RefSB");
@@ -367,9 +368,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
          swathAdapter = new SwathAdapter(reader, table);
          swathAdapter.setDefaultStride(10);
-         logger.debug("Trying to create MODIS 1K SwathAdapter..."); 
+         logger.debug("Trying to create MODIS 1K SwathAdapter...");
 
-         HashMap subset = swathAdapter.getDefaultSubset();
+         Map<String, double[]> subset = swathAdapter.getDefaultSubset();
 
          table = SpectrumAdapter.getEmptyMetadataTable();
          table.put(SpectrumAdapter.array_name, "MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_Emissive");
@@ -518,7 +519,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
        else if (name.startsWith("MOD02QKM") || name.startsWith("MYD02QKM") ||
                (name.startsWith("a1") && (name.indexOf("250m") > 0)) ||
                (name.startsWith("t1") && (name.indexOf("250m") > 0)) ) {
-         HashMap table = SwathAdapter.getEmptyMetadataTable();
+         Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
          table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_250_RefSB");
          table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
          table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
@@ -582,7 +583,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
        else if (name.startsWith("MOD02HKM") || name.startsWith("MYD02HKM") ||
                (name.startsWith("a1") && (name.indexOf("500m") > 0)) ||
                (name.startsWith("t1") && (name.indexOf("500m") > 0)) ) {
-         HashMap table = SwathAdapter.getEmptyMetadataTable();
+         Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
          table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_250_Aggr500_RefSB");
          table.put("lon_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Longitude");
          table.put("lat_array_name", "MODIS_SWATH_Type_L1B/Geolocation_Fields/Latitude");
@@ -687,7 +688,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          multiSpectData_s.add(null);
        }
        else if (name.startsWith("NSS.HRPT") && name.endsWith("level2.hdf")) {
-         HashMap swthTable = SwathAdapter.getEmptyMetadataTable();
+         Map<String, Object> swthTable = SwathAdapter.getEmptyMetadataTable();
          swthTable.put("array_name", "temp_3_75um_nom");
          swthTable.put("lon_array_name", "longitude");
          swthTable.put("lat_array_name", "latitude");
@@ -707,10 +708,10 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
          SwathAdapter swathAdapter0 = new SwathAdapter(reader, swthTable);
          swathAdapter0.setDefaultStride(10);
-         HashMap subset = swathAdapter0.getDefaultSubset();
+         Map<String, double[]> subset = swathAdapter0.getDefaultSubset();
          defaultSubset = subset;
 
-         HashMap specTable = SpectrumAdapter.getEmptyMetadataTable();
+         Map<String, Object> specTable = SpectrumAdapter.getEmptyMetadataTable();
          specTable.put(SpectrumAdapter.array_name, "temp_3_75um_nom");
          specTable.put(SpectrumAdapter.x_dim_name, "pixel_elements_along_scan_direction");
          specTable.put(SpectrumAdapter.y_dim_name, "scan_lines_along_track_direction");
@@ -721,7 +722,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
          MultiSpectralData multiSpectData0 = new MultiSpectralData(swathAdapter0, spectrumAdapter0, "BrightnessTemp", "BrightnessTemp", null, null);
 
-         HashMap table = SwathAdapter.getEmptyMetadataTable();
+         Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
          table.put("array_name", "temp_11_0um_nom");
          table.put("lon_array_name", "longitude");
          table.put("lat_array_name", "latitude");
@@ -847,7 +848,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          hasChannelSelect = true;
        }
        else {
-          HashMap table = SwathAdapter.getEmptyMetadataTable();
+          Map<String, Object> table = SwathAdapter.getEmptyMetadataTable();
           table.put("array_name", "MODIS_SWATH_Type_L1B/Data_Fields/EV_1KM_Emissive");
           table.put("lon_array_name", "pixel_longitude");
           table.put("lat_array_name", "pixel_latitude");
@@ -975,7 +976,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
     }
    */
 
-    public synchronized Data getData(String name, HashMap subset) throws VisADException, RemoteException {
+    public synchronized Data getData(String name, Map<String, double[]> subset) throws VisADException, RemoteException {
       MultiSpectralData msd =  getMultiSpectralData(name);
       Data data = null;
       try {
@@ -1025,7 +1026,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         Data data = null;
 
         try {
-            HashMap subset = null;
+            Map<String, double[]> subset = null;
             if (ginfo != null) {
               subset = swathAdapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
                                         ginfo.getMinLon(), ginfo.getMaxLon());
@@ -1055,7 +1056,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
                     }
                     if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
                       int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
-                      double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
+                      double[] coords = subset.get(SpectrumAdapter.channelIndex_name);
                       if (coords == null) {
                         coords = new double[] {(double)idx, (double)idx, (double)1};
                         subset.put(SpectrumAdapter.channelIndex_name, coords);
@@ -1084,7 +1085,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         return data;
     }
 
-    public MapProjection getDataProjection(HashMap subset) {
+    public MapProjection getDataProjection(Map<String, double[]> subset) {
       MapProjection mp = null;
       try {
         Rectangle2D rect =  multiSpectData.getLonLatBoundingBox(subset);
@@ -1096,7 +1097,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
       return mp;
     }
 
-    protected Data applyProperties(Data data, Hashtable requestProperties, HashMap subset) 
+    protected Data applyProperties(Data data, Hashtable requestProperties, Map<String, double[]> subset)
           throws VisADException, RemoteException {
       Data new_data = data;
 

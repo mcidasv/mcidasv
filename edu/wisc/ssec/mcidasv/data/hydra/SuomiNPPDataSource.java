@@ -112,8 +112,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     protected String filename;
     
     // for loading bundles, store granule lists and geo lists here
-    protected List<String> oldSources = new ArrayList<String>();
-    protected List<String> geoSources = new ArrayList<String>();
+    protected List<String> oldSources = new ArrayList<>();
+    protected List<String> geoSources = new ArrayList<>();
     
     // integrity map for grouping sets/aggregations of selected products
     Map<String, List<String>> filenameMap = null;
@@ -122,10 +122,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     protected MultiDimensionAdapter[] adapters = null;
     
-    private ArrayList<MultiSpectralData> msd_CrIS = new ArrayList<MultiSpectralData>();
-    private ArrayList<MultiSpectralData> multiSpectralData = new ArrayList<MultiSpectralData>();
-    private HashMap<String, MultiSpectralData> msdMap = new HashMap<String, MultiSpectralData>();
-    private HashMap<String, QualityFlag> qfMap = new HashMap<String, QualityFlag>();
+    private List<MultiSpectralData> msd_CrIS = new ArrayList<>();
+    private List<MultiSpectralData> multiSpectralData = new ArrayList<>();
+    private Map<String, MultiSpectralData> msdMap = new HashMap<>();
+    private Map<String, QualityFlag> qfMap = new HashMap<>();
 
     private static final String DATA_DESCRIPTION = "Suomi NPP Data";
     
@@ -143,7 +143,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     // for now, we are only handling OMPS variables that match this filter and SCAN dimensions
     private String ompsFilter = "Radiance";
 
-    private HashMap defaultSubset;
+    private Map<String, double[]> defaultSubset;
     public TrackAdapter track_adapter;
 
     private List categories;
@@ -210,7 +210,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         setDescription("Suomi NPP");
         
         // build the filename map - matches each product to set of files for that product
-        filenameMap = new HashMap<String, List<String>>();
+        filenameMap = new HashMap<>();
         
         // Pass 1, populate the list of products selected
         for (Object o : sources) {
@@ -278,7 +278,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// looking to populate 3 things - path to lat, path to lon, path to relevant products
     	String pathToLat = null;
     	String pathToLon = null;
-    	LinkedHashSet<String> pathToProducts = new LinkedHashSet<String>();
+    	Set<String> pathToProducts = new LinkedHashSet<>();
     	
     	// flag to indicate data is 3-dimensions (X, Y, channel or band)
     	boolean is3D = false;
@@ -302,14 +302,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
         }
     	
     	// various metatdata we'll need to gather on a per-product basis
-        LinkedHashMap<String, String> unsignedFlags = new LinkedHashMap<String, String>();
-        LinkedHashMap<String, String> unpackFlags = new LinkedHashMap<String, String>();
+        Map<String, String> unsignedFlags = new LinkedHashMap<>();
+        Map<String, String> unpackFlags = new LinkedHashMap<>();
     	
     	// geo product IDs for each granule
-    	LinkedHashSet<String> geoProductIDs = new LinkedHashSet<String>();
+    	Set<String> geoProductIDs = new LinkedHashSet<>();
     	
     	// aggregations will use sets of NetCDFFile readers
-    	ArrayList<NetCDFFile> ncdfal = new ArrayList<NetCDFFile>();
+    	List<NetCDFFile> ncdfal = new ArrayList<>();
     	
     	// we should be able to find an XML Product Profile for each data/product type
     	SuomiNPPProductProfile nppPP = null;
@@ -965,16 +965,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	
     	logger.debug("Number of adapters needed: " + pathToProducts.size());
     	adapters = new MultiDimensionAdapter[pathToProducts.size()];
-    	Hashtable<String, String[]> properties = new Hashtable<String, String[]>(); 
+    	Hashtable<String, String[]> properties = new Hashtable<>();
     	
     	Iterator<String> iterator = pathToProducts.iterator();
     	int pIdx = 0;
     	boolean adapterCreated = false;
     	while (iterator.hasNext()) {
-    		String pStr = (String) iterator.next();
+    		String pStr = iterator.next();
     		logger.debug("Working on adapter number " + (pIdx + 1) + ": " + pStr);
-        	HashMap<String, Object> swathTable = SwathAdapter.getEmptyMetadataTable();
-        	HashMap<String, Object> spectTable = SpectrumAdapter.getEmptyMetadataTable();
+        	Map<String, Object> swathTable = SwathAdapter.getEmptyMetadataTable();
+        	Map<String, Object> spectTable = SpectrumAdapter.getEmptyMetadataTable();
         	swathTable.put("array_name", pStr);
         	swathTable.put("lon_array_name", pathToLon);
         	swathTable.put("lat_array_name", pathToLat);
@@ -1403,7 +1403,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	/**
 	 * @return the qfMap
 	 */
-	public HashMap<String, QualityFlag> getQfMap() {
+	public Map<String, QualityFlag> getQfMap() {
 		return qfMap;
 	}
 
@@ -1411,7 +1411,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
       filename = name;
     }
 
-    public HashMap getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
+    public Map<String, double[]> getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
       GeoLocationInfo ginfo = geoSelection.getBoundingBox();
       return adapters[0].getSubsetFromLonLatRect(select.getSubset(), ginfo.getMinLat(), ginfo.getMaxLat(),
                                         ginfo.getMinLon(), ginfo.getMaxLon());
@@ -1468,7 +1468,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         adapter = adapters[aIdx];
 
         try {
-            HashMap subset = null;
+            Map<String, double[]> subset = null;
             if (ginfo != null) {
             	subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
             			ginfo.getMinLon(), ginfo.getMaxLon(),
@@ -1527,7 +1527,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         return data;
     }
 
-    protected Data applyProperties(Data data, Hashtable requestProperties, HashMap subset, int adapterIndex) 
+    protected Data applyProperties(Data data, Hashtable requestProperties, Map<String, double[]> subset, int adapterIndex)
           throws VisADException, RemoteException {
       Data new_data = data;
 

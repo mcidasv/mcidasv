@@ -30,6 +30,8 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import visad.FunctionType;
 import visad.Gridded1DSet;
@@ -58,8 +60,8 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   public static String bandNames = "bandNames";
 
 
-  public static HashMap getEmptyMetadataTable() {
-    HashMap<String, String> metadata = new HashMap<String, String>();
+  public static Map<String, Object> getEmptyMetadataTable() {
+    Map<String, Object> metadata = new HashMap<>();
     metadata.put(array_name, null);
     metadata.put(range_name, null);
     metadata.put(channelIndex_name, null);
@@ -82,8 +84,8 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return metadata;
   }
 
-  public static HashMap<String, double[]> getEmptySubset() {
-    HashMap<String, double[]> subset = new HashMap<String, double[]>();
+  public static Map<String, double[]> getEmptySubset() {
+    Map<String, double[]> subset = new HashMap<>();
     subset.put(x_dim_name, new double[3]);
     subset.put(y_dim_name, new double[3]);
     subset.put(channelIndex_name, new double[3]);
@@ -98,12 +100,12 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
   RealType spectrumRangeType;
   FunctionType spectrumType;
 
-  ArrayList<String> bandNameList = new ArrayList<String>();
+  List<String> bandNameList = new ArrayList<>();
   String[] bandNameArray = null;
-  HashMap<String, Float> bandNameMap = null;
+  Map<String, Float> bandNameMap = null;
   boolean hasBandNames = false;
 
-  public SpectrumAdapter(MultiDimensionReader reader, HashMap metadata) {
+  public SpectrumAdapter(MultiDimensionReader reader, Map<String, Object> metadata) {
     super(reader, metadata);
     this.init();
   }
@@ -145,11 +147,11 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
      return hasBandNames;
   }
 
-  public ArrayList<String> getBandNames() {
+  public List<String> getBandNames() {
     return bandNameList;
   }
 
-  public HashMap<String, Float> getBandNameMap() {
+  public Map<String, Float> getBandNameMap() {
     return bandNameMap;
   }
 
@@ -162,7 +164,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     }
   }
 
-  public Set makeDomain(Object subset) throws Exception {
+  public Set makeDomain(Map<String, double[]> subset) throws Exception {
     return domainSet;
   }
 
@@ -194,7 +196,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     }
 
     if (hasBandNames) {
-      bandNameMap = new HashMap<String, Float>();
+      bandNameMap = new HashMap<>();
       for (int k=0; k<numChannels; k++) {
         bandNameMap.put(bandNameArray[k], new Float(channels[k]));
       }
@@ -232,8 +234,8 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
     return sorted_range;
   }
 
-  public HashMap getDefaultSubset() {
-    HashMap<String, double[]> subset = SpectrumAdapter.getEmptySubset();
+  public Map<String, double[]> getDefaultSubset() {
+    Map<String, double[]> subset = SpectrumAdapter.getEmptySubset();
     
     double[] coords = (double[])subset.get(y_dim_name);
     coords[0] = 1.0;

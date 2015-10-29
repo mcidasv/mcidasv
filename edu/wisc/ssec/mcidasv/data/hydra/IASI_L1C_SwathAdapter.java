@@ -42,6 +42,7 @@ import visad.VisADException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class IASI_L1C_SwathAdapter extends SwathAdapter {
@@ -49,7 +50,7 @@ public class IASI_L1C_SwathAdapter extends SwathAdapter {
    public IASI_L1C_SwathAdapter() {
    }
 
-   public IASI_L1C_SwathAdapter(MultiDimensionReader reader, HashMap metadata) {
+   public IASI_L1C_SwathAdapter(MultiDimensionReader reader, Map<String, Object> metadata) {
      super(reader, metadata);
    }
 
@@ -60,13 +61,12 @@ public class IASI_L1C_SwathAdapter extends SwathAdapter {
      setXTrackLength( len /= 2);
    }
 
-   public FlatField getData(Object subset) throws Exception {
+   public FlatField getData(Map<String, double[]> subset) throws Exception {
      Set domainSet = makeDomain(subset);
 
-     HashMap new_subset = (HashMap) ((HashMap)subset).clone();
-     new_subset.putAll((HashMap)subset);
+     Map<String, double[]> new_subset = new HashMap<>(subset);
 
-     double[] coords = (double[]) new_subset.get(SwathAdapter.track_name);
+     double[] coords = new_subset.get(SwathAdapter.track_name);
      double[] new_coords = new double[] {0.0, coords[1]/2, 1.0};
 
      new_subset.put(SwathAdapter.track_name, new_coords);

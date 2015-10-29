@@ -46,6 +46,7 @@ import java.rmi.RemoteException;
 
 import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import java.io.BufferedReader;
@@ -106,15 +107,15 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
 
       CoordinateSystem cs = null;
 
-      public static HashMap getEmptySubset() {
-        HashMap<String, double[]> subset = new HashMap<String, double[]>();
+      public static Map<String, double[]> getEmptySubset() {
+        Map<String, double[]> subset = new HashMap<>();
         subset.put(trackDim_name, new double[3]);
         subset.put(vertDim_name, new double[3]);
         return subset;
       }
 
-      public static HashMap getEmptyMetadataTable() {
-        HashMap<String, String> metadata = new HashMap<String, String>();
+      public static Map<String, Object> getEmptyMetadataTable() {
+        Map<String, Object> metadata = new HashMap<>();
         metadata.put(array_name, null);
         metadata.put(trackDim_name, null);
         metadata.put(vertDim_name, null);
@@ -138,11 +139,11 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       public ProfileAlongTrack() {
       }
 
-      public ProfileAlongTrack(MultiDimensionReader reader, HashMap metadata) {
+      public ProfileAlongTrack(MultiDimensionReader reader, Map<String, Object> metadata) {
         this(reader, metadata, true);
       }
 
-      public ProfileAlongTrack(MultiDimensionReader reader, HashMap metadata, boolean isVertDimAlt) {
+      public ProfileAlongTrack(MultiDimensionReader reader, Map<String, Object> metadata, boolean isVertDimAlt) {
         super(reader, metadata);
         this.isVertDimAlt = isVertDimAlt;
         this.init();
@@ -238,12 +239,12 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         return track_tup_idx;
       }
                                                                                                                                                      
-      public Set makeDomain(Object subset) throws Exception {
+      public Set makeDomain(Map<String, double[]> subset) throws Exception {
         double[] first = new double[2];
         double[] last = new double[2];
         int[] length = new int[2];
 
-        HashMap<String, double[]> domainSubset = new HashMap<String, double[]>();
+        Map<String, double[]> domainSubset = new HashMap<>();
         domainSubset.put(trackDim_name, (double[]) ((HashMap)subset).get(trackDim_name));
         domainSubset.put(vertDim_name, (double[]) ((HashMap)subset).get(vertDim_name));
 
@@ -335,8 +336,8 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         return domainRealTypes;
       }
 
-      public HashMap getDefaultSubset() {
-        HashMap subset = ProfileAlongTrack.getEmptySubset();
+      public Map<String, double[]> getDefaultSubset() {
+        Map<String, double[]> subset = ProfileAlongTrack.getEmptySubset();
 
         double[] coords = (double[])subset.get("TrackDim");
         coords[0] = 20000.0;
@@ -397,8 +398,8 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         return new int[] {low_idx, hi_idx};
       }
 
-      public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon) {
-        double[] coords = (double[])subset.get("TrackDim");
+      public Map<String, double[]> getSubsetFromLonLatRect(Map<String, double[]> subset, double minLat, double maxLat, double minLon, double maxLon) {
+        double[] coords = subset.get("TrackDim");
         int[] idxs = getTrackRangeInsideLonLatRect(minLat, maxLat, minLon, maxLon);
         coords[0] = (double) idxs[0];
         coords[1] = (double) idxs[1];
@@ -406,10 +407,10 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         return subset;
       }
 
-      public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat, double minLon, double maxLon,
+      public Map<String, double[]> getSubsetFromLonLatRect(Map<String, double[]> subset, double minLat, double maxLat, double minLon, double maxLon,
                                              int xStride, int yStride, int zStride) {
 
-        double[] coords = (double[])subset.get("TrackDim"); 
+        double[] coords = subset.get("TrackDim");
         int[] idxs = getTrackRangeInsideLonLatRect(minLat, maxLat, minLon, maxLon);
         coords[0] = (double) idxs[0];
         coords[1] = (double) idxs[1];
@@ -418,18 +419,18 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
           coords[2] = xStride;
         }
 
-        coords = (double[])subset.get("VertDim");
+        coords = subset.get("VertDim");
         if (yStride > 0) {
           coords[2] = yStride;
         }
         return subset;
       }
 
-      public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
+      public Map<String, double[]> getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon) {
         return getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon);
       }
 
-      public HashMap getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon,
+      public Map<String, double[]> getSubsetFromLonLatRect(double minLat, double maxLat, double minLon, double maxLon,
                                              int xStride, int yStride, int zStride) {
 
         return getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon, xStride, yStride, zStride);

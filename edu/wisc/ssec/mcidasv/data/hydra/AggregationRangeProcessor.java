@@ -30,24 +30,26 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AggregationRangeProcessor extends RangeProcessor {
 
-	ArrayList<RangeProcessor> rangeProcessors = new ArrayList<RangeProcessor>();
+	List<RangeProcessor> rangeProcessors = new ArrayList<>();
 
 	int rngIdx = 0;
 
 	public AggregationRangeProcessor(GranuleAggregation aggrReader,
-			HashMap metadata) throws Exception {
+			Map<String, Object> metadata) throws Exception {
 		super();
 
-		ArrayList readers = aggrReader.getReaders();
+		List<NetCDFFile> readers = aggrReader.getReaders();
 
 		int num = 0;
 
 		for (int rdrIdx = 0; rdrIdx < readers.size(); rdrIdx++) {
 			RangeProcessor rngProcessor = RangeProcessor.createRangeProcessor(
-					(MultiDimensionReader) readers.get(rdrIdx), metadata);
+					readers.get(rdrIdx), metadata);
 
 			if (rngProcessor.hasMultiDimensionScale()) {
 				num++;
@@ -75,19 +77,19 @@ public class AggregationRangeProcessor extends RangeProcessor {
 		rangeProcessors.get(rngIdx).setMultiScaleIndex(idx);
 	}
 
-	public synchronized float[] processRange(byte[] values, HashMap subset) {
+	public synchronized float[] processRange(byte[] values, Map<String, double[]> subset) {
 		return rangeProcessors.get(rngIdx).processRange(values, subset);
 	}
 
-	public synchronized float[] processRange(short[] values, HashMap subset) {
+	public synchronized float[] processRange(short[] values, Map<String, double[]> subset) {
 		return rangeProcessors.get(rngIdx).processRange(values, subset);
 	}
 
-	public synchronized float[] processRange(float[] values, HashMap subset) {
+	public synchronized float[] processRange(float[] values, Map<String, double[]> subset) {
 		return rangeProcessors.get(rngIdx).processRange(values, subset);
 	}
 
-	public synchronized double[] processRange(double[] values, HashMap subset) {
+	public synchronized double[] processRange(double[] values, Map<String, double[]> subset) {
 		return rangeProcessors.get(rngIdx).processRange(values, subset);
 	}
 }

@@ -28,7 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class CrIS_RangeProcessor extends RangeProcessor {
 
@@ -36,7 +36,7 @@ public class CrIS_RangeProcessor extends RangeProcessor {
 		super();
 	}
 
-	public float[] processRange(float[] values, HashMap subset) {
+	public float[] processRange(float[] values, Map<String, double[]> subset) {
 
 		double[] track_coords = (double[]) subset.get(SwathAdapter.track_name);
 		int numLines = ((int) (track_coords[1] - track_coords[0]) + 1);

@@ -28,12 +28,12 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class CloudSat_2B_GEOPROF_RangeProcessor extends RangeProcessor {
 
 	public CloudSat_2B_GEOPROF_RangeProcessor(MultiDimensionReader reader,
-			HashMap metadata) throws Exception {
+			Map<String, Object> metadata) throws Exception {
 		super(reader, metadata);
 		if (scale == null) { // use implicit default value since E05, E06 has
 								// removed the scale/offset from the Radar Refl
@@ -43,7 +43,7 @@ public class CloudSat_2B_GEOPROF_RangeProcessor extends RangeProcessor {
 		}
 	}
 
-	public float[] processRange(short[] values, HashMap subset) {
+	public float[] processRange(short[] values, Map<String, double[]> subset) {
 		float[] new_values = new float[values.length];
 		for (int k = 0; k < values.length; k++) {
 			float val = (float) values[k];

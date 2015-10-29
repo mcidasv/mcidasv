@@ -43,6 +43,7 @@ import java.rmi.RemoteException;
 
 import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import java.io.BufferedReader;
@@ -57,7 +58,7 @@ public class CloudSat2D extends ProfileAlongTrack {
       public CloudSat2D() {
       }
 
-      public CloudSat2D(MultiDimensionReader reader, HashMap metadata) {
+      public CloudSat2D(MultiDimensionReader reader, Map<String, Object> metadata) {
         super(reader, metadata);
       }
 
@@ -119,16 +120,16 @@ public class CloudSat2D extends ProfileAlongTrack {
         return vals;
       }
 
-      public HashMap getDefaultSubset() {
-        HashMap subset = ProfileAlongTrack.getEmptySubset();
+      public Map<String, double[]> getDefaultSubset() {
+        Map<String, double[]> subset = ProfileAlongTrack.getEmptySubset();
 
-        double[] coords = (double[])subset.get("TrackDim");
+        double[] coords = subset.get("TrackDim");
         coords[0] = 1000.0;
         coords[1] = (TrackLen - 1000.0) - 1;
         coords[2] = 5.0;
         subset.put("TrackDim", coords);
 
-        coords = (double[])subset.get("VertDim");
+        coords = subset.get("VertDim");
         coords[0] = 10.0;
         coords[1] = (VertLen) - 1;
         coords[2] = 2.0;

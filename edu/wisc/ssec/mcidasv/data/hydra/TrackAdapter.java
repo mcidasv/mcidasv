@@ -30,6 +30,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.Map;
 
 import visad.FlatField;
 import visad.FunctionType;
@@ -55,30 +56,27 @@ public class TrackAdapter extends MultiDimensionAdapter {
      this.rngAdapter = rangeAdapter;
    }
 
-   public Set makeDomain(Object subset) throws Exception {
+   public Set makeDomain(Map<String, double[]> subset) throws Exception {
      throw new Exception("Unimplemented");
    } 
 
-   public FlatField getData(Object subset) throws VisADException, RemoteException {
-     
-     float[] rngValues = null;
-
-     Set set = trackDomain.makeDomain(subset);
-
-     domainType = ((SetType)set.getType()).getDomain();
+   public FlatField getData(Map<String, double[]> subset) throws VisADException, RemoteException {
 
      try {
-       rngValues = (rngAdapter.getData(subset).getFloats())[0];
-     }
-     catch (Exception e) {
+         float[] rngValues = null;
+         Set set = trackDomain.makeDomain(subset);
+
+         domainType = ((SetType)set.getType()).getDomain();
+
+         rngValues = (rngAdapter.getData(subset).getFloats())[0];
+         FlatField field = new FlatField(new FunctionType(domainType, rngAdapter.getMathType().getRange()), set);
+         field.setSamples(new float[][] {rngValues}, false);
+
+         return field;
+     } catch (Exception e) {
        e.printStackTrace();
        return null;
      }
-
-     FlatField field = new FlatField(new FunctionType(domainType, rngAdapter.getMathType().getRange()), set);
-     field.setSamples(new float[][] {rngValues}, false);
-
-     return field;
    }
 
    public void setName(String name) {
@@ -98,10 +96,10 @@ public class TrackAdapter extends MultiDimensionAdapter {
      listIndex = idx;
    }
 
-   public HashMap getDefaultSubset() {
-     HashMap subset = rngAdapter.getDefaultSubset();
+   public Map<String, double[]> getDefaultSubset() {
+     Map<String, double[]> subset = rngAdapter.getDefaultSubset();
      if (subset.containsKey("VertDim")) {
-       double[] coords = (double[]) ((HashMap)subset).get("VertDim");
+       double[] coords = subset.get("VertDim");
        if (coords != null) {
          coords[0] = listIndex;
          coords[1] = listIndex;
@@ -111,12 +109,12 @@ public class TrackAdapter extends MultiDimensionAdapter {
      return subset;
    }
 
-   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+   public Map<String, double[]> getSubsetFromLonLatRect(double minLat, double maxLat,
                                           double minLon, double maxLon) {
       return trackDomain.getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon);
    }
 
-   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+   public Map<String, double[]> getSubsetFromLonLatRect(double minLat, double maxLat,
                                           double minLon, double maxLon,
                                           int xStride, int yStride, int zStride) {
       return trackDomain.getSubsetFromLonLatRect(getDefaultSubset(), minLat, maxLat, minLon, maxLon,

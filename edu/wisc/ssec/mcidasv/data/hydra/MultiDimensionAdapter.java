@@ -37,18 +37,19 @@ import visad.Set;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public abstract class MultiDimensionAdapter {
 
    MultiDimensionReader reader = null;
-   HashMap metadata = null;
+   Map<String, Object> metadata = null;
    String arrayName = null;
    String[] array_dim_names = null;
    int[] array_dim_lengths  = null;
    int array_rank;
    Class arrayType;
 
-   HashMap<String, String> dimNameMap = new HashMap<String, String>();
+   Map<String, String> dimNameMap = new HashMap<>();
 
    RealType rangeType;
 
@@ -57,15 +58,15 @@ public abstract class MultiDimensionAdapter {
    public MultiDimensionAdapter() {
    }
 
-   public MultiDimensionAdapter(MultiDimensionReader reader, HashMap metadata) {
+   public MultiDimensionAdapter(MultiDimensionReader reader, Map<String, Object> metadata) {
      this.reader = reader;
      this.metadata = metadata;
      this.init();
    }
 
-   public abstract HashMap getDefaultSubset();
+   public abstract Map<String, double[]> getDefaultSubset();
 
-   public abstract Set makeDomain(Object subset) throws Exception;
+   public abstract Set makeDomain(Map<String, double[]> subset) throws Exception;
 
    private void init() {
      this.arrayName = (String) metadata.get("array_name");
@@ -86,9 +87,9 @@ public abstract class MultiDimensionAdapter {
        dimNameMap.put(array_dim_names[i], array_dim_names[i]);
      }
 
-     Iterator iter = metadata.keySet().iterator();
+     Iterator<String> iter = metadata.keySet().iterator();
      while (iter.hasNext()) {
-       String key = (String) iter.next();
+       String key = iter.next();
        Object val = metadata.get(key);
        if (!(val instanceof String)) continue;
        String name = (String) val; 
@@ -101,22 +102,22 @@ public abstract class MultiDimensionAdapter {
 
    }
 
-   public Subset getIndexes(HashMap select) {
+   public Subset getIndexes(Map<String, double[]> select) {
      Subset subset = new Subset(array_rank);
      int[] start = subset.getStart();
      int[] count = subset.getCount();
      int[] stride = subset.getStride();
 
-     Iterator iter = select.keySet().iterator();
+     Iterator<String> iter = select.keySet().iterator();
      while (iter.hasNext()) {
-       String key = (String) iter.next();
+       String key = iter.next();
        String name = (String) metadata.get(key);
 
        if (name == null) name = key;
 
        for (int kk=0; kk<array_rank; kk++) {
          if (array_dim_names[kk].equals(name)) {
-           double[] coords = (double[]) select.get(key);
+           double[] coords = select.get(key);
 
            if (array_dim_lengths[kk] == 1) {
              start[kk] = 0;
@@ -135,7 +136,7 @@ public abstract class MultiDimensionAdapter {
      return subset;
    }
 
-   public FlatField getData(Object subset) throws Exception {
+   public FlatField getData(Map<String, double[]> subset) throws Exception {
      Set domainSet = makeDomain(subset);
      return makeFlatField(domainSet, subset);
    }
@@ -157,7 +158,7 @@ public abstract class MultiDimensionAdapter {
      return f_field;
    }
 
-   public FlatField makeFlatField(Set domainSet, Object subset) throws Exception {
+   public FlatField makeFlatField(Set domainSet, Map<String, double[]> subset) throws Exception {
      FlatField f_field = null;
 
      Object range = readArray(subset);
@@ -190,49 +191,49 @@ public abstract class MultiDimensionAdapter {
      this.rangeProcessor = rangeProcessor;
    }
 
-   public float[] processRange(short[] range, Object subset) {
+   public float[] processRange(short[] range, Map<String, double[]> subset) {
      if (rangeProcessor == null) {
        float[] f_range = new float[range.length];
        for (int i=0; i<range.length;i++) f_range[i] = (float) range[i]; 
        return f_range;
      }
      else { 
-       return rangeProcessor.processRange(range, (HashMap)subset);
+       return rangeProcessor.processRange(range, subset);
      }
    }
 
-   public float[] processRange(byte[] range, Object subset) {
+   public float[] processRange(byte[] range, Map<String, double[]> subset) {
      if (rangeProcessor == null) {
        float[] f_range = new float[range.length];
        for (int i=0; i<range.length;i++) f_range[i] = (float) range[i];
        return f_range;
      }
      else {
-       return rangeProcessor.processRange(range, (HashMap)subset);
+       return rangeProcessor.processRange(range, subset);
      }
    }
 
-   public float[] processRange(float[] range, Object subset) {
+   public float[] processRange(float[] range, Map<String, double[]> subset) {
      if (rangeProcessor == null) {
        return range;
      }
      else {
-       return rangeProcessor.processRange(range, (HashMap)subset);
+       return rangeProcessor.processRange(range, subset);
      }
    }
 
-   public double[] processRange(double[] range, Object subset) {
+   public double[] processRange(double[] range, Map<String, double[]> subset) {
      if (rangeProcessor == null) {
        return range;
      }
      else {
-       return rangeProcessor.processRange(range, (HashMap)subset);
+       return rangeProcessor.processRange(range, subset);
      }
    }
 
 
-   public Object readArray(Object subset) throws Exception {
-     Subset select = getIndexes((HashMap)subset);
+   public Object readArray(Map<String, double[]> subset) throws Exception {
+     Subset select = getIndexes(subset);
      int[] start = select.getStart();
      int[] count = select.getCount();
      int[] stride = select.getStride();
@@ -244,7 +245,7 @@ public abstract class MultiDimensionAdapter {
      return reader;
    }
 
-   public Object getMetadata() {
+   public Map<String, Object> getMetadata() {
      return metadata;
    }
 
@@ -256,17 +257,17 @@ public abstract class MultiDimensionAdapter {
      return rangeType;
    }
    
-   public HashMap getSubsetFromLonLatRect(HashMap subset, double minLat, double maxLat,
-                                                          double minLon, double maxLon) {
+   public Map<String, double[]> getSubsetFromLonLatRect(Map<String, double[]> subset, double minLat, double maxLat,
+                                      double minLon, double maxLon) {
      return subset;
    }
 
-   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+   public Map<String, double[]> getSubsetFromLonLatRect(double minLat, double maxLat,
                                           double minLon, double maxLon) {
      return null;
    }
 
-   public HashMap getSubsetFromLonLatRect(double minLat, double maxLat,
+   public Map<String, double[]> getSubsetFromLonLatRect(double minLat, double maxLat,
                                           double minLon, double maxLon,
                                           int xStride, int yStride, int zStride) {
      return null;

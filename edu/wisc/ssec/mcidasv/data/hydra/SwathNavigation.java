@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import visad.CoordinateSystem;
 import visad.Gridded2DDoubleSet;
@@ -42,7 +43,7 @@ public class SwathNavigation implements Navigation  {
     String product_name = null;
     SwathNavigation swathNav = null;
     
-    product_name = (String) ((HashMap)swathAdapter.getMetadata()).get(SwathAdapter.product_name);
+    product_name = (String)swathAdapter.getMetadata().get(SwathAdapter.product_name);
 
     if (product_name == null) {
       swathNav = new SwathNavigation(swathAdapter);
@@ -91,7 +92,7 @@ public class SwathNavigation implements Navigation  {
 
   public SwathNavigation(SwathAdapter swathAdapter) throws Exception {
 
-    HashMap metadata = (HashMap) swathAdapter.getMetadata();
+    Map<String, Object> metadata = swathAdapter.getMetadata();
     reader = swathAdapter.getReader();
     this.swathAdapter = swathAdapter;
     track_idx = swathAdapter.track_idx;
@@ -102,7 +103,7 @@ public class SwathNavigation implements Navigation  {
 
     String[] lon_dim_names = null;
 
-    String[] lonDimNames = (String[]) metadata.get(SwathAdapter.lon_array_dimension_names);  
+    String[] lonDimNames = (String[])metadata.get(SwathAdapter.lon_array_dimension_names);
 
     if (lonDimNames != null) {
       lon_dim_names = lonDimNames;
@@ -119,8 +120,8 @@ public class SwathNavigation implements Navigation  {
     geo_start = new int[numDims];
 
 
-    String geo_track_name = (String) metadata.get(SwathAdapter.geo_track_name);
-    String geo_xtrack_name = (String) metadata.get(SwathAdapter.geo_xtrack_name);
+    String geo_track_name = (String)metadata.get(SwathAdapter.geo_track_name);
+    String geo_xtrack_name = (String)metadata.get(SwathAdapter.geo_xtrack_name);
 
     for (int k=0; k<numDims;k++) {
       if ( geo_track_name.equals(lon_dim_names[k]) ) {
@@ -143,36 +144,36 @@ public class SwathNavigation implements Navigation  {
     geoTrackLen  = lon_dim_lengths[geo_track_idx];
     geoXTrackLen = lon_dim_lengths[geo_xtrack_idx];
 
-    String str = (String) metadata.get(SwathAdapter.geo_track_skip_name);
+    String str = (String)metadata.get(SwathAdapter.geo_track_skip_name);
 
     if (str != null) {
       track_ratio = (float) Double.parseDouble(str);
       ratio = track_ratio;
     }
-    str = (String) metadata.get(SwathAdapter.geo_xtrack_skip_name);
+    str = (String)metadata.get(SwathAdapter.geo_xtrack_skip_name);
     if (str != null) {
       xtrack_ratio = (float) Double.parseDouble(str);
     }
-    str = (String) metadata.get(SwathAdapter.geo_track_offset_name);
+    str = (String)metadata.get(SwathAdapter.geo_track_offset_name);
     if (str != null) {
       track_offset = Double.parseDouble(str);
     }
-    str = (String) metadata.get(SwathAdapter.geo_xtrack_offset_name);
+    str = (String)metadata.get(SwathAdapter.geo_xtrack_offset_name);
     if (str != null) {
       xtrack_offset = Double.parseDouble(str);
     }
 
-    str = (String) metadata.get(SwathAdapter.geo_scale_name);
+    str = (String)metadata.get(SwathAdapter.geo_scale_name);
     if (str != null) {
       scale_name = str;
     }
 
-    str = (String) metadata.get(SwathAdapter.geo_offset_name);
+    str = (String)metadata.get(SwathAdapter.geo_offset_name);
     if (str != null) {
       offset_name = str;
     }
 
-    str = (String) metadata.get(SwathAdapter.geo_fillValue_name);
+    str = (String)metadata.get(SwathAdapter.geo_fillValue_name);
     if (str != null) {
       fillValue_name = str;
     }
@@ -180,12 +181,12 @@ public class SwathNavigation implements Navigation  {
     type = reader.getArrayType(lon_array_name);
   }
 
-  public CoordinateSystem getVisADCoordinateSystem(Linear2DSet domainSet, Object domainSubset) throws Exception
+  public CoordinateSystem getVisADCoordinateSystem(Linear2DSet domainSet, Map<String, double[]> domainSubset) throws Exception
   {
-      Subset select = swathAdapter.getIndexes((HashMap)domainSubset);
+      Subset select = swathAdapter.getIndexes(domainSubset);
 
-      double[] track_coords = (double[]) ((HashMap)domainSubset).get(SwathAdapter.track_name);
-      double[] xtrack_coords = (double[]) ((HashMap)domainSubset).get(SwathAdapter.xtrack_name);
+      double[] track_coords = domainSubset.get(SwathAdapter.track_name);
+      double[] xtrack_coords = domainSubset.get(SwathAdapter.xtrack_name);
       
       int[] stride = new int[numDims];
       stride[geo_track_idx] = (int) track_coords[2];
@@ -298,7 +299,7 @@ public class SwathNavigation implements Navigation  {
     }
     else if (type == Short.TYPE) {
       short[] values = reader.getShortArray(lon_array_name, geo_start, geo_count, geo_stride);
-      HashMap metadata = new HashMap();
+      Map<String, Object> metadata = new HashMap<>();
       metadata.put(SwathAdapter.array_name, lon_array_name);
       metadata.put(SwathAdapter.scale_name, scale_name);
       metadata.put(SwathAdapter.offset_name, offset_name);
@@ -307,7 +308,7 @@ public class SwathNavigation implements Navigation  {
       float[] lonValues = rangeProcessor.processRange(values, null);
       
       values = reader.getShortArray(lat_array_name, geo_start, geo_count, geo_stride);
-      metadata = new HashMap();
+      metadata = new HashMap<>();
       metadata.put(SwathAdapter.array_name, lat_array_name);
       metadata.put(SwathAdapter.scale_name, scale_name);
       metadata.put(SwathAdapter.offset_name, offset_name);

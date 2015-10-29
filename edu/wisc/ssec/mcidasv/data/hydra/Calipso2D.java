@@ -46,6 +46,7 @@ import java.rmi.RemoteException;
 
 import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import java.io.BufferedReader;
@@ -62,13 +63,13 @@ public class Calipso2D extends ProfileAlongTrack {
       public Calipso2D() {
       }
 
-      public Calipso2D(MultiDimensionReader reader, HashMap metadata, boolean isVertTypeAlt) {
+      public Calipso2D(MultiDimensionReader reader, Map<String, Object> metadata, boolean isVertTypeAlt) {
         super(reader, metadata, isVertTypeAlt);
       }
 
-      public Calipso2D(MultiDimensionReader reader, HashMap metadata) {
+      public Calipso2D(MultiDimensionReader reader, Map<String, Object> metadata) {
         super(reader, metadata);
-        HashMap table = ProfileAlongTrack.getEmptyMetadataTable();
+        Map<String, Object> table = ProfileAlongTrack.getEmptyMetadataTable();
         table.put(ProfileAlongTrack.array_name, "Surface_Elevation");
       }
 
@@ -143,7 +144,7 @@ public class Calipso2D extends ProfileAlongTrack {
         return timeType;
       }
 
-      public FlatField getData(Object subset) throws Exception {
+      public FlatField getData(Map<String, double[]> subset) throws Exception {
         FlatField field = super.getData(subset);
         return field;
       }
