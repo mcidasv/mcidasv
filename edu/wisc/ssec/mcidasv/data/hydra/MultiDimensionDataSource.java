@@ -152,7 +152,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
         try {
           setup();
         } catch (Exception e) {
-          logger.error("could not set up MultiDimensionDataSource", e);
           throw new VisADException("could not set up MultiDimensionDataSource", e);
         }
     }

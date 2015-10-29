@@ -162,8 +162,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
           setup();
         }
         catch (Exception e) {
-          e.printStackTrace();
-          throw new VisADException();
+          throw new VisADException("could not set up data source", e);
         }
     }
 
@@ -362,7 +361,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         	 try {
         		 reader = new GranuleAggregation(ncdfal, products, "10*nscans", "2*nscans", "Max_EV_frames");
         	 } catch (Exception e) {
-        		 throw new VisADException("Unable to initialize aggregation reader");
+        		 throw new VisADException("Unable to initialize aggregation reader", e);
         	 }
          }
 
@@ -548,7 +547,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         	 try {
         		 reader = new GranuleAggregation(ncdfal, products, "40*nscans", "10*nscans", "4*Max_EV_frames");
         	 } catch (Exception e) {
-        		 throw new VisADException("Unable to initialize aggregation reader");
+        		 throw new VisADException("Unable to initialize aggregation reader", e);
         	 }
          }
          swathAdapter = new SwathAdapter(reader, table);
@@ -614,7 +613,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         	 try {
         		 reader = new GranuleAggregation(ncdfal, products, "20*nscans", "10*nscans", "2*Max_EV_frames");
         	 } catch (Exception e) {
-        		 throw new VisADException("Unable to initialize aggregation reader");
+        		 throw new VisADException("Unable to initialize aggregation reader", e);
         	 }
          }
 

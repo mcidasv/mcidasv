@@ -402,7 +402,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     												nppPP.addMetaDataFromFile(productProfileFileName);
     											} catch (Exception nppppe) {
     												logger.error("Error parsing XML Product Profile: " + productProfileFileName);
-    												throw new Exception("XML Product Profile Error");
+    												throw new Exception("XML Product Profile Error", nppppe);
     											}
     										}
     									}
@@ -943,11 +943,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		}
     		
     	} catch (Exception e) {
-    		logger.error("cannot create NetCDF reader for files selected");
+    		logger.error("cannot create NetCDF reader for files selected", e);
     		if (e.getMessage() != null && e.getMessage().equals("XML Product Profile Error")) {
-    			throw new VisADException("Unable to extract metadata from required XML Product Profile");
+    			throw new VisADException("Unable to extract metadata from required XML Product Profile", e);
     		}
-    		e.printStackTrace();
     	}
     	
     	// initialize the aggregation reader object
@@ -955,7 +954,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack", isEDR);
     		((GranuleAggregation) nppAggReader).setQfMap(qfMap);
     	} catch (Exception e) {
-    		throw new VisADException("Unable to initialize aggregation reader");
+    		throw new VisADException("Unable to initialize aggregation reader", e);
     	}
 
     	// make sure we found valid data
