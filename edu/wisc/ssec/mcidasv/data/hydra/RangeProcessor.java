@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,14 +53,14 @@ public class RangeProcessor {
 		if (metadata.get("scale_name") == null) {
 			String product_name = (String) metadata
 					.get(SwathAdapter.product_name);
-			if (product_name == "IASI_L1C_xxx") {
+			if (Objects.equals(product_name, "IASI_L1C_xxx")) {
 				return new IASI_RangeProcessor();
 			}
 			return null;
 		} else {
 			String product_name = (String) metadata
 					.get(ProfileAlongTrack.product_name);
-			if (product_name == "2B-GEOPROF") {
+			if (Objects.equals(product_name, "2B-GEOPROF")) {
 				return new CloudSat_2B_GEOPROF_RangeProcessor(reader, metadata);
 			} else {
 				return new RangeProcessor(reader, metadata);

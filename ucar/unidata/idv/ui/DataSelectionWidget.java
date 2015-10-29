@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -1190,7 +1191,7 @@ public class DataSelectionWidget {
         int  ssize    = selected.size();
         for (int i = 0; i < ssize; i++) {
             TwoFacedObject to = (TwoFacedObject) selected.get(i);
-            if (to.getLabel() == "All Members") {
+            if (Objects.equals(to.getLabel(), "All Members")) {
                 return Misc.getIndexList(members, members);
             }
         }

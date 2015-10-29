@@ -1561,7 +1561,7 @@ public class AddeImageAdvancedPanel extends DataSelectionComponent {
                             AddeImageURL.KEY_LINEELE, locateValue);
                 }
 
-                if (getPlace() == "CENTER") {
+                if (Objects.equals(getPlace(), "CENTER")) {
                     source = AddeImageDataSource.replaceKey(source,
                             AddeImageURL.KEY_PLACE, "CENTER");
                 } else {

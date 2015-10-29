@@ -36,6 +36,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.swing.JEditorPane;
@@ -449,7 +450,7 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
                 if (line.matches(".*McIDAS-V_\\d+\\.\\d+.*")) {
                     line = line.substring(line.indexOf("McIDAS-V_")+9);
                     String aVersion = line.substring(0, line.indexOf("_"));
-                    if (version == "") {
+                    if (version.isEmpty()) {
                         version = aVersion;
                     }
                     else {

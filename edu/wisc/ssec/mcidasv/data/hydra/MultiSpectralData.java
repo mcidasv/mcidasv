@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import visad.CoordinateSystem;
 import visad.FlatField;
@@ -190,7 +191,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
       new_image = new FlatField(new_type, image.getDomainSet());
       float[][] values = image.getFloats(false);
       float[] bt_values = values[0];
-      if (inputParamName == "Radiance") {
+      if (Objects.equals(inputParamName, "Radiance")) {
         bt_values = radianceToBrightnessTemp(values[0], channel, platformName, sensorName);
       }
       new_image.setSamples(new float[][] {bt_values}, false);
@@ -216,7 +217,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
       float[][] channels = ((SampledSet)spectrum.getDomainSet()).getSamples(false);
       float[][] values = spectrum.getFloats(false);
       float[] bt_values = values[0];
-      if (inputParamName == "Radiance") {
+      if (Objects.equals(inputParamName, "Radiance")) {
         bt_values = radianceToBrightnessTempSpectrum(values[0], channels[0], platformName, sensorName);
       }
       new_spectrum = new FlatField(new_type, spectrum.getDomainSet());
@@ -670,7 +671,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     if (sensorName == null) {
       new_values = radianceToBrightnessTemp(values, channelValue);
     }
-    else if (sensorName == "MODIS") {
+    else if (Objects.equals(sensorName, "MODIS")) {
       int channelIndex = spectrumAdapter.getChannelIndexFromWavenumber(channelValue);
       int band_number = MODIS_L1B_Utility.emissive_indexToBandNumber(channelIndex);
       new_values = MODIS_L1B_Utility.modis_radiance_to_brightnessTemp(platformName, band_number, values);
@@ -713,7 +714,7 @@ public class MultiSpectralData extends MultiDimensionAdapter {
     if (sensorName == null) {
       new_values =  radianceToBrightnessTempSpectrum(values, channelValues);
     }
-    else if (sensorName == "MODIS") {
+    else if (Objects.equals(sensorName, "MODIS")) {
       new_values = new float[values.length];
       for (int k=0; k<new_values.length; k++) {
         int channelIndex = spectrumAdapter.getChannelIndexFromWavenumber(channelValues[k]);

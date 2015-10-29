@@ -37,6 +37,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.JComboBox;
@@ -121,15 +122,15 @@ public class HRITChooser extends FileChooser {
     }
     
     public class ImageTypeChooser extends JComboBox implements ActionListener, PropertyChangeListener {
-    	
-		private static final long serialVersionUID = 1L;
-		JFileChooser jfc = null;
+
+        private static final long serialVersionUID = 1L;
+        JFileChooser jfc = null;
         
-    	public ImageTypeChooser(JFileChooser fc, String path) {
-    		jfc = fc;
+        public ImageTypeChooser(JFileChooser fc, String path) {
+            jfc = fc;
             Vector<String> availableTypes = getAvailableHRITTypes(path);
-            if (availableTypes.size() == 1 && availableTypes.get(0) == ".") {
-            	availableTypes.removeAllElements();
+            if (availableTypes.size() == 1 && Objects.equals(availableTypes.get(0), ".")) {
+                availableTypes.removeAllElements();
             }
             reloadComboBox(availableTypes);
             addActionListener(this);
@@ -145,20 +146,19 @@ public class HRITChooser extends FileChooser {
         }
         
         public void reloadComboBox(Vector<String> v) {
-        	removeAllItems();
-        	if (v != null) {
-        		for (int i = 0; i < v.size(); i++) {
-        			addItem(v.get(i));
-        		}
-        	}
-        	if (v == null || v.size() == 0) {
-        		setEnabled(false);
-        		channelLabel.setEnabled(false);
-        	}
-        	else {
-        		setEnabled(true);
-        		channelLabel.setEnabled(true);
-        	}
+            removeAllItems();
+            if (v != null) {
+                for (int i = 0; i < v.size(); i++) {
+                    addItem(v.get(i));
+                }
+            }
+            if (v == null || v.size() == 0) {
+                setEnabled(false);
+                channelLabel.setEnabled(false);
+            } else {
+                setEnabled(true);
+                channelLabel.setEnabled(true);
+            }
         }
         
         public void propertyChange(PropertyChangeEvent e) {
@@ -166,8 +166,8 @@ public class HRITChooser extends FileChooser {
 
             // If the directory changed, reload the combo box with new image type choices.
             if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(prop)) {
-            	Vector<String> availableTypes = getAvailableHRITTypes(jfc.getCurrentDirectory().getPath());
-            	reloadComboBox(availableTypes);
+                Vector<String> availableTypes = getAvailableHRITTypes(jfc.getCurrentDirectory().getPath());
+                reloadComboBox(availableTypes);
             }
 
         }

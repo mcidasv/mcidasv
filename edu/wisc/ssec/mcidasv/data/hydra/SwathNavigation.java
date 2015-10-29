@@ -30,6 +30,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import visad.CoordinateSystem;
 import visad.Gridded2DDoubleSet;
@@ -48,10 +49,10 @@ public class SwathNavigation implements Navigation  {
     if (product_name == null) {
       swathNav = new SwathNavigation(swathAdapter);
     }
-    else if (product_name == "IASI_L1C_xxx") {
+    else if (Objects.equals(product_name, "IASI_L1C_xxx")) {
       swathNav = new IASI_L1C_LonLatNavigation(swathAdapter);
     }
-    else if (product_name == "CrIS_SDR") {
+    else if (Objects.equals(product_name, "CrIS_SDR")) {
       swathNav = new CrIS_SDR_LonLatNavigation(swathAdapter);
     }
     else {
