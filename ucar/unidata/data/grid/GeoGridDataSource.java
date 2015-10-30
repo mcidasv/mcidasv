@@ -29,7 +29,9 @@
 package ucar.unidata.data.grid;
 
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -59,6 +61,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 import edu.wisc.ssec.mcidasv.data.BadNetCDFWidget;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -67,7 +70,6 @@ import ucar.ma2.InvalidRangeException;
 import ucar.ma2.Range;
 import ucar.nc2.Attribute;
 import ucar.nc2.Group;
-import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.NetcdfFileWriter.Version;
 import ucar.nc2.Variable;
@@ -119,6 +121,7 @@ import ucar.unidata.util.WrapperException;
 import ucar.unidata.xml.XmlUtil;
 import ucar.visad.Util;
 import ucar.visad.data.CalendarDateTime;
+
 import visad.Data;
 import visad.DateTime;
 import visad.FieldImpl;
@@ -126,7 +129,6 @@ import visad.Real;
 import visad.VisADException;
 import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
-
 
 /**
  * Handles gridded files
@@ -831,18 +833,29 @@ public class GeoGridDataSource extends GridDataSource {
                 }
             }
         });
-        List        catComps = new ArrayList();
+
         JTabbedPane tab      = new JTabbedPane(JTabbedPane.LEFT);
 
         for (int i = 0; i < categories.size(); i++) {
             List comps = (List) catMap.get(categories.get(i));
+            JPanel labelPanel = new JPanel(new BorderLayout());
+            JPanel leftLabelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            leftLabelPanel.add(new JLabel("Field Name"));
+            JPanel rightLabelPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            rightLabelPanel.add(new JLabel("Grid Size (Points)"));
+            labelPanel.add(leftLabelPanel, BorderLayout.WEST);
+            labelPanel.add(rightLabelPanel, BorderLayout.EAST);
+
             JPanel innerPanel = GuiUtils.doLayout(comps, 3, GuiUtils.WT_NYN,
                                     GuiUtils.WT_N);
-            JScrollPane sp = new JScrollPane(GuiUtils.top(innerPanel));
+            JPanel labeledInnerPanel = new JPanel(new BorderLayout());
+            labeledInnerPanel.add(labelPanel, BorderLayout.NORTH);
+            labeledInnerPanel.add(innerPanel, BorderLayout.CENTER);
+            JScrollPane sp = new JScrollPane(GuiUtils.top(labeledInnerPanel));
             sp.setPreferredSize(new Dimension(500, 400));
-            JPanel top =
-                GuiUtils.right(GuiUtils.rLabel("Grid Size (Points)  "));
-            JComponent inner = GuiUtils.inset(GuiUtils.topCenter(top, sp), 5);
+            // JPanel top =
+            //    GuiUtils.right(GuiUtils.rLabel("Grid Size (Points)  "));
+            JComponent inner = GuiUtils.inset(GuiUtils.center(sp), 5);
             tab.addTab(categories.get(i).toString(), inner);
             //            catComps.add();
         }
