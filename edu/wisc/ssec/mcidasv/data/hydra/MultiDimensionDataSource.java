@@ -50,6 +50,7 @@ import javax.swing.JTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.Variable;
 import visad.CellImpl;
 import visad.Data;
 import visad.FlatField;
@@ -995,12 +996,17 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     private String getVariableDimensionName(String variableName, int dimension) {
         NetcdfFile ncfile = ((NetCDFFile)reader).getNetCDFFile();
-        ucar.nc2.Variable v = ncfile.findVariable(variableName);
+        Variable v = ncfile.findVariable(variableName);
         String name = null;
         if (v != null) {
             name = v.getDimension(dimension).getFullName();
         }
         return name;
+    }
+
+    private boolean hasVariable(String variableName) {
+        NetcdfFile ncfile = ((NetCDFFile)reader).getNetCDFFile();
+        return ncfile.findVariable(variableName) != null;
     }
 
     private ArrayAdapter createTrackVertArrayAdapter(String variableName) {
