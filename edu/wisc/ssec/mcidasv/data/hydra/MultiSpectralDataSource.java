@@ -1253,7 +1253,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
      int nSwths = swaths.length;
      boolean equalDom = true;
      for (int k=1; k<nSwths; k++) {
-        if (!(swaths[0].getDomainSet().equals(swaths[k]))) {
+        if (!(swaths[0].getDomainSet().equals(swaths[k].getDomainSet()))) {
            equalDom = false;
            break;
         }
