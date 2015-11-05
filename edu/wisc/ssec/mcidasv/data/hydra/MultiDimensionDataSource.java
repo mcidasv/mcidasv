@@ -1043,7 +1043,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     private boolean hasVariable(String variableName) {
         NetcdfFile ncfile = ((NetCDFFile) reader).getNetCDFFile();
-        System.err.println("hasVar: " + ncfile.findVariable(variableName));
         return ncfile.findVariable(variableName) != null;
     }
 
