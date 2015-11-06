@@ -28,21 +28,24 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.Displayable;
-
-
-import visad.*;
-import visad.java2d.*;
-
-import visad.java3d.*;
-
-import visad.bom.*;
-
 import java.rmi.RemoteException;
 
-import java.awt.event.InputEvent;
+import ucar.visad.display.Displayable;
+import ucar.visad.display.LineDrawing;
 
+import visad.DataRenderer;
+import visad.Gridded2DSet;
+import visad.LocalDisplay;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SetType;
+import visad.UnionSet;
+import visad.VisADException;
+import visad.bom.CurveManipulationRendererJ2D;
+import visad.bom.CurveManipulationRendererJ3D;
+import visad.java2d.DefaultRendererJ2D;
+import visad.java2d.DisplayRendererJ2D;
+import visad.java3d.DefaultRendererJ3D;
 
 /**
  * Provides support for a Displayable that comprises a set of
@@ -75,9 +78,6 @@ public class CurveDrawer extends LineDrawing {
 
     /** mask for mouse events */
     private int mask;
-
-    /** data renderer */
-    private DataRenderer curver;
 
     /**
      * Construct a CurveDrawer using xType as the X coordinate and
@@ -274,8 +274,3 @@ public class CurveDrawer extends LineDrawing {
                  : (DataRenderer) new DefaultRendererJ3D();
     }
 }
-
-
-
-
-
