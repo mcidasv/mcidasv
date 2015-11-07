@@ -96,7 +96,7 @@ public class DataCacheManager  implements Runnable {
                                                  CacheInfo>();
 
   /** a mutex */
-  private Object MUTEX = new Object();
+  private final Object MUTEX = new Object();
 
   /** Total number of bytes in memory */
   private int totalSize = 0;
@@ -385,7 +385,7 @@ public class DataCacheManager  implements Runnable {
    *
    * @return  Sorted list of cacheinfos
    */
-  private List<CacheInfo> getCacheInfos() {
+  public List<CacheInfo> getCacheInfos() {
     synchronized (MUTEX) {
       List<CacheInfo> infos = new ArrayList<CacheInfo>();
       for (Enumeration keys = cache.keys(); keys.hasMoreElements(); ) {
