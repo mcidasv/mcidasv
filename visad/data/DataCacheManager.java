@@ -327,6 +327,20 @@ public class DataCacheManager  implements Runnable {
     }
 
 
+    /**
+     * Clear the cache.
+     *
+     * <p>Note: this method does not flush to disk, nor does it call
+     * {@link Runtime#gc()}.</p>
+     */
+    public void clearCache() {
+        synchronized (MUTEX) {
+            for (CacheInfo info : getCacheInfos()) {
+                removeFromCache(info);
+            }
+        }
+    }
+
   /**
    * If this cacheinfo has never been written to disk then write it
    * null out the data reference
