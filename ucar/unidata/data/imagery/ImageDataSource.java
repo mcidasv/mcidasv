@@ -33,6 +33,8 @@ import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
 import edu.wisc.ssec.mcidas.AreaFileException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
@@ -64,6 +66,7 @@ import visad.RealType;
 import visad.Set;
 import visad.VisADException;
 
+import visad.data.DataCacheManager;
 import visad.data.DataRange;
 import visad.data.mcidas.AreaAdapter;
 
@@ -1944,11 +1947,12 @@ public abstract class ImageDataSource extends DataSourceImpl {
      */
     public void doRemove() {
         super.doRemove();
+        DataCacheManager.getCacheManager().clearCache();
         myDataChoices         = null;
         myCompositeDataChoice = null;
         imageTimes            = null;
         currentDirs           = null;
     }
 
-
+    private static final Logger logger = LoggerFactory.getLogger(ImageDataSource.class);
 }
