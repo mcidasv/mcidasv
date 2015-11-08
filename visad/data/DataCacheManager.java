@@ -1,7 +1,3 @@
-//
-// DataCacheManager
-//
-
 /*
  * VisAD system for interactive analysis and visualization of numerical
  * data.  Copyright (C) 1996 - 2015 Bill Hibbard, Curtis Rueden, Tom
@@ -24,11 +20,15 @@
  * MA 02111-1307, USA
  */
 
-
 package visad.data;
 
-
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,49 +37,43 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import java.awt.*;
-import javax.swing.*;
-
-
 /**
  * This provides a global cache for primitive array data
- * You access it via the singelton:<pre>
-     DataCacheManager.getCacheManager()
-</pre>
-* Client objects can store their data with:<pre>
-  Object cacheId = DataCacheManager.getCacheManager().addToCache(theData);
-</pre>
+ * You access it as a singleton via {@code DataCacheManager.getCacheManager()}.
+ *
+ * Client objects can store their data with:<pre>
+ *  Object cacheId = DataCacheManager.getCacheManager().addToCache(theData);
+ * </pre>
  * Where data can be 1D or  2D byte/float/int/double arrays
  * If the data changes then update the cache with:<pre>
-        DataCacheManager.getCacheManager().updateData(cacheId, newData);
-</pre>
+ *       DataCacheManager.getCacheManager().updateData(cacheId, newData);
+ * </pre>
  * When the client object is finalized or is finished with the data call:<pre>
-        DataCacheManager.getCacheManager().removeFromCache(cacheId);
-</pre>
+ *       DataCacheManager.getCacheManager().removeFromCache(cacheId);
+ * </pre>
  * When you want to access the data use one of:<pre>
-      DataCacheManager.getCacheManager().getByteArray1D(cacheId); 
-      DataCacheManager.getCacheManager().getByteArray2D(cacheId); 
-      DataCacheManager.getCacheManager().getFloatArray1D(cacheId); 
-      DataCacheManager.getCacheManager().getFloatArray2D(cacheId); 
-      DataCacheManager.getCacheManager().getShortArray1D(cacheId); 
-      DataCacheManager.getCacheManager().getShortArray2D(cacheId); 
-      DataCacheManager.getCacheManager().getIntArray1D(cacheId); 
-      DataCacheManager.getCacheManager().getIntArray2D(cacheId); 
-      DataCacheManager.getCacheManager().getDoubleArray1D(cacheId); 
-      DataCacheManager.getCacheManager().getDoubleArray2D(cacheId); 
-</pre>
-
-* The cachemanager will keep the data arrays in memory until the total size is greater than getMaxSize(). Then it will serialize the data arrays in a least recently used manner until the totalSize less than the max size.
+ *    DataCacheManager.getCacheManager().getByteArray1D(cacheId);
+ *    DataCacheManager.getCacheManager().getByteArray2D(cacheId);
+ *    DataCacheManager.getCacheManager().getFloatArray1D(cacheId);
+ *    DataCacheManager.getCacheManager().getFloatArray2D(cacheId);
+ *    DataCacheManager.getCacheManager().getShortArray1D(cacheId);
+ *    DataCacheManager.getCacheManager().getShortArray2D(cacheId);
+ *    DataCacheManager.getCacheManager().getIntArray1D(cacheId);
+ *    DataCacheManager.getCacheManager().getIntArray2D(cacheId);
+ *    DataCacheManager.getCacheManager().getDoubleArray1D(cacheId);
+ *    DataCacheManager.getCacheManager().getDoubleArray2D(cacheId);
+ * </pre>
+ *
+ * The cachemanager will keep the data arrays in memory until the total size
+ * is greater than getMaxSize(). Then it will serialize the data arrays in a
+ * least recently used manner until the totalSize less than the max size.
  */
-
 public class DataCacheManager  implements Runnable {
 
-
- private double memoryPercentage = 0.25;    
+  private double memoryPercentage = 0.25;
 
   /** the singleton */
   private static DataCacheManager cacheManager;
-
 
   /** Where to store the cached data */
   private File cacheDir;
@@ -89,7 +83,6 @@ public class DataCacheManager  implements Runnable {
 
   /** for unique ids */
   private long baseTime;
-
 
   /** The cache */
   private Hashtable<Object, CacheInfo> cache = new Hashtable<Object,
@@ -103,22 +96,19 @@ public class DataCacheManager  implements Runnable {
 
   private boolean running = false;
 
-
-
   /**
    * ctor
    */
   private DataCacheManager() {
     baseTime = System.currentTimeMillis();
     try {
-        //Start  the cache monitor in a thread
-        Thread t = new Thread(this);
-        t.start();
+      //Start  the cache monitor in a thread
+      Thread t = new Thread(this);
+      t.start();
     } catch(Exception exc) {
-        throw new RuntimeException(exc);
+      throw new RuntimeException(exc);
     }
   }
-
 
   /**
    * The singleton access
@@ -132,24 +122,20 @@ public class DataCacheManager  implements Runnable {
     return cacheManager;
   }
 
-
-
-
-    public void run() {
-        if(running) return;
-        running= true;
-        try {
-            while(true) {
-                Thread.currentThread().sleep(5000);
-                checkCache();
-            }
-        } catch(Exception exc) {
-            System.err.println ("Error in DataCacheManager:");
-            exc.printStackTrace();
-        }
-        running =false;
+  public void run() {
+    if(running) return;
+    running= true;
+    try {
+      while (true) {
+        Thread.currentThread().sleep(5000);
+        checkCache();
+      }
+    } catch(Exception exc) {
+      System.err.println ("Error in DataCacheManager:");
+      exc.printStackTrace();
     }
-
+    running =false;
+  }
 
   /**
    * set the directory to write files to
@@ -159,7 +145,6 @@ public class DataCacheManager  implements Runnable {
   public void setCacheDir(File f) {
     this.cacheDir = f;
   }
-
 
   /**
    * get the cache dir. If it was not set then default to current directory
@@ -182,7 +167,6 @@ public class DataCacheManager  implements Runnable {
     return "data_" + baseTime + "_" + (idCnt++);
   }
 
-
   /**
    * Add the data to the cache
    *
@@ -191,20 +175,18 @@ public class DataCacheManager  implements Runnable {
    *
    * @return the unique id
    */
-    private Object addToCache(String what, Object data, int type, boolean removeIfNeeded) {
+  private Object addToCache(String what, Object data, int type, boolean removeIfNeeded) {
     synchronized (MUTEX) {
-        CacheInfo info = new CacheInfo(this, getId(), data, type, removeIfNeeded);
-      if(what!=null) info.what = what;
+      CacheInfo info = new CacheInfo(this, getId(), data, type, removeIfNeeded);
+      if (what != null) {
+        info.what = what;
+      }
       cache.put(info.getId(), info);
       totalSize += info.getSize();
       checkCache();
       return info.getId();
     }
   }
-
-
-
-
 
   /**
    * the data has changed for the given cache id
@@ -214,16 +196,16 @@ public class DataCacheManager  implements Runnable {
    */
   public void updateData(Object cacheId, Object data) {
     synchronized (MUTEX) {
-        //      if(cacheId == null)
-        //          return addToCache(data, findType(data));
-        CacheInfo info = cache.get(cacheId);
+      //      if(cacheId == null)
+      //          return addToCache(data, findType(data));
+      CacheInfo info = cache.get(cacheId);
 //      if(info==null) {
 //        return addToCache(data);
 //      }
 
       int oldSize = info.data != null
-                    ? info.getSize()
-                    : 0;
+                  ? info.getSize()
+                  : 0;
       info.setData(data);
       int newSize = info.getSize();
       totalSize -= oldSize;
@@ -232,35 +214,39 @@ public class DataCacheManager  implements Runnable {
     }
   }
 
-    public boolean inMemory(Object cacheId) {
-        synchronized (MUTEX) {
-        CacheInfo info =  cache.get(cacheId);
-        if(info == null)return false;
-        info.dataAccessed();
-        return (info.data!=null);
-        }
+  public boolean inMemory(Object cacheId) {
+    synchronized (MUTEX) {
+      CacheInfo info =  cache.get(cacheId);
+      if (info == null) {
+        return false;
+      }
+      info.dataAccessed();
+      return (info.data!=null);
     }
-
-
+  }
 
   /**
-   * 
+   *
    *
    * @param cacheId  the cache id
    *
-   * @return 
+   * @return
    */
   private Object getData(Object cacheId) {
     CacheInfo info = null;
     Object data = null;
     synchronized (MUTEX) {
       info = cache.get(cacheId);
-      if (info == null) return null;
+      if (info == null) {
+        return null;
+      }
       data = info.data;
       info.dataAccessed();
-      if (data != null) return data;
+      if (data != null) {
+        return data;
+      }
       try {
-          long t1 = System.currentTimeMillis();
+        long t1 = System.currentTimeMillis();
         FileInputStream fis = new FileInputStream(info.cacheFile);
         BufferedInputStream bis = new BufferedInputStream(fis,100000);
         ObjectInputStream ois = new ObjectInputStream(bis);
@@ -281,65 +267,58 @@ public class DataCacheManager  implements Runnable {
     }
   }
 
-    public  File getCacheFile() {
-        return new File(getCacheDir() + "/" + getId() + ".dat");
-    }
-
-
-
-
-
+  public  File getCacheFile() {
+    return new File(getCacheDir() + "/" + getId() + ".dat");
+  }
 
   /**
-   * Remove the  item from the cache 
+   * Remove the  item from the cache
    *
-   * @param cacheId  the cache id 
+   * @param cacheId  the cache id
    */
   public void removeFromCache(Object cacheId) {
     synchronized (MUTEX) {
-        removeFromCache(cache.get(cacheId));
+      removeFromCache(cache.get(cacheId));
     }
   }
 
 
-    private  void removeFromCache(CacheInfo info) {
-        if (info == null) {
-            return;
-        }
-        synchronized (MUTEX) {
-            if (info.data != null) {
-                info.data = null;
-                totalSize -= info.getSize();
-            }
-            cache.remove(info.id);
-            info.remove();
-        }
+  private  void removeFromCache(CacheInfo info) {
+    if (info == null) {
+      return;
     }
+    synchronized (MUTEX) {
+      if (info.data != null) {
+        info.data = null;
+        totalSize -= info.getSize();
+      }
+      cache.remove(info.id);
+      info.remove();
+    }
+  }
 
+  public void flushAllCachedData() {
+    synchronized (MUTEX) {
+      for (CacheInfo info : getCacheInfos()) {
+        flushCachedData(info);
+      }
+      Runtime.getRuntime().gc();
+    }
+  }
 
-    public void flushAllCachedData() {
-      synchronized (MUTEX) {
-          for (CacheInfo info : getCacheInfos()) {
-              flushCachedData(info);
-          }
-          Runtime.getRuntime().gc();
+  /**
+   * Clear the cache.
+   *
+   * <p>Note: this method does not flush to disk, nor does it call
+   * {@link Runtime#gc()}.</p>
+   */
+  public void clearCache() {
+    synchronized (MUTEX) {
+      for (CacheInfo info : getCacheInfos()) {
+        removeFromCache(info);
       }
     }
-
-
-    /**
-     * Clear the cache.
-     *
-     * <p>Note: this method does not flush to disk, nor does it call
-     * {@link Runtime#gc()}.</p>
-     */
-    public void clearCache() {
-        synchronized (MUTEX) {
-            for (CacheInfo info : getCacheInfos()) {
-                removeFromCache(info);
-            }
-        }
-    }
+  }
 
   /**
    * If this cacheinfo has never been written to disk then write it
@@ -350,16 +329,13 @@ public class DataCacheManager  implements Runnable {
   private void flushCachedData(CacheInfo info) {
     try {
       if (info.removeIfNeeded) {
-          removeFromCache(info);
-          return;
+        removeFromCache(info);
+        return;
       }
-
 
       if (info.data == null) {
         return;
       }
-
-
 
       if (!info.cacheFileGood) {
         FileOutputStream fos = new FileOutputStream(info.cacheFile);
@@ -372,13 +348,10 @@ public class DataCacheManager  implements Runnable {
       }
       info.data = null;
       totalSize -= info.getSize();
-    }
-    catch (Exception exc) {
+    } catch (Exception exc) {
       throw new RuntimeException(exc);
     }
-
   }
-
 
   /**
    * Get the list of sorted CacheInfo objects
@@ -387,7 +360,7 @@ public class DataCacheManager  implements Runnable {
    */
   public List<CacheInfo> getCacheInfos() {
     synchronized (MUTEX) {
-      List<CacheInfo> infos = new ArrayList<CacheInfo>();
+      List<CacheInfo> infos = new ArrayList<CacheInfo>(cache.size());
       for (Enumeration keys = cache.keys(); keys.hasMoreElements(); ) {
         CacheInfo info = cache.get(keys.nextElement());
         infos.add(info);
@@ -397,102 +370,91 @@ public class DataCacheManager  implements Runnable {
     }
   }
 
-
-
   public  void setMemoryPercent(double percentage) {
-      memoryPercentage = percentage;
-      checkCache();
+    memoryPercentage = percentage;
+    checkCache();
   }
 
   public int getMaxSize() {
-      return (int)(memoryPercentage*Runtime.getRuntime().maxMemory());
+    return (int)(memoryPercentage*Runtime.getRuntime().maxMemory());
   }
 
   /**
    *  Check if we are above the max size. If so then flush data from memory  until we are below the threshold
    */
     public  void checkCache() {
-        if (totalSize < getMaxSize()) {
-            return;
-        }
-        synchronized (MUTEX) {
-            //First do the volatile ones
-            for (CacheInfo info : getCacheInfos()) {
-                if(info.removeIfNeeded) {
-                    flushCachedData(info);
-                    if (totalSize <= getMaxSize()) {
-                        break;
-                    }
-                }
-            }
-
+      if (totalSize < getMaxSize()) {
+        return;
+      }
+      synchronized (MUTEX) {
+        //First do the volatile ones
+        for (CacheInfo info : getCacheInfos()) {
+          if(info.removeIfNeeded) {
+            flushCachedData(info);
             if (totalSize <= getMaxSize()) {
-                for (CacheInfo info : getCacheInfos()) {
-                    flushCachedData(info);
-                    if (totalSize <= getMaxSize()) {
-                        break;
-                    }
-                }
+              break;
             }
+          }
         }
+        if (totalSize <= getMaxSize()) {
+          for (CacheInfo info : getCacheInfos()) {
+            flushCachedData(info);
+            if (totalSize <= getMaxSize()) {
+              break;
+            }
+          }
+        }
+      }
     }
 
-
-
-
-
   /**
-   * Print out the cache statistics 
+   * Print out the cache statistics
    */
   public void printStats() {
-      System.err.println(getStats());
+    System.err.println(getStats());
   }
-
 
   public String getStats() {
     synchronized (MUTEX) {
-        StringBuffer sb = new StringBuffer();
-        int mb =(int)( getMaxSize()/(double)1000000.0);
-        int total =(int)( totalSize/(double)1000000.0);
-        sb.append("Cache total size:" + total +" MB   max size:" + mb +" MB  (" + (100*memoryPercentage)+"% of max memory)");
+      StringBuffer sb = new StringBuffer();
+      int mb =(int)( getMaxSize()/(double)1000000.0);
+      int total =(int)( totalSize/(double)1000000.0);
+      sb.append("Cache total size:" + total +" MB   max size:" + mb +" MB  (" + (100*memoryPercentage)+"% of max memory)");
+      sb.append("\n");
+      List<CacheInfo> infos= getCacheInfos();
+      if(infos.size()==0) {
+        sb.append("nothing in cache");
         sb.append("\n");
-        List<CacheInfo> infos= getCacheInfos();
-        if(infos.size()==0) {
-            sb.append("nothing in cache");
-            sb.append("\n");
-        } else {
-            sb.append("entry size/in cache/data access/cache miss/last touched");
-            sb.append("\n");
-            int cnt = 0;
-            for (CacheInfo info : infos) {
-                sb.append("   #" + (++cnt) +" ");
-                sb.append(info.toString());
-                /*
+      } else {
+        sb.append("entry size/in cache/data access/cache miss/last touched");
+        sb.append("\n");
+        int cnt = 0;
+        for (CacheInfo info : infos) {
+          sb.append("   #" + (++cnt) +" ");
+          sb.append(info.toString());
+          /*
                           "   #" + (++cnt) +" cache entry:" + info.getSize() + "   " + (info.data != null) +
                                    "   " + info.dataAccessedCnt + "   " + info.cacheMissedCnt + "   " +
                                    new Date(info.lastTime));
-                */
-                sb.append("\n");
+          */
+          sb.append('\n');
 
-                /*
-                sb.append("what:" + info.what);
-                sb.append("\n");
-                sb.append(info.where.substring(300));
-                sb.append("\n");
-                */
-            }
-
+          /*
+          sb.append("what:" + info.what);
+          sb.append("\n");
+          sb.append(info.where.substring(300));
+          sb.append("\n");
+          */
+        }
       }
-        return sb.toString();
+      return sb.toString();
     }
   }
 
-
   /**
    * make sure that the totalSize is the same as the cacheinfos - for debugging
- 
    *
-   * @param where 
+   * @param where
    */
   private void checkStats(String where) {
     synchronized (MUTEX) {
@@ -514,10 +476,8 @@ public class DataCacheManager  implements Runnable {
     }
   }
 
-
-
   /**
-   * Class CacheInfo 
+   * Class CacheInfo
    *
    *
    * @author IDV Development Team
@@ -560,14 +520,13 @@ public class DataCacheManager  implements Runnable {
 
     private boolean removeIfNeeded = false;
 
-
     /**
-     * 
      *
-     * @param cacheManager 
+     *
+     * @param cacheManager
      * @param cacheId  the cache id
-     * @param data 
-     * @param type 
+     * @param data
+     * @param type
      */
     public CacheInfo(DataCacheManager cacheManager, Object cacheId, Object data,
                      int type, boolean removeIfNeeded) {
@@ -582,9 +541,8 @@ public class DataCacheManager  implements Runnable {
       setData(data);
     }
 
-
     /**
-     * 
+     *
      */
     private void dataAccessed() {
       lastTime = System.currentTimeMillis();
@@ -592,16 +550,16 @@ public class DataCacheManager  implements Runnable {
     }
 
     /**
-     * 
+     *
      */
     private void cacheMissed() {
       cacheMissedCnt++;
     }
 
     /**
-     * 
      *
-     * @param data 
+     *
+     * @param data
      */
     private void setData(Object data) {
       lastTime = System.currentTimeMillis();
@@ -627,7 +585,7 @@ public class DataCacheManager  implements Runnable {
     /**
      * Compare this to another object
      *
-     * @param o 
+     * @param o
      *
      * @return  comparison
      */
@@ -636,69 +594,64 @@ public class DataCacheManager  implements Runnable {
       if (this.lastTime < that.lastTime) return -1;
       if (this.lastTime == that.lastTime) return 0;
       return 1;
-
     }
 
     /**
-     * 
      *
-     * @param data 
+     *
+     * @param data
      */
     private void setDataFromCache(Object data) {
       lastTime = System.currentTimeMillis();
       this.data = data;
     }
 
-
     /**
-     * 
+     *
      */
     private void remove() {
-        if(cacheFile!=null)
-            cacheFile.delete();
+      if (cacheFile != null) {
+        cacheFile.delete();
+      }
     }
 
     /**
-     * 
      *
-     * @return 
+     *
+     * @return
      */
     public int getSize() {
       return size;
     }
 
-
     /**
-     * 
      *
-     * @return 
+     *
+     * @return
      */
     public Object getId() {
       return id;
     }
   }
 
-
-/********
-  Begin generated access methods
-*****/
-private static final int TYPE_DOUBLE1D = 0;
-private static final int TYPE_FLOAT1D = 1;
-private static final int TYPE_INT1D = 2;
-private static final int TYPE_SHORT1D = 3;
-private static final int TYPE_BYTE1D = 4;
-private static final int TYPE_DOUBLE2D = 5;
-private static final int TYPE_FLOAT2D = 6;
-private static final int TYPE_INT2D = 7;
-private static final int TYPE_SHORT2D = 8;
-private static final int TYPE_BYTE2D = 9;
-private static final int TYPE_DOUBLE3D = 10;
-private static final int TYPE_FLOAT3D = 11;
-private static final int TYPE_INT3D = 12;
-private static final int TYPE_SHORT3D = 13;
-private static final int TYPE_BYTE3D = 14;
-
-
+  /********
+   Begin generated access methods
+   *****/
+  private static final int TYPE_DOUBLE1D = 0;
+  private static final int TYPE_FLOAT1D = 1;
+  private static final int TYPE_INT1D = 2;
+  private static final int TYPE_SHORT1D = 3;
+  private static final int TYPE_BYTE1D = 4;
+  private static final int TYPE_DOUBLE2D = 5;
+  private static final int TYPE_FLOAT2D = 6;
+  private static final int TYPE_INT2D = 7;
+  private static final int TYPE_SHORT2D = 8;
+  private static final int TYPE_BYTE2D = 9;
+  private static final int TYPE_DOUBLE3D = 10;
+  private static final int TYPE_FLOAT3D = 11;
+  private static final int TYPE_INT3D = 12;
+  private static final int TYPE_SHORT3D = 13;
+  private static final int TYPE_BYTE3D = 14;
 
   /**
    * get the value from the cache
@@ -707,9 +660,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public double[] getDoubleArray1D(Object cacheId) {
-        return (double[])getData(cacheId);
-    }
+  public double[] getDoubleArray1D(Object cacheId) {
+    return (double[])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -731,9 +684,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, double[] values) {
-      return addToCache(what, values, TYPE_DOUBLE1D, false);
+    return addToCache(what, values, TYPE_DOUBLE1D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -748,9 +701,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_DOUBLE1D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -758,9 +708,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public float[] getFloatArray1D(Object cacheId) {
-        return (float[])getData(cacheId);
-    }
+  public float[] getFloatArray1D(Object cacheId) {
+    return (float[])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -782,9 +732,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, float[] values) {
-      return addToCache(what, values, TYPE_FLOAT1D, false);
+    return addToCache(what, values, TYPE_FLOAT1D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -799,9 +749,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_FLOAT1D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -809,9 +756,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public int[] getIntArray1D(Object cacheId) {
-        return (int[])getData(cacheId);
-    }
+  public int[] getIntArray1D(Object cacheId) {
+    return (int[])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -833,9 +780,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, int[] values) {
-      return addToCache(what, values, TYPE_INT1D, false);
+    return addToCache(what, values, TYPE_INT1D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -850,9 +797,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_INT1D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -860,9 +804,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public short[] getShortArray1D(Object cacheId) {
-        return (short[])getData(cacheId);
-    }
+  public short[] getShortArray1D(Object cacheId) {
+    return (short[])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -884,9 +828,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, short[] values) {
-      return addToCache(what, values, TYPE_SHORT1D, false);
+    return addToCache(what, values, TYPE_SHORT1D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -901,9 +845,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_SHORT1D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -911,9 +852,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public byte[] getByteArray1D(Object cacheId) {
-        return (byte[])getData(cacheId);
-    }
+  public byte[] getByteArray1D(Object cacheId) {
+    return (byte[])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -935,9 +876,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, byte[] values) {
-      return addToCache(what, values, TYPE_BYTE1D, false);
+    return addToCache(what, values, TYPE_BYTE1D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -952,9 +893,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_BYTE1D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -962,9 +900,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public double[][] getDoubleArray2D(Object cacheId) {
-        return (double[][])getData(cacheId);
-    }
+  public double[][] getDoubleArray2D(Object cacheId) {
+    return (double[][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -986,9 +924,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, double[][] values) {
-      return addToCache(what, values, TYPE_DOUBLE2D, false);
+    return addToCache(what, values, TYPE_DOUBLE2D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1003,9 +941,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_DOUBLE2D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -1013,9 +948,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public float[][] getFloatArray2D(Object cacheId) {
-        return (float[][])getData(cacheId);
-    }
+  public float[][] getFloatArray2D(Object cacheId) {
+    return (float[][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -1037,9 +972,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, float[][] values) {
-      return addToCache(what, values, TYPE_FLOAT2D, false);
+    return addToCache(what, values, TYPE_FLOAT2D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1054,9 +989,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_FLOAT2D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -1064,9 +996,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public int[][] getIntArray2D(Object cacheId) {
-        return (int[][])getData(cacheId);
-    }
+  public int[][] getIntArray2D(Object cacheId) {
+    return (int[][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -1088,9 +1020,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, int[][] values) {
-      return addToCache(what, values, TYPE_INT2D, false);
+    return addToCache(what, values, TYPE_INT2D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1105,9 +1037,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_INT2D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -1115,9 +1044,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public short[][] getShortArray2D(Object cacheId) {
-        return (short[][])getData(cacheId);
-    }
+  public short[][] getShortArray2D(Object cacheId) {
+    return (short[][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -1139,9 +1068,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, short[][] values) {
-      return addToCache(what, values, TYPE_SHORT2D, false);
+    return addToCache(what, values, TYPE_SHORT2D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1156,9 +1085,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_SHORT2D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -1166,9 +1092,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public byte[][] getByteArray2D(Object cacheId) {
-        return (byte[][])getData(cacheId);
-    }
+  public byte[][] getByteArray2D(Object cacheId) {
+    return (byte[][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -1192,7 +1118,7 @@ private static final int TYPE_BYTE3D = 14;
   public Object addToCache(String what, byte[][] values) {
       return addToCache(what, values, TYPE_BYTE2D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1207,9 +1133,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_BYTE2D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -1217,9 +1140,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public double[][][] getDoubleArray3D(Object cacheId) {
-        return (double[][][])getData(cacheId);
-    }
+  public double[][][] getDoubleArray3D(Object cacheId) {
+    return (double[][][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -1241,9 +1164,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, double[][][] values) {
-      return addToCache(what, values, TYPE_DOUBLE3D, false);
+    return addToCache(what, values, TYPE_DOUBLE3D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1258,9 +1181,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_DOUBLE3D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -1268,9 +1188,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public float[][][] getFloatArray3D(Object cacheId) {
-        return (float[][][])getData(cacheId);
-    }
+  public float[][][] getFloatArray3D(Object cacheId) {
+    return (float[][][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -1294,7 +1214,7 @@ private static final int TYPE_BYTE3D = 14;
   public Object addToCache(String what, float[][][] values) {
       return addToCache(what, values, TYPE_FLOAT3D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1309,9 +1229,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_FLOAT3D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -1319,9 +1236,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public int[][][] getIntArray3D(Object cacheId) {
-        return (int[][][])getData(cacheId);
-    }
+  public int[][][] getIntArray3D(Object cacheId) {
+    return (int[][][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -1343,9 +1260,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, int[][][] values) {
-      return addToCache(what, values, TYPE_INT3D, false);
+    return addToCache(what, values, TYPE_INT3D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1360,9 +1277,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_INT3D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -1370,9 +1284,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public short[][][] getShortArray3D(Object cacheId) {
-        return (short[][][])getData(cacheId);
-    }
+  public short[][][] getShortArray3D(Object cacheId) {
+    return (short[][][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -1394,9 +1308,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, short[][][] values) {
-      return addToCache(what, values, TYPE_SHORT3D, false);
+    return addToCache(what, values, TYPE_SHORT3D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1411,9 +1325,6 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_SHORT3D, removeIfNeeded);
   }
 
-
-
-
   /**
    * get the value from the cache
    *
@@ -1421,9 +1332,9 @@ private static final int TYPE_BYTE3D = 14;
    *
    * @return  the value
    */
-    public byte[][][] getByteArray3D(Object cacheId) {
-        return (byte[][][])getData(cacheId);
-    }
+  public byte[][][] getByteArray3D(Object cacheId) {
+    return (byte[][][])getData(cacheId);
+  }
 
   /**
    * add the data to the cache
@@ -1445,9 +1356,9 @@ private static final int TYPE_BYTE3D = 14;
    * @return the cache id
    */
   public Object addToCache(String what, byte[][][] values) {
-      return addToCache(what, values, TYPE_BYTE3D, false);
+    return addToCache(what, values, TYPE_BYTE3D, false);
   }
-  
+
   /**
    * add the data to the cache
    *
@@ -1462,140 +1373,118 @@ private static final int TYPE_BYTE3D = 14;
     return addToCache(what, values, TYPE_BYTE3D, removeIfNeeded);
   }
 
+  /** Get the size of the array **/
+  private static int getArraySize(int type, Object values) {
+    if (type == TYPE_DOUBLE1D) {
+      double[] data = (double[])values;
+      return 8 * data.length;
+    }
 
+    if (type == TYPE_FLOAT1D) {
+      float[] data = (float[])values;
+      return 4 * data.length;
+    }
 
-/** Get the size of the array **/
-private static int getArraySize(int type, Object values) {
+    if (type == TYPE_INT1D) {
+      int[] data = (int[])values;
+      return 4 * data.length;
+    }
 
-   if (type == TYPE_DOUBLE1D) {
-        double[] data= (double[]) values;
-        
-        return 8*data.length;
+    if (type == TYPE_SHORT1D) {
+      short[] data = (short[])values;
+      return 2 * data.length;
+    }
 
-   }
+    if (type == TYPE_BYTE1D) {
+      byte[] data = (byte[])values;
+      return 1 * data.length;
+    }
 
-   if (type == TYPE_FLOAT1D) {
-        float[] data= (float[]) values;
-        
-        return 4*data.length;
+    if (type == TYPE_DOUBLE2D) {
+      double[][] data = (double[][])values;
+      if (data[0] == null) return 0;
+      return 8 * data.length * data[0].length;
+    }
 
-   }
+    if (type == TYPE_FLOAT2D) {
+      float[][] data = (float[][])values;
+      if (data[0] == null) return 0;
+      return 4 * data.length * data[0].length;
+    }
 
-   if (type == TYPE_INT1D) {
-        int[] data= (int[]) values;
-        
-        return 4*data.length;
+    if (type == TYPE_INT2D) {
+      int[][] data = (int[][])values;
+      if (data[0] == null) return 0;
+      return 4 * data.length * data[0].length;
+    }
 
-   }
+    if (type == TYPE_SHORT2D) {
+      short[][] data = (short[][])values;
+      if (data[0] == null) return 0;
+      return 2 * data.length * data[0].length;
+    }
 
-   if (type == TYPE_SHORT1D) {
-        short[] data= (short[]) values;
-        
-        return 2*data.length;
+    if (type == TYPE_BYTE2D) {
+      byte[][] data = (byte[][])values;
+      if (data[0] == null) return 0;
+      return 1 * data.length * data[0].length;
+    }
 
-   }
+    if (type == TYPE_DOUBLE3D) {
+      double[][][] data = (double[][][])values;
+      if (data[0] == null) return 0;
+      if (data[0][0] == null) return 0;
+      return 8 * data.length * data[0].length * data[0][0].length;
+    }
 
-   if (type == TYPE_BYTE1D) {
-        byte[] data= (byte[]) values;
-        
-        return 1*data.length;
+    if (type == TYPE_FLOAT3D) {
+      float[][][] data = (float[][][])values;
+      if (data[0] == null) return 0;
+      if (data[0][0] == null) return 0;
+      return 4 * data.length * data[0].length * data[0][0].length;
+    }
 
-   }
+    if (type == TYPE_INT3D) {
+      int[][][] data = (int[][][])values;
+      if (data[0] == null) return 0;
+      if (data[0][0] == null) return 0;
+      return 4 * data.length * data[0].length * data[0][0].length;
+    }
 
-   if (type == TYPE_DOUBLE2D) {
-        double[][] data= (double[][]) values;
-        if (data[0]==null) return 0;
-        return 8*data.length * data[0].length;
+    if (type == TYPE_SHORT3D) {
+      short[][][] data = (short[][][])values;
+      if (data[0] == null) return 0;
+      if (data[0][0] == null) return 0;
+      return 2 * data.length * data[0].length * data[0][0].length;
+    }
 
-   }
+    if (type == TYPE_BYTE3D) {
+      byte[][][] data = (byte[][][])values;
+      if (data[0] == null) return 0;
+      if (data[0][0] == null) return 0;
+      return 1 * data.length * data[0].length * data[0][0].length;
+    }
+    throw new IllegalArgumentException("Unknown type:" + type);
+  }
 
-   if (type == TYPE_FLOAT2D) {
-        float[][] data= (float[][]) values;
-        if (data[0]==null) return 0;
-        return 4*data.length * data[0].length;
-
-   }
-
-   if (type == TYPE_INT2D) {
-        int[][] data= (int[][]) values;
-        if (data[0]==null) return 0;
-        return 4*data.length * data[0].length;
-
-   }
-
-   if (type == TYPE_SHORT2D) {
-        short[][] data= (short[][]) values;
-        if (data[0]==null) return 0;
-        return 2*data.length * data[0].length;
-
-   }
-
-   if (type == TYPE_BYTE2D) {
-        byte[][] data= (byte[][]) values;
-        if (data[0]==null) return 0;
-        return 1*data.length * data[0].length;
-
-   }
-
-   if (type == TYPE_DOUBLE3D) {
-        double[][][] data= (double[][][]) values;
-        if (data[0]==null) return 0; if(data[0][0]==null) return 0;
-        return 8*data.length * data[0].length*data[0][0].length;
-
-   }
-
-   if (type == TYPE_FLOAT3D) {
-        float[][][] data= (float[][][]) values;
-        if (data[0]==null) return 0; if(data[0][0]==null) return 0;
-        return 4*data.length * data[0].length*data[0][0].length;
-
-   }
-
-   if (type == TYPE_INT3D) {
-        int[][][] data= (int[][][]) values;
-        if (data[0]==null) return 0; if(data[0][0]==null) return 0;
-        return 4*data.length * data[0].length*data[0][0].length;
-
-   }
-
-   if (type == TYPE_SHORT3D) {
-        short[][][] data= (short[][][]) values;
-        if (data[0]==null) return 0; if(data[0][0]==null) return 0;
-        return 2*data.length * data[0].length*data[0][0].length;
-
-   }
-
-   if (type == TYPE_BYTE3D) {
-        byte[][][] data= (byte[][][]) values;
-        if (data[0]==null) return 0; if(data[0][0]==null) return 0;
-        return 1*data.length * data[0].length*data[0][0].length;
-
-   }
-
-   throw new IllegalArgumentException("Unknown type:" + type);
-}
-
-
-/** Get the name of the type **/
-private static String getNameForType(int type) {
-    if (type == TYPE_DOUBLE1D) {return "double1d";}
-    if (type == TYPE_FLOAT1D) {return "float1d";}
-    if (type == TYPE_INT1D) {return "int1d";}
-    if (type == TYPE_SHORT1D) {return "short1d";}
-    if (type == TYPE_BYTE1D) {return "byte1d";}
-    if (type == TYPE_DOUBLE2D) {return "double2d";}
-    if (type == TYPE_FLOAT2D) {return "float2d";}
-    if (type == TYPE_INT2D) {return "int2d";}
-    if (type == TYPE_SHORT2D) {return "short2d";}
-    if (type == TYPE_BYTE2D) {return "byte2d";}
-    if (type == TYPE_DOUBLE3D) {return "double3d";}
-    if (type == TYPE_FLOAT3D) {return "float3d";}
-    if (type == TYPE_INT3D) {return "int3d";}
-    if (type == TYPE_SHORT3D) {return "short3d";}
-    if (type == TYPE_BYTE3D) {return "byte3d";}
- return "unknown type";
-}
-
-
+  /** Get the name of the type **/
+  private static String getNameForType(int type) {
+    if (type == TYPE_DOUBLE1D) return "double1d";
+    if (type == TYPE_FLOAT1D) return "float1d";
+    if (type == TYPE_INT1D) return "int1d";
+    if (type == TYPE_SHORT1D) return "short1d";
+    if (type == TYPE_BYTE1D) return "byte1d";
+    if (type == TYPE_DOUBLE2D) return "double2d";
+    if (type == TYPE_FLOAT2D) return "float2d";
+    if (type == TYPE_INT2D) return "int2d";
+    if (type == TYPE_SHORT2D) return "short2d";
+    if (type == TYPE_BYTE2D) return "byte2d";
+    if (type == TYPE_DOUBLE3D) return "double3d";
+    if (type == TYPE_FLOAT3D) return "float3d";
+    if (type == TYPE_INT3D) return "int3d";
+    if (type == TYPE_SHORT3D) return "short3d";
+    if (type == TYPE_BYTE3D) return "byte3d";
+    return "unknown type";
+  }
 }
 
