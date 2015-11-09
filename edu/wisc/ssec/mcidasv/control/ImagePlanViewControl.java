@@ -235,6 +235,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         return null;
     }
 
+    @Override public void doRemove() throws RemoteException, VisADException {
+        super.doRemove();
+    }
+
     /**
      * Take out the histogram-related stuff that was in doMakeContents and put it
      * in a standalone method, so we can wait and call it only after the
@@ -981,10 +985,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
          */
         public void stateChanged(ChangeEvent e) {
             // MH: don't make the histogram until user clicks the tab.
-            if (getTitleAt(getSelectedIndex()).equals("Histogram")  
-                    && !haveDoneHistogramInit) {
+            int index = getSelectedIndex();
+            if (index >= 0 && getTitleAt(index).equals("Histogram") && !haveDoneHistogramInit) {
                 getIdv().showWaitCursor();
-                this.setComponentAt(getSelectedIndex(), 
+                this.setComponentAt(index,
                         GuiUtils.inset(getHistogramTabComponent(),5));
                 setInitialHistogramRange();
                 getIdv().clearWaitCursor();
