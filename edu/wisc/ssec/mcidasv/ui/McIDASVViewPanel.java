@@ -47,6 +47,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -70,6 +71,8 @@ import javax.swing.border.EtchedBorder;
 
 import edu.wisc.ssec.mcidasv.Constants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.idv.IdvManager;
@@ -420,10 +423,13 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 		if (info != null) {
 			vmInfos.remove(info);
 			info.viewManagerDestroyed();
+			logger.trace("destroying '{}' for '{}'", info, vm);
 //			System.err.println("destroying "+info+" for "+vm);
 		}
 	}
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(McIDASVViewPanel.class);
+
 	/**
 	 * Triggered upon a change in the given ViewManager. Just used so that our
 	 * ControlInfo object can update its internal state.
@@ -626,8 +632,10 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 			int idx = controlInfos.indexOf(info);
 			if (idx == -1)
 				return;
-			
+
 			int btnIdx = buttons.indexOf(info.button);
+
+			buttons.remove(info.button);
 			controlInfos.remove(info);
 			rightPanel.remove(info.outer);
 
@@ -647,6 +655,28 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 			ignore = true;
 			buttonGroup.remove(info.button);
 			ignore = false;
+
+
+			for (ActionListener l : catToggle.getActionListeners()) {
+				catToggle.removeActionListener(l);
+			}
+
+			for (ActionListener l : popupButton.getActionListeners()) {
+				popupButton.removeActionListener(l);
+			}
+
+			for (MouseListener l : viewLabel.getMouseListeners()) {
+				viewLabel.removeMouseListener(l);
+			}
+
+//			for (KeyListener l : catToggle.getKeyListeners()) {
+//				catToggle.removeKeyListener(l);
+//			}
+			catToggle.removeKeyListener(listener);
+			popupButton.removeKeyListener(listener);
+			info.button.removeKeyListener(listener);
+
+
 
 			// if there are still control infos left then we'll use those?
 			if (controlInfos.size() > 0)
@@ -833,6 +863,7 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 		 */
 		public void viewManagerDestroyed() {
 			viewContainer.remove(contents);
+			buttons.clear();
 		}
 
 		/**
