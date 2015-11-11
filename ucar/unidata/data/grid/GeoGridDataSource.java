@@ -848,16 +848,17 @@ public class GeoGridDataSource extends GridDataSource {
 
             JPanel innerPanel = GuiUtils.doLayout(comps, 3, GuiUtils.WT_NYN,
                                     GuiUtils.WT_N);
-            JPanel labeledInnerPanel = new JPanel(new BorderLayout());
-            labeledInnerPanel.add(labelPanel, BorderLayout.NORTH);
-            labeledInnerPanel.add(innerPanel, BorderLayout.CENTER);
-            JScrollPane sp = new JScrollPane(GuiUtils.top(labeledInnerPanel));
+
+            JScrollPane sp = new JScrollPane(GuiUtils.top(innerPanel));
             sp.setPreferredSize(new Dimension(500, 400));
-            // JPanel top =
-            //    GuiUtils.right(GuiUtils.rLabel("Grid Size (Points)  "));
-            JComponent inner = GuiUtils.inset(GuiUtils.center(sp), 5);
+
+            // TJJ Nov 2015 - keep scrollpane and label panel separate so
+            // labels are always visible
+            JPanel spAndLabels = new JPanel(new BorderLayout());
+            spAndLabels.add(labelPanel, BorderLayout.NORTH);
+            spAndLabels.add(sp, BorderLayout.CENTER);
+            JComponent inner = GuiUtils.inset(GuiUtils.center(spAndLabels), 5);
             tab.addTab(categories.get(i).toString(), inner);
-            //            catComps.add();
         }
 
 
