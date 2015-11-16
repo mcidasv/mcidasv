@@ -432,8 +432,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   if ((! s.equals(inTrackDimensionName)) && 
 							   ((! s.startsWith("Band")) && (cnt == 0)) &&
 							   (! varName.endsWith("Latitude")) &&
+							   (! varName.endsWith("latitude")) &&
 							   (! varName.endsWith("Latitude_TC")) &&
 							   (! varName.endsWith("Longitude")) &&
+							   (! varName.endsWith("longitude")) &&
 							   (! varName.endsWith("Longitude_TC")) &&
 							   (! s.equals(crossTrackDimensionName))) {
 						   notDisplayable = true;
@@ -515,8 +517,11 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   if ((v.getFullName().endsWith("Latitude")) || 
 			   (v.getFullName().endsWith("Latitude_TC")) ||
 			   (v.getFullName().endsWith("Longitude")) ||
+			   (v.getFullName().endsWith("latitude")) ||
+			   (v.getFullName().endsWith("longitude")) ||
 			   (v.getFullName().endsWith("LongitudeTC"))) {
-		   if (v.getFullName().startsWith("All_Data")) {
+		   if ((v.getFullName().startsWith("All_Data")) || 
+			   (v.getFullName().startsWith("observation_data"))) {
 			   inTrackName = inTrackDimensionName;
 		   } else {
 			   inTrackName = inTrackGeoDimensionName;

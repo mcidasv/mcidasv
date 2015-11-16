@@ -83,6 +83,7 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.util.Misc;
+
 import visad.Data;
 import visad.DateTime;
 import visad.DerivedUnit;
@@ -152,6 +153,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     
     // need our own separator char since it's always Unix-style in the Suomi NPP files
     private static final String SEPARATOR_CHAR = "/";
+    
+    // date formatter for NASA L1B data
+    SimpleDateFormat sdfNASA = new SimpleDateFormat("yyyyDDDHHmmss");
     
     // date formatter for converting Suomi NPP day/time to something we can use
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
@@ -265,6 +269,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
 	public void setup() throws VisADException {
 
+		// which format, NASA or NOAA?
+		boolean isNOAA = false;
+		
     	// store filenames for possible bundle unpersistence
     	for (Object o : sources) {
     		oldSources.add((String) o);
@@ -288,18 +295,22 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	int lastSeparator = filename.lastIndexOf(File.separatorChar);
     	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
     	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
-        StringTokenizer st = new StringTokenizer(prodStr, "-");
-        logger.debug("SNPPDS check for embedded GEO, tokenizing: " + prodStr);
-        while (st.hasMoreTokens()) {
-        	String singleProd = st.nextToken();
-        	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
-        		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
-        			logger.debug("Setting isCombinedProduct true, Found embedded GEO: " + singleProd);
-        			isCombinedProduct = true;
-        			break;
-        		}
-        	}
-        }
+    	// only do this check for NOAA data
+    	if (filename.endsWith(".h5")) {
+    		isNOAA = true;
+	        StringTokenizer st = new StringTokenizer(prodStr, "-");
+	        logger.debug("SNPPDS check for embedded GEO, tokenizing: " + prodStr);
+	        while (st.hasMoreTokens()) {
+	        	String singleProd = st.nextToken();
+	        	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
+	        		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
+	        			logger.debug("Setting isCombinedProduct true, Found embedded GEO: " + singleProd);
+	        			isCombinedProduct = true;
+	        			break;
+	        		}
+	        	}
+	        }
+    	}
     	
     	// various metatdata we'll need to gather on a per-product basis
         Map<String, String> unsignedFlags = new LinkedHashMap<>();
@@ -340,11 +351,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
     					logger.debug("Trying to open file: " + fileAbsPath);
     					ncfile = NetcdfFile.open(fileAbsPath);
     					if (! isCombinedProduct) {
-    						Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
-    						logger.debug("Value of GEO global attribute: "
-    								+ a.getStringValue());
-    						String tmpGeoProductID = a.getStringValue();
-    						geoProductIDs.add(tmpGeoProductID);
+    						if (isNOAA) {
+	    						Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
+	    						logger.debug("Value of GEO global attribute: " + a.getStringValue());
+	    						String tmpGeoProductID = a.getStringValue();
+	    						geoProductIDs.add(tmpGeoProductID);
+    						} else {
+    							geoProductIDs.add(keyStr.replace("L1B", "GEO"));
+    						}
     					}
     					Group rg = ncfile.getRootGroup();
 
@@ -352,90 +366,122 @@ public class SuomiNPPDataSource extends HydraDataSource {
     					if (gl != null) {
     						for (Group g : gl) {
     							logger.trace("Group name: " + g.getFullName());
-    							// when we find the Data_Products group, go down another group level and pull out 
-    							// what we will use for nominal day and time (for now anyway).
-    							// XXX TJJ fileCount check is so we don't count the GEO file in time array!
-    							if (g.getFullName().contains("Data_Products") && (fileCount != fileNames.size())) {
-    								boolean foundDateTime = false;
-    								List<Group> dpg = g.getGroups();
+    							if (isNOAA) {
+									// when we find the Data_Products group, go down another group level and pull out 
+									// what we will use for nominal day and time (for now anyway).
+									// XXX TJJ fileCount check is so we don't count the GEO file in time array!
+									if (g.getFullName().contains(
+											"Data_Products")
+											&& (fileCount != fileNames.size())) {
+										boolean foundDateTime = false;
+										List<Group> dpg = g.getGroups();
 
-    								// cycle through once looking for XML Product Profiles
-    								for (Group subG : dpg) {
+										// cycle through once looking for XML Product Profiles
+										for (Group subG : dpg) {
 
-    									String subName = subG.getFullName();
-    									// use actual product, not geolocation, to id XML Product Profile
-    									if (! subName.contains("-GEO")) {
-    										// determine the instrument name (VIIRS, ATMS, CrIS, OMPS)
-    										instrumentName = subG.findAttribute("Instrument_Short_Name");
+											String subName = subG.getFullName();
+											// use actual product, not geolocation, to id XML Product Profile
+											if (!subName.contains("-GEO")) {
+												// determine the instrument name (VIIRS, ATMS, CrIS, OMPS)
+												instrumentName = subG.findAttribute("Instrument_Short_Name");
 
-    										// note any EDR products, will need to check for and remove
-    										// fill scans later
-    										Attribute adtt = subG.findAttribute("N_Dataset_Type_Tag");
-    										if (adtt != null) {
-    											String baseName = adtt.getStringValue();
-    											if ((baseName != null) && (baseName.equals("EDR"))) {
-    												isEDR = true;
-    												// have to loop through sub groups variables to determine band
-    												List<Variable> tmpVar = subG.getVariables();
-    												for (Variable v : tmpVar) {
-    													// if Imagery EDR attribute for band is specified, save it
-    													Attribute mBand = v.findAttribute("Band_ID");
-    													if (mBand != null) {
-    														whichEDR = mBand.getStringValue();
-    													}
-    												}
-    											}
-    										}
+												// note any EDR products, will need to check for and remove
+												// fill scans later
+												Attribute adtt = subG.findAttribute("N_Dataset_Type_Tag");
+												if (adtt != null) {
+													String baseName = adtt.getStringValue();
+													if ((baseName != null) && (baseName.equals("EDR"))) {
+														isEDR = true;
+														// have to loop through sub groups variables to determine band
+														List<Variable> tmpVar = subG.getVariables();
+														for (Variable v : tmpVar) {
+															// if Imagery EDR attribute for band is specified, save it
+															Attribute mBand = v.findAttribute("Band_ID");
+															if (mBand != null) {
+																whichEDR = mBand.getStringValue();
+															}
+														}
+													}
+												}
 
-    										// This is also where we find the attribute which tells us which
-    										// XML Product Profile to use!
-    										Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
-    										if (axpp != null) {
-    											String baseName = axpp.getStringValue();
-    											productName = baseName;
-    											String productProfileFileName = nppPP.getProfileFileName(baseName);
-    											logger.trace("Found profile: " + productProfileFileName);
-    											if (productProfileFileName == null) {
-    												throw new Exception("XML Product Profile not found in catalog");
-    											}
-    											try {
-    												nppPP.addMetaDataFromFile(productProfileFileName);
-    											} catch (Exception nppppe) {
-    												logger.error("Error parsing XML Product Profile: " + productProfileFileName);
-    												throw new Exception("XML Product Profile Error", nppppe);
-    											}
-    										}
-    									}
-    								}
+												// This is also where we find the attribute which tells us which
+												// XML Product Profile to use!
+												Attribute axpp = subG.findAttribute("N_Collection_Short_Name");
+												if (axpp != null) {
+													String baseName = axpp.getStringValue();
+													productName = baseName;
+													String productProfileFileName = nppPP
+															.getProfileFileName(baseName);
+													logger.trace("Found profile: " + productProfileFileName);
+													if (productProfileFileName == null) {
+														throw new Exception(
+																"XML Product Profile not found in catalog");
+													}
+													try {
+														nppPP.addMetaDataFromFile(productProfileFileName);
+													} catch (Exception nppppe) {
+														logger.error("Error parsing XML Product Profile: "
+																+ productProfileFileName);
+														throw new Exception(
+																"XML Product Profile Error",
+																nppppe);
+													}
+												}
+											}
+										}
 
-    								// 2nd pass through sub-group to extract date/time for aggregation
-    								for (Group subG : dpg) {
-    									List<Variable> vl = subG.getVariables();
-    									for (Variable v : vl) {
-    										Attribute aDate = v.findAttribute("AggregateBeginningDate");
-    										Attribute aTime = v.findAttribute("AggregateBeginningTime");
-    										// did we find the attributes we are looking for?
-    										if ((aDate != null) && (aTime != null)) {
-    											String sDate = aDate.getStringValue();
-    											String sTime = aTime.getStringValue();
-    											logger.trace("For day/time, using: " + sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
-    											Date d = sdf.parse(sDate + sTime.substring(0, sTime.indexOf('Z') - 3));
-    											theDate = d;
-    											foundDateTime = true;
-    											// set time for display to day/time of 1st granule examined
-    											if (! nameHasBeenSet) {
-    												setName(instrumentName.getStringValue() + " " + sdfOut.format(d));
-    												nameHasBeenSet = true;
-    											}
-    											break;
-    										}
-    									}
-    									if (foundDateTime) break;
-    								}
-    								if (! foundDateTime) {
-    									throw new VisADException("No date time found in Suomi NPP granule");
-    								}
-    							}	    	    			
+										// 2nd pass through sub-group to extract date/time for aggregation
+										for (Group subG : dpg) {
+											List<Variable> vl = subG.getVariables();
+											for (Variable v : vl) {
+												Attribute aDate = v.findAttribute("AggregateBeginningDate");
+												Attribute aTime = v.findAttribute("AggregateBeginningTime");
+												// did we find the attributes we are looking for?
+												if ((aDate != null) && (aTime != null)) {
+													String sDate = aDate.getStringValue();
+													String sTime = aTime.getStringValue();
+													logger.trace("For day/time, using: " + sDate
+															+ sTime.substring(0, sTime.indexOf('Z') - 3));
+													Date d = sdf.parse(sDate
+																	+ sTime.substring(0, sTime.indexOf('Z') - 3));
+													theDate = d;
+													foundDateTime = true;
+													// set time for display to day/time of 1st granule examined
+													if (!nameHasBeenSet) {
+														setName(instrumentName.getStringValue() + " "
+																+ sdfOut.format(d));
+														nameHasBeenSet = true;
+													}
+													break;
+												}
+											}
+											if (foundDateTime)
+												break;
+										}
+										if (!foundDateTime) {
+											throw new VisADException(
+													"No date time found in Suomi NPP granule");
+										}
+									} 
+								} else {
+									// NASA data - date/time from filename
+									// set time for display to day/time of 1st granule examined
+									String yearStr = keyStr.substring(1, 5);
+									System.err.println("TJJ YEAR: " + yearStr);
+									String dayStr = keyStr.substring(5, 8);
+									System.err.println("TJJ DAY: " + dayStr);
+									String hhmmssStr = keyStr.substring(8, 14);
+									System.err.println("TJJ HHMMSS: " + hhmmssStr);
+									Date d = sdfNASA.parse(yearStr + dayStr + hhmmssStr);
+									theDate = d;
+									if (! nameHasBeenSet) {
+										instrumentName = ncfile.findGlobalAttribute("sensor");
+										setName(instrumentName.getStringValue()
+												+ " "
+												+ sdfOut.format(d));
+										nameHasBeenSet = true;
+									}
+								}    	    			
     						}
     					}
     				} catch (Exception e) {
@@ -474,74 +520,107 @@ public class SuomiNPPDataSource extends HydraDataSource {
         			s = (String) l.get(elementNum);
     	        }
     			
+    			String geoFilename = null;
+    			Element fGeo = new Element("netcdf", ns);;
+    			
     			if (! isCombinedProduct) {
-	    			Element fGeo  = new Element("netcdf", ns);
 	
-	    			String geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
-	    			// check if we have the whole file name or just the prefix
-	    			String geoProductID = iterator.next();
-	    			if (geoProductID.endsWith("h5")) {
-	    				geoFilename += geoProductID;
-	    			} else {
-	    				geoFilename += geoProductID;
-	    				geoFilename += s.substring(s.lastIndexOf(File.separatorChar) + 6);
-	    			}
-	    			// Be sure file as specified by N_GEO_Ref global attribute really is there.
-	    			File tmpGeo = new File(geoFilename);
-	    			if (! tmpGeo.exists()) {
-	    				// Ok, the expected file defined (supposedly) exactly by a global att is not there...
-	    				// We need to check for similar geo files with different creation dates
-	    				String geoFileRelative = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
-	    				// also check for Terrain Corrected version of geo
-	    				String geoTerrainCorrected = geoFileRelative;
-	    				geoTerrainCorrected = geoTerrainCorrected.replace("OD", "TC");
-	    				geoTerrainCorrected = geoTerrainCorrected.replace("MG", "TC");
-	    				
-	    				// now we make a file filter, and see if a matching geo file is present
-	    				File fList = new File(geoFilename.substring(0, geoFilename.lastIndexOf(File.separatorChar) + 1)); // current directory
+	    			if (isNOAA) {
+						geoFilename = s.substring(0,
+								s.lastIndexOf(File.separatorChar) + 1);
+						// check if we have the whole file name or just the prefix
+						String geoProductID = iterator.next();
+						if (geoProductID.endsWith("h5")) {
+							geoFilename += geoProductID;
+						} else {
+							geoFilename += geoProductID;
+							geoFilename += s.substring(s
+									.lastIndexOf(File.separatorChar) + 6);
+						}
+						// Be sure file as specified by N_GEO_Ref global attribute really is there.
+						File tmpGeo = new File(geoFilename);
+						if (!tmpGeo.exists()) {
+							// Ok, the expected file defined (supposedly) exactly by a global att is not there...
+							// We need to check for similar geo files with different creation dates
+							String geoFileRelative = geoFilename
+									.substring(geoFilename
+											.lastIndexOf(File.separatorChar) + 1);
+							// also check for Terrain Corrected version of geo
+							String geoTerrainCorrected = geoFileRelative;
+							geoTerrainCorrected = geoTerrainCorrected.replace(
+									"OD", "TC");
+							geoTerrainCorrected = geoTerrainCorrected.replace(
+									"MG", "TC");
 
-	    				FilenameFilter geoFilter = new FilenameFilter() {
-	    					public boolean accept(File dir, String name) {
-	    						if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
-	    							return true;
-	    						} else {
-	    							return false;
-	    						}
-	    					}
-	    				};
-	    				
-	    				File[] files = fList.listFiles(geoFilter);
-	    				for (File file : files) {
-	    					if (file.isDirectory()) {
-	    						continue;
-	    					}
-	    					// get the file name for convenience
-	    					String fName = file.getName();
-	    					// is it one of the standard Ellipsoid geo types we are looking for?
-	    					if (fName.substring(0, 5).equals(geoFileRelative.substring(0, 5))) {
-	    						int geoStartIdx = geoFileRelative.indexOf("_d");
-	    						int prdStartIdx = fName.indexOf("_d");
-	    						String s1 = geoFileRelative.substring(geoStartIdx, geoStartIdx + 35);
-	    						String s2 = fName.substring(prdStartIdx, prdStartIdx + 35);
-	    						if (s1.equals(s2)) {
-	    							geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
-	    							break;
-	    						}
-	    					}
-	    					// same check, but for Terrain Corrected version
-	    					if (fName.substring(0, 5).equals(geoTerrainCorrected.substring(0, 5))) {
-	    						int geoStartIdx = geoTerrainCorrected.indexOf("_d");
-	    						int prdStartIdx = fName.indexOf("_d");
-	    						String s1 = geoTerrainCorrected.substring(geoStartIdx, geoStartIdx + 35);
-	    						String s2 = fName.substring(prdStartIdx, prdStartIdx + 35);
-	    						if (s1.equals(s2)) {
-	    							geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
-	    							break;
-	    						}
-	    					}
-	    				}
-	    			}
-	    			logger.debug("Cobbled together GEO file name: " + geoFilename);
+							// now we make a file filter, and see if a matching geo file is present
+							File fList = new File(
+									geoFilename.substring(
+											0,
+											geoFilename
+													.lastIndexOf(File.separatorChar) + 1)); // current directory
+
+							FilenameFilter geoFilter = new FilenameFilter() {
+								public boolean accept(File dir, String name) {
+									if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX_NOAA)) {
+										return true;
+									} else {
+										return false;
+									}
+								}
+							};
+
+							File[] files = fList.listFiles(geoFilter);
+							for (File file : files) {
+								if (file.isDirectory()) {
+									continue;
+								}
+								// get the file name for convenience
+								String fName = file.getName();
+								// is it one of the standard Ellipsoid geo types we are looking for?
+								if (fName.substring(0, 5).equals(
+										geoFileRelative.substring(0, 5))) {
+									int geoStartIdx = geoFileRelative
+											.indexOf("_d");
+									int prdStartIdx = fName.indexOf("_d");
+									String s1 = geoFileRelative.substring(
+											geoStartIdx, geoStartIdx + 35);
+									String s2 = fName.substring(prdStartIdx,
+											prdStartIdx + 35);
+									if (s1.equals(s2)) {
+										geoFilename = s
+												.substring(
+														0,
+														s.lastIndexOf(File.separatorChar) + 1)
+												+ fName;
+										break;
+									}
+								}
+								// same check, but for Terrain Corrected version
+								if (fName.substring(0, 5).equals(
+										geoTerrainCorrected.substring(0, 5))) {
+									int geoStartIdx = geoTerrainCorrected
+											.indexOf("_d");
+									int prdStartIdx = fName.indexOf("_d");
+									String s1 = geoTerrainCorrected.substring(
+											geoStartIdx, geoStartIdx + 35);
+									String s2 = fName.substring(prdStartIdx,
+											prdStartIdx + 35);
+									if (s1.equals(s2)) {
+										geoFilename = s
+												.substring(
+														0,
+														s.lastIndexOf(File.separatorChar) + 1)
+												+ fName;
+										break;
+									}
+								}
+							}
+						} 
+					} else {
+						// NASA format
+						geoFilename = s.replace("L1B", "GEO");
+					}
+					logger.debug("Determined GEO file name should be: " + geoFilename);
 	    			fGeo.setAttribute("location", geoFilename);
 	    			// add this to list used if we create a zipped bundle
 	    			geoSources.add(geoFilename);
@@ -565,7 +644,40 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    	if (gl != null) {
     	    		for (Group g : gl) {
     	    			logger.debug("Group name: " + g.getFullName());
-    	    			// XXX just temporary - we are looking through All_Data, finding displayable data
+    	    			// NASA only - looking through observation_data and geolocation_data
+    	    			if (g.getFullName().contains("observation_data")) {
+    	    				List<Variable> vl = g.getVariables();
+    						for (Variable v : vl) {
+    							if (JPSSUtilities.isValidNASA(v.getShortName())) {
+	    							logger.debug("Adding product: " + v.getFullName());
+	    							pathToProducts.add(v.getFullName());
+    							}
+    						}
+    	    			}
+    	    			if (g.getFullName().contains("geolocation_data")) {
+    	    				List<Variable> vl = g.getVariables();
+    						for (Variable v : vl) {
+    							if (v.getShortName().equals("latitude")) {
+    								// XXX TJJ Nov 2015
+    								// Hack because fill value in attribute does not match
+    								// what I am seeing in the data.
+    								Attribute fillAtt = new Attribute("_FillValue", -999.0);
+    								v.addAttribute(fillAtt);
+    								pathToLat = v.getFullName();
+    								pathToProducts.add(v.getFullName());
+    							}
+    							if (v.getShortName().equals("longitude")) {
+    								// XXX TJJ Nov 2015
+    								// Hack because fill value in attribute does not match
+    								// what I am seeing in the data.
+    								Attribute fillAtt = new Attribute("_FillValue", -999.0);
+    								v.addAttribute(fillAtt);
+    								pathToLon = v.getFullName();
+    								pathToProducts.add(v.getFullName());
+    							}
+    						}
+    	    			}
+    	    			// NOAA only - we are looking through All_Data, finding displayable data
     	    			if (g.getFullName().contains("All_Data")) {
     	    				List<Group> adg = g.getGroups();
     	    				int xDim = -1;
@@ -951,8 +1063,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	
     	// initialize the aggregation reader object
     	try {
-    		nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack", isEDR);
-    		((GranuleAggregation) nppAggReader).setQfMap(qfMap);
+    		if (isNOAA) {
+    		    nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack", isEDR);
+    		    ((GranuleAggregation) nppAggReader).setQfMap(qfMap);
+    		} else {
+    			nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "number_of_lines", "number_of_pixels", isEDR);
+    		}
     	} catch (Exception e) {
     		throw new VisADException("Unable to initialize aggregation reader", e);
     	}
@@ -1090,12 +1206,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	}
         	
         	String unsignedAttributeStr = unsignedFlags.get(pStr);
-        	if (unsignedAttributeStr.equals("true")) {
+        	if ((unsignedAttributeStr != null) && (unsignedAttributeStr.equals("true"))) {
         		swathTable.put("unsigned", unsignedAttributeStr);
         	}
         	
         	String unpackFlagStr = unpackFlags.get(pStr);
-        	if (unpackFlagStr.equals("true")) {
+        	if ((unpackFlagStr != null) && (unpackFlagStr.equals("true"))) {
         		swathTable.put("unpack", "true");
         	}
         	
@@ -1207,7 +1323,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	            String expandedPath = tempPath.replace(PersistenceManager.MACRO_ZIDVPATH, zidvPath);
     	            // we don't want to add nav files to this list!:
     	            File f = new File(expandedPath);
-    	            if (!f.getName().matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
+    	            if (!f.getName().matches(JPSSUtilities.SUOMI_GEO_REGEX_NOAA)) {
     	                sources.add(expandedPath);
     	            }
     	        }

@@ -110,6 +110,8 @@ public class SuomiNPPFilter extends FileFilter {
         
         private boolean isSuomiNPPFile(File f) {
         	
+        	boolean isSuomiNPP_NOAA = false;
+        	boolean isSuomiNPP_NASA = false;
         	boolean isSuomiNPP = false;
         	
         	String fileNameRelative = f.getName();
@@ -118,12 +120,16 @@ public class SuomiNPPFilter extends FileFilter {
         	// null or empty filename
         	if ((fileNameRelative == null) || (fileNameRelative.equals(""))) return isSuomiNPP;
         	
-        	// see if relative filename matches the Suomi NPP regular expression	
-        	if (fileNameRelative.matches(JPSSUtilities.SUOMI_NPP_REGEX)) {
-        		isSuomiNPP = true;
-        		logger.debug(fileNameRelative + " matches Suomi NPP regex");
-        	// don't go any further if file does not match Suomi NPP data product regex
+        	// see if relative filename matches the Suomi NPP NOAA regular expression	
+        	if (fileNameRelative.matches(JPSSUtilities.SUOMI_NPP_REGEX_NOAA)) {
+        		isSuomiNPP_NOAA = true;
+        		logger.debug(fileNameRelative + " matches Suomi NPP NOAA regex");
+        	// else see if relative filename matches the Suomi NPP NASA regular expression
+        	} else if (fileNameRelative.matches(JPSSUtilities.SUOMI_NPP_REGEX_NASA)) {
+        		isSuomiNPP_NASA = true;
+        		logger.debug(fileNameRelative + " matches Suomi NPP NASA regex");
         	} else {
+        		// don't go any further if file does not match Suomi NPP data product regex
         		return isSuomiNPP;
         	}
         	
@@ -132,59 +138,69 @@ public class SuomiNPPFilter extends FileFilter {
         	// if a geo dataset is embedded in a multi-product file, we can call it good without
         	// having to open any files.  Just look for a geo product id in the filename.
         	// HOWEVER - if it's a single-product GEO-only file, disqualify that
-        	String prodStr = fileNameRelative.substring(0, fileNameRelative.indexOf(JPSSUtilities.JPSS_FIELD_SEPARATOR));
-            StringTokenizer st = new StringTokenizer(prodStr, PRODUCT_SEPARATOR);
-            int numTokens = st.countTokens();
-            logger.trace("check for embedded GEO, tokenizing: " + prodStr);
-            while (st.hasMoreTokens()) {
-            	String singleProd = st.nextToken();
-            	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
-            		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
-            			logger.trace("Found embedded GEO: " + singleProd);
-            			// if it's a single-product file, disqualify this as a GEO-only file!
-            			if (numTokens == 1) {
-            				return false;
-            			} else {
-            				if (numTokens > 1) {
-            					return true;
-            				}
-            			}
-            		}
-            	}
-            }
+        	if (isSuomiNPP_NOAA) {
+	        	String prodStr = fileNameRelative.substring(0, fileNameRelative.indexOf(JPSSUtilities.JPSS_FIELD_SEPARATOR));
+	            StringTokenizer st = new StringTokenizer(prodStr, PRODUCT_SEPARATOR);
+	            int numTokens = st.countTokens();
+	            logger.trace("check for embedded GEO, tokenizing: " + prodStr);
+	            while (st.hasMoreTokens()) {
+	            	String singleProd = st.nextToken();
+	            	for (int i = 0; i < JPSSUtilities.geoProductIDs.length; i++) {
+	            		if (singleProd.equals(JPSSUtilities.geoProductIDs[i])) {
+	            			logger.trace("Found embedded GEO: " + singleProd);
+	            			// if it's a single-product file, disqualify this as a GEO-only file!
+	            			if (numTokens == 1) {
+	            				return false;
+	            			} else {
+	            				if (numTokens > 1) {
+	            					return true;
+	            				}
+	            			}
+	            		}
+	            	}
+	            }
+        	}
         	
     		// looks like a standalone product - will have to look for separate geo file
             // first, create the corresponding GEO loc file name
     		String geoProductID = null;
     		
     		boolean noGeo = false;
-    		NetcdfFile ncfile = null;
-    		try {
-    			logger.debug("Trying to open file: " + fileNameAbsolute);
-    			ncfile = NetcdfFile.open(fileNameAbsolute);
-    			Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
-    			// if no GEO attribute, we can't visualize this Suomi NPP data file, don't include it
-    			if (a == null) {
-    				noGeo = true;
-    			} else {
-        			// in the newest operational data format, attribute is entire file name
-        			// if this is detected, no translation/mapping needed
-        			String geoStr = a.getStringValue();
-        			if (geoStr.matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
-        				geoProductID = geoStr;
-        			} else {
-        				noGeo = true;
-        			}
-    			}
-    		} catch (Exception e) {
-    			logger.error("Exception during open file: " + fileNameAbsolute);
-    			e.printStackTrace();
-    		} finally {
-    			try {
-    				if (ncfile != null) ncfile.close();
-    			} catch (IOException ioe) {
-    				ioe.printStackTrace();
-    			}
+    		
+    		if (isSuomiNPP_NOAA) {
+	    		NetcdfFile ncfile = null;
+	    		try {
+	    			logger.debug("Trying to open file: " + fileNameAbsolute);
+	    			ncfile = NetcdfFile.open(fileNameAbsolute);
+	    			Attribute a = ncfile.findGlobalAttribute("N_GEO_Ref");
+	    			// if no GEO attribute, we can't visualize this Suomi NPP data file, don't include it
+	    			if (a == null) {
+	    				noGeo = true;
+	    			} else {
+	        			// in the newest operational data format, attribute is entire file name
+	        			// if this is detected, no translation/mapping needed
+	        			String geoStr = a.getStringValue();
+	        			if (geoStr.matches(JPSSUtilities.SUOMI_GEO_REGEX_NOAA)) {
+	        				geoProductID = geoStr;
+	        			} else {
+	        				noGeo = true;
+	        			}
+	    			}
+	    		} catch (Exception e) {
+	    			logger.error("Exception during open file: " + fileNameAbsolute);
+	    			e.printStackTrace();
+	    		} finally {
+	    			try {
+	    				if (ncfile != null) ncfile.close();
+	    			} catch (IOException ioe) {
+	    				ioe.printStackTrace();
+	    			}
+	    		}
+    		}
+    		
+    		if (isSuomiNPP_NASA) {
+    			geoProductID = fileNameRelative.replace("L1B", "GEO");
+    			logger.debug("Will be looking for NASA GEO file: " + geoProductID);
     		}
     		
     		// if no geolocation global attribute found, skip this file
@@ -192,93 +208,107 @@ public class SuomiNPPFilter extends FileFilter {
     			isSuomiNPP = false;
     		} else {
     		
-    			// ok, we know what the geo file is supposed to be, but is it present in this directory?
-    			String geoFilename = fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1);
-    			geoFilename += geoProductID;
+    			if (isSuomiNPP_NOAA) {
+	    			// ok, we know what the geo file is supposed to be, but is it present in this directory?
+	    			String geoFilename = fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1);
+	    			geoFilename += geoProductID;
+	    			
+	    			// first check for the typically referenced ellipsoid geolocation
+	    			if (! isSuomiNPP) {
+	    				geoFilename = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
+	    				
+	    				// now we make a file filter, and see if a matching geo file is present
+	    				File fList = new File(fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1)); // current directory
+	
+	    				FilenameFilter geoFilter = new FilenameFilter() {
+	    					public boolean accept(File dir, String name) {
+	    						if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX_NOAA)) {
+	    							return true;
+	    						} else {
+	    							return false;
+	    						}
+	    					}
+	    				};
+	    				
+	    				File[] files = fList.listFiles(geoFilter);
+	    				for (File file : files) {
+	    					if (file.isDirectory()) {
+	    						continue;
+	    					}
+	    					// get the file name for convenience
+	    					String fName = file.getName();
+	    					// is it one of the geo types we are looking for?
+	    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
+	    						int geoStartIdx = geoFilename.indexOf("_d");
+	    						int prdStartIdx = fileNameRelative.indexOf("_d");
+	    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
+	    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
+	    						if (s1.equals(s2)) {
+	    							isSuomiNPP = true;
+	    							break;
+	    						}
+	    					}
+	    				}
+	
+	    			} 
+
     			
-    			// first check for the typically referenced ellipsoid geolocation
-    			if (! isSuomiNPP) {
-    				geoFilename = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
-    				
-    				// now we make a file filter, and see if a matching geo file is present
-    				File fList = new File(fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1)); // current directory
-
-    				FilenameFilter geoFilter = new FilenameFilter() {
-    					public boolean accept(File dir, String name) {
-    						if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
-    							return true;
-    						} else {
-    							return false;
-    						}
-    					}
-    				};
-    				
-    				File[] files = fList.listFiles(geoFilter);
-    				for (File file : files) {
-    					if (file.isDirectory()) {
-    						continue;
-    					}
-    					// get the file name for convenience
-    					String fName = file.getName();
-    					// is it one of the geo types we are looking for?
-    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
-    						int geoStartIdx = geoFilename.indexOf("_d");
-    						int prdStartIdx = fileNameRelative.indexOf("_d");
-    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
-    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
-    						if (s1.equals(s2)) {
-    							isSuomiNPP = true;
-    							break;
-    						}
-    					}
-    				}
-
-    			}   
-    			
-    			// one last thing to check, if no luck so far...
-    			// are we using terrain-corrected geolocation?
-    			if (! isSuomiNPP) {
-    				geoFilename = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
-    				// this one looks for GMTCO instead of GMODO
-    				geoFilename = geoFilename.replace("OD", "TC");
-    				// this one looks for GITCO instead of GIMGO
-    				geoFilename = geoFilename.replace("MG", "TC");
-    				
-    				// now we make a file filter, and see if a matching geo file is present
-    				File fList = new File(fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1)); // current directory
-
-    				FilenameFilter geoFilter = new FilenameFilter() {
-    					public boolean accept(File dir, String name) {
-    						if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX)) {
-    							return true;
-    						} else {
-    							return false;
-    						}
-    					}
-    				};
-    				
-    				File[] files = fList.listFiles(geoFilter);
-    				for (File file : files) {
-    					if (file.isDirectory()) {
-    						continue;
-    					}
-    					// get the file name for convenience
-    					String fName = file.getName();
-    					// is it one of the geo types we are looking for?
-    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
-    						int geoStartIdx = geoFilename.indexOf("_d");
-    						int prdStartIdx = fileNameRelative.indexOf("_d");
-    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
-    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
-    						if (s1.equals(s2)) {
-    							isSuomiNPP = true;
-    							break;
-    						}
-    					}
-    				}
-
+	    			// one last thing to check, if no luck so far...
+	    			// are we using terrain-corrected geolocation?
+	    			if (! isSuomiNPP) {
+	    				geoFilename = geoFilename.substring(geoFilename.lastIndexOf(File.separatorChar) + 1);
+	    				// this one looks for GMTCO instead of GMODO
+	    				geoFilename = geoFilename.replace("OD", "TC");
+	    				// this one looks for GITCO instead of GIMGO
+	    				geoFilename = geoFilename.replace("MG", "TC");
+	    				
+	    				// now we make a file filter, and see if a matching geo file is present
+	    				File fList = new File(fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1)); // current directory
+	
+	    				FilenameFilter geoFilter = new FilenameFilter() {
+	    					public boolean accept(File dir, String name) {
+	    						if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX_NOAA)) {
+	    							return true;
+	    						} else {
+	    							return false;
+	    						}
+	    					}
+	    				};
+	    				
+	    				File[] files = fList.listFiles(geoFilter);
+	    				for (File file : files) {
+	    					if (file.isDirectory()) {
+	    						continue;
+	    					}
+	    					// get the file name for convenience
+	    					String fName = file.getName();
+	    					// is it one of the geo types we are looking for?
+	    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
+	    						int geoStartIdx = geoFilename.indexOf("_d");
+	    						int prdStartIdx = fileNameRelative.indexOf("_d");
+	    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
+	    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
+	    						if (s1.equals(s2)) {
+	    							isSuomiNPP = true;
+	    							break;
+	    						}
+	    					}
+	    				}
+	    			}
     			}
     			
+    			if (isSuomiNPP_NASA) {
+    				logger.debug("Checking for NASA-style GEO...");
+    				String geoFilename = fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1);
+    				geoFilename += geoProductID;
+    				File fGeoNASA = new File(geoFilename);
+    				if (fGeoNASA.exists()) {
+    					logger.debug("NASA-style GEO is there...");
+    					isSuomiNPP = true;
+    				} else {
+    					logger.debug("NASA-style GEO is NOT there...");
+    				}
+    			}
     		}
         	
         	return isSuomiNPP;
