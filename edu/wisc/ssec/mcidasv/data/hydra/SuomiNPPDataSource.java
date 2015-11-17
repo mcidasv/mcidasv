@@ -155,7 +155,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private static final String SEPARATOR_CHAR = "/";
     
     // date formatter for NASA L1B data
-    SimpleDateFormat sdfNASA = new SimpleDateFormat("yyyyDDDHHmmss");
+    SimpleDateFormat sdfNASA = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     
     // date formatter for converting Suomi NPP day/time to something we can use
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
@@ -212,6 +212,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
         filename = (String) sources.get(0);
         setDescription("Suomi NPP");
+        
+        // NASA data is UTC, pre-set time zone
+        SimpleTimeZone stz = new SimpleTimeZone(0, "UTC");
+        sdfNASA.setTimeZone(stz);;
         
         // build the filename map - matches each product to set of files for that product
         filenameMap = new HashMap<>();
@@ -466,19 +470,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
 								} else {
 									// NASA data - date/time from filename
 									// set time for display to day/time of 1st granule examined
-									String yearStr = keyStr.substring(1, 5);
-									System.err.println("TJJ YEAR: " + yearStr);
-									String dayStr = keyStr.substring(5, 8);
-									System.err.println("TJJ DAY: " + dayStr);
-									String hhmmssStr = keyStr.substring(8, 14);
-									System.err.println("TJJ HHMMSS: " + hhmmssStr);
-									Date d = sdfNASA.parse(yearStr + dayStr + hhmmssStr);
+									Attribute timeStartNASA = ncfile.findGlobalAttribute("time_coverage_start");
+									Date d = sdfNASA.parse(timeStartNASA.getStringValue());
 									theDate = d;
 									if (! nameHasBeenSet) {
 										instrumentName = ncfile.findGlobalAttribute("sensor");
-										setName(instrumentName.getStringValue()
-												+ " "
-												+ sdfOut.format(d));
+										setName(instrumentName.getStringValue() + " " + sdfOut.format(d));
 										nameHasBeenSet = true;
 									}
 								}    	    			
