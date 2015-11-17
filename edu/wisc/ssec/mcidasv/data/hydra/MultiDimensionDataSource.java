@@ -202,6 +202,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           categories = DataCategory.parseCategories("2D grid;GRID-2D;");
           defaultSubset = adapters[0].getDefaultSubset();
           defaultSubsets[0] = defaultSubset;
+          hasImagePreview = true;
         }
         else if (name.startsWith("MOD06") || name.startsWith("MYD06")) {
           hasImagePreview = true;
@@ -386,6 +387,14 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
          table.put("array_dimension_names", new String[] {"dim0", "dim1"}); 
          adapter_s[1] = new ArrayAdapter(reader, table);
+         adapter_s[1].setRangeProcessor(new RangeProcessor() { // Eventually handle unit conversions better.
+              public float[] processRange(float[] fvals, Map<String, double[]> subset) {
+                 for (int i=0; i<fvals.length; i++) {
+                    fvals[i] *= 1000; //km -> m 
+                 }
+                 return fvals;
+              }
+         });
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "Longitude");
@@ -482,9 +491,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
          hasTrackPreview = true;
        }
        else if (name.indexOf("2B-GEOPROF") > 0) {
-         adapters = new MultiDimensionAdapter[2];
-         defaultSubsets = new HashMap[2];
-         propsArray = new Hashtable[2];
+         adapters = new MultiDimensionAdapter[4];
+         defaultSubsets = new HashMap[4];
+         propsArray = new Hashtable[4];
 
          Map<String, Object> table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Data_Fields/Radar_Reflectivity");
@@ -521,6 +530,21 @@ public class MultiDimensionDataSource extends HydraDataSource {
          table.put(ProfileAlongTrack.range_name, "DEM_elevation");
          table.put(ProfileAlongTrack.trackDim_name, "nray");
          adapter_s[1] = new ArrayAdapter(reader, table);
+         adapter_s[1].setRangeProcessor(new RangeProcessor() { // need this because we don't want -9999 mapped to NaN
+              public float[] processRange(short[] svals, Map<String, double[]> subset) {
+                  float[] fvals = new float[svals.length];
+                  for (int i=0; i<svals.length; i++) {
+                     short sval = svals[i];
+                     if (sval == -9999) {
+                        fvals[i] = 0f;
+                     }
+                     else {
+                       fvals[i] = sval;
+                     }
+                  }
+                  return fvals;
+               }
+         });
 
          table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Geolocation_Fields/Longitude");
@@ -531,11 +555,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
          TrackDomain track_domain = new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]);
          track_adapter = new TrackAdapter(track_domain, adapter_s[1]);
 
-         /*
          adapters[2] = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]), adapter_s[1]);
          ((TrackAdapter)adapters[2]).setName("Track3D");
          defaultSubsets[2] = adapters[2].getDefaultSubset();
-         */
 
          adapters[1] = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0]), adapter_s[1]);
          ((TrackAdapter)adapters[1]).setName("Track2D");
@@ -544,6 +566,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
          properties.put("medianFilter", new String[] {Double.toString(6), Double.toString(14)});
          properties.put("setBelowSfcMissing", new String[] {"true"});
+         propsArray[0] = properties;
          hasTrackPreview = true;
        }
        else if ( name.startsWith("MHSx_xxx_1B") && name.endsWith("h5")) {
@@ -854,6 +877,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     public Map<String, double[]> getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
       GeoLocationInfo ginfo = geoSelection.getBoundingBox();
+      System.out.println("ginfo0: "+ginfo);
       return adapters[0].getSubsetFromLonLatRect(select.getSubset(), ginfo.getMinLat(), ginfo.getMaxLat(),
                                         ginfo.getMinLon(), ginfo.getMaxLon());
     }
@@ -885,19 +909,32 @@ public class MultiDimensionDataSource extends HydraDataSource {
         GeoLocationInfo ginfo = null;
         GeoSelection geoSelection = null;
         
-        // TJJ 25 Sep 2014 found this case to be needed for CALIPSO data, need to init
-        // with default data selection arg passed in to avoid NPE.
-        if (dataChoice.getDataSelection() == null) {
-        	dataChoice.setDataSelection(dataSelection);
-        }
-        
         if ((dataSelection != null) && (dataSelection.getGeoSelection() != null)) {
-          geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :
-                                    dataChoice.getDataSelection().getGeoSelection();
+
+          if (dataSelection.getGeoSelection().getBoundingBox() != null) {
+            geoSelection = dataSelection.getGeoSelection();
+          }
+          else { // no bounding box in the incoming DataSelection. Check the dataChoice.
+            DataSelection datSelFromChoice = dataChoice.getDataSelection();
+            if (datSelFromChoice != null) {
+              geoSelection = datSelFromChoice.getGeoSelection();
+            }
+          }
         }
 
         if (geoSelection != null) {
           ginfo = geoSelection.getBoundingBox();
+        }
+
+        // Still no geo info so check for the lon/lat b.b. in this datasource (last set by DataSelectionComponent)
+        if (ginfo == null) {
+           DataSelection localDataSelection = getDataSelection();
+           if (localDataSelection != null) {
+              geoSelection = localDataSelection.getGeoSelection();
+              if (geoSelection != null) {
+                 ginfo = geoSelection.getBoundingBox();
+              }
+           }
         }
 
         Data data = null;
@@ -930,7 +967,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
                 subset = select.getSubset();
               }
             }
-            else {
+            else { // no IDV incoming spatial selection info, so check for HYDRA specific via Properties
               if (select != null) {
                 subset = select.getSubset();
               }
@@ -986,7 +1023,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         int k = 0;
         for (int j=0; j<lens[trkIdx]; j++) {
-          float val = sfcElev[j]*1000f; // convert to meters
+          float val = sfcElev[j];
           for (int i=0; i<lens[vrtIdx]; i++) {
             if (vrtIdx < trkIdx) k = i + j*lens[0];
             if (trkIdx < vrtIdx) k = j + i*lens[0];
@@ -1016,7 +1053,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
       if (hasTrackPreview) {
         try {
           FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());
-          components.add(new TrackSelection(dataChoice, track));
+          components.add(new TrackSelection(dataChoice, track, this));
         } catch (Exception e) {
           logger.error("cannot make preview selection", e);
         }
@@ -1077,12 +1114,13 @@ class TrackSelection extends DataSelectionComponent {
 
       JTextField trkStr;
       JTextField vrtStr;
+      MultiDimensionDataSource datSrc;
 
-
-   TrackSelection(DataChoice dataChoice, FlatField track) throws VisADException, RemoteException {
+   TrackSelection(DataChoice dataChoice, FlatField track, MultiDimensionDataSource datSrc) throws VisADException, RemoteException {
         super("track");
         this.dataChoice = dataChoice;
         this.track = track;
+        this.datSrc = datSrc;
         mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
         mapProjDsp.enableRubberBanding(false);
         dspMaster = mapProjDsp;
@@ -1229,6 +1267,11 @@ class TrackSelection extends DataSelectionComponent {
            geoSelect.setXStride(trackStride);
            geoSelect.setYStride(verticalStride);
            dataSelection.setGeoSelection(geoSelect);
+
+           DataSelection datSel = new DataSelection();
+           datSel.setGeoSelection(geoSelect);
+           datSrc.setDataSelection(datSel);
+           dataChoice.setDataSelection(dataSelection);
          }
       }
 }

@@ -103,9 +103,6 @@ public class TrackDomain extends MultiDimensionAdapter {
      Set set = null;
 
      if (altAdapter != null) {
-       for (int k=0; k< altValues.length; k++) {
-         altValues[k] *= 1000.0;
-       }
        set = new Gridded3DSet(domainType, new float[][] {lonValues, latValues, altValues}, lonValues.length);
      }
      else {
