@@ -28,18 +28,10 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Set;
 import visad.Gridded2DSet;
-import visad.Gridded2DDoubleSet;
-import visad.Linear2DSet;
-import visad.CoordinateSystem;
-import visad.GridCoordinateSystem;
 import visad.RealTupleType;
-import java.util.HashMap;
-
 
 public class IASI_L1C_LonLatNavigation extends SwathNavigation  {
-
 
   public IASI_L1C_LonLatNavigation(SwathAdapter swathAdapter) throws Exception {
     super(swathAdapter);

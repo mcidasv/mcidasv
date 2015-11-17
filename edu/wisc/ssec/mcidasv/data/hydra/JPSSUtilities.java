@@ -57,8 +57,8 @@ public abstract class JPSSUtilities {
 	public static final String JPSS_FIELD_SEPARATOR = "_";
 	
 	// This regular expression matches a Suomi NPP Data Product as defined by the 
-	// spec in CDFCB-X Volume 1, Page 21
-	public static final String SUOMI_NPP_REGEX =
+	// NOAA spec in CDFCB-X Volume 1, Page 21
+	public static final String SUOMI_NPP_REGEX_NOAA =
     		// Product Id, Multiple (ex: VSSTO-GATMO-VSLTO)
     		"(\\w\\w\\w\\w\\w-)*" + 
     		// Product Id, Single (ex: VSSTO)
@@ -81,6 +81,66 @@ public abstract class JPSSUtilities {
     		"\\w\\w\\w" + 
     		// HDF5 suffix
     		".h5";
+	
+	// This regular expression matches a Suomi NPP Data Product as defined by the 
+	// NASA spec in TBD
+	public static final String SUOMI_NPP_REGEX_NASA =
+			"V" + 
+    		// Data Start Date (ex: YYYYDDD)
+    		"20[0-3]\\d[0-3]\\d\\d" + 
+    		// Data time (TBD)
+    		"\\d\\d\\d\\d\\d\\d" + 
+    		// Always .L1B
+    		".L1B-" + 
+    		// Always M (M-Band), I (I-Band), or D (DNB)
+    		"[DIM]" + 
+    		// Always ends _SNPP
+    		"_SNPP" + 
+    		// NetCDF 4 suffix
+    		".nc";
+	
+	
+	// This regular expression matches a Suomi NPP geolocation file as defined by the 
+	// NASA spec in TBD
+	public static final String SUOMI_GEO_REGEX_NASA =
+			"V" + 
+    		// Data Start Date (ex: YYYYDDD)
+    		"20[0-3]\\d[0-3]\\d\\d" + 
+    		// Data time (TBD)
+    		"\\d\\d\\d\\d\\d\\d" + 
+    		// Always .GEO
+    		".GEO-" + 
+    		// Always M (M-Band), I (I-Band), or D (DNB)
+    		"[DIM]" + 
+    		// Always ends _SNPP
+    		"_SNPP" + 
+    		// NetCDF 4 suffix
+    		".nc";
+	
+	public static String[] validNASAVariableNames = {
+		"M01",
+		"M02",
+		"M03",
+		"M04",
+		"M05",
+		"M06",
+		"M07",
+		"M08",
+		"M09",
+		"M10",
+		"M11",
+		"M12",
+		"M13",
+		"M14",
+		"M15",
+		"M16",
+		"I01",
+		"I02",
+		"I03",
+		"I04",
+		"I05",
+		"DNB_observations"
+	};
 	
 	public static float[] ATMSChannelCenterFrequencies = {
 		23.8f,
@@ -133,8 +193,8 @@ public abstract class JPSSUtilities {
 	};  
 	
 	// This regular expression matches a Suomi NPP geolocation granule, see 
-	// spec in CDFCB-X Volume 1, Page 21
-	public static final String SUOMI_GEO_REGEX =
+	// NOAA spec in CDFCB-X Volume 1, Page 21
+	public static final String SUOMI_GEO_REGEX_NOAA =
     		// Geo Id, Single (ex: GMODO)
 			// NOTE: This MUST match the list of product ids in static array above!
     		"(GATMO|GCRSO|GAERO|GCLDO|GDNBO|GNCCO|GIGTO|GIMGO|GITCO|" + 
@@ -160,6 +220,24 @@ public abstract class JPSSUtilities {
     		".h5";
 	
 	/**
+	 * Determine if the input variable name is a valid NASA product
+	 * 
+	 * @return True if passes checks
+	 */
+	
+	public static boolean isValidNASA(String varName) {
+		boolean isValid = false;
+		if (varName == null) return isValid; 
+		for (String s : validNASAVariableNames) {
+			if (s.equals(varName)) {
+				isValid = true;
+				break;
+			}
+		}
+		return isValid;
+	}
+	
+	/**
 	 * Determine if the set if filenames constitutes contiguous SNPP granules of the
 	 * same geographic coverage.
 	 * 
@@ -169,19 +247,32 @@ public abstract class JPSSUtilities {
 	public static boolean isValidSet(List fileList) {
 		
 		// map with filename from start date through orbit will be used for comparisons
-        Map metadataMap = new HashMap<String, List<String>>();
+        Map<String, List<String>> metadataMap = new HashMap<String, List<String>>();
         
         // Pass 1, populate the list of products selected, and empty maps
         for (Object o : fileList) {
         	String filename = (String) o;
         	// start at last path separator to clip off absolute paths
         	int lastSeparator = filename.lastIndexOf(File.separatorChar);
-        	// products go to first underscore, see regex above for more detail
-        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
-        	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
-        	if (! metadataMap.containsKey(prodStr)) {
-				List<String> l = new ArrayList<String>();
-				metadataMap.put(prodStr, l);
+        	// NOAA style products
+        	if (filename.endsWith(".h5")) {
+	        	// products go to first underscore, see regex above for more detail
+	        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+	        	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
+	        	if (! metadataMap.containsKey(prodStr)) {
+					List<String> l = new ArrayList<String>();
+					metadataMap.put(prodStr, l);
+	        	}
+        	}
+        	// NASA style products
+        	if (filename.endsWith(".nc")) {
+	        	// products end at first underscore, see regex above for more detail
+	        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+	        	String prodStr = filename.substring(lastSeparator + 16, firstUnderscore);
+	        	if (! metadataMap.containsKey(prodStr)) {
+					List<String> l = new ArrayList<String>();
+					metadataMap.put(prodStr, l);
+	        	}
         	}
         }
         
@@ -190,16 +281,34 @@ public abstract class JPSSUtilities {
         	String filename = (String) o;
         	// start at last path separator to clip off absolute paths
         	int lastSeparator = filename.lastIndexOf(File.separatorChar);
-        	// products go to first underscore, see regex above for more detail
-        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
-        	// this is the key for the maps
-        	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
-        	// this is the value for the meta data map - start time through orbit 
-        	String metaStr = filename.substring(firstUnderscore + 1, firstUnderscore + 39);
-        	// get the appropriate list, add the new value
-        	List l = (List) metadataMap.get(prodStr);
-        	l.add(metaStr);
-        	metadataMap.put(prodStr, l);
+        	
+        	// NOAA style products
+        	if (filename.endsWith(".h5")) {
+	        	// products go to first underscore, see regex above for more detail
+	        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+	        	// this is the key for the maps
+	        	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
+	        	// this is the value for the meta data map - start time through orbit 
+	        	String metaStr = filename.substring(firstUnderscore + 1, firstUnderscore + 39);
+	        	// get the appropriate list, add the new value
+	        	List<String> l = (List<String>) metadataMap.get(prodStr);
+	        	l.add(metaStr);
+	        	metadataMap.put(prodStr, l);
+        	}
+        	
+        	// NASA style products
+        	if (filename.endsWith(".nc")) {
+	        	// products end at first underscore, see regex above for more detail
+	        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+	        	// this is the key for the maps
+	        	String prodStr = filename.substring(lastSeparator + 16, firstUnderscore);
+	        	// this is the value for the meta data map - start time through orbit 
+	        	String metaStr = filename.substring(lastSeparator + 1, lastSeparator + 15);
+	        	// get the appropriate list, add the new value
+	        	List<String> l = (List<String>) metadataMap.get(prodStr);
+	        	l.add(metaStr);
+	        	metadataMap.put(prodStr, l);
+        	}
         }
         
         // loop over metadata map, every list much match the one for ALL other products

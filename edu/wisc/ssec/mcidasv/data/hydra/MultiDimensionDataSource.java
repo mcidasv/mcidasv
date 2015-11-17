@@ -44,12 +44,15 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import ucar.nc2.NetcdfFile;
+import ucar.nc2.Variable;
 import visad.CellImpl;
 import visad.Data;
 import visad.FlatField;
@@ -62,6 +65,7 @@ import visad.UnionSet;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
+
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -147,7 +151,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
             throws VisADException {
         super(descriptor, newSources, DATA_DESCRIPTION, properties);
 
-        this.filename = (String)sources.get(0);
+        this.filename = (String) sources.get(0);
 
         try {
           setup();
@@ -172,7 +176,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
             reader = new NetCDFFile(filename);
           }
         } catch (Exception e) {
-          logger.error("cannot create NetCDF reader for file: "+filename, e);
+          logger.error("Cannot create NetCDF reader for file: " + filename, e);
         }
 
         adapters = new MultiDimensionAdapter[2];
@@ -324,11 +328,28 @@ public class MultiDimensionDataSource extends HydraDataSource {
           }
        }
        else if (name.startsWith("CAL_LID_L1")) {
-         String[] arrayNames = null;
+
+    	   // Make sure the variables we need are present. If not, this is not a valid
+    	   // L1 CALIPSO file McV can work with.
+    	   
+    	   if (! ((hasVariable("Latitude")) &&
+    			  (hasVariable("Longitude")) &&
+    			  (hasVariable("Surface_Elevation")) &&
+    			  (hasVariable("Tropopause_Height")) &&
+    			  (hasVariable("Total_Attenuated_Backscatter_532"))) 
+    		  ) {
+    		   // Pop up a dialog letting user know we can't work wit this data
+	    		String msg = "McIDAS-V is unable to read this Level 1 CALIPSO file.\n" +
+	    				"If you believe this is a valid file which should be supported,\n" +
+	    				"please contact the MUG or post a message on the MUG Forum.";
+	    		Object[] params = { msg };
+	    		JOptionPane.showMessageDialog(null, params, "Data Validity Test Failure", JOptionPane.OK_OPTION);
+	    		throw new Exception("Unable to load CALIPSO data");
+    	   }
+    	   
          adapters = new MultiDimensionAdapter[4];
          defaultSubsets = new HashMap[4];
          propsArray = new Hashtable[4]; 
-         
          
          Map<String, Object> table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "Total_Attenuated_Backscatter_532");
@@ -351,7 +372,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
          properties.put("medianFilter", new String[] {Double.toString(8), Double.toString(16)});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          propsArray[0] = properties;
-
 
          ArrayAdapter[] adapter_s = new ArrayAdapter[3];
          table = ProfileAlongTrack.getEmptyMetadataTable();
@@ -408,6 +428,24 @@ public class MultiDimensionDataSource extends HydraDataSource {
          hasTrackPreview = true;
        }
        else if (name.startsWith("CAL_LID_L2")) {
+    	   
+    	   // Make sure the variables we need are present. If not, this is not a valid
+    	   // L2 CALIPSO file McV can work with.
+    	   
+    	   if (! ((hasVariable("Latitude")) &&
+    			  (hasVariable("Longitude")) &&
+    			  (hasVariable("DEM_Surface_Elevation")) &&
+    			  (hasVariable("Layer_Top_Altitude"))) 
+    		  ) {
+    		   // Pop up a dialog letting user know we can't work wit this data
+	    		String msg = "McIDAS-V is unable to read this Level 2 CALIPSO file.\n" +
+	    				"If you believe this is a valid file which should be supported,\n" +
+	    				"please contact the MUG or post a message on the MUG Forum.";
+	    		Object[] params = { msg };
+	    		JOptionPane.showMessageDialog(null, params, "Data Validity Test Failure", JOptionPane.OK_OPTION);
+	    		throw new Exception("Unable to load CALIPSO data");
+    	   }
+    	   
          adapters = new MultiDimensionAdapter[4];
          defaultSubsets = new HashMap[4];
          propsArray = new Hashtable[4];
@@ -1032,12 +1070,17 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     private String getVariableDimensionName(String variableName, int dimension) {
         NetcdfFile ncfile = ((NetCDFFile)reader).getNetCDFFile();
-        ucar.nc2.Variable v = ncfile.findVariable(variableName);
+        Variable v = ncfile.findVariable(variableName);
         String name = null;
         if (v != null) {
             name = v.getDimension(dimension).getFullName();
         }
         return name;
+    }
+
+    private boolean hasVariable(String variableName) {
+        NetcdfFile ncfile = ((NetCDFFile) reader).getNetCDFFile();
+        return ncfile.findVariable(variableName) != null;
     }
 
     private ArrayAdapter createTrackVertArrayAdapter(String variableName) {

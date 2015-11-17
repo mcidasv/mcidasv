@@ -7467,12 +7467,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (contents != null) {
             //Don't do this for now:
             //GuiUtils.empty(contents);
+            contents.removeAll();
             contents = null;
         }
 
         if (outerContents != null) {
             //Don't do this for now:
             //            GuiUtils.empty(outerContents);
+            outerContents.removeAll();
             outerContents = null;
         }
 
