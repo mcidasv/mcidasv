@@ -37,13 +37,8 @@ import static ucar.unidata.util.LogUtil.userMessage;
 import static ucar.unidata.util.StringUtil.replace;
 import static ucar.unidata.util.StringUtil.split;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -70,8 +65,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
 
 import org.joda.time.DateTime;
@@ -732,6 +725,10 @@ public class JythonShell extends InteractiveShell {
         return out;
     }
 
+    protected String formatJythonSyntaxException(SyntaxError se) {
+        return formatCode("SyntaxError: "+se.msg);
+    }
+
     /**
      * eval
      *
@@ -814,17 +811,15 @@ public class JythonShell extends InteractiveShell {
             // write off history to "store" so user doesn't have to save explicitly.
             saveHistory();
         } catch (PySyntaxError syntaxError) {
-            output("<font color=\"red\">" + formatJythonException(syntaxError) + "</font><br/>");
             SyntaxError se = extractFromJython(syntaxError);
-//            logger.trace("syntax error: lineno={} col={} text='{}'", se.line, se.column, se.text);
-            int caretPos = getPositionForSyntaxError(se);
+            errorOutput(formatJythonSyntaxException(se));
             JTextComponent cmdField = getCommandFld();
             cmdField.setText(getLastHistoryEntry().getEntryText());
-            cmdField.setCaretPosition(caretPos);
+            cmdField.setCaretPosition(getSyntaxErrorPosition(se));
         } catch (PyException pse) {
-            output("<font color=\"red\">" + formatJythonException(pse) + "</font><br/>");
+            errorOutput(formatJythonException(pse));
         } catch (Exception exc) {
-            output("<font color=\"red\">" + formatJavaException(exc) + "</font><br/>");
+            errorOutput(formatJavaException(exc));
         }
     }
 
@@ -862,13 +857,13 @@ public class JythonShell extends InteractiveShell {
         return new SyntaxError(line, col, msg, text);
     }
 
-    private int getPositionForSyntaxError(SyntaxError se) {
+    private int getSyntaxErrorPosition(SyntaxError se) {
         ShellHistoryEntry entry = getLastHistoryEntry();
         List<String> lines = StringUtil.split(entry.getEntryText(), "\n");
         int lengthOfLines = 0;
         for (int i = 0; i < se.line - 1; i++) {
             // the "+ 1" is to account for the newline character
-            lengthOfLines += lines.get(i).length() + 1;;
+            lengthOfLines += lines.get(i).length() + 1;
         }
         return lengthOfLines + se.column;
     }

@@ -652,6 +652,10 @@ public class InteractiveShell implements HyperlinkListener {
             updateText();
         }
     }
+
+    public void errorOutput(String m) {
+        output("<font color=\"red\">" + m + "</font><br/>");
+    }
     
     /**
      * _more_
