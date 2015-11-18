@@ -453,7 +453,19 @@ public class InteractiveShell implements HyperlinkListener {
             getCommandFld().setText(entry.getEntryText());
         }
     }
-    
+
+    public int getHistorySize() {
+        return history.size();
+    }
+
+    public ShellHistoryEntry getHistoryEntry(int index) {
+        return history.get(index);
+    }
+
+    public ShellHistoryEntry getLastHistoryEntry() {
+        return history.get(history.size() - 1);
+    }
+
     public void handleFlipCommandAreaAction() {
         flipField();
     }

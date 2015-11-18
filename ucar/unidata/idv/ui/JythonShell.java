@@ -77,9 +77,21 @@ import javax.swing.text.JTextComponent;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import org.python.core.*;
+import org.python.core.Py;
+import org.python.core.PyCode;
+import org.python.core.PyException;
+import org.python.core.PyFunction;
+import org.python.core.PyJavaPackage;
+import org.python.core.PyObject;
+import org.python.core.PyReflectedFunction;
+import org.python.core.PyString;
+import org.python.core.PyStringMap;
+import org.python.core.PySyntaxError;
+import org.python.core.PySystemState;
+import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
 
+import ucar.unidata.util.StringUtil;
 import visad.Data;
 import visad.MathType;
 
@@ -801,13 +813,66 @@ public class JythonShell extends InteractiveShell {
 
             // write off history to "store" so user doesn't have to save explicitly.
             saveHistory();
+        } catch (PySyntaxError syntaxError) {
+            output("<font color=\"red\">" + formatJythonException(syntaxError) + "</font><br/>");
+            SyntaxError se = extractFromJython(syntaxError);
+//            logger.trace("syntax error: lineno={} col={} text='{}'", se.line, se.column, se.text);
+            int caretPos = getPositionForSyntaxError(se);
+            JTextComponent cmdField = getCommandFld();
+            cmdField.setText(getLastHistoryEntry().getEntryText());
+            cmdField.setCaretPosition(caretPos);
         } catch (PyException pse) {
             output("<font color=\"red\">" + formatJythonException(pse) + "</font><br/>");
         } catch (Exception exc) {
             output("<font color=\"red\">" + formatJavaException(exc) + "</font><br/>");
         }
     }
-    
+
+    public static class SyntaxError {
+        public final int line;
+        public final int column;
+        public final String msg;
+        public final String filename;
+        public final String text;
+
+        public SyntaxError(int line, int column, String msg, String text) {
+            this(line, column, msg, "<stdin>", text);
+        }
+
+        public SyntaxError(int line, int column, String msg, String filename, String text) {
+            this.line = line;
+            this.column = column;
+            this.msg = msg;
+            this.filename = filename;
+            this.text = text;
+        }
+
+        public String toString() {
+            return String.format("[SyntaxError@%x: line=%s, column=%s, filename=\"%s\", msg=\"%s\", text=\"%s\"]", hashCode(), line, column, filename, msg, text);
+        }
+    }
+
+    private static SyntaxError extractFromJython(PySyntaxError pse) {
+        PyTuple value = (PyTuple)pse.value;
+        String msg = value.get(0).toString();
+        PyTuple second = (PyTuple)value.get(1);
+        int line = (Integer)second.get(1);
+        int col = (Integer)second.get(2);
+        String text = second.get(3).toString();
+        return new SyntaxError(line, col, msg, text);
+    }
+
+    private int getPositionForSyntaxError(SyntaxError se) {
+        ShellHistoryEntry entry = getLastHistoryEntry();
+        List<String> lines = StringUtil.split(entry.getEntryText(), "\n");
+        int lengthOfLines = 0;
+        for (int i = 0; i < se.line - 1; i++) {
+            // the "+ 1" is to account for the newline character
+            lengthOfLines += lines.get(i).length() + 1;;
+        }
+        return lengthOfLines + se.column;
+    }
+
     /**
      * print type
      *
