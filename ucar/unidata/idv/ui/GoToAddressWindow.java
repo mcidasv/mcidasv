@@ -416,10 +416,8 @@ public class GoToAddressWindow extends JFrame {
     private String getAddressBoxContents() {
         String address = null;
         if (addressComboBox != null) {
-            address = (String)addressComboBox.getSelectedItem();
-            if (address == null) {
-                address = (String)addressComboBox.getEditor().getItem();
-            }
+            address = (String)addressComboBox.getEditor().getItem();
+            addressComboBox.setSelectedItem(address);
         }
 //        logger.trace("returning address={}", address);
         return address;
