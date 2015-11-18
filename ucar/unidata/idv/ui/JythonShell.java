@@ -77,14 +77,7 @@ import javax.swing.text.JTextComponent;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import org.python.core.PyException;
-import org.python.core.PyFunction;
-import org.python.core.PyJavaPackage;
-import org.python.core.PyObject;
-import org.python.core.PyReflectedFunction;
-import org.python.core.PyString;
-import org.python.core.PyStringMap;
-import org.python.core.PySystemState;
+import org.python.core.*;
 import org.python.util.PythonInterpreter;
 
 import visad.Data;
@@ -790,7 +783,21 @@ public class JythonShell extends InteractiveShell {
             }
             PythonInterpreter interp = getInterpreter();
             // MJH March2013: no longer doing a startBufferingOutput here
-            interp.exec(sb.toString());
+
+            // the compile(...) through flushLine() code essentially mimics
+            // what PythonInterpreter#exec(String) does internally, but the
+            // key difference is that we get the result back!
+            // TODO(jon): not sure if i should be using <stdin> or not...
+            PyCode compiledCode = interp.compile(sb.toString(), "<stdin>");
+            PyObject result = interp.eval(compiledCode);
+            Py.flushLine();
+
+            // if result is Py.None and no exception has been thrown,
+            // we're likely executing something like "print 'hi'" and thus
+            // our output is already handled.
+            if (result != Py.None) {
+                output(formatCode(result.toString()));
+            }
 
             // write off history to "store" so user doesn't have to save explicitly.
             saveHistory();
