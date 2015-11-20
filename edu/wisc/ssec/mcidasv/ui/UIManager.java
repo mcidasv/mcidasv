@@ -42,7 +42,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -104,8 +103,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -121,7 +118,6 @@ import org.w3c.dom.NodeList;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataOperand;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.UserOperandValue;
@@ -138,7 +134,6 @@ import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.DataControlDialog;
 import ucar.unidata.idv.ui.DataSelectionWidget;
-import ucar.unidata.idv.ui.DataSelector;
 import ucar.unidata.idv.ui.IdvComponentGroup;
 import ucar.unidata.idv.ui.IdvComponentHolder;
 import ucar.unidata.idv.ui.IdvUIManager;
@@ -147,7 +142,6 @@ import ucar.unidata.idv.ui.IdvXmlUi;
 import ucar.unidata.idv.ui.ViewPanel;
 import ucar.unidata.idv.ui.WindowInfo;
 import ucar.unidata.metdata.NamedStationTable;
-import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
 import ucar.unidata.ui.HttpFormEntry;
 import ucar.unidata.ui.LatLonWidget;
@@ -172,7 +166,6 @@ import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.StateManager;
 import edu.wisc.ssec.mcidasv.supportform.McvStateCollector;
 import edu.wisc.ssec.mcidasv.supportform.SupportForm;
-import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.Contract;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
@@ -338,7 +331,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         if (Constants.DATASELECTOR_NAME.equals(title)) {
             show = false;
         }
-        if (skinPath.indexOf("dashboard.xml") >= 0) {
+        if (skinPath.contains("dashboard.xml")) {
             show = false;
         }
 
@@ -348,7 +341,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         IdvWindow w = super.createNewWindow(viewManagers, notifyCollab, title, 
             skinPath, skinRoot, show, windowInfo);
 
-        String iconPath = idv.getProperty(Constants.PROP_APP_ICON, (String)null);
+        String iconPath = idv.getProperty(Constants.PROP_APP_ICON, null);
         ImageIcon icon = GuiUtils.getImageIcon(iconPath, getClass(), true);
         w.setIconImage(icon.getImage());
 
@@ -358,7 +351,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         } else if (!w.getComponentGroups().isEmpty()) {
             // otherwise we need to hide the component group header and explicitly
             // set the size of the window.
-            ((ComponentHolder)w.getComponentGroups().get(0)).setShowHeader(false);
+            w.getComponentGroups().get(0).setShowHeader(false);
             if (previousWindow != null) {
                 Rectangle r = previousWindow.getBounds();
                 
@@ -448,8 +441,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         dashboard.addWindowListener(new WindowListener() {
             public void windowClosed(final WindowEvent e) {
                 Boolean saveViz = (Boolean)state.getPreference(Constants.PREF_SAVE_DASHBOARD_VIZ, Boolean.FALSE);
-                if (saveViz)
+                if (saveViz) {
                     state.putPreference(Constants.PROP_SHOWDASHBOARD, false);
+                }
             }
 
             public void windowActivated(final WindowEvent e) { }
@@ -586,8 +580,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         }
         
-        if (newActive != null)
+        if (newActive != null) {
             getVMManager().setLastActiveViewManager(newActive);
+        }
     }
     
     /**
@@ -901,11 +896,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @see ucar.unidata.idv.ui.IdvUIManager#about()
      */
     public void about() {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AboutFrame((McIDASV)idv).setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> new AboutFrame((McIDASV)idv).setVisible(true));
     }
 
     /**
@@ -916,7 +907,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param e The event that triggered the call to this method.
      */
     public void actionPerformed(ActionEvent e) {
-        String cmd = (String)e.getActionCommand();
+        String cmd = e.getActionCommand();
         boolean toolbarEditEvent = false;
 
         // handle selecting large icons
@@ -1026,25 +1017,24 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         // select the appropriate view
-        tree.addTreeSelectionListener(new TreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent evt) {
-                DefaultMutableTreeNode node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-                if (node == null || !(node.getUserObject() instanceof TwoFacedObject)) {
-                    return;
-                }
-                TwoFacedObject tfo = (TwoFacedObject) node.getUserObject();
+        tree.addTreeSelectionListener(evt -> {
+            DefaultMutableTreeNode node =
+                (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+            if (node == null || !(node.getUserObject() instanceof TwoFacedObject)) {
+                return;
+            }
+            TwoFacedObject tfo = (TwoFacedObject) node.getUserObject();
 
-                Object obj = tfo.getId();
-                if (obj instanceof ViewManager) {
-                    ViewManager viewManager = (ViewManager) tfo.getId();
-                    idv.getVMManager().setLastActiveViewManager(viewManager);
-                } else if (obj instanceof McvComponentHolder) {
-                    McvComponentHolder holder = (McvComponentHolder)obj;
-                    holder.setAsActiveTab();
-                } else if (obj instanceof IdvWindow) {
-                    IdvWindow window = (IdvWindow)obj;
-                    window.toFront();
-                }
+            Object obj = tfo.getId();
+            if (obj instanceof ViewManager) {
+                ViewManager viewManager = (ViewManager) tfo.getId();
+                idv.getVMManager().setLastActiveViewManager(viewManager);
+            } else if (obj instanceof McvComponentHolder) {
+                McvComponentHolder holder = (McvComponentHolder)obj;
+                holder.setAsActiveTab();
+            } else if (obj instanceof IdvWindow) {
+                IdvWindow window1 = (IdvWindow)obj;
+                window1.toFront();
             }
         });
 
@@ -1384,12 +1374,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         JButton button = new JButton(node.getName(), fileIcon);
         button.setToolTipText("Click to open favorite: " + node.getName());
-        button.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                // running in a separate thread is kinda nice! *HEH*
-                Misc.run(UIManager.this, "processBundle", bundle);
-            }
+        button.addActionListener(e -> {
+            // running in a separate thread is kinda nice! *HEH*
+            Misc.run(UIManager.this, "processBundle", bundle);
         });
         toolbar.add(button);
     }
@@ -1515,7 +1502,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         final NodeList elements = XmlUtil.getElements(root);
-        List<String> data = new ArrayList<String>(elements.getLength());
+        List<String> data = new ArrayList<>(elements.getLength());
         for (int i = 0; i < elements.getLength(); i++) {
             Element child = (Element)elements.item(i);
             if (child.getTagName().equals(XmlUi.TAG_BUTTON)) {
@@ -2350,17 +2337,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 for (final McvComponentGroup group : McVGuiUtils.idvGroupsToMcv(window)) {
                     JMenuItem mi = new JMenuItem(name);
 
-                    mi.addActionListener(new ActionListener() {
-
-                        public void actionPerformed(ActionEvent ae) {
-                            if (!inWindow) {
-                                createNewTab(skinid);
-                            } else {
-                                createNewWindow(null, true,
-                                    getStateManager().getTitle(), skins.get(
-                                        skinIndex).toString(), skins.getRoot(
-                                        skinIndex, false), inWindow, null);
-                            }
+                    mi.addActionListener(ae -> {
+                        if (!inWindow) {
+                            createNewTab(skinid);
+                        } else {
+                            createNewWindow(null, true,
+                                getStateManager().getTitle(), skins.get(
+                                    skinIndex).toString(), skins.getRoot(
+                                    skinIndex, false), inWindow, null);
                         }
                     });
                     theMenu.add(mi);
@@ -2604,13 +2588,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     public void showSupportForm(final String description, 
         final String stackTrace, final JDialog dialog) 
     {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                // TODO: mcvstatecollector should have a way to gather the
-                // exception information..
-                McIDASV mcv = (McIDASV)getIdv();
-                new SupportForm(getStore(), new McvStateCollector(mcv)).setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            // TODO: mcvstatecollector should have a way to gather the
+            // exception information..
+            McIDASV mcv = (McIDASV)getIdv();
+            new SupportForm(getStore(), new McvStateCollector(mcv)).setVisible(true);
         });
     }
 
@@ -2674,7 +2656,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         List<String> buttonIds = new ArrayList<>(tfos.size());
         for (TwoFacedObject tfo : tfos) {
             if (McvToolbarEditor.isSpace(tfo)) {
-                buttonIds.add((String)null);
+                buttonIds.add(null);
             } else {
                 buttonIds.add(TwoFacedObject.getIdString(tfo));
             }
@@ -2731,13 +2713,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * most useful for triggering an update to the {@literal "toolbar bundles"}.
      */
     @Override public void favoriteBundlesChanged() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                for (JToolBar toolbar : toolbars) {
-                    toolbar.setVisible(false);
-                    populateToolbar(toolbar);
-                    toolbar.setVisible(true);
-                }
+        SwingUtilities.invokeLater(() -> {
+            for (JToolBar toolbar : toolbars) {
+                toolbar.setVisible(false);
+                populateToolbar(toolbar);
+                toolbar.setVisible(true);
             }
         });
     }
@@ -2802,11 +2782,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
         boolean persistCC = getStore().get("mcv.supportreq.cc", true);
 
         JCheckBox ccMyself = new JCheckBox("Send Copy of Support Request to Me", persistCC);
-        ccMyself.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                JCheckBox cb = (JCheckBox)e.getSource();
-                getStore().put("mcv.supportreq.cc", cb.isSelected());
-            }
+        ccMyself.addActionListener(e -> {
+            JCheckBox cb = (JCheckBox)e.getSource();
+            getStore().put("mcv.supportreq.cc", cb.isSelected());
         });
 
         boolean doWrap = idv.getProperty(PROP_WRAP_SUPPORT_DESC, true);
@@ -3026,8 +3004,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         components.add(new JLabel("Value"));
         components.add(new JLabel("Save in Bundle"));
         for (int i = 0; i < userOperands.size(); i++) {
-            DataOperand operand   = (DataOperand) userOperands.get(i);
-            String      fieldType = (String) operand.getProperty("type");
+            DataOperand operand   = (DataOperand)userOperands.get(i);
+            String      fieldType = operand.getProperty("type");
             if (fieldType == null) {
                 fieldType = FIELDTYPE_TEXT;
             }
@@ -3063,7 +3041,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             JComponent field     = null;
             JComponent fieldComp = null;
             if (fieldType.equals(FIELDTYPE_TEXT)) {
-                String rowString = (String) operand.getProperty("rows");
+                String rowString = operand.getProperty("rows");
                 if (rowString == null) {
                     rowString = "1";
                 }
@@ -3084,7 +3062,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     dflt.toString()).booleanValue()
                     : true));
             } else if (fieldType.equals(FIELDTYPE_CHOICE)) {
-                String choices = (String) operand.getProperty("choices");
+                String choices = operand.getProperty("choices");
                 if (choices == null) {
                     throw new IllegalArgumentException(
                         "No 'choices' attribute defined for operand: "
@@ -3111,8 +3089,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
                         if (subToks.size() == 2) {
                             filters.add(
                                 new PatternFileFilter(
-                                    (String) subToks.get(0),
-                                    (String) subToks.get(1)));
+                                    (String)subToks.get(0),
+                                    (String)subToks.get(1)));
                         } else {
                             filters.add(new PatternFileFilter(tok, tok));
                         }
@@ -3134,11 +3112,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                     GuiUtils.getImageButton("/auxdata/ui/icons/Map16.gif",
                         getClass());
                 centerPopupBtn.setToolTipText("Center on current displays");
-                centerPopupBtn.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent ae) {
-                        popupCenterMenu(centerPopupBtn, llw);
-                    }
-                });
+                centerPopupBtn.addActionListener(ae -> popupCenterMenu(centerPopupBtn, llw));
                 JComponent centerPopup = GuiUtils.inset(centerPopupBtn,
                     new Insets(0, 0, 0, 4));
                 fieldComp = GuiUtils.hbox(llw, centerPopup);
@@ -3185,7 +3159,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             if (field instanceof JTextComponent) {
                 value = ((JTextComponent) field).getText().trim();
             } else if (field instanceof JCheckBox) {
-                value = new Boolean(((JCheckBox) field).isSelected());
+                value = new Boolean(((JCheckBox)field).isSelected());
             } else if (field instanceof JComboBox) {
                 value = ((JComboBox) field).getSelectedItem();
             } else if (field instanceof LatLonWidget) {
@@ -3199,8 +3173,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
             if (cacheValue == null) {
                 cacheValue = value;
             }
-            JCheckBox cbx       = (JCheckBox) persistentCbxs.get(i);
-            String    fieldType = (String) operand.getProperty("type");
+            JCheckBox cbx       = (JCheckBox)persistentCbxs.get(i);
+            String    fieldType = operand.getProperty("type");
             if (fieldType == null) {
                 fieldType = "text";
             }
@@ -3224,20 +3198,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
         JMenuItem saveLayout = new JMenuItem("Save");
         McVGuiUtils.setMenuImage(saveLayout, Constants.ICON_DEFAULTLAYOUTADD_SMALL);
         saveLayout.setToolTipText("Save as default layout");
-        saveLayout.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                ((McIDASV)idv).doSaveAsDefaultLayout();
-            }
-        });
+        saveLayout.addActionListener(e -> ((McIDASV)idv).doSaveAsDefaultLayout());
 
         JMenuItem removeLayout = new JMenuItem("Remove");
         McVGuiUtils.setMenuImage(removeLayout, Constants.ICON_DEFAULTLAYOUTDELETE_SMALL);
         removeLayout.setToolTipText("Remove saved default layout");
-        removeLayout.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                idv.doClearDefaults();
-            }
-        });
+        removeLayout.addActionListener(e -> idv.doClearDefaults());
 
         removeLayout.setEnabled(((McIDASV)idv).hasDefaultLayout());
 
@@ -3405,19 +3371,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
         ControlDescriptor cd;
 
         mi = new JMenuItem("Create Layer from Data Source...");
-        mi.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent ae) {
-                showDashboard("Data Sources");
-            }
-        });
+        mi.addActionListener(ae -> showDashboard("Data Sources"));
         displayMenu.add(mi);
 
         mi = new JMenuItem("Layer Controls...");
-        mi.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent ae) {
-                showDashboard("Layer Controls");
-            }
-        });
+        mi.addActionListener(ae -> showDashboard("Layer Controls"));
         displayMenu.add(mi);
 
         displayMenu.addSeparator();
@@ -3469,25 +3427,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         mi = new JMenuItem("Add Background Image");
         McVGuiUtils.setMenuImage(mi, Constants.ICON_BACKGROUND_SMALL);
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                getIdv().doMakeBackgroundImage();
-            }
-        });
+        mi.addActionListener(ae -> getIdv().doMakeBackgroundImage());
         displayMenu.add(mi);
 
         mi = new JMenuItem("Reset Map Layer to Defaults");
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                // TODO: Call IdvUIManager.addDefaultMap()... should be made private
+        mi.addActionListener(ae -> {
+            // TODO: Call IdvUIManager.addDefaultMap()... should be made private
 //                addDefaultMap();
-                ControlDescriptor mapDescriptor = idv.getControlDescriptor("mapdisplay");
-                if (mapDescriptor == null) {
-                    return;
-                }
-                String attrs = "initializeAsDefault=true;displayName=Default Background Maps;";
-                idv.doMakeControl(new ArrayList(), mapDescriptor, attrs, null);
+            ControlDescriptor mapDescriptor = idv.getControlDescriptor("mapdisplay");
+            if (mapDescriptor == null) {
+                return;
             }
+            String attrs = "initializeAsDefault=true;displayName=Default Background Maps;";
+            idv.doMakeControl(new ArrayList(), mapDescriptor, attrs, null);
         });
         displayMenu.add(mi);
         Msg.translateTree(displayMenu);
@@ -3567,14 +3519,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     private final ActionListener makeMenuBarActionListener() {
         final IdvResourceManager mngr = getResourceManager();
-        return new ActionListener() {
-            public void actionPerformed(final ActionEvent ae) {
-                XmlResourceCollection skins = mngr.getXmlResources(mngr.RSC_SKIN);
-                int skinIndex = ((Integer)ae.getSource()).intValue();
-                createNewWindow(null, true, getWindowTitleFromSkin(skinIndex),
-                    skins.get(skinIndex).toString(), 
-                    skins.getRoot(skinIndex, false), true, null);
-            }
+        return ae -> {
+            XmlResourceCollection skins = mngr.getXmlResources(mngr.RSC_SKIN);
+            int skinIndex = ((Integer)ae.getSource()).intValue();
+            createNewWindow(null, true, getWindowTitleFromSkin(skinIndex),
+                skins.get(skinIndex).toString(),
+                skins.getRoot(skinIndex, false), true, null);
         };
     }
 
@@ -3672,7 +3622,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 if (gotSize == null) {
                 	continue;
                 }
-                List<String> dims = StringUtil.split((String)gotSize, " ", false, false);
+                List<String> dims = StringUtil.split(gotSize, " ", false, false);
                 int myLines = -1;
                 int myElements = -1;
                 if (dims.size() == 2) {
@@ -4137,25 +4087,33 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Represents the set of known {@link IdvAction}s in an idiom that can be
-     * easily used by both the IDV and McIDAS-V.
+     * Represents the set of known {@link IdvAction IdvActions} in an idiom
+     * that can be easily used by both the IDV and McIDAS-V.
      */
     // TODO(jon:101): use Sets instead of maps and whatnot
     // TODO(jon:103): create an invalid IdvAction
     public static final class IdvActions {
 
-        /** Maps {@literal "id"} values to {@link IdvAction}s. */
-        private final Map<String, IdvAction> idToAction = new ConcurrentHashMap<>();
-
-        /** Collects {@link IdvAction}s {@literal "under"} common group values. */
-        // TODO(jon:102): this should probably become concurrency-friendly.
-        private final Map<String, Set<IdvAction>> groupToActions = new LinkedHashMap<>();
+        /** Maps {@literal "id"} values to {@link IdvAction IdvActions}. */
+        private final Map<String, IdvAction> idToAction =
+            new ConcurrentHashMap<>();
 
         /**
+         * Collects {@link IdvAction IdvActions} {@literal "under"} common
+         * group values.
+         */
+        // TODO(jon:102): this should probably become concurrency-friendly.
+        private final Map<String, Set<IdvAction>> groupToActions =
+            new LinkedHashMap<>();
+
+        /**
+         * Creates an object that represents the application's
+         * {@link IdvAction IdvActions}.
          * 
-         * 
-         * @param idv Reference to the IDV {@literal "god"} object. Cannot be {@code null}.
-         * @param collectionId IDV resource collection that contains our actions. Cannot be {@code null}.
+         * @param idv Reference to the IDV {@literal "god"} object.
+         *            Cannot be {@code null}.
+         * @param collectionId IDV resource collection that contains our
+         *                     actions. Cannot be {@code null}.
          * 
          * @throws NullPointerException if {@code idv} or {@code collectionId} 
          * is {@code null}. 
@@ -4164,7 +4122,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
             requireNonNull(idv, "Cannot provide a null IDV reference");
             requireNonNull(collectionId, "Cannot build actions from a null collection id");
 
-            // i lub u xpath (but how much slower is this?)
+            // TODO(jon): benchmark use of xpath
             String query = "//action[@id and @image and @description and @action]";
             for (Element e : elements(idv, collectionId, query)) {
                 IdvAction a = new IdvAction(e);
@@ -4172,7 +4130,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 idToAction.put(id, a);
                 String group = a.getAttribute(ActionAttribute.GROUP);
                 if (!groupToActions.containsKey(group)) {
-                    groupToActions.put(group, new LinkedHashSet<IdvAction>());
+                    groupToActions.put(group, new LinkedHashSet<>());
                 }
                 Set<IdvAction> groupedIds = groupToActions.get(group);
                 groupedIds.add(a);
@@ -4222,12 +4180,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         /**
-         * Attempts to return the XML {@link Element} that {@literal "represents"} the
-         * action associated with {@code actionId}.
+         * Attempts to return the XML {@link Element} that
+         * {@literal "represents"} the action associated with {@code actionId}.
          * 
-         * @param actionId Identifier whose XML element is desired. Cannot be {@code null}.
+         * @param actionId Identifier whose XML element is desired.
+         *                 Cannot be {@code null}.
          * 
-         * @return Either the XML element associated with {@code actionId} or {@code null}.
+         * @return Either the XML element associated with {@code actionId} or
+         * {@code null}.
          * 
          * @throws NullPointerException if {@code actionId} is {@code null}.
          * 
@@ -4349,15 +4309,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * displayed. This is {@literal "lazy"}, so the cache does not contain
          * icons for {@link ToolbarStyle}s that haven't been used. 
          */
-        private final Map<ToolbarStyle, Icon> iconCache = new ConcurrentHashMap<>();
+        private final Map<ToolbarStyle, Icon> iconCache =
+            new ConcurrentHashMap<>();
 
         /**
-         * Creates a representation of an IDV action using a given {@link Element}.
+         * Creates a representation of an IDV action using a given
+         * {@link Element}.
          * 
-         * @param element XML representation of an IDV action. Cannot be {@code null}.
+         * @param element XML representation of an IDV action.
+         *                Cannot be {@code null}.
          * 
          * @throws NullPointerException if {@code element} is {@code null}.
-         * @throws IllegalArgumentException if {@code element} is not a valid IDV action.
+         * @throws IllegalArgumentException if {@code element} is not a valid
+         * IDV action.
          * 
          * @see UIManager#isValidIdvAction(Element)
          */
@@ -4371,8 +4335,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         /**
          * @return Returns the {@literal "raw"} path to the icon associated 
-         * with this action. Remember that this is actually a {@literal "format string"}
-         * and should not be considered a valid path! 
+         * with this action. Remember that this is actually a
+         * {@literal "format string"} and should not be considered a valid path!
          * 
          * @see #getIconForStyle
          */
@@ -4381,7 +4345,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         /**
-         * @return Returns the {@link Icon} associated with {@link ToolbarStyle#SMALL}.
+         * @return Returns the {@link Icon} associated with
+         * {@link ToolbarStyle#SMALL}.
          */
         public Icon getMenuIcon() {
             return getIconForStyle(ToolbarStyle.SMALL);
@@ -4394,7 +4359,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * @param style {@literal "Style"} of the {@code Icon} to be returned.
          * Cannot be {@code null}.
          * 
-         * @return This action's {@code Icon} with {@code style} {@literal "applied."}
+         * @return This action's {@code Icon} with {@code style}
+         * {@literal "applied."}
          * 
          * @see ActionAttribute#ICON
          * @see #iconCache
@@ -4417,7 +4383,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         }
 
         /**
-         * Representation of this {@code IdvAction} as an {@literal "IDV action call"}.
+         * Representation of this {@code IdvAction} as an
+         * {@literal "IDV action call"}.
          * 
          * @return String that is suitable to hand off to the IDV for execution. 
          */
@@ -4429,7 +4396,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * Returns the value associated with a given {@link ActionAttribute} 
          * for this action.
          * 
-         * @param attr ActionAttribute whose value you want. Cannot be {@code null}.
+         * @param attr ActionAttribute whose value you want.
+         *             Cannot be {@code null}.
          * 
          * @return Value associated with {@code attr}.
          * 
@@ -4452,7 +4420,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * Returns a brief description of this action. Please note that the 
          * format is subject to change and is not intended for serialization.
          * 
-         * @return String that looks like {@code [IdvAction@HASHCODE: attributes=...]}.
+         * @return String that looks like
+         * {@code [IdvAction@HASHCODE: attributes=...]}.
          */
         @Override public String toString() {
             return String.format("[IdvAction@%x: attributes=%s]", hashCode(), attributes);
