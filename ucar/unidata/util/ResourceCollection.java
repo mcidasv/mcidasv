@@ -343,11 +343,7 @@ public class ResourceCollection {
      */
     public void addResources(List rs) {
         rs = convertResources(rs);
-        if (resources.size() == 0) {
-            resources.addAll(rs);
-        } else {
-            resources.addAll(1, rs);
-        }
+        resources.addAll(rs);
         checkWritable();
     }
 
