@@ -847,6 +847,19 @@ public class JythonShell extends InteractiveShell {
         }
     }
 
+    /**
+     * Convert a Jython {@link PySyntaxError} exception into a
+     * {@link SyntaxError}.
+     *
+     * <p>{@code SyntaxError} makes interacting with the exception's details
+     * less tedious (from Java).</p>
+     *
+     * @param pse Jython syntax error exception to convert.
+     *            Cannot be {@code null}.
+     *
+     * @return {@code SyntaxError} containing information extracted from
+     * {@code pse}.
+     */
     private static SyntaxError extractFromJython(PySyntaxError pse) {
         PyTuple value = (PyTuple)pse.value;
         String msg = value.get(0).toString();
@@ -857,6 +870,17 @@ public class JythonShell extends InteractiveShell {
         return new SyntaxError(line, col, msg, text);
     }
 
+    /**
+     * Determine position a syntax error within the last shell history entry.
+     *
+     * <p>This is useful when combined with
+     * {@link JTextComponent#setCaretPosition(int)}.</p>
+     *
+     * @param se Object containing information about the error location.
+     *           Cannot be {@code null}.
+     *
+     * @return Index of syntax error within the last shell history entry.
+     */
     private int getSyntaxErrorPosition(SyntaxError se) {
         ShellHistoryEntry entry = getLastHistoryEntry();
         List<String> lines = StringUtil.split(entry.getEntryText(), "\n");

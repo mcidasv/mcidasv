@@ -454,14 +454,33 @@ public class InteractiveShell implements HyperlinkListener {
         }
     }
 
+    /**
+     * Returns the number of history items.
+     *
+     * @return Size of {@link #history}.
+     */
     public int getHistorySize() {
         return history.size();
     }
 
+    /**
+     * Returns the history entry at the specified index.
+     *
+     * @param index Index of the history entry to return.
+     *
+     * @return History entry at the given index.
+     */
     public ShellHistoryEntry getHistoryEntry(int index) {
         return history.get(index);
     }
 
+    /**
+     * Returns the last history entry.
+     *
+     * <p>Essentially just {@code getHistoryEntry(getHistorySize() - 1)}.</p>
+     *
+     * @return Last item added to the history.
+     */
     public ShellHistoryEntry getLastHistoryEntry() {
         return history.get(history.size() - 1);
     }
