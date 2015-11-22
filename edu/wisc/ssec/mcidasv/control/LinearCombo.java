@@ -494,7 +494,8 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
     }
 
     /**
-     * 
+     * Selectors are objects that allow users to select a given wavenumber/band
+     * by simply dragging within the GUI.
      */
     public static class Selector extends JythonThing {
 
@@ -520,12 +521,12 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
         private MultiSpectralDisplay display;
 
         /**
+         * Create a new Selector.
          * 
-         * 
-         * @param waveNumber 
-         * @param color 
-         * @param control 
-         * @param console 
+         * @param waveNumber Initial {@literal "wave number (or band)"} of the Selector.
+         * @param color RGB triple that will be the color of the Selector.
+         * @param control Control that created the Selector.
+         * @param console Console that created the Selector.
          */
         public Selector(final float waveNumber, final ConstantMap[] color, final HydraControl control, final Console console) {
             super();
@@ -537,7 +538,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
 
             this.color = new ConstantMap[color.length];
             for (int i = 0; i < this.color.length; i++) {
-                ConstantMap mappedColor = (ConstantMap)color[i];
+                ConstantMap mappedColor = color[i];
                 this.color[i] = (ConstantMap)mappedColor.clone();
             }
 
@@ -546,9 +547,7 @@ public class LinearCombo extends HydraControl implements ConsoleCallback {
                 try {
                     lc.addSelector(this);
                 } catch (Exception e) {
-                    // TODO(jon): no way jose
-                    System.err.println("Could not create selector: "+e.getMessage());
-                    e.printStackTrace();
+                    logger.error("Could not create selector", e);
                 }
             }
         }
