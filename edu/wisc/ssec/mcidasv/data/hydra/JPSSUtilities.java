@@ -221,8 +221,10 @@ public abstract class JPSSUtilities {
 	
 	/**
 	 * Determine if the input variable name is a valid NASA product
-	 * 
-	 * @return True if passes checks
+	 *
+	 * @param varName Variable name to validate.
+	 *
+	 * @return {@code true} if {@code varName} passes checks.
 	 */
 	
 	public static boolean isValidNASA(String varName) {
@@ -238,10 +240,12 @@ public abstract class JPSSUtilities {
 	}
 	
 	/**
-	 * Determine if the set if filenames constitutes contiguous SNPP granules of the
-	 * same geographic coverage.
-	 * 
-	 * @return True if passes checks
+	 * Determine if the set if filenames constitutes contiguous SNPP granules
+	 * of the same geographic coverage.
+	 *
+	 * @param fileList List of files to validate.
+	 *
+	 * @return {@code true} if {@code fileList} passes checks.
 	 */
 	
 	public static boolean isValidSet(List fileList) {
@@ -330,10 +334,14 @@ public abstract class JPSSUtilities {
 	}
 
 	/**
-	 * Determine if a set if filenames which constitutes contiguous SNPP granules of 
-	 * various products all share the same geolocation data type.
-	 * 
-	 * @return True if passes checks
+	 * Determine if a set if filenames which constitutes contiguous SNPP
+	 * granules of various products all share the same geolocation data type.
+	 *
+	 * @param fileList List of files to validate.
+	 * @param directory Used when {@literal "GEO"} is not embedded within one
+	 *                  of {@code fileList}.
+	 *
+	 * @return {@code true} if {@code fileList} passes checks.
 	 */
 	
 	public static boolean hasCommonGeo(List fileList, File directory) {
@@ -360,8 +368,8 @@ public abstract class JPSSUtilities {
             		}
             	}
             }
-            // GEO not embedded in file, need to see which GEO file is referenced in 
-            // the global attribute
+            // GEO not embedded in file, need to see which GEO file is
+			// referenced in the global attribute
             if (! isCombinedProduct) {
             	try {
             		String fileFullPath = directory.getAbsolutePath() + File.separator + filename;
