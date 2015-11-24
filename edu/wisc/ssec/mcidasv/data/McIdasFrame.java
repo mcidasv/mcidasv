@@ -41,7 +41,7 @@ import ucar.unidata.util.ColorTable;
 public class McIdasFrame {
 
     /** frame data */
-    private int	myFrameNumber = 0;
+    private int myFrameNumber = 0;
     private McIdasXFrameInfo myXFrameInfo;
 
     /**
@@ -64,6 +64,7 @@ public class McIdasFrame {
      * Construct a new McIdasFrame from the given frame number
      *
      * @param frameNumber Frame number.
+     * @param xInfo State of McIDAS-X session.
      */
     public McIdasFrame(int frameNumber, McIdasXInfo xInfo) {
 //    	System.out.println("McIdasFrame constructor for frame: " + frameNumber);
@@ -72,7 +73,9 @@ public class McIdasFrame {
     }
 
     /**
-     * Get frame number
+     * Returns frame number.
+     *
+     * @return {@link #myFrameNumber}.
      */
     public int getFrameNumber() {
 //    	System.out.println("McIdasFrame getFrameNumber: " + this.myFrameNumber);
@@ -80,7 +83,9 @@ public class McIdasFrame {
     }
 
     /**
-     * Tell the XFrameInfo to refresh the cached data
+     * Tell {@link #myXFrameInfo} to refresh the cached data.
+     *
+     * @param refresh Whether or not to refresh cached data.
      */
     public void setRefreshData(boolean refresh) {
 //		System.out.println("McIdasFrame setRefreshData(" + refresh + ")");
@@ -88,18 +93,26 @@ public class McIdasFrame {
     }
 
     /**
-     * Get frame data
+     * Returns line size.
+     *
+     * @param refresh Whether or not to refresh {@link #myLineSize}.
+     *
+     * @return {@link #myLineSize}.
      */
     public int getLineSize(boolean refresh) {
 //		System.out.println("McIdasFrame getLineSize(" + refresh + ")");
-        if (this.myLineSize <0 || refresh) {
+        if (this.myLineSize < 0 || refresh) {
             this.myLineSize = this.myXFrameInfo.getLineSize();
         }
         return this.myLineSize;
     }
 
     /**
-     * Get frame data
+     * Returns element size.
+     *
+     * @param refresh Whether or not {@link #myElementSize} should be refreshed.
+     *
+     * @return {@link #myElementSize}.
      */
     public int getElementSize(boolean refresh) {
 //		System.out.println("McIdasFrame getElementSize(" + refresh + ")");
@@ -110,30 +123,45 @@ public class McIdasFrame {
     }
 
     /**
-     * Get Frame Directory
+     * Returns frame directory.
+     *
+     * @param refresh Whether or not {@link #myFrameDirectory} should be
+     *                refreshed.
+     *
+     * @return {@link #myFrameDirectory}.
      */
     public FrameDirectory getFrameDirectory(boolean refresh) {
 //		System.out.println("McIdasFrame getFrameDirectory(" + refresh + ")");
         if (this.myFrameDirectory == null || refresh) {
-            this.myFrameDirectory = new FrameDirectory(this.myXFrameInfo.getFrameDirectory());
+            this.myFrameDirectory =
+                new FrameDirectory(this.myXFrameInfo.getFrameDirectory());
         }
         return this.myFrameDirectory;
     }
 
     /**
-     * Get Color Table
+     * Returns {@link ColorTable} used by {@link #myXFrameInfo}.
+     *
+     * @param refresh Whether or not {@link #myColorTable} should be refreshed.
+     *
+     * @return {@link #myColorTable}.
      */
     public ColorTable getColorTable(boolean refresh) {
 //		System.out.println("McIdasFrame getColorTable(" + refresh + ")");
         if (this.myColorTable == null || refresh) {
-            this.myColorTable = new ColorTable("McIDAS-X",ColorTable.CATEGORY_BASIC,
-                this.myXFrameInfo.getEnhancementTable());
+            this.myColorTable =
+                new ColorTable("McIDAS-X",ColorTable.CATEGORY_BASIC,
+                    this.myXFrameInfo.getEnhancementTable());
         }
         return this.myColorTable;
     }
 
     /**
-     * Get image data
+     * Returns image data.
+     *
+     * @param refresh Whether or not {@link #myImage} should be refreshed.
+     *
+     * @return {@link #myImage}.
      */
     public byte[] getImageData(boolean refresh) {
 //		System.out.println("McIdasFrame getImageData(" + refresh + ")");
@@ -141,10 +169,11 @@ public class McIdasFrame {
             byte[] image = this.myXFrameInfo.getImage();
             int height = this.myLineSize;
             int width = this.myElementSize;
-            this.myImage = new byte[height*width];
-            for (int i=0; i<height; i++) {
-                for (int j=0; j<width; j++) {
-                    this.myImage[i*width + j] = image[(height-i-1)*width + j];
+            this.myImage = new byte[height * width];
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    this.myImage[i * width + j] =
+                        image[(height - i - 1) * width + j];
                 }
             }
         }
@@ -152,7 +181,11 @@ public class McIdasFrame {
     }
 
     /**
-     * Get graphics data
+     * Returns graphics data.
+     *
+     * @param refresh Whether or not {@link #myGraphics} should be refreshed.
+     *
+     * @return {@link #myGraphics}.
      */
     public byte[] getGraphicsData(boolean refresh) {
 //		System.out.println("McIdasFrame getGraphicsData(" + refresh + ")");
@@ -161,22 +194,22 @@ public class McIdasFrame {
             int height = this.myLineSize;
             int width = this.myElementSize;
             this.myGraphics = new byte[height*width];
-            for (int i=0; i<this.myGraphics.length; i++) {
+            for (int i = 0; i < this.myGraphics.length; i++) {
                 this.myGraphics[i] = (byte)255;
             }
             String line;
             StringTokenizer tok;
             int[] graphicsPt = new int[3];
-            for (int i=0; i<graphics.size(); i++) {
+            for (int i = 0; i < graphics.size(); i++) {
                 line = (String)(graphics.get(i));
                 tok = new StringTokenizer(line);
-                for (int j=0; j<3; j++) {
+                for (int j = 0; j < 3; j++) {
                     graphicsPt[j] = new Integer(tok.nextToken()).intValue();
                 }
                 int color = graphicsPt[2];
                 int x = graphicsPt[1] - 1;
                 int y = graphicsPt[0] - 1;
-                if (((y<height)&&(y>0)) && ((x<width)&&(x>0))) {
+                if (((y < height) && ( y > 0)) && ((x < width) && (x > 0))) {
                     this.myGraphics[y*width + x] = (byte)color;
                 }
             }
@@ -185,16 +218,19 @@ public class McIdasFrame {
     }
 
     /**
-     * Get image data
+     * Returns image data as GIF.
+     *
+     * @return {@link #myXFrameInfo} in GIF format.
      */
     public Image getGIF() {
         return this.myXFrameInfo.getGIF();
     }
 
     /**
-     * See if this McIdasFrame is equal to the object in question
+     * See if this McIdasFrame is equal to the object in question.
      *
      * @param o Object in question.
+     *
      * @return true if {@code o} is a McIdasFrame and they area equivalent.
      */
     public boolean equals(Object o) {
