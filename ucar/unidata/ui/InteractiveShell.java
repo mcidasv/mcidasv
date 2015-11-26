@@ -78,6 +78,8 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
 
 import edu.wisc.ssec.mcidasv.util.Contract;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -248,15 +250,13 @@ public class InteractiveShell implements HyperlinkListener {
      * {@code null}.
      */
     public void setMultilineText(final String text) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                JTextComponent inputField = getCommandFld();
-                if (!(inputField instanceof JTextArea)) {
-                    flipField();
-                    inputField = getCommandFld();
-                }
-                inputField.setText(text);
+        SwingUtilities.invokeLater(() -> {
+            JTextComponent inputField = getCommandFld();
+            if (!(inputField instanceof JTextArea)) {
+                flipField();
+                inputField = getCommandFld();
             }
+            inputField.setText(text);
         });
     }
 
@@ -273,28 +273,26 @@ public class InteractiveShell implements HyperlinkListener {
      * Should not be {@code null}.
      */
     public void setTextFromHistoryEntry(final ShellHistoryEntry entry) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                ShellHistoryMode inputMode = entry.getInputMode();
-                String text = entry.getEntryText();
-                if (inputMode == ShellHistoryMode.UNKNOWN) {
-                    inputMode = detectInputMode(text);
-                }
-
-                JTextComponent inputField = getCommandFld();
-                if (inputMode == ShellHistoryMode.SINGLE) {
-                    if (inputField instanceof JTextArea) {
-                        flipField();
-                        inputField = getCommandFld();
-                    }
-                } else {
-                    if (inputField instanceof JTextField) {
-                        flipField();
-                        inputField = getCommandFld();
-                    }
-                }
-                inputField.setText(entry.getEntryText());
+        SwingUtilities.invokeLater(() -> {
+            ShellHistoryMode inputMode = entry.getInputMode();
+            String text = entry.getEntryText();
+            if (inputMode == ShellHistoryMode.UNKNOWN) {
+                inputMode = detectInputMode(text);
             }
+
+            JTextComponent inputField = getCommandFld();
+            if (inputMode == ShellHistoryMode.SINGLE) {
+                if (inputField instanceof JTextArea) {
+                    flipField();
+                    inputField = getCommandFld();
+                }
+            } else {
+                if (inputField instanceof JTextField) {
+                    flipField();
+                    inputField = getCommandFld();
+                }
+            }
+            inputField.setText(entry.getEntryText());
         });
     }
 
@@ -332,8 +330,9 @@ public class InteractiveShell implements HyperlinkListener {
                 }
             }
         });
-        
-        commandArea = new JTextArea(BLANK, 4, 30);
+
+        commandArea = new RSyntaxTextArea(BLANK, 4, 30);
+        ((RSyntaxTextArea)commandArea).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
         GuiUtils.setFixedWidthFont(commandArea);
         GuiUtils.addKeyBindings(commandArea);
         commandArea.setTabSize(4);
@@ -653,11 +652,7 @@ public class InteractiveShell implements HyperlinkListener {
     }
     
     private void updateText() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                editorPane.setText(sb.toString());
-            }
-        });
+        SwingUtilities.invokeLater(() -> editorPane.setText(sb.toString()));
     }
     
     /**
