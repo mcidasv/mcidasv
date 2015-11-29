@@ -7481,6 +7481,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
         //Just to be on the safe side (for memory leaks) 
         //null out all references that we have.
+        colorTable            = null;
+        controlContext        = null;
+        skipSlider            = null;
         bottomLegendComponent = null;
         mainPanel             = null;
         myDataChoices         = null;
