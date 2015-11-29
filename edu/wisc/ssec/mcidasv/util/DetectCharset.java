@@ -38,6 +38,8 @@ import java.io.InputStream;
 
 /**
  * Based on the juniversalchardet example code.
+ *
+ * This code is primarily used by the {@literal "editFile"} function in {@code interactive.py}.
  */
 public final class DetectCharset {
 
