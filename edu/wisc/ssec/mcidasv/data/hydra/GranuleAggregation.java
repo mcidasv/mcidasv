@@ -31,7 +31,6 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -833,7 +832,7 @@ public class GranuleAggregation implements MultiDimensionReader {
                        outArray = rngProcessor.processRange((short[]) values, null);
                    } else if (arrayType == Byte.TYPE) {
         	   // if variable is a bit-field quality flag, apply mask
-         	   if (qfMap.containsKey(origName)) {
+         	   if ((qfMap != null) && (qfMap.containsKey(origName))) {
         		   QualityFlag qf = qfMap.get(origName);
         		   outArray = rngProcessor.processRangeQualityFlag((byte[]) values, null, qf);
         	   } else {

@@ -468,7 +468,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 										}
 									} 
 								} else {
-									// NASA data - date/time from filename
+									// NASA data - date/time from global attribute
 									// set time for display to day/time of 1st granule examined
 									Attribute timeStartNASA = ncfile.findGlobalAttribute("time_coverage_start");
 									Date d = sdfNASA.parse(timeStartNASA.getStringValue());
@@ -639,18 +639,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     	    	List<Group> gl = rg.getGroups();
     	    	if (gl != null) {
+    				int xDimNASA = -1;
+    				int yDimNASA = -1;
+    	    		// Make a first pass to determine the shape of the geolocation data
     	    		for (Group g : gl) {
-    	    			logger.debug("Group name: " + g.getFullName());
-    	    			// NASA only - looking through observation_data and geolocation_data
-    	    			if (g.getFullName().contains("observation_data")) {
-    	    				List<Variable> vl = g.getVariables();
-    						for (Variable v : vl) {
-    							if (JPSSUtilities.isValidNASA(v.getShortName())) {
-	    							logger.debug("Adding product: " + v.getFullName());
-	    							pathToProducts.add(v.getFullName());
-    							}
-    						}
-    	    			}
     	    			if (g.getFullName().contains("geolocation_data")) {
     	    				List<Variable> vl = g.getVariables();
     						for (Variable v : vl) {
@@ -662,6 +654,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								v.addAttribute(fillAtt);
     								pathToLat = v.getFullName();
     								pathToProducts.add(v.getFullName());
+    								xDimNASA = v.getDimension(0).getLength();
+    								yDimNASA = v.getDimension(1).getLength();
     							}
     							if (v.getShortName().equals("longitude")) {
     								// XXX TJJ Nov 2015
@@ -674,6 +668,36 @@ public class SuomiNPPDataSource extends HydraDataSource {
     							}
     						}
     	    			}
+    	    		}
+    	    		for (Group g : gl) {
+    	    			logger.debug("Group name: " + g.getFullName());
+    	    			// NASA only - looking through observation_data and geolocation_data
+    	    			if (g.getFullName().contains("observation_data")) {
+    	    				List<Variable> vl = g.getVariables();
+    						for (Variable v : vl) {
+    							// keep any data which matches geolocation dimensions
+    							if (v.getDimension(0).getLength() == xDimNASA &&
+    								v.getDimension(1).getLength() == yDimNASA) {
+	    							logger.debug("Adding product: " + v.getFullName());
+	    							pathToProducts.add(v.getFullName());
+    							}
+    						}
+    	    			}
+    	    			if (g.getFullName().contains("geolocation_data")) {
+    	    				List<Variable> vl = g.getVariables();
+    						for (Variable v : vl) {
+    							// keep any data which matches geolocation dimensions
+    							if (v.getDimension(0).getLength() == xDimNASA &&
+    								v.getDimension(1).getLength() == yDimNASA) {
+    								// except we already found Lat and Lon, skip those 
+    								if ((v.getShortName().equals("latitude")) ||
+    								    (v.getShortName().equals("latitude"))) continue;
+	    							logger.debug("Adding product: " + v.getFullName());
+	    							pathToProducts.add(v.getFullName());
+    							}
+    						}
+    	    			}
+    	    			
     	    			// NOAA only - we are looking through All_Data, finding displayable data
     	    			if (g.getFullName().contains("All_Data")) {
     	    				List<Group> adg = g.getGroups();
