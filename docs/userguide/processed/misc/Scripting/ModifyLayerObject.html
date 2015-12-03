@@ -134,6 +134,48 @@ Deep Convection'</td></tr></table></div>
 </table></div>
 <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setLayerLabel('%displayname% %timestamp%', size=15, color='blue', style='BOLD'</em>)</div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">There are a variety of macros that can be passed into the label keyword.  These macros may differ between data sources and can include:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">%displayname%</td>
+      <td>The name of the display</td>
+    </tr>
+    <tr>
+      <td valign="top">%shortname%</td>
+      <td>Shot name of parameter being displayed</td>
+    </tr>
+    <tr>
+      <td valign="top">%longname%</td>
+      <td>Long name of parameter being displayed</td>
+    </tr>
+    <tr>
+      <td valign="top">%displayunit%</td>
+      <td>Unit of parameter being displayed</td>
+    </tr>
+    <tr>
+      <td valign="top">%timestamp%</td>
+      <td><p>Lists the timestep of parameter currently being displayed. This defaults to the time format in the User Preferences. The time format can be changed by using the macro in the form of:<br>
+        %time:&lt;time pattern&gt;%<br>
+        For example:<br>
+        %time:HHz EEE dd MMM yyyy% would show something like 20UTC Wed 02 Dec 2015
+      </p></td>
+    </tr>
+        <tr>
+      <td valign="top">%fhour%</td>
+      <td>Forecast hour of grid being displayed followed by an 'H' for hour</td>
+    </tr>
+    <tr>
+        <tr>
+      <td valign="top">%fhour2%</td>
+      <td>Forecast hour of grid being displayed without being followed by an 'H' for hour</td>
+    </tr>
+        <tr>
+      <td valign="top">%level%</td>
+      <td>Lists the vertical level of the parameter being displayed</td>
+    </tr>
+    <tr>
+</table></div>
 <p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible
     -</strong> Toggles layer visibility on/off, this includes any color scale or layer labels for the layer</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(keywords)</em></div>
