@@ -783,7 +783,7 @@ public final class SkewTReadoutTable extends JTable {
         /**
          * Constructs from nothing.
          *
-         * @throws ParseException if the unit specification "˚C" couldn't be
+         * @throws ParseException if the unit specification "°C" couldn't be
          *                        parsed.
          */
         public TemperatureReadout() throws ParseException {
@@ -794,11 +794,11 @@ public final class SkewTReadoutTable extends JTable {
          * Constructs from a name.
          *
          * @param name          The name for the readout.
-         * @throws ParseException if the unit specification "˚C" couldn't be
+         * @throws ParseException if the unit specification "°C" couldn't be
          *                        parsed.
          */
         public TemperatureReadout(String name) throws ParseException {
-            super(name, "˚C", 2);
+            super(name, "°C", 2);
         }
 
         /**
@@ -1214,7 +1214,7 @@ public final class SkewTReadoutTable extends JTable {
          * @throws ParseException       Invalid internal unit specification.
          */
         public LCLTemperatureReadout() throws ParseException {
-            super("Temperature", "˚C", 2);
+            super("Temperature", "°C", 2);
         }
 
         /**
