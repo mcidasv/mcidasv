@@ -144,7 +144,7 @@ public class CommonUnits {
             pascal = SI.kilogram.divide(SI.meter).divide(
                 SI.second.pow(2)).clone("Pa");
             millibar = new ScaledUnit(100, (DerivedUnit) pascal).clone("hPa");
-            celsius         = SI.kelvin.shift(273.15).clone("˚C");
+            celsius         = SI.kelvin.shift(273.15).clone("°C");
             gPerKg          = new ScaledUnit(0.001).clone("g/kg");
             metersPerSecond = SI.meter.divide(SI.second).clone("m/s");
             nauticalMile    = new ScaledUnit(1.852e3, SI.meter).clone("nmi");
