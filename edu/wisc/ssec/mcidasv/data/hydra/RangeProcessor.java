@@ -73,12 +73,10 @@ public class RangeProcessor {
 
 	float[] scale = null;
 	float[] offset = null;
-	float[] missing = null;
-	float[] valid_range = null;
-	float valid_low = -Float.MAX_VALUE;
-	float valid_high = Float.MAX_VALUE;
-	float[] low = new float[] { -Float.MAX_VALUE };
-	float[] high = new float[] { Float.MAX_VALUE };
+	double[] missing = null;
+	double[] valid_range = null;
+	double valid_low = -Double.MAX_VALUE;
+	double valid_high = Double.MAX_VALUE;
 
 	boolean unpack = false;
 	boolean unsigned = false;
@@ -100,7 +98,7 @@ public class RangeProcessor {
 			float valid_high, float missing) {
 		this.scale = new float[] { scale };
 		this.offset = new float[] { offset };
-		this.missing = new float[] { missing };
+		this.missing = new double[] { missing };
 		this.valid_low = valid_low;
 		this.valid_high = valid_high;
 	}
@@ -154,8 +152,17 @@ public class RangeProcessor {
 
 		}
 
-		missing = getAttributeAsFloatArray(array_name,
+		missing = getAttributeAsDoubleArray(array_name,
 				(String) metadata.get("fill_value_name"));
+
+		// if we are working with unsigned data, need to convert missing vals to unsigned too
+		if (unsigned) {
+			if (missing != null) {
+				for (int i = 0; i < missing.length; i++) {
+					missing[i] = (float) Util.unsignedShortToInt((short) missing[i]);
+				}
+			}
+		}
 
 		String metaStr = (String) metadata.get("valid_range");
 		// attr name not supplied, so try the convention default
@@ -163,7 +170,7 @@ public class RangeProcessor {
 			metaStr = "valid_range";
 		}
 
-		valid_range = getAttributeAsFloatArray(array_name, metaStr);
+		valid_range = getAttributeAsDoubleArray(array_name, metaStr);
 		if (valid_range != null) {
 
 			valid_low = valid_range[0];
@@ -174,6 +181,36 @@ public class RangeProcessor {
 				valid_high = valid_range[0];
 			}
 		}
+                else {
+                        metaStr = (String)metadata.get("valid_low");
+                        if (metaStr == null) { // attr name not supplied, so try the convention default
+                           metaStr = "valid_min";
+                        }
+                        double[] dblA = getAttributeAsDoubleArray(array_name, metaStr);
+                        if (dblA != null) {
+                           valid_low = dblA[0];
+                        }
+
+                        metaStr = (String)metadata.get("valid_high");
+                        if (metaStr == null) { // attr name not supplied, so try the convention default
+                           metaStr = "valid_max";
+                        }
+                        dblA = getAttributeAsDoubleArray(array_name, metaStr);
+                        if (dblA != null) {
+                           valid_high = dblA[0];
+                        }
+                }
+                
+                if (rangeCheckBeforeScaling) {
+                   if (unsigned) {
+                      if (valid_low != -Double.MAX_VALUE) {
+                         valid_low = (double) Util.unsignedShortToInt((short) valid_low);
+                      }
+                      if (valid_high != Double.MAX_VALUE) {
+                         valid_high = (double) Util.unsignedShortToInt((short) valid_high);
+                      }  
+                   }
+                }
 
 		String str = (String) metadata.get("multiScaleDimensionIndex");
 		hasMultiDimensionScale = (str != null);
@@ -213,6 +250,59 @@ public class RangeProcessor {
 
 		return fltArray;
 	}
+
+ 	public double[] getAttributeAsDoubleArray(String arrayName, String attrName) 
+	throws Exception 
+	{
+                if (attrName == null) {
+                   return null;
+                }
+
+		double[] dblArray = null;
+                HDFArray arrayAttr = null;
+                try {
+		   arrayAttr = reader.getArrayAttribute(arrayName, attrName);
+                }
+                catch (Exception e) {
+                   e.printStackTrace();
+                }
+
+		if (arrayAttr != null) {
+
+			if (arrayAttr.getType().equals(Float.TYPE)) {
+				float[] attr = (float[]) arrayAttr.getArray();
+				dblArray = new double[attr.length];
+				for (int k=0; k<attr.length; k++) dblArray[k] = attr[k];
+			}
+			else if (arrayAttr.getType().equals(Short.TYPE)) {
+				short[] attr = (short[]) arrayAttr.getArray();
+				dblArray = new double[attr.length];
+				for (int k=0; k<attr.length; k++) dblArray[k] = (double) attr[k];
+			}
+			else if (arrayAttr.getType().equals(Integer.TYPE)) {
+				int[] attr = (int[]) arrayAttr.getArray();
+				dblArray = new double[attr.length];
+				for (int k=0; k<attr.length; k++) dblArray[k] = (double) attr[k];
+			}
+			else if (arrayAttr.getType().equals(Double.TYPE)) {
+				double[] attr = (double[]) arrayAttr.getArray();
+				dblArray = new double[attr.length];
+				for (int k=0; k<attr.length; k++) dblArray[k] = (double) attr[k];
+			}
+                        else if (arrayAttr.getType().equals(Byte.TYPE)) {
+                                byte[] attr = (byte[]) arrayAttr.getArray();
+                                dblArray = new double[attr.length];
+                                for (int k=0; k<attr.length; k++) dblArray[k] = (double) attr[k];
+                        }
+                        else if (arrayAttr.getType().equals(String.class)) {
+                                String[] attr = (String[]) arrayAttr.getArray();
+                                dblArray = new double[attr.length];
+                                for (int k=0; k<attr.length; k++) dblArray[k] = Double.valueOf(attr[0]);
+                        }
+		}
+
+		return dblArray;
+	}       
 
 	/**
 	 * Process a range of data from an array of {@code byte} values where
@@ -332,16 +422,6 @@ public class RangeProcessor {
 
 		float[] new_values = new float[values.length];
 
-		// if we are working with unsigned data, need to convert missing vals to
-		// unsigned too
-		if (unsigned) {
-			if (missing != null) {
-				for (int i = 0; i < missing.length; i++) {
-					missing[i] = (float) Util.unsignedByteToInt((byte) missing[i]);
-				}
-			}
-		}
-
 		float val = 0f;
 		int i = 0;
 		boolean isMissing = false;
@@ -429,16 +509,6 @@ public class RangeProcessor {
 		}
 
 		float[] new_values = new float[values.length];
-
-		// if we are working with unsigned data, need to convert missing vals to
-		// unsigned too
-		if (unsigned) {
-			if (missing != null) {
-				for (int i = 0; i < missing.length; i++) {
-					missing[i] = (float) Util.unsignedShortToInt((short) missing[i]);
-				}
-			}
-		}
 
 		float val = 0f;
 		int i = 0;
