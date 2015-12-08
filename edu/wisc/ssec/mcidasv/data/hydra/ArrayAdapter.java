@@ -78,6 +78,12 @@ public class ArrayAdapter extends MultiDimensionAdapter {
      rangeType = RealType.getRealType(rangeName);
      ftype = new FunctionType(domainType, rangeType);
      domain = IntegerNDSet.create(domainType, lengths);
+
+     RangeProcessor rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
+     if ( !(reader instanceof GranuleAggregation)) {        
+        setRangeProcessor(rangeProcessor);
+     }
+
      }
      catch (Exception e) {
        e.printStackTrace();
