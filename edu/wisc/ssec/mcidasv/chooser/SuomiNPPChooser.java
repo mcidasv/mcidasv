@@ -126,7 +126,13 @@ public class SuomiNPPChooser extends FileChooser {
     	}
     	
         // At present, Suomi NPP chooser only allows selecting sets of consecutive granules
-        boolean granulesAreConsecutive = testConsecutiveGranules(files);
+    	boolean granulesAreConsecutive = true;
+    	// TJJ Dec 2015, only doing conseq granule test for NOAA right now.
+    	// Need to add a test for NASA data, if we allow it (I think we should
+    	// with perhaps a max data size check)
+    	if (files.length > 1) {
+           granulesAreConsecutive = testConsecutiveGranules(files);
+    	}
         if (granulesAreConsecutive) {
         	return super.selectFilesInner(files, directory);
         } else {

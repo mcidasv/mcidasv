@@ -361,7 +361,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    						String tmpGeoProductID = a.getStringValue();
 	    						geoProductIDs.add(tmpGeoProductID);
     						} else {
-    							geoProductIDs.add(keyStr.replace("L1B", "GEO"));
+    							geoProductIDs.add(keyStr.replace("l1b", "geo"));
     						}
     					}
     					Group rg = ncfile.getRootGroup();
@@ -615,7 +615,34 @@ public class SuomiNPPDataSource extends HydraDataSource {
 						} 
 					} else {
 						// NASA format
-						geoFilename = s.replace("L1B", "GEO");
+						geoFilename = s.replace("l1b", "geo");
+						// get list of files in current directory
+						File fList = 
+							new File(geoFilename.substring(0, geoFilename.lastIndexOf(File.separatorChar) + 1)); 
+						// make a NASA style file filter, and see if a matching geo file is present
+						FilenameFilter geoFilter = new FilenameFilter() {
+							public boolean accept(File dir, String name) {
+								if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX_NASA)) {
+									return true;
+								} else {
+									return false;
+								}
+							}
+						};
+						File[] files = fList.listFiles(geoFilter);
+						for (File file : files) {
+							if (file.isDirectory()) {
+								continue;
+							}
+							// get the file name for convenience
+							String fName = file.getName();
+							String tmpStr = geoFilename.substring(s.lastIndexOf(File.separatorChar) + 1,
+									s.lastIndexOf(File.separatorChar) + 33);
+							if (fName.substring(0, 32).equals(tmpStr.substring(0, 32))) {
+								geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
+								break;
+							}
+						}
 					}
 					logger.debug("Determined GEO file name should be: " + geoFilename);
 	    			fGeo.setAttribute("location", geoFilename);

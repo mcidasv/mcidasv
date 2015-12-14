@@ -85,35 +85,40 @@ public abstract class JPSSUtilities {
 	// This regular expression matches a Suomi NPP Data Product as defined by the 
 	// NASA spec in TBD
 	public static final String SUOMI_NPP_REGEX_NASA =
-			"V" + 
-    		// Data Start Date (ex: YYYYDDD)
-    		"20[0-3]\\d[0-3]\\d\\d" + 
-    		// Data time (TBD)
-    		"\\d\\d\\d\\d\\d\\d" + 
-    		// Always .L1B
-    		".L1B-" + 
-    		// Always M (M-Band), I (I-Band), or D (DNB)
-    		"[DIM]" + 
-    		// Always ends _SNPP
-    		"_SNPP" + 
+			// Sensor - right now, only VIIRS
+			"viirs" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+			// Always .L1B
+    		"l1b-" + 
+    		// Always m (M-Band), i (I-Band), or d (DNB)
+    		"[dim]" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Platform - always Suomi NPP
+    		"snpp" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Start Date (ex: dYYYYMMDD)
+    		"d20[0-3]\\d[0-1]\\d[0-3]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Start Time (ex: tHHMM)
+    		"t[0-2]\\d[0-5]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Creation Date (ex: cYYYYMMDDHHMMSSSSSSSS)
+    		"c20[0-3]\\d[0-1]\\d[0-3]\\d\\d\\d\\d\\d\\d\\d" +
     		// NetCDF 4 suffix
     		".nc";
-	
 	
 	// This regular expression matches a Suomi NPP geolocation file as defined by the 
 	// NASA spec in TBD
 	public static final String SUOMI_GEO_REGEX_NASA =
-			"V" + 
-    		// Data Start Date (ex: YYYYDDD)
-    		"20[0-3]\\d[0-3]\\d\\d" + 
-    		// Data time (TBD)
-    		"\\d\\d\\d\\d\\d\\d" + 
-    		// Always .GEO
-    		".GEO-" + 
-    		// Always M (M-Band), I (I-Band), or D (DNB)
-    		"[DIM]" + 
-    		// Always ends _SNPP
-    		"_SNPP" + 
+			// Sensor - right now, only VIIRS
+			"viirs" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+			// Always .L1B
+    		"geo-" + 
+    		// Always m (M-Band), i (I-Band), or d (DNB)
+    		"[dim]" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Platform - always Suomi NPP
+    		"snpp" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Start Date (ex: dYYYYMMDD)
+    		"d20[0-3]\\d[0-1]\\d[0-3]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Data Start Time (ex: tHHMM)
+    		"t[0-2]\\d[0-5]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		// Creation Date (ex: cYYYYMMDDHHMMSSSSSSSS)
+    		"c20[0-3]\\d[0-1]\\d[0-3]\\d\\d\\d\\d\\d\\d\\d" +
     		// NetCDF 4 suffix
     		".nc";
 	
@@ -272,7 +277,8 @@ public abstract class JPSSUtilities {
         	if (filename.endsWith(".nc")) {
 	        	// products end at first underscore, see regex above for more detail
 	        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
-	        	String prodStr = filename.substring(lastSeparator + 16, firstUnderscore);
+	        	int secondUnderscore = filename.indexOf("_", firstUnderscore + 1);
+	        	String prodStr = filename.substring(firstUnderscore + 1, secondUnderscore);
 	        	if (! metadataMap.containsKey(prodStr)) {
 					List<String> l = new ArrayList<String>();
 					metadataMap.put(prodStr, l);
@@ -304,10 +310,13 @@ public abstract class JPSSUtilities {
         	if (filename.endsWith(".nc")) {
 	        	// products end at first underscore, see regex above for more detail
 	        	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
+	        	int secondUnderscore = filename.indexOf("_", firstUnderscore + 1);
 	        	// this is the key for the maps
-	        	String prodStr = filename.substring(lastSeparator + 16, firstUnderscore);
-	        	// this is the value for the meta data map - start time through orbit 
-	        	String metaStr = filename.substring(lastSeparator + 1, lastSeparator + 15);
+	        	String prodStr = filename.substring(firstUnderscore + 1, secondUnderscore);
+	        	// this is the value for the meta data map - date and time 
+	        	int dateIndex = filename.indexOf("_d");
+	        	int creationIndex = filename.indexOf("_c");
+	        	String metaStr = filename.substring(dateIndex + 1, creationIndex);
 	        	// get the appropriate list, add the new value
 	        	List<String> l = (List<String>) metadataMap.get(prodStr);
 	        	l.add(metaStr);
