@@ -397,4 +397,10 @@ public interface Constants extends IdvConstants {
 
     /** Tooltip for adaptive resolution menu items. */
     String TOOLTIP_PROGRESSIVE_RESOLUTION = "This feature can be turned on or off in the \"Display Window\" section of the User Preferences.";
+
+    /** EventBus topic for signaling that directory monitors may begin. */
+    String EVENT_FILECHOOSER_START = "FileChooser.StartWatchService";
+
+    /** EventBus topic for signaling that directory monitors should stop. */
+    String EVENT_FILECHOOSER_STOP = "FileChooser.StopWatchService";
 }

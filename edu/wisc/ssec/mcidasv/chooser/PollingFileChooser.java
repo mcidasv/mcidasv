@@ -34,6 +34,7 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -47,7 +48,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
+import edu.wisc.ssec.mcidasv.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataSource;
@@ -68,6 +73,10 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  */
 public class PollingFileChooser extends FileChooser {
 
+    /** Logging object. */
+    private static final Logger logger =
+        LoggerFactory.getLogger(PollingFileChooser.class);
+
     /** Any initial file system path to start with */
     public static final String ATTR_DIRECTORY = "directory";
 
@@ -85,7 +94,10 @@ public class PollingFileChooser extends FileChooser {
     
     /** file pattern widget accessible to everyone */
     private JTextField filePatternWidget;
-    
+
+    /** Reference to the {@literal "refresh"} checkbox. */
+    private JCheckBox pollingCbx;
+
     /** Keep track of what was selected and update status accordingly */
     boolean isDirectory = false;
     int directoryCount = 0;
@@ -442,6 +454,9 @@ public class PollingFileChooser extends FileChooser {
                     List newComps = new ArrayList();
                     if (comps[0] instanceof JCheckBox) {
                         ((JCheckBox) comps[0]).setText("");
+                        pollingCbx = (JCheckBox)comps[0];
+                        ActionListener listener = buildPollingActionListener();
+                        pollingCbx.addActionListener(listener);
                     }
                     if (comps[1] instanceof JLabel) {
                         String text = ((JLabel) comps[1]).getText().trim();
@@ -564,9 +579,14 @@ public class PollingFileChooser extends FileChooser {
      * @return the center panel
      */
     protected JPanel getCenterPanel() {
-        fileChooser = doMakeDirectoryChooser(path);
+        fileChooser = doMakeDirectoryChooser(getPath());
         fileChooser.setPreferredSize(new Dimension(300, 300));
         fileChooser.setMultiSelectionEnabled(getAllowMultiple());
+
+        fileChooser.addPropertyChangeListener(
+            JFileChooser.DIRECTORY_CHANGED_PROPERTY,
+            createPropertyListener()
+        );
 
         JPanel centerPanel;
         JComponent accessory = getAccessory();
@@ -604,6 +624,32 @@ public class PollingFileChooser extends FileChooser {
         
         JPanel pollingPanel = processPollingOptions(newComps);
         return pollingPanel;
+    }
+
+    /**
+     * Returns an {@link ActionListener} that should be listening to
+     * {@link #pollingCbx}.
+     *
+     * <p>This listener allows users to enable/disable directory watches.</p>
+     *
+     * @return {@code ActionListener} that enables/disables directory watching.
+     */
+    private ActionListener buildPollingActionListener() {
+        return e -> {
+            logger.trace("fired: pollingCbx={}", pollingCbx.isSelected());
+            if (!pollingCbx.isSelected()) {
+                handleStopWatchService(
+                    Constants.EVENT_FILECHOOSER_STOP,
+                    "disabled refreshes"
+                );
+            } else {
+                handleStartWatchService(
+                    Constants.EVENT_FILECHOOSER_START,
+                    "enabled refreshes"
+                );
+                SwingUtilities.invokeLater(this::doUpdate);
+            }
+        };
     }
 
 }

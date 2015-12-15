@@ -38,10 +38,18 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import java.beans.PropertyChangeListener;
+
+import java.io.IOException;
+
+import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -50,9 +58,16 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
+import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.w3c.dom.Element;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.bushe.swing.event.annotation.EventTopicSubscriber;
 
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.chooser.IdvChooserManager;
@@ -62,6 +77,10 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
+
+import edu.wisc.ssec.mcidasv.util.pathwatcher.DirectoryWatchService;
+import edu.wisc.ssec.mcidasv.util.pathwatcher.SimpleDirectoryWatchService;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
@@ -81,6 +100,9 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * {@code "datasourceid"} attribute.
  */
 public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements Constants {
+
+    private static final Logger logger =
+        LoggerFactory.getLogger(FileChooser.class);
 
     /** 
      * Chooser attribute that controls selecting the default data source.
@@ -110,12 +132,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      * Get a handle on the actual file chooser
      */
     protected JFileChooser fileChooser;
-    
-    /**
-     * Extending classes may need to manipulate the path
-     */
-    protected String path;
-    
+
     /**
      * The panels that might need to be enabled/disabled
      */
@@ -133,7 +150,14 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      * Get a handle on the IDV
      */
     protected IntegratedDataViewer idv = getIdv();
-    
+
+    /** Directory monitoring service. May be {@code null}. */
+    protected DirectoryWatchService watchService;
+
+    /** This is mostly used to preemptively null-out the listener. */
+    protected DirectoryWatchService.OnFileChangeListener watchListener;
+
+
     /**
      * Creates a {@code FileChooser} and bubbles up {@code mgr} and 
      * {@code root} to {@link FileChooser}.
@@ -143,6 +167,8 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      */
     public FileChooser(final IdvChooserManager mgr, final Element root) {
         super(mgr, root);
+
+        AnnotationProcessor.process(this);
 
         String id = XmlUtil.getAttribute(root, ATTR_DATASOURCEID, (String)null);
         defaultDataSourceId = (id != null) ? id.toLowerCase() : id;
@@ -316,9 +342,14 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     protected JPanel getCenterPanel() {
         Element chooserNode = getXmlNode();
 
-        fileChooser = doMakeFileChooser(path);
+        fileChooser = doMakeFileChooser(getPath());
         fileChooser.setPreferredSize(new Dimension(300, 300));
         fileChooser.setMultiSelectionEnabled(getAllowMultiple());
+
+        fileChooser.addPropertyChangeListener(
+            JFileChooser.DIRECTORY_CHANGED_PROPERTY,
+            createPropertyListener()
+        );
         
         List filters = new ArrayList();
         String filterString = XmlUtil.getAttribute(chooserNode, ATTR_FILTERS, (String) null);
@@ -346,7 +377,197 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
         setHaveData(false);
         return McVGuiUtils.makeLabeledComponent("Files:", centerPanel);
     }
-    
+
+    /**
+     * Creates a {@link PropertyChangeListener} that listens for
+     * {@link JFileChooser#DIRECTORY_CHANGED_PROPERTY}.
+     *
+     * <p>This is used to disable directory monitoring in directories not
+     * being looked at, as well as enabling monitoring of the directory the
+     * user has chosen.</p>
+     *
+     * @return {@code PropertyChangeListener} that listens for
+     * {@code JFileChooser} directory changes.
+     */
+    protected PropertyChangeListener createPropertyListener() {
+        return evt -> {
+            logger.trace("prop change: evt={}", evt);
+            String name = evt.getPropertyName();
+            if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(name)) {
+                String newPath = evt.getNewValue().toString();
+                logger.trace("old: '{}', new: '{}'", getPath(), newPath);
+                handleChangeWatchService(newPath);
+            }
+        };
+    }
+
+    /**
+     * Change the path that the file chooser is presenting to the user.
+     *
+     * <p>This value will be written to the user's preferences so that the user
+     * can pick up where they left off after restarting McIDAS-V.</p>
+     *
+     * @param newPath Path to set.
+     */
+    public void setPath(String newPath) {
+        String id = PREF_DEFAULTDIR + getId();
+        idv.getStateManager().writePreference(id, newPath);
+    }
+
+    /**
+     * See the javadoc for {@link #getPath(String)}.
+     *
+     * <p>The difference between the two is that this method passes the value
+     * of {@code System.getProperty("user.home")} to {@link #getPath(String)}
+     * as the default value.</p>
+     *
+     * @return Path to use for the chooser.
+     */
+    public String getPath() {
+        return getPath(System.getProperty("user.home"));
+    }
+
+    /**
+     * Get the path the {@link JFileChooser} should be using.
+     *
+     * <p>If the path in the user's preferences is {@code null}
+     * (or does not exist), {@code defaultValue} will be returned.</p>
+     *
+     * @param defaultValue Default path to use if there is a {@literal "bad"}
+     *                     path in the user's preferences.
+     *                     Cannot be {@code null}.
+     *
+     * @return Path to use for the chooser.
+     *
+     * @throws NullPointerException if {@code defaultValue} is {@code null}.
+     */
+    public String getPath(final String defaultValue) {
+        Objects.requireNonNull(defaultValue, "Default value may not be null");
+        String tempPath = (String)idv.getPreference(PREF_DEFAULTDIR + getId());
+        if ((tempPath == null) || !Paths.get(tempPath).toFile().exists()) {
+            tempPath = defaultValue;
+        }
+        return tempPath;
+    }
+
+    /**
+     * Respond to path changes in the {@code JFileChooser}.
+     *
+     * <p>This method will disable monitoring of the previous path and then
+     * enable monitoring of {@code newPath}.</p>
+     *
+     * @param newPath
+     */
+    public void handleChangeWatchService(final String newPath) {
+        if (watchService != null && watchListener != null) {
+            logger.trace("now watching '{}'", newPath);
+
+            setPath(newPath);
+
+            handleStopWatchService(
+                Constants.EVENT_FILECHOOSER_STOP,
+                "changed directory"
+            );
+
+            handleStartWatchService(
+                Constants.EVENT_FILECHOOSER_START,
+                "new directory"
+            );
+        }
+    }
+
+    /**
+     * Begin monitoring the directory returned by {@link #getPath()} for
+     * changes.
+     *
+     * @param topic Artifact from {@code EventBus} annotation. Not used.
+     * @param reason Optional {@literal "Reason"} for starting.
+     *               Helpful for logging.
+     */
+    @EventTopicSubscriber(topic=Constants.EVENT_FILECHOOSER_START)
+    public void handleStartWatchService(final String topic,
+                                        final Object reason)
+    {
+        boolean offscreen = getIdv().getArgsManager().getIsOffScreen();
+        boolean initDone = getIdv().getHaveInitialized();
+        String watchPath = getPath();
+        if (!offscreen && initDone) {
+            try {
+                watchService = createWatcher(watchPath, getFilePattern());
+                watchService.start();
+                logger.trace("watching '{}' (reason: '{}')", watchPath, reason);
+            } catch (IOException e) {
+                logger.error("error creating watch service", e);
+            }
+        }
+    }
+
+    /**
+     * Disable directory monitoring (if it was enabled in the first place).
+     *
+     * @param topic Artifact from {@code EventBus} annotation. Not used.
+     * @param reason Optional {@literal "Reason"} for starting.
+     *               Helpful for logging.
+     */
+    @EventTopicSubscriber(topic=Constants.EVENT_FILECHOOSER_STOP)
+    public void handleStopWatchService(final String topic,
+                                       final Object reason)
+    {
+        if (watchService != null) {
+            logger.trace("stopping service (reason: '{}')", reason);
+            watchService.stop();
+            logger.trace("should be good to go!");
+            watchService = null;
+            watchListener = null;
+        }
+    }
+
+    /**
+     * Creates a directory monitoring
+     * {@link edu.wisc.ssec.mcidasv.util.pathwatcher.Service Service} for
+     * the given {@code path} and files matching {@code glob}.
+     *
+     * @param path Path to monitor. Cannot be {@code null}.
+     * @param glob Unix-style {@literal "glob"} filter. If {@code null} or
+     *             empty, the service will use {@literal "*"}.
+     *
+     * @return Directory monitor that responds to changes in files matching
+     * {@code glob} in {@code path}.
+     *
+     * @throws NullPointerException if {@code path} is {@code null}.
+     * @throws IOException if an I/O error occurs.
+     */
+    protected DirectoryWatchService createWatcher(final String path,
+                                                  final String glob)
+        throws IOException
+    {
+        DirectoryWatchService service = new SimpleDirectoryWatchService();
+        watchListener = new DirectoryWatchService.OnFileChangeListener() {
+            @Override public void onFileCreate(String filePath) {
+                logger.trace("file created: '{}'", filePath);
+                if (fileChooser != null && service.isRunning()) {
+                    SwingUtilities.invokeLater(() -> doUpdate());
+                }
+            }
+
+            @Override public void onFileModify(String filePath) {
+                logger.trace("file modified: '{}'", filePath);
+                if (fileChooser != null && service.isRunning()) {
+                    SwingUtilities.invokeLater(() -> doUpdate());
+                }
+            }
+
+            @Override public void onFileDelete(String filePath) {
+                logger.trace("file deleted: '{}'", filePath);
+                if (fileChooser != null && service.isRunning()) {
+                    SwingUtilities.invokeLater(() -> doUpdate());
+                }
+            }
+        };
+        service.register(watchListener, path, glob);
+        return service;
+    }
+
     private JLabel statusLabel = new JLabel("Status");
 
     @Override
@@ -364,12 +585,13 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
         // It does some initialization on private components that we can't get at
         JComponent parentContents = super.doMakeContents();
         Element chooserNode = getXmlNode();
-        
-        path = (String) idv.getPreference(PREF_DEFAULTDIR + getId());
-        if (path == null) {
-            path = XmlUtil.getAttribute(chooserNode, ATTR_PATH, (String) null);
+
+        String pathFromXml =
+            XmlUtil.getAttribute(chooserNode, ATTR_PATH, (String)null);
+        if (pathFromXml != null && Paths.get(pathFromXml).toFile().exists()) {
+            setPath(pathFromXml);
         }
-        
+
         JComponent typeComponent = new JPanel();
         if (XmlUtil.getAttribute(chooserNode, ATTR_DSCOMP, true)) {
             typeComponent = getDataSourcesComponent();

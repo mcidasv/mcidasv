@@ -430,7 +430,7 @@ public class HRITChooser extends FileChooser {
     		return null;
     	}
     	
-        ImageTypeChooser itc = new ImageTypeChooser(fileChooser, path);
+        ImageTypeChooser itc = new ImageTypeChooser(fileChooser, getPath());
         fileChooser.addPropertyChangeListener(itc);
         JPanel bottomPanel = GuiUtils.left(itc);
         bottomPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -449,7 +449,7 @@ public class HRITChooser extends FileChooser {
         fileChooser.setAcceptAllFileFilterUsed(false);
       
         // see what HRIT data is available in this directory,
-        Vector<String> availableTypes = getAvailableHRITTypes(path);
+        Vector<String> availableTypes = getAvailableHRITTypes(getPath());
         String extraFilter = null;
         if ((availableTypes != null) && (availableTypes.size() > 0)) {
         	extraFilter = (String) availableTypes.get(0);

@@ -32,6 +32,7 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import edu.wisc.ssec.mcidasv.data.GpmIosp;
+import org.bushe.swing.event.EventBus;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.awt.Insets;
@@ -1055,6 +1056,9 @@ public class McIDASV extends IntegratedDataViewer {
 
         // disable idiotic tooltip dismissal (seriously, 4 seconds!?)
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+
+        // turn on directory monitoring in the file choosers.
+        EventBus.publish(Constants.EVENT_FILECHOOSER_START, "init finished");
     }
 
     /**
@@ -1709,14 +1713,14 @@ public class McIDASV extends IntegratedDataViewer {
             } else {
                 System.err.println(msg+e.getMessage());
             }
-
         }
     }
 
     /**
      * Attempts a clean shutdown of McIDAS-V. Currently this entails 
      * suppressing any error dialogs, explicitly killing the 
-     * {@link #addeEntries}, and removing {@link #SESSION_FILE}.
+     * {@link #addeEntries}, removing {@link #SESSION_FILE}, and disabling
+     * the directory monitors found in the file choosers.
      * 
      * @param exitCode System exit code to use.
      * 
@@ -1724,6 +1728,9 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override protected void exit(int exitCode) {
         LogUtil.setShowErrorsInGui(false);
+
+        // turn off the directory monitors in the file choosers.
+        EventBus.publish(Constants.EVENT_FILECHOOSER_STOP, "shutting down");
 
         if (addeEntries != null) {
             addeEntries.saveForShutdown();
