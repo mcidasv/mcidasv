@@ -63,6 +63,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -127,6 +130,8 @@ public class RemoteEntryEditor extends JDialog {
 
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
+
+    private ExecutorService exec;
 
 //    private final TabbedAddeManager manager;
 
@@ -342,19 +347,8 @@ public class RemoteEntryEditor extends JDialog {
         }
 
         setStatus("Contacting server...");
-        Set<RemoteAddeEntry> verifiedEntries = checkGroups(unverifiedEntries);
-        EnumSet<EntryType> presentTypes = EnumSet.noneOf(EntryType.class);
-        if (!verifiedEntries.isEmpty()) {
-            for (RemoteAddeEntry verifiedEntry : verifiedEntries) {
-                presentTypes.add(verifiedEntry.getEntryType());
-            }
-            imageBox.setSelected(presentTypes.contains(EntryType.IMAGE));
-            pointBox.setSelected(presentTypes.contains(EntryType.POINT));
-            gridBox.setSelected(presentTypes.contains(EntryType.GRID));
-            textBox.setSelected(presentTypes.contains(EntryType.TEXT));
-            navBox.setSelected(presentTypes.contains(EntryType.NAV));
-            radarBox.setSelected(presentTypes.contains(EntryType.RADAR));
-        }
+        Thread checkThread = makeCheckThread(unverifiedEntries);
+        checkThread.start();
     }
 
     /**
@@ -879,6 +873,14 @@ public class RemoteEntryEditor extends JDialog {
     private void cancelButtonActionPerformed(ActionEvent evt) {
         setEditorAction(EditorAction.CANCELLED);
         disposeDisplayable(false);
+        Thread t = new Thread() {
+            @Override public void run() {
+                if (exec != null) {
+                    exec.shutdownNow();
+                }
+            }
+        };
+        t.start();
     }
 
     private void formWindowClosed(WindowEvent evt) {
@@ -955,139 +957,87 @@ public class RemoteEntryEditor extends JDialog {
         return goodEntries;
     }
 
-    public Set<RemoteAddeEntry> checkHosts2(final Set<RemoteAddeEntry> entries) {
-        requireNonNull(entries, "entries cannot be null");
-        if (entries.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        Set<RemoteAddeEntry> verified = newLinkedHashSet(entries.size());
-        Set<String> hosts = newLinkedHashSet(entries.size());
-//        Set<String> validHosts = newLinkedHashSet(entries.size());
-
-        ExecutorService exec = Executors.newFixedThreadPool(POOL);
-        CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
-        for (RemoteAddeEntry entry : entries) {
-            ecs.submit(new VerifyHostTask(new StatusWrapper(entry)));
-        }
-
-        try {
-            for (int i = 0; i < entries.size(); i++) {
-                StatusWrapper pairing = ecs.take().get();
-                RemoteAddeEntry entry = pairing.getEntry();
-                AddeStatus status = pairing.getStatus();
-//                setStatus(entry.getAddress()+": attempting to connect...");
-//                statuses.add(status);
-//                entry2Status.put(entry, status);
-                if (status == AddeStatus.OK) {
-                    verified.add(entry);
-//                    setStatus("Found host name "+entry.getAddress());
-                }
+    private Thread makeCheckThread(final Set<RemoteAddeEntry> entries) {
+        return new Thread() {
+            @Override public void run() {
+                logger.trace("checking entries...");
+                checkGroups(entries);
             }
-        } catch (InterruptedException e) {
-            LogUtil.logException("interrupted while checking ADDE entries", e);
-        } catch (ExecutionException e) {
-            LogUtil.logException("ADDE validation execution error", e);
-        } finally {
-            exec.shutdown();
-        }
-        return verified;
+        };
     }
-//    public Set<RemoteAddeEntry> checkHosts2(final Set<RemoteAddeEntry> entries) {
-//        Contract.notNull(entries, "entries cannot be null");
-//        if (entries.isEmpty()) {
-//            return Collections.emptySet();
-//        }
-//        
-//        Set<RemoteAddeEntry> verified = newLinkedHashSet(entries.size());
-//        ExecutorService exec = Executors.newFixedThreadPool(POOL);
-//        CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
-////        Map<RemoteAddeEntry, AddeStatus> entry2Status = new LinkedHashMap<RemoteAddeEntry, AddeStatus>(entries.size());
-//        
-//        for (RemoteAddeEntry entry : entries) {
-//            StatusWrapper check = new StatusWrapper(entry);
-//            ecs.submit(new VerifyHostTask(check));
-//        }
-//        
-//        try {
-//            for (int i = 0; i < entries.size(); i++) {
-//                StatusWrapper pairing = ecs.take().get();
-//                RemoteAddeEntry entry = pairing.getEntry();
-//                AddeStatus status = pairing.getStatus();
-//                setStatus(entry.getAddress()+": attempting to connect...");
-//                statuses.add(status);
-////                entry2Status.put(entry, status);
-//                if (status == AddeStatus.OK) {
-//                    verified.add(entry);
-////                    setStatus("Found host name "+entry.getAddress());
-//                }
-//            }
-//        } catch (InterruptedException e) {
-//            
-//        } catch (ExecutionException e) {
-//            
-//        } finally {
-//            exec.shutdown();
-//        }
-//
-//        if (statuses.contains(AddeStatus.BAD_SERVER)) {
-//            setStatus("Could not connect to the server.");
-//            setBadField(serverField, true);
-//        } else {
-//            setStatus("Connected to server.");
-//        }
-////        
-////        if (!statuses.contains(AddeStatus.OK)) {
-////            if (statuses.contains(AddeStatus.BAD_ACCOUNTING)) {
-////                setStatus("Incorrect accounting information.");
-////                setBadField(userField, true);
-////                setBadField(projField, true);
-////            } else if (statuses.contains(AddeStatus.BAD_GROUP)) {
-////                setStatus("Dataset does not appear to be valid.");
-////                setBadField(datasetField, true);
-////            } else if (statuses.contains(AddeStatus.BAD_SERVER)) {
-////                setStatus("Could not connect to the ADDE server.");
-////                setBadField(serverField, true);
-////            } else {
-////                logger.warn("guru meditation error: statuses={}", statuses);
-////            }
-////        } else {
-////            setStatus("Finished verifying.");
-////        }
-//
-//        return verified;
-//    }
-    
+
+    private void setCheckBoxes(final Set<RemoteAddeEntry> verified) {
+        SwingUtilities.invokeLater(() -> {
+            EnumSet<EntryType> presentTypes =
+                    EnumSet.noneOf(EntryType.class);
+
+            presentTypes.addAll(
+                    verified.stream()
+                            .map(RemoteAddeEntry::getEntryType)
+                            .collect(Collectors.toList()));
+
+            imageBox.setSelected(presentTypes.contains(EntryType.IMAGE));
+            pointBox.setSelected(presentTypes.contains(EntryType.POINT));
+            gridBox.setSelected(presentTypes.contains(EntryType.GRID));
+            textBox.setSelected(presentTypes.contains(EntryType.TEXT));
+            navBox.setSelected(presentTypes.contains(EntryType.NAV));
+            radarBox.setSelected(presentTypes.contains(EntryType.RADAR));
+        });
+    }
+
     public Set<RemoteAddeEntry> checkGroups(final Set<RemoteAddeEntry> entries) {
         requireNonNull(entries, "entries cannot be null");
         if (entries.isEmpty()) {
             return Collections.emptySet();
         }
 
+        exec = Executors.newFixedThreadPool(POOL);
+
         Set<RemoteAddeEntry> verified = newLinkedHashSet(entries.size());
         Collection<AddeStatus> statuses = EnumSet.noneOf(AddeStatus.class);
-        ExecutorService exec = Executors.newFixedThreadPool(POOL);
-        CompletionService<StatusWrapper> ecs = new ExecutorCompletionService<StatusWrapper>(exec);
-        Map<RemoteAddeEntry, AddeStatus> entry2Status = new LinkedHashMap<RemoteAddeEntry, AddeStatus>(entries.size());
 
-        // submit new verification tasks to the pool's queue ... (apologies for the pun?)
+        CompletionService<StatusWrapper> ecs =
+                new ExecutorCompletionService<>(exec);
+
+        Map<RemoteAddeEntry, AddeStatus> entry2Status =
+                new LinkedHashMap<>(entries.size());
+
+        // submit new verification tasks to the pool's queue
+        // ...
+        // (apologies for the pun?)
         for (RemoteAddeEntry entry : entries) {
             StatusWrapper pairing = new StatusWrapper(entry);
             ecs.submit(new VerifyEntryTask(pairing));
         }
 
-        // use completion service magic to only deal with finished verification tasks
+        // use completion service magic to only deal with finished
+        // verification tasks
         try {
-            for (int i = 0; i < entries.size(); i++) {
-                StatusWrapper pairing = ecs.take().get();
-                RemoteAddeEntry entry = pairing.getEntry();
-                AddeStatus status = pairing.getStatus();
-                setStatus(entry.getEntryText()+": attempting verification...");
-                statuses.add(status);
-                entry2Status.put(entry, status);
-                if (status == AddeStatus.OK) {
-                    verified.add(entry);
-                    setStatus("Found accessible "+entry.getEntryType().toString().toLowerCase()+" data.");
+            int checkedEntries = 0;
+            while (checkedEntries != entries.size()) {
+
+                // determine if the user has cancelled their verification
+                // request
+                if ((exec != null) && exec.isShutdown()) {
+                    break;
+                }
+
+                Future<StatusWrapper> future =
+                        ecs.poll(300, TimeUnit.MILLISECONDS);
+
+                if (future != null && future.isDone()) {
+                    StatusWrapper pairing = future.get();
+                    RemoteAddeEntry entry = pairing.getEntry();
+                    AddeStatus status = pairing.getStatus();
+                    setStatus(entry.getEntryText()+": attempting verification...");
+                    statuses.add(status);
+                    entry2Status.put(entry, status);
+                    if (status == AddeStatus.OK) {
+                        verified.add(entry);
+                        setStatus("Found accessible "+entry.getEntryType().toString().toLowerCase()+" data.");
+                    }
+                    checkedEntries++;
+                    setCheckBoxes(verified);
                 }
             }
         } catch (InterruptedException e) {
@@ -1110,7 +1060,7 @@ public class RemoteEntryEditor extends JDialog {
                 setStatus("Could not connect to the ADDE server.");
                 setBadField(serverField, true);
             } else {
-                logger.warn("guru meditation error: statuses={}", statuses);
+                logger.debug("no statuses are available; user may have cancelled");
             }
         } else {
             setStatus("Finished verifying.");
