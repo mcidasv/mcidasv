@@ -31,28 +31,29 @@ package edu.wisc.ssec.mcidasv.util.pathwatcher;
 // Taken from https://gist.github.com/hindol-viz/394ebc553673e2cd0699
 
 /**
- * Interface definition for services.
+ * Interface definition for a callback to be invoked when a file under
+ * watch is changed.
  */
-public interface Service {
+public interface OnFileChangeListener {
 
     /**
-     * Starts the service. This method blocks until the service has completely
-     * started.
+     * Called when the file is created.
      *
-     * @throws Exception if there was a problem starting the service
+     * @param filePath The file path.
      */
-    void start() throws Exception;
+    default void onFileCreate(String filePath) {}
 
     /**
-     * Stops the service. This method blocks until the service has completely
-     * shut down.
-     */
-    void stop();
-
-    /**
-     * Checks to see if the service is still running.
+     * Called when the file is modified.
      *
-     * @return {@code true} if the service is running, {@code false} otherwise.
+     * @param filePath The file path.
      */
-    boolean isRunning();
+    default void onFileModify(String filePath) {}
+
+    /**
+     * Called when the file is deleted.
+     *
+     * @param filePath The file path.
+     */
+    default void onFileDelete(String filePath) {}
 }

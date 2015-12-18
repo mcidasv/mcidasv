@@ -64,6 +64,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.w3c.dom.Element;
 
@@ -82,7 +83,6 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlUtil;
 
 import edu.wisc.ssec.mcidasv.util.pathwatcher.DirectoryWatchService;
-import edu.wisc.ssec.mcidasv.util.pathwatcher.SimpleDirectoryWatchService;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -102,7 +102,9 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * {@link ucar.unidata.data.DataSource} corresponding to the chooser's 
  * {@code "datasourceid"} attribute.
  */
-public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements Constants {
+public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
+    implements Constants
+{
 
     /** Logging object. */
     private static final Logger logger =
@@ -150,7 +152,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     protected IntegratedDataViewer idv = getIdv();
 
     /** This is mostly used to preemptively null-out the listener. */
-    protected DirectoryWatchService.OnFileChangeListener watchListener;
+    protected OnFileChangeListener watchListener;
 
 
     /**
@@ -526,8 +528,8 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      *
      * @return Directory monitor that will respond to changes.
      */
-    protected DirectoryWatchService.OnFileChangeListener createWatcher() {
-        watchListener = new DirectoryWatchService.OnFileChangeListener() {
+    protected OnFileChangeListener createWatcher() {
+        watchListener = new OnFileChangeListener() {
             @Override public void onFileCreate(String filePath) {
                 logger.trace("file created: '{}'", filePath);
                 DirectoryWatchService service = getStaticMcv().getWatchService();

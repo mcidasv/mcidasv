@@ -33,6 +33,7 @@ import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import edu.wisc.ssec.mcidasv.data.GpmIosp;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.DirectoryWatchService;
+import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.SimpleDirectoryWatchService;
 import org.bushe.swing.event.EventBus;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -48,7 +49,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
-import java.nio.file.WatchService;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Date;
@@ -1764,8 +1764,8 @@ public class McIDASV extends IntegratedDataViewer {
      */
     public void watchDirectory(final String path,
                                final String glob,
-                               final DirectoryWatchService.OnFileChangeListener listener)
-            throws IOException
+                               final OnFileChangeListener listener)
+        throws IOException
     {
         watchService.register(listener, path, glob);
     }
