@@ -46,6 +46,7 @@ import java.nio.file.WatchService;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -137,6 +138,35 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
         return mListenerToFilePatternsMap.get(listener);
     }
 
+    private Path getDir(OnFileChangeListener listener) {
+
+        Set<Map.Entry<Path, Set<OnFileChangeListener>>> entries =
+                mDirPathToListenersMap.entrySet();
+
+        Path result = null;
+        for (Map.Entry<Path, Set<OnFileChangeListener>> entry : entries) {
+            Set<OnFileChangeListener> listeners = entry.getValue();
+            if (listeners.contains(listener)) {
+                result = entry.getKey();
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    private WatchKey getWatchKey(Path dir) {
+        Set<Map.Entry<WatchKey, Path>> entries = mWatchKeyToDirPathMap.entrySet();
+        WatchKey key = null;
+        for (Map.Entry<WatchKey, Path> entry : entries) {
+            if (entry.getValue().equals(dir)) {
+                key = entry.getKey();
+                break;
+            }
+        }
+        return key;
+    }
+
     private Set<OnFileChangeListener> matchedListeners(Path dir, Path file) {
         return getListeners(dir)
                 .stream()
@@ -209,8 +239,43 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
 
         mListenerToFilePatternsMap.put(listener, patterns);
 
-        logger.info("Watching files matching " + Arrays.toString(globPatterns)
-                + " under " + dirPath + " for changes.");
+        logger.trace("Watching files matching {} under '{}' for changes",
+                Arrays.toString(globPatterns), dirPath);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void unregister(OnFileChangeListener listener) {
+        Path dir = getDir(listener);
+
+        mDirPathToListenersMap.get(dir).remove(listener);
+
+        // is this step truly needed?
+        if (mDirPathToListenersMap.get(dir).isEmpty()) {
+            mDirPathToListenersMap.remove(dir);
+        }
+
+        mListenerToFilePatternsMap.remove(listener);
+
+        WatchKey key = getWatchKey(dir);
+        if (key != null) {
+            mWatchKeyToDirPathMap.remove(key);
+            key.cancel();
+        }
+        logger.trace("listener unregistered");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void unregisterAll() {
+        // can't simply clear the key->dir map; need to cancel
+        mWatchKeyToDirPathMap.keySet().forEach(WatchKey::cancel);
+
+        mWatchKeyToDirPathMap.clear();
+        mDirPathToListenersMap.clear();
+        mListenerToFilePatternsMap.clear();
     }
 
     /**
@@ -258,10 +323,8 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
             try {
                 key = mWatchService.take();
             } catch (InterruptedException e) {
-                logger.info(
-                        DirectoryWatchService.class.getSimpleName()
-                                + " service interrupted."
-                );
+                logger.trace("{} service interrupted.",
+                        DirectoryWatchService.class.getSimpleName());
                 break;
             }
 
@@ -283,6 +346,6 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
         }
 
         mIsRunning.set(false);
-        logger.info("Stopping file watcher service.");
+        logger.trace("Stopping file watcher service.");
     }
 }

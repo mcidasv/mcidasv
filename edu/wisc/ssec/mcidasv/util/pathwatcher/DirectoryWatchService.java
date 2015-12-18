@@ -61,6 +61,19 @@ public interface DirectoryWatchService extends Service {
             throws IOException;
 
     /**
+     * Notifies the implementation of <em>this</em> interface that
+     * {@code listener} should cease to be notified of file system events.
+     *
+     * @param listener Listener to unregister. Cannot be {@code null}.
+     */
+    void unregister(OnFileChangeListener listener);
+
+    /**
+     * Unregisters <em>all</em> listeners.
+     */
+    void unregisterAll();
+
+    /**
      * Interface definition for a callback to be invoked when a file under
      * watch is changed.
      */

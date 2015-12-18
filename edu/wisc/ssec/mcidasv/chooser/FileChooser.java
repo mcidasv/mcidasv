@@ -34,6 +34,8 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
+import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
+
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -61,6 +63,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.w3c.dom.Element;
 
@@ -101,6 +104,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  */
 public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements Constants {
 
+    /** Logging object. */
     private static final Logger logger =
         LoggerFactory.getLogger(FileChooser.class);
 
@@ -128,14 +132,10 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     /** Different subclasses can use the combobox of data source ids */
     private JComboBox sourceComboBox;
     
-    /**
-     * Get a handle on the actual file chooser
-     */
+    /** Get a handle on the actual file chooser. */
     protected JFileChooser fileChooser;
 
-    /**
-     * The panels that might need to be enabled/disabled
-     */
+    /** Panels that might need to be enabled/disabled. */
     protected JPanel topPanel = new JPanel();
     protected JPanel centerPanel = new JPanel();
     protected JPanel bottomPanel = new JPanel();
@@ -146,13 +146,8 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      */
     protected Boolean buttonPressed = false;
     
-    /**
-     * Get a handle on the IDV
-     */
+    /** Get a handle on the IDV. */
     protected IntegratedDataViewer idv = getIdv();
-
-    /** Directory monitoring service. May be {@code null}. */
-    protected DirectoryWatchService watchService;
 
     /** This is mostly used to preemptively null-out the listener. */
     protected DirectoryWatchService.OnFileChangeListener watchListener;
@@ -456,9 +451,10 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
      * <p>This method will disable monitoring of the previous path and then
      * enable monitoring of {@code newPath}.</p>
      *
-     * @param newPath
+     * @param newPath New path to begin watching.
      */
     public void handleChangeWatchService(final String newPath) {
+        DirectoryWatchService watchService = getStaticMcv().getWatchService();
         if (watchService != null && watchListener != null) {
             logger.trace("now watching '{}'", newPath);
 
@@ -488,14 +484,15 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     public void handleStartWatchService(final String topic,
                                         final Object reason)
     {
-        boolean offscreen = getIdv().getArgsManager().getIsOffScreen();
-        boolean initDone = getIdv().getHaveInitialized();
+        McIDASV mcv = getStaticMcv();
+        boolean offscreen = mcv.getArgsManager().getIsOffScreen();
+        boolean initDone = mcv.getHaveInitialized();
         String watchPath = getPath();
         if (!offscreen && initDone) {
             try {
-                watchService = createWatcher(watchPath, getFilePattern());
-                watchService.start();
-                logger.trace("watching '{}' (reason: '{}')", watchPath, reason);
+                watchListener = createWatcher();
+                mcv.watchDirectory(watchPath, "*", watchListener);
+                logger.trace("watching '{}' pattern: '{}' (reason: '{}')", watchPath, "*", reason);
             } catch (IOException e) {
                 logger.error("error creating watch service", e);
             }
@@ -513,59 +510,49 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser implements
     public void handleStopWatchService(final String topic,
                                        final Object reason)
     {
-        if (watchService != null) {
-            logger.trace("stopping service (reason: '{}')", reason);
-            watchService.stop();
-            logger.trace("should be good to go!");
-            watchService = null;
-            watchListener = null;
-        }
+        logger.trace("stopping service (reason: '{}')", reason);
+
+        DirectoryWatchService service = getStaticMcv().getWatchService();
+        service.unregister(watchListener);
+
+        service = null;
+        watchListener = null;
+        logger.trace("should be good to go!");
     }
 
     /**
      * Creates a directory monitoring
-     * {@link edu.wisc.ssec.mcidasv.util.pathwatcher.Service Service} for
-     * the given {@code path} and files matching {@code glob}.
+     * {@link edu.wisc.ssec.mcidasv.util.pathwatcher.Service Service}.
      *
-     * @param path Path to monitor. Cannot be {@code null}.
-     * @param glob Unix-style {@literal "glob"} filter. If {@code null} or
-     *             empty, the service will use {@literal "*"}.
-     *
-     * @return Directory monitor that responds to changes in files matching
-     * {@code glob} in {@code path}.
-     *
-     * @throws NullPointerException if {@code path} is {@code null}.
-     * @throws IOException if an I/O error occurs.
+     * @return Directory monitor that will respond to changes.
      */
-    protected DirectoryWatchService createWatcher(final String path,
-                                                  final String glob)
-        throws IOException
-    {
-        DirectoryWatchService service = new SimpleDirectoryWatchService();
+    protected DirectoryWatchService.OnFileChangeListener createWatcher() {
         watchListener = new DirectoryWatchService.OnFileChangeListener() {
             @Override public void onFileCreate(String filePath) {
                 logger.trace("file created: '{}'", filePath);
-                if (fileChooser != null && service.isRunning()) {
+                DirectoryWatchService service = getStaticMcv().getWatchService();
+                if ((fileChooser != null) && service.isRunning()) {
                     SwingUtilities.invokeLater(() -> doUpdate());
                 }
             }
 
             @Override public void onFileModify(String filePath) {
                 logger.trace("file modified: '{}'", filePath);
-                if (fileChooser != null && service.isRunning()) {
+                DirectoryWatchService service = getStaticMcv().getWatchService();
+                if ((fileChooser != null) && service.isRunning()) {
                     SwingUtilities.invokeLater(() -> doUpdate());
                 }
             }
 
             @Override public void onFileDelete(String filePath) {
                 logger.trace("file deleted: '{}'", filePath);
-                if (fileChooser != null && service.isRunning()) {
+                DirectoryWatchService service = getStaticMcv().getWatchService();
+                if ((fileChooser != null) && service.isRunning()) {
                     SwingUtilities.invokeLater(() -> doUpdate());
                 }
             }
         };
-        service.register(watchListener, path, glob);
-        return service;
+        return watchListener;
     }
 
     private JLabel statusLabel = new JLabel("Status");

@@ -32,6 +32,8 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import edu.wisc.ssec.mcidasv.data.GpmIosp;
+import edu.wisc.ssec.mcidasv.util.pathwatcher.DirectoryWatchService;
+import edu.wisc.ssec.mcidasv.util.pathwatcher.SimpleDirectoryWatchService;
 import org.bushe.swing.event.EventBus;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -46,6 +48,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.nio.file.WatchService;
 import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Date;
@@ -193,6 +196,9 @@ public class McIDASV extends IntegratedDataViewer {
 
     private TabbedAddeManager tabbedAddeManager = null;
 
+    /** Directory monitoring service. */
+    private final DirectoryWatchService watchService;
+
     /**
      * Create the McIDASV with the given command line arguments.
      * This constructor calls {@link IntegratedDataViewer#init()}
@@ -201,7 +207,7 @@ public class McIDASV extends IntegratedDataViewer {
      * @exception VisADException  from construction of VisAd objects
      * @exception RemoteException from construction of VisAD objects
      */
-    public McIDASV(String[] args) throws VisADException, RemoteException {
+    public McIDASV(String[] args) throws IOException, VisADException, RemoteException {
         super(args);
 
         AnnotationProcessor.process(this);
@@ -239,6 +245,8 @@ public class McIDASV extends IntegratedDataViewer {
 
         // we're tired of the IDV's default missing image, so reset it
         GuiUtils.MISSING_IMAGE = "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/mcidasv-round22.png";
+
+        watchService = new SimpleDirectoryWatchService();
 
         this.init();
     }
@@ -1058,6 +1066,7 @@ public class McIDASV extends IntegratedDataViewer {
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
 
         // turn on directory monitoring in the file choosers.
+        startWatchService();
         EventBus.publish(Constants.EVENT_FILECHOOSER_START, "init finished");
     }
 
@@ -1731,6 +1740,7 @@ public class McIDASV extends IntegratedDataViewer {
 
         // turn off the directory monitors in the file choosers.
         EventBus.publish(Constants.EVENT_FILECHOOSER_STOP, "shutting down");
+        stopWatchService();
 
         if (addeEntries != null) {
             addeEntries.saveForShutdown();
@@ -1740,6 +1750,48 @@ public class McIDASV extends IntegratedDataViewer {
         removeSessionFile(SESSION_FILE);
         logger.info("Exiting McIDAS-V @ {}", new Date());
         System.exit(exitCode);
+    }
+
+    /**
+     * Register the given {@code listener} so that changes to files matching
+     * {@code glob} in {@code path} can be handled.
+     *
+     * @param path Directory to watch.
+     * @param glob Only respond to files matching this file mask.
+     * @param listener Listener that can handle file changes.
+     *
+     * @throws IOException if there was a problem registering {@code listener}.
+     */
+    public void watchDirectory(final String path,
+                               final String glob,
+                               final DirectoryWatchService.OnFileChangeListener listener)
+            throws IOException
+    {
+        watchService.register(listener, path, glob);
+    }
+
+    /**
+     * Returns McIDAS-V's {@link DirectoryWatchService}.
+     *
+     * @return {@code DirectoryWatchService} responsible for handling all of
+     * McIDAS-V's directory monitoring.
+     */
+    public DirectoryWatchService getWatchService() {
+        return watchService;
+    }
+
+    /**
+     * Enable directory monitoring.
+     */
+    public void startWatchService() {
+        watchService.start();
+    }
+
+    /**
+     * Disable directory monitoring.
+     */
+    public void stopWatchService() {
+        watchService.stop();
     }
 
     /**
