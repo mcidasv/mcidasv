@@ -43,6 +43,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -88,7 +89,8 @@ public class EntryStore {
      * 
      * @see #getAddeRootDirectory()
      */
-    private static final String PROP_DEBUG_LOCALROOT = "debug.localadde.rootdir";
+    private static final String PROP_DEBUG_LOCALROOT =
+        "debug.localadde.rootdir";
 
     /**
      * Property that allows users to control debug output from ADDE requests.
@@ -97,6 +99,28 @@ public class EntryStore {
      * @see #setAddeDebugEnabled(boolean)
      */
     private static final String PROP_DEBUG_ADDEURL = "debug.adde.reqs";
+
+    /**
+     * {@literal "Userpath"} not writable error message.
+     * This is the one that is shown in the GUI via
+     * {@link LogUtil#userErrorMessage(String)}.
+     */
+    private static final String ERROR_LOGUTIL_USERPATH =
+        "Local servers cannot write to userpath:\n%s";
+
+    /**
+     * {@literal "Userpath"} not writable error message.
+     * This one is used by the logging system.
+     */
+    private static final String ERROR_USERPATH =
+        "Local servers cannot write to userpath ('{}')";
+
+    /**
+     * SLF4J-style formatting string for use when {@code RESOLV.SRV} can not
+     * be found. .
+     */
+    private static final String WARN_NO_RESOLVSRV =
+        "EntryStore: RESOLV.SRV missing; expected='{}'";
 
     /** Enumeration of the various server manager events. */
     public enum Event { 
@@ -117,7 +141,8 @@ public class EntryStore {
     }
 
     /** Logging object. */
-    private static final Logger logger = LoggerFactory.getLogger(EntryStore.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(EntryStore.class);
 
     /** Preference key for ADDE entries. */
     private static final String PREF_ADDE_ENTRIES = "mcv.servers.entries";
@@ -170,7 +195,9 @@ public class EntryStore {
      * @throws NullPointerException if either of {@code store} or
      * {@code rscManager} is {@code null}.
      */
-    public EntryStore(final IdvObjectStore store, final IdvResourceManager rscManager) {
+    public EntryStore(final IdvObjectStore store,
+                      final IdvResourceManager rscManager)
+    {
         requireNonNull(store);
         requireNonNull(rscManager);
 
@@ -195,16 +222,20 @@ public class EntryStore {
         }
 
         try {
-            Set<LocalAddeEntry> locals = EntryTransforms.readResolvFile(ADDE_RESOLV);
+            Set<LocalAddeEntry> locals =
+                EntryTransforms.readResolvFile(ADDE_RESOLV);
             putEntries(trie, locals);
         } catch (IOException e) {
-            logger.warn("EntryStore: RESOLV.SRV missing; expected=\"" + ADDE_RESOLV + '"');
+            logger.warn(WARN_NO_RESOLVSRV, ADDE_RESOLV);
         }
 
-        XmlResourceCollection userResource = rscManager.getXmlResources(ResourceManager.RSC_NEW_USERSERVERS);
-        XmlResourceCollection sysResource = rscManager.getXmlResources(IdvResourceManager.RSC_ADDESERVER);
+        XmlResourceCollection userResource =
+            rscManager.getXmlResources(ResourceManager.RSC_NEW_USERSERVERS);
+        XmlResourceCollection sysResource =
+            rscManager.getXmlResources(IdvResourceManager.RSC_ADDESERVER);
 
-        Set<AddeEntry> systemEntries = extractResourceEntries(EntrySource.SYSTEM, sysResource);
+        Set<AddeEntry> systemEntries =
+            extractResourceEntries(EntrySource.SYSTEM, sysResource);
 
         Set<AddeEntry> prefEntries = extractPreferencesEntries(store);
         prefEntries = removeDeletedSystemEntries(prefEntries, systemEntries);
@@ -212,9 +243,11 @@ public class EntryStore {
         Set<AddeEntry> userEntries = extractUserEntries(userResource);
         userEntries = removeDeletedSystemEntries(userEntries, systemEntries);
 
+        // inq 2202: shouldn't this order be reversed?
         putEntries(trie, prefEntries);
         putEntries(trie, userEntries);
         putEntries(trie, systemEntries);
+
         saveEntries();
     }
 
@@ -236,15 +269,16 @@ public class EntryStore {
      * @return {@code Set} of entries that are not system resources that have
      * been removed, or an empty {@code Set}.
      */
-    private static Set<AddeEntry> removeDeletedSystemEntries(final Collection<? extends AddeEntry> entries, final Collection<? extends AddeEntry> systemEntries) {
+    private static Set<AddeEntry> removeDeletedSystemEntries(
+        final Collection<? extends AddeEntry> entries,
+        final Collection<? extends AddeEntry> systemEntries)
+    {
         Set<AddeEntry> pruned = newLinkedHashSet(entries.size());
         for (AddeEntry entry : entries) {
             if (entry.getEntrySource() != EntrySource.SYSTEM) {
                 pruned.add(entry);
             } else if (systemEntries.contains(entry)) {
                 pruned.add(entry);
-            } else {
-                continue;
             }
         }
         return pruned;
@@ -256,9 +290,13 @@ public class EntryStore {
      * @param trie Cannot be {@code null}.
      * @param newEntries Cannot be {@code null}.
      */
-    private static void putEntries(final PatriciaTrie<String, AddeEntry> trie, final Collection<? extends AddeEntry> newEntries) {
+    private static void putEntries(
+        final PatriciaTrie<String, AddeEntry> trie,
+        final Collection<? extends AddeEntry> newEntries)
+    {
         requireNonNull(trie);
         requireNonNull(newEntries);
+
         for (AddeEntry e : newEntries) {
             trie.put(e.asStringId(), e);
         }
@@ -330,7 +368,9 @@ public class EntryStore {
         if (McIDASV.isWindows() || (mcvPID == null) || "0".equals(mcvPID)) {
             return new String[] { ADDE_MCSERVL, "-v", "-p", localPort };
         } else {
-            return new String[] { ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID };
+            return new String[] {
+                ADDE_MCSERVL, "-v", "-p", localPort, "-i", mcvPID
+            };
         }
     }
 
@@ -351,13 +391,15 @@ public class EntryStore {
      */
     public static boolean isInvalidEntry(final AddeEntry entry) {
         requireNonNull(entry);
+
         boolean retVal = true;
         if (entry instanceof RemoteAddeEntry) {
             retVal = RemoteAddeEntry.INVALID_ENTRY.equals(entry);
         } else if (entry instanceof LocalAddeEntry) {
             retVal = LocalAddeEntry.INVALID_ENTRY.equals(entry);
         } else {
-            throw new AssertionError("Unknown AddeEntry type: "+entry.getClass().getName());
+            String clsName = entry.getClass().getName();
+            throw new AssertionError("Unknown AddeEntry type: "+clsName);
         }
         return retVal;
     }
@@ -372,7 +414,9 @@ public class EntryStore {
      * @return Either the {@code AddeEntrys} stored in the prefs or an empty
      * {@link Set}.
      */
-    private Set<AddeEntry> extractPreferencesEntries(final IdvObjectStore store) {
+    private Set<AddeEntry> extractPreferencesEntries(
+        final IdvObjectStore store)
+    {
         assert store != null;
 
         // this is valid--the only thing ever written to 
@@ -385,11 +429,10 @@ public class EntryStore {
             entries = Collections.emptySet();
         } else {
             entries = newLinkedHashSet(asList.size());
-            for (AddeEntry entry : asList) {
-                if (entry instanceof RemoteAddeEntry) {
-                    entries.add(entry);
-                }
-            }
+            entries.addAll(
+                asList.stream()
+                      .filter(entry -> entry instanceof RemoteAddeEntry)
+                      .collect(Collectors.toList()));
         }
         return entries;
     }
@@ -405,6 +448,7 @@ public class EntryStore {
     @EventSubscriber(eventClass=Event.class)
     public void onEvent(Event evt) {
         requireNonNull(evt);
+
         saveEntries();
     }
 
@@ -418,7 +462,7 @@ public class EntryStore {
         try {
             EntryTransforms.writeResolvFile(ADDE_RESOLV, getLocalEntries());
         } catch (IOException e) {
-            logger.error("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
+            logger.error(WARN_NO_RESOLVSRV, ADDE_RESOLV);
         }
     }
 
@@ -430,9 +474,10 @@ public class EntryStore {
         idvStore.put(PREF_ADDE_ENTRIES, arrList(getPersistedEntrySet()));
         idvStore.saveIfNeeded();
         try {
-            EntryTransforms.writeResolvFile(ADDE_RESOLV, getPersistedLocalEntries());
+            EntryTransforms.writeResolvFile(ADDE_RESOLV,
+                getPersistedLocalEntries());
         } catch (IOException e) {
-            logger.error("EntryStore: RESOLV.SRV missing; expected=\""+ADDE_RESOLV+"\"");
+            logger.error(WARN_NO_RESOLVSRV, ADDE_RESOLV);
         }
     }
 
@@ -449,12 +494,11 @@ public class EntryStore {
      */
     public List<AddeEntry> getLastAddedByType(final EntryType type) {
         requireNonNull(type);
+
         List<AddeEntry> entries = arrList(lastAdded.size());
-        for (AddeEntry entry : lastAdded) {
-            if (entry.getEntryType() == type) {
-                entries.add(entry);
-            }
-        }
+        entries.addAll(lastAdded.stream()
+                                .filter(entry -> entry.getEntryType() == type)
+                                .collect(Collectors.toList()));
         return entries;
     }
 
@@ -472,12 +516,12 @@ public class EntryStore {
      */
     public List<AddeEntry> getLastAddedByTypes(final EnumSet<EntryType> types) {
         requireNonNull(types);
+
         List<AddeEntry> entries = arrList(lastAdded.size());
-        for (AddeEntry entry : lastAdded) {
-            if (types.contains(entry.getEntryType())) {
-                entries.add(entry);
-            }
-        }
+        entries.addAll(
+            lastAdded.stream()
+                .filter(entry -> types.contains(entry.getEntryType()))
+                .collect(Collectors.toList()));
         return entries;
     }
 
@@ -506,6 +550,7 @@ public class EntryStore {
      */
     public Set<AddeEntry> getVerifiedEntries(final EntryType type) {
         requireNonNull(type);
+
         Set<AddeEntry> verified = newLinkedHashSet(trie.size());
         for (AddeEntry entry : trie.values()) {
             if (entry.getEntryType() != type) {
@@ -530,8 +575,10 @@ public class EntryStore {
      */
     public Map<EntryType, Set<AddeEntry>> getVerifiedEntriesByTypes() {
         Map<EntryType, Set<AddeEntry>> entryMap =
-                newLinkedHashMap(EntryType.values().length);
+            newLinkedHashMap(EntryType.values().length);
+
         int size = trie.size();
+
         for (EntryType type : EntryType.values()) {
             entryMap.put(type, new LinkedHashSet<>(size));
         }
@@ -561,12 +608,13 @@ public class EntryStore {
     public Set<String> getGroupsFor(final String address, EntryType type) {
         requireNonNull(address);
         requireNonNull(type);
+
         Set<String> groups = newLinkedHashSet(trie.size());
-        for (AddeEntry entry : trie.getPrefixedBy(address+'!').values()) {
-            if (entry.getAddress().equals(address) && (entry.getEntryType() == type)) {
-                groups.add(entry.getGroup());
-            }
-        }
+        groups.addAll(
+            trie.getPrefixedBy(address + '!').values().stream()
+                .filter(e -> e.getAddress().equals(address) && (e.getEntryType() == type))
+                .map(AddeEntry::getGroup)
+                .collect(Collectors.toList()));
         return groups;
     }
 
@@ -584,6 +632,7 @@ public class EntryStore {
      */
     public List<AddeEntry> searchWithPrefix(final String prefix) {
         requireNonNull(prefix);
+
         return arrList(trie.getPrefixedBy(prefix).values());
     }
 
@@ -596,9 +645,9 @@ public class EntryStore {
      */
     public Set<String> getAddresses() {
         Set<String> addresses = newLinkedHashSet(trie.size());
-        for (AddeEntry entry : trie.values()) {
-            addresses.add(entry.getAddress());
-        }
+        addresses.addAll(trie.values().stream()
+                             .map(AddeEntry::getAddress)
+                             .collect(Collectors.toList()));
         return addresses;
     }
 
@@ -613,11 +662,10 @@ public class EntryStore {
      */
     public Set<String> getRemoteEntryTexts() {
         Set<String> strs = newLinkedHashSet(trie.size());
-        for (AddeEntry entry : trie.values()) {
-            if (entry instanceof RemoteAddeEntry) {
-                strs.add(entry.getEntryText());
-            }
-        }
+        strs.addAll(trie.values().stream()
+                        .filter(entry -> entry instanceof RemoteAddeEntry)
+                        .map(AddeEntry::getEntryText)
+                        .collect(Collectors.toList()));
         return strs;
     }
 
@@ -632,10 +680,11 @@ public class EntryStore {
      */
     public Set<String> getGroups(final String address) {
         requireNonNull(address);
+
         Set<String> groups = newLinkedHashSet(trie.size());
-        for (AddeEntry entry : trie.getPrefixedBy(address+'!').values()) {
-            groups.add(entry.getGroup());
-        }
+        groups.addAll(trie.getPrefixedBy(address + '!').values().stream()
+                          .map(AddeEntry::getGroup)
+                          .collect(Collectors.toList()));
         return groups;
     }
 
@@ -651,9 +700,10 @@ public class EntryStore {
      */
     public Set<EntryType> getTypes(final String address, final String group) {
         Set<EntryType> types = newLinkedHashSet(trie.size());
-        for (AddeEntry entry : trie.getPrefixedBy(address+'!'+group+'!').values()) {
-            types.add(entry.getEntryType());
-        }
+        types.addAll(
+            trie.getPrefixedBy(address + '!' + group + '!').values().stream()
+                .map(AddeEntry::getEntryType)
+                .collect(Collectors.toList()));
         return types;
     }
 
@@ -676,7 +726,10 @@ public class EntryStore {
      * 
      * @see RemoteAddeEntry#equals(Object)
      */
-    public AddeAccount getAccountingFor(final String address, final String group, EntryType type) {
+    public AddeAccount getAccountingFor(final String address,
+                                        final String group,
+                                        EntryType type)
+    {
         Collection<AddeEntry> entries =
             trie.getPrefixedBy(address+'!'+group+'!'+type.name()).values();
         for (AddeEntry entry : entries) {
@@ -699,7 +752,9 @@ public class EntryStore {
      * @return {@code AddeAccount} associated with {@code idvServer} and
      * {@code typeAsStr}.
      */
-    public AddeAccount getAccountingFor(final AddeServer idvServer, String typeAsStr) {
+    public AddeAccount getAccountingFor(final AddeServer idvServer,
+                                        String typeAsStr)
+    {
         String address = idvServer.getName();
         List<AddeServer.Group> groups =
             (List<AddeServer.Group>)idvServer.getGroups();
@@ -728,11 +783,9 @@ public class EntryStore {
      */
     public Set<AddeEntry> getPersistedEntrySet() {
         Set<AddeEntry> entries = newLinkedHashSet(trie.size());
-        for (AddeEntry entry : trie.values()) {
-            if (!entry.isEntryTemporary()) {
-                entries.add(entry);
-            }
-        }
+        entries.addAll(trie.values().stream()
+                           .filter(entry -> !entry.isEntryTemporary())
+                           .collect(Collectors.toList()));
         return entries;
     }
 
@@ -745,11 +798,10 @@ public class EntryStore {
      */
     public Set<RemoteAddeEntry> getRemoteEntries() {
         Set<RemoteAddeEntry> remotes = newLinkedHashSet(trie.size());
-        for (AddeEntry e : trie.values()) {
-            if (e instanceof RemoteAddeEntry) {
-                remotes.add((RemoteAddeEntry)e);
-            }
-        }
+        remotes.addAll(trie.values().stream()
+                           .filter(e -> e instanceof RemoteAddeEntry)
+                           .map(e -> (RemoteAddeEntry) e)
+                           .collect(Collectors.toList()));
         return remotes;
     }
 
@@ -762,11 +814,10 @@ public class EntryStore {
      */
     public Set<LocalAddeEntry> getLocalEntries() {
         Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
-        for (AddeEntry e : trie.getPrefixedBy("localhost").values()) {
-            if (e instanceof LocalAddeEntry) {
-                locals.add((LocalAddeEntry)e);
-            }
-        }
+        locals.addAll(trie.getPrefixedBy("localhost").values().stream()
+                          .filter(e -> e instanceof LocalAddeEntry)
+                          .map(e -> (LocalAddeEntry) e)
+                          .collect(Collectors.toList()));
         return locals;
     }
 
@@ -811,16 +862,18 @@ public class EntryStore {
      *
      * @return {@link Set} of filtered local ADDE entries.
      */
-    private Set<LocalAddeEntry> filterLocalEntriesByTemporaryStatus(final boolean getTemporaryEntries) {
+    private Set<LocalAddeEntry> filterLocalEntriesByTemporaryStatus(
+        final boolean getTemporaryEntries)
+    {
         Set<LocalAddeEntry> locals = newLinkedHashSet(trie.size());
-        for (AddeEntry e : trie.getPrefixedBy("localhost").values()) {
-            if (e instanceof LocalAddeEntry) {
+        trie.getPrefixedBy("localhost").values().stream()
+            .filter(e -> e instanceof LocalAddeEntry)
+            .forEach(e -> {
                 LocalAddeEntry local = (LocalAddeEntry)e;
                 if (local.isEntryTemporary() == getTemporaryEntries) {
                     locals.add(local);
                 }
-            }
-        }
+            });
         return locals;
     }
 
@@ -834,17 +887,19 @@ public class EntryStore {
      *
      * @throws NullPointerException if {@code removedEntries} is {@code null}.
      */
-    public boolean removeEntries(final Collection<? extends AddeEntry> removedEntries) {
+    public boolean removeEntries(
+        final Collection<? extends AddeEntry> removedEntries)
+    {
         requireNonNull(removedEntries);
 
         boolean val = true;
-        boolean tmpVal = true;
-        for (AddeEntry entry : removedEntries) {
-            if (entry.getEntrySource() != EntrySource.SYSTEM) {
-                tmpVal = trie.remove(entry.asStringId()) != null;
-                logger.trace("attempted bulk remove={} status={}", entry, tmpVal);
-                if (!tmpVal) {
-                    val = tmpVal;
+        boolean tmp = true;
+        for (AddeEntry e : removedEntries) {
+            if (e.getEntrySource() != EntrySource.SYSTEM) {
+                tmp = trie.remove(e.asStringId()) != null;
+                logger.trace("attempted bulk remove={} status={}", e, tmp);
+                if (!tmp) {
+                    val = tmp;
                 }
             }
         }
@@ -865,6 +920,7 @@ public class EntryStore {
      */
     public boolean removeEntry(final AddeEntry entry) {
         requireNonNull(entry);
+
         boolean val = trie.remove(entry.asStringId()) != null;
         logger.trace("attempted remove={} status={}", entry, val);
         Event evt = val ? Event.REMOVAL : Event.FAILURE;
@@ -882,6 +938,7 @@ public class EntryStore {
      */
     public void addEntry(final AddeEntry entry) {
         requireNonNull(entry, "Cannot add a null entry.");
+
         trie.put(entry.asStringId(), entry);
         saveEntries();
         lastAdded.clear();
@@ -899,6 +956,7 @@ public class EntryStore {
      */
     public void addEntries(final Collection<? extends AddeEntry> newEntries) {
         requireNonNull(newEntries, "Cannot add a null Collection.");
+
         for (AddeEntry newEntry : newEntries) {
             trie.put(newEntry.asStringId(), newEntry);
         }
@@ -919,7 +977,10 @@ public class EntryStore {
      * @throws NullPointerException if either of {@code oldEntries} or 
      * {@code newEntries} is {@code null}.
      */
-    public void replaceEntries(final Collection<? extends AddeEntry> oldEntries, final Collection<? extends AddeEntry> newEntries) {
+    public void replaceEntries(
+        final Collection<? extends AddeEntry> oldEntries,
+        final Collection<? extends AddeEntry> newEntries)
+    {
         requireNonNull(oldEntries, "Cannot replace a null Collection.");
         requireNonNull(newEntries, "Cannot add a null Collection.");
 
@@ -948,10 +1009,13 @@ public class EntryStore {
     public Set<AddeServer.Group> getIdvStyleLocalGroups() {
         Set<LocalAddeEntry> localEntries = getLocalEntries();
         Set<AddeServer.Group> idvGroups = newLinkedHashSet(localEntries.size());
-        for (LocalAddeEntry entry : localEntries) {
-            if ((entry.getEntryStatus() == EntryStatus.ENABLED) && (entry.getEntryValidity() == EntryValidity.VERIFIED)) {
-                String group = entry.getGroup();
-                AddeServer.Group idvGroup = new AddeServer.Group("IMAGE", group, group);
+        for (LocalAddeEntry e : localEntries) {
+            boolean enabled = e.getEntryStatus() == EntryStatus.ENABLED;
+            boolean verified = e.getEntryValidity() == EntryValidity.VERIFIED;
+            if (enabled && verified) {
+                String group = e.getGroup();
+                AddeServer.Group idvGroup =
+                    new AddeServer.Group("IMAGE", group, group);
                 idvGroups.add(idvGroup);
             }
         }
@@ -973,8 +1037,12 @@ public class EntryStore {
      * @return {@link Set} of {@code AddeServer.Group} objects that corresponds
      * to the entries associated with {@code server} and {@code typeAsStr}.
      */
-    public Set<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final String typeAsStr) {
-        return getIdvStyleRemoteGroups(server, EntryTransforms.strToEntryType(typeAsStr));
+    public Set<AddeServer.Group> getIdvStyleRemoteGroups(
+        final String server,
+        final String typeAsStr)
+    {
+        return getIdvStyleRemoteGroups(server,
+            EntryTransforms.strToEntryType(typeAsStr));
     }
 
     /**
@@ -989,16 +1057,21 @@ public class EntryStore {
      * @return {@link Set} of {@code AddeServer.Group} objects that corresponds
      * to the entries associated with {@code server} and {@code type}.
      */
-    public Set<AddeServer.Group> getIdvStyleRemoteGroups(final String server, final EntryType type) {
+    public Set<AddeServer.Group> getIdvStyleRemoteGroups(final String server,
+                                                         final EntryType type)
+    {
         Set<AddeServer.Group> idvGroups = newLinkedHashSet(trie.size());
         String typeStr = type.name();
-        for (AddeEntry matched : trie.getPrefixedBy(server).values()) {
-            if (matched == RemoteAddeEntry.INVALID_ENTRY) {
+        for (AddeEntry e : trie.getPrefixedBy(server).values()) {
+            if (e == RemoteAddeEntry.INVALID_ENTRY) {
                 continue;
             }
 
-            if ((matched.getEntryStatus() == EntryStatus.ENABLED) && (matched.getEntryValidity() == EntryValidity.VERIFIED) && (matched.getEntryType() == type)) {
-                String group = matched.getGroup();
+            boolean enabled = e.getEntryStatus() == EntryStatus.ENABLED;
+            boolean verified = e.getEntryValidity() == EntryValidity.VERIFIED;
+            boolean typeMatched = e.getEntryType() == type;
+            if (enabled && verified && typeMatched) {
+                String group = e.getGroup();
                 idvGroups.add(new AddeServer.Group(typeStr, group, group));
             }
         }
@@ -1054,7 +1127,10 @@ public class EntryStore {
      * @return {@link Set} of the {@link AddeEntry AddeEntrys} extracted from
      * {@code xmlResources}.
      */
-    private Set<AddeEntry> extractResourceEntries(EntrySource source, final XmlResourceCollection xmlResources) {
+    private Set<AddeEntry> extractResourceEntries(
+        EntrySource source,
+        final XmlResourceCollection xmlResources)
+    {
         Set<AddeEntry> entries = newLinkedHashSet(xmlResources.size());
         for (int i = 0; i < xmlResources.size(); i++) {
             Element root = xmlResources.getRoot(i);
@@ -1074,7 +1150,9 @@ public class EntryStore {
      * @return {@link Set} of {@link RemoteAddeEntry RemoteAddeEntries}
      * contained within {@code resource}.
      */
-    private Set<AddeEntry> extractUserEntries(final XmlResourceCollection xmlResources) {
+    private Set<AddeEntry> extractUserEntries(
+        final XmlResourceCollection xmlResources)
+    {
         int rcSize = xmlResources.size();
         Set<AddeEntry> entries = newLinkedHashSet(rcSize);
         for (int i = 0; i < rcSize; i++) {
@@ -1099,7 +1177,8 @@ public class EntryStore {
      * <p>Users can provide an arbitrary path at runtime by setting the 
      * {@code debug.localadde.rootdir} system property.
      * 
-     * @return {@code String} containing the path to the McIDAS-X root directory. 
+     * @return {@code String} containing the path to the McIDAS-X root
+     * directory.
      * 
      * @see #PROP_DEBUG_LOCALROOT
      */
@@ -1119,7 +1198,7 @@ public class EntryStore {
      * force debugging for <i>all</i> ADDE requests. To do so will require
      * updates to the VisAD ADDE library.
      * 
-     * @param defaultValue Value to return if {@code debug.adde.reqs} has
+     * @param defValue Value to return if {@code debug.adde.reqs} has
      * not been set.
      * 
      * @return If it exists, the value of {@code debug.adde.reqs}. 
@@ -1130,8 +1209,10 @@ public class EntryStore {
      */
     // TODO(jon): this sort of thing should *really* be happening within the 
     // ADDE library.
-    public static boolean isAddeDebugEnabled(final boolean defaultValue) {
-        return Boolean.parseBoolean(System.getProperty(PROP_DEBUG_ADDEURL, Boolean.toString(defaultValue)));
+    public static boolean isAddeDebugEnabled(final boolean defValue) {
+        String systemProperty =
+            System.getProperty(PROP_DEBUG_ADDEURL, Boolean.toString(defValue));
+        return Boolean.parseBoolean(systemProperty);
     }
 
     /**
@@ -1150,7 +1231,9 @@ public class EntryStore {
      * @see #PROP_DEBUG_ADDEURL
      */
     public static boolean setAddeDebugEnabled(final boolean value) {
-        return Boolean.parseBoolean(System.setProperty(PROP_DEBUG_ADDEURL, Boolean.toString(value)));
+        String systemProperty =
+            System.setProperty(PROP_DEBUG_ADDEURL, Boolean.toString(value));
+        return Boolean.parseBoolean(systemProperty);
     }
 
     /**
@@ -1188,14 +1271,17 @@ public class EntryStore {
             // Create and start the thread if there isn't already one running
             if (!checkLocalServer()) {
                 if (!testLocalServer()) {
-                    LogUtil.userErrorMessage("Local servers cannot write to userpath:\n"+USER_DIRECTORY);
-                    logger.info("Local servers cannot write to userpath ('{}')", USER_DIRECTORY);
+                    String logUtil =
+                        String.format(ERROR_LOGUTIL_USERPATH, USER_DIRECTORY);
+                    LogUtil.userErrorMessage(logUtil);
+                    logger.info(ERROR_USERPATH, USER_DIRECTORY);
                     return;
                 }
                 thread = new AddeThread(this);
                 thread.start();
                 EventBus.publish(McservEvent.STARTED);
-                logger.debug("started mcservl? checkLocalServer={}", checkLocalServer());
+                boolean status = checkLocalServer();
+                logger.debug("started mcservl? checkLocalServer={}", status);
             } else {
                 logger.debug("mcservl is already running");
             }
@@ -1218,7 +1304,8 @@ public class EntryStore {
             thread.interrupt();
             thread = null;
             EventBus.publish(McservEvent.STOPPED);
-            logger.debug("stopped mcservl? checkLocalServer={}", checkLocalServer());
+            boolean status = checkLocalServer();
+            logger.debug("stopped mcservl? checkLocalServer={}", status);
         } else {
             logger.debug("mcservl is not running.");
         }
@@ -1232,7 +1319,9 @@ public class EntryStore {
      */
     public boolean testLocalServer() {
         String[] cmds = { ADDE_MCSERVL, "-t" };
-        String[] env = McIDASV.isWindows() ? getWindowsAddeEnv() : getUnixAddeEnv();
+        String[] env = McIDASV.isWindows()
+                       ? getWindowsAddeEnv()
+                       : getUnixAddeEnv();
 
         try {
             Process proc = Runtime.getRuntime().exec(cmds, env);

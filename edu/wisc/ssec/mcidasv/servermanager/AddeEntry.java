@@ -28,7 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.servermanager;
 
-
 /**
  * Represents a source of ADDE data. An ADDE entry may describe a dataset on
  * remote servers or the user's own machine.
@@ -36,7 +35,6 @@ package edu.wisc.ssec.mcidasv.servermanager;
 public interface AddeEntry {
 
     /** Represents the possible actions that an ADDE editor can perform. */
-//    @PersistableEnum
     enum EditorAction {
         /** Created a new entry; hasn't been verified. */
         ADDED,
@@ -57,8 +55,8 @@ public interface AddeEntry {
         EDITED_VERIFIED,
 
         /** Editor GUI performed some {@literal "invalid"} action. */
-        INVALID;
-    };
+        INVALID
+    }
 
     /** Type of chooser this should appear under. */
     enum EntryType {
@@ -109,7 +107,7 @@ public interface AddeEntry {
         public static String toStr(final EntryType type) {
             return type.name();
         }
-    };
+    }
     
     /** Sort of a {@literal "misc"} status field... */
     enum EntryValidity {
@@ -142,7 +140,7 @@ public interface AddeEntry {
         public static String toStr(final EntryValidity validity) {
             return validity.name();
         }
-    };
+    }
 
     /** Where did this entry come from? */
     enum EntrySource {
@@ -168,7 +166,7 @@ public interface AddeEntry {
         public static String toStr(final EntrySource source) {
             return source.name();
         }
-    };
+    }
 
     /** 
      * Has the user elected to disable this entry from appearing in its 
@@ -191,7 +189,7 @@ public interface AddeEntry {
         public static String toStr(final EntryType type) {
             return type.name();
         }
-    };
+    }
 
     /** Represents the {@literal "no accounting"} entries. */
     AddeAccount DEFAULT_ACCOUNT = new AddeAccount("idv", "0");

@@ -130,7 +130,8 @@ public class AddePreferences {
      * @param prefManager McIDAS-V's {@link PreferenceManager}. Should not be {@code null}.
      */
     public void addPanel(McIdasPreferenceManager prefManager) {
-        AddePrefConglomeration notPretty = buildPanel((McIDASV)prefManager.getIdv());
+        AddePrefConglomeration notPretty =
+            buildPanel((McIDASV)prefManager.getIdv());
         // add the panel, listeners, and so on to the preference manager.
         prefManager.add(notPretty.getName(), "blah", notPretty.getEntryListener(), 
             notPretty.getEntryPanel(), notPretty.getEntryToggles());
@@ -144,7 +145,9 @@ public class AddePreferences {
      * @param catPanel The object that changed.
      */
     @EventTopicSubscriber(topic="CheckboxCategoryPanel.PanelToggled")
-    public void handleCategoryToggle(final String topic, final CheckboxCategoryPanel catPanel) {
+    public void handleCategoryToggle(final String topic,
+                                     final CheckboxCategoryPanel catPanel)
+    {
         IdvObjectStore store = entryStore.getIdvStore();
         store.put("addepref.category."+catPanel.getCategoryName(), catPanel.isOpen());
     }
@@ -179,7 +182,8 @@ public class AddePreferences {
             }
             final Set<AddeEntry> subset = entries.get(type);
             Set<String> observedEntries = new HashSet<>(subset.size());
-            boolean typePanelVis = store.get("addepref.category."+type.toString(), false);
+            boolean typePanelVis =
+                store.get("addepref.category."+type.toString(), false);
             final CheckboxCategoryPanel typePanel = 
                 new CheckboxCategoryPanel(type.toString(), typePanelVis);
 
@@ -191,15 +195,13 @@ public class AddePreferences {
 
                 boolean enabled = entry.getEntryStatus() == EntryStatus.ENABLED;
                 final JCheckBox cbx = new JCheckBox(entryText, enabled);
-                cbx.addActionListener(new ActionListener() {
-                    public void actionPerformed(final ActionEvent e) {
-                        EntryStatus status = cbx.isSelected() ? EntryStatus.ENABLED : EntryStatus.DISABLED;
-                        logger.trace("entry={} val={} status={} evt={}", new Object[] { entryText, cbx.isSelected(), status, e});
-                        entry.setEntryStatus(status);
-                        entryToggles.put(entry, cbx);
-                        store.put("addeprefs.scroller.pos", cbScroller.getViewport().getViewPosition());
-                        EventBus.publish(EntryStore.Event.UPDATE);
-                    }
+                cbx.addActionListener(e -> {
+                    EntryStatus status = cbx.isSelected() ? EntryStatus.ENABLED : EntryStatus.DISABLED;
+                    logger.trace("entry={} val={} status={} evt={}", new Object[] { entryText, cbx.isSelected(), status, e});
+                    entry.setEntryStatus(status);
+                    entryToggles.put(entry, cbx);
+                    store.put("addeprefs.scroller.pos", cbScroller.getViewport().getViewPosition());
+                    EventBus.publish(EntryStore.Event.UPDATE);
                 });
                 entryToggles.put(entry, cbx);
                 typePanel.addItem(cbx);
@@ -228,31 +230,23 @@ public class AddePreferences {
 
         // handle the user opting to enable all servers
         allOn = new JButton("All on");
-        allOn.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                for (CheckboxCategoryPanel cbcp : typePanels) {
-                    cbcp.toggleAll(true);
-                }
+        allOn.addActionListener(e -> {
+            for (CheckboxCategoryPanel cbcp : typePanels) {
+                cbcp.toggleAll(true);
             }
         });
 
         // handle the user opting to disable all servers
         allOff = new JButton("All off");
-        allOff.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                for (CheckboxCategoryPanel cbcp : typePanels) {
-                    cbcp.toggleAll(false);
-                }
+        allOff.addActionListener(e -> {
+            for (CheckboxCategoryPanel cbcp : typePanels) {
+                cbcp.toggleAll(false);
             }
         });
 
         // user wants to add a server! make it so.
         final JButton addServer = new JButton("ADDE Data Manager");
-        addServer.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                mcv.showServerManager();
-            }
-        });
+        addServer.addActionListener(e -> mcv.showServerManager());
 
         boolean useAll = false;
         boolean specify = false;
@@ -265,25 +259,21 @@ public class AddePreferences {
         // disable user selection of entries--they're using everything
         final JRadioButton useAllBtn = 
             new JRadioButton("Use all ADDE entries", useAll);
-        useAllBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                setGUIEnabled(!useAllBtn.isSelected());
-                // TODO(jon): use the eventbus
-                setSpecifyServers(Selection.ALL_ENTRIES);
-                EventBus.publish(EntryStore.Event.UPDATE); // doesn't work...
-            }
+        useAllBtn.addActionListener(ae -> {
+            setGUIEnabled(!useAllBtn.isSelected());
+            // TODO(jon): use the eventbus
+            setSpecifyServers(Selection.ALL_ENTRIES);
+            EventBus.publish(EntryStore.Event.UPDATE); // doesn't work...
         });
 
         // let the user specify the "active" set, enable entry selection
         final JRadioButton useTheseBtn = 
             new JRadioButton("Use selected ADDE entries:", specify);
-        useTheseBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                setGUIEnabled(!useAllBtn.isSelected());
-                // TODO(jon): use the eventbus
-                setSpecifyServers(Selection.SPECIFIED_ENTRIES);
-                EventBus.publish(EntryStore.Event.UPDATE); // doesn't work...
-            }
+        useTheseBtn.addActionListener(ae -> {
+            setGUIEnabled(!useAllBtn.isSelected());
+            // TODO(jon): use the eventbus
+            setSpecifyServers(Selection.SPECIFIED_ENTRIES);
+            EventBus.publish(EntryStore.Event.UPDATE); // doesn't work...
         });
         GuiUtils.buttonGroup(useAllBtn, useTheseBtn);
 
@@ -307,32 +297,30 @@ public class AddePreferences {
 
         // iterate through all the entries and "apply" any changes: 
         // reordering, removing, visibility changes, etc
-        PreferenceManager entryListener = new PreferenceManager() {
-            public void applyPreference(XmlObjectStore store, Object data) {
+        PreferenceManager entryListener = (store1, data) -> {
 //                logger.trace("well, the damn thing fires at least");
 //                // this won't break because the data parameter is whatever
 //                // has been passed in to "prefManager.add(...)". in this case,
 //                // it's the "entryToggles" variable.
-                store.put("addeprefs.scroller.pos", cbScroller.getViewport().getViewPosition());
-                
-                @SuppressWarnings("unchecked")
-                Map<AddeEntry, JCheckBox> toggles = (Map<AddeEntry, JCheckBox>)data;
-                boolean updated = false;
-                for (Entry<AddeEntry, JCheckBox> entry : toggles.entrySet()) {
-                    AddeEntry e = entry.getKey();
-                    JCheckBox c = entry.getValue();
-                    EntryStatus currentStatus = e.getEntryStatus();
-                    EntryStatus nextStatus = c.isSelected() ? EntryStatus.ENABLED : EntryStatus.DISABLED;
-                    logger.trace("entry={} type={} old={} new={}", e, e.getEntryType(), currentStatus, nextStatus);
+            store1.put("addeprefs.scroller.pos", cbScroller.getViewport().getViewPosition());
+
+            @SuppressWarnings("unchecked")
+            Map<AddeEntry, JCheckBox> toggles = (Map<AddeEntry, JCheckBox>)data;
+            boolean updated = false;
+            for (Entry<AddeEntry, JCheckBox> entry : toggles.entrySet()) {
+                AddeEntry e = entry.getKey();
+                JCheckBox c = entry.getValue();
+                EntryStatus currentStatus = e.getEntryStatus();
+                EntryStatus nextStatus = c.isSelected() ? EntryStatus.ENABLED : EntryStatus.DISABLED;
+                logger.trace("entry={} type={} old={} new={}", e, e.getEntryType(), currentStatus, nextStatus);
 //                    if (currentStatus != nextStatus) {
-                        e.setEntryStatus(nextStatus);
-                        toggles.put(e, c);
-                        updated = true;
+                    e.setEntryStatus(nextStatus);
+                    toggles.put(e, c);
+                    updated = true;
 //                    }
-                }
-                if (updated) {
-                    EventBus.publish(EntryStore.Event.UPDATE);
-                }
+            }
+            if (updated) {
+                EventBus.publish(EntryStore.Event.UPDATE);
             }
         };
         return new AddePrefConglomeration(Constants.PREF_LIST_ADDE_SERVERS, entryListener, entryPanel, entryToggles);

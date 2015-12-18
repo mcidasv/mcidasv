@@ -34,6 +34,7 @@ import static edu.wisc.ssec.mcidasv.util.Contract.checkArg;
 
 import java.io.IOException;
 
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -595,16 +596,17 @@ public class RemoteAddeEntry implements AddeEntry {
     public static boolean checkHost(final RemoteAddeEntry entry) {
         requireNonNull(entry, "entry cannot be null");
         String host = entry.getAddress();
-        boolean connected = false;
+        boolean connected;
         if (host.startsWith("localhost:")) {
             connected = true;
         } else {
-            try (Socket socket = new Socket(host, ADDE_PORT)) {
+            Socket socket = new Socket();
+            try {
+                socket.connect(new InetSocketAddress(host, ADDE_PORT), 10);
                 connected = true;
-                // need to explicitly do the close.
                 socket.close();
             } catch (UnknownHostException e) {
-                logger.debug("can't resolve IP for '{}'", entry.getAddress());
+                logger.debug("can't resolve IP for '{}'", host);
                 connected = false;
             } catch (IOException e) {
                 logger.debug("IO problem while connecting to '{}': {}", entry.getAddress(), e.getMessage());

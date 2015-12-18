@@ -40,11 +40,12 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -56,6 +57,8 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.w3c.dom.Element;
 
@@ -109,25 +112,27 @@ public class EntryTransforms {
     private EntryTransforms() { }
 
     /**
-     * {@link Function} that transforms an {@link AddeServer} into a {@link RemoteAddeEntry}.
+     * {@link Function} that transforms an {@link AddeServer} into a
+     * {@link RemoteAddeEntry}.
      */
     // TODO(jon): shouldn't this use AddeEntry rather than RemoteAddeEntry?
-    public static final Function<AddeServer, RemoteAddeEntry> convertIdvServer = new Function<AddeServer, RemoteAddeEntry>() {
-        public RemoteAddeEntry apply(final AddeServer arg) {
+    public static final Function<AddeServer, RemoteAddeEntry> convertIdvServer =
+        arg -> {
             String hostname = arg.toString().toLowerCase();
-            for (AddeServer.Group group : (List<AddeServer.Group>)arg.getGroups()) {
-                
-            }
+//            for (Group ignored : (List<Group>)arg.getGroups()) {
+//
+//            }
             return new RemoteAddeEntry.Builder(hostname, "temp").build();
-        }
-    };
+        };
 
     @SuppressWarnings({"SetReplaceableByEnumSet"})
-    public static Set<EntryType> findEntryTypes(final Collection<? extends AddeEntry> entries) {
+    public static Set<EntryType> findEntryTypes(
+        final Collection<? extends AddeEntry> entries)
+    {
         Set<EntryType> types = new HashSet<>(entries.size());
-        for (AddeEntry entry : entries) {
-            types.add(entry.getEntryType());
-        }
+        types.addAll(entries.stream()
+                            .map(AddeEntry::getEntryType)
+                            .collect(Collectors.toList()));
         return EnumSet.copyOf(types);
     }
 
@@ -240,16 +245,22 @@ public class EntryTransforms {
 
     public static Set<RemoteAddeEntry> createEntriesFrom(final RemoteAddeEntry entry) {
         Set<RemoteAddeEntry> entries = newLinkedHashSet(EntryType.values().length);
-        RemoteAddeEntry.Builder incomp = 
+
+        RemoteAddeEntry.Builder incomp =
             new RemoteAddeEntry.Builder(entry.getAddress(), entry.getGroup())
             .account(entry.getAccount().getUsername(), entry.getAccount().getProject())
             .source(entry.getEntrySource()).status(entry.getEntryStatus())
             .validity(entry.getEntryValidity());
-        for (EntryType type : EnumSet.of(EntryType.IMAGE, EntryType.GRID, EntryType.POINT, EntryType.TEXT, EntryType.RADAR, EntryType.NAV)) {
-            if (!(type == entry.getEntryType())) {
-                entries.add(incomp.type(type).build());
-            }
-        }
+
+        entries.addAll(
+            EnumSet.of(
+                EntryType.IMAGE, EntryType.GRID, EntryType.POINT,
+                EntryType.TEXT, EntryType.RADAR, EntryType.NAV)
+            .stream()
+            .filter(type -> !(type == entry.getEntryType()))
+            .map(type -> incomp.type(type).build())
+            .collect(Collectors.toList()));
+
         logger.trace("built entries={}", entries);
         return entries;
     }
@@ -261,7 +272,7 @@ public class EntryTransforms {
      * 
      * @param root XML to convert.
      * @param source Used to {@literal "bulk set"} the origin of whatever
-     * remote ADDE entries get created.
+     *               remote ADDE entries get created.
      * 
      * @return {@code Set} of remote ADDE entries contained within {@code root}.
      */
@@ -328,7 +339,7 @@ public class EntryTransforms {
      * 
      * @param serverName The server name to convert. Cannot be {@code null}.
      * 
-     * @return {@code serverName} converted to a lowercase {@code String} representation.
+     * @return {@code serverName} converted to a lowercase {@code String}.
      * 
      * @throws NullPointerException if {@code serverName} is {@code null}.
      */
@@ -340,7 +351,8 @@ public class EntryTransforms {
     /**
      * Attempts to convert a {@link String} to a {@link ServerName}.
      * 
-     * @param s Value whose {@code ServerName} is wanted. Cannot be {@code null}.
+     * @param s Value whose {@code ServerName} is wanted.
+     *          Cannot be {@code null}.
      * 
      * @return One of {@code ServerName}. If there was no {@literal "sensible"}
      * conversion, the method returns {@link ServerName#INVALID}.
@@ -364,7 +376,7 @@ public class EntryTransforms {
      * 
      * @param type The type to convert. Cannot be {@code null}.
      * 
-     * @return {@code type} converted to a lowercase {@code String} representation.
+     * @return {@code type} converted to a lowercase {@code String}.
      * 
      * @throws NullPointerException if {@code type} is {@code null}.
      */
@@ -477,14 +489,16 @@ public class EntryTransforms {
      * @param s {@code String} representation of an {@code AddeFormat}. Cannot 
      * be {@code null}.
      * 
-     * @return Uses {@link AddeFormat#valueOf(String)} to convert <i>the modified</i>
-     * {@code String} into an {@code AddeFormat} and returns. If no conversion
-     * was possible, returns {@link AddeFormat#INVALID}.
+     * @return Uses {@link AddeFormat#valueOf(String)} to convert
+     * <i>the modified</i> {@code String} into an {@code AddeFormat} and
+     * returns. If no conversion was possible, returns
+     * {@link AddeFormat#INVALID}.
      * 
      * @throws NullPointerException if {@code s} is {@code null}.
      */
     public static AddeFormat strToAddeFormat(final String s) {
         requireNonNull(s);
+
         AddeFormat format = AddeFormat.INVALID;
         try {
             format = AddeFormat.valueOf(s.toUpperCase().replace(' ', '_').replace("-", ""));
@@ -496,6 +510,7 @@ public class EntryTransforms {
 
     public static String addeFormatToStr(final AddeFormat format) {
         requireNonNull(format);
+
         return format.toString().toLowerCase();
     }
 
@@ -545,9 +560,11 @@ public class EntryTransforms {
             }
 
             if (validFile) {
-                Map<String, String> datasetsToIp = mapDatasetsToIp(datasetToHost, hostToIp);
+                Map<String, String> datasetsToIp =
+                    mapDatasetsToIp(datasetToHost, hostToIp);
                 Map<String, String> ipToName = mapIpToName(hosts);
-                List<RemoteAddeEntry> l = mapDatasetsToName(datasetsToIp, ipToName, username, project);
+                List<RemoteAddeEntry> l =
+                    mapDatasetsToName(datasetsToIp, ipToName, username, project);
                 entries.addAll(l);
             } else {
                 entries = Collections.emptySet();
@@ -577,26 +594,36 @@ public class EntryTransforms {
      * is formed from {@code username} and {@code project}.
      */
     private static List<RemoteAddeEntry> mapDatasetsToName(
-        final Map<String, String> datasetToHost, final Map<String, String> hostToIp, final String username, final String project) 
+        final Map<String, String> datasetToHost,
+        final Map<String, String> hostToIp,
+        final String username,
+        final String project)
     {
         boolean defaultAcct = false;
         AddeAccount defAcct = AddeEntry.DEFAULT_ACCOUNT;
         if (defAcct.getUsername().equalsIgnoreCase(username) && defAcct.getProject().equals(project)) {
             defaultAcct = true;
         }
+
         List<RemoteAddeEntry> entries = arrList(datasetToHost.size());
         for (Entry<String, String> entry : datasetToHost.entrySet()) {
             String dataset = entry.getKey();
             String ip = entry.getValue();
             String name = ip;
+
             if (hostToIp.containsKey(ip)) {
                 name = hostToIp.get(ip);
             }
-            RemoteAddeEntry.Builder builder = new RemoteAddeEntry.Builder(name, dataset)
-                                                  .source(EntrySource.MCTABLE);
+
+            RemoteAddeEntry.Builder builder =
+                new RemoteAddeEntry.Builder(name, dataset)
+                                   .source(EntrySource.MCTABLE);
+
             if (!defaultAcct) {
                 builder.account(username, project);
             }
+
+            // now go ahead and actually create the new entry
             RemoteAddeEntry remoteEntry = builder.build();
             logger.trace("built entry={}", remoteEntry);
             entries.add(builder.build());
@@ -627,7 +654,10 @@ public class EntryTransforms {
         return ipToName;
     }
 
-    private static Map<String, String> mapDatasetsToIp(final Map<String, String> datasets, final Map<String, String> hostMap) {
+    private static Map<String, String> mapDatasetsToIp(
+        final Map<String, String> datasets,
+        final Map<String, String> hostMap)
+    {
         assert datasets != null;
         assert hostMap != null;
 
@@ -658,23 +688,36 @@ public class EntryTransforms {
      */
     public static Set<LocalAddeEntry> readResolvFile(final String filename) throws IOException {
         Set<LocalAddeEntry> servers = newLinkedHashSet();
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(filename));
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty()) {
-                    continue;
-                } else if (line.startsWith("SSH_")) {
-                    continue;
-                }
-                servers.add(readResolvLine(line));
-            }
-        } finally {
-            if (br != null) {
-                br.close();
-            }
+//        BufferedReader br = null;
+//        try {
+//            br = new BufferedReader(new FileReader(filename));
+//            String line;
+//            while ((line = br.readLine()) != null) {
+//                line = line.trim();
+//                if (line.isEmpty()) {
+//                    continue;
+//                } else if (line.startsWith("SSH_")) {
+//                    continue;
+//                }
+//                servers.add(readResolvLine(line));
+//            }
+//        } finally {
+//            if (br != null) {
+//                br.close();
+//            }
+//        }
+        try (Stream<String> stream = Files.lines(Paths.get(filename))) {
+//            stream.forEach(line -> {
+//                line = line.trim();
+//                if (!line.isEmpty() && !line.startsWith("SSH_")) {
+//                    servers.add(readResolvLine(line));
+//                }
+//            })
+            servers.addAll(
+                stream.map(String::trim)
+                      .filter(l -> !l.isEmpty() && !l.startsWith("SSH_"))
+                      .map(EntryTransforms::readResolvLine)
+                      .collect(Collectors.toSet()));
         }
         return servers;
     }
@@ -699,12 +742,12 @@ public class EntryTransforms {
         String[] pairs = commaSplit.split(line.trim());
         String[] pair;
         Map<String, String> keyVals = new HashMap<>(pairs.length);
-        for (int i = 0; i < pairs.length; i++) {
-            if ((pairs[i] == null) || pairs[i].isEmpty()) {
+        for (String tempPair : pairs) {
+            if ((tempPair == null) || tempPair.isEmpty()) {
                 continue;
             }
 
-            pair = equalSplit.split(pairs[i]);
+            pair = equalSplit.split(tempPair);
             if ((pair.length != 2) || pair[0].isEmpty() || pair[1].isEmpty()) {
                 continue;
             }
@@ -777,7 +820,10 @@ public class EntryTransforms {
      * 
      * @see #appendResolvFile(String, Collection)
      */
-    public static void writeResolvFile(final String filename, final Collection<LocalAddeEntry> entries) throws IOException {
+    public static void writeResolvFile(
+        final String filename,
+        final Collection<LocalAddeEntry> entries) throws IOException
+    {
         writeResolvFile(filename, false, entries);
     }
 
@@ -796,7 +842,10 @@ public class EntryTransforms {
      * 
      * @see #writeResolvFile(String, Collection)
      */
-    public static void appendResolvFile(final String filename, final Collection<LocalAddeEntry> entries) throws IOException {
+    public static void appendResolvFile(
+        final String filename,
+        final Collection<LocalAddeEntry> entries) throws IOException
+    {
         writeResolvFile(filename, true, entries);
     }
 
@@ -818,23 +867,37 @@ public class EntryTransforms {
      * @see #appendResolvFile(String, Collection)
      * @see #asResolvEntry(LocalAddeEntry)
      */
-    private static void writeResolvFile(final String filename, final boolean append, final Collection<LocalAddeEntry> entries) throws IOException {
-        BufferedWriter bw = null;
-        try {
-            bw = new BufferedWriter(new FileWriter(filename));
-            for (LocalAddeEntry entry : entries) {
-                bw.write(asResolvEntry(entry)+'\n');
-            }
-        } finally {
-            if (bw != null) {
-                bw.close();
-            }
+    private static void writeResolvFile(
+        final String filename,
+        final boolean append,
+        final Collection<LocalAddeEntry> entries) throws IOException
+    {
+//        BufferedWriter bw = null;
+//        try {
+//            bw = new BufferedWriter(new FileWriter(filename));
+//            for (LocalAddeEntry entry : entries) {
+//                bw.write(asResolvEntry(entry)+'\n');
+//            }
+//        } finally {
+//            if (bw != null) {
+//                bw.close();
+//            }
+//        }
+        try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(filename))) {
+            String result = entries.stream()
+                                   .map(EntryTransforms::asResolvEntry)
+                                   .collect(Collectors.joining("\n"));
+            bw.write(result);
         }
     }
 
-    public static Set<LocalAddeEntry> removeTemporaryEntriesFromResolvFile(final String filename, final Collection<LocalAddeEntry> entries) throws IOException {
+    public static Set<LocalAddeEntry> removeTemporaryEntriesFromResolvFile(
+        final String filename,
+        final Collection<LocalAddeEntry> entries) throws IOException
+    {
         requireNonNull(filename, "Path to resolv file cannot be null");
         requireNonNull(entries, "Local entries cannot be null");
+
         Set<LocalAddeEntry> removedEntries = newLinkedHashSet(entries.size());
         BufferedWriter bw = null;
         try {
@@ -925,9 +988,9 @@ public class EntryTransforms {
      */
     public static List<String> asResolvEntries(final Collection<LocalAddeEntry> entries) {
         List<String> resolvEntries = arrList(entries.size());
-        for (LocalAddeEntry entry : entries) {
-            resolvEntries.add(asResolvEntry(entry));
-        }
+        resolvEntries.addAll(entries.stream()
+                                    .map(EntryTransforms::asResolvEntry)
+                                    .collect(Collectors.toList()));
         return resolvEntries;
     }
 

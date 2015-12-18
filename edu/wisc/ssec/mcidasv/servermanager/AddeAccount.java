@@ -28,6 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.servermanager;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Simplistic representation of ADDE accounting information. This is an
  * immutable class.
@@ -50,14 +52,8 @@ public class AddeAccount {
      * {@code null}.
      */
     public AddeAccount(final String user, final String proj) {
-        if (user == null) {
-            throw new NullPointerException("user cannot be null");
-        }
-        if (proj == null) {
-            throw new NullPointerException("proj cannot be null");
-        }
-        username = user;
-        project = proj;
+        username = requireNonNull(user, "user cannot be null");
+        project = requireNonNull(proj, "proj cannot be null");
     }
 
     /**

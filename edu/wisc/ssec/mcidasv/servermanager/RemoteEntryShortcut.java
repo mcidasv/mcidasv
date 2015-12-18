@@ -62,6 +62,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -164,16 +165,27 @@ public class RemoteEntryShortcut extends JDialog {
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public RemoteEntryShortcut(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
+    public RemoteEntryShortcut(Frame parent, boolean modal,
+                               final TabbedAddeManager manager,
+                               final EntryStore store)
+    {
         this(parent, modal, manager, store, RemoteAddeEntry.INVALID_ENTRIES);
     }
 
-    public RemoteEntryShortcut(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final RemoteAddeEntry entry) {
+    public RemoteEntryShortcut(Frame parent, boolean modal,
+                               final TabbedAddeManager manager,
+                               final EntryStore store,
+                               final RemoteAddeEntry entry)
+    {
         this(parent, modal, manager, store, CollectionHelpers.list(entry));
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public RemoteEntryShortcut(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final List<RemoteAddeEntry> entries) {
+    public RemoteEntryShortcut(Frame parent, boolean modal,
+                               final TabbedAddeManager manager,
+                               final EntryStore store,
+                               final List<RemoteAddeEntry> entries)
+    {
         super(manager, modal);
         this.entryStore = store;
         this.serverText = null;
@@ -332,9 +344,12 @@ public class RemoteEntryShortcut extends JDialog {
         Set<RemoteAddeEntry> verifiedEntries = checkGroups(unverifiedEntries);
         EnumSet<EntryType> presentTypes = EnumSet.noneOf(EntryType.class);
         if (!verifiedEntries.isEmpty()) {
-            for (RemoteAddeEntry verifiedEntry : verifiedEntries) {
-                presentTypes.add(verifiedEntry.getEntryType());
-            }
+
+            presentTypes.addAll(
+                verifiedEntries.stream()
+                               .map(RemoteAddeEntry::getEntryType)
+                               .collect(Collectors.toList()));
+
             imageBox.setSelected(presentTypes.contains(EntryType.IMAGE));
             pointBox.setSelected(presentTypes.contains(EntryType.POINT));
             gridBox.setSelected(presentTypes.contains(EntryType.GRID));
@@ -352,11 +367,7 @@ public class RemoteEntryShortcut extends JDialog {
     private void setStatus(final String msg) {
         assert msg != null;
         logger.debug("msg={}", msg);
-        runOnEDT(new Runnable() {
-            public void run() {
-                statusLabel.setText(msg);
-            }
-        });
+        runOnEDT(() -> statusLabel.setText(msg));
         statusLabel.revalidate();
     }
 
@@ -380,15 +391,13 @@ public class RemoteEntryShortcut extends JDialog {
             badFields.remove(field);
         }
 
-        runOnEDT(new Runnable() {
-            public void run() {
-                if (isBad) {
-                    field.setForeground(ERROR_TEXT_COLOR);
-                    field.setBackground(ERROR_FIELD_COLOR);
-                } else {
-                    field.setForeground(NORMAL_TEXT_COLOR);
-                    field.setBackground(NORMAL_FIELD_COLOR);
-                }
+        runOnEDT(() -> {
+            if (isBad) {
+                field.setForeground(ERROR_TEXT_COLOR);
+                field.setBackground(ERROR_FIELD_COLOR);
+            } else {
+                field.setForeground(NORMAL_TEXT_COLOR);
+                field.setBackground(NORMAL_FIELD_COLOR);
             }
         });
         field.revalidate();

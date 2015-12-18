@@ -112,6 +112,7 @@ import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
 import edu.wisc.ssec.mcidasv.ui.BetterJTable;
 import edu.wisc.ssec.mcidasv.util.McVTextField.Prompt;
 import java.awt.event.ActionEvent;
+import java.util.stream.Collectors;
 
 /**
  * This class is the GUI frontend to {@link EntryStore} (the server manager).
@@ -303,11 +304,10 @@ public class TabbedAddeManager extends JFrame {
             return;
         }
         List<RemoteAddeEntry> removable = arrList(entries.size());
-        for (RemoteAddeEntry entry : entries) {
-            if (entry.getEntrySource() != EntrySource.SYSTEM) {
-                removable.add(entry);
-            }
-        }
+        removable.addAll(
+            entries.stream()
+                   .filter(e -> e.getEntrySource() != EntrySource.SYSTEM)
+                   .collect(Collectors.toList()));
 
         if (serverManager.removeEntries(removable)) {
             RemoteAddeTableModel tableModel =
@@ -1169,12 +1169,13 @@ public class TabbedAddeManager extends JFrame {
         public List<RemoteAddeEntry> call() {
             List<RemoteAddeEntry> valid = arrList();
             if (RemoteAddeEntry.checkHost(entry)) {
-                for (RemoteAddeEntry tmp : EntryTransforms.createEntriesFrom(entry)) {
-                    if (RemoteAddeEntry.checkEntry(false, tmp) == AddeStatus.OK) {
-                        tmp.setEntryValidity(EntryValidity.VERIFIED);
-                        valid.add(tmp);
-                    }
-                }
+                EntryTransforms.createEntriesFrom(entry)
+                               .stream()
+                               .filter(tmp -> RemoteAddeEntry.checkEntry(false, tmp) == AddeStatus.OK)
+                               .forEach(tmp -> {
+                                   tmp.setEntryValidity(EntryValidity.VERIFIED);
+                                   valid.add(tmp);
+                               });
             }
             if (valid.isEmpty()) {
                 entry.setEntryValidity(EntryValidity.INVALID);
@@ -1246,11 +1247,12 @@ public class TabbedAddeManager extends JFrame {
         protected List<RemoteAddeEntry> getEntriesAtRow(final int row) {
             String server = servers.get(row).replace('/', '!');
             List<RemoteAddeEntry> matches = arrList();
-            for (AddeEntry entry : entryStore.searchWithPrefix(server)) {
-                if (entry instanceof RemoteAddeEntry) {
-                    matches.add((RemoteAddeEntry)entry);
-                }
-            }
+            matches.addAll(
+                entryStore.searchWithPrefix(server)
+                          .stream()
+                          .filter(entry -> entry instanceof RemoteAddeEntry)
+                          .map(entry -> (RemoteAddeEntry) entry)
+                          .collect(Collectors.toList()));
             return matches;
         }
 
@@ -1388,19 +1390,29 @@ public class TabbedAddeManager extends JFrame {
                                              final EntryStore manager)
         {
             String[] chunks = ENTRY_ID_SPLITTER.split(serv);
-            Set<EntryType> types = Collections.emptySet();
-            if (chunks.length == 2) {
-                types = manager.getTypes(chunks[0], chunks[1]);
-            }
+//            Set<EntryType> types = Collections.emptySet();
+//            if (chunks.length == 2) {
+//                types = manager.getTypes(chunks[0], chunks[1]);
+//            }
+            Set<EntryType> types = chunks.length == 2
+                                   ? manager.getTypes(chunks[0], chunks[1])
+                                   : Collections.emptySet();
 
-            @SuppressWarnings({"MagicNumber"})
-            StringBuilder sb = new StringBuilder(30);
-            for (EntryType type : EnumSet.of(EntryType.IMAGE, EntryType.GRID, EntryType.NAV, EntryType.POINT, EntryType.RADAR, EntryType.TEXT)) {
-                if (types.contains(type)) {
-                    sb.append(type.toString()).append(' ');
-                }
-            }
-            return sb.toString().toLowerCase();
+
+//            @SuppressWarnings({"MagicNumber"})
+//            StringBuilder sb = new StringBuilder(30);
+//            for (EntryType type : EnumSet.of(EntryType.IMAGE, EntryType.GRID, EntryType.NAV, EntryType.POINT, EntryType.RADAR, EntryType.TEXT)) {
+//                if (types.contains(type)) {
+//                    sb.append(type.toString()).append(' ');
+//                }
+//            }
+            return EnumSet.of(EntryType.IMAGE, EntryType.GRID, EntryType.NAV,
+                              EntryType.POINT, EntryType.RADAR, EntryType.TEXT
+                   ).stream()
+                   .filter(types::contains)
+                   .map(String::valueOf)
+                   .collect(Collectors.joining(" "));
+//            return sb.toString().toLowerCase();
         }
 
         /**
@@ -1461,8 +1473,7 @@ public class TabbedAddeManager extends JFrame {
         protected List<LocalAddeEntry> getSelectedEntries(final int[] rows) {
             List<LocalAddeEntry> selected = arrList(rows.length);
             int rowCount = entries.size();
-            for (int i = 0; i < rows.length; i++) {
-                int tmpIdx = rows[i];
+            for (int tmpIdx : rows) {
                 if ((tmpIdx >= 0) && (tmpIdx < rowCount)) {
                     selected.add(entries.get(tmpIdx));
                 } else {
@@ -1538,7 +1549,13 @@ public class TabbedAddeManager extends JFrame {
     // a "user" entry icon (no idea yet!)
     public class EntrySourceRenderer extends DefaultTableCellRenderer {
 
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table,
+                                                       Object value,
+                                                       boolean isSelected,
+                                                       boolean hasFocus,
+                                                       int row,
+                                                       int column)
+        {
             Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             EntrySource source = EntrySource.valueOf((String)value);
             EntrySourceRenderer renderer = (EntrySourceRenderer)comp;
@@ -1566,7 +1583,13 @@ public class TabbedAddeManager extends JFrame {
     }
 
     public class EntryValidityRenderer extends DefaultTableCellRenderer {
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table,
+                                                       Object value,
+                                                       boolean isSelected,
+                                                       boolean hasFocus,
+                                                       int row,
+                                                       int column)
+        {
             Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             EntryValidity validity = EntryValidity.valueOf((String)value);
             EntryValidityRenderer renderer = (EntryValidityRenderer)comp;
@@ -1603,7 +1626,13 @@ public class TabbedAddeManager extends JFrame {
         /** */
         private Font boldItalic;
 
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table,
+                                                       Object value,
+                                                       boolean isSelected,
+                                                       boolean hasFocus,
+                                                       int row,
+                                                       int column)
+        {
             Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             Font currentFont = comp.getFont();
             if (bold == null) {

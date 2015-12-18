@@ -76,7 +76,7 @@ public class AddeThread extends Thread {
         public String getMessage() {
             return message;
         }
-    };
+    }
 
     /** */
     Process proc;
@@ -109,7 +109,7 @@ public class AddeThread extends Thread {
         }
         temp.append('}');
         logger.debug("env={}", temp.toString());
-        temp = null;
+//        temp = null;
 
         try {
             //start ADDE binary with "-p PORT" and set environment appropriately
@@ -139,7 +139,7 @@ public class AddeThread extends Thread {
 
                 // If the server couldn't start for a known reason, try again on another port
                 //  Retry up to 10 times
-                if (((result == 35584) || (errString.indexOf("Error binding to port") >= 0)) &&
+                if (((result == 35584) || (errString.contains("Error binding to port"))) &&
                     (Integer.parseInt(EntryStore.getLocalPort()) < (Integer.parseInt(Constants.LOCAL_ADDE_PORT) + 30)))
                 {
                     EntryStore.setLocalPort(EntryStore.nextLocalPort());
@@ -148,11 +148,12 @@ public class AddeThread extends Thread {
                 }
             }
         } catch (InterruptedException e) {
-            McservEvent type = McservEvent.DIED;
-//            if (entryStore.getRestarting()) {
-                type = McservEvent.STARTED;
-//            }
-            EventBus.publish(type);
+//            McservEvent type = McservEvent.DIED;
+////            if (entryStore.getRestarting()) {
+//                type = McservEvent.STARTED;
+////            }
+//            EventBus.publish(type);
+            EventBus.publish(McservEvent.STARTED);
         } catch (Exception e) {
             EventBus.publish(McservEvent.DIED);
         }
@@ -204,7 +205,7 @@ public class AddeThread extends Thread {
                     mOut.append((char)ch);
                 }
             } catch (Exception e) {
-                mOut.append("\nRead error: "+e.getMessage());
+                mOut.append("\nRead error: ").append(e.getMessage());
             }
         }
     }

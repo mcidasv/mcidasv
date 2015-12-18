@@ -93,33 +93,52 @@ import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 /**
- * Simple dialog that allows the user to define or modify {@link RemoteAddeEntry}s.
+ * Simple dialog that allows the user to define or modify
+ * {@link RemoteAddeEntry RemoteAddeEntries}.
  */
 @SuppressWarnings("serial")
 public class RemoteEntryEditor extends JDialog {
 
     /** Logger object. */
-    private static final Logger logger = LoggerFactory.getLogger(RemoteEntryEditor.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(RemoteEntryEditor.class);
 
     /** Possible entry verification states. */
-    public enum AddeStatus { PREFLIGHT, BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP };
+    public enum AddeStatus {
+        PREFLIGHT, BAD_SERVER, BAD_ACCOUNTING, NO_METADATA, OK, BAD_GROUP
+    }
 
     /** Number of threads in the thread pool. */
     private static final int POOL = 5;
 
-    /** Whether or not to input in the dataset, username, and project fields should be uppercased. */
+    /**
+     * Whether or not to input in the dataset, username, and project fields
+     * should be uppercased.
+     */
     private static final String PREF_FORCE_CAPS = "mcv.servers.forcecaps";
 
-    /** Background {@link java.awt.Color Color} of an {@literal "invalid"} {@link JTextField JTextField}. */
+    /**
+     * Background {@link java.awt.Color Color} of an {@literal "invalid"}
+     * {@link JTextField}.
+     */
     private static final Color ERROR_FIELD_COLOR = Color.PINK;
 
-    /** Text {@link java.awt.Color Color} of an {@literal "invalid"} {@link JTextField JTextField}. */
+    /**
+     * Text {@link java.awt.Color Color} of an {@literal "invalid"}
+     * {@link JTextField}.
+     * */
     private static final Color ERROR_TEXT_COLOR = Color.WHITE;
 
-    /** Background {@link java.awt.Color Color} of a {@literal "valid"} {@link JTextField JTextField}. */
+    /**
+     * Background {@link java.awt.Color Color} of a {@literal "valid"}
+     * {@link JTextField}.
+     * */
     private static final Color NORMAL_FIELD_COLOR = Color.WHITE;
 
-    /** Text {@link java.awt.Color Color} of a {@literal "valid"} {@link JTextField JTextField}. */
+    /**
+     * Text {@link java.awt.Color Color} of a {@literal "valid"}
+     * {@link JTextField}.
+     */
     private static final Color NORMAL_TEXT_COLOR = Color.BLACK;
 
     /**
@@ -131,9 +150,11 @@ public class RemoteEntryEditor extends JDialog {
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
 
+    /**
+     * Allows for asynchronous verification of ADDE entries.
+     * May be {@code null}.
+     */
     private ExecutorService exec;
-
-//    private final TabbedAddeManager manager;
 
     /** Current contents of the editor. */
     private final Set<RemoteAddeEntry> currentEntries = newLinkedHashSet();
@@ -141,10 +162,16 @@ public class RemoteEntryEditor extends JDialog {
     /** The last dialog action performed by the user. */
     private EditorAction editorAction = EditorAction.INVALID;
 
-    /** Initial contents of {@link #serverField}. Be aware that {@code null} is allowed. */
+    /**
+     * Initial contents of {@link #serverField}.
+     * Be aware that {@code null} is allowed.
+     */
     private final String serverText;
 
-    /** Initial contents of {@link #datasetField}. Be aware that {@code null} is allowed. */
+    /**
+     * Initial contents of {@link #datasetField}.
+     * Be aware that {@code null} is allowed.
+     */
     private final String datasetText;
 
     /** Whether or not the editor is prompting the user to adjust input. */
@@ -359,11 +386,7 @@ public class RemoteEntryEditor extends JDialog {
     private void setStatus(final String msg) {
         assert msg != null;
         logger.debug("msg={}", msg);
-        runOnEDT(new Runnable() {
-            public void run() {
-                statusLabel.setText(msg);
-            }
-        });
+        runOnEDT(() -> statusLabel.setText(msg));
         statusLabel.revalidate();
     }
 
@@ -387,15 +410,13 @@ public class RemoteEntryEditor extends JDialog {
             badFields.remove(field);
         }
 
-        runOnEDT(new Runnable() {
-            public void run() {
-                if (isBad) {
-                    field.setForeground(ERROR_TEXT_COLOR);
-                    field.setBackground(ERROR_FIELD_COLOR);
-                } else {
-                    field.setForeground(NORMAL_TEXT_COLOR);
-                    field.setBackground(NORMAL_FIELD_COLOR);
-                }
+        runOnEDT(() -> {
+            if (isBad) {
+                field.setForeground(ERROR_TEXT_COLOR);
+                field.setBackground(ERROR_FIELD_COLOR);
+            } else {
+                field.setForeground(NORMAL_TEXT_COLOR);
+                field.setBackground(NORMAL_FIELD_COLOR);
             }
         });
         field.revalidate();
@@ -533,11 +554,7 @@ public class RemoteEntryEditor extends JDialog {
         }
 
         acctBox.setText("Specify accounting information:");
-        acctBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                acctBoxActionPerformed(evt);
-            }
-        });
+        acctBox.addActionListener(this::acctBoxActionPerformed);
 
         userLabel.setText("Username:");
         userField.setEnabled(acctBox.isSelected());
@@ -547,11 +564,7 @@ public class RemoteEntryEditor extends JDialog {
 
         capBox.setText("Automatically capitalize dataset and username?");
         capBox.setSelected(forceCaps);
-        capBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                capBoxActionPerformed(evt);
-            }
-        });
+        capBox.addActionListener(this::capBoxActionPerformed);
 
         DocumentListener inputListener = new DocumentListener() {
             public void changedUpdate(DocumentEvent evt) {
@@ -627,14 +640,12 @@ public class RemoteEntryEditor extends JDialog {
 
         typePanel.setBorder(BorderFactory.createTitledBorder("Dataset Types"));
 
-        ActionListener typeInputListener = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                if (inErrorState) {
-                    verifyAddButton.setEnabled(true);
-                    verifyServer.setEnabled(true);
-                    inErrorState = false;
-                    resetBadFields();
-                }
+        ActionListener typeInputListener = evt -> {
+            if (inErrorState) {
+                verifyAddButton.setEnabled(true);
+                verifyServer.setEnabled(true);
+                inErrorState = false;
+                resetBadFields();
             }
         };
 
@@ -687,13 +698,11 @@ public class RemoteEntryEditor extends JDialog {
         } else {
             verifyAddButton.setText("Verify and Save Changes");
         }
-        verifyAddButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                if (initEntries == RemoteAddeEntry.INVALID_ENTRIES)
-                    verifyAddButtonActionPerformed(evt);
-                else
-                    verifyEditButtonActionPerformed(evt);
-            }
+        verifyAddButton.addActionListener(evt -> {
+            if (initEntries == RemoteAddeEntry.INVALID_ENTRIES)
+                verifyAddButtonActionPerformed(evt);
+            else
+                verifyEditButtonActionPerformed(evt);
         });
 
         if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
@@ -701,33 +710,23 @@ public class RemoteEntryEditor extends JDialog {
         } else {
             verifyServer.setText("Verify Changes");
         }
-        verifyServer.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                verifyServerActionPerformed(evt);
-            }
-        });
+        verifyServer.addActionListener(evt -> verifyServerActionPerformed(evt));
 
         if (initEntries.equals(RemoteAddeEntry.INVALID_ENTRIES)) {
             addServer.setText("Add Server");
         } else {
             addServer.setText("Save Changes");
         }
-        addServer.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
-                    addServerActionPerformed(evt);
-                } else {
-                    editServerActionPerformed(evt);
-                }
+        addServer.addActionListener(evt -> {
+            if (initEntries == RemoteAddeEntry.INVALID_ENTRIES) {
+                addServerActionPerformed(evt);
+            } else {
+                editServerActionPerformed(evt);
             }
         });
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -940,9 +939,7 @@ public class RemoteEntryEditor extends JDialog {
         Map<String, Boolean> hostStatus = newMap();
         for (RemoteAddeEntry entry : entries) {
             String host = entry.getAddress();
-            if (hostStatus.get(host).equals(Boolean.FALSE)) {
-                continue;
-            } else if (hostStatus.get(host).equals(Boolean.TRUE)) {
+            if (hostStatus.get(host).equals(Boolean.TRUE)) {
                 goodEntries.add(entry);
             } else {
                 checkedHosts.add(host);

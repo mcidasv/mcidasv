@@ -72,7 +72,8 @@ import edu.wisc.ssec.mcidasv.util.McVTextField;
 @SuppressWarnings("serial")
 public class LocalEntryShortcut extends JDialog {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalEntryShortcut.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(LocalEntryShortcut.class);
 
     /** Property ID for the last directory selected. */
     private static final String PROP_LAST_PATH = "mcv.localdata.lastpath";
@@ -153,39 +154,34 @@ public class LocalEntryShortcut extends JDialog {
         this.entryStore = entryStore;
         this.datasetText = group;
         this.currentEntry = null;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                initComponents(LocalAddeEntry.INVALID_ENTRY);
-            }
-        });
+        SwingUtilities.invokeLater(() -> initComponents(LocalAddeEntry.INVALID_ENTRY));
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public LocalEntryShortcut(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
+    public LocalEntryShortcut(java.awt.Frame parent, boolean modal,
+                              final TabbedAddeManager manager,
+                              final EntryStore store)
+    {
         super(manager, modal);
         this.managerController = manager;
         this.entryStore = store;
         this.datasetText = null;
         this.currentEntry = null;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                initComponents(LocalAddeEntry.INVALID_ENTRY);
-            }
-        });
+        SwingUtilities.invokeLater(() -> initComponents(LocalAddeEntry.INVALID_ENTRY));
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public LocalEntryShortcut(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final LocalAddeEntry entry) {
+    public LocalEntryShortcut(java.awt.Frame parent, boolean modal,
+                              final TabbedAddeManager manager,
+                              final EntryStore store,
+                              final LocalAddeEntry entry)
+    {
         super(manager, modal);
         this.managerController = manager;
         this.entryStore = store;
         this.datasetText = null;
         this.currentEntry = entry;
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                initComponents(entry);
-            }
-        });
+        SwingUtilities.invokeLater(() -> initComponents(entry));
     }
 
     /**
@@ -197,7 +193,8 @@ public class LocalEntryShortcut extends JDialog {
      */
     private void initComponents(final LocalAddeEntry initEntry) {
         JLabel datasetLabel = new JLabel("Dataset (e.g. MYDATA):");
-        datasetField = McVGuiUtils.makeTextFieldDeny("", 8, true, McVTextField.mcidasDeny);
+        datasetField =
+            McVGuiUtils.makeTextFieldDeny("", 8, true, McVTextField.mcidasDeny);
         datasetLabel.setLabelFor(datasetField);
         datasetField.setColumns(20);
         if (datasetText != null) {
@@ -222,29 +219,19 @@ public class LocalEntryShortcut extends JDialog {
         directoryField.setColumns(20);
 
         JButton browseButton = new JButton("Browse...");
-        browseButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent evt) {
-                browseButtonActionPerformed(evt);
-            }
-        });
+        browseButton.addActionListener(this::browseButtonActionPerformed);
 
         JButton saveButton = new JButton("Add Dataset");
-        saveButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent evt) {
-                if (Objects.equals(initEntry, LocalAddeEntry.INVALID_ENTRY)) {
-                    saveButtonActionPerformed(evt);
-                } else {
-                    editButtonActionPerformed(evt);
-                }
+        saveButton.addActionListener(evt -> {
+            if (Objects.equals(initEntry, LocalAddeEntry.INVALID_ENTRY)) {
+                saveButtonActionPerformed(evt);
+            } else {
+                editButtonActionPerformed(evt);
             }
         });
 
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
         if (Objects.equals(initEntry, LocalAddeEntry.INVALID_ENTRY)) {
             setTitle("Add Local Dataset");

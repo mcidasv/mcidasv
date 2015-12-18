@@ -156,7 +156,10 @@ public class LocalEntryEditor extends JDialog {
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public LocalEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store) {
+    public LocalEntryEditor(java.awt.Frame parent, boolean modal,
+                            final TabbedAddeManager manager,
+                            final EntryStore store)
+    {
         super(manager, modal);
         this.managerController = manager;
         this.entryStore = store;
@@ -166,7 +169,11 @@ public class LocalEntryEditor extends JDialog {
     }
 
     // TODO(jon): hold back on javadocs, this is likely to change
-    public LocalEntryEditor(java.awt.Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final LocalAddeEntry entry) {
+    public LocalEntryEditor(java.awt.Frame parent, boolean modal,
+                            final TabbedAddeManager manager,
+                            final EntryStore store,
+                            final LocalAddeEntry entry)
+    {
         super(manager, modal);
         this.managerController = manager;
         this.entryStore = store;
@@ -184,7 +191,8 @@ public class LocalEntryEditor extends JDialog {
      */
     private void initComponents(final LocalAddeEntry initEntry) {
         JLabel datasetLabel = new JLabel("Dataset (e.g. MYDATA):");
-        datasetField = McVGuiUtils.makeTextFieldDeny("", 8, true, McVTextField.mcidasDeny);
+        datasetField =
+            McVGuiUtils.makeTextFieldDeny("", 8, true, McVTextField.mcidasDeny);
         datasetLabel.setLabelFor(datasetField);
         datasetField.setColumns(20);
         if (datasetText != null) {

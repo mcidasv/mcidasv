@@ -56,14 +56,18 @@ import net.miginfocom.swing.MigLayout;
  */
 public class ImportUrl extends JDialog implements ActionListener {
     
-    protected static final String CMD_DEFAULT_ACCOUNTING = "use_default_accounting";
+    protected static final String CMD_DEFAULT_ACCOUNTING =
+        "use_default_accounting";
+
     protected static final String CMD_IMPORT = "import";
+
     protected static final String CMD_CANCEL = "cancel";
     
     private TabbedAddeManager serverManagerGui;
     private EntryStore serverManager;
     
-    private static final Logger logger = LoggerFactory.getLogger(ImportUrl.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(ImportUrl.class);
     
     private JLabel userLabel;
     private JLabel projLabel;
@@ -84,7 +88,9 @@ public class ImportUrl extends JDialog implements ActionListener {
         initComponents();
     }
     
-    public ImportUrl(final EntryStore serverManager, final TabbedAddeManager serverManagerGui) {
+    public ImportUrl(final EntryStore serverManager,
+                     final TabbedAddeManager serverManagerGui)
+    {
         this.serverManager = serverManager;
         this.serverManagerGui = serverManagerGui;
         initComponents();
@@ -115,14 +121,12 @@ public class ImportUrl extends JDialog implements ActionListener {
         });
         
         acctBox = new JCheckBox("Use ADDE accounting?");
-        acctBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                boolean selected = acctBox.isSelected();
-                userLabel.setEnabled(selected);
-                userField.setEnabled(selected);
-                projLabel.setEnabled(selected);
-                projField.setEnabled(selected);
-            }
+        acctBox.addActionListener(e -> {
+            boolean selected = acctBox.isSelected();
+            userLabel.setEnabled(selected);
+            userField.setEnabled(selected);
+            projLabel.setEnabled(selected);
+            projField.setEnabled(selected);
         });
         acctBox.setSelected(false);
         contentPanel.add(acctBox, "cell 1 1");
@@ -165,9 +169,7 @@ public class ImportUrl extends JDialog implements ActionListener {
         }
         
     }
-    
-    
-    
+
     public void actionPerformed(final ActionEvent e) {
         String cmd = e.getActionCommand();
         if (CMD_CANCEL.equals(cmd)) {
@@ -177,11 +179,14 @@ public class ImportUrl extends JDialog implements ActionListener {
             String path = safeGetText(mctableField).trim();
             String user = AddeEntry.DEFAULT_ACCOUNT.getUsername();
             String proj = AddeEntry.DEFAULT_ACCOUNT.getProject();
+
             if (acctBox.isSelected()) {
                 user = safeGetText(userField).trim();
                 proj = safeGetText(projField).trim();
             }
+
             logger.trace("importing: path={} user={} proj={}", path, user, proj);
+
             if (serverManagerGui != null) {
                 serverManagerGui.importMctable(path, user, proj);
             }
@@ -197,9 +202,9 @@ public class ImportUrl extends JDialog implements ActionListener {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             try {
-                ImportUrl dialog = new ImportUrl();
-                dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                dialog.setVisible(true);
+                ImportUrl tmp = new ImportUrl();
+                tmp.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                tmp.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
