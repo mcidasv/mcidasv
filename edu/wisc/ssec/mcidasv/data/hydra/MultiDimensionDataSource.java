@@ -28,13 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -42,30 +36,13 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
-import visad.CellImpl;
-import visad.Data;
-import visad.FlatField;
-import visad.Gridded2DSet;
-import visad.GriddedSet;
-import visad.RealTupleType;
-import visad.RealType;
-import visad.SampledSet;
-import visad.UnionSet;
-import visad.VisADException;
-import visad.data.mcidas.BaseMapAdapter;
-import visad.georef.MapProjection;
-
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -74,15 +51,12 @@ import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
-import ucar.unidata.geoloc.projection.LatLonProjection;
 import ucar.unidata.util.Misc;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
-import ucar.visad.ProjectionCoordinateSystem;
-import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.MapLines;
-import ucar.visad.display.RubberBandBox;
+
+import visad.Data;
+import visad.FlatField;
+import visad.GriddedSet;
+import visad.VisADException;
 
 import edu.wisc.ssec.mcidasv.data.HydraDataSource;
 import edu.wisc.ssec.mcidasv.data.PreviewSelection;
@@ -106,7 +80,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
     protected Hashtable[] propsArray = null;
     protected List[] categoriesArray = null;
 
-
     protected SpectrumAdapter spectrumAdapter;
 
     private static final String DATA_DESCRIPTION = "Multi Dimension Data";
@@ -118,6 +91,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
     private List categories;
     private boolean hasImagePreview = false;
     private boolean hasTrackPreview = false;
+    
+    private TrackSelection trackSelection = null;
 
     /**
      * Zero-argument constructor for construction via unpersistence.
@@ -877,7 +852,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
     public Map<String, double[]> getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
       GeoLocationInfo ginfo = geoSelection.getBoundingBox();
-      System.out.println("ginfo0: "+ginfo);
+      logger.debug("ginfo0: " + ginfo);
       return adapters[0].getSubsetFromLonLatRect(select.getSubset(), ginfo.getMinLat(), ginfo.getMaxLat(),
                                         ginfo.getMinLon(), ginfo.getMaxLon());
     }
@@ -954,15 +929,34 @@ public class MultiDimensionDataSource extends HydraDataSource {
            }
         }
 
-
         try {
             subset = null;
             if (ginfo != null) {
-              subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
-                                                       ginfo.getMinLon(), ginfo.getMaxLon(),
-                                                       geoSelection.getXStride(),
-                                                       geoSelection.getYStride(),
-                                                       geoSelection.getZStride());
+            	if (trackSelection != null) {
+            		boolean trackStrideOk = trackSelection.setTrackStride();
+            		boolean verticalStrideOk = trackSelection.setVerticalStride();
+            		
+            		if (trackStrideOk && verticalStrideOk) {
+            		subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
+            				ginfo.getMinLon(), ginfo.getMaxLon(),
+            				trackSelection.trackStride,
+            				trackSelection.verticalStride,
+            				geoSelection.getZStride());
+            		} else {
+            			// one of the strides is not an integer, let user know
+        	    		String msg = "Either the Track or Vertical Stride is inavlid.\n" +
+        	    				"Stride values must be postiive integers.\n";
+        	    		Object[] params = { msg };
+        	    		JOptionPane.showMessageDialog(null, params, "Invalid Stride", JOptionPane.OK_OPTION);
+        	    		return null;
+            		}
+            	} else {
+            		subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
+            				ginfo.getMinLon(), ginfo.getMaxLon(),
+            				geoSelection.getXStride(),
+            				geoSelection.getYStride(),
+            				geoSelection.getZStride());
+            	}
               if (subset == null && select != null) {
                 subset = select.getSubset();
               }
@@ -1052,8 +1046,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
       }
       if (hasTrackPreview) {
         try {
-          FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());
-          components.add(new TrackSelection(dataChoice, track, this));
+          FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());     
+          trackSelection = new TrackSelection(dataChoice, track, this);
+          components.add(trackSelection);
         } catch (Exception e) {
           logger.error("cannot make preview selection", e);
         }
@@ -1096,182 +1091,4 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
         return new ArrayAdapter(reader, table);
     }
-}
-
-class TrackSelection extends DataSelectionComponent {
-      private static final Logger logger = LoggerFactory.getLogger(TrackSelection.class);
-      DataChoice dataChoice;
-      FlatField track;
-
-      double[] x_coords = new double[2];
-      double[] y_coords = new double[2];
-      boolean hasSubset = true;
-      MapProjectionDisplayJ3D mapProjDsp;
-      DisplayMaster dspMaster;
-
-      int trackStride;
-      int verticalStride;
-
-      JTextField trkStr;
-      JTextField vrtStr;
-      MultiDimensionDataSource datSrc;
-
-   TrackSelection(DataChoice dataChoice, FlatField track, MultiDimensionDataSource datSrc) throws VisADException, RemoteException {
-        super("track");
-        this.dataChoice = dataChoice;
-        this.track = track;
-        this.datSrc = datSrc;
-        mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
-        mapProjDsp.enableRubberBanding(false);
-        dspMaster = mapProjDsp;
-        mapProjDsp.setMapProjection(getDataProjection());
-        LineDrawing trackDsp = new LineDrawing("track");
-        trackDsp.setLineWidth(2f);
-        trackDsp.setData(track);
-        mapProjDsp.addDisplayable(trackDsp);
-
-
-        MapLines mapLines  = new MapLines("maplines");
-        URL      mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
-        try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
-            mapLines.setColor(java.awt.Color.cyan);
-            mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception excp) {
-            logger.error("cannot open map file: "+mapSource, excp);
-        }
-
-        mapLines  = new MapLines("maplines");
-        mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
-        try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
-            mapLines.setColor(java.awt.Color.cyan);
-            mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception excp) {
-            logger.error("cannot open map file: "+mapSource, excp);
-        }
-
-        mapLines  = new MapLines("maplines");
-        mapSource =
-        mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
-        try {
-            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-            mapLines.setMapLines(mapAdapter.getData());
-            mapLines.setColor(java.awt.Color.cyan);
-            mapProjDsp.addDisplayable(mapLines);
-        } catch (Exception excp) {
-            logger.error("cannot open map file: "+mapSource, excp);
-        }
-
-        final LineDrawing selectBox = new LineDrawing("select");
-        selectBox.setColor(Color.green);
-
-        final RubberBandBox rbb =
-            new RubberBandBox(RealType.Longitude, RealType.Latitude, 1);
-        rbb.setColor(Color.green);
-        rbb.addAction(new CellImpl() {
-          public void doAction()
-             throws VisADException, RemoteException
-           {
-              Gridded2DSet set = rbb.getBounds();
-              float[] low = set.getLow();
-              float[] hi = set.getHi();
-              x_coords[0] = low[0];
-              x_coords[1] = hi[0];
-              y_coords[0] = low[1];
-              y_coords[1] = hi[1];
-              
-              SampledSet[] sets = new SampledSet[4];
-              sets[0] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{low[0], hi[0]}, {low[1], low[1]}}, 2);
-              sets[1] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{hi[0], hi[0]}, {low[1], hi[1]}}, 2);
-              sets[2] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{hi[0], low[0]}, {hi[1], hi[1]}}, 2);
-              sets[3] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {{low[0], low[0]}, {hi[1], low[1]}}, 2);
-              UnionSet uset = new UnionSet(sets);
-              selectBox.setData(uset);
-           }
-        });
-        dspMaster.addDisplayable(rbb);
-        dspMaster.addDisplayable(selectBox);
-
-        dspMaster.draw();
-   }
-
-       public MapProjection getDataProjection() {
-         MapProjection mp = null;
-         try {
-           mp = new ProjectionCoordinateSystem(new LatLonProjection());
-         } catch (Exception e) {
-             logger.error("error getting data projection", e);
-         }
-         return mp;
-       }
-
-      protected JComponent doMakeContents() {
-        try {
-          JPanel panel = new JPanel(new BorderLayout());
-          panel.add("Center", dspMaster.getDisplayComponent());
-
-          JPanel stridePanel = new JPanel(new FlowLayout());
-          trkStr = new JTextField(Integer.toString(5), 3);
-          vrtStr = new JTextField(Integer.toString(2), 3);
-          trkStr.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent ae) {
-                setTrackStride(Integer.valueOf(trkStr.getText().trim()));
-              }
-          });
-          vrtStr.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent ae) {
-                setVerticalStride(Integer.valueOf(vrtStr.getText().trim()));
-              }
-          });
-
-          stridePanel.add(new JLabel("track stride: "));
-          stridePanel.add(trkStr);
-          stridePanel.add(new JLabel("vertical stride: "));
-          stridePanel.add(vrtStr);
-          panel.add("South", stridePanel);
-
-          return panel;
-        } catch (Exception e) {
-          logger.error("error creating contents", e);
-        }
-        return null;
-      }
-                                                                                                                                                     
-      public void setTrackStride(int stride) {
-        trackStride = stride;
-      }
-
-      public void setVerticalStride(int stride) {
-        verticalStride = stride;
-      }
-
-      public void setTrackStride() {
-        trackStride = Integer.valueOf(trkStr.getText().trim());
-      }
-
-      public void setVerticalStride() {
-        verticalStride = Integer.valueOf(vrtStr.getText().trim());
-      }
-
-      public void applyToDataSelection(DataSelection dataSelection) {
-         setTrackStride();
-         setVerticalStride();
-         if (hasSubset) {
-           GeoSelection geoSelect = new GeoSelection(
-                new GeoLocationInfo(y_coords[1], x_coords[0], y_coords[0], x_coords[1]));
-           geoSelect.setXStride(trackStride);
-           geoSelect.setYStride(verticalStride);
-           dataSelection.setGeoSelection(geoSelect);
-
-           DataSelection datSel = new DataSelection();
-           datSel.setGeoSelection(geoSelect);
-           datSrc.setDataSelection(datSel);
-           dataChoice.setDataSelection(dataSelection);
-         }
-      }
 }

@@ -1114,8 +1114,12 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
         if ( !init(myDataChoices)) {
             displayControlFailed();
-            if (getProperty("control.ignoreerrors", false)) {
-                addToControlContext();
+            ControlContext cc = getControlContext();
+            // if we had a failure, ControlContext may be null, check it
+            if (cc != null) {
+            	if (getProperty("control.ignoreerrors", false)) {
+            		addToControlContext();
+            	}
             }
             return;
         }

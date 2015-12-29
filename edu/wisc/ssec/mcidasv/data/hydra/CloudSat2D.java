@@ -28,33 +28,21 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
-import visad.FlatField;
-import visad.Set;
-import visad.CoordinateSystem;
-import visad.RealType;
-import visad.RealTupleType;
-import visad.SetType;
-import visad.Linear2DSet;
-import visad.Unit;
-import visad.FunctionType;
-import visad.VisADException;
-import java.rmi.RemoteException;
-
-import java.util.Hashtable;
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import visad.RealType;
 
 public class CloudSat2D extends ProfileAlongTrack {
 
+	  private static final Logger logger = LoggerFactory.getLogger(CloudSat2D.class);
+	  
       public CloudSat2D() {
       }
 
@@ -81,13 +69,13 @@ public class CloudSat2D extends ProfileAlongTrack {
           while (strTok.hasMoreElements()) {
             tokens[tokCnt++] = strTok.nextToken();
           }
-          altitude[line_cnt] = (Float.valueOf(tokens[0]))*1000f;
+          altitude[line_cnt] = (Float.valueOf(tokens[0])) * 1000f;
           line_cnt++;
         }
         ios.close();
         }
         catch (Exception e) {
-          System.out.println("fail on ancillary file read: "+propertyFileName);
+          logger.error("fail on ancillary file read: " + propertyFileName);
         }
         return altitude;
       }
@@ -126,13 +114,13 @@ public class CloudSat2D extends ProfileAlongTrack {
         double[] coords = subset.get("TrackDim");
         coords[0] = 1000.0;
         coords[1] = (TrackLen - 1000.0) - 1;
-        coords[2] = 5.0;
+        coords[2] = TrackSelection.DEFAULT_TRACK_STRIDE;
         subset.put("TrackDim", coords);
 
         coords = subset.get("VertDim");
         coords[0] = 10.0;
         coords[1] = (VertLen) - 1;
-        coords[2] = 2.0;
+        coords[2] = TrackSelection.DEFAULT_VERTICAL_STRIDE;
         subset.put("VertDim", coords);
         return subset;
       }
