@@ -55,9 +55,11 @@ public class SuomiNPPChooser extends FileChooser {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPChooser.class);
 	private static final long CONSECUTIVE_GRANULE_MAX_GAP_MS = 60000;
+	private static final long CONSECUTIVE_GRANULE_MAX_GAP_MS_NASA = 360000;
 	
-	// date formatter for converting Suomi NPP day/time from file name for consecutive granule check
+	// date formatters for converting Suomi NPP day/time from file name for consecutive granule check
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmSSS");
+    private static final SimpleDateFormat sdfNASA = new SimpleDateFormat("yyyyMMddHHmm");
 
     /**
      * Create the chooser with the given manager and xml
@@ -158,66 +160,108 @@ public class SuomiNPPChooser extends FileChooser {
     private boolean testConsecutiveGranules(File[] files) {
     	boolean testResult = false;
     	if (files == null) return testResult;
-		// compare start time of current granule with end time of previous
-    	// difference should be very small - under a second
-    	long prvTime = -1;
-    	testResult = true;
-        for (int i = 0; i < files.length; i++) {
-            if ((files[i] != null) && !files[i].isDirectory()) {
-                if (files[i].exists()) {
-                	String fileName = files[i].getName(); 
-                	int dateIndex = fileName.lastIndexOf("_d2") + 2;
-                	int timeIndexStart = fileName.lastIndexOf("_t") + 2;
-                	int timeIndexEnd = fileName.lastIndexOf("_e") + 2;
-                	String dateStr = fileName.substring(dateIndex, dateIndex + 8);
-                	String timeStrStart = fileName.substring(timeIndexStart, timeIndexStart + 7);
-                	String timeStrEnd = fileName.substring(timeIndexEnd, timeIndexEnd + 7);
-                	// sanity check on file name lengths
-                	int fnLen = fileName.length();
-                	if ((dateIndex > fnLen) || (timeIndexStart > fnLen) || (timeIndexEnd > fnLen)) {
-                		logger.warn("unexpected file name length for: " + fileName);
-                		testResult = false;
-                		break;
-                	}
-                    // pull start and end time out of file name
-                    Date dS = null;
-                    Date dE = null;
-                    try {
-						dS = sdf.parse(dateStr + timeStrStart);
-						// due to nature of Suomi NPP file name encoding, we need a special
-						// check here - end time CAN roll over to next day, while day part 
-						// does not change.  if this happens, we tweak the date string
-						String endDateStr = dateStr;
-						String startHour = timeStrStart.substring(0, 2);
-						String endHour = timeStrEnd.substring(0, 2);
-						if ((startHour.equals("23")) && (endHour.equals("00"))) {
-							// temporarily convert date to integer, increment, convert back
-							int tmpDate = Integer.parseInt(dateStr);
-							tmpDate++;
-							endDateStr = "" + tmpDate;
-							logger.info("Granule time spanning days case handled ok...");
+    	
+    	// TJJ Jan 2016 - different checks for NASA data, 6 minutes per granule
+    	File f = files[0];
+    	if (f.getName().matches(JPSSUtilities.SUOMI_NPP_REGEX_NASA)) {
+			// compare start time of current granule with end time of previous
+	    	// difference should be very small - under a second
+	    	long prvTime = -1;
+	    	testResult = true;
+	        for (int i = 0; i < files.length; i++) {
+	            if ((files[i] != null) && !files[i].isDirectory()) {
+	                if (files[i].exists()) {
+	                	String fileName = files[i].getName();
+	                	int dateIndex = fileName.lastIndexOf("_d2") + 2;
+	                	int timeIndex = fileName.lastIndexOf("_t") + 2;
+	                	String dateStr = fileName.substring(dateIndex, dateIndex + 8);
+	                	String timeStr = fileName.substring(timeIndex, timeIndex + 4);
+	                    // pull start and end time out of file name
+	                    Date dS = null;
+	                    try {
+							dS = sdfNASA.parse(dateStr + timeStr);
+	                    } catch (ParseException pe) {
+							logger.error("Not recognized as valid Suomi NPP file name: " + fileName);
+							testResult = false;
+							break;
+	                    }
+						long curTime = dS.getTime();
+						// only check current with previous
+						if (prvTime > 0) {
+							// make sure time diff does not exceed allowed threshold
+							// consecutive granules should be less than 1 minute apart
+							if ((curTime - prvTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS_NASA) {
+								testResult = false;
+								break;
+							}
 						}
-						dE = sdf.parse(endDateStr + timeStrEnd);
-					} catch (ParseException e) {
-						logger.error("Not recognized as valid Suomi NPP file name: " + fileName);
-						testResult = false;
-						break;
-					}
-					long curTime = dS.getTime();
-					long endTime = dE.getTime();
-					// only check current with previous
-					if (prvTime > 0) {
-						// make sure time diff does not exceed allowed threshold
-						// consecutive granules should be less than 1 minute apart
-						if ((curTime - prvTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
+						prvTime = curTime;
+	                }
+	            }
+	        }
+	    // consecutive granule check for NOAA data
+    	} else {
+			// compare start time of current granule with end time of previous
+	    	// difference should be very small - under a second
+	    	long prvTime = -1;
+	    	testResult = true;
+	        for (int i = 0; i < files.length; i++) {
+	            if ((files[i] != null) && !files[i].isDirectory()) {
+	                if (files[i].exists()) {
+	                	String fileName = files[i].getName(); 
+	                	int dateIndex = fileName.lastIndexOf("_d2") + 2;
+	                	int timeIndexStart = fileName.lastIndexOf("_t") + 2;
+	                	int timeIndexEnd = fileName.lastIndexOf("_e") + 2;
+	                	String dateStr = fileName.substring(dateIndex, dateIndex + 8);
+	                	String timeStrStart = fileName.substring(timeIndexStart, timeIndexStart + 7);
+	                	String timeStrEnd = fileName.substring(timeIndexEnd, timeIndexEnd + 7);
+	                	// sanity check on file name lengths
+	                	int fnLen = fileName.length();
+	                	if ((dateIndex > fnLen) || (timeIndexStart > fnLen) || (timeIndexEnd > fnLen)) {
+	                		logger.warn("unexpected file name length for: " + fileName);
+	                		testResult = false;
+	                		break;
+	                	}
+	                    // pull start and end time out of file name
+	                    Date dS = null;
+	                    Date dE = null;
+	                    try {
+							dS = sdf.parse(dateStr + timeStrStart);
+							// due to nature of Suomi NPP file name encoding, we need a special
+							// check here - end time CAN roll over to next day, while day part 
+							// does not change.  if this happens, we tweak the date string
+							String endDateStr = dateStr;
+							String startHour = timeStrStart.substring(0, 2);
+							String endHour = timeStrEnd.substring(0, 2);
+							if ((startHour.equals("23")) && (endHour.equals("00"))) {
+								// temporarily convert date to integer, increment, convert back
+								int tmpDate = Integer.parseInt(dateStr);
+								tmpDate++;
+								endDateStr = "" + tmpDate;
+								logger.info("Granule time spanning days case handled ok...");
+							}
+							dE = sdf.parse(endDateStr + timeStrEnd);
+						} catch (ParseException e) {
+							logger.error("Not recognized as valid Suomi NPP file name: " + fileName);
 							testResult = false;
 							break;
 						}
-					}
-					prvTime = endTime;
-                }
-            }
-        }
+						long curTime = dS.getTime();
+						long endTime = dE.getTime();
+						// only check current with previous
+						if (prvTime > 0) {
+							// make sure time diff does not exceed allowed threshold
+							// consecutive granules should be less than 1 minute apart
+							if ((curTime - prvTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
+								testResult = false;
+								break;
+							}
+						}
+						prvTime = endTime;
+	                }
+	            }
+	        }
+    	}
 		return testResult;
 	}
 
