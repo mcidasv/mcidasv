@@ -56,7 +56,9 @@ import ucar.unidata.util.Msg;
 // initial version taken verbatim from Unidata :(
 public class MemoryMonitor extends JPanel implements Runnable {
 
-    /** flag for running */
+	private static final long serialVersionUID = 1L;
+
+	/** flag for running */
     private boolean running = false;
 
     /** sleep interval */
@@ -96,9 +98,9 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
     private boolean showClock = false;
 
-    private static final Font clockFont = new Font("Dialog", Font.BOLD, 11);
-
     private static SimpleDateFormat clockFormat = new SimpleDateFormat("HH:mm:ss z");
+    
+    private static double MEGABYTE = 1024 * 1024;
 
     /**
      * Default constructor
@@ -286,11 +288,9 @@ public class MemoryMonitor extends JPanel implements Runnable {
         double freeMemory = Runtime.getRuntime().freeMemory();
         double usedMemory = (highWaterMark - freeMemory);
 
-        double megabyte = 1024 * 1024;
-
-        totalMemory = totalMemory / megabyte;
-        usedMemory = usedMemory / megabyte;
-        highWaterMark = highWaterMark / megabyte;
+        totalMemory = totalMemory / MEGABYTE;
+        usedMemory = usedMemory / MEGABYTE;
+        highWaterMark = highWaterMark / MEGABYTE;
 
         long now = System.currentTimeMillis();
         if (lastTimeRanGC < 0)
@@ -331,12 +331,6 @@ public class MemoryMonitor extends JPanel implements Runnable {
             triedToCancel = false;
         }
 
-//        label.setText(" "
-//            + Msg.msg("Memory:") + " "
-//            + fmt.format(usedMemory) + "/"
-//            + fmt.format(highWaterMark) + "/"
-//            + fmt.format(totalMemory) + " " + Msg.msg("MB")
-//            + " ");
         label.setText(' '
             + memoryString + ' '
             + fmt.format(usedMemory) + '/'
