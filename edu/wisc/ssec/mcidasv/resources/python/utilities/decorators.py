@@ -118,6 +118,14 @@ def keepMetadata(func, *args, **kwargs):
     return wrapper
     
 def _swingRunner(func, *args, **kwargs):
+    # the naming of this function, along with _swingWaitForResult, is kinda
+    # misleading; both functions will "wait" for the result (due to the get()).
+    # the difference between the two is that this function "wraps" invokeLater,
+    # while _swingWaitForResult "wraps" invokeAndWait.
+    #
+    # the real world difference is that this function appends to the end of the
+    # event dispatch thread, while _swingWaitForResult puts its Task at the
+    # beginning of the queue.
     if SwingUtilities.isEventDispatchThread():
         return func(*args, **kwargs)
     else:
@@ -127,6 +135,14 @@ def _swingRunner(func, *args, **kwargs):
         return task.get()
         
 def _swingWaitForResult(func, *args, **kwargs):
+    # the naming of this function, along with _swingRunner, is kinda
+    # misleading; both functions will "wait" for the result (due to the get()).
+    # the difference between the two is that this function "wraps" 
+    # invokeAndWait,  while _swingRunner "wraps" invokeLater.
+    #
+    # the real world difference is that this function puts its Task at the
+    # beginning of the event dispatch thread, while _swingRunner appends to the 
+    # end of the queue.
     if SwingUtilities.isEventDispatchThread():
         return func(*args, **kwargs)
         
