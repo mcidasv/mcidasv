@@ -221,15 +221,13 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         }
     }
     
-    public ChangeListener percentListener = new ChangeListener() {
-        public void stateChanged(ChangeEvent evt) {
-            if (!sliderPanel.isEnabled()) {
-                return;
-            }
-            int sliderValue = ((JSlider)evt.getSource()).getValue();
-            setValue(sliderValue + Prefix.PERCENT.getJavaChar());
-            text.setText("" + Math.round(sliderValue / 100.0 * maxmem));
+    public ChangeListener percentListener = evt -> {
+        if (!sliderPanel.isEnabled()) {
+            return;
         }
+        int sliderValue = ((JSlider)evt.getSource()).getValue();
+        setValue(sliderValue + Prefix.PERCENT.getJavaChar());
+        text.setText("" + Math.round(sliderValue / 100.0 * maxmem));
     };
     
     private void handleNewValue(final JTextField field, final JComboBox box) {
@@ -296,11 +294,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             }
         });
         memVals.setSelectedItem(initPrefixValue);
-        memVals.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                handleNewValue(text, memVals);
-            }
-        });
+        memVals.addActionListener(e -> handleNewValue(text, memVals));
         McVGuiUtils.setComponentWidth(text, McVGuiUtils.Width.ONEHALF);
         McVGuiUtils.setComponentWidth(memVals, McVGuiUtils.Width.ONEHALF);
         textPanel = GuiUtils.hbox(text, memVals);

@@ -128,11 +128,7 @@ public class LoggerLevelOption extends AbstractOption {
     @Override public JComboBox<String> getComponent() {
         comboBox = new JComboBox<>(new String[] { TRACE, DEBUG, INFO, WARN, ERROR, OFF });
         comboBox.setSelectedItem(currentChoice);
-        comboBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                setValue(comboBox.getSelectedItem().toString());
-            }
-        });
+        comboBox.addItemListener(e -> setValue(comboBox.getSelectedItem().toString()));
         
         McVGuiUtils.setComponentWidth(comboBox, McVGuiUtils.Width.ONEHALF);
         return comboBox;
@@ -167,11 +163,9 @@ public class LoggerLevelOption extends AbstractOption {
         currentChoice = value;
         Logger rootLogger = (Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(stringToLogback(value));
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                if (comboBox != null) {
-                    comboBox.setSelectedItem(currentChoice);
-                }
+        SwingUtilities.invokeLater(() -> {
+            if (comboBox != null) {
+                comboBox.setSelectedItem(currentChoice);
             }
         });
     }

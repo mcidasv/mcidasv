@@ -88,11 +88,7 @@ public class TextOption extends AbstractOption {
             }
         });
         if (!onValidPlatform()) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override public void run() {
-                    tf.setEnabled(false);
-                }
-            });
+            SwingUtilities.invokeLater(() -> tf.setEnabled(false));
         }
         return tf;
     }

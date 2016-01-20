@@ -37,7 +37,6 @@ import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -171,7 +170,7 @@ public final class FileOption extends AbstractOption {
         } else {
             fileChooser.setCurrentDirectory(new File(bundleDirectory));
         }
-        String result = defaultValue;
+        String result;
         switch (fileChooser.showOpenDialog(null)) {
             case JFileChooser.APPROVE_OPTION:
                 result = fileChooser.getSelectedFile().getAbsolutePath();
@@ -196,19 +195,13 @@ public final class FileOption extends AbstractOption {
 
         browseButton = new JButton(BUTTON_LABEL);
         browseButton.setEnabled(checkbox);
-        browseButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                browseButtonActionPerformed(e);
-            }
-        });
+        browseButton.addActionListener(this::browseButtonActionPerformed);
 
         enableCheckBox = new JCheckBox(CHECKBOX_LABEL, checkbox);
-        enableCheckBox.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent e) {
-                boolean status = enableCheckBox.isSelected();
-                bundleField.setEnabled(status);
-                browseButton.setEnabled(status);
-            }
+        enableCheckBox.addActionListener(e -> {
+            boolean status = enableCheckBox.isSelected();
+            bundleField.setEnabled(status);
+            browseButton.setEnabled(status);
         });
         JPanel bottom = sideBySide(bundleField, browseButton);
         return topBottom(enableCheckBox, bottom, McVGuiUtils.Prefer.NEITHER);
@@ -263,25 +256,23 @@ public final class FileOption extends AbstractOption {
         String[] results = parseFormat(newValue);
         checkbox = booleanFromFormat(results[0]);
         path = results[1];
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override public void run() {
-                String[] results = parseFormat(newValue);
-                checkbox = booleanFromFormat(results[0]);
-                path = results[1];
-                if (enableCheckBox != null) {
-                    enableCheckBox.setSelected(checkbox);
-                }
+        SwingUtilities.invokeLater(() -> {
+            String[] results1 = parseFormat(newValue);
+            checkbox = booleanFromFormat(results1[0]);
+            path = results1[1];
+            if (enableCheckBox != null) {
+                enableCheckBox.setSelected(checkbox);
+            }
 
-                // defaultValue check is to avoid blanking out the field
-                // when the user hits cancel
-                if ((bundleField != null) && !defaultBundle.equals(path)) {
-                    bundleField.setEnabled(checkbox);
-                    bundleField.setText(path);
-                }
+            // defaultValue check is to avoid blanking out the field
+            // when the user hits cancel
+            if ((bundleField != null) && !defaultBundle.equals(path)) {
+                bundleField.setEnabled(checkbox);
+                bundleField.setText(path);
+            }
 
-                if (browseButton != null) {
-                    browseButton.setEnabled(checkbox);
-                }
+            if (browseButton != null) {
+                browseButton.setEnabled(checkbox);
             }
         });
     }

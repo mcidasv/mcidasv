@@ -48,11 +48,7 @@ public class BooleanOption extends AbstractOption {
     
     public JCheckBox getComponent() {
         final JCheckBox cb = new JCheckBox();
-        cb.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent e) {
-                setValue(cb.isSelected() ? "1" : "0");
-            }
-        });
+        cb.addActionListener(e -> setValue(cb.isSelected() ? "1" : "0"));
         boolean booleanValue = false;
         if ("1".equals(value)) {
             booleanValue = true;

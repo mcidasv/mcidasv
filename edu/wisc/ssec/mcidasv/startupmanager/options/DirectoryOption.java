@@ -149,11 +149,7 @@ public final class DirectoryOption extends AbstractOption {
         }
         
         final JTree tree = new JTree(root);
-        tree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override public void valueChanged(final TreeSelectionEvent e) {
-                useSelectedTreeValue(tree);
-            }
-        });
+        tree.addTreeSelectionListener(e -> useSelectedTreeValue(tree));
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         JScrollPane scroller = new JScrollPane(tree);
         
@@ -169,14 +165,12 @@ public final class DirectoryOption extends AbstractOption {
         }
         
         final JCheckBox enabled = new JCheckBox("Specify default bundle:", true);
-        enabled.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(final ActionEvent e) {
-                tree.setEnabled(enabled.isSelected());
-                if (tree.isEnabled()) {
-                    useSelectedTreeValue(tree);
-                } else {
-                    setValue(defaultValue);
-                }
+        enabled.addActionListener(e -> {
+            tree.setEnabled(enabled.isSelected());
+            if (tree.isEnabled()) {
+                useSelectedTreeValue(tree);
+            } else {
+                setValue(defaultValue);
             }
         });
 

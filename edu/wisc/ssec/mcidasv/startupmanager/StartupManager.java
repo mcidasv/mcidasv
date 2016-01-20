@@ -47,6 +47,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -70,6 +71,7 @@ import javax.swing.LayoutStyle;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -439,10 +441,10 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      */
     protected void createDisplay() {
         DefaultListModel listModel = (DefaultListModel)panelList.getModel();
-        
-        for (int i = 0; i < PREF_PANELS.length; i++) {
-            ImageIcon icon = new ImageIcon(getClass().getResource(PREF_PANELS[i][1]));
-            JLabel label = new JLabel(PREF_PANELS[i][0], icon, SwingConstants.LEADING);
+
+        for (String[] PREF_PANEL : PREF_PANELS) {
+            ImageIcon icon = new ImageIcon(getClass().getResource(PREF_PANEL[1]));
+            JLabel label = new JLabel(PREF_PANEL[0], icon, SwingConstants.LEADING);
             listModel.addElement(label);
         }
         
@@ -457,18 +459,16 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         panelList.setVisibleRowCount(PREF_PANELS.length);
         panelList.setCellRenderer(new IconCellRenderer());
         
-        panelList.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(final ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    splitPane.setRightComponent(getSelectedPanel());
-                }
+        panelList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                splitPane.setRightComponent(getSelectedPanel());
             }
         });
         
         splitPane.setRightComponent(getSelectedPanel());
         
         JFrame frame = new JFrame("User Preferences");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.getContentPane().add(splitPane);
         frame.getContentPane().add(getCommandRow(), BorderLayout.PAGE_END);
         
@@ -667,9 +667,11 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     }
     
     public static int getMaximumHeapSize() {
-        int sysmem = StartupManager.getInstance().getPlatform().getAvailableMemory();
+        int sysmem =
+            StartupManager.getInstance().getPlatform().getAvailableMemory();
         if ((sysmem > Constants.MAX_MEMORY_32BIT) &&
-            (System.getProperty("os.arch").indexOf("64") < 0)) {
+            (!System.getProperty("os.arch").contains("64")))
+        {
             return Constants.MAX_MEMORY_32BIT;
         }
         return sysmem;
@@ -715,10 +717,13 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * 
      * @see #getArgs(boolean, boolean, String[], Properties)
      */
-    public static void applyArgs(final boolean ignoreUnknown, final boolean fromStartupManager, final String[] args) throws IllegalArgumentException {
-        if (args == null) {
-            throw new NullPointerException("Arguments list cannot be null");
-        }
+    public static void applyArgs(final boolean ignoreUnknown,
+                                 final boolean fromStartupManager,
+                                 final String[] args)
+        throws IllegalArgumentException
+    {
+        Objects.requireNonNull(args, "Argument list cannot be null");
+
         StartupManager sm = StartupManager.getInstance();
         Platform platform = sm.getPlatform();
         

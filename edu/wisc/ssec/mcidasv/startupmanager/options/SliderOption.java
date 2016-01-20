@@ -62,13 +62,11 @@ public class SliderOption extends AbstractOption {
     }
     
     private ChangeListener makeChangeListener(final JLabel sliderLabel) {
-        return new ChangeListener() {
-            public void stateChanged(ChangeEvent evt) {
-                JSlider src = (JSlider)evt.getSource();
-                int value = src.getValue();
-                sliderLabel.setText("Use "+value+"% ");
-                setValue(Integer.toString(value));
-            }
+        return evt -> {
+            JSlider src = (JSlider)evt.getSource();
+            int value = src.getValue();
+            sliderLabel.setText("Use "+value+"% ");
+            setValue(Integer.toString(value));
         };
     }
     

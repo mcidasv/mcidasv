@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.Platform;
@@ -330,11 +331,13 @@ public class OptionMaster {
         Collection<Option> allOptions = getAllOptions();
         List<Option> filteredOptions = 
             new ArrayList<>(allOptions.size());
-        for (Option option : allOptions) {
-            if (platforms.contains(option.getOptionPlatform())) {
-                filteredOptions.add(option);
-            }
-        }
+
+        filteredOptions.addAll(
+            allOptions.stream()
+                      .filter(option ->
+                              platforms.contains(option.getOptionPlatform()))
+                      .collect(Collectors.toList()));
+
         return filteredOptions;
     }
     
@@ -354,11 +357,10 @@ public class OptionMaster {
         Collection<Option> allOptions = getAllOptions();
         List<Option> filteredOptions = 
             new ArrayList<>(allOptions.size());
-        for (Option option : allOptions) {
-            if (types.contains(option.getOptionType())) {
-                filteredOptions.add(option);
-            }
-        }
+        filteredOptions.addAll(
+            allOptions.stream()
+                      .filter(option -> types.contains(option.getOptionType()))
+                      .collect(Collectors.toList()));
         return filteredOptions;
     }
     
@@ -380,11 +382,11 @@ public class OptionMaster {
         Collection<Option> allOptions = getAllOptions();
         List<Option> filteredOptions = 
             new ArrayList<>(allOptions.size());
-        for (Option option : allOptions) {
-            if (visibilities.contains(option.getOptionVisibility())) {
-                filteredOptions.add(option);
-            }
-        }
+        filteredOptions.addAll(
+            allOptions.stream()
+                      .filter(option ->
+                              visibilities.contains(option.getOptionVisibility()))
+                      .collect(Collectors.toList()));
         return filteredOptions;
     }
     
