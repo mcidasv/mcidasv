@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <params>
   <param name="AOD_MOD04" range_max="0.99" range_min="0.0" table="AerosolOpticalDepth_MOD04"/>
   <param name="COT_MOD06" range_max="70.0" range_min="0.0" table="CloudOpticalThickness_MOD06"/>
@@ -25,6 +25,23 @@
      table="Precipitation - Transparent" 
      unit="mm/hr"/>
    <!-- end inquiry 1675 -->
+
+  <param
+     name="temp"
+     table="Temperature"
+     range_min="-90.0"
+     range_max="45.0"
+     ci_interval="5"
+     ci_base="0"
+     unit="°C"/>
+  <param
+     name="dewpoint"
+     table="Temperature"
+     range_min="-90.0"
+     range_max="45.0"
+     unit="celsius"
+     ci_interval="5"
+     ci_base="°C"/>
 
 </params>
 
