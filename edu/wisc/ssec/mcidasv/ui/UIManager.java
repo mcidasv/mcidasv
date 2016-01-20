@@ -896,7 +896,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @see ucar.unidata.idv.ui.IdvUIManager#about()
      */
     public void about() {
-        java.awt.EventQueue.invokeLater(() -> new AboutFrame((McIDASV)idv).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> {
+            AboutFrame frame = new AboutFrame((McIDASV)idv);
+            // pop up the window right away; the system information tab won't
+            // be populated until the user has selected the tab.
+            frame.setVisible(true);
+        });
     }
 
     /**

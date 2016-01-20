@@ -28,158 +28,253 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.Color;
+import static java.awt.Color.GRAY;
+
+import static javax.swing.BorderFactory.createBevelBorder;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.border.BevelBorder.RAISED;
+
+import static ucar.unidata.util.GuiUtils.getImageIcon;
+import static ucar.unidata.util.LayoutUtil.inset;
+import static ucar.unidata.util.LayoutUtil.topCenter;
+
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import ucar.unidata.util.GuiUtils;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.swing.GroupLayout;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.text.DefaultCaret;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ucar.unidata.util.Misc;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.StateManager;
 import edu.wisc.ssec.mcidasv.util.SystemState;
 
-public class AboutFrame extends javax.swing.JFrame {
+/**
+ * Class that represents the {@literal "Help>About McIDAS-V"} window.
+ */
+class AboutFrame extends JFrame implements ChangeListener {
 
+    /** Logging object. */
+    private static final Logger logger =
+        LoggerFactory.getLogger(AboutFrame.class);
+
+    /**
+     * Initial message in text area within {@literal "System Information"} tab.
+     */
+    private static final String PLEASE_WAIT =
+        "Please wait, collecting system information...";
+
+    /** Text used as the title for this window. */
+    private static final String WINDOW_TITLE = "About McIDAS-V";
+
+    /** Name of the first tab. */
+    private static final String MCV_TAB_TITLE = "McIDAS-V";
+
+    /** Name of the second tab. */
+    private static final String SYS_TAB_TITLE = "System Information";
+
+    /** Reference to the main McIDAS-V object. */
     private final McIDASV mcv;
 
-    /** Creates new form AboutFrame */
-    public AboutFrame(final McIDASV mcv) {
+    /**
+     * Text area within the {@literal "System Information"} tab.
+     * Value may be {@code null}.
+     */
+    private JTextArea sysTextArea;
+
+    /** Whether or not the system information has been collected. */
+    private final AtomicBoolean hasSysInfo;
+
+    /**
+     * Creates new form AboutFrame
+     *
+     * @param mcv McIDAS-V object. Cannot be {@code null}.
+     *
+     * @throws NullPointerException if {@code mcv} is {@code null}.
+     */
+    AboutFrame(final McIDASV mcv) {
+        Objects.requireNonNull("mcv reference cannot be null");
         this.mcv = mcv;
+        this.hasSysInfo = new AtomicBoolean(false);
         initComponents();
     }
 
-    private javax.swing.JPanel buildAboutMcv() {
-        StateManager stateManager = (StateManager)mcv.getStateManager();
-
-        javax.swing.JEditorPane editor = new javax.swing.JEditorPane();
-        editor.setEditable(false);
-        editor.setContentType("text/html");
-        String html = stateManager.getMcIdasVersionAbout();
-        editor.setText(html);
-        editor.setBackground(new javax.swing.JPanel().getBackground());
-        editor.addHyperlinkListener(mcv);
-
-        final javax.swing.JLabel iconLbl = new javax.swing.JLabel(
-            GuiUtils.getImageIcon(mcv.getProperty(Constants.PROP_SPLASHICON, ""))
-        );
-        iconLbl.setToolTipText("McIDAS-V homepage");
-        iconLbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        iconLbl.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                javax.swing.event.HyperlinkEvent link = null;
-                try {
-                    link = new javax.swing.event.HyperlinkEvent(
-                        iconLbl,
-                        javax.swing.event.HyperlinkEvent.EventType.ACTIVATED,
-                        new URL(mcv.getProperty(Constants.PROP_HOMEPAGE, ""))
-                    );
-                } catch (MalformedURLException e) {}
-                mcv.hyperlinkUpdate(link);
-            }
-        });
-        javax.swing.JPanel contents = GuiUtils.topCenter(
-            GuiUtils.inset(iconLbl, 5),
-            GuiUtils.inset(editor, 5)
-        );
-        contents.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED,
-                Color.gray, Color.gray));
-        return contents;
-    }
-
     private String getSystemInformation() {
-//        return new SystemState(mcv).getStateAsString(true);
         return SystemState.getStateAsString(mcv, true);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    // TODO: refactor the initComponents and buildAboutMcv methods.
+
+    /**
+     * Called by the constructor to initialize the {@literal "About"} window.
      */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        tabbedPanel = new javax.swing.JTabbedPane();
-        mcvTab = new javax.swing.JPanel();
-        mcvPanel = buildAboutMcv();
-        sysTab = new javax.swing.JPanel();
-        sysScrollPane = new javax.swing.JScrollPane();
-        sysTextArea = new javax.swing.JTextArea();
+        JTabbedPane tabbedPanel = new JTabbedPane();
+        JPanel mcvTab = new JPanel();
+        JPanel mcvPanel = buildAboutMcv();
+        JPanel sysTab = new JPanel();
+        JScrollPane sysScrollPane = new JScrollPane();
+        sysTextArea = new JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("About McIDAS-V");
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle(WINDOW_TITLE);
 
-        javax.swing.GroupLayout mcvTabLayout = new javax.swing.GroupLayout(mcvTab);
+        GroupLayout mcvTabLayout = new GroupLayout(mcvTab);
         mcvTab.setLayout(mcvTabLayout);
         mcvTabLayout.setHorizontalGroup(
-            mcvTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-//            .addComponent(mcvPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            mcvTabLayout.createParallelGroup(LEADING)
             .addComponent(mcvPanel)
         );
         mcvTabLayout.setVerticalGroup(
-            mcvTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-//            .addComponent(mcvPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            mcvTabLayout.createParallelGroup(LEADING)
             .addComponent(mcvPanel)
         );
 
-        tabbedPanel.addTab("McIDAS-V", mcvTab);
-        sysTextArea.setText(getSystemInformation());
+        tabbedPanel.addTab(MCV_TAB_TITLE, mcvTab);
+
+        sysTextArea.setText(PLEASE_WAIT);
+
         sysTextArea.setEditable(false);
-        sysTextArea.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, 0, 12)); // NOI18N
+        sysTextArea.setFont(new Font(Font.MONOSPACED, 0, 12)); // NOI18N
         sysTextArea.setCaretPosition(0);
         sysTextArea.setLineWrap(false);
         sysScrollPane.setViewportView(sysTextArea);
 
-        javax.swing.GroupLayout sysTabLayout = new javax.swing.GroupLayout(sysTab);
+        GroupLayout sysTabLayout = new GroupLayout(sysTab);
         sysTab.setLayout(sysTabLayout);
         sysTabLayout.setHorizontalGroup(
-            sysTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            sysTabLayout.createParallelGroup(LEADING)
             .addGroup(sysTabLayout.createSequentialGroup()
-//                .addContainerGap()
-//                .addComponent(sysScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
-//                .addContainerGap())
                 .addComponent(sysScrollPane))
         );
         sysTabLayout.setVerticalGroup(
-            sysTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            sysTabLayout.createParallelGroup(LEADING)
             .addGroup(sysTabLayout.createSequentialGroup()
-//                .addComponent(sysScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
-//                .addContainerGap())
                 .addComponent(sysScrollPane))
         );
 
-        tabbedPanel.addTab("System Information", sysTab);
+        tabbedPanel.addTab(SYS_TAB_TITLE, sysTab);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-//            .addComponent(tabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+            layout.createParallelGroup(LEADING)
             .addComponent(tabbedPanel)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-//            .addComponent(tabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 359, Short.MAX_VALUE)
+            layout.createParallelGroup(LEADING)
             .addComponent(tabbedPanel)
         );
+
+        tabbedPanel.addChangeListener(this);
 
         pack();
         setSize(450, 375);
         setLocationRelativeTo(mcv.getIdvUIManager().getFrame());
-    }// </editor-fold>
+    }
 
-    // Variables declaration - do not modify
-    private javax.swing.JPanel mcvPanel;
-    private javax.swing.JPanel mcvTab;
-    private javax.swing.JScrollPane sysScrollPane;
-    private javax.swing.JPanel sysTab;
-    private javax.swing.JTextArea sysTextArea;
-    private javax.swing.JTabbedPane tabbedPanel;
-    // End of variables declaration
+    private JPanel buildAboutMcv() {
+        StateManager stateManager = (StateManager)mcv.getStateManager();
 
+        JEditorPane editor = new JEditorPane();
+        editor.setEditable(false);
+        editor.setContentType("text/html");
+        String html = stateManager.getMcIdasVersionAbout();
+        editor.setText(html);
+        editor.setBackground(new JPanel().getBackground());
+        editor.addHyperlinkListener(mcv);
+
+        String splashIcon = mcv.getProperty(Constants.PROP_SPLASHICON, "");
+        final JLabel iconLbl = new JLabel(getImageIcon(splashIcon));
+
+        iconLbl.setToolTipText("McIDAS-V Homepage");
+        iconLbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        iconLbl.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                String url = mcv.getProperty(Constants.PROP_HOMEPAGE, "");
+                try {
+                    HyperlinkEvent link = new HyperlinkEvent(
+                        iconLbl,
+                        HyperlinkEvent.EventType.ACTIVATED,
+                        new URL(url)
+                    );
+                    mcv.hyperlinkUpdate(link);
+                } catch (MalformedURLException e) {
+                    logger.warn("Malformed URL: '"+url+"'", e);
+                }
+
+            }
+        });
+        JPanel contents = topCenter(inset(iconLbl, 5), inset(editor, 5));
+        contents.setBorder(createBevelBorder(RAISED, GRAY, GRAY));
+        return contents;
+    }
+
+    /**
+     * Populates the {@literal "System Information"} tab.
+     *
+     * The system information is collected on a separate thread, and when done,
+     * the results are added to the tab (on the Event Dispatch Thread).
+     */
+    void populateSystemTab() {
+        Misc.runInABit(500, () -> {
+            if (!hasSysInfo.get()) {
+                String sysInfo = getSystemInformation();
+                SwingUtilities.invokeLater(() -> {
+                    // the caret manipulation is done so that the "append"
+                    // call doesn't result in the text area being
+                    // auto-scrolled to the end. however, it's also nice to
+                    // have the caret available so that keystroke navigation
+                    // of the text area still works.
+                    DefaultCaret caret = (DefaultCaret)sysTextArea.getCaret();
+                    caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+                    sysTextArea.setText(sysInfo);
+                    caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+                    hasSysInfo.set(true);
+                });
+            }
+        });
+    }
+
+    /**
+     * Respond to a change in the {@link JTabbedPane}.
+     *
+     * If the user has decided to make the {@literal "System Information"} tab
+     * visible, this method will call {@link #populateSystemTab()}.
+     *
+     * @param e Event that represents the state change. Cannot be {@code null}.
+     */
+    public void stateChanged(ChangeEvent e) {
+        JTabbedPane tabPane = (JTabbedPane)e.getSource();
+        int newIndex = tabPane.getSelectedIndex();
+        if (newIndex == 1) {
+            populateSystemTab();
+        }
+    }
 }
