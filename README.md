@@ -14,7 +14,7 @@ Things of Interest
     │       └── ssec                    
     │           ├── mcidas              
     │           └── mcidasv             * General managers and main application 
-    │               │                     code should go here, e.g., ViewManger, 
+    │               │                     code should go here, e.g., ViewManager, 
     │               │                     McIDASV.java.
     │               ├── chooser         * Data choosers should go here.
     │               ├── control         * Display controls should go here.
