@@ -35,5 +35,14 @@
      ci_base="0"
      unit="°C"/>
 
+  <param
+  name="dewpoint"
+  table="Temperature"
+  range_min="-90.0"
+  range_max="45.0"
+  unit="°C"
+  ci_interval="5"
+  ci_base="0"/>
+
 </params>
 
