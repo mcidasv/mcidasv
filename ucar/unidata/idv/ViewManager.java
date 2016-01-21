@@ -156,6 +156,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 
 import java.text.DecimalFormat;
@@ -2400,6 +2402,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         } else if (id.equals(PREF_LOGO_VISIBILITY)) {
             updateAnnotations();
         }
+        /** inquiry 2053 */
+        else if (id.equals(PREF_AUTO_DEPTH)) {
+            setAutoDepth(value);
+        }
+        /** end inquiry 2053 */
     }
 
     /**
@@ -2828,6 +2835,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                       "Toggle logo in display", false));
         props.add(new BooleanProperty(PREF_TOPBAR_VISIBLE, "Show Top Bar",
                                       "Toggle top bar", true));
+        /** inquiry 2053 */
+        if (hasAutoDepth()) {
+            props.add(new BooleanProperty(PREF_AUTO_DEPTH, "Automatic Depth Offset", "Blah", false));
+        }
+        /** end inquiry 2053 */
     }
 
     /**
@@ -4271,7 +4283,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
                 // If none pending then start the thread
                 fillLegendsPending = true;
-                Misc.run(this, "fillLegendsLater");
+//                Misc.run(this, "fillLegendsLater");
+                Misc.run(this::fillLegendsLater);
             }
         }
     }
@@ -8121,7 +8134,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         SwingUtilities.invokeLater(new Runnable() {
             @Override public void run() {
-                animationCB.setSelected(enabled);
+                if (animationCB != null) {
+                    animationCB.setSelected(enabled);
+                }
             }
         });
     }
@@ -8143,5 +8158,58 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public boolean getAnimatedVisibility() {
         return runVisibilityAnimation;
     }
+
+    /** For Inquiry 2053 */
+    public static final String PREF_AUTO_DEPTH = "View.AutoDepthOffset";
+
+    // TODO(jon): remove reflection workarounds after visad sorts itself out
+
+    private boolean hasAutoDepth() {
+        boolean value = false;
+        try {
+            Class<?> control = Class.forName("visad.GraphicsModeControl");
+            Method getter = control.getMethod("getAutoDepthOffsetEnable", null);
+            Method setter =
+                control.getMethod("setAutoDepthOffsetEnable", boolean.class);
+            value = true;
+        } catch (ClassNotFoundException e) {
+            logger.warn("could not find visad.GraphicsModeControl!", e);
+        } catch (NoSuchMethodException e) {
+            logger.warn("not using a version of visad that supports autodepth stuff");
+        }
+        logger.trace("returning value={}", value);
+        return value;
+    }
+
+    public void setAutoDepth(boolean value) {
+        logger.trace("setting autodepth: value={}", value);
+        DisplayImpl display = (DisplayImpl)getMaster().getDisplay();
+        GraphicsModeControl mode = display.getGraphicsModeControl();
+        try {
+            Class<?> control = Class.forName("visad.GraphicsModeControl");
+            Method setter =
+                control.getMethod("setAutoDepthOffsetEnable", boolean.class);
+            setter.invoke(mode, value);
+        } catch (Exception e) {
+            logger.warn("could not set autodepth offset", e);
+        }
+    }
+
+    public boolean getAutoDepth() {
+        boolean value = false;
+        DisplayImpl display = (DisplayImpl)getMaster().getDisplay();
+        GraphicsModeControl mode = display.getGraphicsModeControl();
+        try {
+            Class<?> control = Class.forName("visad.GraphicsModeControl");
+            Method getter = control.getMethod("getAutoDepthOffsetEnable", null);
+            value = (boolean)getter.invoke(mode);
+        } catch (Exception e) {
+            logger.warn("could not run getAutoDepthOffsetEnable", e);
+        }
+        logger.trace("value={}", value);
+        return value;
+    }
+    /** End Inquiry 2053 */
+
     /**** END MCV ADDONS ****/
 }
