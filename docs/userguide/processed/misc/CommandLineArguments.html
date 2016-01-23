@@ -87,7 +87,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/CommandLineA
   <li class="command">-traceonly &lt;trace pattern&gt; (print out trace
       messages that match the pattern) </li>
   <li class="command">-logpath &lt;path to log file&gt;</li>
-  <li class="command">-tempuserpath (sets up a temporary directory to act as the McIDAS-V directory, allowing for a clean, pristine session)</li>      
+  <li class="command">-tempuserpath (sets up a temporary directory to act as the McIDAS-V directory, allowing for a clean, pristine session)</li>
+  <li class="command">-noerrorsingui (don't show error windows when running McIDAS-V in the foreground. Errors still go to mcidasv.log)</li>
+  <li class="command">-scriptargs (all arguments after this flag will be considered Jython arguments)</li>
+  <li class="command">-doaction &lt;action id&gt; (Run given action automatically after startup. For a list of actions, see <a href="Actions.html">Actions</a>.)</li>
+  <li class="command">-nooneinstanceport (don't do the one instance port)</li>      
 </ul>
 </span>
 </tt>
