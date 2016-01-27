@@ -2838,9 +2838,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         props.add(new BooleanProperty(PREF_TOPBAR_VISIBLE, "Show Top Bar",
                                       "Toggle top bar", true));
         /** inquiry 2053 */
-        if (canAutoDepthOffset()) {
-            props.add(new BooleanProperty(PREF_AUTO_DEPTH, "Automatic Depth Offset", "Blah", false));
-        }
+        props.add(new BooleanProperty(PREF_AUTO_DEPTH, "Automatic Depth Offset", "Blah", false));
         /** end inquiry 2053 */
     }
 
@@ -8163,11 +8161,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     /** For Inquiry 2053 */
     public static final String PREF_AUTO_DEPTH = "View.AutoDepthOffset";
-
-    public boolean canAutoDepthOffset() {
-        DisplayImpl d = (DisplayImpl)getMaster().getDisplay();
-        return d.getGraphicsModeControl() instanceof GraphicsModeControlJ3D;
-    }
 
     public void setAutoDepth(boolean value) {
         logger.trace("setting autodepth: value={}", value);
