@@ -915,7 +915,8 @@ public class DisplayConventions extends IdvManager {
 
             String[] names = {
                 //Temperature
-                "Celsius", "Fahrenheit", "Kelvin",
+                // TJJ Jan 2016 - use formal Unicode units recently adopted in VisAD
+                "°C", "°F", "K",
                 //Pressure
                 "millibar", "hectoPascal",
                 //Distance
