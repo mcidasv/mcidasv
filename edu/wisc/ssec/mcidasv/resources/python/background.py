@@ -431,22 +431,33 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
 class _MappedGeoGridFlatField(_MappedFlatField):
     """Implements the 'mega-object' class for grids read with loadGrid."""
     
-    def __init__(self, ggff, geogrid, geogridAdapter, filename, field, levelReal, dataSourceName):
+    def __init__(self, ggff, geogrid, geogridAdapter, gridDataset,
+                    filename, field, levelReal, dataSourceName):
         self.geogrid = geogrid
         self.geogridAdapter = geogridAdapter
         self.filename = filename
         self.field = field
         self.levelReal = levelReal
         self.dataSourceName = dataSourceName
+        self.gridDataset = gridDataset
         keys = ['attributes', 'datatype', 'description', 'info',
                 'levels', 'units', 'times', 'projection', 'field', 'filename',
                 'level', 'dataSourceName']
+
+        for attr in self.geogrid.getAttributes():
+            # variable attributes
+            keys.append(attr.getName())
+        for attr in self.gridDataset.getGlobalAttributes():
+            # global file attributes
+            keys.append(attr.getName())
+
         _MappedFlatField.__init__(self, ggff, keys)
         self.initMetadataMap()
     
     def _getDirValue(self, key):
         if key not in self._keys:
             raise KeyError('unknown key: %s' % key)
+
         if key == 'attributes':
             return self.geogrid.getAttributes()
         if key == 'datatype':
@@ -472,8 +483,18 @@ class _MappedGeoGridFlatField(_MappedFlatField):
             return self.field
         if key == 'filename':
             return self.filename
+
+        # first look in variable attributes
+        attr = self.geogrid.findAttributeIgnoreCase(key)
+        if attr is not None:
+            return attr.getStringValue()
         else:
-            raise KeyError('should not be capable of reaching here: %s')
+            # fall back on global attrs from nc file
+            attr = self.gridDataset.findGlobalAttributeIgnoreCase(key)
+            if attr is not None:
+                return attr.getStringValue()
+
+        raise KeyError('should not be capable of reaching here: %s')
 
     def clone(self):
         return self * 1
@@ -3346,8 +3367,8 @@ def loadGrid(filename=None, field=None, level='all',
         ff = make2D(ff)
 
     # make the 'mega-object'
-    mapped = _MappedGeoGridFlatField(ff, geogrid, adapter, filename, field, 
-            levelReal, dataSource.toString())
+    mapped = _MappedGeoGridFlatField(ff, geogrid, adapter, gridDataset,
+            filename, field, levelReal, dataSource.toString())
 
     return mapped
 
