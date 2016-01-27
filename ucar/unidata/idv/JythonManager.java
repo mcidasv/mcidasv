@@ -61,6 +61,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -788,7 +790,18 @@ public class JythonManager extends IdvManager implements ActionListener {
         }
     }
 
-
+    public void createNewLibrary(String path) {
+        Path p = Paths.get(path);
+        String name = p.getFileName().toString();
+        try {
+            String contents = readContents(p.toFile());
+            LibHolder holder = makeLibHolder(true, name, path, contents);
+            treePanel.addComponent(holder.outerContents, "Local Jython", name, null);
+            evaluateLibJython(false, holder);
+        } catch (Exception e) {
+            logException("An error occurred creating the jython library", e);
+        }
+    }
 
     /**
      * the libs
