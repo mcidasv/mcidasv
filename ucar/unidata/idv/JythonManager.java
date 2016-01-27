@@ -46,7 +46,6 @@ import static ucar.unidata.util.IOUtil.makeDir;
 import static ucar.unidata.util.IOUtil.moveFile;
 import static ucar.unidata.util.IOUtil.readContents;
 import static ucar.unidata.util.IOUtil.writeFile;
-import static ucar.unidata.util.IOUtil.writeTo;
 import static ucar.unidata.util.LogUtil.userErrorMessage;
 import static ucar.unidata.util.LogUtil.userMessage;
 import static ucar.unidata.util.Misc.toList;
@@ -70,8 +69,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -275,11 +272,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         if (getArgsManager().isScriptingMode()) {
             initPythonInner();
         } else {
-            Misc.run(new Runnable() {
-                @Override public void run() {
-                    initPythonInner();
-                }
-            });
+            Misc.run(this::initPythonInner);
         }
     }
     
@@ -393,7 +386,7 @@ public class JythonManager extends IdvManager implements ActionListener {
     public void showJythonEditor() {
         super.show();
     }
-    
+
     /**
      * Find the visible library
      *
@@ -622,7 +615,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         jythonEditor.getTextComponent().addMouseListener(new MouseAdapter() {
             @Override public void mouseReleased(MouseEvent e) {
                 holderArray[0].setSearchIndex(new Point(e.getX(), e.getY()));
-                if ( !SwingUtilities.isRightMouseButton(e)) {
+                if (!SwingUtilities.isRightMouseButton(e)) {
                     return;
                 }
                 JTextComponent comp = jythonEditor.getTextComponent();
@@ -638,7 +631,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                 while (idx >= 0) {
                     char c = text.charAt(idx);
                     idx--;
-                    if ( !Character.isJavaIdentifierPart(c)) {
+                    if (!Character.isJavaIdentifierPart(c)) {
                         break;
                     }
                     token = c + token;
@@ -748,7 +741,7 @@ public class JythonManager extends IdvManager implements ActionListener {
         boolean isNew = true;
         if (ddd != null) {
             isNew = false;
-            if ( !GuiUtils.askOkCancel(
+            if (!GuiUtils.askOkCancel(
                     "Formula Exists",
                     "<html>A formula with the name: " + name
                     + " already exists.</br>Do you want to edit it?</html>")) {
@@ -794,7 +787,9 @@ public class JythonManager extends IdvManager implements ActionListener {
                          exc);
         }
     }
-    
+
+
+
     /**
      * the libs
      *
@@ -810,7 +805,7 @@ public class JythonManager extends IdvManager implements ActionListener {
      * @param holder lib
      */
     public void removeLibrary(LibHolder holder) {
-        if ( !GuiUtils.askYesNo(
+        if (!GuiUtils.askYesNo(
                 "Remove Jython Library",
                 "Are you sure you want to remove the library: "
                 + getFileTail(holder.filePath))) {
@@ -903,7 +898,7 @@ public class JythonManager extends IdvManager implements ActionListener {
                 toks.add("%filename%");
             }
             for (int i = 0; i < toks.size(); i++) {
-                String tok = (String) toks.get(i);
+                String tok = toks.get(i);
                 toks.set(i, StringUtil.replace(tok, "%filename%", filename));
             }
             //            System.err.println("toks:" + toks);
@@ -915,13 +910,11 @@ public class JythonManager extends IdvManager implements ActionListener {
                 logException("An error occurred editing jython library", exc);
             }
             if (holder.editProcess != null) {
-                Misc.run(new Runnable() {
-                    @Override public void run() {
-                        try {
-                            holder.editProcess.waitFor();
-                        } catch (Exception exc) {}
-                        holder.editProcess = null;
-                    }
+                Misc.run(() -> {
+                    try {
+                        holder.editProcess.waitFor();
+                    } catch (Exception exc) {}
+                    holder.editProcess = null;
                 });
             }
             
@@ -1873,21 +1866,21 @@ public class JythonManager extends IdvManager implements ActionListener {
     }
     
     /** Used to synchronize when creating the derivedData interpreter */
-    private static Object MUTEX = new Object();
+    private static final Object MUTEX = new Object();
     
     /**
      *  We keep track of past methods that have been used so we don't have
      *  to tell the interpreter to import more than once (though perhaps
      *  the interp tracks this itself?)
      */
-    private static Map<String, String> seenMethods = new HashMap<String, String>();
+    private static Map<String, String> seenMethods = new HashMap<>();
     
     /**
      * We keep track of past package paths that have been used so we don't have
      * to tell the interpreter to import more than once (though perhaps
      * the interp tracks this itself?)
      */
-    private static Map<String, String> seenPaths = new HashMap<String, String>();
+    private static Map<String, String> seenPaths = new HashMap<>();
     
     /**
      * Create a (singleton) jython interpreter and initialize it with the set
