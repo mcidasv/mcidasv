@@ -8174,10 +8174,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
         DisplayImpl display = (DisplayImpl)getMaster().getDisplay();
         GraphicsModeControl mode = display.getGraphicsModeControl();
         try {
-            if (mode instanceof GraphicsModeControlJ2D) {
-                logger.warn("cannot change auto-depth offset for GraphicsModeControlJ2D!");
-            } else if (mode instanceof GraphicsModeControlJ3D) {
+            if (mode instanceof GraphicsModeControlJ3D) {
                 ((GraphicsModeControlJ3D)mode).setAutoDepthOffsetEnable(value);
+            } else if (mode instanceof GraphicsModeControlJ2D) {
+                logger.warn("cannot change auto-depth offset for GraphicsModeControlJ2D!");
             } else {
                 logger.error("unknown type of GraphicsModeControl: {}", mode.getClass().toString());
             }
@@ -8191,10 +8191,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
         DisplayImpl display = (DisplayImpl)getMaster().getDisplay();
         GraphicsModeControl mode = display.getGraphicsModeControl();
         try {
-            if (mode instanceof GraphicsModeControlJ2D) {
-                value = ((GraphicsModeControlJ2D)mode).getAutoDepthOffsetEnable();
-            } else if (mode instanceof GraphicsModeControlJ3D) {
+            if (mode instanceof GraphicsModeControlJ3D) {
                 value = ((GraphicsModeControlJ3D)mode).getAutoDepthOffsetEnable();
+            } else if (mode instanceof GraphicsModeControlJ2D) {
+                logger.warn("cannot get auto-depth offset value for GraphicsModeControlJ2D!");
             } else {
                 logger.error("unknown type of GraphicsModeControl: {}", mode.getClass().toString());
             }
