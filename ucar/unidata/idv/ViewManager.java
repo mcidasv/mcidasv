@@ -115,8 +115,10 @@ import visad.VisADException;
 import visad.bom.annotations.ImageJ3D;
 import visad.bom.annotations.ScreenAnnotatorJ3D;
 
+import visad.java2d.GraphicsModeControlJ2D;
 import visad.java3d.DisplayImplJ3D;
 import visad.java3d.DisplayRendererJ3D;
+import visad.java3d.GraphicsModeControlJ3D;
 
 
 import java.awt.AWTException;
@@ -2836,9 +2838,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         props.add(new BooleanProperty(PREF_TOPBAR_VISIBLE, "Show Top Bar",
                                       "Toggle top bar", true));
         /** inquiry 2053 */
-        if (hasAutoDepth()) {
-            props.add(new BooleanProperty(PREF_AUTO_DEPTH, "Automatic Depth Offset", "Blah", false));
-        }
+        props.add(new BooleanProperty(PREF_AUTO_DEPTH, "Automatic Depth Offset", "Blah", false));
         /** end inquiry 2053 */
     }
 
@@ -8154,7 +8154,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         return animationCheckBox;
     }
-    
+
     public boolean getAnimatedVisibility() {
         return runVisibilityAnimation;
     }
@@ -8162,36 +8162,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /** For Inquiry 2053 */
     public static final String PREF_AUTO_DEPTH = "View.AutoDepthOffset";
 
-    // TODO(jon): remove reflection workarounds after visad sorts itself out
-
-    private boolean hasAutoDepth() {
-        boolean value = false;
-        try {
-            Class<?> control = Class.forName("visad.GraphicsModeControl");
-            Method getter = control.getMethod("getAutoDepthOffsetEnable", null);
-            Method setter =
-                control.getMethod("setAutoDepthOffsetEnable", boolean.class);
-            value = true;
-        } catch (ClassNotFoundException e) {
-            logger.warn("could not find visad.GraphicsModeControl!", e);
-        } catch (NoSuchMethodException e) {
-            logger.warn("not using a version of visad that supports autodepth stuff");
-        }
-        logger.trace("returning value={}", value);
-        return value;
-    }
+    // TODO(jon): hopefully get tom to add getter/setter to GraphicsModeControl
 
     public void setAutoDepth(boolean value) {
         logger.trace("setting autodepth: value={}", value);
         DisplayImpl display = (DisplayImpl)getMaster().getDisplay();
         GraphicsModeControl mode = display.getGraphicsModeControl();
         try {
-            Class<?> control = Class.forName("visad.GraphicsModeControl");
-            Method setter =
-                control.getMethod("setAutoDepthOffsetEnable", boolean.class);
-            setter.invoke(mode, value);
+            if (mode instanceof GraphicsModeControlJ2D) {
+                ((GraphicsModeControlJ2D)mode).setAutoDepthOffsetEnable(value);
+            } else if (mode instanceof GraphicsModeControlJ3D) {
+                ((GraphicsModeControlJ3D)mode).setAutoDepthOffsetEnable(value);
+            } else {
+                logger.error("unknown type of GraphicsModeControl: {}", mode.getClass().toString());
+            }
         } catch (Exception e) {
-            logger.warn("could not set autodepth offset", e);
+            logger.error("could not set auto-depth offset", e);
         }
     }
 
@@ -8200,13 +8186,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
         DisplayImpl display = (DisplayImpl)getMaster().getDisplay();
         GraphicsModeControl mode = display.getGraphicsModeControl();
         try {
-            Class<?> control = Class.forName("visad.GraphicsModeControl");
-            Method getter = control.getMethod("getAutoDepthOffsetEnable", null);
-            value = (boolean)getter.invoke(mode);
+            if (mode instanceof GraphicsModeControlJ2D) {
+                value = ((GraphicsModeControlJ2D)mode).getAutoDepthOffsetEnable();
+            } else if (mode instanceof GraphicsModeControlJ3D) {
+                value = ((GraphicsModeControlJ3D)mode).getAutoDepthOffsetEnable();
+            } else {
+                logger.error("unknown type of GraphicsModeControl: {}", mode.getClass().toString());
+            }
         } catch (Exception e) {
-            logger.warn("could not run getAutoDepthOffsetEnable", e);
+            logger.error("could not get auto-depth offset value", e);
         }
-        logger.trace("value={}", value);
         return value;
     }
     /** End Inquiry 2053 */
