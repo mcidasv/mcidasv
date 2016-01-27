@@ -487,12 +487,12 @@ class _MappedGeoGridFlatField(_MappedFlatField):
         # first look in variable attributes
         attr = self.geogrid.findAttributeIgnoreCase(key)
         if attr is not None:
-            return attr.getStringValue()
+            return _getNetcdfAttributeValue(attr)
         else:
             # fall back on global attrs from nc file
             attr = self.gridDataset.findGlobalAttributeIgnoreCase(key)
             if attr is not None:
-                return attr.getStringValue()
+                return _getNetcdfAttributeValue(attr)
 
         raise KeyError('should not be capable of reaching here: %s')
 
@@ -515,6 +515,25 @@ class _MappedGeoGridFlatField(_MappedFlatField):
         """Return reasonable default layer label for this class."""
         defaultLabel = '%shortname% %level% - %timestamp%'
         return defaultLabel
+
+
+def _getNetcdfAttributeValue(attr):
+    """Helper to return netcdf Attribute value as either numeric or string value."""
+    if attr.isArray():
+        # umm. convert to python list i guess?
+        values = []
+        array = attr.getValues()
+        if array.getRank() != 1:
+            raise ValueError("Why would an attribute be multi-dimensional???")
+        length = array.getSize()
+        for i in range(length):
+            # TODO need to find a file with a string array attribute and test this
+            values.append(array.getObject(i))
+        return values
+    if attr.isString():
+        return attr.getStringValue()
+    else:
+        return attr.getNumericValue()
 
 
 class _JavaProxy(object):
