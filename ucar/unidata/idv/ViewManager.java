@@ -2838,7 +2838,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         props.add(new BooleanProperty(PREF_TOPBAR_VISIBLE, "Show Top Bar",
                                       "Toggle top bar", true));
         /** inquiry 2053 */
-        props.add(new BooleanProperty(PREF_AUTO_DEPTH, "Automatic Depth Offset", "Blah", false));
+        if (canAutoDepthOffset()) {
+            props.add(new BooleanProperty(PREF_AUTO_DEPTH, "Automatic Depth Offset", "Blah", false));
+        }
         /** end inquiry 2053 */
     }
 
@@ -8162,7 +8164,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /** For Inquiry 2053 */
     public static final String PREF_AUTO_DEPTH = "View.AutoDepthOffset";
 
-    // TODO(jon): hopefully get tom to add getter/setter to GraphicsModeControl
+    public boolean canAutoDepthOffset() {
+        DisplayImpl d = (DisplayImpl)getMaster().getDisplay();
+        return d.getGraphicsModeControl() instanceof GraphicsModeControlJ3D;
+    }
 
     public void setAutoDepth(boolean value) {
         logger.trace("setting autodepth: value={}", value);
@@ -8170,7 +8175,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         GraphicsModeControl mode = display.getGraphicsModeControl();
         try {
             if (mode instanceof GraphicsModeControlJ2D) {
-                ((GraphicsModeControlJ2D)mode).setAutoDepthOffsetEnable(value);
+                logger.warn("cannot change auto-depth offset for GraphicsModeControlJ2D!");
             } else if (mode instanceof GraphicsModeControlJ3D) {
                 ((GraphicsModeControlJ3D)mode).setAutoDepthOffsetEnable(value);
             } else {
