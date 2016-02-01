@@ -32,6 +32,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
+import static org.python.bouncycastle.asn1.x500.style.RFC4519Style.l;
 
 import java.io.IOException;
 
@@ -187,16 +188,17 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
 
             WatchEvent<Path> pathEvent = cast(event);
             Path file = pathEvent.context();
+            String completePath =  getDirPath(key).resolve(file).toString();
 
             if (eventKind.equals(ENTRY_CREATE)) {
                 matchedListeners(getDirPath(key), file)
-                        .forEach(l -> l.onFileCreate(file.toString()));
+                        .forEach(l -> l.onFileCreate(completePath));
             } else if (eventKind.equals(ENTRY_MODIFY)) {
                 matchedListeners(getDirPath(key), file)
-                        .forEach(l -> l.onFileModify(file.toString()));
+                        .forEach(l -> l.onFileModify(completePath));
             } else if (eventKind.equals(ENTRY_DELETE)) {
                 matchedListeners(getDirPath(key), file)
-                        .forEach(l -> l.onFileDelete(file.toString()));
+                        .forEach(l -> l.onFileDelete(completePath));
             }
         }
     }
