@@ -108,6 +108,8 @@ import javax.swing.text.JTextComponent;
 //import org.fife.ui.rsyntaxtextarea.Token;
 //import org.fife.ui.rtextarea.RTextScrollPane;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -165,7 +167,7 @@ import ucar.unidata.util.TwoFacedObject;
  * 
  * @author IDV development team
  */
-public class JythonManager extends IdvManager implements ActionListener {
+public class JythonManager extends IdvManager implements ActionListener, OnFileChangeListener {
     
     /** Trusty logging object. */
     private static final Logger logger =
@@ -314,12 +316,50 @@ public class JythonManager extends IdvManager implements ActionListener {
         doMakeContents();
         if (!getArgsManager().isScriptingMode()) {
             makeFormulasFromLib();
+            try {
+                McIDASV.getStaticMcv().watchDirectory(pythonDir, "*.py", this);
+            } catch (IOException e) {
+                logger.error("Could not watch directory '"+pythonDir+"'", e);
+            }
         }
         //      PySystemState sys = Py.getSystemState ();
         //      sys.add_package ("visad");
         //      sys.add_package ("visad.python");
     }
-    
+
+    /**
+     * Respond to files being created in the user's Jython directory.
+     *
+     * @param filePath The file path.
+     */
+    public void onFileCreate(String filePath) {
+        logger.trace("filePath='{}'", filePath);
+        createNewLibrary(filePath);
+    }
+
+    /**
+     * Respond to files being modified in the user's Jython directory.
+     *
+     * <p>Note: this is currently a no-op; unsure how to handle needing to
+     * reload files.</p>
+     *
+     * @param filePath The file path.
+     */
+    public void onFileModify(String filePath) {
+        logger.trace("filePath='{}'", filePath);
+    }
+
+    /**
+     * Respond to files being deleted in the user's Jython directory.
+     *
+     * <p>Note: this is currently a no-op.</p>
+     *
+     * @param filePath The file path.
+     */
+    public void onFileDelete(String filePath) {
+        logger.trace("filePath='{}'", filePath);
+    }
+
     // TODO(jon): dox!
     private static boolean addToSysPath(PySystemState sys, final String path) {
         PyString pyStrPath = Py.newString(path);
