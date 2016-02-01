@@ -32,7 +32,9 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
-import static org.python.bouncycastle.asn1.x500.style.RFC4519Style.l;
+
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentMap;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.concurrentSet;
 
 import java.io.IOException;
 
@@ -46,18 +48,15 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// Taken from https://gist.github.com/hindol-viz/394ebc553673e2cd0699
+// Adapted from https://gist.github.com/hindol-viz/394ebc553673e2cd0699
 
 /**
  * A simple class which can monitor files and notify interested parties
@@ -74,10 +73,15 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
             LoggerFactory.getLogger(SimpleDirectoryWatchService.class);
 
     private final WatchService mWatchService;
+
     private final AtomicBoolean mIsRunning;
-    private final ConcurrentMap<WatchKey, Path> mWatchKeyToDirPathMap;
-    private final ConcurrentMap<Path, Set<OnFileChangeListener>> mDirPathToListenersMap;
-    private final ConcurrentMap<OnFileChangeListener, Set<PathMatcher>> mListenerToFilePatternsMap;
+
+    private final Map<WatchKey, Path> mWatchKeyToDirPathMap;
+
+    private final Map<Path, Set<OnFileChangeListener>> mDirPathToListenersMap;
+
+    private final Map<OnFileChangeListener, Set<PathMatcher>>
+        mListenerToFilePatternsMap;
 
     /**
      * A simple no argument constructor for creating a
@@ -88,9 +92,9 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     public SimpleDirectoryWatchService() throws IOException {
         mWatchService = FileSystems.getDefault().newWatchService();
         mIsRunning = new AtomicBoolean(false);
-        mWatchKeyToDirPathMap = newConcurrentMap();
-        mDirPathToListenersMap = newConcurrentMap();
-        mListenerToFilePatternsMap = newConcurrentMap();
+        mWatchKeyToDirPathMap = concurrentMap();
+        mDirPathToListenersMap = concurrentMap();
+        mListenerToFilePatternsMap = concurrentMap();
     }
 
     @SuppressWarnings("unchecked")
@@ -98,15 +102,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
         return (WatchEvent<T>)event;
     }
 
-    private static <K, V> ConcurrentMap<K, V> newConcurrentMap() {
-        return new ConcurrentHashMap<>();
-    }
-
-    private static <T> Set<T> newConcurrentSet() {
-        return Collections.newSetFromMap(newConcurrentMap());
-    }
-
-    public static PathMatcher matcherForGlobExpression(String globPattern) {
+    private static PathMatcher matcherForGlobExpression(String globPattern) {
         if ((globPattern == null) || globPattern.isEmpty()) {
             globPattern = "*";
         }
@@ -117,7 +113,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
         return pattern.matches(input);
     }
 
-    public static boolean matchesAny(Path input, Set<PathMatcher> patterns) {
+    private static boolean matchesAny(Path input, Set<PathMatcher> patterns) {
         for (PathMatcher pattern : patterns) {
             if (matches(input, pattern)) {
                 return true;
@@ -157,7 +153,9 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     }
 
     private WatchKey getWatchKey(Path dir) {
-        Set<Map.Entry<WatchKey, Path>> entries = mWatchKeyToDirPathMap.entrySet();
+        Set<Map.Entry<WatchKey, Path>> entries =
+            mWatchKeyToDirPathMap.entrySet();
+
         WatchKey key = null;
         for (Map.Entry<WatchKey, Path> entry : entries) {
             if (entry.getValue().equals(dir)) {
@@ -165,6 +163,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
                 break;
             }
         }
+
         return key;
     }
 
@@ -192,13 +191,13 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
 
             if (eventKind.equals(ENTRY_CREATE)) {
                 matchedListeners(getDirPath(key), file)
-                        .forEach(l -> l.onFileCreate(completePath));
+                    .forEach(l -> l.onFileCreate(completePath));
             } else if (eventKind.equals(ENTRY_MODIFY)) {
                 matchedListeners(getDirPath(key), file)
-                        .forEach(l -> l.onFileModify(completePath));
+                    .forEach(l -> l.onFileModify(completePath));
             } else if (eventKind.equals(ENTRY_DELETE)) {
                 matchedListeners(getDirPath(key), file)
-                        .forEach(l -> l.onFileDelete(completePath));
+                    .forEach(l -> l.onFileDelete(completePath));
             }
         }
     }
@@ -219,16 +218,16 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
         if (!mDirPathToListenersMap.containsKey(dir)) {
             // May throw
             WatchKey key = dir.register(
-                    mWatchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE
+                mWatchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE
             );
 
             mWatchKeyToDirPathMap.put(key, dir);
-            mDirPathToListenersMap.put(dir, newConcurrentSet());
+            mDirPathToListenersMap.put(dir, concurrentSet());
         }
 
         getListeners(dir).add(listener);
 
-        Set<PathMatcher> patterns = newConcurrentSet();
+        Set<PathMatcher> patterns = concurrentSet();
 
         for (String globPattern : globPatterns) {
             patterns.add(matcherForGlobExpression(globPattern));
