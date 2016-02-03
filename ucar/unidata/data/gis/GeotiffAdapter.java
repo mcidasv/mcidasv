@@ -25,6 +25,8 @@
 package ucar.unidata.data.gis;
 
 
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
+import loci.formats.in.TiffReader;
 import ucar.unidata.geoloc.projection.*;
 import ucar.unidata.gis.epsg.CoordinateOperationMethod;
 import ucar.unidata.gis.epsg.CoordinateOperationParameter;
@@ -34,6 +36,7 @@ import ucar.unidata.gis.epsg.Pcs;
 import ucar.unidata.gis.geotiff.*;
 import ucar.unidata.util.Misc;
 
+import ucar.visad.Util;
 import visad.*;
 
 import visad.data.*;
@@ -51,6 +54,7 @@ import java.io.*;
 
 import java.util.Hashtable;
 import java.util.List;
+
 
 
 /**
@@ -133,7 +137,7 @@ public class GeotiffAdapter {
      * @throws IOException              problem opening file
      * @throws VisADException           VisAD problem
      */
-    public FlatField getData() throws VisADException, IOException {
+    public FieldImpl getData() throws VisADException, IOException {
         return getDataAsRgb();
     }
 
@@ -145,7 +149,7 @@ public class GeotiffAdapter {
      * @throws IOException              problem opening file
      * @throws VisADException           VisAD problem
      */
-    public FlatField getDataAsRgb() throws VisADException, IOException {
+    public FieldImpl getDataAsRgb() throws VisADException, IOException {
         return createData(true);
     }
 
@@ -158,7 +162,7 @@ public class GeotiffAdapter {
      * @throws IOException              problem opening file
      * @throws VisADException           VisAD problem
      */
-    public FlatField getDataAsGrid() throws VisADException, IOException {
+    public FieldImpl getDataAsGrid() throws VisADException, IOException {
         return createData(false);
     }
 
@@ -187,21 +191,17 @@ public class GeotiffAdapter {
     /**
      * Make the data
      *
-     *
      * @param asRGB _more_
      *
      * @return _more_
      * @throws IOException              problem opening file
      * @throws VisADException           VisAD problem
      */
-    private FlatField createData(boolean asRGB)
-            throws VisADException, IOException {
-        Form form;
-        if (asRGB) {
-            form = new LegacyTiffForm();
-        } else {
-            form = new TiffForm();
-        }
+    private FieldImpl createData(boolean asRGB)
+        throws VisADException, IOException
+    {
+        TiffForm form = new TiffForm();
+
         FlatField   field  = (FlatField) form.open(filename);
         Linear2DSet domain = (Linear2DSet) field.getDomainSet();
         cols = domain.getX().getLength();
@@ -215,14 +215,38 @@ public class GeotiffAdapter {
                 new RealTupleType(((SetType) domain.getType()).getDomain()
                     .getRealComponents(), projection, null);
             SampledSet newDomain = new Linear2DSet(rtt,
-                                       new Linear1DSet[] { domain.getX(),
+                new Linear1DSet[] { domain.getX(),
                     domain.getY() }, null, null, null, false);
             field =
                 (FlatField) ucar.unidata.data.grid.GridUtil.setSpatialDomain(
                     field, newDomain);
-
         }
-        return field;
+
+        DateTime dateTime = extractDateTime(filename, form);
+        if (dateTime != null) {
+            List<DateTime> timeList = CollectionHelpers.list(dateTime);
+            Set timeSet = Util.makeTimeSet(timeList);
+            FunctionType fType = new FunctionType(RealType.Time, field.getType());
+            FieldImpl fi = new FieldImpl(fType, timeSet);
+            fi.setSample(0, field);
+            return fi;
+        } else {
+            return field;
+        }
+    }
+
+    private static DateTime extractDateTime(String filename, TiffForm form)
+        throws IOException, VisADException
+    {
+        DateTime result = null;
+        TiffReader reader = (TiffReader)form.getReader();
+        form.initHandler(reader, filename);
+        Hashtable tiffTags = reader.getMetadata();
+        if (tiffTags.containsKey("DateTime")) {
+            String s = (String) tiffTags.get("DateTime");
+            result = DateTime.createDateTime(s, "yyyy:MM:dd HH:mm:ss");
+        }
+        return result;
     }
 
     /**
