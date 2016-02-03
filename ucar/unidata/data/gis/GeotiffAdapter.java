@@ -200,8 +200,12 @@ public class GeotiffAdapter {
     private FieldImpl createData(boolean asRGB)
         throws VisADException, IOException
     {
-        TiffForm form = new TiffForm();
-
+        Form form;
+        if (asRGB) {
+            form = new LegacyTiffForm();
+        } else {
+            form = new TiffForm();
+        }
         FlatField   field  = (FlatField) form.open(filename);
         Linear2DSet domain = (Linear2DSet) field.getDomainSet();
         cols = domain.getX().getLength();
@@ -222,7 +226,7 @@ public class GeotiffAdapter {
                     field, newDomain);
         }
 
-        DateTime dateTime = extractDateTime(filename, form);
+        DateTime dateTime = extractDateTime(filename);
         if (dateTime != null) {
             List<DateTime> timeList = CollectionHelpers.list(dateTime);
             Set timeSet = Util.makeTimeSet(timeList);
@@ -235,10 +239,11 @@ public class GeotiffAdapter {
         }
     }
 
-    private static DateTime extractDateTime(String filename, TiffForm form)
+    private static DateTime extractDateTime(String filename)
         throws IOException, VisADException
     {
         DateTime result = null;
+        TiffForm form = new TiffForm();
         TiffReader reader = (TiffReader)form.getReader();
         form.initHandler(reader, filename);
         Hashtable tiffTags = reader.getMetadata();
