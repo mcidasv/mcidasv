@@ -35,10 +35,27 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/Jython.html
 <span class="caption">Image 1: Jython Libraries Window</span></div>
 <p>The Jython Library window has a tree view on the left that shows the different
   (categorized) library files available. The files that are listed under "Local
-  Jython" are those that you can edit. The System files should not be edited by the user, and you should contact the <a href="../../../../support/user_services.html"target="_blank">McIDAS Help Desk</a> for assistance if you wish to modify them. On
+  Jython" are those that you can edit. Any libraries added via a plugin will be listed under Local Jython. The naming of the items in the list will be based on the name of the plugin (e.g. From: VIIRS_Formulas1.5.jar). The System files should not be edited by the user, and you should contact the <a href="../../../../support/user_services.html"target="_blank">McIDAS Help Desk</a> for assistance if you wish to modify them. On
   the right is the edit panel for the selected file.</p>
 <p>There is documentation available for the <a href="JythonLib.html">System Jython
     Libraries</a>.</p>
+<p>The Jython Library contains a search feature at the bottom of the window that will search for text in the currently viewed library.</p>
+<div class="images"><img src="images/JythonLibrarySearch.jpg" width="402" height="28" alt="Image 2: Jython Library Search Menu"><br>
+<span class="caption">Image 2: Jython Library Search Menu</span></div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Find -</strong> Searches for the text string.</li>
+<li class="propertylistitem"><img src="images/FindNext.gif" width="15" height="17" alt="Find Next button"align="absmiddle"><strong> Find Next -</strong> Finds the next occurrence of the searched for text string.</li>
+<li class="propertylistitem"><img src="images/FindPrevious.gif" width="17" height="18" alt="Find Previous button"align="absmiddle"><strong> Find Previous -</strong> Finds the previous occurrence of the searched for text string.</li>
+<li class="propertylistitem"><img src="images/HighlightAll.gif" width="21" height="18" alt="Highlight All button"align="absmiddle"><strong> Highlight All -</strong> Highlights all occurrences of the text string. When all items are highlighted in the text, this button will change from white to yellow.</li>
+<li class="propertylistitem"><strong>Match Case -</strong> Finds only items in the text that match the case of the entry in the <strong>Find</strong> field.</li>
+</ul>
+<div class="pagesubtitle">Menus </div>
+<p>The <strong>File</strong> menu has these unique items:</p>
+    <ul class="propertylist">
+      <li class="propertylistitem"><strong>New Jython Library -</strong> Opens a window prompting for the name of the library. This library will be listed under the Local Jython tree in the Jython Library window.</li>
+      <li class="propertylistitem"><strong>Export to Plugin -</strong> Exports the full text of the currently opened library to a plugin .jar file. This allows for providing the plugin to other users and they will then have access to the function(s).</li>
+      <li class="propertylistitem"><strong>Export Selected to Plugin -</strong> Exports any selected text in the currently opened library to a plugin .jar file. This allows for providing the plugin to other users and they will have access to the function(s). A use of this over <strong>Export to Plugin</strong> is if the library has multiple functions, but you are only interested in exporting one of them.</li>
+    </ul>
 <div class="faq">
   <div class="faq-top">
     <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_">FAQ</a></div>
