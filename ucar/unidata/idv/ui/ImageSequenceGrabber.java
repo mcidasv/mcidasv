@@ -28,7 +28,6 @@
 
 package ucar.unidata.idv.ui;
 
-
 import ij.ImagePlus;
 
 import org.slf4j.Logger;
@@ -296,9 +295,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
 
     /** Index in the list of images we are currently showing as a preview */
     int previewIndex = 0;
-
-    /** image quality */
-    private float quality = 1.0f;
 
     /** Has the user paused the previews */
     boolean paused = false;
@@ -760,8 +756,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             "Number of seconds to pause on last frame of animated GIF");
         captureRateFld = new JTextField("2", 3);
 
-        String imgp = "/auxdata/ui/icons/";
-
         mainDisplayBtn = new JRadioButton("Current View", true);
         allViewsBtn    = new JRadioButton("All Views", false);
         contentsBtn    = new JRadioButton("Current View & Legend", false);
@@ -818,7 +812,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             }
         });
         hiBtn  = new JRadioButton("High", true);
-        medBtn = new JRadioButton("Better", false);
+        medBtn = new JRadioButton("Medium", false);
         lowBtn = new JRadioButton("Low", false);
         GuiUtils.buttonGroup(hiBtn, medBtn).add(lowBtn);
         grabBtn           = makeButton("One Image", CMD_GRAB);
@@ -1719,7 +1713,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
      * @return File prefix
      */
     private String getFilePrefix(int cnt) {
-        String  filename     = "";
+
         String  template     = "image_%count%_%time%";
         boolean usingDefault = true;
 
@@ -1932,7 +1926,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                             }
                             int cols = 2;
                             cols = XmlUtil.getAttribute(scriptingNode,
-                                    imageGenerator.ATTR_COLUMNS, cols);
+                            		ImageGenerator.ATTR_COLUMNS, cols);
                             image = (BufferedImage) ImageUtils.gridImages2(
                                 images, 0, Color.BLACK, cols);
 
@@ -2167,9 +2161,9 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
 
         if (scriptingNode != null) {
             displayRate = imageGenerator.applyMacros(scriptingNode,
-                    imageGenerator.ATTR_FRAMERATE, displayRate);
+            		ImageGenerator.ATTR_FRAMERATE, displayRate);
             endPause = imageGenerator.applyMacros(scriptingNode,
-                    imageGenerator.ATTR_ENDFRAMEPAUSE, -1);
+            		ImageGenerator.ATTR_ENDFRAMEPAUSE, -1);
         }
 
         createMovie(movieFile, images, size, displayRate, scriptingNode,
@@ -2188,14 +2182,12 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         try {
             imageGenerator.debug("Making image panel:" + file);
 
-            int width = imageGenerator.applyMacros(scriptingNode,
-                            imageGenerator.ATTR_WIDTH, 100);
             int columns = imageGenerator.applyMacros(scriptingNode,
-                              imageGenerator.ATTR_COLUMNS, 1);
+            		ImageGenerator.ATTR_COLUMNS, 1);
             int space = imageGenerator.applyMacros(scriptingNode,
-                            imageGenerator.ATTR_SPACE, 0);
+            		ImageGenerator.ATTR_SPACE, 0);
             Color background = imageGenerator.applyMacros(scriptingNode,
-                                   imageGenerator.ATTR_BACKGROUND,
+            		ImageGenerator.ATTR_BACKGROUND,
                                    (Color) null);
             List sizedImages = new ArrayList();
 
@@ -2234,8 +2226,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         createMovie(commaSeparatedFiles, images, size, displayRate,
                     scriptingNode, -1);
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(ImageSequenceGrabber.class);
 
     /**
      * actually create the movie
@@ -2592,7 +2582,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
 
 
                 DateTime        dttm   = imageWrapper.getDttm();
-                GeoLocationInfo bounds = imageWrapper.getBounds();
                 String         nameStr = "image_" + idx;
 
                 sb.append("<entry fromdate=\"" + dttm.toString() + "\" file=\""+ tail + "\" name=\"" + nameStr +
