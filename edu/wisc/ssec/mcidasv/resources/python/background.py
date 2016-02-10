@@ -442,14 +442,8 @@ class _MappedGeoGridFlatField(_MappedFlatField):
         self.gridDataset = gridDataset
         keys = ['attributes', 'datatype', 'description', 'info',
                 'levels', 'units', 'times', 'projection', 'field', 'filename',
-                'level', 'dataSourceName']
-
-        for attr in self.geogrid.getAttributes():
-            # variable attributes
-            keys.append(attr.getName())
-        for attr in self.gridDataset.getGlobalAttributes():
-            # global file attributes
-            keys.append(attr.getName())
+                'level', 'dataSourceName',
+                'variableAttributes', 'globalAttributes', 'metadataVariables']
 
         _MappedFlatField.__init__(self, ggff, keys)
         self.initMetadataMap()
@@ -484,15 +478,17 @@ class _MappedGeoGridFlatField(_MappedFlatField):
         if key == 'filename':
             return self.filename
 
-        # first look in variable attributes
-        attr = self.geogrid.findAttributeIgnoreCase(key)
-        if attr is not None:
-            return _getNetcdfAttributeValue(attr)
-        else:
-            # fall back on global attrs from nc file
-            attr = self.gridDataset.findGlobalAttributeIgnoreCase(key)
-            if attr is not None:
-                return _getNetcdfAttributeValue(attr)
+        if key == 'variableAttributes':
+            # attributes for the variable represented by this _MappedGeoGridFlatField
+            return _dictFromAttributeList(self.geogrid.getAttributes())
+
+        if key == 'globalAttributes':
+            # global attrs from nc file
+            return _dictFromAttributeList(self.gridDataset.getGlobalAttributes())
+
+        if key == 'metadataVariables':
+            # TODO placeholder for single-valued variables
+            return dict()
 
         raise KeyError('should not be capable of reaching here: %s')
 
@@ -515,6 +511,14 @@ class _MappedGeoGridFlatField(_MappedFlatField):
         """Return reasonable default layer label for this class."""
         defaultLabel = '%shortname% %level% - %timestamp%'
         return defaultLabel
+
+
+def _dictFromAttributeList(attrList):
+    """Build a attrName->attrValue dictionary from a list of NetCDF Attributes."""
+    result = dict()
+    for attr in attrList:
+        result[attr.getFullName()] = _getNetcdfAttributeValue(attr)
+    return result
 
 
 def _getNetcdfAttributeValue(attr):
