@@ -487,10 +487,12 @@ class _MappedGeoGridFlatField(_MappedFlatField):
             return _dictFromAttributeList(self.gridDataset.getGlobalAttributes())
 
         if key == 'metadataVariables':
-            # TODO what about the attributes in the "metadata variables"???
             allVars = self.gridDataset.getNetcdfFile().getVariables()
             singleValueVars = filter(lambda v: v.getSize() == 1, allVars)
-            return {v.getFullName(): v.read().getObject(0) 
+            return {v.getFullName(): 
+                            {'value': v.read().getObject(0),
+                             'attributes': _dictFromAttributeList(v.getAttributes())
+                            }
                         for v in singleValueVars}
 
         raise KeyError('should not be capable of reaching here: %s')
