@@ -463,7 +463,9 @@ public class ScatterPlotChartWrapper extends PlotWrapper {
             return new JLabel(" ");
         }
         LineState ls = fieldProperty.wrapper.getLineState();
-        XmlObjectStore store = getDisplayControl().getControlContext().getIdv().getStore();
+        // mcv histogram change
+        XmlObjectStore store = getIdv().getStore();
+        // end mcv histogram change
         ls.getPropertyContents(store);
         List comps = new ArrayList();
         comps.add(GuiUtils.inset(ls.colorSwatch, 4));

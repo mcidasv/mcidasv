@@ -292,15 +292,16 @@ public class MultiDisplayHolder extends DisplayControlImpl {
         displayTree.show(getContents());
     }
 
-
+    // mcv histogram related
     /**
      * Return the display tree
      *
      * @return the display tree
      */
-    protected DisplayTree getDisplayTree() {
+    public DisplayTree getDisplayTree() {
         return displayTree;
     }
+    // end histogram related
 
     /**
      * Get the extra label used for the legend.

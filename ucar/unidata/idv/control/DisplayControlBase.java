@@ -42,6 +42,9 @@ import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ViewContext;
 
+import ucar.unidata.idv.control.chart.ChartWrapper;
+import ucar.unidata.idv.control.multi.DisplayComponent;
+import ucar.unidata.idv.control.multi.DisplayTree;
 import ucar.unidata.idv.ui.IdvUIManager;
 
 
@@ -1019,5 +1022,23 @@ public abstract class DisplayControlBase extends SharableImpl {
         return null;
     }
 
+    // changes related to mcv histogram work
+    public void removeDisplayComponent(DisplayComponent displayComponent) { }
+
+    public void componentChanged() { }
+
+    public void removeDisplayables(List displayables) { }
+
+    public void addFieldToChartWrapper(ChartWrapper chartWrapper) { }
+
+    public DisplayTree getDisplayTree() {
+        return null;
+    }
+
+    public String formatValue(double v) {
+        DisplayConventions dc = DisplayConventions.getDisplayConventions();
+        return dc.format(v);
+    }
+    // end histogram changes
 
 }

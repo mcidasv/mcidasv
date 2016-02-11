@@ -28,6 +28,8 @@ import ucar.unidata.collab.PropertiedThing;
 import ucar.unidata.idv.ControlContext;
 
 
+import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.control.DisplayControlBase;
 import ucar.unidata.idv.ui.ImageSequenceGrabber;
 
 import ucar.unidata.ui.ImageUtils;
@@ -117,7 +119,9 @@ public abstract class DisplayComponent extends PropertiedThing implements Proper
     private Color backgroundColor = Color.white;
 
     /** The displaycontrol I'm in */
-    protected MultiDisplayHolder displayControl;
+    // histogram change
+    protected DisplayControl displayControl;
+    // end
 
 
     /**
@@ -181,14 +185,16 @@ public abstract class DisplayComponent extends PropertiedThing implements Proper
         return contents;
     }
 
+    // mcv histogram change
     /**
      * Set the display control I'm in
      *
      * @param displayControl The display control
      */
-    public void setDisplayControl(MultiDisplayHolder displayControl) {
+    public void setDisplayControl(DisplayControl displayControl) {
         this.displayControl = displayControl;
     }
+
 
 
     /**
@@ -196,9 +202,10 @@ public abstract class DisplayComponent extends PropertiedThing implements Proper
      *
      * @return  The display control
      */
-    protected MultiDisplayHolder getDisplayControl() {
+    protected DisplayControl getDisplayControl() {
         return displayControl;
     }
+    // end mcv histogram change
 
 
 
@@ -290,7 +297,9 @@ public abstract class DisplayComponent extends PropertiedThing implements Proper
             if (displayGroup != null) {
                 displayGroup.removeDisplayComponent(this);
             }
-            getDisplayControl().removeDisplayComponent(this);
+            // mcv histogram change
+            ((DisplayControlBase)getDisplayControl()).removeDisplayComponent(this);
+            // end mcv histogram change
             return true;
         } else {
             return false;
@@ -306,7 +315,9 @@ public abstract class DisplayComponent extends PropertiedThing implements Proper
         if ( !super.doApplyProperties()) {
             return false;
         }
-        getDisplayControl().componentChanged();
+        // mcv histogram change
+        ((DisplayControlBase)getDisplayControl()).componentChanged();
+        // end mcv histogram change
         return true;
     }
 
@@ -319,7 +330,9 @@ public abstract class DisplayComponent extends PropertiedThing implements Proper
         isRemoved = true;
         List displayables = getDisplayables();
         if (displayables.size() > 0) {
-            getDisplayControl().removeDisplayables(displayables);
+            // mcv histogram change
+            ((DisplayControlBase)getDisplayControl()).removeDisplayables(displayables);
+            // end mcv histogram change
         }
         firePropertyChange(PROP_REMOVED, null, this);
     }
@@ -470,7 +483,9 @@ public abstract class DisplayComponent extends PropertiedThing implements Proper
      * @return Was it ok
      */
     public boolean showProperties() {
-        return showProperties(displayControl.getDisplayTree(), 0, 0);
+        // mcv histogram change
+        return showProperties(((DisplayControlBase)displayControl).getDisplayTree(), 0, 0);
+        // end mcv histogram change
     }
 
 

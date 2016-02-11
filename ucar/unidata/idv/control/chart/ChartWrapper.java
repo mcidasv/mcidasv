@@ -29,6 +29,10 @@
 package ucar.unidata.idv.control.chart;
 
 
+import static ucar.unidata.idv.control.DisplayControlBase.logException;
+
+import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
@@ -43,11 +47,16 @@ import org.jfree.ui.*;
 import org.python.core.*;
 import org.python.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataAlias;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
+import ucar.unidata.data.DataOperand;
+import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.grid.GridUtil;
 
 
@@ -59,10 +68,12 @@ import ucar.unidata.data.sounding.TrackDataSource;
 import ucar.unidata.gis.SpatialGrid;
 
 
-
+import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.control.DisplayControlBase;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.multi.*;
 
+import ucar.unidata.idv.ui.DataTreeDialog;
 import ucar.unidata.ui.TableSorter;
 import ucar.unidata.ui.symbol.*;
 
@@ -450,8 +461,12 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
     protected List getPopupMenuItems(List items) {
 
         if (canDoParameters()) {
-            items.add(GuiUtils.makeMenuItem("Add Field...", this,
-                                            "addField"));
+            // mcv histogram change
+            // makeMenuItem will swallow exceptions!
+            JMenuItem menuItem = new JMenuItem("Add Field...");
+            menuItem.addActionListener(e -> addField());
+            items.add(menuItem);
+            // end mcv histogram change
         }
 
         if (canDoJython() && (jython != null)
@@ -588,9 +603,9 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
      */
     protected PythonInterpreter getInterpreter() {
         if (interpreter == null) {
-            interpreter =
-                getDisplayControl().getControlContext().getIdv()
-                    .getJythonManager().createInterpreter();
+            // mcv histogram change
+            interpreter = getIdv().getJythonManager().createInterpreter();
+            // end mcv history change
         }
         return interpreter;
     }
@@ -783,8 +798,9 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
     public void doRemove() {
         super.doRemove();
         if (interpreter != null) {
-            getDisplayControl().getControlContext().getIdv()
-                .getJythonManager().removeInterpreter(interpreter);
+            // mcv histogram change
+            getIdv().getJythonManager().removeInterpreter(interpreter);
+            // end mcv histogram change
             interpreter = null;
         }
         if (timeFilterSource != null) {
@@ -1205,12 +1221,27 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
     }
 
 
-
     /**
      * Add a field to thei chart
      */
     public void addField() {
-        getDisplayControl().addFieldToChartWrapper(this);
+        // mcv histogram change
+//        ((DisplayControlBase)getDisplayControl()).addFieldToChartWrapper(this);
+        logger.trace("before");
+        List choices =
+            selectDataChoices(getFieldSelectionLabels(),
+                doMultipleAddFields(), getDataChoices(),
+                getDisplayControl().getCategories());
+        logger.trace("after");
+        if (choices == null) {
+            return;
+        }
+        try {
+            this.addDataChoices(choices);
+        } catch (Exception excp) {
+            logException("loading data ", excp);
+        }
+        // end mcv histogram change
     }
 
     /**
@@ -1241,7 +1272,9 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
      * @return the value formatted
      */
     public String formatValue(double v) {
-        return getDisplayControl().formatValue(v);
+        // mcv histogram change
+        return ((DisplayControlBase)getDisplayControl()).formatValue(v);
+        // end mcv histogram change
     }
 
 
@@ -1671,10 +1704,104 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
         return animationShareGroup;
     }
 
+    // mcv histogram change
+    private static final Logger logger = LoggerFactory.getLogger(ChartWrapper.class);
 
+    protected IntegratedDataViewer getIdv() {
+        IntegratedDataViewer idv = null;
+        List<DataChoice> choices = (List<DataChoice>)getDataChoices();
+        List<DataSource> dataSources = new ArrayList<>(1);
+        for (DataChoice choice : choices) {
+            if (choice != null) {
+                choice.getDataSources(dataSources);
+                DataSourceImpl dataSource = (DataSourceImpl)dataSources.get(0);
+                idv = dataSource.getIdv();
+                break;
+            }
+        }
+        if (idv == null) {
+            // almost guaranteed to work, but this habit should NOT be
+            // encouraged
+            idv = McIDASV.getStaticMcv();
+        }
+        return idv;
+    }
 
+    /**
+     * Have the user select 1 or more data choices
+     *
+     * @param titles One or more field selector titles. There will be
+     * one data tree in the dialog for each entry in the titles list.
+     * @param multiples Can we select more than one data choice in each data tree
+     * @param selectedDataChoices List of data choices already selected
+     * @param categories The data categories to choose with
+     *
+     * @return List of choices or null if none selected
+     */
+    private List selectDataChoices(List titles, boolean multiples,
+                                   List selectedDataChoices,
+                                   List categories) {
+        logger.trace("! #1");
+        DataOperand dataOperand = new DataOperand("Add Field",
+            "Choose Fields for Chart: ", categories, multiples);
 
+        // there's a problemo with the categories:
+//        Exception in thread "AWT-EventQueue-0" java.lang.ClassCastException: java.util.ArrayList cannot be cast to ucar.unidata.data.DataCategory
+//        at ucar.unidata.data.DataCategory.applicableTo(DataCategory.java:879)
+//        at ucar.unidata.idv.ui.DataTree.addDataSource(DataTree.java:1052)
+//        at ucar.unidata.idv.ui.DataTree.init(DataTree.java:423)
+//        at ucar.unidata.idv.ui.DataTree.<init>(DataTree.java:229)
+//        at ucar.unidata.idv.ui.DataTreeDialog.init(DataTreeDialog.java:198)
+//        at ucar.unidata.idv.ui.DataTreeDialog.<init>(DataTreeDialog.java:180)
+//        at ucar.unidata.idv.ui.DataTreeDialog.<init>(DataTreeDialog.java:154)
+//        at ucar.unidata.idv.control.chart.ChartWrapper.selectDataChoices(ChartWrapper.java:1276)
+//        at ucar.unidata.idv.control.chart.ChartWrapper.addField(ChartWrapper.java:1319)
+//        at ucar.unidata.idv.control.chart.ChartWrapper.lambda$getPopupMenuItems$0(ChartWrapper.java:469)
+//        at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2022)
 
+        // debug that datacategory stuff!!!
 
+//        1 / 0;
+
+        logger.trace("! #2");
+        DataTreeDialog dataDialog = new DataTreeDialog(
+            getIdv(),
+            null,
+            CollectionHelpers.list(dataOperand),
+            getIdv().getAllDataSources(),
+            selectedDataChoices);
+        logger.trace("! #3");
+        List selected = flattenChoices(dataDialog.getSelected());
+        dataDialog.dispose();
+        logger.trace("! #4");
+        return selected;
+    }
+
+    /**
+     * If the given list just holds data choices then just return the list.
+     * Else if it holds lists that hold data choices then expand the lists
+     * out.
+     *
+     * @param theChoices Either a list of data choices or a list of lists of data choices.
+     *
+     * @return The flattened list.
+     */
+    private List flattenChoices(List theChoices) {
+        if (theChoices == null) {
+            return null;
+        }
+        if (theChoices.size() == 0) {
+            return theChoices;
+        }
+        if (theChoices.get(0) instanceof List) {
+            List flatChoices = new ArrayList();
+            for (int i = 0; i < theChoices.size(); i++) {
+                flatChoices.addAll((List) theChoices.get(i));
+            }
+            theChoices = flatChoices;
+        }
+        return theChoices;
+    }
+    // end mcv histogram change
 }
 
