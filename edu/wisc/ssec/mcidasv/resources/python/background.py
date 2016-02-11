@@ -431,22 +431,27 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
 class _MappedGeoGridFlatField(_MappedFlatField):
     """Implements the 'mega-object' class for grids read with loadGrid."""
     
-    def __init__(self, ggff, geogrid, geogridAdapter, filename, field, levelReal, dataSourceName):
+    def __init__(self, ggff, geogrid, geogridAdapter, gridDataset,
+                    filename, field, levelReal, dataSourceName):
         self.geogrid = geogrid
         self.geogridAdapter = geogridAdapter
         self.filename = filename
         self.field = field
         self.levelReal = levelReal
         self.dataSourceName = dataSourceName
+        self.gridDataset = gridDataset
         keys = ['attributes', 'datatype', 'description', 'info',
                 'levels', 'units', 'times', 'projection', 'field', 'filename',
-                'level', 'dataSourceName']
+                'level', 'dataSourceName',
+                'variableAttributes', 'globalAttributes', 'metadataVariables']
+
         _MappedFlatField.__init__(self, ggff, keys)
         self.initMetadataMap()
     
     def _getDirValue(self, key):
         if key not in self._keys:
             raise KeyError('unknown key: %s' % key)
+
         if key == 'attributes':
             return self.geogrid.getAttributes()
         if key == 'datatype':
@@ -472,8 +477,25 @@ class _MappedGeoGridFlatField(_MappedFlatField):
             return self.field
         if key == 'filename':
             return self.filename
-        else:
-            raise KeyError('should not be capable of reaching here: %s')
+
+        if key == 'variableAttributes':
+            # attributes for the variable represented by this _MappedGeoGridFlatField
+            return _dictFromAttributeList(self.geogrid.getAttributes())
+
+        if key == 'globalAttributes':
+            # global attrs from nc file
+            return _dictFromAttributeList(self.gridDataset.getGlobalAttributes())
+
+        if key == 'metadataVariables':
+            allVars = self.gridDataset.getNetcdfFile().getVariables()
+            singleValueVars = filter(lambda v: v.getSize() == 1, allVars)
+            return {v.getFullName(): 
+                            {'value': v.read().getObject(0),
+                             'attributes': _dictFromAttributeList(v.getAttributes())
+                            }
+                        for v in singleValueVars}
+
+        raise KeyError('should not be capable of reaching here: %s')
 
     def clone(self):
         return self * 1
@@ -494,6 +516,33 @@ class _MappedGeoGridFlatField(_MappedFlatField):
         """Return reasonable default layer label for this class."""
         defaultLabel = '%shortname% %level% - %timestamp%'
         return defaultLabel
+
+
+def _dictFromAttributeList(attrList):
+    """Build a attrName->attrValue dictionary from a list of NetCDF Attributes."""
+    result = dict()
+    for attr in attrList:
+        result[attr.getFullName()] = _getNetcdfAttributeValue(attr)
+    return result
+
+
+def _getNetcdfAttributeValue(attr):
+    """Helper to return netcdf Attribute value as either numeric or string value."""
+    if attr.isArray():
+        # umm. convert to python list i guess?
+        values = []
+        array = attr.getValues()
+        if array.getRank() != 1:
+            raise ValueError("Why would an attribute be multi-dimensional???")
+        length = array.getSize()
+        for i in range(length):
+            # TODO need to find a file with a string array attribute and test this
+            values.append(array.getObject(i))
+        return values
+    if attr.isString():
+        return attr.getStringValue()
+    else:
+        return attr.getNumericValue()
 
 
 class _JavaProxy(object):
@@ -3346,8 +3395,8 @@ def loadGrid(filename=None, field=None, level='all',
         ff = make2D(ff)
 
     # make the 'mega-object'
-    mapped = _MappedGeoGridFlatField(ff, geogrid, adapter, filename, field, 
-            levelReal, dataSource.toString())
+    mapped = _MappedGeoGridFlatField(ff, geogrid, adapter, gridDataset,
+            filename, field, levelReal, dataSource.toString())
 
     return mapped
 
