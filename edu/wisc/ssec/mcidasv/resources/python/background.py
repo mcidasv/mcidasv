@@ -1476,19 +1476,21 @@ class _Display(_JavaProxy):
         
         ImageUtils.writeImageToFile(image, kmlImagePath, quality)
         
-    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, bgtransparent=False):
-        """Attempt at a replacement for ISL writeImage.
+    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, bgtransparent=False, createDirectories=False):
+        """Save contents of display into the given filename.
         
         Args:
             filename: Output file.
-            quality:  float between 0.0 and 1.0 (relevant for JPEG's)
-                    0.0 is highest compression / smallest file size / worst quality
-                    1.0 is least compression / biggest file size / best quality
+            quality: float between 0.0 and 1.0 (relevant for JPEGs)
+                       0.0 is highest compression / smallest file size / worst quality
+                       1.0 is least compression / biggest file size / best quality
             height, width: size of image
             
         Raises:
-            ValueError: if filename is a directory, or if the ViewManager 
-                        associated with this wrapper no longer exists.
+            ValueError: if filename is a directory; if any part of the path 
+                        specified by filename does not exist; 
+                        if the ViewManager associated with this wrapper no 
+                        longer exists.
         """
         from ucar.unidata.idv.ui import ImageGenerator
         from ucar.unidata.xml import XmlUtil
@@ -1510,6 +1512,15 @@ class _Display(_JavaProxy):
             # this isn't really good enough.  could be permissions issue, etc.
             raise ValueError(filename, " is a directory")
             
+        dirname = os.path.dirname(filename)
+        if not os.path.exists(dirname):
+            if createDirectories:
+                # exist_ok should not be needed, as we've already verified that
+                # dirname does not exist.
+                os.makedirs(dirname)
+            else:
+                raise ValueError("Could not create '%s'; directory '%s' does not exist." % (filename, dirname))
+                
         isl = ''
         
         if height == -1 and width == -1 and not bgtransparent:
