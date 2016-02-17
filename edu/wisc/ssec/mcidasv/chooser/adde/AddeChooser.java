@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
+import static edu.wisc.ssec.mcidasv.servermanager.EntryTransforms.strToEntryType;
 import static edu.wisc.ssec.mcidasv.servermanager.AddeEntry.DEFAULT_ACCOUNT;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.McIDASV.isLoopback;
@@ -80,6 +81,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import edu.wisc.ssec.mcidasv.ui.MenuScroller;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;
@@ -110,7 +112,9 @@ import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.servermanager.AddeAccount;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
+import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
 import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
@@ -364,7 +368,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         Map<String, String> acctInfo = new HashMap<String, String>();
         EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
         String strType = this.getDataType();
-        EntryType type = EntryTransforms.strToEntryType(strType);
+        EntryType type = strToEntryType(strType);
         AddeAccount acct = entryStore.getAccountingFor(server, group, type);
         acctInfo.put("user", acct.getUsername());
         acctInfo.put("proj", acct.getProject());
@@ -506,7 +510,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //                logger.debug("updateGroups: unknown type={}; toString={}", sel.getClass().getName(), sel);
             }
 
-            EntryType selType = EntryTransforms.strToEntryType(getGroupType());
+            EntryType selType = strToEntryType(getGroupType());
             groups.addAll(servManager.getIdvStyleRemoteGroups(sel, selType));
         }
 //        logger.trace("updateGroups: selected={} (type={}) chooser={} contents={}", new Object[] { serverSelector.getSelectedItem(), serverSelector.getSelectedItem().getClass().getName(), this.getDataType(), groups});
@@ -746,7 +750,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
             if (editorAction != EditorAction.CANCELLED && editorAction != EditorAction.INVALID) {
 
-                List<AddeServer> added = arrList(EntryTransforms.convertMcvServers(servManager.getLastAddedByType(EntryTransforms.strToEntryType(getDataType()))));
+                List<AddeServer> added = arrList(EntryTransforms.convertMcvServers(servManager.getLastAddedByType(strToEntryType(getDataType()))));
                 AddeServer first = null;
                 if (!added.isEmpty()) {
                     first = added.get(0);
@@ -1622,14 +1626,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     public void showGroups() {
         JPopupMenu popup = new JPopupMenu();
         popup.add(new JMenuItem("Reading public datasets..."));
-        popup.show(publicButton, 0, (int) publicButton.getBounds().getHeight());
+
 
         List groups = readGroups();
         popup.removeAll();
         if ((groups == null) || (groups.isEmpty())) {
             popup.add(new JMenuItem("No public datasets available"));
-            popup.setVisible(false);
-            popup.setVisible(true);
+//            popup.setVisible(false);
+//            popup.setVisible(true);
             return;
         }
 
@@ -1637,16 +1641,26 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         for (int i = 0; i < groups.size(); i++) {
             final String group = groups.get(i).toString();
             mi = new JMenuItem(group);
-            mi.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    groupSelector.setSelectedItem(group);
-                    doConnect();
-                }
+            mi.addActionListener(ae -> {
+                EntryStore servManager = ((McIDASV)getIdv()).getServerManager();
+
+                servManager.addEntry(
+                    new RemoteAddeEntry.Builder(lastServerName, group)
+                                       .account(lastServerUser, lastServerProj)
+                                       .type(strToEntryType(getDataType()))
+                                       .source(EntrySource.USER)
+                                       .validity(EntryValidity.VERIFIED)
+                                       .build());
+
+                groupSelector.setSelectedItem(group);
+                doConnect();
             });
             popup.add(mi);
         }
-        popup.setVisible(false);
-        popup.setVisible(true);
+        MenuScroller foo = new MenuScroller(popup, 125);
+        foo.setParent(publicButton);
+//        popup.setVisible(false);
+        popup.show(publicButton, 0, (int) publicButton.getBounds().getHeight());
     }
 
     /**

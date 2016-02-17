@@ -413,6 +413,10 @@ public class MenuScroller {
         super.finalize();
     }
 
+    public void setParent(JComponent parent) {
+        this.parent = parent;
+    }
+
     private void refreshMenu() {
         if ((menuItems != null) && (menuItems.length > 0)) {
 
