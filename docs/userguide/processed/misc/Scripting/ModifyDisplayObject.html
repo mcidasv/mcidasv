@@ -107,7 +107,7 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
 <div class="ThreeTabIndent2"><table class="noborder">
 <tr>
       <td valign="top">projection=</td>
-      <td>string specifying the projection; e.g., 'US>Southeastern U.S.' or the name of the layer returned from createLayer, which uses the default projection of that data</td>
+      <td>string specifying the projection; e.g., 'US>Southeastern U.S.' or the name of the layer returned from createLayer, which uses the default projection of that data. Alternatively, a layer object can be passed through this keyword. For example, if a layer was defined as myLayer when running createLayer, passing 'myLayer' through the projection keyword would set the projection to the native projection of the myLayer layer.</td>
     </tr></table></div>
   <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setProjection(projection='US>States>N-Z>Pennsylvania')</em></div>
