@@ -183,7 +183,7 @@
     <property name="slf4j.version" value="1.7.12" />
     <property name="logback.version" value="1.1.3" />
     <property name="miglayout.version" value="5.0" />
-    <property name="jogamp.version" value="2.3.1" />
+    <property name="jogamp.version" value="2.3.2" />
     <property name="swingx.version" value="1.6.5-1" />
     <property name="eventbus.version" value="1.4" />
     <property name="commons-math.version" value="3.5" />
@@ -257,7 +257,7 @@
     </fileset>
 
     <fileset id="linux_x64.libs" dir="${dist.dir}">
-        <include name="gluegen-${jogamp.version}-natives-linux-amd64.jar" />
+        <!-- <include name="gluegen-${jogamp.version}-natives-linux-amd64.jar" /> -->
         <include name="gluegen-rt-${jogamp.version}-natives-linux-amd64.jar" />
         <include name="joal-${jogamp.version}-natives-linux-amd64.jar" />
         <include name="jocl-${jogamp.version}-natives-linux-amd64.jar" />
@@ -265,7 +265,7 @@
     </fileset>
 
     <fileset id="linux_x86.libs" dir="${dist.dir}">
-        <include name="gluegen-${jogamp.version}-natives-linux-i586.jar" />
+        <!-- <include name="gluegen-${jogamp.version}-natives-linux-i586.jar" /> -->
         <include name="gluegen-rt-${jogamp.version}-natives-linux-i586.jar" />
         <include name="joal-${jogamp.version}-natives-linux-i586.jar" />
         <include name="jocl-${jogamp.version}-natives-linux-i586.jar" />
@@ -273,7 +273,7 @@
     </fileset>
 
     <fileset id="windows_x64.libs" dir="${dist.dir}">
-        <include name="gluegen-${jogamp.version}-natives-windows-amd64.jar" />
+        <!-- <include name="gluegen-${jogamp.version}-natives-windows-amd64.jar" /> -->
         <include name="gluegen-rt-${jogamp.version}-natives-windows-amd64.jar" />
         <include name="joal-${jogamp.version}-natives-windows-amd64.jar" />
         <include name="jocl-${jogamp.version}-natives-windows-amd64.jar" />
@@ -281,7 +281,7 @@
     </fileset>
 
     <fileset id="windows_x86.libs" dir="${dist.dir}">
-        <include name="gluegen-${jogamp.version}-natives-windows-i586.jar" />
+        <!-- <include name="gluegen-${jogamp.version}-natives-windows-i586.jar" /> -->
         <include name="gluegen-rt-${jogamp.version}-natives-windows-i586.jar" />
         <include name="joal-${jogamp.version}-natives-windows-i586.jar" />
         <include name="jocl-${jogamp.version}-natives-windows-i586.jar" />
@@ -289,7 +289,7 @@
     </fileset>
 
     <fileset id="macosx.libs" dir="${dist.dir}">
-        <include name="gluegen-${jogamp.version}-natives-macosx-universal.jar" />
+        <!-- <include name="gluegen-${jogamp.version}-natives-macosx-universal.jar" /> -->
         <include name="gluegen-rt-${jogamp.version}-natives-macosx-universal.jar" />
         <include name="joal-${jogamp.version}-natives-macosx-universal.jar" />
         <include name="jocl-${jogamp.version}-natives-macosx-universal.jar" />
@@ -889,7 +889,7 @@
       <!-- <jvmarg value="-XX:+TieredCompilation" /> -->
       <!-- <jvmarg value="-XX:TieredStopAtLevel=1" /> -->
       <jvmarg value="-noverify" />
-      <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
+      <jvmarg value="-XX:+DoEscapeAnalysis" />
       <!--
         The following two lines will allow the JVM to dump the heap's
         contents on an OutOfMemory exception (very helpful!).
