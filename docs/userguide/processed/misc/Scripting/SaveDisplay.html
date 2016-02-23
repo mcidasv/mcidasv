@@ -143,7 +143,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
     </ul>
   <li class="propertylistitem"><strong>ImageOverlay -</strong> Adds an image, such as a logo, to the output image.</li>
     <ul class="propertylist">
-      <li class="propertylistitem"><strong>image -</strong> Specifies the image to add to the output image.</li>
+      <li class="propertylistitem"><strong>image -</strong> Specifies the image to add to the output image. The full path to the logo file must be specified.</li>
       <li class="propertylistitem"><strong>place -</strong> Sets the location of the image along with x and y pixel offsets.  Valid options are:<br>
       <table class="noborder">
     <tr>
@@ -162,8 +162,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       <td width="150"><strong>LR -</strong> Lower Right</td>
     </tr>
   </table>
-  Example: <em>place=&quot;UL,20,20&quot;</em><br>
-  Adds the image to the upper left brought down 20 pixels from the top and brought in 20 pixels from the left.</li>
+  Example: <em>place=&quot;UL,40,20&quot;</em><br>
+  Adds the image to the upper left brought in 40 pixels from the left and brought down 20 pixels from the top.</li>
       <li class="propertylistitem"><strong>anchor -</strong> Sets the location on the image to center at the <strong>place</strong>. Valid options are:<br>
       <table class="noborder">
     <tr>
