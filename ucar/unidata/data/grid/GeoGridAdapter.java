@@ -1843,14 +1843,28 @@ public class GeoGridAdapter {
         CalendarDateTime time = null;
         if (ncFile != null) {
             Variable timeVar = ncFile.findVariable("base_time");
+
+            // MJH find correct time for "DOE" format simulated ABI files
+            // (see inqs. 1971 and 2278)
             if (timeVar == null) {
-                // MJH if timeVar is still null, also look for just "t".
-                // (This is a fix for "DOE" format simulated ABI files).
-                // (TODO: verify that if there is an unrelated variable named
-                //        "t", for e.g. temperature, a VisADException gets
-                //        thrown below and null is returned harmlessly.)
-            	timeVar = ncFile.findVariable("t");
+                Attribute timeAttr = ncFile.findGlobalAttribute("time_coverage_start");
+                if (timeAttr != null && timeAttr.isString()) {
+                    String timeStr = timeAttr.getStringValue();
+                    // remove the "tenths of a second"; DateTime can't parse it
+                    timeStr = timeStr.replaceAll("\\.[0-9]", "");
+                    try {
+                        return new CalendarDateTime(
+                                DateTime.createDateTime(timeStr,
+                                        "yyyy-MM-dd'T'HH:mm:ss'Z'")
+                        );
+                    } catch (VisADException e) {
+                        System.err.println(
+                                "time_coverage_start attribute exists, but DateTime parsing failed");
+                        System.err.println("timeStr: " + timeStr);
+                    }
+                }
             }
+
             if (timeVar != null) {  // found it
                 try {
                     time = new CalendarDateTime(

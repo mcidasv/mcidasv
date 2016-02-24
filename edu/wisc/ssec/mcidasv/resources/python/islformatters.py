@@ -296,7 +296,7 @@ class Colorbar(ImageFormatting):
     
     """The Colorbar formatter allows you to add a color bar from the color tables in the display controls."""
     
-    def __init__(self, display=None, width=None, height=None, orientation=None, tickMarks=None, interval=None, values=None, place=None, anchor=None, showLines=None, suffix=None, suffixFrequency=None, showUnit=None, transparency=None, color=None, lineColor=None):
+    def __init__(self, display=None, width=None, height=None, orientation=None, tickMarks=None, interval=None, values=None, place=None, anchor=None, showLines=None, suffix=None, suffixFrequency=None, showUnit=None, transparency=None, color=None, lineColor=None, fontFace=None, fontSize=None):
         """Create a new Colorbar ISL formatting object.
         
         Optional Args:
@@ -328,6 +328,8 @@ class Colorbar(ImageFormatting):
                           considered bad practice.
             color: Label color.
             lineColor: Line color.
+            fontFace: Name of font to use for labels.
+            fontSize Font size for labels.
         """
         if display is not None:
             self.displayObj = display
@@ -413,10 +415,20 @@ class Colorbar(ImageFormatting):
             self.lineColor = 'linecolor=%s' % (lineColor)
         else:
             self.lineColor = ''
-            
+
+        if fontFace is not None:
+            self.fontFace = 'fontface=%s' % (fontFace)
+        else:
+            self.fontFace = ''
+
+        if fontSize is not None:
+            self.fontSize = 'fontsize=%s' % (fontSize)
+        else:
+            self.fontSize = ''
+
     def toIsl(self):
         """Return the ISL string representing this Colorbar instance."""
-        islString = "colorbar %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s" % (self.display, self.width, self.height, self.orientation, self.tickMarks, self.interval, self.values, self.place, self.anchor, self.showLines, self.suffix, self.suffixFrequency, self.showUnit, self.transparency, self.color, self.lineColor)
+        islString = "colorbar %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s" % (self.display, self.width, self.height, self.orientation, self.tickMarks, self.interval, self.values, self.place, self.anchor, self.showLines, self.suffix, self.suffixFrequency, self.showUnit, self.transparency, self.color, self.lineColor, self.fontFace, self.fontSize)
         return islString.strip() + '; '
         
 class TransparentColor(ImageFormatting):
