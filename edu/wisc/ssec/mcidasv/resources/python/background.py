@@ -1768,6 +1768,12 @@ class _Layer(_JavaProxy):
         pass
         
     @gui_invoke_later
+    def getData(self):
+        """Return data object associated with this layer."""
+        dataInstance = self._JavaProxy__javaObject.getDataInstance()
+        return self._JavaProxy__javaObject.getData(dataInstance)
+        
+    @gui_invoke_later
     def setEnhancement(self, name=None, range=None, transparency=None):
         """Wrapper for setEnhancementTable and setDataRange.
         
@@ -1783,7 +1789,7 @@ class _Layer(_JavaProxy):
                          specify transparency and not name, the current name
                          will be retained.  0 is opaque and 100(%) is fully 
                          transparent.
-
+                         
         """
         didSomething = False
         if name is not None or transparency is not None:
