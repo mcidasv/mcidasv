@@ -119,10 +119,6 @@ public class DisplayConventions extends IdvManager {
     /** Latitude id */
     private static final int LATITUDE = 1;
 
-    /** Longitude id */
-    private static final int LONGITUDE = 0;
-
-
     /**
      * Create this object with the given idv
      *
@@ -782,20 +778,18 @@ public class DisplayConventions extends IdvManager {
 
     /**
      * Popup a unit selection gui. This will also save off
-     * persistently ay new unit names typed in.
+     * persistently any new unit names typed in.
      *
      * @param unit The current unit
      * @param defaultUnit The default unit to return if the user  chooses "Default"
      * @return The new unit or null on a cancel or an error
      */
+    
     public JComboBox makeUnitBox(Unit unit, Unit defaultUnit) {
         TwoFacedObject current = null;
         if (unit != null) {
             current = new TwoFacedObject(unit.toString(), unit);
         }
-        String unitName = ((unit == null)
-                           ? null
-                           : unit.toString());
         List   unitList = getDefaultUnitList();
         if (unit != null) {
             String unitString = unit.toString();
@@ -860,8 +854,7 @@ public class DisplayConventions extends IdvManager {
             addToUnitList(selected);
             return newUnit;
         } catch (Exception exc) {
-            LogUtil.userMessage("Error parsing unit:" + unitName + "\n"
-                                + exc);
+            LogUtil.userMessage("Error: invalid unit: " + unitName + "\n");
         }
         return null;
     }
@@ -925,12 +918,13 @@ public class DisplayConventions extends IdvManager {
                 //Temperature
                 // TJJ Jan 2016 - use formal Unicode units recently adopted in VisAD
                 "°C", "°F", "K",
-                //Pressure
-                "millibar", "hectoPascal",
-                //Distance
-                "m", "km", "miles", "feet", "inches", "cm", "mm",
-                //speed
-                "m/s", "mi/hr", "knot", "km/hr"
+                // Pressure
+                // TJJ Feb 2016 - again, use formal SI units, last one is inches of Mercury
+                "Pa", "hPa", "in Hg",
+                // Distance
+                "mm", "cm", "m", "km", "in", "ft", "mi",
+                // Speed
+                "m/s", "km/hr", "mi/hr", "knot"
             };
             for (int i = 0; i < names.length; i++) {
                 try {
