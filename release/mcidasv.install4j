@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.15" transformSequenceNumber="4">
-  <directoryPresets config="${compiler:MCVDIR}/dist/jython-standalone-2.7.0.jar" />
+  <directoryPresets config="/Users/jbeavers/work/install4j/mcidasv/release/icons" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.6beta1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.8" javaMaxVersion="1.9" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -208,6 +208,40 @@
     <launcher name="runMcV-Config" id="1330" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config" />
     <launcher name="runMcV.bat" id="844" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
     <launcher name="runMcV-Config.bat" id="1335" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config.bat" />
+    <launcher name="mcidasv" id="8420" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="7336" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="">
+      <executable name="mcidasv" type="1" iconSet="true" iconFile="/Users/jbeavers/work/install4j/mcidasv/release/icons/mcidasv.ico" executableDir="" redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true">
+        <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
+      </executable>
+      <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
+        <text>
+          <statusLine x="20" y="20" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+          <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
+        </text>
+      </splashScreen>
+      <java mainClass="edu.wisc.ssec.mcidasv.McIDASV" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+        <classPath>
+          <archive location="mcv_userguide.jar" failOnError="false" />
+          <archive location="mcidasv.jar" failOnError="false" />
+        </classPath>
+        <nativeLibraryDirectories />
+      </java>
+      <includedFiles />
+      <unextractableFiles />
+      <vmOptionsFile mode="template" overwriteMode="0" fileMode="644">
+        <content />
+      </vmOptionsFile>
+      <customScript mode="1" file="">
+        <content />
+      </customScript>
+      <infoPlist mode="1" file="">
+        <content />
+      </infoPlist>
+      <iconImageFiles>
+        <file path="/Users/jbeavers/work/install4j/mcidasv/release/icons/mcidasv_16x16.png" />
+        <file path="/Users/jbeavers/work/install4j/mcidasv/release/icons/mcidasv_32x32.png" />
+        <file path="/Users/jbeavers/work/install4j/mcidasv/release/icons/mcidasv_60x60.png" />
+      </iconImageFiles>
+    </launcher>
   </launchers>
   <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
     <customCode />
@@ -267,6 +301,18 @@
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="8339" customizedId="" beanClass="com.install4j.runtime.beans.actions.registry.LoadInstallerVariablesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.registry.LoadInstallerVariablesAction">
+                      <void property="packageName">
+                        <string>${compiler:sys.applicationId}</string>
+                      </void>
+                    </object>
                   </java>
                 </serializedBean>
                 <condition />
@@ -532,7 +578,8 @@ return allowed;</validation>
                     </object>
                   </java>
                 </serializedBean>
-                <initScript />
+                <initScript>boolean isSelected = context.getBooleanVariable("createApplicationsLinkAction");
+configurationObject.setSelected(isSelected);</initScript>
                 <visibilityScript />
               </formComponent>
               <formComponent name="" id="7356" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="false" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
@@ -601,7 +648,10 @@ return allowed;</validation>
                     </object>
                   </java>
                 </serializedBean>
-                <initScript />
+                <initScript>String path = (String)context.getVariable("macosShortcutDirectory");
+if (path != null) {
+    configurationObject.setText(path);
+}</initScript>
                 <visibilityScript />
               </formComponent>
             </formComponents>
@@ -820,7 +870,7 @@ return allowed;</validation>
                       </void>
                       <void property="file">
                         <object class="java.io.File">
-                          <string>runMcV.bat</string>
+                          <string>mcidasv.exe</string>
                         </object>
                       </void>
                       <void property="name">
@@ -1165,6 +1215,44 @@ return Util.isWindows() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64
                 <condition>// os.arch returns the "bitness" of the JRE--not the OS
 String javaArch = System.getProperty("os.arch");
 return !Util.isWindows() &amp;&amp; !Util.isMacOS() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64".equals(javaArch);</condition>
+              </action>
+              <action name="Save OS X &quot;use launchers&quot; variable" id="8337" customizedId="" beanClass="com.install4j.runtime.beans.actions.registry.SaveInstallerVariablesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.registry.SaveInstallerVariablesAction">
+                      <void property="installerVariables">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>${installer:createApplicationsLinkAction}</string>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="packageName">
+                        <string>${compiler:sys.applicationId}</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>return Util.isMacOS();</condition>
+              </action>
+              <action name="Save OS X launcher dir if needed" id="8338" customizedId="" beanClass="com.install4j.runtime.beans.actions.registry.SaveInstallerVariablesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.registry.SaveInstallerVariablesAction">
+                      <void property="installerVariables">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>${installer:macosShortcutDirectory}</string>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="packageName">
+                        <string>${compiler:sys.applicationId}</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>return (Util.isMacOS() &amp;&amp; context.getBooleanVariable("createApplicationsLinkAction"));</condition>
               </action>
             </actions>
             <formComponents />
@@ -1545,14 +1633,129 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       </excludedComponents>
       <includedDownloadableComponents />
     </windows>
+    <windowsArchive name="Windows Archive 32-bit" id="8515" customizedId="" mediaFileName="" installDir="McIDAS-V" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_45.tar.gz" manualJREEntry="true">
+      <excludedLaunchers>
+        <launcher id="841" />
+        <launcher id="1330" />
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_7334" fileType="regular" />
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_fileset_7404" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
+        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8085" fileType="regular" />
+        <entry location=".i4j_fileset_8087" fileType="regular" />
+        <entry location=".i4j_fileset_8091" fileType="regular" />
+        <entry location=".i4j_fileset_8093" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+    </windowsArchive>
+    <windowsArchive name="Windows Archive 64-bit" id="8423" customizedId="" mediaFileName="" installDir="McIDAS-V" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-amd64-1.8.0_45" manualJREEntry="false">
+      <excludedLaunchers>
+        <launcher id="841" />
+        <launcher id="1330" />
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_7334" fileType="regular" />
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_fileset_7404" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
+        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8085" fileType="regular" />
+        <entry location=".i4j_fileset_8087" fileType="regular" />
+        <entry location=".i4j_fileset_8093" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+    </windowsArchive>
+    <windows name="mcidasv.exe Windows 32-bit" id="8509" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer_TEST" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_45.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+      <excludedLaunchers>
+        <launcher id="841" />
+        <launcher id="1330" />
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_7334" fileType="regular" />
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_fileset_7404" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
+        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8085" fileType="regular" />
+        <entry location=".i4j_fileset_8087" fileType="regular" />
+        <entry location=".i4j_fileset_8091" fileType="regular" />
+        <entry location=".i4j_fileset_8093" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <excludedComponents>
+        <component id="66" />
+        <component id="3653" />
+      </excludedComponents>
+      <includedDownloadableComponents />
+    </windows>
+    <windows name="mcidasv.exe Windows 64-bit" id="8430" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer_TEST" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_45.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+      <excludedLaunchers>
+        <launcher id="841" />
+        <launcher id="1330" />
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <excludedBeans />
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_7334" fileType="regular" />
+        <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_7408" fileType="regular" />
+        <entry location=".i4j_fileset_7404" fileType="regular" />
+        <entry location=".i4j_fileset_7410" fileType="regular" />
+        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry location=".i4j_fileset_8085" fileType="regular" />
+        <entry location=".i4j_fileset_8087" fileType="regular" />
+        <entry location=".i4j_fileset_8089" fileType="regular" />
+        <entry location=".i4j_fileset_8093" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <excludedComponents>
+        <component id="66" />
+        <component id="3653" />
+      </excludedComponents>
+      <includedDownloadableComponents />
+    </windows>
   </mediaSets>
-  <buildIds buildAll="true">
-    <mediaSet refId="3" />
-    <mediaSet refId="7557" />
-    <mediaSet refId="59" />
-    <mediaSet refId="12" />
-    <mediaSet refId="8" />
-    <mediaSet refId="7720" />
+  <buildIds buildAll="false">
+    <mediaSet refId="8515" />
+    <mediaSet refId="8423" />
+    <mediaSet refId="8509" />
+    <mediaSet refId="8430" />
   </buildIds>
   <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
 </install4j>

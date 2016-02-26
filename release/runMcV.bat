@@ -102,7 +102,7 @@ if ERRORLEVEL 1 GOTO end
 
 REM temp: toggles the CMS collector
 IF "%USE_CMSGC%"=="1" (
-SET GC_ARGS=-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled
+SET GC_ARGS=-J-XX:+UseConcMarkSweepGC -J-XX:+CMSClassUnloadingEnabled
 ) ELSE (
 SET GC_ARGS=
 )
@@ -149,7 +149,7 @@ echo Reading system configuration...
 SET /a SYS_MEM=0
 FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Didv.sysmem=%SYS_MEM% -Dvisad.java3d.textureNpot=%ALLOW_NPOT% -Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -DtextureWidthMax=%TEXTURE_SIZE% -userpath "%MCV_USERPATH%"
+SET MCV_FLAGS=-J-Didv.3d=%ENABLE_3D% -J-Didv.sysmem=%SYS_MEM% -J-Dvisad.java3d.textureNpot=%ALLOW_NPOT% -J-Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -J-Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -J-DtextureWidthMax=%TEXTURE_SIZE% -userpath "%MCV_USERPATH%"
 
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF NOT DEFINED STARTUP_BUNDLE GOTO endbundle
@@ -212,8 +212,8 @@ set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\mcidasv.jar
 set MCV_EXTPATH=-Djava.ext.dirs="jre\lib\ext"
 set MCV_LIBPATH=-Djava.library.path="jre\lib\ext"
 
-@echo Command line: jre\bin\java.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+@echo Command line: mcidasv.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+start /B mcidasv.exe -J-Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -J-Dpython.security.respectJavaAccessibility=false -J-Dloglevel=%LOGGING_LEVEL% -J-Dlogback.configurationFile=%LOGBACK_CONFIG% -J-Dmcv.userpath="%MCV_USERPATH%" -J-Dmcv.logpath="%MCV_LOGPATH%" %MCV_FLAGS% %MCV_PARAMS%
 
 :end
