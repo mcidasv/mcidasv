@@ -109,6 +109,7 @@ import javax.swing.text.JTextComponent;
 //import org.fife.ui.rtextarea.RTextScrollPane;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.ui.JythonEditor;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 import org.python.core.Py;
 import org.python.core.PyObject;
@@ -635,7 +636,7 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
             throws VisADException 
     {
         final LibHolder[] holderArray  = { null };
-        final MyPythonEditor jythonEditor = new MyPythonEditor() {
+        JythonEditor jythonEditor = new JythonEditor() {
             @Override public void undoableEditHappened(UndoableEditEvent e) {
                 if ((holderArray[0] != null)
                         && (holderArray[0].saveBtn != null)) {
@@ -722,8 +723,8 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
             }
         });
         
-        jythonEditor.setPreferredSize(new Dimension(500, 400));
-        JComponent wrapper = GuiUtils.center(jythonEditor);
+        jythonEditor.getScrollPane().setPreferredSize(new Dimension(500, 400));
+        JComponent wrapper = GuiUtils.center(jythonEditor.getScrollPane());
         LibHolder libHolder = new LibHolder(editable, this, label, jythonEditor, path, wrapper);
         
         holderArray[0] = libHolder;
@@ -986,7 +987,7 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
                 }
             }
             holder.pythonEditor.setEnabled(true);
-            holder.wrapper.add(BorderLayout.CENTER, holder.pythonEditor);
+            holder.wrapper.add(BorderLayout.CENTER, holder.pythonEditor.getScrollPane());
             holder.wrapper.repaint();
             editFileMenuItem.setEnabled(true);
         } catch (Exception exc) {
@@ -2110,7 +2111,7 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
         String label;
         
         /** widget */
-        MyPythonEditor pythonEditor;
+        JythonEditor pythonEditor;
         
         /** file */
         String filePath;
@@ -2138,7 +2139,7 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
          * @param wrapper wrapper
          */
         public LibHolder(boolean editable, JythonManager jythonManager,
-            String label, MyPythonEditor editor, String filePath, 
+            String label, JythonEditor editor, String filePath,
             JComponent wrapper) 
         {
             this.pythonEditor = editor;
