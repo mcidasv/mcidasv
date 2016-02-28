@@ -76,6 +76,8 @@ public class JythonEditor implements UndoableEditListener {
         scrollPane = new RTextScrollPane(textArea);
 
         undo = new UndoManager();
+
+        addUndoableEditListener(this);
     }
 
     /**
@@ -178,5 +180,21 @@ public class JythonEditor implements UndoableEditListener {
         }
     }
 
+    /**
+     * Adds the given undoable edit listener to {@link #textArea}.
+     *
+     * @param l Listener to add.
+     */
+    public void addUndoableEditListener(UndoableEditListener l) {
+        textArea.getDocument().addUndoableEditListener(l);
+    }
 
+    /**
+     * Remove the given undoable edit listener from {@link #textArea}.
+     *
+     * @param l Listener to remove.
+     */
+    public void removeUndoableEditListener(UndoableEditListener l) {
+        textArea.getDocument().removeUndoableEditListener(l);
+    }
 }
