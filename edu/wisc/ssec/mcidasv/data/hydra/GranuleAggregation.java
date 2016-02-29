@@ -91,6 +91,9 @@ public class GranuleAggregation implements MultiDimensionReader {
    // except quality flags - only need one hashmap per aggregation
    // it maps the broken out variable name back to the original packed variable name
    Map<String, QualityFlag> qfMap = null;
+   
+   // For those variables which are assembled from other variables based on LUTs
+   Map<String, float[]> lutMap = null;
 
    // variable can have bulk array processor set by the application
    Map<String, RangeProcessor> varToRangeProcessor = new HashMap<>();
@@ -134,16 +137,19 @@ public class GranuleAggregation implements MultiDimensionReader {
 
    public Class getArrayType(String array_name) {
 	   array_name = mapNameIfQualityFlag(array_name);
+	   array_name = mapNameIfLUTVar(array_name);
 	   return varDataTypeList.get(0).get(array_name);
    }
 
    public String[] getDimensionNames(String array_name) {
 	   array_name = mapNameIfQualityFlag(array_name);
+	   array_name = mapNameIfLUTVar(array_name);
 	   return varDimNamesList.get(0).get(array_name);
    }
 
    public int[] getDimensionLengths(String array_name) {
 	   array_name = mapNameIfQualityFlag(array_name);
+	   array_name = mapNameIfLUTVar(array_name);
 	   return varAggrDimLengths.get(array_name);
    }
 
@@ -155,6 +161,21 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   origName = array_name;
 			   QualityFlag qf = qfMap.get(array_name);
 			   String mappedName = qf.getPackedName();
+			   logger.debug("Key: " + array_name + " mapped to: " + mappedName);
+			   return mappedName;
+		   }
+	   }
+	   return array_name;
+   }
+   
+   private String mapNameIfLUTVar(String array_name) {
+	   // only applies if name is from a LUT pseudo variable
+	   // we pull data from a "mapped" variable name, and apply a LUT to that variable
+	   origName = "";
+	   if (lutMap != null) {
+		   if (lutMap.containsKey(array_name)) {
+			   origName = array_name;
+			   String mappedName = array_name.substring(0, array_name.length() - 3);
 			   logger.debug("Key: " + array_name + " mapped to: " + mappedName);
 			   return mappedName;
 		   }
@@ -579,7 +600,9 @@ public class GranuleAggregation implements MultiDimensionReader {
    
    private synchronized Object readArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
 	   
+	   String mapName = array_name;
 	   array_name = mapNameIfQualityFlag(array_name);
+	   array_name = mapNameIfLUTVar(array_name);
 	   // how many dimensions are we dealing with
 	   int dimensionCount = start.length;
 	   
@@ -672,7 +695,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   // or is this the first of multiple granules...
 					   } else {
 						   if ((inTrackTotal - start[j]) < (count[j] * stride[j])) {	
-                                                           countSet[i][j] = inTrackTotal - start[j];
+                               countSet[i][j] = inTrackTotal - start[j];
 						   } else {
 							   countSet[i][j] = count[j] * stride[j];
 						   }
@@ -792,7 +815,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   for (Array a : arrayList) {
 		   if (a != null) {
 			   Object primArray = a.copyTo1DJavaArray();
-			   primArray = processArray(array_name, arrayType, granIdx, primArray, rngProcessor, start, count);
+			   primArray = processArray(mapName, array_name, arrayType, granIdx, primArray, rngProcessor, start, count);
 			   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
 			   destPos += a.getSize();
 		   }
@@ -805,9 +828,18 @@ public class GranuleAggregation implements MultiDimensionReader {
    /**
     * @param qfMap the qfMap to set
     */
+   
    public void setQfMap(Map<String, QualityFlag> qfMap) {
 	   this.qfMap = qfMap;
    }
+   
+   /**
+    * @param lutMap the lutMap to set
+    */
+   
+   public void setLUTMap(Map<String, float[]> lutMap) {
+	   this.lutMap = lutMap;
+   }   
 
    public Map<String, Variable> getVarMap() {
 	   return varMapList.get(0);
@@ -818,35 +850,41 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    /* pass individual granule pieces just read from dataset through the RangeProcessor */
-   private Object processArray(String array_name, Class arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start, int[] count) {
-	   
+   private Object processArray(String mapName, String array_name, Class arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start, int[] count) {
+
 	   if (rngProcessor == null) {
 		   return values;
 	   }
-           else {
-                   ((AggregationRangeProcessor)rngProcessor).setWhichRangeProcessor(granIdx);
+	   else {
+		   ((AggregationRangeProcessor) rngProcessor).setWhichRangeProcessor(granIdx);
 
-                   Object outArray = null;
+		   Object outArray = null;
 
-                   if (arrayType == Short.TYPE) {
-                       outArray = rngProcessor.processRange((short[]) values, null);
-                   } else if (arrayType == Byte.TYPE) {
-        	   // if variable is a bit-field quality flag, apply mask
-         	   if ((qfMap != null) && (qfMap.containsKey(origName))) {
-        		   QualityFlag qf = qfMap.get(origName);
-        		   outArray = rngProcessor.processRangeQualityFlag((byte[]) values, null, qf);
-        	   } else {
-        		   outArray = rngProcessor.processRange((byte[]) values, null);
-        	   }
-           } else if (arrayType == Float.TYPE) {
-              outArray = rngProcessor.processRange((float[]) values, null);
-           } else if (arrayType == Double.TYPE) {
-              outArray = rngProcessor.processRange((double[]) values, null);
-           }
+		   if (arrayType == Short.TYPE) {
+			   // if variable is a LUT var, apply LUT
+			   if ((lutMap != null) && (lutMap.containsKey(mapName))) {
+				   float lut[] = lutMap.get(mapName);
+				   outArray = rngProcessor.processRangeApplyLUT((short []) values, lut);
+			   } else {
+				   outArray = rngProcessor.processRange((short[]) values, null);
+			   }
+		   } else if (arrayType == Byte.TYPE) {
+			   // if variable is a bit-field quality flag, apply mask
+			   if ((qfMap != null) && (qfMap.containsKey(origName))) {
+				   QualityFlag qf = qfMap.get(origName);
+				   outArray = rngProcessor.processRangeQualityFlag((byte[]) values, null, qf);
+			   } else {
+				   outArray = rngProcessor.processRange((byte[]) values, null);
+			   }
+		   } else if (arrayType == Float.TYPE) {
+			   outArray = rngProcessor.processRange((float[]) values, null);
+		   } else if (arrayType == Double.TYPE) {
+			   outArray = rngProcessor.processRange((double[]) values, null);
+		   }
 
-        
-        return outArray;
-     }
+
+		   return outArray;
+	   }
    }
 
    /* Application can supply a RangeProcessor for a variable 'arrayName' */

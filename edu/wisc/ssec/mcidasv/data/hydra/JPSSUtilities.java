@@ -55,6 +55,8 @@ import ucar.nc2.NetcdfFile;
 public abstract class JPSSUtilities {
    
 	public static final String JPSS_FIELD_SEPARATOR = "_";
+	public static final int NASA_CREATION_DATE_INDEX = 28;
+	public static final int NOAA_CREATION_DATE_INDEX = 35;
 	
 	// This regular expression matches a Suomi NPP Data Product as defined by the 
 	// NOAA spec in CDFCB-X Volume 1, Page 21

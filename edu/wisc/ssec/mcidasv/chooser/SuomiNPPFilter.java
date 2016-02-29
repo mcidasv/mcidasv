@@ -55,8 +55,6 @@ public class SuomiNPPFilter extends FileFilter {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPFilter.class);
 	private static final String PRODUCT_SEPARATOR = "-";
-	private static final int NASA_CREATION_DATE_INDEX = 28;
-	private static final int NOAA_CREATION_DATE_INDEX = 35;
 	private static String PREV_DIRECTORY = null;
 	private HashMap<String, File> seenGranules = new HashMap<String, File>();
 	private HashMap<String, File> validGranules = new HashMap<String, File>();
@@ -244,8 +242,10 @@ public class SuomiNPPFilter extends FileFilter {
 	    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
 	    						int geoStartIdx = geoFilename.indexOf("_d");
 	    						int prdStartIdx = fileNameRelative.indexOf("_d");
-	    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + NOAA_CREATION_DATE_INDEX);
-	    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + NOAA_CREATION_DATE_INDEX);
+	    						String s1 = 
+	    							geoFilename.substring(geoStartIdx, geoStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
+	    						String s2 = 
+	    							fileNameRelative.substring(prdStartIdx, prdStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 	    						if (s1.equals(s2)) {
 	    							isSuomiNPP = true;
 	    							break;
@@ -288,8 +288,10 @@ public class SuomiNPPFilter extends FileFilter {
 	    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
 	    						int geoStartIdx = geoFilename.indexOf("_d");
 	    						int prdStartIdx = fileNameRelative.indexOf("_d");
-	    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + NOAA_CREATION_DATE_INDEX);
-	    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + NOAA_CREATION_DATE_INDEX);
+	    						String s1 = 
+	    							geoFilename.substring(geoStartIdx, geoStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
+	    						String s2 = 
+	    							fileNameRelative.substring(prdStartIdx, prdStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 	    						if (s1.equals(s2)) {
 	    							isSuomiNPP = true;
 	    							break;
@@ -331,8 +333,10 @@ public class SuomiNPPFilter extends FileFilter {
     					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
     						int geoStartIdx = geoFilename.indexOf("_d");
     						int prdStartIdx = fileNameRelative.indexOf("_d");
-    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + NASA_CREATION_DATE_INDEX);
-    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + NASA_CREATION_DATE_INDEX);
+    						String s1 = 
+    							geoFilename.substring(geoStartIdx, geoStartIdx + JPSSUtilities.NASA_CREATION_DATE_INDEX);
+    						String s2 = 
+    							fileNameRelative.substring(prdStartIdx, prdStartIdx + JPSSUtilities.NASA_CREATION_DATE_INDEX);
     						if (s1.equals(s2)) {
     							isSuomiNPP = true;
     							break;

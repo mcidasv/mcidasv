@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.wisc.ssec.mcidasv.data.QualityFlag;
-
 import visad.util.Util;
 
 public class RangeProcessor {
@@ -277,7 +276,13 @@ public class RangeProcessor {
 			else if (arrayAttr.getType().equals(Short.TYPE)) {
 				short[] attr = (short[]) arrayAttr.getArray();
 				dblArray = new double[attr.length];
-				for (int k=0; k<attr.length; k++) dblArray[k] = (double) attr[k];
+				for (int k=0; k<attr.length; k++) {
+					if (unsigned) {
+						dblArray[k] = (double) Util.unsignedShortToInt((short) attr[k]);
+					} else {
+						dblArray[k] = (double) attr[k];
+					}
+				}
 			}
 			else if (arrayAttr.getType().equals(Integer.TYPE)) {
 				int[] attr = (int[]) arrayAttr.getArray();
@@ -316,6 +321,7 @@ public class RangeProcessor {
 	 *
 	 * @return Processed range.
 	 */
+ 	
 	public float[] processRangeQualityFlag(byte[] values, Map subset,
 			QualityFlag qf) {
 
@@ -682,6 +688,36 @@ public class RangeProcessor {
 
 	public void setMultiScaleIndex(int idx) {
 		this.soIndex = idx;
+	}
+
+	/**
+	 * Should be generalized. For now works for short to float conversions
+	 * 
+	 * @param values the set of input values to map
+	 * @param lut the lookup table for direct mapping input to output values
+	 * @return output array as primitive floats
+	 */
+	
+	public Object processRangeApplyLUT(short[] values, float[] lut) {
+
+		float[] newValues = new float[values.length];
+
+		int lutLen = lut.length;
+
+		for (int i = 0; i < values.length; i++) {
+			short tmpVal = values[i];
+			if (tmpVal > 0) {
+				if (tmpVal < lutLen) {
+					newValues[i] = lut[tmpVal];
+				} else {
+					newValues[i] = Float.NaN;
+				}
+			} else {
+				newValues[i] = Float.NaN;
+			}
+		}
+
+		return newValues;
 	}
 
 }
