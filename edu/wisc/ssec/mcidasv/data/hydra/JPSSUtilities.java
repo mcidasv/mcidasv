@@ -46,7 +46,7 @@ import ucar.nc2.NetcdfFile;
  * Utility class to support Joint Polar Satellite System (JPSS) functionality.
  * Documentation referenced is from Suomi NPP Common Data Format Control Book.
  * See:
- * http://jointmission.gsfc.nasa.gov/science/documents.html
+ * http://npp.gsfc.nasa.gov/documents.html
  * 
  * @author tommyj
  *
@@ -83,20 +83,17 @@ public abstract class JPSSUtilities {
     		".h5";
 	
 	// This regular expression matches a Suomi NPP Data Product as defined by the 
-	// NASA spec in TBD
+	// NASA spec in TBD (XXX TJJ - find out where is this documented?)
 	public static final String SUOMI_NPP_REGEX_NASA =
-			// Sensor - right now, only VIIRS
-			"viirs" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
-			// Always .L1B
-    		"l1b-" + 
-    		// Always m (M-Band), i (I-Band), or d (DNB)
-    		"[dim]" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+			// Product Id, Single (ex: VL1BM)
+			// NOTE: These are the only supported NASA data at this time
+    		"(VL1BD|VL1BI|VL1BM)" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
     		// Platform - always Suomi NPP
     		"snpp" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
     		// Data Start Date (ex: dYYYYMMDD)
     		"d20[0-3]\\d[0-1]\\d[0-3]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
     		// Data Start Time (ex: tHHMM)
-    		"t[0-2]\\d[0-5]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		"t[0-2]\\d[0-5]\\d\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
     		// Creation Date (ex: cYYYYMMDDHHMMSSSSSSSS)
     		"c20[0-3]\\d[0-1]\\d[0-3]\\d\\d\\d\\d\\d\\d\\d" +
     		// NetCDF 4 suffix
@@ -105,18 +102,16 @@ public abstract class JPSSUtilities {
 	// This regular expression matches a Suomi NPP geolocation file as defined by the 
 	// NASA spec in TBD
 	public static final String SUOMI_GEO_REGEX_NASA =
-			// Sensor - right now, only VIIRS
-			"viirs" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
-			// Always .L1B
-    		"geo-" + 
-    		// Always m (M-Band), i (I-Band), or d (DNB)
-    		"[dim]" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+			// Product Id, Single (ex: VGEOM)
+			// NOTE: This MUST match the list of product ids in static array in this file!
+    		"(VGEOD|VGEOI|VGEOM)" + 
+			JPSSUtilities.JPSS_FIELD_SEPARATOR +
     		// Platform - always Suomi NPP
     		"snpp" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
     		// Data Start Date (ex: dYYYYMMDD)
     		"d20[0-3]\\d[0-1]\\d[0-3]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
     		// Data Start Time (ex: tHHMM)
-    		"t[0-2]\\d[0-5]\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+    		"t[0-2]\\d[0-5]\\d\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
     		// Creation Date (ex: cYYYYMMDDHHMMSSSSSSSS)
     		"c20[0-3]\\d[0-1]\\d[0-3]\\d\\d\\d\\d\\d\\d\\d" +
     		// NetCDF 4 suffix
@@ -194,6 +189,9 @@ public abstract class JPSSUtilities {
     	"GCRIO",
     	"GATRO",
     	"IVMIM",
+        "VGEOD",
+        "VGEOI",
+        "VGEOM",
     	"VMUGE"
 	};  
 	
