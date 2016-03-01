@@ -1272,21 +1272,25 @@
     <!-- BEGIN OSX APP BUNDLE STUFF -->
     <property name="version.public" value="1.6beta1" />
 
-    <!-- output from echo "McIDAS-V 1.6beta1" | shasum -a 256" -->
-    <property name="version.internal" value="a944eb95790eb18055134b06065c84d11bb6df53a8397337a69723dc03486549" />
-
     <property name="bundle.icon" value="release/icons/mcidasv.icns" />
-
-    <!-- TODO(jon): use output from "/usr/libexec/java_home -v 1.8" -->
-    <property name="runtime_17" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk" />
-    <property name="runtime_18" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_76.jdk" />
-    <property name="runtime_19" value="/Library/Java/JavaVirtualMachines/jdk1.9.0.jdk" />
 
     <target name="bundle_18">
         <mkdir dir="${dist.dir}" />
         <taskdef name="bundleapp"
                  classpath="lib/build/appbundler-1.0ea.jar"
                  classname="com.oracle.appbundler.AppBundlerTask" />
+
+        <!-- get SHA512 checksum of edu/wisc/ssec/mcidasv/resources/version.properties -->
+        <exec executable="/bin/bash" outputproperty="version.internal" failifexecutionfails="true">
+            <arg value="-c" />
+            <arg value="/usr/bin/shasum -a 512 ${ver.props} | head -n1 | awk '{print $1;}'" />
+        </exec>
+
+        <!-- locate the system's Java 1.8 -->
+        <exec executable="/usr/libexec/java_home" outputproperty="runtime_18" failifexecutionfails="true">
+            <arg value="-v" />
+            <arg value="1.8" />
+        </exec>
 
         <bundleapp classpathref="app.classpath"
                    outputdirectory="${dist.dir}"
@@ -1306,7 +1310,7 @@
             <!-- NOTE: osx local servers need to be $PWD/adde -->
             <sharedsupport path="lib/build/adde" />
 
-            <runtime dir="${runtime_18}/Contents/Home"/>
+            <runtime dir="${runtime_18}"/>
             <arch name="x86_64"/>
             <!-- Workaround since the icon parameter for bundleapp doesn't work -->
             <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
