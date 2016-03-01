@@ -1307,7 +1307,7 @@
                    applicationCategory="public.app-category.weather">
 
             <!-- TODO(jon): can/should we bundle the local servers in the repo? -->
-            <!-- NOTE: osx local servers need to be $PWD/adde -->
+            <!-- NOTE: osx local servers need to be $PWD/lib/build/adde -->
             <sharedsupport path="lib/build/adde" />
 
             <runtime dir="${runtime_18}"/>
