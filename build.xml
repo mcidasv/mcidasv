@@ -1269,6 +1269,65 @@
         </zip>
     </target>
 
+    <!-- BEGIN OSX APP BUNDLE STUFF -->
+    <property name="version.public" value="1.6beta1" />
+
+    <!-- output from echo "McIDAS-V 1.6beta1" | shasum -a 256" -->
+    <property name="version.internal" value="a944eb95790eb18055134b06065c84d11bb6df53a8397337a69723dc03486549" />
+
+    <property name="bundle.icon" value="release/icons/mcidasv.icns" />
+
+    <!-- TODO(jon): use output from "/usr/libexec/java_home -v 1.8" -->
+    <property name="runtime_17" value="/Library/Java/JavaVirtualMachines/jdk1.7.0_65.jdk" />
+    <property name="runtime_18" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_76.jdk" />
+    <property name="runtime_19" value="/Library/Java/JavaVirtualMachines/jdk1.9.0.jdk" />
+
+    <target name="bundle_18">
+        <mkdir dir="${dist.dir}" />
+        <taskdef name="bundleapp"
+                 classpath="lib/build/appbundler-1.0ea.jar"
+                 classname="com.oracle.appbundler.AppBundlerTask" />
+
+        <bundleapp classpathref="app.classpath"
+                   outputdirectory="${dist.dir}"
+                   name="McIDAS-V (JAVA 8)"
+                   displayname="McIDAS-V"
+                   executableName="mcidasv"
+                   identifier="edu.wisc.ssec.mcidasv.16b1"
+                   shortversion="${version.public}"
+                   version="${version.internal}"
+                   icon="${bundle.icon}"
+                   mainclassname="edu.wisc.ssec.mcidasv.McIDASV"
+                   copyright="2016"
+                   debug="true"
+                   applicationCategory="public.app-category.weather">
+
+            <!-- TODO(jon): can/should we bundle the local servers in the repo? -->
+            <!-- NOTE: osx local servers need to be $PWD/adde -->
+            <sharedsupport path="lib/build/adde" />
+
+            <runtime dir="${runtime_18}/Contents/Home"/>
+            <arch name="x86_64"/>
+            <!-- Workaround since the icon parameter for bundleapp doesn't work -->
+            <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
+            <option value="-Dapple.laf.useScreenMenuBar=true"/>
+            <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+            <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
+            <option value="-Dcom.apple.mrj.application.apple.menu.about.name=McIDAS-V"/>
+            <option value="-Dcom.apple.smallTabs=true"/>
+            <option value="-Dfile.encoding=UTF-8"/>
+            <option value="-Dpython.security.respectJavaAccessibility=false" />
+            <option value="-Ddebug.localadde.rootdir=$APP_ROOT/Contents/SharedSupport/adde" />
+            <option name="logback" value="-Dlogback.configurationFile=$USER_HOME/Documents/McIDAS-V/logback.xml" />
+            <option name="userpath" value="-Dmcv.userpath=$USER_HOME/Documents/McIDAS-V" />
+            <option name="mcidasvlog" value="-Dmcv.logpath=$USER_HOME/Documents/McIDAS-V/mcidasv.log" />
+            <argument value="-forceaqua" />
+            <argument value="-userpath" />
+            <argument value="$USER_HOME/Documents/McIDAS-V" />
+        </bundleapp>
+    </target>
+    <!-- END OSX APP BUNDLE STUFF -->
+
     <!--                           HERE BE DRAGONS                           -->
     <!-- These things allow you to automatically use YourKit to profile an   -->
     <!-- ant build. Everything is still rather simplistic, but you may find  -->
