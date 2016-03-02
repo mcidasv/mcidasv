@@ -81,8 +81,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -102,15 +100,10 @@ import javax.swing.event.MenuListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.text.JTextComponent;
 
-//import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-//import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-//import org.fife.ui.rsyntaxtextarea.SyntaxScheme;
-//import org.fife.ui.rsyntaxtextarea.Token;
-//import org.fife.ui.rtextarea.RTextScrollPane;
-
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ui.JythonEditor;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
+
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -127,7 +120,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import visad.VisADException;
-import visad.python.JPythonEditor;
 
 import ucar.unidata.data.DataCancelException;
 import ucar.unidata.data.DataCategory;
@@ -168,7 +160,9 @@ import ucar.unidata.util.TwoFacedObject;
  * 
  * @author IDV development team
  */
-public class JythonManager extends IdvManager implements ActionListener, OnFileChangeListener {
+public class JythonManager extends IdvManager implements ActionListener,
+    OnFileChangeListener
+{
     
     /** Trusty logging object. */
     private static final Logger logger =
@@ -646,15 +640,16 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
                 super.undoableEditHappened(e);
             }
         };
-        jythonEditor.getTextComponent().addKeyListener(new KeyAdapter() {
-            @Override public void keyPressed(KeyEvent e) {
-                if (GuiUtils.isControlKey(e, KeyEvent.VK_F)) {
-                    //TODO:
-                    //                    findFld.requestFocus();
-                    //                    findFld.selectAll();
-                }
-            }
-        });
+//        // TODO(jon): looks like this was attempting to handle CTRL+F for "find"
+//        jythonEditor.getTextComponent().addKeyListener(new KeyAdapter() {
+//            @Override public void keyPressed(KeyEvent e) {
+//                if (GuiUtils.isControlKey(e, KeyEvent.VK_F)) {
+//                    //TODO:
+//                    //                    findFld.requestFocus();
+//                    //                    findFld.selectAll();
+//                }
+//            }
+//        });
         jythonEditor.getTextComponent().addMouseListener(new MouseAdapter() {
             @Override public void mouseReleased(MouseEvent e) {
                 holderArray[0].setSearchIndex(new Point(e.getX(), e.getY()));
@@ -736,31 +731,9 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
         if (text == null) {
             text = "";
         }
-        if (text != null) {
-            jythonEditor.setText(text);
-            
-            /**
-             * for highlighting text
-             * List funcs = findJythonMethods(true,
-             *                              Misc.newList(libHolder));
-             * Highlighter highlighter = jythonEditor.getTextComponent().getHighlighter();
-             * DefaultHighlighter.DefaultHighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.red);
-             * try {
-             *   for (int i = 0; i < funcs.size(); i++) {
-             *       PyFunction func = (PyFunction) funcs.get(i);
-             *       String name = func.__name__;
-             *       String funcDef = "def "+ name+"(";
-             *       int idx = text.indexOf(funcDef);
-             *       if(idx>=0) {
-             *           highlighter.addHighlight(idx,idx+funcDef.length(), painter);
-             *       }
-             *   }
-             * } catch (Exception exc) {
-             *   logException("An error occurred highlighting the jython library: " +path,
-             *                exc);
-             * }
-             */
-        }
+
+        jythonEditor.setText(text);
+
         if (libHolder.saveBtn != null) {
             libHolder.saveBtn.setEnabled(false);
         }
@@ -918,7 +891,7 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
      * Edit the jython in the external editor
      */
     public void editInExternalEditor() {
-        Misc.run(this, "editInExternalEditorInner", findVisibleComponent());
+        Misc.run(() -> this.editInExternalEditorInner(findVisibleComponent()));
     }
     
     /**
@@ -1558,7 +1531,6 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
             fos.close();
         } catch (Throwable exc) {
             logException("Writing user formulas", exc);
-            return;
         }
     }
     
@@ -2091,10 +2063,7 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
     }
 
     /**
-     * Class LibHolder holds all things for a single lib
-     * 
-     * @author IDV Development Team
-     * @version $Revision$
+     * LibHolder holds all things for a single Jython library.
      */
     public static class LibHolder extends TextSearcher.TextWrapper {
         
@@ -2110,7 +2079,7 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
         /** label */
         String label;
         
-        /** widget */
+        /** Widget that contains text of {@link #filePath}. */
         JythonEditor pythonEditor;
         
         /** file */
@@ -2129,14 +2098,15 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
         Process editProcess;
         
         /**
-         * ctor
+         * Creates a {@code LibHolder} for the given file from the user's
+         * Jython Library.
          * 
-         * @param editable am I editable
-         * @param jythonManager the jython manager
-         * @param label lable
-         * @param editor editor
-         * @param filePath lib file
-         * @param wrapper wrapper
+         * @param editable Whether or not this library accepts changes.
+         * @param jythonManager Application's {@code JythonManager}.
+         * @param label Label
+         * @param editor Editor
+         * @param filePath Path to library file.
+         * @param wrapper Wrapper
          */
         public LibHolder(boolean editable, JythonManager jythonManager,
             String label, JythonEditor editor, String filePath,
@@ -2251,115 +2221,10 @@ public class JythonManager extends IdvManager implements ActionListener, OnFileC
         }
         
         /**
-         * copy
+         * Copies the selected text into the system clipboard.
          */
         public void copy() {
             pythonEditor.copy();
         }
     }
-    
-    /**
-     * Class MyPythonEditor the editor class
-     * 
-     * @author IDV Development Team
-     * @version $Revision$
-     */
-    @SuppressWarnings("serial")
-    private static class MyPythonEditor extends JPythonEditor {
-        /**
-         * ctor
-         * 
-         * @throws VisADException on badness
-         */
-        public MyPythonEditor() throws VisADException {}
-        
-        /**
-         * get the component that shows the line numbers
-         *
-         * @return line number component
-         */
-        public JTextComponent getLineNumberComponent() {
-            return lineNumbers;
-        }
-    }
-    
-//    /**
-//     * Class MyPythonEditor the editor class
-//     *
-//     *
-//     * @author IDV Development Team
-//     * @version $Revision$
-//     */
-//    @SuppressWarnings("serial")
-//    private static class MyPythonEditor extends JPythonEditor {
-//        private RSyntaxTextArea textArea;
-//        /**
-//         * ctor
-//         *
-//         * @throws VisADException on badness
-//         */
-//        public MyPythonEditor() throws VisADException {
-//            textArea = new RSyntaxTextArea();
-//        }
-//
-//        /**
-//         * get the component that shows the line numbers
-//         *
-//         * @return line number component
-//         */
-//        public JTextComponent getLineNumberComponent() {
-//            return lineNumbers;
-//        }
-//        
-//        public JTextComponent getTextComponent() {
-//            return (JTextComponent)textArea;
-//        }
-////        private static  RSyntaxTextArea comp;
-//        private static RSyntaxTextArea buildTextComponent() {
-//            
-//            SwingUtilities.invokeLater(new Runnable() {
-//                public void run() {
-//                    comp = new RSyntaxTextArea();
-//                }
-//            });
-//            return comp;
-//        }
-//    }
-//
-//    public static void runDemo() {
-//        SwingUtilities.invokeLater(new Runnable() {
-//            public void run() {
-//                new TextEditorDemo().setVisible(true);
-//            }
-//        });
-//    }
-//    public static class TextEditorDemo extends JFrame {
-//        public final String demoText = "def foo(str='w00t'):\n    print 'hi'\n    return str + 'w00t'\n\n\nif __name__ == '__main__':\n    print foo()\n\n";
-//        public TextEditorDemo() {
-//            JPanel cp = new JPanel(new BorderLayout());
-//            RSyntaxTextArea textArea = new RSyntaxTextArea();
-//            textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
-//            RTextScrollPane sp = new RTextScrollPane(textArea);
-//            cp.add(sp);
-//
-//            textArea.setText(demoText);
-//            
-//            SyntaxScheme scheme = textArea.getSyntaxScheme();
-//            scheme.getStyle(Token.WHITESPACE).foreground = Color.DARK_GRAY;
-//
-//            textArea.setTabsEmulated(true);
-//            textArea.setTabSize(4);
-//            textArea.setWhitespaceVisible(true);
-//            textArea.setMarkOccurrences(true);
-//            textArea.setEOLMarkersVisible(true);
-//            textArea.setAutoIndentEnabled(true);
-//            
-//            
-//            setContentPane(cp);
-//            setTitle("syntax highlighting demo");
-//            setDefaultCloseOperation(EXIT_ON_CLOSE);
-//            pack();
-//            setLocationRelativeTo(null);
-//        }
-//    }
 }
