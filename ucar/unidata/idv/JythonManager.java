@@ -664,6 +664,8 @@ public class JythonManager extends IdvManager implements ActionListener,
                 List items = new ArrayList();
                 JMenuItem helpMenuItem = null;
                 if ((idx < 0) || (idx >= text.length())) {
+                    JPopupMenu popup = jythonEditor.createPopupMenu();
+                    popup.show(jythonEditor.getTextComponent(), e.getX(), e.getY());
                     return;
                 }
                 while (idx >= 0) {
@@ -712,7 +714,7 @@ public class JythonManager extends IdvManager implements ActionListener,
                 }
                 JPopupMenu popup = makePopupMenu(items);
                 if (popup == null) {
-                    return;
+                    popup = jythonEditor.createPopupMenu();
                 }
                 popup.show(jythonEditor.getTextComponent(), e.getX(), e.getY());
             }

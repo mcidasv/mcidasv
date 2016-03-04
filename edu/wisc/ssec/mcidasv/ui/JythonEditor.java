@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.ui;
 
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
@@ -42,11 +43,15 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 /**
  * A bare-bones text editor that can do relatively robust syntax highlighting
  * of Jython code.
+ *
+ * <p>This class relies <i>very heavily</i> upon the wonderful
+ * <a href="https://github.com/bobbylight/RSyntaxTextArea">RSyntaxTextArea</a>
+ * project.</p>
  */
 public class JythonEditor implements UndoableEditListener {
 
     /** Text area that contains the syntax-highlighted text. */
-    private final RSyntaxTextArea textArea;
+    private final McvJythonTextArea textArea;
 
     /** Scroll pane for {@link #textArea}. */
     private final RTextScrollPane scrollPane;
@@ -58,7 +63,8 @@ public class JythonEditor implements UndoableEditListener {
      * Creates a new JythonEditor.
      */
     public JythonEditor() {
-        textArea = new RSyntaxTextArea(20, 60);
+        textArea = new McvJythonTextArea(20, 60);
+
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
 
         textArea.setCodeFoldingEnabled(true);
@@ -196,5 +202,35 @@ public class JythonEditor implements UndoableEditListener {
      */
     public void removeUndoableEditListener(UndoableEditListener l) {
         textArea.getDocument().removeUndoableEditListener(l);
+    }
+
+    /**
+     * Returns the default {@link JPopupMenu} created by
+     * {@link RSyntaxTextArea#createPopupMenu()}.
+     *
+     * @return Popup menu.
+     */
+    public JPopupMenu createPopupMenu() {
+        return textArea.makePopupMenu();
+    }
+
+    public static class McvJythonTextArea extends RSyntaxTextArea {
+
+        McvJythonTextArea(int rows, int columns) {
+            super(rows, columns);
+        }
+
+        @Override protected JPopupMenu createPopupMenu() {
+            // this is needed so that the popup is disabled by default, which
+            // allows JythonManager's addMouseListener stuff to work a bit
+            // better.
+            return null;
+        }
+
+        public JPopupMenu makePopupMenu() {
+            // this method is mostly for getting around the fact that
+            // createPopupMenu is protected
+            return super.createPopupMenu();
+        }
     }
 }
