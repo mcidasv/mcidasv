@@ -56,6 +56,8 @@ import static ucar.unidata.util.StringUtil.split;
 import static ucar.unidata.util.StringUtil.stringMatch;
 import static ucar.unidata.xml.XmlUtil.getRoot;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -94,6 +96,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
@@ -101,6 +104,7 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.text.JTextComponent;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.JythonEditor;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 
@@ -422,6 +426,13 @@ public class JythonManager extends IdvManager implements ActionListener,
      */
     public void showJythonEditor() {
         super.show();
+        LibHolder visible = findVisibleComponent();
+        if (visible != null) {
+            logger.trace("showing '{}'", visible.filePath);
+            visible.getTextComponent().requestFocusInWindow();
+        } else {
+            logger.trace("no visible component!! :(");
+        }
     }
 
     /**
@@ -575,7 +586,7 @@ public class JythonManager extends IdvManager implements ActionListener,
             return null;
         }
     }
-    
+
     /**
      * Save on exit if anything is changed
      *
@@ -641,15 +652,15 @@ public class JythonManager extends IdvManager implements ActionListener,
             }
         };
 //        // TODO(jon): looks like this was attempting to handle CTRL+F for "find"
-//        jythonEditor.getTextComponent().addKeyListener(new KeyAdapter() {
-//            @Override public void keyPressed(KeyEvent e) {
-//                if (GuiUtils.isControlKey(e, KeyEvent.VK_F)) {
-//                    //TODO:
-//                    //                    findFld.requestFocus();
-//                    //                    findFld.selectAll();
-//                }
-//            }
-//        });
+        jythonEditor.getTextComponent().addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent e) {
+                if (McIDASV.isMac() && e.isMetaDown() && e.getKeyCode() == KeyEvent.VK_F) {
+                    textSearcher.getFindFld().requestFocusInWindow();
+                } else if (!McIDASV.isMac() && GuiUtils.isControlKey(e, KeyEvent.VK_F)) {
+                    textSearcher.getFindFld().requestFocusInWindow();
+                }
+            }
+        });
         jythonEditor.getTextComponent().addMouseListener(new MouseAdapter() {
             @Override public void mouseReleased(MouseEvent e) {
                 holderArray[0].setSearchIndex(new Point(e.getX(), e.getY()));

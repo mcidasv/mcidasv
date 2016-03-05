@@ -137,7 +137,10 @@ public class TextSearcher extends JPanel {
                 if (e.isControlDown()) {
                     return;
                 }
-                if (e.getKeyCode() != e.VK_ENTER) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    JTextComponent comp = getTextWrapper().getTextComponent();
+                    comp.requestFocusInWindow();
+                } else if (e.getKeyCode() != KeyEvent.VK_ENTER) {
                     searchFor(findFld.getText(), true);
                 }
             }
@@ -205,7 +208,9 @@ public class TextSearcher extends JPanel {
         return textWrapper;
     }
 
-
+    public JTextField getFindFld() {
+        return findFld;
+    }
 
     /**
      * Class TextWrapper _more_
