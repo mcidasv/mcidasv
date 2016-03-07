@@ -651,13 +651,19 @@ public class JythonManager extends IdvManager implements ActionListener,
                 super.undoableEditHappened(e);
             }
         };
-//        // TODO(jon): looks like this was attempting to handle CTRL+F for "find"
         jythonEditor.getTextComponent().addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
                 if (McIDASV.isMac() && e.isMetaDown() && e.getKeyCode() == KeyEvent.VK_F) {
                     textSearcher.getFindFld().requestFocusInWindow();
                 } else if (!McIDASV.isMac() && GuiUtils.isControlKey(e, KeyEvent.VK_F)) {
                     textSearcher.getFindFld().requestFocusInWindow();
+                } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    JTextField field = textSearcher.getFindFld();
+                    boolean highlights = textSearcher.getTextWrapper().hasHighlights();
+                    if (!field.getText().isEmpty() && highlights) {
+                        textSearcher.getTextWrapper().removeHighlights();
+                        field.setText("");
+                    }
                 }
             }
         });

@@ -134,10 +134,19 @@ public class TextSearcher extends JPanel {
                 "doSearch", null));
         findFld.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                if (e.isControlDown()) {
-                    return;
-                }
-                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                if (GuiUtils.isMac() && e.isMetaDown()) {
+                    if (e.getKeyCode() == KeyEvent.VK_P) {
+                        searchFor(findFld.getText(), false);
+                    } else if (e.getKeyCode() == KeyEvent.VK_N) {
+                        searchFor(findFld.getText(), true);
+                    }
+                } else if (!GuiUtils.isMac() && e.isControlDown()) {
+                    if (e.getKeyCode() == KeyEvent.VK_P) {
+                        searchFor(findFld.getText(), false);
+                    } else if (e.getKeyCode() == KeyEvent.VK_N) {
+                        searchFor(findFld.getText(), true);
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     JTextComponent comp = getTextWrapper().getTextComponent();
                     comp.requestFocusInWindow();
                 } else if (e.getKeyCode() != KeyEvent.VK_ENTER) {
@@ -295,6 +304,10 @@ public class TextSearcher extends JPanel {
             for (int i = 0; i < highlights.size(); i++) {
                 highlighter.removeHighlight(highlights.get(i));
             }
+        }
+
+        public boolean hasHighlights() {
+            return !highlights.isEmpty();
         }
 
         /** _more_ */
