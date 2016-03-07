@@ -1274,7 +1274,7 @@
 
     <property name="bundle.icon" value="release/icons/mcidasv.icns" />
 
-    <target name="bundle_18">
+    <target name="bundle_18" depends="jar">
         <mkdir dir="${dist.dir}" />
         <taskdef name="bundleapp"
                  classpath="lib/build/appbundler-1.0ea.jar"
