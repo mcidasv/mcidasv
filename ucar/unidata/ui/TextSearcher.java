@@ -134,21 +134,12 @@ public class TextSearcher extends JPanel {
                 "doSearch", null));
         findFld.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                if (GuiUtils.isMac() && e.isMetaDown()) {
-                    if (e.getKeyCode() == KeyEvent.VK_P) {
-                        searchFor(findFld.getText(), false);
-                    } else if (e.getKeyCode() == KeyEvent.VK_N) {
-                        searchFor(findFld.getText(), true);
-                    }
-                } else if (!GuiUtils.isMac() && e.isControlDown()) {
-                    if (e.getKeyCode() == KeyEvent.VK_P) {
-                        searchFor(findFld.getText(), false);
-                    } else if (e.getKeyCode() == KeyEvent.VK_N) {
-                        searchFor(findFld.getText(), true);
-                    }
+                if (isSearchPreviousKey(e)) {
+                    searchFor(findFld.getText(), false);
+                } else if (isSearchNextKey(e)) {
+                    searchFor(findFld.getText(), true);
                 } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    JTextComponent comp = getTextWrapper().getTextComponent();
-                    comp.requestFocusInWindow();
+                    returnFocus();
                 } else if (e.getKeyCode() != KeyEvent.VK_ENTER) {
                     searchFor(findFld.getText(), true);
                 }
@@ -164,6 +155,44 @@ public class TextSearcher extends JPanel {
 
         this.add(BorderLayout.CENTER, bottomPanel);
 
+    }
+
+    /**
+     * Determine whether or not the given {@code KeyEvent} represents a
+     * request to search for previous matches.
+     *
+     * @param e KeyEvent being handled. Cannot be {@code null}.
+     *
+     * @return {@code true} if {@code e} is a valid request. {@code false}
+     *         otherwise.
+     */
+    private static boolean isSearchPreviousKey(KeyEvent e) {
+        boolean modifier = (GuiUtils.isMac() && e.isMetaDown()) ||
+                           (!GuiUtils.isMac() && e.isControlDown());
+        return modifier && e.getKeyCode() == KeyEvent.VK_P;
+    }
+
+    /**
+     * Determine whether or not the given {@code KeyEvent} represents a
+     * request to search for subsequent matches.
+     *
+     * @param e KeyEvent being handled. Cannot be {@code null}.
+     *
+     * @return {@code true} if {@code e} is a valid request. {@code false}
+     *         otherwise.
+     */
+    private static boolean isSearchNextKey(KeyEvent e) {
+        boolean modifier = (GuiUtils.isMac() && e.isMetaDown()) ||
+                           (!GuiUtils.isMac() && e.isControlDown());
+        return modifier && e.getKeyCode() == KeyEvent.VK_P;
+    }
+
+    /**
+     * Restores focus to the component being searched.
+     */
+    private void returnFocus() {
+        JTextComponent comp = getTextWrapper().getTextComponent();
+        comp.requestFocusInWindow();
     }
 
     /**
@@ -217,6 +246,12 @@ public class TextSearcher extends JPanel {
         return textWrapper;
     }
 
+    /**
+     * Get the text field that holds search text.
+     *
+     * @return {@code JTextField} that holds text that should be found in
+     *         {@link TextWrapper#textComp}.
+     */
     public JTextField getFindFld() {
         return findFld;
     }
