@@ -184,7 +184,6 @@ public class AreaImageFlatField extends CachedFlatField implements SingleBandedI
         AreaImageFlatField theClone = new AreaImageFlatField(this, copy, type, domainSet,
                                       rangeCoordSys, rangeCoordSysArray,
                                       rangeSets, units, readLabel);
-        theClone.startTime = this.startTime;
         return theClone;
     }
 

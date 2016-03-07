@@ -314,7 +314,18 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         areaFile.close()
         return cls(aiff, areaFile, areaDirectory, addeDescriptor,
                 ff.getStartTime())
-
+                
+    def cloneMe(self, copy, funcType, domainSet, rangeCoordSys, 
+                rangeCoordSysArray, rangeSets, units):
+        """Make a copy of this _MappedAreaImageFlatField instance."""
+        aiff = AreaImageFlatField.cloneMe(self, copy, funcType, domainSet, 
+                                          rangeCoordSys, rangeCoordSysArray, 
+                                          rangeSets, units)
+                                          
+        return _MappedAreaImageFlatField(aiff, self.areaFile, 
+                                         self.areaDirectory, 
+                                         self.addeDescriptor, self.startTime)
+                                         
     def clone(self):
         # i'm so sorry :(
         return self * 1
