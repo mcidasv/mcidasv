@@ -25,6 +25,8 @@
 package ucar.unidata.ui;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.unidata.util.GuiUtils;
@@ -135,13 +137,13 @@ public class TextSearcher extends JPanel {
         findFld.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
                 if (isSearchPreviousKey(e)) {
-                    searchFor(findFld.getText(), false);
+                    doSearchPrevious();
                 } else if (isSearchNextKey(e)) {
-                    searchFor(findFld.getText(), true);
+                    doSearch();
                 } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     returnFocus();
                 } else if (e.getKeyCode() != KeyEvent.VK_ENTER) {
-                    searchFor(findFld.getText(), true);
+                    doSearch();
                 }
             }
         });
@@ -184,7 +186,7 @@ public class TextSearcher extends JPanel {
     private static boolean isSearchNextKey(KeyEvent e) {
         boolean modifier = (GuiUtils.isMac() && e.isMetaDown()) ||
                            (!GuiUtils.isMac() && e.isControlDown());
-        return modifier && e.getKeyCode() == KeyEvent.VK_P;
+        return modifier && e.getKeyCode() == KeyEvent.VK_N;
     }
 
     /**
