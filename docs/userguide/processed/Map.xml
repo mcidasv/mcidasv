@@ -250,6 +250,8 @@
         <mapID target="idv.misc.pluginjarfiles.advanced"             url="misc/PluginJarFiles.html#advanced" />
         <mapID target="idv.misc.pluginjarfiles.basics"               url="misc/PluginJarFiles.html#basics" />
 		<mapID target="idv.misc.scripting.createobject"				 url="misc/Scripting/CreateObject.html" />
+		<mapID target="idv.misc.scripting.createobjectimagery"		 url="misc/Scripting/CreateObjectImagery.html" />
+		<mapID target="idv.misc.scripting.createobjectgrid"			 url="misc/Scripting/CreateObjectGrid.html" />
 		<mapID target="idv.misc.scripting.environment"				 url="misc/Scripting/Environment.html" />
 		<mapID target="idv.misc.scripting.modifydisplayobject"		 url="misc/Scripting/ModifyDisplayObject.html" />
 		<mapID target="idv.misc.scripting.modifylayerobject"		 url="misc/Scripting/ModifyLayerObject.html" />

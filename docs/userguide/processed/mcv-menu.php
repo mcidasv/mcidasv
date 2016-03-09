@@ -277,6 +277,8 @@ RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('misc/Scripting/Scripting.html');">Scripting</span><br>
       <div class="indented" id="scripting">
       <span class="link" onClick="setPage('misc/Scripting/CreateObject.html');">Create an Object</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/CreateObjectImagery.html');">Create an Object - Imagery</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/CreateObjectGrid.html');">Create an Object - Grids</span><br>
       <span class="link" onClick="setPage('misc/Scripting/ModifyDisplayObject.html');">Modify the Display Object</span><br>
       <span class="link" onClick="setPage('misc/Scripting/ModifyLayerObject.html');">Modify the Layer Object</span><br>
       <span class="link" onClick="setPage('misc/Scripting/SaveDisplay.html');">Save the Display</span><br>

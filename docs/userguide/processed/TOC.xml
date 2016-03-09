@@ -183,6 +183,8 @@
 	<tocitem text="Adaptive Resolution" target="idv.misc.adaptiveresolution"/>
 	<tocitem text="Scripting" target="idv.misc.scripting.scripting">
 	    <tocitem text="Create an Object" target="idv.misc.scripting.createobject"/>
+		<tocitem text="Create an Object - Imagery" target="idv.misc.scripting.createobjectimagery"/>
+		<tocitem text="Create an Object - Grids" target="idv.misc.scripting.createobjectgrid"/>
 		<tocitem text="Modify the Display Object" target="idv.misc.scripting.modifydisplayobject"/>
 		<tocitem text="Modify the Layer Object" target="idv.misc.scripting.modifylayerobject"/>
 		<tocitem text="Save the Display" target="idv.misc.scripting.savedisplay"/>

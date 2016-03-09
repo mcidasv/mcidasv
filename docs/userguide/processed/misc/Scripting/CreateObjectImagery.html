@@ -1,0 +1,692 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Create an Object - Imagery</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/CreateObjectImagery.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="CreateObject.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="CreateObjectGrid.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Create an Object - Imagery</div>
+<p><strong><a name="makeLocalADDE" id="makeLocalADDE"></a>makeLocalADDEEntry -</strong> Creates a local ADDE entry in the server table</p>
+<div class="OneTabIndent">Usage: <em>localDataset=makeLocalADDEEntry(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"> <table class="noborder">
+    <tr>
+      <td valign="top">dataset=</td>
+      <td>name of dataset - limit of 8 characters</td>
+    </tr>
+    <tr>
+      <td valign="top">mask=</td>
+      <td>directory containing the files used by the dataset</td>
+    </tr>
+    <tr>
+      <td valign="top">format=</td>
+      <td>data format of files used within the dataset. Either Full Name or Short Name can be used as valid options</td>
+    </tr>
+</table></div>
+<div class="ThreeTabIndent2">
+<table width="525" border="1">
+    <tr>
+        <th width="420" scope="col"><strong>Full Name</strong></th>
+        <th width="105" scope="col"><strong>Short Name</strong></th>
+    </tr>
+    <tr>
+        <td>&quot;AMSR-E L 1b&quot;</td>
+        <td>&quot;AMSR&quot;</td>
+    </tr>
+        <tr>
+        <td>&quot;AMSR-E L 2a&quot;</td>
+        <td>&quot;AMSE&quot;</td>
+    </tr>
+        <tr>
+        <td>&quot;AMSR-E Rain Product&quot;</td>
+        <td>&quot;AMRR&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-9&quot;</td>
+        <td>&quot;FSDX_G9&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-10&quot;</td>
+        <td>&quot;FSDX_G10&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-11&quot;</td>
+        <td>&quot;FSDX_G11&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT GOES-12&quot;</td>
+        <td>&quot;FSDX_G12&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT MET-5&quot;</td>
+        <td>&quot;FSDX_M5&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT MET-7&quot;</td>
+        <td>&quot;FSDX_M7&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;LRIT MTSAT-1R&quot;</td>
+        <td>&quot;FSDX_MT&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;McIDAS Area&quot;</td>
+        <td>&quot;AREA&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;Meteosat OpenMTP&quot;</td>
+        <td>&quot;OMTP&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;Metop AVHRR L 1b&quot;</td>
+        <td>&quot;LV1B_METOP&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 02 - Level 1B Calibrated Geolocated Radiances&quot;</td>
+        <td>&quot;MODS&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 04 - Aerosol Product&quot;</td>
+        <td>&quot;MOD4&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 06 - Cloud Product&quot;</td>
+        <td>&quot;MODX_06&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 07 - Atmospheric&nbsp;Profiles&quot;</td>
+        <td>&quot;MODX_07&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 28 - Sea Surface Temperature&quot;</td>
+        <td>&quot;MOD8&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD 35 - Cloud Mask&quot;</td>
+        <td>&quot;MODX_35&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MODIS MOD R - Corrected Reflectance&quot;</td>
+        <td>&quot;MODR&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MSG HRIT FD&quot;</td>
+        <td>&quot;MSGT_FD&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MSG HRIT HRV&quot;</td>
+        <td>&quot;MSGT_HRV&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;MTSAT HRIT&quot;</td>
+        <td>&quot;MTST&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;NOAA AVHRR L 1b&quot;</td>
+        <td>&quot;LV1B_NOAA&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;SSMI&quot;</td>
+        <td>&quot;SMIN&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;TRMM&quot;</td>
+        <td>&quot;TMIN&quot;</td>
+    </tr>
+    <tr>
+        <td>&quot;GINI&quot;</td>
+        <td>&quot;GINI&quot;</td>
+    </tr>
+</table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">imageType=</td>
+      <td>image type name for local server entry. (default=<em>format_dataset</em>)</td>
+    </tr>
+    <tr>
+      <td valign="top">save=</td>
+      <td>determines if the dataset will be retained from session to session (default = False)<br>
+      True = retains the dataset between sessions<br>
+      False = does not retain the dataset between sessions</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>dataPath = 'C:\\Users\\myuser\\Data\\AREA'</em></div>
+<div class="TwoTabIndent"><em>areaDataset=makeLocalADDEEntry(dataset='AREA', imageType='Area files', save=True, mask=dataPath, format='McIDAS Area')</em></div>
+<p><strong><a name="getLocalADDE" id="getLocalADDE"></a>getLocalADDEEntry -</strong> Gets the descriptor for a local ADDE entry</p>
+<div class="OneTabIndent">Usage: <em>localDescriptor=getLocalADDEEntry(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">dataset=</td>
+      <td>local ADDE entry dataset name</td>
+    </tr>
+    <tr>
+      <td valign="top">imageType=</td>
+      <td>image type of local ADDE entry</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>desc = getLocalADDEEntry(dataset='AREA',imageType='Area files')</em></div>
+<p><strong><a name="loadADDEImage" id="loadADDEImage"></a>loadADDEImage -</strong> Requests
+  data from an ADDE Image server - returns one object containing both data and metadata</p>
+<div class="OneTabIndent">Usage: Local: <em>dataLocal=loadADDEImage(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required (local):</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">localEntry=</td>
+      <td>local dataset defined by <strong>makeLocalADDEEntry</strong> or the descriptor returned from <strong>getLocalADDEEntry</strong></td>
+    </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - required (remote):</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">server=</td>
+      <td>ADDE server</td>
+    </tr>
+        <tr>
+      <td valign="top">dataset=</td>
+      <td>ADDE dataset group name</td>
+    </tr>
+        <tr>
+      <td valign="top">descriptor=</td>
+      <td>ADDE dataset descriptor</td>
+    </tr>
+    </table></div>
+    <div class="TwoTabIndent">Keywords - optional:</div>
+  <div class="ThreeTabIndent2"><table class="noborder">
+        <tr>
+      <td valign="top">day=</td>
+      <td>single day ('date 1') or as a day range ('begin date','end date'); default=most recent day included in data</td>
+    </tr>
+        <tr>
+      <td valign="top">time=</td>
+      <td>('begin time','end time'); default=most recent time included in data</td>
+    </tr>
+        <tr>
+      <td valign="top">coordinateSystem=</td>
+      <td>coordinate system to use for retrieving    data; default=server dependent<br>
+      AREA = AREA file coordinates - zero based<br>
+      LATLON = latitude and longitude coordinates<br>
+      IMAGE = image coordinates - one based</td>
+    </tr>
+        <tr>
+      <td valign="top">location=</td>
+      <td>(x,y); default=coordinateSystem dependent<br>
+      x = AREA line, latitude, or IMAGE line<br>
+      y = AREA element, longitude, or IMAGE element</td>
+    </tr>
+        <tr>
+      <td valign="top">place=</td>
+      <td>CENTER places specified location (x,y) at    center of panel (default)<br>
+          ULEFT places specified location (x,y) at upper-left    coordinate of panel</td>
+    </tr>
+        <tr>
+      <td valign="top">band=</td>
+      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image</td>
+    </tr>
+        <tr>
+      <td valign="top">unit=</td>
+      <td>calibration unit to request; default = 'BRIT'</td>
+    </tr>
+        <tr>
+      <td valign="top">position=</td>
+      <td>time relative (negative values) or absolute    (positive values) position in the dataset; default=0 (most recent   image)</td>
+    </tr>
+        <tr>
+      <td valign="top">size=</td>
+      <td>number of lines and elements to request; default=(480,640)</td>
+    </tr>
+        <tr>
+      <td valign="top">mag=</td>
+      <td>magnification of data (line,element), negative    number used for sampling data; default=(1,1)</td>
+    </tr>
+        <tr>
+      <td valign="top">accounting=</td>
+      <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
+    </tr>
+        <tr>
+      <td valign="top">debug=</td>
+      <td>send debug information to file; default=False</td>
+    </tr>
+            <tr>
+      <td valign="top">track=</td>
+      <td>
+      True = with real-time data, will wait until the most recent image is complete before pulling it in<br>
+      False = with real-time data, will not wait until the most recent image is complete before pulling it in. Dependent on when the loadADDEImage command is run, this may result in an incomplete image.<br>
+      default=False</td>
+    </tr>
+                <tr>
+      <td valign="top">showUrls=</td>
+      <td>
+        True = Prints the ADDE URL returned from the server to the Jython Shell once the command has completed<br>
+          False = Does not print the ADDE URL returned from the server to the Jython Shell once the command has completed<br>
+          default=True</td>
+    </tr>
+        <tr>
+</table></div>
+<div class="OneTabIndent">Examples:</div>
+  <div class="TwoTabIndent"><em>dataLocal = loadADDEImage(localEntry=desc, size='ALL', mag=(1,1), unit='BRIT',debug=True)</em></div>
+<div class="TwoTabIndent"><em>dataRemote = loadADDEImage(server='adde.ssec.wisc.edu',dataset='RTIMAGES',descriptor='GE-IR',band=4,unit='TEMP')</em></div>
+<div class="OneTabIndent">The data object returned from <strong>loadADDEImage</strong> contains a variety of key:value pairings with information about the data.  The list of keys may vary dependent on the server or type of data, but here is a general list of keys that may be included in the data object returned from <strong>loadADDEImage</strong> as well as example values:</div>
+<div class="TwoTabIndent"><table border="1">
+    <tr>
+      <td valign="top"><strong>Key</strong></td>
+      <td><strong>Example Value</strong></td>
+    <tr>
+      <td valign="top">calibration-unit-name</td>
+      <td>None</td>
+    </tr>
+        <tr>
+      <td valign="top">calibration-scale-factor</td>
+      <td>1</td>
+    </tr>
+        <tr>
+      <td valign="top">bands</td>
+      <td>[4]</td>
+    </tr>
+        <tr>
+      <td valign="top">calinfo</td>
+      <td>[]</td>
+    </tr>
+        <tr>
+      <td valign="top">nominal-time</td>
+      <td>2016-03-08 15:15:00Z</td>
+    </tr>
+        <tr>
+      <td valign="top">datetime</td>
+      <td>2016-03-08 15:15:18Z</td>
+    </tr>
+        <tr>
+      <td valign="top">directory-block</td>
+      <td>list of the first 64 words of the AREA</td>
+    </tr>
+        <tr>
+      <td valign="top">source-type</td>
+      <td>'GVAR'</td>
+    </tr>
+        <tr>
+      <td valign="top">band-count</td>
+      <td>1</td>
+    </tr>
+        <tr>
+      <td valign="top">center-longitude</td>
+      <td>nan</td>
+    </tr>
+        <tr>
+      <td valign="top">lines</td>
+      <td>480</td>
+    </tr>
+        <tr>
+      <td valign="top">center-latitude-resolution</td>
+      <td>nan</td>
+    </tr>
+        <tr>
+      <td valign="top">day</td>
+      <td>'2016068'</td>
+    </tr>
+        <tr>
+      <td valign="top">sensor-id</td>
+      <td>180</td>
+    </tr>
+        <tr>
+      <td valign="top">satband-band-label</td>
+      <td>10.7 um IR Surface/Cloud-top Temp</td>
+    </tr>
+        <tr>
+      <td valign="top">calibration-type</td>
+      <td>'BRIT'</td>
+    </tr>
+        <tr>
+      <td valign="top">start-time</td>
+      <td>2016-03-08 15:15:18Z</td>
+    </tr>
+        <tr>
+      <td valign="top">bandNumber</td>
+      <td>4</td>
+    </tr>
+            <tr>
+      <td valign="top">center-latitude</td>
+      <td>nan</td>
+    </tr>
+        <tr>
+      <td valign="top">url</td>
+      <td>URL that prints to Jython Shell when data retrieved</td>
+    </tr>
+        <tr>
+      <td valign="top">center-longitude-resolution</td>
+      <td>nan</td>
+    </tr>
+        <tr>
+      <td valign="top">memo-field</td>
+      <td>any memos included with data (e.g. the calibration-type)</td>
+    </tr>
+        <tr>
+      <td valign="top">elements</td>
+      <td>640</td>
+        <tr>
+      <td valign="top">bandList</td>
+      <td>[4]</td>
+        <tr>
+      <td valign="top">sensor-type</td>
+      <td>'GOES 13 imager'</td>
+    </table></div>
+<div class="TwoTabIndent">These keys and values can be printed as follows:</div>
+<div class="ThreeTabIndent"><em>print dataRemote['satband-band-label']</em></div>
+<div class="TwoTabIndent">A practical use for this satband-band-label key would be to apply it to a layer label.  This example adds the key to the layer label along with the %timestamp% macro:</div>
+<div class="ThreeTabIndent"><em>layer.setLayerLabel(dataRemote['satband-band-label']+' %timestamp%')</em></div>
+  <p><strong><a name="listADDEImages" id="listADDEImages"></a>listADDEImages -</strong> Lists
+  data from an ADDE Image server that matches the keywords in the request - returns  metadata objects which can be passed into loadADDEImage</p>
+<div class="OneTabIndent">Usage: <em>directoryList = listADDEImages(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required (local):</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">localEntry=</td>
+      <td>local dataset defined by makeLocalADDEEntry or the descriptor returned from getLocalADDEEntry</td>
+    </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - required (remote):</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">server=</td>
+      <td>ADDE server</td>
+    </tr>
+        <tr>
+      <td valign="top">dataset=</td>
+      <td>ADDE dataset group name</td>
+    </tr>
+        <tr>
+      <td valign="top">descriptor=</td>
+      <td>ADDE dataset descriptor</td>
+    </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+        <tr>
+      <td valign="top">day=</td>
+      <td>single day ('date 1') or as a day range ('begin date','end date'); default=most recent day included in data</td>
+    </tr>
+        <tr>
+      <td valign="top">time=</td>
+      <td>('begin time','end time'); default=most recent time included in data</td>
+    </tr>
+        <tr>
+      <td valign="top">band=</td>
+      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image</td>
+    </tr>
+        <tr>
+      <td valign="top">unit=</td>
+      <td>calibration unit to request; default = 'BRIT'</td>
+    </tr>
+        <tr>
+      <td valign="top">position=</td>
+      <td>time relative (negative values) or absolute    (positive values) position in the dataset; default=0 (most recent   image)</td>
+    </tr>
+        <tr>
+      <td valign="top">accounting=</td>
+      <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
+    </tr>
+        <tr>
+      <td valign="top">debug=</td>
+      <td>send debug information to file; default=False</td>
+                      <tr>
+      <td valign="top">showUrls=</td>
+      <td>True = Prints the ADDE URL returned from the server to the Jython Shell once the command has completed<br>
+False = Does not print the ADDE URL returned from the server to the Jython Shell once the command has completed<br>
+default=True</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Examples:</div>
+  <div class="TwoTabIndent"><em>directoryListLocal = listADDEImages(localEntry=desc, band=4, unit='TEMP')</em><br>
+<em>directoryListRemote = listADDEImages(server='adde.ssec.wisc.edu',dataset='RTIMAGES',descriptor='GE-IR',unit='TEMP')</em></div>
+<div class="OneTabIndent">The data object returned from <strong>listADDEImages</strong> contains a variety of key:value pairings with information about the data.  The list of keys may vary dependent on the server or type of data, but here is a general list of keys that may be included in the data object returned from <strong>listADDEImages</strong> as well as example values:</div>
+<div class="TwoTabIndent"><table border="1">
+    <tr>
+      <td valign="top"><strong>Key</strong></td>
+      <td><strong>Example Value</strong></td>
+    <tr>
+      <td valign="top">server</td>
+      <td>'adde.ssec.wisc.edu'</td>
+    </tr>
+
+    <tr>
+      <td valign="top">calibration-unit-name</td>
+      <td>None</td>
+    </tr>
+        <tr>
+      <td valign="top">unitList</td>
+      <td>['RAW', 'TEMP', 'BRIT']</td>
+    </tr>
+        <tr>
+      <td valign="top">calibration-scale-factor</td>
+      <td>1</td>
+    </tr>
+        <tr>
+      <td valign="top">descriptor</td>
+      <td>'GE-IR'</td>
+    </tr>
+        <tr>
+      <td valign="top">accounting</td>
+      <td>('idv', '0')</td>
+    </tr>
+        <tr>
+      <td valign="top">bands</td>
+      <td>[4]</td>
+    </tr>
+        <tr>
+      <td valign="top">resolution</td>
+      <td>(4.03157, 4.58618)</td>
+    </tr>
+        <tr>
+      <td valign="top">calinfo</td>
+      <td>['RAW', 'RAW', 'TEMP', 'TEMPERATURE', 'BRIT', 'BRIGHTNESS'</td>
+    </tr>
+        <tr>
+      <td valign="top">unitType</td>
+      <td>'BRIT'</td>
+    </tr>
+        <tr>
+      <td valign="top">nominal-time</td>
+      <td>2016-03-08 15:15:00Z</td>
+    </tr>
+        <tr>
+      <td valign="top">datetime</td>
+      <td>2016-03-08 15:15:00Z</td>
+    </tr>
+        <tr>
+      <td valign="top">directory-block</td>
+      <td>list of the first 64 words of the AREA</td>
+    </tr>
+        <tr>
+      <td valign="top">source-type</td>
+      <td>'GVAR'</td>
+    </tr>
+        <tr>
+      <td valign="top">band-count</td>
+      <td>1</td>
+    </tr>
+        <tr>
+      <td valign="top">imageSize</td>
+      <td>(2726, 1732)</td>
+    </tr>
+        <tr>
+      <td valign="top">center-longitude</td>
+      <td>-71.9527</td>
+    </tr>
+        <tr>
+      <td valign="top">lines</td>
+      <td>2726</td>
+    </tr>
+        <tr>
+      <td valign="top">day</td>
+      <td>'2016068'</td>
+    </tr>
+            <tr>
+      <td valign="top">center-latitude-resolution</td>
+      <td>4.03157</td>
+    </tr>
+        <tr>
+      <td valign="top">sensor-id</td>
+      <td>180</td>
+    </tr>
+        <tr>
+      <td valign="top">debug</td>
+      <td>'false'</td>
+    </tr>
+        <tr>
+      <td valign="top">centerLocation</td>
+      <td>(-0.0459699, -71.9527)</td>
+    </tr>
+        <tr>
+      <td valign="top">calibration-type</td>
+      <td>'BRIT'</td>
+        <tr>
+      <td valign="top">start-time</td>
+      <td>2016-03-08 15:15:18</td>
+        <tr>
+      <td valign="top">bandNumber</td>
+      <td>4</td>
+        <tr>
+      <td valign="top">center-latitude</td>
+      <td>-0.0459699</td>
+    </tr>
+        <tr>
+      <td valign="top">url</td>
+      <td>URL that prints to Jython Shell when data retrieved</td>
+        <tr>
+      <td valign="top">center-longitude-resolution</td>
+      <td>4.58618</td>
+        <tr>
+      <td valign="top">memo-field</td>
+      <td>any memos included with data (e.g. the calibration-type)</td>
+        <tr>
+      <td valign="top">elements</td>
+      <td>1732</td>
+    </tr>
+        <tr>
+      <td valign="top">bandList</td>
+      <td>[4]</td>
+        <tr>
+      <td valign="top">time</td>
+      <td>'15:15:00'</td>
+        <tr>
+      <td valign="top">sensor-type</td>
+      <td>'GOES 13 imager'</td>
+        <tr>
+      <td valign="top">dataset</td>
+      <td>RTIMAGES</td>
+    </table></div>
+<div class="TwoTabIndent">These keys and values can be accessed the same way as defined in <strong>loadADDEImage</strong>.</div>
+    <p><strong><a name="listADDEImageTimes" id="listADDEImageTimes"></a>listADDEImageTimes -</strong> Returns a list of available dates and times of data that match the keywords in the request</p>
+<div class="OneTabIndent">Usage: <em>directoryList = listADDEImageTimes(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required (local):</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">localEntry=</td>
+      <td>local dataset defined by makeLocalADDEEntry or the descriptor returned from getLocalADDEEntry</td>
+    </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - required (remote):</div>
+<div class="ThreeTabIndent2"><table class="noborder">  
+    <tr>
+      <td valign="top">server=</td>
+      <td>ADDE server</td>
+    </tr>
+        <tr>
+      <td valign="top">dataset=</td>
+      <td>ADDE dataset group name</td>
+    </tr>
+        <tr>
+      <td valign="top">descriptor=</td>
+      <td>ADDE dataset descriptor</td>
+    </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+        <tr>
+      <td valign="top">day=</td>
+      <td>single day ('date 1') or as a day range ('begin date','end date'); default=most recent day included in data</td>
+    </tr>
+        <tr>
+      <td valign="top">time=</td>
+      <td>('begin time','end time'); default=most recent time included in data</td>
+    </tr>
+        <tr>
+      <td valign="top">band=</td>
+      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image </td>
+    </tr>
+        <tr>
+      <td valign="top">unit=</td>
+      <td>calibration unit to request; default = 'BRIT'</td>
+    </tr>
+        <tr>
+      <td valign="top">position=</td>
+      <td>time relative (negative values) or absolute    (positive values) position in the dataset; default=0 (most recent   image)</td>
+    </tr>
+        <tr>
+      <td valign="top">accounting=</td>
+      <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
+    </tr>
+        <tr>
+      <td valign="top">debug=</td>
+      <td>send debug information to file; default=False</td>
+    </tr>
+                    <tr>
+      <td valign="top">showUrls=</td>
+      <td>True = Prints the ADDE URL returned from the server to the Jython Shell once the command has completed<br>
+False = Does not print the ADDE URL returned from the server to the Jython Shell once the command has completed<br>
+default=True</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Examples:</div>
+  <div class="TwoTabIndent"><em>print listADDEImageTimes(localEntry=desc, position=-5)</em><br>
+<em>print listADDEImageTimes(server='adde.ssec.wisc.edu',dataset='RTIMAGES',descriptor='GE-IR',time=('02:00','04:00'),position='ALL')</em></div>
+<div class="OneTabIndent">The data object returned from <strong>listADDEImageTimes</strong> contains a variety of key:value pairings with information about the data.  The list of keys may vary dependent on the server or type of data, but here is a general list of keys that may be included in the data object returned from <strong>listADDEImageTimes</strong> as well as example values:</div>
+<div class="TwoTabIndent"><table border="1">
+    <tr>
+      <td valign="top"><strong>Key</strong></td>
+      <td><strong>Example Value</strong></td>
+        <tr>
+      <td valign="top">datetime</td>
+      <td>'2016-03-08 15:00:00Z'</td>
+        <tr>
+      <td valign="top">time</td>
+      <td>'15:15:00'</td>
+        <tr>
+      <td valign="top">day</td>
+      <td>'2016068'</td>
+    </table></div>
+<div class="TwoTabIndent">These keys and values can be accessed the same way as defined in <strong>loadADDEImage</strong> assuming that a data object returned from <strong>listADDEImageTimes</strong> was defined (e.g. <em>timeList = listADDEImageTimes(...)</em>).</div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="CreateObject.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="CreateObjectGrid.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>
