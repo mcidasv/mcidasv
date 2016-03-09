@@ -3657,7 +3657,7 @@ public class GuiUtils extends LayoutUtil {
      */
     public static int getBoxValue(JComboBox box) {
         Object o = box.getSelectedItem();
-        return (int) Misc.parseValue(o.toString());
+        return (int) Misc.parseNumber(o.toString());
     }
 
 
@@ -6889,7 +6889,7 @@ public class GuiUtils extends LayoutUtil {
      * @return double value shown
      */
     public static double getValue(JTextField fld) {
-        return Misc.parseValue(fld.getText().trim());
+        return Misc.parseNumber(fld.getText().trim());
     }
 
 
