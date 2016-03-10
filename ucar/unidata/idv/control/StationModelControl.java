@@ -658,12 +658,27 @@ public class StationModelControl extends ObsDisplayControl {
                 MetSymbol  metSymbol = (MetSymbol) iter.next();
                 ColorTable ct        = metSymbol.getColorTable();
                 Range      range     = metSymbol.getColorTableRange();
-                if ((ct != null) && (stationModelColorTable == null)
-                        && (range != null)) {
+
+                // MCV INQ 2105
+                // the first time a user hits "Apply", the
+                // stationModelColorTable is null, which will result in
+                // newColorTable being set to the ColorTable from metSymbol.
+                // down towards the end of this method stationModelColorTable
+                // is set to newColorTable.
+                //
+                // a side effect of this is that clicking "Apply" again will
+                // result in stationModelColorTable != null, meaning
+                // newColorTable remains set to null--and this then overwrites
+                // stationModelColorTable at the end of this method.
+                //
+                // if ((ct != null) && (stationModelColorTable == null)
+                //     && (range != null)) {
+                if ((ct != null) && (range != null)) {
                     newColorTable = ct;
                     newRange      = range;
-
                 }
+                // END MCV INQ 2105
+
                 String param = metSymbol.getColorTableParam();
                 if ((ct == null) || (param == null)) {
                     continue;
