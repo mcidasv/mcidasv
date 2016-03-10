@@ -343,6 +343,31 @@ public abstract class JPSSUtilities {
 	}
 
 	/**
+	 * Replace last substring within input string which matches the input with the 
+	 * provided replacement string.
+	 * 
+	 * @param string
+	 * @param substring
+	 * @param replacestr
+	 * @return
+	 */
+	
+	public static String replaceLast(String string, String substring, String replacestr) {
+		// Sanity check on input
+		if (string == null) return null;
+		if ((substring == null) || (replacestr == null)) return string;
+		
+		int index = string.lastIndexOf(substring);
+		
+		// substring not present
+		if (index == -1)
+			return string;
+		// it's there, swap it
+		return string.substring(0, index) + replacestr
+				+ string.substring(index + substring.length());
+	}
+	
+	/**
 	 * Determine if a set if filenames which constitutes contiguous SNPP
 	 * granules of various products all share the same geolocation data type.
 	 *

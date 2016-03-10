@@ -624,7 +624,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 						} 
 					} else {
 						// NASA format
-						geoFilename = s.replace("L1B", "GEO");
+						geoFilename = JPSSUtilities.replaceLast(s, "L1B", "GEO");
 						// get list of files in current directory
 						File fList = 
 							new File(geoFilename.substring(0, geoFilename.lastIndexOf(File.separatorChar) + 1)); 
