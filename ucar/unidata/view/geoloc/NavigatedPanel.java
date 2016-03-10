@@ -504,7 +504,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
      * Return whether the focus is traversable
      * @return true if so
      */
-    public boolean isFocusTraversable() {
+    @Override public boolean isFocusable() {
         return true;
     }
 

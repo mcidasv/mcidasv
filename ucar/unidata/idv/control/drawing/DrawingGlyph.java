@@ -1528,7 +1528,7 @@ public abstract class DrawingGlyph {
 
         JList timeList = (JList) compMap.get(ATTR_TIMES);
         if (createdByUser && (timeList != null)) {
-            timeValues = Misc.toList(timeList.getSelectedValues());
+            timeValues = timeList.getSelectedValuesList();
             timeSet    = null;
             checkVisibility();
         }
