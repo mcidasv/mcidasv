@@ -158,7 +158,6 @@ import javax.swing.table.AbstractTableModel;
  * @author MetApps Development Team
  * @version $Revision: 1.228 $
  */
-
 public class StationModelControl extends ObsDisplayControl {
 
 
