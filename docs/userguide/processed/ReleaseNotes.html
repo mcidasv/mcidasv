@@ -63,6 +63,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#julian1.6">Julian Date with Archive Servers</a></strong></li>
     <li><strong><a class="faq-question-link" href="#animatedGif1.6">Animated GIF Global Color Palette Option</a></strong></li>
+<li><strong><a class="faq-question-link" href="#scripting1.6">Scripting</a></strong></li>
     <li><strong><a class="faq-question-link" href="#java1.6">Java Version</a></strong></li>
   </ul>
 </div>
@@ -104,6 +105,16 @@ Changes</div>
 <div class="faq-category"><a name="animatedGif1.6" id="animatedGif1.6"></a>
   <h4>Animated GIF Global Color Palette Option</h4>
 <div class="faq-answer">Added a '<strong>Use 'global' GIF color palette</strong>' option when saving a movie. This option is applicable for animated GIF movies, and it is enabled by default. Animated GIFs are limited to 256 colors, and this option uses the same   256 colors for every frame in the loop when the setting is enabled.   Enabling this option allows for certain display settings such as a color   scale to remain constant throughout the loop. If this option is   disabled, then each frame uses it's own color palette, so one color may   represent one value in one frame, and the same color may represent a   different value in the next frame. One circumstance where disabling this   option may be ideal is if the movie starts with a low-light scene (not   many colors) and there is no color scale in the display.</div></div>
+<div class="faq-category"><a name="scripting1.6" id="scripting1.6"></a>
+  <h4>Scripting</h4>
+<div class="faq-answer">
+  <p>Added a variety of functionality related to scripting since the release of 1.5. Below is a list of significant changes:</p>
+  <ul>
+    <li>For remote datasets requiring accounting that are already defined in the ADDE Data Manager, there is no need to specify the accounting keyword in the imagery-related functions.  This includes loadADDEImage, listADDEImages, and listADDEImageTimes.  A benefit of this change is that users can share scripts without including any accounting information.</li>
+    <li>Added a new function called setMapVisibilityByDescription() that allows for showing or hiding individual maps from the display.</li>
+    <li>Added new information to the metadata of the data object returned from loadGrid. This new metadata is in the form of three new keys: globalAttributes, metadataVariables, and variableAttributes. Information on accessing these keys and their values can be found on the 'Create an Object - Grids' page.</li>
+  </ul>
+</div></div>
 <div class="faq-category"><a name="java1.6" id="java1.6"></a>
   <h4>Java Version</h4>
 <div class="faq-answer">Updated Java version from 1.7.0_60 to 1.8.0_45.</div></div>

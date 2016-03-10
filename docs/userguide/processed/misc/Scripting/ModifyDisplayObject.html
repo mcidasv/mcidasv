@@ -137,6 +137,24 @@ wire frame box on or off</p>
 <div class="OneTabIndent">Examples:</div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(False)</em></div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(True)</em></div>
+<p><strong><a name="setMapVisibilityByDescription" id="setMapVisibilityByDescription"></a>setMapVisibilityByDescription -</strong> Sets the visibility of individual maps in the display</p>
+<div class="OneTabIndent">Usage: <em>panel[0].setMapVisibilityByDescription(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">description=</td>
+      <td>the map to be added or removed from the display. The description matches the names of the maps in the Layer Controls.</td>
+    </tr>
+    <tr>
+      <td valign="top">visibility=</td>
+      <td>sets the visibility of the map defined in the description keyword<br>
+      True - displays the map<br>
+      False - does not display the map</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Examples:</div>
+<div class="TwoTabIndent"><em>panel[0].setMapVisibilityByDescription(description='World Coastlines', visibility=False)</em></div>
+<div class="TwoTabIndent"><em>panel[0].setMapVisibilityByDescription(description='U.S. County Outlines', visibility=True)</em></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
