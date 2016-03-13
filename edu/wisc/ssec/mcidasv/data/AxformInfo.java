@@ -36,176 +36,176 @@ import java.util.List;
 
 public class AxformInfo extends HeaderInfo {
 
-	/** The url */
-	private String dataFile = "";
-	private boolean isAxform = false;
+    /** The url */
+    private String dataFile = "";
+    private boolean isAxform = false;
 
-	/**
-	 * Ctor for xml encoding
-	 */
-	public AxformInfo() {}
+    /**
+     * Ctor for xml encoding
+     */
+    public AxformInfo() {}
 
-	/**
-	 * CTOR
-	 *
-	 * @param thisFile File to use.
-	 */
-	public AxformInfo(File thisFile) {
-		this(thisFile.getAbsolutePath());
-	}
+    /**
+     * CTOR
+     *
+     * @param thisFile File to use.
+     */
+    public AxformInfo(File thisFile) {
+        this(thisFile.getAbsolutePath());
+    }
 
-	/**
-	 * CTOR
-	 *
-	 * @param filename The filename
-	 */
-	public AxformInfo(String filename) {
-		super(filename);
-	}
+    /**
+     * CTOR
+     *
+     * @param filename The filename
+     */
+    public AxformInfo(String filename) {
+        super(filename);
+    }
 
-	/**
-	 * Is the file an AXFORM header file?
-	 */
-	public boolean isAxformInfoHeader() {
-		parseHeader();
-		return isAxform;
-	}
-	
-	/**
-	 * Which band/file is latitude?
-	 */
-	public int getLatBandNum() {
-		return 1;
-	}
-	public String getLatBandFile() {
-		parseHeader();
-		List bandFiles = (List)getParameter(NAVFILES, new ArrayList());
-		if (bandFiles.size()!=2) return "";
-		return (String)(bandFiles.get(0));
-	}
+    /**
+     * Is the file an AXFORM header file?
+     */
+    public boolean isAxformInfoHeader() {
+        parseHeader();
+        return isAxform;
+    }
 
-	/**
-	 * Which band/file is longitude?
-	 */
-	public int getLonBandNum() {
-		return 1;
-	}
-	public String getLonBandFile() {
-		parseHeader();
-		List bandFiles = (List)getParameter(NAVFILES, new ArrayList());
-		if (bandFiles.size()!=2) return "";
-		return (String)(bandFiles.get(1));
-	}
+    /**
+     * Which band/file is latitude?
+     */
+    public int getLatBandNum() {
+        return 1;
+    }
+    public String getLatBandFile() {
+        parseHeader();
+        List bandFiles = (List)getParameter(NAVFILES, new ArrayList());
+        if (bandFiles.size()!=2) return "";
+        return (String)(bandFiles.get(0));
+    }
 
-	/**
-	 * Parse a potential AXFORM header file
-	 */
-	protected void parseHeader() {
-		if (haveParsed()) return;
-		if (!doesExist()) {
-			isAxform = false;
-			return;
-		}
+    /**
+     * Which band/file is longitude?
+     */
+    public int getLonBandNum() {
+        return 1;
+    }
+    public String getLonBandFile() {
+        parseHeader();
+        List bandFiles = (List)getParameter(NAVFILES, new ArrayList());
+        if (bandFiles.size()!=2) return "";
+        return (String)(bandFiles.get(1));
+    }
 
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(getFilename()));
-			int lineNum = 0;
-			String line;
-			String description = "";
-			boolean gotFiles = false;
-			
-			List bandNames = new ArrayList();
-			List bandFiles = new ArrayList();
-			
-			String latFile = "";
-			String lonFile = "";
-			File thisFile = new File(getFilename());
-			String parent = thisFile.getParent();
-			if (parent==null) parent=".";
+    /**
+     * Parse a potential AXFORM header file
+     */
+    protected void parseHeader() {
+        if (haveParsed()) return;
+        if (!doesExist()) {
+            isAxform = false;
+            return;
+        }
 
-			while ((line = br.readLine()) != null) {
-				lineNum++;
-				if (line.trim().equals("Space Science & Engineering Center")) {
-					isAxform = true;
-					continue;
-				}
-				if (!isAxform) break;
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(getFilename()));
+            int lineNum = 0;
+            String line;
+            String description = "";
+            boolean gotFiles = false;
 
-				if (line.length() < 80) {
-					if (lineNum > 15) gotFiles = true;
-					continue;
-				}
+            List bandNames = new ArrayList();
+            List bandFiles = new ArrayList();
 
-				// Process the description from lines 5 and 6
-				if (lineNum==5) {
-					description += line.substring(13, 41).trim();
-				}
-				else if (lineNum==6) {
-					description += " " + line.substring(14, 23).trim() +" " + line.substring(59, 71).trim();
-					setParameter(DESCRIPTION, description);
-				}
+            String latFile = "";
+            String lonFile = "";
+            File thisFile = new File(getFilename());
+            String parent = thisFile.getParent();
+            if (parent==null) parent=".";
 
-				// Process the file list starting at line 15
-				else if (lineNum>=15 && !gotFiles) {
-					String parameter = line.substring(0, 13).trim();
-					if (parameter.equals("Header")) {
-						isAxform = true;
-					}
-					else if (parameter.equals("Latitude")) {
-						latFile = parent + "/" + line.substring(66).trim();
-					}
-					else if (parameter.equals("Longitude")) {
-						lonFile = parent + "/" + line.substring(66).trim();
-					}
-					else {
-						setParameter(LINES, Integer.parseInt(line.substring(24, 31).trim()));
-						setParameter(ELEMENTS, Integer.parseInt(line.substring(32, 40).trim()));
-						setParameter(UNIT, parameter);
-						String band = line.substring(19, 23).trim();
-						String format = line.substring(41, 59).trim();
-						System.out.println("looking at format line: " + format);
-						if (format.indexOf("ASCII") >= 0) {
-							setParameter(DATATYPE, kFormatASCII);
-						}
-						else if (format.indexOf("8 bit") >= 0) {
-							setParameter(DATATYPE, kFormat1ByteUInt);
-						}
-						else if (format.indexOf("16 bit") >= 0) {
-							setParameter(DATATYPE, kFormat2ByteSInt);
-						}
-						else if (format.indexOf("32 bit") >= 0) {
-							setParameter(DATATYPE, kFormat4ByteSInt);
-						}
-						String filename = line.substring(66).trim();
-						filename = parent + "/" + filename;
-						bandFiles.add(filename);
-						bandNames.add("Band " + band);
-					}
-				}
+            while ((line = br.readLine()) != null) {
+                lineNum++;
+                if (line.trim().equals("Space Science & Engineering Center")) {
+                    isAxform = true;
+                    continue;
+                }
+                if (!isAxform) break;
 
-				// Look for the missing value, bail when you find it
-				else if (gotFiles) {
-					if (line.indexOf("Navigation files missing data value") >= 0) {
-						setParameter(MISSINGVALUE, Float.parseFloat(line.substring(44, 80).trim()));    			
-						break;
-					}
-				}
+                if (line.length() < 80) {
+                    if (lineNum > 15) gotFiles = true;
+                    continue;
+                }
 
-				setParameter(BANDNAMES, bandNames);
-				setParameter(BANDFILES, bandFiles);
-				
-				List latlonFiles = new ArrayList();
-				latlonFiles.add(latFile);
-				latlonFiles.add(lonFile);
-				setParameter(NAVFILES, latlonFiles);
+                // Process the description from lines 5 and 6
+                if (lineNum==5) {
+                    description += line.substring(13, 41).trim();
+                }
+                else if (lineNum==6) {
+                    description += " " + line.substring(14, 23).trim() +" " + line.substring(59, 71).trim();
+                    setParameter(DESCRIPTION, description);
+                }
 
-			}
-			br.close();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+                // Process the file list starting at line 15
+                else if (lineNum>=15 && !gotFiles) {
+                    String parameter = line.substring(0, 13).trim();
+                    if (parameter.equals("Header")) {
+                        isAxform = true;
+                    }
+                    else if (parameter.equals("Latitude")) {
+                        latFile = parent + "/" + line.substring(66).trim();
+                    }
+                    else if (parameter.equals("Longitude")) {
+                        lonFile = parent + "/" + line.substring(66).trim();
+                    }
+                    else {
+                        setParameter(LINES, Integer.parseInt(line.substring(24, 31).trim()));
+                        setParameter(ELEMENTS, Integer.parseInt(line.substring(32, 40).trim()));
+                        setParameter(UNIT, parameter);
+                        String band = line.substring(19, 23).trim();
+                        String format = line.substring(41, 59).trim();
+                        System.out.println("looking at format line: " + format);
+                        if (format.indexOf("ASCII") >= 0) {
+                            setParameter(DATATYPE, kFormatASCII);
+                        }
+                        else if (format.indexOf("8 bit") >= 0) {
+                            setParameter(DATATYPE, kFormat1ByteUInt);
+                        }
+                        else if (format.indexOf("16 bit") >= 0) {
+                            setParameter(DATATYPE, kFormat2ByteSInt);
+                        }
+                        else if (format.indexOf("32 bit") >= 0) {
+                            setParameter(DATATYPE, kFormat4ByteSInt);
+                        }
+                        String filename = line.substring(66).trim();
+                        filename = parent + "/" + filename;
+                        bandFiles.add(filename);
+                        bandNames.add("Band " + band);
+                    }
+                }
 
-	}
+                // Look for the missing value, bail when you find it
+                else if (gotFiles) {
+                    if (line.indexOf("Navigation files missing data value") >= 0) {
+                        setParameter(MISSINGVALUE, Float.parseFloat(line.substring(44, 80).trim()));
+                        break;
+                    }
+                }
+
+                setParameter(BANDNAMES, bandNames);
+                setParameter(BANDFILES, bandFiles);
+
+                List latlonFiles = new ArrayList();
+                latlonFiles.add(latFile);
+                latlonFiles.add(lonFile);
+                setParameter(NAVFILES, latlonFiles);
+
+            }
+            br.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }
