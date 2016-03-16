@@ -25,13 +25,14 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.data;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,9 @@ import org.slf4j.LoggerFactory;
 
 import ucar.unidata.geoloc.projection.UtmProjection;
 
+/**
+ * Representation of an ENVI header file.
+ */
 public class EnviInfo extends HeaderInfo {
 
     /** The url */
@@ -84,7 +88,7 @@ public class EnviInfo extends HeaderInfo {
     /**
      * CTOR
      *
-     * @param thisFile File to use.
+     * @param thisFile File to use. Cannot be {@code null}.
      */
     public EnviInfo(File thisFile) {
         this(thisFile.getAbsolutePath());
@@ -102,6 +106,8 @@ public class EnviInfo extends HeaderInfo {
 
     /**
      * Is the file an ENVI header file?
+     * 
+     * @return {@code true} if the file appears to be an ENVI header file.
      */
     public boolean isEnviHeader() {
         parseHeader();
@@ -110,98 +116,137 @@ public class EnviInfo extends HeaderInfo {
 
     /**
      * Can we find a matching ENVI data file?
+     * 
+     * @return {@code true} if {@link #dataFile} exists.
      */
     public boolean hasEnviData() {
         File testFile = new File(dataFile);
-        if (testFile.exists()) return true;
-        else return false;
+        if (testFile.exists()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
      * Is this a navigation header file?
+     * 
+     * @return {@code true} if {@link #dataFile} contains latitude and 
+     *         longitude bands, {@code false} otherwise.
      */
     public boolean isNavHeader() {
         parseHeader();
-        List bandNames = (List) getParameter(BANDNAMES, new ArrayList());
-        if (bandNames == null) return false;
-        if (bandNames.contains("Latitude") && bandNames.contains("Longitude")) return true;
+        List bandNames = getParameter(BANDNAMES, new ArrayList());
+        if (bandNames == null) {
+            return false;
+        }
+        if (bandNames.contains("Latitude") && bandNames.contains("Longitude")) {
+            return true;
+        }
         return false;
     }
 
     /**
-     * Which band/file is latitude?
+     * Get the latitude band number.
+     * 
+     * @return Either the latitude band number or {code -1}. 
      */
     public int getLatBandNum() {
         parseHeader();
-        List bandNames = (List) getParameter(BANDNAMES, new ArrayList());
-        for (int i=0; i<bandNames.size(); i++) {
-            if (bandNames.get(i).equals("Latitude")) return i+1;
+        List bandNames = getParameter(BANDNAMES, new ArrayList());
+        for (int i = 0; i < bandNames.size(); i++) {
+            if (bandNames.get(i).equals("Latitude")) {
+                return i + 1;
+            }
         }
         return -1;
     }
 
+    /**
+     * 
+     *
+     * @return Either the latitude band file or an empty {@code String}.
+     */
     public String getLatBandFile() {
         parseHeader();
-        List bandFiles = (List) getParameter(BANDFILES, new ArrayList());
+        List bandFiles = getParameter(BANDFILES, new ArrayList());
         int bandNum = getLatBandNum();
-        if (bandNum < 0) return "";
-        return (String)(bandFiles.get(bandNum-1));
+        if (bandNum < 0) {
+            return "";
+        }
+        return (String)(bandFiles.get(bandNum - 1));
     }
 
     /**
-     * Which band/file is longitude?
+     * Get the longitude band number.
+     * 
+     * @return Either the longitude band number or {@code -1}.
      */
     public int getLonBandNum() {
         parseHeader();
-        List bandNames = (List) getParameter(BANDNAMES, new ArrayList());
-        for (int i=0; i<bandNames.size(); i++) {
-            if (bandNames.get(i).equals("Longitude")) return i+1;
+        List bandNames = getParameter(BANDNAMES, new ArrayList());
+        for (int i = 0; i < bandNames.size(); i++) {
+            if (bandNames.get(i).equals("Longitude")) {
+                return i + 1;
+            }
         }
         return -1;
     }
 
+    /**
+     * 
+     * 
+     * @return Either the longitude band file or an empty {@code String}.
+     */
     public String getLonBandFile() {
         parseHeader();
-        List bandFiles = (List) getParameter(BANDFILES, new ArrayList());
+        List bandFiles = getParameter(BANDFILES, new ArrayList());
         int bandNum = getLonBandNum();
-        if (bandNum < 0) return "";
-        return (String)(bandFiles.get(bandNum-1));
+        if (bandNum < 0) {
+            return "";
+        }
+        return (String)(bandFiles.get(bandNum - 1));
     }
 
-    /**
-     * Return a FlatField representing the data
-     */
+//    /**
+//     * Return a FlatField representing the data
+//     */
 //	public FlatField getDataField() {
 //
 //	}
 
-    /**
-     * Return a Gridded2DSet representing navigation
-     */
+//    /**
+//     * Return a Gridded2DSet representing navigation
+//     */
 //	public Gridded2DSet getNavField() {
 //
 //	}
 
     /**
-     * @return the hasBounds
+     * Returns whether or not there are bounds.
+     * 
+     * @return Whether or not there are bounds.
      */
     public boolean isHasBounds() {
         return hasBounds;
     }
 
     /**
-     * @param hasBounds the hasBounds to set
+     * Control whether or not there are bounds.
+     * 
+     * @param hasBounds Whether or not there are bounds.
      */
     public void setHasBounds(boolean hasBounds) {
         this.hasBounds = hasBounds;
     }
 
     /**
-     * Parse a potential ENVI header file
+     * Parse a potential ENVI header file.
      */
-
     protected void parseHeader() {
-        if (haveParsed()) return;
+        if (haveParsed()) {
+            return;
+        }
         if (!doesExist()) {
             isEnvi = false;
             return;
@@ -214,7 +259,7 @@ public class EnviInfo extends HeaderInfo {
             String value = "";
             boolean inValue = false;
 
-            List<String> bandNames = new ArrayList<String>();
+            List<String> bandNames = new ArrayList<>();
             List bandFiles = new ArrayList();
 
             while ((line = br.readLine()) != null) {
@@ -222,7 +267,9 @@ public class EnviInfo extends HeaderInfo {
                     isEnvi = true;
                     continue;
                 }
-                if (!isEnvi) break;
+                if (!isEnvi) {
+                    break;
+                }
 
                 int indexOfEquals = line.indexOf("=");
                 int indexOfOpen = line.indexOf("{");
@@ -236,28 +283,26 @@ public class EnviInfo extends HeaderInfo {
                     if (indexOfClose >= 0) {
                         value += line.substring(indexOfOpen+1, indexOfClose).trim();
                         inValue = false;
-                    }
-                    else {
+                    } else {
                         value += line.substring(indexOfOpen+1).trim();
                         inValue = true;
                         continue;
                     }
-                }
-                else if (inValue) {
+                } else if (inValue) {
                     if (indexOfClose >= 0) {
                         value += line.substring(0, indexOfClose).trim();
                         inValue = false;
-                    }
-                    else {
+                    } else {
                         value += line.trim();
                         continue;
                     }
-                }
-                else {
-                    value += line.substring(indexOfEquals+1).trim();
+                } else {
+                    value += line.substring(indexOfEquals + 1).trim();
                 }
 
-                if (parameter.equals("")) continue;
+                if (parameter.equals("")) {
+                    continue;
+                }
 
                 if (parameter.equals("description")) {
                     setParameter(DESCRIPTION, value);
@@ -270,28 +315,21 @@ public class EnviInfo extends HeaderInfo {
 
                 else if (parameter.equals("samples")) {
                     setParameter(ELEMENTS, new Integer(value));
-                }
-                else if (parameter.equals("lines")) {
+                } else if (parameter.equals("lines")) {
                     setParameter(LINES, new Integer(value));
-                }
-
-                else if (parameter.equals("header offset")) {
+                } else if (parameter.equals("header offset")) {
                     setParameter(OFFSET, Integer.parseInt(value));
-                }
-                else if (parameter.equals("data type")) {
+                } else if (parameter.equals("data type")) {
                     setParameter(DATATYPE, Integer.parseInt(value));
-                }
-                else if (parameter.equals("data ignore value") ||
+                } else if (parameter.equals("data ignore value") ||
                     parameter.equals("bad value")) {
                     setParameter(MISSINGVALUE, Float.parseFloat(value));
-                }
-                else if (parameter.equals("interleave")) {
+                } else if (parameter.equals("interleave")) {
                     setParameter(INTERLEAVE, value.toUpperCase());
-                }
-                else if (parameter.equals("map info")) {
+                } else if (parameter.equals("map info")) {
                     logger.debug("Parsing Map Info, value: " + value);
 
-                    ArrayList<String> mapInfo = new ArrayList<String>();
+                    ArrayList<String> mapInfo = new ArrayList<>();
                     String[] mapInfoSplit = value.split(",");
                     for (int i = 0; i < mapInfoSplit.length; i++) {
                         mapInfo.add(mapInfoSplit[i].trim());
@@ -357,28 +395,27 @@ public class EnviInfo extends HeaderInfo {
                         }
                         hasBounds = true;
                     }
-                }
-                else if (parameter.equals("byte order")) {
+                } else if (parameter.equals("byte order")) {
                     boolean bigEndian = false;
-                    if (value.equals("1")) bigEndian = true;
+                    if (value.equals("1")) {
+                        bigEndian = true;
+                    }
                     setParameter(BIGENDIAN, bigEndian);
-                }
-                else if (parameter.equals("bands")) {
+                } else if (parameter.equals("bands")) {
                     if (bandNames.size() <= 0 && bandFiles.size() <= 0) {
                         int bandCount = Integer.parseInt(value);
-                        for (int i=0; i<bandCount; i++) {
+                        for (int i = 0; i < bandCount; i++) {
                             bandNames.add("Band " + i+1);
                             bandFiles.add(dataFile);
                         }
                         setParameter(BANDNAMES, bandNames);
                         setParameter(BANDFILES, bandFiles);
                     }
-                }
-                else if (parameter.equals("band names")) {
-                    bandNames = new ArrayList<String>();
+                } else if (parameter.equals("band names")) {
+                    bandNames = new ArrayList<>();
                     bandFiles = new ArrayList<String>();
                     String[] bandNamesSplit = value.split(",");
-                    for (int i=0; i<bandNamesSplit.length; i++) {
+                    for (int i = 0; i < bandNamesSplit.length; i++) {
                         bandNames.add(bandNamesSplit[i].trim());
                         bandFiles.add(dataFile);
                     }
@@ -388,12 +425,8 @@ public class EnviInfo extends HeaderInfo {
 
             }
             br.close();
-        } catch (FileNotFoundException fnfe) {
-            fnfe.printStackTrace();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-
     }
-
 }

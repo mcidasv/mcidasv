@@ -25,17 +25,27 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.data;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Representation of an AXFORM header file.
+ */
 public class AxformInfo extends HeaderInfo {
 
+    private static final Logger logger = 
+        LoggerFactory.getLogger(AxformInfo.class);
+    
     /** The url */
     private String dataFile = "";
     private boolean isAxform = false;
@@ -48,7 +58,7 @@ public class AxformInfo extends HeaderInfo {
     /**
      * CTOR
      *
-     * @param thisFile File to use.
+     * @param thisFile File to use. Cannot be {@code null}.
      */
     public AxformInfo(File thisFile) {
         this(thisFile.getAbsolutePath());
@@ -65,6 +75,8 @@ public class AxformInfo extends HeaderInfo {
 
     /**
      * Is the file an AXFORM header file?
+     * 
+     * @return Whether or not the file is a valid AXFORM header file.
      */
     public boolean isAxformInfoHeader() {
         parseHeader();
@@ -72,33 +84,53 @@ public class AxformInfo extends HeaderInfo {
     }
 
     /**
-     * Which band/file is latitude?
+     * Which band number is latitude?
+     * 
+     * @return Always returns {@code 1} for this class.
      */
     public int getLatBandNum() {
         return 1;
     }
+
+    /**
+     * Get the latitude grid file.
+     *
+     * @return Either the latitude grid file or an empty {@code String}.
+     */
     public String getLatBandFile() {
         parseHeader();
-        List bandFiles = (List)getParameter(NAVFILES, new ArrayList());
-        if (bandFiles.size()!=2) return "";
+        List bandFiles = getParameter(NAVFILES, new ArrayList());
+        if (bandFiles.size() != 2) {
+            return "";
+        }
         return (String)(bandFiles.get(0));
     }
 
     /**
-     * Which band/file is longitude?
+     * Which band number is longitude?
+     * 
+     * @return Always returns {@code 1} for this class.
      */
     public int getLonBandNum() {
         return 1;
     }
+
+    /**
+     * Get the longitude grid file.
+     * 
+     * @return Either the longitude grid file or an empty {@code String}.
+     */
     public String getLonBandFile() {
         parseHeader();
-        List bandFiles = (List)getParameter(NAVFILES, new ArrayList());
-        if (bandFiles.size()!=2) return "";
+        List bandFiles = getParameter(NAVFILES, new ArrayList());
+        if (bandFiles.size() != 2) {
+            return "";
+        }
         return (String)(bandFiles.get(1));
     }
 
     /**
-     * Parse a potential AXFORM header file
+     * Parse a potential AXFORM header file.
      */
     protected void parseHeader() {
         if (haveParsed()) return;
@@ -121,7 +153,7 @@ public class AxformInfo extends HeaderInfo {
             String lonFile = "";
             File thisFile = new File(getFilename());
             String parent = thisFile.getParent();
-            if (parent==null) parent=".";
+            if (parent == null) parent=".";
 
             while ((line = br.readLine()) != null) {
                 lineNum++;
@@ -129,51 +161,49 @@ public class AxformInfo extends HeaderInfo {
                     isAxform = true;
                     continue;
                 }
-                if (!isAxform) break;
+                
+                if (!isAxform) {
+                    break;
+                }
 
                 if (line.length() < 80) {
-                    if (lineNum > 15) gotFiles = true;
+                    if (lineNum > 15) {
+                        gotFiles = true;
+                    }
                     continue;
                 }
 
                 // Process the description from lines 5 and 6
-                if (lineNum==5) {
+                if (lineNum == 5) {
                     description += line.substring(13, 41).trim();
-                }
-                else if (lineNum==6) {
-                    description += " " + line.substring(14, 23).trim() +" " + line.substring(59, 71).trim();
+                } else if (lineNum == 6) {
+                    description += " " + line.substring(14, 23).trim() + " " + line.substring(59, 71).trim();
                     setParameter(DESCRIPTION, description);
                 }
 
                 // Process the file list starting at line 15
-                else if (lineNum>=15 && !gotFiles) {
+                else if (lineNum >= 15 && !gotFiles) {
                     String parameter = line.substring(0, 13).trim();
                     if (parameter.equals("Header")) {
                         isAxform = true;
-                    }
-                    else if (parameter.equals("Latitude")) {
+                    } else if (parameter.equals("Latitude")) {
                         latFile = parent + "/" + line.substring(66).trim();
-                    }
-                    else if (parameter.equals("Longitude")) {
+                    } else if (parameter.equals("Longitude")) {
                         lonFile = parent + "/" + line.substring(66).trim();
-                    }
-                    else {
+                    } else {
                         setParameter(LINES, Integer.parseInt(line.substring(24, 31).trim()));
                         setParameter(ELEMENTS, Integer.parseInt(line.substring(32, 40).trim()));
                         setParameter(UNIT, parameter);
                         String band = line.substring(19, 23).trim();
                         String format = line.substring(41, 59).trim();
-                        System.out.println("looking at format line: " + format);
+                        logger.trace("looking at format line: {}", format);
                         if (format.indexOf("ASCII") >= 0) {
                             setParameter(DATATYPE, kFormatASCII);
-                        }
-                        else if (format.indexOf("8 bit") >= 0) {
+                        } else if (format.indexOf("8 bit") >= 0) {
                             setParameter(DATATYPE, kFormat1ByteUInt);
-                        }
-                        else if (format.indexOf("16 bit") >= 0) {
+                        } else if (format.indexOf("16 bit") >= 0) {
                             setParameter(DATATYPE, kFormat2ByteSInt);
-                        }
-                        else if (format.indexOf("32 bit") >= 0) {
+                        } else if (format.indexOf("32 bit") >= 0) {
                             setParameter(DATATYPE, kFormat4ByteSInt);
                         }
                         String filename = line.substring(66).trim();
@@ -201,11 +231,8 @@ public class AxformInfo extends HeaderInfo {
 
             }
             br.close();
+        } catch (Exception e) {
+            logger.error("Could not parse header!", e);
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
-
 }
