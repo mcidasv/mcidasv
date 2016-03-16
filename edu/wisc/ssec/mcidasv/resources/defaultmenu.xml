@@ -103,7 +103,7 @@
                   action="action:edit.colortables"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/x-office-presentation16.png"
                   tooltip="Create and edit color tables" />
-        <menuitem label="Station Model Template" 
+        <menuitem label="Layout Model Editor" 
                   mnemonic="S"
                   action="action:edit.stationmodels"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/accessories-text-editor16.png"
