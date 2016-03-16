@@ -21,6 +21,8 @@
 package ucar.unidata.idv.control;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.point.*;
@@ -101,6 +103,9 @@ public class ValuePlanViewControl extends PlanViewControl {
 
     /** The widget to show the layout model in the gui */
     protected LayoutModelWidget layoutModelWidget;
+
+    /** Checkbox used to toggle decluttering from GUI. May be {@code null}. */
+    private JCheckBox declutterCheckBox;
 
     /**
      * Default constructor.  Sets the attribute flags used by
@@ -237,6 +242,26 @@ public class ValuePlanViewControl extends PlanViewControl {
     public void viewpointChanged() {
         super.viewpointChanged();
         loadDataInThread();
+    }
+
+    /**
+     * Controls whether or not decluttering is enabled and ensures the GUI
+     * responds.
+     *
+     * @param value {@code true} if decluttering should be enabled,
+     *              {@code false} otherwise.
+     *
+     * @see #setDeclutter(boolean)
+     */
+    private void updateDeclutter(boolean value) {
+        // note: used in jython, so don't worry about this appearing to be
+        // unused
+        setDeclutter(value);
+        loadDataInThread();
+        if (declutterCheckBox != null) {
+            SwingUtilities.invokeLater(() ->
+                declutterCheckBox.setSelected(value));
+        }
     }
 
     /**

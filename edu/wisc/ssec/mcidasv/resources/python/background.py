@@ -2270,9 +2270,10 @@ class _Layer(_JavaProxy):
             raise NotImplementedError('decluttering not support for this layer type')
             
         if not self._JavaProxy__javaObject.getDeclutter():
-            self._JavaProxy__javaObject.setDeclutter(True)
-            self._JavaProxy__javaObject.loadDataInThread()
-        
+            # self._JavaProxy__javaObject.setDeclutter(True)
+            # self._JavaProxy__javaObject.loadDataInThread()
+            self._JavaProxy__javaObject.updateDeclutter(True)
+            
     @gui_invoke_later
     def disableDeclutter(self):
         """Disable decluttering of value plot displays.
@@ -2288,8 +2289,23 @@ class _Layer(_JavaProxy):
             raise NotImplementedError('decluttering not support for this layer type')
             
         if self._JavaProxy__javaObject.getDeclutter():
-            self._JavaProxy__javaObject.setDeclutter(False)
-            self._JavaProxy__javaObject.loadDataInThread()
+            self._JavaProxy__javaObject.updateDeclutter(False)
+            
+    @gui_invoke_later
+    def setDeclutter(self, value):
+        """Set decluttering of value plot displays.
+        
+        Args:
+            value: Whether or not decluttering should be enabled.
+            
+        Raises:
+            NotImplementedError: if the underlying layer is not a 
+                                 ValuePlanViewControl.
+        """
+        if not isinstance(self._JavaProxy__javaObject, (ValuePlanViewControl, StationModelControl)):
+            raise NotImplementedError('decluttering not support for this layer type')
+            
+        self._JavaProxy__javaObject.updateDeclutter(value)
         
     @gui_invoke_later
     def isDeclutterEnabled(self):
@@ -2340,8 +2356,40 @@ class _Layer(_JavaProxy):
             raise NotImplementedError('decluttering not support for this layer type')
             
         if self._JavaProxy__javaObject.getDeclutterFilter() != filterFactor:
-            self._JavaProxy__javaObject.setDeclutterFilter(filterFactor)
-            self._JavaProxy__javaObject.loadDataInThread()
+            # self._JavaProxy__javaObject.setDeclutterFilter(filterFactor)
+            # self._JavaProxy__javaObject.loadDataInThread()
+            self._JavaProxy__javaObject.updateDensity(filterFactor)
+            
+    @gui_invoke_later
+    def isVerticalPositionFromAltitude(self):
+        if not isinstance(self._JavaProxy__javaObject, StationModelControl):
+            raise NotImplementedError('not supported for this layer type')
+            
+        return self._JavaProxy__javaObject.getShouldUseAltitude()
+        
+    @gui_invoke_later
+    def setUseAltitudeForVerticalPosition(self, useAltitude):
+        if not isinstance(self._JavaProxy__javaObject, StationModelControl):
+            raise NotImplementedError('not supported for this layer type')
+            
+        if useAltitude != self._JavaProxy__javaObject.getShouldUseAltitude():
+            self._JavaProxy__javaObject.updateVerticalPosition(useAltitude)
+            
+    @gui_invoke_later
+    def enableAltitudeForVerticalPosition(self):
+        if not isinstance(self._JavaProxy__javaObject, StationModelControl):
+            raise NotImplementedError('not supported for this layer type')
+            
+        if not self._JavaProxy__javaObject.getShouldUseAltitude():
+            self._JavaProxy__javaObject.updateVerticalPosition(True)
+            
+    @gui_invoke_later
+    def disableAltitudeForVerticalPosition(self):
+        if not isinstance(self._JavaProxy__javaObject, StationModelControl):
+            raise NotImplementedError('not supported for this layer type')
+            
+        if self._JavaProxy__javaObject.getShouldUseAltitude():
+            self._JavaProxy__javaObject.updateVerticalPosition(False)
             
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
