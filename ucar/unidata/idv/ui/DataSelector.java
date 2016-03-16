@@ -31,6 +31,7 @@ import ucar.unidata.data.DataSourceFactory;
 import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.DescriptorDataSource;
 
+import ucar.unidata.data.grid.GeoGridDataSource;
 import ucar.unidata.idv.*;
 
 import ucar.unidata.ui.ButtonTabbedPane;
@@ -548,6 +549,9 @@ public class DataSelector extends DataSourceHolder {
         /** sort button */
         private JButton sortBtn;
 
+        /** button that switches between variables and descriptions. */
+        private JButton switchBtn;
+
         /** holds search field */
         private JPanel searchFldPanel;
 
@@ -680,10 +684,20 @@ public class DataSelector extends DataSourceHolder {
             }
 
             searchPanel = GuiUtils.centerRight(searchFldPanel, searchBtn);
+            switchBtn = GuiUtils.makeButton("show variables", this, "switchFieldBtnPressed");
+            JComponent left;
+            if (isShowingNetcdf()) {
+                left = GuiUtils.topCenter(
+                        GuiUtils.leftRight(GuiUtils.leftRight(makeLabel("Fields"),
+                                                              switchBtn),
+                                           searchPanel),
+                        treePanel);
+            } else {
+                left = GuiUtils.topCenter(GuiUtils.leftRight(makeLabel("Fields"),
+                                                             searchPanel),
+                                          treePanel);
+            }
 
-            JComponent left =
-                GuiUtils.topCenter(GuiUtils.leftRight(makeLabel("Fields"),
-                    searchPanel), treePanel);
             left.setBorder(null);
             GuiUtils.makeMouseOverBorder(searchBtn);
             searchBtn.setToolTipText("Search for a field by name");
@@ -912,7 +926,29 @@ public class DataSelector extends DataSourceHolder {
             showingSearchFld = !showingSearchFld;
         }
 
+        /**
+         * Handle the user clicking the {@literal "show variables"} button.
+         */
+        public void switchFieldBtnPressed() {
+            if (dataTree.isShowingDescriptions()) {
+                switchBtn.setText("show descriptions");
+            } else {
+                switchBtn.setText("show variables");
+            }
+            dataTree.setShowingDescriptions(!dataTree.isShowingDescriptions());
+            dataTree.dataSourceChanged(dataSource);
+        }
 
+        /**
+         * Determine if the {@literal "current"} {@link #dataSource} is based
+         * on NetCDF.
+         *
+         * @return {@code true} if {@code dataSource} is an instance of
+         * {@link GeoGridDataSource}.
+         */
+        private boolean isShowingNetcdf() {
+            return dataSource instanceof GeoGridDataSource;
+        }
 
     }
 

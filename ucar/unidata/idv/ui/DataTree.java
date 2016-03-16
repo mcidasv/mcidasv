@@ -128,6 +128,12 @@ public class DataTree extends DataSourceHolder {
     boolean doSort = false;
 
     /**
+     * Whether or not descriptions (vs names) for each data choice are
+     * being shown in the tree.
+     */
+    private boolean showingDescriptions = true;
+
+    /**
      * Create a DataTree with the given idv reference.
      *
      *
@@ -1069,11 +1075,16 @@ public class DataTree extends DataSourceHolder {
 
             //Create and initialize the treeNode for this DataChoice
             //            DataTreeNode fieldNode = createTreeNode (choice.toString (), choice);
-            String desc = choice.getDescription();
-            if (desc.trim().length() == 0) {
-                desc = "no name";
+            String text;
+            if (showingDescriptions) {
+                text = choice.getDescription();
+            } else {
+                text = choice.getName();
             }
-            DataTreeNode fieldNode = createTreeNode(desc, choice);
+            if (text.trim().length() == 0) {
+                text = "no name";
+            }
+            DataTreeNode fieldNode = createTreeNode(text, choice);
             lastNode = fieldNode;
 
             fieldNode.setIsDerived((choice instanceof DerivedDataChoice));
@@ -1306,6 +1317,29 @@ public class DataTree extends DataSourceHolder {
         return object;
     }
 
+    /**
+     * Returns whether or not the tree is showing each choice's description.
+     *
+     * <p>If {@code false}, the tree is using the choice's name.</p>
+     *
+     * @return {@code true} if {@link DataChoice#getDescription()} is being
+     *         shown. {@code false} if {@link DataChoice#getName()} is shown.
+     */
+    public boolean isShowingDescriptions() {
+        return showingDescriptions;
+    }
 
-
+    /**
+     * Controls whether or not descriptions are being shown.
+     *
+     * <p>This <i>does not</i> update the contents of the tree. Try
+     * {@link #dataSourceChanged(DataSource)} for that.</p>
+     *
+     * @param value {@code true} of the description of each choice should be
+     *              shown, {@code false} if the name of each choice should be
+     *              used instead.
+     */
+    public void setShowingDescriptions(boolean value) {
+        showingDescriptions = value;
+    }
 }
