@@ -2206,7 +2206,7 @@ class _Layer(_JavaProxy):
         
     @gui_invoke_later
     def setLayoutModel(self, model=None):
-        """Change the station layout model for the current layer.
+        """Change the layout model for the current layer.
         
         If the type of the given model is a string, this method will attempt to
         find the first StationModel object whose name is an exact match. If there
@@ -2219,7 +2219,7 @@ class _Layer(_JavaProxy):
         
         Optional Args:
             model: If provided, this can be a string value representing the name
-            of a station model or an actual StationModel object. Default behavior
+            of a layout model or an actual StationModel object. Default behavior
             is to use the StationModel object returned by defaultLayoutModel.
             
         Raises:
@@ -2242,9 +2242,9 @@ class _Layer(_JavaProxy):
             if match is not None:
                 model = match
             elif len(partialMatches) <= 0:
-                raise ValueError("Could not find an exact or partial match for station layout name '%s'. Call allLayoutModelNames for valid options." % (model))
+                raise ValueError("Could not find an exact or partial match for layout model name '%s'. Call allLayoutModelNames for valid options." % (model))
             elif len(partialMatches) > 1:
-                raise ValueError("Station layout name '%s' has no exact matches, and resulted in multiple partially matching station model layouts (%s). Please try a more specific name or call allLayoutModelNames for valid options." % (model, partialMatches))
+                raise ValueError("Layout model name '%s' has no exact matches, and resulted in multiple partially matching layout models (%s). Please try a more specific name or call allLayoutModelNames for valid options." % (model, partialMatches))
             else:
                 model = partialMatches[0]
         elif not isinstance(model, StationModel):
@@ -2741,26 +2741,26 @@ def getProjection(name=''):
         raise ValueError("Couldn't find a projection named ", name, "; try calling 'projectionNames()' to get the available projection names.")
         
 def allLayoutModelNames():
-    """Return list of the available station model layout names."""
+    """Return list of the available layout model names."""
     return [str(stationModel.getName()) for stationModel in getStaticMcv().getStationModelManager().getStationModels()]
     
 def allLayoutModels():
-    """Return list of the available station model layout names."""
+    """Return list of the available layout model names."""
     return [stationModel for stationModel in getStaticMcv().getStationModelManager().getStationModels()]
     
 def defaultLayoutModelName():
-    """Return name of the default station model layout."""
+    """Return name of the default layout model."""
     return str(getStaticMcv().getStationModelManager().getDefaultStationModel().getName())
     
 def defaultLayoutModel():
-    """Return default station model layout."""
+    """Return default layout model."""
     return getStaticMcv().getStationModelManager().getDefaultStationModel()
     
 def _getLayoutModelByName(name):
-    """Find station model layouts by name.
+    """Find layout models by name.
     
     Args:
-        name: Name of the desired station model layout.
+        name: Name of the desired layout model.
     
     Returns:
         Tuple containing two elements. The first is either a StationModel
