@@ -63,6 +63,9 @@ item in the Main Display window. This opens the Formula Editor dialog window use
 <pre>
    someProcedure(someValue[isuser=true,default=some default])
 </pre>
+<p>An extension from the previous example, a formula can be created without using a pre-defined procedure from the Jython Library. For example, a formula can be created that will allow the user to divide the values of a field by a specific value. This can be done as follows, by specifying that the value is a float (the value could also be specified as an integer by specifying 'int' in place of 'float'):</p>
+<pre>
+   field/float(value[isuser=true,default=some default])</pre>
 <p>You can specify the types of data that can be selected for a variable with the <em>categories</em> name. e.g.:</p>
 <pre>
    someProcedure(someDataValue[categories=param:ALTITUDE])
@@ -83,6 +86,12 @@ item in the Main Display window. This opens the Formula Editor dialog window use
 <pre>
    someProcedure(someValue[pattern=some_pattern])
 </pre>
+<p>A formula can be created that allows for multiple line text input by specifying rows= in the formula.  For example:</p>
+<pre>   someProcedure(someValue(isuser=true,rows=4))</pre>
+<p>A formula can prompt the user with a menu of choices with type=choice in the formula.  For example:</p>
+<pre>   someProcedure(someValue(isuser=true,type=choice,choices=lt;gt))</pre>
+<p>A formula can prompt the user with a Field Selector window that allows for selecting multiple fields at once with multiple=true in the formula.  For example:</p>
+<pre>   someProcedure(someValue(multiple=true))</pre>
 <p>In the advanced section you can enter a description of the formula, its group or category, and you can define what types of displays are applicable for the given formula (the default is to be able to use all displays).</p>
 <p>The group is used to display the formula in the Field Selector window and can be any alphanumeric text including spaces, numbers, and punctuation characters. Hyphens (&quot;-&quot;) define sub-categories.</p>
 <p>To save the formula, click on <img src="images/formula/AddFormulaButton.gif" alt="Add Formula button" width="105" height="26"align=absmiddle>. A new entry appears in the selector panel. By right clicking on the formula entry in the Field Selector window you can edit the formula. If you edit a <a href="NativeFormulas.html">native formula</a> and save it, the original formula will still be listed, but the modified formula will also be listed. To remove a formula, click on <img src="images/formula/RemoveFormulaButton.gif" alt="Remove Formula button" width="129" height="26"align=absmiddle> in the pull down menu. You can also right click on a formula and select Remove Formula.</p>
@@ -97,7 +106,11 @@ item in the Main Display window. This opens the Formula Editor dialog window use
 <p>Open the data source to see the names of parameters available. Click on the parameter
 needed for each variable. Then click <img src="images/Ok.gif" alt="OK button" width="51" height="26"align="absmiddle">. The result of the
 formula is computed for every data point in the source, and the result shown
-in the Main Display window.</p> <!--
+in the Main Display window.</p>
+<p>Note that other windows may appear when evaluating a formula. For example, a Select Input window may be used if the formula prompts the user for a numerical value. This Select Input window may involve a combination of text fields or drop-down menus.</p>
+<div class="images"><img src="images/formula/selectInput.gif" alt="Image 3: Select Input Window"><br>
+<span class="caption">Image 3: Select Input Window</span></div>
+<!--
 <div class="pagesubtitle">Wind Chill Example</div>
 
 Here is an example of a formula using the new (2001) JAG-TI wind chill formula.
