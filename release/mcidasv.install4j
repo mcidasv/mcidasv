@@ -305,14 +305,10 @@
                 </serializedBean>
                 <condition />
               </action>
-              <action name="" id="8339" customizedId="" beanClass="com.install4j.runtime.beans.actions.registry.LoadInstallerVariablesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="" id="8519" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.registry.LoadInstallerVariablesAction">
-                      <void property="packageName">
-                        <string>${compiler:sys.applicationId}</string>
-                      </void>
-                    </object>
+                    <object class="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" />
                   </java>
                 </serializedBean>
                 <condition />
@@ -578,8 +574,7 @@ return allowed;</validation>
                     </object>
                   </java>
                 </serializedBean>
-                <initScript>boolean isSelected = context.getBooleanVariable("createApplicationsLinkAction");
-configurationObject.setSelected(isSelected);</initScript>
+                <initScript />
                 <visibilityScript />
               </formComponent>
               <formComponent name="" id="7356" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="false" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
@@ -648,10 +643,7 @@ configurationObject.setSelected(isSelected);</initScript>
                     </object>
                   </java>
                 </serializedBean>
-                <initScript>String path = (String)context.getVariable("macosShortcutDirectory");
-if (path != null) {
-    configurationObject.setText(path);
-}</initScript>
+                <initScript />
                 <visibilityScript />
               </formComponent>
             </formComponents>
@@ -1216,44 +1208,6 @@ return Util.isWindows() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64
 String javaArch = System.getProperty("os.arch");
 return !Util.isWindows() &amp;&amp; !Util.isMacOS() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64".equals(javaArch);</condition>
               </action>
-              <action name="Save OS X &quot;use launchers&quot; variable" id="8337" customizedId="" beanClass="com.install4j.runtime.beans.actions.registry.SaveInstallerVariablesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.registry.SaveInstallerVariablesAction">
-                      <void property="installerVariables">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:createApplicationsLinkAction}</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="packageName">
-                        <string>${compiler:sys.applicationId}</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>return Util.isMacOS();</condition>
-              </action>
-              <action name="Save OS X launcher dir if needed" id="8338" customizedId="" beanClass="com.install4j.runtime.beans.actions.registry.SaveInstallerVariablesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.registry.SaveInstallerVariablesAction">
-                      <void property="installerVariables">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:macosShortcutDirectory}</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="packageName">
-                        <string>${compiler:sys.applicationId}</string>
-                      </void>
-                    </object>
-                  </java>
-                </serializedBean>
-                <condition>return (Util.isMacOS() &amp;&amp; context.getBooleanVariable("createApplicationsLinkAction"));</condition>
-              </action>
             </actions>
             <formComponents />
           </screen>
@@ -1752,6 +1706,7 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
     </windows>
   </mediaSets>
   <buildIds buildAll="false">
+    <mediaSet refId="12" />
     <mediaSet refId="8515" />
     <mediaSet refId="8423" />
     <mediaSet refId="8509" />
