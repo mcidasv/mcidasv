@@ -400,6 +400,13 @@
         <mapID target="idv.tools.jythonlib"							 url="tools/JythonLib.html" />
         <mapID target="idv.tools.jythonshell"						 url="tools/JythonShell.html" />
         <mapID target="idv.tools.remotedata"						 url="tools/RemoteDataManager.html" />
+        <mapID target="idv.tools.layoutmodeleditor"                  url="tools/LayoutModelEditor.html" />
+        <mapID target="idv.tools.layoutmodeleditor.image1"           url="tools/LayoutModelEditor.html#image1" />
+        <mapID target="idv.tools.layoutmodeleditor.image2"           url="tools/LayoutModelEditor.html#image2" />
+        <mapID target="idv.tools.layoutmodeleditor.image3"           url="tools/LayoutModelEditor.html#image3" />
+        <mapID target="idv.tools.layoutmodeleditor.image4"           url="tools/LayoutModelEditor.html#image4" />
+        <mapID target="idv.tools.layoutmodeleditor.image5"           url="tools/LayoutModelEditor.html#image5" />
+        <mapID target="idv.tools.layoutmodeleditor.image6"           url="tools/LayoutModelEditor.html#image6" />
         <mapID target="idv.tools.localdata"							 url="tools/LocalDataManager.html" />
 		<mapID target="idv.tools.mapformulas"						 url="tools/MapFormulas.html" />
 		<mapID target="idv.tools.miscellaneousformulas"				 url="tools/MiscellaneousFormulas.html" />
@@ -484,13 +491,6 @@
         <mapID target="idv.tools.projectionmanager"                  url="tools/ProjectionManager.html" />
         <mapID target="idv.tools.projectionmanager.image1"           url="tools/ProjectionManager.html#image1" />
         <mapID target="idv.tools.projectionmanager.image2"           url="tools/ProjectionManager.html#image2" />
-        <mapID target="idv.tools.stationmodeleditor"                 url="tools/StationModelEditor.html" />
-        <mapID target="idv.tools.stationmodeleditor.image1"          url="tools/StationModelEditor.html#image1" />
-        <mapID target="idv.tools.stationmodeleditor.image2"          url="tools/StationModelEditor.html#image2" />
-        <mapID target="idv.tools.stationmodeleditor.image3"          url="tools/StationModelEditor.html#image3" />
-        <mapID target="idv.tools.stationmodeleditor.image4"          url="tools/StationModelEditor.html#image4" />
-        <mapID target="idv.tools.stationmodeleditor.image5"          url="tools/StationModelEditor.html#image5" />
-        <mapID target="idv.tools.stationmodeleditor.image6"          url="tools/StationModelEditor.html#image6" />
 		<mapID target="idv.tools.stormtrackcontrol"					 url="tools/StormTrackControl.html" />
 		<mapID target="idv.tools.textproductcontrol"				 url="tools/TextProductControl.html" />
         <mapID target="idv.tools.timeline.image1"                    url="tools/Timeline.html#image1" />

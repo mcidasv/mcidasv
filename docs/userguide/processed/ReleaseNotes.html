@@ -114,6 +114,7 @@ Changes</div>
     <li>For remote datasets requiring accounting that are already defined in the ADDE Data Manager, there is no need to specify the accounting keyword in the imagery-related functions.  This includes loadADDEImage, listADDEImages, and listADDEImageTimes.  A benefit of this change is that users can share scripts without including any accounting information.</li>
     <li>Added a new function called setMapVisibilityByDescription() that allows for showing or hiding individual maps from the display.</li>
     <li>Added new information to the metadata of the data object returned from loadGrid. This new metadata is in the form of three new keys: globalAttributes, metadataVariables, and variableAttributes. Information on accessing these keys and their values can be found on the 'Create an Object - Grids' page.</li>
+    <li>Added a new keyword to captureImage and writeMovie called createDirectories. This createDirectories key, if set to True, allows for the creation of the directory path specified in the command if it does not already exist.</li>
   </ul>
 </div></div>
 <div class="faq-category"><a name="java1.6" id="java1.6"></a>
