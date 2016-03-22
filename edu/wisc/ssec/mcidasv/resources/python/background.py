@@ -1833,6 +1833,7 @@ class _Layer(_JavaProxy):
             ValueError:  couldn't find ctName or transparency invalid value
         Returns: nothing
         """
+        from ucar.unidata.util import ColorTable
         my_mcv = getStaticMcv()
         ctm = my_mcv.getColorTableManager()
         newct = ctm.getColorTable(ctName)
@@ -1848,6 +1849,23 @@ class _Layer(_JavaProxy):
         if transparency is not None:
             if (transparency > 100.0) or (transparency < 0.0):
                 raise ValueError('please specify transparency as a percent between 0 and 100')
+                
+            # using ColorTable.setTransparency(value) will alter the 
+            # transparency of the color table for all subsequent uses in the 
+            # current McV session! 
+            # 
+            # the long and short of it is:
+            #   display1Layer.setEnhancement('Temperature',range=(100,255),transparency=50)
+            #   display2Layer.setEnhancement('Temperature')
+            # will cause *display2Layer* to use the transparency that was set
+            # for *display1Layer*.
+            # 
+            # the workaround is to create a temporary copy of the color table,
+            # *without* adding it to the color table manager. the end result
+            # is that the copy is only used this one time, so we are free to
+            # modifiy its transparency as needed.
+            newct = ColorTable(newct)
+            
             # note, 0.0 should be fully opaque and 1.0 is transparent,
             # so we need to invert here. and, convert percent to 0.0-1.0 range.
             newct.setTransparency(1.0 - transparency/100.0)
