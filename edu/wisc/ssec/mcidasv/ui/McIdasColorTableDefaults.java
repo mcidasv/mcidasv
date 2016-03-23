@@ -28,32 +28,27 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
+import java.awt.Color;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
+
+import org.w3c.dom.Element;
 
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.StringUtil;
 
-import visad.*;
-
-import java.awt.Color;
-
-import java.lang.Integer;
-
-import java.util.ArrayList;
-
-import java.util.List;
+import edu.wisc.ssec.mcidasv.util.XPathUtils;
 
 /**
  * A class to provide color tables suitable for data displays.
  * Uses some code by Ugo Taddei. All methods are static.
- *
- * @version $Id$
  */
 public class McIdasColorTableDefaults {
 
@@ -165,6 +160,46 @@ public class McIdasColorTableDefaults {
         return colorTable;
     }
 
+    /**
+     * Convert a AWIPS II {@literal ".cmap"} file to an IDV {@link ColorTable}
+     * and add the new color table to the {@link McIdasColorTableManager}.
+     * 
+     * @param name Name to use in the color table manager.
+     * @param category Category of the color table.
+     * @param file Path to AWIPS II {@literal ".cmap"} file.
+     * 
+     * @return Either a {@link List} containing the newly created 
+     *         {@code ColorTable} or {@code null} if the conversion failed.
+     */
+    public static List makeAwips2ColorTables(String name, String category, 
+                                             String file) 
+    {
+        String xpath = "//color";
+        // yes, I should be using "List<Color> ....", but some IDV methods
+        // expect ArrayList (for no good reason)
+        ArrayList<Color> colors = new ArrayList<>(512);
+        for (Element e : XPathUtils.elements(file, xpath)) {
+            float r = Float.valueOf(e.getAttribute("r"));
+            float g = Float.valueOf(e.getAttribute("g"));
+            float b = Float.valueOf(e.getAttribute("b"));
+            float a = Float.valueOf(e.getAttribute("a"));
+
+            // some files will have alpha values of "3.0"; we just clamp these
+            // to 1.0.
+            if (a > 1.0) {
+                a = 1.0f;
+            }
+            
+            colors.add(new Color(r, g, b, a));
+        }
+
+        List<ColorTable> newColorTable = null;
+        if (!colors.isEmpty()) {
+            newColorTable = new ArrayList<>(1);
+            newColorTable.add(makeColorTable(name, category, colors));
+        }
+        return newColorTable;
+    }
 
     /**
      * Convert strings of integers to scaled colors.

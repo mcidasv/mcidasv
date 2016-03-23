@@ -62,6 +62,10 @@ public class McIdasColorTableManager extends ColorTableManager {
     public static final PatternFileFilter FILTER_ET =
         new PatternFileFilter(".+\\.et", "McIDAS-X color table (*.et)", ".et");
 
+    /** File filter used for AWIPS II {@literal ".cmap"} color tables.*/
+    public static final PatternFileFilter FILTER_AWIPS2 = 
+        new PatternFileFilter(".+\\.cmap", "AWIPS II color table (*.cmap)", ".cmap");
+    
     /**
      * Create the color table manager.
      */
@@ -89,6 +93,7 @@ public class McIdasColorTableManager extends ColorTableManager {
         List filters = ctm.getWriteFileFilters();
         filters.add(FILTER_HYDRA);
         filters.add(FILTER_ET);
+        filters.add(FILTER_AWIPS2);
         return filters;
     }
 
@@ -178,6 +183,8 @@ public class McIdasColorTableManager extends ColorTableManager {
             cts.addAll(ColorTableDefaults.makeGempakColorTables(name, cat, file));
         } else if (suffix.endsWith(".rgb")) {
             cts.addAll(ColorTableDefaults.makeRgbColorTables(name, cat, file));
+        } else if (suffix.endsWith(".cmap")) {
+              cts.addAll(McIdasColorTableDefaults.makeAwips2ColorTables(name, cat, file));
         } else if (suffix.endsWith(".ascii")) {
             if (category == null) {
                 cat = CATEGORY_HYDRA;
@@ -192,7 +199,7 @@ public class McIdasColorTableManager extends ColorTableManager {
         }
         return cts;
     }
-
+    
     /**
      * Is the given file a Gempak file
      *          
