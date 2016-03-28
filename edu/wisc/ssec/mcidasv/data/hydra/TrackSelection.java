@@ -30,15 +30,23 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionListener;
+import javax.swing.event.ChangeListener;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JSlider;
+import javax.swing.DefaultBoundedRangeModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +59,8 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.geoloc.projection.LatLonProjection;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
+import ucar.unidata.view.geoloc.MapProjectionDisplayJ2D;
+import ucar.unidata.geoloc.ProjectionRect;
 import ucar.visad.ProjectionCoordinateSystem;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineDrawing;
@@ -66,6 +76,7 @@ import visad.UnionSet;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
+import visad.GriddedSet;
 
 public class TrackSelection extends DataSelectionComponent {
 
@@ -79,8 +90,7 @@ public class TrackSelection extends DataSelectionComponent {
 
 	double[] x_coords = new double[2];
 	double[] y_coords = new double[2];
-	boolean hasSubset = true;
-	MapProjectionDisplayJ3D mapProjDsp;
+	MapProjectionDisplayJ2D mapProjDsp;
 	DisplayMaster dspMaster;
 
 	int trackStride;
@@ -88,23 +98,55 @@ public class TrackSelection extends DataSelectionComponent {
 
 	JTextField trkStr;
 	JTextField vrtStr;
-	MultiDimensionDataSource datSrc;
+        JTextField widthFld;
 
-	TrackSelection(DataChoice dataChoice, FlatField track,
-			MultiDimensionDataSource datSrc) throws VisADException, RemoteException {
+        LineDrawing trackSelectDsp;
+        float[][] trackLocs;
+        int trackLen;
+        int trackPos;
+        int trackStart;
+        int trackStop;
+        double trackWidthPercent = 5;
+        int selectWidth;
+        Map defaultSubset;
+
+	TrackSelection(DataChoice dataChoice, FlatField track, Map defaultSubset) throws VisADException, RemoteException {
 		super("track");
 		this.dataChoice = dataChoice;
 		this.track = track;
-		this.datSrc = datSrc;
-		mapProjDsp = new MapProjectionDisplayJ3D(
-				MapProjectionDisplay.MODE_2Din3D);
-		mapProjDsp.enableRubberBanding(false);
+                this.defaultSubset = defaultSubset;
+
+                GriddedSet gset = (GriddedSet)track.getDomainSet();
+                float[] lo = gset.getLow();
+                float[] hi = gset.getHi();
+                float[][] values = gset.getSamples();
+                
+                trackLen = values[0].length;
+                selectWidth = (int) (trackLen*(trackWidthPercent/100));
+                selectWidth /= 2;
+                trackPos = trackLen/2;
+                trackStart = trackPos - selectWidth;
+                trackStop = trackPos + selectWidth;
+                
+                trackLocs = values;
+                Gridded2DSet track2D = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {values[0], values[1]}, values[0].length);
+		//mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
+		mapProjDsp = new MapProjectionDisplayJ2D();
+		//mapProjDsp.enableRubberBanding(false);
 		dspMaster = mapProjDsp;
-		mapProjDsp.setMapProjection(getDataProjection());
+		mapProjDsp.setMapProjection(getDataProjection(new ProjectionRect(lo[0],lo[1],hi[0],hi[1])));
 		LineDrawing trackDsp = new LineDrawing("track");
-		trackDsp.setLineWidth(2f);
-		trackDsp.setData(track);
+		trackDsp.setLineWidth(0.5f);
+                trackDsp.setData(track2D);
+                
+                trackSelectDsp = new LineDrawing("trackSelect");
+                trackSelectDsp.setLineWidth(3f);
+                trackSelectDsp.setColor(java.awt.Color.green);
+                
+                updateTrackSelect();
+                
 		mapProjDsp.addDisplayable(trackDsp);
+                mapProjDsp.addDisplayable(trackSelectDsp);
 
 		MapLines mapLines = new MapLines("maplines");
 		URL mapSource = mapProjDsp.getClass().getResource(
@@ -113,7 +155,7 @@ public class TrackSelection extends DataSelectionComponent {
 			BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
 			mapLines.setMapLines(mapAdapter.getData());
 			mapLines.setColor(java.awt.Color.cyan);
-			mapProjDsp.addDisplayable(mapLines);
+			//mapProjDsp.addDisplayable(mapLines);
 		} catch (Exception excp) {
 			logger.error("cannot open map file: " + mapSource, excp);
 		}
@@ -135,55 +177,18 @@ public class TrackSelection extends DataSelectionComponent {
 			BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
 			mapLines.setMapLines(mapAdapter.getData());
 			mapLines.setColor(java.awt.Color.cyan);
-			mapProjDsp.addDisplayable(mapLines);
+			//mapProjDsp.addDisplayable(mapLines);
 		} catch (Exception excp) {
 			logger.error("cannot open map file: " + mapSource, excp);
 		}
 
-		final LineDrawing selectBox = new LineDrawing("select");
-		selectBox.setColor(Color.green);
-
-		final RubberBandBox rbb = new RubberBandBox(RealType.Longitude,
-				RealType.Latitude, 1);
-		rbb.setColor(Color.green);
-		rbb.addAction(new CellImpl() {
-			public void doAction() throws VisADException, RemoteException {
-				Gridded2DSet set = rbb.getBounds();
-				float[] low = set.getLow();
-				float[] hi = set.getHi();
-				x_coords[0] = low[0];
-				x_coords[1] = hi[0];
-				y_coords[0] = low[1];
-				y_coords[1] = hi[1];
-
-				SampledSet[] sets = new SampledSet[4];
-				sets[0] = new Gridded2DSet(
-						RealTupleType.SpatialEarth2DTuple,
-						new float[][] { { low[0], hi[0] }, { low[1], low[1] } },
-						2);
-				sets[1] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
-						new float[][] { { hi[0], hi[0] }, { low[1], hi[1] } },
-						2);
-				sets[2] = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
-						new float[][] { { hi[0], low[0] }, { hi[1], hi[1] } },
-						2);
-				sets[3] = new Gridded2DSet(
-						RealTupleType.SpatialEarth2DTuple,
-						new float[][] { { low[0], low[0] }, { hi[1], low[1] } },
-						2);
-				UnionSet uset = new UnionSet(sets);
-				selectBox.setData(uset);
-			}
-		});
-		dspMaster.addDisplayable(rbb);
-		dspMaster.addDisplayable(selectBox);
 		dspMaster.draw();
 	}
 
-	public MapProjection getDataProjection() {
+	public MapProjection getDataProjection(ProjectionRect rect) {
 		MapProjection mp = null;
 		try {
-			mp = new ProjectionCoordinateSystem(new LatLonProjection());
+			mp = new ProjectionCoordinateSystem(new LatLonProjection("blah", rect));
 		} catch (Exception e) {
 			logger.error("error getting data projection", e);
 		}
@@ -198,6 +203,8 @@ public class TrackSelection extends DataSelectionComponent {
 			JPanel stridePanel = new JPanel(new FlowLayout());
 			trkStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_TRACK_STRIDE), 3);
 			vrtStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_VERTICAL_STRIDE), 3);
+                        widthFld = new JTextField(Double.toString(5));
+                        
 			trkStr.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
 					setTrackStride(Integer.valueOf(trkStr.getText().trim()));
@@ -208,12 +215,33 @@ public class TrackSelection extends DataSelectionComponent {
 					setVerticalStride(Integer.valueOf(vrtStr.getText().trim()));
 				}
 			});
+                        widthFld.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent ae) {
+                                        setWidthPercent(Double.valueOf(widthFld.getText().trim()));
+                                }
+                        });
 
 			stridePanel.add(new JLabel("Track Stride: "));
 			stridePanel.add(trkStr);
 			stridePanel.add(new JLabel("Vertical Stride: "));
 			stridePanel.add(vrtStr);
-			panel.add("South", stridePanel);
+                        stridePanel.add(new JLabel("Width%: "));
+                        stridePanel.add(widthFld);
+
+                        JPanel selectPanel = new JPanel(new GridLayout(2,0));
+                        DefaultBoundedRangeModel brm = new DefaultBoundedRangeModel(trackStart, 2*selectWidth, 0, trackLen); 
+                        JSlider trackSelect = new JSlider(brm);
+                        trackSelect.addChangeListener( new ChangeListener() {
+                           public void stateChanged(ChangeEvent e) {
+                              trackPos = (int) ((JSlider)e.getSource()).getValue();
+                              updateTrackSelect();
+                           }
+                        }
+                        );
+                        selectPanel.add(trackSelect);
+                        selectPanel.add(stridePanel);
+			//panel.add("South", stridePanel);
+			panel.add("South", selectPanel);
 
 			return panel;
 		} catch (Exception e) {
@@ -229,6 +257,13 @@ public class TrackSelection extends DataSelectionComponent {
 	public void setVerticalStride(int stride) {
 		verticalStride = stride;
 	}
+        
+        public void setWidthPercent(double percent) {
+                trackWidthPercent = percent;
+                selectWidth = (int) (trackLen*(trackWidthPercent/100));
+                selectWidth /= 2;
+                updateTrackSelect();
+        }
 
 	/**
 	 * Update Track Stride if input text box holds a positive integer.
@@ -266,20 +301,59 @@ public class TrackSelection extends DataSelectionComponent {
 		return setOk;
 	}
 
+        /**
+	 * Update Vertical Stride if input text box holds a positive integer.
+	 * 
+	 * @return true if verticalStride was updated
+	 */
+	
+	public boolean setWidthPercent() {
+		boolean setOk = false;
+		try {
+			double newWidth = Double.valueOf(widthFld.getText().trim());
+			trackWidthPercent = newWidth;
+			setOk = true;
+		} catch (NumberFormatException nfe) {
+			// do nothing, will return correct result code
+		}
+		return setOk;
+	}
+        
+        void updateTrackSelect() {
+               trackStart = trackPos - selectWidth;
+               trackStop = trackPos + selectWidth;
+               try {
+                  Gridded2DSet trck = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
+                         new float[][] {java.util.Arrays.copyOfRange(trackLocs[0], trackStart, trackStop), 
+                                        java.util.Arrays.copyOfRange(trackLocs[1], trackStart, trackStop)}, 2*selectWidth);
+                  trackSelectDsp.setData(trck);
+               }
+               catch (Exception exc) {
+                  exc.printStackTrace();
+               }           
+        }
+        
 	public void applyToDataSelection(DataSelection dataSelection) {
 		setTrackStride();
 		setVerticalStride();
-		if (hasSubset) {
-			GeoSelection geoSelect = new GeoSelection(new GeoLocationInfo(
-					y_coords[1], x_coords[0], y_coords[0], x_coords[1]));
-			geoSelect.setXStride(trackStride);
-			geoSelect.setYStride(verticalStride);
-			dataSelection.setGeoSelection(geoSelect);
+                setWidthPercent();
 
-			DataSelection datSel = new DataSelection();
-			datSel.setGeoSelection(geoSelect);
-			datSrc.setDataSelection(datSel);
-			dataChoice.setDataSelection(dataSelection);
-		}
+                HashMap subset = (HashMap) ((HashMap)defaultSubset).clone();
+                double[] coords = (double[]) subset.get(ProfileAlongTrack.vertDim_name);
+
+                subset.put(ProfileAlongTrack.trackDim_name, new double[] {trackStart, trackStop, trackStride});
+                subset.put(ProfileAlongTrack.vertDim_name, new double[] {coords[0], coords[1], verticalStride});
+                  
+ 
+                MultiDimensionSubset select = new MultiDimensionSubset(subset);
+
+                Hashtable table = dataChoice.getProperties();
+                table.put(MultiDimensionSubset.key, select);
+
+                table = dataSelection.getProperties();
+                table.put(MultiDimensionSubset.key, select);
+
+                dataChoice.setDataSelection(dataSelection);
+
 	}
 }

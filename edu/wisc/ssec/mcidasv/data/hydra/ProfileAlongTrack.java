@@ -288,15 +288,19 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         cs = new CoordinateSystem(reference, null) {
           public float[][] toReference(float[][] vals) throws VisADException {
             int[] indexes = lin1DSet_s[0].valueToIndex(new float[][] {vals[0]});
+            /* ?
             for (int k=0; k<vals[0].length;k++) {
-              //-indexes[k] = (int) (vals[vert_tup_idx][k] - vert_offset); ?
+               indexes[k] = (int) (vals[vert_tup_idx][k] - vert_offset);
             }
+            */
             float[][] alts = alt_set.indexToValue(indexes);
 
             indexes = lin1DSet_s[1].valueToIndex(new float[][] {vals[1]});
+            /* ?
             for (int k=0; k<vals[0].length;k++) {
-              //-indexes[k] = (int) (vals[track_tup_idx][k] - track_offset); ?
+               indexes[k] = (int) (vals[track_tup_idx][k] - track_offset);
             }
+            */
             float[][] times = time_set.indexToValue(indexes);
 
             return new float[][] {alts[0], times[0]};
@@ -478,7 +482,6 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
               }
             }
             System.arraycopy(window, 0, new_window, 0, cnt);
-            //-sort_indexes = QuickSort.sort(new_window, sort_indexes);
             sort_indexes = QuickSort.sort(new_window);
             result[a_idx] = new_window[cnt/2];
           }
