@@ -95,7 +95,6 @@
             <tocitem text="Sounding Display Controls" target="idv.controls.aerologicalsoundingcontrol"/>
             <tocitem text="Front Controls" target="idv.controls.frontcontrol"/>
             <tocitem text="Location Controls" target="idv.controls.stationlocationcontrol"/>
-            <tocitem text="WorldWind Controls" target="idv.controls.worldwindcontrol"/>
             <tocitem text="Track Controls" target="idv.controls.trackcontrol"/>
         </tocitem>
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
