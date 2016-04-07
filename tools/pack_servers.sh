@@ -45,6 +45,8 @@ giniadir giniaget
 mod8adir mod8aget
 mtstadir mtstaget
 
+abinadir abinaget
+
 vpserv
 atokserv
 mdfhserv
