@@ -913,6 +913,7 @@
       <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
       <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
 
+      <sysproperty key="visad.java3d.noerasebackground" value="true" />
       <sysproperty key="visad.java3d.textureNpot" value="true" />
       <sysproperty key="visad.java3d.imageByRef" value="true" />
       <sysproperty key="visad.java3d.geometryByRef" value="true" />
