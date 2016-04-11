@@ -50,6 +50,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
+
 import javafx.stage.DirectoryChooser;
 
 import net.miginfocom.swing.MigLayout;
@@ -62,7 +63,7 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
-import edu.wisc.ssec.mcidasv.util.jfxpathchooser.SynchronousJFXDirectoryChooser;
+import edu.wisc.ssec.mcidasv.util.nativepathchooser.NativeDirectoryChooser;
 
 /**
  * A dialog that allows the user to define or modify
@@ -458,7 +459,7 @@ public class LocalEntryEditor extends JDialog {
      * @return Either a path to a data directory or {@code startDir}.
      */
     private String getDataDirectory(final String startDir) {
-        SynchronousJFXDirectoryChooser chooser = new SynchronousJFXDirectoryChooser(() -> {
+        NativeDirectoryChooser chooser = new NativeDirectoryChooser(() -> {
             DirectoryChooser ch = new DirectoryChooser();
             ch.setTitle("Select the data directory");
             File initialDirectory = new File(startDir);

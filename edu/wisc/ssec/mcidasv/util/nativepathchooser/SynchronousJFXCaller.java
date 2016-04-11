@@ -25,7 +25,7 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
-package edu.wisc.ssec.mcidasv.util.jfxpathchooser;
+package edu.wisc.ssec.mcidasv.util.nativepathchooser;
 
 import javax.swing.SwingUtilities;
 
