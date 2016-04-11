@@ -461,7 +461,11 @@ public class LocalEntryEditor extends JDialog {
         SynchronousJFXDirectoryChooser chooser = new SynchronousJFXDirectoryChooser(() -> {
             DirectoryChooser ch = new DirectoryChooser();
             ch.setTitle("Select the data directory");
-            ch.setInitialDirectory(new File(startDir));
+            File initialDirectory = new File(startDir);
+            if (!initialDirectory.exists()) {
+                initialDirectory = new File(System.getProperty("user.home"));
+            }
+            ch.setInitialDirectory(initialDirectory);
             return ch;
         });
 
