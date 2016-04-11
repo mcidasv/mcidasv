@@ -447,7 +447,7 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       public abstract float[] getTrackLongitude() throws Exception;
       public abstract float[] getTrackLatitude() throws Exception;
 
-      public static float[] medianFilter(float[] A, int lenx, int leny, int window_lenx, int window_leny)
+      public static float[] medianFilterOrig(float[] A, int lenx, int leny, int window_lenx, int window_leny)
            throws VisADException {
         float[] result =  new float[A.length];
         float[] window =  new float[window_lenx*window_leny];
@@ -469,6 +469,10 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         for (int j=0; j<leny; j++) {
           for (int i=0; i<lenx; i++) {
             a_idx = j*lenx + i;
+            if (Float.isNaN(A[a_idx])) {
+               result[a_idx] = Float.NaN;
+               continue;
+            }
             cnt = 0;
             for (int w_j=-w_leny; w_j<w_leny; w_j++) {
               for (int w_i=-w_lenx; w_i<w_lenx; w_i++) {
@@ -476,17 +480,203 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
                 ww_ii = w_i + i;
                 w_idx = (w_j+w_leny)*window_lenx + (w_i+w_lenx);
                 if ((ww_jj >= 0) && (ww_ii >=0) && (ww_jj < leny) && (ww_ii < lenx)) {
-                  window[cnt] = A[ww_jj*lenx+ww_ii];
-                  cnt++;
+                  int k = ww_jj*lenx+ww_ii;
+                  float val = A[k];
+                  if (!Float.isNaN(val)) {
+                    window[cnt] = val;
+                    cnt++;
+                  }
                 }
               }
             }
             System.arraycopy(window, 0, new_window, 0, cnt);
-            sort_indexes = QuickSort.sort(new_window);
+            //java.util.Arrays.sort(new_window, 0, cnt-1);
+            QuickSort.sort(new_window, 0, cnt-1);
             result[a_idx] = new_window[cnt/2];
           }
         }
         return result;
       }
 
+      //medianFilterFast
+      public static float[] medianFilter(float[] A, int lenx, int leny, int window_lenx, int window_leny)
+           throws VisADException {
+        float[] result =  new float[A.length];
+        float[] window =  new float[window_lenx*window_leny];
+        float[] sortedWindow =  new float[window_lenx*window_leny];
+        int[] sort_indexes = new int[window_lenx*window_leny];
+        int[] indexes = new int[window_lenx*window_leny];
+        int[] indexesB = new int[window_lenx*window_leny];
+        
+        int[] numToInsertAt = new int[window_lenx*window_leny];
+        float[][] valsToInsert = new float[window_lenx*window_leny][window_lenx*window_leny];
+        int[][] idxsToInsert = new int[window_lenx*window_leny][window_lenx*window_leny];
+        
+        float[] sortedArray = new float[window_lenx*window_leny];
+                                                                                                                                    
+        int a_idx;
+        int w_idx;
+                                                                                                                                    
+        int w_lenx = window_lenx/2;
+        int w_leny = window_leny/2;
+                                                                                                                                    
+        int lo;
+        int hi;
+        int ww_jj;
+        int ww_ii;
+        int cnt=0;
+        int ncnt;
+        int midx;
+        float median;
+
+        
+        for (int i=0; i<lenx; i++) { // zig-zag better? Maybe, but more complicated
+          for (int j=0; j<leny; j++) {             
+            a_idx = j*lenx + i;
+            
+            
+            if (j > 0) {
+              ncnt = 0;
+              for (int t=0; t<cnt; t++) {
+                 // last window index in data coords: A[lenx,leny]
+                 int k = indexes[sort_indexes[t]];
+                 ww_jj = k/lenx;
+                 ww_ii = k % lenx;
+                 
+                 // current window bounds in data coords
+                 int ww_jj_lo = j - w_leny;
+                 int ww_jj_hi = j + w_leny;
+                 int ww_ii_lo = i - w_lenx;
+                 int ww_ii_hi = i + w_lenx;
+                 
+                 if (ww_jj_lo < 0) ww_jj_lo = 0;
+                 if (ww_ii_lo < 0) ww_ii_lo = 0;
+                 if (ww_jj_hi > leny-1) ww_jj_hi = leny-1;
+                 if (ww_ii_hi > lenx-1) ww_ii_hi = lenx-1;
+                 
+                 
+                 // These are the points which overlap between the last and current window
+                 if ((ww_jj >= ww_jj_lo && ww_jj < ww_jj_hi) && (ww_ii >= ww_ii_lo && ww_ii < ww_ii_hi)) {
+                    window[ncnt] = sortedWindow[t];
+                    indexesB[ncnt] = k;
+                    ncnt++;
+                 }
+              } 
+              
+              
+              // Add the new points from sliding the window to the overlap points above
+              java.util.Arrays.fill(numToInsertAt, 0);
+              
+              ww_jj = w_leny-1 + j;
+              for (int w_i=-w_lenx; w_i<w_lenx; w_i++) {
+                 ww_ii = w_i + i;
+                  if ((ww_jj >= 0) && (ww_ii >=0) && (ww_jj < leny) && (ww_ii < lenx)) {
+                     int k = ww_jj*lenx+ww_ii;
+                     float val = A[k];
+                     if (!Float.isNaN(val)) {
+                        for (int t=0; t<ncnt-1; t++) {
+                           if (val >= window[t] && val < window[t+1]) {
+                              valsToInsert[t][numToInsertAt[t]] = val;
+                              idxsToInsert[t][numToInsertAt[t]] = k;
+                              numToInsertAt[t]++;
+                              break;
+                           }
+                        }
+                        int t = ncnt-1;
+                        if (val >= window[t]) {
+                              valsToInsert[t][numToInsertAt[t]] = val;
+                              idxsToInsert[t][numToInsertAt[t]] = k;
+                              numToInsertAt[t]++;  
+                              break;
+                        }
+                        t = 0;
+                        if (val < window[t]) {
+                              valsToInsert[t][numToInsertAt[t]] = val;
+                              idxsToInsert[t][numToInsertAt[t]] = k;
+                              numToInsertAt[t]++;  
+                              break;
+                        }
+                     }
+
+                  }
+              }
+              
+              // insert new unsorted values into the already sorted overlap window region
+              int tcnt = 0;
+              for (int t=0; t<ncnt; t++) {
+                 sortedArray[tcnt] = window[t];
+                 indexes[tcnt] = indexesB[t];
+                 tcnt++;
+                 if (numToInsertAt[t] > 0) {
+                    if (numToInsertAt[t] == 2) { // two item sort here to save work for QuickSort
+                       float val0 = valsToInsert[t][0];
+                       float val1 = valsToInsert[t][1];
+                       if (val0 <= val1) {
+                          sortedArray[tcnt] = val0;
+                          indexes[tcnt] = idxsToInsert[t][0];
+                       }
+                       else {
+                          sortedArray[tcnt] = val1;
+                          indexes[tcnt] = idxsToInsert[t][1];                          
+                       }
+                       tcnt++;
+                    }
+                    else {
+                       for (int it=0; it<numToInsertAt[t]; it++) {
+                          sortedArray[tcnt] = valsToInsert[t][it];
+                          indexes[tcnt] = idxsToInsert[t][it];
+                          tcnt++;
+                       }
+                    }
+                 }
+              }
+              
+              // Now sort the new unsorted and overlap sorted points together to get the new window median
+              
+              System.arraycopy(sortedArray, 0, sortedWindow, 0, tcnt);
+              sort_indexes = QuickSort.sort(sortedWindow, 0, tcnt-1);              
+              
+              median = sortedWindow[tcnt/2];
+              cnt = tcnt;
+
+            }
+            else { // full sort done once for each row (see note on zigzag above)
+            
+               cnt = 0;
+               for (int w_j=-w_leny; w_j<w_leny; w_j++) {
+                 for (int w_i=-w_lenx; w_i<w_lenx; w_i++) {
+                   ww_jj = w_j + j;
+                   ww_ii = w_i + i;
+                   w_idx = (w_j+w_leny)*window_lenx + (w_i+w_lenx);
+                   if ((ww_jj >= 0) && (ww_ii >=0) && (ww_jj < leny) && (ww_ii < lenx)) {
+                     int k = ww_jj*lenx+ww_ii;
+                     float val = A[k];
+                     if (!Float.isNaN(val)) {
+                       window[cnt] = val;
+                       indexes[cnt] = k;
+                       cnt++;
+                     }
+                   }
+                 }
+               }
+            
+            
+               System.arraycopy(window, 0, sortedWindow, 0, cnt);
+               sort_indexes = QuickSort.sort(sortedWindow, 0, cnt-1);
+               midx = cnt/2;
+               median = sortedWindow[midx];
+            }
+            
+            if (Float.isNaN(A[a_idx])) {
+              result[a_idx] = Float.NaN;
+            }
+            else {
+              result[a_idx] = median;
+            }
+            
+          }
+        }
+        
+        return result;
+      }
 }
