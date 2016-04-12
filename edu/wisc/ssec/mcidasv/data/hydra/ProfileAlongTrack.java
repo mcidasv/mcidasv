@@ -611,15 +611,25 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
                     if (numToInsertAt[t] == 2) { // two item sort here to save work for QuickSort
                        float val0 = valsToInsert[t][0];
                        float val1 = valsToInsert[t][1];
+                       
                        if (val0 <= val1) {
                           sortedArray[tcnt] = val0;
                           indexes[tcnt] = idxsToInsert[t][0];
+                          tcnt++;
+                          
+                          sortedArray[tcnt] = val1;
+                          indexes[tcnt] = idxsToInsert[t][1];
+                          tcnt++;
                        }
                        else {
                           sortedArray[tcnt] = val1;
-                          indexes[tcnt] = idxsToInsert[t][1];                          
+                          indexes[tcnt] = idxsToInsert[t][1];  
+                          tcnt++;
+                          
+                          sortedArray[tcnt] = val0;
+                          indexes[tcnt] = idxsToInsert[t][0];      
+                          tcnt++;
                        }
-                       tcnt++;
                     }
                     else {
                        for (int it=0; it<numToInsertAt[t]; it++) {
