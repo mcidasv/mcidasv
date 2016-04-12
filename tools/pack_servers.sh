@@ -115,19 +115,11 @@ echo "Creating local server package:"
 echo "  Source: ${PLATFORM_FULL}"
 echo "    Dest: ${DEST_DIR}/${PLATFORM_FILE}"
 if [ -f ${DEST_DIR}/${PLATFORM_FILE} ]; then
-<<<<<<< Updated upstream
-        echo ""
-        echo "File ${PLATFORM_FILE} already exists."
-        echo "CTRL+C to cancel, Enter to continue (overwrite)"
-        echo ""
-        read CONTYN
-=======
 	echo ""
 	echo "File ${PLATFORM_FILE} already exists."
 	echo "CTRL+C to cancel, Enter to continue (overwrite)"
 	echo ""
 	read CONTYN
->>>>>>> Stashed changes
 fi
 
 ################################################################################
@@ -283,35 +275,6 @@ done
 
 # Special
 if [ "${PLATFORM_SHORT}" = "linux" ]; then
-<<<<<<< Updated upstream
-        FILE=libg2c.so.0
-        echo "Copying ${FILE}..."
-        if [ -r "${DEST_DIR}/${FILE}.32bit" ]; then
-                cp ${DEST_DIR}/${FILE}.32bit ${DEST_DIR_BIN}/${FILE}
-        else
-                echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
-        fi
-fi
-if [ "${PLATFORM_SHORT}" = "linux64" ]; then
-        FILE=libg2c.so.0
-        echo "Copying ${FILE}..."
-        if [ -r "${DEST_DIR}/${FILE}.64bit" ]; then
-                cp ${DEST_DIR}/${FILE}.64bit ${DEST_DIR_BIN}/${FILE}
-        else
-                echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
-        fi
-fi
-if [ "${PLATFORM_SHORT}" = "darwin" ]; then
-        FILES="libgcc_s.1.dylib libgfortran.3.dylib libquadmath.0.dylib"
-        for FILE in ${FILES}; do
-                echo "Copying ${FILE}..."
-                if [ -r "${DEST_DIR}/${FILE}" ]; then
-                        cp ${DEST_DIR}/${FILE} ${DEST_DIR_BIN}/${FILE}
-                else
-                        echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
-                fi
-        done
-=======
 	FILE=libg2c.so.0
 	echo "Copying ${FILE}..."
 	if [ -r "${DEST_DIR}/${FILE}.32bit" ]; then
@@ -339,20 +302,12 @@ if [ "${PLATFORM_SHORT}" = "darwin" ]; then
 			echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
 		fi
 	done
->>>>>>> Stashed changes
 fi
 
 # Compress & cleanup
 echo "Compressing..."
 cd ${DEST_DIR_PLAT} && \
-<<<<<<< Updated upstream
-        rm -f ../${PLATFORM_FILE} && \
-        zip -rq ../${PLATFORM_FILE} adde && \
-        cd - >/dev/null && \
-        rm -Rf ${DEST_DIR_PLAT}
-=======
 	rm -f ../${PLATFORM_FILE} && \
 	zip -rq ../${PLATFORM_FILE} adde && \
 	cd - >/dev/null && \
 	rm -Rf ${DEST_DIR_PLAT}
->>>>>>> Stashed changes
