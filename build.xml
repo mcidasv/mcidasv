@@ -200,7 +200,7 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-    <property name="jar.base.classpath" value="ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.1.jar jnumeric-2.7.0_ra0.1.jar" />
+    <property name="jar.base.classpath" value="ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak-4.1.9.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.0.1.jar jnumeric-2.7.0_ra0.1.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
@@ -222,7 +222,7 @@
         <include name="commons-math3-${commons-math.version}.jar" />
         <include name="rsyntaxtextarea-${rsyntaxtextarea.version}.jar" />
         <include name="jul-to-slf4j-${slf4j.version}.jar" />
-        <include name="JSatTrak.jar"/>
+        <include name="JSatTrak-4.1.9.jar"/>
         <include name="j3dcore-${java3d.version}.jar" />
         <include name="j3dutils-${java3d.version}.jar" />
         <include name="vecmath-${java3d.version}.jar" />
