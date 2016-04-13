@@ -934,6 +934,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES, Boolean.valueOf(mappy.getTransectLabelsVisible()) },
             { "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, Boolean.valueOf(mappy.getWaitMessageVisible()) },
             { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
+            { ViewManager.LABEL_AUTO_DEPTH, ViewManager.PREF_AUTO_DEPTH, mappy.getAutoDepth() },
             { arLabel, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) }
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
