@@ -8180,9 +8180,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         "Enable Automatic Depth Offsetting";
 
     /** 
-     * {@literal "Auto Depth Offset"} default value (default is {@code false}. 
+     * {@literal "Auto Depth Offset"} default value (default is {@code true}. 
      */
-    public static final boolean DEFAULT_AUTO_DEPTH = false;
+    public static final boolean DEFAULT_AUTO_DEPTH = true;
 
     /**
      * Control {@literal "Auto Depth Offset"} status.
