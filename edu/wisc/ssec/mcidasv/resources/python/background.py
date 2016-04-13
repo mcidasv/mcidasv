@@ -489,8 +489,8 @@ class _MappedGeoGridFlatField(_MappedFlatField):
         if key == 'metadataVariables':
             allVars = self.gridDataset.getNetcdfFile().getVariables()
             singleValueVars = filter(lambda v: v.getSize() == 1, allVars)
-            return {v.getFullName(): 
-                            {'value': v.read().getObject(0),
+            return {str(v.getFullName()): 
+                            {'value': str(v.read().getObject(0)),
                              'attributes': _dictFromAttributeList(v.getAttributes())
                             }
                         for v in singleValueVars}
@@ -522,7 +522,7 @@ def _dictFromAttributeList(attrList):
     """Build a attrName->attrValue dictionary from a list of NetCDF Attributes."""
     result = dict()
     for attr in attrList:
-        result[attr.getFullName()] = _getNetcdfAttributeValue(attr)
+        result[str(attr.getFullName())] = _getNetcdfAttributeValue(attr)
     return result
 
 
@@ -537,12 +537,12 @@ def _getNetcdfAttributeValue(attr):
         length = array.getSize()
         for i in range(length):
             # TODO need to find a file with a string array attribute and test this
-            values.append(array.getObject(i))
+            values.append(str(array.getObject(i)))
         return values
     if attr.isString():
-        return attr.getStringValue()
+        return str(attr.getStringValue())
     else:
-        return attr.getNumericValue()
+        return str(attr.getNumericValue())
 
 
 class _JavaProxy(object):
