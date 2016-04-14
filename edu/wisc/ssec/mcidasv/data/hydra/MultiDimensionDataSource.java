@@ -307,10 +307,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
          propsArray = new Hashtable[4];
 
          Map<String, Object> table = ProfileAlongTrack.getEmptyMetadataTable();
-         //table.put(ProfileAlongTrack.array_name, "DataProducts/532_total_attn_bsc");
-         //table.put(ProfileAlongTrack.range_name, "Total_Attenuated_Backscatter_532");
-         table.put(ProfileAlongTrack.array_name, "DataProducts/532_AOT_hi_col");
-         //table.put(ProfileAlongTrack.range_name, "SUCKS");
+         table.put(ProfileAlongTrack.array_name, "DataProducts/532_total_attn_bsc");
+         table.put(ProfileAlongTrack.range_name, "Total_Attenuated_Backscatter_532");
          table.put(ProfileAlongTrack.trackDim_name, "dim0");
          table.put(ProfileAlongTrack.vertDim_name, "dim1");
          table.put(ProfileAlongTrack.profileTime_name, "ApplanixIMU/gps_time");
@@ -326,11 +324,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
          DataCategory.createCategory("ProfileAlongTrack");
          categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
 
-         /*
-         properties.put("medianFilter", new String[] {Double.toString(8), Double.toString(16)});
+         properties.put("medianFilter", new String[] {Double.toString(12), Double.toString(24)});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          propsArray[0] = properties;
-         */
 
          hasTrackPreview = true;
 
@@ -411,7 +407,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          DataCategory.createCategory("ProfileAlongTrack");
          categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
 
-         properties.put("medianFilter", new String[] {Double.toString(8), Double.toString(16)});
+         properties.put("medianFilter", new String[] {Double.toString(12), Double.toString(32)});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          propsArray[0] = properties;
 
