@@ -293,7 +293,7 @@ if [ "${PLATFORM_SHORT}" = "linux64" ]; then
 	fi
 fi
 if [ "${PLATFORM_SHORT}" = "darwin" ]; then
-	FILES="libgcc_s.1.dylib libgfortran.3.dylib libquadmath.0.dylib"
+	FILES="libgcc_s.1.dylib libgfortran.3.dylib libquadmath.0.dylib libnetcdf.7.dylib"
 	for FILE in ${FILES}; do
 		echo "Copying ${FILE}..."
 		if [ -r "${DEST_DIR}/${FILE}" ]; then
