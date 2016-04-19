@@ -34,6 +34,7 @@ import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -585,12 +586,30 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
+        private final Insets borderInsets = new Insets(0, 0, 0, 0);
+
         private int horizontalTextPosition = SwingConstants.LEFT;
 
         public CloseableTabbedPaneUI() { }
 
         public CloseableTabbedPaneUI(int horizontalTextPosition) {
             this.horizontalTextPosition = horizontalTextPosition;
+        }
+
+        @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {
+            if (showTabArea(group, tabPane)) {
+                super.paintContentBorder(g, tabPlacement, selectedIndex);
+            }
+        }
+
+        @Override protected Insets getContentBorderInsets(int tabPlacement) {
+            Insets insets = null;
+            if (showTabArea(group, tabPane)) {
+                insets = super.getContentBorderInsets(tabPlacement);
+            } else {
+                insets = borderInsets;
+            }
+            return insets;
         }
 
         @Override protected void layoutLabel(int tabPlacement, 
@@ -667,6 +686,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     class CloseableMetalTabbedPaneUI extends MetalTabbedPaneUI {
+        private final Insets borderInsets = new Insets(0, 0, 0, 0);
 
         private int horizontalTextPosition = SwingUtilities.LEFT;
 
@@ -674,6 +694,22 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         public CloseableMetalTabbedPaneUI(int newHorizontalTextPosition) {
             this.horizontalTextPosition = newHorizontalTextPosition;
+        }
+
+        @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {
+            if (showTabArea(group, tabPane)) {
+                super.paintContentBorder(g, tabPlacement, selectedIndex);
+            }
+        }
+
+        @Override protected Insets getContentBorderInsets(int tabPlacement) {
+            Insets insets = null;
+            if (showTabArea(group, tabPane)) {
+                insets = super.getContentBorderInsets(tabPlacement);
+            } else {
+                insets = borderInsets;
+            }
+            return insets;
         }
 
         @Override protected void paintTabBorder(Graphics g, int placement,
