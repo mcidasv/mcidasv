@@ -203,7 +203,7 @@ public class TrackSelection extends DataSelectionComponent {
 			JPanel stridePanel = new JPanel(new FlowLayout());
 			trkStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_TRACK_STRIDE), 3);
 			vrtStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_VERTICAL_STRIDE), 3);
-                        widthFld = new JTextField(Double.toString(5));
+                        widthFld = new JTextField(Double.toString(trackWidthPercent), 3);
                         
 			trkStr.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
@@ -229,7 +229,7 @@ public class TrackSelection extends DataSelectionComponent {
                         stridePanel.add(widthFld);
 
                         JPanel selectPanel = new JPanel(new GridLayout(2,0));
-                        DefaultBoundedRangeModel brm = new DefaultBoundedRangeModel(trackStart, 2*selectWidth, 0, trackLen); 
+                        DefaultBoundedRangeModel brm = new DefaultBoundedRangeModel(trackStart, 0, 0, trackLen); 
                         JSlider trackSelect = new JSlider(brm);
                         trackSelect.addChangeListener( new ChangeListener() {
                            public void stateChanged(ChangeEvent e) {
@@ -240,7 +240,6 @@ public class TrackSelection extends DataSelectionComponent {
                         );
                         selectPanel.add(trackSelect);
                         selectPanel.add(stridePanel);
-			//panel.add("South", stridePanel);
 			panel.add("South", selectPanel);
 
 			return panel;
@@ -275,8 +274,13 @@ public class TrackSelection extends DataSelectionComponent {
 		boolean setOk = false;
 		try {
 			int newStride = Integer.valueOf(trkStr.getText().trim());
-			trackStride = newStride;
-			setOk = true;
+                        if (newStride >= 1) {
+			   trackStride = newStride;
+			   setOk = true;
+                        }
+                        else {
+                           setOk = false;
+                        }
 		} catch (NumberFormatException nfe) {
 			// do nothing, will return correct result code
 		}
@@ -293,8 +297,13 @@ public class TrackSelection extends DataSelectionComponent {
 		boolean setOk = false;
 		try {
 			int newStride = Integer.valueOf(vrtStr.getText().trim());
-			verticalStride = newStride;
-			setOk = true;
+                        if (newStride >= 1) {
+   		  	   verticalStride = newStride;
+			   setOk = true;
+                        }
+                        else {
+                           setOk = false;
+                        }
 		} catch (NumberFormatException nfe) {
 			// do nothing, will return correct result code
 		}
@@ -321,11 +330,16 @@ public class TrackSelection extends DataSelectionComponent {
         
         void updateTrackSelect() {
                trackStart = trackPos - selectWidth;
+               if (trackStart < 0) trackStart = 0;
+               
                trackStop = trackPos + selectWidth;
+               if (trackStop >= trackLen) trackStop = trackLen - 1;
+               
                try {
                   Gridded2DSet trck = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
                          new float[][] {java.util.Arrays.copyOfRange(trackLocs[0], trackStart, trackStop), 
-                                        java.util.Arrays.copyOfRange(trackLocs[1], trackStart, trackStop)}, 2*selectWidth);
+                                        java.util.Arrays.copyOfRange(trackLocs[1], trackStart, trackStop)}, 
+                               (trackStop - trackStart));
                   trackSelectDsp.setData(trck);
                }
                catch (Exception exc) {
