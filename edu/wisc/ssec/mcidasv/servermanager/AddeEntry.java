@@ -54,6 +54,18 @@ public interface AddeEntry {
         /** Updated an entry and verified the changes. */
         EDITED_VERIFIED,
 
+        /** Wait for verification and add whatever passed. */
+        VERIFYING_AND_ADDING,
+
+        /** Wait for verification and replace with passing entries. */
+        VERIFYING_AND_EDITING,
+
+        /**
+         * Wait for verification.
+         * Current use is mostly a {@literal "no-op"}.
+         */
+        VERIFYING,
+
         /** Editor GUI performed some {@literal "invalid"} action. */
         INVALID
     }
