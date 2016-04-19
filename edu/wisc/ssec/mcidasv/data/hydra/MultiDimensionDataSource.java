@@ -1008,7 +1008,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
             		} else {
             			// one of the strides is not an integer, let user know
         	    		String msg = "Either the Track or Vertical Stride is inavlid.\n" +
-        	    				"Stride values must be postiive integers.\n";
+        	    				"Stride values must be postiive integers > 0.\n";
         	    		Object[] params = { msg };
         	    		JOptionPane.showMessageDialog(null, params, "Invalid Stride", JOptionPane.OK_OPTION);
         	    		return null;
