@@ -196,18 +196,23 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * drag. 
      */
     @Override public void dragGestureRecognized(DragGestureEvent e) {
-        sourceIndex = getSelectedIndex();
+        // currently we want to disable drag and drop for "chrome-less" windows
+        // one alternative is to have drag and drop simply *reposition*
+        // chrome-less windows.
+        if (showTabArea(group, this)) {
+            sourceIndex = getSelectedIndex();
 
-        // transferable allows us to store the current DraggableTabbedPane and
-        // the source index of the drag inside the various drag and drop event
-        // listeners.
-        Transferable transferable = new TransferableIndex(this, sourceIndex);
+            // transferable allows us to store the current DraggableTabbedPane
+            // and the source index of the drag inside the various drag and
+            // drop event listeners.
+            Transferable transferable = new TransferableIndex(this, sourceIndex);
 
-        Cursor cursor = DragSource.DefaultMoveDrop;
-        if (e.getDragAction() != DnDConstants.ACTION_MOVE) {
-            cursor = DragSource.DefaultCopyDrop;
+            Cursor cursor = DragSource.DefaultMoveDrop;
+            if (e.getDragAction() != DnDConstants.ACTION_MOVE) {
+                cursor = DragSource.DefaultCopyDrop;
+            }
+            dragSource.startDrag(e, cursor, transferable, this);
         }
-        dragSource.startDrag(e, cursor, transferable, this);
     }
 
     /** 
