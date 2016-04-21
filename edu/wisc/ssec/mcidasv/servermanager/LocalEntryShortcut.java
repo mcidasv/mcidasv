@@ -89,6 +89,8 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.AMSRE_L2A,
             AddeFormat.AMSRE_RAIN_PRODUCT,
             AddeFormat.GINI,
+            AddeFormat.INSAT3D_IMAGER,
+            AddeFormat.INSAT3D_SOUNDER,
             AddeFormat.LRIT_GOES9,
             AddeFormat.LRIT_GOES10,
             AddeFormat.LRIT_GOES11,
@@ -110,9 +112,7 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.MTSAT_HRIT,
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
-            AddeFormat.TRMM,
-            AddeFormat.INSAT3D_IMAGER,
-            AddeFormat.INSAT3D_SOUNDER
+            AddeFormat.TRMM
             
             // AddeFormat.HIMAWARI8
             
@@ -443,17 +443,6 @@ public class LocalEntryShortcut extends JDialog {
      */
     public EditorAction getEditorAction() {
         return editorAction;
-    }
-
-    /**
-     * Set the {@link EditorAction} that was performed.
-     *
-     * @param editorAction Action that was performed.
-     *
-     * @see #editorAction
-     */
-    private void setEditorAction(final EditorAction editorAction) {
-        this.editorAction = editorAction;
     }
 
     /**

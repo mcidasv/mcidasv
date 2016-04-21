@@ -89,6 +89,8 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.AMSRE_L2A,
             AddeFormat.AMSRE_RAIN_PRODUCT,
             AddeFormat.GINI,
+            AddeFormat.INSAT3D_IMAGER,
+            AddeFormat.INSAT3D_SOUNDER,
             AddeFormat.LRIT_GOES9,
             AddeFormat.LRIT_GOES10,
             AddeFormat.LRIT_GOES11,
@@ -110,9 +112,7 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.MTSAT_HRIT,
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
-            AddeFormat.TRMM,           
-            AddeFormat.INSAT3D_IMAGER,
-            AddeFormat.INSAT3D_SOUNDER
+            AddeFormat.TRMM
             
             // TJJ Apr 2015 - temporarily comment out Himawari-8, since the ADDE
             // servers had not passed testing and been released prior to the
