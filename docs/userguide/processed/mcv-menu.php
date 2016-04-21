@@ -162,7 +162,6 @@ RAOB Sounding Data</span><br>
         <span class="link" onClick="setPage('controls/AerologicalSoundingControl.html');">Sounding Display Controls</span><br>
 		<span class="link" onClick="setPage('controls/FrontControl.html');">Front Controls</span><br>
         <span class="link" onClick="setPage('controls/StationLocationControl.html');">Location Controls</span><br>
-        <span class="link" onClick="setPage('controls/WorldWindControl.html');">WorldWind Controls</span><br>
         <span class="link" onClick="setPage('controls/TrackControl.html');">Track Controls</span><br>
       </div>
 

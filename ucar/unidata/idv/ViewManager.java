@@ -946,6 +946,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
             // getMaster().addDisplayable(animation);
         }
 
+        initializeBooleanProperty(new BooleanProperty(PREF_AUTO_DEPTH, 
+                                                      LABEL_AUTO_DEPTH, 
+                                                      LABEL_AUTO_DEPTH, 
+                                                      DEFAULT_AUTO_DEPTH));
         Trace.call1("ViewManager.init initWith");
         initWith(this);
         Trace.call2("ViewManager.init initWith");
@@ -2838,7 +2842,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
         props.add(new BooleanProperty(PREF_TOPBAR_VISIBLE, "Show Top Bar",
                                       "Toggle top bar", true));
         /** inquiry 2053 */
-        props.add(new BooleanProperty(PREF_AUTO_DEPTH, "Automatic Depth Offset", "Blah", false));
+        boolean useAutoDepthOffset = DEFAULT_AUTO_DEPTH;
+        XmlObjectStore store = getStore();
+        if (store != null) {
+            useAutoDepthOffset = store.get(PREF_AUTO_DEPTH, DEFAULT_AUTO_DEPTH);
+        }
+        props.add(new BooleanProperty(PREF_AUTO_DEPTH,
+                                      LABEL_AUTO_DEPTH,
+                                      LABEL_AUTO_DEPTH,
+                                      useAutoDepthOffset));
         /** end inquiry 2053 */
     }
 
@@ -8159,11 +8171,25 @@ public class ViewManager extends SharableImpl implements ActionListener,
         return runVisibilityAnimation;
     }
 
-    /** For Inquiry 2053 */
+    /* For Inquiry 2053 */
+    /** {@literal "Auto Depth Offset"} preference ID. */
     public static final String PREF_AUTO_DEPTH = "View.AutoDepthOffset";
+    
+    /** {@literal "Auto Depth Offset"} label. */
+    public static final String LABEL_AUTO_DEPTH = 
+        "Enable Automatic Depth Offsetting";
 
+    /** 
+     * {@literal "Auto Depth Offset"} default value (default is {@code true}. 
+     */
+    public static final boolean DEFAULT_AUTO_DEPTH = true;
+
+    /**
+     * Control {@literal "Auto Depth Offset"} status.
+     * 
+     * @param value New auto depth offset status. 
+     */
     public void setAutoDepth(boolean value) {
-        logger.trace("setting autodepth: value={}", value);
         DisplayImpl display = (DisplayImpl)getMaster().getDisplay();
         GraphicsModeControl mode = display.getGraphicsModeControl();
         try {
@@ -8179,24 +8205,26 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
+    /**
+     * Returns {@literal "Auto Depth Offset"} status.
+     * 
+     * @return Whether or not auto depth offset should be used.
+     * 
+     * @see #DEFAULT_AUTO_DEPTH
+     */
     public boolean getAutoDepth() {
-        boolean value = false;
-        DisplayImpl display = (DisplayImpl)getMaster().getDisplay();
-        GraphicsModeControl mode = display.getGraphicsModeControl();
-        try {
-            if (mode instanceof GraphicsModeControlJ3D) {
-                value = ((GraphicsModeControlJ3D)mode).getAutoDepthOffsetEnable();
-            } else if (mode instanceof GraphicsModeControlJ2D) {
-                logger.warn("cannot get auto-depth offset value for GraphicsModeControlJ2D!");
-            } else {
-                logger.error("unknown type of GraphicsModeControl: {}", mode.getClass().toString());
+        boolean value = DEFAULT_AUTO_DEPTH;
+        if (hasBooleanProperty(PREF_AUTO_DEPTH)) {
+            value = getBp(PREF_AUTO_DEPTH, DEFAULT_AUTO_DEPTH);
+        } else {
+            XmlObjectStore store = getStore();
+            if (store != null) {
+                value = store.get(PREF_AUTO_DEPTH, DEFAULT_AUTO_DEPTH);
             }
-        } catch (Exception e) {
-            logger.error("could not get auto-depth offset value", e);
         }
         return value;
     }
-    /** End Inquiry 2053 */
+    /* End Inquiry 2053 */
 
     /**** END MCV ADDONS ****/
 }

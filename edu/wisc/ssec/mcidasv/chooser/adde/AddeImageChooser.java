@@ -396,7 +396,7 @@ public class AddeImageChooser extends AddeChooser implements
                 "/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
                 true);
         archiveDayBtn.setToolTipText("Select a day for archive datasets");
-        archiveDayLabel = new JLabel("Select day:");
+        archiveDayLabel = new JLabel("Select Day");
 
         this.addeDefaults = getImageDefaults();
     }
@@ -561,7 +561,7 @@ public class AddeImageChooser extends AddeChooser implements
     @Override protected void readFromServer() {
         archiveDay = null;
         if (archiveDayLabel != null) {
-            archiveDayLabel.setText("Select day:");
+            archiveDayLabel.setText("Select Day");
         }
         readSatBands();
         super.readFromServer();
@@ -600,7 +600,7 @@ public class AddeImageChooser extends AddeChooser implements
                 String cmd = ae.getActionCommand();
                 if (cmd.equals(GuiUtils.CMD_REMOVE)) {
                     archiveDay = null;
-                    archiveDayLabel.setText("Select day:");
+                    archiveDayLabel.setText("Select Day");
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 } else if (cmd.equals(GuiUtils.CMD_OK)) {
@@ -1070,18 +1070,7 @@ public class AddeImageChooser extends AddeChooser implements
      * Set the relative and absolute extra components.
      */
     @Override protected JPanel makeTimesPanel() {
-        JPanel timesPanel = super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
-
-        // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
-        Component[] comps = timesPanel.getComponents();
-
-        if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
-            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
-            timesCardPanelExtra.add(new JPanel(), "relative");
-            timesCardPanelExtra.add(getExtraTimeComponent(), "absolute");
-            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
-        }
-        return timesPanel;
+        return super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
     }
 
     /**
@@ -1089,7 +1078,7 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return a widget for selecing the day
      */
-    @Override protected JComponent getExtraTimeComponent() {
+    @Override protected JComponent getExtraAbsoluteTimeComponent() {
         return McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
     }
 

@@ -32,7 +32,6 @@ import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Collections;
 import java.util.Objects;
@@ -90,6 +89,8 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.AMSRE_L2A,
             AddeFormat.AMSRE_RAIN_PRODUCT,
             AddeFormat.GINI,
+            AddeFormat.INSAT3D_IMAGER,
+            AddeFormat.INSAT3D_SOUNDER,
             AddeFormat.LRIT_GOES9,
             AddeFormat.LRIT_GOES10,
             AddeFormat.LRIT_GOES11,
@@ -112,13 +113,6 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
             AddeFormat.TRMM
-            
-            // TJJ Apr 2015 - temporarily comment out INSAT-3D, since the ADDE
-            // servers had not passed testing and been released prior to the
-            // McIDAS-V 1.5 release
-            
-            // AddeFormat.INSAT3D_IMAGER,
-            // AddeFormat.INSAT3D_SOUNDER,
             
             // AddeFormat.HIMAWARI8
             
@@ -449,17 +443,6 @@ public class LocalEntryShortcut extends JDialog {
      */
     public EditorAction getEditorAction() {
         return editorAction;
-    }
-
-    /**
-     * Set the {@link EditorAction} that was performed.
-     *
-     * @param editorAction Action that was performed.
-     *
-     * @see #editorAction
-     */
-    private void setEditorAction(final EditorAction editorAction) {
-        this.editorAction = editorAction;
     }
 
     /**

@@ -200,7 +200,7 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-    <property name="jar.base.classpath" value="ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.1.jar jnumeric-2.7.0_ra0.1.jar" />
+    <property name="jar.base.classpath" value="ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak-4.1.9.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.0.1.jar jnumeric-2.7.0_ra0.1.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
@@ -222,7 +222,7 @@
         <include name="commons-math3-${commons-math.version}.jar" />
         <include name="rsyntaxtextarea-${rsyntaxtextarea.version}.jar" />
         <include name="jul-to-slf4j-${slf4j.version}.jar" />
-        <include name="JSatTrak.jar"/>
+        <include name="JSatTrak-4.1.9.jar"/>
         <include name="j3dcore-${java3d.version}.jar" />
         <include name="j3dutils-${java3d.version}.jar" />
         <include name="vecmath-${java3d.version}.jar" />
@@ -913,6 +913,7 @@
       <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
       <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
 
+      <sysproperty key="visad.java3d.noerasebackground" value="true" />
       <sysproperty key="visad.java3d.textureNpot" value="true" />
       <sysproperty key="visad.java3d.imageByRef" value="true" />
       <sysproperty key="visad.java3d.geometryByRef" value="true" />
@@ -1274,7 +1275,39 @@
 
     <property name="bundle.icon" value="release/icons/mcidasv.icns" />
 
-    <target name="bundle_18" depends="jar">
+    <property name="bundle.name" value="McIDAS-V (JAVA 8)" />
+
+    <property name="bundle.path" value="${dist.dir}/${bundle.name}.app" />
+
+    <property name="bundle.dmg" value="${dist.dir}/McIDAS-V ${version.public}.dmg" />
+
+    <!-- 
+        This is the name associated with the key from Apple. 
+        NOTE: pass the actual value in via a property on the command line:
+        
+          ant -Dbundle.identity="SIGNING IDENTITY HERE" appbundle.sign
+        
+        The command line definition of "bundle.identity" will take precedence 
+        over the defintion below.
+    -->
+    <property name="bundle.identity" value="" />
+
+    <!-- 
+    This checks for a non-empty value in bundle.identity. If the value is an 
+    empty string, the "appbundle.sign" target will not run
+    -->
+    <condition property="hasidentity">
+        <not>
+            <equals arg1="${bundle.identity}" arg2=""/>
+        </not>
+    </condition>
+
+    <target name="appbundle.clean" description="Delete previously built McIDAS-V app bundle (and DMG).">
+        <delete dir="${bundle.path}" failonerror="false" />
+        <delete file="${bundle.dmg}" failonerror="false" />
+    </target>
+
+    <target name="appbundle.build" depends="jar" description="Generate McIDAS-V.app.">
         <mkdir dir="${dist.dir}" />
         <taskdef name="bundleapp"
                  classpath="lib/build/appbundler-1.0ea.jar"
@@ -1291,10 +1324,15 @@
             <arg value="-v" />
             <arg value="1.8" />
         </exec>
+        
+        <exec executable="/bin/bash" outputproperty="bundle.jdk" failifexecutionfails="true">
+            <arg value="-c" />
+            <arg value="echo ${runtime_18} | perl -pe 's/^.*\/([\-\.\w]+\.jdk)\/.*$/$1/'" />
+        </exec>
 
         <bundleapp classpathref="app.classpath"
                    outputdirectory="${dist.dir}"
-                   name="McIDAS-V (JAVA 8)"
+                   name="${bundle.name}"
                    displayname="McIDAS-V"
                    executableName="mcidasv"
                    identifier="edu.wisc.ssec.mcidasv.16b1"
@@ -1329,6 +1367,48 @@
             <argument value="-userpath" />
             <argument value="$USER_HOME/Documents/McIDAS-V" />
         </bundleapp>
+    </target>
+    
+    <!--
+        This target will use the "codesign" utility to sign the bundle that was
+        created by the "bundle_18" target.
+    -->
+    <target name="appbundle.sign" 
+            depends="appbundle.build" 
+            description="Sign the McIDAS-V application bundle.">
+            
+        <fail message="Please provide a value for bundle.identity: ant -Dbundle.identity='YOUR SIGNING IDENTITY' appbundle.sign" 
+              unless="hasidentity" />
+              
+        <!-- 
+        It turns out that the "codesign" utility is not compatible with 
+        symlinks. Regrettably, the OSX JRE contains a symlink. 
+        
+        The following exec task removes the symlink and places a copy of 
+        the linked file in the directory that contained said symlink.
+        -->
+        <exec executable="/bin/bash" failifexecutionfails="true">
+            <arg value="-c" />
+            <arg value="/bin/rm -f '${bundle.path}/Contents/PlugIns/${bundle.jdk}/Contents/MacOS/libjli.dylib' ; /bin/cp -f '${bundle.path}/Contents/PlugIns/${bundle.jdk}/Contents/Home/jre/lib/jli/libjli.dylib' '${bundle.path}/Contents/PlugIns/${bundle.jdk}/Contents/MacOS/'" />
+        </exec>
+        
+        <exec executable="/usr/bin/codesign" failifexecutionfails="true">
+            <arg value="-s" />
+            <arg value="${bundle.identity}" />
+            <arg value="-fv" />
+            <arg value="--deep" />
+            <arg value="${bundle.path}" />
+        </exec>
+    </target>
+    
+    <target name="appbundle.dist" depends="appbundle.clean, appbundle.sign" description="Package app bundle stuff for distribution.">
+        <echo>Creating DMG. Please be patient!</echo>
+        <exec executable="/usr/bin/hdiutil" failifexecutionfails="true">
+            <arg value="create" />
+            <arg value="-srcfolder" />
+            <arg value="${bundle.path}" />
+            <arg value="${bundle.dmg}" />
+        </exec>
     </target>
     <!-- END OSX APP BUNDLE STUFF -->
 

@@ -304,7 +304,7 @@ servers, see the <a href="choosers/index.html">Data Sources</a> section.</p>
 </ul>
 </ul>
 <p>You can configure defaults for particular images by creating a custom defaults file. For more information, see <a href="../misc/ImageDefaults.html">Configuring Image Defaults</a>.</p>
-<p>*Additional alternate servers include: stratus.al.noaa.gov, atm.ucar.edu, goessouth.unidata.ucar.edu, and satepsanone.nesdis.noaa.gov. These alternate servers have most or all of the datasets listed under adde.ssec.wisc.edu.</p>
+<p>*Additional alternate servers include: adde.ucar.edu, stratus.al.noaa.gov, and atm.ucar.edu. These alternate servers have most or all of the datasets listed under adde.ssec.wisc.edu.</p>
 <div class="pagesubsubtitle"><a name="thredds" id="thredds"></a>THREDDS Data Server (TDS)/OPeNDAP</div>
 <p>McIDAS-V can access gridded data (netCDF/GRIB/GEMPAK) and NEXRAD radar data stored on a THREDDS Data Server (TDS) through the OPeNDAP (formerly called DODS) protocol. See <a href="choosers/CatalogChooser.html">Choosing
 Cataloged Data</a> for more information.</p>
@@ -316,8 +316,8 @@ bytes&quot; headers. See the <a href="choosers/UrlChooser.html">Choosing a URL</
 more information.</p>
 <div class="pagesubtitle"><a name="netcdf" id="netcdf"></a>netCDF files</div>
 <p>The Network Common Data Form (<a href="http://www.unidata.ucar.edu/software/netcdf" target="_blank">netCDF</a>) provides a common data access method for Unidata applications. This format can be used to store a variety of data types that encompass single-point observations, time series, regular grids, and satellite and radar images. The mere use of netCDF by itself is not sufficient to make data &quot;self-describing&quot; and meaningful to McIDAS-V.</p>
-<p>Generally, McIDAS-V requires that datasets in netCDF format use <a href="http://www.unidata.ucar.edu/packages/netcdf/conventions.html" target="_blank">metadata conventions</a> to be able to fully understand and geolocate the dataset.
-    These conventions provide documented <a href="http://www.unidata.ucar.edu/packages/netcdf/BestPractices.html" target="_blank">&quot;best
+<p>Generally, McIDAS-V requires that datasets in netCDF format use <a href="http://www.unidata.ucar.edu/software/netcdf/conventions.html" target="_blank">metadata conventions</a> to be able to fully understand and geolocate the dataset.
+    These conventions provide documented <a href="http://www.unidata.ucar.edu/software/netcdf/workshops/2012/bestpractices/" target="_blank">&quot;best
     practices&quot;</a>. Using conventions with netCDF ensures your data
     is complete and self-describing, and can be used by others. We
     recommend you use CF, COARDS, or NUWG conventions for netCDF data files for

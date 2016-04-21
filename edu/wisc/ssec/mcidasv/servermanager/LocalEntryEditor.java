@@ -32,7 +32,9 @@ import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
+
 import java.io.File;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -40,7 +42,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -48,6 +49,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
+
+
+import javafx.stage.DirectoryChooser;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -59,6 +63,7 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
+import edu.wisc.ssec.mcidasv.util.nativepathchooser.NativeDirectoryChooser;
 
 /**
  * A dialog that allows the user to define or modify
@@ -84,6 +89,8 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.AMSRE_L2A,
             AddeFormat.AMSRE_RAIN_PRODUCT,
             AddeFormat.GINI,
+            AddeFormat.INSAT3D_IMAGER,
+            AddeFormat.INSAT3D_SOUNDER,
             AddeFormat.LRIT_GOES9,
             AddeFormat.LRIT_GOES10,
             AddeFormat.LRIT_GOES11,
@@ -106,13 +113,6 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
             AddeFormat.TRMM
-            
-            // TJJ Apr 2015 - temporarily comment out INSAT-3D, since the ADDE
-            // servers had not passed testing and been released prior to the
-            // McIDAS-V 1.5 release
-            
-//            AddeFormat.INSAT3D_IMAGER,
-//            AddeFormat.INSAT3D_SOUNDER,
             
             // TJJ Apr 2015 - temporarily comment out Himawari-8, since the ADDE
             // servers had not passed testing and been released prior to the
@@ -454,17 +454,24 @@ public class LocalEntryEditor extends JDialog {
      * @return Either a path to a data directory or {@code startDir}.
      */
     private String getDataDirectory(final String startDir) {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fileChooser.setSelectedFile(new File(startDir));
-        switch (fileChooser.showOpenDialog(this)) {
-            case JFileChooser.APPROVE_OPTION:
-                return fileChooser.getSelectedFile().getAbsolutePath();
-            case JFileChooser.CANCEL_OPTION:
-                return startDir;
-            default:
-                return startDir;
+        NativeDirectoryChooser chooser = new NativeDirectoryChooser(() -> {
+            DirectoryChooser ch = new DirectoryChooser();
+            ch.setTitle("Select the data directory");
+            File initialDirectory = new File(startDir);
+            if (!initialDirectory.exists()) {
+                initialDirectory = new File(System.getProperty("user.home"));
+            }
+            ch.setInitialDirectory(initialDirectory);
+            return ch;
+        });
+
+        String s = startDir;
+        File chosenPath = chooser.showOpenDialog();
+
+        if (chosenPath != null) {
+            s = chosenPath.getAbsolutePath();
         }
+        return s;
     }
 
     /**

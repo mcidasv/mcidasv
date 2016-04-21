@@ -347,6 +347,10 @@
        id="nexrad"
        location="%IDVPATH%/stations/nexradstns.xml"
        type="radar"/>
+    <resource
+       id="nexrad"
+       location="%USERPATH%/nexradstations.xml"
+       type="radar"/>
     <resource location="%IDVPATH%/stations/statelocations.xml"/>
   </resources>
 

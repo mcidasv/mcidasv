@@ -139,5 +139,16 @@
      <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
   </control> 
   -->
+  
+    <!-- TJJ Apr 2016 Added for McV 1.6 release -->
+	<control id="streamlines" categories="*-flowvector-*"
+		class="ucar.unidata.idv.control.FlowPlanViewControl" 
+		description="Stream line plan view of flow vectors"
+		label="Streamline Plan View" 
+		doeslevels="true" 
+		displaycategory="Flow Displays"
+		properties="streamlines=true;">
+		<property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager" />
+	</control>
 
 </controls>
