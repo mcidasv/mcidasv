@@ -94,7 +94,7 @@ public class LocalAddeEntry implements AddeEntry {
     private String entryAlias;
 
     public enum ServerName {
-        // note: if you are add a new server you may need to edit the
+        // note: if you are adding a new server you may need to edit the
         // AddeFormat enum below, the "formats" field in both
         // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
         // in mcvadde.py.
@@ -128,12 +128,8 @@ public class LocalAddeEntry implements AddeEntry {
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),
         GINI(ServerName.GINI, "GINI"),
         
-        // TJJ Apr 2015 - temporarily comment out INSAT-3D, since the ADDE
-        // servers had not passed testing and been released prior to the
-        // McIDAS-V 1.5 release
-        
-        // INSAT3D_IMAGER(ServerName.INST, "INSAT-3D Imager", "INSAT-3D Imager"),
-        // INSAT3D_SOUNDER(ServerName.INST, "INSAT-3D Sounder", "INSAT-3D Sounder"),
+        INSAT3D_IMAGER(ServerName.INST, "INSAT-3D Imager", "INSAT-3D Imager"),
+        INSAT3D_SOUNDER(ServerName.INST, "INSAT-3D Sounder", "INSAT-3D Sounder"),
         
         // TJJ Apr 2015 - temporarily comment out Himawari-8, since the ADDE
         // servers had not passed testing and been released prior to the

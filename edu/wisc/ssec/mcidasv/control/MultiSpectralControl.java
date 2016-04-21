@@ -81,6 +81,7 @@ import javax.swing.table.TableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvConstants;
 import ucar.visad.display.XYDisplay;
 import visad.DataReference;
@@ -160,6 +161,7 @@ public class MultiSpectralControl extends HydraControl {
     private final JButton removeProbe = new JButton("Remove Probe");
     private JCheckBox use360Box;
 
+    private boolean blackBackground = true;
     private JRadioButton bgBlack;
     private JRadioButton bgWhite;
     private JLabel bgColorLabel;
@@ -260,6 +262,7 @@ public class MultiSpectralControl extends HydraControl {
             XYDisplay master = display.getMaster();
             master.setBackground(Color.black);
             master.setForeground(Color.white);
+            setBlackBackground(true);
         });
 
         bgWhite = new JRadioButton("White");
@@ -268,6 +271,7 @@ public class MultiSpectralControl extends HydraControl {
             XYDisplay master = display.getMaster();
             master.setBackground(Color.white);
             master.setForeground(Color.black);
+            setBlackBackground(false);
         });
 
         bgColorLabel = new JLabel("Background Color:");
@@ -276,7 +280,8 @@ public class MultiSpectralControl extends HydraControl {
         bgColorGroup.add(bgBlack);
         bgColorGroup.add(bgWhite);
 
-        bgBlack.setSelected(true);
+        bgBlack.setSelected(getBlackBackground());
+        bgWhite.setSelected(!getBlackBackground());
 
         setShowInDisplayList(false);
 
@@ -293,7 +298,22 @@ public class MultiSpectralControl extends HydraControl {
         if (s != null) {
             wavelengthLabel.setText(s);
         }
-        return;
+    }
+
+    @Override public void initAfterUnPersistence(ControlContext vc,
+                                                 Hashtable properties,
+                                                 List preSelectedDataChoices)
+    {
+        super.initAfterUnPersistence(vc, properties, preSelectedDataChoices);
+
+        XYDisplay master = display.getMaster();
+        if (getBlackBackground()) {
+            master.setBackground(Color.black);
+            master.setForeground(Color.white);
+        } else {
+            master.setBackground(Color.white);
+            master.setForeground(Color.black);
+        }
     }
 
     @Override public void initDone() {
@@ -795,6 +815,16 @@ public class MultiSpectralControl extends HydraControl {
         } catch (Exception e) {
             logException("MultiSpectralControl.contrastStretch", e);
         }
+    }
+
+    // sole use is for persistence!
+    public boolean getBlackBackground() {
+        return blackBackground;
+    }
+
+    // sole use is for persistence!
+    public void setBlackBackground(boolean value) {
+        blackBackground = value;
     }
 
     private static class Spectrum implements ProbeListener {

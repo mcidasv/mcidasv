@@ -166,6 +166,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     float[] i04LUT = null;
     float[] i05LUT = null;
     
+    // Map to match NASA variables to units (XML Product Profiles used for NOAA)
+    Map<String, String> unitsNASA = new HashMap<String, String>();
+    
     // date formatter for converting Suomi NPP day/time to something we can use
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
     
@@ -725,6 +728,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    								unsignedFlags.put(v.getFullName(), aUnsigned.getStringValue());
 	    							} else {
 	    								unsignedFlags.put(v.getFullName(), "false");
+	    							}
+	    							
+	    							// store units in a map for later
+	    							Attribute unitAtt = v.findAttribute("units");
+	    							if (unitAtt != null) {
+	    								unitsNASA.put(v.getShortName(), unitAtt.getStringValue());
+	    							} else {
+	    								unitsNASA.put(v.getShortName(), "Unknown");
 	    							}
 	    							
 	    							// TJJ Feb 2016 - Create BT variables where applicable
@@ -1453,11 +1464,17 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 }
                 
         	} else {
+        		// setting NOAA-format units
         		String varName = pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1);
         		String varShortName = pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1);
         		String units = nppPP.getUnits(varShortName);
-        		if ((! isNOAA) && varShortName.endsWith("_BT")) units = "Kelvin";
-        		// TJJ this is where we need to check and set NASA units, I think
+
+        		// setting NASA-format units
+        		if (! isNOAA) {
+        			units = unitsNASA.get(varShortName);
+        			// Need to set _BT variables manually, since they are created on the fly
+        			if (varShortName.endsWith("_BT")) units = "Kelvin";
+        		}
         		if (units == null) units = "Unknown";
         		Unit u = null;
         		try {

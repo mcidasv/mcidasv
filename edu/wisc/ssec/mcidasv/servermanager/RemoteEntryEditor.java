@@ -354,13 +354,13 @@ public class RemoteEntryEditor extends JDialog {
      * Attempts to verify that the current contents of the GUI are
      * {@literal "valid"}.
      */
-    private void verifyInput() {
+    private void verifyInput(final EditorAction action) {
         resetBadFields();
         Set<RemoteAddeEntry> unverifiedEntries = pollWidgets(true);
 
         // the editor GUI only works with one server address at a time. so 
         // although there may be several RemoteAddeEntry objs, they'll all have
-        // the same address and the follow *isn't* as dumb as it looks!
+        // the same address and the following *isn't* as dumb as it looks!
         if (!unverifiedEntries.isEmpty()) {
             if (!RemoteAddeEntry.checkHost(unverifiedEntries.toArray(new RemoteAddeEntry[0])[0])) {
                 setStatus("Could not connect to the given server.");
@@ -374,7 +374,7 @@ public class RemoteEntryEditor extends JDialog {
         }
 
         setStatus("Contacting server...");
-        Thread checkThread = makeCheckThread(unverifiedEntries);
+        Thread checkThread = makeCheckThread(action, unverifiedEntries);
         checkThread.start();
     }
 
@@ -846,7 +846,10 @@ public class RemoteEntryEditor extends JDialog {
     }
 
     private void verifyAddButtonActionPerformed(ActionEvent evt) {
-        verifyInput();
+        verifyInput(EditorAction.VERIFYING_AND_ADDING);
+    }
+
+    private void handleVerifyAdd() {
         if (!anyBadFields()) {
             setEditorAction(EditorAction.ADDED_VERIFIED);
             addEntry();
@@ -858,7 +861,10 @@ public class RemoteEntryEditor extends JDialog {
     }
 
     private void verifyEditButtonActionPerformed(ActionEvent evt) {
-        verifyInput();
+        verifyInput(EditorAction.VERIFYING_AND_EDITING);
+    }
+
+    private void handleVerifyEdit() {
         if (!anyBadFields()) {
             setEditorAction(EditorAction.EDITED_VERIFIED);
             editEntry();
@@ -888,7 +894,7 @@ public class RemoteEntryEditor extends JDialog {
     }
 
     private void verifyServerActionPerformed(ActionEvent evt) {
-        verifyInput();
+        verifyInput(EditorAction.VERIFYING);
         if (anyBadFields()) {
             // save poll widget state
             // toggle a "listen for *any* input event" switch to on
@@ -954,11 +960,13 @@ public class RemoteEntryEditor extends JDialog {
         return goodEntries;
     }
 
-    private Thread makeCheckThread(final Set<RemoteAddeEntry> entries) {
+    private Thread makeCheckThread(final EditorAction action,
+                                   final Set<RemoteAddeEntry> entries)
+    {
         return new Thread() {
             @Override public void run() {
                 logger.trace("checking entries...");
-                checkGroups(entries);
+                checkGroups(action, entries);
             }
         };
     }
@@ -982,7 +990,9 @@ public class RemoteEntryEditor extends JDialog {
         });
     }
 
-    public Set<RemoteAddeEntry> checkGroups(final Set<RemoteAddeEntry> entries) {
+    public Set<RemoteAddeEntry> checkGroups(final EditorAction action,
+                                            final Set<RemoteAddeEntry> entries)
+    {
         requireNonNull(entries, "entries cannot be null");
         if (entries.isEmpty()) {
             return Collections.emptySet();
@@ -1061,6 +1071,12 @@ public class RemoteEntryEditor extends JDialog {
             }
         } else {
             setStatus("Finished verifying.");
+        }
+
+        if (EditorAction.VERIFYING_AND_ADDING.equals(action)) {
+            handleVerifyAdd();
+        } else if (EditorAction.VERIFYING_AND_EDITING.equals(action)) {
+            handleVerifyEdit();
         }
         return verified;
     }

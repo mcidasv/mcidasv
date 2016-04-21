@@ -302,31 +302,43 @@ public class MultiDimensionDataSource extends HydraDataSource {
           }
        }
        else if (name.contains("HSRL2_B200") && name.endsWith(".h5")) {
-         adapters = new MultiDimensionAdapter[4];
-         defaultSubsets = new HashMap[4];
-         propsArray = new Hashtable[4];
+         Map<String, Object> table;
+         adapters = new MultiDimensionAdapter[5];
+         defaultSubsets = new HashMap[5];
+         propsArray = new Hashtable[5];
+         
+         String dataPath = "DataProducts/";
+         String[] arrayNames = new String[] {"532_total_attn_bsc", "1064_total_attn_bsc", "355_total_attn_bsc"};
+         String[] rangeNames = new String[] {"Total_Attenuated_Backscatter_532", "Total_Attenuated_Backscatter_1064", "Total_Attenuated_Backscatter_355"};
+         
+         String[] arrayNameAOT = new String[] {"532_AOT_hi_col", "355_AOT_hi_col"};
+         String[] rangeNamesAOT = new String[] {};
+         
 
-         Map<String, Object> table = ProfileAlongTrack.getEmptyMetadataTable();
-         table.put(ProfileAlongTrack.array_name, "DataProducts/532_total_attn_bsc");
-         table.put(ProfileAlongTrack.range_name, "Total_Attenuated_Backscatter_532");
-         table.put(ProfileAlongTrack.trackDim_name, "dim0");
-         table.put(ProfileAlongTrack.vertDim_name, "dim1");
-         table.put(ProfileAlongTrack.profileTime_name, "ApplanixIMU/gps_time");
-         table.put(ProfileAlongTrack.longitude_name, "ApplanixIMU/gps_lon");
-         table.put(ProfileAlongTrack.latitude_name, "ApplanixIMU/gps_lat");
-         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
-         ProfileAlongTrack adapter = new HSRL2D(reader, table);
-         ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
-         Map<String, double[]> subset = adapter.getDefaultSubset();
-         adapters[0] = adapter3D;
-         defaultSubset = subset;
-         defaultSubsets[0] = defaultSubset;
+         for (int k=0; k<arrayNames.length; k++) {
+            table = ProfileAlongTrack.getEmptyMetadataTable();
+            table.put(ProfileAlongTrack.array_name, dataPath+arrayNames[k]);
+            table.put(ProfileAlongTrack.range_name, rangeNames[k]);
+            table.put(ProfileAlongTrack.trackDim_name, "dim0");
+            table.put(ProfileAlongTrack.vertDim_name, "dim1");
+            table.put(ProfileAlongTrack.profileTime_name, "ApplanixIMU/gps_time");
+            table.put(ProfileAlongTrack.longitude_name, "ApplanixIMU/gps_lon");
+            table.put(ProfileAlongTrack.latitude_name, "ApplanixIMU/gps_lat");
+            table.put("array_dimension_names", new String[] {"dim0", "dim1"});
+            ProfileAlongTrack adapter = new HSRL2D(reader, table);
+            ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
+            Map<String, double[]> subset = adapter.getDefaultSubset();
+            adapters[k] = adapter3D;
+            defaultSubset = subset;
+            defaultSubsets[k] = defaultSubset;
+
+            properties.put("medianFilter", new String[] {Double.toString(12), Double.toString(24)});
+            properties.put("setBelowSfcMissing", new String[] {"true"});
+            propsArray[k] = properties;
+         }
+         
          DataCategory.createCategory("ProfileAlongTrack");
          categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
-
-         properties.put("medianFilter", new String[] {Double.toString(12), Double.toString(24)});
-         properties.put("setBelowSfcMissing", new String[] {"true"});
-         propsArray[0] = properties;
 
          hasTrackPreview = true;
 
@@ -364,6 +376,12 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
          TrackDomain track_domain = new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]);
          track_adapter = new TrackAdapter(track_domain, adapter_s[1]);
+         
+         TrackAdapter trkAdapter = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]), adapter_s[1]);
+         trkAdapter.setName("Track3D");
+         
+         trkAdapter = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0]), adapter_s[1]);
+         trkAdapter.setName("Track2D");
        }
        else if (name.startsWith("CAL_LID_L1")) {
 
@@ -1007,8 +1025,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
             				geoSelection.getZStride());
             		} else {
             			// one of the strides is not an integer, let user know
-        	    		String msg = "Either the Track or Vertical Stride is inavlid.\n" +
-        	    				"Stride values must be postiive integers > 0.\n";
+            		    String msg = "Either the Track or Vertical Stride is invalid.\n" +
+            		                 "Stride values must be positive integers.\n";
         	    		Object[] params = { msg };
         	    		JOptionPane.showMessageDialog(null, params, "Invalid Stride", JOptionPane.OK_OPTION);
         	    		return null;

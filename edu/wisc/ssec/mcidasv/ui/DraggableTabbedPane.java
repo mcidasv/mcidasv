@@ -34,6 +34,7 @@ import java.awt.Cursor;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -140,6 +141,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
     /** The tab index that the user is currently over. */
     private int overIndex = -1;
 
+    private int draggedAtX;
+
+    private int draggedAtY;
+
     /** Used for starting the dragging process. */
     private DragSource dragSource;
 
@@ -195,18 +200,23 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * drag. 
      */
     @Override public void dragGestureRecognized(DragGestureEvent e) {
-        sourceIndex = getSelectedIndex();
+        // currently we want to disable drag and drop for "chrome-less" windows
+        // one alternative is to have drag and drop simply *reposition*
+        // chrome-less windows.
+        if (showTabArea(group, this)) {
+            sourceIndex = getSelectedIndex();
 
-        // transferable allows us to store the current DraggableTabbedPane and
-        // the source index of the drag inside the various drag and drop event
-        // listeners.
-        Transferable transferable = new TransferableIndex(this, sourceIndex);
+            // transferable allows us to store the current DraggableTabbedPane
+            // and the source index of the drag inside the various drag and
+            // drop event listeners.
+            Transferable transferable = new TransferableIndex(this, sourceIndex);
 
-        Cursor cursor = DragSource.DefaultMoveDrop;
-        if (e.getDragAction() != DnDConstants.ACTION_MOVE) {
-            cursor = DragSource.DefaultCopyDrop;
+            Cursor cursor = DragSource.DefaultMoveDrop;
+            if (e.getDragAction() != DnDConstants.ACTION_MOVE) {
+                cursor = DragSource.DefaultCopyDrop;
+            }
+            dragSource.startDrag(e, cursor, transferable, this);
         }
-        dragSource.startDrag(e, cursor, transferable, this);
     }
 
     /** 
@@ -236,10 +246,12 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * Triggered when the user drags out of {@code dropTarget}.
      */
     @Override public void dragExit(DropTargetEvent e) {
+        if (showTabArea(group, this)) {
 //        logger.trace("drag left a window outsideDrag={} sourceIndex={}", outsideDrag, sourceIndex);
-        overIndex = -1;
-        //outsideDrag = true;
-        repaint();
+            overIndex = -1;
+            //outsideDrag = true;
+            repaint();
+        }
     }
 
     /**
@@ -250,13 +262,15 @@ public class DraggableTabbedPane extends JTabbedPane implements
      */
     @Override public void dragOver(DropTargetDragEvent e) {
 //        logger.trace("dragOver outsideDrag={} sourceIndex={}", outsideDrag, sourceIndex);
-        if (!outsideDrag && (sourceIndex == -1)) {
-            return;
-        }
+        if (showTabArea(group, this)) {
+            if (!outsideDrag && (sourceIndex == -1)) {
+                return;
+            }
 
-        Point dropPoint = e.getLocation();
-        overIndex = indexAtLocation(dropPoint.x, dropPoint.y);
-        repaint();
+            Point dropPoint = e.getLocation();
+            overIndex = indexAtLocation(dropPoint.x, dropPoint.y);
+            repaint();
+        }
     }
 
     /**
@@ -265,6 +279,9 @@ public class DraggableTabbedPane extends JTabbedPane implements
      * @param e State that we'll need in order to handle the drop.
      */
     @Override public void drop(DropTargetDropEvent e) {
+        if (!showTabArea(group, this)) {
+            return;
+        }
         // if the dragged ComponentHolder was dragged from another window we
         // must do a behind-the-scenes transfer from its old ComponentGroup to 
         // the end of the new ComponentGroup.
@@ -330,7 +347,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
     /**
      * Overridden so that McIDAS-V can draw an indicator of a dragged tab's 
-     * possible 
+     * possible new position.
      */
     @Override public void paint(Graphics g) {
         super.paint(g);
@@ -486,31 +503,53 @@ public class DraggableTabbedPane extends JTabbedPane implements
     @Override public void dropActionChanged(DropTargetDragEvent e) { }
 
     @Override public void mouseClicked(final MouseEvent e) {
-        processMouseEvents(e);
+        if (showTabArea(group, this)) {
+            processMouseEvents(e);
+        }
     }
 
     @Override public void mouseExited(final MouseEvent e) {
-        processMouseEvents(e);
+        if (showTabArea(group, this)) {
+            processMouseEvents(e);
+        }
     }
 
     @Override public void mousePressed(final MouseEvent e) {
-        processMouseEvents(e);
+        if (showTabArea(group, this)) {
+            processMouseEvents(e);
+        } else {
+            draggedAtX = e.getX();
+            draggedAtY = e.getY();
+        }
     }
 
     @Override public void mouseEntered(final MouseEvent e) {
-        processMouseEvents(e);
+        if (showTabArea(group, this)) {
+            processMouseEvents(e);
+        }
     }
 
     @Override public void mouseMoved(final MouseEvent e) {
-        processMouseEvents(e);
+        if (showTabArea(group, this)) {
+            processMouseEvents(e);
+        }
     }
 
     @Override public void mouseDragged(final MouseEvent e) {
-        processMouseEvents(e);
+        // note: this method is called continously throughout the dragging
+        // process
+        if (showTabArea(group, this)) {
+            processMouseEvents(e);
+        } else {
+            window.setLocation(e.getX() - draggedAtX + window.getLocation().x,
+                               e.getY() - draggedAtY + window.getLocation().y);
+        }
     }
 
     @Override public void mouseReleased(final MouseEvent e) {
-        processMouseEvents(e);
+        if (showTabArea(group, this)) {
+            processMouseEvents(e);
+        }
     }
 
     private void processMouseEvents(final MouseEvent e) {
@@ -585,12 +624,30 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     class CloseableTabbedPaneUI extends BasicTabbedPaneUI {
+        private final Insets borderInsets = new Insets(0, 0, 0, 0);
+
         private int horizontalTextPosition = SwingConstants.LEFT;
 
         public CloseableTabbedPaneUI() { }
 
         public CloseableTabbedPaneUI(int horizontalTextPosition) {
             this.horizontalTextPosition = horizontalTextPosition;
+        }
+
+        @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {
+            if (showTabArea(group, tabPane)) {
+                super.paintContentBorder(g, tabPlacement, selectedIndex);
+            }
+        }
+
+        @Override protected Insets getContentBorderInsets(int tabPlacement) {
+            Insets insets = null;
+            if (showTabArea(group, tabPane)) {
+                insets = super.getContentBorderInsets(tabPlacement);
+            } else {
+                insets = borderInsets;
+            }
+            return insets;
         }
 
         @Override protected void layoutLabel(int tabPlacement, 
@@ -667,6 +724,7 @@ public class DraggableTabbedPane extends JTabbedPane implements
     }
 
     class CloseableMetalTabbedPaneUI extends MetalTabbedPaneUI {
+        private final Insets borderInsets = new Insets(0, 0, 0, 0);
 
         private int horizontalTextPosition = SwingUtilities.LEFT;
 
@@ -674,6 +732,22 @@ public class DraggableTabbedPane extends JTabbedPane implements
 
         public CloseableMetalTabbedPaneUI(int newHorizontalTextPosition) {
             this.horizontalTextPosition = newHorizontalTextPosition;
+        }
+
+        @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {
+            if (showTabArea(group, tabPane)) {
+                super.paintContentBorder(g, tabPlacement, selectedIndex);
+            }
+        }
+
+        @Override protected Insets getContentBorderInsets(int tabPlacement) {
+            Insets insets = null;
+            if (showTabArea(group, tabPane)) {
+                insets = super.getContentBorderInsets(tabPlacement);
+            } else {
+                insets = borderInsets;
+            }
+            return insets;
         }
 
         @Override protected void paintTabBorder(Graphics g, int placement,

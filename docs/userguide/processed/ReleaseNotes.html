@@ -58,6 +58,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#transect1.6">New Transect Tab and Window Types</a></strong><strong><a class="faq-question-link" href="#contourLabelInterval1.5"></a></strong></li>
   </ul>
 </div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.6">Data Changes</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#netcdf1.6">Listing of Fields from a NetCDF Data Source</a></strong><strong><a class="faq-question-link" href="#contourLabelInterval1.5"></a></strong></li>
+  </ul>
+</div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.6">Other Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
@@ -66,8 +72,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <li><strong><a class="faq-question-link" href="#scripting1.6">Scripting</a></strong></li>
     <li><strong><a class="faq-question-link" href="#java1.6">Java Version</a></strong></li>
     <li><strong><a class="faq-question-link" href="#install1.6">Updates to Installation GUI</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#cmap1.6">Support for AWIPS II cmap Colormaps</a></strong></li>
   </ul>
 </div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.6">Under Development</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#npp1.6">Suomi NPP Chooser</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.6" id="faq1_cat1_1.6"></a>Documentation
@@ -89,8 +100,13 @@ Changes</div>
   <li>File&gt;New Display Tab/Window&gt;Misc&gt;1 Map 2 Transects</li>
   <li>File&gt;New Display Tab/Window&gt;Misc&gt;2 Maps 1 Transect</li></ul>
 </div></div>
-
-<div class="faq-category-title"><a name="faq1_cat4_1.6" id="faq1_cat2_1.5"></a>Other
+<div class="faq-category-title"><a name="faq1_cat3_1.6" id="faq1_cat3_1.6"></a>Data Changes</div>
+  <div class="faq-category"><a name="netcdf1.6" id="netcdf1.6"></a>
+  <h4>Listing of Fields from a NetCDF Data Source</h4>
+<div class="faq-answer">
+  <p>Added a new button to the top of the Fields panel of the Field Selector to toggle between the longname and shortname descriptions of each field in the data source. This is only an option if the fields populating the Fields panel are from a NetCDF-formatted data source.</p>
+</div></div>
+<div class="faq-category-title"><a name="faq1_cat4_1.6" id="faq1_cat4_1.5"></a>Other
   Changes</div>
 <div class="faq-category"><a name="julian1.6" id="julian1.6"></a>
   <h4>Julian Date with Archive Servers</h4>
@@ -115,6 +131,7 @@ Changes</div>
     <li>Added a new function called setMapVisibilityByDescription() that allows for showing or hiding individual maps from the display.</li>
     <li>Added new information to the metadata of the data object returned from loadGrid. This new metadata is in the form of three new keys: globalAttributes, metadataVariables, and variableAttributes. Information on accessing these keys and their values can be found on the 'Create an Object - Grids' page.</li>
     <li>Added a new keyword to captureImage and writeMovie called createDirectories. This createDirectories key, if set to True, allows for the creation of the directory path specified in the command if it does not already exist.</li>
+    <li>Added new fontSize and fontFace keywords to the Colorbar formatting option of captureImage.</li>
   </ul>
 </div></div>
 <div class="faq-category"><a name="java1.6" id="java1.6"></a>
@@ -122,7 +139,16 @@ Changes</div>
 <div class="faq-answer">Updated Java version from 1.7.0_60 to 1.8.0_45.</div></div>
 <div class="faq-category"><a name="install1.6" id="install1.6"></a>
   <h4>Updates to Installation GUI</h4>
-<div class="faq-answer">Updated the installation GUI. The first update is that the GUI now prompts the user if McIDAS-V should be installed into the same directory that McIDAS-V was last installed into (overwriting any previous version), or if it should be installed into a different directory. If the option of installing into the existing installation directory is selected, then the installation GUI will skip the step where the installation directory is selected. If the user selects to install into a different directory, there is a new feature that allows for the creation of a new directory within the installer.</div></div>
+<div class="faq-answer">Updated the installation GUI. The first update is that the GUI now prompts the user if McIDAS-V should be installed into the same directory that McIDAS-V was last installed into (overwriting any previous version), or if it should be installed into a different directory. If the option of installing into the existing installation directory is selected, then the installation GUI will skip the step where the installation directory is selected. If the user selects to install into a different directory, there is a new feature that allows for the creation of a new directory within the installer. There were also updates to allow for installing into and running from directory paths that include spaces.</div></div>
+<div class="faq-category"><a name="cmap1.6" id="cmap1.6"></a>
+  <h4>Support for AWIPS II cmap Colormaps</h4>
+<div class="faq-answer">Added support for AWIPS II *.cmap colormaps (enhancements). These files can be imported through the Color Table Editor.</div></div>
+  <div class="faq-category-title"><a name="faq1_cat5_1.6" id="faq1_cat5_1.6"></a>Under Development</div>
+  <div class="faq-category"><a name="npp1.6" id="npp1.6"></a>
+    <h4>Suomi NPP Chooser</h4>
+    <div class="faq-answer">Added support for subsetting EDR granules containing missing scanlines.</div>
+  </div>
+</div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

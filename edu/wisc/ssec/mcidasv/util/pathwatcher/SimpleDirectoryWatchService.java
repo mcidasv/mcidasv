@@ -152,9 +152,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
             globPattern = "*";
         }
 
-        try (FileSystem fs = FileSystems.getDefault()) {
-            return fs.getPathMatcher("glob:" + globPattern);
-        }
+        return FileSystems.getDefault().getPathMatcher("glob:"+globPattern);
     }
 
     /**

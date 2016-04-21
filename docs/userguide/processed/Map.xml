@@ -97,7 +97,6 @@
         <mapID target="idv.controls.valueplotcontrol"				 url="controls/ValuePlotControl.html" />
         <mapID target="idv.controls.visibility"                      url="controls/index.html#visibility" />
         <mapID target="idv.controls.volumerendercontrol"             url="controls/VolumeRenderControl.html" />
-        <mapID target="idv.controls.worldwindcontrol"                url="controls/WorldWindControl.html" />
         <mapID target="idv.data.choosers"                            url="data/choosers/index.html" />
         <mapID target="idv.data.choosers.catalogchooser"             url="data/choosers/CatalogChooser.html" />
         <mapID target="idv.data.choosers.catalogchooser.image1"      url="data/choosers/CatalogChooser.html#image1" />

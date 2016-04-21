@@ -1022,7 +1022,7 @@ public class JythonManager extends IdvManager implements ActionListener,
         PythonInterpreter interp = new PythonInterpreter();
         addInterpreter(interp);
         // only needed for background output?
-        if (getArgsManager().getNoGui()) {
+        if (getArgsManager().getIsOffScreen()) {
             outputStream = new OutputStream() {
                 @Override public void write(byte[] b, int off, int len) {
                     print(new String(b, off, len));

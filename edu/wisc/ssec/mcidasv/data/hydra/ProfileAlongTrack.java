@@ -447,58 +447,7 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       public abstract float[] getTrackLongitude() throws Exception;
       public abstract float[] getTrackLatitude() throws Exception;
 
-      public static float[] medianFilterOrig(float[] A, int lenx, int leny, int window_lenx, int window_leny)
-           throws VisADException {
-        float[] result =  new float[A.length];
-        float[] window =  new float[window_lenx*window_leny];
-        float[] new_window =  new float[window_lenx*window_leny];
-        int[] sort_indexes = new int[window_lenx*window_leny];
-                                                                                                                                    
-        int a_idx;
-        int w_idx;
-                                                                                                                                    
-        int w_lenx = window_lenx/2;
-        int w_leny = window_leny/2;
-                                                                                                                                    
-        int lo;
-        int hi;
-        int ww_jj;
-        int ww_ii;
-        int cnt;
-                                                                                                                                    
-        for (int j=0; j<leny; j++) {
-          for (int i=0; i<lenx; i++) {
-            a_idx = j*lenx + i;
-            if (Float.isNaN(A[a_idx])) {
-               result[a_idx] = Float.NaN;
-               continue;
-            }
-            cnt = 0;
-            for (int w_j=-w_leny; w_j<w_leny; w_j++) {
-              for (int w_i=-w_lenx; w_i<w_lenx; w_i++) {
-                ww_jj = w_j + j;
-                ww_ii = w_i + i;
-                w_idx = (w_j+w_leny)*window_lenx + (w_i+w_lenx);
-                if ((ww_jj >= 0) && (ww_ii >=0) && (ww_jj < leny) && (ww_ii < lenx)) {
-                  int k = ww_jj*lenx+ww_ii;
-                  float val = A[k];
-                  if (!Float.isNaN(val)) {
-                    window[cnt] = val;
-                    cnt++;
-                  }
-                }
-              }
-            }
-            System.arraycopy(window, 0, new_window, 0, cnt);
-            //java.util.Arrays.sort(new_window, 0, cnt-1);
-            QuickSort.sort(new_window, 0, cnt-1);
-            result[a_idx] = new_window[cnt/2];
-          }
-        }
-        return result;
-      }
-
-      //medianFilterFast
+      
       public static float[] medianFilter(float[] A, int lenx, int leny, int window_lenx, int window_leny)
            throws VisADException {
         float[] result =  new float[A.length];
