@@ -49,13 +49,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td>type of display to create<br>
           MAP (default)<br>GLOBE</td>
     </tr>
+    <tr>
+      <td valign="top">widgets=</td>
+      <td>include toolbar buttons in the window<br>
+          True (default)<br>False</td>
+    </tr>
   </table>
 </div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel=buildWindow(height=600,width=800,panelTypes=GLOBE)</em></div>
 <div class="TwoTabIndent"><em>panel=buildWindow(height=600,width=800,panelTypes=MAP)</em></div>
 <div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">When working in a foreground session, it is possible to build a window that will close itself once it has completed the process assigned to it using Python's &quot;with statement&quot; functionality.  For example, a user can build a window, display a loop of satellite data, write a movie, then have the window close automatically when the movie capture is complete.  Here is an example of how to use this functionality with buildWindow.</div>
+<div class="TwoTabIndent">When widgets=False is passed through buildWindow(), there will be no toolbar buttons, including the top toolbar that allows for closing the window. There are two ways of closing this window within McIDAS-V. To do this, the findWindow() function (defined below) can be used, or a &quot;with statement&quot; can be used. When working in a foreground session, it is possible to build a window that will close itself once it has completed the process assigned to it using Python's &quot;with statement&quot; functionality.  For example, a user can build a window, display a loop of satellite data, write a movie, then have the window close automatically when the movie capture is complete.  Here is an example of how to use this functionality with buildWindow.</div>
 <div class="ThreeTabIndent"><em>with buildWindow(height=1000,width=1200) as panel:</em></div>
 <div class="FourTabIndent"><em>layer = panel[0].createLayer('Image Sequence Display',myLoop)</em></div>
 <div class="FourTabIndent"><em>writeMovie('C:\\Users\\myUser\\myMovie.gif')</em></div>
@@ -111,6 +116,23 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>layer=panel[0].createLayer('Image Display', data)</em></div>
+<p><strong><a name="findWindow" id="findWindow"></a>findWindow -</strong> Finds and creates a reference to the window containing a display</p>
+<div class="OneTabIndent">Usage: <em>window = findWindow(display=panel[0])</em></div>
+    <div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">display=</td>
+      <td>display name defined from buildWindow</td>
+</table></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">The buildWindow function returns a reference to a specific panel in a window, and therefore any functions run on this panel will only impact that one panel, not the window as a whole.  This findWindow function returns a reference to the actual window containing the buildWindow panel.  This allows for performing actions on the window itself, such as adding new tabs and closing the window.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent">
+  <em>panel = buildWindow()</em><br>
+  <em>window = findWindow(display=panel[0])</em><br>
+  <em>see(window) # return which functions/methods can be applied to 'window'</em><br>
+  <em>window.createTab()</em><br>
+<em>window.close()</em></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
