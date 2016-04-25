@@ -89,6 +89,7 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.AMSRE_L2A,
             AddeFormat.AMSRE_RAIN_PRODUCT,
             AddeFormat.GINI,
+            AddeFormat.HIMAWARI8,
             AddeFormat.INSAT3D_IMAGER,
             AddeFormat.INSAT3D_SOUNDER,
             AddeFormat.LRIT_GOES9,
@@ -112,15 +113,8 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.MTSAT_HRIT,
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
-            AddeFormat.TRMM
-            
-            // TJJ Apr 2015 - temporarily comment out Himawari-8, since the ADDE
-            // servers had not passed testing and been released prior to the
-            // McIDAS-V 1.5 release
-            
-            // AddeFormat.HIMAWARI8
-            
-//            AddeFormat.MCIDAS_MD
+            AddeFormat.TRMM           
+            // AddeFormat.MCIDAS_MD
         });
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
@@ -483,17 +477,6 @@ public class LocalEntryEditor extends JDialog {
      */
     public EditorAction getEditorAction() {
         return editorAction;
-    }
-
-    /**
-     * Set the {@link EditorAction} that was performed.
-     *
-     * @param editorAction Action that was performed.
-     *
-     * @see #editorAction
-     */
-    private void setEditorAction(final EditorAction editorAction) {
-        this.editorAction = editorAction;
     }
 
     /**

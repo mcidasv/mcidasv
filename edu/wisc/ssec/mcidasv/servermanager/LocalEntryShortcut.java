@@ -89,6 +89,7 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.AMSRE_L2A,
             AddeFormat.AMSRE_RAIN_PRODUCT,
             AddeFormat.GINI,
+            AddeFormat.HIMAWARI8,
             AddeFormat.INSAT3D_IMAGER,
             AddeFormat.INSAT3D_SOUNDER,
             AddeFormat.LRIT_GOES9,
@@ -113,10 +114,7 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
             AddeFormat.TRMM
-            
-            // AddeFormat.HIMAWARI8
-            
-//            AddeFormat.MCIDAS_MD
+            // AddeFormat.MCIDAS_MD
         });
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
