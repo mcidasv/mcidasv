@@ -205,6 +205,7 @@ public class LocalEntryShortcut extends JDialog {
         // TJJ Apr 2016
         // certain local servers are not available on Windows, remove them from the list
         if (McIDASV.isWindows()) {
+            formats.removeElement(AddeFormat.HIMAWARI8);
             formats.removeElement(AddeFormat.INSAT3D_IMAGER);
             formats.removeElement(AddeFormat.INSAT3D_SOUNDER);
         }
