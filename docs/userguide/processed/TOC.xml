@@ -186,6 +186,7 @@
 		<tocitem text="Create an Object - Grids" target="idv.misc.scripting.createobjectgrid"/>
 		<tocitem text="Modify the Display Object" target="idv.misc.scripting.modifydisplayobject"/>
 		<tocitem text="Modify the Layer Object" target="idv.misc.scripting.modifylayerobject"/>
+		<tocitem text="Modify the Layer Object - Point" target="idv.misc.scripting.modifypointlayerobject"/>
 		<tocitem text="Save the Display" target="idv.misc.scripting.savedisplay"/>
 		<tocitem text="Environment" target="idv.misc.scripting.environment"/>
 	</tocitem>	
