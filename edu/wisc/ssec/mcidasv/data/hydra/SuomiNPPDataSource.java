@@ -386,10 +386,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 									// when we find the Data_Products group, go down another group level and pull out 
 									// what we will use for nominal day and time (for now anyway).
 									// XXX TJJ fileCount check is so we don't count the GEO file in time array!
-									if (g.getFullName().contains(
-											"Data_Products")
+									if (g.getFullName().contains("Data_Products")
 											&& (fileCount != fileNames.size())) {
-										boolean foundDateTime = false;
 										List<Group> dpg = g.getGroups();
 
 										// cycle through once looking for XML Product Profiles
@@ -454,27 +452,24 @@ public class SuomiNPPDataSource extends HydraDataSource {
 												Attribute aTime = v.findAttribute("AggregateBeginningTime");
 												// did we find the attributes we are looking for?
 												if ((aDate != null) && (aTime != null)) {
-													String sDate = aDate.getStringValue();
-													String sTime = aTime.getStringValue();
-													logger.trace("For day/time, using: " + sDate
-															+ sTime.substring(0, sTime.indexOf('Z') - 3));
-													Date d = sdf.parse(sDate
-																	+ sTime.substring(0, sTime.indexOf('Z') - 3));
-													theDate = d;
-													foundDateTime = true;
 													// set time for display to day/time of 1st granule examined
-													if (!nameHasBeenSet) {
-														setName(instrumentName.getStringValue() + " "
-																+ sdfOut.format(d));
-														nameHasBeenSet = true;
-													}
+												    if (! nameHasBeenSet) {
+												        String sDate = aDate.getStringValue();
+												        String sTime = aTime.getStringValue();
+												        logger.debug("For day/time, using: " + sDate
+												                + sTime.substring(0, sTime.indexOf('Z') - 3));
+												        Date d = sdf.parse(sDate
+												                + sTime.substring(0, sTime.indexOf('Z') - 3));
+												        theDate = d;
+												        setName(instrumentName.getStringValue() + " "
+												                + sdfOut.format(d));
+												        nameHasBeenSet = true;
+												    }
 													break;
 												}
 											}
-											if (foundDateTime)
-												break;
 										}
-										if (!foundDateTime) {
+										if (! nameHasBeenSet) {
 											throw new VisADException(
 													"No date time found in Suomi NPP granule");
 										}
