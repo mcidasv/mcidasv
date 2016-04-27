@@ -209,6 +209,13 @@ Deep Convection'</td></tr></table></div>
 <div class="TwoTabIndent"><em>layerData = layer.getData()</em></div>
   <div class="OneTabIndent">Remarks:</div>
   <div class="TwoTabIndent">The data object returned from the getData function (<em>layerData</em> from the above example) can now be passed through various formulas</div>
+<p><strong><a name="getLayer" id="getLayer"></a>getLayer
+    -</strong> Returns a reference to a displayed layer</p>
+<div class="OneTabIndent">Usage: <em>layer = panel[0].getLayer(index)</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>satLayer = panel[0].getLayer[1]</em></div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">This function returns a reference to a displayed error, which allows for passing this layer through other functions such as <em>setLayerVisible()</em>, <em>setEnhancement()</em>, and<em> setLayerLabel()</em>. The numerical value in the square brackets after <em>getLayer</em> in the example is the layer's index in the display. The index of displays in the displays begins with 0, which is the first layer displayed in the panel (normally the map layer). The second layer displayed would be index 1, the third layer display would be index 2, and so on.</div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
