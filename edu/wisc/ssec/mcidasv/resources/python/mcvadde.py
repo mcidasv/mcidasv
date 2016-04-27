@@ -210,6 +210,7 @@ _formats = {
     "TRMM":                                                    AddeFormat.TRMM,
     "TMIN":                                                    AddeFormat.TRMM,
     "GINI":                                                    AddeFormat.GINI,
+    # The following servers are not supported on Windows
     "Himawari-8":                                              AddeFormat.HIMAWARI8,
     "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
     "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
