@@ -67,9 +67,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-
 import org.w3c.dom.Element;
 
 import ucar.nc2.NetcdfFile;
@@ -1692,8 +1689,9 @@ public class McIDASV extends IntegratedDataViewer {
         // widgets into McV (which is Swing). The first line initializes the
         // JavaFX runtime, and the second line allows the JavaFX runtime to
         // hang around even if there are no JavaFX windows.
-        JFXPanel dummy = new JFXPanel();
-        Platform.setImplicitExit(false);
+        // TODO(jon): commenting out for now
+        // JFXPanel dummy = new JFXPanel();
+        // Platform.setImplicitExit(false);
 
         try {
             applyArgs(args);
