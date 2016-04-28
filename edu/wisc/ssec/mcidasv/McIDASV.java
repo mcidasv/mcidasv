@@ -1762,7 +1762,7 @@ public class McIDASV extends IntegratedDataViewer {
         removeSessionFile(SESSION_FILE);
 
         // shut down javafx runtime
-        Platform.exit();
+        // Platform.exit();
 
         logger.info("Exiting McIDAS-V @ {}", new Date());
 
