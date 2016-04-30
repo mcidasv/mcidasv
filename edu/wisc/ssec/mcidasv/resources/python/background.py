@@ -2629,7 +2629,7 @@ def importColorTable(filename, name=None, category=None, overwrite=False):
     if mcv:
         makeUnique = not overwrite
         ctm = mcv.getColorTableManager()
-        tables = ctm.processSpecial(filename, name, category)
+        tables = ctm.handleColorTable(filename, name, category)
         if tables:
             return _ColorTable(ctm.doImport(tables, makeUnique))
         else: 
