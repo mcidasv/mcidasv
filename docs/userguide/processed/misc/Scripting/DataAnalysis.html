@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Data Analysis</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/DataAnalysis.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ModifyPointLayerObject.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="SaveDisplay.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Data Analysis</div>
+<p><strong><a name="describe" id="describe"></a>describe -</strong></strong> Returns a variety of statistical parameters about an imagery or gridded data object</p>
+<div class="OneTabIndent">Usage: <em>describe(myData)</em></div>
+<div class="ThreeTabIndent"></div>
+<div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>describe(imageryData)</em></div>
+  <div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">This function returns the following statistical parameters of data objects returned from loadADDEImage and loadGrid:
+  <ul>
+    <li>Histogram</li>
+    <li>Length</li>
+    <li>Min</li>
+    <li>Max</li>
+    <li>Range</li>
+    <li>Q1</li>
+    <li>Q2</li>
+    <li>Q3</li>
+    <li>IQR</li>
+    <li>Mean</li>
+    <li>Mode</li>
+    <li>Kurtosis</li>
+    <li>Skewness</li>
+    <li>Std Dev</li>
+    <li>Variance</li>
+  </ul>
+Multiple data objects can be passed through describe() at once, separated by commas (example: <em>describe(imageryIR,imageryVIS)</em>).</div>
+<p><strong><a name="sparkline" id="sparkline"></a>sparkline -</strong> Returns a histogram of data values in a data object returned from loadADDEImage and loadGrid</p>
+<div class="OneTabIndent">Usage: <em>sparkline(myData)</em></div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>sparkline(imageryData)</em></div>
+    <div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">Multiple data objects can be passed through sparkline() at once, separated by commas (example: <em>sparkline(imageryIR,imageryVIS)</em>).
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ModifyPointLayerObject.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="SaveDisplay.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>

@@ -281,6 +281,7 @@ RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('misc/Scripting/ModifyDisplayObject.html');">Modify the Display Object</span><br>
       <span class="link" onClick="setPage('misc/Scripting/ModifyLayerObject.html');">Modify the Layer Object</span><br>
       <span class="link" onClick="setPage('misc/Scripting/ModifyPointLayerObject.html');">Modify the Layer Object - Point</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/DataAnalysis.html');">Data Analysis</span><br>
       <span class="link" onClick="setPage('misc/Scripting/SaveDisplay.html');">Save the Display</span><br>
       <span class="link" onClick="setPage('misc/Scripting/Environment.html');">Environment</span><br>
       </div>

@@ -251,6 +251,7 @@
 		<mapID target="idv.misc.scripting.createobject"				 url="misc/Scripting/CreateObject.html" />
 		<mapID target="idv.misc.scripting.createobjectimagery"		 url="misc/Scripting/CreateObjectImagery.html" />
 		<mapID target="idv.misc.scripting.createobjectgrid"			 url="misc/Scripting/CreateObjectGrid.html" />
+		<mapID target="idv.misc.scripting.dataanalysis"				 url="misc/Scripting/DataAnalysis.html" />
 		<mapID target="idv.misc.scripting.environment"				 url="misc/Scripting/Environment.html" />
 		<mapID target="idv.misc.scripting.modifydisplayobject"		 url="misc/Scripting/ModifyDisplayObject.html" />
 		<mapID target="idv.misc.scripting.modifylayerobject"		 url="misc/Scripting/ModifyLayerObject.html" />

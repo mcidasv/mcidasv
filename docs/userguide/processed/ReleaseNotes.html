@@ -138,8 +138,11 @@ Changes</div>
     <li>Added a new function called findWindow() that returns a reference to the display window containing a buildWindow() panel. This allows for performing operations on a window such as adding new tabs or closing the window.</li>
     <li>Added new functions to modify displays of point data, which are outlined in the 'Modify the Layer Object - Point' page.</li>
     <li>Added a new function called getData() which returns a data object from a displayed layer. This data object can then be passed through formulas.</li>
+    <li>Added new lister functions for Suomi NPP VIIRS data (described below in the Under Development section).</li>
+    <li>Added a new function called describe() which returns a variety of statistical parameters about an imagery or gridded data object. These statistical parameters include a histogram, length, min, max, range, Q1, Q2, Q3, IQR, mean, mode, kurtosis, skewness, standard deviation, and variance.</li>
+    <li>Added a new function called sparkline() which returns a histogram of data values from an imagery or gridded data object.</li>
     <li>Added new information to the metadata of the data object returned from loadGrid. This new metadata is in the form of three new keys: globalAttributes, metadataVariables, and variableAttributes. Information on accessing these keys and their values can be found on the 'Create an Object - Grids' page.</li>
-    <li>Added a new keyword to captureImage and writeMovie called createDirectories. This createDirectories key, if set to True, allows for the creation of the directory path specified in the command if it does not already exist.</li>
+    <li>Added a new keyword to the captureImage() and writeMovie() functions called createDirectories. This createDirectories key, if set to True, allows for the creation of the directory path specified in the command if it does not already exist.</li>
     <li>Added new fontSize and fontFace keywords to the Colorbar formatting option of captureImage.</li>
     <li>Added a new keyword to buildWindow called widgets. This keyword, if set to false, builds a display window without any toolbar buttons and only the display panel.</li>
     <li>Added syntax highlighting to the Jython libraries window. Also added keyboard shortcuts to assist with searching for text in the currently open library.</li>
@@ -158,7 +161,10 @@ Changes</div>
   <div class="faq-category-title"><a name="faq1_cat5_1.6" id="faq1_cat5_1.6"></a>Under Development</div>
   <div class="faq-category"><a name="npp1.6" id="npp1.6"></a>
     <h4>Suomi NPP Chooser</h4>
-    <div class="faq-answer">Added support for subsetting EDR granules containing missing scanlines.</div>
+    <div class="faq-answer">Added support for subsetting EDR granules containing missing scanlines. Also added a couple new functions to list information about VIIRS files:
+       <ul>
+         <li><strong>listVIIRSFieldsInFile(filename) -</strong> Returns a list of the fields included with the file passed through the function.  These field names can then be passed through the loadVIIRSImage() function to create a data object that can then be displayed.</li>
+         <li><strong>listVIIRSTimesInField(filename, field) -</strong> Returns the beginning date and time of the file passed through the function.</li></ul></div>
   </div>
 </div>
 <!-- InstanceEndEditable -->
