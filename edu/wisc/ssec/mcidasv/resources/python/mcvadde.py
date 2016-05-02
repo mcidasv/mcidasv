@@ -157,6 +157,7 @@ def _lookupAccounting(server, dataset):
 # LocalAddeEntry's ServerName and AddeFormat enums, and the format combo boxes 
 # in LocalEntryEditor and LocalEntryShortcut.
 _formats = {
+    "ABI and L2 GOES-16":                                      AddeFormat.ABI_GOES16,
     "AMSR-E Rain Product":                                     AddeFormat.AMSRE_RAIN_PRODUCT,
     "AMRR":                                                    AddeFormat.AMSRE_RAIN_PRODUCT,
     "AMSR-E L 1b":                                             AddeFormat.AMSRE_L1B,

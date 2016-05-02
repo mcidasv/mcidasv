@@ -92,8 +92,8 @@ public class LocalAddeEntry implements AddeEntry {
         // AddeFormat enum below, the "formats" field in both
         // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
         // in mcvadde.py.
-        AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
-        MODR, MSGT, MTST, SMIN, TMIN, MD, INDS, INST, WARI, INVALID
+        ABIN, AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4,  
+        MOD8, MODR, MSGT, MTST, SMIN, TMIN, MD, INDS, INST, WARI, INVALID
     }
 
     /**
@@ -117,6 +117,7 @@ public class LocalAddeEntry implements AddeEntry {
         // sorry. :(
         MCIDAS_AREA(ServerName.AREA, "McIDAS AREA"),
         MCIDAS_MD(ServerName.MD, "McIDAS MD", "McIDAS MD", EntryType.POINT),
+        ABI_GOES16(ServerName.ABIN, "GOES-16 ABI and L2", "GOES-16 ABI and L2"),
         AMSRE_L1B(ServerName.AMSR, "AMSR-E L 1b", "AMSR-E Level 1b"),
         AMSRE_L2A(ServerName.AMSE, "AMSR-E L 2a", "AMSR-E Level 2a"),
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),

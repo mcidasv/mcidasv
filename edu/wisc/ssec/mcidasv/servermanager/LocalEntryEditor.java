@@ -82,6 +82,7 @@ public class LocalEntryEditor extends JDialog {
             // the format combo box in LocalEntryShortcut, and the _formats
             // dictionary in mcvadde.py.
             AddeFormat.MCIDAS_AREA,
+            AddeFormat.ABI_GOES16,
             AddeFormat.AMSRE_L1B,
             AddeFormat.AMSRE_L2A,
             AddeFormat.AMSRE_RAIN_PRODUCT,
