@@ -82,11 +82,11 @@ public class LocalEntryEditor extends JDialog {
             // the format combo box in LocalEntryShortcut, and the _formats
             // dictionary in mcvadde.py.
             AddeFormat.MCIDAS_AREA,
-            AddeFormat.ABI_GOES16,
             AddeFormat.AMSRE_L1B,
             AddeFormat.AMSRE_L2A,
             AddeFormat.AMSRE_RAIN_PRODUCT,
             AddeFormat.GINI,
+            AddeFormat.GOES16_ABI,
             AddeFormat.HIMAWARI8,
             AddeFormat.INSAT3D_IMAGER,
             AddeFormat.INSAT3D_SOUNDER,
@@ -203,6 +203,7 @@ public class LocalEntryEditor extends JDialog {
         // TJJ Apr 2016
         // certain local servers are not available on Windows, remove them from the list
         if (McIDASV.isWindows()) {
+            formats.removeElement(AddeFormat.GOES16_ABI);
             formats.removeElement(AddeFormat.HIMAWARI8);
             formats.removeElement(AddeFormat.INSAT3D_IMAGER);
             formats.removeElement(AddeFormat.INSAT3D_SOUNDER);

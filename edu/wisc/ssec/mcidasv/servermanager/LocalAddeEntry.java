@@ -117,11 +117,11 @@ public class LocalAddeEntry implements AddeEntry {
         // sorry. :(
         MCIDAS_AREA(ServerName.AREA, "McIDAS AREA"),
         MCIDAS_MD(ServerName.MD, "McIDAS MD", "McIDAS MD", EntryType.POINT),
-        ABI_GOES16(ServerName.ABIN, "GOES-16 ABI and L2", "GOES-16 ABI and L2"),
         AMSRE_L1B(ServerName.AMSR, "AMSR-E L 1b", "AMSR-E Level 1b"),
         AMSRE_L2A(ServerName.AMSE, "AMSR-E L 2a", "AMSR-E Level 2a"),
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),
         GINI(ServerName.GINI, "GINI"),
+        GOES16_ABI(ServerName.ABIN, "GOES-16 ABI", "GOES-16 ABI"),
         HIMAWARI8(ServerName.WARI, "Himawari 8", "Himawari 8"),        
         INSAT3D_IMAGER(ServerName.INST, "INSAT-3D Imager", "INSAT-3D Imager"),
         INSAT3D_SOUNDER(ServerName.INDS, "INSAT-3D Sounder", "INSAT-3D Sounder"),

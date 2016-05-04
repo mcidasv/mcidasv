@@ -157,7 +157,6 @@ def _lookupAccounting(server, dataset):
 # LocalAddeEntry's ServerName and AddeFormat enums, and the format combo boxes 
 # in LocalEntryEditor and LocalEntryShortcut.
 _formats = {
-    "ABI and L2 GOES-16":                                      AddeFormat.ABI_GOES16,
     "AMSR-E Rain Product":                                     AddeFormat.AMSRE_RAIN_PRODUCT,
     "AMRR":                                                    AddeFormat.AMSRE_RAIN_PRODUCT,
     "AMSR-E L 1b":                                             AddeFormat.AMSRE_L1B,
@@ -212,6 +211,7 @@ _formats = {
     "TMIN":                                                    AddeFormat.TRMM,
     "GINI":                                                    AddeFormat.GINI,
     # The following servers are not supported on Windows
+    "GOES-16 ABI":                                             AddeFormat.GOES16_ABI,
     "Himawari-8":                                              AddeFormat.HIMAWARI8,
     "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
     "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
