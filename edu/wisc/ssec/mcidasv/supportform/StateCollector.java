@@ -36,4 +36,5 @@ public interface StateCollector {
     public boolean canBundleState();
     public byte[] getBundledState();
     public String getLogPath();
+    public String getPrefsPath();
 }

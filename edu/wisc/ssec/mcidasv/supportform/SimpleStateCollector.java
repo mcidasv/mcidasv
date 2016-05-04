@@ -69,4 +69,9 @@ public class SimpleStateCollector implements StateCollector {
     public String getLogPath() {
         return "";
     }
+    
+    public String getPrefsPath() {
+        return "";
+    }
+    
 }

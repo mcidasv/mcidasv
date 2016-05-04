@@ -79,8 +79,20 @@ public class McvStateCollector implements StateCollector {
         return EXTRA;
     }
 
+    /**
+     * Return full path to McV log file
+     */
+    
     public String getLogPath() {
         return mcv.getUserFile("mcidasv.log");
+    }
+    
+    /**
+     * Return full path to runMcV.prefs file
+     */
+    
+    public String getPrefsPath() {
+        return mcv.getUserFile("runMcV.prefs");
     }
 
     /**
