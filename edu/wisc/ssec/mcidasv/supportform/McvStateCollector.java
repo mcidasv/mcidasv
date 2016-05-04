@@ -31,6 +31,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Properties;
 
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import ucar.unidata.util.LogUtil;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -88,11 +89,10 @@ public class McvStateCollector implements StateCollector {
     }
     
     /**
-     * Return full path to runMcV.prefs file
+     * Return full path to user's startup preferences file.
      */
-    
     public String getPrefsPath() {
-        return mcv.getUserFile("runMcV.prefs");
+        return StartupManager.getInstance().getPlatform().getUserPrefs();
     }
 
     /**
