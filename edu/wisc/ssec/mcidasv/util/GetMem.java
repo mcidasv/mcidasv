@@ -52,7 +52,9 @@ public class GetMem {
      * @return Either the value returned by the {@code methodName} call, or
      * {@code defaultValue}.
      */
-    private <T> T callMXBeanMethod(final String methodName, final T defaultValue) {
+    private <T> T callMXBeanMethod(final String methodName,
+                                   final T defaultValue)
+    {
         assert methodName != null : "Cannot invoke a null method name";
         assert methodName.length() > 0: "Cannot invoke an empty method name";
         OperatingSystemMXBean osBean = 
@@ -66,7 +68,7 @@ public class GetMem {
             result = (T)m.invoke(osBean);
         } catch (Exception e) {
             System.err.println("Error invoking OperatingSystemMXBean method: " + methodName);
-            // do nothing for right now
+            // do nothing else for right now
         }
         return result;
     }
@@ -83,9 +85,9 @@ public class GetMem {
         Object totalMemoryObject =
             nonStaticInstance.callMXBeanMethod("getTotalPhysicalMemorySize", 0);
         long totalMemory = ((Number)totalMemoryObject).longValue();
-        boolean is64 = (System.getProperty("os.arch").indexOf("64") >= 0);
-        int megabytes = (int)(Math.round(totalMemory/1024/1024));
-        if (!is64 && megabytes > 1536) {
+        boolean is64 = System.getProperty("os.arch").contains("64");
+        int megabytes = Math.round(totalMemory / 1024 / 1024);
+        if (!is64 && (megabytes > 1536)) {
             megabytes = 1536;
         }
         return String.valueOf(megabytes);

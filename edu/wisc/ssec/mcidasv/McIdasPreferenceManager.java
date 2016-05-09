@@ -92,6 +92,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import edu.wisc.ssec.mcidasv.util.GetMem;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -721,8 +722,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         Platform platform = startup.getPlatform();
         platform.setUserDirectory(
                 mcv.getObjectStore().getUserDirectory().toString());
-        platform.setAvailableMemory(
-               mcv.getStateManager().getProperty(Constants.PROP_SYSMEM, "0"));
+        platform.setAvailableMemory(GetMem.getMemory());
         JPanel smPanel = startup.getAdvancedPanel(true);
         List<JPanel> stuff = Collections.singletonList(smPanel);
         

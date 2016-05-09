@@ -157,6 +157,9 @@ public enum Platform {
      * zero or does not represent an integer.
      * 
      * @see StartupManager#getArgs
+     *
+     * @deprecated There's not really a need for this method; the JVM can
+     *             tell us the amount of memory.
      */
     public void setAvailableMemory(String megabytes) {
         Objects.requireNonNull(megabytes, "Available memory cannot be null");
