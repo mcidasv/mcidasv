@@ -1723,6 +1723,20 @@ class _Display(_JavaProxy):
         # change the display to the saved viewpoint
         self._JavaProxy__javaObject.initWith(desiredViewpoint)
         
+    @gui_invoke_later
+    def setAutoDepth(self, value):
+        """Set whether or not the display should be using automatic depth offsetting.
+        
+        Args:
+            value: Boolean value for whether or not automatic depth offsetting should be enabled.
+        """
+        from ucar.unidata.idv.ViewManager import PREF_AUTO_DEPTH
+        self._JavaProxy__javaObject.setBp(PREF_AUTO_DEPTH, value)
+        
+    @gui_invoke_later
+    def getAutoDepth(self):
+        """Return whether or not this display is using automatic depth offsetting."""
+        return self._JavaProxy__javaObject.getAutoDepth()
         
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
