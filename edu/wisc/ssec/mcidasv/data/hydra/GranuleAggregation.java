@@ -105,6 +105,8 @@ public class GranuleAggregation implements MultiDimensionReader {
    private Set<String> products;
    private String origName = null;
    private boolean isEDR = false;
+   // assume we are working with SDRs, will toggle if not
+   private boolean isSDR = true;
 
    public GranuleAggregation(List<NetCDFFile> ncdfal, Set<String> products,
 		   String inTrackDimensionName, String inTrackGeoDimensionName, 
@@ -116,6 +118,7 @@ public class GranuleAggregation implements MultiDimensionReader {
        this.ncdfal = ncdfal;
        this.products = products;
        this.isEDR = isEDR;
+       if (isEDR) isSDR = false;
 	   init(ncdfal);
    }
    
@@ -286,7 +289,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   // good place to initialize the cut Range ArrayList for each granule
 		   Integer granuleIndex = new Integer(ncIdx);
 		   List<Range> al = new ArrayList<>();
-		   granCutRanges.put(granuleIndex, al);
+
 		   int cutScanCount = 0;
 		   
 		   ncfile = nclist.get(ncIdx); 
@@ -302,11 +305,15 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   // and if found, try to handle it by simply adjusting the dimensions
 			   // for this granule.  Sound like a plan?  We'll see...
 			   
-			   if (isEDR) {
+			   // TJJ May 2016 
+			   // "simply adjusting the dimensions" he says
+			   // Anyway, we now do this check for EDRs and SDRs, it can manifest for both
+			   
+			   if (isEDR || isSDR) {
 				   
 				   // look through lat grid, look for missing scans
 				   String varName = var.getShortName();
-				   if ((varName.endsWith("Latitude")) || (varName.endsWith("Latitude_TC"))){
+				   if (varName.endsWith("Latitude")) {
 					   // iterate through the scan lines, looking for fill lines
 					   // NOTE: we only need to check the first column! so set
 					   // up an appropriate Range to cut the read down significantly
@@ -315,12 +322,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   alr.add(new Range(0, shape[0] - 1, 1));
 					   alr.add(new Range(0, 1, 1));
 					   Array a = var.read(alr);
+					   int granLength = shape[0];
 					   int scanLength = shape[1];
 					   Index index = a.getIndex();
 					   float fVal = 0.0f;
 
 					   int rangeOffset = 0;
-					   int rangeCount = 0;
 					   boolean prvScanWasCut = false;
 					   boolean needClosingRange = false;
 					   boolean hadCutRanges = false;
@@ -337,8 +344,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   if (someMissing) {
 							   hadCutRanges = true;
 							   cutScanCount++;
-							   logger.trace("Found a cut scan " + (i + 1)
-									   + ", last val: " + fVal);
+							   logger.trace("Found a cut scan " + i + ", last val: " + fVal);
 							   if ((prvScanWasCut) || (i == 0)) {
 								   if (i == 0) {
 									   rangeOffset = 0;
@@ -357,28 +363,26 @@ public class GranuleAggregation implements MultiDimensionReader {
 								   } catch (Exception e) {
 									   e.printStackTrace();
 								   }
-								   rangeCount = 0;
 								   rangeOffset = i;
 							   }
 							   prvScanWasCut = true;
 						   } else {
 							   prvScanWasCut = false;
-							   rangeCount += scanLength;
 						   }
 
 						   // check to see if closing Range needed, good data at end
-						   if ((! prvScanWasCut) && (i == (scanLength - 1))) {
-							   needClosingRange = true;
+						   if ((! prvScanWasCut) && (i == (granLength - 1))) {
+						       if (hadCutRanges) {
+							      needClosingRange = true;
+						       }
 						   }
 					   }
 
 					   if (needClosingRange) {
 						   // We are using 2D ranges
-						   al.add(new Range(rangeOffset, rangeOffset + shape[0]
-								   - 1, 1));
+                           logger.trace("Adding closing cut range: " + rangeOffset + ", " + (shape[0] - 1) + ", 1");
+						   al.add(new Range(rangeOffset, shape[0] - 1, 1));
 						   al.add(new Range(0, scanLength - 1, 1));
-						   logger.trace("Adding closing cut Range, offs: "
-								   + rangeOffset + ", len: " + rangeCount);
 					   }
 
 					   // if only one contiguous range, process as a normal clean granule
@@ -387,14 +391,14 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   }
 
 					   granCutScans.put(granuleIndex, new Integer(cutScanCount));
-					   logger.debug("Total scans cut this granule: "
-							   + cutScanCount);
+					   logger.debug("Total scans cut this granule: " + cutScanCount);
 
 				   }
 			   } else {
 				   granCutScans.put(granuleIndex, new Integer(0));
 			   }
 		   }
+	       granCutRanges.put(granuleIndex, al);
 	   }
 	   
 	   for (int ncIdx = 0; ncIdx < nclist.size(); ncIdx++) {
@@ -687,11 +691,21 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   startSet[i][j]--;
 					   }
 				   }
+                   
 				   // counts may be different for start, end, and middle granules
 				   if (i == 0) {
 					   // is this the first and only granule?
 					   if (granuleSpan == 1) {
 						   countSet[i][j] = count[j] * stride[j];
+		                   // TJJ May 2016
+		                   // This condition manifests because there are times when 
+		                   // "fill" scans are cut from otherwise fine granules.
+	                       // e.g., to the chooser it may look like there are 3072 valid lines,
+                           // but by the time we get here we realize there are really 3056
+		                   // This typically shortens the granule by one scan (16 lines)
+		                   if (countSet[i][j] > (vGranuleLengths[loGranuleId+i] - startSet[i][j])) 
+		                       countSet[i][j] = vGranuleLengths[loGranuleId+i] - startSet[i][j];
+
 					   // or is this the first of multiple granules...
 					   } else {
 						   if ((inTrackTotal - start[j]) < (count[j] * stride[j])) {	
@@ -709,10 +723,14 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   } else {
 						   // the end granule
 						   countSet[i][j] = (count[j] * stride[j]) - countSubtotal;
-						   // XXX TJJ - limiting count to valid numbers here, why??
-						   // need to revisit, see why this condition manifests
-						   if (countSet[i][j] > (vGranuleLengths[loGranuleId+i] - startSet[i][j])) 
-							   countSet[i][j] = vGranuleLengths[loGranuleId+i] - startSet[i][j];
+		                   // TJJ May 2016
+		                   // This condition manifests because there are times when 
+		                   // "fill" scans are cut from otherwise fine granules.
+						   // e.g., to the chooser it may look like there are 3072 valid lines,
+						   // but by the time we get here we realize there are really 3056
+		                   // This typically shortens the granule by one scan (16 lines)
+		                   if (countSet[i][j] > (vGranuleLengths[loGranuleId+i] - startSet[i][j])) 
+		                       countSet[i][j] = vGranuleLengths[loGranuleId+i] - startSet[i][j];
 					   }
 				   }
 				   // luckily, stride never changes
