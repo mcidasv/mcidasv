@@ -1384,8 +1384,9 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <component id="7274" />
       </excludedComponents>
       <includedDownloadableComponents />
-      <installerScript mode="1" file="">
-        <content />
+      <installerScript mode="3" file="">
+        <content>mkdir -p $HOME/.java/.userPrefs
+mkdir -p $app_java_home/.systemPrefs</content>
       </installerScript>
     </unixInstaller>
     <unixInstaller name="Linux 64-bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-amd64-1.8.0_45.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
@@ -1418,8 +1419,9 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <component id="7274" />
       </excludedComponents>
       <includedDownloadableComponents />
-      <installerScript mode="1" file="">
-        <content />
+      <installerScript mode="3" file="">
+        <content>mkdir -p $HOME/.java/.userPrefs
+mkdir -p $app_java_home/.systemPrefs</content>
       </installerScript>
     </unixInstaller>
     <unixInstaller name="Generic Unix (no JRE)" id="59" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
@@ -1453,8 +1455,9 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
         <component id="7433" />
       </excludedComponents>
       <includedDownloadableComponents />
-      <installerScript mode="1" file="">
-        <content />
+      <installerScript mode="3" file="">
+        <content>mkdir -p $HOME/.java/.userPrefs
+mkdir -p $app_java_home/.systemPrefs</content>
       </installerScript>
     </unixInstaller>
     <macosFolder name="Mac OS X" id="12" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.8.0_45_unpacked" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
