@@ -2605,7 +2605,7 @@ def allColorTables():
     return [_ColorTable(colorTable) for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
     
 @gui_invoke_later
-def importColorTable(filename, name=None, category=None, overwrite=False):
+def importEnhancement(filename, name=None, category=None, overwrite=False):
     """Import color table using the given path.
     
     If the color table in question was exported from the Color Table Manager,
