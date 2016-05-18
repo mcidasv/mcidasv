@@ -1251,9 +1251,6 @@
         <exec dir="${release.dir}" executable="${install4jc.bin}">
             <arg line="mcidasv.install4j" />
         </exec>
-        <exec dir="${release.dir}" executable="${install4jc.bin}">
-            <arg line="mcidasv-xp.install4j" />
-        </exec>
     </target>
 
     <!-- Zip up McIDAS-V JARs. mcidasv-tiny.zip contains only local-idv.jar  -->
