@@ -2127,7 +2127,7 @@ class _Layer(_JavaProxy):
         if color is not None:
             self.setLayerLabelColor(color)
             
-        self._JavaProxy__javaObject.getViewManager().updateDisplayList()
+        # self._JavaProxy__javaObject.getViewManager().updateDisplayList()
         
     @gui_invoke_later
     def getLayerVisible(self):
