@@ -19,8 +19,8 @@
       <variable name="SLF4J_VERSION" value="1.7.12" description="Version number used with jul-to-slf4j, log4j-over-slf4j, and slf4j-api." category="" />
       <variable name="LOGBACK_VERSION" value="1.1.3" description="Version number used with logback-classic and logback-core." category="" />
       <variable name="MIGLAYOUT_VERSION" value="5.0" description="Version number used with miglayout-core and miglayout-swing." category="" />
-      <variable name="JOGAMP_VERSION" value="2.3.2" description="Version number used with gluegen, gluegen-rt, joal, jocl, jogl-all, and the various native JARs." category="" />
-      <variable name="JAVA3D_VERSION" value="1.6.0-pre12" description="Version number used with j3dcore, j3dutils, and vecmath." category="" />
+      <variable name="JOGAMP_VERSION" value="2.2.3" description="Version number used with gluegen, gluegen-rt, joal, jocl, jogl-all, and the various native JARs." category="" />
+      <variable name="JAVA3D_VERSION" value="1.6.0-pre11" description="Version number used with j3dcore, j3dutils, and vecmath." category="" />
     </variables>
     <mergedProjects />
     <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pvkAndSpc" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
@@ -1390,7 +1390,7 @@ mkdir -p $HOME/.java/.systemPrefs
 mkdir -p $app_java_home/.systemPrefs
 
 chmod -R 755 $HOME/.java
-export JAVA_OPTS="-Djava.util.prefs.systemRoot=/home/user/.java -Djava.util.prefs.userRoot=/home/user/.java/.userPrefs"</content>
+export JAVA_OPTS="-Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs"</content>
       </installerScript>
     </unixInstaller>
     <unixInstaller name="Linux 64-bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-amd64-1.8.0_45.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
@@ -1429,7 +1429,7 @@ mkdir -p $HOME/.java/.systemPrefs
 mkdir -p $app_java_home/.systemPrefs
 
 chmod -R 755 $HOME/.java
-export JAVA_OPTS="-Djava.util.prefs.systemRoot=/home/user/.java -Djava.util.prefs.userRoot=/home/user/.java/.userPrefs"</content>
+export JAVA_OPTS="-Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs"</content>
       </installerScript>
     </unixInstaller>
     <unixInstaller name="Generic Unix (no JRE)" id="59" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
@@ -1469,7 +1469,7 @@ mkdir -p $HOME/.java/.systemPrefs
 mkdir -p $app_java_home/.systemPrefs
 
 chmod -R 755 $HOME/.java
-export JAVA_OPTS="-Djava.util.prefs.systemRoot=/home/user/.java -Djava.util.prefs.userRoot=/home/user/.java/.userPrefs"</content>
+export JAVA_OPTS="-Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs"</content>
       </installerScript>
     </unixInstaller>
     <macosFolder name="Mac OS X" id="12" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.8.0_45_unpacked" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
