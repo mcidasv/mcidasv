@@ -183,7 +183,7 @@
     <property name="slf4j.version" value="1.7.12" />
     <property name="logback.version" value="1.1.3" />
     <property name="miglayout.version" value="5.0" />
-    <property name="jogamp.version" value="2.3.2" />
+    <property name="jogamp.version" value="2.2.3" />
     <property name="swingx.version" value="1.6.5-1" />
     <property name="eventbus.version" value="1.4" />
     <property name="commons-math.version" value="3.5" />
@@ -195,7 +195,7 @@
     <!-- note that the J3D JARs available from http://jogamp.org/deployment/java3d/
          do not (as of 20140915) have the version string in the filenames.
          this must be done manually for now. -->
-    <property name="java3d.version" value="1.6.0-pre12" />
+    <property name="java3d.version" value="1.6.0-pre11" />
 
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
@@ -841,7 +841,7 @@
 
     <!-- Create distribution product -->
     <target name="dist"
-        depends="auxdata.nodocs, jar, ncidv.nolog, external.cleanup, startupmanager, javadoc.jar, userguide.jar"
+        depends="clean, auxdata.nodocs, jar, ncidv.nolog, external.cleanup, startupmanager, javadoc.jar, userguide.jar"
         description="Create distribution product">
         <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" 
               tofile="${dist.dir}/GetMem.class" 
