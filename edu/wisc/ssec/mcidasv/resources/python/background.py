@@ -1751,6 +1751,10 @@ class _Layer(_JavaProxy):
         self.usedTemporaryId = False
         
     @gui_invoke_later
+    def _refreshLayerList(self):
+        self._JavaProxy__javaObject.getViewManager().updateDisplayList()
+        
+    @gui_invoke_later
     def _getDisplayWrapper(self):
         """Helper method for layer label setters.
         
@@ -2111,10 +2115,7 @@ class _Layer(_JavaProxy):
         if label is not None:
             label = str(label)  # convert to str if possible
             self._JavaProxy__javaObject.setDisplayListTemplate(label)
-            
-        self.setLayerLabelVisible(visible)
-        self._getDisplayWrapper().labelDict['visible'] = visible
-        
+                    
         if font is not None:
             self.setLayerLabelFont(fontName=font)
             
@@ -2127,7 +2128,11 @@ class _Layer(_JavaProxy):
         if color is not None:
             self.setLayerLabelColor(color)
             
-        # self._JavaProxy__javaObject.getViewManager().updateDisplayList()
+        self.setLayerLabelVisible(visible)
+        self._getDisplayWrapper().labelDict['visible'] = visible
+        
+        # pause()
+        # self._refreshLayerList()
         
     @gui_invoke_later
     def getLayerVisible(self):
@@ -2174,7 +2179,9 @@ class _Layer(_JavaProxy):
         # self._JavaProxy__javaObject.getViewManager().setDisplayListColor(newColor)
         # self._JavaProxy__javaObject.setViewManagerDisplayListColor(newColor)
         self._JavaProxy__javaObject.setDisplayListColor(newColor, False)
+        self._JavaProxy__javaObject.setViewManagerDisplayListColor(newColor)
         self._getDisplayWrapper().labelDict['color'] = newColor
+        # self._JavaProxy__javaObject.applyColor()
         
     @gui_invoke_later
     def setLayerLabelFont(self, fontName=None, style=None, size=None):
