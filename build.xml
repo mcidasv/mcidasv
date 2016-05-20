@@ -1254,7 +1254,7 @@
         
         <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
             <arg value="-L" />
-            <arg value="${install4jc.license" />
+            <arg value="${install4jc.license}" />
             <arg value="mcidasv.install4j" />
         </exec>
     </target>
