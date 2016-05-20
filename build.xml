@@ -1248,13 +1248,7 @@
 
     <!-- Make the installers with install4j -->
     <target name="installers" description="Make the installers with install4j">
-        <exec executable="/bin/cat" outputproperty="install4jc.license" failifexecutionfails="true">
-            <arg value="${install4jc.licensefile}" />
-        </exec>
-        
         <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
-            <arg value="-L" />
-            <arg value="${install4jc.license}" />
             <arg value="mcidasv.install4j" />
         </exec>
     </target>
