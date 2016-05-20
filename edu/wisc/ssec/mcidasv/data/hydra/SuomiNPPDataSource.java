@@ -83,7 +83,6 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.util.Misc;
-
 import visad.Data;
 import visad.DateTime;
 import visad.DerivedUnit;
@@ -127,6 +126,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private List<MultiSpectralData> multiSpectralData = new ArrayList<>();
     private Map<String, MultiSpectralData> msdMap = new HashMap<>();
     private Map<String, QualityFlag> qfMap = new HashMap<>();
+    private Map<String, float[]> lutMap = new HashMap<>();
 
     private static final String DATA_DESCRIPTION = "Suomi NPP Data";
     
@@ -154,8 +154,20 @@ public class SuomiNPPDataSource extends HydraDataSource {
     // need our own separator char since it's always Unix-style in the Suomi NPP files
     private static final String SEPARATOR_CHAR = "/";
     
-    // date formatter for NASA L1B data
+    // date formatter for NASA L1B data, ex 2016-02-07T00:06:00.000Z
     SimpleDateFormat sdfNASA = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    
+    // LUTs for NASA L1B data
+    float[] m12LUT = null;
+    float[] m13LUT = null;
+    float[] m14LUT = null;
+    float[] m15LUT = null;
+    float[] m16LUT = null;
+    float[] i04LUT = null;
+    float[] i05LUT = null;
+    
+    // Map to match NASA variables to units (XML Product Profiles used for NOAA)
+    Map<String, String> unitsNASA = new HashMap<String, String>();
     
     // date formatter for converting Suomi NPP day/time to something we can use
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
@@ -361,7 +373,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    						String tmpGeoProductID = a.getStringValue();
 	    						geoProductIDs.add(tmpGeoProductID);
     						} else {
-    							geoProductIDs.add(keyStr.replace("l1b", "geo"));
+    							geoProductIDs.add(keyStr.replace("L1B", "GEO"));
     						}
     					}
     					Group rg = ncfile.getRootGroup();
@@ -374,10 +386,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 									// when we find the Data_Products group, go down another group level and pull out 
 									// what we will use for nominal day and time (for now anyway).
 									// XXX TJJ fileCount check is so we don't count the GEO file in time array!
-									if (g.getFullName().contains(
-											"Data_Products")
+									if (g.getFullName().contains("Data_Products")
 											&& (fileCount != fileNames.size())) {
-										boolean foundDateTime = false;
 										List<Group> dpg = g.getGroups();
 
 										// cycle through once looking for XML Product Profiles
@@ -442,27 +452,24 @@ public class SuomiNPPDataSource extends HydraDataSource {
 												Attribute aTime = v.findAttribute("AggregateBeginningTime");
 												// did we find the attributes we are looking for?
 												if ((aDate != null) && (aTime != null)) {
-													String sDate = aDate.getStringValue();
-													String sTime = aTime.getStringValue();
-													logger.trace("For day/time, using: " + sDate
-															+ sTime.substring(0, sTime.indexOf('Z') - 3));
-													Date d = sdf.parse(sDate
-																	+ sTime.substring(0, sTime.indexOf('Z') - 3));
-													theDate = d;
-													foundDateTime = true;
 													// set time for display to day/time of 1st granule examined
-													if (!nameHasBeenSet) {
-														setName(instrumentName.getStringValue() + " "
-																+ sdfOut.format(d));
-														nameHasBeenSet = true;
-													}
+												    if (! nameHasBeenSet) {
+												        String sDate = aDate.getStringValue();
+												        String sTime = aTime.getStringValue();
+												        logger.debug("For day/time, using: " + sDate
+												                + sTime.substring(0, sTime.indexOf('Z') - 3));
+												        Date d = sdf.parse(sDate
+												                + sTime.substring(0, sTime.indexOf('Z') - 3));
+												        theDate = d;
+												        setName(instrumentName.getStringValue() + " "
+												                + sdfOut.format(d));
+												        nameHasBeenSet = true;
+												    }
 													break;
 												}
 											}
-											if (foundDateTime)
-												break;
 										}
-										if (!foundDateTime) {
+										if (! nameHasBeenSet) {
 											throw new VisADException(
 													"No date time found in Suomi NPP granule");
 										}
@@ -474,7 +481,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 									Date d = sdfNASA.parse(timeStartNASA.getStringValue());
 									theDate = d;
 									if (! nameHasBeenSet) {
-										instrumentName = ncfile.findGlobalAttribute("sensor");
+										instrumentName = ncfile.findGlobalAttribute("instrument");
 										setName(instrumentName.getStringValue() + " " + sdfOut.format(d));
 										nameHasBeenSet = true;
 									}
@@ -580,9 +587,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
 											.indexOf("_d");
 									int prdStartIdx = fName.indexOf("_d");
 									String s1 = geoFileRelative.substring(
-											geoStartIdx, geoStartIdx + 35);
+											geoStartIdx, geoStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 									String s2 = fName.substring(prdStartIdx,
-											prdStartIdx + 35);
+											prdStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 									if (s1.equals(s2)) {
 										geoFilename = s
 												.substring(
@@ -599,9 +606,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
 											.indexOf("_d");
 									int prdStartIdx = fName.indexOf("_d");
 									String s1 = geoTerrainCorrected.substring(
-											geoStartIdx, geoStartIdx + 35);
+											geoStartIdx, geoStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 									String s2 = fName.substring(prdStartIdx,
-											prdStartIdx + 35);
+											prdStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 									if (s1.equals(s2)) {
 										geoFilename = s
 												.substring(
@@ -615,7 +622,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 						} 
 					} else {
 						// NASA format
-						geoFilename = s.replace("l1b", "geo");
+						geoFilename = JPSSUtilities.replaceLast(s, "L1B", "GEO");
 						// get list of files in current directory
 						File fList = 
 							new File(geoFilename.substring(0, geoFilename.lastIndexOf(File.separatorChar) + 1)); 
@@ -637,8 +644,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 							// get the file name for convenience
 							String fName = file.getName();
 							String tmpStr = geoFilename.substring(s.lastIndexOf(File.separatorChar) + 1,
-									s.lastIndexOf(File.separatorChar) + 33);
-							if (fName.substring(0, 32).equals(tmpStr.substring(0, 32))) {
+									s.lastIndexOf(File.separatorChar) + (JPSSUtilities.NASA_CREATION_DATE_INDEX + 1));
+							if (fName.substring(0, JPSSUtilities.NASA_CREATION_DATE_INDEX).equals(tmpStr.substring(0, JPSSUtilities.NASA_CREATION_DATE_INDEX))) {
 								geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
 								break;
 							}
@@ -663,6 +670,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    	Group rg = ncdff.getRootGroup();
     	    	// this is a list filled with unpacked qflag products, if any
     	    	ArrayList<VariableDS> qfProds = new ArrayList<VariableDS>();
+    	    	
+    	    	// this is a list filled with pseudo Brightness Temp variables converted from Radiance
+    	    	ArrayList<VariableDS> btProds = new ArrayList<VariableDS>();
 
     	    	List<Group> gl = rg.getGroups();
     	    	if (gl != null) {
@@ -707,6 +717,134 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								v.getDimension(1).getLength() == yDimNASA) {
 	    							logger.debug("Adding product: " + v.getFullName());
 	    							pathToProducts.add(v.getFullName());
+	    							
+	    							Attribute aUnsigned = v.findAttribute("_Unsigned");
+	    							if (aUnsigned != null) {
+	    								unsignedFlags.put(v.getFullName(), aUnsigned.getStringValue());
+	    							} else {
+	    								unsignedFlags.put(v.getFullName(), "false");
+	    							}
+	    							
+	    							// store units in a map for later
+	    							Attribute unitAtt = v.findAttribute("units");
+	    							if (unitAtt != null) {
+	    								unitsNASA.put(v.getShortName(), unitAtt.getStringValue());
+	    							} else {
+	    								unitsNASA.put(v.getShortName(), "Unknown");
+	    							}
+	    							
+	    							// TJJ Feb 2016 - Create BT variables where applicable
+	    							if ((v.getShortName().matches("M12|M13|M14|M15|M16")) ||
+	    								(v.getShortName().matches("I04|I05"))) {
+	    								
+	    								// Get the LUT variable, load into primitive array
+	    								Variable lut = g.findVariable(v.getShortName() + "_brightness_temperature_lut");
+	    								int [] lutShape = lut.getShape();
+	    								logger.debug("Handling NASA LUT Variable, LUT size: " + lutShape[0]);
+	    								
+	    								// pull out valid min, max - these will be used for our new VariableDS
+	    								Attribute aVMin = lut.findAttribute("valid_min");
+	    								Attribute aVMax = lut.findAttribute("valid_max");
+	    								Attribute fillAtt = lut.findAttribute("_FillValue");
+	    								logger.debug("valid_min from LUT: " + aVMin.getNumericValue());
+	    								logger.debug("valid_max from LUT: " + aVMax.getNumericValue());
+	    								
+	    								// A little hacky, but at this point the class is such a mess
+	    								// that what's a little more, right? Load M12-M16, I4-I5 LUTS
+	    								
+	    								if (v.getShortName().matches("M12")) {
+		    								m12LUT = new float[lutShape[0]];
+		    								ArrayFloat.D1 lutArray = (ArrayFloat.D1) lut.read();
+		    								for (int lutIdx = 0; lutIdx < lutShape[0]; lutIdx++) {
+		    									m12LUT[lutIdx] = lutArray.get(lutIdx);
+		    								}
+	    								}
+	    								
+	    								if (v.getShortName().matches("M13")) {
+		    								m13LUT = new float[lutShape[0]];
+		    								ArrayFloat.D1 lutArray = (ArrayFloat.D1) lut.read();
+		    								for (int lutIdx = 0; lutIdx < lutShape[0]; lutIdx++) {
+		    									m13LUT[lutIdx] = lutArray.get(lutIdx);
+		    								}
+	    								}
+	    								
+	    								if (v.getShortName().matches("M14")) {
+		    								m14LUT = new float[lutShape[0]];
+		    								ArrayFloat.D1 lutArray = (ArrayFloat.D1) lut.read();
+		    								for (int lutIdx = 0; lutIdx < lutShape[0]; lutIdx++) {
+		    									m14LUT[lutIdx] = lutArray.get(lutIdx);
+		    								}
+	    								}
+	    								
+	    								if (v.getShortName().matches("M15")) {
+		    								m15LUT = new float[lutShape[0]];
+		    								ArrayFloat.D1 lutArray = (ArrayFloat.D1) lut.read();
+		    								for (int lutIdx = 0; lutIdx < lutShape[0]; lutIdx++) {
+		    									m15LUT[lutIdx] = lutArray.get(lutIdx);
+		    								}
+	    								}
+	    								
+	    								if (v.getShortName().matches("M16")) {
+		    								m16LUT = new float[lutShape[0]];
+		    								ArrayFloat.D1 lutArray = (ArrayFloat.D1) lut.read();
+		    								for (int lutIdx = 0; lutIdx < lutShape[0]; lutIdx++) {
+		    									m16LUT[lutIdx] = lutArray.get(lutIdx);
+		    								}
+	    								}
+	    								
+	    								if (v.getShortName().matches("I04")) {
+		    								i04LUT = new float[lutShape[0]];
+		    								ArrayFloat.D1 lutArray = (ArrayFloat.D1) lut.read();
+		    								for (int lutIdx = 0; lutIdx < lutShape[0]; lutIdx++) {
+		    									i04LUT[lutIdx] = lutArray.get(lutIdx);
+		    								}
+	    								}
+	    								
+	    								if (v.getShortName().matches("I05")) {
+		    								i05LUT = new float[lutShape[0]];
+		    								ArrayFloat.D1 lutArray = (ArrayFloat.D1) lut.read();
+		    								for (int lutIdx = 0; lutIdx < lutShape[0]; lutIdx++) {
+		    									i05LUT[lutIdx] = lutArray.get(lutIdx);
+		    								}
+	    								}
+	    								
+	    								// Create a pseudo-variable, fill using LUT
+    									// make a copy of the source variable
+    									// NOTE: by using a VariableDS here, the original
+    									// variable is used for the I/O, this matters!
+    									VariableDS vBT = new VariableDS(g, v, false);
+
+    									// Name is orig name plus suffix
+    									vBT.setShortName(v.getShortName() + "_BT");
+    									
+	    								vBT.addAttribute(fillAtt);
+	    								vBT.addAttribute(aVMin);
+	    								vBT.addAttribute(aVMax);
+
+    									if (v.getShortName().matches("M12")) {
+    										lutMap.put(vBT.getFullName(), m12LUT);
+    									}
+    									if (v.getShortName().matches("M13")) {
+    										lutMap.put(vBT.getFullName(), m13LUT);
+    									}
+    									if (v.getShortName().matches("M14")) {
+    										lutMap.put(vBT.getFullName(), m14LUT);
+    									}
+    									if (v.getShortName().matches("M15")) {
+    										lutMap.put(vBT.getFullName(), m15LUT);
+    									}
+    									if (v.getShortName().matches("M16")) {
+    										lutMap.put(vBT.getFullName(), m16LUT);
+    									}
+    									if (v.getShortName().matches("I04")) {
+    										lutMap.put(vBT.getFullName(), i04LUT);
+    									}
+    									if (v.getShortName().matches("I05")) {
+    										lutMap.put(vBT.getFullName(), i05LUT);
+    									}
+    									pathToProducts.add(vBT.getFullName());
+    									btProds.add(vBT);
+	    							}
     							}
     						}
     	    			}
@@ -1099,6 +1237,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    		unpackFlags.put(qfV.getFullName(), "false");
     	    	}
     	    	
+    	    	// add in any pseudo BT products from NASA data
+    	    	for (Variable vBT: btProds) {
+    	    		logger.trace("Adding BT product: " + vBT.getFullName());
+					ncdff.addVariable(vBT.getGroup(), vBT);
+					unsignedFlags.put(vBT.getFullName(), "true");
+					unpackFlags.put(vBT.getFullName(), "false");
+    	    	}
+    	    	
     		    ncdfal.add((NetCDFFile) netCDFReader);
     		}
     		
@@ -1116,6 +1262,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		    ((GranuleAggregation) nppAggReader).setQfMap(qfMap);
     		} else {
     			nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "number_of_lines", "number_of_pixels", isEDR);
+    		    ((GranuleAggregation) nppAggReader).setLUTMap(lutMap);
     		}
     	} catch (Exception e) {
     		throw new VisADException("Unable to initialize aggregation reader", e);
@@ -1145,6 +1292,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	swathTable.put("Track", "Track");
         	swathTable.put("geo_Track", "Track");
         	swathTable.put("geo_XTrack", "XTrack");
+        	// TJJ is this even needed?  Is product_name used anywhere?
+        	if (productName == null) productName = pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1);
         	swathTable.put("product_name", productName);
         	
         	// array_name common to spectrum table
@@ -1310,16 +1459,24 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 }
                 
         	} else {
+        		// setting NOAA-format units
         		String varName = pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1);
         		String varShortName = pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1);
         		String units = nppPP.getUnits(varShortName);
+
+        		// setting NASA-format units
+        		if (! isNOAA) {
+        			units = unitsNASA.get(varShortName);
+        			// Need to set _BT variables manually, since they are created on the fly
+        			if (varShortName.endsWith("_BT")) units = "Kelvin";
+        		}
         		if (units == null) units = "Unknown";
         		Unit u = null;
         		try {
 					u = Parser.parse(units);
 				} catch (NoSuchUnitException e) {
 					u = new DerivedUnit(units);
-					logger.debug("Unkown units: " + units);
+					logger.debug("Unknown units: " + units);
 				} catch (ParseException e) {
 					u = new DerivedUnit(units);
 					logger.debug("Unparseable units: " + units);

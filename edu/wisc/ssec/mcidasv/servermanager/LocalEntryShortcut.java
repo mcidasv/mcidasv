@@ -32,7 +32,6 @@ import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.safeGetText;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Collections;
 import java.util.Objects;
@@ -89,7 +88,11 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.AMSRE_L1B,
             AddeFormat.AMSRE_L2A,
             AddeFormat.AMSRE_RAIN_PRODUCT,
+            AddeFormat.GOES16_ABI,
             AddeFormat.GINI,
+            AddeFormat.HIMAWARI8,
+            AddeFormat.INSAT3D_IMAGER,
+            AddeFormat.INSAT3D_SOUNDER,
             AddeFormat.LRIT_GOES9,
             AddeFormat.LRIT_GOES10,
             AddeFormat.LRIT_GOES11,
@@ -112,17 +115,7 @@ public class LocalEntryShortcut extends JDialog {
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SSMI,
             AddeFormat.TRMM
-            
-            // TJJ Apr 2015 - temporarily comment out INSAT-3D, since the ADDE
-            // servers had not passed testing and been released prior to the
-            // McIDAS-V 1.5 release
-            
-            // AddeFormat.INSAT3D_IMAGER,
-            // AddeFormat.INSAT3D_SOUNDER,
-            
-            // AddeFormat.HIMAWARI8
-            
-//            AddeFormat.MCIDAS_MD
+            // AddeFormat.MCIDAS_MD
         });
 
     /** The server manager GUI. Be aware that this can be {@code null}. */
@@ -209,6 +202,16 @@ public class LocalEntryShortcut extends JDialog {
         JLabel formatLabel = new JLabel("Format:");
         formatComboBox = new JComboBox<>();
         formatComboBox.setRenderer(new TooltipComboBoxRenderer());
+
+        // TJJ Apr 2016
+        // certain local servers are not available on Windows, remove them from the list
+        if (McIDASV.isWindows()) {
+            formats.removeElement(AddeFormat.GOES16_ABI);
+            formats.removeElement(AddeFormat.HIMAWARI8);
+            formats.removeElement(AddeFormat.INSAT3D_IMAGER);
+            formats.removeElement(AddeFormat.INSAT3D_SOUNDER);
+        }
+
         formatComboBox.setModel(formats);
         formatComboBox.setSelectedIndex(0);
         formatLabel.setLabelFor(formatComboBox);
@@ -449,17 +452,6 @@ public class LocalEntryShortcut extends JDialog {
      */
     public EditorAction getEditorAction() {
         return editorAction;
-    }
-
-    /**
-     * Set the {@link EditorAction} that was performed.
-     *
-     * @param editorAction Action that was performed.
-     *
-     * @see #editorAction
-     */
-    private void setEditorAction(final EditorAction editorAction) {
-        this.editorAction = editorAction;
     }
 
     /**

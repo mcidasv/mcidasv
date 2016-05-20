@@ -48,8 +48,8 @@ import ucar.unidata.xml.XmlUtil;
 
 
 /**
- * Class ServerInfo Holds has methods for accessing
- * the contents of servers.xml
+ * {@code ServerInfo} objects have methods for accessing the contents of
+ * {@code servers.xml}.
  */
 public class ServerInfo {
 
@@ -83,7 +83,10 @@ public class ServerInfo {
     private String[] defTypes = {"image", "point", "grid", "text", "nav"};
 
     /**
-     * Constructor
+     * Creates a new {@code ServerInfo} object.
+     *
+     * @param idv Reference to the main application object.
+     * @param servers ADDE server definitions.
      */
     public ServerInfo(IntegratedDataViewer idv, XmlResourceCollection servers) {
         myIdv = idv;
@@ -101,11 +104,9 @@ public class ServerInfo {
 
 
     /**
-     * getServersFromXml
-     *  Read and parse servers.xml
+     * Read and parse servers.xml.
      *
-     *  fill lists:
-     *    typeList - type name Strings
+     * @param servers Collection of ADDE server definitions.
      */
     private void getServersFromXml(XmlResourceCollection servers) {
         servers.clearCache();
@@ -151,21 +152,29 @@ public class ServerInfo {
     }
 
     /**
-     * getUser
-     *   return userId, default="idv"
+     * Return userId, default="idv".
+     *
+     * @return User ID. Default value is {@code "idv"}.
      */
     public String getUser() {
         return user;
     }
 
     /**
-     * getProj
-     *   return project number, default="0"
+     * Return project number, default="0"
+     *
+     * @return Project number. Default value is {@code "0"}.
      */
     public String getProj() {
         return proj;
     }
 
+    /**
+     * Change the user id and project number for this instance.
+     *
+     * @param user New user ID.
+     * @param proj New project number.
+     */
     public void setUserProj(String user, String proj) {
         Element serverRoot = serversXRC.getWritableRoot("<tabs></tabs>");
         Document serverDocument = serversXRC.getWritableDocument("<tabs></tabs>");
@@ -180,8 +189,10 @@ public class ServerInfo {
     }
 
     /**
-     * getServerTypes
-     *    return List of type Strings
+     * Get the different {@literal "types"} supported by the server.
+     *
+     * @return A list whose possible values may contain {@literal "image",
+     * "point", "grid", "text", "nav"}.
      */
     public List getServerTypes() {
         for (int i=0; i<defTypes.length; i++) {
@@ -191,11 +202,17 @@ public class ServerInfo {
     }
 
     /**
-     * getServers
-     *    input: type = data type
-     *           all = boolean flag
-     *           includeDuplicates = boolean flag
-     *    return List of ServerDescriptors
+     * Get list of {@link ServerDescriptor ServerDescriptors} that match the
+     * given {@code type}.
+     *
+     * @param type Data type. Should be one of
+     *             {@literal "image", "point", "grid", "text", "nav"}.
+     * @param all Includes all definitions, even duplicates.
+     * @param includeDuplicates Whether or not duplicate definitions are
+     *                          included.
+     *
+     * @return List of {@code ServerDescriptor} objects that match
+     *         {@code type}.
      */
     public List getServers(String type, boolean all, boolean includeDuplicates) {
         init();
@@ -221,11 +238,15 @@ public class ServerInfo {
     }
 
     /**
-     * getServerNames
-     *    input: type = data type
-     *           all = boolean flag
-     *           includeDuplicates = boolean flag
-     *    return List of server name strings
+     * Get list of server names that match {@code type}.
+     *
+     * @param type Data type. Should be one of
+     *             {@literal "image", "point", "grid", "text", "nav"}.
+     * @param all Includes all definitions, even duplicates.
+     * @param includeDuplicates Whether or not duplicate definitions are
+     *                          included.
+     *
+     * @return List of server name strings.
      */
      public List getServerNames(String type, boolean all, boolean includeDuplicates) {
         if (serverDescriptors == null) init();
@@ -249,11 +270,15 @@ public class ServerInfo {
      }
 
     /**
-     * getAddeServers
-     *    input: type = data type
-     *           all = boolean flag
-     *           includeDuplicates = boolean flag
-     *    return List of server name strings
+     * Get list of {@link AddeServer AddeServers} that match {@code type}.
+     *
+     * @param type Data type. Should be one of
+     *             {@literal "image", "point", "grid", "text", "nav"}.
+     * @param all Includes all definitions, even duplicates.
+     * @param includeDuplicates Whether or not duplicate definitions are
+     *                          included.
+     *
+     * @return List of {@code AddeServer} objects.
      */
      public List getAddeServers(String type, boolean all, boolean includeDuplicates) {
         if (serverDescriptors == null) init();
@@ -283,11 +308,15 @@ public class ServerInfo {
      }
 
     /**
-     * updateAddeServers(String type, boolean all, boolean includeDuplicates) {
-     *    input: type = data type
-     *           all = boolean flag
-     *           includeDuplicates = boolean flag
-     *    return List of server name strings
+     * Re-reads {@code servers.xml} and re-initialize all lists.
+     *
+     * @param type Data type. Should be one of
+     *             {@literal "image", "point", "grid", "text", "nav"}.
+     * @param all Includes all definitions, even duplicates.
+     * @param includeDuplicates Whether or not duplicate definitions are
+     *                          included.
+     *
+     * @return List of server name strings that support {@code type} data.
      */
      public List updateAddeServers(String type, boolean all, boolean includeDuplicates) {
          init();
@@ -295,8 +324,10 @@ public class ServerInfo {
      }
 
     /**
-     * init
-     *    read servers.xml and initialize all Lists
+     * Read servers.xml and initialize all lists.
+     *
+     * @return {@code false} if {@link #serverDescriptors} is {@code null},
+     * {@code true} otherwise.
      */
     private boolean init() {
        serversXRC =
@@ -308,8 +339,12 @@ public class ServerInfo {
     }
 
     /**
-     * getGroups - return all groups for a given data type
-     *    return List of group name Strings
+     * Get all group names for a given data {@code type}.
+     *
+     * @param type Data type. Should be one of
+     *             {@literal "image", "point", "grid", "text", "nav"}.
+     *
+     * @return List of groups that support {@code type} data.
      */
     public List getGroups(String type) {
         init();
@@ -319,9 +354,10 @@ public class ServerInfo {
 
 
     /**
-     * addServers to servers.xml
-     *   input: type = data type
-     *          serverList = alternating strings: name1, group1, name2, group2, etc.
+     * Adds {@code serverList} to {@code servers.xml}.
+     *
+     * @param idv Reference to main application object.
+     * @param serverList alternating strings: name1, group1, name2, group2...
      */
     public void addServers(IntegratedDataViewer idv, List serverList) {
         int num = serverList.size();
@@ -358,7 +394,9 @@ public class ServerInfo {
     }
 
     /**
-     * Clear servers.xml
+     * Clear {@code servers.xml}.
+     *
+     * @param serversXRC Collection of server definitions.
      */
     public void clear(XmlResourceCollection serversXRC) {
         List typeElements = XmlUtil.getElements(serversRoot, TAG_SERVER);

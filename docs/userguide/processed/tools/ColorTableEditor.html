@@ -22,7 +22,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ColorTableE
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
   <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="StormTrackControl.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="StationModelEditor.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="LayoutModelEditor.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
@@ -149,10 +149,11 @@ can be saved for future use. To save a new or modified color table simply select
   dialog will appear that will allow you to find the color table as an XML-format
   file. The following types of color tables can be imported: </p>
   <ul>
-  <li>McIDAS-V (IDV) color tables (*.xml)</li>
-  <li>GEMPAK color tables (*.tbl)</li>
+  <li>McIDAS-V (IDV) color table (*.xml)</li>
+  <li>GEMPAK color table (*.tbl)</li>
   <li> 3-column RGB color table (*.ascii)</li>
-  <li>McIDAS-X color tables (*.ET)</li>
+  <li>McIDAS-X color table (*.ET)</li>
+  <li>AWIPS II color table (*.cmap)</li>
   </ul>
 <p>Another way that you can save all of your color tables at once is to save them as a plugin. This can be done through the <a href="Plugins.html">Plugin Manager</a>, by including your colortables.xml file that is inside of your /User/McIDAS-V directory. You can then pass this on to any McIDAS-V user, and they can install this plugin and obtain all of your color bars without having to individually transfer them.</p>
 <div class="pagesubsubtitle">3-column RGB color table</div>
@@ -238,7 +239,7 @@ can be saved for future use. To save a new or modified color table simply select
   <li class="propertylistitem"><strong>Save - </strong>Saves changes to a color table. This will overwrite the current color bar that you are editing.</li>
   <li class="propertylistitem"><strong>Save As... -</strong> Saves a color table and allows you to name it. This allows you to save your updated color bar with a new name&nbsp;and keep your original color bar as well.</li>
   <li class="propertylistitem"><strong>Remove -</strong> Removes an existing color table. Note that you cannot remove any system color bars (color bars that are included with McIDAS-V). If you have a system color bar open, this <strong>Remove</strong> option will be grayed out and not usable. You can only remove color bars you have created yourself.</li>
-  <li class="propertylistitem"><strong>Import... -</strong> Imports a color table in the IDV (*.xml), GEMPAK (*.tbl), 3-column RGB (*.ascii), and McIDAS-X (*.et) color table formats.</li>
+  <li class="propertylistitem"><strong>Import... -</strong> Imports a color table in the IDV (*.xml), GEMPAK (*.tbl), 3-column RGB (*.ascii), McIDAS-X (*.et), and AWIPS II (*.cmap) color table formats.</li>
   <li class="propertylistitem"><strong>Export... -</strong> Exports a color table in the IDV (*.xml) and GEMPAK (*.tbl) color table formats.</li>
   <li class="propertylistitem"><strong>Close -</strong> Closes the Color Table Editor.</li>
 </ul>
@@ -250,7 +251,7 @@ can be saved for future use. To save a new or modified color table simply select
 <div class="BottomTitleNav">
   <hr align="center">
   <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="StormTrackControl.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="StationModelEditor.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="LayoutModelEditor.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>

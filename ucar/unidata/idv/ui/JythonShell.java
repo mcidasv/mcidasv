@@ -656,7 +656,7 @@ public class JythonShell extends InteractiveShell {
                 displayMenuItems.add(catMenu);
             }
             catMenu.add(makeMenuItem(cd.getDescription(), this,
-                    "insert", '\'' + cd.getControlId() + '\''));
+                    "insert", '\'' + cd.getDescription() + '\''));
         }
         return displayMenuItems;
     }

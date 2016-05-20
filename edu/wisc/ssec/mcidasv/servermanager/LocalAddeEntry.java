@@ -49,12 +49,6 @@ public class LocalAddeEntry implements AddeEntry {
     /** Represents a {@literal "bad"} collection of local ADDE entries. */
     public static final List<LocalAddeEntry> INVALID_ENTRIES = Collections.singletonList(INVALID_ENTRY);
 
-    /** This prefix is Cygwin abstraction that allows access to arbitrary drives. */
-    private static final String CYGWIN_PREFIX = "/cygdrive/";
-
-    /** Length of {@link #CYGWIN_PREFIX}. */
-    private static final int CYGWIN_PREFIX_LEN = CYGWIN_PREFIX.length();
-
     /** Status of this entry. */
     private EntryStatus entryStatus = EntryStatus.INVALID;
 
@@ -94,12 +88,12 @@ public class LocalAddeEntry implements AddeEntry {
     private String entryAlias;
 
     public enum ServerName {
-        // note: if you are add a new server you may need to edit the
+        // note: if you are adding a new server you may need to edit the
         // AddeFormat enum below, the "formats" field in both
         // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
         // in mcvadde.py.
-        AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4, MOD8, 
-        MODR, MSGT, MTST, SMIN, TMIN, MD, INST, WARI, INVALID
+        ABIN, AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4,  
+        MOD8, MODR, MSGT, MTST, SMIN, TMIN, MD, INDS, INST, WARI, INVALID
     }
 
     /**
@@ -127,20 +121,10 @@ public class LocalAddeEntry implements AddeEntry {
         AMSRE_L2A(ServerName.AMSE, "AMSR-E L 2a", "AMSR-E Level 2a"),
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),
         GINI(ServerName.GINI, "GINI"),
-        
-        // TJJ Apr 2015 - temporarily comment out INSAT-3D, since the ADDE
-        // servers had not passed testing and been released prior to the
-        // McIDAS-V 1.5 release
-        
-        // INSAT3D_IMAGER(ServerName.INST, "INSAT-3D Imager", "INSAT-3D Imager"),
-        // INSAT3D_SOUNDER(ServerName.INST, "INSAT-3D Sounder", "INSAT-3D Sounder"),
-        
-        // TJJ Apr 2015 - temporarily comment out Himawari-8, since the ADDE
-        // servers had not passed testing and been released prior to the
-        // McIDAS-V 1.5 release
-        
-        // HIMAWARI8(ServerName.WARI, "Himawari 8", "Himawari 8"),
-        
+        GOES16_ABI(ServerName.ABIN, "GOES-16 ABI", "GOES-16 ABI"),
+        HIMAWARI8(ServerName.WARI, "Himawari 8", "Himawari 8"),        
+        INSAT3D_IMAGER(ServerName.INST, "INSAT-3D Imager", "INSAT-3D Imager"),
+        INSAT3D_SOUNDER(ServerName.INDS, "INSAT-3D Sounder", "INSAT-3D Sounder"),
         LRIT_GOES9(ServerName.FSDX, "LRIT GOES-9", "EUMETCast LRIT GOES-9"),
         LRIT_GOES10(ServerName.FSDX, "LRIT GOES-10", "EUMETCast LRIT GOES-10"),
         LRIT_GOES11(ServerName.FSDX, "LRIT GOES-11", "EUMETCast LRIT GOES-11"),

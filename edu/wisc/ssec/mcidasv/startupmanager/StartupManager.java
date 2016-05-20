@@ -72,12 +72,11 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import edu.wisc.ssec.mcidasv.startupmanager.options.FileOption;
+import edu.wisc.ssec.mcidasv.util.GetMem;
 import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -702,15 +701,18 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     }
     
     /**
-     * Applies the command line arguments to the startup preferences. This function
-     * is mostly useful because it allows us to supply an arbitrary {@code args} array,
-     * link in {@link edu.wisc.ssec.mcidasv.McIDASV#main(String[])}.
+     * Applies the command line arguments to the startup preferences.
+     *
+     * This method is mostly useful because it allows us to supply an
+     * arbitrary {@code args} array, link in
+     * {@link edu.wisc.ssec.mcidasv.McIDASV#main(String[])}.
      * 
      * @param ignoreUnknown If {@code true} ignore any parameters that do not 
-     * apply to the startup manager. If {@code false} the non-applicable 
-     * parameters should signify an error.
+     *                      apply to the startup manager. If {@code false},
+     *                      the non-applicable parameters should signify an
+     *                      error.
      * @param fromStartupManager Whether or not this call originated from the 
-     * startup manager (rather than preferences).
+     *                           startup manager (rather than preferences).
      * @param args Incoming command line arguments. Cannot be {@code null}.
      * 
      * @throws NullPointerException if {@code args} is null.
@@ -727,9 +729,12 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         StartupManager sm = StartupManager.getInstance();
         Platform platform = sm.getPlatform();
         
-        Properties props = getArgs(ignoreUnknown, fromStartupManager, args, getDefaultProperties());
+        Properties props = getArgs(ignoreUnknown,
+                                   fromStartupManager,
+                                   args,
+                                   getDefaultProperties());
         platform.setUserDirectory(props.getProperty("userpath"));
-        platform.setAvailableMemory(props.getProperty(Constants.PROP_SYSMEM));
+        platform.setAvailableMemory(GetMem.getMemory());
     }
     
     public static void main(String[] args) {

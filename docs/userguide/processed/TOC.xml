@@ -95,7 +95,6 @@
             <tocitem text="Sounding Display Controls" target="idv.controls.aerologicalsoundingcontrol"/>
             <tocitem text="Front Controls" target="idv.controls.frontcontrol"/>
             <tocitem text="Location Controls" target="idv.controls.stationlocationcontrol"/>
-            <tocitem text="WorldWind Controls" target="idv.controls.worldwindcontrol"/>
             <tocitem text="Track Controls" target="idv.controls.trackcontrol"/>
         </tocitem>
         <tocitem text="Miscellaneous Controls" target="idv.page_miscellaneouscontrols">
@@ -153,7 +152,7 @@
 	<tocitem text="Weather Text Product Controls" target="idv.tools.textproductcontrol"/>
 	<tocitem text="Storm Track Controls" target="idv.tools.stormtrackcontrol"/>
 	<tocitem text="Color Table Editor" target="idv.tools.colortableeditor"/>
-	<tocitem text="Layout Model Editor" target="idv.tools.stationmodeleditor"/>
+	<tocitem text="Layout Model Editor" target="idv.tools.layoutmodeleditor"/>
     <tocitem text="Parameter Alias Editor" target="idv.tools.aliaseditor"/>
     <tocitem text="Parameter Defaults Editor" target="idv.tools.parameterdefaultseditor"/>
     <tocitem text="Parameter Groups Editor" target="idv.tools.parametergroupseditor"/>
@@ -183,8 +182,12 @@
 	<tocitem text="Adaptive Resolution" target="idv.misc.adaptiveresolution"/>
 	<tocitem text="Scripting" target="idv.misc.scripting.scripting">
 	    <tocitem text="Create an Object" target="idv.misc.scripting.createobject"/>
+		<tocitem text="Create an Object - Imagery" target="idv.misc.scripting.createobjectimagery"/>
+		<tocitem text="Create an Object - Grids" target="idv.misc.scripting.createobjectgrid"/>
 		<tocitem text="Modify the Display Object" target="idv.misc.scripting.modifydisplayobject"/>
 		<tocitem text="Modify the Layer Object" target="idv.misc.scripting.modifylayerobject"/>
+		<tocitem text="Modify the Layer Object - Point" target="idv.misc.scripting.modifypointlayerobject"/>
+		<tocitem text="Data Analysis" target="idv.misc.scripting.dataanalysis"/>
 		<tocitem text="Save the Display" target="idv.misc.scripting.savedisplay"/>
 		<tocitem text="Environment" target="idv.misc.scripting.environment"/>
 	</tocitem>	

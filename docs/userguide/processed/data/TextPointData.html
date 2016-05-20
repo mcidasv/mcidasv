@@ -30,8 +30,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/TextPointDat
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Text (ASCII) Point Data Format</div>
-If your point (in situ) data is not available in one of the file formats that McIDAS-V can handle, but you can output it into a column-oriented ASCII text file, you may still be able to use the McIDAS-V displays. McIDAS-V supports reading in point observation data in a text comma separated value (CSV) file format.
-<p>You need to specify the metadata of this point data. This can be done in two ways. First, the file can have two extra header lines that defines for McIDAS-V the fields that are within the file and the types of the fields. The only other requirement is that there must be a latitude, longitude and time field in the data. See below.</p>
+If your point (in situ) data is not available in one of the file formats that McIDAS-V can handle, but it can output into a column-oriented ASCII text file, it may still be able to read into McIDAS-V. McIDAS-V supports reading in point observation data in a text comma separated value (CSV) file format.
+<p>The metadata of this point data must be specified. This can be done in two ways. First, the file can have two extra header lines that defines for McIDAS-V the fields that are within the file and the types of the fields. The only other requirement is that there must be a latitude, longitude and time field in the data. See below.</p>
 <p>Secondly, if there are no metadata header lines defined, the Text Point Data Source will show the Metadata GUI <a href="#metadatagui">described below</a>.</p>
 <p>More information about the format of Time and Lat/Lon symbols can be found in the User Preferences' <a href="../tools/preferences/FormatPreferences.html#dateformat">Formats and Data Preferences</a> page.</p>
 <h2>Examples:</h2>
@@ -46,10 +46,10 @@ TD[unit="celsius"],T[unit="celsius"]
 2007-01-07 16:00:00Z,36.8,98.7,449.0,1024.0,12.4,9.8,330.0,-3.0,3.0
 2007-01-07 16:00:00Z,44.3,121.2,938.0,1030.1,NaN,2.1,110.0,-3.3,-1.7
 </pre>
-<p>Note also that the first line's structure is quite rigid -- you must have a variable (e.g., <strong>index</strong>, <strong>recNum</strong>) that is the domain parameter; this should map to the range values. The second line defines the formatting and units of the parameters. Unit names should be standard international unit specifications (udunits compatible). A list of valid names can be found <a href="http://www.unidata.ucar.edu/software/udunits/udunits-1/udunits.txt"target="_blank">here</a>. (A complete description of this format is contained in the VisAD <a href="http://www.ssec.wisc.edu/~billh/README.text"target="_blank">README.text</a> file.)</p>
-<p>Also note that you need to set the name of the variable for time as "Time", as well as the locations as "Latitude", "Longitude" and "Altitude" (if needed).</p>
+<p>Note also that the first line's structure is quite rigid -- there must be a variable (e.g., <strong>index</strong>, <strong>recNum</strong>) that is the domain parameter; this should map to the range values. The second line defines the formatting and units of the parameters. Unit names should be standard international unit specifications (udunits compatible). A list of valid names can be found <a href="http://www.unidata.ucar.edu/software/udunits/udunits-1/udunits.txt"target="_blank">here</a>. (A complete description of this format is contained in the VisAD <a href="http://www.ssec.wisc.edu/~billh/README.text"target="_blank">README.text</a> file.)</p>
+<p>Also note that  "Time", as well as the locations as "Latitude", "Longitude" and "Altitude" must be specified (if needed).</p>
 <h3>Text fields</h3>
-If you have text fields (i.e., non-numeric data) in your observation, just do this:
+If there are text fields (i.e., non-numeric data) in the observation, just do this:
 <pre>
 (index) -&gt; (Time,Latitude,Longitude,Altitude,ST(Text),T)
 Time[fmt="yyyy-MM-dd HH:mm:ss z"],Latitude[unit="deg"],Longitude[unit="degrees west"],Altitude[unit="m"],ST(Text),T[unit="celsius"]
@@ -57,7 +57,7 @@ Time[fmt="yyyy-MM-dd HH:mm:ss z"],Latitude[unit="deg"],Longitude[unit="degrees w
 </pre>
 Here we have a ST field (State from metars). Its field name is defined as "ST(Text)" and its entry in the second line is the same.
 <h3>Time in multiple columns</h3>
-If you have time fields that span multiple columns, you can use the <strong>colspan</strong> keyword:
+If there are time fields that span multiple columns, the <strong>colspan</strong> keyword should be used:
 <pre>
 (index) -&gt; (IDN, Latitude, Longitude, Time, WDIR, WSPD, GST)
 IDN, Latitude[unit="deg"], Longitude[unit="deg"], Time[fmt="yyyy MM dd HH mm" colspan="5"], WDIR[unit="deg" miss="MM"], WSPD[unit="m/s" miss="MM"], GST[unit="m/s" miss="MM"]
@@ -67,7 +67,7 @@ IDN, Latitude[unit="deg"], Longitude[unit="deg"], Time[fmt="yyyy MM dd HH mm" co
 </pre>
 <p>If using the Point Data window to define a colspan value, the numerical value must be in quotes.  For example: colspan="2".  This colspan value goes into the <strong>Extra</strong> field in the Point Data window.</p>
 <h3>Skipping columns</h3>
-You can use the "skip" parameter if you want to ignore (not read) values in your text file that you don't want to use:
+The "skip" parameter should be used to ignore (not read) values in the text file that shouldn't be used:
 <pre>
 (recNum)-&gt;(Latitude, Longitude, Altitude, type(Text), time, turb_intensity)
 time[fmt=yyyyMMddHH], obtime, skip, type(Text), skip, skip, Latitude, Longitude[scale=-1], Altitude[unit=ft], Altitude2[unit=ft], turb_intensity, skip
@@ -76,7 +76,7 @@ time[fmt=yyyyMMddHH], obtime, skip, type(Text), skip, skip, Latitude, Longitude[
 2004050100 0008    58      A36 0 T  29.18   81.05   5000   5000  2 -9
 </pre>
 <h3>Fixed values for several observations</h3>
-If you have values (like time or location) that are fixed for several observations, you may use this construct:
+If there are values (like time or location) that are fixed for several observations then this construct may be used:
 <pre>
 (index) -&gt; (Longitude,Latitude,Time,ST(Text),SPD,DIR,TD,T)
 Longitude[unit="degrees west"],Latitude[unit="deg"],Time[fmt="yyyy-MM-dd HH:mm:ss z"],ST(Text),SPD[unit="m/s"],DIR[unit="deg"],TD[unit="celsius"],T[unit="celsius"]
@@ -99,31 +99,30 @@ ST=ORD
 2007-02-20 11:00:00 ST  ,10.8,230.0,-1.1,6.7
 </pre>
 <h2>Loading into McIDAS-V</h2>
-Finally, after you have created your file, you will want to tailor your McIDAS-V display in two ways:
+Finally, after the file has been created, McIDAS-V displays can be tailored in two ways:
 <ol>
-<li>Create a station model for those variables using the McIDAS-V's "<strong>Tools-&gt;Station Model Template</strong>" menu</li>
+<li>Create a layout model for those variables using the McIDAS-V's "<strong>Tools-&gt;Layout Model Editor</strong>" menu item.</li>
 </ol>
-Then, when you run McIDAS-V to read your data:
+Then, here is the process to read in and display the data:
 <ol>
 <li>Use Data Source Type as "Text Point Data files"</li>
 <li>Use the "Point Data Plot" for the Display</li>
-<li>Select your newly created station model</li>
+<li>Select the newly created layout model</li>
 </ol>
 <a name="metadatagui" id="metadatagui"></a>
 <h2>Using the Text Point Metadata Gui</h2>
-If your text data does not have the metadata header lines the Text Point Data Source will show the following dialog which allows you to specify the metadata.
+If the text data does not have the metadata header lines the Text Point Data Source will show the following dialog which allows for specifying the metadata.
 <div class="images"><img src="images/TextPointMetadataGui.gif" width="750" height="530" alt="Image 1: Point Data Dialog Window"><br>
 <span class="caption">Image 1: Point Data Dialog Window</span></div>
 <p><strong>Delimiter</strong></p>
-<p>This field specifies how the different data values are separated within the text file. The options are Comma, Semicolon, Tab, and Space. Selecting this option allows McIDAS-V to separate out different text fields to allow you to define them at the bottom of this Point Data window.</p>
+<p>This field specifies how the different data values are separated within the text file. The options are Comma, Semicolon, Tab, and Space. Selecting this option allows McIDAS-V to separate out different text fields to allow for defining them at the bottom of this Point Data window.</p>
 <p><strong>Skipping lines</strong></p>
 <p>At the top, a number of the initial lines from the text data are shown. The arrow
-keys allow you to specify the start line. For example, if you had some other
-header information, you can skip over those lines.</p>
+keys allow for specifying the start line. For example, if there were header lines in the file, these lines can be skipped over.</p>
 <p><strong>Specifying metadata</strong>
 <br>
-For each column of text data there is a row shown in the bottom of the dialog. This shows the sampled value and allows you to enter a name, unit, date format, missing value and extra information. There are some names that McIDAS-V treats special: "Latitude", "Longitude", "Altitude", and "Time". You must have at least Latitude, Longitude and Time specified.</p>
-<p>The Unit/Date Format field allows you to specify the Unit for data fields and the date format. For text fields choose <strong>Misc-&gt;Text</strong> as
+For each column of text data there is a row shown in the bottom of the dialog. This shows the sampled value and allows for entering a name, unit, date format, missing value and extra information. There are some names that McIDAS-V treats special: "Latitude", "Longitude", "Altitude", and "Time". At least Latitude, Longitude and Time must be specified in the file.</p>
+<p>The Unit/Date Format field allows for specifying the Unit for data fields and the date format. For text fields choose <strong>Misc-&gt;Text</strong> as
 the unit.</p>
 <p>The Extra fields must be of the form:</p>
 <pre>
@@ -132,11 +131,11 @@ name="value"
 Don't forget the quotes!
 <p><strong>Skipping columns</strong>
 <br>
-You can skip over certain columns by entering the Name: "skip"</p>
+Certain columns can be skipped by entering the Name: "skip"</p>
 <p><strong>Saving this as a preference</strong>
 <br>
-To keep from having to enter in this data again next time you load a new text point data of the same form, simply press the "Preferences" button and select <strong>Save
-Current</strong>. This allows you to save these metadata settings and reapply them later
+To keep from having to enter in this data again next time  new text point data of the same form is loaded, simply press the "Preferences" button and select <strong>Save
+Current</strong>. This allows for saving these metadata settings and reapply them later
 using the "Preferences" button.</p>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

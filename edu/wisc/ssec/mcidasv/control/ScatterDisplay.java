@@ -42,6 +42,7 @@ import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.ButtonGroup;
@@ -59,6 +60,7 @@ import javax.swing.border.LineBorder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.idv.ControlContext;
 import visad.AxisScale;
 import visad.BaseColorControl;
 import visad.CellImpl;
@@ -202,7 +204,17 @@ public class ScatterDisplay extends DisplayControlImpl {
         { 0.0f, 0.8f, 0.0f, 0.8f }
     };
 
+    /** used for persistence */
+    private boolean blackBackground = true;
+    
+    JRadioButton bgColorBlack;
+    
+    JRadioButton bgColorWhite;
+    
+    ButtonGroup bgColorGroup;
+    
     JButton computeStatsButton;
+    
     StatsTable statsTable;
    
     boolean selectByCurve = false;
@@ -214,6 +226,37 @@ public class ScatterDisplay extends DisplayControlImpl {
     
 
     @Override public boolean init(List choices) throws VisADException, RemoteException {
+        bgColorBlack = new JRadioButton("Black");
+        bgColorBlack.addActionListener(e -> {
+            scatterMaster.setForeground(Color.white);
+            scatterMaster.setBackground(Color.black);
+            setBlackBackground(true);
+            try {
+                scatterMarkDsp.setColorPalette(markPaletteBlackBackground);
+            } catch (Exception ex) {
+                logger.error("could not change color palette", ex);
+            }
+        });
+
+        bgColorWhite = new JRadioButton("White");
+        bgColorWhite.addActionListener(e -> {
+            scatterMaster.setForeground(Color.black);
+            scatterMaster.setBackground(Color.white);
+            setBlackBackground(false);
+            try {
+                scatterMarkDsp.setColorPalette(markPaletteWhiteBackground);
+            } catch (Exception ex) {
+                logger.error("could not change color palette", ex);
+            }
+        });
+
+        bgColorGroup = new ButtonGroup();
+        bgColorGroup.add(bgColorBlack);
+        bgColorGroup.add(bgColorWhite);
+
+        bgColorBlack.setSelected(getBlackBackground());
+        bgColorWhite.setSelected(!getBlackBackground());
+        
         if ((dataChoiceX != null) && (dataChoiceY != null)) {
           setupFromUnpersistence();
         } else {
@@ -342,7 +385,6 @@ public class ScatterDisplay extends DisplayControlImpl {
 
         Area_field = JPythonMethods.createAreaField(X_field);
         statsTable = new StatsTable();
-        
     }
 
     public void setupFromUnpersistence() throws VisADException, RemoteException {
@@ -361,6 +403,33 @@ public class ScatterDisplay extends DisplayControlImpl {
         }
     }
 
+    @Override public void initAfterUnPersistence(ControlContext vc,
+                                                 Hashtable properties,
+                                                 List preSelectedDataChoices) 
+    {
+        super.initAfterUnPersistence(vc, properties, preSelectedDataChoices);
+
+        Color fg;
+        Color bg;
+        float[][] bgPalette;
+        if (getBlackBackground()) {
+            fg = Color.white;
+            bg = Color.black;
+            bgPalette = markPaletteBlackBackground;
+        } else {
+            fg = Color.black;
+            bg = Color.white;
+            bgPalette = markPaletteWhiteBackground;
+        }
+        scatterMaster.setForeground(fg);
+        scatterMaster.setBackground(bg);
+        try {
+            scatterMarkDsp.setColorPalette(bgPalette);
+        } catch (Exception ex) {
+            logger.error("could not change color palette", ex);
+        }
+    }
+    
     @Override protected void popupDataDialog(final String dialogMessage,
                                    Component from, boolean multiples,
                                    List categories) {
@@ -611,7 +680,6 @@ public class ScatterDisplay extends DisplayControlImpl {
        return master;
     }
 
-
     @Override public Container doMakeContents() {
         JPanel pane = new JPanel(new GridLayout(1,3));
 
@@ -678,35 +746,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            statsTable.setIsShowing();
            statsTable.setFields(X_field, Y_field,0);
         });
-
-        JRadioButton bgColorBlack = new JRadioButton("Black");
-        bgColorBlack.addActionListener(e -> {
-            scatterMaster.setForeground(Color.white);
-            scatterMaster.setBackground(Color.black);
-            try {
-                scatterMarkDsp.setColorPalette(markPaletteBlackBackground);
-            } catch (Exception ex) {
-                logger.error("could not change color palette", ex);
-            }
-        });
-
-        JRadioButton bgColorWhite = new JRadioButton("White");
-        bgColorWhite.addActionListener(e -> {
-            scatterMaster.setForeground(Color.black);
-            scatterMaster.setBackground(Color.white);
-            try {
-                scatterMarkDsp.setColorPalette(markPaletteWhiteBackground);
-            } catch (Exception ex) {
-                logger.error("could not change color palette", ex);
-            }
-        });
-
-        ButtonGroup bgColorGroup = new ButtonGroup();
-        bgColorGroup.add(bgColorBlack);
-        bgColorGroup.add(bgColorWhite);
-
-        bgColorBlack.setSelected(true);
-
+        
         buttonPanel.add(computeStatsButton);
         buttonPanel.add(new JLabel("Background Color:"));
         buttonPanel.add(bgColorBlack);
@@ -720,6 +760,13 @@ public class ScatterDisplay extends DisplayControlImpl {
         return container;
     }
 
+    public void setBlackBackground(boolean value) {
+        blackBackground = value;
+    }
+    
+    public boolean getBlackBackground() {
+        return blackBackground;
+    }
 
     protected Component getScatterTabComponent() {
        try {

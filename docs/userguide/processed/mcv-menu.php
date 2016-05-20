@@ -162,7 +162,6 @@ RAOB Sounding Data</span><br>
         <span class="link" onClick="setPage('controls/AerologicalSoundingControl.html');">Sounding Display Controls</span><br>
 		<span class="link" onClick="setPage('controls/FrontControl.html');">Front Controls</span><br>
         <span class="link" onClick="setPage('controls/StationLocationControl.html');">Location Controls</span><br>
-        <span class="link" onClick="setPage('controls/WorldWindControl.html');">WorldWind Controls</span><br>
         <span class="link" onClick="setPage('controls/TrackControl.html');">Track Controls</span><br>
       </div>
 
@@ -236,7 +235,7 @@ RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('tools/TextProductControl.html');">Weather Text Product Controls</span><br>
       <span class="link" onClick="setPage('tools/StormTrackControl.html');">Storm Track Controls</span><br>
       <span class="link" onClick="setPage('tools/ColorTableEditor.html');">Color Table Editor</span><br>
-      <span class="link" onClick="setPage('tools/StationModelEditor.html');">Layout Model Editor</span><br>
+      <span class="link" onClick="setPage('tools/LayoutModelEditor.html');">Layout Model Editor</span><br>
       <span class="link" onClick="setPage('tools/AliasEditor.html');">Parameter Alias Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterDefaultsEditor.html');">Parameter Defaults Editor</span><br>
       <span class="link" onClick="setPage('tools/ParameterGroupsEditor.html');">Parameter Groups Editor</span><br>
@@ -277,8 +276,12 @@ RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('misc/Scripting/Scripting.html');">Scripting</span><br>
       <div class="indented" id="scripting">
       <span class="link" onClick="setPage('misc/Scripting/CreateObject.html');">Create an Object</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/CreateObjectImagery.html');">Create an Object - Imagery</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/CreateObjectGrid.html');">Create an Object - Grids</span><br>
       <span class="link" onClick="setPage('misc/Scripting/ModifyDisplayObject.html');">Modify the Display Object</span><br>
       <span class="link" onClick="setPage('misc/Scripting/ModifyLayerObject.html');">Modify the Layer Object</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/ModifyPointLayerObject.html');">Modify the Layer Object - Point</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/DataAnalysis.html');">Data Analysis</span><br>
       <span class="link" onClick="setPage('misc/Scripting/SaveDisplay.html');">Save the Display</span><br>
       <span class="link" onClick="setPage('misc/Scripting/Environment.html');">Environment</span><br>
       </div>

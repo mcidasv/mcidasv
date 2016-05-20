@@ -78,9 +78,11 @@ def transform_flatfields(func, *args, **kwargs):
     @wraps(func)
     def wrapper(*args, **kwargs):
         wrappedArgs = []
+        returnFlatField = False
         for i, arg in enumerate(args):
             # print '%s: %s' % (i, arg)
             if isinstance(arg, FlatField):
+                returnFlatField = True
                 arg = makeFlatFieldSequence([arg])
             wrappedArgs.append(arg)
         # print [type(a) for a in wrappedArgs]
@@ -88,12 +90,13 @@ def transform_flatfields(func, *args, **kwargs):
         for keyword in kwargs:
             keywordValue = kwargs[keyword]
             if isinstance(keywordValue, FlatField):
+                returnFlatField = True # ??? not sure about kwarg case
                 keywordValue = makeFlatFieldSequence([keywordValue])
             wrappedKwargs[keyword] = keywordValue
         # print [type(wrappedKwargs[a]) for a in wrappedKwargs]
         result = func(*wrappedArgs, **wrappedKwargs)
         # print 'result type=%s' % (type(result))
-        if GridUtil.isTimeSequence(result) and len(result) == 1:
+        if GridUtil.isTimeSequence(result) and len(result) == 1 and returnFlatField:
             # print 'attempting conversion...'
             result = result.getSample(0)
         # else:

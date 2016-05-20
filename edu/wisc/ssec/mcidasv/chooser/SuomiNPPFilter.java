@@ -130,6 +130,7 @@ public class SuomiNPPFilter extends FileFilter {
         		logger.debug(fileNameRelative + " matches Suomi NPP NASA regex");
         	} else {
         		// don't go any further if file does not match Suomi NPP data product regex
+        		logger.debug(fileNameRelative + " does not match any Suomi regex");
         		return isSuomiNPP;
         	}
         	
@@ -241,8 +242,10 @@ public class SuomiNPPFilter extends FileFilter {
 	    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
 	    						int geoStartIdx = geoFilename.indexOf("_d");
 	    						int prdStartIdx = fileNameRelative.indexOf("_d");
-	    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
-	    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
+	    						String s1 = 
+	    							geoFilename.substring(geoStartIdx, geoStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
+	    						String s2 = 
+	    							fileNameRelative.substring(prdStartIdx, prdStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 	    						if (s1.equals(s2)) {
 	    							isSuomiNPP = true;
 	    							break;
@@ -252,7 +255,6 @@ public class SuomiNPPFilter extends FileFilter {
 	
 	    			} 
 
-    			
 	    			// one last thing to check, if no luck so far...
 	    			// are we using terrain-corrected geolocation?
 	    			if (! isSuomiNPP) {
@@ -286,8 +288,10 @@ public class SuomiNPPFilter extends FileFilter {
 	    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
 	    						int geoStartIdx = geoFilename.indexOf("_d");
 	    						int prdStartIdx = fileNameRelative.indexOf("_d");
-	    						String s1 = geoFilename.substring(geoStartIdx, geoStartIdx + 35);
-	    						String s2 = fileNameRelative.substring(prdStartIdx, prdStartIdx + 35);
+	    						String s1 = 
+	    							geoFilename.substring(geoStartIdx, geoStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
+	    						String s2 = 
+	    							fileNameRelative.substring(prdStartIdx, prdStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 	    						if (s1.equals(s2)) {
 	    							isSuomiNPP = true;
 	    							break;
@@ -299,14 +303,45 @@ public class SuomiNPPFilter extends FileFilter {
     			
     			if (isSuomiNPP_NASA) {
     				logger.debug("Checking for NASA-style GEO...");
-    				String geoFilename = fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1);
-    				geoFilename += geoProductID;
-    				File fGeoNASA = new File(geoFilename);
-    				if (fGeoNASA.exists()) {
-    					logger.debug("NASA-style GEO is there...");
-    					isSuomiNPP = true;
-    				} else {
-    					logger.debug("NASA-style GEO is NOT there...");
+    				String geoFilename = geoProductID;
+    				logger.debug("Target FileName: " + geoFilename);
+    				
+    				// now we make a file filter, and see if a matching geo file is present
+    				File fList = new File(
+    						fileNameAbsolute.substring(0, fileNameAbsolute.lastIndexOf(File.separatorChar) + 1)
+    				);
+
+    				FilenameFilter geoFilter = new FilenameFilter() {
+    					public boolean accept(File dir, String name) {
+    						if (name.matches(JPSSUtilities.SUOMI_GEO_REGEX_NASA)) {
+    							return true;
+    						} else {
+    							return false;
+    						}
+    					}
+    				};
+    				
+    				File[] files = fList.listFiles(geoFilter);
+    				for (File file : files) {
+    					if (file.isDirectory()) {
+    						continue;
+    					}
+    					// get the file name for convenience
+    					String fName = file.getName();
+    					logger.debug("FileName: " + fName);
+    					// is it one of the geo types we are looking for?
+    					if (fName.substring(0, 5).equals(geoFilename.substring(0, 5))) {
+    						int geoStartIdx = geoFilename.indexOf("_d");
+    						int prdStartIdx = fileNameRelative.indexOf("_d");
+    						String s1 = 
+    							geoFilename.substring(geoStartIdx, geoStartIdx + JPSSUtilities.NASA_CREATION_DATE_INDEX);
+    						String s2 = 
+    							fileNameRelative.substring(prdStartIdx, prdStartIdx + JPSSUtilities.NASA_CREATION_DATE_INDEX);
+    						if (s1.equals(s2)) {
+    							isSuomiNPP = true;
+    							break;
+    						}
+    					}
     				}
     			}
     		}
@@ -314,7 +349,6 @@ public class SuomiNPPFilter extends FileFilter {
         	return isSuomiNPP;
         }
         
-
         // The description of this filter
         public String getDescription() {
             return "Suomi NPP Data";

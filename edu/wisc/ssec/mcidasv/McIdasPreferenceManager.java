@@ -92,6 +92,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import edu.wisc.ssec.mcidasv.util.GetMem;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -721,8 +722,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         Platform platform = startup.getPlatform();
         platform.setUserDirectory(
                 mcv.getObjectStore().getUserDirectory().toString());
-        platform.setAvailableMemory(
-               mcv.getStateManager().getProperty(Constants.PROP_SYSMEM, "0"));
+        platform.setAvailableMemory(GetMem.getMemory());
         JPanel smPanel = startup.getAdvancedPanel(true);
         List<JPanel> stuff = Collections.singletonList(smPanel);
         
@@ -934,6 +934,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES, Boolean.valueOf(mappy.getTransectLabelsVisible()) },
             { "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, Boolean.valueOf(mappy.getWaitMessageVisible()) },
             { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
+            { ViewManager.LABEL_AUTO_DEPTH, ViewManager.PREF_AUTO_DEPTH, mappy.getAutoDepth() },
             { arLabel, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) }
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());

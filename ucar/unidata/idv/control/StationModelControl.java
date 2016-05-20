@@ -158,7 +158,6 @@ import javax.swing.table.AbstractTableModel;
  * @author MetApps Development Team
  * @version $Revision: 1.228 $
  */
-
 public class StationModelControl extends ObsDisplayControl {
 
 
@@ -403,6 +402,30 @@ public class StationModelControl extends ObsDisplayControl {
 
     /** the GE KMZ color swatch field */
     ColorSwatchComponent kmzColorSwatch;
+
+    /** Checkbox used to toggle decluttering from GUI. May be {@code null}. */
+    private JCheckBox declutterCheckBox;
+
+    /**
+     * Button group that represents whether or not the vertical position is
+     * {@literal "from"} altitude (or from a fixed value).
+     *
+     * <p>Contains {@link #altitudeButton} and {@link #fixedPositionButton}.
+     * May be {@code null}.</p>
+     */
+    private ButtonGroup verticalPositionGroup;
+
+    /**
+     * Radio button for representing that vertical position should use
+     * altitude. May be {@code null}.
+     */
+    private JRadioButton altitudeButton;
+
+    /**
+     * Radio button for representing that vertical position should use a
+     * fixed value. May be {@code null}.
+     */
+    private JRadioButton fixedPositionButton;
 
     /**
      * Default constructor.
@@ -659,12 +682,27 @@ public class StationModelControl extends ObsDisplayControl {
                 MetSymbol  metSymbol = (MetSymbol) iter.next();
                 ColorTable ct        = metSymbol.getColorTable();
                 Range      range     = metSymbol.getColorTableRange();
-                if ((ct != null) && (stationModelColorTable == null)
-                        && (range != null)) {
+
+                // MCV INQ 2105
+                // the first time a user hits "Apply", the
+                // stationModelColorTable is null, which will result in
+                // newColorTable being set to the ColorTable from metSymbol.
+                // down towards the end of this method stationModelColorTable
+                // is set to newColorTable.
+                //
+                // a side effect of this is that clicking "Apply" again will
+                // result in stationModelColorTable != null, meaning
+                // newColorTable remains set to null--and this then overwrites
+                // stationModelColorTable at the end of this method.
+                //
+                // if ((ct != null) && (stationModelColorTable == null)
+                //     && (range != null)) {
+                if ((ct != null) && (range != null)) {
                     newColorTable = ct;
                     newRange      = range;
-
                 }
+                // END MCV INQ 2105
+
                 String param = metSymbol.getColorTableParam();
                 if ((ct == null) || (param == null)) {
                     continue;
@@ -2449,10 +2487,65 @@ public class StationModelControl extends ObsDisplayControl {
         return lockBtn;
     }
 
+    /**
+     * Controls whether or not decluttering is enabled and ensures the GUI
+     * responds.
+     *
+     * @param value {@code true} if decluttering should be enabled,
+     *              {@code false} otherwise.
+     *
+     * @see #setDeclutter(boolean)
+     */
+    private void updateDeclutter(boolean value) {
+        // note: used in jython, so don't worry about this appearing to be
+        // unused
+        setDeclutter(value);
+        loadDataInThread();
+        if (declutterCheckBox != null) {
+            SwingUtilities.invokeLater(() ->
+                declutterCheckBox.setSelected(value));
+        }
+    }
 
+    /**
+     * Controls the declutter {@literal "density"} and ensures the GUI
+     * responds.
+     *
+     * @param value New declutter density value.
+     *
+     * @see #setDeclutterFilter(float)
+     */
+    private void updateDensity(float value) {
+        // note: used in jython, so don't worry about this appearing to be
+        // unused
+        setDeclutterFilter(value);
+        loadDataInThread();
+        if (densitySlider != null) {
+            GuiUtils.setSliderPercent(densitySlider, 1.0f - value);
+        }
+    }
 
-
-
+    /**
+     * Controls whether or not the vertical position is from altitude and
+     * ensures the GUI responds.
+     *
+     * @param useAltitude {@code true} if vertical position is from altitude,
+     *                    {@code false} if the vertical position is fixed.
+     *
+     * @throws VisADException if there was a problem with VisAD.
+     * @throws RemoteException if a remote VisAD object had a problem.
+     */
+    private void updateVerticalPosition(boolean useAltitude)
+        throws VisADException, RemoteException
+    {
+        // note: used in jython, so don't worry about this appearing to be
+        // unused
+        if (verticalPositionGroup != null) {
+            altitudeButton.setSelected(useAltitude);
+            fixedPositionButton.setSelected(!useAltitude);
+        }
+        setShouldUseAltitude(useAltitude);
+    }
 
     /**
      * Get any control widgets special to this control and add them to
@@ -2470,8 +2563,8 @@ public class StationModelControl extends ObsDisplayControl {
         //        super.getControlWidgets(controlWidgets);
 
 
-        JCheckBox toggle = new JCheckBox("", declutter);
-        toggle.addActionListener(new ActionListener() {
+        declutterCheckBox = new JCheckBox("", declutter);
+        declutterCheckBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 setDeclutter(((JCheckBox) e.getSource()).isSelected());
                 loadDataInThread();
@@ -2486,7 +2579,7 @@ public class StationModelControl extends ObsDisplayControl {
         controlWidgets.add(
             new WrapperWidget(
                 this, GuiUtils.rLabel("Declutter:"),
-                GuiUtils.hbox(Misc.newList(new Object[] { toggle,
+                GuiUtils.hbox(Misc.newList(new Object[] { declutterCheckBox,
                 getLockButton(), GuiUtils.filler(),
                 addDensityComp(GuiUtils.rLabel(" Density: ")),
                 getDensityControl() }))));
@@ -2582,18 +2675,28 @@ public class StationModelControl extends ObsDisplayControl {
         zPositionPanel = GuiUtils.hgrid(doMakeZPositionSlider(),
                                         GuiUtils.filler());
         GuiUtils.enableTree(zPositionPanel, !shouldUseAltitude);
-        JRadioButton[] jrbs =
-            GuiUtils.makeRadioButtons(Misc.newList("Altitude (if available)",
-                "Fixed position:"), (shouldUseAltitude
-                                     ? 0
-                                     : 1), this, "setShouldUseAltitudeIndex");
+
+        altitudeButton = new JRadioButton("Altitude (if available)", shouldUseAltitude);
+        altitudeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setShouldUseAltitudeIndex(0);
+            }
+        });
+        fixedPositionButton = new JRadioButton("Fixed Position:", !shouldUseAltitude);
+        fixedPositionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setShouldUseAltitudeIndex(1);
+            }
+        });
+
+        verticalPositionGroup = new ButtonGroup();
+        verticalPositionGroup.add(altitudeButton);
+        verticalPositionGroup.add(fixedPositionButton);
 
         return GuiUtils.doLayout(new Component[] {
-            GuiUtils.left(GuiUtils.hbox(jrbs[0], jrbs[1])),
+            GuiUtils.left(GuiUtils.hbox(altitudeButton, fixedPositionButton)),
             zPositionPanel }, 1, GuiUtils.WT_Y, GuiUtils.WT_N);
-
     }
-
 
     /**
      * Make Gui contents

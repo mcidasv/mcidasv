@@ -446,6 +446,12 @@ public class LineState {
                     ok[0] = true;
                     propListener.propertyChange(new PropertyChangeEvent(this,
                             "properties", this, null));
+                    // Fixes inquiry 2104 (two apply clicks necessary to get
+                    // main display legend to show changes to "Legend Label" field).
+                    // Would love to know why second propertyChange call is needed,
+                    // but time is finite.
+                    propListener.propertyChange(new PropertyChangeEvent(this,
+                            "properties", this, null));
                 }
 
                 if (cmd.equals(GuiUtils.CMD_OK)

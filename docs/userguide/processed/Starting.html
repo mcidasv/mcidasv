@@ -39,8 +39,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('Starting.html',tr
   <li><a href="#memory">Setting Memory Usage</a></li>  
   <li><a href="#source">Downloading McIDAS-V Source Code</a></li>
 </ul>
-<p>If you have any trouble downloading and installing McIDAS-V, first check the <a href="Faq.html">FAQ</a>,
-  then please report your problem as described in <a href="Support.html">McIDAS-V
+<p>If there is any trouble downloading and installing McIDAS-V, first check the <a href="Faq.html">FAQ</a>,
+  then please report the problem as described to <a href="Support.html">McIDAS-V
 Support</a>.</p>
 <p>For more information on downloading and  using McIDAS-V, please see the Installation and Introduction tutorial on the <a href="../../../software/v/documentation.html"target="_blank">McIDAS-V Documentation Page</a>. Also, see this page for additional tutorials and instructional videos on more advanced subjects.</p>
 <div class="pagesubtitle"><a name="download" id="download"></a> Downloading McIDAS-V</div>
@@ -54,8 +54,8 @@ package for the following operating systems:
   <li>Windows</li>
 </ul>
 <p>This file is just the installer and can be placed anywhere
-    on your machine. When you run the installer in the next step, you can then
-    indicate where you want McIDAS-V to be installed.</p>
+    on your machine. When the installer is run in the next step, the user can then
+    indicate where McIDAS-V should be installed.</p>
 <div class="pagesubtitle"><a name="install" id="install"></a>Installing McIDAS-V</div>
 <p>Start the installer by following the instructions appropriate for your operating
   system:</p><br>
@@ -96,12 +96,20 @@ package for the following operating systems:
         </ul></td>
     </tr>
   </table>
-<p>A GUI will walk you through the installation steps and allow you to create
-  a program group and/or desktop icon.&nbsp;When McIDAS-V is installed, a McIDAS-V-System directory will be created in your installation directory.&nbsp;This directory contains system files necessary to run McIDAS-V and users should not save files to the McIDAS-V-System directory.</p>
-<p>Note: Windows users should not install McIDAS-V in the <strong>/Program Files</strong> directory as this can lead to permissions problems.</p>
+<p>A GUI will walk through the installation steps and allow for creating
+  a program group and/or desktop icon. When McIDAS-V is installed, a McIDAS-V-System directory will be created in the installation directory. This directory contains system files necessary to run McIDAS-V and users should not save files to the McIDAS-V-System directory. The first part of the installation GUI prompts the user to select if the install should update any existing installs, or if McIDAS-V should be installed into a new directory:</p>
+<div class="images"><img src="images/Setup.gif" width="500" height="390" alt="Image 1: Setup Window"><br>
+<span class="caption">Image 1: Setup Window</span></div>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Yes, update the existing installation -</strong>
+  Installs McIDAS-V into the same directory that McIDAS-V was last installed into.  Moving the mouse over the <img src="images/QuestionMark.gif" width="17" height="16" alt="Question mark icon"align="absmiddle">
+  icon notifies the user which directory this is. Using this option will skip the step of the setup where the installation directory would be selected.</li>
+  <li class="propertylistitem"><strong>No, install into a different directory -</strong> Proceeds with the installation that includes a step where the user selects the installation directory.  When selecting the installation directory, the user can either type a directory path into the text field, or use the <img src="images/Browse_install.gif" width="81" height="21" alt="Browse button" align="absmiddle"> button to open a Select Directory window which lists the directories on the system. From here, the user can select a previously-existing directory, or create a new directory with the <img src="images/NewFolder.gif" width="83" height="21" alt="New folder button" align="absmiddle">
+  button.</ul>
+  <p>Note: Windows users should not install McIDAS-V in the <strong>/Program Files</strong> directory as this can lead to permissions problems.</p>
 <p>If an error occurs, please see the <a href="Faq.html"> FAQ</a> for information
   on solutions to common errors reported by users installing and running McIDAS-V.
-  If you do not see your error listed, please send a support request to <a href="../../../misc/contact.html?mcv" target="_blank">McIDAS-V
+  If the error is not listed, please send a support request to <a href="../../../misc/contact.html?mcv" target="_blank">McIDAS-V
   Support</a>.</p>
 <div class="pagesubtitle"><a name="run" id="run"></a>Running McIDAS-V</div>
 <p><strong>On Mac OS X:</strong></p>
@@ -112,7 +120,7 @@ package for the following operating systems:
 <blockquote>At the UNIX prompt from the McIDAS-V-System directory (where McIDAS-V was installed), run the command: <strong>runMcV</strong></blockquote>
 <p>If an error occurs, please see the <a href="Faq.html"> FAQ</a> for information
   on solutions to common errors reported by users installing and running McIDAS-V.
-  If you do not see your error listed, send a support request to <a href="../../../misc/contact.html?mcv" target="_blank">McIDAS-V
+  If the error is not listed, please send a support request to <a href="../../../misc/contact.html?mcv" target="_blank">McIDAS-V
   Support</a> or use the Support Request Form in the Help menu of McIDAS-V.</p>
 <p>Note: When McIDAS-V is first run, a <strong>/McIDAS-V</strong> directory will be created in the user path.&nbsp;This directory contains information about user-specified settings as well as XML files for color tables, projections, etc. that are used by McIDAS-V.&nbsp;Users can write files to this directory.</p>
 <div class="pagesubtitle"><a name="memory" id="memory"></a>Setting Memory Usage</div>

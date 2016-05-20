@@ -210,15 +210,13 @@ _formats = {
     "TRMM":                                                    AddeFormat.TRMM,
     "TMIN":                                                    AddeFormat.TRMM,
     "GINI":                                                    AddeFormat.GINI,
-
-    # TJJ Apr 2015 - temporarily comment out Himawari-8, since the ADDE
-    # servers had not passed testing and been released prior to the
-    # McIDAS-V 1.5 release
-    #    "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
-    #    "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
-    #    "INSAT3D_SOUNDER":                                         AddeFormat.INSAT3D_SOUNDER,
-    #    "INSAT-3D Sounder":                                        AddeFormat.INSAT3D_SOUNDER,
-    #    "Himawari-8":                                              AddeFormat.HIMAWARI8,
+    # The following servers are not supported on Windows
+    "GOES-16 ABI":                                             AddeFormat.GOES16_ABI,
+    "Himawari-8":                                              AddeFormat.HIMAWARI8,
+    "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
+    "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
+    "INSAT3D_SOUNDER":                                         AddeFormat.INSAT3D_SOUNDER,
+    "INSAT-3D Sounder":                                        AddeFormat.INSAT3D_SOUNDER,
 }
 
 DEFAULT_ACCOUNTING = ('idv', '0')

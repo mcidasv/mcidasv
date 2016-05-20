@@ -21,7 +21,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ModifyLayerObject.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="DataAnalysis.html">Go
         to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="Environment.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
@@ -59,6 +59,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
     <tr>
       <td valign="top">formatting=</td>
       <td>various formatting options to apply to the output image</td>
+    </tr>
+    <tr>
+      <td valign="top">createDirectories=</td>
+      <td>creates the directory specified in the file keyword if it does not already exist when set to True; default=False</td>
     </tr>
   </table></div>
 <ul class="propertylist">
@@ -338,13 +342,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       <td valign="top">globalPalette=</td>
       <td>sets if the animated GIF will use the color palette of each individual image or if the same colors will be used in each frame. Setting this to true helps to mitigate the flickering effect that can sometimes be seen in the color scale attached to the image. One circumstance where disabling this option may be ideal is if the movie starts with a low-light scene (not many colors) and there is no color scale in the display. default=True</td>
     </tr>
+    <tr>
+      <td valign="top">createDirectories=</td>
+      <td>creates the directory specified in the file keyword if it does not already exist when set to True; default=False</td>
+    </tr>
   </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>writeMovie('C:\\Users\\myuser\\movie.gif',params='resize width=600 height=800')</em></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ModifyLayerObject.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="DataAnalysis.html">Go
         to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="Environment.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>

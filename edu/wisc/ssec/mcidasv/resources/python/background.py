@@ -489,8 +489,8 @@ class _MappedGeoGridFlatField(_MappedFlatField):
         if key == 'metadataVariables':
             allVars = self.gridDataset.getNetcdfFile().getVariables()
             singleValueVars = filter(lambda v: v.getSize() == 1, allVars)
-            return {v.getFullName(): 
-                            {'value': v.read().getObject(0),
+            return {str(v.getFullName()): 
+                            {'value': str(v.read().getObject(0)),
                              'attributes': _dictFromAttributeList(v.getAttributes())
                             }
                         for v in singleValueVars}
@@ -522,7 +522,7 @@ def _dictFromAttributeList(attrList):
     """Build a attrName->attrValue dictionary from a list of NetCDF Attributes."""
     result = dict()
     for attr in attrList:
-        result[attr.getFullName()] = _getNetcdfAttributeValue(attr)
+        result[str(attr.getFullName())] = _getNetcdfAttributeValue(attr)
     return result
 
 
@@ -537,12 +537,12 @@ def _getNetcdfAttributeValue(attr):
         length = array.getSize()
         for i in range(length):
             # TODO need to find a file with a string array attribute and test this
-            values.append(array.getObject(i))
+            values.append(str(array.getObject(i)))
         return values
     if attr.isString():
-        return attr.getStringValue()
+        return str(attr.getStringValue())
     else:
-        return attr.getNumericValue()
+        return str(attr.getNumericValue())
 
 
 class _JavaProxy(object):
@@ -1723,6 +1723,20 @@ class _Display(_JavaProxy):
         # change the display to the saved viewpoint
         self._JavaProxy__javaObject.initWith(desiredViewpoint)
         
+    @gui_invoke_later
+    def setAutoDepth(self, value):
+        """Set whether or not the display should be using automatic depth offsetting.
+        
+        Args:
+            value: Boolean value for whether or not automatic depth offsetting should be enabled.
+        """
+        from ucar.unidata.idv.ViewManager import PREF_AUTO_DEPTH
+        self._JavaProxy__javaObject.setBp(PREF_AUTO_DEPTH, value)
+        
+    @gui_invoke_later
+    def getAutoDepth(self):
+        """Return whether or not this display is using automatic depth offsetting."""
+        return self._JavaProxy__javaObject.getAutoDepth()
         
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
@@ -1735,6 +1749,10 @@ class _Layer(_JavaProxy):
         #_JavaProxy.__init__(self, javaObject).addDisplayInfo()
         _JavaProxy.__init__(self, javaObject)
         self.usedTemporaryId = False
+        
+    @gui_invoke_later
+    def _refreshLayerList(self):
+        self._JavaProxy__javaObject.getViewManager().updateDisplayList()
         
     @gui_invoke_later
     def _getDisplayWrapper(self):
@@ -1833,6 +1851,7 @@ class _Layer(_JavaProxy):
             ValueError:  couldn't find ctName or transparency invalid value
         Returns: nothing
         """
+        from ucar.unidata.util import ColorTable
         my_mcv = getStaticMcv()
         ctm = my_mcv.getColorTableManager()
         newct = ctm.getColorTable(ctName)
@@ -1848,6 +1867,23 @@ class _Layer(_JavaProxy):
         if transparency is not None:
             if (transparency > 100.0) or (transparency < 0.0):
                 raise ValueError('please specify transparency as a percent between 0 and 100')
+                
+            # using ColorTable.setTransparency(value) will alter the 
+            # transparency of the color table for all subsequent uses in the 
+            # current McV session! 
+            # 
+            # the long and short of it is:
+            #   display1Layer.setEnhancement('Temperature',range=(100,255),transparency=50)
+            #   display2Layer.setEnhancement('Temperature')
+            # will cause *display2Layer* to use the transparency that was set
+            # for *display1Layer*.
+            # 
+            # the workaround is to create a temporary copy of the color table,
+            # *without* adding it to the color table manager. the end result
+            # is that the copy is only used this one time, so we are free to
+            # modifiy its transparency as needed.
+            newct = ColorTable(newct)
+            
             # note, 0.0 should be fully opaque and 1.0 is transparent,
             # so we need to invert here. and, convert percent to 0.0-1.0 range.
             newct.setTransparency(1.0 - transparency/100.0)
@@ -2079,10 +2115,7 @@ class _Layer(_JavaProxy):
         if label is not None:
             label = str(label)  # convert to str if possible
             self._JavaProxy__javaObject.setDisplayListTemplate(label)
-            
-        self.setLayerLabelVisible(visible)
-        self._getDisplayWrapper().labelDict['visible'] = visible
-        
+                    
         if font is not None:
             self.setLayerLabelFont(fontName=font)
             
@@ -2095,7 +2128,11 @@ class _Layer(_JavaProxy):
         if color is not None:
             self.setLayerLabelColor(color)
             
-        self._JavaProxy__javaObject.getViewManager().updateDisplayList()
+        self.setLayerLabelVisible(visible)
+        self._getDisplayWrapper().labelDict['visible'] = visible
+        
+        # pause()
+        # self._refreshLayerList()
         
     @gui_invoke_later
     def getLayerVisible(self):
@@ -2142,7 +2179,9 @@ class _Layer(_JavaProxy):
         # self._JavaProxy__javaObject.getViewManager().setDisplayListColor(newColor)
         # self._JavaProxy__javaObject.setViewManagerDisplayListColor(newColor)
         self._JavaProxy__javaObject.setDisplayListColor(newColor, False)
+        self._JavaProxy__javaObject.setViewManagerDisplayListColor(newColor)
         self._getDisplayWrapper().labelDict['color'] = newColor
+        # self._JavaProxy__javaObject.applyColor()
         
     @gui_invoke_later
     def setLayerLabelFont(self, fontName=None, style=None, size=None):
@@ -2206,7 +2245,7 @@ class _Layer(_JavaProxy):
         
     @gui_invoke_later
     def setLayoutModel(self, model=None):
-        """Change the station layout model for the current layer.
+        """Change the layout model for the current layer.
         
         If the type of the given model is a string, this method will attempt to
         find the first StationModel object whose name is an exact match. If there
@@ -2219,7 +2258,7 @@ class _Layer(_JavaProxy):
         
         Optional Args:
             model: If provided, this can be a string value representing the name
-            of a station model or an actual StationModel object. Default behavior
+            of a layout model or an actual StationModel object. Default behavior
             is to use the StationModel object returned by defaultLayoutModel.
             
         Raises:
@@ -2242,9 +2281,9 @@ class _Layer(_JavaProxy):
             if match is not None:
                 model = match
             elif len(partialMatches) <= 0:
-                raise ValueError("Could not find an exact or partial match for station layout name '%s'. Call allLayoutModelNames for valid options." % (model))
+                raise ValueError("Could not find an exact or partial match for layout model name '%s'. Call allLayoutModelNames for valid options." % (model))
             elif len(partialMatches) > 1:
-                raise ValueError("Station layout name '%s' has no exact matches, and resulted in multiple partially matching station model layouts (%s). Please try a more specific name or call allLayoutModelNames for valid options." % (model, partialMatches))
+                raise ValueError("Layout model name '%s' has no exact matches, and resulted in multiple partially matching layout models (%s). Please try a more specific name or call allLayoutModelNames for valid options." % (model, partialMatches))
             else:
                 model = partialMatches[0]
         elif not isinstance(model, StationModel):
@@ -2270,9 +2309,10 @@ class _Layer(_JavaProxy):
             raise NotImplementedError('decluttering not support for this layer type')
             
         if not self._JavaProxy__javaObject.getDeclutter():
-            self._JavaProxy__javaObject.setDeclutter(True)
-            self._JavaProxy__javaObject.loadDataInThread()
-        
+            # self._JavaProxy__javaObject.setDeclutter(True)
+            # self._JavaProxy__javaObject.loadDataInThread()
+            self._JavaProxy__javaObject.updateDeclutter(True)
+            
     @gui_invoke_later
     def disableDeclutter(self):
         """Disable decluttering of value plot displays.
@@ -2288,8 +2328,23 @@ class _Layer(_JavaProxy):
             raise NotImplementedError('decluttering not support for this layer type')
             
         if self._JavaProxy__javaObject.getDeclutter():
-            self._JavaProxy__javaObject.setDeclutter(False)
-            self._JavaProxy__javaObject.loadDataInThread()
+            self._JavaProxy__javaObject.updateDeclutter(False)
+            
+    @gui_invoke_later
+    def setDeclutter(self, value):
+        """Set decluttering of value plot displays.
+        
+        Args:
+            value: Whether or not decluttering should be enabled.
+            
+        Raises:
+            NotImplementedError: if the underlying layer is not a 
+                                 ValuePlanViewControl.
+        """
+        if not isinstance(self._JavaProxy__javaObject, (ValuePlanViewControl, StationModelControl)):
+            raise NotImplementedError('decluttering not support for this layer type')
+            
+        self._JavaProxy__javaObject.updateDeclutter(value)
         
     @gui_invoke_later
     def isDeclutterEnabled(self):
@@ -2340,8 +2395,40 @@ class _Layer(_JavaProxy):
             raise NotImplementedError('decluttering not support for this layer type')
             
         if self._JavaProxy__javaObject.getDeclutterFilter() != filterFactor:
-            self._JavaProxy__javaObject.setDeclutterFilter(filterFactor)
-            self._JavaProxy__javaObject.loadDataInThread()
+            # self._JavaProxy__javaObject.setDeclutterFilter(filterFactor)
+            # self._JavaProxy__javaObject.loadDataInThread()
+            self._JavaProxy__javaObject.updateDensity(filterFactor)
+            
+    @gui_invoke_later
+    def isVerticalPositionFromAltitude(self):
+        if not isinstance(self._JavaProxy__javaObject, StationModelControl):
+            raise NotImplementedError('not supported for this layer type')
+            
+        return self._JavaProxy__javaObject.getShouldUseAltitude()
+        
+    @gui_invoke_later
+    def setUseAltitudeForVerticalPosition(self, useAltitude):
+        if not isinstance(self._JavaProxy__javaObject, StationModelControl):
+            raise NotImplementedError('not supported for this layer type')
+            
+        if useAltitude != self._JavaProxy__javaObject.getShouldUseAltitude():
+            self._JavaProxy__javaObject.updateVerticalPosition(useAltitude)
+            
+    @gui_invoke_later
+    def enableAltitudeForVerticalPosition(self):
+        if not isinstance(self._JavaProxy__javaObject, StationModelControl):
+            raise NotImplementedError('not supported for this layer type')
+            
+        if not self._JavaProxy__javaObject.getShouldUseAltitude():
+            self._JavaProxy__javaObject.updateVerticalPosition(True)
+            
+    @gui_invoke_later
+    def disableAltitudeForVerticalPosition(self):
+        if not isinstance(self._JavaProxy__javaObject, StationModelControl):
+            raise NotImplementedError('not supported for this layer type')
+            
+        if self._JavaProxy__javaObject.getShouldUseAltitude():
+            self._JavaProxy__javaObject.updateVerticalPosition(False)
             
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
@@ -2525,7 +2612,7 @@ def allColorTables():
     return [_ColorTable(colorTable) for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
     
 @gui_invoke_later
-def importColorTable(filename, name=None, category=None, overwrite=False):
+def importEnhancement(filename, name=None, category=None, overwrite=False):
     """Import color table using the given path.
     
     If the color table in question was exported from the Color Table Manager,
@@ -2563,7 +2650,7 @@ def importColorTable(filename, name=None, category=None, overwrite=False):
     if mcv:
         makeUnique = not overwrite
         ctm = mcv.getColorTableManager()
-        tables = ctm.processSpecial(filename, name, category)
+        tables = ctm.handleColorTable(filename, name, category)
         if tables:
             return _ColorTable(ctm.doImport(tables, makeUnique))
         else: 
@@ -2741,26 +2828,26 @@ def getProjection(name=''):
         raise ValueError("Couldn't find a projection named ", name, "; try calling 'projectionNames()' to get the available projection names.")
         
 def allLayoutModelNames():
-    """Return list of the available station model layout names."""
+    """Return list of the available layout model names."""
     return [str(stationModel.getName()) for stationModel in getStaticMcv().getStationModelManager().getStationModels()]
     
 def allLayoutModels():
-    """Return list of the available station model layout names."""
+    """Return list of the available layout model names."""
     return [stationModel for stationModel in getStaticMcv().getStationModelManager().getStationModels()]
     
 def defaultLayoutModelName():
-    """Return name of the default station model layout."""
+    """Return name of the default layout model."""
     return str(getStaticMcv().getStationModelManager().getDefaultStationModel().getName())
     
 def defaultLayoutModel():
-    """Return default station model layout."""
+    """Return default layout model."""
     return getStaticMcv().getStationModelManager().getDefaultStationModel()
     
 def _getLayoutModelByName(name):
-    """Find station model layouts by name.
+    """Find layout models by name.
     
     Args:
-        name: Name of the desired station model layout.
+        name: Name of the desired layout model.
     
     Returns:
         Tuple containing two elements. The first is either a StationModel

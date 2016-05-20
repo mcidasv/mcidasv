@@ -428,8 +428,22 @@ public class SupportForm extends JFrame {
         return new File(path).exists();
     }
     
+    /**
+     * Get path to McV log file
+     * @return
+     */
+    
     public String getLogPath() {
         return collector.getLogPath();
+    }
+    
+    /**
+     * Get path to McV prefs file
+     * @return
+     */
+    
+    public String getPrefsPath() {
+        return collector.getPrefsPath();
     }
     
     // TODO: dialogs are bad news bears.

@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Layout Model Editor</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('tools/LayoutModelEditor.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ColorTableEditor.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="AliasEditor.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Layout Model Editor</div>
+<p>The Layout Model Editor composes the model and style used to plot data on
+  a map from observations at discrete points (e.g., weather observations). This tool is used to edit existing models or to create new models.
+  The Layout Model Editor is opened with the <strong>Tools-&gt;Layout Model Template </strong> menu item in the Main Display window.</p>
+<ul class="childlist">
+  <li><a href="#create">Creating a Layout Model</a></li>
+  <li><a href="#edit">Editing a Layout Model</a></li>
+  <li><a href="#image2">Properties Dialog - Display Tab</a></li>
+  <li><a href="#image3">Properties Dialog - Color By Tab</a></li>
+  <li><a href="#image5">Properties Dialog - Scale Size Tab</a></li>
+  <li><a href="#image6">Properties Dialog - Rotate Tab</a></li>
+  <li><a href="#align">Alignment Toolbar</a></li>
+  <li><a href="#shapes">Properties Dialog - Shapes</a></li>
+  <li><a href="#menus">Menus</a></li>
+</ul>
+<a name="image1" id="image1"></a>
+<div class="images"><img src="images/StationLayoutEditor.png" alt="Image 1: Layout Model Editor"> <br>
+  <span class="caption">Image 1: Layout Model Editor</span></div>
+<div class="pagesubtitle">Creating a Layout Model<a name="create" id="create"></a></div>
+<p>Layout models can be created from scratch by utilizing the <strong>File-&gt;New</strong> menu option, or an existing layout model can be edited with the <strong>Layout Models</strong> menu. The display includes a horizontal and vertical line, which acts as a reference point for the location of the layout model with respect to the physical location of the observation (at the origin). The different shapes and features that can be added to the layout model are in the left panel. The shapes and features can be added to the layout model by left-clicking the item and then left-clicking at the desired location in the panel. Once in the Layout Model, individual components can be moved by left-clicking and dragging them. When an item is placed into the layout model, the <a href="#image2">Properties dialog</a> for the component will open. This Properties dialog can also be invoked by double-clicking on a shape.</p>
+<p>Each component of the layout model can be resized by dragging the black squares along the outside of the item. Multiple items can be aligned at once by holding down Shift and left-clicking on the items to move. Clicking on an item makes it active, and active items have black squares around them. Each item in the layout model also includes a red &quot;Alignment Point', which acts to locate the individual components of the  model with respect to the center point of the observation. The location of the Alignment Point to the item can be changed via the Alignment Point option in the menu when an item is right-clicked on<a href="#popup"></a>.</p>
+<p>When the mouse is held over a component of the layout model, the name of the item will be listed in the bottom bar of the Layout Model Editor. This can be useful if multiple <strong>Value</strong> fields are included in the layout model (temperature, dew point, etc.).</p>
+<p>To save a layout model, use the <strong>File-&gt;Save</strong> or <strong>File-&gt;Save As...</strong> menu items. When the layout model is saved, any point data displays or gridded value plot displays that are using it will be updated. To remove a model, use the <strong>File-&gt;Remove</strong> menu item. Layout models supplied with McIDAS-V cannot be removed, but user-created local models can be removed.</p>
+<div class="pagesubtitle">Editing a Layout Model<a name="edit" id="edit"></a></div>
+<p>There are many options that can be controlled for each individual component of the layout model. This menu is seen by right-clicking on an item.</p>
+<div class="images"><img src="images/StationModelMenu.gif" alt="Image 2: Editing a Layout Model Menu" width="163" height="189"><br>
+<span class="caption">Image 2: Editing a Layout Model Menu</span></div>
+<ul class=propertylist>
+<li class=propertylistitem><strong>Set Color -</strong> Sets the color of the selected item.</li>
+<li class=propertylistitem><strong>To Front -</strong> Moves the selected item in front of others that may overlap it.</li>
+<li class=propertylistitem><strong>To Back -</strong> Moves the selected item behind others that may overlap it.</li>
+<li class=propertylistitem><strong>Delete -</strong> Removes the selected item from the layout model display. The Delete key will also remove the item.</li>
+<li class=propertylistitem><strong>Hide -</strong> Grays out the component in the layout model, still leaving the object in the model, but not displaying it in the Main Display window.</li>
+<li class=propertylistitem><strong>Alignment Point -</strong> Sets the location of the Alignment Point with respect to the item. For example, NW would place the Alignment Point to the northwest (upper left) of the item. This is not an option when working with windbarbs or vectors</li>
+<li class=propertylistitem><strong>Center -</strong> Centers the display in both the horizontal and vertical, just in the horizontal, or just in the vertical.</li>
+<li class=propertylistitem><strong>Properties... -</strong> Opens the Properties Dialog described below. The Properties Dialog can also be invoked by double-clicking on a component of the layout model.</li>
+</ul>
+<p>The Properties window consists of four tabs: <strong>Display</strong>, <strong>Color By</strong>, <strong>Scale Size</strong>, and <strong>Rotate</strong>.</p>
+<div class="pagesubtitle">Properties Dialog - Display Tab<a name="image2" id="image2"></a></div>
+<p>The <strong>Display</strong> tab allows for assigning which observation variable is associated with that item. Numerical values should appear in a "Value" item, text in a "Text" item, etc. Note that the items in this tab may differ depending on the item.</p>
+<div class="images"><img src="images/StationModelPropertiesDisplay.gif" alt="Image 3: Display Tab of the Properties Dialog"><br>
+<span class="caption">Image 3: Display Tab of the Properties Dialog</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class=propertylist>
+<li class=propertylistitem><strong>Parameter -</strong> Represents what parameter the layout model item is displaying. This can be a single parameter, such as pressure, or it can be an equation. This is possible because the parameter identifiers in the layout model can hold embedded Jython code, and any parameter that begins with &quot;=&quot; is treated as a Jython expression. For example, &quot;=T-Td&quot; can be entered for dew point depression. This can also be formatted this as &quot;='Td:'+str(T-Td)&quot;. To format the result of the calculation using the format specifier from the properties dialog, then enter &quot;='Td:'+format(T-Td).</li>
+<li class=propertylistitem><strong>Unit -</strong> Determines the unit that the parameter will use in its display.</li>
+<li class=propertylistitem><strong>Format -</strong> Represents how the numerical value will be displayed. This can affect rounding. An example of how each format will appear is written in the 'ex:' next to the Format field<strong>.</strong> The <strong>0</strong> value will plot the actual numerical value of the data at that place in the number if it exists, and if not a 0 will be plotted at that place. The <strong>#</strong> value will plot the actual numerical value of the data at that place in the number if it exists, and if not it will leave it empty. For example, with a value of 998.5, different <strong>Formats</strong> would plot the value as:</li>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>###0.0# -</strong> plots as: 998.5</li>
+<li class="propertylistitem"><strong>0000.00 -</strong> plots as: 0998.50</li>
+</ul>
+<li class=propertylistitem><strong>Font -</strong> Sets the font of the item's text when displayed in the Main Display window.</li>
+<li class=propertylistitem><strong>Size -</strong> Sets the size of the item's text when displayed in the Main Display window.</li>
+<li class=propertylistitem><strong>Shown -</strong> Determines if the item will be shown as part of the layout model.</li>
+<li class=propertylistitem><strong>Foreground Color -</strong> Represents the color of the text/symbol.</li>
+<li class=propertylistitem><strong>Background Color -</strong> Sets a background color for the text/symbol if desired. A  <img src="images/Transparent.gif" alt="x" width="37" height="22"align=absmiddle> through this field is representative of a transparent background.</li>
+<li class=propertylistitem><strong>Scale Size By -</strong> Scales the size of the item with respect to other items in the layout model. The default value for this field is 1, meaning that all parameters in the layout model are scaled the same.</li>
+</ul>
+<div class="pagesubtitle">Properties Dialog - Color By Tab<a name="image3" id="image3"></a></div>
+<p> The <strong>Color By</strong> tab consists of two tabs within itself: <strong>Map Value Into Color Table</strong>, and <strong>Color From Parameter</strong>. This tab allows for specifying how to color the item in the layout model.</p>
+<p>The <strong>Map Value Into Color Table</strong> tab allows for coloring the parameter based off of its numerical value in relation to the set data range and color table for the parameter.</p>
+<div class="images"><img src="images/StationModelPropertiesColorBy.gif" alt="Image 4: Map Value Into Color Table Tab of the Color By Tab"> <br> 
+<span class="caption">Image 4: Map Value Into Color Table Tab of the Color By Tab</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class=propertylist>
+<li class=propertylistitem><strong>Map Value of -</strong> Sets the parameter used for coloring the displayed item. The <img src="../data/choosers/images/DownDown.gif" width="9" height="10" alt="Double down arrow"> to the right of this field allows for selecting a currently loaded field or an alias.</li>
+<li class=propertylistitem><strong>Data Range -</strong> Sets the numerical range of the parameter listed in the <strong>Map Value of</strong> field. This represents the end points for the color table.</li>
+<li class=propertylistitem><strong>Unit -</strong> Sets the unit of the parameter listed in the <strong>Map Value of</strong> field.</li>
+<li class=propertylistitem><strong>Color Table -</strong> Sets the color table of the parameter to be one of the already existing tables.</li>
+</ul>
+<p>For example, in the above image the Temperature parameter has been specified with data range -90 to 45 Celsius. For each display, McIDAS-V will find the Temperature value (e.g., 15 Celsius), convert it to the specified unit (if necessary), find where it lays within the range, and use the corresponding color from the color table to display the data in the Main Display window.</p>
+<a name="image4" id="image4"></a>
+<p>The <strong>Color From Parameter</strong> tab allows for specifying a parameter, a set of (regular expression) patterns, and a corresponding color. If the text value of the parameter matches one of the patterns then the given color is used to color the shape.</p>
+<div class="images"><img src="images/StationModelPropertiesColorFrom.gif" alt="Image 5: Color From Parameter Tab of the Color By Tab"> <br> 
+    <span class="caption">Image 5: Color From Parameter Tab of the Color By Tab</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class=propertylist>
+<li class=propertylistitem><strong>Get Color From -</strong> Selects a parameter or set of patterns that correspond to a color. The <img src="../data/choosers/images/DownDown.gif" width="9" height="10" alt="Double down arrow"> to the right of this field allows for selecting a currently loaded field or an alias.</li>
+<li class=propertylistitem><strong>Parameter Value - </strong> Represents a numerical, fixed value that will be colored by the color selected for each value. If specifying a range of values, they should be entered by minimum value, maximum value (for example: 250,273). Clicking <img src="images/Clear.gif" width="64" height="26" alt="Clear button"align="absmiddle"> will change any set color back to transparent. Pressing the <img src="images/Apply.gif" alt="Apply button" width="65" height="26"align=absmiddle> button will add two more Parameter Value fields once all other fields are filled.</li>
+</ul>
+<div class="pagesubtitle">Properties Dialog - Scale Size Tab<a name="image5" id="image5"></a></div>
+<p>The <strong>Scale Size</strong> tab allows for specifying a parameter to scale the shape by.  For each point display, McIDAS-V will find the value of the parameter, determine where that value lies within the data range, and find the corresponding scaling from the scale factor range.</p>
+<div class="images"><img src="images/StationModelPropertiesScaleBy.gif" alt="Image 6: Scale Size Tab of the Properties Dialog"> <br> 
+<span class="caption">Image 6: Scale Size Tab of the Properties Dialog</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class=propertylist>
+<li class=propertylistitem><strong>Scale By Parameter -</strong> Sets the parameter used to scale the data in the Main Display window. The <img src="../data/choosers/images/DownDown.gif" width="9" height="10" alt="Double down arrow"> to the right of this field allows for selecting a currently loaded field or an alias.</li>
+<li class=propertylistitem><strong>Data Range -</strong> Sets the numerical range of the parameter listed in the <strong>Map Value of</strong> field of the <strong>Color By</strong> tab.</li>
+<li class=propertylistitem><strong>Unit -</strong> Sets the unit of the parameter listed in the <strong>Scale By Parameter</strong> field.</li>
+<li class=propertylistitem><strong>Scale By Factor -</strong> Sets the range for which the scaling factor will be applied to the data.</li>
+</ul>
+<div class="pagesubtitle">Properties Dialog - Rotate Tab<a name="image6" id="image6"></a></div>
+<p>The <strong>Rotate About Axis</strong> tab works like the scale and color by facilities.  Note that the rotation is about the Z axis in X/Y/Z space. It is not a rotation in Lat/Lon space. All three tabs in the <strong>Rotate</strong> tab have the same fields.</p>
+<div class="images"><span class="pagesubtitle"><img src="images/StationModelPropertiesRotateBy.gif" alt="Image 7: Rotate About Tabs of the Rotate Tab"></span><br>
+<span class="caption">Image 7: Rotate About Tabs of the Rotate Tab</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class=propertylist>
+<li class=propertylistitem><strong>Rotate By Parameter -</strong> Sets the parameter used to rotate the data in the Main Display window. The <img src="../data/choosers/images/DownDown.gif" width="9" height="10" alt="Double down arrow"> to the right of this field allows for selecting a currently loaded field or an alias.</li>
+<li class=propertylistitem><strong>Data Range -</strong> Sets the numerical range of the parameter listed in the <strong>Map Value of</strong> field of the <strong>Color By</strong> tab.</li>
+<li class=propertylistitem><strong>Unit -</strong> Sets the unit of the parameter listed in the <strong>Scale By Parameter</strong> field.</li>
+<li class=propertylistitem><strong>Degrees -</strong> Sets the range of degrees for which the data will rote about each respective axis.</li>
+</ul>
+<div class="pagesubtitle">Alignment Toolbar<a name="align" id="align"></a></div>
+<p>At the top of the Layout Model Editor window, there is an alignment toolbar that allows for specifying the location of one item in a layout model model with respect to another. To align one item with respect to another, both items must be selected in the Layout Model Editor must be active. To activate multiple items, use Shift+left click on each item. </p>
+<div class="images"><img src="images/alignment.gif" width="194" height="27" alt="Alignment toolbar"></span><br>
+<span class="caption">Image 8: Alignment Toolbar</span></div>
+<ul class=propertylist>
+<li class=propertylistitem><strong><img src="images/alignTop.gif" width="20" height="18" alt="Align Top" align=absmiddle> -</strong> Shifts the selected items up vertically to align the top of the items. There is no horizontal shift.</li>
+<li class=propertylistitem><strong><img src="images/alignCenter.gif" width="20" height="18" alt="Align Center" align=absmiddle> -</strong> Shifts the selected items  vertically to align the middle point of the items. There is no horizontal shift.</li>
+<li class=propertylistitem><strong><img src="images/alignBottom.gif" width="23" height="19" alt="Align bottom" align=absmiddle> -</strong> Shifts the selected items down vertically to align the bottom of the items. There is no horizontal shift.</li>
+<li class=propertylistitem><strong><img src="images/alignLeft.gif" width="21" height="21" alt="Align Left" align=absmiddle> -</strong> Shifts the selected items left horizontally to align the left side of the two items. There is no vertical shift.</li>
+<li class=propertylistitem><strong><img src="images/alignMiddle.gif" width="21" height="20" alt="Align Middle" align=absmiddle> -</strong> Shifts the selected items horizontally to align the middle point of the items. There is no vertical shift.</li>
+<li class=propertylistitem><strong><img src="images/alignRight.gif" width="19" height="22" alt="Align Right" align=absmiddle> -</strong> Shifts the selected items right horizontally to align the right side of the two items. There is no vertical shift.</li>
+<li class=propertylistitem><strong><img src="images/spaceHorizontally.gif" width="21" height="17" alt="Space Horizontally" align=absmiddle> -</strong> Centers (horizontally) the item with respect to the shift made from a button on the left.</li>
+<li class=propertylistitem><strong><img src="images/spaceVertically.gif" width="15" height="22" alt="Space Vertically" align=absmiddle> -</strong> Centers (vertically) the item with respect to the shift made from a button on the left.</li>
+<li class=propertylistitem><strong><img src="images/snapToGrid.gif" width="23" height="22" alt="Snap To Grid" align=absmiddle> -</strong> Snaps the items to the grid.</li>
+</ul>
+<div class="pagesubtitle">Properties Dialog - Shapes<a name="shapes" id="shapes"></a></div>
+<p> Two items that can be added to the layout model whose Properties windows are significantly different than described above are <strong>Shape</strong> and <strong>Mapped Shape</strong>. These allow you to define numerical values of a parameter as a variety of different shapes.</p>
+<p>The Properties window of the <strong>Mapped Shape Symbol</strong> is shown below. The only tab that differs between the Properties of <strong>Mapped Shape Symbol</strong> and <strong>Shape</strong> and the Properties above is the<strong> Display</strong> tab. The <strong>Shape</strong> item does not include the <strong>Shape Mappings</strong> panel in the window below, so using <strong>Shape</strong>, all numerical values will be plotted with the same shape regardless of their value.</p>
+<div class="images"><img src="images/MappedShape.gif" width="590" height="548" alt="Image 9: Mapped Shape Properties"><br> 
+<span class="caption">Image 9: Mapped Shape Properties</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class=propertylist>
+<li class=propertylistitem><strong>Shape -</strong> Sets the shape that numerical values will be plotted as. This will be the shape of all of the values not included in the <strong>Shape Mappings</strong> panel below.</li>
+<li class=propertylistitem><strong>Shape Mappings -</strong> Allows for defining specific shapes to individual numerical values included with the data. The <strong>Value</strong> field is for the numerical values included in the data. This can be either an individual value (e.g. 6) or a range of values, which is represented by minValue, maxValue (e.g. 1,5). The <strong>Shape</strong> field next to <strong>Value</strong> is the shape that the values will take in the display. Note that the <strong>Values</strong> and <strong>Shapes</strong> in the <strong>Shape Mappings</strong> panel override the <strong>Shape</strong> field above.</li>
+<li class=propertylistitem><strong>Parameter -</strong> Represents what parameter the layout model item is displaying. This can be a single parameter, such as pressure, or it can be an equation. This is possible because the parameter identifiers in the layout model can hold embedded Jython code, and any parameter that begins with &quot;=&quot; is treated as a Jython expression. For example, &quot;=T-Td&quot; can be entered for dew point depression. This can also be formatted this as &quot;='Td:'+str(T-Td)&quot;. To format the result of the calculation using the format specifier from the properties dialog, then enter &quot;='Td:'+format(T-Td).</li>
+<li class=propertylistitem><strong>Unit -</strong> Determines the unit that the parameter will use in its display.</li>
+<li class=propertylistitem><strong>Shown -</strong> Determines if the item will be shown as part of the layout model.</li>
+<li class=propertylistitem><strong>Foreground Color -</strong> Sets the color of the shape(s).</li>
+<li class=propertylistitem><strong>Background Color -</strong> Sets a background color for the shape(s) if desired. A  <img src="images/Transparent.gif" alt="x" width="37" height="22"align=absmiddle> through this field is representative of a transparent background.</li>
+<li class=propertylistitem><strong>Scale Size By -</strong> Scales the size of the item with respect to other items in the layout model. The default value for this field is 1, meaning that all parameters in the layout model are scaled the same.</li>
+</ul>
+<p>For example, in the above image the Value parameter has been specified. From the <strong>Shape Mappings</strong> panel, values of 1-5 will display as a Minus, 6 will display as a Pin, 8 will display as a Filled Star, and 10 will display as a Square. All other values will display as a Filled Diamond, as set in the <strong>Shape</strong> field.</p>
+<!--<h4>Defining your own symbols</h4>
+<p>You can define new symbol types using an xml file plugin.  See <a href="stationsymbols.xml">here</a> for an example.</p>-->
+<div class="pagesubtitle">Menus<a name="menus" id="menus"></a></div>
+<p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are several options unique to this display.</p>
+<p>The <strong>File </strong>menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>New -</strong> Allows for the creation of a new layout model.</li>
+  <li class="propertylistitem"><strong>Save -</strong> Saves the layout model so that it can be used in McIDAS-V.</li>
+  <li class="propertylistitem"><strong>Save As... -</strong> Saves the layout model so that it can be used in McIDAS-V and allows for the changing of the name of the layout model.</li>
+  <li class="propertylistitem"><strong>Rename... -</strong> Opens a Rename Layout Model window that prompts for the layout model's new name.</li>
+  <li class="propertylistitem"><strong>Remove -</strong> Removes the currently open layout model.</li>
+  <li class="propertylistitem"><strong>Import... -</strong> Allows for importing a layout model as an IDV station model file (*.ism).</li>
+  <li class="propertylistitem"><strong>Export... -</strong> Allows for exporting a layout model as an IDV station model file (*.ism).</li>
+  <li class="propertylistitem"><strong>Close... -</strong> Closes the Layout Model Editor.</li>
+</ul>
+<p>The <strong>Edit</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Symbols -</strong> Lists the different symbols included in the layout model. Clicking on the symbol will bring up the Properties Dialog window for that symbol, allowing for modifications to be made to it.</li>
+  <li class="propertylistitem"><strong>Set properties on selected -</strong> Opens a Properties Dialog window for the active symbols in the Layout Model Editor. Active symbols are those that have black squares around them. The only items in this Properties Dialog window are only properties that can apply to all symbols in the layout model, such as the <strong>Data Range</strong>, <strong>Unit</strong>, and <strong>Color Table</strong>. Changing a property in this window will apply the change to all active symbols.</li>
+  <li class="propertylistitem"><strong>Cut -</strong> Removes the selected symbols from the layout model.</li>
+  <li class="propertylistitem"><strong>Copy -</strong> Copies the selected symbols from the layout model.</li>
+  <li class="propertylistitem"><strong>Paste -</strong> Pastes a symbols into the layout model.</li>
+  <li class="propertylistitem"><strong>Select All -</strong> Activates each individual symbol in the layout model so that cut/copy/paste can be applied to all of the symbols at once. When active, each symbol will have black squares around them.</li>
+  <li class="propertylistitem"><strong>To Front -</strong> Moves the selected item to the front of others that may overlap it.</li>
+  <li class="propertylistitem"><strong>To Back -</strong> Moves the selected item to the back of others that may overlap it.</li>
+</ul>
+<p>The <strong>View</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Show Alignment Points -</strong> Displays a red square representing where the symbol will be centered.</li>
+  <li class="propertylistitem"><strong>Zoom in -</strong> Zooms in on the layout model.</li>
+  <li class="propertylistitem"><strong>Zoom out -</strong> Zooms out on the layout model.</li>
+  <li class="propertylistitem"><strong>Zoom rest -</strong> Reverts back to original zoom level.</li>
+  <li class="propertylistitem"><strong>Grid -</strong> Adds horizontal/vertical grids to the layout model. Increase makes the grid size larger (fewer grids), and Decrease makes the grid size smaller (more grids).</li>
+  <li class="propertylistitem"><strong>Black background -</strong> Makes the background in the Layout Model Editor black, with white grids and gray axes lines.</li>
+  <li class="propertylistitem"><strong>White Background -</strong> Makes the background in the Layout Model Editor white, with gray grids and black axes lines. This is the default for the Layout Model Editor</li>
+</ul>
+<p>The <strong>Layout Models</strong> menu has these unique options:</p>
+<ul class="propertylist">
+  <li class="propertylistitem">This menu lists out all of the layout models included in McIDAS-V. Layout models that have been created by a user will include <strong>&lt;local&gt;</strong> after the name. When a layout model is selected, it will be brought into the Layout Model Editor where a user can modify the layout model.</li></ul>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ColorTableEditor.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="AliasEditor.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>

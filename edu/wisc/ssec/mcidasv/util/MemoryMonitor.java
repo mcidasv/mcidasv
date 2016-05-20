@@ -56,9 +56,9 @@ import ucar.unidata.util.Msg;
 // initial version taken verbatim from Unidata :(
 public class MemoryMonitor extends JPanel implements Runnable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** flag for running */
+    /** flag for running */
     private boolean running = false;
 
     /** sleep interval */
@@ -103,22 +103,25 @@ public class MemoryMonitor extends JPanel implements Runnable {
     private static double MEGABYTE = 1024 * 1024;
 
     /**
-     * Default constructor
+     * Default constructor.
      * 
-     * @param stateManager 
+     * @param stateManager Reference back to application session's 
+     *                     {@code StateManager}. Cannot be {@code null}.
      */
     public MemoryMonitor(StateManager stateManager) {
         this(stateManager, 75, 95, false);
     }
 
     /**
-     * Create a new MemoryMonitor
-     * 
-     * @param stateManager 
-     * @param percentThreshold the percentage of use memory before garbage
-     * collection is run.
-     * @param percentCancel 
-     * @param showClock 
+     * Create a new MemoryMonitor.
+     *
+     * @param stateManager Reference back to application session's 
+     *                     {@code StateManager}. Cannot be {@code null}.
+     * @param percentThreshold Percentage of use memory before garbage
+     *                         collection is run.
+     * @param percentCancel Not currently in use.
+     * @param showClock Whether or not the clock should be shown instead of 
+     *                  the memory monitor widget.
      * 
      */
     public MemoryMonitor(StateManager stateManager, final int percentThreshold, final int percentCancel, boolean showClock) {

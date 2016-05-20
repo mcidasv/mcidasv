@@ -243,10 +243,9 @@ public class EntryStore {
         Set<AddeEntry> userEntries = extractUserEntries(userResource);
         userEntries = removeDeletedSystemEntries(userEntries, systemEntries);
 
-        // inq 2202: shouldn't this order be reversed?
-        putEntries(trie, prefEntries);
-        putEntries(trie, userEntries);
         putEntries(trie, systemEntries);
+        putEntries(trie, userEntries);
+        putEntries(trie, prefEntries);
 
         saveEntries();
     }

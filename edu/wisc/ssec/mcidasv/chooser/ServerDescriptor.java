@@ -30,8 +30,7 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 
 /**
- * Class ServerDescriptor Holds the state of
- * server components from servers.xml
+ * Holds the state of server components from {@code servers.xml}.
  */
 public class ServerDescriptor {
 
@@ -48,9 +47,13 @@ public class ServerDescriptor {
     private String dataType;
 
     /**
-     * Constructor
+     * Create a new server descriptor object.
      *
-     *
+     * @param type Data type. Should be one of {@literal "image", "point",
+     *             "grid", "text", "nav"}.
+     * @param name ADDE server name.
+     * @param group ADDE group name.
+     * @param active {@code "true"} if this descriptor should be active.
      */
     public ServerDescriptor(String type, String name, String group, String active) {
         this.serverName = name;
@@ -62,16 +65,16 @@ public class ServerDescriptor {
     /**
      * Get the isActive property.
      *
-     * @return The isActive property.
+     * @return Value of the {@link #isActive} property.
      */
     public boolean getIsActive() {
         return this.isActive;
     }
 
     /**
-     * Get the data type
+     * Get the data type property.
      *
-     * @return The dataType property.
+     * @return Value of the {@link #dataType} property.
      */
     public String getDataType() {
         return this.dataType;
@@ -79,9 +82,13 @@ public class ServerDescriptor {
 
 
     /**
-     * Does this server contain data of specified type
+     * Determine whether or not this server supports data of the given type.
      *
-     * @return true or false.
+     * @param type Data type. Should be one of {@literal "image", "point",
+     *             "grid", "text", "nav"}.
+     *
+     * @return {@code true} if {@code type} is supported, {@code false}
+     *         otherwise.
      */
     public boolean isDataType(String type) {
         return this.dataType.equals(type);
@@ -90,7 +97,7 @@ public class ServerDescriptor {
     /**
      * Get the serverName property.
      *
-     * @return The serverName property.
+     * @return Value of the {@link #serverName} property.
      */
     public String getServerName() {
         return this.serverName;
@@ -100,7 +107,7 @@ public class ServerDescriptor {
     /**
      * Get the groupName property.
      *
-     * @return The groupName property.
+     * @return Value of the {@link #groupName} property.
      */
     public String getGroupName() {
         return this.groupName;
@@ -110,7 +117,7 @@ public class ServerDescriptor {
     /**
      * Set the isActive property.
      *
-     * @param newValue The new vaue for the isActive property.
+     * @param newValue The new vaue for the {@link #isActive} property.
      */
     public void setIsActive(boolean newValue) {
         this.isActive = newValue;
@@ -119,7 +126,7 @@ public class ServerDescriptor {
     /**
      * Set the dataType property.
      *
-     * @param newValue The new vaue for the dataType property.
+     * @param newValue The new vaue for the {@link #dataType} property.
      */
     public void setDataType(String newValue) {
         this.dataType = newValue;
@@ -128,7 +135,7 @@ public class ServerDescriptor {
     /**
      * Set the serverName property.
      *
-     * @param newValue The new vaue for the serverName property.
+     * @param newValue The new vaue for the {@link #serverName} property.
      */
     public void setServerName(String newValue) {
         this.serverName = newValue;
@@ -138,7 +145,7 @@ public class ServerDescriptor {
     /**
      * Set the groupName property.
      *
-     * @param newValue The new vaue for the groupName property.
+     * @param newValue The new vaue for the {@link #groupName} property.
      */
     public void setGroupName(String newValue) {
         this.groupName = newValue;
@@ -146,8 +153,10 @@ public class ServerDescriptor {
 
 
     /**
-     * Get a String representation of this object
-     * @return a string representation
+     * Get a String representation of this object.
+     *
+     * @return String representation that generally looks like {@literal
+     * "SERVERNAME/GROUPNAME"}.
      */
     public String toString() {
         StringBuffer buf = new StringBuffer();

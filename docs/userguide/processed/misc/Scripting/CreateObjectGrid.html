@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Create an Object - Grids</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/CreateObjectGrid.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="CreateObjectImagery.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="ModifyDisplayObject.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Create an Object - Grids</div>
+<p><strong><a name="loadGrid" id="loadGrid"></a>loadGrid -</strong> Loads local netCDF, hdf, and grib files.</p>
+<div class="OneTabIndent">Usage: <em>myData = loadGrid(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">filename=</td>
+      <td>directory path to local gridded file</td>
+    </tr>
+    <tr>
+      <td valign="top">field=</td>
+      <td>the short name of the field to load. A listing of field short names included in a file can be printed using <strong>listGridFieldsInFile</strong>.</td>
+    </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+        <tr>
+      <td width="95" valign="top">level=</td>
+      <td width="696">the vertical level and units to load. Default=&quot;All&quot;. A listing of vertical levels included with a field can be printed using <strong>listGridLevelsInField</strong>. Example: <em>level=&quot;1000 hPa&quot;</em></td>
+    </tr>
+        <tr>
+      <td valign="top">time=</td>
+      <td>the time to load. This can be an integer representing the index of time to be loaded (Default=0 for earliest time). A listing of times included with a field can be printed using <strong>listGridTimesInField</strong>. This can also be set as a date/time text string. Example: <em>time=&quot;2014-01-16 18:00:00 UTC&quot;</em></td>
+    </tr>
+        <tr>
+      <td valign="top">xStride=</td>
+      <td>integer value to reduce the resolution of display in the x-direction. Default=1 for full resolution. Higher values reduce the resolution.</td>
+    </tr>
+        <tr>
+      <td valign="top">yStride=</td>
+      <td>integer value to reduce the resolution of display in the y-direction. Default=1 for full resolution. Higher values reduce the resolution.</td>
+    </tr>
+        <tr>
+      <td valign="top">stride=</td>
+      <td>integer value to reduce the resolution of the display in the x and y-directions. Default=1 for full resolution. Higher values reduce the resolution.</td>
+    </tr>
+        <tr>
+      <td valign="top">xRange=</td>
+      <td> integer for geographically subsetting by grid indices in the x-direction. By default, no geographical subsetting is done. Example: <em>xRange=(0,80)</em></td>
+    </tr>
+        <tr>
+      <td valign="top">yRange=</td>
+      <td>integer for geographically subsetting by grid indices in the y-direction. By default, no geographical subsetting is done. Example: <em>yRange=(0,80)</em></td>
+    </tr>
+        </tr>
+        <tr>
+      <td valign="top">latLonBounds=</td>
+      <td>geographically subset by lat/lon bounds. By default, no subsetting is done. The expected format is (upper left lat, upper left, lon, lower right lat, lower right lon). Example: <em>latLonBounds=(50,-130,20,-65)</em></td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>t850 = loadGrid(filename='C:\\Users\\myUser\\gfs.grb',field='Temperature_Isobaric',level='850 hPa')</em></div>
+<div class="OneTabIndent">The data object returned from <strong>loadGrid</strong> contains a variety of key:value pairings with information about the data.  The list of keys may vary dependent on the type of data, but here is a general list of keys that may be included in the data object returned from <strong>loadGrid</strong> as well as example values:</div>
+<div class="TwoTabIndent"><table border="1">
+    <tr>
+      <td valign="top"><strong>Key</strong></td>
+      <td><strong>Example Value</strong></td>
+    <tr>
+      <td valign="top">globalAttributes</td>
+      <td>dictionary of all global attributes included with data</td>
+    </tr>
+        <tr>
+      <td valign="top">level</td>
+      <td>850.0</td>
+    </tr>
+        <tr>
+      <td valign="top">description</td>
+      <td>'Temperature @ Isobaric surface'</td>
+    </tr>
+        <tr>
+      <td valign="top">units</td>
+      <td>'K'</td>
+    </tr>
+        <tr>
+      <td valign="top">dataSourceName</td>
+      <td>file path or URL of data source</td>
+    </tr>
+        <tr>
+      <td valign="top">times</td>
+      <td>[2016-03-08T06:00:00Z]</td>
+    </tr>
+        <tr>
+      <td valign="top">filename</td>
+      <td>name of file or URL of data source</td>
+    </tr>
+        <tr>
+      <td valign="top">field</td>
+      <td>Temperature_isobaric</td>
+    </tr>
+        <tr>
+      <td valign="top">datatype</td>
+      <td>float</td>
+    </tr>
+        <tr>
+      <td valign="top">metadataVariables</td>
+      <td>dictionary of all metadata variables included with data</td>
+    </tr>
+        <tr>
+      <td valign="top">attributes</td>
+      <td>lists all of the attributes of the field/variable loaded</td>
+    </tr>
+        <tr>
+      <td valign="top">projection</td>
+      <td>projection information about the data</td>
+    </tr>
+        <tr>
+      <td valign="top">levels</td>
+      <td>[850]</td>
+    </tr>
+        <tr>
+      <td valign="top">info</td>
+      <td>'Temperature_isobaric K false Temperature @ Isobaric surface'</td>
+    </tr>
+        <tr>
+      <td valign="top">variableAttributes</td>
+      <td>lists all of the attributes of the field/variable loaded</td>
+    </tr>
+    </table></div>
+<div class="TwoTabIndent">These keys and values can be printed as follows:</div>
+<div class="ThreeTabIndent"><em>t850['description']</em></div>
+<div class="TwoTabIndent">The keys and values within one of the dictionary keys (globalAttributes or metadataVariables) can be printed as follows:</div>
+<div class="ThreeTabIndent"><em>t850['globalAttributes']</em></div>
+<div class="TwoTabIndent">An individual value of one of the keys in globalAttributes or metadataVariables can be printed as follows</div>
+<div class="ThreeTabIndent"><em>t850['globalAttributes']['file_format']</em></div>
+<div class="TwoTabIndent">A practical use for these key:value parings would be to apply it to a layer label.  This example adds the description key to the layer label along with the %timestamp% macro:</div>
+<div class="ThreeTabIndent"><em>layer.setLayerLabel(t850['description']+' %timestamp%')</em></div>
+<p><strong><a name="listGridFields" id="listGridFields"></a>listGridFieldsInFile -</strong> Lists the fields in a file brought in with <strong>loadGrid</strong>. The output is <em>shortname ; longname</em></p>
+<div class="OneTabIndent">Usage: <em>myData = listGridFieldsInFile(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">filename=</td>
+      <td>directory path to local gridded file</td>
+    </tr>
+    </table></div>
+    <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>listGridFieldsInFile(filename='C:\\Users\\myUser\\gfs.grb')</em></div>
+<p><strong><a name="listFieldLevels" id="listFieldLevels"></a>listGridLevelsInField -</strong> Lists the vertical levels included in a field of a <strong>loadGrid</strong> file</p>
+<div class="OneTabIndent">Usage: <em>myData = listGridLevelsInField(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">filename=</td>
+      <td>directory path to local gridded file</td>
+    </tr>
+        <tr>
+      <td valign="top">field=</td>
+      <td>the short name of the field to list levels of. A listing of field short names included in a file can be printed using <strong>listGridFieldsInFile</strong></td>
+    </tr>
+    </table></div>
+    <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>listGridLevelsInField(filename='C:\\Users\\myUser\\gfs.grb',field='Temperature_Isobaric')</em></div>
+<p><strong><a name="listFieldTimes" id="listFieldTimes"></a>listGridTimesInField -</strong> Lists the times included in a field of a <strong>loadGrid</strong> file</p>
+<div class="OneTabIndent">Usage: <em>myData = listGridTimesInField(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">filename=</td>
+      <td>directory path to local gridded file</td>
+    </tr>
+        <tr>
+      <td valign="top">field=</td>
+      <td>the short name of the field to list times of. A listing of field short names included in a file can be printed using <strong>listGridFieldsInFile</strong></td>
+    </tr>
+    </table></div>
+    <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>listGridTimesInField(filename='C:\\Users\\myUser\\gfs.grb',field='Temperature_Isobaric')</em></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="CreateObjectImagery.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="ModifyDisplayObject.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>

@@ -239,6 +239,9 @@ public class AddeImageChooser extends AddeChooser implements
     protected JLabel archiveDayLabel;
     protected JButton archiveDayBtn;
 
+//    protected JLabel allImagesLabel;
+    protected JButton allImagesButton;
+
     /** Maps the PROP_ property name to the gui component */
     private Hashtable propToComps = new Hashtable();
 
@@ -396,7 +399,14 @@ public class AddeImageChooser extends AddeChooser implements
                 "/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
                 true);
         archiveDayBtn.setToolTipText("Select a day for archive datasets");
-        archiveDayLabel = new JLabel("Select day:");
+        archiveDayLabel = new JLabel("Select Day");
+
+        allImagesButton = GuiUtils.getImageButton("/auxdata/ui/icons/calendar_edit.png", AddeImageChooser.class);
+        allImagesButton = new JButton("List All Images");
+        GuiUtils.makeMouseOverBorder(allImagesButton);
+        allImagesButton.addActionListener(e -> readTimes(true));
+        allImagesButton.setToolTipText("Fetch all available images");
+//        allImagesLabel = new JLabel("List All");
 
         this.addeDefaults = getImageDefaults();
     }
@@ -561,7 +571,7 @@ public class AddeImageChooser extends AddeChooser implements
     @Override protected void readFromServer() {
         archiveDay = null;
         if (archiveDayLabel != null) {
-            archiveDayLabel.setText("Select day:");
+            archiveDayLabel.setText("Select Day");
         }
         readSatBands();
         super.readFromServer();
@@ -600,7 +610,7 @@ public class AddeImageChooser extends AddeChooser implements
                 String cmd = ae.getActionCommand();
                 if (cmd.equals(GuiUtils.CMD_REMOVE)) {
                     archiveDay = null;
-                    archiveDayLabel.setText("Select day:");
+                    archiveDayLabel.setText("Select Day");
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 } else if (cmd.equals(GuiUtils.CMD_OK)) {
@@ -1070,18 +1080,7 @@ public class AddeImageChooser extends AddeChooser implements
      * Set the relative and absolute extra components.
      */
     @Override protected JPanel makeTimesPanel() {
-        JPanel timesPanel = super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
-
-        // Make a new timesPanel that has extra components tacked on the bottom, inside the tabs
-        Component[] comps = timesPanel.getComponents();
-
-        if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
-            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
-            timesCardPanelExtra.add(new JPanel(), "relative");
-            timesCardPanelExtra.add(getExtraTimeComponent(), "absolute");
-            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
-        }
-        return timesPanel;
+        return super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
     }
 
     /**
@@ -1089,8 +1088,11 @@ public class AddeImageChooser extends AddeChooser implements
      * 
      * @return a widget for selecing the day
      */
-    @Override protected JComponent getExtraTimeComponent() {
-        return McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
+    @Override protected JComponent getExtraAbsoluteTimeComponent() {
+        JPanel rightPanel = McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
+//        JPanel leftPanel = McVGuiUtils.makeLabeledComponent(allImagesLabel, allImagesButton);
+        JPanel panel = GuiUtils.leftRight(allImagesButton, rightPanel);
+        return panel;
     }
 
     /**
@@ -1255,9 +1257,13 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Read the set of image times available for the current server/group/type
      * This method is a wrapper, setting the wait cursor and wrapping the call
-     * to {@link #readTimesInner()}; in a try/catch block
+     * to {@link #readTimesInner(boolean)}; in a try/catch block
      */
     @Override public void readTimes() {
+        readTimes(false);
+    }
+
+    public void readTimes(boolean forceAll) {
         clearTimesList();
         if (!canReadTimes()) {
             return;
@@ -1267,7 +1273,7 @@ public class AddeImageChooser extends AddeChooser implements
                 updateStatus();
                 showWaitCursor();
                 try {
-                    readTimesInner();
+                    readTimesInner(forceAll);
                     checkSetNav();
                 } catch (Exception e) {
                     handleConnectionError(e);
@@ -1294,9 +1300,12 @@ public class AddeImageChooser extends AddeChooser implements
      * Set the list of dates/times based on the image selection
      * 
      */
-    protected void readTimesInner() {
+    protected void readTimesInner(boolean forceAll) {
         String descriptor = getDescriptor();
-        String pos = (getDoAbsoluteTimes() || (archiveDay != null)) ? "all" : "0";
+        String archivePosition = forceAll ? "all" : "-99";
+        String pos = (getDoAbsoluteTimes() || (archiveDay != null))
+                      ? archivePosition
+                      : "0";
 
         StringBuffer addeCmdBuff = getGroupUrl(REQ_IMAGEDIR, getGroup());
         String id = getSelectedStation();

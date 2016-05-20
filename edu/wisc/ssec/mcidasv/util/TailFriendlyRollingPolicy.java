@@ -117,7 +117,8 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
      *
      * @param src Path to the file to be copied. Cannot be {@code null}.
      * @param target Path to the destination file. Cannot be {@code null}.
-     * @throws RolloverFailure
+     * 
+     * @throws RolloverFailure if copying failed.
      */
     public void renameByCopying(String src, String target)
         throws RolloverFailure

@@ -162,12 +162,11 @@ fi
 
 # Get the version and amount of system memory
 echo "Reading system configuration..."
-# SYS_VER=`"${JAVA_BIN}" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2>/dev/null`
-SYS_MEM=`"${JAVA_BIN}" -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
-echo "sys mem: ${SYS_MEM}"
 
 # We have system memory, so try to set heap size if a percent was requested
 if [ ${HEAP_PERCENT} -gt 0 ]; then
+  SYS_MEM=`"${JAVA_BIN}" -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+  echo "sys mem: ${SYS_MEM}"
   if [ ${SYS_MEM} -gt 0 ]; then
     HEAP_SIZE=$(( ${SYS_MEM} * ${HEAP_PERCENT} / 100 ))
     HEAP_SIZE="${HEAP_SIZE}M"
@@ -256,7 +255,7 @@ else
 fi
 
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dpython.security.respectJavaAccessibility=false"
-MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} -DtextureWidthMax=${TEXTURE_SIZE}"
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -DtextureWidthMax=${TEXTURE_SIZE}"
 
 ################################################################################
 # OS specific settings
@@ -299,27 +298,7 @@ fi
 MCV_FLAGS="${MCV_FLAGS} -userpath \"${MCV_USERPATH}\" ${USE_LAYOUT_BUNDLE} ${DEFAULT_BUNDLE}"
 echo "mcv flags: ${MCV_FLAGS}"
 
-# Clean the log
-# if [ -f "${MCV_LOG}" ]; then
-#   LINES=`wc -l "${MCV_LOG}" 2>/dev/null | awk '{print $1}' 2>/dev/null`
-#   if [ "${LINES}" = "" ]; then
-#     LINES=0
-#   fi
-#   MCV_TEMP="${MCV_USERPATH}/mcidasv.tmp"
-#   if [ ${LINES} -gt ${MCV_LOG_LINES} ]; then
-#     tail -${MCV_LOG_LINES} "${MCV_LOG}" > "${MCV_TEMP}"
-#     rm -f "${MCV_LOG}" && mv "${MCV_TEMP}" "${MCV_LOG}"
-#   fi
-# fi
-
 MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
-
-# # Log this session
-# echo "################" >>"${MCV_LOG}"
-# date >>"${MCV_LOG}"
-# echo "${SYS_VER}" >>"${MCV_LOG}"
-# echo "${SYS_MEM} MB system memory" >>"${MCV_LOG}"
-# echo "Command line: ${JAVA_BIN} ${JAVA_FLAGS} -classpath ${MCV_CLASSPATH} -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
 
 # Run it
 # "${JAVA_BIN}" ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1

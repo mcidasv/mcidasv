@@ -297,10 +297,17 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      */
     private void setServer(String s) {
         datasetList = new ArrayList();
-        serverUrl   = s;
+        serverUrl = s;
         try {
-            List collections = getRadarCollections(serverUrl);
-            GuiUtils.setListData(collectionSelector, collections);
+            datasetList = getRadarCollections(serverUrl);
+            GuiUtils.setListData(collectionSelector, datasetList);
+            for (int i = 0; i < datasetList.size(); i++) {
+                TwoFacedObject obj = (TwoFacedObject) datasetList.get(i);
+                String tmpStr = (String) (obj.getLabel());
+                if ((tmpStr).contains("NEXRAD Level II Radar from IDD")) {
+                    collectionSelector.setSelectedIndex(i);
+                }
+            }
         } catch (Exception e) {
             GuiUtils.setListData(collectionSelector, new ArrayList());
         }

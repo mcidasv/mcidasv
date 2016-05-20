@@ -34,6 +34,8 @@ import visad.Set;
 import visad.RealTupleType;
 import visad.RealType;
 import visad.Gridded3DSet;
+import visad.GriddedSet;
+import visad.Gridded3DDoubleSet;
 
 
 public class ProfileAlongTrack3D extends MultiDimensionAdapter {
@@ -70,9 +72,6 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
     int vert_idx = adapter2D.getVertIdx();
     int track_idx = adapter2D.getTrackIdx();
 
-    float[] lonValues = null;
-    float[] latValues = null;
-
     String lonArrayName = (String)getMetadata().get(ProfileAlongTrack.longitude_name);
     String latArrayName = (String)getMetadata().get(ProfileAlongTrack.latitude_name);
 
@@ -104,11 +103,6 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
       stride[0] = (int) track_coords[2];
     }
 
-    if (reader.getArrayType(lonArrayName) == Float.TYPE ) {
-      lonValues = reader.getFloatArray(lonArrayName, start, count, stride);
-      latValues = reader.getFloatArray(latArrayName, start, count, stride);
-    }
-
     int vert_len = (int) ((vert_coords[1] - vert_coords[0])/vert_coords[2] + 1f);
     int track_len = count[track_idx];
 
@@ -117,10 +111,28 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
       altitudes[k] = vertLocs[(int)vert_coords[0] + k*((int)vert_coords[2])];
     }
 
-    float[][] alt_lon_lat = new float[3][vert_len*track_len];
-    oneD_threeDfill(lonValues, latValues, track_len, altitudes, vert_len, alt_lon_lat);
+    GriddedSet domainSet = null;
 
-    return new Gridded3DSet(domain3D, alt_lon_lat, vert_len, track_len);
+    if (reader.getArrayType(lonArrayName) == Float.TYPE ) {
+      float[] lonValues = reader.getFloatArray(lonArrayName, start, count, stride);
+      float[] latValues = reader.getFloatArray(latArrayName, start, count, stride);
+      float[][] alt_lon_lat = new float[3][vert_len*track_len];
+      oneD_threeDfill(lonValues, latValues, track_len, altitudes, vert_len, alt_lon_lat);
+      domainSet = new Gridded3DSet(domain3D, alt_lon_lat, vert_len, track_len);
+    }
+    else if (reader.getArrayType(lonArrayName) == Double.TYPE) {
+      double[] lonValues = reader.getDoubleArray(lonArrayName, start, count, stride);
+      double[] latValues = reader.getDoubleArray(latArrayName, start, count, stride);
+      double[][] alt_lon_lat = new double[3][vert_len*track_len];
+      double[] altsDbl = new double[altitudes.length];
+      for (int i=0; i<altsDbl.length; i++) {
+         altsDbl[i] = (double) altitudes[i];
+      }
+      oneD_threeDfillDbl(lonValues, latValues, track_len, altsDbl, vert_len, alt_lon_lat);
+      domainSet = new Gridded3DDoubleSet(domain3D, alt_lon_lat, vert_len, track_len);
+    }
+
+    return domainSet;
   }
   
 
@@ -151,5 +163,18 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
        }
      }
    }
+
+  public static void oneD_threeDfillDbl(double[] b, double[] c, int leny, double[] a, int lenx, double[][] abc) {
+    int cnt = 0;
+    for (int i=0; i<leny; i++) {
+      for (int j=0; j<lenx; j++) {
+        abc[0][cnt] = b[i];
+        abc[1][cnt] = c[i];
+        abc[2][cnt] = a[j];
+        cnt++;
+       }
+     }
+   }
+
 
 }

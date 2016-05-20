@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Modify the Layer Object - Point</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/ModifyPointLayerObject.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ModifyLayerObject.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="DataAnalysis.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Modify the Layer Object - Point</div>
+<p><strong><a name="setLayoutModel" id="setLayoutModel"></a>setLayoutModel -</strong></strong> Sets the layout model used in the display</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setLayoutModel(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">model=</td>
+      <td>name of layout model to use in the display. The full directory structure to the layout model must be specified.</td>
+    </tr>
+</table></div>
+<div class="ThreeTabIndent"></div>
+<div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.setLayoutModel(model='Observations&gt;Temperature'</em>)</div>
+<p><strong><a name="setDeclutter" id="setDeclutter"></a>setDeclutter -&nbsp;</strong>Enables or disables decluttering of the layer in the display<br>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setDeclutter(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+<tr>
+  <td valign="top">value =</td>
+  <td>sets if decluttering is enabled or disabled for the layer<br>
+  True - declutters the layer (default)<br> 
+  False - plots every point of data without decluttering
+</td></tr></table></div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.setDeclutter(value=True)</em></div>
+<p><strong><a name="setDeclutterFilter" id="setDeclutterFilter"></a>setDeclutterFilter -</strong> Sets the level of decluttering used for the layer if setDeclutter is set to True</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setDeclutterFilter(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+<tr>
+<td>filterFactor =</td>
+<td>numerical value for level of decluttering to use in the display. This is a value between 0 and 1, where 0 is the maximum level of decluttering and 1 is the maximum level of decluttering. default=0</td></tr></table></div>
+<div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.setDeclutterFilter(filterFactor=0.5</em>)</div>
+<p><strong><a name="setUseAltitudeForVerticalPosition" id="setUseAltitudeForVerticalPosition"></a>setUseAltitudeForVerticalPosition
+    -</strong> Toggles between displaying the data at the data's altitude (if available) or at a constant vertical position</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer.setUseAltitudeForVerticalPosition(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">useAltitude=</td>
+      <td>sets if the display plots at the altitude of the data or at a constant vertical position<br>
+      True - displays the layer at the altitude of the data (if available) (default)<br>
+      False - displays the layer at a constant vertical position, defined by setVerticalPosition()</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setUseAltitudeForVerticalPosition(useAltitude=False)</em></div>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ModifyLayerObject.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="DataAnalysis.html">Go
+        to Next</a><!-- InstanceEndEditable -->] </span></p>
+</div>
+</body>
+<!-- InstanceEnd -->
+</html>

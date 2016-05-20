@@ -188,6 +188,9 @@ public class Submitter extends BackgroundTask<String> {
         if (form.canSendLog()) {
             parts.add(buildRealFilePart("form_data[att_log]", form.getLogPath()));
         }
+        
+        // tack on the contents of runMcV.prefs
+        parts.add(buildRealFilePart("form_data[att_prefs]", form.getPrefsPath()));
 
         Part[] arr = parts.toArray(new Part[0]);
         MultipartRequestEntity mpr = new MultipartRequestEntity(arr, method.getParams());

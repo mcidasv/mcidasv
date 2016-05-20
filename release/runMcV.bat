@@ -144,12 +144,7 @@ SET USE_LAYOUT_BUNDLE=
 
 SET LOGBACK_CONFIG="%MCV_USERPATH%\logback.xml"
 
-REM Get the amount of system memorys
-echo Reading system configuration...
-SET /a SYS_MEM=0
-FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
-
-SET MCV_FLAGS=-J-Didv.3d=%ENABLE_3D% -J-Didv.sysmem=%SYS_MEM% -J-Dvisad.java3d.textureNpot=%ALLOW_NPOT% -J-Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -J-Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -J-DtextureWidthMax=%TEXTURE_SIZE% -userpath "%MCV_USERPATH%"
+SET MCV_FLAGS=-J-Didv.3d=%ENABLE_3D% -J-Dvisad.java3d.textureNpot=%ALLOW_NPOT% -J-Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -J-Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -J-DtextureWidthMax=%TEXTURE_SIZE% -userpath "%MCV_USERPATH%"
 
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF NOT DEFINED STARTUP_BUNDLE GOTO endbundle
@@ -191,6 +186,10 @@ set HEAP_SIZE=%HEAP_SIZE%M
 GOTO goodheap
 
 :percentheap
+REM Get the amount of system memory
+echo Reading system configuration...
+SET /a SYS_MEM=0
+FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT% && GOTO goodheap
 set HEAP_PERCENT=%HEAP_SIZE:~0,-1%
 set /a HEAP_SIZE=%SYS_MEM% * %HEAP_PERCENT% / 100

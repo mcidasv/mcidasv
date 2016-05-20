@@ -31,25 +31,21 @@ package edu.wisc.ssec.mcidasv;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
-import edu.wisc.ssec.mcidasv.data.GpmIosp;
-import edu.wisc.ssec.mcidasv.util.pathwatcher.DirectoryWatchService;
-import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
-import edu.wisc.ssec.mcidasv.util.pathwatcher.SimpleDirectoryWatchService;
-import org.bushe.swing.event.EventBus;
-import org.slf4j.bridge.SLF4JBridgeHandler;
-
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
@@ -71,11 +67,6 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
-import edu.wisc.ssec.mcidasv.util.SystemState;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventSubscriber;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import ucar.nc2.NetcdfFile;
@@ -106,9 +97,18 @@ import ucar.unidata.xml.XmlDelegateImpl;
 import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlUtil;
 
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.annotation.AnnotationProcessor;
+import org.bushe.swing.event.annotation.EventSubscriber;
+
+import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
+import edu.wisc.ssec.mcidasv.data.GpmIosp;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
@@ -128,7 +128,11 @@ import edu.wisc.ssec.mcidasv.ui.LayerAnimationWindow;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.SystemState;
 import edu.wisc.ssec.mcidasv.util.WebBrowser;
+import edu.wisc.ssec.mcidasv.util.pathwatcher.DirectoryWatchService;
+import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
+import edu.wisc.ssec.mcidasv.util.pathwatcher.SimpleDirectoryWatchService;
 
 @SuppressWarnings("unchecked")
 public class McIDASV extends IntegratedDataViewer {
@@ -1681,6 +1685,14 @@ public class McIDASV extends IntegratedDataViewer {
     public static void main(String[] args) throws Exception {
         startTime = System.nanoTime();
 
+        // the following two lines are required if we want to embed JavaFX
+        // widgets into McV (which is Swing). The first line initializes the
+        // JavaFX runtime, and the second line allows the JavaFX runtime to
+        // hang around even if there are no JavaFX windows.
+        // TODO(jon): commenting out for now
+        // JFXPanel dummy = new JFXPanel();
+        // Platform.setImplicitExit(false);
+
         try {
             applyArgs(args);
 
@@ -1748,7 +1760,12 @@ public class McIDASV extends IntegratedDataViewer {
         }
 
         removeSessionFile(SESSION_FILE);
+
+        // shut down javafx runtime
+        // Platform.exit();
+
         logger.info("Exiting McIDAS-V @ {}", new Date());
+
         System.exit(exitCode);
     }
 

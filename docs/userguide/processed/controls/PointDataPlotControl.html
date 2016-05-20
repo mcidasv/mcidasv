@@ -32,7 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/PointDat
 <div class="pagetitle">Point Data Plot Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.stationmodelcontrol">
 <div class="pagesubtitle">Overview</div>
-<p>The Point Data Plot Control displays a set of observations using a station model.
+<p>The Point Data Plot Control displays a set of observations using a layout model.
 This control is accessed by selecting the Point Data field and the Point Data Plot display. The control window consists of four tabs: <strong>Layout</strong>, <strong>Times</strong>, <strong>Plot</strong>, and <strong>Filters</strong>.</p>
 <ul>
   <li>  <a href="#layout">Layout</a></li>
@@ -53,8 +53,8 @@ This control is accessed by selecting the Point Data field and the Point Data Pl
     display changed when navigating in the Main Display window.</li>
   <li class="propertylistitem"><strong>Density -</strong> Changes how dense the display of stations is in the Main Display window
     when the decluttering option is selected. This option will not be available if the decluttering option is not selected, as all of the stations will then be displayed.</li>
-  <li class="propertylistitem"><strong>Layout Model -</strong> Sets the layout model that will be used to display the data. This can be one of the native layout models included with McIDAS-V, or a user-made layout model. Click on the downward facing blue arrows <img src="images/DownBlueArrows.gif" alt="Double down arrow" width="13" height="13" align=absmiddle  > to change the layout model. Selecting <strong>Edit</strong> will open the <a href="../tools/StationModelEditor.html">Station Model
-      Editor</a> which will allow you to create your own custom station model.</li>
+  <li class="propertylistitem"><strong>Layout Model -</strong> Sets the layout model that will be used to display the data. This can be one of the native layout models included with McIDAS-V, or a user-made layout model. Click on the downward facing blue arrows <img src="images/DownBlueArrows.gif" alt="Double down arrow" width="13" height="13" align=absmiddle  > to change the layout model. Selecting <strong>Edit</strong> will open the <a href="../tools/LayoutModelEditor.html">Layout Model
+      Editor</a> which will allow you to create your own custom layout model.</li>
   <li class="propertylistitem"><strong>Scale -</strong> Sets the size of the layout model displayed in the Main Display window.</li>
   <li class="propertylistitem"><strong>Line Width -</strong> Sets the thickness of the layout model displayed in the Main Display window.</li>
   <li class="propertylistitem"><strong>Vertical Position -</strong> Sets the vertical positioning of the layout model with respect to other variables being displayed. The Altitude option will set the vertical position of the layout models based off of the stations' altitudes (if this information is available through the data source). The Fixed Position option will uniformly set a fixed vertical position for each layout model regardless of altitude. The value for a fixed position can be set using the slider or entering a value into the field and pressing Enter.</li>
@@ -100,15 +100,15 @@ This control is accessed by selecting the Point Data field and the Point Data Pl
 <ul class="propertylist">
   <li class="propertylistitem"><img src="images/ApplyFilters.gif" alt="Apply Filters button" width="103" height="26" align=absmiddle> <strong> -</strong> Applies any set filters to the data displayed in the Main Display window.
   <li class="propertylistitem"><strong>Filters Enabled -</strong> Enables filters to be applied to the data in the Main Display window.
-  <li class="propertylistitem"><strong>Match all of the filters -</strong> Displays only station models that correspond with every chosen filter.
-  <li class="propertylistitem"><strong>Match any of the filters - </strong>Displays any station models that correspond with one or more of the chosen filters.
+  <li class="propertylistitem"><strong>Match all of the filters -</strong> Displays only layout models that correspond with every chosen filter.
+  <li class="propertylistitem"><strong>Match any of the filters - </strong>Displays any layout models that correspond with one or more of the chosen filters.
   <li class="propertylistitem"><strong>Property -</strong> Represents the variable or property that you want to filter.
   <li class="propertylistitem"><strong>Middle Dropdown Menu -</strong> Represents the mathematical symbol that determines your filter. This can be greater than, less than, equal to, not equal to, etc.
   <li class="propertylistitem"><strong>Value -</strong> Specifies the numerical value that the mathematical symbol in the middle dropdown menu will utilize.</ul>
 <p>As an example, the above image
       shows two filter expressions, one that states the Temperature <strong>Property</strong> needs
       to be greater that 35 F and the other states that the Wind Speed value needs
-  to be greater than 15. The unit of [F] is entered for the Temperature <strong>Property</strong>. If you do not define a unit after the value, then McIDAS-V will utilize the native unit for the Property. <strong>Match all of the filters</strong> is selected, meaning only station models where the Temperature is greater than 35 degrees F and the wind speed is greater than 15 will be plotted in the Main Display window.</p>
+  to be greater than 15. The unit of [F] is entered for the Temperature <strong>Property</strong>. If you do not define a unit after the value, then McIDAS-V will utilize the native unit for the Property. <strong>Match all of the filters</strong> is selected, meaning only layout models where the Temperature is greater than 35 degrees F and the wind speed is greater than 15 will be plotted in the Main Display window.</p>
 <div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are some options that are unique to this display.</p>
 <p>The <strong>File</strong> menu has these unique options:</p>
@@ -119,8 +119,8 @@ This control is accessed by selecting the Point Data field and the Point Data Pl
 </ul>
 <p>The <strong>Edit</strong> menu has this unique option:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Layout Model... -</strong> Opens the <a href="../tools/StationModelEditor.html"> Station Model
-      Editor</a> which will allow you to create your own custom station model.</li>
+  <li class="propertylistitem"><strong>Layout Model... -</strong> Opens the <a href="../tools/LayoutModelEditor.html"> Layout Model
+      Editor</a> which will allow you to create your own custom layout model.</li>
 </ul>
 <p>The <strong>View</strong> menu has these unique options:</p>
 <ul class="propertylist">

@@ -706,6 +706,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * 
      * @param info WindowInfo to use with creating the new window.
      * @param merge Merge created things into an existing window?
+     * @param mergeLayers Whether or not layers should be merged.
+     * @param fromCollab Whether or not this is in response to a 
+     *                   {@literal "collaboration"} event.
      */
     public void makeBundledDisplays(final WindowInfo info, final boolean merge, final boolean mergeLayers, final boolean fromCollab) {
         // need a way to get the last active view manager (for real)
@@ -1604,7 +1607,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * @see ucar.unidata.util.MenuUtil#makeMenuItem(String, Object, String, Object)
+     * {@inheritDoc}
      */
     public static JMenuItem makeMenuItem(String label, Object obj, 
         String method, Object arg) 
@@ -1613,7 +1616,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * @see ucar.unidata.util.MenuUtil#makeMenu(String, List)
+     * {@inheritDoc}
      */
     @SuppressWarnings("unchecked")
     public static JMenu makeMenu(String name, List menuItems) {
@@ -2045,8 +2048,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
+     * Add tab navigation {@link JMenuItem JMenuItems} to the given 
+     * {@code menu}.
      * 
-     * @param menu
+     * @param menu Menu to which tab navigation menu items should be added. 
+     *             Cannot be {@code null}.
      */
     private void makeTabNavigationMenu(final JMenu menu) {
         if (!didInitActions) {
@@ -2463,16 +2469,19 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * 
      * @param vm The ViewManager whose ComponentHolder is needed.
      * 
-     * @return Either null or the ComponentHolder.
+     * @return Either {@code null} or the {@code ComponentHolder}.
      */
     public ComponentHolder getViewManagerHolder(ViewManager vm) {
         return viewManagers.get(vm);
     }
 
     /**
-     * Disassociate a given ViewManager from its ComponentHolder.
+     * Disassociate a given {@code ViewManager} from its 
+     * {@code ComponentHolder}.
      * 
-     * @return The associated ComponentHolder.
+     * @param vm {@code ViewManager} to disassociate.
+     * 
+     * @return The associated {@code ComponentHolder}.
      */
     public ComponentHolder removeViewManagerHolder(ViewManager vm) {
         ComponentHolder holder = viewManagers.remove(vm);
@@ -2483,28 +2492,34 @@ public class UIManager extends IdvUIManager implements ActionListener {
     /**
      * Overridden to keep the dashboard around after it's initially created.
      * Also give the user the ability to show a particular tab.
+     * 
      * @see ucar.unidata.idv.ui.IdvUIManager#showDashboard()
      */
-    @Override
-    public void showDashboard() {
+    @Override public void showDashboard() {
         showDashboard("");
     }
 
     /**
-     * Creates the McVViewPanel component that shows up in the dashboard.
+     * Creates the {@link McIDASVViewPanel} component that shows up in the 
+     * dashboard.
+     * 
+     * @return McIDAS-V specific view panel.
      */
-    @Override
-    protected ViewPanel doMakeViewPanel() {
+    @Override protected ViewPanel doMakeViewPanel() {
         ViewPanel vp = new McIDASVViewPanel(idv);
         vp.getContents();
         return vp;
     }
 
     /**
-     * @return A map of skin ids to their index within the skin resource.
+     * Build a mapping of {@literal "skin"} IDs to their indicies within skin
+     * resources.
+     * 
+     * @return Map of skin ids to their index within the skin resource.
      */
     private Map<String, Integer> readSkinIds() {
-        XmlResourceCollection skins = getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN);
+        XmlResourceCollection skins = 
+            getResourceManager().getXmlResources(IdvResourceManager.RSC_SKIN);
         Map<String, Integer> ids = new HashMap<>(skins.size());
         for (int i = 0; i < skins.size(); i++) {
             String id = skins.getProperty("skinid", i);
@@ -2534,7 +2549,11 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Method to do the work of showing the Data Explorer (nee Dashboard)
+     * Method to do the work of showing the Data Explorer (nee Dashboard).
+     * 
+     * @param tabName Name of the tab that should be made active. 
+     *                Cannot be {@code null}, but empty {@code String} values 
+     *                will not change the active tab.
      */
     @SuppressWarnings("unchecked") // IdvWindow.getWindows only adds IdvWindows.
     public void showDashboard(String tabName) {
@@ -3606,6 +3625,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /**
      * Estimate the number of megabytes that will be used by this data selection
+     * 
+     * @param dcd Data control dialog containing the data selection whose size
+     *            we'd like to estimate. Cannot be {@code null}.
+     *            
+     * @return Rough estimate of the size (in megabytes) of the 
+     * {@code DataSelection} within {@code dcd}.
      */
     protected int getEstimatedMegabytes(DataControlDialog dcd) {
         int estimatedMB = 0;
@@ -3777,7 +3802,14 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * Using this constructor allows McIDAS-V to control whether or not a
          * HttpFormEntry performs line wrapping for JTextArea components.
          * 
-         * @see HttpFormEntry#HttpFormEntry(int, String, String, String, int, int, boolean)
+         * @param wrap Whether or not line wrapping should be enabled.
+         * @param type Type of this entry
+         * @param name Name
+         * @param label Label
+         * @param value Initial value
+         * @param rows Number of rows.
+         * @param cols Number of columns.
+         * @param required Whether or not the entry will be required.
          */
         public FormEntry(boolean wrap, int type, String name, String label, String value, int rows, int cols, boolean required) {
             super(type, name, label, value, rows, cols, required);
@@ -3790,6 +3822,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         /**
          * Overrides the IDV method so that the McIDAS-V support request form
          * will wrap lines in the "Description" field.
+         * 
+         * @param guiComps List to which this instance should be added.
          */
         @SuppressWarnings("unchecked")
         @Override public void addToGui(List guiComps) {
@@ -3813,6 +3847,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
          * local to this class. 
          * Hijacks any value requests so that the local {@code component}
          * field is queried, not the IDV's.
+         * 
+         * @return Contents of form.
          */
         @Override public String getValue() {
             if (type != HttpFormEntry.TYPE_AREA) {
@@ -3901,6 +3937,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         /**
          * Returns the label to use as a brief description of this style.
+         * 
+         * @return Description of style (suitable for a label).
          */
         public String getLabel() {
             return label;
@@ -3908,6 +3946,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         /**
          * Returns the action command associated with this style.
+         * 
+         * @return This style's {@literal "action command"}.
          */
         public String getAction() {
             return action;
@@ -3915,6 +3955,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
         /**
          * Returns the dimensions of icons used in this style.
+         * 
+         * @return Dimensions of this style's icons.
          */
         public int getSize() {
             return size;
@@ -3923,6 +3965,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
         /**
          * Returns {@link #size} as a {@link String} to make cooperating with
          * the IDV preferences code easier.
+         * 
+         * @return String representation of this style's icon dimensions.
          */
         public String getSizeAsString() {
             return sizeAsString;
