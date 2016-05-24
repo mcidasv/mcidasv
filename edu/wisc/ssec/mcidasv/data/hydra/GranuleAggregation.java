@@ -481,7 +481,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   if (notDisplayable) continue;
 			   
 			   // adjust in-track dimension if needed (scans were cut)
-			   int cutScans = granCutScans.get(ncIdx);
+			   int cutScans = 0;
+			   if (! granCutScans.isEmpty()) {
+			       cutScans = granCutScans.get(ncIdx);
+			   } else {
+			       granCutScans.put(ncIdx, new Integer(0));
+			   }
 			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] - cutScans;
 			   
 			   // XXX TJJ - can below block go away?  Think so...
@@ -672,7 +677,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // this part is a little tricky - set the values for each granule we need to access for this read
 	   for (int i = 0; i < granuleSpan; i++) {
-           inTrackTotal += vGranuleLengths[loGranuleId+i];
+           inTrackTotal += vGranuleLengths[loGranuleId+i] + granCutScans.get(i);
 		   for (int j = 0; j < dimensionCount; j++) {
 			   // for all indeces other than the in-track index, the numbers match what was passed in
 			   if (j != vInTrackIndex) {
@@ -683,13 +688,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   // for the in-track index, it's not so easy...
 				   // for first granule, start is what's passed in
 				   if (i == 0) {
-					   startSet[i][j] = start[j] - (inTrackTotal - vGranuleLengths[loGranuleId]);
-				   } else {
-					   startSet[i][j] = (inTrackTotal - start[j]) % stride[j];
-					   // TJJ Sep 2013, zero-base starts that offset into subsequent granules
-					   if (startSet[i][j] > 0) {
-						   startSet[i][j]--;
-					   }
+					   startSet[i][j] = start[j];
+				   } else {  
+				       startSet[i][j] = 
+                          ((inTrackTotal - (vGranuleLengths[loGranuleId + i] + granCutScans.get(i))) % stride[j]);
 				   }
                    
 				   // counts may be different for start, end, and middle granules
@@ -709,7 +711,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   // or is this the first of multiple granules...
 					   } else {
 						   if ((inTrackTotal - start[j]) < (count[j] * stride[j])) {	
-                               countSet[i][j] = inTrackTotal - start[j];
+                               countSet[i][j] = inTrackTotal - granCutScans.get(i) - start[j];
 						   } else {
 							   countSet[i][j] = count[j] * stride[j];
 						   }
@@ -718,7 +720,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   } else {
 					   // middle granules
 					   if (i < (granuleSpan - 1)) {
-						   countSet[i][j] = vGranuleLengths[loGranuleId+i];
+						   countSet[i][j] = vGranuleLengths[loGranuleId+i] - startSet[i][j];
 						   countSubtotal += countSet[i][j];
 					   } else {
 						   // the end granule
@@ -798,11 +800,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   Array subarray = single.section(rangeList);
 					   totalLength += subarray.getSize();
 					   arrayList.add(subarray);
-					   logger.debug("Size of final data array: " + subarray.getSize());
+					   logger.debug("Size of cut sub array: " + subarray.getSize());
 
 				   } else {
 					   Array subarray = var.read(rangeList);
 					   totalLength += subarray.getSize();
+					   logger.debug("Size of reg sub array: " + subarray.getSize());
 					   arrayList.add(subarray);
 				   }
 				   
@@ -825,6 +828,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   else {
 		   outType = java.lang.Float.TYPE;
 	   }
+	   logger.debug("Creating aggregated array, totalLength: " + totalLength);
 	   Object o = java.lang.reflect.Array.newInstance(outType, totalLength);
            
 	   int destPos = 0;
@@ -833,7 +837,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   for (Array a : arrayList) {
 		   if (a != null) {
 			   Object primArray = a.copyTo1DJavaArray();
-			   primArray = processArray(mapName, array_name, arrayType, granIdx, primArray, rngProcessor, start, count);
+			   primArray = processArray(
+			      mapName, array_name, arrayType, granIdx, primArray, rngProcessor, start, count
+			   );
 			   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
 			   destPos += a.getSize();
 		   }
