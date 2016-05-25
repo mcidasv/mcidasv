@@ -355,25 +355,6 @@ public class ImageChooser extends AddeImageChooser implements Constants {
     }
 
     /**
-     * Set the relative and absolute extra components.
-     */
-    @Override protected JPanel makeTimesPanel() {
-        JPanel timesPanel = super.makeTimesPanel(false, true, true);
-
-        // Make a new timesPanel that has extra components tacked on the
-        // bottom, inside the tabs
-        Component[] comps = timesPanel.getComponents();
-
-        if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
-            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
-            timesCardPanelExtra.add(new JPanel(), "relative");
-            timesCardPanelExtra.add(getExtraTimeComponent(), "absolute");
-            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
-        }
-        return timesPanel;
-    }
-
-    /**
      * User said go, we go. Simply get the list of images from the Image Chooser
      * and create the {@code ADDE.IMAGE} data source.
      */
