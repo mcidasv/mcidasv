@@ -35,6 +35,7 @@ import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.KeyStroke.getKeyStroke;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.IllegalComponentStateException;
@@ -1080,18 +1081,12 @@ public class AddeImageChooser extends AddeChooser implements
      * Set the relative and absolute extra components.
      */
     @Override protected JPanel makeTimesPanel() {
-        return super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
-    }
-
-    /**
-     * Get the time popup widget
-     * 
-     * @return a widget for selecing the day
-     */
-    @Override protected JComponent getExtraAbsoluteTimeComponent() {
-        JPanel rightPanel = McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
-//        JPanel leftPanel = McVGuiUtils.makeLabeledComponent(allImagesLabel, allImagesButton);
-        JPanel panel = GuiUtils.leftRight(allImagesButton, rightPanel);
+        JPanel panel =
+            super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
+        JPanel rightPanel =
+            McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
+        underTimelistPanel.add(BorderLayout.WEST, allImagesButton);
+        underTimelistPanel.add(BorderLayout.EAST, rightPanel);
         return panel;
     }
 
