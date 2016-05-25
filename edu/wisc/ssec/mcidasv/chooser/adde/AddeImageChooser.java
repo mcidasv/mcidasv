@@ -400,10 +400,10 @@ public class AddeImageChooser extends AddeChooser implements
 
         allImagesButton = new JButton("List All Images");
         allImagesButton.addActionListener(e -> readTimes(true));
-        allImagesButton.setToolTipText("<html>By default, the last 100 times" +
-            " are listed.<br/><br/>Clicking this button will ask the server " +
-            "for ALL relevant times.<br/>This may take a while for datasets " +
-            "with many times.</html>");
+        allImagesButton.setToolTipText("<html>By default, up to the 100 most " +
+            "recent times are listed.<br/><br/>Clicking this button will ask " +
+            "the server for ALL relevant times.<br/>This may take awhile for" +
+            " datasets with many times.</html>");
 //        allImagesLabel = new JLabel("List All");
 
         this.addeDefaults = getImageDefaults();
