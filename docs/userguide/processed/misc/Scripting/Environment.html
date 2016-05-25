@@ -126,6 +126,25 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
 If the enhancement specified in the filename keyword of importEnhancement() was originally exported from McIDAS-V, then the name and category keywords will be set from the values that already exist in the enhancement file.</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>importEnhancement(filename='C:\\Users\\myuser\\cape.xml', name='CAPE', category='Severe')</em></div>
+<p><strong><a name="see" id="see"></a>see( ) -</strong> Inspects an object passed through the function and prints out a list of different functions that can be used on the object.</p>
+<div class="OneTabIndent">
+    Usage: <em>setLogLevel(keywords)</em>
+</div>
+<div class="OneTabIndent">Keywords:</div>
+<div class="TwoTabIndent"><table class="noborder">
+<tr>
+      <td valign="top">obj=</td>
+      <td>data or layer object passed through the function. The returned functions can be applied on the obj object.</td>
+    </tr>
+<tr>
+      <td valign="top">pattern=</td>
+      <td>filters the list of commands returned from the function. Wildcards (*) can be used.</td>
+    </tr></table></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">If the obj keyword is omitted, the command will list all of the functions and packages that can be used in the current session.</div>
+<div class="OneTabIndent">Examples:</div>
+<div class="TwoTabIndent"><em>see(obj=data,pattern='.get*')</em></div>
+<div class="ThreeTabIndent">Returns a list of functions beginning with &quot;.get&quot; that can be applied on the data object.</div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

@@ -42,6 +42,13 @@ is brought up with the <strong>Tools-&gt;Formulas-&gt;Jython Shell</strong> menu
   entry field goes up and down through the history of commands when you are in single-line input. If you are using multi-line input, use Ctrl+P, Ctrl+N&nbsp;to cycle through previously-executed commands.</p>
 <p>After a command has been evaluated, the command will be listed above the Evaluate field. To the right of the command, there are two buttons. The <img src="images/DownArrow.gif" width="18" height="18" alt="Down Arrow button"align="absmiddle"> button enters the formula back into the Evaluate field without evaluating it. The <img src="images/ReEval.gif" width="17" height="18" alt="Reevaluate button"align="absmiddle"> button reevaluates the previously entered command without having to manually reenter it.</p>
 <p>The Jython Shell window includes syntax highlighting, which colors   different parts of the text in different colors. For example, strings   will be pink and comments specified with a pound symbol (<em>#</em>) will be green. This syntax highlighting is only available in multi-line input mode. When in multi-line input mode, pressing enter will restore the indentation of the previously-entered line. For example, when setting up the addeParms dictionary in the image above, when Enter was pressed after line three, the indentation of four spaces was automatically applied for line four.</p>
+<p>Print statements are not needed in the Jython Shell to output information when a single line of code is being evaluated. Below are a couple of examples:</p>
+<ul class="propertylist">
+  <li class="propertylistitem">Command: 2+6</li>
+  <li class="propertylistitem">Output: 8</li>
+  <li class="propertylistitem">Command: layer.getEnhancementTable()</li>
+  <li class="propertylistitem">Output: Inverse Gray shade</li>
+</ul>
 <p>Right-clicking in the entry field brings up a menu that allows for:</p>
 <ul class="propertylist">
   <li class="propertylistitem">Adding an entry from the history.</li>
