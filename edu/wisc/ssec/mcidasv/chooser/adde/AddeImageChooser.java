@@ -236,11 +236,9 @@ public class AddeImageChooser extends AddeChooser implements
     /** Holds the properties */
     private JPanel propPanel;
 
-    /** archive day button and label */
-    protected JLabel archiveDayLabel;
+    /** Archive day selector button. */
     protected JButton archiveDayBtn;
 
-//    protected JLabel allImagesLabel;
     protected JButton allImagesButton;
 
     /** Maps the PROP_ property name to the gui component */
@@ -396,17 +394,16 @@ public class AddeImageChooser extends AddeChooser implements
 //        AnnotationProcessor.process(this);
         addDescComp(loadButton);
 
-        archiveDayBtn = GuiUtils.makeImageButton(
-                "/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
-                true);
+        archiveDayBtn = new JButton("Select Day");
+        archiveDayBtn.addActionListener(e -> getArchiveDay());
         archiveDayBtn.setToolTipText("Select a day for archive datasets");
-        archiveDayLabel = new JLabel("Select Day");
 
-        allImagesButton = GuiUtils.getImageButton("/auxdata/ui/icons/calendar_edit.png", AddeImageChooser.class);
         allImagesButton = new JButton("List All Images");
-        GuiUtils.makeMouseOverBorder(allImagesButton);
         allImagesButton.addActionListener(e -> readTimes(true));
-        allImagesButton.setToolTipText("Fetch all available images");
+        allImagesButton.setToolTipText("<html>By default, the last 100 times" +
+            " are listed.<br/><br/>Clicking this button will ask the server " +
+            "for ALL relevant times.<br/>This may take a while for datasets " +
+            "with many times.</html>");
 //        allImagesLabel = new JLabel("List All");
 
         this.addeDefaults = getImageDefaults();
@@ -571,8 +568,8 @@ public class AddeImageChooser extends AddeChooser implements
      */
     @Override protected void readFromServer() {
         archiveDay = null;
-        if (archiveDayLabel != null) {
-            archiveDayLabel.setText("Select Day");
+        if (archiveDayBtn != null) {
+            archiveDayBtn.setText("Select Day");
         }
         readSatBands();
         super.readFromServer();
@@ -611,13 +608,13 @@ public class AddeImageChooser extends AddeChooser implements
                 String cmd = ae.getActionCommand();
                 if (cmd.equals(GuiUtils.CMD_REMOVE)) {
                     archiveDay = null;
-                    archiveDayLabel.setText("Select Day");
+                    archiveDayBtn.setText("Select Day");
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 } else if (cmd.equals(GuiUtils.CMD_OK)) {
                     try {
                         archiveDay = picker.getUserSelectedDay();
-                        archiveDayLabel.setText(archiveDay);
+                        archiveDayBtn.setText(archiveDay);
                     } catch (Exception e) {
                     }
                     // System.out.println("archiveDay = " + archiveDay);
@@ -642,7 +639,7 @@ public class AddeImageChooser extends AddeChooser implements
                     if (stroke.getKeyCode() == KeyEvent.VK_ENTER) {
                         try {
                             archiveDay = picker.getUserSelectedDay();
-                            archiveDayLabel.setText(archiveDay);
+                            archiveDayBtn.setText(archiveDay);
                         } catch (Exception ex) {
                             // nothing to do
                         }
@@ -1083,10 +1080,8 @@ public class AddeImageChooser extends AddeChooser implements
     @Override protected JPanel makeTimesPanel() {
         JPanel panel =
             super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
-        JPanel rightPanel =
-            McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
         underTimelistPanel.add(BorderLayout.WEST, allImagesButton);
-        underTimelistPanel.add(BorderLayout.EAST, rightPanel);
+        underTimelistPanel.add(BorderLayout.EAST, archiveDayBtn);
         return panel;
     }
 
