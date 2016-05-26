@@ -6061,7 +6061,7 @@
                 <string><![CDATA[ABI Cloud Mask]]></string>
             </property>
             <property name="Category">
-                <string><![CDATA[Satellite>Legacy>GOES-R]]></string>
+                <string><![CDATA[Satellite>GOES-R]]></string>
             </property>
             <property name="Table">
                 <array class="[F" length="4">
@@ -6157,7 +6157,7 @@
                 <string><![CDATA[ABI Cloud Type]]></string>
             </property>
             <property name="Category">
-                <string><![CDATA[Satellite>Legacy>GOES-R]]></string>
+                <string><![CDATA[Satellite>GOES-R]]></string>
             </property>
             <property name="Table">
                 <array class="[F" length="4">
@@ -6205,7 +6205,7 @@
                 <string><![CDATA[ABI Ozone (GOES Sounder legacy)]]></string>
             </property>
             <property name="Category">
-                <string><![CDATA[Satellite>Legacy>GOES-R]]></string>
+                <string><![CDATA[Satellite>GOES-R]]></string>
             </property>
             <property name="Table">
                 <array class="[F" length="4">
@@ -6859,7 +6859,7 @@
                 <string><![CDATA[ABI TPW/Soundings]]></string>
             </property>
             <property name="Category">
-                <string><![CDATA[Satellite>Legacy>GOES-R]]></string>
+                <string><![CDATA[Satellite>GOES-R]]></string>
             </property>
             <property name="Table">
                 <array class="[F" length="4">
@@ -11074,7 +11074,7 @@
                 </array>
             </property>
             <property name="Category">
-                <string><![CDATA[Satellite>Legacy>GOES-R]]></string>
+                <string><![CDATA[Satellite>GOES-R]]></string>
             </property>
             <property name="Range">
                 <object class="ucar.unidata.util.Range">
@@ -11129,7 +11129,7 @@
                 </array>
             </property>
             <property name="Category">
-                <string><![CDATA[Satellite>Legacy>GOES-R]]></string>
+                <string><![CDATA[Satellite>GOES-R]]></string>
             </property>
             <property name="Range">
                 <object class="ucar.unidata.util.Range">
