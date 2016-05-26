@@ -1248,8 +1248,16 @@
 
     <!-- Make the installers with install4j -->
     <target name="installers" description="Make the installers with install4j">
-        <exec dir="${release.dir}" executable="${install4jc.bin}">
-            <arg line="mcidasv.install4j" />
+        <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
+            <arg value="mcidasv.install4j" />
+        </exec>
+    </target>
+    
+    <target name="exe_installers" description="TEMPORARY FOR APPSIGN_WINDOWS BRANCH">
+        <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
+            <arg value="--build-ids=8509,8430" />
+            <arg value="--destination=${dist.dir}" />
+            <arg value="mcidasv.install4j" />
         </exec>
     </target>
 
