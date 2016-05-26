@@ -244,7 +244,10 @@
     </launcher>
   </launchers>
   <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
-    <customCode />
+    <customCode>
+      <file location="${compiler:MCVDIR}/dist/install4j-custom-code/PropertiesPreferences.class" />
+      <file location="${compiler:MCVDIR}/dist/install4j-custom-code/PropertiesPreferencesFactory.class" />
+    </customCode>
     <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
       <commentFiles />
       <customAttributes />
@@ -1429,10 +1432,10 @@ To configure ${compiler:sys.fullName}, open a terminal and type:
       <installerScript mode="3" file="">
         <content>mkdir -p $HOME/.java/.userPrefs
 mkdir -p $HOME/.java/.systemPrefs
-mkdir -p $app_java_home/.systemPrefs
 
 chmod -R 755 $HOME/.java
-export JAVA_OPTS="-Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs"</content>
+
+INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs -Djava.util.prefs.PreferencesFactory=PropertiesPreferencesFactory"</content>
       </installerScript>
     </unixInstaller>
     <unixInstaller name="Linux 64-bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-amd64-1.8.0_45.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
@@ -1468,10 +1471,10 @@ export JAVA_OPTS="-Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.use
       <installerScript mode="3" file="">
         <content>mkdir -p $HOME/.java/.userPrefs
 mkdir -p $HOME/.java/.systemPrefs
-mkdir -p $app_java_home/.systemPrefs
 
 chmod -R 755 $HOME/.java
-export JAVA_OPTS="-Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs"</content>
+
+INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs -Djava.util.prefs.PreferencesFactory=PropertiesPreferencesFactory"</content>
       </installerScript>
     </unixInstaller>
     <unixInstaller name="Generic Unix (no JRE)" id="59" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
@@ -1508,10 +1511,10 @@ export JAVA_OPTS="-Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.use
       <installerScript mode="3" file="">
         <content>mkdir -p $HOME/.java/.userPrefs
 mkdir -p $HOME/.java/.systemPrefs
-mkdir -p $app_java_home/.systemPrefs
 
 chmod -R 755 $HOME/.java
-export JAVA_OPTS="-Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs"</content>
+
+INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs -Djava.util.prefs.PreferencesFactory=PropertiesPreferencesFactory"</content>
       </installerScript>
     </unixInstaller>
     <macosFolder name="Mac OS X" id="12" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="macosx-amd64-1.8.0_45_unpacked" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
@@ -1720,15 +1723,13 @@ export JAVA_OPTS="-Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.use
       <includedDownloadableComponents />
     </windows>
   </mediaSets>
-  <buildIds buildAll="true">
+  <buildIds buildAll="false">
     <mediaSet refId="3" />
     <mediaSet refId="7557" />
     <mediaSet refId="59" />
     <mediaSet refId="12" />
     <mediaSet refId="8" />
     <mediaSet refId="7720" />
-    <mediaSet refId="8515" />
-    <mediaSet refId="8423" />
     <mediaSet refId="8509" />
     <mediaSet refId="8430" />
   </buildIds>

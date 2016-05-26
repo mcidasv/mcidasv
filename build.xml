@@ -1247,18 +1247,34 @@
     </target>
 
     <!-- Make the installers with install4j -->
-    <target name="installers" description="Make the installers with install4j">
+    <target name="installers" depends="installer_custom_code" description="Make the installers with install4j">
         <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
             <arg value="mcidasv.install4j" />
         </exec>
     </target>
-    
+
     <target name="exe_installers" description="TEMPORARY FOR APPSIGN_WINDOWS BRANCH">
         <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
             <arg value="--build-ids=8509,8430" />
             <arg value="--destination=${dist.dir}" />
             <arg value="mcidasv.install4j" />
         </exec>
+    </target>
+
+    <!-- This builds a preferences store that will not generate tons of
+         warnings for Linux users attempting to install McV. This stuff
+         is only applicable to the Linux (and generic unix) installers. -->
+    <target name="installer_custom_code" description="Build Install4J custom prefs store.">
+        <echo>Building install4j custom code...</echo>
+        <mkdir dir="${dist.dir}/install4j-custom-code"/>
+        <javac fork="true"
+               srcdir="${release.dir}/install4j-custom-code"
+               destdir="${dist.dir}/install4j-custom-code"
+               source="1.7"
+               deprecation="${deprecation.flag}"
+               includeantruntime="false">
+            <compilerarg value="-Xlint:-options" />
+        </javac>
     </target>
 
     <!-- Zip up McIDAS-V JARs. mcidasv-tiny.zip contains only local-idv.jar  -->
