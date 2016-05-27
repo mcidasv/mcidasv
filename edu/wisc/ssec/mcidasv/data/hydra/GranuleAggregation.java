@@ -45,7 +45,6 @@ import ucar.ma2.DataType;
 import ucar.ma2.Index;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.Range;
-
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
@@ -617,6 +616,8 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // pull out a representative variable so we can determine which index is in-track
 	   Variable vTmp = varMapList.get(0).get(array_name);
+	   logger.trace("");
+	   logger.trace("Working on var: " + array_name);
 	   int vInTrackIndex = getInTrackIndex(vTmp);
 	   
 	   int loGranuleId = 0;
@@ -677,7 +678,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // this part is a little tricky - set the values for each granule we need to access for this read
 	   for (int i = 0; i < granuleSpan; i++) {
-           inTrackTotal += vGranuleLengths[loGranuleId+i] + granCutScans.get(i);
+           inTrackTotal += vGranuleLengths[loGranuleId+i];
 		   for (int j = 0; j < dimensionCount; j++) {
 			   // for all indeces other than the in-track index, the numbers match what was passed in
 			   if (j != vInTrackIndex) {
@@ -691,7 +692,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   startSet[i][j] = start[j];
 				   } else {  
 				       startSet[i][j] = 
-                          ((inTrackTotal - (vGranuleLengths[loGranuleId + i] + granCutScans.get(i))) % stride[j]);
+                          ((inTrackTotal - (vGranuleLengths[loGranuleId + i])) % stride[j]);
+				       // if there is a remainder, need to offset stride - remainder into next gran
+				       if (startSet[i][j] != 0) startSet[i][j] = stride[j] - startSet[i][j];
 				   }
                    
 				   // counts may be different for start, end, and middle granules
@@ -711,7 +714,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   // or is this the first of multiple granules...
 					   } else {
 						   if ((inTrackTotal - start[j]) < (count[j] * stride[j])) {	
-                               countSet[i][j] = inTrackTotal - granCutScans.get(i) - start[j];
+                               countSet[i][j] = inTrackTotal - start[j];
 						   } else {
 							   countSet[i][j] = count[j] * stride[j];
 						   }
@@ -724,7 +727,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   countSubtotal += countSet[i][j];
 					   } else {
 						   // the end granule
-						   countSet[i][j] = (count[j] * stride[j]) - countSubtotal;
+						   countSet[i][j] = (count[j] * stride[j]) - countSubtotal - startSet[i][j];
 		                   // TJJ May 2016
 		                   // This condition manifests because there are times when 
 		                   // "fill" scans are cut from otherwise fine granules.
@@ -739,6 +742,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   strideSet[i][j] = stride[j];
 			   }
 		   }
+		   inTrackTotal += granCutScans.get(i);
 	   }
 	   
 	   int totalLength = 0;
@@ -797,6 +801,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   }
 
 					   // finally, apply subset ranges
+					   logger.debug("Size of cut src array: " + single.getSize());
 					   Array subarray = single.section(rangeList);
 					   totalLength += subarray.getSize();
 					   arrayList.add(subarray);
@@ -829,24 +834,43 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   outType = java.lang.Float.TYPE;
 	   }
 	   logger.debug("Creating aggregated array, totalLength: " + totalLength);
-	   Object o = java.lang.reflect.Array.newInstance(outType, totalLength);
+	   
+	   // TJJ May 2016
+	   // I'm starting to think there may be a bug in the Java NetCDF section/subarray
+	   // code - I have chased this quite a bit with no solution, the total length 
+	   // sectioned out sometimes exceeds the total requested. It's almost as if a
+	   // previous section length is retained. Anyway, as a hack for now I will just
+	   // truncate if this occurs. We also need to watch for overflow in the arracopy
+	   // calls below
+	   
+	   if (totalLength > (count[0] * count[1])) {
+	       totalLength = count[0] * count[1];
+	   }
+	   
+	   float[] finalArray = new float[totalLength];
            
 	   int destPos = 0;
 	   int granIdx = 0;
 
+	   int remaining = totalLength;
 	   for (Array a : arrayList) {
 		   if (a != null) {
 			   Object primArray = a.copyTo1DJavaArray();
 			   primArray = processArray(
 			      mapName, array_name, arrayType, granIdx, primArray, rngProcessor, start, count
 			   );
-			   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
+			   if (a.getSize() > remaining) {
+			       System.arraycopy(primArray, 0, finalArray, destPos, remaining);
+			   } else {
+			       System.arraycopy(primArray, 0, finalArray, destPos, (int) a.getSize());
+			   }
 			   destPos += a.getSize();
+			   remaining -= (int) a.getSize();
 		   }
 		   granIdx++;
 	   }
        
-	   return o;
+	   return finalArray;
    }
    
    /**
