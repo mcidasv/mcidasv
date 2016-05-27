@@ -865,7 +865,7 @@ return allowed;</validation>
                       </void>
                       <void property="file">
                         <object class="java.io.File">
-                          <string>mcidasv.exe</string>
+                          <string>runMcV.bat</string>
                         </object>
                       </void>
                       <void property="name">
