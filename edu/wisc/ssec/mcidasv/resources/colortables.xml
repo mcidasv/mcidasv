@@ -11060,10 +11060,10 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
-                <string><![CDATA[GA20P Invert]]></string>
+                <string><![CDATA[GOES IR]]></string>
             </property>
             <property name="Id">
-                <string><![CDATA[GA20P Invert]]></string>
+                <string><![CDATA[GOES IR]]></string>
             </property>
             <property name="Table">
                 <array class="[F" length="4">
