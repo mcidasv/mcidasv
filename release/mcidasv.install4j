@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.15" transformSequenceNumber="4">
-  <directoryPresets config="/Users/jbeavers/work/install4j/mcidasv/release/icons" />
+  <directoryPresets config="${compiler:MCVDIR}/release/windows-launchers/mcvexe/runMcV.bat" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.6beta1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.8" javaMaxVersion="1.9" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -29,7 +29,8 @@
     <filesets>
       <fileset name="UNIX file set" id="7334" customizedId="" />
       <fileset name="OS X file set" id="7332" customizedId="" />
-      <fileset name="Windows file set" id="7336" customizedId="" />
+      <fileset name="Windows mcvexe file set" id="8603" customizedId="" />
+      <fileset name="Windows javaw file set" id="8605" customizedId="" />
       <fileset name="Linux ADDE" id="7408" customizedId="" />
       <fileset name="OS X ADDE" id="7404" customizedId="" />
       <fileset name="Windows ADDE" id="7406" customizedId="" />
@@ -44,7 +45,8 @@
     <roots>
       <root id="7335" fileset="7334" location="" />
       <root id="7333" fileset="7332" location="" />
-      <root id="7337" fileset="7336" location="" />
+      <root id="8604" fileset="8603" location="" />
+      <root id="8606" fileset="8605" location="" />
       <root id="7409" fileset="7408" location="" />
       <root id="7405" fileset="7404" location="" />
       <root id="7407" fileset="7406" location="" />
@@ -60,7 +62,8 @@
       <mountPoint id="1" root="" location="" mode="755" />
       <mountPoint id="7339" root="7335" location="" mode="755" />
       <mountPoint id="7338" root="7333" location="" mode="755" />
-      <mountPoint id="7340" root="7337" location="" mode="755" />
+      <mountPoint id="8607" root="8604" location="" mode="755" />
+      <mountPoint id="8608" root="8606" location="" mode="755" />
       <mountPoint id="7416" root="7409" location="" mode="755" />
       <mountPoint id="7417" root="7405" location="" mode="755" />
       <mountPoint id="7469" root="7407" location="" mode="755" />
@@ -105,12 +108,18 @@
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/macos-apps.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-apps-setdir.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-java-check.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/runMcV-HeapDumpEnabled.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7340" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/windows-launchers/mcvexe/runMcV.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-HeapDumpEnabled.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/windows-launchers/javaw/runMcV.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-HeapDumpEnabled.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7416" file="${compiler:ADDEDIR}/adde-linux.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7417" file="${compiler:ADDEDIR}/adde-darwin.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7469" file="${compiler:ADDEDIR}/adde-windows.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -169,10 +178,11 @@
           <component id="66" />
         </dependencies>
       </component>
-      <component name="Windows components" id="7274" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
+      <component name="Windows components" id="7274" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="false" downloadable="false" hidden="false">
         <description />
         <include all="false">
-          <entry location=".i4j_fileset_7336" fileType="regular" />
+          <entry location=".i4j_fileset_8603" fileType="regular" />
+          <entry location=".i4j_fileset_8605" fileType="regular" />
         </include>
         <dependencies>
           <component id="67" />
@@ -206,7 +216,7 @@
   <launchers>
     <launcher name="runMcV" id="841" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV" />
     <launcher name="runMcV-Config" id="1330" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config" />
-    <launcher name="runMcV.bat" id="844" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
+    <launcher name="windows-javaw" id="844" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
     <launcher name="runMcV-Config.bat" id="1335" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config.bat" />
     <launcher name="mcidasv" id="8420" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="7336" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="">
       <executable name="mcidasv" type="1" iconSet="true" iconFile="${compiler:MCVDIR}/release/icons/mcidasv.ico" executableDir="" redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true">
@@ -242,6 +252,7 @@
         <file path="${compiler:MCVDIR}/release/icons/mcidasv_60x60.png" />
       </iconImageFiles>
     </launcher>
+    <launcher name="windows-mcvexe" id="8610" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
   </launchers>
   <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
     <customCode>
@@ -1549,12 +1560,15 @@ INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
+        <launcher id="8420" />
+        <launcher id="8610" />
       </excludedLaunchers>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location=".i4j_fileset_7334" fileType="regular" />
         <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_8603" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
@@ -1579,12 +1593,15 @@ INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
+        <launcher id="8420" />
+        <launcher id="8610" />
       </excludedLaunchers>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location=".i4j_fileset_7334" fileType="regular" />
         <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_8603" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
@@ -1605,59 +1622,6 @@ INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$
       </excludedComponents>
       <includedDownloadableComponents />
     </windows>
-    <windowsArchive name="Windows Archive 32-bit" id="8515" customizedId="" mediaFileName="" installDir="McIDAS-V" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_45.tar.gz" manualJREEntry="true">
-      <excludedLaunchers>
-        <launcher id="841" />
-        <launcher id="1330" />
-        <launcher id="844" />
-        <launcher id="1335" />
-      </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location=".i4j_fileset_7334" fileType="regular" />
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
-        <entry location=".i4j_fileset_8085" fileType="regular" />
-        <entry location=".i4j_fileset_8087" fileType="regular" />
-        <entry location=".i4j_fileset_8091" fileType="regular" />
-        <entry location=".i4j_fileset_8093" fileType="regular" />
-      </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
-    </windowsArchive>
-    <windowsArchive name="Windows Archive 64-bit" id="8423" customizedId="" mediaFileName="" installDir="McIDAS-V" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="windows-amd64-1.8.0_45" manualJREEntry="false">
-      <excludedLaunchers>
-        <launcher id="841" />
-        <launcher id="1330" />
-        <launcher id="844" />
-        <launcher id="1335" />
-      </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location=".i4j_fileset_7334" fileType="regular" />
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
-        <entry location=".i4j_fileset_8085" fileType="regular" />
-        <entry location=".i4j_fileset_8087" fileType="regular" />
-        <entry location=".i4j_fileset_8093" fileType="regular" />
-      </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
-    </windowsArchive>
     <windows name="mcidasv.exe Windows 32-bit" id="8509" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer_TEST" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_45.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
@@ -1670,6 +1634,7 @@ INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$
       <exclude>
         <entry location=".i4j_fileset_7334" fileType="regular" />
         <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_8605" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
@@ -1702,6 +1667,7 @@ INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$
       <exclude>
         <entry location=".i4j_fileset_7334" fileType="regular" />
         <entry location=".i4j_fileset_7332" fileType="regular" />
+        <entry location=".i4j_fileset_8605" fileType="regular" />
         <entry location=".i4j_fileset_7408" fileType="regular" />
         <entry location=".i4j_fileset_7404" fileType="regular" />
         <entry location=".i4j_fileset_7410" fileType="regular" />
@@ -1724,10 +1690,6 @@ INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$
     </windows>
   </mediaSets>
   <buildIds buildAll="false">
-    <mediaSet refId="3" />
-    <mediaSet refId="7557" />
-    <mediaSet refId="59" />
-    <mediaSet refId="12" />
     <mediaSet refId="8" />
     <mediaSet refId="7720" />
     <mediaSet refId="8509" />
