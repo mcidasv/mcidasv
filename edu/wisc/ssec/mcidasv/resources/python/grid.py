@@ -1,5 +1,12 @@
 """ This is the doc for the grid module """
 
+from ucar.unidata.data.grid import DerivedGridFactory
+from ucar.unidata.data.grid import GridMath
+from ucar.unidata.data.grid import GridUtil
+from ucar.unidata.data.grid import GridTrajectory
+
+from ucar.visad import Util
+
 def makeVector(a,b):
   """ Make a vector from 2 components
   <div class=jython>
