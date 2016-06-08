@@ -76,8 +76,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td>- local files, TDS servers</td>
   </tr>
   <tr>
-    <td rowspan="23">Satellite Imagery</td>
-    <td rowspan="23">Geostationary and polar orbiter satellite imagery, derived
+    <td rowspan="26">Satellite Imagery</td>
+    <td rowspan="26">Geostationary and polar orbiter satellite imagery, derived
       satellite products</td>
     <td>- <a href="#adde">ADDE</a></td>
     <td>- <a href="choosers/ImageChooser.html">ADDE servers</a></td>
@@ -170,6 +170,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td>- TRMM (TeraScan netCDF) </td>
     <td>- local ADDE </td>
   </tr>
+  <tr class="gridded_data_row">
+    <td>- Himawari-8 (*.DAT) *</td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- INSAT-3D Imager *</td>
+    <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- INSAT-3D Sounder *</td>
+    <td>- local ADDE </td>
+  </tr>
   <tr>
     <td rowspan="5">Radar</td>
     <td rowspan="5">Radar images</td>
@@ -248,6 +260,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td> - local files, HTTP</td>
   </tr>
 </table>
+<p>* The Himawari and INSAT-3D local servers are currently supported on Linux and OS X platforms</p>
 <div class="pagesubtitle"><a name="servers" id="servers"></a>Remote Data Servers</div>
 <p>Extensive meteorological and oceanographic data is available from remote data servers for use in research and education. Some of these data have restrictions on their use, see <a href="http://www.unidata.ucar.edu/data/data_usage.html#data" target="_blank">Using Data Acquired via Unidata</a> for that information.</p>
 <div class="pagesubsubtitle"><a name="adde" id="adde"></a>Abstract Data Distribution Environment (ADDE)</div>

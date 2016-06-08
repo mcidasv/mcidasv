@@ -62,7 +62,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.6">Data Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#netcdf1.6">Listing of Fields from a NetCDF Data Source</a></strong><strong><a class="faq-question-link" href="#contourLabelInterval1.5"></a></strong></li>
+    <li><strong><a class="faq-question-link" href="#himawari1.6">Himawari Local Server</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#insat1.6">INSAT-3D Local Servers</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#netcdf1.6">Listing of Fields from a NetCDF Data Source</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.6">Other Changes</a></div>
@@ -108,6 +110,14 @@ Changes</div>
   Added a new setting that displays overlapping layers of differing resolutions in a way that there   is no display interference when the display is rotated. This setting is enabled by default in the Display Window tab of the User Preferences. This setting can also be controlled on a display by display basis through the View&gt;Properties menu in a panel.
 </div></div>
 <div class="faq-category-title"><a name="faq1_cat3_1.6" id="faq1_cat3_1.6"></a>Data Changes</div>
+  <div class="faq-category"><a name="himawari1.6" id="himawari1.6"></a>
+  <h4>Himawari Local Server</h4>
+<div class="faq-answer">
+Added a new local server to work with Himawari HSD (Himawari Standard Data) formatted files (*.DAT). To create a local dataset using this server, from the ADDE Data Manager, click the Add New Dataset button and select the 'Himawari 8' Format. The file names must match the JMA HSD image file naming convention, <strong>HS_aaa_yyyymmdd_hhnn_Bbb_cccc_Rjj_Skkll.DAT</strong>, described in the <a href="http://www.data.jma.go.jp/mscweb/en/himawari89/space_segment/hsd_sample/HS_D_users_guide_en_v11.pdf" target="_blank">Himawari Standard Data User's Guide</a>. This server is currently supported on Linux and OS X. </div></div>
+  <div class="faq-category"><a name="insat1.6" id="insat1.6"></a>
+  <h4>INSAT-3D Local Servers</h4>
+<div class="faq-answer">
+Added new local servers to work with INSAT-3D Imager and Sounder files (*.h5). To create a local dataset using this server, from the ADDE Data Manager, click the Add New Dataset button and select the 'INSAT-3D Imager' or 'INSAT-3D Sounder' Format. These servers are currently supported on Linux and OS X.</div></div>
   <div class="faq-category"><a name="netcdf1.6" id="netcdf1.6"></a>
   <h4>Listing of Fields from a NetCDF Data Source</h4>
 <div class="faq-answer">
@@ -183,7 +193,7 @@ Added a List All Images button to the Absolute times tab of the Satellite>Imager
   <div class="faq-category-title"><a name="faq1_cat5_1.6" id="faq1_cat5_1.6"></a>Under Development</div>
   <div class="faq-category"><a name="npp1.6" id="npp1.6"></a>
     <h4>Suomi NPP Chooser</h4>
-    <div class="faq-answer">Added support for subsetting EDR and SDR granule aggregations containing missing scanlines. Also added a couple new functions to list information about VIIRS files:
+    <div class="faq-answer">Added support for subsetting EDR and SDR granule aggregations containing missing scanlines. Added initial support for NASA VIIRS L1b formatted files. Also added a couple new functions to list information about VIIRS files:
        <ul>
          <li><strong>listVIIRSFieldsInFile(filename) -</strong> Returns a list of the fields included with the file passed through the function.  These field names can then be passed through the loadVIIRSImage() function to create a data object that can then be displayed.</li>
          <li><strong>listVIIRSTimesInField(filename, field) -</strong> Returns the beginning date and time of the file passed through the function.</li></ul></div>
