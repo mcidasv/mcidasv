@@ -49,7 +49,6 @@ public class SandwichSpeedup {
                                        int nCols,
                                        float noIRContribution)
     {
-        logger.info("Inside sandwichSpeedup");
         for (int i = 0; i < scaledFloats.length; i++) {
             // set anything colder than threshold to r,g,b from color table,
             // otherwise just set to 1 (so that result after multiply is just
