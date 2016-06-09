@@ -138,7 +138,9 @@ public class SuomiNPPChooser extends FileChooser {
         	return super.selectFilesInner(files, directory);
         } else {
         	// throw up a dialog to tell user the problem
-        	JOptionPane.showMessageDialog(this, "When selecting multiple granules, they must be consecutive.");
+            JOptionPane.showMessageDialog(this,
+                "When selecting multiple granules, they must be consecutive, \n" +
+                "and in increasing time order.");
         }
         return false;
     }
@@ -193,6 +195,12 @@ public class SuomiNPPChooser extends FileChooser {
 								testResult = false;
 								break;
 							}
+                            // TJJ Inq #2265 granules need to be increasing time order to
+                            // properly georeference
+                            if (curTime < prvTime) {
+                                testResult = false;
+                                break;
+                            }
 						}
 						prvTime = curTime;
 	                }
@@ -254,6 +262,12 @@ public class SuomiNPPChooser extends FileChooser {
 							if ((curTime - prvTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
 								testResult = false;
 								break;
+							}
+                            // TJJ Inq #2265 granules need to be increasing time order to
+                            // properly georeference
+							if (curTime < prvTime) {
+							    testResult = false;
+							    break;
 							}
 						}
 						prvTime = endTime;
