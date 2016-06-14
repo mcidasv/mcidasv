@@ -151,6 +151,9 @@ cd "${DEST_DIR}/pack_windows/adde/bin" && tar xvf mcv_windows_bin.tar && \
 cd "${DEST_DIR}/pack_windows/adde/data" && tar xvf mcv_windows_data.tar && \
         rm mcv_windows_data.tar && cd -
 cp "${DEST_DIR}/cygwin1.dll" "${DEST_DIR}/pack_windows/adde/bin/"
+cp "${DEST_DIR}/cyggfortran-3.dll" "${DEST_DIR}/pack_windows/adde/bin/"
+cp "${DEST_DIR}/cygquadmath-0.dll" "${DEST_DIR}/pack_windows/adde/bin/"
+cp "${DEST_DIR}/cyggcc_s-1.dll" "${DEST_DIR}/pack_windows/adde/bin/"
 echo "Zipping..."
 cd "${DEST_DIR}/pack_windows" && zip -r ../adde-windows.zip adde && cd -
 rm -Rf "${DEST_DIR}/pack_windows"
