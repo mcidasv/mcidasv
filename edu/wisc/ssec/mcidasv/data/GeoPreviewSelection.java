@@ -42,14 +42,19 @@ import java.rmi.RemoteException;
 
 import javax.swing.*;
 
+import edu.wisc.ssec.mcidasv.data.hydra.Statistics;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.grid.GridUtil;
+import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.IdvObjectStore;
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.ui.colortable.ColorTableManager;
+import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.Range;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
@@ -117,9 +122,29 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         dspMaster = mapProjDsp;
         mapProjDsp.setMapProjection(sampleProjection);
         RealType imageRangeType = (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
-        HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
 
-        if (showPreview) imageDsp.setData(image);
+        IntegratedDataViewer idv = dataSource.getIdv();
+        DisplayConventions dc = idv.getDisplayConventions();
+
+        String param = dataChoice.getName();
+        Unit colorUnit = image.getRangeUnits()[0][0]; // visad loves arrays...
+
+        ColorTable colorTable = dc.getParamColorTable(param);
+        Range colorRange = dc.getParamRange(param, colorUnit);
+        colorTable.setRange(colorRange);
+        logger.trace("previewImage: param='{}' colorTable='{}' colorUnit='{}' colorRange='{}'", param, colorTable, colorUnit, colorRange);
+        HydraRGBDisplayable imageDsp =
+          new HydraRGBDisplayable("image",
+                                  imageRangeType,
+                                  null,
+                                  colorTable.getAlphaTable(),
+                                  true,
+                                  colorRange,
+                                  null);
+
+        if (showPreview) {
+          imageDsp.setData(image);
+        }
 
         MapLines mapLines  = new MapLines("maplines");
         URL mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
@@ -171,29 +196,11 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         makeBox();
 
         dspMaster.draw();
-        ScalarMap colorMap = imageDsp.getColorMap();
         if (showPreview) {
-            Range[] range = GridUtil.fieldMinMax(this.image);
-            Range imageRange = range[0];
-            int max;
-            int min;
-            double dMax = imageRange.getMax();
-            double dMin = imageRange.getMin();
-            String name = this.dataChoice.getName();
-            DataSelection ds = this.dataChoice.getDataSelection();
-            if (ds != null) {
-                GeoSelection gs = ds.getGeoSelection();
-             }
-            if (name.endsWith("TEMP")) {
-               min = (int)(dMax);
-               max = (int)(dMin);
-            } else { 
-               max = (int)(dMin);
-               min = (int)(dMax); 
-            }
-            colorMap.setRange(min, max);
-            BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
-            clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
+          ScalarMap colorMap = imageDsp.getColorMap();
+          colorMap.setRange(colorRange.getMin(), colorRange.getMax());
+          BaseColorControl control = (BaseColorControl)colorMap.getControl();
+          control.setTable(colorTable.getAlphaTable());
         }
       }
 
