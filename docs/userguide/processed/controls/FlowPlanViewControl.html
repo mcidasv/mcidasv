@@ -35,35 +35,50 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/FlowPlan
 <p>The Flow Plan View Controls are used to control plan (horizontal) displays
   (flow vectors, wind barbs, streamlines) of vector based data (e.g., wind components).
 They are similar to the <a href="PlanViewControl.html">Plan View controls</a>.&nbsp;For more information on what wind speeds correspond to each of the wind barbs in McIDAS-V displays, please see the table in the <a href="../DataFaq.html#windbarb">FAQ</a>.</p>
-<p>The five types of Flow Displays are Vector Plan View, Streamline Plan View,  Wind Barb Plan View, Vector Cross Section, and Wind Barb Cross Section. When you are working with 3D data, you can select Vectors Over Topography, Wind Barbs Over Topography, and Streamlines Over Topography. The <strong>Layer Controls</strong> listed below apply for all display types:</p>
-<div class="images"><img  src="images/FlowPlanViewControlGui.gif"  alt="Image 1: Properties Dialog for the Flow Display Controls"><br>
+<p>The seven types of Flow Displays are Vector Plan View, Vector Colored by Speed, Vector Colored by Another Parameter, Wind Barb Plan View, Wind Barb Colored by Speed, Wind Barb Colored by Another Parameter, and Streamline Plan View. Under the 3D Surface displays, additional display types of Vectors Over Topography, Wind Barbs Over Topography, and Streamlines Over Topography can be selected.. The <strong>Layer Controls</strong> listed below apply for all display types:</p>
+<div class="images"><img src="images/FlowPlanViewControlGui.gif" width="627" height="466" alt="Image 1: Properties Dialog for the FLow Display Controls"><br>
 <span class="caption">Image 1: Properties Dialog for the Flow Display Controls</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show</strong> - Switches between displaying Vectors or Wind Barbs and Streamlines. </li>
+  <li class="propertylistitem"><strong>Show</strong> - Switches between displaying Vectors, Streamlines, Trajectories, and Curly Vectors. Note that in order to use Trajectories or Curly Vectors, at least four timesteps must be displayed, otherwise, these <strong>Show</strong> modes will be inactive.</li>
     <ul class="propertylist">
-    <li class="propertylistitem"><strong>Vector Size -</strong> Displays vectors in the Main Display window. <strong>Size</strong> changes the length of the vectors.
+    <li class="propertylistitem"><strong>Vectors -</strong> Displays vectors in the Main Display window.</li>
+      <ul class="propertylist">
+      <li class="propertylistitem"><strong>Size</strong> changes the length of the vectors.
       The Size box is an editable box where you can enter a new size and press Enter,
       or use the slider (<img src="../data/choosers/images/Slider.gif" alt="Slider icon to change vector size" width="18" height="12"align=absmiddle>) to
-    change the value. When the <strong>Autosize</strong> checkbox is checked, the size of the vectors will decrease proportionally as you zoom in or out of the image. When unchecked, the vectors will remain the same size regardless of zoom level.</li>
-    <li class="propertylistitem"><strong> Streamline Density -</strong> Displays streamlines in the Main Display window. <strong>Density</strong> changes the density of the streamlines on the display.</li>
+    change the value.</li>
+      <li class="propertylistitem"><strong>Autosize</strong> checkbox is checked, the size of the vectors will decrease proportionally as you zoom in or out of the image. When unchecked, the vectors will remain the same size regardless of zoom level.</li></ul>
+    <li class="propertylistitem"><strong>Streamlines -</strong> Displays streamlines in the Main Display window.</li>
+      <ul class="propertylist">
+      <li class="propertylistitem"><strong> Density -</strong> Changes the density of the streamlines on the display.</li></ul>
+    <li class="propertylistitem"><strong>Trajectories -</strong> Displays trajectories in the Main Display window.</li>
+      <ul class="propertylist">
+      <li class="propertylistitem"><strong>Trajectory Form -</strong> Allows for selecting the type of trajectory used in the display. The options are Line, Cylinder, Ribbon, and Deform Ribbon.</li>
+      <li class="propertylistitem"><strong>Length Offset -</strong> Sets the number of timesteps to include in each trajectory.</li>
+      <li class="propertylistitem"><strong>Arrow -</strong>
+    Adds an arrow head to the trajectories if the Line <strong>Trajectory Form</strong> is selected.</li></ul>
+    <li class="propertylistitem"><strong>Curly Vectors -</strong> Displays curly vectors in the Main Display window. This option draws vectors that include multiple timesteps.</li>
+      <ul class="propertylist">
+       <li class="propertylistitem"><strong>Vector Length -</strong> Sets the length, or number of timesteps included with each curly vector.</li></ul>
     </ul>
+  <li class="propertylistitem"><strong>Arrow Scale -</strong> Sets the size of the arrows in the Main Display window for all of the <strong>Show</strong> modes.
   <li class="propertylistitem"><strong>Skip -</strong> Defines the number
-    of grid points that are skipped to avoid cluttering. A skip interval of 0 mean show all vectors, 1 means skip every other
+    of grid points that are skipped to avoid cluttering. A skip interval of 0 means show all vectors, 1 means skip every other
       vector, 2 means show every third vector, etc. This is also an editable
       box, enter a new skip interval and press return.</li>
   <li class="propertylistitem"><strong>Range -</strong> Lists the current range of data for sizing the vectors. Click on the <strong>Edit</strong> (<img src="images/StreamlineEdit.gif" width="23" height="17" alt="RangeEdit"align="absmiddle">)<strong> </strong>icon
       to change the range. This is an option with the Vector Plan View and Streamline Plan View displays.</li>
-  <li class="propertylistitem"><strong>Color -</strong> Changes the color of the streamlines and the vectors in the display. Note that if the displayed field is derived from speed and direction fields (not u- and v-wind components), the vectors, wind barbs, and streamlines will be colored by the speed field. In this case, the <strong>Color</strong> field will be <strong>Color Table</strong>, where the user can define the enhancement and enhancement range used for the display.</li>
+  <li class="propertylistitem"><strong>Color -</strong> Changes the color of the vectors, streamlines, and trajectories in the display. Note that if the displayed field is derived from speed and direction fields (not u- and v-wind components), or colored by another parameter, the vectors, streamlines, and trajectories will be colored by the speed or the color-by field. In this case, the <strong>Color</strong> field will be <strong>Color Table</strong>, where the user can define the enhancement and enhancement range used for the display.</li>
   <li class="propertylistitem"><strong>Line Width -</strong> Sets the line width in the display. Click on the <img src="../ui/images/Slider16.gif" alt="Slider icon to change line width"align=absmiddle> or
       put in a value and hit enter to change the value.</li>
-  <li class="propertylistitem"><strong>Smoothing -</strong> Smooths the grid. There are seven types of smoothing:        None, 5-point, 9-point, Gaussian Weighted, Cressman Weighted,   Circular Aperture, and Rectangular Aperture. The amount of smoothness        can be set for all except the 5 and 9-point smoothers. The higher   the amount, the smoother    the grid. For the Cressman, Circular and Rectangular aperture   smoothing types, the smoothing factor is the radius in grid spacing   units. This is not an option for the * Over Topography display types.</li>
+  <!--<li class="propertylistitem"><strong>Smoothing -</strong> Smooths the grid. There are seven types of smoothing:        None, 5-point, 9-point, Gaussian Weighted, Cressman Weighted,   Circular Aperture, and Rectangular Aperture. The amount of smoothness        can be set for all except the 5 and 9-point smoothers. The higher   the amount, the smoother    the grid. For the Cressman, Circular and Rectangular aperture   smoothing types, the smoothing factor is the radius in grid spacing   units. This is not an option for the * Over Topography display types.</li>-->
   <li class="propertylistitem"><strong>Levels -</strong> Lists the native grid levels. Click on one level value to reset the      plan to that level. The plan level in use is shown in the data's   native altitude        units. The <strong>Levels</strong> box is editable. Click in        the box, enter a value and hit return to set your own value.   Additionally,        you can click on the arrows to the right of the <strong>Levels</strong> box        to switch levels, or click        on the <strong>Cycle</strong> checkbox to animate vertically through all available levels.</li>
   <li class="propertylistitem"><strong>Selector Position -</strong> Determines the vertical positioning of the Selector line with respect to other variables displayed in the Main Display window. This is an option with the Vector Cross Section and Wind Barb Cross Section displays.</li>
   <li class="propertylistitem"><strong>Vertical Scale -</strong> Changes the vertical axis of the chart in the <strong>Display</strong> tab of the <strong>Layer Controls</strong> tab of the Data Explorer.</li>
   <li class="propertylistitem"><strong>Autoscale -</strong> Scales   the Y-Axis automatically to the data range along the selector
   line in the display.</li>
-	  </ul>
+</ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are some options that are unique to this display.</p>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
