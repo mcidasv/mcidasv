@@ -119,7 +119,14 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         RealType imageRangeType = (((FunctionType)image.getType()).getFlatRange().getRealComponents())[0];
         HydraRGBDisplayable imageDsp = new HydraRGBDisplayable("image", imageRangeType, null, true, null);
 
-        if (showPreview) imageDsp.setData(image);
+        String name = this.dataChoice.getName();
+
+        if (showPreview) {
+          if (name.startsWith("186_")) {
+              filterMissingValueABI();
+          }
+          imageDsp.setData(image);
+        }
 
         MapLines mapLines  = new MapLines("maplines");
         URL mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
@@ -179,7 +186,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             int min;
             double dMax = imageRange.getMax();
             double dMin = imageRange.getMin();
-            String name = this.dataChoice.getName();
             DataSelection ds = this.dataChoice.getDataSelection();
             if (ds != null) {
                 GeoSelection gs = ds.getGeoSelection();
@@ -195,6 +201,59 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             BaseColorControl clrCntrl = (BaseColorControl) colorMap.getControl();
             clrCntrl.setTable(BaseColorControl.initTableGreyWedge(new float[4][256], true));
         }
+      }
+
+      private void filterMissingValueABI() throws VisADException, RemoteException {
+          float missingValue = getMissingValueABI();
+          float[][] values = image.getFloats();
+          for (int i = 0; i < values[0].length; i++) {
+              if (values[0][i] == missingValue) {
+                  values[0][i] = Float.NaN;
+              }
+          }
+          image.setSamples(values);
+      }
+
+      private float getMissingValueABI() {
+          String name = this.dataChoice.getName();
+          if (!name.startsWith("186_")) {
+              throw new AssertionError("This method is only applicable to ABI");
+          }
+          if (name.contains("186_Band1")) {
+              return 1023.0f;
+          } else if (name.contains("186_Band2")) {
+              return 4095.0f;
+          } else if (name.contains("186_Band3")) {
+              return 1024.0f;
+          } else if (name.contains("186_Band4")) {
+              return 2047.0f;
+          } else if (name.contains("186_Band5")) {
+              return 1023.0f;
+          } else if (name.contains("186_Band6")) {
+              return 1023.0f;
+          } else if (name.contains("186_Band7")) {
+              return 16383.0f;
+          } else if (name.contains("186_Band8")) {
+              return 4095.0f;
+          } else if (name.contains("186_Band9")) {
+              return 2047.0f;
+          } else if (name.contains("186_Band10")) {
+              return 4095.0f;
+          } else if (name.contains("186_Band11")) {
+              return 4095.0f;
+          } else if (name.contains("186_Band12")) {
+              return 2047.0f;
+          } else if (name.contains("186_Band13")) {
+              return 4095.0f;
+          } else if (name.contains("186_Band14")) {
+              return 4095.0f;
+          } else if (name.contains("186_Band15")) {
+              return 4095.0f;
+          } else if (name.contains("186_Band16")) {
+              return 1023.0f;
+          } else {
+              throw new AssertionError("Could not infer band from '"+name+'\'');
+          }
       }
 
       public MapProjection getDataProjection() {
