@@ -186,7 +186,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             int min;
             double dMax = imageRange.getMax();
             double dMin = imageRange.getMin();
-            logger.trace("name='{}' min={} max={}", name, dMin, dMax);
             DataSelection ds = this.dataChoice.getDataSelection();
             if (ds != null) {
                 GeoSelection gs = ds.getGeoSelection();
@@ -207,7 +206,6 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       private void filterMissingValueABI() throws VisADException, RemoteException {
           float missingValue = getMissingValueABI();
           float[][] values = image.getFloats();
-          logger.trace("missing value={}", missingValue);
           for (int i = 0; i < values[0].length; i++) {
               if (values[0][i] == missingValue) {
                   values[0][i] = Float.NaN;
