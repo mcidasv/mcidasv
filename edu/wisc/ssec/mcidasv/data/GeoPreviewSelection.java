@@ -186,6 +186,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             int min;
             double dMax = imageRange.getMax();
             double dMin = imageRange.getMin();
+            logger.trace("name='{}' min={} max={}", name, dMin, dMax);
             DataSelection ds = this.dataChoice.getDataSelection();
             if (ds != null) {
                 GeoSelection gs = ds.getGeoSelection();
@@ -206,6 +207,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
       private void filterMissingValueABI() throws VisADException, RemoteException {
           float missingValue = getMissingValueABI();
           float[][] values = image.getFloats();
+          logger.trace("missing value={}", missingValue);
           for (int i = 0; i < values[0].length; i++) {
               if (values[0][i] == missingValue) {
                   values[0][i] = Float.NaN;
@@ -219,37 +221,37 @@ public class GeoPreviewSelection extends DataSelectionComponent {
           if (!name.startsWith("186_")) {
               throw new AssertionError("This method is only applicable to ABI");
           }
-          if (name.contains("186_Band1")) {
+          if (name.contains("_Band1_")) {
               return 1023.0f;
-          } else if (name.contains("186_Band2")) {
+          } else if (name.contains("_Band2_")) {
               return 4095.0f;
-          } else if (name.contains("186_Band3")) {
-              return 1024.0f;
-          } else if (name.contains("186_Band4")) {
+          } else if (name.contains("_Band3_")) {
+              return 1023.0f;
+          } else if (name.contains("_Band4_")) {
               return 2047.0f;
-          } else if (name.contains("186_Band5")) {
+          } else if (name.contains("_Band5_")) {
               return 1023.0f;
-          } else if (name.contains("186_Band6")) {
+          } else if (name.contains("_Band6_")) {
               return 1023.0f;
-          } else if (name.contains("186_Band7")) {
+          } else if (name.contains("_Band7_")) {
               return 16383.0f;
-          } else if (name.contains("186_Band8")) {
+          } else if (name.contains("_Band8_")) {
               return 4095.0f;
-          } else if (name.contains("186_Band9")) {
+          } else if (name.contains("_Band9_")) {
               return 2047.0f;
-          } else if (name.contains("186_Band10")) {
+          } else if (name.contains("_Band10_")) {
               return 4095.0f;
-          } else if (name.contains("186_Band11")) {
+          } else if (name.contains("_Band11_")) {
               return 4095.0f;
-          } else if (name.contains("186_Band12")) {
+          } else if (name.contains("_Band12_")) {
               return 2047.0f;
-          } else if (name.contains("186_Band13")) {
+          } else if (name.contains("_Band13_")) {
               return 4095.0f;
-          } else if (name.contains("186_Band14")) {
+          } else if (name.contains("_Band14_")) {
               return 4095.0f;
-          } else if (name.contains("186_Band15")) {
+          } else if (name.contains("_Band15_")) {
               return 4095.0f;
-          } else if (name.contains("186_Band16")) {
+          } else if (name.contains("_Band16_")) {
               return 1023.0f;
           } else {
               throw new AssertionError("Could not infer band from '"+name+'\'');
