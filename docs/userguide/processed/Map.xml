@@ -18,6 +18,7 @@
         <mapID target="idv.bundles.zidv"                             url="Bundles.html#zidv" />
         <mapID target="idv.collab.sharing"                           url="collab/Sharing.html" />
         <mapID target="idv.controls"                                 url="controls/index.html" />
+		<mapID target="idv.controls.3dflowplanviewcontrol"		     url="controls/3DFlowPlanViewControl.html" />
         <mapID target="idv.controls.aerologicalsoundingcontrol"      url="controls/AerologicalSoundingControl.html" />
         <mapID target="idv.controls.aerologicalsoundingcontrol.image1"  url="controls/AerologicalSoundingControl.html#image1" />
         <mapID target="idv.controls.bridgecontrol"					 url="controls/misc/BridgeControl.html" />

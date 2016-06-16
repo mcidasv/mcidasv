@@ -93,6 +93,7 @@ RAOB Sounding Data</span><br>
       <div class="indented" id="layercontrols_2">
         <span class="link" onClick="setPage('controls/PlanViewControl.html');">Plan View Controls</span><br>
         <span class="link" onClick="setPage('controls/FlowPlanViewControl.html');">Flow Display Controls</span><br>
+        <span class="link" onClick="setPage('controls/3DFlowPlanViewControl.html');">3D Flow Display Controls</span><br>
                 <span class="link" onClick="setPage('controls/ValuePlotControl.html');">Value Plot Controls </span><br>
         <span class="link" onClick="setPage('controls/CrossSectionControl.html');">Vertical Cross Section Controls</span><br>
         <span class="link" onClick="setPage('controls/ThreeDSurfaceControl.html');">3D Surface Controls</span><br>

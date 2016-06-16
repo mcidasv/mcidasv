@@ -55,6 +55,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#flowdisplay1.6">Flow Display Controls</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#3dflowdisplay1.6">3D Flow Display Controls</a></strong></li>
     <li><strong><a class="faq-question-link" href="#transect1.6">New Transect Tab and Window Types</a></strong><strong><a class="faq-question-link" href="#contourLabelInterval1.5"></a></strong></li>
     <li><strong><a class="faq-question-link" href="#autodepthoffset1.6">Automatic Depth Offsetting</a></strong></li>
   </ul>
@@ -95,6 +97,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 </div>
 <div class="faq-category-title"><a name="faq1_cat2_1.6" id="faq1_cat2_1.6"></a>Display
 Changes</div>
+  <div class="faq-category"><a name="flowdisplay1.6" id="flowdisplay1.6"></a>
+  <h4>Flow Display Controls</h4>
+<div class="faq-answer">
+  <p>Added new display types for Vector Colored by Speed, Vector Colored by Another Parameter, Wind Barb Colored by Speed, and Wind Barb Colored by Another Parameter. Additionally, if four or more timesteps are displayed, new features in the Layer Controls allow for changing the display to trajectories or curly vectors. If trajectories are chosen, then there are four options for how the trajectories are drawn. These options are Line, Cylinder, Ribbon, and Deform Ribbon. Curly vectors are the same as regular vectors, with the exception that they are multiple timesteps in length.</p>
+</div></div>
+  <div class="faq-category"><a name="3dflowdisplay1.6" id="3dflowdisplay1.6"></a>
+  <h4>3D Flow Display Controls</h4>
+<div class="faq-answer">
+  <p>Added new display types for 3D Volume Vector, 3D Volume Vector Colored by Speed, 3D Volume Vector Colored by Another Parameter, and 3D Volume Trajectory. For these display types, there is the option to switch between displaying vectors and trajectories. When trajectories is chosen, there are different options for setting how the trajectories are drawn in the display. These options are Line, Cylinder, Ribbon, and Deform Ribbon. By default, the trajectories will be drawn at every vertical level included with the data at the specified Z Skip which is defined in the Layer Controls. The Trajectory Start Level dropdown menu can be used to set trajectories to originate at a single vertical level instead of all levels at once. Four or more timesteps must be displayed in order to plot trajectories.</p>
+</div></div>
   <div class="faq-category"><a name="transect1.6" id="transect1.6"></a>
   <h4>New Transect Tab and Window Types</h4>
 <div class="faq-answer">
@@ -104,7 +116,7 @@ Changes</div>
   <li>File&gt;New Display Tab/Window&gt;Misc&gt;1 Map 2 Transects</li>
   <li>File&gt;New Display Tab/Window&gt;Misc&gt;2 Maps 1 Transect</li></ul>
 </div></div>
-  <div class="faq-category"><a name="autodepthoffset1.6" id="autodepthoffset1.6"></a>
+<div class="faq-category"><a name="autodepthoffset1.6" id="autodepthoffset1.6"></a>
   <h4>Automatic Depth Offsetting</h4>
 <div class="faq-answer">
   Added a new setting that displays overlapping layers of differing resolutions in a way that there   is no display interference when the display is rotated. This setting is enabled by default in the Display Window tab of the User Preferences. This setting can also be controlled on a display by display basis through the View&gt;Properties menu in a panel.
@@ -159,6 +171,7 @@ Added a List All Images button to the Absolute times tab of the Satellite>Imager
         <li>Added a new function called describe() which returns a variety of statistical parameters about an imagery or gridded data object. These statistical parameters include a histogram, length, min, max, range, Q1, Q2, Q3, IQR, mean, mode, kurtosis, skewness, standard deviation, and variance.</li>
         <li>Added a new function called sparkline() which returns a histogram of data values from an imagery or gridded data object.</li>
         <li>Added a new function called importEnhancement() which allows for importing local enhancement files for use in scripts and the user interface.</li>
+        <li>Added a new function called sandwich() which is defined in the Sandwich Product library in the Jython Libraries. This function creates a sandwich RGB display using infrared and visible data, as well as user-defined minimum and maximum infrared values, a color enhancement, and the ability to specify if missing values should be plotted in the display.</li>
       </ul>
       <li>New functionality with existing functions:</li>
       <ul>
