@@ -1590,7 +1590,9 @@ public class IOUtil {
                                       String dflt) {
         try {
             return readContents(contentName, origin);
-        } catch (Exception exc) {}
+        } catch (Exception exc) {
+            logger.warn("could not read contents for '"+contentName+"'", exc);
+        }
         return dflt;
     }
 
@@ -1646,9 +1648,13 @@ public class IOUtil {
      */
     public static String readContents(String contentName, Class origin)
             throws FileNotFoundException, IOException {
-        //If a bad url then try it as a file
-
-        InputStream s = IOUtil.getInputStream(contentName, origin);
+        InputStream s;
+        if (isHttpProtocol(contentName)) {
+            URLConnection connection = getUrlConnection(contentName);
+            s = connection.getInputStream();
+        } else {
+            s = IOUtil.getInputStream(contentName, origin);
+        }
         if (s == null) {
             return null;
         }
