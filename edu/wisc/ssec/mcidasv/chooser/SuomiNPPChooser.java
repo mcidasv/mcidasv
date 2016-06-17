@@ -138,7 +138,7 @@ public class SuomiNPPChooser extends FileChooser {
     	   Collections.reverse(Arrays.asList(files));
     	}
     	
-        if (granulesAreConsecutive >= 0) {
+        if ((granulesAreConsecutive >= 0) || (files.length == 1)) {
         	return super.selectFilesInner(files, directory);
         } else {
         	// throw up a dialog to tell user the problem
