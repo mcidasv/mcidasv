@@ -49,6 +49,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A set of io related utilities
  * @author IDV development group.
@@ -56,7 +59,11 @@ import java.util.zip.ZipOutputStream;
  * @version $Revision: 1.52 $
  */
 public class IOUtil {
-
+    
+    public static int MAX_REDIRECTS = 5;
+    
+    private static final Logger logger = LoggerFactory.getLogger(IOUtil.class);
+    
     /** Holds the filename/urls that we have checked if they are html */
     private static Hashtable isHtmlCache = new Hashtable();
 
@@ -589,12 +596,47 @@ public class IOUtil {
      * @throws Exception _more_
      */
     public static String readContents(URL url) throws Exception {
-        URLConnection connection = url.openConnection();
+        URLConnection connection = getUrlConnection(url.toExternalForm());
         InputStream   is         = connection.getInputStream();
         return readContents(is);
     }
-
-
+    
+    public static URLConnection getUrlConnection(String url) throws IOException {
+        return getUrlConnection(url, true);
+    }
+    
+    public static URLConnection getUrlConnection(String url, boolean followRedirects) throws IOException {
+        URL from = new URL(url);
+        URLConnection connection = from.openConnection();
+        if (connection instanceof HttpURLConnection) {
+            HttpURLConnection huc = (HttpURLConnection)connection;
+            int redirects = 0;
+            while (followRedirects && (redirects++ < MAX_REDIRECTS)) {
+                if ((huc.getResponseCode() >= 300) && (huc.getResponseCode() <= 399)) {
+                    String newUrl = huc.getHeaderField("Location");
+                    if ((newUrl != null) && !newUrl.isEmpty()) {
+                        logger.trace("redirect needed! original: '{}' new: '{}' status: {}", url, newUrl, huc.getResponseCode());
+                        from = new URL(newUrl);
+                        connection = from.openConnection();
+                        connection.setAllowUserInteraction(true);
+                        huc = (HttpURLConnection)connection;
+                        // found a new url, try request again
+                        continue;
+                    } else {
+                        logger.trace("bad redirect url? newUrl: '{}'", newUrl);
+                    }
+                } else {
+                    logger.trace("final url: '{}' status: {}", from, huc
+                        .getResponseCode());
+                }
+                // either we had a problem or we've arrived at
+                // destination
+                break;
+            }
+        }
+        return connection;
+    }
+    
     /**
      * Write to the file from the URL stream
      *
@@ -609,7 +651,7 @@ public class IOUtil {
      */
     public static long writeTo(URL from, File file, Object loadId)
             throws IOException {
-        URLConnection    connection = from.openConnection();
+        URLConnection    connection = getUrlConnection(from.toExternalForm());
         InputStream      is         = connection.getInputStream();
         int              length     = connection.getContentLength();
         long             numBytes   = -1;
@@ -784,7 +826,7 @@ public class IOUtil {
                                             ? (URL) obj
                                             : getURL(obj.toString(),
                                                 IOUtil.class));
-                URLConnection connection = url.openConnection();
+                URLConnection connection = getUrlConnection(url.toExternalForm());
                 try {
                     from   = connection.getInputStream();
                     length = connection.getContentLength();
@@ -1185,7 +1227,7 @@ public class IOUtil {
         if (ext.equals(".php") && isHttpProtocol(filenameOrUrl)) {
             try {
                 URL           url        = new URL(originalUrl);
-                URLConnection connection = url.openConnection();
+                URLConnection connection = getUrlConnection(url.toExternalForm());
                 String        type       = connection.getContentType();
                 return (type.indexOf("text/html") >= 0);
             } catch (Exception exc) {}
@@ -1255,7 +1297,7 @@ public class IOUtil {
         try {
             URL url = getURL(filename, origin);
             if (url != null) {
-                URLConnection connection = url.openConnection();
+                URLConnection connection = getUrlConnection(url.toExternalForm());
                 connection.setAllowUserInteraction(true);
                 if (connection instanceof HttpURLConnection) {
                     HttpURLConnection huc = (HttpURLConnection) connection;
@@ -1372,7 +1414,7 @@ public class IOUtil {
             try {
                 String encodedUrl = StringUtil.replace(filename, " ", "%20");
                 URL           dataUrl    = new URL(encodedUrl);
-                URLConnection connection = dataUrl.openConnection();
+                URLConnection connection = getUrlConnection(dataUrl.toExternalForm());
                 s = connection.getInputStream();
             } catch (Exception exc) {}
         }
