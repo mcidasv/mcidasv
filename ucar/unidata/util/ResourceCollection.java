@@ -518,8 +518,8 @@ public class ResourceCollection {
      */
     public void writeWritableResource(String contents)
             throws java.io.FileNotFoundException, java.io.IOException {
-
-        IOUtil.writeFile(getWritable(), contents);
+        byte[] utf8Bytes = contents.getBytes("UTF-8");
+        IOUtil.writeBytes(new File(getWritable()), utf8Bytes);
         if (writableIndex >= 0) {
             cache.put(get(writableIndex), contents);
         }
