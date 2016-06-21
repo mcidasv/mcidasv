@@ -264,20 +264,28 @@ public class XmlResourceCollection extends ResourceCollection {
 
 
     /**
-     *  Create a new xml document with the given xml String and resource index.
+     * Create a new xml document with the given xml String and resource index.
      *
-     *  @param xml The xml String to use.
-     *  @param resourceIndex Which resource is this xml from.
-     * @param lookAtCache SHould we check the cache first
-     *  @return The root of the given xml.
+     * @param xml The xml String to use.
+     * @param resourceIndex Which resource is this xml from.
+     * @param lookAtCache Should we check the cache first
+     * @param useOldEncoding Whether or not {@code ISO-8859-1} should be used
+     *                       rather than {@code UTF-8}.
+     * @return The root of the given xml.
      */
     private Element getRoot(String xml, int resourceIndex,
-                            boolean lookAtCache) {
+                            boolean lookAtCache, boolean useOldEncoding) {
         try {
             Element root = (Element) (lookAtCache
                                       ? roots.get(get(resourceIndex))
                                       : null);
             if (root == null) {
+
+                if (useOldEncoding) {
+                    xml = xml.replace(
+                            XmlUtil.getHeader(),
+                            "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>");
+                }
                 Document doc = XmlUtil.getDocument(xml);
                 root = doc.getDocumentElement();
                 roots.put(get(resourceIndex), root);
@@ -287,17 +295,7 @@ public class XmlResourceCollection extends ResourceCollection {
             }
             return root;
         } catch (Exception exc) {
-            //For now log the exception and return null
-            //Check if we got html, like from a file not found, etc.
-            if (Misc.isHtml(xml)) {
-                return null;
-            }
-            LogUtil.logException("Error: parsing resource xml file:"
-                                 + get(resourceIndex), exc);
-            return null;
-            /*            throw new IllegalArgumentException(
-                "Error: parsing resource xml file:" + get(resourceIndex)
-                + "\n" + exc);*/
+            throw new IllegalArgumentException(exc);
         }
     }
 
@@ -336,7 +334,26 @@ public class XmlResourceCollection extends ResourceCollection {
         if (xml.length() == 0) {
             return null;
         }
-        return getRoot(xml, resourceIndex, lookAtCache);
+
+        try {
+            return getRoot(xml, resourceIndex, lookAtCache, false);
+        } catch (IllegalArgumentException ex) {
+            try {
+                return getRoot(xml, resourceIndex, lookAtCache, true);
+            } catch (Exception exc) {
+                //For now log the exception and return null
+                //Check if we got html, like from a file not found, etc.
+                if (Misc.isHtml(xml)) {
+                    return null;
+                }
+                LogUtil.logException("Error: parsing resource xml file:"
+                        + get(resourceIndex), exc);
+                return null;
+            /*            throw new IllegalArgumentException(
+                "Error: parsing resource xml file:" + get(resourceIndex)
+                + "\n" + exc);*/
+            }
+        }
     }
 
 
