@@ -135,7 +135,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private String productName = null;
     
     // product related variables and flags
-    boolean isEDR = false;
     String whichEDR = "";
     
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
@@ -303,8 +302,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	String pathToLon = null;
     	Set<String> pathToProducts = new LinkedHashSet<>();
     	
-    	// flag to indicate data is 3-dimensions (X, Y, channel or band)
-    	boolean is3D = false;
+    	// flag to differentiate VIIRS from one of the other Suomi sensors
+    	boolean isVIIRS = true;
     	
     	// check source filenames to see if this is a combined product. everything
     	// from last file separator to first underscore should be product info
@@ -405,7 +404,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
 												if (adtt != null) {
 													String baseName = adtt.getStringValue();
 													if ((baseName != null) && (baseName.equals("EDR"))) {
-														isEDR = true;
 														// have to loop through sub groups variables to determine band
 														List<Variable> tmpVar = subG.getVariables();
 														for (Variable v : tmpVar) {
@@ -1078,8 +1076,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							if ((instrumentName.getStringValue().equals("CrIS")) ||
     	    									(instrumentName.getStringValue().equals("ATMS")) || 
     	    									(instrumentName.getStringValue().contains("OMPS"))) {
-    	    								is3D = true;
-    	    								logger.debug("Handling 3-D data source...");
+    	    								isVIIRS = false;
+    	    								logger.debug("Handling non-VIIRS data source...");
     	    							}
     	    						}
 
@@ -1258,10 +1256,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// initialize the aggregation reader object
     	try {
     		if (isNOAA) {
-    		    nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack", isEDR);
+    		    nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack", isVIIRS);
     		    ((GranuleAggregation) nppAggReader).setQfMap(qfMap);
     		} else {
-    			nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "number_of_lines", "number_of_pixels", isEDR);
+    			nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "number_of_lines", "number_of_pixels", isVIIRS);
     		    ((GranuleAggregation) nppAggReader).setLUTMap(lutMap);
     		}
     	} catch (Exception e) {
@@ -1300,7 +1298,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	spectTable.put("array_name", pStr);
         	spectTable.put("product_name", productName);
         	
-        	if (is3D) {
+        	if (! isVIIRS) {
 
         		// 3D data is either ATMS, OMPS, or CrIS
         		if ((instrumentName.getShortName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
@@ -1416,7 +1414,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	swathTable.put("range_check_after_scaling", "true");
         	
         	// pass in a GranuleAggregation reader...
-        	if (is3D) {
+        	if (! isVIIRS) {
                 if (instrumentName.getStringValue().equals("ATMS")) {
             		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
             		adapterCreated = true;

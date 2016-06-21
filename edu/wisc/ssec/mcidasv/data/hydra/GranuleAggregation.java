@@ -103,21 +103,19 @@ public class GranuleAggregation implements MultiDimensionReader {
    private String crossTrackDimensionName = null;
    private Set<String> products;
    private String origName = null;
-   private boolean isEDR = false;
-   // assume we are working with SDRs, will toggle if not
-   private boolean isSDR = true;
+   // assume we are working with VIIRS, will toggle if not
+   private boolean isVIIRS = true;
 
    public GranuleAggregation(List<NetCDFFile> ncdfal, Set<String> products,
 		   String inTrackDimensionName, String inTrackGeoDimensionName, 
-		   String crossTrackDimensionName, boolean isEDR) throws Exception {
+		   String crossTrackDimensionName, boolean isVIIRS) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
 	   this.inTrackDimensionName = inTrackDimensionName;
 	   this.crossTrackDimensionName = crossTrackDimensionName;
 	   this.inTrackGeoDimensionName = inTrackGeoDimensionName;
        this.ncdfal = ncdfal;
        this.products = products;
-       this.isEDR = isEDR;
-       if (isEDR) isSDR = false;
+       this.isVIIRS = isVIIRS;
 	   init(ncdfal);
    }
    
@@ -183,20 +181,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   }
 	   }
 	   return array_name;
-   }
-
-   /**
-    * @return the isEDR
-    */
-   public boolean isEDR() {
-	   return isEDR;
-   }
-
-   /**
-    * @param isEDR the isEDR to set
-    */
-   public void setEDR(boolean isEDR) {
-	   this.isEDR = isEDR;
    }
 
    public float[] getFloatArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
@@ -308,7 +292,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   // "simply adjusting the dimensions" he says
 			   // Anyway, we now do this check for EDRs and SDRs, it can manifest for both
 			   
-			   if (isEDR || isSDR) {
+			   if (isVIIRS) {
 				   
 				   // look through lat grid, look for missing scans
 				   String varName = var.getShortName();
@@ -840,11 +824,13 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   // code - I have chased this quite a bit with no solution, the total length 
 	   // sectioned out sometimes exceeds the total requested. It's almost as if a
 	   // previous section length is retained. Anyway, as a hack for now I will just
-	   // truncate if this occurs. We also need to watch for overflow in the arracopy
+	   // truncate if this occurs. We also need to watch for overflow in the arraycopy
 	   // calls below
 	   
-	   if (totalLength > (count[0] * count[1])) {
-	       totalLength = count[0] * count[1];
+	   if (count.length < 3) {
+	       if (totalLength > (count[0] * count[1])) {
+	           totalLength = count[0] * count[1];
+	       }
 	   }
 	   
 	   float[] finalArray = new float[totalLength];
