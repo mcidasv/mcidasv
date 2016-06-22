@@ -269,16 +269,16 @@ class _MappedVIIRSFlatField(_MappedFlatField):
                 
         
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
-    def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime):
+    def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime, accounting, debug, server):
         """Make a _MappedAreaImageFlatField from an existing AreaImageFlatField."""
         # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
-        keys = [ 'band-count', 'bandList', 'bandNumber', 'bands',
+        keys = [ 'accounting', 'band-count', 'bandList', 'bandNumber', 'bands',
                  'calibration-scale-factor', 'calibration-type',
                  'calibration-unit-name', 'calinfo', 'center-latitude',
                  'center-latitude-resolution', 'center-longitude',
-                 'center-longitude-resolution', 'day', 'directory-block',
+                 'center-longitude-resolution', 'day', 'debug', 'directory-block',
                  'elements', 'lines', 'memo-field', 'nominal-time',
-                 'sensor-id', 'sensor-type', 'source-type', 'start-time',
+                 'sensor-id', 'sensor-type', 'server', 'source-type', 'start-time',
                  'datetime', 'url','satband-band-label', ]
                  
         _MappedData.__init__(self, keys)
@@ -286,6 +286,9 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         self.areaDirectory = areaDirectory
         self.addeDescriptor = addeDescriptor
         self.addeSatBands = None
+        self.accounting = accounting
+        self.debug = debug
+        self.server = server
         # call the copy constructor
         AreaImageFlatField.__init__(self, aiff, False, aiff.getType(),
             aiff.getDomainSet(), aiff.RangeCoordinateSystem,
@@ -296,7 +299,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         
     # http://stackoverflow.com/questions/141545/overloading-init-in-python
     @classmethod
-    def fromUrl(cls, imageUrl):
+    def fromUrl(cls, accounting, debug, server, imageUrl):
         """Create an AreaImageFlatField from a URL, then make a _MappedAreaImageFlatField."""
         aa = ErrorCodeAreaUtils.createAreaAdapter(imageUrl)
         areaFile = aa.getAreaFile()
@@ -313,7 +316,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
                 rangeCoordSys, rangeSets, units, samples, "READLABEL")
         areaFile.close()
         return cls(aiff, areaFile, areaDirectory, addeDescriptor,
-                ff.getStartTime())
+                ff.getStartTime(), accounting, debug, server)
 
     def clone(self):
         # i'm so sorry :(
@@ -408,6 +411,18 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             return str(self.aid.getSource())
         elif key == 'satband-band-label':
             return self._handleSatBand()
+        elif key == 'accounting':
+            if isinstance(self.accounting, tuple):
+                self.accounting = (str(self.accounting[0]), str(self.accounting[1]))
+            return self.accounting
+        elif key == 'debug':
+            if isinstance(self.debug, str) and self.debug.lower() == 'true':
+                self.debug = True
+            elif isinstance(self.debug, str) and self.debug.lower() == 'false':
+                self.debug = False
+            return self.debug
+        elif key == 'server':
+            return self.server
         else:
             raise KeyError('should not be capable of reaching here: %s')
 

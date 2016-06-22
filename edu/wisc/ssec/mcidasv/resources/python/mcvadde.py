@@ -1375,7 +1375,7 @@ def _getADDEImage(localEntry=None,
         print url
         
     try:
-        mapped = _MappedAreaImageFlatField.fromUrl(url)
+        mapped = _MappedAreaImageFlatField.fromUrl(accounting, debug, server, url)
         
         # build an object that returns the SATBAND file.
         satBandRequest = _SatBandReq(_satBandUrl(**formatValues))
