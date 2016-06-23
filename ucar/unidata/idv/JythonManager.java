@@ -106,6 +106,7 @@ import javax.swing.text.JTextComponent;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.JythonEditor;
+import edu.wisc.ssec.mcidasv.util.FileFinder;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 
 import org.python.core.Py;
@@ -525,9 +526,10 @@ public class JythonManager extends IdvManager implements ActionListener,
                 List files;
                 File file = new File(path);
                 if (file.exists() && file.isDirectory()) {
-                    File[] libFiles = file.listFiles((java.io.FileFilter)new PatternFileFilter(".*\\.py$"));
+//                    File[] libFiles = file.listFiles((java.io.FileFilter)new PatternFileFilter(".*\\.py$"));
 //                    files.addAll(toList(libFiles));
-                    files = toList(libFiles);
+//                    files = toList(libFiles);
+                    files = FileFinder.findFiles(file.getPath(), "*.py");
                 } else {
                     files = new ArrayList();
                     files.add(path);
@@ -535,7 +537,7 @@ public class JythonManager extends IdvManager implements ActionListener,
                 for (int fileIdx = 0; fileIdx < files.size(); fileIdx++) {
                     path = files.get(fileIdx).toString();
                     file = new File(path);
-                    if (file.getName().startsWith(".")) {
+                    if (file.getName().startsWith(".") || file.isDirectory()) {
                         continue;
                     }
                     String canonicalPath = replace(path, "\\", "/");
