@@ -533,8 +533,11 @@ public class JythonManager extends IdvManager implements ActionListener,
                     files.add(path);
                 }
                 for (int fileIdx = 0; fileIdx < files.size(); fileIdx++) {
-                    path = (String) files.get(fileIdx).toString();
+                    path = files.get(fileIdx).toString();
                     file = new File(path);
+                    if (file.getName().startsWith(".")) {
+                        continue;
+                    }
                     String canonicalPath = replace(path, "\\", "/");
                     if (seen.get(canonicalPath) != null) {
                         continue;
@@ -553,6 +556,7 @@ public class JythonManager extends IdvManager implements ActionListener,
                     if (!editable && (new File(path).isDirectory() || (text == null))) {
                         continue;
                     }
+
                     libHolder = makeLibHolder(editable, label, path, text);
                     String category = resources.getProperty("category", i);
                     String treeCategory = null;
