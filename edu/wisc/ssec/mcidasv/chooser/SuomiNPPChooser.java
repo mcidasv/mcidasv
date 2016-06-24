@@ -128,7 +128,7 @@ public class SuomiNPPChooser extends FileChooser {
     	
         // At present, Suomi NPP chooser only allows selecting sets of consecutive granules
     	int granulesAreConsecutive = -1;
-    	// Consecutive granule check - can only aggreate a contiguous set
+        // Consecutive granule check - can only aggregate a contiguous set
     	if (files.length > 1) {
            granulesAreConsecutive = testConsecutiveGranules(files);
     	}
@@ -219,10 +219,19 @@ public class SuomiNPPChooser extends FileChooser {
 	    	// difference should be very small - under a second
 	    	long prvTime = -1;
 	    	testResult = 0;
+            int lastSeparator = -1;
+            int firstUnderscore = -1;
+            String prodStr = "";
+            String prevPrd = "";
 	        for (int i = 0; i < files.length; i++) {
 	            if ((files[i] != null) && !files[i].isDirectory()) {
 	                if (files[i].exists()) {
 	                	String fileName = files[i].getName(); 
+                        lastSeparator = fileName.lastIndexOf(File.separatorChar);
+                        firstUnderscore = fileName.indexOf("_", lastSeparator + 1);
+                        prodStr = fileName.substring(lastSeparator + 1, firstUnderscore);
+                        // reset check if product changes
+                        if (! prodStr.equals(prevPrd)) prvTime = -1;
 	                	int dateIndex = fileName.lastIndexOf("_d2") + 2;
 	                	int timeIndexStart = fileName.lastIndexOf("_t") + 2;
 	                	int timeIndexEnd = fileName.lastIndexOf("_e") + 2;
@@ -280,6 +289,7 @@ public class SuomiNPPChooser extends FileChooser {
 						}
 						prvTime = endTime;
 	                }
+	                prevPrd = prodStr;
 	            }
 	        }
     	}
