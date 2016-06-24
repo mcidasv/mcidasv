@@ -373,14 +373,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   al.clear();
 					   }
 
-					   granCutScans.put(granuleIndex, new Integer(cutScanCount));
 					   logger.debug("Total scans cut this granule: " + cutScanCount);
 
 				   }
-			   } else {
-				   granCutScans.put(granuleIndex, new Integer(0));
 			   }
 		   }
+		   granCutScans.put(granuleIndex, new Integer(cutScanCount));
 	       granCutRanges.put(granuleIndex, al);
 	   }
 	   
@@ -465,10 +463,10 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   
 			   // adjust in-track dimension if needed (scans were cut)
 			   int cutScans = 0;
-			   if (! granCutScans.isEmpty()) {
-			       cutScans = granCutScans.get(ncIdx);
+			   if (! granCutScans.isEmpty() && granCutScans.containsKey(ncIdx)) {
+			       cutScans = granCutScans.get(new Integer(ncIdx));
 			   } else {
-			       granCutScans.put(ncIdx, new Integer(0));
+			       granCutScans.put(new Integer(ncIdx), new Integer(0));
 			   }
 			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] - cutScans;
 			   
