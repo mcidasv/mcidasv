@@ -46,7 +46,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Allows for easy searching of files matching {@literal "glob"} patterns
+ * (e.g. {@code *.py}) in a given directories and its subdirectories.
+ *
+ * <p>Note: this class is not thread safe!</p>
+ */
 public class FileFinder {
+
+    // TODO(jon): make thread safe?
+
+    // TODO(jon): along the lines of thread safety...allow for cancelling?
 
     // adapted from https://docs.oracle.com/javase/tutorial/essential/io/find.html
 
@@ -57,20 +67,29 @@ public class FileFinder {
             extends SimpleFileVisitor<Path> {
 
         private final PathMatcher matcher;
-        private int numMatches = 0;
         private final List<String> matches;
 
         Finder(String pattern) {
             matches = new ArrayList<>();
-            matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+            matcher =
+                FileSystems.getDefault().getPathMatcher("glob:" + pattern);
         }
 
         // Compares the glob pattern against
         // the file or directory name.
+
+        /**
+         * Compare the given file or directory against the glob pattern.
+         *
+         * <p>If {@code file} matches, it is added to {@link #matches}.</p>
+         *
+         * @param file File (or directory) to compare against the glob pattern.
+         *
+         * @see #results()
+         */
         void find(Path file) {
             Path name = file.getFileName();
             if (name != null && matcher.matches(name)) {
-                numMatches++;
                 matches.add(file.toString());
             }
         }
@@ -78,35 +97,48 @@ public class FileFinder {
         // Prints the total number of
         // matches to standard out.
         void done() {
-            System.out.println("Matched: "
-                    + numMatches);
+            System.out.println("Matched: " + matches.size());
         }
 
         List<String> results() {
             return matches;
         }
 
-        // Invoke the pattern matching
-        // method on each file.
-        @Override
-        public FileVisitResult visitFile(Path file,
-                                         BasicFileAttributes attrs) {
+
+        /**
+         * Invokes pattern matching method on the given file.
+         *
+         * @param file File in question.
+         * @param attrs Attributes of {@code file}.
+         *
+         * @return Always returns {@link FileVisitResult#CONTINUE} (for now).
+         */
+        @Override public FileVisitResult visitFile(Path file,
+                                                   BasicFileAttributes attrs)
+        {
             find(file);
             return CONTINUE;
         }
 
-        // Invoke the pattern matching
-        // method on each directory.
-        @Override
-        public FileVisitResult preVisitDirectory(Path dir,
-                                                 BasicFileAttributes attrs) {
+        /**
+         * Invokes the pattern matching method on the given directory.
+         *
+         * @param dir Directory in question.
+         * @param attrs Attributes of {@code dir}.
+         *
+         * @return Always returns {@link FileVisitResult#CONTINUE} (for now).
+         */
+        @Override public FileVisitResult preVisitDirectory(
+            Path dir,
+            BasicFileAttributes attrs)
+        {
             find(dir);
             return CONTINUE;
         }
 
-        @Override
-        public FileVisitResult visitFileFailed(Path file,
-                                               IOException exc) {
+        @Override public FileVisitResult visitFileFailed(Path file,
+                                                         IOException exc)
+        {
             logger.warn("file='"+file+"'", exc);
             return CONTINUE;
         }
