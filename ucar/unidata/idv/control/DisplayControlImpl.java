@@ -134,6 +134,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -7696,16 +7697,17 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 value = r.getValue();
                 unit  = r.getUnit();
             }
-            result = Misc.format(value);
-            result = result + "[" + unit + "]";
+            String formatStr =
+                getStore().get(Constants.PREF_PROBEVALUEFORMAT, "#.00##");
+            DecimalFormat formatter = new DecimalFormat();
+            formatter.applyPattern(formatStr);
+            result = formatter.format(value) + '[' + unit + ']';
             int length = result.length();
             result = StringUtil.padLeft(result, 8 * (20 - length), "&nbsp;");
         }
 
         return result;
     }
-
-
 
 
     /**
