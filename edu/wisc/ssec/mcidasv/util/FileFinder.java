@@ -30,11 +30,11 @@ package edu.wisc.ssec.mcidasv.util;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
+
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,41 +42,59 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Allows for easy searching of files matching {@literal "glob"} patterns
  * (e.g. {@code *.py}) in a given directories and its subdirectories.
  *
- * <p>Note: this class is not thread safe!</p>
+ * <p>Note: the {@code findFiles(...)} methods will block until the search
+ * finishes! If this is a concern, for the time being, please consider using
+ * {@link #findFiles(String, String, int)} with a reasonable depth value.</p>
  */
 public class FileFinder {
 
-    // TODO(jon): make thread safe?
+    // TODO(jon): make this async somehow
 
-    // TODO(jon): along the lines of thread safety...allow for cancelling?
+    // adapted from
+    // https://docs.oracle.com/javase/tutorial/essential/io/find.html
 
-    // adapted from https://docs.oracle.com/javase/tutorial/essential/io/find.html
-
+    /** Logging object. */
     private static final Logger logger =
             LoggerFactory.getLogger(FileFinder.class);
 
-    public static class Finder
-            extends SimpleFileVisitor<Path> {
+    /**
+     * Internal class used by the {@code findFiles(...)} methods to actually
+     * {@literal "walk"} the directory tree.
+     */
+    private static class Finder extends SimpleFileVisitor<Path> {
 
+        /** Pattern matcher. */
         private final PathMatcher matcher;
+
+        /** {@code String} representations of matching {@link Path Paths}. */
         private final List<String> matches;
 
+        /**
+         * Creates a new file searcher.
+         *
+         * <p>Please see {@link FileSystem#getPathMatcher(String)} for more
+         * details concerning patterns.</p>
+         *
+         * @param pattern Pattern to match against.
+         */
         Finder(String pattern) {
             matches = new ArrayList<>();
             matcher =
                 FileSystems.getDefault().getPathMatcher("glob:" + pattern);
         }
-
-        // Compares the glob pattern against
-        // the file or directory name.
 
         /**
          * Compare the given file or directory against the glob pattern.
@@ -89,27 +107,37 @@ public class FileFinder {
          */
         void find(Path file) {
             Path name = file.getFileName();
-            if (name != null && matcher.matches(name)) {
+            if ((name != null) && matcher.matches(name)) {
                 matches.add(file.toString());
             }
         }
 
-        // Prints the total number of
-        // matches to standard out.
+        /**
+         * Prints the total number of matches to standard out.
+         */
         void done() {
+            // TODO(jon): not the most useful method...
             System.out.println("Matched: " + matches.size());
         }
 
+        /**
+         * Returns the matching paths as strings.
+         *
+         * @return {@code List} of the matching paths as {@code String} values.
+         */
         List<String> results() {
-            return matches;
+            List<String> results = Collections.emptyList();
+            if (!matches.isEmpty()) {
+                results = new ArrayList<>(matches);
+            }
+            return results;
         }
-
 
         /**
          * Invokes pattern matching method on the given file.
          *
          * @param file File in question.
-         * @param attrs Attributes of {@code file}.
+         * @param attrs Attributes of {@code dir}. Not currently used.
          *
          * @return Always returns {@link FileVisitResult#CONTINUE} (for now).
          */
@@ -124,7 +152,7 @@ public class FileFinder {
          * Invokes the pattern matching method on the given directory.
          *
          * @param dir Directory in question.
-         * @param attrs Attributes of {@code dir}.
+         * @param attrs Attributes of {@code dir}. Not currently used.
          *
          * @return Always returns {@link FileVisitResult#CONTINUE} (for now).
          */
@@ -136,6 +164,16 @@ public class FileFinder {
             return CONTINUE;
         }
 
+        /**
+         * Handle file {@literal "visitation"} errors.
+         *
+         * @param file File that could not be {@literal "visited"}.
+         * @param exc Exception associated with {@literal "visit"} to
+         *            {@code file}.
+         *
+         * @return Always returns {@link FileVisitResult#CONTINUE} (for now).
+         *
+         */
         @Override public FileVisitResult visitFileFailed(Path file,
                                                          IOException exc)
         {
@@ -144,14 +182,55 @@ public class FileFinder {
         }
     }
 
+    /**
+     * Find files matching the specified {@literal "glob"} pattern in the given
+     * directory (and all of its subdirectories).
+     *
+     * <p>Note: {@literal "glob"} patterns are simple DOS/UNIX style. Think
+     * {@literal "*.py"}.</p>
+     *
+     * @param path Directory to search.
+     * @param globPattern Pattern to match against.
+     *
+     * @return {@code List} of {@code String} versions of matching paths. The
+     * list will be empty ({@link Collections#emptyList()} if there were no
+     * matches.
+     */
     public static List<String> findFiles(String path, String globPattern) {
+        return findFiles(path, globPattern, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Find files matching the specified {@literal "glob"} pattern in the given
+     * directory (and not exceeding the given {@literal "depth"}).
+     *
+     * <p>Note: {@literal "glob"} patterns are simple DOS/UNIX style. Think
+     * {@literal "*.py"}.</p>
+     *
+     * @param path Directory to search.
+     * @param globPattern Pattern to match against.
+     * @param depth Maximum number of directory levels to visit.
+     *
+     * @return {@code List} of {@code String} versions of matching paths. The
+     * list will be empty ({@link Collections#emptyList()} if there were no
+     * matches.
+     */
+    public static List<String> findFiles(String path,
+                                         String globPattern,
+                                         int depth)
+    {
         Path p = Paths.get(path);
         Finder f = new Finder(globPattern);
-        List<String> results = Collections.emptyList();
+        List<String> results;
         try {
-            Files.walkFileTree(p, f);
+            Files.walkFileTree(p,
+                               EnumSet.noneOf(FileVisitOption.class),
+                               depth,
+                               f);
+
             results = f.results();
         } catch (IOException e) {
+            results = Collections.emptyList();
             logger.error("Could not search '"+path+"'", e);
         }
         return results;
