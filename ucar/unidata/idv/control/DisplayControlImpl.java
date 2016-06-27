@@ -7698,7 +7698,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 unit  = r.getUnit();
             }
             String formatStr =
-                getStore().get(Constants.PREF_PROBEVALUEFORMAT, "#.00##");
+                getStore().get(Constants.PREF_CURSORVALUEFORMAT, "#.00##");
             DecimalFormat formatter = new DecimalFormat();
             formatter.applyPattern(formatStr);
             result = formatter.format(value) + '[' + unit + ']';
