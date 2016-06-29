@@ -529,7 +529,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   (v.getFullName().endsWith("Longitude")) ||
 			   (v.getFullName().endsWith("latitude")) ||
 			   (v.getFullName().endsWith("longitude")) ||
-			   (v.getFullName().endsWith("LongitudeTC"))) {
+			   (v.getFullName().endsWith("Longitude_TC"))) {
 		   if ((v.getFullName().startsWith("All_Data")) || 
 			   (v.getFullName().startsWith("observation_data"))) {
 			   inTrackName = inTrackDimensionName;
@@ -635,7 +635,13 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   break;
 		   }
 	   }
-
+       
+       int totalScansCut = 0;
+       for (int k = loGranuleId; k <= hiGranuleId; k++) {
+           totalScansCut += granCutScans.get(k); 
+       }
+       logger.debug("Scans cut for this selection: " + totalScansCut);
+       
 	   // next, we break out the offsets, counts, and strides for each granule
 	   int granuleSpan = hiGranuleId - loGranuleId + 1;
 	   
@@ -660,7 +666,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // this part is a little tricky - set the values for each granule we need to access for this read
 	   for (int i = 0; i < granuleSpan; i++) {
-           inTrackTotal += vGranuleLengths[loGranuleId+i];
+	       
+           inTrackTotal += vGranuleLengths[loGranuleId + i];
+           
 		   for (int j = 0; j < dimensionCount; j++) {
 			   // for all indeces other than the in-track index, the numbers match what was passed in
 			   if (j != vInTrackIndex) {
@@ -671,7 +679,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   // for the in-track index, it's not so easy...
 				   // for first granule, start is what's passed in
 				   if (i == 0) {
-					   startSet[i][j] = start[j];
+				       if (inTrackTotal > vGranuleLengths[loGranuleId + i]) {
+					       startSet[i][j] = 
+					          (start[j] % (inTrackTotal - vGranuleLengths[loGranuleId + i]));
+				       } else {
+				           startSet[i][j] = start[j];
+				       }
 				   } else {  
 				       startSet[i][j] = 
                           ((inTrackTotal - (vGranuleLengths[loGranuleId + i])) % stride[j]);
@@ -690,8 +703,8 @@ public class GranuleAggregation implements MultiDimensionReader {
 	                       // e.g., to the chooser it may look like there are 3072 valid lines,
                            // but by the time we get here we realize there are really 3056
 		                   // This typically shortens the granule by one scan (16 lines)
-		                   if (countSet[i][j] > (vGranuleLengths[loGranuleId+i] - startSet[i][j])) 
-		                       countSet[i][j] = vGranuleLengths[loGranuleId+i] - startSet[i][j];
+		                   if (countSet[i][j] > (vGranuleLengths[loGranuleId+i])) 
+		                       countSet[i][j] = vGranuleLengths[loGranuleId+i];
 
 					   // or is this the first of multiple granules...
 					   } else {
@@ -724,7 +737,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   strideSet[i][j] = stride[j];
 			   }
 		   }
-		   inTrackTotal += granCutScans.get(i);
 	   }
 	   
 	   int totalLength = 0;
@@ -913,7 +925,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   } else if (arrayType == Double.TYPE) {
 			   outArray = rngProcessor.processRange((double[]) values, null);
 		   }
-
 
 		   return outArray;
 	   }
