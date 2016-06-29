@@ -218,6 +218,7 @@ public class SuomiNPPChooser extends FileChooser {
 			// compare start time of current granule with end time of previous
 	    	// difference should be very small - under a second
 	    	long prvTime = -1;
+            long prvStartTime = -1;
 	    	testResult = 0;
             int lastSeparator = -1;
             int firstUnderscore = -1;
@@ -282,12 +283,13 @@ public class SuomiNPPChooser extends FileChooser {
                             // TJJ Inq #2265, #2370. Granules need to be increasing time order 
                             // to properly georeference. If they are reverse order but pass
                             // all consecutive tests, we just reverse the list before returning
-							if (curTime < prvTime) {
+							if (curTime < prvStartTime) {
 							    testResult = 1;
 							    break;
 							}
 						}
 						prvTime = endTime;
+						prvStartTime = curTime;
 	                }
 	                prevPrd = prodStr;
 	            }
