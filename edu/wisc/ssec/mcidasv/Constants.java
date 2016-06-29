@@ -403,7 +403,4 @@ public interface Constants extends IdvConstants {
 
     /** EventBus topic for signaling that directory monitors should stop. */
     String EVENT_FILECHOOSER_STOP = "FileChooser.StopWatchService";
-
-    /** Preference ID for the cursor readout value formatter. */
-    String PREF_CURSORVALUEFORMAT = "mcidasv.displaycontrol.cursorvalueformat";
 }

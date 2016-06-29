@@ -241,24 +241,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                               "%rawvalue%",
                               "%value% <i>%unit%</i>");
 
-
-    /** Example cursor value for user previews. */
-    private static final double cursorValueTest = -2087.1312448828125;
-
-    /** Formatter used to apply patterns for user previews. */
-    private static final DecimalFormat cursorValueFormatter =
-        new DecimalFormat();
-
-    /** Some default cursor value format strings. */
-    private static final Set<String> cursorValueFormats =
-        CollectionHelpers.set("0.#",
-                              "0.#E0",
-                              "#.0##",
-                              "#.00##",
-                              "###.#",
-                              "####.#",
-                              "#####.#");
-
     /** 
      * Replacing the "incoming" IDV preference tab names with whatever's in
      * this map.
@@ -1600,34 +1582,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JComboBox probeComboBox = McVGuiUtils.makeComboBox(probeFormatsList, probeFormat, Width.TRIPLE);
         widgets.put(DisplayControl.PREF_PROBEFORMAT, probeComboBox);
 
-        JLabel cursorValueLabel = McVGuiUtils.makeLabelRight("Cursor Value Format:", Width.ONEHALF);
-        String cursorValueFormatString = getStore().get(PREF_CURSORVALUEFORMAT, "#.00##");
-        JComboBox cursorValueComboBox = McVGuiUtils.makeComboBox(cursorValueFormats, cursorValueFormatString, Width.TRIPLE);
-        JLabel cursorValueExLabel = new JLabel("");
-        widgets.put(PREF_CURSORVALUEFORMAT, cursorValueComboBox);
-
-        try {
-            cursorValueFormatter.applyPattern(cursorValueFormatString);
-            cursorValueExLabel.setText("ex: "+ cursorValueFormatter.format(cursorValueTest));
-        } catch (IllegalArgumentException iae) {
-            cursorValueExLabel.setText("Bad format string: "+ cursorValueFormatString);
-        }
-        cursorValueComboBox.addActionListener(new ObjectListener(cursorValueExLabel) {
-            public void actionPerformed(final ActionEvent ae) {
-                JLabel label = (JLabel)theObject;
-                JComboBox box = (JComboBox)ae.getSource();
-                String pattern = box.getSelectedItem().toString();
-                try {
-                    cursorValueFormatter.applyPattern(pattern);
-                    label.setText("ex: " + cursorValueFormatter.format(cursorValueTest));
-                } catch (IllegalArgumentException iae) {
-                    label.setText("Bad format string: "+pattern);
-                }
-            }
-        });
-
         JComponent probeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.probeformat");
-        JComponent probeValueHelpButton = getIdv().makeHelpButton("idv.tools.preferences.cursorvalueformat");
 
         // Distance stuff
         JLabel distanceLabel = McVGuiUtils.makeLabelRight("Distance Unit:", Width.ONEHALF);
@@ -1692,14 +1647,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                         .addGap(GAP_RELATED)
                         .addComponent(probeHelpButton))
                     .addGroup(formatLayout.createSequentialGroup()
-                        .addComponent(cursorValueLabel)
-                        .addGap(GAP_RELATED)
-                        .addComponent(cursorValueComboBox)
-                        .addGap(GAP_RELATED)
-                        .addComponent(probeValueHelpButton)
-                        .addGap(GAP_RELATED)
-                        .addComponent(cursorValueExLabel))
-                    .addGroup(formatLayout.createSequentialGroup()
                         .addComponent(distanceLabel)
                         .addGap(GAP_RELATED)
                         .addComponent(distanceComboBox))
@@ -1734,12 +1681,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .addComponent(probeComboBox)
                     .addComponent(probeLabel)
                     .addComponent(probeHelpButton))
-                .addPreferredGap(RELATED)
-                .addGroup(formatLayout.createParallelGroup(BASELINE)
-                    .addComponent(cursorValueLabel)
-                    .addComponent(cursorValueComboBox)
-                    .addComponent(probeValueHelpButton)
-                    .addComponent(cursorValueExLabel))
                 .addPreferredGap(RELATED)
                 .addGroup(formatLayout.createParallelGroup(BASELINE)
                     .addComponent(distanceComboBox)
