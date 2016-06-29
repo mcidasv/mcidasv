@@ -39,6 +39,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -204,24 +205,47 @@ public class RGBCompositeControl extends DisplayControlImpl {
     }
 
     public void initDone() {
+        // why not keep track of iteration count?
+        DateTime elapsed = new DateTime();
+
+        DateTime redStart = new DateTime();
+        long redCount = 0;
         while (true) {
             if (null != redMap.getControl()) {
                 redTable = ((BaseColorControl) redMap.getControl()).getTable();
                 break;
             }
+            redCount++;
         }
+        long redDuration = new DateTime().minus(redStart.getMillis()).getMillis();
+        logger.trace("RED: iterations={}, duration={} (ms)", redCount, redDuration);
+
+        DateTime greenStart = new DateTime();
+        long greenCount = 0;
         while (true) {
             if (null != grnMap.getControl()) {
                 grnTable = ((BaseColorControl) grnMap.getControl()).getTable();
                 break;
             }
+            greenCount++;
         }
+        long greenDuration = new DateTime().minus(greenStart.getMillis()).getMillis();
+        logger.trace("GREEN: iterations={}, duration={} (ms)", greenCount, greenDuration);
+
+        DateTime blueStart = new DateTime();
+        long blueCount = 0;
         while (true) {
             if (null != bluMap.getControl()) {
                 bluTable = ((BaseColorControl) bluMap.getControl()).getTable();
                 break;
             }
+            blueCount++;
         }
+        long blueDuration = new DateTime().minus(blueStart.getMillis()).getMillis();
+        logger.trace("BLUE: iterations={}, duration={} (ms)", blueCount, blueDuration);
+
+        long finished = new DateTime().minus(elapsed.getMillis()).getMillis();
+        logger.trace("total iterations: {}, elapsed time: {} (ms)", redCount+greenCount+blueCount, finished);
 
         float[][] newRedTbl = getZeroOutArray(redTable);
         float[][] newGrnTbl = getZeroOutArray(grnTable);
