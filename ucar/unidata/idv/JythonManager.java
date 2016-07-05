@@ -279,7 +279,7 @@ public class JythonManager extends IdvManager implements ActionListener,
             Misc.run(this::initPythonInner);
         }
     }
-    
+
     /**
      * Initialize the python interpreter. This gets called from initPython inside of a thread.
      */
@@ -312,6 +312,7 @@ public class JythonManager extends IdvManager implements ActionListener,
             pythonProps.put("python.home", cacheDir);
         }
         // TODO: is there a way to force console_init.py to load first?
+        logger.trace("calling PythonInterpreter.initialize...");
         PythonInterpreter.initialize(System.getProperties(), pythonProps, getArgsManager().commandLineArgs);
         doMakeContents();
         if (!getArgsManager().isScriptingMode()) {
@@ -322,9 +323,6 @@ public class JythonManager extends IdvManager implements ActionListener,
                 logger.error("Could not watch directory '"+pythonDir+"'", e);
             }
         }
-        //      PySystemState sys = Py.getSystemState ();
-        //      sys.add_package ("visad");
-        //      sys.add_package ("visad.python");
     }
 
     /**
@@ -894,9 +892,17 @@ public class JythonManager extends IdvManager implements ActionListener,
         fileMenu.addSeparator();
         fileMenu.add(makeMenuItem("Close", this, "close"));
     }
-    
+
     /**
-     * Gets called when the IDV is quitting. Kills the editor process if there is one
+     * Allow external code to call {@link #applicationClosing()}.
+     */
+    public void handleApplicationExit() {
+        applicationClosing();
+    }
+
+    /**
+     * Gets called when the IDV is quitting. Kills the editor process if
+     * there is one.
      */
     protected void applicationClosing() {
         if (getArgsManager().isScriptingMode()) {

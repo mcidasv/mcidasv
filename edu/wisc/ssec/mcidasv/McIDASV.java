@@ -55,6 +55,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -67,6 +68,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
+import edu.wisc.ssec.mcidasv.util.OptionPaneClicker;
+import org.joda.time.DateTime;
+import org.python.util.PythonInterpreter;
 import org.w3c.dom.Element;
 
 import ucar.nc2.NetcdfFile;
@@ -1705,6 +1709,10 @@ public class McIDASV extends IntegratedDataViewer {
             // the initialization phase of your application
             SLF4JBridgeHandler.install();
 
+//            Properties pythonProps = new Properties();
+//            logger.trace("calling PythonInterpreter.initialize...");
+//            PythonInterpreter.initialize(System.getProperties(), pythonProps, new String[] {""});
+
             LogUtil.configure();
 
             NetcdfFile.registerIOProvider(GpmIosp.class);
@@ -1767,6 +1775,50 @@ public class McIDASV extends IntegratedDataViewer {
         logger.info("Exiting McIDAS-V @ {}", new Date());
 
         System.exit(exitCode);
+    }
+
+    /**
+     * This method is largely a copy of {@link IntegratedDataViewer#quit()},
+     * but allows for some GUI testing.
+     */
+    public boolean autoQuit() {
+        IdvObjectStore store = getStore();
+
+        boolean showQuitConfirm = store.get(PREF_SHOWQUITCONFIRM, true);
+        long quitDelay = store.get("mcidasv.autoexit.delay", 3000);
+
+        if (showQuitConfirm) {
+            JCheckBox cbx = new JCheckBox("Always ask", true);
+            JComponent comp =
+                GuiUtils.vbox(
+                    new JLabel("<html><b>Do you really want to exit?</b></html>"),
+                    GuiUtils.inset(cbx, new Insets(4, 15, 0, 10)));
+
+            JOptionPane pane = new JOptionPane(comp,
+                                               JOptionPane.QUESTION_MESSAGE,
+                                               JOptionPane.YES_NO_OPTION);
+
+            new OptionPaneClicker(pane, "Exit Confirmation", quitDelay, "Yes");
+            getStore().put(PREF_SHOWQUITCONFIRM, cbx.isSelected());
+        }
+
+        if (!getStationModelManager().checkCloseWindow()) {
+            return false;
+        }
+
+        if (!getJythonManager().saveOnExit()) {
+            return false;
+        }
+
+        store.saveIfNeeded();
+        store.cleanupTmpFiles();
+        getPluginManager().handleApplicationExit();
+        getJythonManager().handleApplicationExit();
+
+        if (getInteractiveMode()) {
+            exit(0);
+        }
+        return true;
     }
 
     /**

@@ -34,9 +34,9 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import java.io.IOException;
 
 import javax.swing.GroupLayout;
@@ -50,7 +50,6 @@ import javax.swing.JTextPane;
 import javax.swing.LayoutStyle;
 import javax.swing.WindowConstants;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 /**
  * {@code WelcomeWindow} is really just intended to <i>try</i> to detect known
@@ -82,13 +81,25 @@ public class WelcomeWindow extends JFrame {
     /** Dimensions of the welcome window frame. */
     private static final Dimension WINDOW_SIZE = new Dimension(495, 431);
 
+    private static final long DEFAULT_QUIT_DELAY = 2500;
+
     /** Java-friendly location of the path to the welcome message. */
     private final java.net.URL contents;
+
+    private final boolean autoQuit;
+
+    private final long autoQuitDelay;
 
     /** 
      * Creates new form WelcomeWindow.
      */
     public WelcomeWindow() {
+        this(false, Long.MAX_VALUE);
+    }
+
+    public WelcomeWindow(boolean autoQuit, long delay) {
+        this.autoQuit = autoQuit;
+        this.autoQuitDelay = delay;
         this.contents = WelcomeWindow.class.getResource(WELCOME_HTML);
         initComponents();
     }
@@ -123,11 +134,7 @@ public class WelcomeWindow extends JFrame {
             textPane.setText(ERROR_MESSAGE);
             e.printStackTrace();
         }
-        textPane.addHyperlinkListener(new HyperlinkListener() {
-            @Override public void hyperlinkUpdate(HyperlinkEvent evt) {
-                textPaneHyperlinkUpdate(evt);
-            }
-        });
+        textPane.addHyperlinkListener(this::textPaneHyperlinkUpdate);
         scrollPane.setViewportView(textPane);
 
         GroupLayout mainPanelLayout = new GroupLayout(mainPanel);
@@ -142,18 +149,10 @@ public class WelcomeWindow extends JFrame {
         );
 
         setButtonImage(startButton, McVGuiUtils.ICON_APPLY_SMALL);
-        startButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent evt) {
-                startButtonActionPerformed(evt);
-            }
-        });
+        startButton.addActionListener(this::startButtonActionPerformed);
 
         setButtonImage(quitButton, McVGuiUtils.ICON_CANCEL_SMALL);
-        quitButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent evt) {
-                quitButtonActionPerformed(evt);
-            }
-        });
+        quitButton.addActionListener(this::quitButtonActionPerformed);
 
         GroupLayout buttonPanelLayout = new GroupLayout(buttonPanel);
         buttonPanel.setLayout(buttonPanelLayout);
@@ -200,6 +199,25 @@ public class WelcomeWindow extends JFrame {
         setLocationRelativeTo(null);
         setSize(WINDOW_SIZE);
     }// </editor-fold>
+
+    @Override public void setVisible(boolean visible) {
+        super.setVisible(visible);
+
+        if (autoQuit) {
+            new Thread() {
+                public void run() {
+                    try {
+                        sleep(autoQuitDelay);
+                    } catch (InterruptedException ex) {
+                        // not much else to be done...
+                        ex.printStackTrace();
+                    } finally {
+                        EventQueue.invokeLater(startButton::doClick);
+                    }
+                }
+            }.start();
+        }
+    }
 
     /**
      * Handles the user clicking on {@link #startButton}. 
@@ -270,10 +288,20 @@ public class WelcomeWindow extends JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new WelcomeWindow().setVisible(true);
+        EventQueue.invokeLater(() -> {
+            WelcomeWindow ww;
+            if (args.length == 2) {
+                boolean autoQuit = "-autoquit".equals(args[0]);
+                long delay = Long.parseLong(args[1]);
+                ww = new WelcomeWindow(autoQuit, delay);
+            } else if (args.length == 1) {
+                boolean autoQuit = "-autoquit".equals(args[0]);
+                ww = new WelcomeWindow(autoQuit, DEFAULT_QUIT_DELAY);
             }
+            else {
+                ww = new WelcomeWindow();
+            }
+            ww.setVisible(true);
         });
     }
 

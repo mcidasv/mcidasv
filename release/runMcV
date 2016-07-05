@@ -154,7 +154,11 @@ if [ "${SHOW_WELCOME}" = "1" ]; then
         OSX_FLAGS=""
     fi
 
-    "${JAVA_BIN}" ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
+    if [ "${MCV_UNWELCOME_WINDOW}" = "true" ]; then
+        "${JAVA_BIN}" ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow -autoquit "${MCV_UNWELCOME_DELAY}" 2>/dev/null
+    else
+        "${JAVA_BIN}" ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
+    fi
     if [ $? -eq 1 ]; then
         exit 1
     fi

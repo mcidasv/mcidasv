@@ -167,6 +167,12 @@
         description="Exit"
         action="jython:idv.quit();"/>
 
+    <action id="mcvautoquit"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/stop-loads%d.png"
+        group="General"
+        description="Automatically Quit"
+        action="jython:getStaticMcv().autoQuit();" />
+
     <action id="edit.formula.export"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/calc-export%d.png"
         group="Jython"
