@@ -28,7 +28,6 @@
 package edu.wisc.ssec.mcidasv;
 
 import static ucar.unidata.util.GuiUtils.makeMenu;
-import static ucar.unidata.util.GuiUtils.makeMenuItem;
 import static ucar.unidata.util.MenuUtil.MENU_SEPARATOR;
 
 import java.util.ArrayList;
@@ -47,6 +46,8 @@ import ucar.unidata.data.DescriptorDataSource;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.ImageGenerator;
 import ucar.unidata.idv.ui.JythonShell;
+
+import javax.swing.JMenuItem;
 
 /**
  * Overrides the IDV's {@link ucar.unidata.idv.JythonManager JythonManager} to 
@@ -133,15 +134,9 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         if (properties == null) {
             properties = CollectionHelpers.newMap();
         }
-        if (!properties.containsKey("islInterpreter")) {
-            properties.put("islInterpreter", new ImageGenerator(getIdv()));
-        }
-        if (!properties.containsKey("_idv")) {
-            properties.put("_idv", getIdv());
-        }
-        if (!properties.containsKey("idv")) {
-            properties.put("idv", getIdv());
-        }
+        properties.putIfAbsent("islInterpreter", new ImageGenerator(getIdv()));
+        properties.putIfAbsent("_idv", getIdv());
+        properties.putIfAbsent("idv", getIdv());
         super.evaluateTrusted(code, properties);
     }
     
@@ -156,21 +151,40 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
     @SuppressWarnings("unchecked") // dealing with idv code that predates generics.
     @Override public List doMakeFormulaDataSourceMenuItems(DataSource dataSource) {
         List menuItems = new ArrayList(100);
-        menuItems.add(makeMenuItem("Create Formula", this, "showFormulaDialog"));
+        JMenuItem menuItem;
+
+        menuItem = new JMenuItem("Create Formula");
+        menuItem.addActionListener(e -> showFormulaDialog());
+        menuItems.add(menuItem);
+
         List editItems;
         if (dataSource instanceof DescriptorDataSource) {
             editItems = doMakeEditMenuItems((DescriptorDataSource)dataSource);
-        }
-        else {
+        } else {
             editItems = doMakeEditMenuItems();
         }
         menuItems.add(makeMenu("Edit Formulas", editItems));
+
         menuItems.add(MENU_SEPARATOR);
-        menuItems.add(makeMenuItem("Jython Library", this, "showJythonEditor"));
-        menuItems.add(makeMenuItem("Jython Shell", this, "createShell"));
+
+        menuItem = new JMenuItem("Jython Library");
+        menuItem.addActionListener(e -> showJythonEditor());
+        menuItems.add(menuItem);
+
+        menuItem = new JMenuItem("Jython Shell");
+        menuItem.addActionListener(e -> createShell());
+        menuItems.add(menuItem);
+
         menuItems.add(MENU_SEPARATOR);
-        menuItems.add(makeMenuItem("Import", this, "importFormulas"));
-        menuItems.add(makeMenuItem("Export", this, "exportFormulas"));
+
+        menuItem = new JMenuItem("Import");
+        menuItem.addActionListener(e -> importFormulas());
+        menuItems.add(menuItem);
+
+        menuItem = new JMenuItem("Export");
+        menuItem.addActionListener(e -> exportFormulas());
+        menuItems.add(menuItem);
+
         return menuItems;
     }
     

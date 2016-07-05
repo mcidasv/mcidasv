@@ -536,17 +536,30 @@ public class McIDASV extends IntegratedDataViewer {
      * and additionally, if the action is a HTML link, we attempt to visit the
      * link in the user's preferred browser.
      */
-    @Override public boolean handleAction(String action, Hashtable properties, 
-        boolean checkForAlias) 
+    @Override public boolean handleAction(String action, Hashtable properties,
+                                          boolean checkForAlias)
     {
         actions.add(action);
 
+        boolean result = false;
+        DateTime start = DateTime.now();
+        logger.trace("started: action='{}', checkForAlias={}, properties='{}'", action, checkForAlias, properties);
         if (IOUtil.isHtmlFile(action)) {
             WebBrowser.browse(action);
-            return true;
+            result = true;
+        } else {
+            if (action.toLowerCase().contains("showsupportform")) {
+                logger.trace("showing support form 'manually'...");
+                getIdvUIManager().showSupportForm();
+                result = true;
+            } else {
+                result = super.handleAction(action, properties, checkForAlias);
+            }
         }
+        long duration = new DateTime().minus(start.getMillis()).getMillis();
+        logger.trace("finished: action='{}', duration: {} (ms), checkForAlias={}, properties='{}'", action, duration, checkForAlias, properties);
 
-        return super.handleAction(action, properties, checkForAlias);
+        return result;
     }
 
     /**
@@ -588,15 +601,11 @@ public class McIDASV extends IntegratedDataViewer {
         ucar.unidata.idv.JythonManager jyManager = getJythonManager();
         if (idvAction) {
             action = action.replace("&", "&amp;").substring(4);
-//            getJythonManager().evaluateUntrusted(action, hashProps);
             jyManager.evaluateUntrusted(action, hashProps);
             result = true;
         } else if (jythonAction) {
             action = action.substring(7);
-            jyManager.evaluateTrusted(action, hashProps);
-//            ucar.unidata.idv.JythonManager jyMan = new ucar.unidata.idv.JythonManager();
-//            jyMan
-//            getJythonManager().evaluateTrusted(action, hashProps);
+            jyManager.evaluateAction(action, hashProps);
             result = true;
         } else {
             result = super.handleFileOrUrlAction(action, properties);

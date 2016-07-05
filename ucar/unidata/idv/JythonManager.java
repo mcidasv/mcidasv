@@ -28,6 +28,7 @@
 
 package ucar.unidata.idv;
 
+import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
 import static ucar.unidata.util.GuiUtils.MENU_SEPARATOR;
 import static ucar.unidata.util.GuiUtils.getInput;
 import static ucar.unidata.util.GuiUtils.inset;
@@ -48,7 +49,6 @@ import static ucar.unidata.util.IOUtil.readContents;
 import static ucar.unidata.util.IOUtil.writeFile;
 import static ucar.unidata.util.LogUtil.userErrorMessage;
 import static ucar.unidata.util.LogUtil.userMessage;
-import static ucar.unidata.util.Misc.toList;
 import static ucar.unidata.util.StringUtil.listToStringArray;
 import static ucar.unidata.util.StringUtil.removeWhitespace;
 import static ucar.unidata.util.StringUtil.replace;
@@ -104,15 +104,14 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.text.JTextComponent;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.JythonEditor;
 import edu.wisc.ssec.mcidasv.util.FileFinder;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 
 import org.python.core.Py;
+import org.python.core.PyFunction;
 import org.python.core.PyObject;
 import org.python.core.PyString;
-import org.python.core.PyFunction;
 import org.python.core.PyStringMap;
 import org.python.core.PySyntaxError;
 import org.python.core.PySystemState;
@@ -318,9 +317,14 @@ public class JythonManager extends IdvManager implements ActionListener,
         if (!getArgsManager().isScriptingMode()) {
             makeFormulasFromLib();
             try {
-                McIDASV.getStaticMcv().watchDirectory(pythonDir, "*.py", this);
+                McIDASV mcv = getStaticMcv();
+                if (mcv != null) {
+                    mcv.watchDirectory(pythonDir, "*.py", this);
+                } else {
+                    logger.warn("getStaticMcv() returned null! Could not watch directory '"+pythonDir+'\'');
+                }
             } catch (IOException e) {
-                logger.error("Could not watch directory '"+pythonDir+"'", e);
+                logger.error("Could not watch directory '"+pythonDir+ '\'', e);
             }
         }
     }
@@ -1403,7 +1407,79 @@ public class JythonManager extends IdvManager implements ActionListener,
         }
         interp.exec(code);
     }
-    
+
+    /**
+     * Largely the same as {@link #evaluateTrusted(String, Map)}.
+     *
+     * <p>The key difference is that prior to running {@code action}, this
+     * method will check the namespace of its Jython interpreter for the
+     * {@literal "idv"} object. If not found, {@literal "idv"} is added to the
+     * namespace.</p>
+     *
+     * <p>The idea is to try to mitigate some issues we've seen
+     * (McV Inquiry 2109).</p>
+     *
+     * @param code Action code to evaluate.
+     * @param properties Any properties
+     */
+    public void evaluateAction(String code, Map<String, Object> properties) {
+        PythonInterpreter interp = getUiInterpreter();
+        if (properties != null) {
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                interp.set(entry.getKey(), entry.getValue());
+            }
+        }
+        if (code.startsWith("idv.")) {
+            PyObject locals = interp.getLocals();
+            PyStringMap map = (PyStringMap)locals;
+            if (!map.has_key("idv")) {
+                logger.warn("interpreter does not have 'idv'! adding it...");
+                PyObject mcvRef = getMcvReference(this);
+                if (mcvRef != null) {
+                    interp.set("idv", mcvRef);
+                }
+            } else {
+                boolean result = getStaticMcv() == map.__getitem__("idv").__tojava__(IntegratedDataViewer.class);
+                logger.trace("interpreter has idv; is value same as getStaticMcv? result={}", result);
+                if (!result) {
+                    logger.trace("idv was not the expected value! replacing with output of getStaticMcv()!");
+                    PyObject mcvRef = getMcvReference(this);
+                    if (mcvRef != null) {
+                        interp.set("idv", mcvRef);
+                    }
+                }
+            }
+        }
+        interp.exec(code);
+    }
+
+    /**
+     * Attempt to find a valid reference to the object used as a representation
+     * of the application session.
+     *
+     * @param jyManager Jython manager for the session. Cannot be {@code null}.
+     *
+     * @return The result of {@link McIDASV#getStaticMcv()},
+     * {@link IntegratedDataViewer#getIdv()}, or {@code null} if the previous
+     * two methods failed.
+     */
+    private static PyObject getMcvReference(JythonManager jyManager) {
+        PyObject result = null;
+        McIDASV mcv = getStaticMcv();
+        if (mcv != null) {
+            result = Py.java2py(mcv);
+        } else {
+            logger.warn("getStaticMcv() returned null! Trying getIdv()...");
+            IntegratedDataViewer idv = jyManager.getIdv();
+            if (idv != null) {
+                result = Py.java2py(idv);
+            } else {
+                logger.warn("getIdv() failed as well! Nothing left...");
+            }
+        }
+        return result;
+    }
+
     /**
      * Create (if needed) and initialize a Jython interpreter. The initialization is to map
      * the variable "idv" to this instance of the idv and map "datamanager" to the DataManager
