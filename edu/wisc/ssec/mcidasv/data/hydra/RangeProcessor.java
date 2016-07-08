@@ -52,6 +52,14 @@ public class RangeProcessor {
             if (Objects.equals(product_name, "IASI_L1C_xxx")) {
                 return new IASI_RangeProcessor();
             }
+            
+            // TJJ Jul 2016
+            // Force valid range and missing value checks for AIRS, yes, I know this
+            // should not be hardcoded, it's a hack for Inq #2382
+            if (Objects.equals(product_name, "AIRS_L1B")) {
+                return new RangeProcessor(1.0f, 0.0f, 0.0f, 320.0f, -9999.0f);
+            }
+            
             return null;
         } else {
             String product_name = (String) metadata.get(ProfileAlongTrack.product_name);
