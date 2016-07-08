@@ -36,58 +36,61 @@ import java.util.StringTokenizer;
 
 public class AIRS_L1B_Spectrum extends SpectrumAdapter {
 
-  String propertyFileName;
-  float[] srf_centroid_freq;
-  int[] radiance_quality;
+    String propertyFileName;
+    float[] srf_centroid_freq;
+    int[] radiance_quality;
 
-  public AIRS_L1B_Spectrum(MultiDimensionReader reader, Map<String, Object> metadata) {
-    super(reader, metadata);
-  }
-
-  public float[] getChannels() throws Exception {
-    srf_centroid_freq = new float[numChannels];
-    radiance_quality = new int[numChannels];
-    propertyFileName = (String) metadata.get(SpectrumAdapter.ancillary_file_name);
-    InputStream ios = getClass().getResourceAsStream(propertyFileName);
-    BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
-  
-    int cnt = 0;
-    while (true) {
-      String line = ancillaryReader.readLine();
-      if (line == null) break;
-      if (line.startsWith("!")) continue;
-      StringTokenizer strTok = new StringTokenizer(line);
-      String[] tokens = new String[strTok.countTokens()];
-      int tokCnt = 0;
-      while (strTok.hasMoreElements()) {
-        tokens[tokCnt++] = strTok.nextToken();
-      }
-      srf_centroid_freq[cnt] = Float.valueOf(tokens[1]);
-      radiance_quality[cnt] = Integer.valueOf(tokens[12]);
-      cnt++;
+    public AIRS_L1B_Spectrum(MultiDimensionReader reader, Map<String, Object> metadata) {
+        super(reader, metadata);
     }
-    ios.close();
 
-    float[] channels = new float[numChannels];
-    System.arraycopy(srf_centroid_freq,0,channels,0,numChannels);
-    return srf_centroid_freq;
-  }
+    public float[] getChannels() throws Exception {
+        srf_centroid_freq = new float[numChannels];
+        radiance_quality = new int[numChannels];
+        propertyFileName = (String) metadata.get(SpectrumAdapter.ancillary_file_name);
+        InputStream ios = getClass().getResourceAsStream(propertyFileName);
+        BufferedReader ancillaryReader = new BufferedReader(new InputStreamReader(ios));
 
-  public float[] processRange(float[] range, Map<String, double[]> subset) {
-    for (int k=0; k<numChannels; k++) {
-      if (radiance_quality[k] != 0) range[k] = Float.NaN;
+        int cnt = 0;
+        while (true) {
+            String line = ancillaryReader.readLine();
+            if (line == null)
+                break;
+            if (line.startsWith("!"))
+                continue;
+            StringTokenizer strTok = new StringTokenizer(line);
+            String[] tokens = new String[strTok.countTokens()];
+            int tokCnt = 0;
+            while (strTok.hasMoreElements()) {
+                tokens[tokCnt++] = strTok.nextToken();
+            }
+            srf_centroid_freq[cnt] = Float.valueOf(tokens[1]);
+            radiance_quality[cnt] = Integer.valueOf(tokens[12]);
+            cnt++;
+        }
+        ios.close();
+
+        float[] channels = new float[numChannels];
+        System.arraycopy(srf_centroid_freq, 0, channels, 0, numChannels);
+        return srf_centroid_freq;
     }
-    float[] new_range = sortRange(range);
-    return new_range;
-  }
 
-  public double[] processRange(double[] range, Map<String, double[]> subset) {
-    for (int k=0; k<numChannels; k++) {
-      if (radiance_quality[k] != 0) range[k] = Double.NaN;
+    public float[] processRange(float[] range, Map<String, double[]> subset) {
+        for (int k = 0; k < numChannels; k++) {
+            if (radiance_quality[k] != 0)
+                range[k] = Float.NaN;
+        }
+        float[] new_range = sortRange(range);
+        return new_range;
     }
-    double[] new_range = sortRange(range);
-    return new_range;
-  }
 
+    public double[] processRange(double[] range, Map<String, double[]> subset) {
+        for (int k = 0; k < numChannels; k++) {
+            if (radiance_quality[k] != 0)
+                range[k] = Double.NaN;
+        }
+        double[] new_range = sortRange(range);
+        return new_range;
+    }
 
 }
