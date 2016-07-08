@@ -232,14 +232,6 @@ public class MultiSpectralDataSource extends HydraDataSource {
         			table.put(SwathAdapter.array_name, "L1B_AIRS_Science/Data_Fields/radiances");
         			table.put(SwathAdapter.range_name, "BrightnessTemperature");
         		}
-        		
-                // TJJ Jul 2016 impose a hard-coded valid range check. This handles any bad channels
-                // by forcing values outside this range to NaN. A bandaid, but ok since right now
-                // our only supported fields are Radiance and Brightness Temp. The product name
-        		// triggers a RangeProcessor constructor which sets the values
-                
-        		table.put("product_name", "AIRS_L1B");
-                
         		table.put("lon_array_name", "L1B_AIRS_Science/Geolocation_Fields/Longitude");
         		table.put("lat_array_name", "L1B_AIRS_Science/Geolocation_Fields/Latitude");
         		table.put("XTrack", "GeoXTrack");
