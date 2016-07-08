@@ -28,15 +28,21 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import java.net.InetAddress;
+import java.net.Socket;
+
+import java.util.Hashtable;
+
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.HttpServer;
 import ucar.unidata.util.LogUtil;
 
-import java.util.Hashtable;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 
+import org.slf4j.LoggerFactory;
 
-import java.net.InetAddress;
-import java.net.Socket;
+import edu.wisc.ssec.mcidasv.jython.Console;
 
 /**
  * This provides http based access to a stack trace and enables the user to
@@ -127,7 +133,9 @@ public class McIDASVMonitor extends HttpServer {
             String header = "<h1>McIDAS-V HTTP monitor</h1><hr>" +
                 "<a href=stack.html>Stack Trace</a>&nbsp;|&nbsp;" +
                 "<a href=info.html>System Information</a>&nbsp;|&nbsp;" +
-                "<a href=shutdown.html>Shut Down</a><hr>";
+                "<a href=shutdown.html>Shut Down</a>&nbsp;|&nbsp;" +
+                "<a href=jython.html>Jython</a>&nbsp;|&nbsp;" +
+                "<a href=trace.html>Enable TRACE logging</a><hr>";
             writeResult(true,  header+sb.toString(), "text/html");
         }
 
@@ -161,12 +169,42 @@ public class McIDASVMonitor extends HttpServer {
             } else if (path.equals("/reallyshutdown.html")) {
                 writeResult(true, "McIDAS-V is shutting down","text/html");
                 System.exit(0);
+            } else if (path.equals("/jython.html")) {
+                StringBuffer extra = new StringBuffer("Try to show <a href=shell.html>Jython Shell</a> in your McV session.<br/><br/>");
+                extra.append("Try to <a href=console.html>show alternative Jython console</a><br/>");
+                extra.append("If the event dispatch queue is not functioning, the console will probably not appear.");
+                decorateHtml(extra);
+            } else if (path.equals("/shell.html")) {
+                StringBuffer extra = new StringBuffer("Try to show Jython Shell in your McV session.<br/><br/>");
+                extra.append("Try to <a href=console.html>show alternative Jython console</a><br/>");
+                extra.append("If the event dispatch queue is not functioning, the console will probably not appear.");
+                decorateHtml(extra);
+                McIDASV.getStaticMcv().getJythonManager().createShell();
+            } else if (path.equals("/trace.html")) {
+                enableTraceLogging();
+            } else if (path.equals("/console.html")) {
+                StringBuffer extra = new StringBuffer("Try to show <a href=shell.html>Jython Shell</a> in your McV session.<br/><br/>");
+                extra.append("Try to show alternative Jython console</a><br/>");
+                extra.append("If the event dispatch queue is not functioning, the console will probably not appear.");
+                decorateHtml(extra);
+                Console.testConsole(false);
             } else if (path.equals("/") || path.equals("/index.html")) {
                 decorateHtml(new StringBuffer(""));
             } else {
                 decorateHtml(new StringBuffer("Unknown url:" + path));
             }
         }
-    }
 
+        private void enableTraceLogging() throws Exception {
+            Logger rootLogger = (Logger)LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+            Level currentRootLevel = rootLogger.getLevel();
+            Level currentEffectiveLevel = rootLogger.getEffectiveLevel();
+            rootLogger.setLevel(Level.TRACE);
+            StringBuffer extra = new StringBuffer(512);
+            extra.append("Logging level set to TRACE<br/><br/>")
+                 .append("Previous level: ").append(currentRootLevel).append("<br/>")
+                 .append("Previous <i>effective</i> level: ").append(currentEffectiveLevel).append("<br/>");
+            decorateHtml(extra);
+        }
+    }
 }
