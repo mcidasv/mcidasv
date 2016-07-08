@@ -129,6 +129,16 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     }
 
     /**
+     * Clear the histogram.
+     */
+    public void clearHistogram() {
+        for (int dataSetIdx = 0; dataSetIdx < plot.getDatasetCount(); dataSetIdx++) {
+            MyHistogramDataset dataset = (MyHistogramDataset)plot.getDataset(dataSetIdx);
+            dataset.removeAllSeries();
+        }
+    }
+
+    /**
      * Create the charts
      *
      * @throws RemoteException On badness
@@ -138,10 +148,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         createChart();
         List dataChoiceWrappers = getDataChoiceWrappers();
         try {
-            for (int dataSetIdx = 0; dataSetIdx < plot.getDatasetCount(); dataSetIdx++) {
-                MyHistogramDataset dataset = (MyHistogramDataset)plot.getDataset(dataSetIdx);
-                dataset.removeAllSeries();
-            }
+            clearHistogram();
 
             Hashtable props = new Hashtable();
             ErrorEstimate[] errOut = new ErrorEstimate[1];
