@@ -81,7 +81,6 @@ import javax.swing.table.TableCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvConstants;
 import ucar.visad.display.XYDisplay;
@@ -791,21 +790,19 @@ public class MultiSpectralControl extends HydraControl {
     private void updateHistogramTab() {
         try {
             FlatField ff = display.getImageData();
-            if (GridUtil.isAllMissing(ff)) {
-                histoWrapper.clearHistogram();
-                rangeMin = Float.NaN;
-                rangeMax = Float.NaN;
-                minBox.setText("NaN");
-                maxBox.setText("NaN");
-            } else {
-                histoWrapper.loadData(ff);
-                org.jfree.data.Range range = histoWrapper.getRange();
-                rangeMin = (float)range.getLowerBound();
-                rangeMax = (float)range.getUpperBound();
-                minBox.setText(Integer.toString((int)rangeMin));
-                maxBox.setText(Integer.toString((int)rangeMax));
-            }
-        } catch (Exception e) {
+            histoWrapper.loadData(ff);
+            org.jfree.data.Range range = histoWrapper.getRange();
+            rangeMin = (float)range.getLowerBound();
+            rangeMax = (float)range.getUpperBound();
+            minBox.setText(Integer.toString((int)rangeMin));
+            maxBox.setText(Integer.toString((int)rangeMax));
+        } catch (IllegalArgumentException e) {
+            histoWrapper.clearHistogram();
+            rangeMin = Float.NaN;
+            rangeMax = Float.NaN;
+            minBox.setText("NaN");
+            maxBox.setText("NaN");
+        } catch (RemoteException | VisADException e) {
             logException("MultiSpectralControl.getHistogramTabComponent", e);
         }
     }

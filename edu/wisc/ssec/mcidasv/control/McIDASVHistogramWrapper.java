@@ -57,6 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.chart.DataChoiceWrapper;
@@ -132,19 +133,44 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
      * Clear the histogram.
      */
     public void clearHistogram() {
-        for (int dataSetIdx = 0; dataSetIdx < plot.getDatasetCount(); dataSetIdx++) {
-            MyHistogramDataset dataset = (MyHistogramDataset)plot.getDataset(dataSetIdx);
-            dataset.removeAllSeries();
+        if (plot != null) {
+            for (int i = 0; i < plot.getDatasetCount(); i++) {
+                MyHistogramDataset dataset =
+                    (MyHistogramDataset)plot.getDataset(i);
+                if (dataset != null) {
+                    dataset.removeAllSeries();
+                }
+            }
         }
     }
 
     /**
-     * Create the charts
+     * Create the histogram.
      *
+     * @param data Data to use in histogram.
+     *
+     * @throws IllegalArgumentException if {@code data} is all NaNs.
      * @throws RemoteException On badness
      * @throws VisADException On badness
      */
-    public void loadData(FlatField data) throws VisADException, RemoteException {
+    public void loadData(FlatField data) throws IllegalArgumentException, RemoteException, VisADException {
+        if (!GridUtil.isAllMissing(data)) {
+            reallyLoadData(data);
+        } else {
+            throw new IllegalArgumentException("Nothing to show in histogram");
+        }
+     }
+
+    /**
+     * Assumes that {@code data} has been validated and is okay to actually try
+     * loading.
+     *
+     * @param data Data to use in histogram. Cannot be {@code null} or all NaNs.
+     *
+     * @throws VisADException
+     * @throws RemoteException
+     */
+    private void reallyLoadData(FlatField data) throws VisADException, RemoteException {
         createChart();
         List dataChoiceWrappers = getDataChoiceWrappers();
         try {
@@ -181,7 +207,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
 
                 MyHistogramDataset dataset = new MyHistogramDataset();
                 dataset.setType(HistogramType.FREQUENCY);
-                dataset.addSeries(dataChoice.getName() + " [" + unit + "]",
+                dataset.addSeries(dataChoice.getName() + " [" + unit + ']',
                     actualValues, getBins());
                 samples = null;
                 actualValues = null;
@@ -209,7 +235,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                             }
                             ((DisplayControlImpl) imageControl).setRange(newRange);
                         } catch (Exception e) {
-                            System.out.println("Can't set new range e=" + e);
+                            logger.error("Cannot change range", e);
                         }
                     }
                 });
@@ -222,7 +248,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         } catch (Exception exc) {
             System.out.println("Exception exc=" + exc);
             LogUtil.logException("Error creating data set", exc);
-            return;
         }
     }
 
