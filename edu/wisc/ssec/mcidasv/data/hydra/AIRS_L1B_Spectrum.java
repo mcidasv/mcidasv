@@ -39,6 +39,8 @@ public class AIRS_L1B_Spectrum extends SpectrumAdapter {
     String propertyFileName;
     float[] srf_centroid_freq;
     int[] radiance_quality;
+    private static final float AIRS_VALID_MIN = 0.0f;
+    private static final float AIRS_MISSING_VALUE = -9999.0f;
 
     public AIRS_L1B_Spectrum(MultiDimensionReader reader, Map<String, Object> metadata) {
         super(reader, metadata);
@@ -81,6 +83,14 @@ public class AIRS_L1B_Spectrum extends SpectrumAdapter {
                 range[k] = Float.NaN;
         }
         float[] new_range = sortRange(range);
+        
+        // TJJ Jul 2016, Patch for Inq #2382
+        for (int k = 0; k < new_range.length; k++) {
+            if ((new_range[k] < AIRS_VALID_MIN) || (new_range[k] == AIRS_MISSING_VALUE)) {
+                new_range[k] = Float.NaN;
+            }
+        }
+        
         return new_range;
     }
 
@@ -90,6 +100,14 @@ public class AIRS_L1B_Spectrum extends SpectrumAdapter {
                 range[k] = Double.NaN;
         }
         double[] new_range = sortRange(range);
+        
+        // TJJ Jul 2016, Patch for Inq #2382
+        for (int k = 0; k < new_range.length; k++) {
+            if ((new_range[k] < AIRS_VALID_MIN) || (new_range[k] == AIRS_MISSING_VALUE)) {
+                new_range[k] = Double.NaN;
+            }
+        }
+        
         return new_range;
     }
 
