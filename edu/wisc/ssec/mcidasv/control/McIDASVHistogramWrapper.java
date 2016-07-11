@@ -107,7 +107,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     }
 
     /**
-     * Create the chart
+     * Create the chart.
      */
     private void createChart() {
         if (chartPanel != null) {
@@ -133,10 +133,11 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
      * Clear the histogram.
      */
     public void clearHistogram() {
-        if (plot != null) {
-            for (int i = 0; i < plot.getDatasetCount(); i++) {
+        if (chartPanel != null) {
+            XYPlot tempPlot = chartPanel.getChart().getXYPlot();
+            for (int i = 0; i < tempPlot.getDatasetCount(); i++) {
                 MyHistogramDataset dataset =
-                    (MyHistogramDataset)plot.getDataset(i);
+                        (MyHistogramDataset)tempPlot.getDataset(i);
                 if (dataset != null) {
                     dataset.removeAllSeries();
                 }
@@ -154,7 +155,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
      * @throws VisADException On badness
      */
     public void loadData(FlatField data) throws IllegalArgumentException, RemoteException, VisADException {
-        if (!GridUtil.isAllMissing(data)) {
+        if ((data != null) && !GridUtil.isAllMissing(data)) {
             reallyLoadData(data);
         } else {
             throw new IllegalArgumentException("Nothing to show in histogram");
@@ -173,6 +174,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     private void reallyLoadData(FlatField data) throws VisADException, RemoteException {
         createChart();
         List dataChoiceWrappers = getDataChoiceWrappers();
+
         try {
             clearHistogram();
 
@@ -199,6 +201,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                     renderer = new StackedXYBarRenderer();
                 } else {
                     renderer = new XYBarRenderer();
+                }
+                if ((plot == null) && (chartPanel != null)) {
+                    plot = chartPanel.getChart().getXYPlot();
                 }
                 plot.setRenderer(paramIdx, renderer);
                 Color c = wrapper.getColor(paramIdx);

@@ -798,6 +798,7 @@ public class MultiSpectralControl extends HydraControl {
             maxBox.setText(Integer.toString((int)rangeMax));
         } catch (IllegalArgumentException e) {
             histoWrapper.clearHistogram();
+            histoWrapper.resetPlot();
             rangeMin = Float.NaN;
             rangeMax = Float.NaN;
             minBox.setText("NaN");
