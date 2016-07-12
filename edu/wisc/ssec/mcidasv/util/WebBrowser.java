@@ -35,7 +35,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import javax.swing.JOptionPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.unidata.util.LogUtil;
 
@@ -45,11 +46,35 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  * A simple utility class for opening a web browser to a given link.
  */
 public final class WebBrowser {
-
+    
+    /** Logging object. */
+    private static final Logger logger =
+        LoggerFactory.getLogger(WebBrowser.class);
+    
     /** Probe Unix-like systems for these browsers, in this order. */
     private static final List<String> unixBrowsers = 
         list("firefox", "chromium-browser", "google-chrome", "konqueror",
              "opera", "mozilla", "netscape");
+    
+    /**
+     * {@code IOException} formatting string used when all browsing methods
+     * have failed.
+     */
+    private static final String ALL_METHODS_ERRMSG = "Could not open '%s'";
+    
+    /**
+     * {@code IOException} formatting string used by
+     * {@link #openOldStyle(String)} when no browsers could be identified on
+     * the system.
+     */
+    private static final String NO_BROWSER_ERRMSG =
+        "Could not find a web browser to launch (tried %s)";
+    
+    /** Message displayed to the user when all browsing methods have failed. */
+    private static final String THINGS_DUN_BROKE_ERRMSG =
+        "All three approaches for opening a browser " +
+            "failed!\nPlease consider sending a support request via\n" +
+            "the button below.\n";
 
     /** Do not create instances of {@code WebBrowser}. */
     private WebBrowser() { }
@@ -76,28 +101,35 @@ public final class WebBrowser {
      * @see #openOldStyle(String)
      */
     public static void browse(final String url) {
-        // if the user has taken the trouble to explicitly provide the path to 
-        // a web browser, we should probably use it.
+        // if the user has taken the trouble to explicitly provide the path to
+        // a web browser, we should probably prefer it.
         if (tryUserSpecifiedBrowser(url)) {
             return;
         }
-
+        
         // try using the JDK-supported approach
         if (openNewStyle(url)) {
             return;
         }
-
+        
         // if not, use the hacky stuff.
-        openOldStyle(url);
+        try {
+            openOldStyle(url);
+        } catch (Exception e) {
+            logger.warn(String.format(ALL_METHODS_ERRMSG, url), e);
+            IOException uhoh =
+                new IOException(String.format(ALL_METHODS_ERRMSG, url));
+            LogUtil.logException(THINGS_DUN_BROKE_ERRMSG, uhoh);
+        }
     }
-
+    
     /**
      * Test whether or not a given URL should be opened in a web browser.
      *
      * @param url URL to test. Cannot be {@code null}.
      *
-     * @return {@code true} if {@code url} begins with either {@literal "http:"}
-     * or {@literal "https:"}.
+     * @return {@code true} if {@code url} begins with either
+     * {@literal "http:"} or {@literal "https:"}.
      */
     public static boolean useBrowserForUrl(final String url) {
         String lowercase = url.toLowerCase();
@@ -123,9 +155,9 @@ public final class WebBrowser {
                     // well... the assumption is that there was not a problem
                     retVal = true;
                 } catch (URISyntaxException e) {
-                    LogUtil.logException("Bad syntax in URI: "+url, e);
+                    logger.warn("Bad syntax in URI: "+url, e);
                 } catch (IOException e) {
-                    LogUtil.logException("Problem accessing URI: "+url, e);
+                    logger.warn("Problem accessing URI: "+url, e);
                 }
             }
         }
@@ -155,10 +187,11 @@ public final class WebBrowser {
                         return;
                     }
                 }
-                throw new IOException("Could not find a web browser to launch (tried "+unixBrowsers+')');
+                String msg = String.format(NO_BROWSER_ERRMSG, unixBrowsers);
+                throw new IOException(msg);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Problem running web browser:\n" + e.getLocalizedMessage());
+            logger.warn("Could not open URL '"+url+'\'', e);
         }
     }
 
@@ -168,21 +201,21 @@ public final class WebBrowser {
      * 
      * @param url URL to open.
      * 
-     * @return Either {@code true} if the command-line was executed, {@code false} if
-     * either the command-line wasn't launched or {@literal "idv.browser.path"}
-     * was not set.
+     * @return Either {@code true} if the command-line was executed,
+     * {@code false} if either the command-line wasn't launched or
+     * {@literal "idv.browser.path"} was not set.
      */
     private static boolean tryUserSpecifiedBrowser(final String url) {
         McIDASV mcv = McIDASV.getStaticMcv();
         boolean retVal = false;
         if (mcv != null) {
-            String browserPath = mcv.getProperty("idv.browser.path", (String)null);
+            String browserPath = mcv.getProperty("idv.browser.path", null);
             if ((browserPath != null) && !browserPath.trim().isEmpty()) {
                 try {
                     Runtime.getRuntime().exec(browserPath+' '+url);
                     retVal = true;
                 } catch (Exception e) {
-                    LogUtil.logException("Executing browser: "+browserPath, e);
+                    logger.warn("Could not execute '"+browserPath+'\'', e);
                 }
             }
         }
