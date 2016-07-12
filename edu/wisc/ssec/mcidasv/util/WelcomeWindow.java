@@ -42,6 +42,7 @@ import java.io.IOException;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -60,7 +61,8 @@ import javax.swing.event.HyperlinkEvent;
  */
 // NOTE TO MCV CODERS:
 // **DOCUMENT WHAT CHECKS AND/OR DETECTION ARE BEING PERFORMED**
-public class WelcomeWindow extends JFrame {
+//public class WelcomeWindow extends JFrame {
+public class WelcomeWindow extends JDialog {
 
     /** Path to {@literal "header"} image. */
     private static final String LOGO_PATH = 
@@ -81,13 +83,16 @@ public class WelcomeWindow extends JFrame {
     /** Dimensions of the welcome window frame. */
     private static final Dimension WINDOW_SIZE = new Dimension(495, 431);
 
-    private static final long DEFAULT_QUIT_DELAY = 2500;
+    /** Default auto-quit delay (in milliseconds). */
+    public static final long DEFAULT_QUIT_DELAY = 2500;
 
     /** Java-friendly location of the path to the welcome message. */
     private final java.net.URL contents;
 
+    /** Whether or not the window should automatically close. */
     private final boolean autoQuit;
 
+    /** Delay in milliseconds for auto-quitting. */
     private final long autoQuitDelay;
 
     /** 
@@ -198,11 +203,19 @@ public class WelcomeWindow extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setSize(WINDOW_SIZE);
+        setModal(true);
     }// </editor-fold>
 
+    /**
+     * Show or close the Welcome Window.
+     *
+     * <p>Overridden in McV to handle auto-quitting. If we're supposed to
+     * auto-quit, a thread will be started that calls {@link JButton#doClick()}.
+     * </p>
+     *
+     * @param visible Whether or not the dialog should be opened or closed.
+     */
     @Override public void setVisible(boolean visible) {
-        super.setVisible(visible);
-
         if (autoQuit) {
             new Thread() {
                 public void run() {
@@ -217,17 +230,16 @@ public class WelcomeWindow extends JFrame {
                 }
             }.start();
         }
+        super.setVisible(visible);
     }
 
     /**
      * Handles the user clicking on {@link #startButton}. 
-     * Executes {@code System.exit(0)} in an effort to signal to the startup
-     * scripts that the window terminated {@literal "normally"}.
-     * 
+     *
      * @param evt Event to handle. Currently ignored.
      */
     private void startButtonActionPerformed(ActionEvent evt) {
-        System.exit(0);
+        this.setVisible(false);
     }
 
     /**
@@ -252,7 +264,7 @@ public class WelcomeWindow extends JFrame {
      * <p>An abnormal termination will result in the startup script 
      * terminating the launch of McIDAS-V.
      * 
-     * @param evt Note that this parameter is currently ignored.
+     * @param evt Event to handle. Currently ignored.
      */
     private void formWindowClosing(WindowEvent evt) {
         System.exit(1);
@@ -285,7 +297,9 @@ public class WelcomeWindow extends JFrame {
     }
 
     /**
-     * @param args the command line arguments
+     * Kick the tires.
+     *
+     * @param args Command line arguments
      */
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {

@@ -145,25 +145,6 @@ else
   JAVA_HOME=$(readlink -f ${JAVA_PATH} | sed "s:/bin/java::")
 fi
 
-# Show the welcome window if needed
-if [ "${SHOW_WELCOME}" = "1" ]; then
-    echo "Showing the welcome window..."
-    if [ `uname -s` = "Darwin" ]; then
-        OSX_FLAGS="-Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
-    else
-        OSX_FLAGS=""
-    fi
-
-    if [ "${MCV_UNWELCOME_WINDOW}" = "true" ]; then
-        "${JAVA_BIN}" ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow -autoquit "${MCV_UNWELCOME_DELAY}" 2>/dev/null
-    else
-        "${JAVA_BIN}" ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
-    fi
-    if [ $? -eq 1 ]; then
-        exit 1
-    fi
-fi
-
 # Get the version and amount of system memory
 echo "Reading system configuration..."
 
@@ -260,6 +241,15 @@ fi
 
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dpython.security.respectJavaAccessibility=false"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -DtextureWidthMax=${TEXTURE_SIZE}"
+
+# should mcv show the welcome window prior to starting
+if [ "${SHOW_WELCOME}" = "1" ]; then
+  if [ "${MCV_UNWELCOME_WINDOW}" = "true" ]; then
+      MCV_FLAGS="-welcomewindow -autoquit ${MCV_UNWELCOME_DELAY} ${MCV_FLAGS}"
+  else
+      MCV_FLAGS="-welcomewindow ${MCV_FLAGS}"
+  fi
+fi
 
 ################################################################################
 # OS specific settings
