@@ -224,6 +224,10 @@ set MCV_LIBPATH=-Djava.library.path="jre\lib\ext"
 
 @echo Command line: mcidasv.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
-
+IF DEFINED MCV_UNWELCOME_WINDOW (
+    start /B /WAIT jre\bin\java.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+    EXIT
+) ELSE (
+    start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+)
 :end
