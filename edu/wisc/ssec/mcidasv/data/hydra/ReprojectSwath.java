@@ -811,25 +811,24 @@ public class ReprojectSwath {
    return values[closest];
  }
 
- private static float[] v0 = new float[2];  // A
- private static float[] v1 = new float[2];  // B
- private static float[] v2 = new float[2];  // D
- private static float[] v3 = new float[2];  // C
-
- private static float[] bd = new float[2];
- private static float[] bp = new float[2];
- private static float[] dp = new float[2];
-
- private static float[] ab = new float[2];
- private static float[] da = new float[2];
- private static float[] ap = new float[2];
-
- private static float[] bc = new float[2];
- private static float[] cd = new float[2];
- private static float[] cp = new float[2];
-
-
  public static float visad2D(float gy, float gx, float[][] corners, float[] values) {
+    float[] v0 = new float[2];  // A
+    float[] v1 = new float[2];  // B
+    float[] v2 = new float[2];  // D
+    float[] v3 = new float[2];  // C
+
+    float[] bd = new float[2];
+    float[] bp = new float[2];
+    float[] dp = new float[2];
+
+    float[] ab = new float[2];
+    float[] da = new float[2];
+    float[] ap = new float[2];
+
+    float[] bc = new float[2];
+    float[] cd = new float[2];
+    float[] cp = new float[2];
+
 
     boolean Pos = true;
 
