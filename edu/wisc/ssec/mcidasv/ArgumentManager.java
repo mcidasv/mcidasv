@@ -180,7 +180,15 @@ public class ArgumentManager extends ArgsManager {
             if (!getIslInteractive()) {
                 setIsOffScreen(true);
             }
-        } else if ("-console".equals(arg)) {
+        } else if ("-welcomewindow".equals(arg)) {
+            // do nothing
+
+        } else if (checkArg(arg, "-autoquit", args, idx, 1)) {
+            // do nothing besides skip the next parameter
+            // (which should be the autoquit delay)
+            idx++;
+        }
+        else if ("-console".equals(arg)) {
             System.err.println("*** WARNING: console flag is likely to go away soon!");
         } else if (ARG_JYTHONARGS.equals(arg)) {
             if (scriptingFiles.isEmpty()) {

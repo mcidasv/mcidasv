@@ -68,7 +68,12 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.OptionPaneClicker;
+import edu.wisc.ssec.mcidasv.util.SystemState;
+import edu.wisc.ssec.mcidasv.util.WebBrowser;
+import edu.wisc.ssec.mcidasv.util.WelcomeWindow;
+
 import org.joda.time.DateTime;
 import org.python.util.PythonInterpreter;
 import org.w3c.dom.Element;
@@ -131,9 +136,6 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.LayerAnimationWindow;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.SystemState;
-import edu.wisc.ssec.mcidasv.util.WebBrowser;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.DirectoryWatchService;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.SimpleDirectoryWatchService;
@@ -1688,6 +1690,41 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * Show the McIDAS-V {@literal "Welcome Window"} for the first start up.
+     *
+     * @param args Commandline arguments, used to handle autoquit stress testing.
+     */
+    private static void handleWelcomeWindow(String... args) {
+        boolean showWelcome = false;
+        boolean welcomeAutoQuit = false;
+        long welcomeAutoQuitDelay = WelcomeWindow.DEFAULT_QUIT_DELAY;
+        for (int i = 0; i < args.length; i++) {
+            if ("-welcomewindow".equals(args[i])) {
+                showWelcome = true;
+            } else if ("-autoquit".equals(args[i])) {
+                welcomeAutoQuit = true;
+                int delayIdx = i + 1;
+                if (delayIdx < args.length) {
+                    welcomeAutoQuitDelay = Long.parseLong(args[delayIdx]);
+                }
+            }
+        }
+
+        // if user elects to quit, System.exit(1) will be called.
+        // if the user decides to start, the welcome window will be simply be
+        // closed, allowing McV to continue starting up.
+        if (showWelcome) {
+            WelcomeWindow ww;
+            if (welcomeAutoQuit) {
+                ww = new WelcomeWindow(true, welcomeAutoQuitDelay);
+            } else {
+                ww = new WelcomeWindow();
+            }
+            ww.setVisible(true);
+        }
+    }
+
+    /**
      * The main. Configure the logging and create the McIDAS-V object
      * responsible for initializing the application session.
      *
@@ -1695,7 +1732,12 @@ public class McIDASV extends IntegratedDataViewer {
      *
      * @throws Exception When something untoward happens.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String... args) throws Exception {
+        // show the welcome window if needed.
+        // since the welcome window is intended to be a one time thing,
+        // it probably shouldn't count for the startTime stuff.
+        handleWelcomeWindow(args);
+
         startTime = System.nanoTime();
 
         // the following two lines are required if we want to embed JavaFX

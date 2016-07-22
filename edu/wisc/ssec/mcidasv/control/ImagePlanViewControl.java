@@ -267,10 +267,12 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
 
         if (dataSource == null) {
             try {
-                image = (FlatField)((ComboDataChoice)datachoice).getData();
+                image = (FlatField) ((ComboDataChoice) datachoice).getData();
                 histoWrapper.loadData(image);
-            } catch (Exception e) {
-                
+            } catch (IllegalArgumentException e) {
+                logger.trace("Could not create histogram: nothing to show!", e);
+            } catch (RemoteException | VisADException e) {
+                logger.error("Could not create histogram!", e);
             }
         } else {
             Hashtable props = dataSource.getProperties();
@@ -296,15 +298,18 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                         image = (FlatField) data;
                     } else if (data instanceof FieldImpl) {
                         image = (FlatField) ((FieldImpl)data).getSample(0, false);
-                    }
-                    else {
+                    } else {
                         throw new Exception("Histogram must be made from a FlatField");
                     }
                 }
                 if ((seq != null) && (seq.getImageCount() > 0)) {
                     image = (FlatField)seq.getImage(0);
                 }
-                histoWrapper.loadData(image);
+                try {
+                    histoWrapper.loadData(image);
+                } catch (IllegalArgumentException e) {
+                    logger.trace("Could not create histogram: nothing to show!", e);
+                }
             } catch (Exception e) {
                 logger.error("attempting to set up histogram", e);
             }

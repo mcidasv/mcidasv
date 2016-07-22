@@ -94,12 +94,6 @@ IF EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" CALL "%MCV_USERPATH%\runMcV-Prefs.bat
 SET ENABLE_3D=true
 IF %USE_3DSTUFF%==0 SET ENABLE_3D=false
 
-REM Show the welcome window if needed
-if "%SHOW_WELCOME%"=="1" (
-jre\bin\javaw.exe -Dmcv.userpath="%MCV_USERPATH%" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow
-if ERRORLEVEL 1 GOTO end
-)
-
 REM temp: toggles the CMS collector
 IF "%USE_CMSGC%"=="1" (
 SET GC_ARGS=-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled
@@ -145,6 +139,23 @@ SET USE_LAYOUT_BUNDLE=
 SET LOGBACK_CONFIG="%MCV_USERPATH%\logback.xml"
 
 SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=%ALLOW_NPOT% -Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -DtextureWidthMax=%TEXTURE_SIZE% -userpath "%MCV_USERPATH%"
+
+REM the unwelcome stuff is used for stress testing mcv startup
+IF DEFINED MCV_UNWELCOME_DELAY (
+SET MCV_FLAGS=%MCV_UNWELCOME_DELAY% %MCV_FLAGS%
+)
+
+IF DEFINED MCV_UNWELCOME_WINDOW (
+SET MCV_FLAGS=-autoquit %MCV_FLAGS%
+)
+
+REM Toggle the welcome window if MCV_USERPATH does not exist
+IF NOT EXIST "%MCV_USERPATH%" SET SHOW_WELCOME=1
+
+REM Show the welcome window if needed
+IF "%SHOW_WELCOME%"=="1" (
+SET MCV_FLAGS=-welcomewindow %MCV_FLAGS%
+)
 
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF NOT DEFINED STARTUP_BUNDLE GOTO endbundle
@@ -213,6 +224,10 @@ set MCV_LIBPATH=-Djava.library.path="jre\lib\ext"
 
 @echo Command line: mcidasv.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
 
-start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
-
+IF DEFINED MCV_UNWELCOME_WINDOW (
+    start /B /WAIT jre\bin\java.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+    EXIT
+) ELSE (
+    start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+)
 :end

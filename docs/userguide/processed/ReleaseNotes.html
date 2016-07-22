@@ -40,181 +40,25 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <br>
     <hr size="4" noshade>
 <div class="pagesubtitle">McIDAS-V <br>
-  Version 1.6</div>
+  Version 1.7</div>
 <hr size="4" noshade>
-<p>The items below reflect the changes since the 1.5 release.</p>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_1.6">Documentation
+<p>The items below reflect the changes since the 1.6 release.</p>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat1_1.7">Documentation
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#doc1.6">McIDAS-V User's
+    <li><strong><a class="faq-question-link" href="#doc1.7">McIDAS-V User's
           Guide</a></strong></li>
   </ul>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.6">Display
-    Changes</a></div>
-<div class="faq-category">
-  <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#flowdisplay1.6">Flow Display Controls</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#3dflowdisplay1.6">3D Flow Display Controls</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#transect1.6">New Transect Tab and Window Types</a></strong><strong><a class="faq-question-link" href="#contourLabelInterval1.5"></a></strong></li>
-    <li><strong><a class="faq-question-link" href="#autodepthoffset1.6">Automatic Depth Offsetting</a></strong></li>
-  </ul>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.6">Data Changes</a></div>
-<div class="faq-category">
-  <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#himawari1.6">Himawari Local Server</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#insat1.6">INSAT-3D Local Servers</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#abi1.6">GOES-16 ABI Local Servers</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#netcdf1.6">Listing of Fields from a NetCDF Data Source</a></strong></li>
-  </ul>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.6">Other Changes</a></div>
-<div class="faq-category">
-  <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#julian1.6">Julian Date with Archive Servers</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#listAll1.6">List All Images Button</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#animatedGif1.6">Animated GIF Global Color Palette Option</a></strong></li>
-<li><strong><a class="faq-question-link" href="#scripting1.6">Scripting</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#java1.6">Java Version</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#install1.6">Updates to Installation GUI</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#cmap1.6">Support for AWIPS II cmap Colormaps</a></strong></li>
-  </ul>
-</div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.6">Under Development</a></div>
-<div class="faq-category">
-  <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#npp1.6">Suomi NPP Chooser</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
-  <div class="faq-category-title"><a name="faq1_cat1_1.6" id="faq1_cat1_1.6"></a>Documentation
+  <div class="faq-category-title"><a name="faq1_cat1_1.7" id="faq1_cat1_1.7"></a>Documentation
     Changes</div>
-  <div class="faq-category"><a name="doc1.6" id="doc1.6"></a>
+  <div class="faq-category"><a name="doc1.7" id="doc1.7"></a>
     <h4>McIDAS-V User's Guide</h4>
     <div class="faq-answer">Updated the McIDAS-V User's Guide to contain new
       features and more detailed content.</div>
-  </div>
-</div>
-<div class="faq-category-title"><a name="faq1_cat2_1.6" id="faq1_cat2_1.6"></a>Display
-Changes</div>
-  <div class="faq-category"><a name="flowdisplay1.6" id="flowdisplay1.6"></a>
-  <h4>Flow Display Controls</h4>
-<div class="faq-answer">
-  <p>Added new display types for Vector Colored by Speed, Vector Colored by Another Parameter, Wind Barb Colored by Speed, and Wind Barb Colored by Another Parameter. Additionally, if four or more timesteps are displayed, new features in the Layer Controls allow for changing the display to trajectories or curly vectors. If trajectories are chosen, then there are four options for how the trajectories are drawn. These options are Line, Cylinder, Ribbon, and Deform Ribbon. Curly vectors are the same as regular vectors, with the exception that they are multiple timesteps in length.</p>
-</div></div>
-  <div class="faq-category"><a name="3dflowdisplay1.6" id="3dflowdisplay1.6"></a>
-  <h4>3D Flow Display Controls</h4>
-<div class="faq-answer">
-  <p>Added new display types for 3D Volume Vector, 3D Volume Vector Colored by Speed, 3D Volume Vector Colored by Another Parameter, and 3D Volume Trajectory. For these display types, there is the option to switch between displaying vectors and trajectories. When trajectories is chosen, there are different options for setting how the trajectories are drawn in the display. These options are Line, Cylinder, Ribbon, and Deform Ribbon. By default, the trajectories will be drawn at every vertical level included with the data at the specified Z Skip which is defined in the Layer Controls. The Trajectory Start Level dropdown menu can be used to set trajectories to originate at a single vertical level instead of all levels at once. Four or more timesteps must be displayed in order to plot trajectories.</p>
-</div></div>
-  <div class="faq-category"><a name="transect1.6" id="transect1.6"></a>
-  <h4>New Transect Tab and Window Types</h4>
-<div class="faq-answer">
-  <p>Added new transect tab and window types that can be accessed in the Main Display window. The new types include:</p><ul>
-  <li>File&gt;New Display Tab/Window&gt;Transect Display&gt;Three Panels</li>
-  <li>File&gt;New Display Tab/Window&gt;Transect Display&gt;Four Panels</li>
-  <li>File&gt;New Display Tab/Window&gt;Misc&gt;1 Map 2 Transects</li>
-  <li>File&gt;New Display Tab/Window&gt;Misc&gt;2 Maps 1 Transect</li></ul>
-</div></div>
-<div class="faq-category"><a name="autodepthoffset1.6" id="autodepthoffset1.6"></a>
-  <h4>Automatic Depth Offsetting</h4>
-<div class="faq-answer">
-  Added a new setting that displays overlapping layers of differing resolutions in a way that there   is no display interference when the display is rotated. This setting is enabled by default in the Display Window tab of the User Preferences. This setting can also be controlled on a display by display basis through the View&gt;Properties menu in a panel.
-</div></div>
-<div class="faq-category-title"><a name="faq1_cat3_1.6" id="faq1_cat3_1.6"></a>Data Changes</div>
-  <div class="faq-category"><a name="himawari1.6" id="himawari1.6"></a>
-  <h4>Himawari Local Server</h4>
-<div class="faq-answer">
-Added a new local server to work with Himawari HSD (Himawari Standard Data) formatted files (*.DAT). To create a local dataset using this server, from the ADDE Data Manager, click the Add New Dataset button and select the 'Himawari 8' Format. The file names must match the JMA HSD image file naming convention, <strong>HS_aaa_yyyymmdd_hhnn_Bbb_cccc_Rjj_Skkll.DAT</strong>, described in the <a href="http://www.data.jma.go.jp/mscweb/en/himawari89/space_segment/hsd_sample/HS_D_users_guide_en_v11.pdf" target="_blank">Himawari Standard Data User's Guide</a>. This server is currently supported on Linux and OS X. </div></div>
-  <div class="faq-category"><a name="insat1.6" id="insat1.6"></a>
-  <h4>INSAT-3D Local Servers</h4>
-<div class="faq-answer">
-Added new local servers to work with INSAT-3D Imager and Sounder files (*.h5). To create a local dataset using this server, from the ADDE Data Manager, click the Add New Dataset button and select the 'INSAT-3D Imager' or 'INSAT-3D Sounder' Format. These servers are currently supported on Linux and OS X.</div></div>
-  <div class="faq-category"><a name="abi1.6" id="abi1.6"></a>
-  <h4>GOES-16 ABI Local Servers</h4>
-<div class="faq-answer">
-Added new local servers to work with Level 1b GOES-R ABI files in the netCDF-4 format.  The names of these files should look similar to this: OR_ABI-L1b-RadC-M4C16_G16_s20151702215532_e20151702220362_c20151702220394.nc. To create a local dataset using this server, from the ADDE Data Manager, click the Add New Dataset button and select the 'GOES-16 ABI' Format. These servers are currently supported on Linux and OS X.</div></div>
-  <div class="faq-category"><a name="netcdf1.6" id="netcdf1.6"></a>
-  <h4>Listing of Fields from a NetCDF Data Source</h4>
-<div class="faq-answer">
-  <p>Added a new button to the top of the Fields panel of the Field Selector to toggle between the longname and shortname descriptions of each field in the data source. This is only an option if the fields populating the Fields panel are from a NetCDF-formatted data source.</p>
-</div></div>
-<div class="faq-category-title"><a name="faq1_cat4_1.6" id="faq1_cat4_1.5"></a>Other
-  Changes</div>
-<div class="faq-category"><a name="julian1.6" id="julian1.6"></a>
-  <h4>Julian Date with Archive Servers</h4>
-<div class="faq-answer">
-  <p>Added the ability to work with Julian dates with archive imagery servers. Once an Image Type is selected in a chooser, in the Set Archive Day window, Julian dates can be entered. For example:</p>
-  <ul>
-    <li>001 - Day 1 of the current year</li>
-    <li>13255 - Day 255 of year 2013</li>
-    <li>2015150 - Day 150 of year 2015</li>
-  </ul>
-In the past, users were limited to entering dates such as 'Jun 19, 2015'.
-</div></div>
-<div class="faq-category"><a name="listAll1.6" id="listAll1.6"></a>
-  <h4>List All Images Button</h4>
-<div class="faq-answer">
-Added a List All Images button to the Absolute times tab of the Satellite>Imagery chooser.  By default, only up the 100 most recent images in the dataset will be listed to save time.  Clicking this button requests the server to list all of the relevant times in the times panel.  Dependent on the server and number of images in the dataset, this may take some time to complete.
-</div></div>
-<div class="faq-category"><a name="animatedGif1.6" id="animatedGif1.6"></a>
-  <h4>Animated GIF Global Color Palette Option</h4>
-<div class="faq-answer">Added a '<strong>Use 'global' GIF color palette</strong>' option when saving a movie. This option is applicable for animated GIF movies, and it is enabled by default. Animated GIFs are limited to 256 colors, and this option uses the same   256 colors for every frame in the loop when the setting is enabled.   Enabling this option allows for certain display settings such as a color   scale to remain constant throughout the loop. If this option is   disabled, then each frame uses it's own color palette, so one color may   represent one value in one frame, and the same color may represent a   different value in the next frame. One circumstance where disabling this   option may be ideal is if the movie starts with a low-light scene (not   many colors) and there is no color scale in the display.</div></div>
-<div class="faq-category"><a name="scripting1.6" id="scripting1.6"></a>
-  <h4>Scripting</h4>
-<div class="faq-answer">
-  <p>Added a variety of functionality related to scripting since the release of 1.5. Below is a list of significant changes:</p>
-  <ul>
-    <li>New functions:</li>
-      <ul>
-        <li>Added a new function called setMapVisibilityByDescription() that allows for showing or hiding individual maps from the display.</li>
-        <li>Added a new function called findWindow() that returns a reference to the display window containing a buildWindow() panel. This allows for performing operations on a window such as adding new tabs or closing the window.</li>
-        <li>Added new functions to modify displays of point data, which are outlined in the 'Modify the Layer Object - Point' page.</li>
-        <li>Added a new function called getData() which returns a data object from a displayed layer. This data object can then be passed through formulas.</li>
-        <li>Added new lister functions for Suomi NPP VIIRS data (described below in the Under Development section).</li>
-        <li>Added a new function called describe() which returns a variety of statistical parameters about an imagery or gridded data object. These statistical parameters include a histogram, length, min, max, range, Q1, Q2, Q3, IQR, mean, mode, kurtosis, skewness, standard deviation, and variance.</li>
-        <li>Added a new function called sparkline() which returns a histogram of data values from an imagery or gridded data object.</li>
-        <li>Added a new function called importEnhancement() which allows for importing local enhancement files for use in scripts and the user interface.</li>
-        <li>Added a new function called sandwich() which is defined in the Sandwich Product library in the Jython Libraries. This function creates a sandwich RGB display using infrared and visible data, as well as user-defined minimum and maximum infrared values, a color enhancement, and the ability to specify if missing values should be plotted in the display.</li>
-      </ul>
-      <li>New functionality with existing functions:</li>
-      <ul>
-        <li>Added new information to the metadata of the data object returned from loadGrid. This new metadata is in the form of three new keys: globalAttributes, metadataVariables, and variableAttributes. Information on accessing these keys and their values can be found on the 'Create an Object - Grids' page.</li>
-        <li>Added a new keyword to the captureImage() and writeMovie() functions called createDirectories. This createDirectories key, if set to True, allows for the creation of the directory path specified in the command if it does not already exist.</li>
-        <li>Added new fontSize and fontFace keywords to the Colorbar formatting option of captureImage.</li>
-        <li>Added a new keyword to buildWindow called widgets. This keyword, if set to false, builds a display window without any toolbar buttons and only the display panel.</li>
-      </ul>
-      <li>Miscellaneous scripting-related changes:</li>
-<ul>
-        <li>For remote datasets requiring accounting that are already defined in the ADDE Data Manager, there is no need to specify the accounting keyword in the imagery-related functions.  This includes loadADDEImage, listADDEImages, and listADDEImageTimes.  A benefit of this change is that users can share scripts without including any accounting information.</li>
-        <li>Added syntax highlighting to the Jython libraries window. Also added keyboard shortcuts to assist with searching for text in the currently open library.</li>
-        <li>Added syntax highlighting to the Jython Shell window when multi-line input is being used.</li>
-  <li>Print statements are no longer required in the Jython Shell when a single line of code is being evaluated. Below are a couple of examples:</li>
-  <ul>
-    <li>Command: 2+6</li>
-    <li>Output: 8</li>
-    <li>Command: layer.getEnhancementTable()</li>     
-    <li>Output: Inverse Gray shade</li></ul>
-  </ul>
-  </ul>
-</div></div>
-<div class="faq-category"><a name="java1.6" id="java1.6"></a>
-  <h4>Java Version</h4>
-<div class="faq-answer">Updated Java version from 1.7.0_60 to 1.8.0_45.</div></div>
-<div class="faq-category"><a name="install1.6" id="install1.6"></a>
-  <h4>Updates to Installation GUI</h4>
-<div class="faq-answer">Updated the installation GUI. The first update is that the GUI now prompts the user if McIDAS-V should be installed into the same directory that McIDAS-V was last installed into (overwriting any previous version), or if it should be installed into a different directory. If the option of installing into the existing installation directory is selected, then the installation GUI will skip the step where the installation directory is selected. If the user selects to install into a different directory, there is a new feature that allows for the creation of a new directory within the installer. There were also updates to allow for installing into and running from directory paths that include spaces.</div></div>
-<div class="faq-category"><a name="cmap1.6" id="cmap1.6"></a>
-  <h4>Support for AWIPS II cmap Colormaps</h4>
-<div class="faq-answer">Added support for AWIPS II *.cmap colormaps (enhancements). These files can be imported through the Color Table Editor.</div></div>
-  <div class="faq-category-title"><a name="faq1_cat5_1.6" id="faq1_cat5_1.6"></a>Under Development</div>
-  <div class="faq-category"><a name="npp1.6" id="npp1.6"></a>
-    <h4>Suomi NPP Chooser</h4>
-    <div class="faq-answer">Added support for subsetting EDR and SDR granule aggregations containing missing scanlines. Added initial support for NASA VIIRS L1b formatted files. Also added a couple new functions to list information about VIIRS files:
-       <ul>
-         <li><strong>listVIIRSFieldsInFile(filename) -</strong> Returns a list of the fields included with the file passed through the function.  These field names can then be passed through the loadVIIRSImage() function to create a data object that can then be displayed.</li>
-         <li><strong>listVIIRSTimesInField(filename, field) -</strong> Returns the beginning date and time of the file passed through the function.</li></ul></div>
   </div>
 </div>
 <!-- InstanceEndEditable -->

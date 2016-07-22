@@ -140,11 +140,17 @@ public class Console implements Runnable, KeyListener {
 
     private MenuWrangler menuWrangler;
 
+    private final boolean exitOnClose;
+
     /**
      * Build a console with no initial commands.
      */
     public Console() {
-        this(Collections.<String>emptyList());
+        this(true, Collections.emptyList());
+    }
+
+    public Console(boolean exitOnClose) {
+        this(exitOnClose, Collections.emptyList());
     }
 
     /**
@@ -153,13 +159,18 @@ public class Console implements Runnable, KeyListener {
      * 
      * @param initialCommands Jython statements to execute.
      */
-    public Console(final List<String> initialCommands) {
+    public Console(final boolean exitOnClose, final List<String> initialCommands) {
         requireNonNull(initialCommands, "List of initial commands cannot be null");
+        this.exitOnClose = exitOnClose;
         jythonHistory = new ArrayList<>();
         jythonRunner = new Runner(this, initialCommands);
         jythonRunner.start();
         // err, shouldn't the gui stuff be done explicitly in the EDT!?
-        menuWrangler = new DefaultMenuWrangler(this);
+        try {
+            menuWrangler = new DefaultMenuWrangler(this);
+        } catch (Exception e) {
+            logger.warn("Could not create console menu", e);
+        }
         panel = new JPanel(new BorderLayout());
         textPane = new JTextPane() {
             @Override public void paste() {
@@ -787,7 +798,11 @@ public class Console implements Runnable, KeyListener {
      */
     @Override public void run() {
         JFrame frame = new JFrame(windowTitle);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        if (exitOnClose) {
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        } else {
+            frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        }
         frame.getContentPane().add(getPanel());
         frame.getContentPane().setPreferredSize(new Dimension(600, 200));
         frame.pack();
@@ -905,7 +920,7 @@ public class Console implements Runnable, KeyListener {
         }
 
         private void checkPopup(final MouseEvent e) {
-            if (e.isPopupTrigger()) {
+            if (e.isPopupTrigger() && (menuWrangler != null)) {
                 JPopupMenu popup = menuWrangler.buildMenu();
                 popup.show(textPane, e.getX(), e.getY());
             }
@@ -923,6 +938,11 @@ public class Console implements Runnable, KeyListener {
         return result;
     }
 
+    public static void testConsole(boolean exitOnClose) {
+        EventQueue.invokeLater(new Console(exitOnClose));
+        EventQueue.invokeLater(new Console(exitOnClose));
+    }
+
     public static void main(String[] args) {
         String os = System.getProperty("os.name");
         String sep = "/";
@@ -935,7 +955,7 @@ public class Console implements Runnable, KeyListener {
         Properties jythonProperties = new Properties();
         jythonProperties.setProperty("python.home", pythonHome+sep+"jython");
         Interpreter.initialize(systemProperties, jythonProperties, new String[]{""});
-        EventQueue.invokeLater(new Console());
-        EventQueue.invokeLater(new Console());
+
+        testConsole(true);
     }
 }

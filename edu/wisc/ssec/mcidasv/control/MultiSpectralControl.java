@@ -789,13 +789,21 @@ public class MultiSpectralControl extends HydraControl {
 
     private void updateHistogramTab() {
         try {
-            histoWrapper.loadData(display.getImageData());
+            FlatField ff = display.getImageData();
+            histoWrapper.loadData(ff);
             org.jfree.data.Range range = histoWrapper.getRange();
             rangeMin = (float)range.getLowerBound();
             rangeMax = (float)range.getUpperBound();
             minBox.setText(Integer.toString((int)rangeMin));
             maxBox.setText(Integer.toString((int)rangeMax));
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
+            histoWrapper.clearHistogram();
+            histoWrapper.resetPlot();
+            rangeMin = Float.NaN;
+            rangeMax = Float.NaN;
+            minBox.setText("NaN");
+            maxBox.setText("NaN");
+        } catch (RemoteException | VisADException e) {
             logException("MultiSpectralControl.getHistogramTabComponent", e);
         }
     }
