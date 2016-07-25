@@ -185,8 +185,7 @@ public class ReprojectSwath {
   */
     
   public FlatField reproject(int mode, boolean filter) throws Exception {
-
-    projectSwathToGrid();
+    this.mode = mode;
     
     initGrid();
 
@@ -459,8 +458,8 @@ public class ReprojectSwath {
  }
  
  public void initGrid() throws VisADException {
-    Arrays.fill(swathGridCoord[0], Float.NaN);
-    Arrays.fill(swathGridCoord[1], Float.NaN);
+    Arrays.fill(swathGridCoord[0], -999.9f);
+    Arrays.fill(swathGridCoord[1], -999.9f);
     Arrays.fill(swathIndexAtGrid, -1);
 
     for (int j=0; j < trackLen; j++) {
@@ -549,53 +548,60 @@ public class ReprojectSwath {
 
     return newRange;
  }
-
  private static int findSwathGridLoc(int grdIdx, float[][] swathGridCoord, int gridYLen, int gridXLen, String which) {
   
     int idx = -1;
 
     int gy = grdIdx/gridXLen;
     int gx = grdIdx % gridXLen;
+    
+    int yu1 = (gy+1)*gridXLen;
+    int yu2 = (gy+2)*gridXLen;
+    int yu3 = (gy+3)*gridXLen;    
+    
+    int yd1 = (gy-1)*gridXLen;
+    int yd2 = (gy-2)*gridXLen;
+    int yd3 = (gy-3)*gridXLen;
 
     switch (which) {
        case "LL":
 
-          idx = (gy-1)*gridXLen + (gx-1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd1 + (gx-1);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-2)*gridXLen + (gx-1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd2 + (gx-1);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-1)*gridXLen + (gx-2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd1 + (gx-2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-2)*gridXLen + (gx-2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd2 + (gx-2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
 
 
-          idx = (gy-2)*gridXLen + (gx-3);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd2 + (gx-3);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-3)*gridXLen + (gx-2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd3 + (gx-2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-3)*gridXLen + (gx-1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd3 + (gx-1);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-1)*gridXLen + (gx-3);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd1 + (gx-3);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-3)*gridXLen + (gx-3);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd3 + (gx-3);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
 
@@ -603,40 +609,40 @@ public class ReprojectSwath {
           break;
        case "UL":
           idx = (gy)*gridXLen + (gx-1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
           idx = (gy)*gridXLen + (gx-2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy+1)*gridXLen + (gx-1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu1 + (gx-1);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy+1)*gridXLen + (gx-2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu1 + (gx-2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
 
-          idx = (gy+1)*gridXLen + (gx-3);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu1 + (gx-3);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy+2)*gridXLen + (gx-3);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu2 + (gx-3);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy+2)*gridXLen + (gx-2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu2 + (gx-2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
           idx = (gy)*gridXLen + (gx-3);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-1)*gridXLen + (gx-3);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd1 + (gx-3);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
 
@@ -644,81 +650,81 @@ public class ReprojectSwath {
           break;
        case "UR":
           idx = (gy)*gridXLen + (gx);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy+1)*gridXLen + (gx);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu1 + (gx);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
           idx = (gy)*gridXLen + (gx+1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy+1)*gridXLen + (gx+1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu1 + (gx+1);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
 
-          idx = (gy+2)*gridXLen + (gx+1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu2 + (gx+1);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy+1)*gridXLen + (gx+2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu1 + (gx+2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy+2)*gridXLen + (gx+2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yu2 + (gx+2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
           idx = (gy)*gridXLen + (gx+2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-1)*gridXLen + (gx+2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd1 + (gx+2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
 
           idx = -1;
           break;
        case "LR":
-          idx = (gy-1)*gridXLen + (gx);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd1 + (gx);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-1)*gridXLen + (gx+1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd1 + (gx+1);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-2)*gridXLen + (gx);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd2 + (gx);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-2)*gridXLen + (gx+1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd2 + (gx+1);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
 
-          idx = (gy-1)*gridXLen + (gx+2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd1 + (gx+2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-2)*gridXLen + (gx+2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd2 + (gx+2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-3)*gridXLen + (gx);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd3 + (gx);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-3)*gridXLen + (gx+1);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd3 + (gx+1);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
-          idx = (gy-3)*gridXLen + (gx+2);
-          if (!Float.isNaN(swathGridCoord[0][idx])) {
+          idx = yd3 + (gx+2);
+          if (swathGridCoord[0][idx] != -999.9f) {
              break;
           }
  
@@ -810,59 +816,42 @@ public class ReprojectSwath {
 
    return values[closest];
  }
-
  public static float visad2D(float gy, float gx, float[][] corners, float[] values) {
-    float[] v0 = new float[2];  // A
-    float[] v1 = new float[2];  // B
-    float[] v2 = new float[2];  // D
-    float[] v3 = new float[2];  // C
-
-    float[] bd = new float[2];
-    float[] bp = new float[2];
-    float[] dp = new float[2];
-
-    float[] ab = new float[2];
-    float[] da = new float[2];
-    float[] ap = new float[2];
-
-    float[] bc = new float[2];
-    float[] cd = new float[2];
-    float[] cp = new float[2];
-
-
     boolean Pos = true;
 
-    v0[0] = corners[0][0];
-    v0[1] = corners[1][0];
-    v1[0] = corners[0][1];
-    v1[1] = corners[1][1];
-    v2[0] = corners[0][2];
-    v2[1] = corners[1][2];
-    v3[0] = corners[0][3];
-    v3[1] = corners[1][3];
+    // A:0, B:1, C:2, D:3
+    float v0x = corners[0][0];
+    float v0y = corners[1][0];
+    float v1x = corners[0][1];
+    float v1y = corners[1][1];
+    float v2x = corners[0][2];
+    float v2y = corners[1][2];
+    float v3x = corners[0][3];
+    float v3y = corners[1][3];
 
-    bd[0] = v2[0]-v1[0];
-    bd[1] = v2[1]-v1[1];
+    float bdx = v2x-v1x;
+    float bdy = v2y-v1y;
 
-    bp[0] = gx-v1[0];
-    bp[1] = gy-v1[1];
+    float bpx = gx-v1x;
+    float bpy = gy-v1y;
 
-    dp[0] = gx-v2[0];
-    dp[1] = gy-v2[1];
+    float dpx = gx-v2x;
+    float dpy = gy-v2y;
 
     // lower triangle first
 
     boolean insideTri = true;
 
-    ab[0] = v1[0]-v0[0];
-    ab[1] = v1[1]-v0[1];
-    da[0] = v0[0]-v2[0];
-    da[1] = v0[1]-v2[1];
-    ap[0] = gx-v0[0];
-    ap[1] = gy-v0[1];
-    float tval1 = ab[0]*ap[1]-ab[1]*ap[0];
-    float tval2 = bd[0]*bp[1]-bd[1]*bp[0];
-    float tval3 = da[0]*dp[1]-da[1]*dp[0];
+    float abx = v1x-v0x;
+    float aby = v1y-v0y;
+    float dax = v0x-v2x;
+    float day = v0y-v2y;
+    float apx = gx-v0x;
+    float apy = gy-v0y;
+    
+    float tval1 = abx*apy-aby*apx;
+    float tval2 = bdx*bpy-bdy*bpx;
+    float tval3 = dax*dpy-day*dpx;
     boolean test1 = (tval1 == 0) || ((tval1 > 0) == Pos);
     boolean test2 = (tval2 == 0) || ((tval2 > 0) == Pos);
     boolean test3 = (tval3 == 0) || ((tval3 > 0) == Pos);
@@ -889,29 +878,29 @@ public class ReprojectSwath {
     float gyy = Float.NaN;
 
     if (insideTri) {
-       gxx = ((gx-v0[0])*(v2[1]-v0[1])
-                        + (v0[1]-gy)*(v2[0]-v0[0]))
-                       / ((v1[0]-v0[0])*(v2[1]-v0[1])
-                        + (v0[1]-v1[1])*(v2[0]-v0[0]));
+       gxx = ((gx-v0x)*(v2y-v0y)
+                        + (v0y-gy)*(v2x-v0x))
+                       / ((v1x-v0x)*(v2y-v0y)
+                        + (v0y-v1y)*(v2x-v0x));
 
-       gyy =  ((gx-v0[0])*(v1[1]-v0[1])
-                        + (v0[1]-gy)*(v1[0]-v0[0]))
-                       / ((v2[0]-v0[0])*(v1[1]-v0[1])
-                        + (v0[1]-v2[1])*(v1[0]-v0[0])); 
+       gyy =  ((gx-v0x)*(v1y-v0y)
+                        + (v0y-gy)*(v1x-v0x))
+                       / ((v2x-v0x)*(v1y-v0y)
+                        + (v0y-v2y)*(v1x-v0x)); 
     }
     else {
        insideTri = true;
 
-       bc[0] = v3[0]-v1[0];
-       bc[1] = v3[1]-v1[1];
-       cd[0] = v2[0]-v3[0];
-       cd[1] = v2[1]-v3[1];
-       cp[0] = gx-v3[0];
-       cp[1] = gy-v3[1];
+       float bcx = v3x-v1x;
+       float bcy = v3y-v1y;
+       float cdx = v2x-v3x;
+       float cdy = v2y-v3y;
+       float cpx = gx-v3x;
+       float cpy = gy-v3y;
 
-       tval1 = bc[0]*bp[1]-bc[1]*bp[0];
-       tval2 = cd[0]*cp[1]-cd[1]*cp[0];
-       tval3 = bd[0]*dp[1]-bd[1]*dp[0];
+       tval1 = bcx*bpy-bcy*bpx;
+       tval2 = cdx*cpy-cdy*cpx;
+       tval3 = bdx*dpy-bdy*dpx;
        test1 = (tval1 == 0) || ((tval1 > 0) == Pos);
        test2 = (tval2 == 0) || ((tval2 > 0) == Pos);
        test3 = (tval3 == 0) || ((tval3 < 0) == Pos);
@@ -935,14 +924,14 @@ public class ReprojectSwath {
        if (insideTri) {
             // Found correct grid triangle
             // Solve the point with the reverse interpolation
-            gxx = ((v3[0]-gx)*(v1[1]-v3[1])
-                        + (gy-v3[1])*(v1[0]-v3[0]))
-                       / ((v2[0]-v3[0])*(v1[1]-v3[1])
-                        - (v2[1]-v3[1])*(v1[0]-v3[0])) + 1;
-            gyy = ((v2[1]-v3[1])*(v3[0]-gx)
-                        + (v2[0]-v3[0])*(gy-v3[1]))
-                       / ((v1[0]-v3[0])*(v2[1]-v3[1])
-                        - (v2[0]-v3[0])*(v1[1]-v3[1])) + 1;
+            gxx = ((v3x-gx)*(v1y-v3y)
+                        + (gy-v3y)*(v1x-v3x))
+                       / ((v2x-v3x)*(v1y-v3y)
+                        - (v2y-v3y)*(v1x-v3x)) + 1;
+            gyy = ((v2y-v3y)*(v3x-gx)
+                        + (v2x-v3x)*(gy-v3y))
+                       / ((v1x-v3x)*(v2y-v3y)
+                        - (v2x-v3x)*(v1y-v3y)) + 1;
        }
 
     }
@@ -954,6 +943,5 @@ public class ReprojectSwath {
 
     return intrp;
  }
-
 
 }
