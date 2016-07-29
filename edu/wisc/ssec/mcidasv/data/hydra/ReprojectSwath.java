@@ -74,8 +74,8 @@ public class ReprojectSwath {
   int[][][] quads;
   int mode;
   
-  public static final int NEAREST = 0;
-  public static final int BILINEAR_VISAD = 2;
+  public static final int NEAREST = 1;
+  public static final int BILINEAR_VISAD = 0;
   
   int numProc = Runtime.getRuntime().availableProcessors();
   private static boolean doParallel = false;
