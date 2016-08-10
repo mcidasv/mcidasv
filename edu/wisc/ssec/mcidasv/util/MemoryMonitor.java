@@ -37,8 +37,10 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 
 import javax.swing.GroupLayout;
@@ -48,14 +50,19 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ucar.unidata.idv.StateManager;
 import ucar.unidata.util.CacheManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Msg;
 
-// initial version taken verbatim from Unidata :(
 public class MemoryMonitor extends JPanel implements Runnable {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(MemoryMonitor.class);
+    
     private static final long serialVersionUID = 1L;
 
     /** flag for running */
@@ -98,7 +105,8 @@ public class MemoryMonitor extends JPanel implements Runnable {
 
     private boolean showClock = false;
 
-    private static SimpleDateFormat clockFormat = new SimpleDateFormat("HH:mm:ss z");
+    private static SimpleDateFormat clockFormat =
+        new SimpleDateFormat("HH:mm:ss z");
     
     private static double MEGABYTE = 1024 * 1024;
 
@@ -124,7 +132,11 @@ public class MemoryMonitor extends JPanel implements Runnable {
      *                  the memory monitor widget.
      * 
      */
-    public MemoryMonitor(StateManager stateManager, final int percentThreshold, final int percentCancel, boolean showClock) {
+    public MemoryMonitor(StateManager stateManager,
+                         final int percentThreshold,
+                         final int percentCancel,
+                         boolean showClock)
+    {
         super(new BorderLayout());
         this.stateManager = stateManager;
         this.showClock = showClock;
@@ -155,7 +167,11 @@ public class MemoryMonitor extends JPanel implements Runnable {
             public void mouseClicked(MouseEvent e) {
                 if (!SwingUtilities.isRightMouseButton(e)) {
                     toggleClock();
-                    showStats();
+                    try {
+                        showStats();
+                    } catch (Exception ex) {
+                        
+                    }
                 }
                 handleMouseEvent(e);
             }
@@ -177,7 +193,6 @@ public class MemoryMonitor extends JPanel implements Runnable {
     private void handleMouseEvent(MouseEvent event) {
         if (SwingUtilities.isRightMouseButton(event)) {
             popupMenu(event);
-            return;
         }
     }
 
@@ -254,14 +269,13 @@ public class MemoryMonitor extends JPanel implements Runnable {
      * Start running
      */
     private synchronized void start() {
-        if (running)
-            return;
-
-        label.setEnabled(true);
-        running = true;
-        triedToCancel = false;
-        thread = new Thread(this, "Memory monitor");
-        thread.start();
+        if (!running) {
+            label.setEnabled(true);
+            running = true;
+            triedToCancel = false;
+            thread = new Thread(this, "Memory monitor");
+            thread.start();
+        }
     }
 
     /**
@@ -296,8 +310,9 @@ public class MemoryMonitor extends JPanel implements Runnable {
         highWaterMark = highWaterMark / MEGABYTE;
 
         long now = System.currentTimeMillis();
-        if (lastTimeRanGC < 0)
+        if (lastTimeRanGC < 0) {
             lastTimeRanGC = now;
+        }
 
         // For the threshold use the physical memory
         int percent = (int)(100.0f * (usedMemory / totalMemory));
@@ -329,8 +344,7 @@ public class MemoryMonitor extends JPanel implements Runnable {
 //              idv.handleAction("action:idv.stopload");
                 triedToCancel = true;
             }
-        }
-        else {
+        } else {
             triedToCancel = false;
         }
 
@@ -345,19 +359,20 @@ public class MemoryMonitor extends JPanel implements Runnable {
     }
 
     private Color doColorThing(final int percent) {
-    	Float alpha = new Float(percent).floatValue() / 100;
+        Float alpha = new Float(percent).floatValue() / 100;
         return new Color(1.0f, 0.0f, 0.0f, alpha);
     }
-
+    
     /**
      * Run this monitor
      */
     public void run() {
         while (running) {
             try {
-                showStats();
+                SwingUtilities.invokeLater(this::showStats);
                 Thread.sleep(sleepInterval);
             } catch (Exception exc) {
+                logger.warn("Caught exception!", exc);
             }
         }
     }
