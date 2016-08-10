@@ -939,6 +939,18 @@
 
   <target name="jar.aspectj" depends="build.aspectj, copy.build.props, jar.base, jar.local-idv" description="Create jar files and documentation with AspectJ" />
 
+    <!-- Create distribution product (but built via AspectJ -->
+    <target name="dist.aspectj"
+        depends="clean, auxdata.nodocs, jar.aspectj, ncidv.nolog, external.cleanup, startupmanager, javadoc.jar, userguide.jar"
+        description="Create distribution product with AspectJ">
+        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetMem.class" 
+              tofile="${dist.dir}/GetMem.class" 
+              failonerror="false" />
+        <copy file="${build.dir}/edu/wisc/ssec/mcidasv/util/GetVer.class" 
+              tofile="${dist.dir}/GetVer.class" 
+              failonerror="false" />
+    </target>
+
   <target name="aspectj.runlarge" depends="jar.aspectj" description="Build and run McIDAS-V application (large memory) with AspectJ">
     <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
       <classpath refid="app.classpath" />
