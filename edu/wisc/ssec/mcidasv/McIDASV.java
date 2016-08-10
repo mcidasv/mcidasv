@@ -74,6 +74,7 @@ import edu.wisc.ssec.mcidasv.util.SystemState;
 import edu.wisc.ssec.mcidasv.util.WebBrowser;
 import edu.wisc.ssec.mcidasv.util.WelcomeWindow;
 
+import org.jdesktop.swinghelper.debug.EventDispatchThreadHangMonitor;
 import org.joda.time.DateTime;
 import org.python.util.PythonInterpreter;
 import org.w3c.dom.Element;
@@ -1096,6 +1097,8 @@ public class McIDASV extends IntegratedDataViewer {
         // turn on directory monitoring in the file choosers.
         startWatchService();
         EventBus.publish(Constants.EVENT_FILECHOOSER_START, "init finished");
+    
+        EventDispatchThreadHangMonitor.initMonitoring();
     }
 
     /**

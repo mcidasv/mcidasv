@@ -200,12 +200,14 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-    <property name="jar.base.classpath" value="ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak-4.1.9.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.0.1.jar" />
+    <property name="jar.base.classpath" value="aspectjrt.jar swing-debug.jar ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak-4.1.9.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.0.1.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
          modifications to the "jar.base.classpath" property. -->
     <fileset id="mcv.libs" dir="${dist.dir}">
+        <include name="aspectjrt.jar" />
+        <include name="swing-debug.jar" />
         <include name="commons-httpclient-3.1.jar" />
         <include name="swingx-common-${swingx.version}.jar" />
         <include name="sysout-over-slf4j-${sysout.version}.jar" />
@@ -360,6 +362,7 @@
 
     <!-- Files to include in application jar -->
     <patternset id="jar.includes">
+        <include name="EdtRuleChecker.class" />
         <include name="edu/**/*.class" />
         <include name="edu/**/resources/**/*" />
         <include name="edu/**/images/**/*" />
@@ -868,6 +871,131 @@
         </java>
     </target>
 
+    <taskdef classpath="lib/build/aspectjtools-1.8.jar"
+             resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties" />
+        
+    <!-- Build the edu tree -->
+    <target name="build.aspectj" description="Build the edu tree with AspectJ">
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${dist.dir}" />
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${idvlib.dir}">
+                <include name="**/*.jar" />
+                <exclude name="**/jython.jar" />
+            </fileset>
+            <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
+        </copy>
+
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" debug="${debug.flag}" 
+              source="${source.ver}" target="${target.ver}">
+            <classpath refid="app.classpath" />
+        </iajc>
+        <condition property="isLinux.x86">
+            <os family="unix" arch="x86" />
+        </condition>
+        <condition property="isLinux.x86_64">
+            <or>
+                <and>
+                    <os family="unix" arch="x86_64"/>
+                    <not>
+                        <os family="mac"/>
+                    </not>
+                </and>
+                <and>
+                    <os family="unix" arch="amd64"/>
+                    <not>
+                        <os family="mac"/>
+                    </not>
+                </and>
+            </or>
+        </condition>
+        <condition property="isWindows.x86">
+            <os family="windows" arch="x86" />
+        </condition>
+        <condition property="isWindows.x86_64">
+            <or>
+                <os family="windows" arch="x86_64" />
+                <os family="windows" arch="amd64" />
+            </or>
+        </condition>
+        <condition property="isMac">
+            <os family="mac" />
+        </condition>
+
+        <antcall target="_build.linux.x86" />
+        <antcall target="_build.linux.x86_64" />
+        <antcall target="_build.windows.x86" />
+        <antcall target="_build.windows.x86_64" />
+        <antcall target="_build.macosx"  />
+
+        <copy todir="${build.dir}" preservelastmodified="true">
+            <fileset dir="${base.dir}">
+                <patternset refid="jar.includes" />
+                <patternset refid="local-idv.includes" />
+            </fileset>
+        </copy>
+    </target>
+
+
+  <target name="jar.aspectj" depends="build.aspectj, copy.build.props, jar.base, jar.local-idv" description="Create jar files and documentation with AspectJ" />
+
+  <target name="aspectj.runlarge" depends="jar.aspectj" description="Build and run McIDAS-V application (large memory) with AspectJ">
+    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
+      <classpath refid="app.classpath" />
+      <assertions refid="mcv.assertions"/>
+      <!-- <jvmarg value="-XX:+UseG1GC" /> -->
+      <!-- <jvmarg value="-XX:+UseConcMarkSweepGC" /> -->
+      <!-- <jvmarg value="-XX:+CMSClassUnloadingEnabled" /> -->
+      <!-- <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" /> -->
+
+      <!--
+        these tiered compilation flags are apparently equivalent to -client.
+        that said, i am deeply ambivalent about encouraging their use, as the
+        "client" JIT is nowhere near as smart as the "server" JIT…despite the
+        faster startup times with -client.
+      -->
+      <!-- <jvmarg value="-XX:+TieredCompilation" /> -->
+      <!-- <jvmarg value="-XX:TieredStopAtLevel=1" /> -->
+      <jvmarg value="-noverify" />
+      <jvmarg value="-XX:+DoEscapeAnalysis" />
+      <!--
+        The following two lines will allow the JVM to dump the heap's
+        contents on an OutOfMemory exception (very helpful!).
+        ${heap.dir} defaults to "/tmp/mcidasv-heapdump.hprof" but feel free
+        to change it.
+      -->
+      <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+      <!--
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+      <sysproperty key="debug.adde.reqs" value="false" />
+      -->
+      <!--<sysproperty key="textureWidthMax" value="${visad.texturemax}" />-->
+      <sysproperty key="java.ext.dirs" value="${java.home}/lib/ext" />
+      <sysproperty key="java.library.path" value="${java.home}/lib/ext" />
+      <sysproperty key="loglevel" value="${run.log.level}" />
+      <sysproperty key="mcv.userpath" value="${userpath.dir}" />
+      <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
+      <sysproperty key="debug.adde.reqs" value="true" />
+      <sysproperty key="idv.usetimedriver" value="true" />
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+
+      <sysproperty key="visad.java3d.noerasebackground" value="true" />
+      <sysproperty key="visad.java3d.textureNpot" value="true" />
+      <sysproperty key="visad.java3d.imageByRef" value="true" />
+      <sysproperty key="visad.java3d.geometryByRef" value="true" />
+      <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+      <!--
+      <sysproperty key="sun.java2d.opengl" value="True" />
+      <sysproperty key="sun.java2d.trace" value="log,timestamp,count,out:./java2d.log,verbose" />
+      -->
+      <arg value="-forceaqua" />
+      <arg value="-userpath" />
+      <arg value="${userpath.dir}" />
+    </java>
+  </target>
+
   <!-- TODO: need a way to generalize these run.* targets...  -->
 
   <!-- Build and run McIDAS-V application (large memory) -->
@@ -875,9 +1003,10 @@
     <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
       <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
-      <jvmarg value="-XX:+UseConcMarkSweepGC" />
-      <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
-      <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" />
+      <!-- <jvmarg value="-XX:+UseG1GC" /> -->
+      <!-- <jvmarg value="-XX:+UseConcMarkSweepGC" /> -->
+      <!-- <jvmarg value="-XX:+CMSClassUnloadingEnabled" /> -->
+      <!-- <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" /> -->
 
       <!--
         these tiered compilation flags are apparently equivalent to -client.
