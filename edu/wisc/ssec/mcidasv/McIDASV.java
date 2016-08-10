@@ -259,6 +259,15 @@ public class McIDASV extends IntegratedDataViewer {
         watchService = new SimpleDirectoryWatchService();
 
         this.init();
+    
+        // ensure jython init only happens once per application session
+        String cacheDir = getStore().getJythonCacheDir();
+        Properties pyProps = new Properties();
+        if (cacheDir != null) {
+            pyProps.put("python.home", cacheDir);
+        }
+        String[] blank = new String[] { "" };
+        PythonInterpreter.initialize(System.getProperties(), pyProps, blank);
     }
 
     // Generic registration with the Mac OS X application menu

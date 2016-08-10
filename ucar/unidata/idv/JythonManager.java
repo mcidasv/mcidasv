@@ -310,10 +310,9 @@ public class JythonManager extends IdvManager implements ActionListener,
         if (cacheDir != null) {
             pythonProps.put("python.home", cacheDir);
         }
-        // TODO: is there a way to force console_init.py to load first?
-        logger.trace("calling PythonInterpreter.initialize...");
-        PythonInterpreter.initialize(System.getProperties(), pythonProps, getArgsManager().commandLineArgs);
+
         doMakeContents();
+
         if (!getArgsManager().isScriptingMode()) {
             makeFormulasFromLib();
             try {
