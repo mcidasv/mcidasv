@@ -200,12 +200,13 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-    <property name="jar.base.classpath" value="swing-debug.jar ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak-4.1.9.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.0.1.jar" />
+    <property name="jar.base.classpath" value="aspectjrt.jar swing-debug.jar ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak-4.1.9.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.0.1.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
          modifications to the "jar.base.classpath" property. -->
     <fileset id="mcv.libs" dir="${dist.dir}">
+        <include name="aspectjrt.jar" />
         <include name="swing-debug.jar" />
         <include name="commons-httpclient-3.1.jar" />
         <include name="swingx-common-${swingx.version}.jar" />
@@ -349,7 +350,6 @@
         <fileset refid="idv.libs" />
         <fileset refid="macosx.libs" />
     </path>
-
 
     <path id="bundle.classpath">
         <pathelement location="${dist.dir}/mcidasv.jar" />
@@ -560,16 +560,17 @@
         </copy>
     </target>
 
+    <!-- aspectj equivs to the above targets. this stuff is getting a little
+         bit out of hand... -->
     <target name="_build.linux.x86" description="" if="isLinux.x86">
         <echo>Building linuxx86</echo>
         <copy todir="${dist.dir}" preservelastmodified="true">
             <fileset dir="${linuxx86lib.dir}" includes="**/*.jar" />
         </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
             <classpath refid="linux_x86.app.classpath" />
-        </javac>
+        </iajc>
     </target>
 
     <target name="_build.linux.x86_64" description="" if="isLinux.x86_64">
@@ -577,11 +578,10 @@
         <copy todir="${dist.dir}" preservelastmodified="true">
             <fileset dir="${linuxx64lib.dir}" includes="**/*.jar" />
         </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
             <classpath refid="linux_x64.app.classpath" />
-        </javac>
+        </iajc>
     </target>
 
     <target name="_build.windows.x86" description="" if="isWindows.x86">
@@ -589,11 +589,10 @@
         <copy todir="${dist.dir}" preservelastmodified="true">
             <fileset dir="${windowsx86lib.dir}" includes="**/*.jar" />
         </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
             <classpath refid="windows_x86.app.classpath" />
-        </javac>
+        </iajc>
     </target>
 
     <target name="_build.windows.x86_64" description="" if="isWindows.x86_64">
@@ -601,11 +600,10 @@
         <copy todir="${dist.dir}" preservelastmodified="true">
             <fileset dir="${windowsx64lib.dir}" includes="**/*.jar" />
         </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
             <classpath refid="windows_x64.app.classpath" />
-        </javac>
+        </iajc>
     </target>
 
     <target name="_build.macosx" description="" if="isMac">
@@ -613,76 +611,15 @@
         <copy todir="${dist.dir}" preservelastmodified="true">
             <fileset dir="${macosxlib.dir}" includes="**/*.jar" />
         </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
             <classpath refid="macosx.app.classpath" />
-        </javac>
+        </iajc>
     </target>
+    <!-- /aspectj _build equivs -->
 
     <!-- Build the edu tree -->
-    <target name="build" description="Build the edu tree">
-        <mkdir dir="${build.dir}" />
-        <mkdir dir="${dist.dir}" />
-        <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${idvlib.dir}">
-                <include name="**/*.jar" />
-                <exclude name="**/jython.jar" />
-            </fileset>
-            <!--<fileset dir="${lib.dir}" includes="**/*.jar" />-->
-            <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
-        </copy>
 
-        <javac fork="true" srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-            debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
-            <classpath refid="app.classpath" />
-        </javac>
-        <condition property="isLinux.x86">
-            <os family="unix" arch="x86" />
-        </condition>
-        <condition property="isLinux.x86_64">
-            <or>
-                <and>
-                    <os family="unix" arch="x86_64"/>
-                    <not>
-                        <os family="mac"/>
-                    </not>
-                </and>
-                <and>
-                    <os family="unix" arch="amd64"/>
-                    <not>
-                        <os family="mac"/>
-                    </not>
-                </and>
-            </or>
-        </condition>
-        <condition property="isWindows.x86">
-            <os family="windows" arch="x86" />
-        </condition>
-        <condition property="isWindows.x86_64">
-            <or>
-                <os family="windows" arch="x86_64" />
-                <os family="windows" arch="amd64" />
-            </or>
-        </condition>
-        <condition property="isMac">
-            <os family="mac" />
-        </condition>
-
-        <antcall target="_build.linux.x86" />
-        <antcall target="_build.linux.x86_64" />
-        <antcall target="_build.windows.x86" />
-        <antcall target="_build.windows.x86_64" />
-        <antcall target="_build.macosx"  />
-
-        <copy todir="${build.dir}" preservelastmodified="true">
-            <fileset dir="${base.dir}">
-                <patternset refid="jar.includes" />
-                <patternset refid="local-idv.includes" />
-            </fileset>
-        </copy>
-    </target>
 
     <!-- Build only the startup manager -->
     <target name="startupmanager" depends="build"
@@ -778,13 +715,7 @@
     </target>
 
     <!-- Create jar files and documentation -->
-    <!-- <target name="jar"
-    depends="clean, build, copy.build.props, jar.base, jar.local-idv"
-    description="Create jar files and documentation" />
-    -->
-    <target name="jar"
-    depends="build, copy.build.props, jar.base, jar.local-idv"
-    description="Create jar files and documentation" />
+    <target name="jar" depends="build, copy.build.props, jar.base, jar.local-idv" description="Create jar files and documentation with AspectJ" />
 
     <!-- Create nightly jar files and documentation -->
     <target name="jar.nightly"
@@ -868,6 +799,123 @@
             <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
         </java>
     </target>
+
+    <taskdef classpath="lib/build/aspectjtools-1.8.jar"
+             resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties" />
+        
+    <!-- Build the edu tree -->
+    <target name="build" description="Build the edu tree with AspectJ">
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${dist.dir}" />
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${idvlib.dir}">
+                <include name="**/*.jar" />
+                <exclude name="**/jython.jar" />
+            </fileset>
+            <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
+        </copy>
+        <condition property="isLinux.x86">
+            <os family="unix" arch="x86" />
+        </condition>
+        <condition property="isLinux.x86_64">
+            <or>
+                <and>
+                    <os family="unix" arch="x86_64"/>
+                    <not>
+                        <os family="mac"/>
+                    </not>
+                </and>
+                <and>
+                    <os family="unix" arch="amd64"/>
+                    <not>
+                        <os family="mac"/>
+                    </not>
+                </and>
+            </or>
+        </condition>
+        <condition property="isWindows.x86">
+            <os family="windows" arch="x86" />
+        </condition>
+        <condition property="isWindows.x86_64">
+            <or>
+                <os family="windows" arch="x86_64" />
+                <os family="windows" arch="amd64" />
+            </or>
+        </condition>
+        <condition property="isMac">
+            <os family="mac" />
+        </condition>
+
+        <antcall target="_build.linux.x86" />
+        <antcall target="_build.linux.x86_64" />
+        <antcall target="_build.windows.x86" />
+        <antcall target="_build.windows.x86_64" />
+        <antcall target="_build.macosx"  />
+
+        <copy todir="${build.dir}" preservelastmodified="true">
+            <fileset dir="${base.dir}">
+                <patternset refid="jar.includes" />
+                <patternset refid="local-idv.includes" />
+            </fileset>
+        </copy>
+    </target>
+
+  <target name="aspectj.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory) with AspectJ">
+    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
+      <classpath refid="app.classpath" />
+      <assertions refid="mcv.assertions"/>
+      <!-- <jvmarg value="-XX:+UseG1GC" /> -->
+      <!-- <jvmarg value="-XX:+UseConcMarkSweepGC" /> -->
+      <!-- <jvmarg value="-XX:+CMSClassUnloadingEnabled" /> -->
+      <!-- <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" /> -->
+
+      <!--
+        these tiered compilation flags are apparently equivalent to -client.
+        that said, i am deeply ambivalent about encouraging their use, as the
+        "client" JIT is nowhere near as smart as the "server" JIT…despite the
+        faster startup times with -client.
+      -->
+      <!-- <jvmarg value="-XX:+TieredCompilation" /> -->
+      <!-- <jvmarg value="-XX:TieredStopAtLevel=1" /> -->
+      <jvmarg value="-noverify" />
+      <jvmarg value="-XX:+DoEscapeAnalysis" />
+      <!--
+        The following two lines will allow the JVM to dump the heap's
+        contents on an OutOfMemory exception (very helpful!).
+        ${heap.dir} defaults to "/tmp/mcidasv-heapdump.hprof" but feel free
+        to change it.
+      -->
+      <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+      <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+      <!--
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+      <sysproperty key="debug.adde.reqs" value="false" />
+      -->
+      <!--<sysproperty key="textureWidthMax" value="${visad.texturemax}" />-->
+      <sysproperty key="java.ext.dirs" value="${java.home}/lib/ext" />
+      <sysproperty key="java.library.path" value="${java.home}/lib/ext" />
+      <sysproperty key="loglevel" value="${run.log.level}" />
+      <sysproperty key="mcv.userpath" value="${userpath.dir}" />
+      <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
+      <sysproperty key="debug.adde.reqs" value="true" />
+      <sysproperty key="idv.usetimedriver" value="true" />
+      <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+      <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+
+      <sysproperty key="visad.java3d.noerasebackground" value="true" />
+      <sysproperty key="visad.java3d.textureNpot" value="true" />
+      <sysproperty key="visad.java3d.imageByRef" value="true" />
+      <sysproperty key="visad.java3d.geometryByRef" value="true" />
+      <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+      <!--
+      <sysproperty key="sun.java2d.opengl" value="True" />
+      <sysproperty key="sun.java2d.trace" value="log,timestamp,count,out:./java2d.log,verbose" />
+      -->
+      <arg value="-forceaqua" />
+      <arg value="-userpath" />
+      <arg value="${userpath.dir}" />
+    </java>
+  </target>
 
   <!-- TODO: need a way to generalize these run.* targets...  -->
 
@@ -1248,13 +1296,6 @@
         failonerror="false" />
     </target>
 
-    <!-- Make the installers with install4j -->
-    <target name="installers" depends="installer_custom_code" description="Make the installers with install4j">
-        <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
-            <arg value="mcidasv.install4j" />
-        </exec>
-    </target>
-
     <!-- exactly the same as the "installers" target, but places the created 
          installers in a directory that's more accessible to Jenkins -->
     <target name="jenkins_installers" 
@@ -1266,14 +1307,6 @@
             <arg value="mcidasv.install4j" />
         </exec>
         
-    </target>
-
-    <target name="exe_installers" description="TEMPORARY FOR APPSIGN_WINDOWS BRANCH">
-        <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
-            <arg value="--build-ids=8509,8430" />
-            <arg value="--destination=${dist.dir}" />
-            <arg value="mcidasv.install4j" />
-        </exec>
     </target>
 
     <!-- This builds a preferences store that will not generate tons of
@@ -1290,240 +1323,5 @@
                includeantruntime="false">
             <compilerarg value="-Xlint:-options" />
         </javac>
-    </target>
-
-    <!-- Zip up McIDAS-V JARs. mcidasv-tiny.zip contains only local-idv.jar  -->
-    <!-- and mcidasv.jar. mcidasv-alljars.zip contains all McIDAS-V JARs.    -->
-    <target name="archive" depends="jar" description="Build McIDAS-V JARs and create mcidasv-tiny.zip and mcidasv-alljars.zip.">
-        <!-- zip task defaults to overwriting destfile.  -->
-        <zip destfile="${dist.dir}/mcidasv-tiny.zip">
-            <fileset dir="${dist.dir}" includes="local-idv.jar, mcidasv.jar"/>
-        </zip>
-        <zip destfile="${dist.dir}/mcidasv-alljars.zip">
-            <fileset dir="${dist.dir}" includes="*.jar"/>
-        </zip>
-    </target>
-
-    <!-- BEGIN OSX APP BUNDLE STUFF -->
-    <property name="version.public" value="1.6beta1" />
-
-    <property name="bundle.icon" value="release/icons/mcidasv.icns" />
-
-    <property name="bundle.name" value="McIDAS-V (JAVA 8)" />
-
-    <property name="bundle.path" value="${dist.dir}/${bundle.name}.app" />
-
-    <property name="bundle.dmg" value="${dist.dir}/McIDAS-V ${version.public}.dmg" />
-
-    <!-- 
-        This is the name associated with the key from Apple. 
-        NOTE: pass the actual value in via a property on the command line:
-        
-          ant -Dbundle.identity="SIGNING IDENTITY HERE" appbundle.sign
-        
-        The command line definition of "bundle.identity" will take precedence 
-        over the defintion below.
-    -->
-    <property name="bundle.identity" value="" />
-
-    <!-- 
-    This checks for a non-empty value in bundle.identity. If the value is an 
-    empty string, the "appbundle.sign" target will not run
-    -->
-    <condition property="hasidentity">
-        <not>
-            <equals arg1="${bundle.identity}" arg2=""/>
-        </not>
-    </condition>
-
-    <target name="appbundle.clean" description="Delete previously built McIDAS-V app bundle (and DMG).">
-        <delete dir="${bundle.path}" failonerror="false" />
-        <delete file="${bundle.dmg}" failonerror="false" />
-    </target>
-
-    <target name="appbundle.build" depends="jar" description="Generate McIDAS-V.app.">
-        <mkdir dir="${dist.dir}" />
-        <taskdef name="bundleapp"
-                 classpath="lib/build/appbundler-1.0ea.jar"
-                 classname="com.oracle.appbundler.AppBundlerTask" />
-
-        <!-- get SHA512 checksum of edu/wisc/ssec/mcidasv/resources/version.properties -->
-        <exec executable="/bin/bash" outputproperty="version.internal" failifexecutionfails="true">
-            <arg value="-c" />
-            <arg value="/usr/bin/shasum -a 512 ${ver.props} | head -n1 | awk '{print $1;}'" />
-        </exec>
-
-        <!-- locate the system's Java 1.8 -->
-        <exec executable="/usr/libexec/java_home" outputproperty="runtime_18" failifexecutionfails="true">
-            <arg value="-v" />
-            <arg value="1.8" />
-        </exec>
-        
-        <exec executable="/bin/bash" outputproperty="bundle.jdk" failifexecutionfails="true">
-            <arg value="-c" />
-            <arg value="echo ${runtime_18} | perl -pe 's/^.*\/([\-\.\w]+\.jdk)\/.*$/$1/'" />
-        </exec>
-
-        <bundleapp classpathref="macosx.app.classpath"
-                   outputdirectory="${dist.dir}"
-                   name="${bundle.name}"
-                   displayname="McIDAS-V"
-                   executableName="mcidasv"
-                   identifier="edu.wisc.ssec.mcidasv.16b1"
-                   shortversion="${version.public}"
-                   version="${version.internal}"
-                   icon="${bundle.icon}"
-                   mainclassname="edu.wisc.ssec.mcidasv.McIDASV"
-                   copyright="2016"
-                   debug="true"
-                   applicationCategory="public.app-category.weather">
-
-            <!-- TODO(jon): can/should we bundle the local servers in the repo? -->
-            <!-- NOTE: osx local servers need to be $PWD/lib/build/adde -->
-            <sharedsupport path="lib/build/adde" />
-
-            <runtime dir="${runtime_18}"/>
-            <arch name="x86_64"/>
-            <!-- Workaround since the icon parameter for bundleapp doesn't work -->
-            <option value="-Xdock:icon=Contents/Resources/${bundle.icon}"/>
-            <option value="-Dapple.laf.useScreenMenuBar=true"/>
-            <option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
-            <option value="-Dcom.apple.macos.useScreenMenuBar=true"/>
-            <option value="-Dcom.apple.mrj.application.apple.menu.about.name=McIDAS-V"/>
-            <option value="-Dcom.apple.smallTabs=true"/>
-            <option value="-Dfile.encoding=UTF-8"/>
-            <option value="-Dpython.security.respectJavaAccessibility=false" />
-            <option value="-Ddebug.localadde.rootdir=$APP_ROOT/Contents/SharedSupport/adde" />
-            <option name="logback" value="-Dlogback.configurationFile=$USER_HOME/Documents/McIDAS-V/logback.xml" />
-            <option name="userpath" value="-Dmcv.userpath=$USER_HOME/Documents/McIDAS-V" />
-            <option name="mcidasvlog" value="-Dmcv.logpath=$USER_HOME/Documents/McIDAS-V/mcidasv.log" />
-            <argument value="-forceaqua" />
-            <argument value="-userpath" />
-            <argument value="$USER_HOME/Documents/McIDAS-V" />
-        </bundleapp>
-    </target>
-    
-    <!--
-        This target will use the "codesign" utility to sign the bundle that was
-        created by the "bundle_18" target.
-    -->
-    <target name="appbundle.sign" 
-            depends="appbundle.build" 
-            description="Sign the McIDAS-V application bundle.">
-            
-        <fail message="Please provide a value for bundle.identity: ant -Dbundle.identity='YOUR SIGNING IDENTITY' appbundle.sign" 
-              unless="hasidentity" />
-              
-        <!-- 
-        It turns out that the "codesign" utility is not compatible with 
-        symlinks. Regrettably, the OSX JRE contains a symlink. 
-        
-        The following exec task removes the symlink and places a copy of 
-        the linked file in the directory that contained said symlink.
-        -->
-        <exec executable="/bin/bash" failifexecutionfails="true">
-            <arg value="-c" />
-            <arg value="/bin/rm -f '${bundle.path}/Contents/PlugIns/${bundle.jdk}/Contents/MacOS/libjli.dylib' ; /bin/cp -f '${bundle.path}/Contents/PlugIns/${bundle.jdk}/Contents/Home/jre/lib/jli/libjli.dylib' '${bundle.path}/Contents/PlugIns/${bundle.jdk}/Contents/MacOS/'" />
-        </exec>
-        
-        <exec executable="/usr/bin/codesign" failifexecutionfails="true">
-            <arg value="-s" />
-            <arg value="${bundle.identity}" />
-            <arg value="-fv" />
-            <arg value="--deep" />
-            <arg value="${bundle.path}" />
-        </exec>
-    </target>
-    
-    <target name="appbundle.dist" depends="appbundle.clean, appbundle.sign" description="Package app bundle stuff for distribution.">
-        <echo>Creating DMG. Please be patient!</echo>
-        <exec executable="/usr/bin/hdiutil" failifexecutionfails="true">
-            <arg value="create" />
-            <arg value="-srcfolder" />
-            <arg value="${bundle.path}" />
-            <arg value="${bundle.dmg}" />
-        </exec>
-    </target>
-    <!-- END OSX APP BUNDLE STUFF -->
-
-    <!--                           HERE BE DRAGONS                           -->
-    <!-- These things allow you to automatically use YourKit to profile an   -->
-    <!-- ant build. Everything is still rather simplistic, but you may find  -->
-    <!-- one of the "memory.profiler", "sampling.profiler", or               -->
-    <!-- "tracing.profiler" targets useful. Don't use "profiler.runlarge"!   -->
-
-    <!-- For the time being, I'm using the testing release of YourKit 11.    -->
-    <!-- It's free and there is no registration process (last I checked):    -->
-    <!-- http://www.yourkit.com/eap/                                         -->
-    <!-- YourKit is especially generous in that they provide free licenses   -->
-
-    <!-- This value will regrettably be user and platform depedent. Look at  -->
-    <!-- http://www.yourkit.com/docs/11/help/agent.jsp                       -->
-    <property name="yourkit.agentlib" value="/Applications/YourKit_Java_Profiler_2014_build_14108.app/Contents/Resources/bin/mac/libyjpagent.jnilib" />
-
-    <target name="memory.profiler" description="Starts McIDAS-V and takes a snapshot of performance and memory at shutdown.">
-        <antcall target="profiler.runlarge">
-            <param name="yourkit.options" value="onexit=memory,onexit=snapshot" />
-        </antcall>
-    </target>
-
-    <target name="sampling.profiler" description="Starts McIDAS-V with CPU sampling (find performance problems)">
-        <antcall target="profiler.runlarge">
-            <param name="yourkit.options" value="sampling,noj2ee" />
-        </antcall>
-    </target>
-
-    <target name="tracing.profiler" description="Starts McIDAS-V with CPU tracing (look at each method invocation)">
-        <antcall target="profiler.runlarge">
-            <param name="yourkit.options" value="tracing,noj2ee" />
-        </antcall>
-    </target>
-
-    <target name="ugh.profiler" description="CPU sampling, performance/memory snapshot at shutdown.">
-        <antcall target="profiler.runlarge">
-            <param name="yourkit.options" value="onexit=memory,onexit=snapshot,tracing,noj2ee" />
-        </antcall>
-    </target>
-
-    <!-- Build and run McIDAS-V application (large memory) -->
-    <target name="profiler.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
-        <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
-            <classpath refid="app.classpath" />
-            <assertions refid="mcv.assertions"/>
-            <jvmarg value="-agentpath:${yourkit.agentlib}=${yourkit.options}" />
-            <jvmarg value="-XX:+UseConcMarkSweepGC" />
-            <jvmarg value="-XX:+CMSClassUnloadingEnabled" />
-            <jvmarg value="-XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses" />
-            <jvmarg value="-XX:MaxPermSize=512m" />
-            <jvmarg value="-noverify" />
-            <!--
-              The following two lines will allow the JVM to dump the heap's
-              contents on an OutOfMemory exception (very helpful!).
-              ${heap.dir} defaults to "/tmp/mcidasv-heapdump.hprof" but feel free
-              to change it.
-            -->
-            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
-            <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
-            <sysproperty key="java.ext.dirs" value="${java.home}/lib/ext" />
-            <sysproperty key="java.library.path" value="${java.home}/lib/ext" />
-            <sysproperty key="loglevel" value="${run.log.level}" />
-            <sysproperty key="mcv.userpath" value="${userpath.dir}" />
-            <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
-            <sysproperty key="debug.adde.reqs" value="true" />
-            <sysproperty key="idv.usetimedriver" value="true" />
-            <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
-            <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
-            <sysproperty key="visad.java3d.textureNpot" value="true" />
-            <sysproperty key="visad.java3d.imageByRef" value="true" />
-            <sysproperty key="visad.java3d.geometryByRef" value="true" />
-            <sysproperty key="python.security.respectJavaAccessibility" value="false" />
-            <!--
-            <sysproperty key="sun.java2d.opengl" value="True" />
-            <sysproperty key="sun.java2d.trace" value="log,timestamp,count,out:./java2d.log,verbose" />
-            -->
-            <arg value="-forceaqua" />
-            <arg value="-userpath" />
-            <arg value="${userpath.dir}" />
-        </java>
     </target>
 </project>
