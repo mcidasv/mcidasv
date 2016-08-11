@@ -1394,6 +1394,19 @@
         </exec>
     </target>
 
+    <!-- exactly the same as the "installers" target, but places the created 
+         installers in a directory that's more accessible to Jenkins -->
+    <target name="jenkins_installers" 
+            depends="installer_custom_code" 
+            description="Create all Install4J installers (place them in dist)">
+            
+        <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
+            <arg value="--destination=${dist.dir}" />
+            <arg value="mcidasv.install4j" />
+        </exec>
+        
+    </target>
+
     <target name="exe_installers" description="TEMPORARY FOR APPSIGN_WINDOWS BRANCH">
         <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
             <arg value="--build-ids=8509,8430" />
