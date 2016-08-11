@@ -621,6 +621,63 @@
         </javac>
     </target>
 
+    <!-- aspectj equivs to the above targets. this stuff is getting a little
+         bit out of hand... -->
+    <target name="_build.aspectj.linux.x86" description="" if="isLinux.x86">
+        <echo>Building linuxx86</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${linuxx86lib.dir}" includes="**/*.jar" />
+        </copy>
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
+            <classpath refid="linux_x86.app.classpath" />
+        </iajc>
+    </target>
+
+    <target name="_build.aspectj.linux.x86_64" description="" if="isLinux.x86_64">
+        <echo>Building linuxx64</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${linuxx64lib.dir}" includes="**/*.jar" />
+        </copy>
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
+            <classpath refid="linux_x64.app.classpath" />
+        </iajc>
+    </target>
+
+    <target name="_build.aspectj.windows.x86" description="" if="isWindows.x86">
+        <echo>Building winx86</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${windowsx86lib.dir}" includes="**/*.jar" />
+        </copy>
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
+            <classpath refid="windows_x86.app.classpath" />
+        </iajc>
+    </target>
+
+    <target name="_build.aspectj.windows.x86_64" description="" if="isWindows.x86_64">
+        <echo>Building winx64</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${windowsx64lib.dir}" includes="**/*.jar" />
+        </copy>
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
+            <classpath refid="windows_x64.app.classpath" />
+        </iajc>
+    </target>
+
+    <target name="_build.aspectj.macosx" description="" if="isMac">
+        <echo>Building macosx</echo>
+        <copy todir="${dist.dir}" preservelastmodified="true">
+            <fileset dir="${macosxlib.dir}" includes="**/*.jar" />
+        </copy>
+        <iajc srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
+               debug="${debug.flag}" deprecation="${deprecation.flag}">
+            <classpath refid="macosx.app.classpath" />
+        </iajc>
+    </target>
+    <!-- /aspectj _build equivs -->
 
     <!-- Build the edu tree -->
     <target name="build" description="Build the edu tree">
@@ -885,11 +942,6 @@
             </fileset>
             <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
         </copy>
-
-        <iajc srcdir="${base.dir}" destdir="${build.dir}" debug="${debug.flag}" 
-              source="${source.ver}" target="${target.ver}">
-            <classpath refid="app.classpath" />
-        </iajc>
         <condition property="isLinux.x86">
             <os family="unix" arch="x86" />
         </condition>
@@ -922,11 +974,11 @@
             <os family="mac" />
         </condition>
 
-        <antcall target="_build.linux.x86" />
-        <antcall target="_build.linux.x86_64" />
-        <antcall target="_build.windows.x86" />
-        <antcall target="_build.windows.x86_64" />
-        <antcall target="_build.macosx"  />
+        <antcall target="_build.aspectj.linux.x86" />
+        <antcall target="_build.aspectj.linux.x86_64" />
+        <antcall target="_build.aspectj.windows.x86" />
+        <antcall target="_build.aspectj.windows.x86_64" />
+        <antcall target="_build.aspectj.macosx"  />
 
         <copy todir="${build.dir}" preservelastmodified="true">
             <fileset dir="${base.dir}">
