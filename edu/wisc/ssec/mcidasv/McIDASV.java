@@ -1084,6 +1084,11 @@ public class McIDASV extends IntegratedDataViewer {
         overridePreferences();
 
         detectAndHandleCrash();
+    
+        if (addeEntries == null) {
+            getServerManager();
+        }
+        addeEntries.startLocalServer();
 
         estimate = System.nanoTime() - startTime;
         logger.info("estimated startup duration: {} ms", estimate / 1e6);
@@ -1267,7 +1272,6 @@ public class McIDASV extends IntegratedDataViewer {
     public EntryStore getServerManager() {
         if (addeEntries == null) {
             addeEntries = new EntryStore(getStore(), getResourceManager());
-            addeEntries.startLocalServer();
         }
         return addeEntries;
     }
