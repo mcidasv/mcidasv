@@ -1073,7 +1073,8 @@ public class RemoteEntryShortcut extends JDialog {
 
     /**
      * Represents an ADDE entry verification task. These are executed asynchronously 
-     * by the completion service within {@link RemoteEntryEditor#checkGroups(Set)}.
+     * by the completion service within
+     * {@link RemoteEntryEditor#checkGroups(EditorAction, Set)}.
      */
     private class VerifyEntryTask implements Callable<StatusWrapper> {
         private final StatusWrapper entryStatus;
