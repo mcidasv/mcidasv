@@ -58,6 +58,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RunnableFuture;
 import java.util.regex.Pattern;
 
 import javax.swing.GroupLayout;
@@ -100,8 +104,11 @@ import edu.wisc.ssec.mcidasv.ui.UIManager;
  * McIDAS-V's collection of GUI utility methods
  */
 public class McVGuiUtils implements Constants {
-
-//    private static final Logger logger = LoggerFactory.getLogger(McVGuiUtils.class);
+    
+    /** Logging object. */
+    // TODO(jon): consider removing when testing is done
+    private static final Logger logger =
+        LoggerFactory.getLogger(McVGuiUtils.class);
 
     /** 
      * Estimated number of {@link ucar.unidata.idv.ViewManager ViewManagers}.
@@ -1042,7 +1049,37 @@ public class McVGuiUtils implements Constants {
             SwingUtilities.invokeLater(r);
         }
     }
-
+    
+    /**
+     * Executes the specified {@link Callable} on the EDT thread. If the calling
+     * thread is already the EDT thread, this invocation simply delegates to
+     * call(), otherwise the callable is placed in Swing's event dispatch queue
+     * and the method waits for the result.
+     * <p>
+     * @param <V> the result type of the {@code callable}
+     * @param callable the callable task
+     * @return computed result
+     */
+    public static <V> V getFromEDT(final Callable<V> callable) {
+        // credit for this belongs to:
+        // http://stackoverflow.com/a/31156045
+        final RunnableFuture<V> f = new FutureTask<>(callable);
+        
+        if (SwingUtilities.isEventDispatchThread()) {
+            f.run();
+        } else {
+            SwingUtilities.invokeLater(f);
+        }
+        
+        V result = null;
+        try {
+            result = f.get();
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("Thread execution problem", e);
+        }
+        return result;
+    }
+    
     //    private static <E> List<E> sizedList() {
     //        McIDASV mcv = McIDASV.getStaticMcv();
     //        int viewManagerCount = ESTIMATED_VM_COUNT;
