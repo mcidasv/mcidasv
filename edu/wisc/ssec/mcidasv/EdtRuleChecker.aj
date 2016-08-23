@@ -1,11 +1,16 @@
 package edu.wisc.ssec.mcidasv;
 
 import java.awt.Window;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 public aspect EdtRuleChecker {
+    
+    
+    private final AtomicInteger violationCount = new AtomicInteger(0);
+    
     private boolean isStressChecking = true;
     
     public pointcut anyEdtMethods(Window w):
@@ -30,7 +35,8 @@ public aspect EdtRuleChecker {
         if(!SwingUtilities.isEventDispatchThread() &&
             (isStressChecking || c.isShowing()))
         {
-            System.err.println(thisJoinPoint.getSourceLocation());
+            int count = violationCount.incrementAndGet();
+            System.err.println(thisJoinPoint.getSourceLocation() + " (#" + count + ')');
             System.err.println(thisJoinPoint.getSignature());
             System.err.println();
         }
@@ -40,7 +46,8 @@ public aspect EdtRuleChecker {
     // etc)
     before(Window w): anyEdtMethods(w) && !threadSafeMethods() && !within(EdtRuleChecker) {
         if (!SwingUtilities.isEventDispatchThread() && (isStressChecking || w.isShowing())) {
-            System.err.println(thisJoinPoint.getSourceLocation());
+            int count = violationCount.incrementAndGet();
+            System.err.println(thisJoinPoint.getSourceLocation() + " (#" + count + ')');
             System.err.println(thisJoinPoint.getSignature());
             System.err.println();
         }
@@ -49,7 +56,18 @@ public aspect EdtRuleChecker {
     //calls of any JComponent constructor, including subclasses
     before(): call(JComponent+.new(..)) {
         if (isStressChecking && !SwingUtilities.isEventDispatchThread()) {
-            System.err.println(thisJoinPoint.getSourceLocation());
+            int count = violationCount.incrementAndGet();
+            System.err.println(thisJoinPoint.getSourceLocation() + " (#" + count + ')');
+            System.err.println(thisJoinPoint.getSignature() + " *constructor*");
+            System.err.println();
+        }
+    }
+    
+    // calls of any AWT constructors, including subclasses
+    before(): call(Window+.new(..)) {
+        if (isStressChecking && !SwingUtilities.isEventDispatchThread()) {
+            int count = violationCount.incrementAndGet();
+            System.err.println(thisJoinPoint.getSourceLocation() + " (#" + count + ')');
             System.err.println(thisJoinPoint.getSignature() + " *constructor*");
             System.err.println();
         }
