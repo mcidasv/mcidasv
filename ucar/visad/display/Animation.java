@@ -747,8 +747,6 @@ public class Animation extends Displayable {
             return;
         }
         try {
-            //Maybe try to set this here for now
-            aniValue = newTime;
             int index = animationSet.doubleToIndex(new double[][] {
                 { newTime.getValue(animationSet.getSetUnits()[0]) }
             })[0];
@@ -766,6 +764,8 @@ public class Animation extends Displayable {
             }
             if (index != getCurrent()) {
                 setCurrent(index, false);
+                // don't change the field unless required
+                aniValue = newTime;
             }
         } catch (Exception ve) {
             LogUtil.logException("setting animation value", ve);
