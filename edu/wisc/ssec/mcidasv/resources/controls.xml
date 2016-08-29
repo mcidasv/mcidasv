@@ -127,18 +127,14 @@
      label="Time/Height Display"
      displaycategory="Profiler"
      properties="windowVisible=true;"/>
-  <!-- The section below enables Advanced Objective Dvorak Technique
-       (AODT) functionality in McV.  See Inquiry #1187
-  <control
-     id="stormintesitydisplay"
-     categories="IMAGE-*-*"
-     class="edu.wisc.ssec.mcidasv.control.cyclone.StormIntensityControl"
-     label="Storm Intensity"
-     displaycategory="Probe"
-     properties="">
-     <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
-  </control> 
-  -->
+
+	<!-- The section below enables Advanced Objective Dvorak Technique (AODT) 
+		functionality in McV. See Inquiry #1187 -->
+	<control id="stormintesitydisplay" categories="IMAGE-*-*"
+		class="edu.wisc.ssec.mcidasv.control.adt.ADTControl"
+		label="Storm Intensity" displaycategory="Probe" properties="">
+		<property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager" />
+	</control> 
   
     <!-- TJJ Apr 2016 Added for McV 1.6 release -->
 	<control id="streamlines" categories="*-flowvector-*"
