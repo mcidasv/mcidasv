@@ -762,10 +762,10 @@ public class Animation extends Displayable {
                     index = 0;
                 }
             }
+            
+            // don't change unless required
             if (index != getCurrent()) {
                 setCurrent(index, false);
-                // don't change the field unless required
-                aniValue = newTime;
             }
         } catch (Exception ve) {
             LogUtil.logException("setting animation value", ve);
