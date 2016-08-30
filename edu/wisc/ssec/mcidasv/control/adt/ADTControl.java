@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2014
+ * Copyright 2007-2016
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -28,51 +28,44 @@
 
 package edu.wisc.ssec.mcidasv.control.adt;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.lang.*;
-import java.util.*;
-import java.util.List;
-import java.awt.*;
-import java.awt.event.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-
-/*
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-*/
-import java.rmi.RemoteException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
+import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+import java.util.TimeZone;
+
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JComponent.*;
-import javax.swing.BoxLayout;
-import javax.swing.SpringLayout;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-import javax.swing.JFileChooser;
 import javax.swing.JRadioButton;
-import javax.swing.JCheckBox;
-import javax.swing.ButtonGroup;
-import javax.swing.SwingConstants;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
@@ -87,15 +80,13 @@ import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
-import ucar.unidata.util.ObjectListener;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
-import ucar.visad.display.PointProbe;
-import ucar.visad.display.Displayable;
-import ucar.visad.display.DisplayableData;
 import ucar.visad.display.CompositeDisplayable;
+import ucar.visad.display.PointProbe;
 import ucar.visad.quantities.AirTemperature;
+
 import visad.CommonUnit;
 import visad.DateTime;
 import visad.DisplayEvent;
@@ -111,19 +102,6 @@ import visad.georef.LatLonPoint;
 import visad.util.DataUtility;
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Functions;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Main;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_History;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Topo;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Data;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Auto;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Scene;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Intensity;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Forecasts;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Output;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_Env;
-import edu.wisc.ssec.mcidasv.control.adt.ADT_ReadIRImage;
-
 
 /**
  * 
@@ -132,6 +110,7 @@ import edu.wisc.ssec.mcidasv.control.adt.ADT_ReadIRImage;
  * @author Tim Olander
  *
  */
+
 @SuppressWarnings({"unused", "static-access", "unchecked", "rawtypes"})
 
 public class ADTControl extends DisplayControlImpl {
