@@ -26,11 +26,11 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 @SuppressWarnings("unused")
 
-public class ADT_Output {
+public class Output {
 
    static String[] Months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
    static String[] LatNS = {"N","S"};        /** N/S hemisphere character value */
@@ -67,7 +67,7 @@ public class ADT_Output {
                                    "MW Adjst ","MW ON    ","MW ON    ","MW HOLD  ",
                                    "MW AdjEnd" };
 
-   public ADT_Output() {
+   public Output() {
    }
 
    public static String TextScreenOutput(String HistoryFileName){
@@ -89,11 +89,11 @@ public class ADT_Output {
       boolean RadiusMaxWindTF = false;
 
       /* convert Julian date/time to DateValue/month/year format */
-      int CurDate = ADT_History.IRCurrentRecord.date;
-      int CurTime = ADT_History.IRCurrentRecord.time;
-      double CurLatitudeValue = ADT_History.IRCurrentRecord.latitude;
-      double CurLongitudeValue = ADT_History.IRCurrentRecord.longitude;
-      int[] ReturnValues = ADT_Functions.adt_yddmy(CurDate);
+      int CurDate = History.IRCurrentRecord.date;
+      int CurTime = History.IRCurrentRecord.time;
+      double CurLatitudeValue = History.IRCurrentRecord.latitude;
+      double CurLongitudeValue = History.IRCurrentRecord.longitude;
+      int[] ReturnValues = Functions.adt_yddmy(CurDate);
       int DateValue = ReturnValues[0];
       int MonthValue = ReturnValues[1];
       int YearValue = ReturnValues[2];
@@ -134,21 +134,21 @@ public class ADT_Output {
       /** format character string for latitude output */
       String LongitudeString = String.format("%3d:%02d:%02d %1s",DegreeValue2B,MinuteValue2B,SecondValue2B,LonWE[LonWEval]);
 
-      int[] ReturnValues3 = ADT_Functions.adt_oceanbasin(CurLatitudeValue,CurLongitudeValue);
+      int[] ReturnValues3 = Functions.adt_oceanbasin(CurLatitudeValue,CurLongitudeValue);
       int BasinIDValue = ReturnValues3[0];
       int DomainID = ReturnValues3[1];
     
       /** determine Dvorak pressure/wind speed in relation to final CI # */
-      double CurRawT = ADT_History.IRCurrentRecord.Traw;
-      double CurRawTorig = ADT_History.IRCurrentRecord.TrawO;
-      double CurFinalT = ADT_History.IRCurrentRecord.Tfinal;
-      double CurCI = ADT_History.IRCurrentRecord.CI;
-      double CurCIAdjP = ADT_History.IRCurrentRecord.CIadjp;
+      double CurRawT = History.IRCurrentRecord.Traw;
+      double CurRawTorig = History.IRCurrentRecord.TrawO;
+      double CurFinalT = History.IRCurrentRecord.Tfinal;
+      double CurCI = History.IRCurrentRecord.CI;
+      double CurCIAdjP = History.IRCurrentRecord.CIadjp;
       /** System.out.printf("ciadjp=%f\n",CurCIAdjP); */
-      PresWindValue_Pressure = ADT_Functions.adt_getpwval(0,CurCI,CurLatitudeValue,CurLongitudeValue);
-      PresWindValue_Wind = ADT_Functions.adt_getpwval(1,CurCI,CurLatitudeValue,CurLongitudeValue);
+      PresWindValue_Pressure = Functions.adt_getpwval(0,CurCI,CurLatitudeValue,CurLongitudeValue);
+      PresWindValue_Wind = Functions.adt_getpwval(1,CurCI,CurLatitudeValue,CurLongitudeValue);
 
-      boolean Vmax1or10TF = ADT_Env.Vmax1or10TF;
+      boolean Vmax1or10TF = Env.Vmax1or10TF;
 
       if(!Vmax1or10TF) {
          /** convert 1-minute to 10-minute average Vmax for output */
@@ -156,23 +156,23 @@ public class ADT_Output {
       }
     
       /** determine Rule 8 and Rule 9 screen output values */
-      int Rule8Value = ADT_History.IRCurrentRecord.rule8;
-      int Rule9Value = ADT_History.IRCurrentRecord.rule9;
-      int RapidIntenValue = ADT_History.IRCurrentRecord.rapiddiss;
+      int Rule8Value = History.IRCurrentRecord.rule8;
+      int Rule9Value = History.IRCurrentRecord.rule9;
+      int RapidIntenValue = History.IRCurrentRecord.rapiddiss;
 
-      double EyeTempValue = ADT_History.IRCurrentRecord.eyet;
-      double CloudTempValue = ADT_History.IRCurrentRecord.cloudt;
+      double EyeTempValue = History.IRCurrentRecord.eyet;
+      double CloudTempValue = History.IRCurrentRecord.cloudt;
 
       /** determine scenetype to be output to screen */
-      int EyeSceneTypeValue = ADT_History.IRCurrentRecord.eyescene;
-      int CloudSceneTypeValue = ADT_History.IRCurrentRecord.cloudscene;
-      int CloudFFTValue = ADT_History.IRCurrentRecord.cloudfft;
+      int EyeSceneTypeValue = History.IRCurrentRecord.eyescene;
+      int CloudSceneTypeValue = History.IRCurrentRecord.cloudscene;
+      int CloudFFTValue = History.IRCurrentRecord.cloudfft;
       if(CloudSceneTypeValue==2) {
          SceneString = String.format("%s",CloudSceneTypes[CloudSceneTypeValue]);
       } else if(CloudSceneTypeValue==3) {
-         double CurvedBandValue = ((double)(ADT_History.IRCurrentRecord.ringcbval-1))/24.0;
-         double CurvedBandMaxValue = ((double)(ADT_History.IRCurrentRecord.ringcbvalmax-1))/25.0;
-         int RingCB = ADT_History.IRCurrentRecord.ringcb;
+         double CurvedBandValue = ((double)(History.IRCurrentRecord.ringcbval-1))/24.0;
+         double CurvedBandMaxValue = ((double)(History.IRCurrentRecord.ringcbvalmax-1))/25.0;
+         int RingCB = History.IRCurrentRecord.ringcb;
          SceneString = String.format("CURVED BAND with %4.2f ARC in %s",CurvedBandValue,BDCatString[RingCB]);
          /** System.out.printf("curved band max=%f curved band=%f\n",CurvedBandMaxValue,CurvedBandValue); */
          if(CurvedBandMaxValue>CurvedBandValue) {
@@ -181,7 +181,7 @@ public class ADT_Output {
          if(MaxCurvedBandTF) {
             SceneMaxCBString = String.format("Maximum CURVED BAND with %4.2f ARC in %s",CurvedBandMaxValue,BDCatString[RingCB]);
             /** convert xx.xxxx latitude format to degree/minute/second format */
-            double CurvedBandMaxLatitude = ADT_History.IRCurrentRecord.ringcbvalmaxlat;
+            double CurvedBandMaxLatitude = History.IRCurrentRecord.ringcbvalmaxlat;
             int[] ReturnValues4A = adt_lldms(CurvedBandMaxLatitude);
             int DegreeValue4A = ReturnValues4A[0];
             int MinuteValue4A = ReturnValues4A[1];
@@ -197,7 +197,7 @@ public class ADT_Output {
             String CBMaxLatString = String.format("%3d:%02d:%02d %1s",DegreeValue4A,MinuteValue4A,SecondValue4A,LatNS[LatNSval]);
 
             /** convert xx.xxxx longitude format to degree/minute/second format */
-            double CurvedBandMaxLongitude = ADT_History.IRCurrentRecord.ringcbvalmaxlon;
+            double CurvedBandMaxLongitude = History.IRCurrentRecord.ringcbvalmaxlon;
             int[] ReturnValues4B = adt_lldms(CurvedBandMaxLongitude);
             int DegreeValue4B = ReturnValues4B[0];
             int MinuteValue4B = ReturnValues4B[1];
@@ -216,7 +216,7 @@ public class ADT_Output {
          }
       }
       else if(CloudSceneTypeValue==4) {
-         double CDOSizeValue = ADT_History.IRCurrentRecord.eyecdosize/110.0;
+         double CDOSizeValue = History.IRCurrentRecord.eyecdosize/110.0;
          if(CDOSizeValue<1.30) {
             SceneString = String.format("SHEAR (%4.2f^ TO DG)",CDOSizeValue);
          } else {
@@ -229,7 +229,7 @@ public class ADT_Output {
             if(EyeSceneTypeValue<=2) {
                RadiusMaxWindTF = true;
             }
-            double RMWValue = ADT_History.IRCurrentRecord.rmw;
+            double RMWValue = History.IRCurrentRecord.rmw;
             if(RMWValue<0.0) {
                if(EyeSceneTypeValue==1) {
                   RadiusMaxWindString = String.format("<10");
@@ -250,8 +250,8 @@ public class ADT_Output {
          }
       }
       
-      int NumRecsHistory = ADT_History.HistoryNumberOfRecords();
-      double InitStrengthValue = ADT_Env.InitRawTValue;
+      int NumRecsHistory = History.HistoryNumberOfRecords();
+      double InitStrengthValue = Env.InitRawTValue;
       if((HistoryFileName!=null)&&(NumRecsHistory==0)) {
          CloudSceneTypeValue=0;
          if(InitStrengthValue>1.0) {
@@ -271,17 +271,17 @@ public class ADT_Output {
          SceneMaxCBLLString2 = String.format("%s",SceneMaxCBLLString);
       }
 
-      int SatType = ADT_History.IRCurrentRecord.sattype;
-      int AutoPos = ADT_History.IRCurrentRecord.autopos;
-      int LandFlag = ADT_History.IRCurrentRecord.land;
-      int R34Value = ADT_History.IRCurrentRecord.r34;
-      int MSLPenvValue = ADT_History.IRCurrentRecord.MSLPenv;
-      double VZAValue = ADT_History.IRCurrentRecord.vza;
-      String SatelliteIDString = ADT_Functions.adt_sattypes(SatType);
+      int SatType = History.IRCurrentRecord.sattype;
+      int AutoPos = History.IRCurrentRecord.autopos;
+      int LandFlag = History.IRCurrentRecord.land;
+      int R34Value = History.IRCurrentRecord.r34;
+      int MSLPenvValue = History.IRCurrentRecord.MSLPenv;
+      double VZAValue = History.IRCurrentRecord.vza;
+      String SatelliteIDString = Functions.adt_sattypes(SatType);
       
-      String VersionString = ADT_Env.ADTVersion;
-      boolean LandFlagTF = ADT_Env.LandFlagTF;
-      boolean UseCKZTF = ADT_Env.UseCKZTF;
+      String VersionString = Env.ADTVersion;
+      boolean LandFlagTF = Env.LandFlagTF;
+      boolean UseCKZTF = Env.UseCKZTF;
 
       /* send results to the screen */
 
@@ -354,7 +354,7 @@ public class ADT_Output {
    }
 
    public static int[] adt_lldms(double FullDegreeValue)
-   /**
+   /**   
     ** Convert "degree.partial_degree" to degree/minute/second format.
     ** Inputs  : FullDegreeValue_Input  - latitude/longitude value to convert
     ** Outputs : Degree_Return - degrees integer value

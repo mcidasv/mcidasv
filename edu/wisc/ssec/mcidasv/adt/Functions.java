@@ -26,13 +26,13 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.util.Scanner;
 
 @SuppressWarnings("unused")
 
-public class ADT_Functions {
+public class Functions {
 
    static String[] Months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
    static double[] PW_TnoValues = {-9999.,-8888.,
@@ -174,7 +174,7 @@ public class ADT_Functions {
 
       /** determine julian date from day/month/year */
       if(MonthValue<12) {
-         JulianDateReturnValue = ADT_Functions.idmyyd(DayValue,MonthValue+1,YearValue);
+         JulianDateReturnValue = Functions.idmyyd(DayValue,MonthValue+1,YearValue);
       }
       else {
          JulianDateReturnValue = 0;   /** Error */
@@ -278,7 +278,7 @@ public class ADT_Functions {
     */
    {
       /* calculate date/month/year from julian date */
-      int ReturnValues[] = ADT_Functions.adt_yddmy(JulianDateInputValue);
+      int ReturnValues[] = Functions.adt_yddmy(JulianDateInputValue);
       int DayValue = ReturnValues[0];
       int MonthValue = ReturnValues[1];
       int YearValue = ReturnValues[2];
@@ -478,7 +478,7 @@ public class ADT_Functions {
          }
       }
 
-      int DomainID_Input = ADT_Env.DomainID;
+      int DomainID_Input = Env.DomainID;
       if(DomainID_Input==-1) {
          /* automatically determined storm basin ID */
          /* if(BasinID_Local==0) { */
@@ -540,22 +540,22 @@ public class ADT_Functions {
       boolean OverWaterTF = false;             /* TC over water logical value */
       boolean FirstLonValueTF = true;          /* 1st lon value for extrap logical */
 
-      int NumRecsHistory = ADT_History.HistoryNumberOfRecords();
+      int NumRecsHistory = History.HistoryNumberOfRecords();
 
-      int ImageDate = ADT_History.IRCurrentRecord.date;
-      int ImageTime = ADT_History.IRCurrentRecord.time;
-      double CurrentTime = ADT_Functions.calctime(ImageDate,ImageTime);
+      int ImageDate = History.IRCurrentRecord.date;
+      int ImageTime = History.IRCurrentRecord.time;
+      double CurrentTime = Functions.calctime(ImageDate,ImageTime);
       double TimeThreshold = CurrentTime-(SearchTimeInterval/24.0);
 
-      boolean LandFlagTF = ADT_Env.LandFlagTF;
-      double InitStrengthValue = ADT_Env.InitRawTValue;
+      boolean LandFlagTF = Env.LandFlagTF;
+      double InitStrengthValue = Env.InitRawTValue;
 
       int XInc = 0;
       while(XInc<NumRecsHistory) {
-         RecDate = ADT_History.HistoryFile[XInc].date;
-         RecTime = ADT_History.HistoryFile[XInc].time;
-         HistoryRecTime = ADT_Functions.calctime(RecDate,RecTime);
-         RecLand = ADT_History.HistoryFile[XInc].land;
+         RecDate = History.HistoryFile[XInc].date;
+         RecTime = History.HistoryFile[XInc].time;
+         HistoryRecTime = Functions.calctime(RecDate,RecTime);
+         RecLand = History.HistoryFile[XInc].land;
 
 
          if((HistoryRecTime<CurrentTime)&&(HistoryRecTime>=TimeThreshold)) {
@@ -568,16 +568,16 @@ public class ADT_Functions {
             if(OverWaterTF) {
               XAxisValue = (double)(CurrentTime-HistoryRecTime);
                if(SlopeInterceptFlag==1) {
-                  YAxisValue = ADT_History.HistoryFile[XInc].Tfinal;
+                  YAxisValue = History.HistoryFile[XInc].Tfinal;
                }
                if(SlopeInterceptFlag==2) {
-                  YAxisValue = ADT_History.HistoryFile[XInc].Traw;
+                  YAxisValue = History.HistoryFile[XInc].Traw;
                }
                if(SlopeInterceptFlag==3) {
-                  YAxisValue = ADT_History.HistoryFile[XInc].latitude;
+                  YAxisValue = History.HistoryFile[XInc].latitude;
                }
                if(SlopeInterceptFlag==4) {
-                  YAxisValue = ADT_History.HistoryFile[XInc].longitude;
+                  YAxisValue = History.HistoryFile[XInc].longitude;
                   if(FirstLonValueTF) {
                      FirstLonValue = YAxisValue;
                      FirstLonValueTF = false;
@@ -612,10 +612,10 @@ public class ADT_Functions {
          CounterMinimum=6;
          /** add current record to slope calculation */
          if(SlopeInterceptFlag==1) {
-            YAxisValue = ADT_History.IRCurrentRecord.Tfinal;
+            YAxisValue = History.IRCurrentRecord.Tfinal;
          }
          if(SlopeInterceptFlag==2) {
-            YAxisValue = ADT_History.IRCurrentRecord.Traw;
+            YAxisValue = History.IRCurrentRecord.Traw;
          }
          SumY = SumY+YAxisValue;
          SumSquaresY = SumSquaresY+(YAxisValue*YAxisValue);
@@ -698,14 +698,14 @@ public class ADT_Functions {
          XInc++; 
       }
     
-      int[] ReturnValues = ADT_Functions.adt_oceanbasin(LatitudeInput,LongitudeInput);
+      int[] ReturnValues = Functions.adt_oceanbasin(LatitudeInput,LongitudeInput);
       int BasinID = ReturnValues[0];
-      /* int DomainID = ADT_Env.DomainID; */
+      /* int DomainID = Env.DomainID; */
       int DomainID = ReturnValues[1];
 
-      boolean UseCKZTF = ADT_Env.UseCKZTF;
-      double CKZGaleRadius34 = ADT_Env.CKZGaleRadius;
-      double CKZPenv = ADT_Env.CKZPenv;
+      boolean UseCKZTF = Env.UseCKZTF;
+      double CKZGaleRadius34 = Env.CKZGaleRadius;
+      double CKZPenv = Env.CKZPenv;
 
       /** convert CI value to wind/pressure value */
       if(PressureWindIDValue==1) {
@@ -752,8 +752,8 @@ public class ADT_Functions {
                PWReturnValue = CKZPenv-2.0;
             }
             /** System.out.printf("PWReturnValue=%f\n",PWReturnValue); */
-            ADT_History.IRCurrentRecord.r34 = (int)CKZGaleRadius34;
-            ADT_History.IRCurrentRecord.MSLPenv = (int)CKZPenv;
+            History.IRCurrentRecord.r34 = (int)CKZGaleRadius34;
+            History.IRCurrentRecord.MSLPenv = (int)CKZPenv;
          }
       }
 
@@ -849,9 +849,9 @@ public class ADT_Functions {
    
       String ATCFFileName = "";
 
-      int CurDate = ADT_History.IRCurrentRecord.date;
-      int CurTime = ADT_History.IRCurrentRecord.time;
-      int ReturnValues[] = ADT_Functions.adt_yddmy(CurDate);
+      int CurDate = History.IRCurrentRecord.date;
+      int CurTime = History.IRCurrentRecord.time;
+      int ReturnValues[] = Functions.adt_yddmy(CurDate);
       int DayValue = ReturnValues[0];
       int MonthValue = ReturnValues[1];
       int YearValue = ReturnValues[2];

@@ -26,7 +26,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -82,7 +82,7 @@ class IRHistoryRecord {
 
 @SuppressWarnings("unused")
 
-public class ADT_History {
+public class History {
 
    static String[] Rule89_ATCF = { "  ","R8","R9","89" };               /** ATCF Rule 8/9 array */
    static String[] Rule9String = { "OFF"," ON","WKN","N/A" };           /** ATCF Rule 9 array */
@@ -112,7 +112,7 @@ public class ADT_History {
    public static IRHistoryRecord IRCurrentRecord = new IRHistoryRecord(); 
    /** public static IRHistoryRecord IRCurrentRecord = new IRHistoryRecord();     / this could be public if I redo everything */
  
-   public ADT_History() {
+   public History() {
       HistoryFileRecords=0;
    }
 
@@ -132,7 +132,7 @@ public class ADT_History {
           **  System.out.println(histVals);
           ** } */
          /** HistoryFile[HistoryFileRecords].date = Integer.parseInt(tokens[0]); */
-         HistoryFile[HistoryFileRecords].date = ADT_Functions.cmonth2julian(tokens[0]);
+         HistoryFile[HistoryFileRecords].date = Functions.cmonth2julian(tokens[0]);
          HistoryFile[HistoryFileRecords].time = Integer.parseInt(tokens[1]);
          HistoryFile[HistoryFileRecords].TrawO = Float.parseFloat(tokens[3]);
          HistoryFile[HistoryFileRecords].Traw = Float.parseFloat(tokens[4]);
@@ -166,7 +166,7 @@ public class ADT_History {
          HistoryFile[HistoryFileRecords].CIadjp = Float.parseFloat(tokens[32]);
          HistoryFile[HistoryFileRecords].rmw = Float.parseFloat(tokens[33]);
          HistoryFile[HistoryFileRecords].mwscore = Float.parseFloat(tokens[34]);
-         HistoryFile[HistoryFileRecords].mwdate = ADT_Functions.cmonth2julian(tokens[35]);
+         HistoryFile[HistoryFileRecords].mwdate = Functions.cmonth2julian(tokens[35]);
          HistoryFile[HistoryFileRecords].mwtime = Integer.parseInt(tokens[36]);
          HistoryFile[HistoryFileRecords].r34 = Integer.parseInt(tokens[37]);
          HistoryFile[HistoryFileRecords].MSLPenv = Integer.parseInt(tokens[38]);
@@ -202,8 +202,8 @@ public class ADT_History {
    {
       String HistoryFileListing = "";
 
-      boolean UseCKZTF = ADT_Env.UseCKZTF;
-      boolean Vmax1or10TF = ADT_Env.Vmax1or10TF;
+      boolean UseCKZTF = Env.UseCKZTF;
+      boolean Vmax1or10TF = Env.Vmax1or10TF;
       int NumRecsHistory;
       int RetErr;
         int DateValue;
@@ -375,10 +375,10 @@ public class ADT_History {
            MWScoreString = String.format("  N/A");
         } else {
 
-           ADT_Env.CKZGaleRadius = R34Distance;
-           ADT_Env.CKZPenv = EnvironMSLP;
-           CIPressureValue = ADT_Functions.adt_getpwval(0,CI,Latitude,Longitude);
-           CIWindValue = ADT_Functions.adt_getpwval(1,CI,Latitude,Longitude);
+           Env.CKZGaleRadius = R34Distance;
+           Env.CKZPenv = EnvironMSLP;
+           CIPressureValue = Functions.adt_getpwval(0,CI,Latitude,Longitude);
+           CIWindValue = Functions.adt_getpwval(1,CI,Latitude,Longitude);
            if(!Vmax1or10TF) {
               /** convert 1-minute to 10-minute average Vmax for output */
               CIWindValue=0.88*CIWindValue;
@@ -405,9 +405,9 @@ public class ADT_History {
         System.out.printf("here AA %d %d\n",OutputFormatTypeID,NumRecsHistory);
         if(OutputFormatTypeID==-1) {
            /** original format history file listing */
-           String DateString = ADT_Functions.adt_julian2cmonth(DateValue);
+           String DateString = Functions.adt_julian2cmonth(DateValue);
            String LatLonComboString = String.format("%6.2f %7.2f",Latitude,Longitude);
-           String SatelliteIDString = ADT_Functions.adt_sattypes(SatelliteIDValue);
+           String SatelliteIDString = Functions.adt_sattypes(SatelliteIDValue);
            if(UseCKZTF) {
               HistoryFileListing += String.format("%9s %06d  %3.1f %6.1f %5.1f  "
                                + "%3.1f %3.1f %3.1f  %8s %3s  %3s  "
@@ -437,7 +437,7 @@ public class ADT_History {
            /** ATCF format listing */
            int RawTFlag_ATCF = OutputFormatTypeID/1000;
            int FinalTFlag_ATCF = (OutputFormatTypeID-(RawTFlag_ATCF*1000))/100;
-           int[] ReturnValues = ADT_Functions.adt_yddmy(DateValue);
+           int[] ReturnValues = Functions.adt_yddmy(DateValue);
            int MonthValue = ReturnValues[0];
            int DayValue = ReturnValues[1];
            int YearValue = ReturnValues[2];
@@ -447,7 +447,7 @@ public class ADT_History {
            String EWString_ATCF = (Longitude>0.0) ? String.format("%s","W") : String.format("%s","E");
            String LatitudeString = String.format("%4d%1s",(int)(Math.abs(Latitude)*100),NSString_ATCF);
            String LongitudeString = String.format("%5d%1s",(int)(Math.abs(Longitude)*100),EWString_ATCF);
-           int RetVal[] = ADT_Functions.adt_oceanbasin(Latitude,Longitude);
+           int RetVal[] = Functions.adt_oceanbasin(Latitude,Longitude);
            int BasinIDValue = RetVal[0];
    
            int StormIDNum = Integer.parseInt(ATCFStormIDString.substring(0,2));
@@ -541,7 +541,7 @@ public class ADT_History {
                  PositionConfidence = 2;
               }
            }
-           String SatelliteIDString = ADT_Functions.adt_sattypes(SatelliteIDValue);
+           String SatelliteIDString = Functions.adt_sattypes(SatelliteIDValue);
 
            String SiteID_ATCF = String.format("%s",ATCFFileSourceIDString);
 
@@ -610,19 +610,19 @@ public class ADT_History {
       boolean FoundRecordTF = false;
       IRHistoryRecord TemporaryIRCurrentRecord = IRCurrentRecord;
      
-      boolean LandFlagTF = ADT_Env.LandFlagTF;
+      boolean LandFlagTF = Env.LandFlagTF;
 
       int NumRecsHistory = HistoryNumberOfRecords();
 
       int ImageDate = IRCurrentRecord.date;
       int ImageTime = IRCurrentRecord.time;
-      double CurrentTime = ADT_Functions.calctime(ImageDate,ImageTime);
+      double CurrentTime = Functions.calctime(ImageDate,ImageTime);
 
       int XInc = 0;
       while(XInc<NumRecsHistory) {
          int RecDate = HistoryFile[XInc].date;
          int RecTime = HistoryFile[XInc].time;
-         double HistoryRecTime = ADT_Functions.calctime(RecDate,RecTime);
+         double HistoryRecTime = Functions.calctime(RecDate,RecTime);
          if((HistoryRecTime==CurrentTime)&&(!FoundRecordTF)) {
             /** OVERWRITE RECORD */
             System.out.printf("OVERWRITE RECORD %d\n",XInc);
@@ -662,7 +662,7 @@ public class ADT_History {
                   InitCurrent(false);
                } else {
                   /** recompute intensity */
-                  ADT_Intensity.CalculateIntensity(1,RunFullAnalysis,HistoryFileName);
+                  Intensity.CalculateIntensity(1,RunFullAnalysis,HistoryFileName);
                }
                ModifiedCount++;
             }
@@ -708,22 +708,22 @@ public class ADT_History {
       int DeleteRecordCount = 0;
       boolean FoundRecordTF = false;
       IRHistoryRecord TemporaryIRCurrentRecord = IRCurrentRecord;
-      boolean LandFlagTF = ADT_Env.LandFlagTF;
+      boolean LandFlagTF = Env.LandFlagTF;
 
       int NumRecsHistory = HistoryNumberOfRecords();
 
       int XInc = 0;
-      int DateStart = ADT_Env.StartJulianDate;
-      int DateEnd = ADT_Env.EndJulianDate;
-      int DateStartTime = ADT_Env.StartHHMMSSTime;
-      int DateEndTime = ADT_Env.EndHHMMSSTime;
-      double AnalysisStartTime = ADT_Functions.calctime(DateStart,DateStartTime);
-      double AnalysisEndTime = ADT_Functions.calctime(DateEnd,DateEndTime);
+      int DateStart = Env.StartJulianDate;
+      int DateEnd = Env.EndJulianDate;
+      int DateStartTime = Env.StartHHMMSSTime;
+      int DateEndTime = Env.EndHHMMSSTime;
+      double AnalysisStartTime = Functions.calctime(DateStart,DateStartTime);
+      double AnalysisEndTime = Functions.calctime(DateEnd,DateEndTime);
 
       while(XInc<NumRecsHistory) {
          int RecDate = HistoryFile[XInc].date;
          int RecTime = HistoryFile[XInc].time;
-         double HistoryRecTime = ADT_Functions.calctime(RecDate,RecTime);
+         double HistoryRecTime = Functions.calctime(RecDate,RecTime);
 
          if((HistoryRecTime>=AnalysisStartTime)&&
             (HistoryRecTime<=AnalysisEndTime)) {
@@ -753,7 +753,7 @@ public class ADT_History {
                   InitCurrent(false);
                } else {
                   /** recompute intensity */
-                  ADT_Intensity.CalculateIntensity(1,RunFullAnalysis,HistoryFileName);
+                  Intensity.CalculateIntensity(1,RunFullAnalysis,HistoryFileName);
                }
                ModifiedCount++;
             }
@@ -784,17 +784,17 @@ public class ADT_History {
       int NumRecsHistory = HistoryNumberOfRecords();
 
       int XInc = 0;
-      int DateStart = ADT_Env.StartJulianDate;
-      int DateEnd = ADT_Env.EndJulianDate;
-      int DateStartTime = ADT_Env.StartHHMMSSTime;
-      int DateEndTime = ADT_Env.EndHHMMSSTime;
-      double AnalysisStartTime = ADT_Functions.calctime(DateStart,DateStartTime);
-      double AnalysisEndTime = ADT_Functions.calctime(DateEnd,DateEndTime);
+      int DateStart = Env.StartJulianDate;
+      int DateEnd = Env.EndJulianDate;
+      int DateStartTime = Env.StartHHMMSSTime;
+      int DateEndTime = Env.EndHHMMSSTime;
+      double AnalysisStartTime = Functions.calctime(DateStart,DateStartTime);
+      double AnalysisEndTime = Functions.calctime(DateEnd,DateEndTime);
 
       while(XInc<NumRecsHistory) {
          int RecDate = HistoryFile[XInc].date;
          int RecTime = HistoryFile[XInc].time;
-         double HistoryRecTime = ADT_Functions.calctime(RecDate,RecTime);
+         double HistoryRecTime = Functions.calctime(RecDate,RecTime);
 
          if((HistoryRecTime>=AnalysisStartTime)&&
             (HistoryRecTime<=AnalysisEndTime)) {
@@ -832,13 +832,13 @@ public class ADT_History {
       while(XInc<NumRecsHistory) {
          int RecDate = HistoryFile[XInc].date;
          int RecTime = HistoryFile[XInc].time;
-         double HistoryRecTime = ADT_Functions.calctime(RecDate,RecTime);
-         String DateString = ADT_Functions.adt_julian2cmonth(RecDate);
+         double HistoryRecTime = Functions.calctime(RecDate,RecTime);
+         String DateString = Functions.adt_julian2cmonth(RecDate);
          
          int MWRecDate = HistoryFile[XInc].mwdate;
          int MWRecTime = HistoryFile[XInc].mwtime;
-         double MWHistoryRecTime = ADT_Functions.calctime(MWRecDate,MWRecTime);
-         String MWDateString = ADT_Functions.adt_julian2cmonth(MWRecDate);
+         double MWHistoryRecTime = Functions.calctime(MWRecDate,MWRecTime);
+         String MWDateString = Functions.adt_julian2cmonth(MWRecDate);
 
          double JulianDate=HistoryRecTime-(double)((int)HistoryRecTime/1000)*1000.0;
          

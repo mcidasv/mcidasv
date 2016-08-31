@@ -26,7 +26,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -34,9 +34,9 @@ import java.io.InputStream;
 
 @SuppressWarnings("unused")
 
-public class ADT_Topo {
+public class Topo {
 
-   public ADT_Topo() {
+   public Topo() {
    }
 
    public static int ReadTopoFile(String topofile, double inputlat, double inputlon) throws IOException {
@@ -58,7 +58,7 @@ public class ADT_Topo {
       System.out.printf("TOPO: lat: %f  lon: %f\n",ax,bx);
       // File file = new File(topofile);
       // RandomAccessFile filestream = new RandomAccessFile(file,"r");
-      InputStream filestream = ADT_Topo.class.getResourceAsStream(topofile);
+      InputStream filestream = Topo.class.getResourceAsStream(topofile);
       DataInputStream dis = new DataInputStream(filestream);
       
       // RandomAccessFile filestream = new RandomAccessFile(file,"r");

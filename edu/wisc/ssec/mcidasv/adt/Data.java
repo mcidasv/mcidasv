@@ -26,7 +26,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.lang.Math;
 
@@ -38,7 +38,7 @@ class IRRingData {
 
 @SuppressWarnings("unused")
 
-public class ADT_Data {
+public class Data {
 
    private static double KtoC_Value=273.16;
    private static double OUTER_RADIUS=136.0;
@@ -75,7 +75,7 @@ public class ADT_Data {
    public static float[][] IRData_Longitude = new float[200][200];
    public static float[][] IRData_Temperature = new float[200][200];
 
-   public ADT_Data() {
+   public Data() {
      Eye_Temperature=-999.9;
      CWCloud_Temperature=-999.9;
      Cloud_Temperature=-999.9;
@@ -98,7 +98,7 @@ public class ADT_Data {
             LatVal = IRData_Latitude[j][i];
             LonVal = IRData_Longitude[j][i];
             TempVal = IRData_Temperature[j][i];
-            double LocalValue[] = ADT_Functions.distance_angle(LatVal,LonVal,
+            double LocalValue[] = Functions.distance_angle(LatVal,LonVal,
                                   CenterLatitude,CenterLongitude,1);
 
             if(LocalValue[0]<=(OUTER_RADIUS+80.0)) {
@@ -123,7 +123,7 @@ public class ADT_Data {
    private static double CalcEyeTemperature() {
       double EyeMaxTemp=-99.0;
 
-      int RingDataCount = ADT_Data.RingDataNumberOfPoints();
+      int RingDataCount = Data.RingDataNumberOfPoints();
       /** System.out.printf("number of points in RingData=%d\n",RingDataCount); */
 
       for (int i = 0; i < RingDataCount; i++ ) {
@@ -147,7 +147,7 @@ public class ADT_Data {
       int IntVal;
       int i,j;
 
-      int RingDataCount = ADT_Data.RingDataNumberOfPoints();
+      int RingDataCount = Data.RingDataNumberOfPoints();
 
       int MaxNumberRings = (int)((OUTER_RADIUS-INNER_RADIUS)/RING_WIDTH);
       /** System.out.printf("maxNumberRings=%d\n",MaxNumberRings); */
@@ -229,7 +229,7 @@ public class ADT_Data {
       double SectorAverageArray[] = new double[MAXSECTOR];
       double SectorStdvArray[] = new double[MAXSECTOR];
  
-      int RingDataCount = ADT_Data.RingDataNumberOfPoints();
+      int RingDataCount = Data.RingDataNumberOfPoints();
 
       for (i = 0; i < TEMPBINS; i++ ) {
          TemperatureHistArray[i] = KtoC_Value + 26.0 - ((double)i)*2.0;
@@ -266,7 +266,7 @@ public class ADT_Data {
             }
          }
 
-         int FFT_ReturnValue = ADT_FFT.CalculateFFT(TemperatureHistArrayCounter); 
+         int FFT_ReturnValue = FFT.CalculateFFT(TemperatureHistArrayCounter);
          
          /** System.out.printf("sceneID=%d  harmonic=%d\n",SceneIDFlag,FFT_ReturnValue); */
 
@@ -277,8 +277,8 @@ public class ADT_Data {
          }
       }
 
-      ADT_History.IRCurrentRecord.eyefft = Eye_FFTValue;
-      ADT_History.IRCurrentRecord.cloudfft = Cloud_FFTValue;
+      History.IRCurrentRecord.eyefft = Eye_FFTValue;
+      History.IRCurrentRecord.cloudfft = Cloud_FFTValue;
 
       /** determine various Eye and Cloud region parameters */
       for (i = 0; i < MAXSECTOR; i++ ) {
@@ -324,7 +324,7 @@ public class ADT_Data {
        ** is less than 68km from center, annulus will start at 28km */
       int AnnulusTemperatureCount = 0;
       double AnnulusTemperatureSum = 0.0;
-      double AnnulusDistance = ADT_History.IRCurrentRecord.cwring;
+      double AnnulusDistance = History.IRCurrentRecord.cwring;
       double AnnulusStartRadius = Math.max(28.0,AnnulusDistance-40.0);
       double AnnulusEndRadius = Math.max(108.0,AnnulusDistance+40.0);
       for (i = 0; i < RingDataCount; i++ ) {
@@ -349,11 +349,11 @@ public class ADT_Data {
          for (j = 0; j < SectorCounterValue; j++ ) {
             TempSectorArray[j] = SectorDataArray[i][j];
          }
-         double ReturnValues[] = ADT_Data.CalcSkew(TempSectorArray,SectorCounterValue);  
+         double ReturnValues[] = Data.CalcSkew(TempSectorArray,SectorCounterValue);
          SectorAverageArray[i] = ReturnValues[0];
          SectorStdvArray[i] = ReturnValues[1];
       }
-      double ReturnValues2[] = ADT_Data.CalcSkew(SectorAverageArray,MAXSECTOR);  
+      double ReturnValues2[] = Data.CalcSkew(SectorAverageArray,MAXSECTOR);
       double SectorAverageAverageValue = ReturnValues2[0];   /** cloud2 value */
 
       int HalfMaxSector = MAXSECTOR/2;
@@ -361,10 +361,10 @@ public class ADT_Data {
       for (i = 0; i < HalfMaxSector; i++ ) {
          SectorDifferenceArray[i] = Math.abs(SectorAverageArray[i]-SectorAverageArray[i+HalfMaxSector]);
       }
-      double ReturnValues3[] = ADT_Data.CalcSkew(SectorDifferenceArray,HalfMaxSector);  
+      double ReturnValues3[] = Data.CalcSkew(SectorDifferenceArray,HalfMaxSector);
       double SectorDiffAverageValue = ReturnValues3[0];    /** cloud symmetry value */
 
-      double ReturnValues4[] = ADT_Data.CalcSkew(EyeDataArray,EyeCount);  
+      double ReturnValues4[] = Data.CalcSkew(EyeDataArray,EyeCount);
       double EyeRegionSTDVValue = ReturnValues4[1];    /** eye stdv value */
 
       return new double[] { CloudAnnulusAveTemp, SectorAverageAverageValue, SectorDiffAverageValue, EyeRegionSTDVValue };
@@ -384,19 +384,19 @@ public class ADT_Data {
 
       LoadRingData(CenterLatValue,CenterLonValue);
 
-      Eye_Temperature = ADT_Data.CalcEyeTemperature();
-      ADT_History.IRCurrentRecord.eyet = Eye_Temperature-KtoC_Value;
+      Eye_Temperature = Data.CalcEyeTemperature();
+      History.IRCurrentRecord.eyet = Eye_Temperature-KtoC_Value;
       /** System.out.printf("eyeT=%f\n",Eye_Temperature); */
 
-      double LocalValue[] = ADT_Data.CalcCWCloudInfo();
+      double LocalValue[] = Data.CalcCWCloudInfo();
       CWCloud_Temperature = LocalValue[0];
       CWRing_Distance = (int)LocalValue[1];
       /** System.out.printf("cw cloudT=%f\n",CWCloud_Temperature); */
       /** System.out.printf("cw Ring distance=%d\n",CWRing_Distance); */
-      ADT_History.IRCurrentRecord.cwcloudt = CWCloud_Temperature-KtoC_Value;
-      ADT_History.IRCurrentRecord.cwring = CWRing_Distance;
+      History.IRCurrentRecord.cwcloudt = CWCloud_Temperature-KtoC_Value;
+      History.IRCurrentRecord.cwring = CWRing_Distance;
 
-      double LocalValue2[] = ADT_Data.CalcEyeCloudInfo();
+      double LocalValue2[] = Data.CalcEyeCloudInfo();
       Cloud_Temperature = LocalValue2[0];
       Cloud2_Temperature = LocalValue2[1];
       Cloud_Symmetry = LocalValue2[2];
@@ -405,10 +405,10 @@ public class ADT_Data {
       /** System.out.printf("cloud2t=%f\n",Cloud2_Temperature); */
       /** System.out.printf("eyestdv=%f\n",Eye_STDV);   / double check these values */
       /** System.out.printf("cloudsymave=%f\n",Cloud_Symmetry); */
-      ADT_History.IRCurrentRecord.cloudt = Cloud_Temperature-KtoC_Value;
-      ADT_History.IRCurrentRecord.cloudt2 = Cloud2_Temperature-KtoC_Value;
-      ADT_History.IRCurrentRecord.cloudsymave = Cloud_Symmetry;
-      ADT_History.IRCurrentRecord.eyestdv = Eye_STDV;
+      History.IRCurrentRecord.cloudt = Cloud_Temperature-KtoC_Value;
+      History.IRCurrentRecord.cloudt2 = Cloud2_Temperature-KtoC_Value;
+      History.IRCurrentRecord.cloudsymave = Cloud_Symmetry;
+      History.IRCurrentRecord.eyestdv = Eye_STDV;
 
    }
 
@@ -425,8 +425,8 @@ public class ADT_Data {
 
       double CenterTempValue = IRData_Temperature[CenterYPos][CenterXPos];
 
-      double CloudTemperature = ADT_History.IRCurrentRecord.cloudt;
-      double EyeTemperature = ADT_History.IRCurrentRecord.eyet;
+      double CloudTemperature = History.IRCurrentRecord.cloudt;
+      double EyeTemperature = History.IRCurrentRecord.eyet;
 
       int XDirMaximum=Math.min(IRData_NumberColumns,CenterXPos+320);
       int XDirMinimum=Math.max(0,CenterXPos-320);
@@ -498,25 +498,25 @@ public class ADT_Data {
 
       LatitudeValue = IRData_Latitude[CenterYPos][XDirIterationStoredMinimum];
       LongitudeValue = IRData_Longitude[CenterYPos][XDirIterationStoredMinimum];
-      double LocalValue1[] = ADT_Functions.distance_angle(LatitudeValue,LongitudeValue,
+      double LocalValue1[] = Functions.distance_angle(LatitudeValue,LongitudeValue,
                                            CenterPointLatitude,CenterPointLongitude,1);
       double DistanceValueX1 = LocalValue1[0];
 
       LatitudeValue = IRData_Latitude[CenterYPos][XDirIterationStoredMaximum];
       LongitudeValue = IRData_Longitude[CenterYPos][XDirIterationStoredMaximum];
-      double LocalValue2[] = ADT_Functions.distance_angle(LatitudeValue,LongitudeValue,
+      double LocalValue2[] = Functions.distance_angle(LatitudeValue,LongitudeValue,
                                            CenterPointLatitude,CenterPointLongitude,1);
       double DistanceValueX2 = LocalValue2[0];
 
       LatitudeValue = IRData_Latitude[YDirIterationStoredMinimum][CenterXPos];
       LongitudeValue = IRData_Longitude[YDirIterationStoredMinimum][CenterXPos];
-      double LocalValue3[] = ADT_Functions.distance_angle(LatitudeValue,LongitudeValue,
+      double LocalValue3[] = Functions.distance_angle(LatitudeValue,LongitudeValue,
                                            CenterPointLatitude,CenterPointLongitude,1);
       double DistanceValueY1 = LocalValue3[0];
 
       LatitudeValue = IRData_Latitude[YDirIterationStoredMaximum][CenterXPos];
       LongitudeValue = IRData_Longitude[YDirIterationStoredMaximum][CenterXPos];
-      double LocalValue4[] = ADT_Functions.distance_angle(LatitudeValue,LongitudeValue,
+      double LocalValue4[] = Functions.distance_angle(LatitudeValue,LongitudeValue,
                                            CenterPointLatitude,CenterPointLongitude,1);
       double DistanceValueY2 = LocalValue4[0];
 

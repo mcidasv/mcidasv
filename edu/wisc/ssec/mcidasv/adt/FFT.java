@@ -26,13 +26,13 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.lang.Math;
 
 @SuppressWarnings("unused")
 
-public class ADT_FFT {
+public class FFT {
 
    private static int FFTBINS=64;
    private static double PI = 3.14159265358979;
@@ -41,7 +41,7 @@ public class ADT_FFT {
    private static double FFT_Complex[] = new double[FFTBINS];
    private static double FFT_Magnitude[] = new double[FFTBINS];
 
-   public ADT_FFT() {
+   public FFT() {
    }
 
    private static int dfft() {
@@ -256,12 +256,12 @@ public class ADT_FFT {
          FFT_Magnitude[i] = 0.0;
       }
 
-      int RetErr = ADT_FFT.dfft();
+      int RetErr = FFT.dfft();
       if(RetErr<=0) {
          /** throw exception */
       } else {
          for (i = 0; i < FFTBINS; i++ ) {
-            FFT_Magnitude[i] = ADT_FFT.complex_abs(FFT_Real[i],FFT_Complex[i]);
+            FFT_Magnitude[i] = FFT.complex_abs(FFT_Real[i],FFT_Complex[i]);
             /** System.out.printf("arrayinc=%d  FFT real=%f cmplx=%f magnitude=%f\n",i,FFT_Real[i],FFT_Complex[i],FFT_Magnitude[i]); */
          }
          for (i = 2; i <= 31; i++ ) {

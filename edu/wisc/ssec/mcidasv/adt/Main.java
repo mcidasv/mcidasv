@@ -26,33 +26,33 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.io.File;
 import java.io.IOException;
 
 @SuppressWarnings({"static-access", "unused"})
 
-public class ADT_Main {
+public class Main {
 
    public static String HistoryFileName;
    public static String ReturnOutputString;
    
-   public ADT_Main( ) { 
+   public Main( ) {
       HistoryFileName = null;
       ReturnOutputString = null;
    }
 
    public int GetInitialPosition() {
        
-       ADT_Auto AutoMode = new ADT_Auto();
+       Auto AutoMode = new Auto();
        
        String ForecastFileName = null;
        double[] AutoMode1Return = null;
 
-       boolean RunAuto = ADT_Env.AutoTF;
-       ForecastFileName = ADT_Env.ForecastFileName;
-       int ForecastFileType = ADT_Env.ForecastFileType;
+       boolean RunAuto = Env.AutoTF;
+       ForecastFileName = Env.ForecastFileName;
+       int ForecastFileType = Env.ForecastFileType;
        
        System.out.printf("Run AUTO=%b\n",RunAuto);
        if(RunAuto) {
@@ -73,20 +73,20 @@ public class ADT_Main {
           double ForecastIntensity = AutoMode1Return[3];
           double ForecastMethodID = AutoMode1Return[4];
           
-          ADT_Env.SelectedLatitude = ForecastLatitude;
-          ADT_Env.SelectedLongitude = ForecastLongitude;
+          Env.SelectedLatitude = ForecastLatitude;
+          Env.SelectedLongitude = ForecastLongitude;
 
-          ADT_History.IRCurrentRecord.latitude = ForecastLatitude;
-          ADT_History.IRCurrentRecord.longitude = ForecastLongitude;
-          ADT_History.IRCurrentRecord.autopos = 1;  // forecast interpolation
+          History.IRCurrentRecord.latitude = ForecastLatitude;
+          History.IRCurrentRecord.longitude = ForecastLongitude;
+          History.IRCurrentRecord.autopos = 1;  // forecast interpolation
           System.out.printf("AutoMode1 output position info : Latitude=%f Longitude=%f Intensity=%f MethodID=%f Flag=%d\n",
                              ForecastLatitude,ForecastLongitude,ForecastIntensity,ForecastMethodID,ForecastReturnFlag);
 
       } else {
-          System.out.printf("Manual Mode : latitude=%f longitude=%f",ADT_Env.SelectedLatitude,ADT_Env.SelectedLongitude);
-          ADT_History.IRCurrentRecord.latitude = ADT_Env.SelectedLatitude;
-          ADT_History.IRCurrentRecord.longitude = ADT_Env.SelectedLongitude;
-          ADT_History.IRCurrentRecord.autopos = 0;  // Manual
+          System.out.printf("Manual Mode : latitude=%f longitude=%f", Env.SelectedLatitude, Env.SelectedLongitude);
+          History.IRCurrentRecord.latitude = Env.SelectedLatitude;
+          History.IRCurrentRecord.longitude = Env.SelectedLongitude;
+          History.IRCurrentRecord.autopos = 0;  // Manual
       }
        
       return 1;
@@ -96,11 +96,11 @@ public class ADT_Main {
    public void GetARCHERPosition() {
 
       double[] AutoMode2Return = null;
-      double InputLatitude = ADT_Env.SelectedLatitude;
-      double InputLongitude = ADT_Env.SelectedLongitude;
-      boolean OverrideCenter = ADT_Env.OverCenterTF;
+      double InputLatitude = Env.SelectedLatitude;
+      double InputLongitude = Env.SelectedLongitude;
+      boolean OverrideCenter = Env.OverCenterTF;
       try {
-          AutoMode2Return = ADT_Auto.AutoMode2(InputLatitude,InputLongitude);
+          AutoMode2Return = Auto.AutoMode2(InputLatitude,InputLongitude);
       }
       catch(IOException exception) {
           System.out.printf("ERROR with Automode2 routine\n");
@@ -110,12 +110,12 @@ public class ADT_Main {
       double FinalLatitude = AutoMode2Return[0];
       double FinalLongitude = AutoMode2Return[1];
       int FinalPositioningMethod = (int)AutoMode2Return[2];
-      ADT_History.IRCurrentRecord.latitude = FinalLatitude;
-      ADT_History.IRCurrentRecord.longitude = FinalLongitude;
-      ADT_History.IRCurrentRecord.autopos = FinalPositioningMethod;
+      History.IRCurrentRecord.latitude = FinalLatitude;
+      History.IRCurrentRecord.longitude = FinalLongitude;
+      History.IRCurrentRecord.autopos = FinalPositioningMethod;
       
-      ADT_Env.SelectedLatitude = ADT_History.IRCurrentRecord.latitude;
-      ADT_Env.SelectedLongitude = ADT_History.IRCurrentRecord.longitude;
+      Env.SelectedLatitude = History.IRCurrentRecord.latitude;
+      Env.SelectedLongitude = History.IRCurrentRecord.longitude;
 
       return;
       
@@ -131,20 +131,20 @@ public class ADT_Main {
       int RetIntValue2;
       int RetErr;
 
-      ADT_History CurrentHistory = new ADT_History();
-      ADT_Topo Topo = new ADT_Topo();
-      ADT_Scene SceneType = new ADT_Scene();
-      ADT_Intensity Intensity = new ADT_Intensity();
-      ADT_Output Output = new ADT_Output();
-      ADT_Forecasts Forecast = new ADT_Forecasts();
-      ADT_Functions Functions = new ADT_Functions();
+      History CurrentHistory = new History();
+      Topo Topo = new Topo();
+      Scene SceneType = new Scene();
+      Intensity Intensity = new Intensity();
+      Output Output = new Output();
+      Forecasts Forecast = new Forecasts();
+      Functions Functions = new Functions();
 
       HistoryFileName = InputHistoryFile;
 
-      boolean OverrideScene = ADT_Env.OverSceneTF;
-      int OverrideSceneTypeValue = ADT_Env.OverrideSceneType;
+      boolean OverrideScene = Env.OverSceneTF;
+      int OverrideSceneTypeValue = Env.OverrideSceneType;
 
-      /** System.out.printf("MW Info : Date=%s JulianDate=%d Time=%d Score=%f\n",MWDate,ADT_Env.MWJulianDate,MWTime,MWScore); */
+      /** System.out.printf("MW Info : Date=%s JulianDate=%d Time=%d Score=%f\n",MWDate,Env.MWJulianDate,MWTime,MWScore); */
      
       /** READ HISTORY FILE INFORMATION */
       if(RunFullAnalysis && HistoryFileName != null) {    
@@ -163,8 +163,8 @@ public class ADT_Main {
       System.out.printf("Number of records in history file %s is %d\n",HistoryFileName,HistoryFileRecords);
     
       /** read topography file at center position */
-      double PositionLatitude = ADT_History.IRCurrentRecord.latitude;
-      double PositionLongitude = ADT_History.IRCurrentRecord.longitude;
+      double PositionLatitude = History.IRCurrentRecord.latitude;
+      double PositionLongitude = History.IRCurrentRecord.longitude;
       String TopoFilePath = System.getenv("ODTTOPO");
       String topoPath = new File(".").getCanonicalPath();
       System.err.println("topoPath: " + topoPath);
@@ -173,7 +173,7 @@ public class ADT_Main {
       int TopographyFlag = 0;
       System.out.printf("TOPO Info : File=%s Lat=%f Lon=%f\n",TopoFileName,PositionLatitude,PositionLongitude);
       try {
-         TopographyFlag = ADT_Topo.ReadTopoFile(TopoFileName,PositionLatitude,PositionLongitude);
+         TopographyFlag = edu.wisc.ssec.mcidasv.adt.Topo.ReadTopoFile(TopoFileName,PositionLatitude,PositionLongitude);
       }
       catch(IOException e)
         {
@@ -182,19 +182,19 @@ public class ADT_Main {
             return null;
         }
       /** System.out.printf("after topo read flag=%d\n",TopographyFlag); */
-      ADT_History.IRCurrentRecord.land = TopographyFlag;
+      History.IRCurrentRecord.land = TopographyFlag;
 
       /** Calculate Eye and Cloud region temperatures */
-      ADT_Data.CalcEyeCloudTemps();
+      Data.CalcEyeCloudTemps();
       /** System.out.printf("after calceyecloudtemps\n"); */
       /**
-       ** double Eye_Temperature = ADT_History.IRCurrentRecord.eyet;
-       ** double CWCloud_Temperature = ADT_History.IRCurrentRecord.cwcloudt;
-       ** double Cloud_Temperature = ADT_History.IRCurrentRecord.cloudt;
-       ** double Cloud2_Temperature = ADT_History.IRCurrentRecord.cloudt2;
-       ** double Cloud_Symmetry = ADT_History.IRCurrentRecord.cloudsymave;
-       ** double Eye_STDV = ADT_History.IRCurrentRecord.eyestdv;
-       ** int CWRing_Distance = ADT_History.IRCurrentRecord.cwring;
+       ** double Eye_Temperature = History.IRCurrentRecord.eyet;
+       ** double CWCloud_Temperature = History.IRCurrentRecord.cwcloudt;
+       ** double Cloud_Temperature = History.IRCurrentRecord.cloudt;
+       ** double Cloud2_Temperature = History.IRCurrentRecord.cloudt2;
+       ** double Cloud_Symmetry = History.IRCurrentRecord.cloudsymave;
+       ** double Eye_STDV = History.IRCurrentRecord.eyestdv;
+       ** int CWRing_Distance = History.IRCurrentRecord.cwring;
        ** System.out.printf("Eye Temperature=%f\n",Eye_Temperature);
        ** System.out.printf("CWCloud Temperature=%f\n",CWCloud_Temperature);
        ** System.out.printf("CWRing Distance=%d\n",CWRing_Distance);
@@ -209,23 +209,23 @@ public class ADT_Main {
       /** System.out.printf("overridescenetypevalue=%d\n", OverrideSceneTypeValue); */
       if(OverrideSceneTypeValue>=0) {
           /** System.out.printf("setting old scene types\n"); */
-          ADT_History.IRCurrentRecord.cloudsceneold = ADT_History.IRCurrentRecord.cloudscene;
-          ADT_History.IRCurrentRecord.eyesceneold = ADT_History.IRCurrentRecord.eyescene;
-          ADT_History.IRCurrentRecord.cloudscene = Math.max(0,(OverrideSceneTypeValue - 3));
-          ADT_History.IRCurrentRecord.eyescene = Math.min(3,OverrideSceneTypeValue);
-          ADT_Env.OverrideSceneType = -99;
+          History.IRCurrentRecord.cloudsceneold = History.IRCurrentRecord.cloudscene;
+          History.IRCurrentRecord.eyesceneold = History.IRCurrentRecord.eyescene;
+          History.IRCurrentRecord.cloudscene = Math.max(0,(OverrideSceneTypeValue - 3));
+          History.IRCurrentRecord.eyescene = Math.min(3,OverrideSceneTypeValue);
+          Env.OverrideSceneType = -99;
       } else {
           SceneType.DetermineSceneType(RunFullAnalysis);
           /** System.out.printf("after scene type determination\n"); */
           /** System.out.printf("OverrideScene=%b\n",OverrideScene); */
           if(OverrideScene) {
-              /** System.out.printf("overriding scene type : eye=%d cloud=%d\n",ADT_History.IRCurrentRecord.eyescene,ADT_History.IRCurrentRecord.cloudscene); */
-              if (ADT_History.IRCurrentRecord.eyescene<3) {
-                  ADT_Env.OverrideSceneType = ADT_History.IRCurrentRecord.eyescene;
+              /** System.out.printf("overriding scene type : eye=%d cloud=%d\n",History.IRCurrentRecord.eyescene,History.IRCurrentRecord.cloudscene); */
+              if (History.IRCurrentRecord.eyescene<3) {
+                  Env.OverrideSceneType = History.IRCurrentRecord.eyescene;
               } else {
-                  ADT_Env.OverrideSceneType = 3 + ADT_History.IRCurrentRecord.cloudscene;
+                  Env.OverrideSceneType = 3 + History.IRCurrentRecord.cloudscene;
               }
-              /** System.out.printf("ADTEnv.overridescenetype=%d\n", ADT_Env.OverrideSceneType); */
+              /** System.out.printf("ADTEnv.overridescenetype=%d\n", Env.OverrideSceneType); */
               return "override";
           }
       }

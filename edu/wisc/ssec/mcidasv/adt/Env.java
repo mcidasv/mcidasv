@@ -26,11 +26,11 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.lang.String;
 
-public class ADT_Env {
+public class Env {
 
    public static boolean RunADTTF;
    public static boolean PlotTF;
@@ -79,7 +79,7 @@ public class ADT_Env {
    public static String ADTVersion;
    public static int DEBUG;
 
-   public ADT_Env() {
+   public Env() {
       RunADTTF = true;
       PlotTF = false;
       ListTF = false;

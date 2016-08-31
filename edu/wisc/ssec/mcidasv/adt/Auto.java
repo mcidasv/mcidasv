@@ -26,7 +26,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.io.IOException;
 
@@ -71,7 +71,7 @@ class TiffVars {
 
 @SuppressWarnings("unused")
 
-public class ADT_Auto {
+public class Auto {
 
    private static int[][] MoatMaskFlagField = new int[200][200];;
    private static int[][] BlackWhiteFieldArray = new int[200][200];
@@ -101,7 +101,7 @@ public class ADT_Auto {
    private static int MINBFW = 500000;    /** Minimum block size (bytes) for domap */
    private static int MINBLKSIZ = 10;     /** Minimum block size (lines) */
 
-   public ADT_Auto() {
+   public Auto() {
      IRData_Remap_NumberRows = 0;
      IRData_Remap_NumberColumns = 0;
    }
@@ -142,13 +142,13 @@ public class ADT_Auto {
 
       /** Read Forecast File */
       double ThresholdTime = 24.0;
-      double[] ForecastFileOutput = ADT_Forecasts.ReadForecasts(ForecastFile,ForecastFileType,ThresholdTime);
+      double[] ForecastFileOutput = Forecasts.ReadForecasts(ForecastFile,ForecastFileType,ThresholdTime);
       InterpolatedReturnFlag = (int)ForecastFileOutput[0];
       InterpolatedLatitude = ForecastFileOutput[1];
       InterpolatedLongitude = ForecastFileOutput[2];
       InterpolatedIntensity = ForecastFileOutput[3];
-      /** ADT_History.IRCurrentRecord.latitude = ForecastLatitude; */
-      /** ADT_History.IRCurrentRecord.longitude = ForecastLongitude; */
+      /** History.IRCurrentRecord.latitude = ForecastLatitude; */
+      /** History.IRCurrentRecord.longitude = ForecastLongitude; */
 
       /** System.out.printf("InterpolatedReturnFlag=%d\n",InterpolatedReturnFlag); */
       if(InterpolatedReturnFlag!=0) {
@@ -174,8 +174,8 @@ public class ADT_Auto {
        */
       if(UseExtrapPositionTF) {
          /** call slopecal to get y-intercept values for lat/lon values */
-         InterpolatedLatitude = ADT_Functions.adt_slopecal(12.0,3);
-         InterpolatedLongitude = ADT_Functions.adt_slopecal(12.0,4);
+         InterpolatedLatitude = Functions.adt_slopecal(12.0,3);
+         InterpolatedLongitude = Functions.adt_slopecal(12.0,4);
          if((Math.abs(InterpolatedLatitude)>90.0)||
             (Math.abs(InterpolatedLongitude)>180.0)) {
             /** invalid interp and extrap... negative error code returns */
@@ -235,30 +235,30 @@ public class ADT_Auto {
        * which uses West/East Longitudes of +1.0/-1.0.  McV is reversed.
        */
       InputLongitudePosition = -1.0 * InputLongitudePosition;  // flip for ADT routines
-      for (YInc = 0; YInc < ADT_Data.IRData_NumberRows; YInc++ ) {
-         for (XInc = 0; XInc < ADT_Data.IRData_NumberColumns; XInc++ ) {
-             ADT_Data.IRData_Longitude[YInc][XInc] = (float)-1.0 * ADT_Data.IRData_Longitude[YInc][XInc];
+      for (YInc = 0; YInc < Data.IRData_NumberRows; YInc++ ) {
+         for (XInc = 0; XInc < Data.IRData_NumberColumns; XInc++ ) {
+             Data.IRData_Longitude[YInc][XInc] = (float)-1.0 * Data.IRData_Longitude[YInc][XInc];
          }
       }
 
       if(DoRemappingTF) {
          System.out.printf("REMAPPING DATA\n");
-         IRData_Remap_NumberRows = ADT_Data.IRData_NumberRows;
-         IRData_Remap_NumberColumns = ADT_Data.IRData_NumberColumns;
+         IRData_Remap_NumberRows = Data.IRData_NumberRows;
+         IRData_Remap_NumberColumns = Data.IRData_NumberColumns;
 
-         double LongitudeIncrement = ADT_Data.IRData_Longitude[0][0] - ADT_Data.IRData_Longitude[0][1];
-         double LatitudeIncrement = ADT_Data.IRData_Latitude[0][0] - ADT_Data.IRData_Latitude[1][1];
+         double LongitudeIncrement = Data.IRData_Longitude[0][0] - Data.IRData_Longitude[0][1];
+         double LatitudeIncrement = Data.IRData_Latitude[0][0] - Data.IRData_Latitude[1][1];
 
          if(Math.abs(LongitudeIncrement-LatitudeIncrement)<0.001) {
             System.out.printf("already remapped\n");
             /** data is already remapped */
             /** crosses dateline check */
-            int XSizeMax = ADT_Data.IRData_NumberColumns-1;
-            int YSizeMax = ADT_Data.IRData_NumberRows-1;
-            double NWCornerLongitude = ADT_Data.IRData_Longitude[0][0];
-            double NECornerLongitude = ADT_Data.IRData_Longitude[0][XSizeMax];
-            double SWCornerLongitude = ADT_Data.IRData_Longitude[YSizeMax][0];
-            double SECornerLongitude = ADT_Data.IRData_Longitude[YSizeMax][XSizeMax];
+            int XSizeMax = Data.IRData_NumberColumns-1;
+            int YSizeMax = Data.IRData_NumberRows-1;
+            double NWCornerLongitude = Data.IRData_Longitude[0][0];
+            double NECornerLongitude = Data.IRData_Longitude[0][XSizeMax];
+            double SWCornerLongitude = Data.IRData_Longitude[YSizeMax][0];
+            double SECornerLongitude = Data.IRData_Longitude[YSizeMax][XSizeMax];
             /** if((NWCornerLongitude<NECornerLongitude)||(SWCornerLongitude<SECornerLongitude)) {
                DatelineCrossTF = true;
             } */
@@ -267,19 +267,19 @@ public class ADT_Auto {
                 NWCornerLongitude = NWCornerLongitude+360.0;
 
             }
-            for(YInc=0;YInc<ADT_Data.IRData_NumberRows;YInc++) {
-               for(XInc=0;XInc<ADT_Data.IRData_NumberColumns;XInc++) {
-                  IRData_Remap_Longitude[YInc][XInc] = ADT_Data.IRData_Longitude[YInc][XInc];
+            for(YInc=0; YInc< Data.IRData_NumberRows; YInc++) {
+               for(XInc=0; XInc< Data.IRData_NumberColumns; XInc++) {
+                  IRData_Remap_Longitude[YInc][XInc] = Data.IRData_Longitude[YInc][XInc];
                   /** check for dateline crossing */
                   if (DatelineCrossTF&&(IRData_Remap_Longitude[YInc][XInc]<0.0)) {
-                     IRData_Remap_Latitude[YInc][XInc] = ADT_Data.IRData_Latitude[YInc][XInc]+360.0; 
+                     IRData_Remap_Latitude[YInc][XInc] = Data.IRData_Latitude[YInc][XInc]+360.0;
                   }
-                  IRData_Remap_Latitude[YInc][XInc] = ADT_Data.IRData_Latitude[YInc][XInc];
-                  IRData_Remap_Temperature[YInc][XInc] = ADT_Data.IRData_Temperature[YInc][XInc];
+                  IRData_Remap_Latitude[YInc][XInc] = Data.IRData_Latitude[YInc][XInc];
+                  IRData_Remap_Temperature[YInc][XInc] = Data.IRData_Temperature[YInc][XInc];
                }
             }
-            IRData_Remap_NumberColumns = ADT_Data.IRData_NumberColumns;
-            IRData_Remap_NumberRows = ADT_Data.IRData_NumberRows;
+            IRData_Remap_NumberColumns = Data.IRData_NumberColumns;
+            IRData_Remap_NumberRows = Data.IRData_NumberRows;
          } else {
             /** remap data to rectilinear projection */
             RemapData( );
@@ -350,7 +350,7 @@ public class ADT_Auto {
          FinalAutoFixMethod = 1;
       }  
 
-      int PositioningMethodID = ADT_History.IRCurrentRecord.autopos;
+      int PositioningMethodID = History.IRCurrentRecord.autopos;
     
       double LocationReturn[] = PickFinalLocation(PositioningMethodID,
                                                   InputLatitudePosition,InputLongitudePosition,
@@ -420,7 +420,7 @@ public class ADT_Auto {
       double FilterDiscSize = Math.pow(OuterSearchRadiusDegree+(2.0*FineGridSpacingDegree),2);
       double AlphaPOWP1 = 1.0+Math.pow(Alpha,2);
 
-      int ImageResolution = (int)ADT_Data.GetCurrentImageResolution();
+      int ImageResolution = (int) Data.GetCurrentImageResolution();
       int IncAddVal = (ImageResolution>RingWidthLocal) ? 1 : (RingWidthLocal-ImageResolution+1);
 
       double SignFactor = Math.abs(InputLatitude)/InputLatitude;
@@ -687,7 +687,7 @@ public class ADT_Auto {
       double DotScoreFinal = 0.0;
       double NANAdjustmentValue = 0.0;
 
-      int ImageResolution = (int)ADT_Data.GetCurrentImageResolution();
+      int ImageResolution = (int) Data.GetCurrentImageResolution();
       int IncAddVal = (ImageResolution>RingWidthLocal) ? 1 : (RingWidthLocal-ImageResolution+1);
 
       /** derive values */
@@ -1303,7 +1303,7 @@ public class ADT_Auto {
       double MaximumSpiralScoreLongitude = -999.99;;
 
       /** Spiral Score Calculations */
-      double LocalValue[] = ADT_Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
+      double LocalValue[] = Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
                             SpiralCenterLatitude,SpiralCenterLongitude,1);
       DistanceValue = LocalValue[0];
       AngleValue = LocalValue[1];
@@ -1311,14 +1311,14 @@ public class ADT_Auto {
       double InitialSpiralScoreArrayScore = SpiralCenterScoreValue;
 
       for(YInc=1;YInc<NumberOfSpirals;YInc++) {
-         double LocalValue1[] = ADT_Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
+         double LocalValue1[] = Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
                                                              SpiralCenterAnalysisField[YInc][1],
                                                              SpiralCenterAnalysisField[YInc][2],1);
          DistanceValue = LocalValue1[0];
          AngleValue = LocalValue1[1];
          DistancePenaltyArray[YInc] = -DISTPENALTYWEIGHT*(DistanceValue/KMperDegree);
          InitialSpiralScoreArray[YInc] = SPIRALWEIGHT*(SpiralCenterAnalysisField[YInc][0]-InitialSpiralScoreArrayScore);
-         double LocalValue2[] = ADT_Functions.distance_angle(SpiralCenterLatitude,SpiralCenterLongitude,
+         double LocalValue2[] = Functions.distance_angle(SpiralCenterLatitude,SpiralCenterLongitude,
                                                              SpiralCenterAnalysisField[YInc][1],
                                                              SpiralCenterAnalysisField[YInc][2],1);
          DistanceValue = LocalValue2[0];
@@ -1350,7 +1350,7 @@ public class ADT_Auto {
        ** System.out.printf("FirstGuessLatitude=%f  FirstGuessLongitude=%f SpiralCenterMaximumLatitude=%f SpiralCenterMaximumLongitude=%f\n",
        **                    FirstGuessLatitude,FirstGuessLongitude,SpiralCenterMaximumLatitude,SpiralCenterMaximumLongitude);
        */
-      double LocalValue3[] = ADT_Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
+      double LocalValue3[] = Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
                                                           SpiralCenterMaximumLatitude,SpiralCenterMaximumLongitude,1);
       DistanceValue = LocalValue3[0];
       AngleValue = LocalValue3[1];
@@ -1361,7 +1361,7 @@ public class ADT_Auto {
        */
       if(SpiralMaximumDistanceFromGuess<=MaximumAllowableDisplacement) {
          /* Ring Score Calculations */
-         double LocalValue4[] = ADT_Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
+         double LocalValue4[] = Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
                                                              RingFitLatitude,RingFitLongitude,1);
          DistanceValue = LocalValue4[0];
          AngleValue = LocalValue4[1];
@@ -1485,20 +1485,20 @@ public class ADT_Auto {
       boolean ForceAutoFixUseTF_forTesting = false;
       boolean FoundEyeSceneTF = false;
 
-      int CurDate = ADT_History.IRCurrentRecord.date;
-      int CurTime = ADT_History.IRCurrentRecord.time;
-      int CurCloudScene = ADT_History.IRCurrentRecord.cloudscene;
-      int CurEyeScene = ADT_History.IRCurrentRecord.eyescene;
-      int CurLand = ADT_History.IRCurrentRecord.land;
-      double CurrentTime = ADT_Functions.calctime(CurDate,CurTime);
+      int CurDate = History.IRCurrentRecord.date;
+      int CurTime = History.IRCurrentRecord.time;
+      int CurCloudScene = History.IRCurrentRecord.cloudscene;
+      int CurEyeScene = History.IRCurrentRecord.eyescene;
+      int CurLand = History.IRCurrentRecord.land;
+      double CurrentTime = Functions.calctime(CurDate,CurTime);
 
-      int NumRecsHistory = ADT_History.HistoryNumberOfRecords();
-      double InitStrengthValue = ADT_Env.InitRawTValue;
-      boolean LandFlagTF = ADT_Env.LandFlagTF;
+      int NumRecsHistory = History.HistoryNumberOfRecords();
+      double InitStrengthValue = Env.InitRawTValue;
+      boolean LandFlagTF = Env.LandFlagTF;
 
       int EyeSceneCount = 0;
 
-      if((ADT_Main.HistoryFileName!=null)||(ForceAutoFixUseTF_forTesting)) {
+      if((Main.HistoryFileName!=null)||(ForceAutoFixUseTF_forTesting)) {
          HistoryRecFinalTno = 9.0;
          MaximumHistoryRecCI = 9.0;
          HistoryRecRawTno = 9.0;
@@ -1508,26 +1508,26 @@ public class ADT_Auto {
          HistoryRecRawTno = InitStrengthValue;
       } else {
          EyeSceneCount = 0;
-         HistoryRecFinalTno = ADT_History.IRCurrentRecord.Traw;
-         HistoryRecRawTno = ADT_History.IRCurrentRecord.Traw;
-         MaximumHistoryRecCI = ADT_History.IRCurrentRecord.Traw;
+         HistoryRecFinalTno = History.IRCurrentRecord.Traw;
+         HistoryRecRawTno = History.IRCurrentRecord.Traw;
+         MaximumHistoryRecCI = History.IRCurrentRecord.Traw;
          int XInc = 0;
          while(XInc<NumRecsHistory) {
-            int RecDate = ADT_History.HistoryFile[XInc].date;
-            int RecTime = ADT_History.HistoryFile[XInc].time;
-            int RecLand = ADT_History.HistoryFile[XInc].land;
-            double RecTnoRaw = ADT_History.HistoryFile[XInc].Traw;
-            double HistoryRecTime = ADT_Functions.calctime(RecDate,RecTime);
+            int RecDate = History.HistoryFile[XInc].date;
+            int RecTime = History.HistoryFile[XInc].time;
+            int RecLand = History.HistoryFile[XInc].land;
+            double RecTnoRaw = History.HistoryFile[XInc].Traw;
+            double HistoryRecTime = Functions.calctime(RecDate,RecTime);
             boolean LandCheckTF = true;
             if(((LandFlagTF)&&(RecLand==1))||(RecTnoRaw<1.0)) {
                LandCheckTF = false;
             }
             if((HistoryRecTime<CurrentTime)&&(LandCheckTF)) {
-               HistoryRecCI = ADT_History.HistoryFile[XInc].CI;
-               HistoryRecFinalTno = ADT_History.HistoryFile[XInc].Tfinal;
-               HistoryRecRawTno = ADT_History.HistoryFile[XInc].Traw;
-               HistoryRecEyeScene = ADT_History.HistoryFile[XInc].eyescene;
-               HistoryRecCloudScene = ADT_History.HistoryFile[XInc].cloudscene;
+               HistoryRecCI = History.HistoryFile[XInc].CI;
+               HistoryRecFinalTno = History.HistoryFile[XInc].Tfinal;
+               HistoryRecRawTno = History.HistoryFile[XInc].Traw;
+               HistoryRecEyeScene = History.HistoryFile[XInc].eyescene;
+               HistoryRecCloudScene = History.HistoryFile[XInc].cloudscene;
                if(HistoryRecCI>MaximumHistoryRecCI) {
                   MaximumHistoryRecCI = HistoryRecCI;
                }
@@ -1617,8 +1617,8 @@ public class ADT_Auto {
       int LineSplineValue = 3;
       int ElementSplineValue = LineSplineValue;
     
-      tiff_vars.in_elems = ADT_Data.IRData_NumberColumns;
-      tiff_vars.in_lines = ADT_Data.IRData_NumberRows;
+      tiff_vars.in_elems = Data.IRData_NumberColumns;
+      tiff_vars.in_lines = Data.IRData_NumberRows;
     
       /** System.out.printf("elems=%d lines=%d\n", tiff_vars.in_elems,tiff_vars.in_lines); */
 
@@ -1654,17 +1654,17 @@ public class ADT_Auto {
     */
 
       int XInc,YInc;
-      int XSizeMax=ADT_Data.IRData_NumberColumns-1;
-      int YSizeMax=ADT_Data.IRData_NumberRows-1;
+      int XSizeMax= Data.IRData_NumberColumns-1;
+      int YSizeMax= Data.IRData_NumberRows-1;
        
-      double NWCornerLatitude = ADT_Data.IRData_Latitude[0][0];
-      double NWCornerLongitude = ADT_Data.IRData_Longitude[0][0];
-      double NECornerLatitude = ADT_Data.IRData_Latitude[0][XSizeMax];
-      double NECornerLongitude = ADT_Data.IRData_Longitude[0][XSizeMax];
-      double SWCornerLatitude = ADT_Data.IRData_Latitude[YSizeMax][0];
-      double SWCornerLongitude = ADT_Data.IRData_Longitude[YSizeMax][0];
-      double SECornerLatitude = ADT_Data.IRData_Latitude[YSizeMax][XSizeMax];
-      double SECornerLongitude = ADT_Data.IRData_Longitude[YSizeMax][XSizeMax];
+      double NWCornerLatitude = Data.IRData_Latitude[0][0];
+      double NWCornerLongitude = Data.IRData_Longitude[0][0];
+      double NECornerLatitude = Data.IRData_Latitude[0][XSizeMax];
+      double NECornerLongitude = Data.IRData_Longitude[0][XSizeMax];
+      double SWCornerLatitude = Data.IRData_Latitude[YSizeMax][0];
+      double SWCornerLongitude = Data.IRData_Longitude[YSizeMax][0];
+      double SECornerLatitude = Data.IRData_Latitude[YSizeMax][XSizeMax];
+      double SECornerLongitude = Data.IRData_Longitude[YSizeMax][XSizeMax];
 
       /* crosses dateline check */
       if((NWCornerLongitude<NECornerLongitude)||(SWCornerLongitude<SECornerLongitude)) {
@@ -1675,20 +1675,20 @@ public class ADT_Auto {
          /** System.out.printf("DATELINE CROSS\n"); */
          for(XInc=0;XInc<XSizeMax;XInc++) {
             for(YInc=0;YInc<YSizeMax;YInc++) {
-               double DataValue = ADT_Data.IRData_Longitude[YInc][XInc];
+               double DataValue = Data.IRData_Longitude[YInc][XInc];
                if(DataValue<0.0) {
-                 ADT_Data.IRData_Longitude[YInc][XInc] = (float)(DataValue+360.0);
+                 Data.IRData_Longitude[YInc][XInc] = (float)(DataValue+360.0);
                }
             }
          }
-         NWCornerLatitude = ADT_Data.IRData_Latitude[0][0];
-         NWCornerLongitude = ADT_Data.IRData_Longitude[0][0];
-         NECornerLatitude = ADT_Data.IRData_Latitude[0][XSizeMax];
-         NECornerLongitude = ADT_Data.IRData_Longitude[0][XSizeMax];
-         SWCornerLatitude = ADT_Data.IRData_Latitude[YSizeMax][0];
-         SWCornerLongitude = ADT_Data.IRData_Longitude[YSizeMax][0];
-         SECornerLatitude = ADT_Data.IRData_Latitude[YSizeMax][XSizeMax];
-         SECornerLongitude = ADT_Data.IRData_Longitude[YSizeMax][XSizeMax];
+         NWCornerLatitude = Data.IRData_Latitude[0][0];
+         NWCornerLongitude = Data.IRData_Longitude[0][0];
+         NECornerLatitude = Data.IRData_Latitude[0][XSizeMax];
+         NECornerLongitude = Data.IRData_Longitude[0][XSizeMax];
+         SWCornerLatitude = Data.IRData_Latitude[YSizeMax][0];
+         SWCornerLongitude = Data.IRData_Longitude[YSizeMax][0];
+         SECornerLatitude = Data.IRData_Latitude[YSizeMax][XSizeMax];
+         SECornerLongitude = Data.IRData_Longitude[YSizeMax][XSizeMax];
       }
 
       double MaximumLatitudeValue = Math.min(NWCornerLatitude,NECornerLatitude);
@@ -1697,9 +1697,9 @@ public class ADT_Auto {
       double MinimumLongitudeValue = Math.min(NECornerLongitude,SECornerLongitude);
 
       double LatitudeIncrement = (MaximumLatitudeValue-MinimumLatitudeValue)/
-                                 (double)ADT_Data.IRData_NumberColumns;
+                                 (double) Data.IRData_NumberColumns;
       double LongitudeIncrement = (MaximumLongitudeValue-MinimumLongitudeValue)/
-                                  (double)ADT_Data.IRData_NumberRows;
+                                  (double) Data.IRData_NumberRows;
       double MaximumIncrementValue = Math.max(LatitudeIncrement,LongitudeIncrement);
         System.out.printf("REMAPPING INFO\n");
         System.out.printf("Source Array Bounds\n");
@@ -1798,7 +1798,7 @@ public class ADT_Auto {
             /** System.out.printf("spline line=%d element=%d \n ",SplineLineValue,SplineElementValue); */
             if((ElementSplineInput==1)&&(LineSplineInput==1)) {
                IRData_Remap_Temperature[LineValue][ElementValue]=
-                       ADT_Data.IRData_Temperature[SplineLineValue][SplineElementValue];
+                       Data.IRData_Temperature[SplineLineValue][SplineElementValue];
             } else {
                ++ArrayInc;
                if(RetErr==0) {
@@ -1880,10 +1880,10 @@ public class ADT_Auto {
          CornerLongitudeArray[XInc] = 0.0;
       }
       while((!FoundPointTF)&&(!OutOfBoundsTF)) {
-         CornerLatitudeArray[0] = ADT_Data.IRData_Latitude[LineValue][ElementValue];
-         CornerLongitudeArray[0] = ADT_Data.IRData_Longitude[LineValue][ElementValue];
-         CornerLatitudeArray[3] = ADT_Data.IRData_Latitude[LineValue+1][ElementValue+1];
-         CornerLongitudeArray[3] = ADT_Data.IRData_Longitude[LineValue+1][ElementValue+1];
+         CornerLatitudeArray[0] = Data.IRData_Latitude[LineValue][ElementValue];
+         CornerLongitudeArray[0] = Data.IRData_Longitude[LineValue][ElementValue];
+         CornerLatitudeArray[3] = Data.IRData_Latitude[LineValue+1][ElementValue+1];
+         CornerLongitudeArray[3] = Data.IRData_Longitude[LineValue+1][ElementValue+1];
          /**
           ** System.out.printf("x=%d  y=%d  : CornerLatitudeArray0=%f CornerLongitudeArray0=%f ",
           **                   " CornerLatitudeArray3=%f CornerLongitudeArray3=%f\n",
@@ -1917,7 +1917,7 @@ public class ADT_Auto {
          } else {
             FoundLatitudeTF = true;
          }
-         double LocalValue1[] = ADT_Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue1[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
                                     CornerLatitudeArray[0],CornerLongitudeArray[0],1);
          double DistanceValue = LocalValue1[0];
          double AngleValue = LocalValue1[1];
@@ -1944,23 +1944,23 @@ public class ADT_Auto {
          PreviousDistance = DistanceValue;
       }
       if(FoundPointTF) {
-         CornerLatitudeArray[1] = ADT_Data.IRData_Latitude[LineValue][ElementValue+1];
-         CornerLongitudeArray[1] = ADT_Data.IRData_Longitude[LineValue][ElementValue+1];
-         CornerLatitudeArray[2] = ADT_Data.IRData_Latitude[LineValue+1][ElementValue];
-         CornerLongitudeArray[2] = ADT_Data.IRData_Longitude[LineValue+1][ElementValue];
+         CornerLatitudeArray[1] = Data.IRData_Latitude[LineValue][ElementValue+1];
+         CornerLongitudeArray[1] = Data.IRData_Longitude[LineValue][ElementValue+1];
+         CornerLatitudeArray[2] = Data.IRData_Latitude[LineValue+1][ElementValue];
+         CornerLongitudeArray[2] = Data.IRData_Longitude[LineValue+1][ElementValue];
 
-         double LocalValue2[] = ADT_Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue2[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
                                     CornerLatitudeArray[0],CornerLongitudeArray[0],1);
          NSEWDistanceValuesArray[0] = LocalValue2[0];
-         double LocalValue3[] = ADT_Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue3[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
                                     CornerLatitudeArray[1],CornerLongitudeArray[1],1);
          NSEWDistanceValuesArray[1] = LocalValue3[0];
          IndexValue = (NSEWDistanceValuesArray[0]<NSEWDistanceValuesArray[1]) ? 0 : 1;
-         double LocalValue4[] = ADT_Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue4[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
                                     CornerLatitudeArray[2],CornerLongitudeArray[2],1);
          NSEWDistanceValuesArray[2] = LocalValue4[0];
          IndexValue = (NSEWDistanceValuesArray[IndexValue]<NSEWDistanceValuesArray[2]) ? IndexValue : 2;
-         double LocalValue5[] = ADT_Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue5[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
                                     CornerLatitudeArray[3],CornerLongitudeArray[3],1);
          NSEWDistanceValuesArray[3] = LocalValue5[0];
          IndexValue = (NSEWDistanceValuesArray[IndexValue]<NSEWDistanceValuesArray[3]) ? IndexValue : 3;
@@ -2062,7 +2062,7 @@ public class ADT_Auto {
          for(YInc=0;YInc<tiff_vars.in_lines;YInc++) {
             for(XInc=0;XInc<tiff_vars.in_elems;XInc++) {
                ArrayIndexValue = (YInc*tiff_vars.in_elems)+XInc;
-               SourceArray[ArrayIndexValue] = ADT_Data.IRData_Temperature[YInc][XInc];
+               SourceArray[ArrayIndexValue] = Data.IRData_Temperature[YInc][XInc];
             }
          }
     

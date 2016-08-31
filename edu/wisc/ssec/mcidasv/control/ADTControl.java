@@ -26,7 +26,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.control;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -64,6 +64,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import edu.wisc.ssec.mcidasv.adt.Data;
+import edu.wisc.ssec.mcidasv.adt.Env;
+import edu.wisc.ssec.mcidasv.adt.Functions;
+import edu.wisc.ssec.mcidasv.adt.History;
+import edu.wisc.ssec.mcidasv.adt.Main;
+import edu.wisc.ssec.mcidasv.adt.ReadIRImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -962,7 +968,7 @@ public class ADTControl extends DisplayControlImpl {
             public void actionPerformed(ActionEvent ae) {
                 overrideSceneFrame.dispose();
                 /** GUIOverrideSceneTF=false; */
-                GUIOverrideSceneType = ADT_Env.OverrideSceneType;
+                GUIOverrideSceneType = Env.OverrideSceneType;
                 runADTmain();
             }
         });
@@ -997,11 +1003,11 @@ public class ADTControl extends DisplayControlImpl {
     }
         
     private void runADT() {
-        ADT_Main StormADT = new ADT_Main();
+        Main StormADT = new Main();
         String HistoryListOutput = null;
         String ADTRunOutput = null;
         String ErrorMessage = null;
-        ADT_History CurrentHistory = new ADT_History();
+        History CurrentHistory = new History();
         
         if(GUIFileOverrideTF) {
             String GUIOverrideFilePath = System.getenv("ODTHOME");
@@ -1022,7 +1028,7 @@ public class ADTControl extends DisplayControlImpl {
         
         loadADTenvParameters();
         
-        boolean RunAuto = ADT_Env.AutoTF;
+        boolean RunAuto = Env.AutoTF;
 
         /* set storm position either through automated storm selection or by manual choice */
         GetImageDateTime();
@@ -1036,8 +1042,8 @@ public class ADTControl extends DisplayControlImpl {
         } else {
             if(RunAuto) {
                 try {
-                    float CenterLatitude = (float)ADT_Env.SelectedLatitude;
-                    float CenterLongitude =  (float)ADT_Env.SelectedLongitude;
+                    float CenterLatitude = (float) Env.SelectedLatitude;
+                    float CenterLongitude =  (float) Env.SelectedLongitude;
                     /** System.out.printf("pre-ARCHER latitude=%f longitude=%f\n",CenterLatitude,CenterLongitude); */
                     GetImageData(CenterLatitude, CenterLongitude);
                 }
@@ -1061,9 +1067,9 @@ public class ADTControl extends DisplayControlImpl {
             }
         
             try {
-                float CenterLatitude = (float)ADT_Env.SelectedLatitude;
-                float CenterLongitude =  (float)ADT_Env.SelectedLongitude;
-                int DomainID = ADT_Env.DomainID;
+                float CenterLatitude = (float) Env.SelectedLatitude;
+                float CenterLongitude =  (float) Env.SelectedLongitude;
+                int DomainID = Env.DomainID;
                 /** System.out.printf("latitude=%f longitude=%f domain=%d\n",CenterLatitude,CenterLongitude,DomainID); */
                 GetImageData(CenterLatitude, CenterLongitude);
             }
@@ -1090,7 +1096,7 @@ public class ADTControl extends DisplayControlImpl {
                 ExitADT();
                 return;
             }
-            int InitialSceneTypeValue = ADT_Env.OverrideSceneType;
+            int InitialSceneTypeValue = Env.OverrideSceneType;
             if((GUIOverrideSceneTF)&&(InitialSceneTypeValue>=0)) {
                 /** System.out.printf("Overriding scene type!!!  Scene value=%d\n",InitialSceneTypeValue); */
                 overrideSceneCurrentTextField.setText(SceneTypeStrings[InitialSceneTypeValue]);
@@ -1106,9 +1112,9 @@ public class ADTControl extends DisplayControlImpl {
  
                 if(GUIHistoryFileName!=null) {
                     try {
-                        int[] InsertRecs = ADT_History.InsertHistoryRecord(runFullADTAnalysis,GUIHistoryFileName);
+                        int[] InsertRecs = History.InsertHistoryRecord(runFullADTAnalysis,GUIHistoryFileName);
                         /** System.out.printf("*** Modified=%d InsertOverwriteFlag=%d***\n",InsertRecs[0],InsertRecs[1]); */
-                        int NumRecs = ADT_History.WriteHistoryFile(GUIHistoryFileName);
+                        int NumRecs = History.WriteHistoryFile(GUIHistoryFileName);
                         ErrorMessage = String.format("Number of records writen to history file=%d\n",NumRecs);
                     }
                     catch (IOException exception) 
@@ -1136,7 +1142,7 @@ public class ADTControl extends DisplayControlImpl {
     private void listHistoryFile() {
         HistoryListOutput = null;
         
-        ADT_History CurrentHistory = new ADT_History();
+        History CurrentHistory = new History();
         
         try {
             System.out.printf("trying to read history file %s\n",GUIHistoryFileName);
@@ -1163,7 +1169,7 @@ public class ADTControl extends DisplayControlImpl {
     
     private void modifyHistoryFile() {
         
-        ADT_History CurrentHistory = new ADT_History();
+        History CurrentHistory = new History();
 
         if(GUIDeleteTF) {
             // delete records
@@ -1280,7 +1286,7 @@ public class ADTControl extends DisplayControlImpl {
         } else {
             // call routine to generate ATCF file name for single analysis record
             System.out.printf("stormID=%s siteID=%s\n",GUIATCFStormID,GUIATCFSiteID);
-            ATCFOutputFileName = ADT_Functions.adt_atcffilename(GUIATCFStormID,GUIATCFSiteID);
+            ATCFOutputFileName = Functions.adt_atcffilename(GUIATCFStormID,GUIATCFSiteID);
             System.out.printf("atcf output name=%s*\n", ATCFOutputFileName);
             ATCFOutputFilePath = System.getenv("ODTOUTPUT");
             if(ATCFOutputFilePath==null) {
@@ -1292,7 +1298,7 @@ public class ADTControl extends DisplayControlImpl {
         	writefileTF = true;
         }
         // call routine to output file
-        ATCFFileOutput = ADT_History.ListHistory(outputstyle,GUIHistoryListFormat,GUIATCFSiteID,GUIATCFStormID);
+        ATCFFileOutput = History.ListHistory(outputstyle,GUIHistoryListFormat,GUIATCFSiteID,GUIATCFStormID);
         if(writefileTF) {
             try(FileWriter outFile = new FileWriter(saveFile)) {
                 outFile.write(ATCFFileOutput);
@@ -1477,7 +1483,7 @@ public class ADTControl extends DisplayControlImpl {
         int returnValue;
         
         returnString = pmwManDateTextField.getText();
-        returnValue = ADT_Functions.cmonth2julian(returnString);
+        returnValue = Functions.cmonth2julian(returnString);
         
         return returnValue;
     }
@@ -1528,12 +1534,12 @@ public class ADTControl extends DisplayControlImpl {
         
         if(intval==1) {
             returnString = historyDateStartDateTextField.getText();
-            returnValue = ADT_Functions.cmonth2julian(returnString);
+            returnValue = Functions.cmonth2julian(returnString);
         } else if (intval==2) {
             returnValue = Integer.valueOf(historyDateStartTimeTextField.getText()).intValue();
         } else if (intval==3) {
             returnString = historyDateEndDateTextField.getText();
-            returnValue = ADT_Functions.cmonth2julian(returnString);
+            returnValue = Functions.cmonth2julian(returnString);
         } else {
             returnValue = Integer.valueOf(historyDateEndTimeTextField.getText()).intValue();
         }
@@ -1641,95 +1647,95 @@ public class ADTControl extends DisplayControlImpl {
     }
     
     private void getADTenvParameters() {
-        ADT_Env GlobalVariables = new ADT_Env();
-        ADT_History.InitCurrent(true);
+        Env GlobalVariables = new Env();
+        History.InitCurrent(true);
         GUIHistoryFileName = null;
 
         /* load initial ADT Environmental parameters */
-        GUIDeleteTF = ADT_Env.DeleteTF;
-        GUIRunAutoTF = ADT_Env.AutoTF;
-        GUIOverrideSceneTF = ADT_Env.OverSceneTF;
-        GUIOverrideTF = ADT_Env.OverTF;
-        GUIATCFOutputTF = ADT_Env.ATCFOutputTF;
-        GUIATCFRecordOutputTF = ADT_Env.ATCFRecordOutputTF;
-        GUIInitStrengthTF = ADT_Env.InitStrengthTF;
-        GUILandFlagTF = ADT_Env.LandFlagTF;
-        GUIUseCKZTF = ADT_Env.UseCKZTF;
-        GUIVmax1or10TF = ADT_Env.Vmax1or10TF;
-        GUICommentAddTF = ADT_Env.CommentAddTF;
-        GUIPMWActivateTF = ADT_Env.UsePMWTF;
+        GUIDeleteTF = Env.DeleteTF;
+        GUIRunAutoTF = Env.AutoTF;
+        GUIOverrideSceneTF = Env.OverSceneTF;
+        GUIOverrideTF = Env.OverTF;
+        GUIATCFOutputTF = Env.ATCFOutputTF;
+        GUIATCFRecordOutputTF = Env.ATCFRecordOutputTF;
+        GUIInitStrengthTF = Env.InitStrengthTF;
+        GUILandFlagTF = Env.LandFlagTF;
+        GUIUseCKZTF = Env.UseCKZTF;
+        GUIVmax1or10TF = Env.Vmax1or10TF;
+        GUICommentAddTF = Env.CommentAddTF;
+        GUIPMWActivateTF = Env.UsePMWTF;
         
         /* integer values */
-        GUIDomainID = ADT_Env.DomainID;
-        GUIForecastType = ADT_Env.ForecastFileType;
-        GUIMWJulianDate = ADT_Env.MWJulianDate;
-        GUIMWHHMMSSTime = ADT_Env.MWHHMMSSTime;
-        GUIStartDate = ADT_Env.StartJulianDate;
-        GUIStartTime = ADT_Env.StartHHMMSSTime;
-        GUIEndDate = ADT_Env.EndJulianDate;
-        GUIEndTime = ADT_Env.EndHHMMSSTime;
-        GUIHistoryListFormat = ADT_Env.HistoryListFormat;
+        GUIDomainID = Env.DomainID;
+        GUIForecastType = Env.ForecastFileType;
+        GUIMWJulianDate = Env.MWJulianDate;
+        GUIMWHHMMSSTime = Env.MWHHMMSSTime;
+        GUIStartDate = Env.StartJulianDate;
+        GUIStartTime = Env.StartHHMMSSTime;
+        GUIEndDate = Env.EndJulianDate;
+        GUIEndTime = Env.EndHHMMSSTime;
+        GUIHistoryListFormat = Env.HistoryListFormat;
         /* double values */
-        GUIRawTValue = ADT_Env.InitRawTValue;
-        GUIMWScore = ADT_Env.MWScore;
-        GUICKZGaleRadius = ADT_Env.CKZGaleRadius;
-        GUICKZPenv = ADT_Env.CKZPenv;
-        GUIRMWSize = ADT_Env.RMWSize;
-        GUIUserLatitude = ADT_Env.SelectedLatitude;
-        GUIUserLongitude = ADT_Env.SelectedLongitude;
+        GUIRawTValue = Env.InitRawTValue;
+        GUIMWScore = Env.MWScore;
+        GUICKZGaleRadius = Env.CKZGaleRadius;
+        GUICKZPenv = Env.CKZPenv;
+        GUIRMWSize = Env.RMWSize;
+        GUIUserLatitude = Env.SelectedLatitude;
+        GUIUserLongitude = Env.SelectedLongitude;
         
-        GUIForecastFileName = ADT_Env.ForecastFileName;            // needed?
-        GUIHistoryFileListingName = ADT_Env.ASCIIOutputFileName;   // needed?
-        GUIATCFStormID = ADT_Env.StormIDString;
-        GUIATCFSiteID = ADT_Env.ATCFSourceAgcyIDString;
-        GUIOverrideSceneType = ADT_Env.OverrideSceneType;
+        GUIForecastFileName = Env.ForecastFileName;            // needed?
+        GUIHistoryFileListingName = Env.ASCIIOutputFileName;   // needed?
+        GUIATCFStormID = Env.StormIDString;
+        GUIATCFSiteID = Env.ATCFSourceAgcyIDString;
+        GUIOverrideSceneType = Env.OverrideSceneType;
     }
 
     private void loadADTenvParameters() {
-        /* ADT_Env GlobalVariables = new ADT_Env(); */
+        /* Env GlobalVariables = new Env(); */
 
         System.out.printf("setting env parameters\n");
         
-        /* send ADT Environmental parameters to ADT_Env prior to running ADT */
+        /* send ADT Environmental parameters to Env prior to running ADT */
         /* boolean values */
-        ADT_Env.DeleteTF = GUIDeleteTF;
-        ADT_Env.AutoTF = GUIRunAutoTF;
-        ADT_Env.OverTF = GUIOverrideTF;
-        ADT_Env.ATCFOutputTF = GUIATCFOutputTF;
-        ADT_Env.ATCFRecordOutputTF = GUIATCFRecordOutputTF;
-        ADT_Env.InitStrengthTF = GUIInitStrengthTF;
-        ADT_Env.LandFlagTF = GUILandFlagTF;
-        ADT_Env.UseCKZTF = GUIUseCKZTF;
-        ADT_Env.Vmax1or10TF = GUIVmax1or10TF;
-        ADT_Env.CommentAddTF = GUICommentAddTF;
-        ADT_Env.OverSceneTF = GUIOverrideSceneTF;
-        ADT_Env.UsePMWTF = GUIPMWActivateTF;
+        Env.DeleteTF = GUIDeleteTF;
+        Env.AutoTF = GUIRunAutoTF;
+        Env.OverTF = GUIOverrideTF;
+        Env.ATCFOutputTF = GUIATCFOutputTF;
+        Env.ATCFRecordOutputTF = GUIATCFRecordOutputTF;
+        Env.InitStrengthTF = GUIInitStrengthTF;
+        Env.LandFlagTF = GUILandFlagTF;
+        Env.UseCKZTF = GUIUseCKZTF;
+        Env.Vmax1or10TF = GUIVmax1or10TF;
+        Env.CommentAddTF = GUICommentAddTF;
+        Env.OverSceneTF = GUIOverrideSceneTF;
+        Env.UsePMWTF = GUIPMWActivateTF;
 
         /* integer values */
-        ADT_Env.DomainID = GUIDomainID;
-        ADT_Env.ForecastFileType = GUIForecastType;
-        ADT_Env.MWJulianDate = GUIMWJulianDate;
-        ADT_Env.MWHHMMSSTime = GUIMWHHMMSSTime;
-        ADT_Env.StartJulianDate = GUIStartDate;
-        ADT_Env.StartHHMMSSTime = GUIStartTime;
-        ADT_Env.EndJulianDate = GUIEndDate;
-        ADT_Env.EndHHMMSSTime = GUIEndTime;
-        ADT_Env.HistoryListFormat = GUIHistoryListFormat;
+        Env.DomainID = GUIDomainID;
+        Env.ForecastFileType = GUIForecastType;
+        Env.MWJulianDate = GUIMWJulianDate;
+        Env.MWHHMMSSTime = GUIMWHHMMSSTime;
+        Env.StartJulianDate = GUIStartDate;
+        Env.StartHHMMSSTime = GUIStartTime;
+        Env.EndJulianDate = GUIEndDate;
+        Env.EndHHMMSSTime = GUIEndTime;
+        Env.HistoryListFormat = GUIHistoryListFormat;
         /* double values */
-        ADT_Env.InitRawTValue = GUIRawTValue;
-        ADT_Env.MWScore = GUIMWScore;
-        ADT_Env.CKZGaleRadius = GUICKZGaleRadius;
-        ADT_Env.CKZPenv = GUICKZPenv;
-        ADT_Env.RMWSize = GUIRMWSize;
-        ADT_Env.SelectedLatitude = GUIUserLatitude;
-        ADT_Env.SelectedLongitude = GUIUserLongitude;
+        Env.InitRawTValue = GUIRawTValue;
+        Env.MWScore = GUIMWScore;
+        Env.CKZGaleRadius = GUICKZGaleRadius;
+        Env.CKZPenv = GUICKZPenv;
+        Env.RMWSize = GUIRMWSize;
+        Env.SelectedLatitude = GUIUserLatitude;
+        Env.SelectedLongitude = GUIUserLongitude;
         
         System.out.printf("load forecast file name=%s\n",GUIForecastFileName);
-        ADT_Env.ForecastFileName = GUIForecastFileName;   // needed?
-        ADT_Env.ASCIIOutputFileName = GUIHistoryFileListingName;   // needed?
-        ADT_Env.StormIDString = GUIATCFStormID;
-        ADT_Env.ATCFSourceAgcyIDString = GUIATCFSiteID;
-        ADT_Env.OverrideSceneType = GUIOverrideSceneType;
+        Env.ForecastFileName = GUIForecastFileName;   // needed?
+        Env.ASCIIOutputFileName = GUIHistoryFileListingName;   // needed?
+        Env.StormIDString = GUIATCFStormID;
+        Env.ATCFSourceAgcyIDString = GUIATCFSiteID;
+        Env.OverrideSceneType = GUIOverrideSceneType;
         
     }
     
@@ -1960,17 +1966,17 @@ public class ADTControl extends DisplayControlImpl {
             int ImageTimeInt = Integer.valueOf(HHMMSSTime.toString()).intValue();
             /** System.out.printf("image date = %d  image time=%d\n",ImageDateInt,ImageTimeInt); */
             
-            ADT_Data.IRData_JulianDate = ImageDateInt;
-            ADT_Data.IRData_HHMMSSTime = ImageTimeInt;
+            Data.IRData_JulianDate = ImageDateInt;
+            Data.IRData_HHMMSSTime = ImageTimeInt;
             
-            System.out.printf("IMAGE DATE=%d  TIME=%d\n",ADT_Data.IRData_JulianDate,ADT_Data.IRData_HHMMSSTime);
+            System.out.printf("IMAGE DATE=%d  TIME=%d\n", Data.IRData_JulianDate, Data.IRData_HHMMSSTime);
         }
         
         public void GetImageData(float CenterLatitude, float CenterLongitude) {
             
-            System.err.println("creating ADT_ReadIRImage()...");
+            System.err.println("creating ReadIRImage()...");
             
-            ADT_ReadIRImage IRImage = new ADT_ReadIRImage();
+            ReadIRImage IRImage = new ReadIRImage();
 
             FlatField ffield = null;
             int SatelliteID = 0;
@@ -2017,20 +2023,20 @@ public class ADTControl extends DisplayControlImpl {
         
             String shortName = choice.getName();
 
-            ADT_Env.UserDefineDomain = 0; // automated
-            String sidName = ADT_Functions.adt_sattypes(SatelliteID);
+            Env.UserDefineDomain = 0; // automated
+            String sidName = Functions.adt_sattypes(SatelliteID);
            
             System.err.printf("SatelliteID=%d\n", SatelliteID);
             
             try
             {
-                ADT_ReadIRImage.ReadIRDataFile(ffield, CenterLatitude, CenterLongitude,
+                ReadIRImage.ReadIRDataFile(ffield, CenterLatitude, CenterLongitude,
                             SatelliteID, channel, isTemp);
             }
             catch (IOException ex)
             {
                 ex.printStackTrace();
-                System.err.printf("error in ADT_ReadIRImage");
+                System.err.printf("error in ReadIRImage");
             }
             
         }

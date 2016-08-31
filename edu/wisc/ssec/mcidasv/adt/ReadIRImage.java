@@ -26,7 +26,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.io.IOException;
 import java.lang.Math;
@@ -43,11 +43,11 @@ import visad.FlatField;
 
 @SuppressWarnings("unused")
 
-public class ADT_ReadIRImage {
+public class ReadIRImage {
 
-    private static final Logger logger = LoggerFactory.getLogger(ADT_ReadIRImage.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReadIRImage.class);
     
-   public ADT_ReadIRImage() {
+   public ReadIRImage() {
 
    }
 
@@ -122,10 +122,10 @@ public class ADT_ReadIRImage {
                 else
                         temps = im_gvtota(numx, numy, temp0, imsorc, imtype);
 
-                ADT_Data.IRData_NumberRows = numy;
-                ADT_Data.IRData_NumberColumns = numx;
-                ADT_Data.IRData_CenterLatitude = cenlat;
-                ADT_Data.IRData_CenterLongitude = cenlon;
+                Data.IRData_NumberRows = numy;
+                Data.IRData_NumberColumns = numx;
+                Data.IRData_CenterLatitude = cenlat;
+                Data.IRData_CenterLongitude = cenlon;
 
                 LocalTemperature = temps;
                 LocalLatitude = g2d1.getlats();
@@ -134,30 +134,30 @@ public class ADT_ReadIRImage {
                 for(int XInc=0;XInc<numx;XInc++) {
                     for(int YInc=0;YInc<numy;YInc++) {
                         /* must flip x/y to y/x for ADT automated routines */
-                        ADT_Data.IRData_Latitude[YInc][XInc] = LocalLatitude[XInc][YInc]; 
-                        ADT_Data.IRData_Longitude[YInc][XInc] = LocalLongitude[XInc][YInc];
-                        ADT_Data.IRData_Temperature[YInc][XInc] = LocalTemperature[XInc][YInc];
+                        Data.IRData_Latitude[YInc][XInc] = LocalLatitude[XInc][YInc];
+                        Data.IRData_Longitude[YInc][XInc] = LocalLongitude[XInc][YInc];
+                        Data.IRData_Temperature[YInc][XInc] = LocalTemperature[XInc][YInc];
                     }
                 }
-                int CenterXPos = ADT_Data.IRData_NumberColumns/2;
-                int CenterYPos = ADT_Data.IRData_NumberRows/2;
+                int CenterXPos = Data.IRData_NumberColumns/2;
+                int CenterYPos = Data.IRData_NumberRows/2;
 
-                double LocalValue[] = ADT_Functions.distance_angle(ADT_Data.IRData_Latitude[CenterYPos][CenterXPos],
-                                        ADT_Data.IRData_Longitude[CenterYPos][CenterXPos],
-                                        ADT_Data.IRData_Latitude[CenterYPos+1][CenterXPos],
-                                        ADT_Data.IRData_Longitude[CenterYPos][CenterXPos],1);
-                ADT_Data.IRData_ImageResolution = LocalValue[0];
+                double LocalValue[] = Functions.distance_angle(Data.IRData_Latitude[CenterYPos][CenterXPos],
+                                        Data.IRData_Longitude[CenterYPos][CenterXPos],
+                                        Data.IRData_Latitude[CenterYPos+1][CenterXPos],
+                                        Data.IRData_Longitude[CenterYPos][CenterXPos],1);
+                Data.IRData_ImageResolution = LocalValue[0];
       
-                ADT_History.IRCurrentRecord.date = ADT_Data.IRData_JulianDate;
-                ADT_History.IRCurrentRecord.time = ADT_Data.IRData_HHMMSSTime;
-                ADT_History.IRCurrentRecord.latitude = ADT_Data.IRData_CenterLatitude;
-                ADT_History.IRCurrentRecord.longitude = ADT_Data.IRData_CenterLongitude;
-                ADT_History.IRCurrentRecord.sattype = SatelliteID;
+                History.IRCurrentRecord.date = Data.IRData_JulianDate;
+                History.IRCurrentRecord.time = Data.IRData_HHMMSSTime;
+                History.IRCurrentRecord.latitude = Data.IRData_CenterLatitude;
+                History.IRCurrentRecord.longitude = Data.IRData_CenterLongitude;
+                History.IRCurrentRecord.sattype = SatelliteID;
                 
-                int RetVal[] = ADT_Functions.adt_oceanbasin(ADT_Data.IRData_CenterLatitude,ADT_Data.IRData_CenterLongitude);
+                int RetVal[] = Functions.adt_oceanbasin(Data.IRData_CenterLatitude, Data.IRData_CenterLongitude);
                 int OceanBasinID = RetVal[0];
-                ADT_Env.DomainID = RetVal[1];
-                /** System.out.printf("lat=%f lon=%f domainID=%d\n",ADT_Data.IRData_CenterLatitude,ADT_Data.IRData_CenterLongitude,ADT_Env.DomainID); */
+                Env.DomainID = RetVal[1];
+                /** System.out.printf("lat=%f lon=%f domainID=%d\n",Data.IRData_CenterLatitude,Data.IRData_CenterLongitude,Env.DomainID); */
          }
    
          private static GridUtil.Grid2D spatialSubset(GridUtil.Grid2D g2d, float cenlat,

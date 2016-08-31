@@ -26,11 +26,11 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 @SuppressWarnings("unused")
 
-public class ADT_Scene {
+public class Scene {
 
    private static double[] BDCurve_Points =
    { 30.0,  9.0,-30.0,-42.0,-54.0,
@@ -45,7 +45,7 @@ public class ADT_Scene {
    private static int IRImageXSize;
    private static int IRImageYSize;
 
-   public ADT_Scene() {
+   public Scene() {
       IRImageXSize = -1;
       IRImageYSize = -1;
    }
@@ -82,19 +82,19 @@ public class ADT_Scene {
       double CloudBDCategoryFloatDiff = -99.9;
       double EyeCloudTemperatureDiff2 = -99.9;
 
-      boolean LandFlagTF = ADT_Env.LandFlagTF;
-      double InitStrengthValue = ADT_Env.InitRawTValue;
-      double RMWSize = ADT_Env.RMWSize;
+      boolean LandFlagTF = Env.LandFlagTF;
+      double InitStrengthValue = Env.InitRawTValue;
+      double RMWSize = Env.RMWSize;
 
-      int EyeFFTValue = ADT_History.IRCurrentRecord.eyefft;
-      int CloudFFTValue = ADT_History.IRCurrentRecord.cloudfft;
-      double StormLatitude = ADT_History.IRCurrentRecord.latitude;
-      double StormLongitude = ADT_History.IRCurrentRecord.longitude;
-      double EyeTemperature = ADT_History.IRCurrentRecord.eyet;
-      double EyeStdvValue = ADT_History.IRCurrentRecord.eyestdv;
-      double CloudCWTemperature = ADT_History.IRCurrentRecord.cwcloudt;
-      double CloudTemperature = ADT_History.IRCurrentRecord.cloudt;
-      double CloudSymmetryValue = ADT_History.IRCurrentRecord.cloudsymave;
+      int EyeFFTValue = History.IRCurrentRecord.eyefft;
+      int CloudFFTValue = History.IRCurrentRecord.cloudfft;
+      double StormLatitude = History.IRCurrentRecord.latitude;
+      double StormLongitude = History.IRCurrentRecord.longitude;
+      double EyeTemperature = History.IRCurrentRecord.eyet;
+      double EyeStdvValue = History.IRCurrentRecord.eyestdv;
+      double CloudCWTemperature = History.IRCurrentRecord.cwcloudt;
+      double CloudTemperature = History.IRCurrentRecord.cloudt;
+      double CloudSymmetryValue = History.IRCurrentRecord.cloudsymave;
       double CurvedBandBDMaxLatitude = StormLatitude;
       double CurvedBandBDMaxLongitude = StormLongitude;
 
@@ -168,10 +168,10 @@ public class ADT_Scene {
        ** System.out.printf("EyeCloudTemperatureDiff2=%f\n",EyeCloudTemperatureDiff2);
        */
       
-      int ImageDate = ADT_History.IRCurrentRecord.date;
-      int ImageTime = ADT_History.IRCurrentRecord.time;
+      int ImageDate = History.IRCurrentRecord.date;
+      int ImageTime = History.IRCurrentRecord.time;
 
-      double CurrentTime = ADT_Functions.calctime(ImageDate,ImageTime);
+      double CurrentTime = Functions.calctime(ImageDate,ImageTime);
       /** System.out.printf("current time=%f\n",CurrentTime); */
 
       double CurrentTimeMinus12hr = CurrentTime-0.5;
@@ -181,7 +181,7 @@ public class ADT_Scene {
       double PreviousHistoryTnoValue = MaximumRule9Value;
       double PreviousValidHistoryTnoValue = PreviousHistoryTnoValue;
 
-      int HistoryFileRecords = ADT_History.HistoryNumberOfRecords();
+      int HistoryFileRecords = History.HistoryNumberOfRecords();
 
       if((HistoryFileRecords==0)||(!RunFullAnalysis)) {
          FoundHistoryRecMinus12hrTF = true;
@@ -207,21 +207,21 @@ public class ADT_Scene {
          double RecTnoRaw,RecTnoFinal;
          boolean LandCheckTF;
          for(XInc=0;XInc<HistoryFileRecords;XInc++) {
-            RecDate = ADT_History.HistoryFile[XInc].date;
-            RecTime = ADT_History.HistoryFile[XInc].time;
-            RecLand = ADT_History.HistoryFile[XInc].land;
-            RecTnoRaw = ADT_History.HistoryFile[XInc].Traw;
-            HistoryRecTime = ADT_Functions.calctime(RecDate,RecTime);
+            RecDate = History.HistoryFile[XInc].date;
+            RecTime = History.HistoryFile[XInc].time;
+            RecLand = History.HistoryFile[XInc].land;
+            RecTnoRaw = History.HistoryFile[XInc].Traw;
+            HistoryRecTime = Functions.calctime(RecDate,RecTime);
             LandCheckTF = true; 
             if(((LandFlagTF)&&(RecLand==1))||(RecTnoRaw<1.0)) {
                LandCheckTF = false;
             }
             if((HistoryRecTime<CurrentTime)&&(LandCheckTF)) {
                LastValidHistoryRecTime = HistoryRecTime;
-               RecTnoFinal = ADT_History.HistoryFile[XInc].Tfinal;
-               RecEyeScene = ADT_History.HistoryFile[XInc].eyescene;
-               RecCloudScene = ADT_History.HistoryFile[XInc].cloudscene;
-               RecRule9 = ADT_History.HistoryFile[XInc].rule9;
+               RecTnoFinal = History.HistoryFile[XInc].Tfinal;
+               RecEyeScene = History.HistoryFile[XInc].eyescene;
+               RecCloudScene = History.HistoryFile[XInc].cloudscene;
+               RecRule9 = History.HistoryFile[XInc].rule9;
                if((HistoryRecTime>=CurrentTimeMinus12hr)&&
                   (!FoundHistoryRecMinus12hrTF)) {
                  PreviousHistoryTnoValueMinus12hrs = RecTnoFinal;
@@ -313,14 +313,14 @@ public class ADT_Scene {
       /** System.out.printf("RMW SIZE=%f\n",RMWSize); */
       if(RMWSize>0.0) {
          /** System.out.printf("Manually Entered RMW Size=%f\n",RMWSize); */
-         ADT_History.IRCurrentRecord.rmw = RMWSize;
+         History.IRCurrentRecord.rmw = RMWSize;
          EyeCDOSizeValue = RMWSize-1.0; /** manually input eye size */
       } else {
          /** System.out.printf("Calculating RMW Size\n"); */
-         double LocalValue[] = ADT_Data.CalcRMW();
+         double LocalValue[] = Data.CalcRMW();
          double RadiusMaxWind = LocalValue[0];
          /** System.out.printf("Calculated RMW Size=%f\n",RadiusMaxWind); */ 
-         ADT_History.IRCurrentRecord.rmw = RadiusMaxWind;
+         History.IRCurrentRecord.rmw = RadiusMaxWind;
       }
     
       /* LARGE EYE CHECKS */
@@ -422,7 +422,7 @@ public class ADT_Scene {
       }
       if((!CurvedBandSceneTF)&&(EmbeddedCenterCheckTF)) {
          TemperatureValue=BDCurve_Points[CloudCWBDCategory+1]+273.16;
-         double ReturnValues[] = ADT_Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,1);
+         double ReturnValues[] = Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,1);
          LogSpiralAmount = (int)ReturnValues[0];
          LogSpiralLatitude = ReturnValues[1];
          LogSpiralLongitude = ReturnValues[2];
@@ -438,7 +438,7 @@ public class ADT_Scene {
       /** System.out.printf("CloudFactorTotal= %f  ShearSceneTF=%b CurvedBandSceneTF=%b CurvedBandBDGrayShadeTF=%b IrregularCDOSceneTF=%b \n",
                CloudFactorTotal,ShearSceneTF,CurvedBandSceneTF,CurvedBandBDGrayShadeTF,IrregularCDOSceneTF); */
     
-      String ImageDateString = ADT_Functions.adt_julian2cmonth(ImageDate);
+      String ImageDateString = Functions.adt_julian2cmonth(ImageDate);
        
       /** 
        ** System.out.printf("%9s %6d %4.1f %4.1f %2d %2d %5.1f %5.1f  %5.2f %5.2f %5.2f %5.2f %5.2f %5.2f %5.2f  %2d %2d %4.1f %4.1f  %5.2f %5.2f %5.2f %5.2f %5.2f %5.2f   %6.2f %7.2f %3.1f  \n",ImageDateString,ImageTime,
@@ -480,7 +480,7 @@ public class ADT_Scene {
                XInc = 4;  /** start with LIGHT GRAY */
                while((XInc>=2)&&(!FoundCurvedBandSceneTF)) {
                   TemperatureValue = BDCurve_Points[XInc]+273.16;
-                  double ReturnValues[] = ADT_Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,1);
+                  double ReturnValues[] = Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,1);
                   LogSpiralAmount = (int)ReturnValues[0];
                   LogSpiralLatitude = ReturnValues[1];
                   LogSpiralLongitude = ReturnValues[2];
@@ -529,7 +529,7 @@ public class ADT_Scene {
                XInc = 6;
                while((XInc>4)&&(!FoundCurvedBandSceneTF)) {
                   TemperatureValue = BDCurve_Points[XInc]+273.16;
-                  double ReturnValues[] = ADT_Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,1);
+                  double ReturnValues[] = Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,1);
                   LogSpiralAmount = (int)ReturnValues[0];
                   LogSpiralLatitude = ReturnValues[1];
                   LogSpiralLongitude = ReturnValues[2];
@@ -552,7 +552,7 @@ public class ADT_Scene {
                TemperatureValue = BDCurve_Points[CurvedBandBDCategory]+273.16;
                boolean CBSearchTF_Global = true;
                if(CBSearchTF_Global) {   /** need global variable here */
-                  double ReturnValues[] = ADT_Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,2);
+                  double ReturnValues[] = Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,2);
                   CurvedBandBDMaxAmount = (int)ReturnValues[0];
                   CurvedBandBDMaxLatitude = ReturnValues[1];
                   CurvedBandBDMaxLongitude = ReturnValues[2];
@@ -629,19 +629,19 @@ public class ADT_Scene {
       /** System.out.printf("CBMAX :ringcbval=%d ringcb=%d ringcbval=%d\n",CurvedBandBDMaxAmount,CurvedBandBDCategory,CurvedBandBDAmount); */
 
       /** System.out.printf("EyeScene=%d CloudScene=%d EyeCDOSize=%f \n",EyeSceneIDValue,CloudSceneIDValue,EyeCDOSizeValue); */
-      ADT_History.IRCurrentRecord.eyescene = EyeSceneIDValue;
-      ADT_History.IRCurrentRecord.cloudscene = CloudSceneIDValue;
-      ADT_History.IRCurrentRecord.eyesceneold = -1;
-      ADT_History.IRCurrentRecord.cloudsceneold = -1;
-      ADT_History.IRCurrentRecord.eyecdosize = EyeCDOSizeValue;
-      ADT_History.IRCurrentRecord.ringcb = CurvedBandBDCategory;
-      ADT_History.IRCurrentRecord.ringcbval = CurvedBandBDAmount;
-      ADT_History.IRCurrentRecord.ringcbvalmax = CurvedBandBDMaxAmount;
-      ADT_History.IRCurrentRecord.ringcbvalmaxlat = CurvedBandBDMaxLatitude;
-      ADT_History.IRCurrentRecord.ringcbvalmaxlon = CurvedBandBDMaxLongitude;
-      ADT_History.IRCurrentRecord.mwscore = ADT_Env.MWScore;
-      ADT_History.IRCurrentRecord.mwdate = ADT_Env.MWJulianDate;
-      ADT_History.IRCurrentRecord.mwtime = ADT_Env.MWHHMMSSTime;
+      History.IRCurrentRecord.eyescene = EyeSceneIDValue;
+      History.IRCurrentRecord.cloudscene = CloudSceneIDValue;
+      History.IRCurrentRecord.eyesceneold = -1;
+      History.IRCurrentRecord.cloudsceneold = -1;
+      History.IRCurrentRecord.eyecdosize = EyeCDOSizeValue;
+      History.IRCurrentRecord.ringcb = CurvedBandBDCategory;
+      History.IRCurrentRecord.ringcbval = CurvedBandBDAmount;
+      History.IRCurrentRecord.ringcbvalmax = CurvedBandBDMaxAmount;
+      History.IRCurrentRecord.ringcbvalmaxlat = CurvedBandBDMaxLatitude;
+      History.IRCurrentRecord.ringcbvalmaxlon = CurvedBandBDMaxLongitude;
+      History.IRCurrentRecord.mwscore = Env.MWScore;
+      History.IRCurrentRecord.mwdate = Env.MWJulianDate;
+      History.IRCurrentRecord.mwtime = Env.MWHHMMSSTime;
       
    }
 
@@ -676,7 +676,7 @@ public class ADT_Scene {
       float ValidPixelLongitudeArray[] = new float[40000];
       float ValidPixelTemperatureArray[] = new float[40000];
 
-      double ImageResolution = ADT_Data.GetCurrentImageResolution();
+      double ImageResolution = Data.GetCurrentImageResolution();
       double DistanceDifferenceMaximumKM=ImageResolution+(ImageResolution/2.0);
       int IncAddVal=(ImageResolution>RING_WIDTH) ? 1 : ((int)(RING_WIDTH-ImageResolution+1.0));
 
@@ -700,11 +700,11 @@ public class ADT_Scene {
       
       /** allocate memory, if necessary */
       if(IRImageXSize==-1) {
-         IRImageXSize = ADT_Data.GetCurrentImageXSize();
-         IRImageYSize = ADT_Data.GetCurrentImageYSize();
-         IRImageLatitudeArrayLocal = ADT_Data.GetCurrentImageLatitudeArray();
-         IRImageLongitudeArrayLocal = ADT_Data.GetCurrentImageLongitudeArray();
-         IRImageTemperatureArrayLocal = ADT_Data.GetCurrentImageTemperatureArray();
+         IRImageXSize = Data.GetCurrentImageXSize();
+         IRImageYSize = Data.GetCurrentImageYSize();
+         IRImageLatitudeArrayLocal = Data.GetCurrentImageLatitudeArray();
+         IRImageLongitudeArrayLocal = Data.GetCurrentImageLongitudeArray();
+         IRImageTemperatureArrayLocal = Data.GetCurrentImageTemperatureArray();
       }
 
       /** System.out.printf("temperature threshold=%f\n",TemperatureThreshold); */
@@ -749,7 +749,7 @@ public class ADT_Scene {
             if(AnalysisTypeIDValue==2) {
                SpiralStartMinimumDistance = 12.0;
                for(ZInc=0;ZInc<ValidPointCounter;ZInc++) {
-                  double LocalValue[] = ADT_Functions.distance_angle(SearchIncrementLatitude,SearchIncrementLongitude,
+                  double LocalValue[] = Functions.distance_angle(SearchIncrementLatitude,SearchIncrementLongitude,
                                                                      ValidPixelLatitudeArray[ZInc], 
                                                                      ValidPixelLongitudeArray[ZInc],1);
                   double DistanceValue = LocalValue[0];
@@ -789,7 +789,7 @@ public class ADT_Scene {
                         FinalArcAngleTheta = (double)(-1*ArcAngleTheta)+(double)RotationFactor;
                      }
                      FinalArcAngleThetaPlus180 = FinalArcAngleTheta+180.0;
-                     double LocalValue2[] = ADT_Functions.distance_angle2(SearchIncrementLatitude,SearchIncrementLongitude,
+                     double LocalValue2[] = Functions.distance_angle2(SearchIncrementLatitude,SearchIncrementLongitude,
                                                                           RadialDistanceKM,FinalArcAngleThetaPlus180);
                      double SearchGuessLatitude = LocalValue2[0];
                      double SearchGuessLongitude = LocalValue2[1];
@@ -804,7 +804,7 @@ public class ADT_Scene {
                          ** determine distance
                          */
                         if((LatitudeDifference<=0.1)&&(LongitudeDifference<=0.1)) {
-                            double LocalValue3[] = ADT_Functions.distance_angle(SearchGuessLatitude,SearchGuessLongitude,
+                            double LocalValue3[] = Functions.distance_angle(SearchGuessLatitude,SearchGuessLongitude,
                                                                                ValidPixelLatitudeArray[ZInc], 
                                                                                ValidPixelLongitudeArray[ZInc],1);
                             double DistanceValue3 = LocalValue3[0];
@@ -864,7 +864,7 @@ public class ADT_Scene {
             FinalArcAngleTheta=(double)(-1*ArcAngleTheta)+(double)SpiralArcBestRotationAngleValue;
          }
          FinalArcAngleThetaPlus180=FinalArcAngleTheta+180.0;
-         double LocalValue4[] = ADT_Functions.distance_angle2(SpiralArcLatitude,SpiralArcLongitude,
+         double LocalValue4[] = Functions.distance_angle2(SpiralArcLatitude,SpiralArcLongitude,
                                                               RadialDistanceKM,FinalArcAngleThetaPlus180);
          double SearchGuessLatitude = LocalValue4[0];
          double SearchGuessLongitude = LocalValue4[1];
@@ -911,11 +911,11 @@ public class ADT_Scene {
 
       /** allocate memory, if necessary */
       if(IRImageXSize==-1) {
-         IRImageXSize = ADT_Data.GetCurrentImageXSize();
-         IRImageYSize = ADT_Data.GetCurrentImageYSize();
-         IRImageLatitudeArrayLocal = ADT_Data.GetCurrentImageLatitudeArray();
-         IRImageLongitudeArrayLocal = ADT_Data.GetCurrentImageLongitudeArray();
-         IRImageTemperatureArrayLocal = ADT_Data.GetCurrentImageTemperatureArray();
+         IRImageXSize = Data.GetCurrentImageXSize();
+         IRImageYSize = Data.GetCurrentImageYSize();
+         IRImageLatitudeArrayLocal = Data.GetCurrentImageLatitudeArray();
+         IRImageLongitudeArrayLocal = Data.GetCurrentImageLongitudeArray();
+         IRImageTemperatureArrayLocal = Data.GetCurrentImageTemperatureArray();
       }
 
       if(AnalysisTypeIDValue==1) {
@@ -934,7 +934,7 @@ public class ADT_Scene {
          /** System.out.printf("PointCounter=%d  numx*numy=%d\n",PointCounter,IRImageYSize*IRImageXSize); */
          if(PointCounter<(IRImageYSize*IRImageXSize)) {
             for(ZInc=0;ZInc<PointCounter;ZInc++) {
-               double LocalValue[] = ADT_Functions.distance_angle(InputLatitude,InputLongitude,
+               double LocalValue[] = Functions.distance_angle(InputLatitude,InputLongitude,
                                                                   PixelLatitudeArray[ZInc],PixelLongitudeArray[ZInc],1);
                DistanceValue = LocalValue[0];
                AngleValue = LocalValue[1];

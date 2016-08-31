@@ -26,7 +26,7 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
-package edu.wisc.ssec.mcidasv.control.adt;
+package edu.wisc.ssec.mcidasv.adt;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,7 @@ import java.util.Scanner;
 
 @SuppressWarnings("unused")
 
-public class ADT_Forecasts {
+public class Forecasts {
 
    private static double ForecastLatitudes[] = new double[10];;
    private static double ForecastLongitudes[] = new double[10];;
@@ -42,7 +42,7 @@ public class ADT_Forecasts {
 
    private static String[] MonthID_StringX = { "JAN","FEB","MAR","APR","MAY","JUN",
                                                "JUL","AUG","SEP","OCT","NOV","DEC" };
-   public ADT_Forecasts() {
+   public Forecasts() {
    }
 
    public static double[] ReadForecasts(String ForecastFileName, int ForecastFileType, double ThresholdTime) throws IOException
@@ -73,12 +73,12 @@ public class ADT_Forecasts {
       File forecastfile = new File(ForecastFileName);
       Scanner in = new Scanner(forecastfile);
 
-      int ImageDate = ADT_Data.IRData_JulianDate;
-      int ImageTime = ADT_Data.IRData_HHMMSSTime;
-      System.out.printf("IMAGE DATE=%d  TIME=%d\n",ADT_Data.IRData_JulianDate,ADT_Data.IRData_HHMMSSTime);
-      /** int ImageDate = ADT_History.IRCurrentRecord.date; */
-      /** int ImageTime = ADT_History.IRCurrentRecord.time; */
-      double CurrentTime = ADT_Functions.calctime(ImageDate,ImageTime);
+      int ImageDate = Data.IRData_JulianDate;
+      int ImageTime = Data.IRData_HHMMSSTime;
+      System.out.printf("IMAGE DATE=%d  TIME=%d\n", Data.IRData_JulianDate, Data.IRData_HHMMSSTime);
+      /** int ImageDate = History.IRCurrentRecord.date; */
+      /** int ImageTime = History.IRCurrentRecord.time; */
+      double CurrentTime = Functions.calctime(ImageDate,ImageTime);
       int XInc=0;
       int YInc=0;
       FcstTimeIntValPrev=-1;
@@ -115,14 +115,14 @@ public class ADT_Forecasts {
                /** System.out.printf("year=%d month=%d day=%d\n",YearIntVal,MonthIntVal,DayIntVal); */
                HMSTimeIntVal = 10000*Integer.parseInt(TmpStr3.substring(8,10));     /** 10000*((int)aodt_atoif(TmpStr3,9,10)); */
                FcstTimeIntVal = 10000*Integer.parseInt(TmpStr6);                    /** 10000*((int)aodt_atoif(TmpStr6,1,strlen(TmpStr6))); */
-               JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
-               TmpTimeVal2 = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+               JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+               TmpTimeVal2 = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                /** System.out.printf("YInc=%d tmptime=%f\n",YInc,TmpTimeVal2); */
                if((TmpTimeVal2<CurrentTime)&&
                   (FcstTimeIntValPrev!=FcstTimeIntVal)&&(YInc<6)) {
                   LocVar1 = ((int)(FcstTimeIntVal+HMSTimeIntVal))/240000;
                   LocVar2 = (((int)(FcstTimeIntVal+HMSTimeIntVal))%240000);
-                  TimeArray[YInc] = ADT_Functions.calctime(JulianDayIntVal+LocVar1,LocVar2);
+                  TimeArray[YInc] = Functions.calctime(JulianDayIntVal+LocVar1,LocVar2);
                   NSFactor = (TmpStr7.charAt(TmpStr7.length()-1)=='N') ? 1.0 : -1.0;
                   WEFactor = (TmpStr8.charAt(TmpStr8.length()-1)=='W') ? 1.0 : -1.0;
                   LatitudeArray[YInc] = NSFactor*Double.parseDouble(TmpStr7.substring(0,TmpStr7.length()-1))/10.0;           /** (aodt_atoif(TmpStr7,1,strlen(TmpStr7)))/10.0; */
@@ -162,7 +162,7 @@ public class ADT_Forecasts {
                   while((!tokens[4].equals(MonthID_StringX[MonthIntValXX]))&&(MonthIntValXX<12)) {
                      MonthIntValXX++;
                   }
-                  JulianDayIntValXX = ADT_Functions.idmyyd(DayIntValXX,MonthIntValXX+1,YearIntValXX);
+                  JulianDayIntValXX = Functions.idmyyd(DayIntValXX,MonthIntValXX+1,YearIntValXX);
                   FoundMonthTF = true;
                   /** System.out.printf("XX julday=%d day=%d month=%d year=%d\n",JulianDayIntValXX,DayIntValXX,MonthIntValXX+1,YearIntValXX); */
                }
@@ -210,11 +210,11 @@ public class ADT_Forecasts {
                               YearIntVal++;
                               MonthIntVal = 0;
                            }
-                           JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal+1,YearIntVal);
+                           JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal+1,YearIntVal);
                         } else {
                            JulianDayIntVal = JulianDayIntValXX+(DayIntVal-DayIntValXX);
                         }
-                        TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+                        TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                         NSFactor = (TmpStr3.charAt(TmpStr3.length()-1)=='N') ? 1.0 : -1.0;
                         WEFactor = (TmpStr4.charAt(TmpStr4.length()-1)=='W') ? 1.0 : -1.0;
                         LatitudeArray[XInc] = NSFactor*Double.parseDouble(TmpStr3.substring(0,TmpStr3.length()-1));
@@ -238,7 +238,7 @@ public class ADT_Forecasts {
           ** month and year from the image is equal to the month
           ** and year of the forecast file.
           */
-         int[] ReturnValues = ADT_Functions.adt_yddmy((int)CurrentTime);
+         int[] ReturnValues = Functions.adt_yddmy((int)CurrentTime);
          DayIntValXX = ReturnValues[0];
          MonthIntValXX = ReturnValues[1];
          YearIntValXX = ReturnValues[2];
@@ -267,7 +267,7 @@ public class ADT_Forecasts {
                      HMSTimeIntVal = 100*Integer.parseInt(TmpStr1.substring(2,6));
                      /** System.out.printf("dayintval=%d hmstimeintval=%d\n",DayIntVal,HMSTimeIntVal); */
                      DayIntValSub=DayIntValXX-DayIntVal;
-                     int[] ReturnValues2 = ADT_Functions.adt_yddmy(ImageDate);
+                     int[] ReturnValues2 = Functions.adt_yddmy(ImageDate);
                      datexxx = ReturnValues2[0];
                      monthxxx = ReturnValues2[1];
                      yearxxx = ReturnValues2[2];
@@ -293,9 +293,9 @@ public class ADT_Forecasts {
                            /** System.out.printf("datexxx=%d\n",datexxx); */
                            if((datexxx<=2)&&(monthxxx==1)) {
                               /** System.out.printf("year crossing... image during new year: %d %d\n",yearxxx-1,DayIntVal); */
-                              JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,12,yearxxx-1);
+                              JulianDayIntVal = Functions.idmyyd(DayIntVal,12,yearxxx-1);
                            } else {
-                              JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,monthxxx-1,yearxxx);
+                              JulianDayIntVal = Functions.idmyyd(DayIntVal,monthxxx-1,yearxxx);
                            }
                            /** System.out.printf("JulianDayIntVal=%d\n",JulianDayIntVal); */
                         } else {
@@ -303,7 +303,7 @@ public class ADT_Forecasts {
                         }
                      }
                      /** System.out.printf("JulianDayIntVal=%d\n",JulianDayIntVal); */
-                     TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+                     TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                      /** System.out.printf("TimeArray[%d]=%f\n",XInc,TimeArray[XInc]); */
                      NSFactor = (TmpStr4.charAt(TmpStr4.length()-1)=='N') ? 1.0 : -1.0;
                      WEFactor = (TmpStr5.charAt(TmpStr5.length()-1)=='W') ? 1.0 : -1.0;
@@ -317,23 +317,23 @@ public class ADT_Forecasts {
                      DayIntValSub = DayIntValXX-DayIntVal;
                      if(DayIntValSub<-27) {
                         if((monthxxx-1)==0) {
-                           JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,12,yearxxx-1);
+                           JulianDayIntVal = Functions.idmyyd(DayIntVal,12,yearxxx-1);
                         } else {
-                           JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,monthxxx-1,yearxxx);
+                           JulianDayIntVal = Functions.idmyyd(DayIntVal,monthxxx-1,yearxxx);
                         }
                      } else {
                         if(DayIntValSub>27) {
                            if((monthxxx+1)>12) {
-                              JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,1,yearxxx+1);
+                              JulianDayIntVal = Functions.idmyyd(DayIntVal,1,yearxxx+1);
                            } else {
-                              JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,monthxxx+1,yearxxx);
+                              JulianDayIntVal = Functions.idmyyd(DayIntVal,monthxxx+1,yearxxx);
                            }
                         } else {
-                           JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,monthxxx,yearxxx);
+                           JulianDayIntVal = Functions.idmyyd(DayIntVal,monthxxx,yearxxx);
                         }
                      }
                      /** System.out.printf("JulianDayIntVal=%d\n",JulianDayIntVal); */
-                     TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+                     TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                      /** System.out.printf("TimeArray[%d]=%f\n",XInc,TimeArray[XInc]); */
                      NSFactor = (TmpStr3.charAt(TmpStr3.length()-1)=='N') ? 1.0 : -1.0;
                      WEFactor = (TmpStr4.charAt(TmpStr4.length()-1)=='W') ? 1.0 : -1.0;
@@ -367,8 +367,8 @@ public class ADT_Forecasts {
                MonthIntVal = Integer.parseInt(TmpStr2.substring(0,2));
                YearIntVal = Integer.parseInt(TmpStr3.substring(0,4));
                HMSTimeIntVal = 100*Integer.parseInt(TmpStr4.substring(0,4));
-               JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
-               TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+               JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+               TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                NSFactor = (TmpStr5.charAt(TmpStr5.length()-1)=='N') ? 1.0 : -1.0;
                WEFactor = (TmpStr6.charAt(TmpStr6.length()-1)=='W') ? 1.0 : -1.0;
                LatitudeArray[XInc] = NSFactor*Double.parseDouble(TmpStr5.substring(0,TmpStr5.length()-1));
@@ -404,8 +404,8 @@ public class ADT_Forecasts {
                   TmpStr2 = tokens[2];
                   HMSTimeIntVal = 100*Integer.parseInt(TmpStr2.substring(0,4));
                } 
-               JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
-               TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+               JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+               TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                /** System.out.printf("time0=%f  hmstime=%d\n",TimeArray[XInc],HMSTimeIntVal); */
             } else if(tokens[0].equals("PSN")) {
                   TmpStr1 = tokens[1];
@@ -465,8 +465,8 @@ public class ADT_Forecasts {
                MonthIntVal = Integer.parseInt(TmpStr2);
                DayIntVal = Integer.parseInt(TmpStr3);
                HMSTimeIntVal = 100*Integer.parseInt(TmpStr4);
-               JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
-               TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+               JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+               TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                forecastRec = in.nextLine();
                tokens = forecastRec.split(delims5);
                if(tokens.length==2) {
@@ -503,8 +503,8 @@ public class ADT_Forecasts {
                   MonthIntVal = Integer.parseInt(TmpStr2);
                   DayIntVal = Integer.parseInt(TmpStr3);
                   HMSTimeIntVal = 10000*Integer.parseInt(TmpStr4);
-                  JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
-                  TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+                  JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+                  TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                   NSFactor = (TmpStr5.charAt(TmpStr5.length()-1)=='N') ? 1.0 : -1.0;
                   WEFactor = (TmpStr6.charAt(TmpStr6.length()-1)=='W') ? 1.0 : -1.0;
                   LatitudeArray[XInc] = NSFactor*Double.parseDouble(TmpStr5.substring(0,TmpStr5.length()-1));
@@ -544,13 +544,13 @@ public class ADT_Forecasts {
                MonthIntVal = Integer.parseInt(TmpStr3);
                DayIntVal = Integer.parseInt(TmpStr2);
                /** HMSTimeIntVal = 100*Integer.parseInt(TmpStr1); */
-               JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+               JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
             }
             if(tokens[0].equals("Data")) {
                /** initial time */
                TmpStr1 = tokens[2];
                HMSTimeIntVal = 100*Integer.parseInt(TmpStr1);
-               TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+               TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
             }
             if(tokens[0].equals("Latitude")) {
                /** initial latitude */
@@ -586,8 +586,8 @@ public class ADT_Forecasts {
                   TmpStr5 = tokens[7];
                   DayIntVal = Integer.parseInt(TmpStr1);
                   HMSTimeIntVal = 100*Integer.parseInt(TmpStr2);
-                  JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
-                  TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+                  JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+                  TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                   NSFactor = (TmpStr3.charAt(TmpStr3.length()-1)=='N') ? 1.0 : -1.0;
                   WEFactor = (TmpStr4.charAt(TmpStr4.length()-1)=='W') ? 1.0 : -1.0;
                   LatitudeArray[XInc] = NSFactor*Double.parseDouble(TmpStr3.substring(0,TmpStr3.length()-1));
@@ -600,8 +600,8 @@ public class ADT_Forecasts {
                         YearIntVal=YearIntVal+1;
                         MonthIntVal=1;
                      }
-                     JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
-                     TimeArray[XInc] = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+                     JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+                     TimeArray[XInc] = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                   }
                   forecastRec = in.nextLine();
                   tokens = forecastRec.split(delims6);
@@ -627,9 +627,9 @@ public class ADT_Forecasts {
                MonthIntVal = Integer.parseInt(TmpStr1.substring(4,6));
                DayIntVal = Integer.parseInt(TmpStr1.substring(6,8));
                HMSTimeIntVal = 10000*Integer.parseInt(TmpStr1.substring(8,10));
-               JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+               JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
                /** System.out.printf("day=%d month=%d year=%d hms=%d julian=%d \n",DayIntVal,MonthIntVal,YearIntVal,HMSTimeIntVal,JulianDayIntVal); */
-               double TmpTimeVal1 = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+               double TmpTimeVal1 = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
                NSFactor = (TmpStr2.charAt(TmpStr2.length()-1)=='N') ? 1.0 : -1.0;
                WEFactor = (TmpStr3.charAt(TmpStr3.length()-1)=='W') ? 1.0 : -1.0;
                int CurrentDateValueInt=HMSTimeIntVal;
@@ -670,8 +670,8 @@ public class ADT_Forecasts {
             MonthIntVal = Integer.parseInt(TmpStr2);
             DayIntVal = Integer.parseInt(TmpStr3);
             HMSTimeIntVal=(10000*Integer.parseInt(TmpStr4));
-            JulianDayIntVal = ADT_Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
-            double TmpTimeVal1 = ADT_Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
+            JulianDayIntVal = Functions.idmyyd(DayIntVal,MonthIntVal,YearIntVal);
+            double TmpTimeVal1 = Functions.calctime(JulianDayIntVal,HMSTimeIntVal);
             /** NSFactor = (TmpStr5.charAt(TmpStr5.length()-1)=='N') ? 1.0 : -1.0; */
             /** WEFactor = (TmpStr6.charAt(TmpStr6.length()-1)=='W') ? 1.0 : -1.0; */
             NSFactor = 1.0;
