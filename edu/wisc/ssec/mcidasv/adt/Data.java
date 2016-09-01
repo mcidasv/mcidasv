@@ -36,8 +36,6 @@ class IRRingData {
    double temperature;
 }
 
-@SuppressWarnings("unused")
-
 public class Data {
 
    private static double KtoC_Value=273.16;
@@ -47,7 +45,6 @@ public class Data {
    private static double EYE_SEARCH_RADIUS=24.0;
    private static int MAXSECTOR = 24;
    private static int MAXSECTORA = 10000;
-   private static int FFTBINS = 534;
    private static int TEMPBINS = 64;
    private static int RINGSLICESIZE = 15;
    private static int RingDataArrayNumber;
@@ -88,7 +85,6 @@ public class Data {
    private static void LoadRingData(double CenterLatitude,double CenterLongitude) 
    {
       double LatVal,LonVal,TempVal;
-      double LocalAngleValue=-99;
       
       RingDataArrayNumber = 0;
       /** System.out.printf("CenterLat=%f CenterLon=%f\n",CenterLatitude,CenterLongitude); */
@@ -214,7 +210,6 @@ public class Data {
    private static double[] CalcEyeCloudInfo() {
 
       int i,j;
-      int RetErr;
       double InnerRadiusDistance;
       double OuterRadiusDistance;
       double DistVal,AngleVal,TempVal;
@@ -224,8 +219,6 @@ public class Data {
       double TemperatureArray[] = new double[TEMPBINS];
       double SectorDataArray[][] = new double[MAXSECTOR][MAXSECTORA];
       double EyeDataArray[] = new double[MAXSECTORA];
-      double SectorTempSortArray[] = new double[MAXSECTORA];
-      double SortedSectorArray[] = new double[MAXSECTORA];
       double SectorAverageArray[] = new double[MAXSECTOR];
       double SectorStdvArray[] = new double[MAXSECTOR];
  
@@ -339,9 +332,6 @@ public class Data {
 
       double CloudAnnulusAveTemp = AnnulusTemperatureSum/((double)AnnulusTemperatureCount);
 
-      /** Calculate Eye and Cloud region statistical values */
-      double EyeRegionSTDV = 0.0;
-
       /** calculate averages, standard deviations and skews for each sector */
       double TempSectorArray[] = new double[MAXSECTORA];
       for (i = 0; i < MAXSECTOR; i++ ) {
@@ -372,14 +362,14 @@ public class Data {
    }
 
    public static void CalcEyeCloudTemps() {
-      int RetErr;
+
       int CenterXPos = IRData_NumberColumns/2;
       int CenterYPos = IRData_NumberRows/2;
 
       /** System.out.printf("CenterXPos=%d  CenterYPos=%d\n",CenterXPos,CenterYPos); */
       double CenterLatValue = IRData_Latitude[CenterYPos][CenterXPos];
       double CenterLonValue = IRData_Longitude[CenterYPos][CenterXPos];
-      double CenterTempValue = IRData_Temperature[CenterYPos][CenterXPos];
+
       /** System.out.printf("CenterLatVal=%f  CenterLonVal=%f\n",CenterLatValue,CenterLonValue); */
 
       LoadRingData(CenterLatValue,CenterLonValue);
@@ -413,7 +403,7 @@ public class Data {
    }
 
    public static double[] CalcRMW() {
-      int RetErr;
+
       int CenterXPos = IRData_NumberColumns/2;
       int CenterYPos = IRData_NumberRows/2;
       double RadiusMaxWind = -99.5;
@@ -422,8 +412,6 @@ public class Data {
       double CriticalTemperatureDegK = 228.0;
 
       /** System.out.printf("CenterXPos=%d  CenterYPos=%d\n",CenterXPos,CenterYPos); */
-
-      double CenterTempValue = IRData_Temperature[CenterYPos][CenterXPos];
 
       double CloudTemperature = History.IRCurrentRecord.cloudt;
       double EyeTemperature = History.IRCurrentRecord.eyet;

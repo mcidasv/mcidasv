@@ -32,8 +32,6 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-@SuppressWarnings("unused")
-
 public class Topo {
 
    public Topo() {
@@ -52,7 +50,6 @@ public class Topo {
       boolean test = true;
       if (test) return 2;
       
-      int topoflag = 0;
       double ax = inputlat;
       double bx = inputlon;  /* to make mcidas compliant */
       System.out.printf("TOPO: lat: %f  lon: %f\n",ax,bx);

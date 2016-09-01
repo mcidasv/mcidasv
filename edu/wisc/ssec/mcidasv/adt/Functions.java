@@ -30,8 +30,6 @@ package edu.wisc.ssec.mcidasv.adt;
 
 import java.util.Scanner;
 
-@SuppressWarnings("unused")
-
 public class Functions {
 
    static String[] Months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
@@ -238,7 +236,6 @@ public class Functions {
       int YearValue_Local;                  /** local year value */
       int DayValue_Local;                   /** local day value */
       int MonthValue_Local;                 /** local month value */
-      int LeapYearFlag=0;                   /** leap year flag value */
 
       YearValue_Local=JulianDateInput/1000;
       if(YearValue_Local<1900) {
@@ -686,11 +683,9 @@ public class Functions {
     */
    {
       double PWReturnValue = -999.0;
-      double GaleRadius34_Climo = 0.0;
       double ROCI_Local = 0.0;
       double R34_Local= 0.0;
       int XInc=2;
-      int RetErr;
 
       /** use traditional MSLP/Wind-T# conversion */
       /** determine correct pressure/wind array bin */
@@ -699,7 +694,6 @@ public class Functions {
       }
     
       int[] ReturnValues = Functions.adt_oceanbasin(LatitudeInput,LongitudeInput);
-      int BasinID = ReturnValues[0];
       /* int DomainID = Env.DomainID; */
       int DomainID = ReturnValues[1];
 
@@ -717,11 +711,7 @@ public class Functions {
              ** use new Knaff/Zehr T#->MSLP conversion.
              ** Need Vmax calculation and two command line input values
              */
-            if(BasinID==2) {
-               GaleRadius34_Climo = 82.0;
-            } else {
-               GaleRadius34_Climo = 107.0;
-            }
+
             double StormSpeed = 11.0;  /* 11 knots -- climo value */
             double Vmax_Local = PW_WindValues[XInc];                    /* WIND */
 

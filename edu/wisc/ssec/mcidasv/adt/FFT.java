@@ -30,8 +30,6 @@ package edu.wisc.ssec.mcidasv.adt;
 
 import java.lang.Math;
 
-@SuppressWarnings("unused")
-
 public class FFT {
 
    private static int FFTBINS=64;
@@ -248,7 +246,6 @@ public class FFT {
       int HarmonicCounter=0;
       double FFT_BinM2,FFT_BinM1;
       double FFT_TotalAllBins=0.0;
-      double Amplitude=0.0;
 
       for (i = 0; i < FFTBINS; i++ ) {
          FFT_Real[i] = InputArray[i];
@@ -277,7 +274,6 @@ public class FFT {
          if(FFT_Magnitude[0]==0) {
             /** throw exception */
          } else {
-            Amplitude = FFT_TotalAllBins/FFT_Magnitude[0];
             FFTValue=HarmonicCounter;
          }
       }

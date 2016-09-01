@@ -31,8 +31,6 @@ package edu.wisc.ssec.mcidasv.adt;
 import java.lang.Math;
 import java.lang.String;
 
-@SuppressWarnings("unused")
-
 public class Intensity {
 
    private static int MWAnalysisFlag;
@@ -58,7 +56,7 @@ public class Intensity {
     **            0 : o.k.
     */
    {
-      int RetErr;
+
       double TnoRaw=0.0;
       double TnoFinal=0.0;
       double CI=0.0;
@@ -70,7 +68,6 @@ public class Intensity {
       int RecLand = History.IRCurrentRecord.land;
       double Latitude = History.IRCurrentRecord.latitude;
       double Longitude = History.IRCurrentRecord.longitude;
-      boolean LandCheckTF = true;
 
       if((LandFlagTF)&&(RecLand==1)) {
          /** Initialize Missing Record */
@@ -137,10 +134,9 @@ public class Intensity {
     ** Return  : Raw T# value
     */
    {
-      int RetErr;
+
       int XInc;
       int CloudBDCategory = 0;
-      int EyeBDCategory = 0;
       int Rule8AdjCatValue = 0;
       int PreviousHistoryRecPtr = 0;
       double CloudTnoIntensity = -909.0;
@@ -305,7 +301,6 @@ public class Intensity {
          /** compute eye category for eye adjustment */
          if((EyeTemperatureCurrent<=BDCurve_Points[XInc])&&
             (EyeTemperatureCurrent>BDCurve_Points[XInc+1])) {
-            EyeBDCategory = XInc;
          }
       }
 
@@ -319,14 +314,11 @@ public class Intensity {
          History.IRCurrentRecord.eyet = EyeTemperatureCurrent;
       }
 
-      /** category difference between eye and cloud region */
-      double EyeCloudBDCategoryDifference = Math.max(0,CloudBDCategory-EyeBDCategory);
       /** System.out.printf("EyeCloudBDCategoryDifference=%f\n",EyeCloudBDCategoryDifference); */
     
       /** if scenetype is EYE */
       int CurvedBandBDAmountCurrent = History.IRCurrentRecord.ringcbval;
       int CurvedBandBDCategoryCurrent = History.IRCurrentRecord.ringcb;
-      int CloudFFTValueCurrent = History.IRCurrentRecord.cloudfft;
       double MWScoreValueCurrent = History.IRCurrentRecord.mwscore;
       /** System.out.printf("MWScoreValueCurrent=%f\n",MWScoreValueCurrent); */
 
@@ -573,7 +565,6 @@ public class Intensity {
             RecDate = History.HistoryFile[0].date;
             RecTime = History.HistoryFile[0].time;
             double FirstHistoryRecTime = Functions.calctime(RecDate,RecTime);
-            double FirstHistoryLandRecTime = 1900001.0;
             boolean FirstHistoryLandRecTF = true;
             boolean CurrentTimeMinus24hrTF = false;
             boolean CurrentTimeMinus18hrTF = false;
@@ -587,7 +578,6 @@ public class Intensity {
             int RecRule9;
             int RecRapidDiss;
             int RecEyeScene;
-            int RecCloudScene;
             int Rule8Val = 0;
             int PreviousHistoryRule9Value = 0;
             int PreviousHistoryRapidDissIDValue = 0;
@@ -607,7 +597,6 @@ public class Intensity {
                RecRule9 = History.HistoryFile[XInc].rule9;
                RecRapidDiss = History.HistoryFile[XInc].rapiddiss;
                RecEyeScene = History.HistoryFile[XInc].eyescene;
-               RecCloudScene = History.HistoryFile[XInc].cloudscene;
                /** System.out.printf("currenttime=%f  historyrectime=%f\n",CurrentTime,HistoryRecTime); */
                if(HistoryRecTime>=CurrentTime) {
                   /** System.out.printf("outta here\n"); */
@@ -618,7 +607,6 @@ public class Intensity {
                if(((LandFlagTF)&&(RecLand==1))||(RecTnoRaw<1.0)) {
                   LandCheckTF = false;
                   if (FirstHistoryLandRecTF) {
-                     FirstHistoryLandRecTime = HistoryRecTime;
                      FirstHistoryLandRecTF = false;
                   }
                } else {
@@ -1020,7 +1008,7 @@ public class Intensity {
     ** Return  : Current Intensity (CI) #
     */
    {
-      int RetErr;
+
       int RapidDissIDValue = 0;
       int CurrentStrengthIDValue;
       int PreviousHistoryRule9Value = 0;;
@@ -1032,7 +1020,6 @@ public class Intensity {
       double Rule9AdditiveValue = 1.0;
       double CIadjP;
       boolean LandOnly12hrTF = true;           /* land only during last 12hrs logical*/
-      boolean TDTSOnly24hrTF = false;          /* tropical dep/storm only last 24 hrs*/
       boolean LandCheckTF = true;
 
       int ImageDate = History.IRCurrentRecord.date;
@@ -1071,9 +1058,7 @@ public class Intensity {
       }
 
       /** determine various time threshold values */
-      double CurrentTimeMinus3Hrs = CurrentTime-0.125;
       double CurrentTimeMinus6Hrs = CurrentTime-0.25;
-      double CurrentTimeMinus12Hrs = CurrentTime-0.5;
       double CurrentTimeMinus24Hrs = CurrentTime-1.0;
     
       /** find record just prior to current record */
@@ -1128,13 +1113,6 @@ public class Intensity {
                }
                if(PreviousHistoryFinalTnoValue>TnoMaximumValue) {
                   TnoMaximumValue = PreviousHistoryFinalTnoValue;
-               }
-               /**
-                ** if storm was TD/TS at any time during last 24 hours,
-                ** don't allow trip of sig. strengthening flag
-                */
-               if(PreviousHistoryFinalTnoValue<=4.0) {
-                  TDTSOnly24hrTF = true;
                }
             }
          }
@@ -1250,7 +1228,7 @@ public class Intensity {
     ** Return  : Adjusted MSLP value
     */
    {
-      int RetErr;
+
       double ReturnCIPressureAdjValue = 0.0;
 
       boolean UseCKZTF = Env.UseCKZTF;
@@ -1311,9 +1289,9 @@ public class Intensity {
       double CurrentTimeMinus6hr = CurrentTime - 0.26;
       double MergePeriodFirstTime = CurrentTime;
 
-      int RecDate,RecTime,RecLand,RecLBFlag;
+      int RecDate,RecTime,RecLand;
       double HistoryRecTime;
-      double RecTnoRaw,RecCI;
+      double RecTnoRaw;
       boolean LandCheckTF=true;
       boolean EIRSceneTypeTF=true;
       boolean FoundMergePeriodFirstRecordTF = false;

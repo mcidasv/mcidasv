@@ -28,8 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.adt;
 
-@SuppressWarnings("unused")
-
 public class Output {
 
    static String[] Months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
@@ -166,7 +164,7 @@ public class Output {
       /** determine scenetype to be output to screen */
       int EyeSceneTypeValue = History.IRCurrentRecord.eyescene;
       int CloudSceneTypeValue = History.IRCurrentRecord.cloudscene;
-      int CloudFFTValue = History.IRCurrentRecord.cloudfft;
+
       if(CloudSceneTypeValue==2) {
          SceneString = String.format("%s",CloudSceneTypes[CloudSceneTypeValue]);
       } else if(CloudSceneTypeValue==3) {

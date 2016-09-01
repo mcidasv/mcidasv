@@ -28,8 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.adt;
 
-@SuppressWarnings("unused")
-
 public class Scene {
 
    private static double[] BDCurve_Points =
@@ -53,22 +51,17 @@ public class Scene {
    public static void DetermineSceneType(boolean RunFullAnalysis)
    {
       /** adt_classify in ADT code */
-      int RetErr;
-      int XInc,YInc;
+      int XInc;
       int PreviousHistoryEyeSceneID = -1;
       int PreviousHistoryCloudSceneID = -1;
       double PreviousHistoryTnoValueMinus12hrs = 0.0;
       boolean FoundHistoryRecMinus12hrTF = false;
       double TemperatureValue = -999.0;
       int LogSpiralAmount = 0;
-      int LogSpiralAmountMax = 0;
-      double LogSpiralLatitude = -999.0;
-      double LogSpiralLongitude = -999.0;
 
       int CloudBDCategory = -99;
       int CloudCWBDCategory = -99;
       int EyeBDCategory = -99;
-      int BDCategoryDifference = -99;
       int CloudBDDifference = -99;
       int EyeCloudBDCategoryDifference = -99;
       double TnoInterpValue = -99.9;
@@ -76,7 +69,6 @@ public class Scene {
       double EyeBDCategoryFloat = -99.9;
       double CloudCWBDCategoryFloat = -99.9;
       double CloudTemperatureDifference = -99.9;
-      double EyeCloudTemperatureDifference = -99.9;
       double EyeCloudCWBDCategoryFloatDiff = -99.9;
       double EyeCloudBDCategoryFloatDiff = -99.9;
       double CloudBDCategoryFloatDiff = -99.9;
@@ -146,9 +138,8 @@ public class Scene {
        **                                        CloudCWBDCategory,
        **                                        CloudCWBDCategoryFloat);
        */
-      BDCategoryDifference = Math.max(0,Math.max(CloudBDCategory,CloudCWBDCategory)-EyeBDCategory);
+
       CloudTemperatureDifference = CloudTemperature-CloudCWTemperature;
-      EyeCloudTemperatureDifference = EyeTemperature-CloudTemperature;
       EyeCloudCWBDCategoryFloatDiff = CloudCWBDCategoryFloat-EyeBDCategoryFloat;
       EyeCloudBDCategoryFloatDiff = CloudBDCategoryFloat-EyeBDCategoryFloat;
       CloudBDCategoryFloatDiff = CloudBDCategoryFloat-CloudCWBDCategoryFloat;
@@ -424,8 +415,6 @@ public class Scene {
          TemperatureValue=BDCurve_Points[CloudCWBDCategory+1]+273.16;
          double ReturnValues[] = Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,1);
          LogSpiralAmount = (int)ReturnValues[0];
-         LogSpiralLatitude = ReturnValues[1];
-         LogSpiralLongitude = ReturnValues[2];
          if((LogSpiralAmount>=8)&&(LogSpiralAmount<20)) {
             EmbeddedCenterSceneTF = true;
          }
@@ -437,8 +426,6 @@ public class Scene {
       
       /** System.out.printf("CloudFactorTotal= %f  ShearSceneTF=%b CurvedBandSceneTF=%b CurvedBandBDGrayShadeTF=%b IrregularCDOSceneTF=%b \n",
                CloudFactorTotal,ShearSceneTF,CurvedBandSceneTF,CurvedBandBDGrayShadeTF,IrregularCDOSceneTF); */
-    
-      String ImageDateString = Functions.adt_julian2cmonth(ImageDate);
        
       /** 
        ** System.out.printf("%9s %6d %4.1f %4.1f %2d %2d %5.1f %5.1f  %5.2f %5.2f %5.2f %5.2f %5.2f %5.2f %5.2f  %2d %2d %4.1f %4.1f  %5.2f %5.2f %5.2f %5.2f %5.2f %5.2f   %6.2f %7.2f %3.1f  \n",ImageDateString,ImageTime,
@@ -482,8 +469,6 @@ public class Scene {
                   TemperatureValue = BDCurve_Points[XInc]+273.16;
                   double ReturnValues[] = Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,1);
                   LogSpiralAmount = (int)ReturnValues[0];
-                  LogSpiralLatitude = ReturnValues[1];
-                  LogSpiralLongitude = ReturnValues[2];
                   if((LogSpiralAmount>=8)||(XInc==2)) {
                      /** 10 = .375% -- 10 ==> 9 arcs of 15 degrees */
                      if(LogSpiralAmount>25) {
@@ -531,8 +516,6 @@ public class Scene {
                   TemperatureValue = BDCurve_Points[XInc]+273.16;
                   double ReturnValues[] = Scene.adt_logspiral(StormLatitude,StormLongitude,TemperatureValue,1);
                   LogSpiralAmount = (int)ReturnValues[0];
-                  LogSpiralLatitude = ReturnValues[1];
-                  LogSpiralLongitude = ReturnValues[2];
                   if((LogSpiralAmount>=9)&&(LogSpiralAmount<=25)) {
                      FoundCurvedBandSceneTF = true;
                      /** EmbeddedCenterSceneTF = true;   needed here? */
@@ -855,7 +838,6 @@ public class Scene {
       } /** XInc loop */
     
       /** load array for best spiral band */
-      int TemporaryCounter=0;
       for(int ArcAngleTheta=0;ArcAngleTheta<=540;ArcAngleTheta=ArcAngleTheta+15) {
          ArcAngleTheta_Radians=(double)ArcAngleTheta/RadiansValue;
          RadialDistanceKM=SpiralConstantAValue*Math.exp((SpiralConstantBValue*ArcAngleTheta_Radians));
@@ -864,14 +846,9 @@ public class Scene {
             FinalArcAngleTheta=(double)(-1*ArcAngleTheta)+(double)SpiralArcBestRotationAngleValue;
          }
          FinalArcAngleThetaPlus180=FinalArcAngleTheta+180.0;
-         double LocalValue4[] = Functions.distance_angle2(SpiralArcLatitude,SpiralArcLongitude,
-                                                              RadialDistanceKM,FinalArcAngleThetaPlus180);
-         double SearchGuessLatitude = LocalValue4[0];
-         double SearchGuessLongitude = LocalValue4[1];
          /** load array for external plotting of spiral band */
          /** SpiralBandPoints_Global[0][TemporaryCounter]=SearchGuessLatitude; */
          /**SpiralBandPoints_Global[1][TemporaryCounter]=SearchGuessLongitude; */
-         TemporaryCounter++;
       }
 
       return new double[] { (double)SpiralArcDistance, SpiralArcLatitude, SpiralArcLongitude };

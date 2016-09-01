@@ -32,8 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-@SuppressWarnings("unused")
-
 public class Forecasts {
 
    private static double ForecastLatitudes[] = new double[10];;
@@ -48,7 +46,6 @@ public class Forecasts {
    public static double[] ReadForecasts(String ForecastFileName, int ForecastFileType, double ThresholdTime) throws IOException
    {
       String delims = "[, ]+";
-      String delims2 = "[ ]+";
 
       double ReturnLatitudeInterpolation = -999.5;
       double ReturnLongitudeInterpolation = -999.5;
@@ -56,8 +53,8 @@ public class Forecasts {
       double CurrentDayValue;
       int ReturnFlagValue = -1;
       String TmpStr1;
-      String TmpStr1a,TmpStr2,TmpStr3,TmpStr4,TmpStr5,TmpStr6;
-      String TmpStr7,TmpStr8,TmpStr9,TmpStr10,TmpStr11,TmpStr12;
+      String TmpStr2,TmpStr3,TmpStr4,TmpStr5,TmpStr6;
+      String TmpStr7,TmpStr8,TmpStr9,TmpStr12;
       int WindVal,YearIntVal,MonthIntVal,DayIntVal,HMSTimeIntVal,FcstTimeIntVal,JulianDayIntVal,FcstTimeIntValPrev;
       int LocVar1,LocVar2;
       int DayIntValXX,MonthIntValXX,YearIntValXX,JulianDayIntValXX;
@@ -97,8 +94,6 @@ public class Forecasts {
             TmpStr7 = tokens[6];
             TmpStr8 = tokens[7];
             TmpStr9 = tokens[8];
-            TmpStr10 = tokens[9];
-            TmpStr11 = tokens[10];
             TmpStr12 = tokens[11];
             WindVal=0;
             if((TmpStr12.length()>1)&&(TmpStr12.matches("\\d+"))) {
@@ -189,10 +184,8 @@ public class Forecasts {
                      TmpStr4 = tokens[3+iadd];
                      TmpStr5 = tokens[4+iadd];
                      TmpStr6 = tokens[5+iadd];
-                     TmpStr1a = "**"; 
                   } else {
                      TmpStr1 = tokens[0+iadd];
-                     TmpStr1a = tokens[1+iadd];
                      TmpStr2 = tokens[2+iadd];
                      TmpStr3 = tokens[3+iadd];
                      TmpStr4 = tokens[4+iadd];
@@ -655,7 +648,6 @@ public class Forecasts {
          }
       } else if(ForecastFileType==9) {
          /* HURDAT - best track file input */
-         int LastDateValueInt = 1;
          while (in.hasNextLine()) {
             String forecastRec = in.nextLine();
             String[] tokens = forecastRec.split(delims);

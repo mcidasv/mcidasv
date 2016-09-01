@@ -31,7 +31,7 @@ package edu.wisc.ssec.mcidasv.adt;
 import java.io.File;
 import java.io.IOException;
 
-@SuppressWarnings({"static-access", "unused"})
+@SuppressWarnings({"static-access"})
 
 public class Main {
 
@@ -98,7 +98,6 @@ public class Main {
       double[] AutoMode2Return = null;
       double InputLatitude = Env.SelectedLatitude;
       double InputLongitude = Env.SelectedLongitude;
-      boolean OverrideCenter = Env.OverCenterTF;
       try {
           AutoMode2Return = Auto.AutoMode2(InputLatitude,InputLongitude);
       }
@@ -124,20 +123,12 @@ public class Main {
    public String RunADTAnalysis( boolean RunFullAnalysis, String InputHistoryFile ) throws IOException {
        
       String BulletinOutput = null;
-      String HistoryListOutput = null;
-      int aaa;
       int HistoryFileRecords;
-      int RetIntValue;
-      int RetIntValue2;
-      int RetErr;
 
       History CurrentHistory = new History();
-      Topo Topo = new Topo();
       Scene SceneType = new Scene();
       Intensity Intensity = new Intensity();
       Output Output = new Output();
-      Forecasts Forecast = new Forecasts();
-      Functions Functions = new Functions();
 
       HistoryFileName = InputHistoryFile;
 
@@ -165,10 +156,9 @@ public class Main {
       /** read topography file at center position */
       double PositionLatitude = History.IRCurrentRecord.latitude;
       double PositionLongitude = History.IRCurrentRecord.longitude;
-      String TopoFilePath = System.getenv("ODTTOPO");
       String topoPath = new File(".").getCanonicalPath();
       System.err.println("topoPath: " + topoPath);
-      String TopoFileName = topoPath + "/edu/wisc/ssec/mcidasv/data/hydra/resources/digelev_hires_le.map";
+      String TopoFileName = topoPath + "/edu/wisc/ssec/mcidasv/resources/digelev_hires_le.map";
 
       int TopographyFlag = 0;
       System.out.printf("TOPO Info : File=%s Lat=%f Lon=%f\n",TopoFileName,PositionLatitude,PositionLongitude);

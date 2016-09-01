@@ -41,8 +41,6 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.StringUtil;
 import visad.FlatField;
 
-@SuppressWarnings("unused")
-
 public class ReadIRImage {
 
     private static final Logger logger = LoggerFactory.getLogger(ReadIRImage.class);
@@ -94,8 +92,6 @@ public class ReadIRImage {
                 GridUtil.Grid2D g2d = null;
                 float[][] temps = null;
                 float[][][] satimage = null;
-                float[][] lons = null;
-                float[][] lats = null;
                 int numx = 200;
                 int numy = 200;
                 float[][] LocalLatitude = new float[200][200];
@@ -104,8 +100,6 @@ public class ReadIRImage {
 
                 try {
                         g2d = GridUtil.makeGrid2D(satgrid);
-                        lons = g2d.getlons();
-                        lats = g2d.getlats();
 
                 } catch (Exception re) {
                 }
@@ -155,7 +149,6 @@ public class ReadIRImage {
                 History.IRCurrentRecord.sattype = SatelliteID;
                 
                 int RetVal[] = Functions.adt_oceanbasin(Data.IRData_CenterLatitude, Data.IRData_CenterLongitude);
-                int OceanBasinID = RetVal[0];
                 Env.DomainID = RetVal[1];
                 /** System.out.printf("lat=%f lon=%f domainID=%d\n",Data.IRData_CenterLatitude,Data.IRData_CenterLongitude,Env.DomainID); */
          }
@@ -248,10 +241,7 @@ public class ReadIRImage {
           int ii, ip, chan, found;
           double Rad, Teff, tmpdbl;
           float[][] ta = new float[nx][ny];
-          int iret;
           String fp = "/ucar/unidata/data/storm/ImgCoeffs.tbl";
-
-          iret = 0;
 
           for (ii = 0; ii < nx; ii++) {
                   for (int jj = 0; jj < ny; jj++) {
@@ -298,7 +288,6 @@ public class ReadIRImage {
           }
 
           if (found == 0) {
-              iret = -2;
               return null;
           } else {
 

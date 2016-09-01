@@ -80,8 +80,6 @@ class IRHistoryRecord {
   String comment;
 }
 
-@SuppressWarnings("unused")
-
 public class History {
 
    static String[] Rule89_ATCF = { "  ","R8","R9","89" };               /** ATCF Rule 8/9 array */
@@ -205,7 +203,6 @@ public class History {
       boolean UseCKZTF = Env.UseCKZTF;
       boolean Vmax1or10TF = Env.Vmax1or10TF;
       int NumRecsHistory;
-      int RetErr;
         int DateValue;
         int TimeValue;
         double RawTAdj;
@@ -214,8 +211,6 @@ public class History {
         double CI;
         double EyeTemp;
         double CloudTemp;
-        double CloudTemp2;
-        double CloudCWTemp;
         double Latitude;
         double Longitude;
          int SatelliteIDValue;
@@ -303,8 +298,6 @@ public class History {
             CI = HistoryFile[XInc].CI;
             EyeTemp = HistoryFile[XInc].eyet;
             CloudTemp = HistoryFile[XInc].cloudt;
-            CloudTemp2 = HistoryFile[XInc].cloudt2;
-            CloudCWTemp = HistoryFile[XInc].cwcloudt;
             Latitude = HistoryFile[XInc].latitude;
             Longitude = HistoryFile[XInc].longitude;
             SatelliteIDValue = HistoryFile[XInc].sattype;
@@ -331,8 +324,6 @@ public class History {
             CI = IRCurrentRecord.CI;
             EyeTemp = IRCurrentRecord.eyet;
             CloudTemp = IRCurrentRecord.cloudt;
-            CloudTemp2 = IRCurrentRecord.cloudt2;
-            CloudCWTemp = IRCurrentRecord.cwcloudt;
             Latitude = IRCurrentRecord.latitude;
             Longitude = IRCurrentRecord.longitude;
             SatelliteIDValue = IRCurrentRecord.sattype;
@@ -436,7 +427,6 @@ public class History {
         } else {
            /** ATCF format listing */
            int RawTFlag_ATCF = OutputFormatTypeID/1000;
-           int FinalTFlag_ATCF = (OutputFormatTypeID-(RawTFlag_ATCF*1000))/100;
            int[] ReturnValues = Functions.adt_yddmy(DateValue);
            int MonthValue = ReturnValues[0];
            int DayValue = ReturnValues[1];
@@ -447,8 +437,6 @@ public class History {
            String EWString_ATCF = (Longitude>0.0) ? String.format("%s","W") : String.format("%s","E");
            String LatitudeString = String.format("%4d%1s",(int)(Math.abs(Latitude)*100),NSString_ATCF);
            String LongitudeString = String.format("%5d%1s",(int)(Math.abs(Longitude)*100),EWString_ATCF);
-           int RetVal[] = Functions.adt_oceanbasin(Latitude,Longitude);
-           int BasinIDValue = RetVal[0];
    
            int StormIDNum = Integer.parseInt(ATCFStormIDString.substring(0,2));
            char aChar = ATCFStormIDString.charAt(2);
@@ -603,9 +591,8 @@ public class History {
     ** Return  : record number overwritten will be return value
     */
    {
-      int RetErr;
+
       int ModifiedCount = 0;
-      int RecordCount = 0;
       int InsertOverwriteFlag = 0;
       boolean FoundRecordTF = false;
       IRHistoryRecord TemporaryIRCurrentRecord = IRCurrentRecord;
@@ -667,7 +654,6 @@ public class History {
                ModifiedCount++;
             }
             /** nothing yet... keep searching */
-            RecordCount++;
          }
          XInc++;
       }
@@ -777,7 +763,7 @@ public class History {
     **          >=0 : record number modified
     */
    {
-      int RetID;                            /* return ID variable */
+
       int RecordCount = 0;                  /* record counter */
       boolean FoundRecordTF = false;        /* found recurd logical */
     
@@ -836,8 +822,6 @@ public class History {
          String DateString = Functions.adt_julian2cmonth(RecDate);
          
          int MWRecDate = HistoryFile[XInc].mwdate;
-         int MWRecTime = HistoryFile[XInc].mwtime;
-         double MWHistoryRecTime = Functions.calctime(MWRecDate,MWRecTime);
          String MWDateString = Functions.adt_julian2cmonth(MWRecDate);
 
          double JulianDate=HistoryRecTime-(double)((int)HistoryRecTime/1000)*1000.0;

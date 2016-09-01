@@ -69,11 +69,9 @@ class TiffVars {
         int out_elems;
 };
 
-@SuppressWarnings("unused")
-
 public class Auto {
 
-   private static int[][] MoatMaskFlagField = new int[200][200];;
+   private static int[][] MoatMaskFlagField = new int[200][200];
    private static int[][] BlackWhiteFieldArray = new int[200][200];
    private static double[][] IRData_Remap_Latitude = new double[200][200];
    private static double[][] IRData_Remap_Longitude = new double[200][200];
@@ -90,10 +88,7 @@ public class Auto {
    private static double[] ElementCoordinateArray = new double[5000];  /** I don't know this size for sure */
 
    private static Remap remap_vars = new Remap();
-   private static TiffHeader tiff_header = new TiffHeader();
-   private static TiffRecord tiff_record = new TiffRecord();
    private static TiffVars tiff_vars = new TiffVars();
-   private static DisVars dis_vars = new DisVars();
 
    private static double PI = 3.14159265358979;
    private static double RING_WIDTH=4.0;
@@ -130,8 +125,6 @@ public class Auto {
        **             0 : Subroutine Error
        */
 
-      int XInc,YInc;
-      int PositionMethodID = -1;
       int RetID = 0;
       int PositioningMethodID = 0;
       int InterpolatedReturnFlag = 0;
@@ -358,7 +351,6 @@ public class Auto {
                                                   FinalAutoScore,FinalAutoFixMethod);
       double FinalLatitude = LocationReturn[0];
       double FinalLongitude = LocationReturn[1];
-      double FinalScoreValue = LocationReturn[2];
       PositioningMethodID = (int)LocationReturn[3];
     
       if(FinalLongitude>180.0) {
@@ -665,7 +657,6 @@ public class Auto {
       int RingWidthLocal = (int)RING_WIDTH;
       int XLocation = 0;
       int YLocation = 0;
-      int MaximumRadiusSize = 0;
       int CircleFilterXLocation = 0;
       int CircleFilterYLocation = 0;
 
@@ -884,7 +875,6 @@ public class Auto {
                      DotScoreMaximum = DotScoreFinal;
                      XLocation = XInc;
                      YLocation = YInc;
-                     MaximumRadiusSize = CircleFilterRadii;
                      /** System.out.printf("   xloc=%d yloc=%d MaxRadSize=%d",XInc,YInc,MaximumRadiusSize); */
                   }
                   /** System.out.printf("\n"); */
@@ -1263,10 +1253,9 @@ public class Auto {
     ** Return  : Error flag = 0
     */
 
-      int XInc,YInc;
+      int YInc;
       int FinalLocationSelectionMethodReturn = 0;
       int NumberOfSpirals = (int)SpiralCenterAnalysisField[0][0]+1;
-      int NumberOfRings = (int)RingScoreAnalysisField[0][0]+1;
 
       double[] DistancePenaltyArray = new double[NumberOfSpirals];
       double[] InitialSpiralScoreArray = new double[NumberOfSpirals];
@@ -1279,7 +1268,6 @@ public class Auto {
       double FinalLongitudeReturn = -999.99;
       double FinalScoreReturn = 0.0;
       double DistanceValue;
-      double AngleValue;
       double MaximumForecastErrorDegree=1.0; /* max dist between fcst and final */
       double ExpectedMaximumForecastErrorDegree=MaximumForecastErrorDegree; /* expected error */
       double MaximumAllowableDisplacement=ExpectedMaximumForecastErrorDegree*1.15; /* max displacement */
@@ -1289,25 +1277,20 @@ public class Auto {
       double PROXIMITYTHRESH=0.25;           /* RF bonus value threshold dist deg */
       double COMBOSCORETHRESH=15.0;          /* combination score threshold value */
       double KMperDegree=111.0;              /* convert distance in km to degrees */
-      double SpiralCenterIndexMaximum = -999.99;;
-      double SpiralCenterMaximumLatitude = -99.99;;
-      double SpiralCenterMaximumLongitude = -999.99;;
-      double SpiralMaximumDistanceFromGuess = 999.99;;
-      double RingDistanceFromGuess = 999.99;;
-      double RingFitMaximumLatitude = -99.99;;
-      double RingFitMaximumLongitude = -999.99;;
-      double IntermediateRingScore = 0.0;;
-      double FinalSpiralScoreValue = 0.0;;
-      double MaximumSpiralScoreValue = -99.99;;
-      double MaximumSpiralScoreLatitude = -99.99;;
-      double MaximumSpiralScoreLongitude = -999.99;;
+      double SpiralCenterIndexMaximum = -999.99;
+      double SpiralCenterMaximumLatitude = -99.99;
+      double SpiralCenterMaximumLongitude = -999.99;
+      double SpiralMaximumDistanceFromGuess = 999.99;
+      double IntermediateRingScore = 0.0;
+      double FinalSpiralScoreValue = 0.0;
+      double MaximumSpiralScoreValue = -99.99;
+      double MaximumSpiralScoreLatitude = -99.99;
+      double MaximumSpiralScoreLongitude = -999.99;
 
       /** Spiral Score Calculations */
       double LocalValue[] = Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
                             SpiralCenterLatitude,SpiralCenterLongitude,1);
       DistanceValue = LocalValue[0];
-      AngleValue = LocalValue[1];
-      double SpiralCenterDistanceFromGuess = DistanceValue/KMperDegree;
       double InitialSpiralScoreArrayScore = SpiralCenterScoreValue;
 
       for(YInc=1;YInc<NumberOfSpirals;YInc++) {
@@ -1315,14 +1298,12 @@ public class Auto {
                                                              SpiralCenterAnalysisField[YInc][1],
                                                              SpiralCenterAnalysisField[YInc][2],1);
          DistanceValue = LocalValue1[0];
-         AngleValue = LocalValue1[1];
          DistancePenaltyArray[YInc] = -DISTPENALTYWEIGHT*(DistanceValue/KMperDegree);
          InitialSpiralScoreArray[YInc] = SPIRALWEIGHT*(SpiralCenterAnalysisField[YInc][0]-InitialSpiralScoreArrayScore);
          double LocalValue2[] = Functions.distance_angle(SpiralCenterLatitude,SpiralCenterLongitude,
                                                              SpiralCenterAnalysisField[YInc][1],
                                                              SpiralCenterAnalysisField[YInc][2],1);
          DistanceValue = LocalValue2[0];
-         AngleValue = LocalValue2[1];
          DistanceFromSpiralCenterArray[YInc] = DistanceValue/KMperDegree;
          if(DistanceFromSpiralCenterArray[YInc]<=PROXIMITYTHRESH) {
             DistanceBonusArray[YInc] = PROXIMITYBONUS;
@@ -1353,7 +1334,6 @@ public class Auto {
       double LocalValue3[] = Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
                                                           SpiralCenterMaximumLatitude,SpiralCenterMaximumLongitude,1);
       DistanceValue = LocalValue3[0];
-      AngleValue = LocalValue3[1];
       SpiralMaximumDistanceFromGuess = DistanceValue/KMperDegree;
       /**
        ** System.out.printf("SpiralMaximumDistanceFromGuess=%f MaximumAllowableDisplacement=%f\n",
@@ -1364,10 +1344,6 @@ public class Auto {
          double LocalValue4[] = Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
                                                              RingFitLatitude,RingFitLongitude,1);
          DistanceValue = LocalValue4[0];
-         AngleValue = LocalValue4[1];
-         RingDistanceFromGuess = DistanceValue/KMperDegree;
-         RingFitMaximumLatitude = RingFitLatitude;
-         RingFitMaximumLongitude = RingFitLongitude;
          for(YInc=1;YInc<NumberOfSpirals;YInc++) {
             double[] RingScoreReturn = FindRingScore(SpiralCenterAnalysisField[YInc][1],
                                                      SpiralCenterAnalysisField[YInc][2],
@@ -1489,7 +1465,6 @@ public class Auto {
       int CurTime = History.IRCurrentRecord.time;
       int CurCloudScene = History.IRCurrentRecord.cloudscene;
       int CurEyeScene = History.IRCurrentRecord.eyescene;
-      int CurLand = History.IRCurrentRecord.land;
       double CurrentTime = Functions.calctime(CurDate,CurTime);
 
       int NumRecsHistory = History.HistoryNumberOfRecords();
@@ -1612,7 +1587,6 @@ public class Auto {
        ** Return  : 0
        */
 
-      int XInc,YInc;
       int NumberOfCorners = 0;
       int LineSplineValue = 3;
       int ElementSplineValue = LineSplineValue;
@@ -1639,7 +1613,7 @@ public class Auto {
       /** System.out.printf("after corners\n"); */
 
       if((ElementSplineValue>1)||(LineSplineValue>1)) {
-         int RetErr = DoMap(NumberOfCorners,LineSplineValue,ElementSplineValue);
+         DoMap(NumberOfCorners,LineSplineValue,ElementSplineValue);
       }
 
    }
@@ -1821,8 +1795,6 @@ public class Auto {
     ** Return  : None
     */
 
-      int SourceLineValue;                  /* source array line position value */
-      int SourceElementValue;               /* source array element position value*/
       double DestinationLatitude;           /* dest array line position value */
       double DestinationLongitude;          /* dest array element position value */
     
@@ -1854,7 +1826,7 @@ public class Auto {
     */
 
       int RetErr;
-      int XInc,YInc;
+      int XInc;
       int IndexValue;
       int YLineValueReturn;
       int XElementValueReturn;
@@ -1920,7 +1892,7 @@ public class Auto {
          double LocalValue1[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
                                     CornerLatitudeArray[0],CornerLongitudeArray[0],1);
          double DistanceValue = LocalValue1[0];
-         double AngleValue = LocalValue1[1];
+
          /*
          ** System.out.printf("distance : LatitudeInput=%f LongitudeInput=%f",
          **                   " CornerLatitudeArray0=%f CornerLongitudeArray0=%f",
@@ -2021,7 +1993,6 @@ public class Auto {
       int SourceElement = 0;
       int SourceOffsetValue;
       int MaximumSourceLine;
-      int MaximumSourceElement;
 
       double LineValueA;
       double LineValueB;

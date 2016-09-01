@@ -31,8 +31,6 @@ package edu.wisc.ssec.mcidasv.adt;
 import java.lang.Math;
 import java.lang.String;
 
-@SuppressWarnings("unused")
-
 public class MWAdj {
 
    public MWAdj() {
@@ -42,7 +40,6 @@ public class MWAdj {
                                                double IntensityEstimateValueInput) {
 
       int MWScoreApplicationFlag = 0;
-      int Rule9Flag = 0;
       int XInc;
       int NumRecsHistory = History.HistoryNumberOfRecords();
       int RecDate,RecTime,RecLand;
@@ -59,7 +56,6 @@ public class MWAdj {
       double MWIntensityTnoValue1 = 4.3;
       double MWIntensityTnoValue1a = 4.8;
       double MWIntensityTnoValue2 = 5.0;
-      double PreviousHistoryTnoValue = 0.0;
       double RecMWScore;
       double Traw;
       double PreviousMWScoreValue;
@@ -72,7 +68,6 @@ public class MWAdj {
       double FirstMWadjTime = 0.0;
       double FirstMWadjTimePlus12hr = 0.0;
       double LastValidMWadjTime = 0.0;
-      double LastValidMWadjTimePlus12 = 0.0;
       double LastValidMWadjTimePlus6 = 0.0;
       double HistoryCIValue = 0.0;
       double HistoryCIValueMinus12hr= 0.0;
@@ -466,7 +461,7 @@ public class MWAdj {
                      System.out.printf("Time=%f  previous MW record:  lastscore=%f lasteye=%d  rule8=%d\n",
                                         HistoryRecTime,LastMWScoreValue,LastEyeSceneValue,Rule8Flag);
                   }
-                  PreviousHistoryTnoValue = History.HistoryFile[XInc].Tfinal;
+
                   MWAdjCurrentONTF = false;
                   if((Rule8Flag>=31)&&(Rule8Flag<=33)) {
                      MWAdjCurrentONTF = true;
@@ -485,7 +480,6 @@ public class MWAdj {
                   if((Rule8Flag>=30)&&(Rule8Flag<=32)) {
                      LastValidMWCIValue = History.HistoryFile[XInc].CI;
                      LastValidMWadjTime = HistoryRecTime;
-                     LastValidMWadjTimePlus12 = HistoryRecTime+0.5;
                      LastValidMWadjTimePlus6 = HistoryRecTime+0.25;
                   }
                }
@@ -800,7 +794,6 @@ public class MWAdj {
                         History.HistoryFile[XInc].Tfinal = LastValidMWCIValue;
                         History.HistoryFile[XInc].CI = LastValidMWCIValue;
                         LastValidMWadjTime = HistoryRecTime;
-                        LastValidMWadjTimePlus12 = LastValidMWadjTime+0.5;
                         LastValidMWadjTimePlus6 = LastValidMWadjTime+0.25;
                         FirstHistoryCIValue = History.HistoryFile[XInc].CI;
                         FirstMWadjTime = HistoryRecTime;
@@ -826,7 +819,6 @@ public class MWAdj {
                            History.HistoryFile[XInc].CI = NewIntensityEstScore;
                         }
                         LastValidMWadjTime = HistoryRecTime;
-                        LastValidMWadjTimePlus12 = LastValidMWadjTime+0.5;
                         LastValidMWadjTimePlus6 = LastValidMWadjTime+0.25;
                         break;
                      case 32:
@@ -860,7 +852,6 @@ public class MWAdj {
                               History.HistoryFile[XInc].CI = NewIntensityEstScore;
                               LastValidMWCIValue = History.HistoryFile[XInc].CI;
                               LastValidMWadjTime = HistoryRecTime;
-                              LastValidMWadjTimePlus12 = LastValidMWadjTime+0.5;
                               LastValidMWadjTimePlus6 = LastValidMWadjTime+0.25;
                            } else {
                               if(Env.DEBUG==100) {
@@ -883,7 +874,6 @@ public class MWAdj {
                                  History.HistoryFile[XInc].CI = LastValidMWCIValue;
                                  LastValidMWCIValue = History.HistoryFile[XInc].CI;
                                  LastValidMWadjTime = HistoryRecTime;
-                                 LastValidMWadjTimePlus12 = LastValidMWadjTime+0.5;
                                  LastValidMWadjTimePlus6 = LastValidMWadjTime+0.25;
                               } else {
                                  if(Env.DEBUG==100) {
@@ -919,7 +909,6 @@ public class MWAdj {
                               }
                               History.HistoryFile[XInc].rule8 = 32; /** Turn back ON */
                               LastValidMWadjTime = HistoryRecTime;
-                              LastValidMWadjTimePlus12 = LastValidMWadjTime+0.5;
                               LastValidMWadjTimePlus6 = LastValidMWadjTime+0.25;
                            } else {
                               if(Env.DEBUG==100) {
@@ -951,7 +940,6 @@ public class MWAdj {
                            }
                            History.HistoryFile[XInc].rule8 = 31;
                            LastValidMWadjTime = HistoryRecTime;
-                           LastValidMWadjTimePlus12 = LastValidMWadjTime+0.5;
                            LastValidMWadjTimePlus6 = LastValidMWadjTime+0.25;
                            History.HistoryFile[XInc].Traw = LastValidMWCIValue;
                            History.HistoryFile[XInc].Tfinal = LastValidMWCIValue;
