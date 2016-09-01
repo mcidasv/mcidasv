@@ -28,36 +28,79 @@
 
 package edu.wisc.ssec.mcidasv.adt;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.log;
+import static java.lang.Math.max;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.pow;
+
+
 import java.io.IOException;
 
 class Remap {
-        int in_bfw;             /** Block size (bytes) input file */
-        int out_bfw;            /** Block size (bytes) output file */
-        int nspl;               /** Number of splines/line */
-        int nspe;               /** Number of splines/elem */
-        int slb;                /** Source blocksize */
-        int dlb;                /** Dest blocksize */
-        int ncl;                /** Number of corners in line */
-        int nce;                /** Number of corners in elem */
-};
+   /** Block size (bytes) input file */
+   int in_bfw;
+   
+   /** Block size (bytes) output file */
+   int out_bfw;
+   
+   /** Number of splines/line */
+   int nspl;
+   
+   /** Number of splines/elem */
+   int nspe;
+   
+   /** Source blocksize */
+   int slb;
+   
+   /** Dest blocksize */
+   int dlb;
+   
+   /** Number of corners in line */
+   int ncl;
+   
+   /** Number of corners in elem */
+   int nce;
+}
 
-class TiffHeader {              /** TIFF header */
-        int order;              /** Byte order */
-        int version;            /** Version */
-        int point;              /** Pointer */
-};
+/** TIFF header */
+class TiffHeader {
+   /** Byte order */
+   int order;
+   
+   /** Version */
+   int version;
+   
+   /** Pointer */
+   int point;
+}
 
-class TiffRecord {              /** TIFF directory record */
-        int tag;                /** TIFF tag */
-        int type;               /** Data type */
-        int length;             /** Length */
-        int voff;               /** Pointer or value */
-};
+/**
+ * TIFF directory record.
+ */
+class TiffRecord {
+   /** TIFF tag */
+   int tag;
+   
+   /** Data type */
+   int type;
+   
+   /** Length */
+   int length;
+   
+   /** Pointer or value */
+   int voff;
+}
 
 class DisVars {
-        double xrectl;          /** Output number of lines */
-        double xrecte;          /** Output number of elems */
-};
+   /** Output number of lines */
+   double xrectl;
+   
+   /** Output number of elems */
+   double xrecte;
+}
 
 class TiffVars {
         int nbits;
@@ -67,63 +110,86 @@ class TiffVars {
         int in_elems;
         int out_lines;
         int out_elems;
-};
+}
 
 public class Auto {
 
    private static int[][] MoatMaskFlagField = new int[200][200];
+   
    private static int[][] BlackWhiteFieldArray = new int[200][200];
+   
    private static double[][] IRData_Remap_Latitude = new double[200][200];
    private static double[][] IRData_Remap_Longitude = new double[200][200];
+   
    private static double[][] IRData_Remap_Temperature = new double[200][200];
+   
    private static int IRData_Remap_NumberRows;
+   
    private static int IRData_Remap_NumberColumns;
+   
    private static double[][] NSTempGradientArray = new double[200][200];
+   
    private static double[][] EWTempGradientArray = new double[200][200];
+   
    private static double[][] SpiralCenterAnalysisField = new double[50000][3];
+   
    private static double[][] RingScoreAnalysisField = new double[750000][3];
+   
    private static int[][] CircleFilterRowArray = new int[100][2000];
+   
    private static int[][] CircleFilterColumnArray = new int[100][2000];
-   private static double[] LineCoordinateArray = new double[5000];  /** I don't know this size for sure */
-   private static double[] ElementCoordinateArray = new double[5000];  /** I don't know this size for sure */
+   
+   /* I don't know this size for sure */
+   /** Array containing line coordinates */
+   private static double[] LineCoordinateArray = new double[5000];
+   
+   /* I don't know this size for sure */
+   /** Array containing element coordinates */
+   private static double[] ElementCoordinateArray = new double[5000];
 
    private static Remap remap_vars = new Remap();
+   
    private static TiffVars tiff_vars = new TiffVars();
-
-   private static double PI = 3.14159265358979;
-   private static double RING_WIDTH=4.0;
-
-   private static int MINBFW = 500000;    /** Minimum block size (bytes) for domap */
-   private static int MINBLKSIZ = 10;     /** Minimum block size (lines) */
+   
+   private static double RING_WIDTH = 4.0;
+   
+   /** Minimum block size (bytes) for domap */
+   private static int MINBFW = 500000;
+   
+   /** Minimum block size (lines) */
+   private static int MINBLKSIZ = 10;
 
    public Auto() {
      IRData_Remap_NumberRows = 0;
      IRData_Remap_NumberColumns = 0;
    }
-
+   
+   /**
+    * Determine storm position at time CurrentTime using NHC/JTWC
+    * forecast discussion products.
+    *
+    * Time and location information
+    * from these products are then interpolated to time in question
+    * to derive a estimated storm position.  If position estimation
+    * cannot be calculated, a lat/lon position of -99.5/-999.5 will
+    * be returned.
+    * Inputs  : None
+    * Outputs : Latitude_Return            - estimated latitude position
+    *           Longitude_Return           - estimated longitude position
+    *           PositioningMethodID_Return - method used to derive storm location
+    * Return  : -43 : Error w/ forecast file open and BAD extrapolation
+    *           -44 : Invalid forecast file and BAD extrapolation
+    *           -45 : Error w/ forecast file read and BAD extrapolation
+    *           -46 : Error w/ forecast interpolation and BAD extrapolation
+    *            42 : GOOD INTERPOLATION
+    *            43 : Error w/ forecast file open but GOOD EXTRAPOLATION
+    *            44 : Invalid forecast file but GOOD extrapolation
+    *            45 : Error w/ forecast file read but GOOD extrapolation
+    *            46 : Error w/ forecast interpolation but GOOD EXTRAPOLATION
+    *             0 : Subroutine Error
+    */
    public double[] AutoMode1(String ForecastFile, int ForecastFileType) throws IOException {
-      /**
-       ** Determine storm position at time CurrentTime using NHC/JTWC
-       ** forecast discussion products.  Time and location information
-       ** from these products are then interpolated to time in question
-       ** to derive a estimated storm position.  If position estimation
-       ** cannot be calculated, a lat/lon position of -99.5/-999.5 will
-       ** be returned.
-       ** Inputs  : None
-       ** Outputs : Latitude_Return            - estimated latitude position
-       **           Longitude_Return           - estimated longitude position
-       **           PositioningMethodID_Return - method used to derive storm location
-       ** Return  : -43 : Error w/ forecast file open and BAD extrapolation
-       **           -44 : Invalid forecast file and BAD extrapolation
-       **           -45 : Error w/ forecast file read and BAD extrapolation
-       **           -46 : Error w/ forecast interpolation and BAD extrapolation
-       **            42 : GOOD INTERPOLATION
-       **            43 : Error w/ forecast file open but GOOD EXTRAPOLATION
-       **            44 : Invalid forecast file but GOOD extrapolation
-       **            45 : Error w/ forecast file read but GOOD extrapolation
-       **            46 : Error w/ forecast interpolation but GOOD EXTRAPOLATION
-       **             0 : Subroutine Error
-       */
+
 
       int RetID = 0;
       int PositioningMethodID = 0;
@@ -133,84 +199,97 @@ public class Auto {
       double InterpolatedIntensity = -99.99;
       boolean UseExtrapPositionTF = false;
 
-      /** Read Forecast File */
+      /* Read Forecast File */
       double ThresholdTime = 24.0;
       double[] ForecastFileOutput = Forecasts.ReadForecasts(ForecastFile,ForecastFileType,ThresholdTime);
       InterpolatedReturnFlag = (int)ForecastFileOutput[0];
       InterpolatedLatitude = ForecastFileOutput[1];
       InterpolatedLongitude = ForecastFileOutput[2];
       InterpolatedIntensity = ForecastFileOutput[3];
-      /** History.IRCurrentRecord.latitude = ForecastLatitude; */
-      /** History.IRCurrentRecord.longitude = ForecastLongitude; */
+      /* History.IRCurrentRecord.latitude = ForecastLatitude; */
+      /* History.IRCurrentRecord.longitude = ForecastLongitude; */
 
-      /** System.out.printf("InterpolatedReturnFlag=%d\n",InterpolatedReturnFlag); */
+      /* System.out.printf("InterpolatedReturnFlag=%d\n",InterpolatedReturnFlag); */
       if(InterpolatedReturnFlag!=0) {
          PositioningMethodID = 6;
          UseExtrapPositionTF = true;
-         /**
-          ** -1 will give 45=invalid interpretation
-          ** -2 will give 44=invalid file type
-          ** -4 will give 42=error closing file
-          ** -5 will give 41=error opening file
+         /*
+          * -1 will give 45=invalid interpretation
+          * -2 will give 44=invalid file type
+          * -4 will give 42=error closing file
+          * -5 will give 41=error opening file
           */
          RetID = 46+InterpolatedReturnFlag;
       } else {
-         /** Good interpolated values... use 'em */
+         /* Good interpolated values... use 'em */
          PositioningMethodID = 1;
          UseExtrapPositionTF = false;
          RetID = 43;
       }
 
-      /**
-       ** try to extrapolate storm location from previous
-       **  storm locations in history file
+      /*
+       * try to extrapolate storm location from previous
+       *  storm locations in history file
        */
       if(UseExtrapPositionTF) {
-         /** call slopecal to get y-intercept values for lat/lon values */
+         /* call slopecal to get y-intercept values for lat/lon values */
          InterpolatedLatitude = Functions.adt_slopecal(12.0,3);
          InterpolatedLongitude = Functions.adt_slopecal(12.0,4);
-         if((Math.abs(InterpolatedLatitude)>90.0)||
-            (Math.abs(InterpolatedLongitude)>180.0)) {
-            /** invalid interp and extrap... negative error code returns */
+         if((abs(InterpolatedLatitude)>90.0)||
+            (abs(InterpolatedLongitude)>180.0)) {
+            /* invalid interp and extrap... negative error code returns */
             PositioningMethodID = 0;
             RetID = -1*RetID;
          } else {
-            /** invalid interp but good extrap... positive error code returns */
+            /* invalid interp but good extrap... positive error code returns */
             PositioningMethodID = 6;
             RetID = 46;
          }
       }
 
-      return new double[] {(double)RetID, InterpolatedLatitude, InterpolatedLongitude, InterpolatedIntensity, (double)PositioningMethodID };
-
+      return new double[] {
+         (double)RetID,
+         InterpolatedLatitude,
+         InterpolatedLongitude,
+         InterpolatedIntensity,
+         (double)PositioningMethodID
+      };
    }
-
-   public static double[] AutoMode2(double InputLatitudePosition, double InputLongitudePosition) throws IOException {
-      /**
-       ** Additional automatic positioning of storm center location
-       ** using official forecasts from NHC or JTWC as input.  Storm
-       ** location will be estimated using spiral fitting and ring fitting routines
-       ** derived by Tony Wimmers in his MatLab routines (which have been converted).
-       ** The final position will be determined utilizing
-       ** empirically defined confidence factors for each method.
-       ** The final storm position will be returned along with a
-       ** position determination flag.
-       ** Inputs  : InputLatitudePosition      - input storm center latitude position
-       **           InputLongitudePosition     - input storm center longitude position
-       ** Outputs : Latitude_Return            - final storm center latitude position
-       **           Longitude_Return           - final storm center longitude position
-       **           PositioningMethodID_Return - method used to derive storm location
-       **                      0-error
-       **                      1-interpolation of operational forecast
-       **                      2-Laplacian analysis (not used anymore)
-       **                      3-Warm Spot location
-       **                      4-10^ log spiral analysis
-       **                      5-Combo method of spiral and ring analyses
-       **                      6-linear extrapolation from prior locations
-       ** Return  : Error flag = 0
-       */
-
-      int XInc,YInc;
+   
+   /**
+    * Additional automatic positioning of storm center location using
+    * official forecasts from NHC or JTWC as input.
+    *
+    * Storm location will be estimated using spiral fitting and ring fitting
+    * routines derived by Tony Wimmers in his MatLab routines (which have
+    * been converted).
+    *
+    * The final position will be determined utilizing
+    * empirically defined confidence factors for each method.
+    * The final storm position will be returned along with a
+    * position determination flag.
+    *
+    * @param InputLatitudePosition Storm center latitude.
+    * @param InputLongitudePosition Storm center longitude.
+    *
+    * Outputs : Latitude_Return            - final storm center latitude position
+    *           Longitude_Return           - final storm center longitude position
+    *           PositioningMethodID_Return - method used to derive storm location
+    *                      0-error
+    *                      1-interpolation of operational forecast
+    *                      2-Laplacian analysis (not used anymore)
+    *                      3-Warm Spot location
+    *                      4-10^ log spiral analysis
+    *                      5-Combo method of spiral and ring analyses
+    *                      6-linear extrapolation from prior locations
+    * Return  : Error flag = 0
+    */
+   public static double[] AutoMode2(double InputLatitudePosition,
+                                    double InputLongitudePosition)
+       throws IOException
+   {
+      int XInc;
+      int YInc;
       double SpiralCenterLatitude = -99.9;
       double SpiralCenterLongitude = -99.9;
       double SpiralCenterScore = -1.0;
@@ -242,17 +321,17 @@ public class Auto {
          double LongitudeIncrement = Data.IRData_Longitude[0][0] - Data.IRData_Longitude[0][1];
          double LatitudeIncrement = Data.IRData_Latitude[0][0] - Data.IRData_Latitude[1][1];
 
-         if(Math.abs(LongitudeIncrement-LatitudeIncrement)<0.001) {
+         if(abs(LongitudeIncrement-LatitudeIncrement)<0.001) {
             System.out.printf("already remapped\n");
-            /** data is already remapped */
-            /** crosses dateline check */
+            /* data is already remapped */
+            /* crosses dateline check */
             int XSizeMax = Data.IRData_NumberColumns-1;
             int YSizeMax = Data.IRData_NumberRows-1;
             double NWCornerLongitude = Data.IRData_Longitude[0][0];
             double NECornerLongitude = Data.IRData_Longitude[0][XSizeMax];
             double SWCornerLongitude = Data.IRData_Longitude[YSizeMax][0];
             double SECornerLongitude = Data.IRData_Longitude[YSizeMax][XSizeMax];
-            /** if((NWCornerLongitude<NECornerLongitude)||(SWCornerLongitude<SECornerLongitude)) {
+            /* if((NWCornerLongitude<NECornerLongitude)||(SWCornerLongitude<SECornerLongitude)) {
                DatelineCrossTF = true;
             } */
             if((NWCornerLongitude>NECornerLongitude)||(SWCornerLongitude>SECornerLongitude)) {
@@ -263,7 +342,7 @@ public class Auto {
             for(YInc=0; YInc< Data.IRData_NumberRows; YInc++) {
                for(XInc=0; XInc< Data.IRData_NumberColumns; XInc++) {
                   IRData_Remap_Longitude[YInc][XInc] = Data.IRData_Longitude[YInc][XInc];
-                  /** check for dateline crossing */
+                  /* check for dateline crossing */
                   if (DatelineCrossTF&&(IRData_Remap_Longitude[YInc][XInc]<0.0)) {
                      IRData_Remap_Latitude[YInc][XInc] = Data.IRData_Latitude[YInc][XInc]+360.0;
                   }
@@ -274,47 +353,47 @@ public class Auto {
             IRData_Remap_NumberColumns = Data.IRData_NumberColumns;
             IRData_Remap_NumberRows = Data.IRData_NumberRows;
          } else {
-            /** remap data to rectilinear projection */
+            /* remap data to rectilinear projection */
             RemapData( );
             System.out.printf("COMPLETED REMAPPING DATA\n");
          }
     
-         /** perform spiral analysis to determine storm center location */
+         /* perform spiral analysis to determine storm center location */
          double SpiralReturn[] = SpiralCenterLowRes(InputLatitudePosition,InputLongitudePosition);
          SpiralCenterLatitude = SpiralReturn[0];
          SpiralCenterLongitude = SpiralReturn[1];
          SpiralCenterScore = SpiralReturn[2];
          
-         /** System.out.printf("Spiral Score : lat=%f  lon=%f  score=%f\n",SpiralCenterLatitude,
-          **                  SpiralCenterLongitude,SpiralCenterScore);
+         /* System.out.printf("Spiral Score : lat=%f  lon=%f  score=%f\n",SpiralCenterLatitude,
+          *                  SpiralCenterLongitude,SpiralCenterScore);
           */
             
-         /** redefine first guess for ring analysis as input storm location point */
+         /* redefine first guess for ring analysis as input storm location point */
          double RingFitFirstGuessLatitude = SpiralCenterLatitude;
          double RingFitFirstGuessLongitude = SpiralCenterLongitude;
     
-         /** calculate Moat Mask for false eye check */
+         /* calculate Moat Mask for false eye check */
          double MoatMaskTempThreshold = 237.0;
          double MoatMaskMaxRadiusDegree = 0.50;
          MoatMaskCalc(MoatMaskTempThreshold,MoatMaskMaxRadiusDegree,1);
     
-         /** perform ring analysis to determine storm center location */
+         /* perform ring analysis to determine storm center location */
          double RingReturn[] = RingFit(RingFitFirstGuessLatitude,RingFitFirstGuessLongitude);
          RingFitLatitude = RingReturn[0];
          RingFitLongitude = RingReturn[1];
          RingFitScore = RingReturn[2];
          
-         /** System.out.printf("Ring Score   : lat=%f  lon=%f  score=%f \n",
-          **                  RingFitLatitude,RingFitLongitude,RingFitScore);
+         /* System.out.printf("Ring Score   : lat=%f  lon=%f  score=%f \n",
+          *                  RingFitLatitude,RingFitLongitude,RingFitScore);
           */
-         /**
-          ** System.out.printf("fglat=%f fglon=%f  SpiralCenterLatitude=%f SpiralCenterLongitude=%f rglat=%f rglon=%f\n",
-          **                   InputLatitudePosition,InputLongitudePosition,
-          **                   SpiralCenterLatitude,SpiralCenterLongitude,
-          **                   RingFitLatitude,RingFitLongitude);
+         /*
+          * System.out.printf("fglat=%f fglon=%f  SpiralCenterLatitude=%f SpiralCenterLongitude=%f rglat=%f rglon=%f\n",
+          *                   InputLatitudePosition,InputLongitudePosition,
+          *                   SpiralCenterLatitude,SpiralCenterLongitude,
+          *                   RingFitLatitude,RingFitLongitude);
           */
          
-         /** caluculate confidence factor for combined spiral/ring analyses */
+         /* caluculate confidence factor for combined spiral/ring analyses */
          double ScoresReturn[] = CalcScores(InputLatitudePosition,InputLongitudePosition,
                                             SpiralCenterLatitude,SpiralCenterLongitude,SpiralCenterScore,
                                             RingFitLatitude,RingFitLongitude,RingFitScore);
@@ -322,13 +401,13 @@ public class Auto {
          FinalAutoLongitude = ScoresReturn[1];
          FinalAutoScore = ScoresReturn[2];
          FinalAutoFixMethod = (int)ScoresReturn[3];
-         /**
-          ** System.out.printf("SPIRAL CENTER : lat=%f  lon=%f  SCORE=%f  \n",
-          **                    SpiralCenterLatitude,SpiralCenterLongitude,SpiralCenterScore);
-          ** System.out.printf("RING   CENTER : lat=%f  lon=%f  SCORE=%f  \n",
-          **                    RingFitLatitude,RingFitLongitude,RingFitScore);
-          ** System.out.printf("FINAL  CENTER : lat=%f  lon=%f  SCORE=%f  \n",
-          **                    FinalAutoLatitude,FinalAutoLongitude,FinalAutoScore);
+         /*
+          * System.out.printf("SPIRAL CENTER : lat=%f  lon=%f  SCORE=%f  \n",
+          *                    SpiralCenterLatitude,SpiralCenterLongitude,SpiralCenterScore);
+          * System.out.printf("RING   CENTER : lat=%f  lon=%f  SCORE=%f  \n",
+          *                    RingFitLatitude,RingFitLongitude,RingFitScore);
+          * System.out.printf("FINAL  CENTER : lat=%f  lon=%f  SCORE=%f  \n",
+          *                    FinalAutoLatitude,FinalAutoLongitude,FinalAutoScore);
           */
       } else {
          SpiralCenterLatitude = -99.9;
@@ -346,23 +425,27 @@ public class Auto {
       int PositioningMethodID = History.IRCurrentRecord.autopos;
     
       double LocationReturn[] = PickFinalLocation(PositioningMethodID,
-                                                  InputLatitudePosition,InputLongitudePosition,
-                                                  FinalAutoLatitude,FinalAutoLongitude,
-                                                  FinalAutoScore,FinalAutoFixMethod);
+                                                  InputLatitudePosition,
+                                                  InputLongitudePosition,
+                                                  FinalAutoLatitude,
+                                                  FinalAutoLongitude,
+                                                  FinalAutoScore,
+                                                  FinalAutoFixMethod);
+      
       double FinalLatitude = LocationReturn[0];
       double FinalLongitude = LocationReturn[1];
       PositioningMethodID = (int)LocationReturn[3];
     
-      if(FinalLongitude>180.0) {
+      if (FinalLongitude > 180.0) {
          FinalLongitude = FinalLongitude-360.0;
       }
     
-      /** System.out.printf("TAC CENTER    :  lat=%f  lon=%f \n",
+      /* System.out.printf("TAC CENTER    :  lat=%f  lon=%f \n",
                          InputLatitudePosition,InputLongitudePosition); */
-      /** System.out.printf("AUTO CENTER   :  lat=%f  lon=%f  SCORE=%f  METHOD=%d\n",
+      /* System.out.printf("AUTO CENTER   :  lat=%f  lon=%f  SCORE=%f  METHOD=%d\n",
                          FinalAutoLatitude,FinalAutoLongitude,
                          FinalAutoScore,FinalAutoFixMethod); */
-      /** System.out.printf("FINAL LOCATION:  lat=%f  lon=%f  SCORE=%f  METHOD=%d\n",
+      /* System.out.printf("FINAL LOCATION:  lat=%f  lon=%f  SCORE=%f  METHOD=%d\n",
                          FinalLatitude,FinalLongitude,
                          FinalScoreValue,PositioningMethodID); */
       
@@ -409,19 +492,19 @@ public class Auto {
       double OuterSearchRadiusDegree = 1.75;
       double CourseGridSpacingDegree = 0.2;
       double FineGridSpacingDegree = 0.1;
-      double FilterDiscSize = Math.pow(OuterSearchRadiusDegree+(2.0*FineGridSpacingDegree),2);
-      double AlphaPOWP1 = 1.0+Math.pow(Alpha,2);
+      double FilterDiscSize = pow(OuterSearchRadiusDegree+(2.0*FineGridSpacingDegree),2);
+      double AlphaPOWP1 = 1.0+pow(Alpha,2);
 
       int ImageResolution = (int) Data.GetCurrentImageResolution();
       int IncAddVal = (ImageResolution>RingWidthLocal) ? 1 : (RingWidthLocal-ImageResolution+1);
 
-      double SignFactor = Math.abs(InputLatitude)/InputLatitude;
+      double SignFactor = abs(InputLatitude)/InputLatitude;
 
       YInc = (IRData_Remap_NumberRows)-1;
       if((InputLongitude<0.0)&&((IRData_Remap_Longitude[0][0]>180.0)||
          (IRData_Remap_Longitude[YInc][0]>180.0))) {
-         /**
-          ** System.out.printf("DATELINE CROSS... changing InputLongitude from %f",InputLongitude);
+         /*
+          * System.out.printf("DATELINE CROSS... changing InputLongitude from %f",InputLongitude);
           */
          InputLongitude = InputLongitude+360.0;
       }
@@ -430,62 +513,62 @@ public class Auto {
          for(XInc=0;XInc<IRData_Remap_NumberColumns;XInc++) {
             /* compute normalized coordinate system arrays */
             IRData_NormCoord_Longitude[YInc][XInc] = (IRData_Remap_Longitude[YInc][XInc]-InputLongitude)*
-                                                 (Math.cos(PI*InputLatitude/180.0));
+                                                 (cos(PI*InputLatitude/180.0));
             IRData_NormCoord_Latitude[YInc][XInc] = IRData_Remap_Latitude[YInc][XInc]-InputLatitude;
             IRData_NormCoord_Temperature[YInc][XInc] = IRData_Remap_Temperature[YInc][XInc];
-            /** 
-             ** System.out.printf("YInc=%d XInc=%d  lat=%f lon=%f  lat=%f lon=%f  temp=%f\n",
-             **                    YInc,XInc,
-             **                    IRData_Remap_Latitude[YInc][XInc],
-             **                    IRData_Remap_Longitude[YInc][XInc],
-             **                    IRData_NormCoord_Latitude[YInc][XInc],
-             **                    IRData_NormCoord_Longitude[YInc][XInc],
-             **                    IRData_Remap_Temperature[YInc][XInc]);
+            /*
+             * System.out.printf("YInc=%d XInc=%d  lat=%f lon=%f  lat=%f lon=%f  temp=%f\n",
+             *                    YInc,XInc,
+             *                    IRData_Remap_Latitude[YInc][XInc],
+             *                    IRData_Remap_Longitude[YInc][XInc],
+             *                    IRData_NormCoord_Latitude[YInc][XInc],
+             *                    IRData_NormCoord_Longitude[YInc][XInc],
+             *                    IRData_Remap_Temperature[YInc][XInc]);
              */
          }
       }
       IRData_NormCoord_NumberColumns = IRData_Remap_NumberColumns;
       IRData_NormCoord_NumberRows = IRData_Remap_NumberRows;
 
-      /** determine lat/lon grid increment */
-      /** W to E gradient */
-      double LongitudeIncrement = Math.abs(IRData_NormCoord_Longitude[0][0]-
+      /* determine lat/lon grid increment */
+      /* W to E gradient */
+      double LongitudeIncrement = abs(IRData_NormCoord_Longitude[0][0]-
                                            IRData_NormCoord_Longitude[0][1]);
-      /** N to S gradient */
-      double LatitudeIncrement = Math.abs(IRData_NormCoord_Latitude[0][0]-
+      /* N to S gradient */
+      double LatitudeIncrement = abs(IRData_NormCoord_Latitude[0][0]-
                                           IRData_NormCoord_Latitude[1][0]);
-      /**
-       ** This is to determine longitude multiplier factor... original routines
-       ** were developed using negative, but McIDAS is positive in WH.  So if
-       ** LongitudeMultFactor is negative, we know (assume) we are using non-McIDAS
-       ** input imagery/values, otherwise make LongitudeMultFactor positive.
-       ** This all assumes that image is loaded from NW to SE
+      /*
+       * This is to determine longitude multiplier factor... original routines
+       * were developed using negative, but McIDAS is positive in WH.  So if
+       * LongitudeMultFactor is negative, we know (assume) we are using non-McIDAS
+       * input imagery/values, otherwise make LongitudeMultFactor positive.
+       * This all assumes that image is loaded from NW to SE
        */
       double LongitudeMultFactor = IRData_NormCoord_Longitude[0][0]-IRData_NormCoord_Longitude[0][1];
       LongitudeMultFactor = (LongitudeMultFactor<0.0) ? 1.0 : -1.0;
-      /**
-       ** System.out.printf("LatitudeIncrement=%f  LongitudeIncrement=%f LongitudeMultFactor=%f\n",
-       **                    LatitudeIncrement, LongitudeIncrement,LongitudeMultFactor);
+      /*
+       * System.out.printf("LatitudeIncrement=%f  LongitudeIncrement=%f LongitudeMultFactor=%f\n",
+       *                    LatitudeIncrement, LongitudeIncrement,LongitudeMultFactor);
        */
       
     
-      /** calculate gradient field */
+      /* calculate gradient field */
       Gradient(IRData_NormCoord_Temperature,IRData_NormCoord_NumberColumns,IRData_NormCoord_NumberRows,
                LongitudeIncrement,LatitudeIncrement);
 
       for(YInc=0;YInc<IRData_NormCoord_NumberRows-1;YInc++) {
          for(XInc=0;XInc<IRData_NormCoord_NumberColumns-1;XInc++) {
-            /**            
-             ** System.out.printf("YInc=%d XInc=%d  remap:lat=%f lon=%f  normcoord:lat=%f lon=%f NSTempGradientArray=%f EWTempGrad=%f\n",
-             **                 YInc,XInc,
-             **                 IRData_Remap_Latitude[YInc][XInc],IRData_Remap_Longitude[YInc][XInc],
-             **                 IRData_NormCoord_Latitude[YInc][XInc],IRData_NormCoord_Longitude[YInc][XInc],
-             **                 NSTempGradientArray[YInc][XInc],EWTempGradientArray[YInc][XInc]);
+            /*
+             * System.out.printf("YInc=%d XInc=%d  remap:lat=%f lon=%f  normcoord:lat=%f lon=%f NSTempGradientArray=%f EWTempGrad=%f\n",
+             *                 YInc,XInc,
+             *                 IRData_Remap_Latitude[YInc][XInc],IRData_Remap_Longitude[YInc][XInc],
+             *                 IRData_NormCoord_Latitude[YInc][XInc],IRData_NormCoord_Longitude[YInc][XInc],
+             *                 NSTempGradientArray[YInc][XInc],EWTempGradientArray[YInc][XInc]);
              */
    
-            double GradientOriginalMag = Math.sqrt(Math.pow(NSTempGradientArray[YInc][XInc],2)+
-                                                   Math.pow(EWTempGradientArray[YInc][XInc],2));
-            double GradientLOGMag = Math.log(1.0+GradientOriginalMag);
+            double GradientOriginalMag = sqrt(pow(NSTempGradientArray[YInc][XInc],2)+
+                                              pow(EWTempGradientArray[YInc][XInc],2));
+            double GradientLOGMag = log(1.0+GradientOriginalMag);
             double GradientLOGReduction = 0.0;
             if(GradientLOGMag!=0.0) {
                GradientLOGReduction = GradientLOGMag/GradientOriginalMag;
@@ -495,50 +578,50 @@ public class Auto {
          }
       }
     
-      /** COURSE GRID */
-      /** calculate cross product score at each grid point */
-      /** XInc/YInc are "starting point" coordinates */
+      /* COURSE GRID */
+      /* calculate cross product score at each grid point */
+      /* XInc/YInc are "starting point" coordinates */
       SpiralMeanCrossMaxScore = -99.0;
-      double SearchRadiusMaximum = Math.pow(OuterSearchRadiusDegree+((2.0*CourseGridSpacingDegree)/3.0),2);
+      double SearchRadiusMaximum = pow(OuterSearchRadiusDegree+((2.0*CourseGridSpacingDegree)/3.0),2);
       for(XOff=-OuterSearchRadiusDegree;XOff<=OuterSearchRadiusDegree;XOff=XOff+CourseGridSpacingDegree) {
          for(YOff=-OuterSearchRadiusDegree;YOff<=OuterSearchRadiusDegree;YOff=YOff+CourseGridSpacingDegree) {
-            /** XOff/YOff are offset coordinates from "starting point" */
-            SearchRadius = Math.pow(XOff,2)+Math.pow(YOff,2);
+            /* XOff/YOff are offset coordinates from "starting point" */
+            SearchRadius = pow(XOff,2)+pow(YOff,2);
             if(SearchRadius<=SearchRadiusMaximum) {
                CrossScoreSum=0.0;
                NumPoints=0;
                for(YInc=1;YInc<IRData_NormCoord_NumberRows-2;YInc=YInc+IncAddVal) {
                   for(XInc=1;XInc<IRData_NormCoord_NumberColumns-2;XInc=XInc+IncAddVal) {
-                     SearchRadius = Math.pow(IRData_NormCoord_Longitude[YInc][XInc],2)+
-                                    Math.pow(IRData_NormCoord_Latitude[YInc][XInc],2);
+                     SearchRadius = pow(IRData_NormCoord_Longitude[YInc][XInc],2)+
+                                    pow(IRData_NormCoord_Latitude[YInc][XInc],2);
                      if(SearchRadius<FilterDiscSize) {
                         ProxyValueX = LongitudeMultFactor*IRData_NormCoord_Longitude[YInc][XInc]-XOff;
                         ProxyValueY = IRData_NormCoord_Latitude[YInc][XInc]-YOff;
-                        DenominatorValue = Math.sqrt((AlphaPOWP1)*(Math.pow(ProxyValueX,2)+Math.pow(ProxyValueY,2)));
+                        DenominatorValue = sqrt((AlphaPOWP1)*(pow(ProxyValueX,2)+pow(ProxyValueY,2)));
                         SpiralValueX = ((Alpha*ProxyValueX)+(SignFactor*ProxyValueY))/DenominatorValue;
                         SpiralValueY = ((Alpha*ProxyValueY)-(SignFactor*ProxyValueX))/DenominatorValue;
                         RawCrossScore = (SpiralValueX*NSTempGradientArray[YInc][XInc])-
                                         (SpiralValueY* EWTempGradientArray[YInc][XInc]);
-                        CrossScoreClean = Math.max(0.0,-RawCrossScore)+(OutsideFactor*Math.max(0.0,RawCrossScore));
+                        CrossScoreClean = max(0.0,-RawCrossScore)+(OutsideFactor*max(0.0,RawCrossScore));
                         CrossScoreSum = CrossScoreSum+CrossScoreClean;
-                        /**
-                         ** System.out.printf("%d %d : lat=%f lon=%f  xoff=%f yoff=%f ",
-                         **                   "ProxyValueX=%f ProxyValueY=%f ",
-                         **                   "SpiralValueX=%f SpiralValueY=%f ",
-                         **                   "rawScore=%f clean=%f\n",
-                         **                    IRData_Remap_Latitude[YInc][XInc],
-                         **                    IRData_Remap_Longitude[YInc][XInc],
-                         **                    XOff,YOff,ProxyValueX,ProxyValueY,
-                         **                    SpiralValueX,SpiralValueY,
-                         **                    RawCrossScore,CrossScoreClean);
+                        /*
+                         * System.out.printf("%d %d : lat=%f lon=%f  xoff=%f yoff=%f ",
+                         *                   "ProxyValueX=%f ProxyValueY=%f ",
+                         *                   "SpiralValueX=%f SpiralValueY=%f ",
+                         *                   "rawScore=%f clean=%f\n",
+                         *                    IRData_Remap_Latitude[YInc][XInc],
+                         *                    IRData_Remap_Longitude[YInc][XInc],
+                         *                    XOff,YOff,ProxyValueX,ProxyValueY,
+                         *                    SpiralValueX,SpiralValueY,
+                         *                    RawCrossScore,CrossScoreClean);
                          */
                         NumPoints++;
                      }
                   }
                }
-               /** calculate mean of all values in CrossScore array */
+               /* calculate mean of all values in CrossScore array */
                SpiralMeanCrossScore = CrossScoreSum/(double)NumPoints;
-               /** store location of maximum score position */
+               /* store location of maximum score position */
                if(SpiralMeanCrossScore>SpiralMeanCrossMaxScore) {
                   SpiralMeanCrossMaxScore = SpiralMeanCrossScore;
                   SpiralMeanCrossMaxYLocation = YOff;
@@ -548,12 +631,12 @@ public class Auto {
          }
       }
      
-       /** System.out.printf("course grid : y=%f x=%f max=%f\n",
+       /* System.out.printf("course grid : y=%f x=%f max=%f\n",
                           SpiralMeanCrossMaxYLocation,SpiralMeanCrossMaxXLocation,
                           SpiralMeanCrossMaxScore); */
       
     
-      /** FINE GRID */
+      /* FINE GRID */
       int SpiralCount = 1;
       double FineGridXMinimum = SpiralMeanCrossMaxXLocation-CourseGridSpacingDegree;
       double FineGridXMaximum = SpiralMeanCrossMaxXLocation+CourseGridSpacingDegree;
@@ -562,7 +645,7 @@ public class Auto {
       SpiralMeanCrossMaxScore=-99.0;
       for(XOff=FineGridXMinimum;XOff<=FineGridXMaximum;XOff=XOff+FineGridSpacingDegree) {
          for(YOff=FineGridYMimimum;YOff<=FineGridYMaximum;YOff=YOff+FineGridSpacingDegree) {
-            /** XOff/YOff are offset coordinates from "starting point" */
+            /* XOff/YOff are offset coordinates from "starting point" */
             CrossScoreSum = 0.0;
             NumPoints = 0;
             for(YInc=1;YInc<IRData_NormCoord_NumberRows-2;YInc++) {
@@ -583,9 +666,9 @@ public class Auto {
                    }
                 }
              }
-             /** calculate mean of all values in CrossScore array */
+             /* calculate mean of all values in CrossScore array */
              SpiralMeanCrossScore = CrossScoreSum/(double)NumPoints;
-             /** store location of maximum score position */
+             /* store location of maximum score position */
              if(SpiralMeanCrossScore>SpiralMeanCrossMaxScore) {
                 SpiralMeanCrossMaxScore = SpiralMeanCrossScore;
                 SpiralMeanCrossMaxYLocation = YOff;
@@ -599,14 +682,14 @@ public class Auto {
          }
       }
       
-      /** System.out.printf("fine grid : y=%f x=%f max=%f\n",
+      /* System.out.printf("fine grid : y=%f x=%f max=%f\n",
                           SpiralMeanCrossMaxYLocation,SpiralMeanCrossMaxXLocation,SpiralMeanCrossMaxScore); */
       
     
       SpiralCenterAnalysisField[0][1] = 0.0;
       SpiralCenterAnalysisField[0][2] = 0.0;
     
-      /** determine lat/lon point from x/y coordinates */
+      /* determine lat/lon point from x/y coordinates */
       SpiralCenterLatitude = SpiralMeanCrossMaxYLocation+InputLatitude;
       SpiralCenterLongitude = ((LongitudeMultFactor*SpiralMeanCrossMaxXLocation)/
                                      (Math.cos(PI*InputLatitude/180.0)))+InputLongitude;
@@ -625,7 +708,7 @@ public class Auto {
 
       int XInc,YInc;
 
-      /** initialize arrays */
+      /* initialize arrays */
       for(YInc=0;YInc<LineYNumber-1;YInc++) {
          for(XInc=0;XInc<ElementXNumber-1;XInc++) {
             NSTempGradientArray[YInc][XInc] = 0.0;
@@ -635,11 +718,11 @@ public class Auto {
 
       for(YInc=1;YInc<LineYNumber-1;YInc++) {
          for(XInc=1;XInc<ElementXNumber-1;XInc++) {
-            /** determine N-S gradient at point */
+            /* determine N-S gradient at point */
             NSTempGradientArray[YInc][XInc] = (TemperatureInputArray[YInc-1][XInc]-
                                                TemperatureInputArray[YInc+1][XInc])/
                                                (2.0*LatitudeIncrement);
-            /** determine E-W gradient at point */
+            /* determine E-W gradient at point */
             EWTempGradientArray[YInc][XInc] = (TemperatureInputArray[YInc][XInc+1]-
                                                TemperatureInputArray[YInc][XInc-1])/
                                                (2.0*LongitudeIncrement);
@@ -681,7 +764,7 @@ public class Auto {
       int ImageResolution = (int) Data.GetCurrentImageResolution();
       int IncAddVal = (ImageResolution>RingWidthLocal) ? 1 : (RingWidthLocal-ImageResolution+1);
 
-      /** derive values */
+      /* derive values */
       double DegreesPerPixel = Math.abs(IRData_Remap_Latitude[0][0]-IRData_Remap_Latitude[1][0]);
       int RingFitSearchRadiusPixel = (int)Math.round(RingFitSearchRadiusDegree/DegreesPerPixel);
       int RingFitMinRadiusPix = (int)Math.max(2.0,Math.round(RingFitMinRadiusDegree/DegreesPerPixel));
@@ -691,19 +774,19 @@ public class Auto {
       double LatitudeIncrement = -1.0;
 
       
-      /** System.out.printf("RingFit: %d %f %d %d %d\n",IncAddVal,DegreesPerPixel,
+      /* System.out.printf("RingFit: %d %f %d %d %d\n",IncAddVal,DegreesPerPixel,
                                  RingFitSearchRadiusPixel,RingFitMinRadiusPix,
                                  MaximumRadiusSizePixels); */
-      /**  
-       ** for(YInc=0;YInc<IRData_Remap_NumberRows-1;YInc++) {
-       **    for(XInc=0;XInc<IRData_Remap_NumberColumns-1;XInc++) {
-       **       System.out.printf("Y=%d X=%d lat=%f lon=%f\n",YInc,XInc,IRData_Remap_Latitude[YInc][XInc],IRData_Remap_Longitude[YInc][XInc]);
-       **    }
-       **  }
+      /*
+       * for(YInc=0;YInc<IRData_Remap_NumberRows-1;YInc++) {
+       *    for(XInc=0;XInc<IRData_Remap_NumberColumns-1;XInc++) {
+       *       System.out.printf("Y=%d X=%d lat=%f lon=%f\n",YInc,XInc,IRData_Remap_Latitude[YInc][XInc],IRData_Remap_Longitude[YInc][XInc]);
+       *    }
+       *  }
        */
 
-      /** NEED TO PASS BACK BOTH 2D ARRAYS FROM GRADIENT AND CIRCLEFILT */
-      /** calculate gradient field */
+      /* NEED TO PASS BACK BOTH 2D ARRAYS FROM GRADIENT AND CIRCLEFILT */
+      /* calculate gradient field */
       Gradient(IRData_Remap_Temperature,IRData_Remap_NumberColumns,IRData_Remap_NumberRows,
                LongitudeIncrement,LatitudeIncrement);
 
@@ -711,16 +794,16 @@ public class Auto {
          for(XInc=0;XInc<IRData_Remap_NumberColumns-1;XInc++) {
             GradientFieldYDirection[YInc][XInc] = NSTempGradientArray[YInc][XInc];
             GradientFieldXDirection[YInc][XInc] = EWTempGradientArray[YInc][XInc];
-            /** System.out.printf("GRADIENT  Y=%d X=%d Xdir=%f Ydir=%f  ",YInc,XInc,GradientFieldXDirection[YInc][XInc],GradientFieldYDirection[YInc][XInc]); */
-            /** System.out.printf(" lat=%f lon=%f\n",IRData_Remap_Latitude[YInc][XInc],IRData_Remap_Longitude[YInc][XInc]); */
+            /* System.out.printf("GRADIENT  Y=%d X=%d Xdir=%f Ydir=%f  ",YInc,XInc,GradientFieldXDirection[YInc][XInc],GradientFieldYDirection[YInc][XInc]); */
+            /* System.out.printf(" lat=%f lon=%f\n",IRData_Remap_Latitude[YInc][XInc],IRData_Remap_Longitude[YInc][XInc]); */
          }
       }
-      /**
-       ** System.out.printf("RingFit : RingFitFirstGuessLatitude=%f RingFitFirstGuessLongitude=%f\n",
-       **                    RingFitFirstGuessLatitude,RingFitFirstGuessLongitude);
+      /*
+       * System.out.printf("RingFit : RingFitFirstGuessLatitude=%f RingFitFirstGuessLongitude=%f\n",
+       *                    RingFitFirstGuessLatitude,RingFitFirstGuessLongitude);
        */
 
-      /** make matricies of row and column numbers */
+      /* make matricies of row and column numbers */
       int Lalo2IndsReturn[] = Lalo2IndsFloat(RingFitFirstGuessLatitude,RingFitFirstGuessLongitude,
                                              IRData_Remap_Latitude,IRData_Remap_Longitude,
                                              IRData_Remap_NumberColumns,IRData_Remap_NumberRows);
@@ -728,85 +811,85 @@ public class Auto {
       int FirstGuessXLocation = Lalo2IndsReturn[0];
       int FirstGuessYLocation = Lalo2IndsReturn[1];
 
-      /**
-       ** System.out.printf("RingFit : FirstGuessXLocation=%d FirstGuessYLocation=%d\n",
-       **                    FirstGuessXLocation,FirstGuessYLocation);
+      /*
+       * System.out.printf("RingFit : FirstGuessXLocation=%d FirstGuessYLocation=%d\n",
+       *                    FirstGuessXLocation,FirstGuessYLocation);
        */
     
-      /** initialize circle/ring filter arrays */
-      /** radius in pixels */
+      /* initialize circle/ring filter arrays */
+      /* radius in pixels */
 
       for(CircleFilterRadii=0;CircleFilterRadii<100;CircleFilterRadii++) {
-         /** number of points on circle at radius */
+         /* number of points on circle at radius */
          for(CircleFilterPoints=0;CircleFilterPoints<2000;CircleFilterPoints++) {
             CircleFilterRowArray[CircleFilterRadii][CircleFilterPoints] = 0;
             CircleFilterColumnArray[CircleFilterRadii][CircleFilterPoints] = 0;
          }
       }
 
-      /**
-       ** determine digital pixel coordinates for ring analysis for
-       ** different radii sizes
+      /*
+       * determine digital pixel coordinates for ring analysis for
+       * different radii sizes
        */
       for(CircleFilterRadii=RingFitMinRadiusPix;CircleFilterRadii<=MaximumRadiusSizePixels;CircleFilterRadii++) {
          CircleFilt(CircleFilterRadii);
       }
     
-      /** search image box */
+      /* search image box */
       ZInc = 1;
-      /** develop the accumulator */
+      /* develop the accumulator */
       for(CircleFilterRadii=RingFitMinRadiusPix;CircleFilterRadii<MaximumRadiusSizePixels;CircleFilterRadii++) {
          int CircleFilterPointCount = CircleFilterRowArray[CircleFilterRadii][0];
-         /** determine each main point in analysis disc */
+         /* determine each main point in analysis disc */
          for(XInc=1;XInc<IRData_Remap_NumberColumns-1;XInc=XInc+IncAddVal) {
             for(YInc=1;YInc<IRData_Remap_NumberRows-1;YInc=YInc+IncAddVal) {
-               /**
-                ** System.out.printf("XInc=%d YInc=%d  %d %d: %d\n",XInc,YInc,
-                **                    FirstGuessXLocation,FirstGuessYLocation,RingFitSearchRadiusPixel);
+               /*
+                * System.out.printf("XInc=%d YInc=%d  %d %d: %d\n",XInc,YInc,
+                *                    FirstGuessXLocation,FirstGuessYLocation,RingFitSearchRadiusPixel);
                 */
 
                CircleFilterDistance = (double)((XInc-FirstGuessXLocation)*(XInc-FirstGuessXLocation))+
                                               ((YInc-FirstGuessYLocation)*(YInc-FirstGuessYLocation));
-               /**
-                ** System.out.printf("XInc=%d YInc=%d CircleFilterDistance=%f RingFitSearchRadiusPixel=%d\n",
-                **                    XInc,YInc,CircleFilterDistance,RingFitSearchRadiusPixel);
+               /*
+                * System.out.printf("XInc=%d YInc=%d CircleFilterDistance=%f RingFitSearchRadiusPixel=%d\n",
+                *                    XInc,YInc,CircleFilterDistance,RingFitSearchRadiusPixel);
                 */
                if(CircleFilterDistance<=(double)(RingFitSearchRadiusPixel*RingFitSearchRadiusPixel)) {
-                  /**
-                   ** if main point (YInc,XInc) is in disc, calculate dotproduct
-                   ** for each subpoint on ring around main point
+                  /*
+                   * if main point (YInc,XInc) is in disc, calculate dotproduct
+                   * for each subpoint on ring around main point
                    */
                   DotScoreValueSum = 0.0;
                   int NANCount = 0;
                   boolean FoundMoatRegionTF = false;
-                  /**
-                   ** System.out.printf("XInc=%d YInc=%d  CircleFilterPointCount=%d %d\n",
-                   **                    XInc,YInc,CircleFilterPointCount,CircleFilterRadii);
+                  /*
+                   * System.out.printf("XInc=%d YInc=%d  CircleFilterPointCount=%d %d\n",
+                   *                    XInc,YInc,CircleFilterPointCount,CircleFilterRadii);
                    */
                   for(CircleFilterPoints=1;CircleFilterPoints<=CircleFilterPointCount;CircleFilterPoints++) {
-                     /**
-                      ** System.out.printf("CircleFilterPoints=%d CircleFilterRadii=%d XInc=%d YInc=%d\n",
-                      **                    CircleFilterPoints,CircleFilterRadii,XInc,YInc);
+                     /*
+                      * System.out.printf("CircleFilterPoints=%d CircleFilterRadii=%d XInc=%d YInc=%d\n",
+                      *                    CircleFilterPoints,CircleFilterRadii,XInc,YInc);
                       */
                      CircleFilterXLocation = XInc+CircleFilterColumnArray[CircleFilterRadii][CircleFilterPoints];
                      CircleFilterYLocation = YInc+CircleFilterRowArray[CircleFilterRadii][CircleFilterPoints];
-                     /**
-                      ** System.out.printf("%d : %d %d --  %d : %d %d ",
-                      **                    CircleFilterYLocation,YInc,
-                      **                    CircleFilterRowArray[CircleFilterRadii][CircleFilterPoints],
-                      **                    CircleFilterXLocation,XInc,
-                      **                    CircleFilterColumnArray[CircleFilterRadii][CircleFilterPoints]);
+                     /*
+                      * System.out.printf("%d : %d %d --  %d : %d %d ",
+                      *                    CircleFilterYLocation,YInc,
+                      *                    CircleFilterRowArray[CircleFilterRadii][CircleFilterPoints],
+                      *                    CircleFilterXLocation,XInc,
+                      *                    CircleFilterColumnArray[CircleFilterRadii][CircleFilterPoints]);
                       */
                      if((CircleFilterXLocation<1)||(CircleFilterYLocation<1)) {
                         DotProductXDirection = -999.9;
                         DotProductYDirection = -999.9;
                      } else {
-                        /**
-                         ** System.out.printf("I=%d x=%d  J=%d y=%d  : %b %b\n",
-                         **                    CircleFilterXLocation,IRData_Remap_NumberColumns,
-                         **                    CircleFilterYLocation,IRData_Remap_NumberRows,
-                         **                    (CircleFilterXLocation>=IRData_Remap_NumberColumns),
-                         **                    (CircleFilterYLocation>=IRData_Remap_NumberRows));
+                        /*
+                         * System.out.printf("I=%d x=%d  J=%d y=%d  : %b %b\n",
+                         *                    CircleFilterXLocation,IRData_Remap_NumberColumns,
+                         *                    CircleFilterYLocation,IRData_Remap_NumberRows,
+                         *                    (CircleFilterXLocation>=IRData_Remap_NumberColumns),
+                         *                    (CircleFilterYLocation>=IRData_Remap_NumberRows));
                          */
                         if((CircleFilterXLocation>=(IRData_Remap_NumberColumns-1))||
                            (CircleFilterYLocation>=(IRData_Remap_NumberRows-1))) {
@@ -816,7 +899,7 @@ public class Auto {
                            if(MoatMaskFlagField[CircleFilterYLocation][CircleFilterXLocation]==1) {
                               FoundMoatRegionTF = true;
                            }
-                           /** System.out.printf(" mask=%d  FoundMoatRegionTF=%b\n",MoatMaskFlagField[CircleFilterYLocation][CircleFilterXLocation],FoundMoatRegionTF); */
+                           /* System.out.printf(" mask=%d  FoundMoatRegionTF=%b\n",MoatMaskFlagField[CircleFilterYLocation][CircleFilterXLocation],FoundMoatRegionTF); */
                            if(FoundMoatRegionTF) {
                               DotProductXDirection = -999.9;
                               DotProductYDirection = -999.9;
@@ -825,15 +908,15 @@ public class Auto {
                               ((double)CircleFilterRowArray[CircleFilterRadii][CircleFilterPoints]/
                                (double)CircleFilterRadii)*
                                GradientFieldYDirection[CircleFilterYLocation][CircleFilterXLocation];
-                               /**
-                                ** System.out.printf(" XX | %d %d j=%d i=%d j=%d i=%d  GradientFieldYDirection=%f  GradientFieldXDirection=%f | \n",
-                                **                    CircleFilterPoints,CircleFilterRadii,
-                                **                    CircleFilterRowArray[CircleFilterRadii][CircleFilterPoints],
-                                **                    CircleFilterColumnArray[CircleFilterRadii][CircleFilterPoints],
-                                **                    CircleFilterYLocation,
-                                **                    CircleFilterXLocation,
-                                **                    GradientFieldYDirection[CircleFilterYLocation][CircleFilterXLocation],
-                                **                    GradientFieldXDirection[CircleFilterYLocation][CircleFilterXLocation]);
+                               /*
+                                * System.out.printf(" XX | %d %d j=%d i=%d j=%d i=%d  GradientFieldYDirection=%f  GradientFieldXDirection=%f | \n",
+                                *                    CircleFilterPoints,CircleFilterRadii,
+                                *                    CircleFilterRowArray[CircleFilterRadii][CircleFilterPoints],
+                                *                    CircleFilterColumnArray[CircleFilterRadii][CircleFilterPoints],
+                                *                    CircleFilterYLocation,
+                                *                    CircleFilterXLocation,
+                                *                    GradientFieldYDirection[CircleFilterYLocation][CircleFilterXLocation],
+                                *                    GradientFieldXDirection[CircleFilterYLocation][CircleFilterXLocation]);
                                 */
                               DotProductYDirection=
                                ((double)CircleFilterColumnArray[CircleFilterRadii][CircleFilterPoints]/
@@ -849,54 +932,54 @@ public class Auto {
                         if(DotProductXYValue==0.0) {
                            SignFactor = 0.0;
                         } else {
-                           /** return -1/+1 for -/+ value */
+                           /* return -1/+1 for -/+ value */
                            SignFactor = Math.abs(DotProductXYValue)/DotProductXYValue;
                         }
                         DotScoreValue = SignFactor*(Math.log(1.0+Math.abs(DotProductXYValue)));
                         DotScoreValueSum = DotScoreValueSum+DotScoreValue;
                      }
-                     /**  
-                      ** System.out.printf("dot product X=%f Y=%f XY=%f value=%f sum=%f\n",DotProductXDirection,
-                      **            DotProductYDirection,DotProductXYValue,DotScoreValue,DotScoreValueSum);
+                     /*
+                      * System.out.printf("dot product X=%f Y=%f XY=%f value=%f sum=%f\n",DotProductXDirection,
+                      *            DotProductYDirection,DotProductXYValue,DotScoreValue,DotScoreValueSum);
                       */
-                  } /** if indisk */
-                  /** System.out.printf("dot product Final Sum=%f \n",DotScoreValueSum); */
-                  /** check for missing data and adjust DotScoreFinal accordingly */
-                  /** System.out.printf("Y=%d X=%d foundmoat=%b  nancount=%f  xyz=%f\n",YInc,XInc,FoundMoatRegionTF,(double)NANCount,0.575*(double)CircleFilterPointCount); */
+                  } /* if indisk */
+                  /* System.out.printf("dot product Final Sum=%f \n",DotScoreValueSum); */
+                  /* check for missing data and adjust DotScoreFinal accordingly */
+                  /* System.out.printf("Y=%d X=%d foundmoat=%b  nancount=%f  xyz=%f\n",YInc,XInc,FoundMoatRegionTF,(double)NANCount,0.575*(double)CircleFilterPointCount); */
                   if(FoundMoatRegionTF||((double)NANCount)>(0.575*(double)CircleFilterPointCount)) {
                      DotScoreFinal = 0.0;
                   } else {
                      NANAdjustmentValue = (double)CircleFilterPointCount/(double)(CircleFilterPointCount-NANCount);
                      DotScoreFinal = -NANAdjustmentValue*DotScoreValueSum/Math.sqrt((double)CircleFilterPointCount);
                   }
-                  /** System.out.printf("XX final=%f maximum=%f ",DotScoreFinal,DotScoreMaximum); */
-                  /** System.out.printf("    circlefilterpointcount=%d sqrt=%f ",CircleFilterPointCount,Math.sqrt((double)CircleFilterPointCount)); */
+                  /* System.out.printf("XX final=%f maximum=%f ",DotScoreFinal,DotScoreMaximum); */
+                  /* System.out.printf("    circlefilterpointcount=%d sqrt=%f ",CircleFilterPointCount,Math.sqrt((double)CircleFilterPointCount)); */
                   if(DotScoreFinal>DotScoreMaximum) {
                      DotScoreMaximum = DotScoreFinal;
                      XLocation = XInc;
                      YLocation = YInc;
-                     /** System.out.printf("   xloc=%d yloc=%d MaxRadSize=%d",XInc,YInc,MaximumRadiusSize); */
+                     /* System.out.printf("   xloc=%d yloc=%d MaxRadSize=%d",XInc,YInc,MaximumRadiusSize); */
                   }
-                  /** System.out.printf("\n"); */
+                  /* System.out.printf("\n"); */
                   RingScoreAnalysisField[ZInc][0] = DotScoreFinal;
                   RingScoreAnalysisField[ZInc][1] = IRData_Remap_Latitude[YInc][XInc];
                   RingScoreAnalysisField[ZInc][2] = IRData_Remap_Longitude[YInc][XInc];
                   RingScoreAnalysisField[0][0] = (double)ZInc;
-                  /**
-                   ** System.out.printf("ZZZZ  0=%f 1=%f 2=%f x=%f\n",RingScoreAnalysisField[ZInc][0],RingScoreAnalysisField[ZInc][1],
-                   **                                                 RingScoreAnalysisField[ZInc][2],RingScoreAnalysisField[0][0]);
+                  /*
+                   * System.out.printf("ZZZZ  0=%f 1=%f 2=%f x=%f\n",RingScoreAnalysisField[ZInc][0],RingScoreAnalysisField[ZInc][1],
+                   *                                                 RingScoreAnalysisField[ZInc][2],RingScoreAnalysisField[0][0]);
                    */
                   ZInc++;
                }
-            } /** XInc */
-         } /** YInc */
-      } /** CircleFilterRadii */
+            } /* XInc */
+         } /* YInc */
+      } /* CircleFilterRadii */
     
       RingScoreAnalysisField[0][1] = 0.0;
       RingScoreAnalysisField[0][2] = 0.0;
     
-      /** make matricies of row and column numbers */
-      /** System.out.printf("inds2lalo: x=%d y=%d \n",XLocation,YLocation); */
+      /* make matricies of row and column numbers */
+      /* System.out.printf("inds2lalo: x=%d y=%d \n",XLocation,YLocation); */
       double Inds2LaloReturn[] = Inds2LaloFloat(XLocation,YLocation,
                                                 IRData_Remap_Latitude,IRData_Remap_Longitude,
                                                 IRData_Remap_NumberColumns,IRData_Remap_NumberRows);
@@ -965,7 +1048,7 @@ public class Auto {
          }
       }
 
-      /** number of points on given radius size */
+      /* number of points on given radius size */
       CircleFilterRowArray[RingRadiusInput][0] = PointCount-1;
       CircleFilterColumnArray[RingRadiusInput][0] = PointCount-1;
 
@@ -977,7 +1060,7 @@ public class Auto {
       int NumberColumns=IRData_Remap_NumberColumns;
       int NumberRows=IRData_Remap_NumberRows;
     
-      /** initialize arrays */
+      /* initialize arrays */
       for(YInc=0;YInc<NumberRows;YInc++) {
          for(XInc=0;XInc<NumberColumns;XInc++) {
             MoatMaskFlagField[YInc][XInc]=0;
@@ -1045,7 +1128,7 @@ public class Auto {
    }
 
    private static int BWImage(int ConnectednessValue, int NumberRows, int NumberColumns) {
-      /** blackwhitefieldarray = BooleanValueArray; moatmaskflagfield = LabelImageArray */
+      /* blackwhitefieldarray = BooleanValueArray; moatmaskflagfield = LabelImageArray */
     
       int IncVal,XInc,YInc;
       int B_Value,C_Value,D_Value,E_Value;
@@ -1057,8 +1140,9 @@ public class Auto {
     
       for(YInc=0;YInc<NumberRows;YInc++) {
          for(XInc=0;XInc<NumberColumns;XInc++) {
-            if(BlackWhiteFieldArray[YInc][XInc]==1) {       /** if A is an object */
-               /** get the neighboring pixels B_Value, C_Value, D_Value, and E_Value */
+            if(BlackWhiteFieldArray[YInc][XInc]==1) {
+               /* if A is an object */
+               /* get the neighboring pixels B_Value, C_Value, D_Value, and E_Value */
                B_Value=0;
                C_Value=0;
                D_Value=0;
@@ -1076,9 +1160,9 @@ public class Auto {
                   E_Value = Find(LabelSetArray,MoatMaskFlagField[YInc-1][XInc+1]);
                }
                if(ConnectednessValue==4) {
-                  /** apply 4 connectedness */
+                  /* apply 4 connectedness */
                   if((B_Value!=0)&&(C_Value!=0)) {
-                     /** B_Value and C_Value are labeled */
+                     /* B_Value and C_Value are labeled */
                      if(B_Value==C_Value) {
                         MoatMaskFlagField[YInc][XInc] = B_Value;
                      } else {
@@ -1086,25 +1170,25 @@ public class Auto {
                         MoatMaskFlagField[YInc][XInc] = B_Value;
                      }
                   } else if(B_Value!=0) {
-                     /** B_Value is object but C_Value is not */
+                     /* B_Value is object but C_Value is not */
                      MoatMaskFlagField[YInc][XInc] = B_Value;
                   } else if(C_Value!=0) {
-                     /** C_Value is object but B_Value is not */
+                     /* C_Value is object but B_Value is not */
                      MoatMaskFlagField[YInc][XInc] = C_Value;
                   } else {
-                     /** B_Value, C_Value, D_Value not object - new object */
-                     /** label and put into table */
+                     /* B_Value, C_Value, D_Value not object - new object */
+                     /* label and put into table */
                      TableElements++;
                      LabelSetArray[TableElements] = TableElements;
                      MoatMaskFlagField[YInc][XInc] = LabelSetArray[TableElements];
                   }
                } else if(ConnectednessValue==6) {
-                  /** apply 6 connected ness */
+                  /* apply 6 connected ness */
                   if(D_Value!=0) {
-                     /** D_Value object, copy label and move on */
+                     /* D_Value object, copy label and move on */
                      MoatMaskFlagField[YInc][XInc] = D_Value;
                   } else if((B_Value!=0)&&(C_Value!=0)) {
-                     /** B_Value and C_Value are labeled */
+                     /* B_Value and C_Value are labeled */
                      if(B_Value==C_Value) {
                         MoatMaskFlagField[YInc][XInc] = B_Value;
                      } else {
@@ -1114,20 +1198,20 @@ public class Auto {
                         MoatMaskFlagField[YInc][XInc] = LabelValue;
                      }
                   } else if(B_Value!=0) {
-                     /** B_Value is object but C_Value is not */
+                     /* B_Value is object but C_Value is not */
                      MoatMaskFlagField[YInc][XInc] = B_Value;
                   } else if(C_Value!=0) {
-                     /** C_Value is object but B_Value is not */
+                     /* C_Value is object but B_Value is not */
                      MoatMaskFlagField[YInc][XInc] = C_Value;
                   } else {
-                     /** B_Value, C_Value, D_Value not object - new object */
-                     /** label and put into table */
+                     /* B_Value, C_Value, D_Value not object - new object */
+                     /* label and put into table */
                      TableElements++;
                      LabelSetArray[TableElements] = TableElements;
                      MoatMaskFlagField[YInc][XInc] = LabelSetArray[TableElements];
                   }
                } else if(ConnectednessValue==8) {
-                  /** apply 8 connectedness */
+                  /* apply 8 connectedness */
                   if((B_Value!=0)||(C_Value!=0)||(D_Value!=0)||(E_Value!=0)) {
                      LabelValue = B_Value;
                      if(B_Value!=0) {
@@ -1153,31 +1237,32 @@ public class Auto {
                         LabelSetArray[E_Value] = LabelValue;
                      }
                   } else {
-                     /** label and put into table */
+                     /* label and put into table */
                      TableElements++;
                      LabelSetArray[TableElements] = TableElements;
                      MoatMaskFlagField[YInc][XInc] = LabelSetArray[TableElements];
                   }
                }
             } else {
-               MoatMaskFlagField[YInc][XInc] = 0; /** A is not an object so leave it */
+               /* A is not an object so leave it */
+               MoatMaskFlagField[YInc][XInc] = 0;
             }
          }
       }
     
-      /** consolidate component table */
+      /* consolidate component table */
       for(IncVal=0;IncVal<=TableElements;IncVal++) {
          LabelSetArray[IncVal] = Find(LabelSetArray,IncVal);
       }
     
-      /** run image through the look-up table */
+      /* run image through the look-up table */
       for(YInc=0;YInc<NumberRows;YInc++) {
          for(XInc=0;XInc<NumberColumns;XInc++) {
             MoatMaskFlagField[YInc][XInc] = LabelSetArray[MoatMaskFlagField[YInc][XInc]];
          }
       }
     
-      /** count up the objects in the image */
+      /* count up the objects in the image */
       for(IncVal=0;IncVal<=TableElements;IncVal++) {
          LabelSetArray[IncVal] = 0;
       }
@@ -1188,7 +1273,7 @@ public class Auto {
          }
       }
     
-      /** number the objects from 1 through n objects */
+      /* number the objects from 1 through n objects */
       int NumberObjects = 0;
       LabelSetArray[0] = 0;
       for(IncVal=1;IncVal<=TableElements;IncVal++) {
@@ -1197,7 +1282,7 @@ public class Auto {
          }
       }
 
-      /** run through the look-up table again */
+      /* run through the look-up table again */
       for(YInc=0;YInc<NumberRows;YInc++) {
          for(XInc=0;XInc<NumberColumns;XInc++) {
             MoatMaskFlagField[YInc][XInc] = LabelSetArray[MoatMaskFlagField[YInc][XInc]];
@@ -1217,42 +1302,43 @@ public class Auto {
 
       return IncVal;
    }
-
-   private static double[] CalcScores(double FirstGuessLatitude, double FirstGuessLongitude,
-                                      double SpiralCenterLatitude, double SpiralCenterLongitude,
-                                      double SpiralCenterScoreValue,
-                                      double RingFitLatitude, double RingFitLongitude,
-                                      double RingFitScoreValue) {
+   
    /**
-    ** This routine will determine the confidence scores for the spiral fitting
-    ** and ring fitting routines and calculate the best possible position for the
-    ** storm center based upon a combination of the two methods, if available.
-    ** If the ring fitting routine does not determine a good candidate position,
-    ** the spiral fitting routine will be used alone.  If the spiral fitting
-    ** routine candidate point is not "good", the forecast point will be selected.
-    ** Inputs  : FirstGuessLatitude     - First Guess latitude
-    **           FirstGuessLongitude    - First Guess longitude
-    **           SpiralCenterLatitude   - Spiral Analysis latitude at max location
-    **           SpiralCenterLongitude  - Spiral Analysis longitude at max location
-    **           SpiralCenterScoreValue - Spiral Analysis Score value
-    **           SpiralCenterAnalysisField - Grid of Spiral Analysis
-    **                                       scores in analysis region
-    **           RingFitLatitude   - Ring Analysis latitude at max score location
-    **           RingFitLongitude  - Ring Analysis longitude at max score location
-    **           RingFitScoreValue - Ring Analysis Score value
-    **           RingScoreAnalysisField - Grid of Ring Analysis
-    **                                    scores in analysis region
-    ** Outputs : FinalLatitude_Return  - Latitude of final selected location
-    **           FinalLongitude_Return - Longitude of final selected location
-    **           FinalScore_Return - Confidence Score of final selected location
-    **           FinalLocationSelectionMethod_Return - Method used to determine
-    **                                                 final selected location
-    **                                                 1-First Guess,
-    **                                                 4-Enhanced Spiral Analysis,
-    **                                                 5-Combo Ring/Spiral Analysis
-    ** Return  : Error flag = 0
+    * This routine will determine the confidence scores for the spiral fitting
+    * and ring fitting routines and calculate the best possible position for
+    * the storm center based upon a combination of the two methods, if
+    * available.
+    *
+    * If the ring fitting routine does not determine a good candidate position,
+    * the spiral fitting routine will be used alone.  If the spiral fitting
+    * routine candidate point is not "good", the forecast point will be
+    * selected.
+    *
+    * @param FirstGuessLatitude First Guess latitude.
+    * @param FirstGuessLongitude First Guess longitude.
+    * @param SpiralCenterLatitude Spiral Analysis latitude at max location.
+    * @param SpiralCenterLongitude Spiral Analysis longitude at max location.
+    * @param SpiralCenterScoreValue Spiral Analysis Score value.
+    * @param RingFitLatitude Ring Analysis latitude at max score location.
+    * @param RingFitLongitude Ring Analysis longitude at max score location.
+    * @param RingFitScoreValue Ring Analysis Score value.
+    *
+    * @return Array of four double values. The values represent: latitude of
+    * final selected location, longitude of final selected location,
+    * confidence score of final selected location, and the {@literal "method"}
+    * used to determine the final selected location. Possible values for the
+    * method: 1 for first guess, 2 for enhanced spiral analysis, and 5 for
+    * combo ring/spiral analysis.
     */
-
+   private static double[] CalcScores(double FirstGuessLatitude,
+                                      double FirstGuessLongitude,
+                                      double SpiralCenterLatitude,
+                                      double SpiralCenterLongitude,
+                                      double SpiralCenterScoreValue,
+                                      double RingFitLatitude,
+                                      double RingFitLongitude,
+                                      double RingFitScoreValue)
+   {
       int YInc;
       int FinalLocationSelectionMethodReturn = 0;
       int NumberOfSpirals = (int)SpiralCenterAnalysisField[0][0]+1;
@@ -1270,13 +1356,28 @@ public class Auto {
       double DistanceValue;
       double MaximumForecastErrorDegree=1.0; /* max dist between fcst and final */
       double ExpectedMaximumForecastErrorDegree=MaximumForecastErrorDegree; /* expected error */
-      double MaximumAllowableDisplacement=ExpectedMaximumForecastErrorDegree*1.15; /* max displacement */
-      double SPIRALWEIGHT=10.0;              /* Spiral Center analysis weight */
-      double DISTPENALTYWEIGHT=(0.5/ExpectedMaximumForecastErrorDegree); /* RF distance penalty */
-      double PROXIMITYBONUS=4.5;             /* Ring Fit bonus value */
-      double PROXIMITYTHRESH=0.25;           /* RF bonus value threshold dist deg */
-      double COMBOSCORETHRESH=15.0;          /* combination score threshold value */
-      double KMperDegree=111.0;              /* convert distance in km to degrees */
+      
+      /* max displacement */
+      double MaximumAllowableDisplacement=ExpectedMaximumForecastErrorDegree*1.15;
+      
+      /* Spiral Center analysis weight */
+      double SPIRALWEIGHT=10.0;
+      
+      /* RF distance penalty */
+      double DISTPENALTYWEIGHT=(0.5/ExpectedMaximumForecastErrorDegree);
+      
+      /* Ring Fit bonus value */
+      double PROXIMITYBONUS=4.5;
+      
+      /* RF bonus value threshold dist deg */
+      double PROXIMITYTHRESH=0.25;
+      
+      /* combination score threshold value */
+      double COMBOSCORETHRESH=15.0;
+      
+      /* convert distance in km to degrees */
+      double KMperDegree=111.0;
+      
       double SpiralCenterIndexMaximum = -999.99;
       double SpiralCenterMaximumLatitude = -99.99;
       double SpiralCenterMaximumLongitude = -999.99;
@@ -1287,7 +1388,7 @@ public class Auto {
       double MaximumSpiralScoreLatitude = -99.99;
       double MaximumSpiralScoreLongitude = -999.99;
 
-      /** Spiral Score Calculations */
+      /* Spiral Score Calculations */
       double LocalValue[] = Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
                             SpiralCenterLatitude,SpiralCenterLongitude,1);
       DistanceValue = LocalValue[0];
@@ -1311,14 +1412,14 @@ public class Auto {
             DistanceBonusArray[YInc] = 0.0;
          }
          EnhancedSpiralScoreArray[YInc] = InitialSpiralScoreArray[YInc]+DistancePenaltyArray[YInc];
-         /**
-          ** System.out.printf("SpiralCenterAnalysisField :   YInc: %d  Lat: %f  Lon: %f Value: %f ",YInc,SpiralCenterAnalysisField[YInc][1],
-          **                   SpiralCenterAnalysisField[YInc][2],SpiralCenterAnalysisField[YInc][0]);
+         /*
+          * System.out.printf("SpiralCenterAnalysisField :   YInc: %d  Lat: %f  Lon: %f Value: %f ",YInc,SpiralCenterAnalysisField[YInc][1],
+          *                   SpiralCenterAnalysisField[YInc][2],SpiralCenterAnalysisField[YInc][0]);
           */
-         /**
-          ** System.out.printf(" distPentaly=%f  DistanceFromSpiralCenterArray=%f DistanceBonusArray=%f   max=%f\n",
-          **                   DistancePenaltyArray[YInc],DistanceFromSpiralCenterArray[YInc],
-          **                   DistanceBonusArray[YInc],SpiralCenterIndexMaximum);
+         /*
+          * System.out.printf(" distPentaly=%f  DistanceFromSpiralCenterArray=%f DistanceBonusArray=%f   max=%f\n",
+          *                   DistancePenaltyArray[YInc],DistanceFromSpiralCenterArray[YInc],
+          *                   DistanceBonusArray[YInc],SpiralCenterIndexMaximum);
           */
          if(EnhancedSpiralScoreArray[YInc]>SpiralCenterIndexMaximum) {
             SpiralCenterIndexMaximum = EnhancedSpiralScoreArray[YInc];
@@ -1327,17 +1428,17 @@ public class Auto {
          }
          FinalSpiralScoreArray[YInc] = InitialSpiralScoreArray[YInc]+DistancePenaltyArray[YInc]+DistanceBonusArray[YInc];
       }
-      /**
-       ** System.out.printf("FirstGuessLatitude=%f  FirstGuessLongitude=%f SpiralCenterMaximumLatitude=%f SpiralCenterMaximumLongitude=%f\n",
-       **                    FirstGuessLatitude,FirstGuessLongitude,SpiralCenterMaximumLatitude,SpiralCenterMaximumLongitude);
+      /*
+       * System.out.printf("FirstGuessLatitude=%f  FirstGuessLongitude=%f SpiralCenterMaximumLatitude=%f SpiralCenterMaximumLongitude=%f\n",
+       *                    FirstGuessLatitude,FirstGuessLongitude,SpiralCenterMaximumLatitude,SpiralCenterMaximumLongitude);
        */
       double LocalValue3[] = Functions.distance_angle(FirstGuessLatitude,FirstGuessLongitude,
                                                           SpiralCenterMaximumLatitude,SpiralCenterMaximumLongitude,1);
       DistanceValue = LocalValue3[0];
       SpiralMaximumDistanceFromGuess = DistanceValue/KMperDegree;
-      /**
-       ** System.out.printf("SpiralMaximumDistanceFromGuess=%f MaximumAllowableDisplacement=%f\n",
-       **                   SpiralMaximumDistanceFromGuess,MaximumAllowableDisplacement);
+      /*
+       * System.out.printf("SpiralMaximumDistanceFromGuess=%f MaximumAllowableDisplacement=%f\n",
+       *                   SpiralMaximumDistanceFromGuess,MaximumAllowableDisplacement);
        */
       if(SpiralMaximumDistanceFromGuess<=MaximumAllowableDisplacement) {
          /* Ring Score Calculations */
@@ -1352,10 +1453,10 @@ public class Auto {
             IntermediateRingScore = RingScoreReturn[1];
             if(RetErr==1) {
                FinalSpiralScoreValue = FinalSpiralScoreArray[YInc]+IntermediateRingScore;
-               /** 
-                ** System.out.printf("    FOUND  NumberOfSpirals=%d  lat=%f  lon=%f ringScore=%f  FinalSpiralScoreValue=%f MaximumSpiralScoreValue=%f\n",
-                **                   YInc,SpiralCenterAnalysisField[YInc][1],SpiralCenterAnalysisField[YInc][2],
-                **                   IntermediateRingScore,FinalSpiralScoreValue,MaximumSpiralScoreValue);
+               /*
+                * System.out.printf("    FOUND  NumberOfSpirals=%d  lat=%f  lon=%f ringScore=%f  FinalSpiralScoreValue=%f MaximumSpiralScoreValue=%f\n",
+                *                   YInc,SpiralCenterAnalysisField[YInc][1],SpiralCenterAnalysisField[YInc][2],
+                *                   IntermediateRingScore,FinalSpiralScoreValue,MaximumSpiralScoreValue);
                 */
                if(FinalSpiralScoreValue>MaximumSpiralScoreValue) {
                   MaximumSpiralScoreValue = FinalSpiralScoreValue;
@@ -1364,19 +1465,19 @@ public class Auto {
                }
             }
          }
-         /**
-          ** System.out.printf("MaximumSpiralScoreValue=%f RingPart=%f SpiralCenterIndexMaximum=%f\n",
-          **                    MaximumSpiralScoreValue,IntermediateRingScore,SpiralCenterIndexMaximum);
+         /*
+          * System.out.printf("MaximumSpiralScoreValue=%f RingPart=%f SpiralCenterIndexMaximum=%f\n",
+          *                    MaximumSpiralScoreValue,IntermediateRingScore,SpiralCenterIndexMaximum);
           */
          if(MaximumSpiralScoreValue>=COMBOSCORETHRESH) {
-            /** use Combo Method */
+            /* use Combo Method */
             FinalScoreReturn = MaximumSpiralScoreValue;
             FinalLatitudeReturn = MaximumSpiralScoreLatitude;
             FinalLongitudeReturn = MaximumSpiralScoreLongitude;
             FinalLocationSelectionMethodReturn = 5;
          }
          else {
-            /** use ESP method */
+            /* use ESP method */
             FinalScoreReturn = 1.0+SpiralCenterIndexMaximum;
             FinalLatitudeReturn = SpiralCenterMaximumLatitude;
             FinalLongitudeReturn = SpiralCenterMaximumLongitude;
@@ -1384,27 +1485,36 @@ public class Auto {
          }
       }
       else {
-         /** use Forecast Position */
+         /* use Forecast Position */
          FinalScoreReturn = 0.0;
          FinalLatitudeReturn = FirstGuessLatitude;
          FinalLongitudeReturn = FirstGuessLongitude;
          FinalLocationSelectionMethodReturn = 1;
       }
 
-      return new double[] { FinalLatitudeReturn, FinalLongitudeReturn, FinalScoreReturn, (double)FinalLocationSelectionMethodReturn };
+      return new double[] {
+         FinalLatitudeReturn,
+         FinalLongitudeReturn,
+         FinalScoreReturn,
+         (double)FinalLocationSelectionMethodReturn
+      };
    }
-
-   private static double[] FindRingScore(double FirstGuessLatitude, double FirstGuessLongitude, double RingScoreAnalysisField[][]) {
+   
    /**
-    ** Find Ring score at selected location (spiral analysis location)
-    ** Inputs  : FirstGuessLatitude     - latitude of search location
-    **           FirstGuessLongitude    - longitude of search location
-    **           RingScoreAnalysisField - Array/Grid of Ring Analysis scores
-    ** Outputs : RingFixScore_Return    - Value at search location in
-    **                                    Ring Analysis Grid (if found)
-    ** Return  : -1 if not found, 1 if found
+    * Find Ring score at selected location (spiral analysis location)
+    *
+    * @param FirstGuessLatitude Latitude of search location.
+    * @param FirstGuessLongitude Longitude of search location.
+    * @param RingScoreAnalysisField - Array/Grid of Ring Analysis scores.
+    *
+    * @return Array of two doubles. The first value will be either -1 (if
+    * nothing was found) or 1 (if found). The second value is the value at
+    * search location in ring analysis grid (if the first value is 1).
     */
-
+   private static double[] FindRingScore(double FirstGuessLatitude,
+                                         double FirstGuessLongitude,
+                                         double RingScoreAnalysisField[][])
+   {
       int YInc = 1;
       int Ret_ID = -1;
       double MaxRingDistance = RingScoreAnalysisField[0][0];
@@ -1425,29 +1535,41 @@ public class Auto {
 
       return new double[] { (double)Ret_ID, RingFixScoreReturn };
    }
-
-   private static double[] PickFinalLocation(int InputPositioningID,
-                                             double ForecastLatitude, double ForecastLongitude,
-                                             double RingSpiralLatitude, double RingSpiralLongitude,
-                                             double RingSpiralScore, int RingSpiralSelectionIDValue) {
+   
    /**
-    ** Determine method location scheme to use by examining
-    ** various empirically-defined confidence factors.
-    ** confidence factors will be derived,
-    ** with the "most confident" value used as the final automatically
-    ** determined storm position.
-    ** Inputs  : RingSpiralLatitude  - Ring/Spiral Analysis latitude position
-    **           RingSpiralLongitude - Ring/Spiral Analysis longitude position
-    **           RingSpiralScore     - Ring/Spiral Analysis confidence factor score
-    **           RingSpiralSelectionIDValue - Ring/Spiral Analysis position
-    **                                        derivation method
-    **           ForecastLatitude    - NHC/JTWC interpolated latitude position
-    **           ForecastLongitude   - NHC/JTWC interpolated longitude position
-    ** Outputs : FinalLatitude_Return  - latitude value to be used
-    **           FinalLongitude_Return - longitude value to be used
-    **           PositioningMethodID_Return - method utilized in determination
-    **                                        of storm postion values
+    * Determine method location scheme to use by examining various
+    * empirically-defined confidence factors.
+    *
+    * Confidence factors will be derived,
+    * with the "most confident" value used as the final automatically
+    * determined storm position.
+    *
+    * @param ForecastLatitude NHC/JTWC interpolated latitude position.
+    *
+    * @param ForecastLongitude NHC/JTWC interpolated longitude position.
+    *
+    * @param RingSpiralLatitude Ring/Spiral Analysis latitude position.
+    *
+    * @param RingSpiralLongitude Ring/Spiral Analysis longitude position.
+    *
+    * @param RingSpiralScore Ring/Spiral Analysis confidence factor score.
+    *
+    * @param RingSpiralSelectionIDValue Ring/Spiral Analysis position
+    *                                   derivation method.
+    *
+    * @return Array of three doubles. First value is latitude to be used,
+    * second value is longitude to be used, and the third value is the
+    * method used to determine storm position values.
     */
+   private static double[] PickFinalLocation(int InputPositioningID,
+                                             double ForecastLatitude,
+                                             double ForecastLongitude,
+                                             double RingSpiralLatitude,
+                                             double RingSpiralLongitude,
+                                             double RingSpiralScore,
+                                             int RingSpiralSelectionIDValue)
+   {
+
       int PositioningMethodID = 0;
       int HistoryRecEyeScene;
       int HistoryRecCloudScene;
@@ -1508,7 +1630,7 @@ public class Auto {
                }
                if((HistoryRecEyeScene<3)||((HistoryRecCloudScene==1)&&(HistoryRecEyeScene==3))) {
                   EyeSceneCount = EyeSceneCount+1;
-                  /** checking for eye or embedded center scene types */
+                  /* checking for eye or embedded center scene types */
                   if(EyeSceneCount==3) {
                      FoundEyeSceneTF = true;
                   }
@@ -1523,15 +1645,15 @@ public class Auto {
          }
       }
 
-      /** System.out.printf("%d %d : ",CurDate,CurTime); */
-      /** System.out.printf("RingSpiralScore=%f HistoryRecFinalTno=%f\n",RingSpiralScore,HistoryRecFinalTno); */
-      /** System.out.printf("HistoryRecRawTno=%f MaximumHistoryRecCI=%f\n",HistoryRecRawTno,MaximumHistoryRecCI); */
+      /* System.out.printf("%d %d : ",CurDate,CurTime); */
+      /* System.out.printf("RingSpiralScore=%f HistoryRecFinalTno=%f\n",RingSpiralScore,HistoryRecFinalTno); */
+      /* System.out.printf("HistoryRecRawTno=%f MaximumHistoryRecCI=%f\n",HistoryRecRawTno,MaximumHistoryRecCI); */
     
-      /**
-       ** check score for developing systems
-       ** (MaximumHistoryRecCI<5.0) starting at 3.0 or
-       ** check score for weakeining systems
-       ** (MaximumHistoryRecCI>=5.0) only above 3.5
+      /*
+       * check score for developing systems
+       * (MaximumHistoryRecCI<5.0) starting at 3.0 or
+       * check score for weakeining systems
+       * (MaximumHistoryRecCI>=5.0) only above 3.5
        */
       if(((HistoryRecRawTno>=3.0)&&(MaximumHistoryRecCI<5.0))||
          ((HistoryRecRawTno>=3.5)&&(MaximumHistoryRecCI>=5.0))) {
@@ -1539,26 +1661,26 @@ public class Auto {
          if((HistoryRecFinalTno<=4.5)&&(RingSpiralScore<1.0)&&
             (!FoundEyeSceneTF)) RingSpiralScore = -99.99;
 
-         /** System.out.printf(" FINALRingSpiralScore=%f ",RingSpiralScore); */
+         /* System.out.printf(" FINALRingSpiralScore=%f ",RingSpiralScore); */
     
          if(RingSpiralScore>0.0) {
-            /** use Spiral/Ring methodology for center point */
+            /* use Spiral/Ring methodology for center point */
             FinalLatitude = RingSpiralLatitude;
             FinalLongitude = RingSpiralLongitude;
             FinalScoreValue = RingSpiralScore;
             PositioningMethodID = RingSpiralSelectionIDValue;
          } else {
-            /** CDO... can't find anything to focus on */
+            /* CDO... can't find anything to focus on */
             FinalLatitude = ForecastLatitude;
             FinalLongitude = ForecastLongitude;
             FinalScoreValue = 0.0;
             PositioningMethodID = InputPositioningID;
          }
       } else {
-         /**
-          ** current Tfinal is less than 3.5 or current scene
-          ** is not an eye or embedded center
-          ** WILL USE FORECAST POSITION FOR AODT ANALYSIS
+         /*
+          * current Tfinal is less than 3.5 or current scene
+          * is not an eye or embedded center
+          * WILL USE FORECAST POSITION FOR AODT ANALYSIS
           */
          FinalLatitude = ForecastLatitude;
          FinalLongitude = ForecastLongitude;
@@ -1570,21 +1692,20 @@ public class Auto {
 
    }
  
-      /**
-       ** The following routines were originally developed by Dave Santek
-       ** of UW/SSEC and were added to the ADT under permission.
-       ** If executed, an array of latitude and longitude position arrays
-       ** will be remapped to a rectilinear projection for Tony Wimmers routines
-       */
 
+   
+   /**
+    * Calls routines to setup transformation, transform, data move.
+    *
+    * Input data provided with global variable arrays containing original
+    * and transformed arrays.
+    */
    private static void RemapData() {
-      /**
-       ** Calls routines to setup transformation, transform, data move.  Input data
-       ** provided with global variable arrays containing original and transformed
-       ** arrays.
-       ** Inputs  : None
-       ** Outputs : None
-       ** Return  : 0
+      /*
+       * The following routines were originally developed by Dave Santek
+       * of UW/SSEC and were added to the ADT under permission.
+       * If executed, an array of latitude and longitude position arrays
+       * will be remapped to a rectilinear projection for Tony Wimmers routines
        */
 
       int NumberOfCorners = 0;
@@ -1594,40 +1715,35 @@ public class Auto {
       tiff_vars.in_elems = Data.IRData_NumberColumns;
       tiff_vars.in_lines = Data.IRData_NumberRows;
     
-      /** System.out.printf("elems=%d lines=%d\n", tiff_vars.in_elems,tiff_vars.in_lines); */
+      /* System.out.printf("elems=%d lines=%d\n", tiff_vars.in_elems,tiff_vars.in_lines); */
 
-      /** Uinit( ); */
-      /** 
+      /* Uinit( ); */
+      /*
       dis_vars.xrectl = (double)tiff_vars.in_lines;
       dis_vars.xrecte = (double)tiff_vars.in_elems;
       System.out.printf("xrectl=%f xrecte=%f\n",dis_vars.xrectl,dis_vars.xrecte);
       */
       
       DetermineDest( );
-      /** System.out.printf("after determineDest\n"); */
+      /* System.out.printf("after determineDest\n"); */
       
       NumberOfCorners = Init(LineSplineValue,ElementSplineValue);
 
       System.out.printf("number of corners=%d\n",NumberOfCorners);
       Corner(NumberOfCorners,LineSplineValue,ElementSplineValue);
-      /** System.out.printf("after corners\n"); */
+      /* System.out.printf("after corners\n"); */
 
       if((ElementSplineValue>1)||(LineSplineValue>1)) {
          DoMap(NumberOfCorners,LineSplineValue,ElementSplineValue);
       }
 
    }
-
-
-   private static void DetermineDest() {
+   
    /**
-    ** Interpolate between two arrays of different size
-    ** Inputs  : None
-    ** Outputs : None
-    ** Return  : None
+    * Interpolate between two arrays of different size.
     */
-
-      int XInc,YInc;
+   private static void DetermineDest() {
+   int XInc,YInc;
       int XSizeMax= Data.IRData_NumberColumns-1;
       int YSizeMax= Data.IRData_NumberRows-1;
        
@@ -1646,7 +1762,7 @@ public class Auto {
          if(SWCornerLongitude<SECornerLongitude) {
             SWCornerLongitude = SWCornerLongitude+360.0;
          }
-         /** System.out.printf("DATELINE CROSS\n"); */
+         /* System.out.printf("DATELINE CROSS\n"); */
          for(XInc=0;XInc<XSizeMax;XInc++) {
             for(YInc=0;YInc<YSizeMax;YInc++) {
                double DataValue = Data.IRData_Longitude[YInc][XInc];
@@ -1699,17 +1815,17 @@ public class Auto {
 
       IRData_Remap_NumberColumns = tiff_vars.out_elems;
       IRData_Remap_NumberRows = tiff_vars.out_lines;
-
    }
-
-   private static int Init(int LineSplineInput, int ElementSplineInput) {
+   
    /**
-    ** Compute number of corners for transformation & block sizes
-    ** Inputs  : LineSplineInput    - spline function for line values
-    **           ElementSplineInput - spline function for element values
-    ** Outputs : NumberOfCorners_Return - total number of corners to interpolate
-    ** Return  : 0
+    * Compute number of corners for transformation and block sizes.
+    *
+    * @param LineSplineInput Spline function for line values.
+    * @param ElementSplineInput Spline function for element values.
+    *
+    * @return Total number of corners to interpolate.
     */
+   private static int Init(int LineSplineInput, int ElementSplineInput) {
       int NumberOfCorners = 0;
     
       remap_vars.nspl = (tiff_vars.out_elems+ElementSplineInput-1)/ElementSplineInput;
@@ -1735,21 +1851,26 @@ public class Auto {
 
       return NumberOfCorners;
    }
-
-   private static void Corner(int NumberOfCornersInput, int LineSplineInput, int ElementSplineInput) {
+   
    /**
-    ** Compute transformations at corners
-    ** Inputs  : NumberOfCornersInput   - total number of corners to interpolate
-    **           LineSplineInput        - spline function for line values
-    **           ElementSplineInput     - spline function for element values
-    ** Outputs : LineCoordinateArray    - Array containing line coordinates
-    **           ElementCoordinateArray - Array containint element coordinates
-    ** Return  : None
+    * Compute transformations at corners.
+    *
+    * Operates on the {@link #LineCoordinateArray} and
+    * {@link #ElementCoordinateArray}.
+    *
+    * @param NumberOfCornersInput Total number of corners to interpolate.
+    * @param LineSplineInput Spline function for line values.
+    * @param ElementSplineInput Spline function for element values.
     */
+   private static void Corner(int NumberOfCornersInput,
+                              int LineSplineInput,
+                              int ElementSplineInput)
+   {
+      int XInc;
+      int YInc;
+      int ArrayInc;
 
-      int XInc,YInc,ArrayInc;
-
-      /** initialize array of corners */
+      /* initialize array of corners */
       for (ArrayInc=0;ArrayInc<NumberOfCornersInput;ArrayInc++) {
          LineCoordinateArray[ArrayInc] = -99.9;
          ElementCoordinateArray[ArrayInc] = -99.9;
@@ -1763,13 +1884,13 @@ public class Auto {
       for (YInc=0;YInc<NumberLines;YInc=YInc+LineSplineInput) {
          int LineValue = YInc;
          for (XInc=0;XInc<NumberElements;XInc=XInc+ElementSplineInput) {
-            /** System.out.printf("yinc=%d xinc=%d... \n",YInc,XInc); */
+            /* System.out.printf("yinc=%d xinc=%d... \n",YInc,XInc); */
             int ElementValue = XInc;
             int[] UMapReturn = UMap(LineValue,ElementValue);
             int RetErr = UMapReturn[0];
             int SplineLineValue = UMapReturn[1];
             int SplineElementValue = UMapReturn[2];
-            /** System.out.printf("spline line=%d element=%d \n ",SplineLineValue,SplineElementValue); */
+            /* System.out.printf("spline line=%d element=%d \n ",SplineLineValue,SplineElementValue); */
             if((ElementSplineInput==1)&&(LineSplineInput==1)) {
                IRData_Remap_Temperature[LineValue][ElementValue]=
                        Data.IRData_Temperature[SplineLineValue][SplineElementValue];
@@ -1784,23 +1905,27 @@ public class Auto {
       }
 
    }
-
-   private static int[] UMap(int LineValueInput, int ElementValueInput) {
+   
    /**
-    ** provide coordinates between original point and transformed point
-    ** Inputs  : LineValueInput      - original line coordinate
-    **           ElementValueInput   - soriginal element coordinatep
-    ** Outputs : LineValue_Return    - interpolated line coordinates
-    **           ElementValue_Return - interpolated element coordinates
-    ** Return  : None
+    * Provide coordinates between original point and transformed point.
+    *
+    * @param LineValueInput Original line coordinate.
+    * @param ElementValueInput Ooriginal element coordinate.
+    *
+    * @return Array containing three values: possible error code, interpolated
+    * line coordinate, and interpolated element coordinate.
     */
+   private static int[] UMap(int LineValueInput, int ElementValueInput) {
 
-      double DestinationLatitude;           /* dest array line position value */
-      double DestinationLongitude;          /* dest array element position value */
+      /* dest array line position value */
+      double DestinationLatitude;
+
+      /* dest array element position value */
+      double DestinationLongitude;
     
-      /**
-       ** Convert destination LineValueInput, ElementValueInput to
-       ** source coords LineValue_Return, ElementValue_Return
+      /*
+       * Convert destination LineValueInput, ElementValueInput to
+       * source coords LineValue_Return, ElementValue_Return
        */
       LineValueInput = Math.min(LineValueInput,tiff_vars.out_lines-1);
       ElementValueInput = Math.min(ElementValueInput,tiff_vars.out_elems-1);
@@ -1814,17 +1939,18 @@ public class Auto {
 
       return new int[] { RetErr, LineValueReturn, ElementValueReturn };
    }
-
-   private static int[] FindPoint(double LatitudeInput, double LongitudeInput) {
+   
    /**
-    ** find specific lat/lon location in array and return index values
-    ** Inputs  : LatitudeInput  - Latitude value
-    **           LongitudeInput - Longitude value
-    ** Outputs : YLineValue_Return    - Array line value of lat/lon input
-    **           XElementValue_Return - Array element value of lat/lon input
-    ** Return  : -1- error in transformation; 0 - o.k.
+    * Find specific lat/lon location in array and return index values.
+    *
+    * @param latitude Latitude value.
+    * @param longitude Longitude value.
+    *
+    * @return Array of three values. The first value is the status (-1 for
+    * error, 0 for ok), the second value is array line value of lat/lon
+    * input, and the third value is array element value of lat/lon input.
     */
-
+   private static int[] FindPoint(double latitude, double longitude) {
       int RetErr;
       int XInc;
       int IndexValue;
@@ -1835,10 +1961,18 @@ public class Auto {
       double[] CornerLongitudeArray = new double[4];
       double[] NSEWDistanceValuesArray = new double[4];
 
-      boolean FoundPointTF = false;           /** found point logical */
-      boolean OutOfBoundsTF = false;          /** out of bounds flag logical */
-      boolean FoundLatitudeTF = false;        /** found latitude value logical */
-      boolean FoundLongitudeTF = false;       /** found longitude value logical */
+      /* found point logical */
+      boolean FoundPointTF = false;
+      
+      /* out of bounds flag logical */
+      boolean OutOfBoundsTF = false;
+      
+      /* found latitude value logical */
+      boolean FoundLatitudeTF = false;
+      
+      /* found longitude value logical */
+      boolean FoundLongitudeTF = false;
+      
 
       int NumberElements = tiff_vars.in_elems;
       int NumberLines = tiff_vars.in_lines;
@@ -1856,47 +1990,47 @@ public class Auto {
          CornerLongitudeArray[0] = Data.IRData_Longitude[LineValue][ElementValue];
          CornerLatitudeArray[3] = Data.IRData_Latitude[LineValue+1][ElementValue+1];
          CornerLongitudeArray[3] = Data.IRData_Longitude[LineValue+1][ElementValue+1];
-         /**
-          ** System.out.printf("x=%d  y=%d  : CornerLatitudeArray0=%f CornerLongitudeArray0=%f ",
-          **                   " CornerLatitudeArray3=%f CornerLongitudeArray3=%f\n",
-          **                   ElementValue,LineValue,
-          **                   CornerLatitudeArray[0],CornerLongitudeArray[0],
-          **                   CornerLatitudeArray[3],CornerLongitudeArray[3]);
+         /*
+          * System.out.printf("x=%d  y=%d  : CornerLatitudeArray0=%f CornerLongitudeArray0=%f ",
+          *                   " CornerLatitudeArray3=%f CornerLongitudeArray3=%f\n",
+          *                   ElementValue,LineValue,
+          *                   CornerLatitudeArray[0],CornerLongitudeArray[0],
+          *                   CornerLatitudeArray[3],CornerLongitudeArray[3]);
           */
-         if((LongitudeInput>CornerLongitudeArray[0])||
-            (LongitudeInput<CornerLongitudeArray[3])) {
+         if((longitude>CornerLongitudeArray[0])||
+            (longitude<CornerLongitudeArray[3])) {
             FoundLongitudeTF = false;
-            if(LongitudeInput<CornerLongitudeArray[3]) {
+            if(longitude<CornerLongitudeArray[3]) {
                ElementValue++;
             } else {
-               if(LongitudeInput>CornerLongitudeArray[0]) {
+               if(longitude>CornerLongitudeArray[0]) {
                   ElementValue--;
                }
             }
          } else {
             FoundLongitudeTF = true;
          }
-         if((LatitudeInput>CornerLatitudeArray[0])||
-            (LatitudeInput<CornerLatitudeArray[3])) {
+         if((latitude>CornerLatitudeArray[0])||
+            (latitude<CornerLatitudeArray[3])) {
             FoundLatitudeTF = false;
-            if(LatitudeInput<CornerLatitudeArray[3]) {
+            if(latitude<CornerLatitudeArray[3]) {
                LineValue++;
             } else {
-               if(LatitudeInput>CornerLatitudeArray[0]) {
+               if(latitude>CornerLatitudeArray[0]) {
                   LineValue--;
                }
             }
          } else {
             FoundLatitudeTF = true;
          }
-         double LocalValue1[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue1[] = Functions.distance_angle(latitude,longitude,
                                     CornerLatitudeArray[0],CornerLongitudeArray[0],1);
          double DistanceValue = LocalValue1[0];
 
          /*
-         ** System.out.printf("distance : LatitudeInput=%f LongitudeInput=%f",
+         ** System.out.printf("distance : latitude=%f longitude=%f",
          **                   " CornerLatitudeArray0=%f CornerLongitudeArray0=%f",
-         **                   " dist=%f angle=%f\n",LatitudeInput,LongitudeInput,
+         **                   " dist=%f angle=%f\n",latitude,longitude,
          **                    CornerLatitudeArray[0],CornerLongitudeArray[0],
          **                    DistanceValue,AngleValue);
          */
@@ -1921,18 +2055,18 @@ public class Auto {
          CornerLatitudeArray[2] = Data.IRData_Latitude[LineValue+1][ElementValue];
          CornerLongitudeArray[2] = Data.IRData_Longitude[LineValue+1][ElementValue];
 
-         double LocalValue2[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue2[] = Functions.distance_angle(latitude,longitude,
                                     CornerLatitudeArray[0],CornerLongitudeArray[0],1);
          NSEWDistanceValuesArray[0] = LocalValue2[0];
-         double LocalValue3[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue3[] = Functions.distance_angle(latitude,longitude,
                                     CornerLatitudeArray[1],CornerLongitudeArray[1],1);
          NSEWDistanceValuesArray[1] = LocalValue3[0];
          IndexValue = (NSEWDistanceValuesArray[0]<NSEWDistanceValuesArray[1]) ? 0 : 1;
-         double LocalValue4[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue4[] = Functions.distance_angle(latitude,longitude,
                                     CornerLatitudeArray[2],CornerLongitudeArray[2],1);
          NSEWDistanceValuesArray[2] = LocalValue4[0];
          IndexValue = (NSEWDistanceValuesArray[IndexValue]<NSEWDistanceValuesArray[2]) ? IndexValue : 2;
-         double LocalValue5[] = Functions.distance_angle(LatitudeInput,LongitudeInput,
+         double LocalValue5[] = Functions.distance_angle(latitude,longitude,
                                     CornerLatitudeArray[3],CornerLongitudeArray[3],1);
          NSEWDistanceValuesArray[3] = LocalValue5[0];
          IndexValue = (NSEWDistanceValuesArray[IndexValue]<NSEWDistanceValuesArray[3]) ? IndexValue : 3;
@@ -1950,13 +2084,21 @@ public class Auto {
    }
 
    private static int DoMap(int NumberOfCornersInput, int LineSplineInput, int ElementSplineInput) {
-      /** LineCoordsArrayInput = LineCoordinateArray */
-      /** ElementCoordsArrayInput = ElementCoordinateArray */
+      /* LineCoordsArrayInput = LineCoordinateArray */
+      /* ElementCoordsArrayInput = ElementCoordinateArray */
 
-      int[] LineIncArray1 = {-2,-2, 0, 2, 2, 2, 0,-2};    /** line increment */
-      int[] LineIncArray2 = {-1,-1, 0, 1, 1, 1, 0,-1};    /** line increment */
-      int[] ElementIncArray1 = { 0, 2, 2, 2, 0,-2,-2,-2}; /** ele increment*/
-      int[] ElementIncArray2 = { 0, 1, 1, 1, 0,-1,-1,-1}; /** ele increment*/
+      /* line increment */
+      int[] LineIncArray1 = { -2, -2, 0, 2, 2, 2, 0, -2 };
+      
+      /* line increment */
+      int[] LineIncArray2 = { -1, -1, 0, 1, 1, 1, 0, -1 };
+      
+      /* ele increment*/
+      int[] ElementIncArray1 = { 0, 2, 2, 2, 0, -2, -2, -2 };
+      
+      /* ele increment*/
+      int[] ElementIncArray2 = { 0, 1, 1, 1, 0, -1, -1, -1 };
+      
    
       int BufferSize = tiff_vars.in_lines*tiff_vars.in_elems;
    
@@ -2037,7 +2179,7 @@ public class Auto {
             }
          }
     
-         /** System.out.printf("remap nce=%d ncl=%d\n",remap_vars.nce,remap_vars.ncl); */
+         /* System.out.printf("remap nce=%d ncl=%d\n",remap_vars.nce,remap_vars.ncl); */
          for(YInc=1;YInc<remap_vars.nce+1;YInc++) {
             for(XInc=1;XInc<remap_vars.ncl+1;XInc++) {
                ArrayPointValue = IND(YInc,XInc);
@@ -2086,8 +2228,8 @@ public class Auto {
                                   ((double)(2.0*LineCoordinateArray[ValueIND2-1]))-LineCoordinateArray[ValueIND1-1];
                            ElementSum = ElementSum+
                                   ((double)2.0*ElementCoordinateArray[ValueIND2-1])-ElementCoordinateArray[ValueIND1-1];
-                        } /** SKIP:; */
-                     } /** SKIP:; */
+                        } /* SKIP:; */
+                     } /* SKIP:; */
                   }
                       
                   if(PointCounter>0) {
@@ -2099,27 +2241,27 @@ public class Auto {
             }
          }
              
-         /** Loop through by destination blocks */
+         /* Loop through by destination blocks */
          int BlockCounter = 0;
     
          for(IncVal=1;IncVal<tiff_vars.out_lines+1;IncVal=IncVal+remap_vars.dlb) {
-            /** Accumulated lines/block */
+            /* Accumulated lines/block */
             AccumulatedLines = BlockCounter*remap_vars.dlb;
     
-            /** Pointer to first corner of splines for this dest block */
+            /* Pointer to first corner of splines for this dest block */
             FirstCornerPointer = (BlockCounter*remap_vars.ncl*remap_vars.dlb)/LineSplineInput;
             FirstCornerPointerHold = FirstCornerPointer;
     
-            /** Pointer to last corner for this dest block */
+            /* Pointer to last corner for this dest block */
             LastCornerPointer = (((BlockCounter+1)*remap_vars.ncl*remap_vars.dlb)/LineSplineInput)-1;
             LastCornerPointer=Math.min(LastCornerPointer,NumberOfCornersInput-remap_vars.ncl);
     
-            /** For each destination block loop through entire source */
+            /* For each destination block loop through entire source */
             for(SourceBlockInc=1;SourceBlockInc<tiff_vars.in_lines+1;SourceBlockInc=SourceBlockInc+remap_vars.slb) {
                MaximumSourceLine = Math.min(tiff_vars.in_lines,(SourceBlockInc+remap_vars.slb-1));
                ReadAllTF = false;
     
-               /** Loop through splines and move any data */
+               /* Loop through splines and move any data */
     
                FirstCornerPointer = FirstCornerPointerHold;
                SourceBlockValue = 0;
@@ -2131,7 +2273,7 @@ public class Auto {
                      OffsetValue2 = OffsetValue1+OffsetValue0+1;
                      CornerPointer = FirstCornerPointer+SplineInc-1;
     
-                     /** Get 4 corners in line space and check for out of bounds */
+                     /* Get 4 corners in line space and check for out of bounds */
     
                      ValX = remap_vars.ncl;
                      LineULValue = LineCoordinateArray[CornerPointer];
@@ -2146,7 +2288,7 @@ public class Auto {
                      LineMinimum = Math.min(LineMinimum,LineLLValue);
                      LineMinimum = Math.min(LineMinimum,LineLRValue);
     
-                     /** Test for the presence of a limb in the spline box */
+                     /* Test for the presence of a limb in the spline box */
     
                      if( LineMinimum==-99.9) {
                         LABEL30 = true;
@@ -2164,7 +2306,7 @@ public class Auto {
                         LABEL30 = true;
                      }
     
-                     /** Get 4 corners in elem space & check for out of bound */
+                     /* Get 4 corners in elem space & check for out of bound */
     
                      ValX = remap_vars.ncl;
                      ElementULValue = ElementCoordinateArray[CornerPointer];
@@ -2194,13 +2336,13 @@ public class Auto {
                      }
                      EdgeFixID = 0;
     
-                     /** If the max & min element fall off the image...pitch it */
+                     /* If the max & min element fall off the image...pitch it */
     
                      if((ElementMaximumFinal>tiff_vars.in_elems)&&(ElementMinimumFinal<1)) {
                         LABEL30 = true;
                      }
     
-                     /** Fix if left & right edge should be continuous */
+                     /* Fix if left & right edge should be continuous */
     
                      if(!LABEL30) { 
                         if((ElementMaximumFinal-ElementMinimumFinal)>(int)(.75*tiff_vars.in_elems)) {
@@ -2276,8 +2418,8 @@ public class Auto {
                                     if(!LABEL38) {
                                        OffsetValue = OffsetValueL+OffsetValueE;
                                        InterpArray[OffsetValue-1] = SourceArray[SourceOffsetValue-1];
-                                    } /** LABEL38: */
-                                 } /** LABEL38: */
+                                    } /* LABEL38: */
+                                 } /* LABEL38: */
                                  LineValueACounter0 = LineValueACounter0+LineValueACounter;
                                  ElementValueACounter0 = ElementValueACounter0+ElementValueACounter;
                               }
@@ -2337,7 +2479,7 @@ public class Auto {
                               }
                            }
                         }
-                     } /** LABEL30: */
+                     } /* LABEL30: */
                      SourceBlockValue = SourceBlockValue+1;
                   }
                   FirstCornerPointer = FirstCornerPointer+remap_vars.ncl;
@@ -2363,7 +2505,7 @@ public class Auto {
    }
 
    private static int IND(int y, int x) {
-       /** #define IND(y,x) ((y-1)*remap_vars.ncl+x) */
+       /* #define IND(y,x) ((y-1)*remap_vars.ncl+x) */
       return ((y-1)*remap_vars.ncl+x);
    } 
 

@@ -108,7 +108,7 @@ public class History {
    public static int HistoryFileRecords;
    public static IRHistoryRecord HistoryFile[] = new IRHistoryRecord[1000];
    public static IRHistoryRecord IRCurrentRecord = new IRHistoryRecord(); 
-   /** public static IRHistoryRecord IRCurrentRecord = new IRHistoryRecord();     / this could be public if I redo everything */
+   /* public static IRHistoryRecord IRCurrentRecord = new IRHistoryRecord();     / this could be public if I redo everything */
  
    public History() {
       HistoryFileRecords=0;
@@ -126,10 +126,10 @@ public class History {
          HistoryFile[HistoryFileRecords] = new IRHistoryRecord();
          String historyRec = in.nextLine();
          String[] tokens = historyRec.split(delims);
-         /** for(String histVals : tokens) {
-          **  System.out.println(histVals);
-          ** } */
-         /** HistoryFile[HistoryFileRecords].date = Integer.parseInt(tokens[0]); */
+         /* for(String histVals : tokens) {
+          *  System.out.println(histVals);
+          * } */
+         /* HistoryFile[HistoryFileRecords].date = Integer.parseInt(tokens[0]); */
          HistoryFile[HistoryFileRecords].date = Functions.cmonth2julian(tokens[0]);
          HistoryFile[HistoryFileRecords].time = Integer.parseInt(tokens[1]);
          HistoryFile[HistoryFileRecords].TrawO = Float.parseFloat(tokens[3]);
@@ -170,7 +170,7 @@ public class History {
          HistoryFile[HistoryFileRecords].MSLPenv = Integer.parseInt(tokens[38]);
          HistoryFile[HistoryFileRecords].vza = Integer.parseInt(tokens[39]);
          if(tokens.length>40) {
-            if(tokens[40] != null) HistoryFile[HistoryFileRecords].comment = tokens[40];   /** this won't get all comment past first space */
+            if(tokens[40] != null) HistoryFile[HistoryFileRecords].comment = tokens[40];   /* this won't get all comment past first space */
          } else {
             HistoryFile[HistoryFileRecords].comment = "";
          }
@@ -242,7 +242,7 @@ public class History {
       while(XInc<NumRecsHistory) {
         if(XInc==0) {
            if(OutputFormatTypeID==-1) {
-              /** original format history file listing */
+              /* original format history file listing */
               if(UseCKZTF) {
                  HistoryFileListing += String.format("                  ----Intensity--- "
                            + "-Tno Values-- ---Tno/CI Rules---  -Temperature-"
@@ -285,8 +285,8 @@ public class History {
                               + "VZA  Comments\n");
               }
            } else {
-              /** ATCF format listing */
-              /** HistoryFileListing += String.format("\n"); */
+              /* ATCF format listing */
+              /* HistoryFileListing += String.format("\n"); */
            }
         }
         if(OutputStyle==0) {
@@ -361,7 +361,7 @@ public class History {
            Rule8Flag = 6;
            Rule9Flag = 3;
            RapidDissFlag = 4;
-           /** AutoCenteringValue=7; */
+           /* AutoCenteringValue=7; */
            RadiusMaxWindString = String.format("  N/A ");
            MWScoreString = String.format("  N/A");
         } else {
@@ -371,7 +371,7 @@ public class History {
            CIPressureValue = Functions.adt_getpwval(0,CI,Latitude,Longitude);
            CIWindValue = Functions.adt_getpwval(1,CI,Latitude,Longitude);
            if(!Vmax1or10TF) {
-              /** convert 1-minute to 10-minute average Vmax for output */
+              /* convert 1-minute to 10-minute average Vmax for output */
               CIWindValue=0.88*CIWindValue;
            }
            if((CloudScene==3)||(CloudScene==4)) {
@@ -395,7 +395,7 @@ public class History {
    
         System.out.printf("here AA %d %d\n",OutputFormatTypeID,NumRecsHistory);
         if(OutputFormatTypeID==-1) {
-           /** original format history file listing */
+           /* original format history file listing */
            String DateString = Functions.adt_julian2cmonth(DateValue);
            String LatLonComboString = String.format("%6.2f %7.2f",Latitude,Longitude);
            String SatelliteIDString = Functions.adt_sattypes(SatelliteIDValue);
@@ -425,7 +425,7 @@ public class History {
                          SatVZA,CommentString);
            }
         } else {
-           /** ATCF format listing */
+           /* ATCF format listing */
            int RawTFlag_ATCF = OutputFormatTypeID/1000;
            int[] ReturnValues = Functions.adt_yddmy(DateValue);
            int MonthValue = ReturnValues[0];
@@ -533,18 +533,18 @@ public class History {
 
            String SiteID_ATCF = String.format("%s",ATCFFileSourceIDString);
 
-           /** determine ATCF center/intensity ID */
+           /* determine ATCF center/intensity ID */
            String CenterFixMethodID_ATCF = "";
            if(AutoCenteringValue>=4) {
-              /** center fix by autofix method */
+              /* center fix by autofix method */
               CenterFixMethodID_ATCF = String.format("%s","CI");
            } else {
-              /** center fix by forecast interpolation */
+              /* center fix by forecast interpolation */
               if (ListLandRecordTF) {
-                 /** storm is over land */
+                 /* storm is over land */
                  CenterFixMethodID_ATCF = String.format("%s"," N");
               } else {
-                 /** storm is over ocean */
+                 /* storm is over ocean */
                  CenterFixMethodID_ATCF = String.format("%s"," I");
               }
            }
@@ -579,17 +579,18 @@ public class History {
       }
       return HistoryFileListing;
    }
-
-   public static int[] InsertHistoryRecord(boolean RunFullAnalysis,String HistoryFileName)
-   /**
-    ** Insert or overwrite a record in a history file.  Global structure
-    ** HistoryRecordPtr will be modified and the ASCII history file will be
-    ** rewritten in another routine.
-    ** Inputs  : None
-    ** Outputs : RecordsModified_Return - number of records modified
-    **           InsertOverFlag_Return  - overwrote (1) or insert (2) flag value
-    ** Return  : record number overwritten will be return value
-    */
+    
+    /**
+     * Insert or overwrite a record in a history file.  Global structure
+     * HistoryRecordPtr will be modified and the ASCII history file will be
+     * rewritten in another routine.
+     * Inputs  : None
+     * Outputs : RecordsModified_Return - number of records modified
+     *           InsertOverFlag_Return  - overwrote (1) or insert (2) flag value
+     * Return  : record number overwritten will be return value
+     */
+   public static int[] InsertHistoryRecord(boolean RunFullAnalysis,
+                                           String HistoryFileName)
    {
 
       int ModifiedCount = 0;
@@ -611,15 +612,15 @@ public class History {
          int RecTime = HistoryFile[XInc].time;
          double HistoryRecTime = Functions.calctime(RecDate,RecTime);
          if((HistoryRecTime==CurrentTime)&&(!FoundRecordTF)) {
-            /** OVERWRITE RECORD */
+            /* OVERWRITE RECORD */
             System.out.printf("OVERWRITE RECORD %d\n",XInc);
             HistoryFile[XInc] = IRCurrentRecord;
             FoundRecordTF = true;
             InsertOverwriteFlag = 1;
          } else if((HistoryRecTime>CurrentTime)&&(!FoundRecordTF)) {
-            /** INSERT RECORD */
+            /* INSERT RECORD */
             System.out.printf("INSERT RECORD\n");
-            /** shift records after HistoryRecTime up one record */
+            /* shift records after HistoryRecTime up one record */
             NumRecsHistory++;
             HistoryFileRecords++;
             int YInc = HistoryFileRecords;
@@ -628,43 +629,43 @@ public class History {
                YInc--;
             }
             HistoryFile[XInc] = IRCurrentRecord;
-            /** System.out.printf("IRcurrentrecord.land=%d\n",IRCurrentRecord.land); */
+            /* System.out.printf("IRcurrentrecord.land=%d\n",IRCurrentRecord.land); */
             FoundRecordTF = true;
             InsertOverwriteFlag = 2;
          } else {
             if(FoundRecordTF) {
                System.out.printf("RECOMPUTING RECORD %d\n",XInc);
-               /**
-                ** previously found records to insert, so all records following
-                ** the inserted record must be recalculated
+               /*
+                * previously found records to insert, so all records following
+                * the inserted record must be recalculated
                 */
-               /**
-                ** assign XInc history file record as "current record" and recalculate intensity
+               /*
+                * assign XInc history file record as "current record" and recalculate intensity
                 */
                IRCurrentRecord = HistoryFile[XInc];
                int RecLand = HistoryFile[XInc].land;
                double RecTnoRaw = HistoryFile[XInc].Traw;
                if(((LandFlagTF)&&(RecLand==1))||(RecTnoRaw<1.0)) {
-                  /** assign as "missing record" */
+                  /* assign as "missing record" */
                   InitCurrent(false);
                } else {
-                  /** recompute intensity */
+                  /* recompute intensity */
                   Intensity.CalculateIntensity(1,RunFullAnalysis,HistoryFileName);
                }
                ModifiedCount++;
             }
-            /** nothing yet... keep searching */
+            /* nothing yet... keep searching */
          }
          XInc++;
       }
       if(!FoundRecordTF) {
          if(XInc==0) {
-            /** record will be placed at start of new history structure */
+            /* record will be placed at start of new history structure */
             System.out.printf("PLACE RECORD AT START OF NEW\n");
             HistoryFile[0] = IRCurrentRecord;
             InsertOverwriteFlag = 3;
          } else {
-            /** record will be placed at end of history structure */
+            /* record will be placed at end of history structure */
             System.out.printf("PLACE RECORD AT END OF EXISTING\n");
             HistoryFile[NumRecsHistory] = IRCurrentRecord;
             InsertOverwriteFlag = 4;

@@ -28,37 +28,43 @@
 
 package edu.wisc.ssec.mcidasv.adt;
 
-import java.lang.Math;
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 
 public class FFT {
 
-   private static int FFTBINS=64;
-   private static double PI = 3.14159265358979;
+   private static int FFTBINS = 64;
 
-   private static double FFT_Real[] = new double[FFTBINS];
-   private static double FFT_Complex[] = new double[FFTBINS];
-   private static double FFT_Magnitude[] = new double[FFTBINS];
+   private static double fftReal[] = new double[FFTBINS];
+   private static double fftComplex[] = new double[FFTBINS];
+   private static double fftMagnitude[] = new double[FFTBINS];
 
-   public FFT() {
+   private FFT() {
    }
-
+   
+   /**
+    * A Duhamel-Hollman split-radix dif FFT.
+    *
+    * Ref: Electronics Letters, Jan. 5, 1984
+    * Complex input and output data in arrays x and y
+    * Length is n.
+    * Inputs  : RealArray_Input  - Input data array to perform FFT analysis
+    *           CmplxArray_Input - Empty on input
+    *           NumBins          - Number of histogram bins in input array
+    * Outputs : RealArray_Input  - Real part of FFT Analysis
+    *           CmplxArray_Input - Complex part of FFT Analysis
+    *
+    * @return Values {@code <= 0} are errors, while anything {@code > 0} is ok.
+    */
    private static int dfft() {
-
-      /**
-      ** A Duhamel-Hollman split-radix dif fft
-      ** Ref: Electronics Letters, Jan. 5, 1984
-      ** Complex input and output data in arrays x and y
-      ** Length is n.
-      ** Inputs  : RealArray_Input  - Input data array to perform FFT analysis
-      **           CmplxArray_Input - Empty on input
-      **           NumBins          - Number of histogram bins in input array
-      ** Outputs : RealArray_Input  - Real part of FFT Analysis
-      **           CmplxArray_Input - Complex part of FFT Analysis
-      ** Return  : <=0- error; >0 - o.k.
-      */
+      /* real values array */
+      double[] RealArr = new double[FFTBINS + 1];
       
-      double[] RealArr = new double[FFTBINS+1];                      /** real values array */
-      double[] CmplxArr = new double[FFTBINS+1];                     /** complex values array */
+      /* complex values array */
+      double[] CmplxArr = new double[FFTBINS + 1];
+      
       int LocalA;
       int LocalB;
       int LocalC;
@@ -86,25 +92,24 @@ public class FFT {
       double LocalDblZ2;
       double LocalDblZ3;
       double LocalDblXt;
-      int NumBins=FFTBINS;
       int i;
-    
+      
       RealArr[0] = 0.0;
       CmplxArr[0] = 0.0;
-      for (i = 1; i <= NumBins; i++ ) {
-         RealArr[i] = FFT_Real[i-1];
-         CmplxArr[i] = FFT_Complex[i-1];
+      for (i = 1; i <= FFTBINS; i++ ) {
+         RealArr[i] = fftReal[i-1];
+         CmplxArr[i] = fftComplex[i-1];
       }
       LocalA = 2;
       LocalD = 1;
-      while (LocalA < NumBins) {
+      while (LocalA < FFTBINS) {
          LocalA = LocalA+LocalA;
          LocalD = LocalD+1;
       }
       LocalE = LocalA;
    
-      if (LocalE != NumBins) {
-         for (LocalA = NumBins+1; LocalA <= LocalE; LocalA++)  {
+      if (LocalE != FFTBINS) {
+         for (LocalA = FFTBINS + 1; LocalA <= LocalE; LocalA++)  {
             RealArr[LocalA] = 0.0;
             CmplxArr[LocalA] = 0.0; 
          }
@@ -118,10 +123,10 @@ public class FFT {
          LocalDblA = 0.0;
          for (LocalB = 1; LocalB<= LocalE4 ; LocalB++) {
             LocalDblA3 = 3.0*LocalDblA;
-            LocalDblX1 = Math.cos(LocalDblA);
-            LocalDblY1 = Math.sin(LocalDblA);
-            LocalDblX3 = Math.cos(LocalDblA3);
-            LocalDblY3 = Math.sin(LocalDblA3);
+            LocalDblX1 = cos(LocalDblA);
+            LocalDblY1 = sin(LocalDblA);
+            LocalDblX3 = cos(LocalDblA3);
+            LocalDblY3 = sin(LocalDblA3);
             LocalDblA = ((double)LocalB)*LocalDblB;
             LocalY = LocalB;
             LocalZ = 2*LocalE2;
@@ -160,7 +165,7 @@ public class FFT {
          }
       }
     
-       /**
+      /*
        ---------------------Last stage, length=2 butterfly---------------------
        */
       LocalY = 1;
@@ -174,11 +179,11 @@ public class FFT {
             CmplxArr[LocalX0] = LocalDblW1 + CmplxArr[LocalX1];
             CmplxArr[LocalX1] = LocalDblW1 - CmplxArr[LocalX1];
          }
-         LocalY = 2*LocalZ - 1;
+         LocalY = 2 * LocalZ - 1;
          LocalZ = 4 * LocalZ;
       }
     
-       /**
+      /*
        c--------------------------Bit reverse counter
        */
       LocalB = 1;
@@ -200,86 +205,84 @@ public class FFT {
          LocalB = LocalB + LocalC;
       }
     
-      /** write Real/CmplxArr back to FFT_Real/Comples arrays */
-      for (i = 1; i <= NumBins; i++ ) {
-         FFT_Real[i-1] = RealArr[i];
-         FFT_Complex[i-1] = CmplxArr[i];
+      /* write Real/CmplxArr back to FFT_Real/Comples arrays */
+      for (i = 1; i <= FFTBINS; i++ ) {
+         fftReal[i-1] = RealArr[i];
+         fftComplex[i-1] = CmplxArr[i];
       }
 
       return LocalE;
     
    }
-
-   private static double complex_abs(double RealValue, double ImaginaryValue) {
-
-      double ComplexAbs_Return=0.0;
-      double StorageValue;
-
-      if(RealValue<0.0) {
-         RealValue=-RealValue;
+   
+   private static double complexAbs(double realValue, double imaginaryValue) {
+      double storageValue;
+      
+      if (realValue < 0.0) {
+         realValue = -realValue;
       }
-      if(ImaginaryValue<0.0) {
-         ImaginaryValue=-ImaginaryValue;
+      if (imaginaryValue < 0.0) {
+         imaginaryValue = -imaginaryValue;
       }
-      if(ImaginaryValue>RealValue){
-         StorageValue=RealValue;
-         RealValue=ImaginaryValue;
-         ImaginaryValue=StorageValue;
+      if (imaginaryValue > realValue){
+         storageValue = realValue;
+         realValue = imaginaryValue;
+         imaginaryValue = storageValue;
       }
-
-      if((RealValue+ImaginaryValue)==RealValue) {
-         ComplexAbs_Return=RealValue;
+      
+      final double complexAbs;
+      if ((realValue + imaginaryValue) == realValue) {
+         complexAbs = realValue;
       } else {
-         StorageValue=ImaginaryValue/RealValue;
-         StorageValue=RealValue*Math.sqrt(1.0+(StorageValue*StorageValue));
-         ComplexAbs_Return=StorageValue;
+         storageValue = imaginaryValue / realValue;
+         storageValue = realValue * sqrt(1.0 + (storageValue * storageValue));
+         complexAbs = storageValue;
       }
-
-      return ComplexAbs_Return;
-
+      return complexAbs;
    }
-
-   public static int CalculateFFT(double[] InputArray) {
-
-      int i;
-      int FFTValue=-99;
-      int HarmonicCounter=0;
-      double FFT_BinM2,FFT_BinM1;
-      double FFT_TotalAllBins=0.0;
-
-      for (i = 0; i < FFTBINS; i++ ) {
-         FFT_Real[i] = InputArray[i];
-         FFT_Complex[i] = 0.0;
-         FFT_Magnitude[i] = 0.0;
+   
+   public static int calculateFFT(double[] inputArray) {
+      
+      int fftValue = -99;
+      
+      for (int i = 0; i < FFTBINS; i++ ) {
+         fftReal[i] = inputArray[i];
+         fftComplex[i] = 0.0;
+         fftMagnitude[i] = 0.0;
       }
-
-      int RetErr = FFT.dfft();
-      if(RetErr<=0) {
-         /** throw exception */
+      
+      int retErr = FFT.dfft();
+      if (retErr <= 0) {
+         /* throw exception */
       } else {
-         for (i = 0; i < FFTBINS; i++ ) {
-            FFT_Magnitude[i] = FFT.complex_abs(FFT_Real[i],FFT_Complex[i]);
-            /** System.out.printf("arrayinc=%d  FFT real=%f cmplx=%f magnitude=%f\n",i,FFT_Real[i],FFT_Complex[i],FFT_Magnitude[i]); */
+         int harmonicCounter = 0;
+         
+         for (int i = 0; i < FFTBINS; i++ ) {
+            fftMagnitude[i] = FFT.complexAbs(fftReal[i], fftComplex[i]);
+            /* System.out.printf("arrayinc=%d  FFT real=%f cmplx=%f magnitude=%f\n",i,fftReal[i],fftComplex[i],fftMagnitude[i]); */
          }
-         for (i = 2; i <= 31; i++ ) {
-            FFT_BinM2 = FFT_Magnitude[i-2];
-            FFT_BinM1 = FFT_Magnitude[i-1];
-            FFT_TotalAllBins = FFT_TotalAllBins + (FFT_BinM1+FFT_BinM2)/2.0;
-            if((FFT_Magnitude[i-1]>FFT_Magnitude[i-2])&&
-               (FFT_Magnitude[i-1]>FFT_Magnitude[i])) {
-               ++HarmonicCounter;
-               /** System.out.printf("i=%d magnitude=%f  counter=%d\n",i,FFT_Magnitude[i],HarmonicCounter); */
+         
+         double fftTotalAllBins = 0.0;
+         for (int i = 2; i <= 31; i++ ) {
+            double fftBinM2 = fftMagnitude[i - 2];
+            double fftBinM1 = fftMagnitude[i - 1];
+            fftTotalAllBins = fftTotalAllBins + (fftBinM1+fftBinM2) / 2.0;
+            if ((fftMagnitude[i - 1] > fftMagnitude[i - 2]) &&
+                (fftMagnitude[i - 1] > fftMagnitude[i])) {
+               ++harmonicCounter;
+               /* System.out.printf("i=%d magnitude=%f  counter=%d\n",i,
+                * fftMagnitude[i],harmonicCounter); */
             }
          }
-         if(FFT_Magnitude[0]==0) {
-            /** throw exception */
+         if (fftMagnitude[0] == 0) {
+            /* throw exception */
          } else {
-            FFTValue=HarmonicCounter;
+            fftValue = harmonicCounter;
          }
       }
       
-      /** System.out.printf("Amplitude=%f\n",Amplitude); */
-      return FFTValue;
+      /* System.out.printf("Amplitude=%f\n",Amplitude); */
+      return fftValue;
    }
 
 }

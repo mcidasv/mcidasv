@@ -259,7 +259,7 @@ public class Data {
             }
          }
 
-         int FFT_ReturnValue = FFT.CalculateFFT(TemperatureHistArrayCounter);
+         int FFT_ReturnValue = FFT.calculateFFT(TemperatureHistArrayCounter);
          
          /** System.out.printf("sceneID=%d  harmonic=%d\n",SceneIDFlag,FFT_ReturnValue); */
 

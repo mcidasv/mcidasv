@@ -28,11 +28,17 @@
 
 package edu.wisc.ssec.mcidasv.adt;
 
+import static java.lang.Math.asin;
+import static java.lang.Math.sin;
+
 import java.util.Scanner;
 
 public class Functions {
 
-   static String[] Months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
+   static String[] Months = {
+      "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
+   };
+   
    static double[] PW_TnoValues = {-9999.,-8888.,
       1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,
       2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,
@@ -42,8 +48,10 @@ public class Functions {
       6.0,6.1,6.2,6.3,6.4,6.5,6.6,6.7,6.8,6.9,
       7.0,7.1,7.2,7.3,7.4,7.5,7.6,7.7,7.8,7.9,
       8.0,8.1,8.2,8.3,8.4,8.5,8.6,8.7,8.8,8.9,9.0};
+   
+   
    static double[][] PW_PressureValues = {
-        /** Atlantic pressure relationship values */
+       /* Atlantic pressure relationship values */
       {-9999.0,-8888.0,
         1014.0,1013.6,1013.2,1012.8,1012.4,1012.0,1011.4,1010.8,1010.2,1009.6,
         1009.0,1008.2,1007.4,1006.6,1005.8,1005.0,1004.0,1003.0,1002.0,1001.0,
@@ -53,7 +61,7 @@ public class Functions {
          948.0,945.4,942.8,940.2,937.6,935.0,932.2,929.4,926.6,923.8,
          921.0,918.0,915.0,912.0,909.0,906.0,902.8,899.6,896.4,893.2,
          890.0,886.6,883.2,879.8,876.4,873.0,869.4,865.8,862.2,858.6,855.0},
-        /** Pacific pressure relationship values */
+        /* Pacific pressure relationship values */
       {-9999.0,-8888.0,
         1005.0,1004.6,1004.2,1003.8,1003.4,1003.0,1002.4,1001.8,1001.2,1000.6,
         1000.0,999.4,998.8,998.2,997.6,997.0,995.8,994.6,993.4,992.2,
@@ -76,10 +84,15 @@ public class Functions {
          170.0,173.0,176.0,179.0,182.0,185.0,188.0,191.0,194.0,197.0,200.0};
 
    private static double RADIANSCONSTANT = 0.017453292;
+   
    private static double ANGLE90DEGRADIANS = 1.570797;
+   
    private static double PI = 3.14159265358979;
+   
    private static double EARTHRADIUSKM = 6371.0;
-   private static int[] JulianDateMonthArray = {0,31,59,90,120,151,181,212,243,273,304,334,365};
+   
+   private static int[] JulianDateMonthArray =
+       { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 };
 
    private static double deg_to_rad(double deg) {
       return ((deg * PI) / 180.0);
@@ -92,29 +105,30 @@ public class Functions {
    private static double a_sign(double x,double y) {
       return ((x)/(y))*Math.abs(y);
    }
-
-   public static double calctime(int InputJulianDate, int InputHMSTime) {
+   
    /**
-    ** Compute time in ADT xxxxx.yyy units, where xxxxx is the
-    ** day and yyy is the percentage of the day.  This routine
-    ** will also correct for Y2K problems.
-    ** Inputs  : InputJulianDate - Julian date
-    **           InputHMSTime    - time in HHMMSS format
-    ** Outputs : None
-    ** Return  : Date/Time value in xxxxx.yyy units
+    * Compute time in ADT xxxxx.yyy units, where xxxxx is the day and yyy is
+    * the percentage of the day.
+    *
+    * This routine will also correct for Y2K problems.
+    *
+    * @param InputJulianDate Julian date.
+    * @param InputHMSTime Time in HHMMSS format.
+    *
+    * @return Date/Time value in xxxxx.yyy units.
     */
-
+   public static double calctime(int InputJulianDate, int InputHMSTime) {
       double TimeReturnValue;
 
-      /** System.out.printf("calctime : input date=%d\n", InputJulianDate); */
+      /* System.out.printf("calctime : input date=%d\n", InputJulianDate); */
       if(((InputJulianDate%1000)==0)||(InputHMSTime<0)) {
          TimeReturnValue=0.0;
       }
       else {
          int YearValue=InputJulianDate/1000;  /** obtain year */
-         /** check for millenium designation in the year.
+         /* check for millenium designation in the year.
             if it is not there, add it onto the beginning */
-         /** System.out.printf("calctime : year=%d\n", YearValue); */
+         /* System.out.printf("calctime : year=%d\n", YearValue); */
          if(YearValue<1900) {
             if(YearValue>70) {
                InputJulianDate=1900000+InputJulianDate;
@@ -123,34 +137,36 @@ public class Functions {
                InputJulianDate=2000000+InputJulianDate;
             }
          }
-         /** System.out.printf("calctime : InputJulianDate=%d\n",InputJulianDate); */
+         /* System.out.printf("calctime : InputJulianDate=%d\n",InputJulianDate); */
          double SecondsValue=((double)(InputHMSTime%100))/3600.0;
-         /** System.out.printf("calctime : secs=%f\n", SecondsValue); */
+         /* System.out.printf("calctime : secs=%f\n", SecondsValue); */
          double MinutesValue=((double)((InputHMSTime/100)%100))/60.0;
-         /** System.out.printf("calctime : mins=%f\n", MinutesValue); */
+         /* System.out.printf("calctime : mins=%f\n", MinutesValue); */
          double HoursValue=(double)(InputHMSTime/10000);
-         /** System.out.printf("calctime : hrs=%f\n", HoursValue); */
+         /* System.out.printf("calctime : hrs=%f\n", HoursValue); */
          double PartialDateValue=(HoursValue+MinutesValue+SecondsValue)/24.0;
-         /** System.out.printf("calctime : pdv=%f\n", PartialDateValue); */
+         /* System.out.printf("calctime : pdv=%f\n", PartialDateValue); */
          TimeReturnValue=(double)InputJulianDate+(double)PartialDateValue;
-         /** System.out.printf("calctime : retval=%f\n", TimeReturnValue); */
+         /* System.out.printf("calctime : retval=%f\n", TimeReturnValue); */
       }
 
       return TimeReturnValue;
    }
-
+   
+   /**
+    * Convert YYYYMMMDD format character string value to julian date Integer.
+    *
+    * @param InputDateCharString Character representation of date in
+    *                            YYYYmonDD format where DD and YYYY are
+    *                            integers and mon is a three character
+    *                            abbreviation for the month (e.g. 2000MAR13).
+    *
+    * @return Julian Date. Note: value may be {@code 0} if there was a problem.
+    */
    public static int cmonth2julian(String InputDateCharString) {
-      /**
-      ** Convert YYYYMMMDD format character string value to julian date Integer.
-      ** Inputs  : InputDateCharString - character representation of date in
-      **                                 YYYYmonDD format where DD and YYYY are
-      **                                 integers and mon is a three character
-      **                                 abbreviation for the month (e.g. 2000MAR13)
-      ** Outputs : None
-      ** Return  : Julian Date
-      */
-
-      int JulianDateReturnValue=99999;     /** julian date return value */
+      /* julian date return value */
+      int JulianDateReturnValue=99999;
+      
       int MonthValue=0;
 
       String delims = "[A-Z]+";
@@ -165,77 +181,74 @@ public class Functions {
       String MonthCharString = InputValue.next();
       InputValue.close();
       
-      /** calculate integer month value */
+      /* calculate integer month value */
       while((MonthValue < 12) && (!MonthCharString.equals(Months[MonthValue]))) {
          MonthValue++;
       }
 
-      /** determine julian date from day/month/year */
-      if(MonthValue<12) {
+      /* determine julian date from day/month/year */
+      if(MonthValue < 12) {
          JulianDateReturnValue = Functions.idmyyd(DayValue,MonthValue+1,YearValue);
+      } else {
+         /* Error */
+         JulianDateReturnValue = 0;
       }
-      else {
-         JulianDateReturnValue = 0;   /** Error */
-      }
-
       return JulianDateReturnValue;
-
    }
-
-   public static int idmyyd(int InputDay, int InputMonth, int InputYear)
+   
    /**
-   ** Convert dd/mm/yy to yyyyddd format.
-   ** this routine was originally taken from McIDAS
-   ** program idmyyd.for.
-   ** Inputs  : InputDay   - day
-   **           InputMonth - month (integer)
-   **           InputYear  - year (YY or YYYY)
-   ** Outputs : None
-   ** Return  : Julian date or 0 (0=bad input data)
-   */
-   {
+    * Convert dd/mm/yy to yyyyddd format.
+    *
+    * @param InputDay Day.
+    * @param InputMonth Month (integer).
+    * @param InputYear Year (YY or YYYY).
+    *
+    * @return Julian date or 0 (0=bad input data).
+    */
+   public static int idmyyd(int InputDay, int InputMonth, int InputYear) {
      int JulianDate_Return=-1;             /* julian date return value */
      int DayValue;                         /* local day value */
    
-     /** perform a couple quality checks for day/month */
+     /* perform a couple quality checks for day/month */
      if(((InputDay<1)||(InputDay>31))||((InputMonth<1)||(InputMonth>12))) {
         JulianDate_Return=0;
-     }
-     else
-     {
+     } else {
         DayValue=InputDay+JulianDateMonthArray[InputMonth-1];
         if(InputYear<1900) {
           if(InputYear>70) {
             InputYear=1900+InputYear;
-          }
-          else {
+          } else {
             InputYear=2000+InputYear;
           }
         }
-        /** Leap year check */
+        /* Leap year check */
         if(((InputYear%4)==0)&&(InputMonth>2)) {
            DayValue=DayValue+1;
         }
         JulianDate_Return=(InputYear*1000)+DayValue;
      }
-   
      return JulianDate_Return;
-   
    }
-
-   public static int[] adt_yddmy(int JulianDateInput)
+   
    /**
-    ** Convert yyyyddd to dd/mm/yy format.
-    ** Inputs  : JulianDateInput - Julian day (yyyyddd)
-    ** Outputs : Day_Return      - date
-    **           Month_Return    - month
-    **           Year_Return     - year (yyyy)
-    ** Return  : None
+    * Convert yyyyddd to dd/mm/yy format.
+    *
+    * @param JulianDateInput Julian day (yyyyddd).
+    *
+    * @return Array of three values. First value is the day, second value is
+    * the month, and the third value is the year (yyyy).
     */
-   {
-      int YearValue_Local;                  /** local year value */
-      int DayValue_Local;                   /** local day value */
-      int MonthValue_Local;                 /** local month value */
+   public static int[] adt_yddmy(int JulianDateInput) {
+      
+      /* local year value */
+      int YearValue_Local;
+      
+      /* local day value */
+      int DayValue_Local;
+      
+      /* local month value */
+      int MonthValue_Local;
+      
 
       YearValue_Local=JulianDateInput/1000;
       if(YearValue_Local<1900) {
@@ -262,18 +275,17 @@ public class Functions {
       return new int[] { Day_Return, Month_Return, Year_Return };
  
    }
-
-   public static String adt_julian2cmonth( int JulianDateInputValue)
+   
    /**
-    ** convert julian date to YYYYMMMDD format for output.
-    ** Inputs  : JulianDateInputValue - Julian date representation of date
-    ** Outputs : ReturnDateCharString - character representation of date
-    **                                  in YYYYmonDD format where DD and YYYY
-    **                                  are integers and mon is a three
-    **           character abbreviation for the month (e.g. 2000MAR13)
-    ** Return  : None
+    * Convert julian date to YYYYMMMDD format for output.
+    *
+    * @param JulianDateInputValue Julian date representation of date.
+    *
+    * @return Character representation of date in YYYYmonDD format where DD
+    * and YYYY are integers and mon is a three character abbreviation for
+    * the month (e.g. 2000MAR13)
     */
-   {
+   public static String adt_julian2cmonth( int JulianDateInputValue) {
       /* calculate date/month/year from julian date */
       int ReturnValues[] = Functions.adt_yddmy(JulianDateInputValue);
       int DayValue = ReturnValues[0];
@@ -317,53 +329,57 @@ public class Functions {
       Distance_Intermediate=Math.sqrt(AdditiveValue);
     
       /* Distance_Final is distance in kilometers */
-      Distance_Final=2.0*Math.asin(Distance_Intermediate/2.0)*EARTHRADIUSKM;
+      Distance_Final = 2.0 * asin(Distance_Intermediate/2.0) * EARTHRADIUSKM;
     
-      if(UnitFlagID==2) {
-         /** Conversion to Miles */
-         Distance_Final=((69.0*Distance_Final)+55)/111.0;
+      if (UnitFlagID == 2) {
+         /* Conversion to Miles */
+         Distance_Final = ((69.0 * Distance_Final) + 55) / 111.0;
       }
-      if(UnitFlagID==3) {
-         /** Conversion to Nautical Miles */
-         Distance_Final=((60.0*Distance_Final)+55)/111.0;
+      if (UnitFlagID == 3) {
+         /* Conversion to Nautical Miles */
+         Distance_Final = ((60.0 * Distance_Final) + 55) / 111.0;
       }
     
-      /** Compute Final Angle */
-      if(Math.abs(Distance_Final)>0.0001) {
-         Angle_Final=(Math.sin(StartLongitude_Radians-EndLongitude_Radians)*
-                      Math.sin((PI/2.0)-EndLatitude_Radians))/
-                      Math.sin(Distance_Intermediate);
+      /* Compute Final Angle */
+      if (Math.abs(Distance_Final) > 0.0001) {
+         Angle_Final = (sin(StartLongitude_Radians - EndLongitude_Radians) *
+                        sin((PI/2.0)-EndLatitude_Radians)) /
+                        sin(Distance_Intermediate);
+      } else {
+         Angle_Final = 0.0;
       }
-      else {
-         Angle_Final=0.0;
+      if (Math.abs(Angle_Final) > 1.0) {
+         Angle_Final = a_sign(1.000, Angle_Final);
       }
-      if(Math.abs(Angle_Final)>1.0) {
-         Angle_Final=a_sign(1.000,Angle_Final);
+      Angle_Final = Math.asin(Angle_Final) / RADIANSCONSTANT;
+      if (EndLatitude_Radians < StartLatitude_Radians) {
+         Angle_Final = 180.0 - Angle_Final;
       }
-      Angle_Final=Math.asin(Angle_Final)/RADIANSCONSTANT;
-      if(EndLatitude_Radians<StartLatitude_Radians) {
-         Angle_Final=180.0-Angle_Final;
-      }
-      if(Angle_Final<0.0) {
-         Angle_Final=360.0+Angle_Final;
+      if (Angle_Final < 0.0) {
+         Angle_Final = 360.0 + Angle_Final;
       }
 
       return new double[] {Distance_Final, Angle_Final};
    }
-
-   public static double[] distance_angle2(double StartLatitudeInput, double StartLongitudeInput,
-                                         double DistanceInput, double AngleInput)
-   /*
-    ** Calculate a latitude and longitude position from an
-    ** initial latitude/longitude and distance/angle values.
-    ** Inputs  : StartLatitudeInput  - initial latitude
-    **           StartLongitudeInput - initial longitude
-    **           DistanceInput       - distance from initial position
-    **           AngleInput          - angle from initial position
-    ** Outputs : EndLatitude_Return  - derived latitude
-    **           EndLongitude_Return - derived longitude
-    ** Return  : None
+   
+   
+   /**
+    * Calculate a latitude and longitude position from an initial
+    * latitude/longitude and distance/angle values.
+    *
+    *
+    * @param StartLatitudeInput Initial latitude.
+    * @param StartLongitudeInput Initial longitude.
+    * @param DistanceInput Distance from initial position.
+    * @param AngleInput Angle from initial position.
+    *
+    * Outputs : EndLatitude_Return  - derived latitude
+    *           EndLongitude_Return - derived longitude
     */
+   public static double[] distance_angle2(double StartLatitudeInput,
+                                          double StartLongitudeInput,
+                                          double DistanceInput,
+                                          double AngleInput)
    {
       double StartLatitude_Radians=(90.0-StartLatitudeInput)*RADIANSCONSTANT;
       double StartLatitude_Radians_Flipped=StartLatitude_Radians;
@@ -407,15 +423,17 @@ public class Functions {
       return new double[] {EndLatitude, EndLongitude};
 
    }
-
-   public static int[] adt_oceanbasin(double LatitudeInput, double LongitudeInput)
-   /*
-    ** determine ocean basin given latitude and longitude position of storm
-    ** Inputs  : LatitudeInput - latitude
-    **           LongitudeInput - longitude
-    ** Outputs : None
-    ** Return  : basin type (0=atlantic,1=west pacific,2,east pacific,3=Indian)
+   
+   /**
+    * Determine ocean basin given latitude and longitude position of storm.
+    * Outputs : None
+    * Return  : basin type (0=atlantic,1=west pacific,2,east pacific,3=Indian)
+    *
+    * @param LatitudeInput Latitude.
+    * @param LongitudeInput Longitude.
     */
+   public static int[] adt_oceanbasin(double LatitudeInput,
+                                      double LongitudeInput)
    {
       int BasinID_Local;
       int DomainID_Local;
@@ -429,48 +447,48 @@ public class Functions {
          DomainID_Local=-99;
       } else {
          if(LatitudeInput>=0.0) {
-            /** northern hemisphere */
+            /* northern hemisphere */
             if(LongitudeInput<=-100.0) {
-               BasinID_Local=1;      /** West Pacific */
+               BasinID_Local=1;      /* West Pacific */
             } else if((LongitudeInput>-100.0)&&(LongitudeInput<=-20.0)) {
-               BasinID_Local=3;      /** Indian */
+               BasinID_Local=3;      /* Indian */
             } else if(LongitudeInput>=100.0) {
-               BasinID_Local=2;      /** East Pacific */
+               BasinID_Local=2;      /* East Pacific */
             } else {
-               /** -20 to ~+100 */
+               /* -20 to ~+100 */
                if(LatitudeInput>20.0) {
-                  BasinID_Local=0;      /** Atlantic */
+                  BasinID_Local=0;      /* Atlantic */
                } else if(LatitudeInput<10.0) {
                   if(LongitudeInput<80.0) {
-                     BasinID_Local=0;      /** Atlantic */
+                     BasinID_Local=0;      /* Atlantic */
                   } else {
-                     BasinID_Local=2;      /** East Pacific */
+                     BasinID_Local=2;      /* East Pacific */
                   }
                } else {
-                  /** latitude between 10 and 20 north */
-                  /**
-                   ** slope of line between (100W,20N) and (80W,10N) is 2
-                   ** if slope of new point and (100,20)  > 2, storm is in atlantic
-                   ** if slope of new point and (100,20) <= 2, storm is in pacific
+                  /* latitude between 10 and 20 north */
+                  /*
+                   * slope of line between (100W,20N) and (80W,10N) is 2
+                   * if slope of new point and (100,20)  > 2, storm is in atlantic
+                   * if slope of new point and (100,20) <= 2, storm is in pacific
                    */
                   double AtlEPacDivision=(100.0-LongitudeInput)/(20.0-LatitudeInput);
                   if(AtlEPacDivision>2.0) {
-                     BasinID_Local=0;      /** Atlantic */
+                     BasinID_Local=0;      /* Atlantic */
                   } else {
-                     BasinID_Local=2;      /** East Pacific */
+                     BasinID_Local=2;      /* East Pacific */
                   }
                }
             }
          } else {
-            /** southern hemisphere */
+            /* southern hemisphere */
             if(LongitudeInput<=-135.0) {
-               BasinID_Local=1;      /** West Pacific */
+               BasinID_Local=1;      /* West Pacific */
             } else if((LongitudeInput>-135.0)&&(LongitudeInput<=-20.0)) {
-               BasinID_Local=3;      /** Indian */
+               BasinID_Local=3;      /* Indian */
             } else if((LongitudeInput>-20.0)&&(LongitudeInput<=67.0)) {
-               BasinID_Local=0;      /** Atlantic */
+               BasinID_Local=0;      /* Atlantic */
             } else {
-               BasinID_Local=2;      /** East Pacific */
+               BasinID_Local=2;      /* East Pacific */
             }
          }
       }
@@ -494,21 +512,24 @@ public class Functions {
       return new int[] { BasinID_Local, DomainID_Local };
 
    }
-
-   public static double adt_slopecal( double  SearchTimeInterval,int SlopeInterceptFlag)
-   /*
-    ** Calculate slope or y-intercept of all points over SearchTimeInterval period
-    ** Inputs  : SearchTimeInterval - time period to calculate slope or y-intercept
-    **           SlopeInterceptFlag - flag value indicating slope or y-intercept
-    **                                calculation and parameter to utilize
-    **                            1 = Final T# (will return slope)
-    **                            2 = Adjusted Raw T# (will return slope)
-    **                            3 = latitude (will return y-intercept)
-    **                            4 = longitude (will return y-intercept)
-    **           HistoryCurrentPointer_Global contains current analysis information
-    ** Outputs : None
-    ** Return  : Slope or Y-Intercept value of line over time period desired
-    */
+   
+   /**
+    * Calculate slope or y-intercept of all points over SearchTimeInterval
+    * period
+    * Inputs  : SearchTimeInterval - time period to calculate slope or y-intercept
+    *           SlopeInterceptFlag - flag value indicating slope or y-intercept
+    *                                calculation and parameter to utilize
+    *                            1 = Final T# (will return slope)
+    *                            2 = Adjusted Raw T# (will return slope)
+    *                            3 = latitude (will return y-intercept)
+    *                            4 = longitude (will return y-intercept)
+    *           HistoryCurrentPointer_Global contains current analysis
+    *           information
+    *
+    * @return Slope or Y-Intercept value of line over time period desired
+ */
+   public static double adt_slopecal(double SearchTimeInterval,
+                                     int SlopeInterceptFlag)
    {
       double Slope;
       double SlopeYIntReturnValue = 0.0;
@@ -580,11 +601,11 @@ public class Functions {
                      FirstLonValueTF = false;
                   } else {
                      if((FirstLonValue>100.0)&&(YAxisValue<-100.0)) {
-                        /** dateline cross W to E */
+                        /* dateline cross W to E */
                         YAxisValue = YAxisValue+360.0;
                      }
                      if((FirstLonValue<-100.0)&&(YAxisValue>100.0)) {
-                        /** dateline cross E to W */
+                        /* dateline cross E to W */
                         YAxisValue = YAxisValue-360.0;
                      }
                   }
@@ -604,10 +625,10 @@ public class Functions {
          }
          XInc++;
       }
-      /** if calculating slope of Final T# values, add in current value */
+      /* if calculating slope of Final T# values, add in current value */
       if(SlopeInterceptFlag<=2) {
          CounterMinimum=6;
-         /** add current record to slope calculation */
+         /* add current record to slope calculation */
          if(SlopeInterceptFlag==1) {
             YAxisValue = History.IRCurrentRecord.Tfinal;
          }
@@ -620,17 +641,17 @@ public class Functions {
       }
     
       /*
-       ** compute least squares fit of line for data points
-       ** using the equation  Y = Y* + r(varX/varY)(X - X*) = Mx + B
-       ** X* = mean of X values (time values)  = XMean
-       ** Y* = mean of Y values (T# values)    = YMean
-       ** varX = variance of X                 = XVariance
-       ** varY = variance of Y                 = YVariance
-       ** r = covariance - Y*X*                = RValue
-       ** M = slope of line (desired value)    = RValue*(sqrt(YVariance/XVariance))
-       ** B = y-intercept                      = YMean-(slopecal*XMean)
+       * compute least squares fit of line for data points
+       * using the equation  Y = Y* + r(varX/varY)(X - X*) = Mx + B
+       * X* = mean of X values (time values)  = XMean
+       * Y* = mean of Y values (T# values)    = YMean
+       * varX = variance of X                 = XVariance
+       * varY = variance of Y                 = YVariance
+       * r = covariance - Y*X*                = RValue
+       * M = slope of line (desired value)    = RValue*(sqrt(YVariance/XVariance))
+       * B = y-intercept                      = YMean-(slopecal*XMean)
        */
-      /** must have more than CounterMinimum data values to calculate slope */
+      /* must have more than CounterMinimum data values to calculate slope */
       if(Counter<CounterMinimum) {
          if((SlopeInterceptFlag==3)||(SlopeInterceptFlag==4)) {
             Slope = 999.99; 
@@ -657,38 +678,40 @@ public class Functions {
                if(YIntercept<-180.0) YIntercept = YIntercept+360.0;
                if(YIntercept>180.0) YIntercept = YIntercept-360.0;
             }
-            /** y-intercept for latitude/longitude extrapolation */
+            /* y-intercept for latitude/longitude extrapolation */
             SlopeYIntReturnValue = YIntercept;
          } else {
-            /** slope for Final T# slope calculation */
+            /* slope for Final T# slope calculation */
             SlopeYIntReturnValue = Slope;
          }
       }
 
       return SlopeYIntReturnValue;
    }
-
-   public static double adt_getpwval( int PressureWindIDValue, double CIValue,
-                                      double LatitudeInput, double LongitudeInput)
-   /*
-    ** Obtain pressure or wind value (for Atlantic or
-    ** West Pacific storms) given the intensity estimate
-    ** value.
-    ** Inputs  : PressureWindIDValue  - flag for wind (1) or pressure (0) output
-    **           CIValue              - Current Intensity (CI) value
-    **           Latitude_Input       - Latitude value of analysis
-    **           Longitude_Input      - Longitude value of analysis
-    ** Outputs : None
-    ** Return  : Pressure or Wind Speed value
+   
+   /**
+    * Obtain pressure or wind value (for Atlantic or West Pacific storms)
+    * given the intensity estimate value.
+    *
+    * @param PressureWindIDValue Flag for wind (1) or pressure (0) output.
+    * @param CIValue Current Intensity (CI) value
+    * @param LatitudeInput Latitude value of analysis
+    * @param LongitudeInput Longitude value of analysis
+    *
+    * @return Pressure or Wind Speed value.
     */
+   public static double adt_getpwval(int PressureWindIDValue,
+                                     double CIValue,
+                                     double LatitudeInput,
+                                     double LongitudeInput)
    {
       double PWReturnValue = -999.0;
       double ROCI_Local = 0.0;
       double R34_Local= 0.0;
       int XInc=2;
 
-      /** use traditional MSLP/Wind-T# conversion */
-      /** determine correct pressure/wind array bin */
+      /* use traditional MSLP/Wind-T# conversion */
+      /* determine correct pressure/wind array bin */
       while(((CIValue-0.001)>PW_TnoValues[XInc])&&(XInc<82)) { 
          XInc++; 
       }
@@ -701,21 +724,21 @@ public class Functions {
       double CKZGaleRadius34 = Env.CKZGaleRadius;
       double CKZPenv = Env.CKZPenv;
 
-      /** convert CI value to wind/pressure value */
+      /* convert CI value to wind/pressure value */
       if(PressureWindIDValue==1) {
          PWReturnValue = PW_WindValues[XInc];                      /* WIND */
       } else {
          PWReturnValue = PW_PressureValues[DomainID][XInc];  /* PRESSURE */
          if(UseCKZTF) {
-            /**
-             ** use new Knaff/Zehr T#->MSLP conversion.
-             ** Need Vmax calculation and two command line input values
+            /*
+             * use new Knaff/Zehr T#->MSLP conversion.
+             * Need Vmax calculation and two command line input values
              */
 
             double StormSpeed = 11.0;  /* 11 knots -- climo value */
             double Vmax_Local = PW_WindValues[XInc];                    /* WIND */
 
-            /** System.out.printf("CKZGaleRadius34=%f\n",CKZGaleRadius34); */
+            /* System.out.printf("CKZGaleRadius34=%f\n",CKZGaleRadius34); */
             if(CKZGaleRadius34<0.0) {
                ROCI_Local = Math.abs(CKZGaleRadius34);
                R34_Local = (0.354*ROCI_Local)+13.3;
@@ -723,25 +746,25 @@ public class Functions {
                R34_Local = CKZGaleRadius34;
             }
 
-            /** System.out.printf("R34_local=%f\n",R34_Local); */
-            /** System.out.printf("LatitudeInput=%f\n",LatitudeInput); */
+            /* System.out.printf("R34_local=%f\n",R34_Local); */
+            /* System.out.printf("LatitudeInput=%f\n",LatitudeInput); */
             double Vstorm_Local = Vmax_Local-(1.5*Math.pow(StormSpeed,0.63));
-            /** System.out.printf("Vstorm_local=%f\n",Vstorm_Local); */
+            /* System.out.printf("Vstorm_local=%f\n",Vstorm_Local); */
             double EXP_Local = 0.1147+(0.0055*Vstorm_Local)-(0.001*(Math.abs(LatitudeInput)-25.0));
-            /** System.out.printf("EXP_local=%f\n",EXP_Local); */
+            /* System.out.printf("EXP_local=%f\n",EXP_Local); */
             double Vstorm_500 = (R34_Local/9.0)-3.0;
-            /** System.out.printf("Vstorm_500=%f\n",Vstorm_500); */
+            /* System.out.printf("Vstorm_500=%f\n",Vstorm_500); */
             double Vstorm_500c = Vstorm_Local*Math.pow(((66.785-(0.09102*Vstorm_Local)+
                                 (1.0619*(Math.abs(LatitudeInput)-25.0)))/500.0),EXP_Local);
-            /** System.out.printf("Vstorm_500c=%f\n",Vstorm_500c); */
+            /* System.out.printf("Vstorm_500c=%f\n",Vstorm_500c); */
             double S = Math.max((Vstorm_500/Vstorm_500c),0.4);
-            /** System.out.printf("S=%f\n",S); */
+            /* System.out.printf("S=%f\n",S); */
             PWReturnValue = 23.286-(0.483*Vstorm_Local)-Math.pow((Vstorm_Local/24.254),2)-
                             (12.587*S)-(0.483*Math.abs(LatitudeInput))+CKZPenv;
             if(PWReturnValue>=(CKZPenv-1.0)) {
                PWReturnValue = CKZPenv-2.0;
             }
-            /** System.out.printf("PWReturnValue=%f\n",PWReturnValue); */
+            /* System.out.printf("PWReturnValue=%f\n",PWReturnValue); */
             History.IRCurrentRecord.r34 = (int)CKZGaleRadius34;
             History.IRCurrentRecord.MSLPenv = (int)CKZPenv;
          }
@@ -750,16 +773,16 @@ public class Functions {
       return PWReturnValue;
 
    }
-
-   public static String adt_sattypes( int SatelliteIDInput)
-   /*
-    ** obtain satellite name given ID number
-    ** Inputs  : SatelliteIDInput - Internal ADT satellite ID number
-    ** Outputs : csat - Satellite character string ID
-    ** Return  : None
+   
+   /**
+    * Obtain satellite name given ID number.
+    *
+    * @param SatelliteIDInput Internal ADT satellite ID number.
+    *
+    * @return Satellite character string ID.
     */
-   {
-     String SatelliteName = "";
+   public static String adt_sattypes( int SatelliteIDInput) {
+     String SatelliteName;
 
      if (SatelliteIDInput<0) {
         SatelliteName = String.format("%s","MSNG");
@@ -827,16 +850,17 @@ public class Functions {
      return SatelliteName;
     
    }
-
-   public static String adt_atcffilename( String StormNameInput, String StormSiteIDInput )
-   /*
-    ** Derived ATCF file name using various input parameters
-    ** Inputs  : StormName_Input - Storm ID character string value (e.g. 12L)
-    ** Outputs : ATCFFileName - Complete file name and path for ATCF file
-    ** Return  : 0
-    */
-   {
    
+   /**
+    * Derived ATCF file name using various input parameters.
+    *
+    * Inputs  : StormName_Input - Storm ID character string value (e.g. 12L)
+    * Outputs : ATCFFileName - Complete file name and path for ATCF file
+    * Return  : 0
+    */
+   public static String adt_atcffilename(String StormNameInput,
+                                         String StormSiteIDInput)
+   {
       String ATCFFileName = "";
 
       int CurDate = History.IRCurrentRecord.date;
@@ -852,24 +876,28 @@ public class Functions {
  
       return ATCFFileName;
    }
-
-   public static double adt_XLZA(double rlat, double rlon, double plat, double plon)
-   /*   approximate local zenith angle (angle from vertical to the satellite)
-    **  Inputs  : rlat - latitude of target position on earth
-    **            rlon - longitude of target position on earth
-    **            plat - latitude of sub-satellite point
-    **            plon - longitude of sub-satellite point
-    **  Outputs : ang  - local zenith angle
-    */
-   {
    
-      double r = 6371.229;           /**  mean earth radius   */
-      double sd = r + 35790.0;       /**  mean distance from satellite to earth center  */
+   /**
+    * Approximate local zenith angle (angle from vertical to the satellite).
+    *
+    * @param rlat Latitude of target position on earth.
+    * @param rlon Longitude of target position on earth.
+    * @param plat Latitude of sub-satellite point.
+    * @param plon Longitude of sub-satellite point.
+    *
+    * @return local zenith angle
+    */
+   public static double adt_XLZA(double rlat, double rlon, double plat, double plon)
+   {
+      /*  mean earth radius   */
+      double r = 6371.229;
+      /*  mean distance from satellite to earth center  */
+      double sd = r + 35790.0;
     
       rlat = Math.abs(rlat);
-       /**  For the longitude in East of Greenwich  */
+       /*  For the longitude in East of Greenwich  */
       if (rlon < 0) rlon = rlon + 360.0;
-       /** rlon = Math.abs(rlon);  is this even needed with above + 360.0? */
+       /* rlon = Math.abs(rlon);  is this even needed with above + 360.0? */
       double dif = Math.abs(plon - rlon);
     
       double cosal = Math.cos(deg_to_rad(rlat)) * Math.cos(deg_to_rad(dif));
