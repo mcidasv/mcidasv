@@ -76,7 +76,7 @@ public class Env {
    public static String StormIDString;
    public static String ATCFSourceAgcyIDString;
    public static String CommentString;
-   public static String ADTVersion;
+   public static final String ADTVersion = "ADT Version 8.2.1";
    public static int DEBUG;
 
    public Env() {
@@ -123,8 +123,6 @@ public class Env {
       StormIDString = null;
       ATCFSourceAgcyIDString = null;
       CommentString = null;
-
-      ADTVersion = "ADT Version 8.2.1";
 
       DEBUG = 1;
    }

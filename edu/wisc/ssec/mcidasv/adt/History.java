@@ -797,15 +797,20 @@ public class History {
     
       return RecordCount;
    }
-
-   public static int WriteHistoryFile(String HistoryFileName) throws IOException 
-   /* Write HistoryRecordPtr structure to ASCII history file.
-    ** Inputs  : none
-    ** Outputs : number of records written is return value
-    ** Return  : -2 - error reading history file
-    **           -3 - error writing to history file
-    **           -5 - error closing history file
+    
+   /**
+    * Write HistoryRecordPtr structure to ASCII history file.
+    *
+    * @param HistoryFileName File to write.
+    *
+    * @return If {@code >= 0}, the value represents the number of records
+    * written. If -2, there was an error reading {@code HistoryFileName}. If
+    * {@code -3}, there was an error writing {@code HistoryFileName}.
+    * Finally, if {@code -5}, there was an error closing {@code
+    * HistoryFileName}.
     */
+   public static int WriteHistoryFile(String HistoryFileName)
+       throws IOException
    {
       String OutputString = "";
       FileWriter FileWriteStream = new FileWriter(HistoryFileName,false);
