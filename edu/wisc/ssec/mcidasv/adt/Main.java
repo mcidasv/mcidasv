@@ -31,8 +31,6 @@ package edu.wisc.ssec.mcidasv.adt;
 import java.io.File;
 import java.io.IOException;
 
-@SuppressWarnings({"static-access"})
-
 public class Main {
 
    public static String HistoryFileName;
