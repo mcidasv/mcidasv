@@ -44,17 +44,17 @@ public class Intensity {
       MWAnalysisFlag = 0;
       Rule9StrengthFlag = 0;
    }
-
+   
+   /**
+    * Compute intensity values CI, Final T#, and Raw T#.
+    * Inputs  : RedoIntensityFlag_Input  - Recalculate Intensity flag value
+    * Outputs : None
+    * Return  : 71 : storm is over land
+    *            0 : o.k.
+    */
    public static void CalculateIntensity(int RedoIntensityFlagValue,
                                          boolean RunFullAnalysis,
                                          String HistoryFileName)
-   /**
-    ** Compute intensity values CI, Final T#, and Raw T#.
-    ** Inputs  : RedoIntensityFlag_Input  - Recalculate Intensity flag value
-    ** Outputs : None
-    ** Return  : 71 : storm is over land
-    **            0 : o.k.
-    */
    {
 
       double TnoRaw=0.0;
@@ -70,19 +70,19 @@ public class Intensity {
       double Longitude = History.IRCurrentRecord.longitude;
 
       if((LandFlagTF)&&(RecLand==1)) {
-         /** Initialize Missing Record */
-         /** throw exception ?? */
+         /* Initialize Missing Record */
+         /* throw exception ?? */
       } else {
          double RetVal[] = adt_TnoRaw(RedoIntensityFlagValue,HistoryFileName);
          TnoRaw = RetVal[0];
          MWAnalysisFlag = (int)RetVal[1];
-         /** System.out.printf("RawT#Adj=%f  MWAnalysisFlag=%d\n",TnoRaw,MWAnalysisFlag); */
+         /* System.out.printf("RawT#Adj=%f  MWAnalysisFlag=%d\n",TnoRaw,MWAnalysisFlag); */
          History.IRCurrentRecord.Traw = TnoRaw;
       }
 
-      /** System.out.printf("RunFullAnalysis=%b\n",RunFullAnalysis); */
+      /* System.out.printf("RunFullAnalysis=%b\n",RunFullAnalysis); */
       if(!RunFullAnalysis) {
-         /** Perform Spot Analysis (only T#raw) */
+         /* Perform Spot Analysis (only T#raw) */
          History.IRCurrentRecord.Tfinal = TnoRaw;
          History.IRCurrentRecord.CI = TnoRaw;
          CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,TnoRaw,Latitude,Longitude);
@@ -90,8 +90,8 @@ public class Intensity {
          History.IRCurrentRecord.rule9 = 0;
       } else {
          int NumRecsHistory = History.HistoryNumberOfRecords();
-         /** System.out.printf("numrecs=%d  inistrength=%b historyfilename=%s*\n",NumRecsHistory,InitStrengthTF,HistoryFileName); */
-         /** System.out.printf("MWanalysisflag=%d\n",MWAnalysisFlag); */
+         /* System.out.printf("numrecs=%d  inistrength=%b historyfilename=%s*\n",NumRecsHistory,InitStrengthTF,HistoryFileName); */
+         /* System.out.printf("MWanalysisflag=%d\n",MWAnalysisFlag); */
          if((((NumRecsHistory==0)&&(InitStrengthTF))&&(HistoryFileName!=null))||(MWAnalysisFlag==1)) {
              System.out.printf("tnoraw=%f\n",TnoRaw);
             History.IRCurrentRecord.Tfinal = TnoRaw;
@@ -110,29 +110,30 @@ public class Intensity {
                History.IRCurrentRecord.rule9 = 0;
             }
          } else {
-            /** System.out.printf("rawt=%f\n",History.IRCurrentRecord.Traw); */
+            /* System.out.printf("rawt=%f\n",History.IRCurrentRecord.Traw); */
             TnoFinal = adt_TnoFinal(1);
-            /** System.out.printf("FinalT#=%f\n",TnoFinal); */
+            /* System.out.printf("FinalT#=%f\n",TnoFinal); */
             History.IRCurrentRecord.Tfinal = TnoFinal;
             double[] RetVals2 = adt_CIno(HistoryFileName);
             CI = RetVals2[0];
             Rule9StrengthFlag = (int)RetVals2[1];
-            /** System.out.printf("CI#=%f Rule9StrengthFlag=%d \n",CI,Rule9StrengthFlag); */
+            /* System.out.printf("CI#=%f Rule9StrengthFlag=%d \n",CI,Rule9StrengthFlag); */
             History.IRCurrentRecord.CI = CI;
             History.IRCurrentRecord.rule9 = Rule9StrengthFlag;
          }
       }
 
    }
-
-   public static double[] adt_TnoRaw(int RedoIntensityFlag,String HistoryFileName)
+   
    /**
-    ** Compute initial Raw T-Number value using original Dvorak rules
-    ** Inputs  : RedoIntensityFlag_Input - Redo Intensity Flag value
-    **           MWAnalysisFlag_Input    - MW Analysis Flag value
-    ** Outputs : None
-    ** Return  : Raw T# value
+    * Compute initial Raw T-Number value using original Dvorak rules
+    * Inputs  : RedoIntensityFlag_Input - Redo Intensity Flag value
+    *           MWAnalysisFlag_Input    - MW Analysis Flag value
+    * Outputs : None
+    * Return  : Raw T# value
     */
+   public static double[] adt_TnoRaw(int RedoIntensityFlag,String HistoryFileName)
+
    {
 
       int XInc;
@@ -155,40 +156,40 @@ public class Intensity {
       boolean MWOFFTF = false;
       boolean LandCheckTF = true;
 
-      /** EYE SCENE REGRESSION BASE VALUES */
+      /* EYE SCENE REGRESSION BASE VALUES */
       double[][] EyeRegressionBaseArray = 
-      /**                      DG   MG   LG   B    W    CMG  CDG           */
+      /*                      DG   MG   LG   B    W    CMG  CDG           */
                   {{1.00,2.00,3.25,4.00,4.75,5.25,5.75,6.50,7.25,7.75,8.25},
                    {1.50,2.25,3.30,3.85,4.50,4.75,5.15,5.50,6.00,6.25,6.75}};
-      /** CLOUD SCENE REGRESSION BASE VALUES */
+      /* CLOUD SCENE REGRESSION BASE VALUES */
       double[][] CloudRegressionBaseArray = 
-      /**                      DG   MG   LG   B    W    CMG  CDG           */
+      /*                      DG   MG   LG   B    W    CMG  CDG           */
                   {{2.00,2.40,3.25,3.50,3.75,4.00,4.10,4.20,4.30,4.40,4.70},
                    {2.05,2.40,3.00,3.20,3.40,3.55,3.65,3.75,3.80,3.90,4.10}};
-      /** Curved Band Scene Type Intensity Values (each 20% of wrap around center) */
+      /* Curved Band Scene Type Intensity Values (each 20% of wrap around center) */
       double[] CurvedBandIntensityArray = {1.5,1.5,2.0,2.5,3.0,3.5,4.0};
-      /** Shear Scene Type Distance Threshold Values (distance in km) */
+      /* Shear Scene Type Distance Threshold Values (distance in km) */
       double[] ShearDistanceArray = {0.0,35.0,50.0,80.0,110.0,140.0};
-      /** Shear Scene Type Intensity Values */
+      /* Shear Scene Type Intensity Values */
       double[] ShearIntensityArray = {3.50,3.00,2.50,2.25,2.00,1.50};
 
-      /** Rule 8 Adjustments
-       **  Row 1 - Shear Scenes (original rule 8)
-       **  Row 2 - Eye Scenes (original + 0.5)
-       **  Row 3 - Other Scenes (original - 0.5)
+      /* Rule 8 Adjustments
+       *  Row 1 - Shear Scenes (original rule 8)
+       *  Row 2 - Eye Scenes (original + 0.5)
+       *  Row 3 - Other Scenes (original - 0.5)
        */
       double[][] Rule8AdjArray = 
-      /**                1hr  6hr 12hr 18hr 24hr                           */
+      /*                1hr  6hr 12hr 18hr 24hr                           */
                   {{0.0,0.51,1.01,1.71,2.21,2.71,0.0,0.0,0.21,0.51},
                    {0.0,0.51,1.01,2.71,3.21,3.71,1.31,0.0,0.21,0.51},
                    {0.0,0.51,0.71,1.21,1.71,2.21,0.0,0.0,0.21,0.51}};
-      /** Eye Regression Factor (Atlantic, Pacific) */
+      /* Eye Regression Factor (Atlantic, Pacific) */
       double[] EyeCloudTempDifferenceRegressionFactorArrayEYE = { 0.011, 0.015 };
-      /** Cloud Region Symmatry Regression Factor - Eye Scene (Atlantic, Pacific) */
+      /* Cloud Region Symmatry Regression Factor - Eye Scene (Atlantic, Pacific) */
       double[] CloudSymmatryRegressionFactorArrayEYE = { -0.015, -0.015 };
-      /** CDO size (km - Dark Gray BD Curve) - Cloud Scene (Atlantic, Pacific) */
+      /* CDO size (km - Dark Gray BD Curve) - Cloud Scene (Atlantic, Pacific) */
       double[] CDOSizeRegressionFactorArrayCLD = { 0.002 , 0.001 };
-      /** Cloud Region Symmatry Regression Factor - Cloud Scene (Atlantic, Pacific) */
+      /* Cloud Region Symmatry Regression Factor - Cloud Scene (Atlantic, Pacific) */
       double[] CloudSymmatryRegressionFactorArrayCLD = { -0.030, -0.015 };
 
       double CurrentTime = 1900001.0;
@@ -204,11 +205,11 @@ public class Intensity {
       double RecTnoRaw = 0.0;
 
       int NumRecsHistory = History.HistoryNumberOfRecords();
-      /** System.out.printf("numrecs=%d\n",NumRecsHistory); */
+      /* System.out.printf("numrecs=%d\n",NumRecsHistory); */
       if((NumRecsHistory==0)&&(HistoryFileName!=null)) {
-         /**
-          ** History file does not exist and current analysis is
-          ** first analysis for the storm
+         /*
+          * History file does not exist and current analysis is
+          * first analysis for the storm
           */
          if(InitStrengthTF) {
             History.IRCurrentRecord.TrawO = InitStrengthValue;
@@ -230,13 +231,13 @@ public class Intensity {
             FirstHistoryRecTime = LastValidRecordTime;
          }
 
-         /** System.out.printf("FirstHistoryRecTime=%f\n",FirstHistoryRecTime); */
+         /* System.out.printf("FirstHistoryRecTime=%f\n",FirstHistoryRecTime); */
          XInc = 0;
          while(XInc<NumRecsHistory) {
             RecDate = History.HistoryFile[XInc].date;
             RecTime = History.HistoryFile[XInc].time;
             HistoryRecTime = Functions.calctime(RecDate,RecTime);
-            /** System.out.printf("XInc= %d  HistoryRecTime%f\n",XInc,HistoryRecTime); */
+            /* System.out.printf("XInc= %d  HistoryRecTime%f\n",XInc,HistoryRecTime); */
             if(HistoryRecTime>CurrentTime) {
                break;
             }
@@ -248,10 +249,10 @@ public class Intensity {
             }
             if(LandCheckTF) {
                if((HistoryRecTime==CurrentTime)&&(XInc==0)&&(InitStrengthValue!=0.0)) {
-                  /**
-                   ** Current analysis is at or before first record in
-                   ** existing history file - return global initial
-                   ** strength value
+                  /*
+                   * Current analysis is at or before first record in
+                   * existing history file - return global initial
+                   * strength value
                    */
                   System.out.printf("FIRST RECORD in NON-empty file\n");
                   History.IRCurrentRecord.TrawO = InitStrengthValue;
@@ -270,17 +271,17 @@ public class Intensity {
             PreviousHistoryCIValue = 4.0;
          }
 
-         /** System.out.printf("PreviousHistoryCIValue=%f\n",PreviousHistoryCIValue); */
+         /* System.out.printf("PreviousHistoryCIValue=%f\n",PreviousHistoryCIValue); */
          if(((CurrentTime-LastValidRecordTime)>1.0)&&
             (HistoryFileName!=null)) {
-            /** The history file either begins with all land scenes
-             ** or there is a break in the history file of greater than
-             ** 24 hours.  Reinitialize the storm with the input
-             ** Initial Classification value
+            /* The history file either begins with all land scenes
+             * or there is a break in the history file of greater than
+             * 24 hours.  Reinitialize the storm with the input
+             * Initial Classification value
              */
             History.IRCurrentRecord.TrawO = InitStrengthValue;
             Env.InitRawTValue = -1.0;
-            /** System.out.printf("returning...\n"); */
+            /* System.out.printf("returning...\n"); */
             return new double[] { InitStrengthValue, 0.0 };  /* EXIT */
          }
       }
@@ -288,9 +289,9 @@ public class Intensity {
       double CloudTemperatureCurrent = History.IRCurrentRecord.cloudt;
       double EyeTemperatureCurrent = History.IRCurrentRecord.eyet;
 
-      /** System.out.printf("current cloudT=%f  eyeT=%f\n",CloudTemperatureCurrent,EyeTemperatureCurrent); */
+      /* System.out.printf("current cloudT=%f  eyeT=%f\n",CloudTemperatureCurrent,EyeTemperatureCurrent); */
       for(XInc=0;XInc<10;XInc++) {
-         /** compute cloud category */
+         /* compute cloud category */
          if((CloudTemperatureCurrent<=BDCurve_Points[XInc])&&
             (CloudTemperatureCurrent>BDCurve_Points[XInc+1])) {
             CloudBDCategory = XInc;
@@ -298,29 +299,29 @@ public class Intensity {
                                 (BDCurve_Points[CloudBDCategory+1]-
                                  BDCurve_Points[CloudBDCategory]);
          }
-         /** compute eye category for eye adjustment */
+         /* compute eye category for eye adjustment */
          if((EyeTemperatureCurrent<=BDCurve_Points[XInc])&&
             (EyeTemperatureCurrent>BDCurve_Points[XInc+1])) {
          }
       }
 
-      /** System.out.printf("cloudBD=%d  CloudTnoIntensity= %f eyeBD=%d  \n",CloudBDCategory,CloudTnoIntensity,EyeBDCategory); */
+      /* System.out.printf("cloudBD=%d  CloudTnoIntensity= %f eyeBD=%d  \n",CloudBDCategory,CloudTnoIntensity,EyeBDCategory); */
       int EyeSceneCurrent = History.IRCurrentRecord.eyescene;
       if(EyeSceneCurrent==1) {
-         /** this matches DT used at NHC (jack beven) */
-         /** EyeTemperature=(9.0+EyeTemperature)/2.0; */
-         /** Eye Temp is between +9C (beven) and measured eye temp (turk) */
+         /* this matches DT used at NHC (jack beven) */
+         /* EyeTemperature=(9.0+EyeTemperature)/2.0; */
+         /* Eye Temp is between +9C (beven) and measured eye temp (turk) */
          EyeTemperatureCurrent = (EyeTemperatureCurrent+9.0)/2.0;
          History.IRCurrentRecord.eyet = EyeTemperatureCurrent;
       }
 
-      /** System.out.printf("EyeCloudBDCategoryDifference=%f\n",EyeCloudBDCategoryDifference); */
+      /* System.out.printf("EyeCloudBDCategoryDifference=%f\n",EyeCloudBDCategoryDifference); */
     
-      /** if scenetype is EYE */
+      /* if scenetype is EYE */
       int CurvedBandBDAmountCurrent = History.IRCurrentRecord.ringcbval;
       int CurvedBandBDCategoryCurrent = History.IRCurrentRecord.ringcb;
       double MWScoreValueCurrent = History.IRCurrentRecord.mwscore;
-      /** System.out.printf("MWScoreValueCurrent=%f\n",MWScoreValueCurrent); */
+      /* System.out.printf("MWScoreValueCurrent=%f\n",MWScoreValueCurrent); */
 
       MWAnalysisFlag = 0;
       if(RedoIntensityFlag==1) {
@@ -334,9 +335,9 @@ public class Intensity {
       int DomainID = Env.DomainID;
       double CloudSymAveCurrent = History.IRCurrentRecord.cloudsymave;
       double EyeCDOSizeCurrent = History.IRCurrentRecord.eyecdosize;
-      /** System.out.printf("CloudScene=%d\n",CloudScene); */
+      /* System.out.printf("CloudScene=%d\n",CloudScene); */
       if(CloudScene==3) {
-         /** CURVED BAND */
+         /* CURVED BAND */
          CurvedBandBDAmountCurrent = Math.min(30,CurvedBandBDAmountCurrent+1);
          int CurvedBandBDPercentage = CurvedBandBDAmountCurrent/5;
          double IncrementMultFactor = 0.1;
@@ -346,9 +347,9 @@ public class Intensity {
          IntensityEstimateValue=CurvedBandIntensityArray[CurvedBandBDPercentage];
          TnoInterpAdjValue = IncrementMultFactor*
                              ((double)(CurvedBandBDAmountCurrent-(CurvedBandBDPercentage*5)));
-         /**
-          ** System.out.printf("CurvedBandBDAmount=%d  CurvedBandBDPercentage=%d CurvedBandBDCategory=%d  IntensityEstimateValue=%f TnoInterpAdjValue=%f\n",
-          **         CurvedBandBDAmountCurrent,CurvedBandBDPercentage, CurvedBandBDCategoryCurrent,IntensityEstimateValue, TnoInterpAdjValue);
+         /*
+          * System.out.printf("CurvedBandBDAmount=%d  CurvedBandBDPercentage=%d CurvedBandBDCategory=%d  IntensityEstimateValue=%f TnoInterpAdjValue=%f\n",
+          *         CurvedBandBDAmountCurrent,CurvedBandBDPercentage, CurvedBandBDCategoryCurrent,IntensityEstimateValue, TnoInterpAdjValue);
           */
          IntensityEstimateValue = IntensityEstimateValue+TnoInterpAdjValue;
          if(CurvedBandBDCategoryCurrent==5) {
@@ -359,7 +360,7 @@ public class Intensity {
          }
          Rule8AdjCatValue=2;
       } else if(CloudScene==4) {
-         /** POSSIBLE SHEAR -- new definition from NHC */
+         /* POSSIBLE SHEAR -- new definition from NHC */
          XInc = 0;
          IntensityEstimateValue = 1.5;
          double ShearDistanceCurrent = History.IRCurrentRecord.eyecdosize;
@@ -387,15 +388,15 @@ public class Intensity {
             }
          }
       } else {
-         /** EYE or NO EYE */
+         /* EYE or NO EYE */
          /* int DomainID_Local = Env.DomainID = DomainID; */
          if(EyeScene<=2) {
-            /** EYE */
-            /**
-             ** System.out.printf("EYE : EyeTemperature=%f  CloudTemperature=%f\n",
-             **         EyeTemperatureCurrent,CloudTemperatureCurrent);
-             ** System.out.printf("EYE : CloudTnoIntensity=%f  DomainID=%d CloudBDCategory=%d\n",CloudTnoIntensity,DomainID,
-             **         CloudBDCategory);
+            /* EYE */
+            /*
+             * System.out.printf("EYE : EyeTemperature=%f  CloudTemperature=%f\n",
+             *         EyeTemperatureCurrent,CloudTemperatureCurrent);
+             * System.out.printf("EYE : CloudTnoIntensity=%f  DomainID=%d CloudBDCategory=%d\n",CloudTnoIntensity,DomainID,
+             *         CloudBDCategory);
              */
             TnoInterpAdjValue = (CloudTnoIntensity*
                     (EyeRegressionBaseArray[DomainID][CloudBDCategory+1]-
@@ -407,7 +408,7 @@ public class Intensity {
                     CloudSymmatryRegressionFactorArrayEYE[DomainID]*
                     (CloudSymAveCurrent);
             
-            /** System.out.printf("EYE : cloudsymave=%f  CDOSymmatryRegressionAdjValue=%f\n",
+            /* System.out.printf("EYE : cloudsymave=%f  CDOSymmatryRegressionAdjValue=%f\n",
                       CloudSymAveCurrent,CDOSymmatryRegressionAdjValue); */
              
             IntensityEstimateValue = 
@@ -416,20 +417,20 @@ public class Intensity {
                     EyeCloudTempDifferenceAdjValue+
                     CDOSymmatryRegressionAdjValue;
             
-            /** System.out.printf("EYE :TnoInterpAdjValue=%f EyeCloudTempDifferenceAdjValue=%f CDOSymmatryRegressionAdjValue=%f IntensityEstimateValue=%f\n",
+            /* System.out.printf("EYE :TnoInterpAdjValue=%f EyeCloudTempDifferenceAdjValue=%f CDOSymmatryRegressionAdjValue=%f IntensityEstimateValue=%f\n",
                       TnoInterpAdjValue,EyeCloudTempDifferenceAdjValue, CDOSymmatryRegressionAdjValue,IntensityEstimateValue); */
              
             IntensityEstimateValue = Math.min(IntensityEstimateValue,9.0);
-            /** System.out.printf("IntensityEstimateValue=%f\n",IntensityEstimateValue); */
+            /* System.out.printf("IntensityEstimateValue=%f\n",IntensityEstimateValue); */
             if(EyeScene==2)  {
-               /** LARGE EYE adjustment */
+               /* LARGE EYE adjustment */
                IntensityEstimateValue = Math.min(IntensityEstimateValue-0.5,6.5);
             }
             Rule8AdjCatValue = 1;
          }
          else {
-            /** NO EYE */
-            /** CDO */
+            /* NO EYE */
+            /* CDO */
             TnoInterpAdjValue = (CloudTnoIntensity*
                     (CloudRegressionBaseArray[DomainID][CloudBDCategory+1]-
                      CloudRegressionBaseArray[DomainID][CloudBDCategory]));
@@ -437,7 +438,7 @@ public class Intensity {
                     CDOSizeRegressionFactorArrayCLD[DomainID]*
                     EyeCDOSizeCurrent;
             
-            /** System.out.printf("CDO : dgraysize=%f  CDOSymmatryRegressionAdjValue=%f\n",
+            /* System.out.printf("CDO : dgraysize=%f  CDOSymmatryRegressionAdjValue=%f\n",
                       EyeCDOSizeCurrent,CDOSizeRegressionAdjValue); */
              
             CDOSymmatryRegressionAdjValue = 
@@ -451,7 +452,7 @@ public class Intensity {
                     CloudRegressionBaseArray[DomainID][CloudBDCategory]+
                     TnoInterpAdjValue+CDOSizeRegressionAdjValue+CDOSymmatryRegressionAdjValue;
             IntensityEstimateValue = IntensityEstimateValue-0.1; /** bias adjustment */
-            /** CDO adjustment for very weak or very strong CDOs */
+            /* CDO adjustment for very weak or very strong CDOs */
             if(CloudScene==0) {
                CIValueAdjustmentFactorValue=0.0;
                if(PreviousHistoryCIValue>=4.5) {
@@ -463,23 +464,23 @@ public class Intensity {
                IntensityEstimateValue = IntensityEstimateValue+CIValueAdjustmentFactorValue;
             }
             
-            /** System.out.printf("CDO : TnoInterpAdjValue=%f CDOSizeRegressionAdjValue=%f CDOSymmatryRegressionAdjValue=%f IntensityEstimateValue=%f\n",
+            /* System.out.printf("CDO : TnoInterpAdjValue=%f CDOSizeRegressionAdjValue=%f CDOSymmatryRegressionAdjValue=%f IntensityEstimateValue=%f\n",
                       TnoInterpAdjValue,CDOSizeRegressionAdjValue,CDOSymmatryRegressionAdjValue,IntensityEstimateValue); */
              
             CIValueAdjustmentFactorValue = 0.0;
-            /** EMBEDDED CENTER */
+            /* EMBEDDED CENTER */
             if(CloudScene==1) {
                CIValueAdjustmentFactorValue = Math.max(0.0,Math.min(
                                             1.5,PreviousHistoryCIValue-4.0));
                
-               /** System.out.printf("EMBC : PreviousHistoryCIValue=%f TnoInterpAdjValue=%f\n",
+               /* System.out.printf("EMBC : PreviousHistoryCIValue=%f TnoInterpAdjValue=%f\n",
                          PreviousHistoryCIValue,CIValueAdjustmentFactorValue); */
                 
                IntensityEstimateValue = IntensityEstimateValue+CIValueAdjustmentFactorValue;
             }
-            /** IRREGULAR CDO (PT=3.5) */
+            /* IRREGULAR CDO (PT=3.5) */
             if(CloudScene==2) {
-               /** additional IrrCDO bias adjustment */
+               /* additional IrrCDO bias adjustment */
                IntensityEstimateValue = IntensityEstimateValue+0.3;
                IntensityEstimateValue = Math.min(3.5,Math.max(2.5,IntensityEstimateValue));
             }
@@ -490,14 +491,14 @@ public class Intensity {
       FinalIntensityEstimateValue = ((double)((int)((IntensityEstimateValue+0.01)*10.0)))/10.0;
       History.IRCurrentRecord.TrawO = FinalIntensityEstimateValue;
       
-      /** System.out.printf("RawT#orig=%f\n",FinalIntensityEstimateValue); */
+      /* System.out.printf("RawT#orig=%f\n",FinalIntensityEstimateValue); */
      
-      /** NEW Microwave Eye Score logic */
+      /* NEW Microwave Eye Score logic */
       if(Env.DEBUG==100) {
          System.out.printf("***IntensityEstimateValue=%f\n",IntensityEstimateValue);
       }
     
-      /** moved MW analysis here to work with all scenes */
+      /* moved MW analysis here to work with all scenes */
 
       double[] RetVals2 = MWAdj.adt_calcmwadjustment(MWScoreValueCurrent,FinalIntensityEstimateValue);
       MWAnalysisFlag = (int)RetVals2[0];
@@ -507,7 +508,7 @@ public class Intensity {
          System.out.printf("MWAnalysisFlag=%d  IntensityEstimateValue=%f\n", MWAnalysisFlag,IntensityEstimateValue);
       }
       FinalIntensityEstimateValue=(double)((int)((IntensityEstimateValue+0.01)*10.0))/10.0;
-      /** System.out.printf("FinalIntensityEstimateValue=%f\n",FinalIntensityEstimateValue); */
+      /* System.out.printf("FinalIntensityEstimateValue=%f\n",FinalIntensityEstimateValue); */
 
       int Rule8Current = History.IRCurrentRecord.rule8;
       
@@ -515,25 +516,25 @@ public class Intensity {
       
       boolean SpecialPostMWRule8EYEFlag = false;
       if((MWOFFTF)&&(Rule8AdjCatValue==1)) {
-          /** System.out.printf("USING NEW POST-MW EYE RULE 8 CONSTRAINTS!!!\n"); */
+          /* System.out.printf("USING NEW POST-MW EYE RULE 8 CONSTRAINTS!!!\n"); */
           SpecialPostMWRule8EYEFlag = true;
       }
 
-      /** System.out.printf("MWAnalysisFlag=%d\n",MWAnalysisFlag); */
+      /* System.out.printf("MWAnalysisFlag=%d\n",MWAnalysisFlag); */
       if(MWAnalysisFlag==0) {
-         /**
-          ** perform Dvorak EIR Rule 8 Constrants on Raw T# value
-          ** "velden rule" (actually 86.4 minutes... 0.06 of a day)
-          ** "additional velden rule", only over first 6 hours
-          ** All cases     : delT of 0.5 over  1 hour  : rule8 = 9 "velden rule"
-          **                 delT of 0.1 over  1 hour  : rule8 = 8 "additional"
-          ** Raw T# <  4.0 : delT of 1.0 over  6 hours : rule8 = 2
-          **                 No threshold exceeded     : rule8 = 0
-          ** Raw T# >= 4.0 : delT of 1.0 over  6 hours : rule8 = 2
-          **                 delT of 1.5 over 12 hours : rule8 = 3
-          **                 delT of 2.0 over 18 hours : rule8 = 4
-          **                 delT of 2.5 over 24 hours : rule8 = 5
-          **                 No threshold exceeded     : rule8 = 0
+         /*
+          * perform Dvorak EIR Rule 8 Constrants on Raw T# value
+          * "velden rule" (actually 86.4 minutes... 0.06 of a day)
+          * "additional velden rule", only over first 6 hours
+          * All cases     : delT of 0.5 over  1 hour  : rule8 = 9 "velden rule"
+          *                 delT of 0.1 over  1 hour  : rule8 = 8 "additional"
+          * Raw T# <  4.0 : delT of 1.0 over  6 hours : rule8 = 2
+          *                 No threshold exceeded     : rule8 = 0
+          * Raw T# >= 4.0 : delT of 1.0 over  6 hours : rule8 = 2
+          *                 delT of 1.5 over 12 hours : rule8 = 3
+          *                 delT of 2.0 over 18 hours : rule8 = 4
+          *                 delT of 2.5 over 24 hours : rule8 = 5
+          *                 No threshold exceeded     : rule8 = 0
           */
          double PreviousHistoryFinalTnoValue = FinalIntensityEstimateValue;
          int EyeSceneCounter = 0;
@@ -548,9 +549,9 @@ public class Intensity {
          double RawTnoValueMinus1hr = FinalIntensityEstimateValue;
          boolean First6hrRecordTF = false;
          if(NumRecsHistory!=0) {
-            /**
-             ** 0.0416 is one hour... round to 0.05 to make sure I catch the
-             ** hour previous report
+            /*
+             * 0.0416 is one hour... round to 0.05 to make sure I catch the
+             * hour previous report
              */
             double CurrentTimeMinus1hr = CurrentTime-0.05;
             double CurrentTimeMinus6hr = CurrentTime-0.26;
@@ -597,13 +598,13 @@ public class Intensity {
                RecRule9 = History.HistoryFile[XInc].rule9;
                RecRapidDiss = History.HistoryFile[XInc].rapiddiss;
                RecEyeScene = History.HistoryFile[XInc].eyescene;
-               /** System.out.printf("currenttime=%f  historyrectime=%f\n",CurrentTime,HistoryRecTime); */
+               /* System.out.printf("currenttime=%f  historyrectime=%f\n",CurrentTime,HistoryRecTime); */
                if(HistoryRecTime>=CurrentTime) {
-                  /** System.out.printf("outta here\n"); */
+                  /* System.out.printf("outta here\n"); */
                   break;
                }
                LandCheckTF = true;
-               /** System.out.printf("**RecLand=%d\n",RecLand); */
+               /* System.out.printf("**RecLand=%d\n",RecLand); */
                if(((LandFlagTF)&&(RecLand==1))||(RecTnoRaw<1.0)) {
                   LandCheckTF = false;
                   if (FirstHistoryLandRecTF) {
@@ -612,7 +613,7 @@ public class Intensity {
                } else {
                   FirstHistoryLandRecTF = true;
                }
-               /** System.out.printf("**LandCheckTF=%b\n",LandCheckTF); */
+               /* System.out.printf("**LandCheckTF=%b\n",LandCheckTF); */
                if((HistoryRecTime>=CurrentTimeMinus24hr)&&
                   (HistoryRecTime<CurrentTime)&&
                   (!CurrentTimeMinus24hrTF)&&(LandCheckTF)) {
@@ -673,7 +674,7 @@ public class Intensity {
                XInc++;
             }
     
-            /** System.out.printf("LandFlagCurrent=%d\n",LandFlagCurrent); */
+            /* System.out.printf("LandFlagCurrent=%d\n",LandFlagCurrent); */
             /* added to correctly analyze current record (08/27/13)*/
             if(LandFlagCurrent==2) {
                if(EyeScene<=2) {
@@ -685,16 +686,16 @@ public class Intensity {
                   ApplyVeldenRuleTF = true;
                }
             }
-            /** System.out.printf("ApplyVeldenRuleTF=%b\n",ApplyVeldenRuleTF); */
+            /* System.out.printf("ApplyVeldenRuleTF=%b\n",ApplyVeldenRuleTF); */
             Rule8Val = (Rule8AdjCatValue*10)+0;
-            /** System.out.printf("Rule8AdjCatValue=%d Rule8Val=%d\n",Rule8AdjCatValue,Rule8Val); */
+            /* System.out.printf("Rule8AdjCatValue=%d Rule8Val=%d\n",Rule8AdjCatValue,Rule8Val); */
             History.IRCurrentRecord.rule8 = Rule8Val;
-            /** System.out.printf("PreviousHistoryFinalTnoValue=%f\n",PreviousHistoryFinalTnoValue); */
-            /** System.out.printf("Rule8 value = %d\n",History.IRCurrentRecord.rule8); */
+            /* System.out.printf("PreviousHistoryFinalTnoValue=%f\n",PreviousHistoryFinalTnoValue); */
+            /* System.out.printf("Rule8 value = %d\n",History.IRCurrentRecord.rule8); */
             if(PreviousHistoryFinalTnoValue<4.0) {
-               /** System.out.printf(" LESS THAN 4.0\n"); */
+               /* System.out.printf(" LESS THAN 4.0\n"); */
                /* Raw T# < 4.0 */
-               /** System.out.printf("First6hrRecordTF=%b\n",First6hrRecordTF); */
+               /* System.out.printf("First6hrRecordTF=%b\n",First6hrRecordTF); */
                if(First6hrRecordTF) {
                   if(CurrentTimeMinus1hrTF) {
                      TnoDifferenceValueMinus1hr = Math.abs(RawTnoValueMinus1hr-
@@ -729,7 +730,7 @@ public class Intensity {
                } else {
                   TnoDifferenceValueMinus1hr = Math.abs(TnoValueMinus1hr-
                                                    FinalIntensityEstimateValue);
-                  /** System.out.printf("TnoDifferenceValueMinus1hr=%f\n",TnoDifferenceValueMinus1hr); */
+                  /* System.out.printf("TnoDifferenceValueMinus1hr=%f\n",TnoDifferenceValueMinus1hr); */
                   if((TnoDifferenceValueMinus1hr>
                       Rule8AdjArray[Rule8AdjCatValue][9])&&
                      (CurrentTimeMinus1hrTF)&&(ApplyVeldenRuleTF)) {
@@ -743,8 +744,8 @@ public class Intensity {
                   }
                   TnoDifferenceValueMinus6hr = Math.abs(TnoValueMinus6hr-
                                              FinalIntensityEstimateValue);
-                  /** System.out.printf("TnoDifferenceValueMinus6hr=%f\n",TnoDifferenceValueMinus6hr); */
-                  /** System.out.printf("PreviousHistoryRule9Value=%d\n",PreviousHistoryRule9Value); */
+                  /* System.out.printf("TnoDifferenceValueMinus6hr=%f\n",TnoDifferenceValueMinus6hr); */
+                  /* System.out.printf("PreviousHistoryRule9Value=%d\n",PreviousHistoryRule9Value); */
                   if(PreviousHistoryRule9Value<2) {
                      if((TnoDifferenceValueMinus6hr>
                          Rule8AdjArray[Rule8AdjCatValue][2])&&
@@ -772,11 +773,11 @@ public class Intensity {
                   }
                }
             } else {
-               /** System.out.printf(" GREATER THAN 4.0\n"); */
+               /* System.out.printf(" GREATER THAN 4.0\n"); */
                /* Raw T# >= 4.0 */
                TnoDifferenceValueMinus1hr = Math.abs(TnoValueMinus1hr-
                                                 FinalIntensityEstimateValue);
-               /** System.out.printf("TnoDifferenceValueMinus1hr=%f\n",TnoDifferenceValueMinus1hr); */
+               /* System.out.printf("TnoDifferenceValueMinus1hr=%f\n",TnoDifferenceValueMinus1hr); */
                if((TnoDifferenceValueMinus1hr>
                    Rule8AdjArray[Rule8AdjCatValue][9])&&
                   (CurrentTimeMinus1hrTF)&&(ApplyVeldenRuleTF)) {
@@ -792,17 +793,17 @@ public class Intensity {
                TnoDifferenceValueMinus12hr = Math.abs(TnoValueMinus12hr-FinalIntensityEstimateValue);
                TnoDifferenceValueMinus18hr = Math.abs(TnoValueMinus18hr-FinalIntensityEstimateValue);
                TnoDifferenceValueMinus24hr = Math.abs(TnoValueMinus24hr-FinalIntensityEstimateValue);
-               /** System.out.printf("Rule8AdjCatValue=%d\n",Rule8AdjCatValue);
-               /** System.out.printf("current6hrTF=%b TnoDifferenceValueMinus6hr=%f arrayval=%f \n",
+               /* System.out.printf("Rule8AdjCatValue=%d\n",Rule8AdjCatValue);
+               /* System.out.printf("current6hrTF=%b TnoDifferenceValueMinus6hr=%f arrayval=%f \n",
                     CurrentTimeMinus6hrTF,TnoDifferenceValueMinus6hr,Rule8AdjArray[Rule8AdjCatValue][2]); */
-               /** System.out.printf("current12hrTF=%b TnoDifferenceValueMinus12hr=%f arrayval=%f \n",
+               /* System.out.printf("current12hrTF=%b TnoDifferenceValueMinus12hr=%f arrayval=%f \n",
                     CurrentTimeMinus12hrTF,TnoDifferenceValueMinus12hr,Rule8AdjArray[Rule8AdjCatValue][3]); */
-               /** System.out.printf("current18hrTF=%b TnoDifferenceValueMinus18hr=%f arrayval=%f \n",
+               /* System.out.printf("current18hrTF=%b TnoDifferenceValueMinus18hr=%f arrayval=%f \n",
                     CurrentTimeMinus18hrTF,TnoDifferenceValueMinus18hr,Rule8AdjArray[Rule8AdjCatValue][4]); */
-               /** System.out.printf("current24hrTF=%b TnoDifferenceValueMinus24hr=%f arrayval=%f \n",
+               /* System.out.printf("current24hrTF=%b TnoDifferenceValueMinus24hr=%f arrayval=%f \n",
                     CurrentTimeMinus24hrTF,TnoDifferenceValueMinus24hr,Rule8AdjArray[Rule8AdjCatValue][5]); */
 
-               /** NEW Rule 8 MW adjustment*/
+               /* NEW Rule 8 MW adjustment*/
                if(SpecialPostMWRule8EYEFlag) {
                   Rule8TESTValue=Rule8AdjArray[Rule8AdjCatValue][6];
                } else {
@@ -812,7 +813,7 @@ public class Intensity {
                if((TnoDifferenceValueMinus6hr>
                    Rule8TESTValue)&&
                   (CurrentTimeMinus6hrTF)) {
-                  /** System.out.printf("6 hr\n"); */
+                  /* System.out.printf("6 hr\n"); */
                   FinalIntensityEstimateValue = Math.max(TnoValueMinus6hr-
                                               Rule8TESTValue,
                                               Math.min(TnoValueMinus6hr+
@@ -827,7 +828,7 @@ public class Intensity {
                } else if((TnoDifferenceValueMinus12hr>
                         Rule8AdjArray[Rule8AdjCatValue][3])&&
                        (CurrentTimeMinus12hrTF)) {
-                  /** System.out.printf("12 hr\n"); */
+                  /* System.out.printf("12 hr\n"); */
                   FinalIntensityEstimateValue = Math.max(TnoValueMinus12hr-
                                               Rule8AdjArray[Rule8AdjCatValue][3],
                                               Math.min(TnoValueMinus12hr+
@@ -849,7 +850,7 @@ public class Intensity {
                } else if((TnoDifferenceValueMinus24hr>
                         Rule8AdjArray[Rule8AdjCatValue][5])&&
                        (CurrentTimeMinus24hrTF)) {
-                  /** System.out.printf("24 hr\n"); */
+                  /* System.out.printf("24 hr\n"); */
                   FinalIntensityEstimateValue = Math.max(TnoValueMinus24hr-
                                               Rule8AdjArray[Rule8AdjCatValue][5],
                                               Math.min(TnoValueMinus24hr+
@@ -858,13 +859,13 @@ public class Intensity {
                   Rule8Val = (Rule8AdjCatValue*10)+5;
                   History.IRCurrentRecord.rule8 = Rule8Val;
                } else {
-                  /** System.out.printf("default \n"); */
+                  /* System.out.printf("default \n"); */
                   History.IRCurrentRecord.rule8 = Rule8Val;
                }
             }
          }
       }
-      /** System.out.printf("Rule 8 value @ end of intensity calc=%d\n",History.IRCurrentRecord.rule8); */
+      /* System.out.printf("Rule 8 value @ end of intensity calc=%d\n",History.IRCurrentRecord.rule8); */
       if(MWOFFTF) {
          /* printf("holding Rule 8 flag to 34\n"); */
          History.IRCurrentRecord.rule8 = 34;
@@ -884,17 +885,16 @@ public class Intensity {
 
       return new double[] { TnoRawValue, ReturnMWAnalysisFlag };
    }
-
-   public static double adt_TnoFinal(int TimeAvgDurationID)
+   
    /**
-    ** Compute time averaged T-Number value using previous and current
-    ** intensity estimates.  Average using a time-weighted averaging
-    ** scheme.
-    ** Inputs  : TimeAvgDurationID : time average duration flag : 0=6 hour;1=3 hour
-    ** Outputs : None
-    ** Return  : Final T# value
+    * Compute time averaged T-Number value using previous and current
+    * intensity estimates.  Average using a time-weighted averaging
+    * scheme.
+    * Inputs  : TimeAvgDurationID : time average duration flag : 0=6 hour;1=3 hour
+    * Outputs : None
+    * Return  : Final T# value
     */
-   {
+   public static double adt_TnoFinal(int TimeAvgDurationID) {
       /* double TnoFinalValue = 0.0; */
 
       double TnoFinalValue = History.IRCurrentRecord.Traw;
@@ -926,9 +926,9 @@ public class Intensity {
       int NumRecsHistory = History.HistoryNumberOfRecords();
       boolean LandFlagTF = Env.LandFlagTF;
 
-      /**
-       ** compute average with current value with any values
-       ** from previous 6 hours
+      /*
+       * compute average with current value with any values
+       * from previous 6 hours
        */
       double BeginningTime=CurrentTime-(BaseTimeAvgValueHrs/24.0);
 
@@ -954,10 +954,10 @@ public class Intensity {
             if(LandCheckTF) {
                double TimeDifference=CurrentTime-HistoryRecTime;
                if(TimeAvgDurationID==0) {
-                  /** time weighted average */
+                  /* time weighted average */
                   WeightValue = (BaseTimeAvgValueHrs-(TimeDifference/OneHourInterval));
                } else {
-                  /** straight average */
+                  /* straight average */
                   WeightValue = BaseTimeAvgValueHrs;
                }
                AverageValueSum = AverageValueSum+(WeightValue*AverageValue);
@@ -971,11 +971,11 @@ public class Intensity {
          }
          XInc++;
       }
-      /**
-       ** compute time-averaged T# value.
-       ** if no previous records found, return Raw T#
+      /*
+       * compute time-averaged T# value.
+       * if no previous records found, return Raw T#
        */
-      /** System.out.printf("TRAW=%f\n",History.IRCurrentRecord.Traw); */
+      /* System.out.printf("TRAW=%f\n",History.IRCurrentRecord.Traw); */
       if(TimeAvgDurationID<=1) {
          AverageValue = History.IRCurrentRecord.Traw;
       } else {
@@ -983,31 +983,30 @@ public class Intensity {
             FoundValuesTF = false;
          }
       }
-      /** System.out.printf("foundvaluestf=%b averagevalue=%f\n",FoundValuesTF,AverageValue); */
+      /* System.out.printf("foundvaluestf=%b averagevalue=%f\n",FoundValuesTF,AverageValue); */
       if(FoundValuesTF) {
          AverageValueSum = AverageValueSum+(BaseTimeAvgValueHrs*AverageValue);
          WeightValueSum = WeightValueSum+BaseTimeAvgValueHrs;
-         /** remove any value remainder past tenths */
+         /* remove any value remainder past tenths */
          FinalTnoValue = (double)((int)(((AverageValueSum/WeightValueSum)+0.01)*10.0))/10.0;
       } else {
          FinalTnoValue = AverageValue;
       }
-      /** System.out.printf("finaltnovalue=%f\n",FinalTnoValue); */
+      /* System.out.printf("finaltnovalue=%f\n",FinalTnoValue); */
 
       TnoFinalValue = FinalTnoValue;
 
       return TnoFinalValue;
    }
-
-   public static double[] adt_CIno(String HistoryFileName)
+   
    /**
-    ** Compute final CI-Number applying various Dvorak Rules, such
-    ** as the now famous Rule 9
-    ** Inputs  : None
-    ** Outputs : CurrentStrenghIDValue_Return - current strengthening/weakening flag
-    ** Return  : Current Intensity (CI) #
+    * Compute final CI-Number applying various Dvorak Rules, such
+    * as the now famous Rule 9
+    * Inputs  : None
+    * Outputs : CurrentStrenghIDValue_Return - current strengthening/weakening flag
+    * Return  : Current Intensity (CI) #
     */
-   {
+   public static double[] adt_CIno(String HistoryFileName) {
 
       int RapidDissIDValue = 0;
       int CurrentStrengthIDValue;
@@ -1033,35 +1032,35 @@ public class Intensity {
 
       int NumRecsHistory = History.HistoryNumberOfRecords();
       if(NumRecsHistory==0) {
-         /** no records in history file */
+         /* no records in history file */
          IntensityValue = History.IRCurrentRecord.Traw;
          CurrentStrengthIDValue = 0;
-         /** this will trip the RULE 9 FLAG for an initial classification of >=6.0 */
+         /* this will trip the RULE 9 FLAG for an initial classification of >=6.0 */
          if(InitStrengthValue>=6.0) {
             CurrentStrengthIDValue = 2;
          }
-         /** Apply Latitude Bias Adjustment to CI value */
+         /* Apply Latitude Bias Adjustment to CI value */
          CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,IntensityValue,Latitude,Longitude);
          History.IRCurrentRecord.CIadjp = CIadjP;
-         /** return Raw T# for CI# for initial analysis */
+         /* return Raw T# for CI# for initial analysis */
          return new double[] { IntensityValue, (double)CurrentStrengthIDValue };                                /* EXIT */
       }
-      /** MW Eye Score Adjustment being applied... let CI# = Final T# and return */
+      /* MW Eye Score Adjustment being applied... let CI# = Final T# and return */
       int Rule8Current = History.IRCurrentRecord.rule8;
       if((Rule8Current>=30)&&(Rule8Current<=33)) {
          IntensityValue = History.IRCurrentRecord.Tfinal;
-         /** Apply Latitude Bias Adjustment to CI value */
+         /* Apply Latitude Bias Adjustment to CI value */
          CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,IntensityValue,Latitude,Longitude);
          History.IRCurrentRecord.CIadjp = CIadjP;
          CurrentStrengthIDValue = 0;
          return new double[] { IntensityValue, (double)CurrentStrengthIDValue };                                /* EXIT */
       }
 
-      /** determine various time threshold values */
+      /* determine various time threshold values */
       double CurrentTimeMinus6Hrs = CurrentTime-0.25;
       double CurrentTimeMinus24Hrs = CurrentTime-1.0;
     
-      /** find record just prior to current record */
+      /* find record just prior to current record */
       double PreviousHistoryTnoMaximumValue = 0.0;
       double PreviousHistoryTnoMaximum6hrValue = 0.0;
       double PreviousHistoryCIValue = 0.0;
@@ -1086,19 +1085,19 @@ public class Intensity {
             PreviousHistoryCIValue = History.HistoryFile[XInc].CI;
             PreviousHistoryRule9Value = History.HistoryFile[XInc].rule9;
             PreviousHistoryRapidDissIDValue = History.HistoryFile[XInc].rapiddiss;
-            /** check Rule 9 */
+            /* check Rule 9 */
             if(HistoryRecTime>=CurrentTimeMinus6Hrs) {
-               /** find largest finalT# in last 6 hours prior to current record */
+               /* find largest finalT# in last 6 hours prior to current record */
                if(PreviousHistoryFinalTnoValue>PreviousHistoryTnoMaximumValue) {
                   PreviousHistoryTnoMaximumValue = PreviousHistoryFinalTnoValue;
                }
             }
             if(HistoryRecTime>=CurrentTimeMinus6Hrs) {
-               /** if storm is over land for SIX hours, turn off Rule 9
+               /* if storm is over land for SIX hours, turn off Rule 9
                   (changed from 12 hours) */
                LandOnly12hrTF = false;
     
-               /** rapid dissapation check */
+               /* rapid dissapation check */
                if(PreviousHistoryRapidDissIDValue<PreviousHistoryRapidDissIDMinimumValue) {
                   PreviousHistoryRapidDissIDMinimumValue = PreviousHistoryRapidDissIDValue;
                }
@@ -1107,7 +1106,7 @@ public class Intensity {
                }
             }
             if(HistoryRecTime>=CurrentTimeMinus24Hrs) {
-               /** find min and max finalT# in last 24 hours prior to current record */
+               /* find min and max finalT# in last 24 hours prior to current record */
                if(PreviousHistoryFinalTnoValue<TnoMinimumValue) {
                   TnoMinimumValue = PreviousHistoryFinalTnoValue;
                }
@@ -1122,12 +1121,12 @@ public class Intensity {
       IntensityValue = History.IRCurrentRecord.Tfinal;
     
       if(XInc==0) {
-         /** current record is before first record in history file */
+         /* current record is before first record in history file */
          CurrentStrengthIDValue=0;
-         /** Apply Latitude Bias Adjustment to CI value */
+         /* Apply Latitude Bias Adjustment to CI value */
          CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,IntensityValue,Latitude,Longitude);
          History.IRCurrentRecord.CIadjp = CIadjP;
-         /** return Final T# for CI# for initial analysis */
+         /* return Final T# for CI# for initial analysis */
          return new double[] { IntensityValue, (double)CurrentStrengthIDValue };                                /* EXIT */
       }
     
@@ -1135,11 +1134,11 @@ public class Intensity {
       int[] ReturnValues3 = Functions.adt_oceanbasin(Latitude,Longitude);
       int BasinID_Local = ReturnValues3[0];
       
-      /** rapid dissipation determination */
+      /* rapid dissipation determination */
       double Slope6hrValue = Functions.adt_slopecal(6.0,2);
       if(PreviousHistoryRapidDissIDValue<=1) {
          RapidDissIDValue = 0;
-         /** if(Slope6hrValue>=2.0) { */
+         /* if(Slope6hrValue>=2.0) { */
          /* relax rapid weakening criteria for the East Pac */
          if(((BasinID_Local!=2)&&(Slope6hrValue>=2.0))||
             ((BasinID_Local==2)&&(Slope6hrValue>=1.5))) {
@@ -1165,21 +1164,21 @@ public class Intensity {
          }
       }
     
-      /**
-       ** strength flags : 0 - strengthening, but not significant
-       **                  1 - applying Max's 12 hour max Tno. rule
+      /*
+       * strength flags : 0 - strengthening, but not significant
+       *                  1 - applying Max's 12 hour max Tno. rule
        */
-      /** determine CI# */
+      /* determine CI# */
       double CurrentTnoValue = IntensityValue;
       double CurrentTnoPlusRule9Value = IntensityValue+Rule9AdditiveValue;
-      /**
-       ** We have once again returned to using the 6 hour Max T# value
-       ** for all basins for the Rule 9 check
+      /*
+       * We have once again returned to using the 6 hour Max T# value
+       * for all basins for the Rule 9 check
        */
       double CIValue = Math.min(CurrentTnoPlusRule9Value,
                     Math.max(PreviousHistoryTnoMaximumValue,CurrentTnoValue));
 
-      /** will utilize Max's Rule all of the time */
+      /* will utilize Max's Rule all of the time */
       if(CIValue>CurrentTnoValue) {
          Rule9IDValue = 1;
       }
@@ -1187,26 +1186,26 @@ public class Intensity {
          Rule9IDValue = 0;
       }
     
-      /**
-       ** check for land interaction
-       ** if undergoing interactation with land "turn off" Rule 9
-       ** application and return CI value to Adjusted Raw Tno value for >= 3 hours (was 12 hours)
+      /*
+       * check for land interaction
+       * if undergoing interactation with land "turn off" Rule 9
+       * application and return CI value to Adjusted Raw Tno value for >= 3 hours (was 12 hours)
        */
       if(LandOnly12hrTF) {
-         /**
-          ** if land flag is TRUE,
-          ** turn off Rule 9 and let CI value be equal to the
-          ** current Adjusted Raw T# value, and return (was Final T#)
-          ** current intensity flag to "insignificant value" until
-          ** another significant strengtheing cycle occurs
+         /*
+          * if land flag is TRUE,
+          * turn off Rule 9 and let CI value be equal to the
+          * current Adjusted Raw T# value, and return (was Final T#)
+          * current intensity flag to "insignificant value" until
+          * another significant strengtheing cycle occurs
           */
          Rule9IDValue = 0;
          CIValue = History.IRCurrentRecord.Traw;
          RapidDissIDValue = 0;
       }
-      /** Apply Latitude Bias Adjustment to CI value */
+      /* Apply Latitude Bias Adjustment to CI value */
       CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,CIValue,Latitude,Longitude);
-      /** System.out.printf("CIno: ciadjp=%f\n",CIadjP); */
+      /* System.out.printf("CIno: ciadjp=%f\n",CIadjP); */
       History.IRCurrentRecord.CIadjp = CIadjP;
       History.IRCurrentRecord.rapiddiss = RapidDissIDValue;
     
@@ -1215,18 +1214,21 @@ public class Intensity {
       return new double[] { CIValue, (double)CurrentStrengthIDValue };
     
    }
-
-   public static double adt_latbias(boolean InitStrengthTF,boolean LandFlagTF,
-                                    String HistoryFileName,double InitialCIValue,
-                                    double InputLatitude,double InputLongitude)
+   
    /**
-    ** Apply Latitude Bias Adjustment to CI value
-    ** Inputs  : InitialCIValue - initial CI value
-    **           InputLatitude  - current latitude of storm
-    **           InputLongitude - current longitude of storm
-    ** Outputs : None
-    ** Return  : Adjusted MSLP value
+    * Apply Latitude Bias Adjustment to CI value
+    * Inputs  : InitialCIValue - initial CI value
+    *           InputLatitude  - current latitude of storm
+    *           InputLongitude - current longitude of storm
+    * Outputs : None
+    * Return  : Adjusted MSLP value
     */
+   public static double adt_latbias(boolean InitStrengthTF,
+                                    boolean LandFlagTF,
+                                    String HistoryFileName,
+                                    double InitialCIValue,
+                                    double InputLatitude,
+                                    double InputLongitude)
    {
 
       double ReturnCIPressureAdjValue = 0.0;
@@ -1237,15 +1239,15 @@ public class Intensity {
          int LatBiasAdjFlagID = (int)RetVals[0];
          double AdjustmentMultFactor = RetVals[1];
          History.IRCurrentRecord.LBflag = LatBiasAdjFlagID;
-         /** System.out.printf("latbiasadjflagid=%d\n",LatBiasAdjFlagID); */ 
+         /* System.out.printf("latbiasadjflagid=%d\n",LatBiasAdjFlagID); */
          if(LatBiasAdjFlagID>=2) {
-            /** EIR scene */
+            /* EIR scene */
             if((InputLatitude>=0.0)&&((InputLongitude>=-100.0)&&
                (InputLongitude<=-40.0))) {
-               /** do not make adjustment in N Indian Ocean */
+               /* do not make adjustment in N Indian Ocean */
                ReturnCIPressureAdjValue = 0.0;
             } else {
-               /** apply bias adjustment to pressure */
+               /* apply bias adjustment to pressure */
                ReturnCIPressureAdjValue = AdjustmentMultFactor*
                                         (7.325-(0.302*Math.abs(InputLatitude)));
             }
@@ -1254,17 +1256,19 @@ public class Intensity {
 
       return ReturnCIPressureAdjValue;
    }
-
-   public static double[] adt_scenesearch(String HistoryFileName,boolean InitStrengthTF,boolean LandFlagTF)
+   
    /**
-    ** Search for valid scene range for Latitude Bias Adjustment application
-    ** Inputs  : None
-    ** Outputs : AdjustmentMultFactor_Return - multiplicative value for merging
-    ** Return  : 0 - first record in new history file
-    **           1 - non Enhanced Infrared scene or intermediate/merging application
-    **           2 - entering/leaving valid adjustment time period.  Also used for
-    **               non-history file intensity analysis (full adjustment)
+    * Search for valid scene range for Latitude Bias Adjustment application
+    * Inputs  : None
+    * Outputs : AdjustmentMultFactor_Return - multiplicative value for merging
+    * Return  : 0 - first record in new history file
+    *           1 - non Enhanced Infrared scene or intermediate/merging application
+    *           2 - entering/leaving valid adjustment time period.  Also used for
+    *               non-history file intensity analysis (full adjustment)
     */
+   public static double[] adt_scenesearch(String HistoryFileName,
+                                          boolean InitStrengthTF,
+                                          boolean LandFlagTF)
    {
       int LatBiasAdjFlagID = -1;
       double AdjustmentMultFactor = 0.0;
@@ -1280,7 +1284,7 @@ public class Intensity {
       int HistoryRecLatBiasAdjFlagIDValue = 0;
 
       int CloudScene = History.IRCurrentRecord.cloudscene;
-      /** System.out.printf("cloudscene=%d\n",CloudScene); */
+      /* System.out.printf("cloudscene=%d\n",CloudScene); */
       if((CloudScene>=2)&&(CloudScene<6)) LatBiasAdjFlagID = 0;
 
       int ImageDate = History.IRCurrentRecord.date;
@@ -1309,12 +1313,12 @@ public class Intensity {
          }
          if((HistoryRecTime<CurrentTime)&&(LandCheckTF)) {
             HistoryRecLatBiasAdjFlagIDValue = History.HistoryFile[XInc].LBflag;
-            /** System.out.printf("Historyrectime=%f  Currtimem6=%f  eirscenetypetf=%b\n",HistoryRecTime,CurrentTimeMinus6hr,EIRSceneTypeTF); */
+            /* System.out.printf("Historyrectime=%f  Currtimem6=%f  eirscenetypetf=%b\n",HistoryRecTime,CurrentTimeMinus6hr,EIRSceneTypeTF); */
             if((HistoryRecTime>=CurrentTimeMinus6hr)&&(EIRSceneTypeTF)) {
                if(FirstHistoryRecTime<0.0) {
                  FirstHistoryRecTime = HistoryRecTime;
                }
-               /** System.out.printf("HistoryRecLatBiasAdjFlagIDValue=%d\n",HistoryRecLatBiasAdjFlagIDValue); */
+               /* System.out.printf("HistoryRecLatBiasAdjFlagIDValue=%d\n",HistoryRecLatBiasAdjFlagIDValue); */
                if(HistoryRecLatBiasAdjFlagIDValue==0) {
                   EIRSceneTypeTF = false;
                } 
@@ -1329,9 +1333,9 @@ public class Intensity {
          XInc++;
       }
 
-      /** System.out.printf("scenesearch: FirstHistoryRecTime=%f\n",FirstHistoryRecTime); */
+      /* System.out.printf("scenesearch: FirstHistoryRecTime=%f\n",FirstHistoryRecTime); */
       if(FirstHistoryRecTime<0.0) {
-         /** there is a six hour gap in the data for some reason...
+         /* there is a six hour gap in the data for some reason...
             I will use the last value available */
          LatBiasAdjFlagID=HistoryRecLatBiasAdjFlagIDValue;
          if(HistoryRecLatBiasAdjFlagIDValue>=1) {
@@ -1339,15 +1343,15 @@ public class Intensity {
          }
          AdjustmentMultFactor = 1.0;
       } else {
-         /** System.out.printf("scenesearch: eirscenetypetf=%b",EIRSceneTypeTF); */
+         /* System.out.printf("scenesearch: eirscenetypetf=%b",EIRSceneTypeTF); */
          if(EIRSceneTypeTF) {
-            /** entering or in valid lat bias adjustment period */
+            /* entering or in valid lat bias adjustment period */
             LatBiasAdjFlagID = 2;
-            /** return value from 0 to 1 */
+            /* return value from 0 to 1 */
             AdjustmentMultFactor = (CurrentTime-MergePeriodFirstTime)/
                                    (CurrentTime-FirstHistoryRecTime);
          } else {
-            /** LatBiasAdjFlagID = LatBiasAdjFlagID; */
+            /* LatBiasAdjFlagID = LatBiasAdjFlagID; */
             AdjustmentMultFactor = -999.0;
          }
       }

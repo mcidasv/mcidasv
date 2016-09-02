@@ -31,28 +31,42 @@ package edu.wisc.ssec.mcidasv.adt;
 public class Output {
 
    static String[] Months = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-   static String[] LatNS = {"N","S"};        /** N/S hemisphere character value */
-   static String[] LonWE = {"W","E"};        /** E/W hemisphere character value */
-    /** Rule 9 string array */
+   
+   /** N/S hemisphere character value */
+   static String[] LatNS = {"N","S"};
+   
+   /** E/W hemisphere character value */
+   static String[] LonWE = {"W","E"};
+   
+   /** Rule 9 string array */
    static String[] Rule9String = { "OFF   ","ON    ","WEAKEN" };
-    /** rapid dissipation string array */
+   
+   /** rapid dissipation string array */
    static String[] RapidString = { "OFF   ","FLAG  ","ON    ","ON    " };
-    /** BD curve value string array */
+   
+   /** BD curve value string array */
    static String[] BDCatString = { "LOW CLD","OFF WHT","DK GRAY","MD GRAY", "LT GRAY","BLACK  ","WHITE  " };
-    /** ocean basin string array */
+   
+   /** ocean basin string array */
    static String[] BasinString = { "ATLANTIC    ","WEST PACIFIC", "EAST PACIFIC","INDIAN      " };
-    /** eye scene type array */
+   
+   /** eye scene type array */
    static String[] EyeSceneTypes = { "EYE","PINHOLE EYE","LARGE EYE","NONE" };
-    /** cloud scene type array */
+   
+   /** cloud scene type array */
    static String[] CloudSceneTypes = { "UNIFORM CDO","EMBEDDED CENTER","IRREGULAR CDO","CURVED BAND","SHEAR","EYE" };
-    /** storm position type arrays */
+   
+   /** storm position type arrays */
    static String[] AutoPosString = { "MANUAL", "FORECAST INTERPOLATION", "LAPLACIAN ANALYSIS", "WARMEST PIXEL SEARCH",
                                      "SPIRAL ANALYSIS", "RING/SPIRAL COMBINATION", "LINEAR EXTRAPOLATION",
                                      "NETCDF NOMINAL POSITION", "NOT AVAILABLE"};
+   
    static String[] AutoPosStringAbbr = { " MAN ","FCST ", "LAPL ", "WARM ", "SPRL ", "COMBO", "EXTRP", "NETCDF", " N/A " };
-    /** basin ID string array */
+   
+   /** basin ID string array */
    static String[] PW_BasinValues = { "ATLANTIC","PACIFIC " };
-    /** Rule 8 string array */
+   
+   /** Rule 8 string array */
    static String[] Rule8String = { "NO LIMIT ","0.5T/6hr ","1.0T/6hr ","1.7T/12hr",
                                    "2.2T/18hr","2.7T/24hr","         ","         ",
                                    "0.2T/hour","0.5T/hour",
@@ -73,8 +87,8 @@ public class Output {
        System.err.println("TextScreenOutput() in...");
       String TextScreen_Return = "";
 
-      /** int LatNSval = 0; */
-      /** int LonWEval = 0; */
+      /* int LatNSval = 0; */
+      /* int LonWEval = 0; */
       String SceneString = "";
       String RadiusMaxWindString = "";
       String SceneMaxCBString = "";
@@ -96,10 +110,10 @@ public class Output {
       int MonthValue = ReturnValues[1];
       int YearValue = ReturnValues[2];
 
-      /** format character string for date output */
+      /* format character string for date output */
       String DateString = String.format("%02d %3s %04d",DateValue,Months[MonthValue-1],YearValue);
 
-      /** format character string for time output */
+      /* format character string for time output */
       String TimeString = String.format("  %06d UTC",CurTime);
     
       /* convert xx.xxxx latitude format to degree/minute/second format */
@@ -108,52 +122,52 @@ public class Output {
       int MinuteValue2A = ReturnValues2A[1];
       int SecondValue2A = ReturnValues2A[2];
       int LatNSval = (CurLatitudeValue<0.0) ? 1 : 0;
-      /** 
+      /*
       LatNSval=0;
       if(CurLatitudeValue<0.0) {
          LatNSval=1;
       }
       */
-      /** format character string for latitude output */
+      /* format character string for latitude output */
       String LatitudeString = String.format("%3d:%02d:%02d %1s",DegreeValue2A,MinuteValue2A,SecondValue2A,LatNS[LatNSval]);
 
       int[] ReturnValues2B = adt_lldms(CurLongitudeValue);
       int DegreeValue2B = ReturnValues2B[0];
       int MinuteValue2B = ReturnValues2B[1];
       int SecondValue2B = ReturnValues2B[2];
-      /** int LonWEval = (CurLongitudeValue<0.0) ? 1 : 0; old McIDAS-X conversion */
+      /* int LonWEval = (CurLongitudeValue<0.0) ? 1 : 0; old McIDAS-X conversion */
       int LonWEval = (CurLongitudeValue<0.0) ? 0 : 1;
-      /** 
+      /*
       LonWEval=0;
       if(CurLongitudeValue<0.0) {
          LonWEval=1;
       }
       */
-      /** format character string for latitude output */
+      /* format character string for latitude output */
       String LongitudeString = String.format("%3d:%02d:%02d %1s",DegreeValue2B,MinuteValue2B,SecondValue2B,LonWE[LonWEval]);
 
       int[] ReturnValues3 = Functions.adt_oceanbasin(CurLatitudeValue,CurLongitudeValue);
       int BasinIDValue = ReturnValues3[0];
       int DomainID = ReturnValues3[1];
     
-      /** determine Dvorak pressure/wind speed in relation to final CI # */
+      /* determine Dvorak pressure/wind speed in relation to final CI # */
       double CurRawT = History.IRCurrentRecord.Traw;
       double CurRawTorig = History.IRCurrentRecord.TrawO;
       double CurFinalT = History.IRCurrentRecord.Tfinal;
       double CurCI = History.IRCurrentRecord.CI;
       double CurCIAdjP = History.IRCurrentRecord.CIadjp;
-      /** System.out.printf("ciadjp=%f\n",CurCIAdjP); */
+      /* System.out.printf("ciadjp=%f\n",CurCIAdjP); */
       PresWindValue_Pressure = Functions.adt_getpwval(0,CurCI,CurLatitudeValue,CurLongitudeValue);
       PresWindValue_Wind = Functions.adt_getpwval(1,CurCI,CurLatitudeValue,CurLongitudeValue);
 
       boolean Vmax1or10TF = Env.Vmax1or10TF;
 
       if(!Vmax1or10TF) {
-         /** convert 1-minute to 10-minute average Vmax for output */
+         /* convert 1-minute to 10-minute average Vmax for output */
          PresWindValue_Wind=0.88*PresWindValue_Wind;
       }
     
-      /** determine Rule 8 and Rule 9 screen output values */
+      /* determine Rule 8 and Rule 9 screen output values */
       int Rule8Value = History.IRCurrentRecord.rule8;
       int Rule9Value = History.IRCurrentRecord.rule9;
       int RapidIntenValue = History.IRCurrentRecord.rapiddiss;
@@ -161,7 +175,7 @@ public class Output {
       double EyeTempValue = History.IRCurrentRecord.eyet;
       double CloudTempValue = History.IRCurrentRecord.cloudt;
 
-      /** determine scenetype to be output to screen */
+      /* determine scenetype to be output to screen */
       int EyeSceneTypeValue = History.IRCurrentRecord.eyescene;
       int CloudSceneTypeValue = History.IRCurrentRecord.cloudscene;
 
@@ -172,43 +186,43 @@ public class Output {
          double CurvedBandMaxValue = ((double)(History.IRCurrentRecord.ringcbvalmax-1))/25.0;
          int RingCB = History.IRCurrentRecord.ringcb;
          SceneString = String.format("CURVED BAND with %4.2f ARC in %s",CurvedBandValue,BDCatString[RingCB]);
-         /** System.out.printf("curved band max=%f curved band=%f\n",CurvedBandMaxValue,CurvedBandValue); */
+         /* System.out.printf("curved band max=%f curved band=%f\n",CurvedBandMaxValue,CurvedBandValue); */
          if(CurvedBandMaxValue>CurvedBandValue) {
             MaxCurvedBandTF = true;
          }
          if(MaxCurvedBandTF) {
             SceneMaxCBString = String.format("Maximum CURVED BAND with %4.2f ARC in %s",CurvedBandMaxValue,BDCatString[RingCB]);
-            /** convert xx.xxxx latitude format to degree/minute/second format */
+            /* convert xx.xxxx latitude format to degree/minute/second format */
             double CurvedBandMaxLatitude = History.IRCurrentRecord.ringcbvalmaxlat;
             int[] ReturnValues4A = adt_lldms(CurvedBandMaxLatitude);
             int DegreeValue4A = ReturnValues4A[0];
             int MinuteValue4A = ReturnValues4A[1];
             int SecondValue4A = ReturnValues4A[2];
             LatNSval = (CurLatitudeValue<0.0) ? 1 : 0;
-            /**
+            /*
             LatNSval=0;
             if(CurvedBandMaxLatitude<0.0) {
                LatNSval=1;
             }
             */
-            /** format character string for latitude output */
+            /* format character string for latitude output */
             String CBMaxLatString = String.format("%3d:%02d:%02d %1s",DegreeValue4A,MinuteValue4A,SecondValue4A,LatNS[LatNSval]);
 
-            /** convert xx.xxxx longitude format to degree/minute/second format */
+            /* convert xx.xxxx longitude format to degree/minute/second format */
             double CurvedBandMaxLongitude = History.IRCurrentRecord.ringcbvalmaxlon;
             int[] ReturnValues4B = adt_lldms(CurvedBandMaxLongitude);
             int DegreeValue4B = ReturnValues4B[0];
             int MinuteValue4B = ReturnValues4B[1];
             int SecondValue4B = ReturnValues4B[2];
-            /** LonWEval = (CurLongitudeValue<0.0) ? 1 : 0;  old conversion for McIDAS-X */
+            /* LonWEval = (CurLongitudeValue<0.0) ? 1 : 0;  old conversion for McIDAS-X */
             LonWEval = (CurLongitudeValue<0.0) ? 0 : 1;
-            /**
+            /*
             LonWEval=0;
             if(CurvedBandMaxLongitude<0.0) {
                LonWEval=1;
             }
             */
-            /** format character string for longitude output */
+            /* format character string for longitude output */
             String CBMaxLonString = String.format("%3d:%02d:%02d %1s",DegreeValue4B,MinuteValue4B,SecondValue4B,LonWE[LonWEval]);
             SceneMaxCBLLString = String.format(" at Lat:%12s  Lon:%12s",CBMaxLatString,CBMaxLonString);
          }
@@ -350,17 +364,16 @@ public class Output {
       System.err.println("TextScreenOutput() out, val: " + TextScreen_Return);
       return TextScreen_Return;
    }
-
-   public static int[] adt_lldms(double FullDegreeValue)
-   /**   
-    ** Convert "degree.partial_degree" to degree/minute/second format.
-    ** Inputs  : FullDegreeValue_Input  - latitude/longitude value to convert
-    ** Outputs : Degree_Return - degrees integer value
-    **           Minute_Return - minutes integer value
-    **           Second_Return - seconds integer value
-    ** Return  : None
+   
+   /**
+    * Convert "degree.partial_degree" to degree/minute/second format.
+    *
+    * @param FullDegreeValue Latitude/Longitude value to convert.
+    *
+    * @return Array whose values represent (in order): degrees, minutes, and
+    * seconds.
     */
-   {
+   public static int[] adt_lldms(double FullDegreeValue) {
       int DegreeValue = (int)FullDegreeValue;
       double MinuteValue = (FullDegreeValue-(double)DegreeValue)*60.0;
       double SecondValue = (MinuteValue-(double)((int)MinuteValue))*60.0;

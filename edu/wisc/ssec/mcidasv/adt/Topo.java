@@ -77,7 +77,7 @@ public class Topo {
 
       int i = dis.readShort();
       System.err.println("After read, val: " + i);
-      /** int i = filestream.readUnsignedByte(); */
+      /* int i = filestream.readUnsignedByte(); */
       int ichar = (i==0) ? 2 : 1;
       System.err.println("After read, returning: " + ichar);
       System.out.printf("TOPO: position=%d Value=%d landflag=%d \n ",position,i,ichar);

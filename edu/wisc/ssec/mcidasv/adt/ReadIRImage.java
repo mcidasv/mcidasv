@@ -150,7 +150,7 @@ public class ReadIRImage {
                 
                 int RetVal[] = Functions.adt_oceanbasin(Data.IRData_CenterLatitude, Data.IRData_CenterLongitude);
                 Env.DomainID = RetVal[1];
-                /** System.out.printf("lat=%f lon=%f domainID=%d\n",Data.IRData_CenterLatitude,Data.IRData_CenterLongitude,Env.DomainID); */
+                /* System.out.printf("lat=%f lon=%f domainID=%d\n",Data.IRData_CenterLatitude,Data.IRData_CenterLongitude,Env.DomainID); */
          }
    
          private static GridUtil.Grid2D spatialSubset(GridUtil.Grid2D g2d, float cenlat,
@@ -214,27 +214,31 @@ public class ReadIRImage {
 
              return new GridUtil.Grid2D(slats, slons, svalues);
          }
-   
-      private static float[][] im_gvtota(int nx, int ny, float[][] gv, int imsorc, int imtype)
-      /**
-       * im_gvtota
-       *
-       * This subroutine converts GVAR counts to actual temperatures based on the
-       * current image set in IM_SIMG.
-       *
-       * im_gvtota ( int *nvals, unsigned int *gv, float *ta, int *iret )
-       *
-       * Input parameters: *nvals int Number of values to convert *gv int Array of
-       * GVAR count values
-       *
-       * Output parameters: *ta float Array of actual temperatures *iret int
-       * Return value = -1 - could not open table = -2 - could not find match
-       *
-       *
-       * Log: D.W.Plummer/NCEP 02/03 D.W.Plummer/NCEP 06/03 Add coeff G for 2nd
-       * order poly conv T. Piper/SAIC 07/06 Added tmpdbl to eliminate warning
-       */
-      {
+    
+    /**
+     * im_gvtota
+     *
+     * This subroutine converts GVAR counts to actual temperatures based on the
+     * current image set in IM_SIMG.
+     *
+     * im_gvtota ( int *nvals, unsigned int *gv, float *ta, int *iret )
+     *
+     * Input parameters: *nvals int Number of values to convert *gv int Array of
+     * GVAR count values
+     *
+     * Output parameters: *ta float Array of actual temperatures *iret int
+     * Return value = -1 - could not open table = -2 - could not find match
+     *
+     *
+     * Log: D.W.Plummer/NCEP 02/03 D.W.Plummer/NCEP 06/03 Add coeff G for 2nd
+     * order poly conv T. Piper/SAIC 07/06 Added tmpdbl to eliminate warning
+     */
+    private static float[][] im_gvtota(int nx,
+                                       int ny,
+                                       float[][] gv,
+                                       int imsorc,
+                                       int imtype)
+    {
           double c1 = 1.191066E-5;
           double c2 = 1.438833;
 
@@ -327,7 +331,6 @@ public class ReadIRImage {
           }
 
           return ta;
-
       }
 
       public static int G_NINT(double x) {

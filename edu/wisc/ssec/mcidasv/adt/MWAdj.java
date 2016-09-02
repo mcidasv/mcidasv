@@ -93,7 +93,7 @@ public class MWAdj {
       double CurrentTime = Functions.calctime(CurDate,CurTime);
 
       System.out.printf("INPUT current mw env score=%f date=%d time=%d\n",MWScoreInput, Env.MWJulianDate, Env.MWHHMMSSTime );
-      /** check for valid MW eye score value (not equal to -920) */
+      /* check for valid MW eye score value (not equal to -920) */
       if(MWScoreInput<-900.0) {
          if(Env.DEBUG==100) {
             System.out.printf("MW SCORE=-920 ... will restore to previous valid record");
@@ -126,7 +126,7 @@ public class MWAdj {
          }
       }
 
-      /** determine MW score flag and value */
+      /* determine MW score flag and value */
       if(MWScoreInput>=MWScoreThresholdValue1) {
          MWScoreApplicationFlag = 1;
       }
@@ -157,12 +157,12 @@ public class MWAdj {
                              CurrentTime,CurrentMWTime,CurrentMWTimePlus12hr);
       }
     
-      /** redo MW score logic */
+      /* redo MW score logic */
       if(CurrentTime>CurrentMWTimePlus12hr) {
          MWScoreApplicationFlag = 0;
       }
 
-      /** NEW LOGIC
+      /* NEW LOGIC
         - If last valid MW overpass time is greater than 8 hours old, then MW HOLD
         -- If, while in MW HOLD pattern we get three shear scenes, turn MW OFF
         -- If in MW HOLD for greater than or equal to 6 hours, turn MW OFF
@@ -170,12 +170,12 @@ public class MWAdj {
       */
 
       if((CurrentTime-CurrentMWTime)>.3333) {
-         /** MW record is > 8 hours old... start new Shear/HOLD checking logic */
+         /* MW record is > 8 hours old... start new Shear/HOLD checking logic */
          if(Env.DEBUG==100) {
             System.out.printf("MW record > 8 hours old... new logic  CurrentTime=%f CurrentMWTime=%f\n",CurrentTime,CurrentMWTime);
          }
     
-         /** First... loop through history file records */
+         /* First... loop through history file records */
          XInc = 0;
          while(XInc<NumRecsHistory) {
             RecDate = History.HistoryFile[XInc].date;
@@ -212,53 +212,53 @@ public class MWAdj {
             XInc++;
          }
     
-         /** now check for current shear scene and previous MW ON */
+         /* now check for current shear scene and previous MW ON */
          if(LastRule8Flag==32) {
             EXIT_Routine = true;
-            /** previous MW ON... set to HOLD */
-            History.IRCurrentRecord.rule8 = 33;     /** HOLD */
+            /* previous MW ON... set to HOLD */
+            History.IRCurrentRecord.rule8 = 33;     /* HOLD */
             if(Env.DEBUG==100) {
                System.out.printf("previous MW on... now MW HOLD: nonEIRscenecounter=%d\n",NonEIRSceneCounter);
             }
             IntensityEstimateValueReturn = LastValidMWCIValue;
             MWScoreApplicationFlag = 1;
-            /** check to see if current record is shear scene and had two shears before it...
+            /* check to see if current record is shear scene and had two shears before it...
                 if so... turn MW OFF */
             if((NonEIRSceneCounter>=2)&&(CurCloudScene==4)) {
                if(Env.DEBUG==100) {
                   System.out.printf("Third consecutive SHEAR scene... turning OFF!!!\n");
                }
-               /** >= three consecutive non-EIR eye scenes and would have been MW HOLD... turn OFF */
+               /* >= three consecutive non-EIR eye scenes and would have been MW HOLD... turn OFF */
                IntensityEstimateValueReturn = InputIntensityEstStore;
-               History.IRCurrentRecord.rule8 = 34;     /** OFF */
+               History.IRCurrentRecord.rule8 = 34;     /* OFF */
                MWScoreApplicationFlag = 0;
             }
-            /** end possible remove section */
+            /* end possible remove section */
          } else if (LastRule8Flag==33) {
             EXIT_Routine = true;
             if(Env.DEBUG==100) {
                System.out.printf("current MW HOLD... nonEIRscene=%d  cloudscene=%d\n",NonEIRSceneCounter,CurCloudScene);
             }
-            /** was in MW HOLD... now checking for shear scenes to turn MW OFF */
+            /* was in MW HOLD... now checking for shear scenes to turn MW OFF */
             if((NonEIRSceneCounter>=2)&&(CurCloudScene==4)) {
                if(Env.DEBUG==100) {
                   System.out.printf("current MW HOLD... third consecutive SHEAR scene... turning OFF!!!\n");
                }
-               /** >= three consecutive non-EIR eye scenes and was in MW HOLD... turn OFF */
+               /* >= three consecutive non-EIR eye scenes and was in MW HOLD... turn OFF */
                IntensityEstimateValueReturn = InputIntensityEstStore;
-               History.IRCurrentRecord.rule8 = 34;     /** OFF */
+               History.IRCurrentRecord.rule8 = 34;     /* OFF */
                MWScoreApplicationFlag = 0;
             } else {
-               History.IRCurrentRecord.rule8 = 33;     /** HOLD */
+               History.IRCurrentRecord.rule8 = 33;     /* HOLD */
                IntensityEstimateValueReturn = LastValidMWCIValue;
                MWScoreApplicationFlag = 1;
                if(Env.DEBUG==100) {
                   System.out.printf("current MW HOLD... keep HOLD\n");
                }
                if((CurrentTime-FirstMWHoldTime)>=.25) {
-                  /**  in MW HOLD >= 6 hours... turn OFF */
+                  /*  in MW HOLD >= 6 hours... turn OFF */
                   IntensityEstimateValueReturn = InputIntensityEstStore;
-                  History.IRCurrentRecord.rule8 = 34;     /** OFF */
+                  History.IRCurrentRecord.rule8 = 34;     /* OFF */
                   MWScoreApplicationFlag = 0;
 
                   CommentString = String.format("MW OFF HOLD >=6hrs old",CommentString);
@@ -277,7 +277,7 @@ public class MWAdj {
                System.out.printf("last record MW OFF.... returning\n");
             }
          } else {
-            /** do nothing */
+            /* do nothing */
             MWScoreApplicationFlag = 0;
             IntensityEstimateValueReturn = InputIntensityEstStore;
             EXIT_Routine = true;
@@ -285,9 +285,9 @@ public class MWAdj {
                System.out.printf("old MW record.... returning\n");
             }
          }
-         /** END NEW LOGIC */
+         /* END NEW LOGIC */
       } else {
-         /** check for three consecutive eyes */
+         /* check for three consecutive eyes */
          int EyeSceneCounter = 0;
          LastCIValue = 1.0;
          XInc = 0;
@@ -305,12 +305,12 @@ public class MWAdj {
 
             if(LandCheckTF) {
                if(HistoryRecTime<CurrentTime) {
-                  /**
-                   ** added time check for LastCIValue to make sure MW eye adjustment doesn't
-                   ** reset at a time after the MW time once the CI falls below 4.0 (after the
-                   ** MW adjustment had been on but had turned off for whatever reason)... the
-                   ** CI# must be below 4.0 when the current MW score is implemented at
-                   ** or before the current MW time for this to be reset
+                  /*
+                   * added time check for LastCIValue to make sure MW eye adjustment doesn't
+                   * reset at a time after the MW time once the CI falls below 4.0 (after the
+                   * MW adjustment had been on but had turned off for whatever reason)... the
+                   * CI# must be below 4.0 when the current MW score is implemented at
+                   * or before the current MW time for this to be reset
                    */
                   if(HistoryRecTime<CurrentMWTime) {
                      LastCIValue = History.HistoryFile[XInc].CI;
@@ -325,14 +325,14 @@ public class MWAdj {
                   if(EyeSceneCounter>=3) MWAdjOFFTF = true;
                }
             }
-            /**
-             ** turn back on MW adjustment if CI falls below 4.0.
-             ** had to modifiy because if MW adjustment goes on after "reset"
-             ** and CI#s are modified when a new MW adjustment goes on, the
-             ** eye check from a previous period will still tell ADT to turn
-             ** off MW adjustment even though it was reset.  Checking for Rule8
-             ** value of 31 will indicate that the MW was turned back on correctly
-             ** and to start new checking for eyes after that point.
+            /*
+             * turn back on MW adjustment if CI falls below 4.0.
+             * had to modifiy because if MW adjustment goes on after "reset"
+             * and CI#s are modified when a new MW adjustment goes on, the
+             * eye check from a previous period will still tell ADT to turn
+             * off MW adjustment even though it was reset.  Checking for Rule8
+             * value of 31 will indicate that the MW was turned back on correctly
+             * and to start new checking for eyes after that point.
              */
             if((LastCIValue<4.0||LastRule8Flag==31)) {
                if(Env.DEBUG==100) {
@@ -353,12 +353,12 @@ public class MWAdj {
             if (EyeSceneCounter>=3) MWAdjOFFTF = true;
          }
          if(MWAdjOFFTF) {
-            /** found three consecutive eyes... return immediately */
+            /* found three consecutive eyes... return immediately */
             if(Env.DEBUG==100) {
                System.out.printf("FOUND THREE EYES... EXITING!!!  LastCIValue=%f\n",LastCIValue);
             }
             if((LastRule8Flag>=30)&&(LastRule8Flag<=33)) {
-               History.IRCurrentRecord.rule8 = 34;     /** OFF */
+               History.IRCurrentRecord.rule8 = 34;     /* OFF */
             }
             IntensityEstimateValueReturn = InputIntensityEstStore;
             EXIT_Routine = true;
@@ -369,7 +369,7 @@ public class MWAdj {
          System.out.printf("1 EXIT_Routine=%b\n",EXIT_Routine);
       }
 
-      /** check for THREE hours of land interaction... turn MW off this occurs
+      /* check for THREE hours of land interaction... turn MW off this occurs
          changed from six hours on 7 June 2013 per Velden recommendation */
       LastRule8Flag=0;
       if(Env.DEBUG==100) {
@@ -390,7 +390,7 @@ public class MWAdj {
             LandCheckTF = false;
          }
 
-         if(!LandCheckTF) { /** TC over land */
+         if(!LandCheckTF) { /* TC over land */
             if(Env.DEBUG==100) {
                System.out.printf("OVER LAND SINCE %f FOR %f DAYS \n",LastNonLandTime,(HistoryRecTime-LastNonLandTime));
             }
@@ -422,20 +422,20 @@ public class MWAdj {
             if(Env.DEBUG==100) {
                System.out.printf("OVER LAND FOR MORE THAN 3 HOURS... TURNING OFF ME AND EXITING!!!\n");
             }
-            History.IRCurrentRecord.rule8 = 34;     /** OFF */
+            History.IRCurrentRecord.rule8 = 34;     /* OFF */
             IntensityEstimateValueReturn = InputIntensityEstStore;
             EXIT_Routine = true;
             MWScoreApplicationFlag = 0;
          }
       }
-      /** End Land Check */
+      /* End Land Check */
 
       if(Env.DEBUG==100) {
          System.out.printf("3 EXIT_Routine=%b\n",EXIT_Routine);
       }
 
       if(!EXIT_Routine) {
-         /** check previous history record values */
+         /* check previous history record values */
          XInc = 0;
          while(XInc<NumRecsHistory) {
             RecDate = History.HistoryFile[XInc].date;
@@ -451,7 +451,7 @@ public class MWAdj {
                   LandCheckTF = false;
                }
       
-               if(LandCheckTF) { /** TC over land */
+               if(LandCheckTF) { /* TC over land */
                   /* check to see if current MW adjustment was on previous
                   ** to current MW entry date/time */
                   LastMWScoreValue = History.HistoryFile[XInc].mwscore;
@@ -475,7 +475,7 @@ public class MWAdj {
                         First31Record = false;
                      }
                   } else {
-                     First31Record = true; /** reset mark for MW score merging */
+                     First31Record = true; /* reset mark for MW score merging */
                   }
                   if((Rule8Flag>=30)&&(Rule8Flag<=32)) {
                      LastValidMWCIValue = History.HistoryFile[XInc].CI;
@@ -494,29 +494,29 @@ public class MWAdj {
             System.out.printf("FirstHistoryCIValue=%f  First31Record=%b\n",FirstHistoryCIValue,First31Record);
             System.out.printf("FirstMWadjTime=%f FirstMWadjTimePlus12hr=%f\n",FirstMWadjTime,FirstMWadjTimePlus12hr);
          }
-         /** BEFORE MW TIME */
+         /* BEFORE MW TIME */
          if(Env.DEBUG==100) {
             System.out.printf("MWAdjCurrentONTF=%b MWScoreApplicationFlag=%d\n",MWAdjCurrentONTF,MWScoreApplicationFlag);
          }
          if((!MWAdjCurrentONTF)&&(MWScoreApplicationFlag==0)) {
-            /** MW was OFF and is still OFF */
+            /* MW was OFF and is still OFF */
             if(Env.DEBUG==100) {
                System.out.printf("OFF - OFF\n");
             }
-            /** I still need to put the mw value into all records after the mw input time */
+            /* I still need to put the mw value into all records after the mw input time */
             XInc = 0;
             while(XInc<NumRecsHistory) {
                RecDate = History.HistoryFile[XInc].date;
                RecTime = History.HistoryFile[XInc].time;
                HistoryRecTime = Functions.calctime(RecDate,RecTime);
                if(HistoryRecTime>=CurrentMWTime) {
-                  /** determine if there is a record after MW time */
+                  /* determine if there is a record after MW time */
                   NORecordAfterMWTimeTF = false;
                }
                XInc++;
             }
          } else if((!MWAdjCurrentONTF)&&(MWScoreApplicationFlag==1)) {
-            /** MW was OFF but is now ON */
+            /* MW was OFF but is now ON */
             if(Env.DEBUG==100) {
                System.out.printf("OFF - now ON\n");
             }
@@ -530,7 +530,7 @@ public class MWAdj {
                   System.out.printf("HistoryRecTime=%f CurrentMWTime=%f\n",HistoryRecTime,CurrentMWTime);
                }
                if(HistoryRecTime<CurrentMWTime) {
-                  /** merge backwards 12 hours previous to MW time */
+                  /* merge backwards 12 hours previous to MW time */
                   RecLand = History.HistoryFile[XInc].land;
                   Traw = History.HistoryFile[XInc].Traw;
                   LandCheckTF = true;
@@ -547,9 +547,9 @@ public class MWAdj {
                            HistoryCIValueMinus12hr = HistoryCIValue;
                            HistoryRecTimeMinus12hr = HistoryRecTime;
                         }
-                        /**
-                         ** interpolate value between current value and
-                         ** 12 hour previous value
+                        /*
+                         * interpolate value between current value and
+                         * 12 hour previous value
                          */
                         if(Rule8Flag!=30) {
                            CommentString = "" ;
@@ -580,13 +580,13 @@ public class MWAdj {
                   LastValidMWCIValue = History.HistoryFile[XInc].CI;
                   LastRule8Flag = 30;
                } else {
-                  /** determine if there is a record after MW time */
+                  /* determine if there is a record after MW time */
                   NORecordAfterMWTimeTF = false;
                }
                XInc++;
             }
          } else if((MWAdjCurrentONTF)&&(MWScoreApplicationFlag==1)) {
-            /** MW was ON and is still ON */
+            /* MW was ON and is still ON */
             if(Env.DEBUG==100) {
                System.out.printf("ON - still ON\n");
             }
@@ -605,9 +605,9 @@ public class MWAdj {
                      System.out.printf("HistoryRecTime=%f CurrentMWTime=%f : LastMWScoreValue=%f *IntensityEstimateValue_Ret=%f\n",
                              HistoryRecTime,CurrentMWTime,LastMWScoreValue,IntensityEstimateValueReturn);
                   }
-                  /** merge backwards from 4.3/4.8 to 5.0, if necessary */
+                  /* merge backwards from 4.3/4.8 to 5.0, if necessary */
                   if((LastMWScoreValue<MWScoreThresholdValue2)&&(IntensityEstimateValueReturn>=MWIntensityTnoValue2)) {
-                     /** merge backwards 12 hours previous to MW time */
+                     /* merge backwards 12 hours previous to MW time */
                      RecLand = History.HistoryFile[XInc].land;
                      Traw = History.HistoryFile[XInc].Traw;
                      LandCheckTF = true;
@@ -631,9 +631,9 @@ public class MWAdj {
                               }
                            }
                            if(CommentString.length()==0) {
-                              /**
-                               ** interpolate value between current value and
-                               ** 12 hour previous value
+                              /*
+                               * interpolate value between current value and
+                               * 12 hour previous value
                                */
                               CommentString = "";
                               CommentString = String.format("MWinit2=%3.1f/%3.1f/%3.1f",
@@ -659,7 +659,7 @@ public class MWAdj {
                         }
                      }
                   } else {
-                     /** merge backwards from 4.3 to 4.8 AFTER HOLD when MW > threshold, if necessary */
+                     /* merge backwards from 4.3 to 4.8 AFTER HOLD when MW > threshold, if necessary */
                      if((LastMWScoreValue<MWScoreThresholdValue1)&&
                         (MWScoreInput>=MWScoreThresholdValue1)) {
                         CommentString = History.HistoryFile[XInc].comment;
@@ -667,7 +667,7 @@ public class MWAdj {
                         if(Env.DEBUG==100) {
                            System.out.printf("merge backwards - WAS IN HOLD, now back on\n");
                         }
-                        /** merge backwards 12 hours previous to MW time */
+                        /* merge backwards 12 hours previous to MW time */
                         RecLand = History.HistoryFile[XInc].land;
                         Traw = History.HistoryFile[XInc].Traw;
                         LandCheckTF = true;
@@ -677,9 +677,9 @@ public class MWAdj {
                         if(LandCheckTF) {
                            if(HistoryRecTime>=FirstMWadjTime) {
                               if(Rule8Flag==33) {
-                                 /**
-                                  ** interpolate value between current value and
-                                  ** 12 hour previous value
+                                 /*
+                                  * interpolate value between current value and
+                                  * 12 hour previous value
                                   */
                                  if(CommentString.length()==0) {
                                     CommentString = "";
@@ -716,13 +716,13 @@ public class MWAdj {
                   }
                   LastValidMWCIValue = History.HistoryFile[XInc].CI;
                } else {
-                  /** determine if there is a record after MW time */
+                  /* determine if there is a record after MW time */
                   NORecordAfterMWTimeTF = false;
                }
                XInc++;
             }
          } else if((MWAdjCurrentONTF)&&(MWScoreApplicationFlag==0)) {
-            /** MW was ON and is now OFF */
+            /* MW was ON and is now OFF */
             if(Env.DEBUG==100) {
                System.out.printf("ON - now OFF\n");
             }
@@ -732,13 +732,13 @@ public class MWAdj {
                RecTime = History.HistoryFile[XInc].time;
                HistoryRecTime = Functions.calctime(RecDate,RecTime);
                if(HistoryRecTime>=CurrentMWTime) {
-                  /** determine if there is a record after MW time */
+                  /* determine if there is a record after MW time */
                   NORecordAfterMWTimeTF = false;
                }
                XInc++;
             }
          } else {
-            /** nothing */
+            /* nothing */
             if(Env.DEBUG==100) {
                System.out.printf("nothing\n");
             }
@@ -748,21 +748,21 @@ public class MWAdj {
             System.out.printf("LastValidMWCIValue=%f\n",LastValidMWCIValue);
          }
     
-         /** AFTER MW TIME */
+         /* AFTER MW TIME */
          if(Env.DEBUG==100) {
             System.out.printf("NORecordAfterMWTimeTF=%b\n",NORecordAfterMWTimeTF);
          }
          if(!NORecordAfterMWTimeTF) {
-            /** first record after MW time is not current record...
-             ** do necessary processing to records in between
-             ** MW time and up to current record
+            /* first record after MW time is not current record...
+             * do necessary processing to records in between
+             * MW time and up to current record
              */
             if(Env.DEBUG==100) {
                System.out.printf("CURRENT RECORD IS NOT LAST\n");
             }
             XInc = 0;
             while(XInc<NumRecsHistory) {
-               /** handle all records after input MW time */
+               /* handle all records after input MW time */
                RecDate = History.HistoryFile[XInc].date;
                RecTime = History.HistoryFile[XInc].time;
                HistoryRecTime = Functions.calctime(RecDate,RecTime);
@@ -788,7 +788,7 @@ public class MWAdj {
                            System.out.printf("rule8 was 30 current is 31\n");
                         }
                         History.HistoryFile[XInc].rule8 = 32;
-                        /** should set value right after MW time to 4.3/4.8 */
+                        /* should set value right after MW time to 4.3/4.8 */
                         LastValidMWCIValue = Math.max(IntensityEstimateValueReturn,LastValidMWCIValue);
                         History.HistoryFile[XInc].Traw = LastValidMWCIValue;
                         History.HistoryFile[XInc].Tfinal = LastValidMWCIValue;
@@ -805,7 +805,7 @@ public class MWAdj {
                            System.out.printf("rule8 was 31 current is 32\n");
                         }
                         if(HistoryRecTime<=FirstMWadjTimePlus12hr) {
-                           /** merge forward to 4.8 for first 12 hours*/
+                           /* merge forward to 4.8 for first 12 hours*/
                            InterpTimePart = 1.0-((FirstMWadjTimePlus12hr-HistoryRecTime)/
                                                  (FirstMWadjTimePlus12hr-FirstMWadjTime));
                            IntensityCIMergeValue = MWIntensityTnoValue1a;
@@ -831,7 +831,7 @@ public class MWAdj {
                               if(Env.DEBUG==100) {
                                  System.out.printf("merge to 4.8\n");
                               }
-                              /** merge forward to 4.8, if necessary */  /* check to make sure MW score is not 5.0 */
+                              /* merge forward to 4.8, if necessary */  /* check to make sure MW score is not 5.0 */
                               if(MWScoreInput<MWScoreThresholdValue2) {
                                  InterpTimePart = 1.0-((FirstMWadjTimePlus12hr-HistoryRecTime)/
                                                        (FirstMWadjTimePlus12hr-FirstMWadjTime));
@@ -907,14 +907,14 @@ public class MWAdj {
                               if(Env.DEBUG==100) {
                                  System.out.printf("rule8 was 33 mwscore>threshold1... turn back ON\n");
                               }
-                              History.HistoryFile[XInc].rule8 = 32; /** Turn back ON */
+                              History.HistoryFile[XInc].rule8 = 32; /* Turn back ON */
                               LastValidMWadjTime = HistoryRecTime;
                               LastValidMWadjTimePlus6 = LastValidMWadjTime+0.25;
                            } else {
                               if(Env.DEBUG==100) {
                                  System.out.printf("rule8 was 33 hold at 33\n");
                               }
-                              History.HistoryFile[XInc].rule8 = 33; /** hold */
+                              History.HistoryFile[XInc].rule8 = 33; /* hold */
                            }
                            History.HistoryFile[XInc].Traw = LastValidMWCIValue;
                            History.HistoryFile[XInc].Tfinal = LastValidMWCIValue;
@@ -925,7 +925,7 @@ public class MWAdj {
                            if(Env.DEBUG==100) {
                               System.out.printf("rule8 was 33 GREATER THAN 6 hours old!   TURNING OFF\n");
                            }
-                           History.HistoryFile[XInc].rule8 = 34; /** turn off */
+                           History.HistoryFile[XInc].rule8 = 34; /* turn off */
                            CommentString = "";
                            CommentString = String.format("MW OFF HOLD >=6hrs old");
                            History.HistoryFile[XInc].comment = CommentString;
@@ -933,7 +933,7 @@ public class MWAdj {
                         }
                         break;
                      case 34:
-                        /** added */
+                        /* added */
                         if(MWScoreInput>=MWScoreThresholdValue1) {
                            if(Env.DEBUG==100) {
                               System.out.printf("rule8 was 34 mwscore>threshold1... turn back ON\n");
@@ -954,7 +954,7 @@ public class MWAdj {
                            }
                            MWScoreApplicationFlag = 0;
                         }
-                        /** end added */
+                        /* end added */
                         break;
                      default:
                         if(Env.DEBUG==100) {
@@ -971,15 +971,15 @@ public class MWAdj {
                }
                XInc++;
             }
-            /** deal with last/current record */
+            /* deal with last/current record */
          }
     
-         /** deal with last/current record */
+         /*deal with last/current record */
          if(Env.DEBUG==100) {
             System.out.printf("CURRENT RECORD IS LAST\n");
          }
-         /** first record after MW time is current record...
-          ** mark it with appropriate Rule 8 value
+         /* first record after MW time is current record...
+          * mark it with appropriate Rule 8 value
           */
          if(Env.DEBUG==100) {
             System.out.printf("LastRule8Flag=%d\n",LastRule8Flag);
@@ -1009,7 +1009,7 @@ public class MWAdj {
                System.out.printf("rule8 was 32 current is 32\n");
             }
             MWScoreApplicationFlag = 1;
-            /** check for change in MW value from previous record */
+            /* check for change in MW value from previous record */
             double MWScoreDiffValue = Math.abs(PreviousMWScoreValue-MWScoreInput);
             if(Env.DEBUG==100) {
                System.out.printf("previousMWvalue=%f  currentMWvalue=%f  diff=%f\n",
@@ -1055,7 +1055,7 @@ public class MWAdj {
                      if(Env.DEBUG==100) {
                         System.out.printf("rule8 was 33 GREATER THAN 12 hours old!  TURNING OFF\n");
                      }
-                     History.IRCurrentRecord.rule8 = 34; /** turn off */
+                     History.IRCurrentRecord.rule8 = 34; /* turn off */
                      IntensityEstimateValueReturn = LastValidMWCIValue;
                      MWScoreApplicationFlag = 0;
                   }
@@ -1064,7 +1064,7 @@ public class MWAdj {
                if(Env.DEBUG==100) {
                   System.out.printf("MW value < 20: rule8 was 32 current is 33  STARTING HOLD\n");
                }
-               History.IRCurrentRecord.rule8 = 33; /** start hold for 12 hrs */
+               History.IRCurrentRecord.rule8 = 33; /* start hold for 12 hrs */
                IntensityEstimateValueReturn = LastValidMWCIValue;
             }
             break;
@@ -1077,12 +1077,12 @@ public class MWAdj {
                   if(Env.DEBUG==100) {
                      System.out.printf("rule8 was 33 current is 32   score >threshold1\n");
                   }
-                  History.IRCurrentRecord.rule8 = 32; /** turn back ON */
+                  History.IRCurrentRecord.rule8 = 32; /* turn back ON */
                } else {
                   if(Env.DEBUG==100) {
                      System.out.printf("rule8 was 33 current is 33   STILL HOLDING\n");
                   }
-                  History.IRCurrentRecord.rule8 = 33; /** start hold for 12 hrs */
+                  History.IRCurrentRecord.rule8 = 33; /* start hold for 12 hrs */
                }
                IntensityEstimateValueReturn = LastValidMWCIValue;
                MWScoreApplicationFlag = 1;
@@ -1093,18 +1093,18 @@ public class MWAdj {
                if(Env.DEBUG==100) {
                   System.out.printf("rule8 was 33 GREATER THAN 6 hours old!   TURNING OFF\n");
                }
-               History.IRCurrentRecord.rule8 = 34; /** turn off */
+               History.IRCurrentRecord.rule8 = 34; /* turn off */
                IntensityEstimateValueReturn = LastValidMWCIValue;
                MWScoreApplicationFlag = 0;
             }
             break;
-         /** added */
+         /* added */
          case 34:
             if(MWScoreInput>=MWScoreThresholdValue1) {
                if(Env.DEBUG==100) {
                   System.out.printf("rule8 was 34 current is 31   score >threshold1\n");
                }
-               History.IRCurrentRecord.rule8 = 31; /** turn back ON */
+               History.IRCurrentRecord.rule8 = 31; /* turn back ON */
                IntensityEstimateValueReturn = LastValidMWCIValue;
                MWScoreApplicationFlag = 1;
             } else {
@@ -1112,7 +1112,7 @@ public class MWAdj {
                MWScoreApplicationFlag = 0;
             }
             break;
-         /** end added */
+         /* end added */
          default:
             IntensityEstimateValueReturn = InputIntensityEstStore;
             MWScoreApplicationFlag = 0;
@@ -1127,16 +1127,16 @@ public class MWAdj {
          History.IRCurrentRecord.mwdate = Env.MWJulianDate;
          History.IRCurrentRecord.mwtime = Env.MWHHMMSSTime;
          IntensityEstimateValueReturn = ((double)(int)((IntensityEstimateValueReturn+0.05)*10.0))/10.0;
-         /** EXIT_Routine */
+         /* EXIT_Routine */
       } else {
-         /** need to put the intensity score into the correct place in the history file */
+         /* need to put the intensity score into the correct place in the history file */
          XInc = 0;
          while(XInc<NumRecsHistory) {
             RecDate = History.HistoryFile[XInc].date;
             RecTime = History.HistoryFile[XInc].time;
             HistoryRecTime = Functions.calctime(RecDate,RecTime);
             if(HistoryRecTime>=CurrentMWTime) {
-               /** determine if there is a record after MW time */
+               /* determine if there is a record after MW time */
                if(Env.DEBUG==100) {
                   System.out.printf("putting MW value of %f into history file at %f!\n",MWScoreInput,HistoryRecTime);
                }
@@ -1148,7 +1148,7 @@ public class MWAdj {
          }
       }
     
-      /** IntensityEstimateValueReturn = IntensityEstimateValueReturn;  compiler says this does nothing */
+      /* IntensityEstimateValueReturn = IntensityEstimateValueReturn;  compiler says this does nothing */
       if(Env.DEBUG==100) {
          System.out.printf("exit *IntensityEstimateValue_Return=%f\n",IntensityEstimateValueReturn);
          System.out.printf("MWScoreApplicationFlag=%d\n",MWScoreApplicationFlag);

@@ -135,9 +135,9 @@ public class Main {
       boolean OverrideScene = Env.OverSceneTF;
       int OverrideSceneTypeValue = Env.OverrideSceneType;
 
-      /** System.out.printf("MW Info : Date=%s JulianDate=%d Time=%d Score=%f\n",MWDate,Env.MWJulianDate,MWTime,MWScore); */
+      /* System.out.printf("MW Info : Date=%s JulianDate=%d Time=%d Score=%f\n",MWDate,Env.MWJulianDate,MWTime,MWScore); */
      
-      /** READ HISTORY FILE INFORMATION */
+      /* READ HISTORY FILE INFORMATION */
       if(RunFullAnalysis && HistoryFileName != null) {    
          try {
             CurrentHistory.ReadHistoryFile(HistoryFileName);
@@ -153,7 +153,7 @@ public class Main {
       HistoryFileRecords = CurrentHistory.HistoryNumberOfRecords();
       System.out.printf("Number of records in history file %s is %d\n",HistoryFileName,HistoryFileRecords);
     
-      /** read topography file at center position */
+      /* read topography file at center position */
       double PositionLatitude = History.IRCurrentRecord.latitude;
       double PositionLongitude = History.IRCurrentRecord.longitude;
       String topoPath = new File(".").getCanonicalPath();
@@ -171,34 +171,34 @@ public class Main {
             e.printStackTrace();
             return null;
         }
-      /** System.out.printf("after topo read flag=%d\n",TopographyFlag); */
+      /* System.out.printf("after topo read flag=%d\n",TopographyFlag); */
       History.IRCurrentRecord.land = TopographyFlag;
 
-      /** Calculate Eye and Cloud region temperatures */
+      /* Calculate Eye and Cloud region temperatures */
       Data.CalcEyeCloudTemps();
-      /** System.out.printf("after calceyecloudtemps\n"); */
-      /**
-       ** double Eye_Temperature = History.IRCurrentRecord.eyet;
-       ** double CWCloud_Temperature = History.IRCurrentRecord.cwcloudt;
-       ** double Cloud_Temperature = History.IRCurrentRecord.cloudt;
-       ** double Cloud2_Temperature = History.IRCurrentRecord.cloudt2;
-       ** double Cloud_Symmetry = History.IRCurrentRecord.cloudsymave;
-       ** double Eye_STDV = History.IRCurrentRecord.eyestdv;
-       ** int CWRing_Distance = History.IRCurrentRecord.cwring;
-       ** System.out.printf("Eye Temperature=%f\n",Eye_Temperature);
-       ** System.out.printf("CWCloud Temperature=%f\n",CWCloud_Temperature);
-       ** System.out.printf("CWRing Distance=%d\n",CWRing_Distance);
-       ** System.out.printf("Cloud Temperature=%f\n",Cloud_Temperature);
-       ** System.out.printf("Cloud2 Temperature=%f\n",Cloud2_Temperature);
-       ** System.out.printf("Cloud Symmetry=%f\n",Cloud_Symmetry);
-       ** System.out.printf("Eye STDV=%f\n",Eye_STDV);
+      /* System.out.printf("after calceyecloudtemps\n"); */
+      /*
+       * double Eye_Temperature = History.IRCurrentRecord.eyet;
+       * double CWCloud_Temperature = History.IRCurrentRecord.cwcloudt;
+       * double Cloud_Temperature = History.IRCurrentRecord.cloudt;
+       * double Cloud2_Temperature = History.IRCurrentRecord.cloudt2;
+       * double Cloud_Symmetry = History.IRCurrentRecord.cloudsymave;
+       * double Eye_STDV = History.IRCurrentRecord.eyestdv;
+       * int CWRing_Distance = History.IRCurrentRecord.cwring;
+       * System.out.printf("Eye Temperature=%f\n",Eye_Temperature);
+       * System.out.printf("CWCloud Temperature=%f\n",CWCloud_Temperature);
+       * System.out.printf("CWRing Distance=%d\n",CWRing_Distance);
+       * System.out.printf("Cloud Temperature=%f\n",Cloud_Temperature);
+       * System.out.printf("Cloud2 Temperature=%f\n",Cloud2_Temperature);
+       * System.out.printf("Cloud Symmetry=%f\n",Cloud_Symmetry);
+       * System.out.printf("Eye STDV=%f\n",Eye_STDV);
        */
 
-      /** Calculate Eye and Cloud region Scene Type */
+      /* Calculate Eye and Cloud region Scene Type */
 
-      /** System.out.printf("overridescenetypevalue=%d\n", OverrideSceneTypeValue); */
+      /* System.out.printf("overridescenetypevalue=%d\n", OverrideSceneTypeValue); */
       if(OverrideSceneTypeValue>=0) {
-          /** System.out.printf("setting old scene types\n"); */
+          /* System.out.printf("setting old scene types\n"); */
           History.IRCurrentRecord.cloudsceneold = History.IRCurrentRecord.cloudscene;
           History.IRCurrentRecord.eyesceneold = History.IRCurrentRecord.eyescene;
           History.IRCurrentRecord.cloudscene = Math.max(0,(OverrideSceneTypeValue - 3));
@@ -206,30 +206,30 @@ public class Main {
           Env.OverrideSceneType = -99;
       } else {
           SceneType.DetermineSceneType(RunFullAnalysis);
-          /** System.out.printf("after scene type determination\n"); */
-          /** System.out.printf("OverrideScene=%b\n",OverrideScene); */
+          /* System.out.printf("after scene type determination\n"); */
+          /* System.out.printf("OverrideScene=%b\n",OverrideScene); */
           if(OverrideScene) {
-              /** System.out.printf("overriding scene type : eye=%d cloud=%d\n",History.IRCurrentRecord.eyescene,History.IRCurrentRecord.cloudscene); */
+              /* System.out.printf("overriding scene type : eye=%d cloud=%d\n",History.IRCurrentRecord.eyescene,History.IRCurrentRecord.cloudscene); */
               if (History.IRCurrentRecord.eyescene<3) {
                   Env.OverrideSceneType = History.IRCurrentRecord.eyescene;
               } else {
                   Env.OverrideSceneType = 3 + History.IRCurrentRecord.cloudscene;
               }
-              /** System.out.printf("ADTEnv.overridescenetype=%d\n", Env.OverrideSceneType); */
+              /* System.out.printf("ADTEnv.overridescenetype=%d\n", Env.OverrideSceneType); */
               return "override";
           }
       }
 
-      /** Calculate Intensity Estimate Values */
+      /* Calculate Intensity Estimate Values */
 
       int RedoIntensityFlag = 0;
       Intensity.CalculateIntensity(RedoIntensityFlag,RunFullAnalysis,HistoryFileName);
-      /** System.out.printf("after calcintensity\n"); */
-      /** Write Bulletin Output */
+      /* System.out.printf("after calcintensity\n"); */
+      /* Write Bulletin Output */
 
       BulletinOutput = Output.TextScreenOutput(HistoryFileName);
-      /** System.out.printf("\n *** Bulletin Output ***\n%s\n",BulletinOutput); */
-      /** System.out.printf("after textscreenoutput\n"); */
+      /* System.out.printf("\n *** Bulletin Output ***\n%s\n",BulletinOutput); */
+      /* System.out.printf("after textscreenoutput\n"); */
       ReturnOutputString = BulletinOutput;
       
       return ReturnOutputString;
