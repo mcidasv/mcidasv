@@ -220,7 +220,7 @@ public class Intensity {
          ImageDate = History.IRCurrentRecord.date;
          ImageTime = History.IRCurrentRecord.time;
          CurrentTime = Functions.calctime(ImageDate,ImageTime);
-         /** System.out.printf("CurrentTime=%f\n",CurrentTime); */
+         /* System.out.printf("CurrentTime=%f\n",CurrentTime); */
          double FirstHistoryRecTime = LastValidRecordTime;
          if(NumRecsHistory!=0) {
             RecDate = History.HistoryFile[0].date;
@@ -451,7 +451,7 @@ public class Intensity {
             IntensityEstimateValue = 
                     CloudRegressionBaseArray[DomainID][CloudBDCategory]+
                     TnoInterpAdjValue+CDOSizeRegressionAdjValue+CDOSymmatryRegressionAdjValue;
-            IntensityEstimateValue = IntensityEstimateValue-0.1; /** bias adjustment */
+            IntensityEstimateValue = IntensityEstimateValue-0.1; /* bias adjustment */
             /* CDO adjustment for very weak or very strong CDOs */
             if(CloudScene==0) {
                CIValueAdjustmentFactorValue=0.0;
@@ -839,7 +839,7 @@ public class Intensity {
                } else if((TnoDifferenceValueMinus18hr>
                         Rule8AdjArray[Rule8AdjCatValue][4])&&
                        (CurrentTimeMinus18hrTF)) {
-                  /** System.out.printf("18 hr\n"); */
+                  /* System.out.printf("18 hr\n"); */
                   FinalIntensityEstimateValue = Math.max(TnoValueMinus18hr-
                                               Rule8AdjArray[Rule8AdjCatValue][4],
                                               Math.min(TnoValueMinus18hr+

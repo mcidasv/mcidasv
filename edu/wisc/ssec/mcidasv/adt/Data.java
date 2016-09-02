@@ -87,8 +87,8 @@ public class Data {
       double LatVal,LonVal,TempVal;
       
       RingDataArrayNumber = 0;
-      /** System.out.printf("CenterLat=%f CenterLon=%f\n",CenterLatitude,CenterLongitude); */
-      /** System.out.printf("numberRows=%d numberColumns=%d\n",IRData_NumberRows,IRData_NumberColumns); */
+      /* System.out.printf("CenterLat=%f CenterLon=%f\n",CenterLatitude,CenterLongitude); */
+      /* System.out.printf("numberRows=%d numberColumns=%d\n",IRData_NumberRows,IRData_NumberColumns); */
       for (int j = 0; j < IRData_NumberRows; j++ ) {
          for (int i = 0; i < IRData_NumberColumns; i++ ) {
             LatVal = IRData_Latitude[j][i];
@@ -98,8 +98,8 @@ public class Data {
                                   CenterLatitude,CenterLongitude,1);
 
             if(LocalValue[0]<=(OUTER_RADIUS+80.0)) {
-               /** System.out.printf("j=%d i=%d  lat=%f lon=%f temp=%f ",j,i,LatVal,LonVal,TempVal); */
-               /** System.out.printf("  Distance=%f Angle=%f  ringarraynumber=%d \n",LocalValue[0],LocalValue[1],RingDataArrayNumber); */
+               /* System.out.printf("j=%d i=%d  lat=%f lon=%f temp=%f ",j,i,LatVal,LonVal,TempVal); */
+               /* System.out.printf("  Distance=%f Angle=%f  ringarraynumber=%d \n",LocalValue[0],LocalValue[1],RingDataArrayNumber); */
                RingArray[RingDataArrayNumber] = new IRRingData();
 
                RingArray[RingDataArrayNumber].distance = LocalValue[0];
@@ -120,11 +120,11 @@ public class Data {
       double EyeMaxTemp=-99.0;
 
       int RingDataCount = Data.RingDataNumberOfPoints();
-      /** System.out.printf("number of points in RingData=%d\n",RingDataCount); */
+      /* System.out.printf("number of points in RingData=%d\n",RingDataCount); */
 
       for (int i = 0; i < RingDataCount; i++ ) {
          if(RingArray[i].distance<=EYE_SEARCH_RADIUS) {
-            /** System.out.printf("i=%d distance=%f temp=%f MAX=%f\n",i,RingArray[i].distance,RingArray[i].temperature,EyeMaxTemp); */
+            /* System.out.printf("i=%d distance=%f temp=%f MAX=%f\n",i,RingArray[i].distance,RingArray[i].temperature,EyeMaxTemp); */
             if(RingArray[i].temperature>EyeMaxTemp) {
                EyeMaxTemp=RingArray[i].temperature;
             }
@@ -146,7 +146,7 @@ public class Data {
       int RingDataCount = Data.RingDataNumberOfPoints();
 
       int MaxNumberRings = (int)((OUTER_RADIUS-INNER_RADIUS)/RING_WIDTH);
-      /** System.out.printf("maxNumberRings=%d\n",MaxNumberRings); */
+      /* System.out.printf("maxNumberRings=%d\n",MaxNumberRings); */
       for (j = 0; j < MaxNumberRings; j++ ) {
          MaxTempRingArray[j] = -999.0;
       }
@@ -169,7 +169,7 @@ public class Data {
             CWCloudTemp=MaxTempRingArray[j];
             CWRingDist=(((double)j)*RING_WIDTH)+INNER_RADIUS;
          }
-         /** System.out.printf("ring=%d MaxTempRing=%f CWCloudTemp=%f CWRingDist=%f\n",j,MaxTempRingArray[j],CWCloudTemp,CWRingDist); */
+         /* System.out.printf("ring=%d MaxTempRing=%f CWCloudTemp=%f CWRingDist=%f\n",j,MaxTempRingArray[j],CWCloudTemp,CWRingDist); */
       }
 
       return new double[] {CWCloudTemp, CWRingDist }; 
@@ -201,7 +201,7 @@ public class Data {
          STDVValue = Math.sqrt((1.0/((double)Counter-1.0))*ArrayValuesSumSquared);
       }
 
-      /** System.out.printf("average value=%f  stdv=%f\n",AverageValue, STDVValue); */
+      /* System.out.printf("average value=%f  stdv=%f\n",AverageValue, STDVValue); */
 
       return new double[] { AverageValue, STDVValue }; 
    }
@@ -228,7 +228,7 @@ public class Data {
          TemperatureHistArray[i] = KtoC_Value + 26.0 - ((double)i)*2.0;
       }
  
-      /** determine FFT values for Eye and Cloud regions */
+      /* determine FFT values for Eye and Cloud regions */
       for (int SceneIDFlag = 0; SceneIDFlag <=1 ; SceneIDFlag++ ) {
          for (i = 0; i < TEMPBINS; i++ ) {
             TemperatureHistArrayCounter[i] = 0.0;
@@ -236,12 +236,12 @@ public class Data {
          }
  
          if(SceneIDFlag==0) {
-            /** CLOUD TOP REGION */
+            /* CLOUD TOP REGION */
             InnerRadiusDistance = (double)INNER_RADIUS;
             OuterRadiusDistance = (double)OUTER_RADIUS;
          }
          else {
-            /** EYE REGION */
+            /* EYE REGION */
             InnerRadiusDistance = (double)0;
             OuterRadiusDistance = (double)INNER_RADIUS;
          }
@@ -261,7 +261,7 @@ public class Data {
 
          int FFT_ReturnValue = FFT.calculateFFT(TemperatureHistArrayCounter);
          
-         /** System.out.printf("sceneID=%d  harmonic=%d\n",SceneIDFlag,FFT_ReturnValue); */
+         /* System.out.printf("sceneID=%d  harmonic=%d\n",SceneIDFlag,FFT_ReturnValue); */
 
          if(SceneIDFlag==0) {
            Cloud_FFTValue = FFT_ReturnValue;
@@ -273,7 +273,7 @@ public class Data {
       History.IRCurrentRecord.eyefft = Eye_FFTValue;
       History.IRCurrentRecord.cloudfft = Cloud_FFTValue;
 
-      /** determine various Eye and Cloud region parameters */
+      /* determine various Eye and Cloud region parameters */
       for (i = 0; i < MAXSECTOR; i++ ) {
          SectorCountArray[i] = 0;
       }
@@ -289,7 +289,7 @@ public class Data {
          if(AngleVal==360.0) AngleVal = 0.0;
          int SectorVal = 0;
 
-         /** Check for Cloud region pixel */
+         /* Check for Cloud region pixel */
          if((DistVal>=InnerRadiusDistance)&&(DistVal<=OuterRadiusDistance)) {
             while(SectorVal<MAXSECTOR) {
                double SectorStartAngle = Math.max(0.0,(((double)SectorVal)*RINGSLICESIZE));
@@ -297,24 +297,24 @@ public class Data {
                if((AngleVal>=SectorStartAngle)&&(AngleVal<SectorEndAngle)) {
                   SectorDataArray[SectorVal][SectorCountArray[SectorVal]] = TempVal;
                   SectorCountArray[SectorVal]++;
-                  SectorVal = MAXSECTOR;  /** exit while loop */
+                  SectorVal = MAXSECTOR;  /* exit while loop */
                } else {
                   SectorVal++;
                }
             }
          }
 
-         /** Check for Eye region pixel */
+         /* Check for Eye region pixel */
          if((DistVal>=0.0)&&(DistVal<InnerRadiusDistance)) {
             EyeDataArray[EyeCount] = TempVal;
             EyeCount++;
          }
       }
 
-      /** Calculate Cloud Region Annulus Temperature */
-      /** position annulus at CW max temp distance and
-       ** determine mean temp w/in +/- 40km from this distance.  If dist
-       ** is less than 68km from center, annulus will start at 28km */
+      /* Calculate Cloud Region Annulus Temperature */
+      /* position annulus at CW max temp distance and
+       * determine mean temp w/in +/- 40km from this distance.  If dist
+       * is less than 68km from center, annulus will start at 28km */
       int AnnulusTemperatureCount = 0;
       double AnnulusTemperatureSum = 0.0;
       double AnnulusDistance = History.IRCurrentRecord.cwring;
@@ -332,7 +332,7 @@ public class Data {
 
       double CloudAnnulusAveTemp = AnnulusTemperatureSum/((double)AnnulusTemperatureCount);
 
-      /** calculate averages, standard deviations and skews for each sector */
+      /* calculate averages, standard deviations and skews for each sector */
       double TempSectorArray[] = new double[MAXSECTORA];
       for (i = 0; i < MAXSECTOR; i++ ) {
          int SectorCounterValue = SectorCountArray[i];
@@ -344,7 +344,7 @@ public class Data {
          SectorStdvArray[i] = ReturnValues[1];
       }
       double ReturnValues2[] = Data.CalcSkew(SectorAverageArray,MAXSECTOR);
-      double SectorAverageAverageValue = ReturnValues2[0];   /** cloud2 value */
+      double SectorAverageAverageValue = ReturnValues2[0];   /* cloud2 value */
 
       int HalfMaxSector = MAXSECTOR/2;
       double SectorDifferenceArray[] = new double[HalfMaxSector];
@@ -352,10 +352,10 @@ public class Data {
          SectorDifferenceArray[i] = Math.abs(SectorAverageArray[i]-SectorAverageArray[i+HalfMaxSector]);
       }
       double ReturnValues3[] = Data.CalcSkew(SectorDifferenceArray,HalfMaxSector);
-      double SectorDiffAverageValue = ReturnValues3[0];    /** cloud symmetry value */
+      double SectorDiffAverageValue = ReturnValues3[0];    /* cloud symmetry value */
 
       double ReturnValues4[] = Data.CalcSkew(EyeDataArray,EyeCount);
-      double EyeRegionSTDVValue = ReturnValues4[1];    /** eye stdv value */
+      double EyeRegionSTDVValue = ReturnValues4[1];    /* eye stdv value */
 
       return new double[] { CloudAnnulusAveTemp, SectorAverageAverageValue, SectorDiffAverageValue, EyeRegionSTDVValue };
 
@@ -366,23 +366,23 @@ public class Data {
       int CenterXPos = IRData_NumberColumns/2;
       int CenterYPos = IRData_NumberRows/2;
 
-      /** System.out.printf("CenterXPos=%d  CenterYPos=%d\n",CenterXPos,CenterYPos); */
+      /* System.out.printf("CenterXPos=%d  CenterYPos=%d\n",CenterXPos,CenterYPos); */
       double CenterLatValue = IRData_Latitude[CenterYPos][CenterXPos];
       double CenterLonValue = IRData_Longitude[CenterYPos][CenterXPos];
 
-      /** System.out.printf("CenterLatVal=%f  CenterLonVal=%f\n",CenterLatValue,CenterLonValue); */
+      /* System.out.printf("CenterLatVal=%f  CenterLonVal=%f\n",CenterLatValue,CenterLonValue); */
 
       LoadRingData(CenterLatValue,CenterLonValue);
 
       Eye_Temperature = Data.CalcEyeTemperature();
       History.IRCurrentRecord.eyet = Eye_Temperature-KtoC_Value;
-      /** System.out.printf("eyeT=%f\n",Eye_Temperature); */
+      /* System.out.printf("eyeT=%f\n",Eye_Temperature); */
 
       double LocalValue[] = Data.CalcCWCloudInfo();
       CWCloud_Temperature = LocalValue[0];
       CWRing_Distance = (int)LocalValue[1];
-      /** System.out.printf("cw cloudT=%f\n",CWCloud_Temperature); */
-      /** System.out.printf("cw Ring distance=%d\n",CWRing_Distance); */
+      /* System.out.printf("cw cloudT=%f\n",CWCloud_Temperature); */
+      /* System.out.printf("cw Ring distance=%d\n",CWRing_Distance); */
       History.IRCurrentRecord.cwcloudt = CWCloud_Temperature-KtoC_Value;
       History.IRCurrentRecord.cwring = CWRing_Distance;
 
@@ -391,10 +391,10 @@ public class Data {
       Cloud2_Temperature = LocalValue2[1];
       Cloud_Symmetry = LocalValue2[2];
       Eye_STDV = LocalValue2[3];
-      /** System.out.printf("cloudt=%f\n",Cloud_Temperature); */
-      /** System.out.printf("cloud2t=%f\n",Cloud2_Temperature); */
-      /** System.out.printf("eyestdv=%f\n",Eye_STDV);   / double check these values */
-      /** System.out.printf("cloudsymave=%f\n",Cloud_Symmetry); */
+      /* System.out.printf("cloudt=%f\n",Cloud_Temperature); */
+      /* System.out.printf("cloud2t=%f\n",Cloud2_Temperature); */
+      /* System.out.printf("eyestdv=%f\n",Eye_STDV);   / double check these values */
+      /* System.out.printf("cloudsymave=%f\n",Cloud_Symmetry); */
       History.IRCurrentRecord.cloudt = Cloud_Temperature-KtoC_Value;
       History.IRCurrentRecord.cloudt2 = Cloud2_Temperature-KtoC_Value;
       History.IRCurrentRecord.cloudsymave = Cloud_Symmetry;
@@ -411,7 +411,7 @@ public class Data {
       double ThresholdWarmCloudTemperatureDegK = 223.0;
       double CriticalTemperatureDegK = 228.0;
 
-      /** System.out.printf("CenterXPos=%d  CenterYPos=%d\n",CenterXPos,CenterYPos); */
+      /* System.out.printf("CenterXPos=%d  CenterYPos=%d\n",CenterXPos,CenterYPos); */
 
       double CloudTemperature = History.IRCurrentRecord.cloudt;
       double EyeTemperature = History.IRCurrentRecord.eyet;
@@ -424,21 +424,21 @@ public class Data {
       if(CloudTemperature>=(ThresholdWarmCloudTemperatureDegK-KtoC_Value)) {
          CriticalTemperatureDegK = KtoC_Value + ((EyeTemperature + (2.0*CloudTemperature))/3.0);
       }
-      /** System.out.printf("thresholdT=%f\n",CriticalTemperatureDegK); */
+      /* System.out.printf("thresholdT=%f\n",CriticalTemperatureDegK); */
 
-      /** Iterate five times */
+      /* Iterate five times */
       int XInc,YInc;
       int XDirIterationStoredMaximum = 0;
       int XDirIterationStoredMinimum = 0;
       int YDirIterationStoredMaximum = 0;
       int YDirIterationStoredMinimum = 0;
       for (int Iterations = 0; Iterations < 5; Iterations++ ) {
-      /** System.out.printf("Iteration=%d\n",Iterations); */
+      /* System.out.printf("Iteration=%d\n",Iterations); */
          XInc=CenterXPos;
          while(IRData_Temperature[CenterYPos][XInc]>CriticalTemperatureDegK) {
             XInc=XInc-1;
             if(XInc==XDirMinimum) {
-               /** Eyewall not found */
+               /* Eyewall not found */
                return new double[] { RadiusMaxWind, EyeSizeRadius };
             }
          }
@@ -447,7 +447,7 @@ public class Data {
          while(IRData_Temperature[CenterYPos][XInc]>CriticalTemperatureDegK) {
             XInc=XInc+1;
             if(XInc==XDirMaximum) {
-               /** Eyewall not found */
+               /* Eyewall not found */
                return new double[] { RadiusMaxWind, EyeSizeRadius };
             }
          }
@@ -456,7 +456,7 @@ public class Data {
          while(IRData_Temperature[YInc][CenterXPos]>CriticalTemperatureDegK) {
             YInc=YInc-1;
             if(YInc==YDirMinimum) {
-               /** Eyewall not found */
+               /* Eyewall not found */
                return new double[] { RadiusMaxWind, EyeSizeRadius };
             }
          }
@@ -465,7 +465,7 @@ public class Data {
          while(IRData_Temperature[YInc][CenterXPos]>CriticalTemperatureDegK) {
             YInc=YInc+1;
             if(YInc==YDirMaximum) {
-               /** Eyewall not found */
+               /* Eyewall not found */
                return new double[] { RadiusMaxWind, EyeSizeRadius };
             }
          }
@@ -476,7 +476,7 @@ public class Data {
                                          YDirIterationStoredMaximum))/2.0));
       }
 
-      /** System.out.printf("x=%d  y=%d\n",CenterXPos,CenterYPos); */
+      /* System.out.printf("x=%d  y=%d\n",CenterXPos,CenterYPos); */
 
       double CenterPointLatitude,CenterPointLongitude;
       double LatitudeValue,LongitudeValue;
