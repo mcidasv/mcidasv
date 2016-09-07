@@ -80,7 +80,7 @@ public class ArrayAdapter extends MultiDimensionAdapter {
      domain = IntegerNDSet.create(domainType, lengths);
 
      RangeProcessor rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
-     if ( !(reader instanceof GranuleAggregation)) {        
+     if ( !(reader instanceof GranuleAggregation)) {
         setRangeProcessor(rangeProcessor);
      }
 
@@ -109,7 +109,7 @@ public class ArrayAdapter extends MultiDimensionAdapter {
 
      for (int kk=0; kk<array_rank; kk++) {
        RealType rtype = realTypes[kk];
-       double[] coords = (double[]) ((HashMap)subset).get(dimNameMap.get(rtype.getName()));
+       double[] coords = subset.get(dimNameMap.get(rtype.getName()));
        if (array_dim_lengths[kk] == 1) {
          coords[0] = 0;
          coords[1] = 0;
@@ -139,7 +139,7 @@ public class ArrayAdapter extends MultiDimensionAdapter {
    public Map<String, double[]> getDefaultSubset() {
      Map<String, double[]> map = getEmptySubset();
      for (int i=0; i<array_rank; i++) {
-       double[] coords = (double[]) map.get(dimNameMap.get(array_dim_names[i]));
+       double[] coords = map.get(dimNameMap.get(array_dim_names[i]));
        coords[0] = 0;
        coords[1] = array_dim_lengths[i] - 1;
        coords[2] = 1;

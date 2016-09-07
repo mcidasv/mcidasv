@@ -29,6 +29,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import visad.FlatField;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -39,12 +40,12 @@ public class ReflSolzenCorr extends RangeProcessor {
    ArrayAdapter solzenAdapter;
    
    
-   public ReflSolzenCorr(NetCDFFile reader, HashMap metadata, ArrayAdapter solzenAdapter) throws Exception {
+   public ReflSolzenCorr(NetCDFFile reader, Map<String, Object> metadata, ArrayAdapter solzenAdapter) throws Exception {
       super(reader, metadata);
       this.solzenAdapter = solzenAdapter;
    }
    
-   public ReflSolzenCorr(NetCDFFile reader, HashMap metadata) throws Exception {
+   public ReflSolzenCorr(NetCDFFile reader, Map<String, Object> metadata) throws Exception {
       super(reader, metadata);
    }
    
@@ -52,7 +53,7 @@ public class ReflSolzenCorr extends RangeProcessor {
     * super returns uncorrected reflectance.
     * 
     */
-   public float[] processRange(short[] values, HashMap subset) {
+   public float[] processRange(short[] values, Map<String, double[]> subset) {
       float[] refls = super.processRange(values, subset);
       float[] solzen = null;
       

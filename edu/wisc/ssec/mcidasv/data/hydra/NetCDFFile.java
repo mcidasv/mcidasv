@@ -28,6 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.nc2.*;
 import ucar.nc2.ncml.NcMLReader;
 import ucar.ma2.*;
@@ -39,6 +41,7 @@ import java.util.Iterator;
 import java.net.URL;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.util.Map;
 
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
@@ -47,12 +50,13 @@ import org.jdom2.Element;
 
 
 public class NetCDFFile implements MultiDimensionReader {
-
-   HashMap<String, Variable> varMap = new HashMap<String, Variable>();
-   HashMap<String, String[]> varDimNames = new HashMap<String, String[]>();
-   HashMap<String, int[]> varDimLengths = new HashMap<String, int[]>();
-   HashMap<String, Class> varDataType = new HashMap<String, Class>();
-   HashMap<String, String> varUnits = new HashMap<String, String>();
+    
+    private static final Logger logger = LoggerFactory.getLogger(NetCDFFile.class);
+   private final Map<String, Variable> varMap = new HashMap<>();
+   private final Map<String, String[]> varDimNames = new HashMap<>();
+   private final Map<String, int[]> varDimLengths = new HashMap<>();
+   private final Map<String, Class> varDataType = new HashMap<>();
+   private final Map<String, String> varUnits = new HashMap<>();
 
    NetcdfFile ncfile = null;
 
@@ -73,14 +77,15 @@ public class NetCDFFile implements MultiDimensionReader {
 
      list = ((Element)list.get(1)).getChildren();
 
-     org.jdom2.Attribute attr1 = (org.jdom2.Attribute) (((Element)list.get(0)).getAttributes()).get(0);
+     org.jdom2.Attribute attr1 = (((Element)list.get(0)).getAttributes()).get(0);
      attr1.setValue(filename);
 
-     org.jdom2.Attribute attr2 = (org.jdom2.Attribute) (((Element)list.get(1)).getAttributes()).get(0);
+     org.jdom2.Attribute attr2 = (((Element)list.get(1)).getAttributes()).get(0);
      attr2.setValue(other);
 
      XMLOutputter xmlOut = new XMLOutputter();
      String newStr = xmlOut.outputString(doc);
+       logger.trace("union string:\n{}", newStr);
      ByteArrayInputStream is = new ByteArrayInputStream(newStr.getBytes());
      return new NetCDFFile(is);
    }
@@ -187,12 +192,7 @@ public class NetCDFFile implements MultiDimensionReader {
 
    public int getDimensionLength(String dimName) {
      Dimension dim = ncfile.findDimension(dimName);
-     if (dim != null) {
-       return dim.getLength();
-     }
-     else {
-       return -1;
-     }
+     return (dim != null) ? dim.getLength() : -1;
    }
 
    public float[] getFloatArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
@@ -236,7 +236,7 @@ public class NetCDFFile implements MultiDimensionReader {
        return array.copyTo1DJavaArray();
      }
      else {
-       ArrayList rangeList = new ArrayList();
+       List<Range> rangeList = new ArrayList<>(start.length);
        for (int i=0;i<start.length;i++) {
          Range rng = new Range(start[i], start[i]+(count[i]-1)*stride[i], stride[i]);
          rangeList.add(i, rng);
@@ -292,25 +292,16 @@ public class NetCDFFile implements MultiDimensionReader {
      ncfile.close();
    }
 
-   public HashMap getVarMap() {
+   public Map<String, Variable> getVarMap() {
      return varMap;
    }
 
    public boolean hasArray(String name) {
-	   if (varMap.get(name) == null) {
-		   return false;
-	   } else {
-		   return true;
-	   }
+       return varMap.get(name) != null;
    }
 
    public boolean hasDimension(String name) {
-     if (ncfile.findDimension(name) != null) {
-       return true;
-     }
-     else {
-       return false;
-     }
+       return ncfile.findDimension(name) != null;
    }
 
    public NetcdfFile getNetCDFFile() {

@@ -245,12 +245,12 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         int[] length = new int[2];
 
         Map<String, double[]> domainSubset = new HashMap<>();
-        domainSubset.put(trackDim_name, (double[]) ((HashMap)subset).get(trackDim_name));
-        domainSubset.put(vertDim_name, (double[]) ((HashMap)subset).get(vertDim_name));
+        domainSubset.put(trackDim_name, subset.get(trackDim_name));
+        domainSubset.put(vertDim_name, subset.get(vertDim_name));
 
         for (int kk=0; kk<2; kk++) {
           RealType rtype = domainRealTypes[kk];
-          double[] coords = (double[]) ((HashMap)subset).get(rtype.getName());
+          double[] coords = subset.get(rtype.getName());
           first[kk] = coords[0];
           last[kk] = coords[1];
           length[kk] = (int) ((last[kk] - first[kk])/coords[2] + 1);
@@ -265,8 +265,8 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
 
         int track_start = (int) first[track_tup_idx];
         int vert_start = (int) first[vert_tup_idx];
-        int vert_skip = (int) ((double[]) ((HashMap)subset).get(vertDim_name))[2];
-        int track_skip = (int) ((double[]) ((HashMap)subset).get(trackDim_name))[2];
+        int vert_skip = (int) (subset.get(vertDim_name))[2];
+        int track_skip = (int) (subset.get(trackDim_name))[2];
         for (int k=0; k<new_altitudes.length; k++) {
           new_altitudes[k] = vertLocs[vert_start+(k*vert_skip)];
         }
@@ -339,14 +339,14 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       public Map<String, double[]> getDefaultSubset() {
         Map<String, double[]> subset = ProfileAlongTrack.getEmptySubset();
 
-        double[] coords = (double[])subset.get("TrackDim");
+        double[] coords = subset.get("TrackDim");
         coords[0] = 20000.0;
         coords[1] = (TrackLen - 15000.0) - 1;
         //-coords[2] = 30.0;
         coords[2] = 5.0;
         subset.put("TrackDim", coords);
 
-        coords = (double[])subset.get("VertDim");
+        coords = subset.get("VertDim");
         coords[0] = 98.0;
         coords[1] = (VertLen) - 1;
         coords[2] = 2.0;

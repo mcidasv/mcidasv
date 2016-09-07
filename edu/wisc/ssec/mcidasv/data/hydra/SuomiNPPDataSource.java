@@ -1814,7 +1814,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 if (props != null) {
                   if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
                 	  logger.debug("Props contains channel index key...");
-                    double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
+                    double[] coords = subset.get(SpectrumAdapter.channelIndex_name);
                     int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
                     coords[0] = (double) idx;
                     coords[1] = (double) idx;

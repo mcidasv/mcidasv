@@ -27,7 +27,7 @@
  */
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -38,7 +38,7 @@ public class RadianceToBTbyLUT extends RangeProcessor {
    LUTtransform lutCal;
    
    
-   public RadianceToBTbyLUT(NetCDFFile reader, HashMap metadata, String radLUTname, String btLUTname) throws Exception {
+   public RadianceToBTbyLUT(NetCDFFile reader, Map<String, Object> metadata, String radLUTname, String btLUTname) throws Exception {
       super(reader, metadata);
       
       int numLUTvals = (reader.getDimensionLengths(radLUTname))[0];
@@ -48,7 +48,7 @@ public class RadianceToBTbyLUT extends RangeProcessor {
       lutCal = new LUTtransform(radLUT, btLUT);
    }
    
-   public RadianceToBTbyLUT(NetCDFFile reader, HashMap metadata) throws Exception {
+   public RadianceToBTbyLUT(NetCDFFile reader, Map<String, Object> metadata) throws Exception {
       super(reader, metadata);
    }
    
@@ -56,7 +56,7 @@ public class RadianceToBTbyLUT extends RangeProcessor {
     * calls super to unscale radiances then converts to BT
     * 
     */
-   public float[] processRange(short[] values, HashMap subset) {
+   public float[] processRange(short[] values, Map<String, double[]> subset) {
       float[] radiances = super.processRange(values, subset);
       
       float[] brightnessTemps = null;

@@ -316,11 +316,11 @@ public class RangeProcessor {
      * @return Processed range.
      */
 
-    public float[] processRangeQualityFlag(byte[] values, Map subset, QualityFlag qf) {
+    public float[] processRangeQualityFlag(byte[] values, Map<String, double[]> subset, QualityFlag qf) {
 
         if (subset != null) {
             if (subset.get(multiScaleDimName) != null) {
-                soIndex = (int) ((double[]) subset.get(multiScaleDimName))[0];
+                soIndex = (int) (subset.get(multiScaleDimName))[0];
             }
         }
 
@@ -416,7 +416,7 @@ public class RangeProcessor {
 
         if (subset != null) {
             if (subset.get(multiScaleDimName) != null) {
-                double[] coords = (double[]) subset.get(multiScaleDimName);
+                double[] coords = subset.get(multiScaleDimName);
                 soIndex = (int) coords[0];
                 multiScaleDimLen = (int) (coords[1] - coords[0] + 1.0);
             }
@@ -505,7 +505,7 @@ public class RangeProcessor {
 
         if (subset != null) {
             if (subset.get(multiScaleDimName) != null) {
-                double[] coords = (double[]) subset.get(multiScaleDimName);
+                double[] coords = subset.get(multiScaleDimName);
                 soIndex = (int) coords[0];
                 multiScaleDimLen = (int) (coords[1] - coords[0] + 1.0);
             }
