@@ -602,7 +602,7 @@ public class RemoteAddeEntry implements AddeEntry {
         } else {
             Socket socket = new Socket();
             try {
-                socket.connect(new InetSocketAddress(host, ADDE_PORT), 10);
+                socket.connect(new InetSocketAddress(host, ADDE_PORT), 1000);
                 connected = true;
                 socket.close();
             } catch (UnknownHostException e) {
