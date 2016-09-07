@@ -158,12 +158,12 @@ public class Main {
       double PositionLongitude = History.IRCurrentRecord.longitude;
       String topoPath = new File(".").getCanonicalPath();
       System.err.println("topoPath: " + topoPath);
-      String TopoFileName = topoPath + "/edu/wisc/ssec/mcidasv/resources/digelev_hires_le.map";
+      String TopoFileName = "/edu/wisc/ssec/mcidasv/resources/digelev_hires_le.map";
 
       int TopographyFlag = 0;
       System.out.printf("TOPO Info : File=%s Lat=%f Lon=%f\n",TopoFileName,PositionLatitude,PositionLongitude);
       try {
-         TopographyFlag = edu.wisc.ssec.mcidasv.adt.Topo.ReadTopoFile(TopoFileName,PositionLatitude,PositionLongitude);
+         TopographyFlag = Topo.ReadTopoFile(TopoFileName,PositionLatitude,PositionLongitude);
       }
       catch(IOException e)
         {

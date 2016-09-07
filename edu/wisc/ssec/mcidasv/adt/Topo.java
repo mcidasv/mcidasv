@@ -45,21 +45,13 @@ public class Topo {
       double first_lat_elev=90.0;
       double last_lon_elev=360.0;
       double last_lat_elev=-90.0;
-
-      // XXX TJJ just to keep moving, we'll fix this later
-      boolean test = true;
-      if (test) return 2;
       
       double ax = inputlat;
       double bx = inputlon;  /* to make mcidas compliant */
       System.out.printf("TOPO: lat: %f  lon: %f\n",ax,bx);
-      // File file = new File(topofile);
-      // RandomAccessFile filestream = new RandomAccessFile(file,"r");
+
       InputStream filestream = Topo.class.getResourceAsStream(topofile);
       DataInputStream dis = new DataInputStream(filestream);
-      
-      // RandomAccessFile filestream = new RandomAccessFile(file,"r");
-      // filestream.seek(0);
 
       double del_lon_elev = (last_lon_elev-first_lon_elev)/num_lon_elev;
       double del_lat_elev = (first_lat_elev-last_lat_elev)/num_lat_elev;
@@ -77,7 +69,7 @@ public class Topo {
 
       int i = dis.readShort();
       System.err.println("After read, val: " + i);
-      /* int i = filestream.readUnsignedByte(); */
+
       int ichar = (i==0) ? 2 : 1;
       System.err.println("After read, returning: " + ichar);
       System.out.printf("TOPO: position=%d Value=%d landflag=%d \n ",position,i,ichar);
