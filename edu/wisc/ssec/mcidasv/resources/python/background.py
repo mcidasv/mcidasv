@@ -274,9 +274,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
         keys = [ 'accounting', 'band-count', 'bandList', 'bandNumber', 'bands',
                  'calibration-scale-factor', 'calibration-type',
-                 'calibration-unit-name', 'calinfo', 'center-latitude',
-                 'center-latitude-resolution', 'center-longitude',
-                 'center-longitude-resolution', 'day', 'debug', 'directory-block',
+                 'day', 'debug', 'directory-block',
                  'elements', 'lines', 'memo-field', 'nominal-time',
                  'sensor-id', 'sensor-type', 'server', 'source-type', 'start-time',
                  'datetime', 'url','satband-band-label', ]
@@ -371,22 +369,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             return self._getBand()
         elif key == 'day':
             return self._getDay()
-        elif key == 'calinfo':
-            return self._getCalInfo()
         elif key == 'calibration-scale-factor':
             return self.areaDirectory.getCalibrationScaleFactor()
         elif key == 'calibration-type':
             return str(self.areaDirectory.getCalibrationType())
-        elif key == 'calibration-unit-name':
-            return self.areaDirectory.getCalibrationUnitName()
-        elif key == 'center-latitude':
-            return self.areaDirectory.getCenterLatitude()
-        elif key == 'center-latitude-resolution':
-            return self.areaDirectory.getCenterLatitudeResolution()
-        elif key == 'center-longitude':
-            return self.areaDirectory.getCenterLongitude()
-        elif key == 'center-longitude-resolution':
-            return self.areaDirectory.getCenterLongitudeResolution()
         elif key == 'directory-block':
             return list(self.areaDirectory.getDirectoryBlock())
         elif key == 'elements':
