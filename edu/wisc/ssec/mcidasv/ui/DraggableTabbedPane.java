@@ -75,6 +75,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.ComponentGroup;
 import ucar.unidata.ui.ComponentHolder;
@@ -293,6 +294,13 @@ public class DraggableTabbedPane extends JTabbedPane implements
             ComponentHolder target = other.removeDragged();
             sourceIndex = group.quietAddComponent(target);
             outsideDrag = false;
+    
+            McvComponentHolder draggedHolder = (McvComponentHolder)target;
+            
+            List<ViewManager> vms = draggedHolder.getViewManagers();
+            for (ViewManager vm : vms) {
+                vm.setWindow(window);
+            }
         }
 
         // check to see if we've actually dropped something McV understands.
@@ -468,9 +476,21 @@ public class DraggableTabbedPane extends JTabbedPane implements
             ComponentGroup newGroup = w.getComponentGroups().get(0);
 
             newGroup.addComponent(dragged);
+            
+            McvComponentHolder draggedHolder = (McvComponentHolder)dragged;
+            List<ViewManager> vms = draggedHolder.getViewManagers();
+            for (ViewManager vm : vms) {
+                vm.setWindow(w);
+            }
 
             // let there be a window
+            w.pack();
             w.setVisible(true);
+//            GuiUtils.toFront(w.getWindow());
+//            logger.trace("active window: {} new window: {}", Integer
+//                .toHexString
+//                (IdvWindow.getActiveWindow().hashCode()), Integer
+//                .toHexString(w.hashCode()));
         } catch (Throwable e) {
             logger.error("Error creating new window from dragged tab", e);
         }
