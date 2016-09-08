@@ -48,9 +48,13 @@ public class Scene {
       IRImageYSize = -1;
    }
    
-   /** adt_classify in ADT code */
-   public static void DetermineSceneType(boolean RunFullAnalysis)
-   {
+   /**
+    * adt_classify in original ADT codebase.
+    *
+    * @param RunFullAnalysis Whether or not a complete scene analysis should
+    *                        happen.
+    */
+   public static void DetermineSceneType(boolean RunFullAnalysis) {
       
       int XInc;
       int PreviousHistoryEyeSceneID = -1;
@@ -631,20 +635,25 @@ public class Scene {
    
    /**
     * Determine storm location using 10^ Log-spiral analysis.
-    * Algorithm will attempt to match the spiral with the image
-    * pixels at or below the threshold temperature based on
-    * BD-enhancement curve values.
     *
-    * Outputs : SpiralArcLatitude    - best latitude location from analysis
-    *           SpiralArcLongitude   - best longitude location from analysis
-    *           SpiralArcDistance    - number of consecutive arcs through
-    *                                  which spiral passes
+    * <p>Algorithm will attempt to match the spiral with the image
+    * pixels at or below the threshold temperature based on
+    * BD-enhancement curve values.</p>
     *
     * @param InputLatitude Center latitude of analysis grid
     * @param InputLongitude Center longitude of analysis grid
     * @param TemperatureThreshold Temperature threshold value
     * @param AnalysisTypeIDValue 1=search at single point
     *                            2=search over 2^box
+    *
+    * @return Array of three double values. In order, they
+    * are:
+    * <ol>
+    *   <li>SpiralArcLatitude - best latitude location from analysis.</li>
+    *   <li>SpiralArcLongitude - best longitude location from analysis.</li>
+    *   <li>SpiralArcDistance - number of consecutive arcs through which
+    *   spiral passes</li>
+    * </ol>
     */
    public static double[] adt_logspiral(double InputLatitude,
                                         double InputLongitude,
