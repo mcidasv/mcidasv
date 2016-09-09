@@ -202,6 +202,9 @@ public class JythonShell extends InteractiveShell {
     @Override public void close() {
         saveWindowBounds(idv.getStore(), frame.getBounds());
         saveDividerLocation(idv.getStore(), getDividerLocation());
+        interp.close();
+        outputStream = null;
+        interp = null;
         super.close();
     }
     

@@ -1049,10 +1049,41 @@ public class JythonManager extends IdvManager implements ActionListener,
 
                 @Override public void write(int b) { }
             };
+            // NOTE: because this only ever happens in background mode, we
+            // don't have to worry about calling resetOutputStreams(...);
+            // once our interpreter closes, we quit the session
             interp.setOut(outputStream);
             interp.setErr(outputStream);
+            
         }
         return interp;
+    }
+    
+    /**
+     * Reset Jython's STDERR/STDOUT streams.
+     */
+    private void resetOutputStreams() {
+        // The reason this method exists is because of Jython's overuse of
+        // static fields and the IDV's eagerness to create new Jython
+        // interpreters.
+        //
+        // Jython's STDERR/STDOUT is static, so if you change the
+        // streams for one Jython interpreter, you've changed the streams for
+        // *all* of the existing interpreters!
+        if (!interpreters.isEmpty()) {
+            PythonInterpreter i = interpreters.get(0);
+            PySystemState sysState = i.getSystemState();
+            
+            PyObject defaultErr = sysState.__stderr__;
+            PyObject defaultOut = sysState.__stdout__;
+            
+            if (!defaultErr.equals(sysState.stderr)) {
+                i.setErr(defaultErr);
+            }
+            if (!defaultOut.equals(sysState.stdout)) {
+                i.setOut(defaultOut);
+            }
+        }
     }
     
     /**
@@ -1082,6 +1113,7 @@ public class JythonManager extends IdvManager implements ActionListener,
      */
     public void removeInterpreter(PythonInterpreter interp) {
         interpreters.remove(interp);
+        resetOutputStreams();
     }
     
     /**
