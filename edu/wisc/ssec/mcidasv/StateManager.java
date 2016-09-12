@@ -78,30 +78,30 @@ public class StateManager extends ucar.unidata.idv.StateManager
     /** Logging object. */
     private static final Logger logger =
         LoggerFactory.getLogger(StateManager.class);
-
+        
     /** Error message shown when given userpath cannot be used. */
     public static final String USERPATH_IS_BAD_MESSAGE =
         "<html>McIDAS-V is unable to create or write to the local user's " +
         "directory.<br>Please select a directory.</html>";
-
+        
     /** Message shown when asking the user to select a userpath. */
     public static final String USERPATH_PICK =
         "Please select a directory to use as the McIDAS-V user path.";
-
+        
     /**
      * Lazily-loaded VisAD build date. Value may be {@code null}.
      *
      * @see #getVisadDate()
      */
     private String visadDate;
-
+    
     /**
      * Lazily-loaded VisAD revision number. Value may be {@code null}.
      *
      * @see #getVisadVersion()
      */
     private String visadVersion;
-
+    
     /**
      * Lazily-loaded {@code ncIdv.jar} build timestamp. Value may be
      * {@code null}.
@@ -109,25 +109,25 @@ public class StateManager extends ucar.unidata.idv.StateManager
      * @see #getNetcdfDate()
      */
     private String netcdfDate;
-
+    
     /**
      * Lazily-loaded {@code ncIdv.jar} version. Value may be {@code null}.
      *
      * @see #getNetcdfVersion()
      */
     private String netcdfVersion;
-
+    
     /**
      * Lazily-loaded {@code mcidasv.jar} version. Value may be {@code null}.
      *
      * @see #getMcIdasVersion()
      */
     private String version;
-
+    
     public StateManager(IntegratedDataViewer idv) {
         super(idv);
     }
-
+    
     /**
      * Override to set the right user directory.
      *
@@ -141,7 +141,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         initObjectStore(store);
         return store;
     }
-
+    
     /**
      * Initialize the given object store. This mostly initializes the user's
      * {@literal "userpath"} directory when it is first created.
@@ -159,7 +159,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
                 System.exit(0);
             }
         }
-
+        
         if (store.getMadeUserDirectory()) {
             initNewUserDirectory(store.getUserDirectory());
         }
@@ -309,7 +309,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return value;
     }
-
+    
     /**
      * Find the value associated with the given ID by checking the
      * {@literal "properties"}, and if nothing was found, check the preferences.
@@ -325,7 +325,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return o;
     }
-
+    
     /**
      * Find the {@link String} value associated with the given ID by checking
      * the {@literal "properties"}, and if nothing was found, check the
@@ -345,7 +345,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return value;
     }
-
+    
     /**
      * Find the {@link Integer} value associated with the given ID by checking
      * the {@literal "properties"}, and if nothing was found, check the
@@ -365,7 +365,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return value;
     }
-
+    
     /**
      * Find the {@link Double} value associated with the given ID by checking
      * the {@literal "properties"}, and if nothing was found, check the
@@ -385,7 +385,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return value;
     }
-
+    
     /**
      * Find the {@link Boolean} value associated with the given ID by checking
      * the {@literal "properties"}, and if nothing was found, check the
@@ -405,7 +405,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return value;
     }
-
+    
     /**
      * Returns information about the current version of McIDAS-V and the IDV,
      * along with their respective build dates.
@@ -416,9 +416,9 @@ public class StateManager extends ucar.unidata.idv.StateManager
         String versionFile = (String)getProperty(Constants.PROP_VERSIONFILE);
         Properties props =
             Misc.readProperties(versionFile, null, getClass());
-
+            
         String mcvBuild = props.getProperty(PROP_BUILD_DATE, "Unknown");
-
+        
         Hashtable<String, String> table = new Hashtable<>();
         table.put("mcv.version.general", getMcIdasVersion());
         table.put("mcv.version.build", mcvBuild);
@@ -430,7 +430,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         table.put("netcdf.version.build", getNetcdfDate());
         return table;
     }
-
+    
     /**
      * Return the timestamp from when {@code ncIdv.jar} was created.
      *
@@ -444,7 +444,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return netcdfDate;
     }
-
+    
     /**
      * Return the version information within {@code ncIdv.jar}.
      *
@@ -458,7 +458,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return netcdfVersion;
     }
-
+    
     /**
      * Return the timestamp from when visad.jar was created.
      * 
@@ -473,7 +473,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return visadDate;
     }
-
+    
     /**
      * Return the {@literal "version"} of VisAD.
      * 
@@ -488,25 +488,25 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return visadVersion;
     }
-
+    
     public String getIdvVersion() {
         return getVersion();
     }
-
+    
     /**
      * Overridden to set default of McIDAS-V
      */
     @Override public String getStoreSystemName() {
         return StartupManager.getInstance().getPlatform().getUserDirectory();
     }
-
+    
     /**
      * Overridden to get dir of the unnecessary second level directory.
      */
     @Override public String getStoreName() {
         return "";
     }
-
+    
     /**
      * Connect to McIDAS-V website and look for latest stable version.
      *
@@ -526,7 +526,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return version.trim();
     }
-
+    
     /**
      * Connect to McIDAS-V website and look for latest pre-release version.
      *
@@ -557,7 +557,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return version.trim();
     }
-
+    
     /**
      * Connect to McIDAS website and look for latest notice.
      *
@@ -576,7 +576,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         notice = notice.replaceAll("<[/?]notice>","");
         return notice.trim();
     }
-
+    
     /**
      * Compare version strings.
      *
@@ -598,7 +598,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
         int thatInt = versionToInteger(thatVersion);
         return thatInt - thisInt;
     }
-
+    
     /**
      * Turn version strings of the form {@code #.#(a#)}, where # is one or two
      * digits, a is one of alpha or beta, and () is optional, into an integer
@@ -608,44 +608,43 @@ public class StateManager extends ucar.unidata.idv.StateManager
      *
      * @return Integer representation of {@code version}.
      */
-	public static int versionToInteger(String version) {
-		int value = 0;
-		int p;
-		String part;
-		Character one = null;
-		
-		try {
-			
-			// Major version
-			p = version.indexOf('.');
-			if (p > 0) {
-				part = version.substring(0,p);
-				value += Integer.parseInt(part) * 1000000;
-				version = version.substring(p+1);
-			}
-			
-			// Minor version
-			int minor = 0;
-			int i = 0;
-			for (i = 0; i < 2 && i < version.length(); i++) {
-				one = version.charAt(i);
-				if (Character.isDigit(one)) {
-					if (i > 0) {
-					    minor *= 10;
-                    }
-					minor += Character.digit(one, 10) * 10000;
-				} else {
-					break;
-				}
-			}
-			value += minor;
-			if (one != null) {
-			    version = version.substring(i);
+    public static int versionToInteger(String version) {
+        int value = 0;
+        int p;
+        String part;
+        Character one = null;
+        
+        try {
+            // Major version
+            p = version.indexOf('.');
+            if (p > 0) {
+                part = version.substring(0,p);
+                value += Integer.parseInt(part) * 1000000;
+                version = version.substring(p+1);
             }
-	
-			// Alpha/beta/update/release status
-			if (version.length() == 0) {
-			    value += 300;
+            
+            // Minor version
+            int minor = 0;
+            int i = 0;
+            for (i = 0; i < 2 && i < version.length(); i++) {
+                one = version.charAt(i);
+                if (Character.isDigit(one)) {
+                    if (i > 0) {
+                        minor *= 10;
+                    }
+                    minor += Character.digit(one, 10) * 10000;
+                } else {
+                    break;
+                }
+            }
+            value += minor;
+            if (one != null) {
+                version = version.substring(i);
+            }
+            
+            // Alpha/beta/update/release status
+            if (version.length() == 0) {
+                value += 300;
             } else if (version.charAt(0) == 'b') {
                 value += 200;
             } else if (version.charAt(0) == 'a') {
@@ -655,141 +654,147 @@ public class StateManager extends ucar.unidata.idv.StateManager
             } else if (version.charAt(0) == 'r') {
                 value += 400;
             }
-			for (i = 0; i < version.length(); i++) {
-				one = version.charAt(i);
-				if (Character.isDigit(one)) {
-				    break;
+            for (i = 0; i < version.length(); i++) {
+                one = version.charAt(i);
+                if (Character.isDigit(one)) {
+                    break;
                 }
-			}
-			if (one != null) {
-			    version = version.substring(i);
             }
-	
-			// Alpha/beta version
-			if (version.length() > 0) {
+            if (one != null) {
+                version = version.substring(i);
+            }
+            
+            // Alpha/beta version
+            if (version.length() > 0) {
                 value += Integer.parseInt(version);
             }
-		} catch (Exception e) {
-		    
+        } catch (Exception e) {
+            
         }
-		
-		return value;
-	}
-	
-	public boolean getIsPrerelease() {
-		boolean isPrerelease = false;
-		String version = getMcIdasVersion();
-		if (version.contains("a") || version.contains("b")) {
-			isPrerelease = true;
-		}
-		return isPrerelease;
-	}
-	
-	public void checkForNewerVersion(boolean notifyDialog) {
-		checkForNewerVersionStable(notifyDialog);
-    	if (getStore().get(Constants.PREF_PRERELEASE_CHECK, getIsPrerelease())) {
-    		checkForNewerVersionPrerelease(notifyDialog);
-    	}
-	}
-	
-	public void checkForNewerVersionStable(boolean notifyDialog) {
-
-		// get the stable version from the website (for statistics recording)
-		String thatVersion = getMcIdasVersionStable();
-
-		// shortcut the rest of the process if we are processing offscreen
-		if (getIdv().getArgsManager().getIsOffScreen()) {
-			return;
-		}
-
-		String thisVersion = getMcIdasVersion();
-		String titleText = "Version Check";
-		
-		if (thisVersion.isEmpty() || thatVersion.isEmpty()) {
-			if (notifyDialog) {
-				JOptionPane.showMessageDialog(null, "Version check failed", titleText, 
-						JOptionPane.WARNING_MESSAGE);
-			}
-		}
-		else if (compareVersions(thisVersion, thatVersion) > 0) {
-			String labelText = "<html>Version <b>" + thatVersion + "</b> is available<br><br>";
-			labelText += "Visit <a href=\"" + Constants.HOMEPAGE_URL + "\">";
-			labelText += Constants.HOMEPAGE_URL + "</a> to download</html>";
-			
-			JPanel backgroundColorGetterPanel = new JPanel();
-			JEditorPane messageText = new JEditorPane("text/html", labelText);
-			messageText.setBackground(backgroundColorGetterPanel.getBackground());
-			messageText.setEditable(false);
-			messageText.addHyperlinkListener(this);
-
-//			JLabel message = new JLabel(labelText, JLabel.CENTER);
-			JOptionPane.showMessageDialog(null, messageText, titleText, 
-					JOptionPane.INFORMATION_MESSAGE);
-		}
-		else {
-			if (notifyDialog) {
-				String labelText = "<html>This version (<b>" + thisVersion + "</b>) is up to date</html>";
-				JLabel message = new JLabel(labelText, JLabel.CENTER);
-				JOptionPane.showMessageDialog(null, message, titleText, 
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-		}
-		
-	}
-	
-	public void checkForNewerVersionPrerelease(boolean notifyDialog) {
-		
-		// shortcut the rest of the process if we are processing offscreen
-		if (getIdv().getArgsManager().getIsOffScreen()) {
-			return;
-		}
-
-		String thisVersion = getMcIdasVersion();
-		String thatVersion = getMcIdasVersionPrerelease();
-		String titleText = "Prerelease Check";
-		
-		if (thisVersion.isEmpty() || thatVersion.isEmpty()) {
-			if (notifyDialog) {
-				JOptionPane.showMessageDialog(null, "No prerelease version available", titleText, 
-						JOptionPane.WARNING_MESSAGE);
-			}
-		} else if (compareVersions(thisVersion, thatVersion) > 0) {
-			String labelText = "<html>Prerelease <b>" + thatVersion + "</b> is available<br><br>";
-			labelText += "Visit <a href=\"" + Constants.HOMEPAGE_URL+'/'+Constants.PRERELEASE_URL + "\">";
-			labelText += Constants.HOMEPAGE_URL+'/'+Constants.PRERELEASE_URL + "</a> to download</html>";
-			
-			JPanel backgroundColorGetterPanel = new JPanel();
-			JEditorPane messageText = new JEditorPane("text/html", labelText);
-			messageText.setBackground(backgroundColorGetterPanel.getBackground());
-			messageText.setEditable(false);
-			messageText.addHyperlinkListener(this);
-
-//			JLabel message = new JLabel(labelText, JLabel.CENTER);
-			JOptionPane.showMessageDialog(null, messageText, titleText, 
-					JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			if (notifyDialog) {
-				String labelText = "<html>This version (<b>" + thisVersion + "</b>) is up to date</html>";
-				JLabel message = new JLabel(labelText, JLabel.CENTER);
-				JOptionPane.showMessageDialog(null, message, titleText, 
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-		}
-		
-	}
-
+        return value;
+    }
+    
+    public boolean getIsPrerelease() {
+        boolean isPrerelease = false;
+        String version = getMcIdasVersion();
+        if (version.contains("a") || version.contains("b")) {
+            isPrerelease = true;
+        }
+        return isPrerelease;
+    }
+    
+    public void checkForNewerVersion(boolean notifyDialog) {
+        checkForNewerVersionStable(notifyDialog);
+        if (getStore().get(Constants.PREF_PRERELEASE_CHECK, getIsPrerelease())) {
+            checkForNewerVersionPrerelease(notifyDialog);
+        }
+    }
+    
+    public void checkForNewerVersionStable(boolean notifyDialog) {
+        
+        // get the stable version from the website (for statistics recording)
+        String thatVersion = getMcIdasVersionStable();
+        
+        // shortcut the rest of the process if we are processing offscreen
+        if (getIdv().getArgsManager().getIsOffScreen()) {
+            return;
+        }
+        
+        String thisVersion = getMcIdasVersion();
+        String titleText = "Version Check";
+        
+        if (thisVersion.isEmpty() || thatVersion.isEmpty()) {
+            if (notifyDialog) {
+                JOptionPane.showMessageDialog(null,
+                                              "Version check failed",
+                                              titleText,
+                                              JOptionPane.WARNING_MESSAGE);
+            }
+        } else if (compareVersions(thisVersion, thatVersion) > 0) {
+            String labelText = "<html>Version <b>" + thatVersion + "</b> is available<br><br>";
+            labelText += "Visit <a href=\"" + Constants.HOMEPAGE_URL + "\">";
+            labelText += Constants.HOMEPAGE_URL + "</a> to download</html>";
+            
+            JPanel backgroundColorGetterPanel = new JPanel();
+            JEditorPane messageText = new JEditorPane("text/html", labelText);
+            messageText.setBackground(backgroundColorGetterPanel.getBackground());
+            messageText.setEditable(false);
+            messageText.addHyperlinkListener(this);
+            
+            //JLabel message = new JLabel(labelText, JLabel.CENTER);
+            JOptionPane.showMessageDialog(null,
+                                          messageText,
+                                          titleText,
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            if (notifyDialog) {
+                String labelText = "<html>This version (<b>" + thisVersion + "</b>) is up to date</html>";
+                JLabel message = new JLabel(labelText, JLabel.CENTER);
+                JOptionPane.showMessageDialog(null,
+                                              message,
+                                              titleText,
+                                              JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+    
+    public void checkForNewerVersionPrerelease(boolean notifyDialog) {
+        
+        // shortcut the rest of the process if we are processing offscreen
+        if (getIdv().getArgsManager().getIsOffScreen()) {
+            return;
+        }
+        
+        String thisVersion = getMcIdasVersion();
+        String thatVersion = getMcIdasVersionPrerelease();
+        String titleText = "Prerelease Check";
+        
+        if (thisVersion.isEmpty() || thatVersion.isEmpty()) {
+            if (notifyDialog) {
+                JOptionPane.showMessageDialog(
+                    null, "No prerelease version available", titleText,
+                    JOptionPane.WARNING_MESSAGE);
+            }
+        } else if (compareVersions(thisVersion, thatVersion) > 0) {
+            String labelText = "<html>Prerelease <b>" + thatVersion + "</b> is available<br><br>";
+            labelText += "Visit <a href=\"" + Constants.HOMEPAGE_URL+'/'+Constants.PRERELEASE_URL + "\">";
+            labelText += Constants.HOMEPAGE_URL+'/'+Constants.PRERELEASE_URL + "</a> to download</html>";
+            
+            JPanel backgroundColorGetterPanel = new JPanel();
+            JEditorPane messageText = new JEditorPane("text/html", labelText);
+            messageText.setBackground(backgroundColorGetterPanel.getBackground());
+            messageText.setEditable(false);
+            messageText.addHyperlinkListener(this);
+            
+            // JLabel message = new JLabel(labelText, JLabel.CENTER);
+            JOptionPane.showMessageDialog(null,
+                                          messageText,
+                                          titleText,
+                                          JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            if (notifyDialog) {
+                String labelText = "<html>This version (<b>" + thisVersion + "</b>) is up to date</html>";
+                JLabel message = new JLabel(labelText, JLabel.CENTER);
+                JOptionPane.showMessageDialog(null,
+                                              message,
+                                              titleText,
+                                              JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+    
     public void checkForNotice(boolean notifyDialog) {
-
+        
         // Shortcut this whole process if we are processing offscreen
         if (getIdv().getArgsManager().getIsOffScreen()) {
             return;
         }
-
+        
         String thisNotice = getNoticeCached().trim();
         String thatNotice = getNoticeLatest().trim();
         String titleText = "New Notice";
         String labelText = thatNotice;
-
+        
         if (thatNotice.isEmpty()) {
             setNoticeCached(thatNotice);
             if (notifyDialog) {
@@ -800,7 +805,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
             }
         } else if (!thisNotice.equals(thatNotice)) {
             setNoticeCached(thatNotice);
-
+            
             JPanel backgroundColorGetterPanel = new JPanel();
             JEditorPane messageText = new JEditorPane("text/html", labelText);
             messageText.setBackground(backgroundColorGetterPanel.getBackground());
@@ -822,7 +827,7 @@ public class StateManager extends ucar.unidata.idv.StateManager
             }
         }
     }
-
+    
     /**
      * Debug a McIDAS-V {@literal "system notice"} before sending it to all
      * users!
@@ -838,19 +843,20 @@ public class StateManager extends ucar.unidata.idv.StateManager
         if (getIdv().getArgsManager().getIsOffScreen()) {
             return;
         }
-
+        
         String thisNotice;
         thisNotice = disableCache ? "" : getNoticeCached().trim();
         String thatNotice = noticeContents.trim();
         String labelText = thatNotice;
-
+        
         if (thatNotice.isEmpty()) {
             if (!disableCache) {
                 setNoticeCached(thatNotice);
             }
             if (notifyDialog) {
                 String titleText = "No Notice";
-                JLabel message = new JLabel("There is no current notice", JLabel.CENTER);
+                JLabel message =
+                    new JLabel("There is no current notice", JLabel.CENTER);
                 JOptionPane.showMessageDialog(null, message, titleText,
                     JOptionPane.INFORMATION_MESSAGE);
             }
@@ -880,11 +886,11 @@ public class StateManager extends ucar.unidata.idv.StateManager
             }
         }
     }
-
+    
     private String getNoticePath() {
         return StartupManager.getInstance().getPlatform().getUserFile("notice.txt");
     }
-
+    
     private String getNoticeCached() {
         StringBuilder notice = new StringBuilder(1024);
         try{
@@ -900,9 +906,9 @@ public class StateManager extends ucar.unidata.idv.StateManager
         }
         return notice.toString();
     }
-
+    
     private void setNoticeCached(String notice) {
-        try{
+        try {
             FileWriter fstream = new FileWriter(getNoticePath());
             BufferedWriter out = new BufferedWriter(fstream);
             out.write(notice);
