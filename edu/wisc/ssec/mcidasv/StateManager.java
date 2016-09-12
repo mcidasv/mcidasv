@@ -54,11 +54,18 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.util.SystemState;
 
 public class StateManager extends ucar.unidata.idv.StateManager implements Constants, HyperlinkListener {
-
+    
+    /** Logging object. */
+    private static final Logger logger =
+        LoggerFactory.getLogger(StateManager.class);
+    
     public static final String USERPATH_IS_BAD_MESSAGE = "<html>McIDAS-V is unable to create or write to the local user's directory.<br>Please select a directory.</html>";
 
     public static final String USERPATH_PICK = "Please select a directory to use as the McIDAS-V user path.";
@@ -129,6 +136,12 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
      * @param directory McIDAS-V user directory. Cannot be {@code null}.
      */
     @Override protected void initUserDirectory(File directory) {
+        File idvRbi = new File(IOUtil.joinDir(directory, "idv.rbi"));
+        if (idvRbi.exists()) {
+            if (!idvRbi.delete()) {
+                logger.warn("Could not delete '"+idvRbi+'\'');
+            }
+        }
         File rbiFile = new File(IOUtil.joinDir(directory, "mcidasv.rbi"));
         if (!rbiFile.exists()) {
             String defaultRbi =
