@@ -222,15 +222,10 @@ public class FileFinder {
         Finder f = new Finder(globPattern);
         List<String> results = Collections.emptyList();
         try {
-            Path p = Paths.get(path);
-            if (Files.isSymbolicLink(p)) {
-                p = Files.readSymbolicLink(p);
-            }
-            Files.walkFileTree(p,
-                               EnumSet.noneOf(FileVisitOption.class),
+            Files.walkFileTree(Paths.get(path),
+                               EnumSet.of(FileVisitOption.FOLLOW_LINKS),
                                depth,
                                f);
-
             results = f.results();
         } catch (IOException e) {
             logger.error("Could not search '"+path+"'", e);
