@@ -219,10 +219,13 @@ public class FileFinder {
                                          String globPattern,
                                          int depth)
     {
-        Path p = Paths.get(path);
         Finder f = new Finder(globPattern);
-        List<String> results;
+        List<String> results = Collections.emptyList();
         try {
+            Path p = Paths.get(path);
+            if (Files.isSymbolicLink(p)) {
+                p = Files.readSymbolicLink(p);
+            }
             Files.walkFileTree(p,
                                EnumSet.noneOf(FileVisitOption.class),
                                depth,
@@ -230,7 +233,6 @@ public class FileFinder {
 
             results = f.results();
         } catch (IOException e) {
-            results = Collections.emptyList();
             logger.error("Could not search '"+path+"'", e);
         }
         return results;
