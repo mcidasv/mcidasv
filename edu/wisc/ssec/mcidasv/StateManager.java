@@ -120,6 +120,32 @@ public class StateManager extends ucar.unidata.idv.StateManager implements Const
     }
 
     /**
+     * Initialize the McIDAS-V user directory (if it is not already
+     * initalized).
+     *
+     * <p>Here, initialization means {@literal "the user directory exists,
+     * and contains a barebones version of mcidasv.rbi"}.</p>
+     *
+     * @param directory McIDAS-V user directory. Cannot be {@code null}.
+     */
+    @Override protected void initUserDirectory(File directory) {
+        File rbiFile = new File(IOUtil.joinDir(directory, "mcidasv.rbi"));
+        if (!rbiFile.exists()) {
+            String defaultRbi =
+                IOUtil.readContents(
+                    "/edu/wisc/ssec/mcidasv/resources/userrbi.rbi",
+                    (String)null);
+            if (defaultRbi != null) {
+                try {
+                    IOUtil.writeFile(rbiFile, defaultRbi);
+                } catch (Exception exc) {
+                    logException("Writing default rbi", exc);
+                }
+            }
+        }
+    }
+
+    /**
      * Handle a change to a link
      *
      * @param e  the link's event
