@@ -28,17 +28,15 @@
 
 package edu.wisc.ssec.mcidasv.adt;
 
-import java.lang.Math;
-import java.lang.String;
-
 public class Intensity {
 
    private static int MWAnalysisFlag;
    private static int Rule9StrengthFlag;
 
-   private static double[] BDCurve_Points =
-   { 30.0,  9.0,-30.0,-42.0,-54.0,
-    -64.0,-70.0,-76.0,-80.0,-84.0,-100.0};
+   private static double[] BDCurve_Points = {
+       30.0, 9.0, -30.0, -42.0, -54.0, -64.0, -70.0, -76.0, -80.0, -84.0,
+       -100.0
+   };
 
    public Intensity() {
       MWAnalysisFlag = 0;
@@ -47,10 +45,12 @@ public class Intensity {
    
    /**
     * Compute intensity values CI, Final T#, and Raw T#.
-    * Inputs  : RedoIntensityFlag_Input  - Recalculate Intensity flag value
-    * Outputs : None
-    * Return  : 71 : storm is over land
-    *            0 : o.k.
+    *
+    * @param RedoIntensityFlagValue Recalculate Intensity flag value.
+    * @param RunFullAnalysis Whether or not a full analysis should be
+    *                        performed.
+    * @param HistoryFileName Path to history file.
+    *
     */
    public static void CalculateIntensity(int RedoIntensityFlagValue,
                                          boolean RunFullAnalysis,
@@ -85,7 +85,8 @@ public class Intensity {
          /* Perform Spot Analysis (only T#raw) */
          History.IRCurrentRecord.Tfinal = TnoRaw;
          History.IRCurrentRecord.CI = TnoRaw;
-         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,TnoRaw,Latitude,Longitude);
+//         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,TnoRaw,Latitude,Longitude);
+         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,Latitude,Longitude);
          History.IRCurrentRecord.CIadjp = CIadjP;
          History.IRCurrentRecord.rule9 = 0;
       } else {
@@ -103,7 +104,8 @@ public class Intensity {
                Rule9StrengthFlag = (int)RetVals[1];
                History.IRCurrentRecord.CI = CI;
                History.IRCurrentRecord.rule9 = Rule9StrengthFlag;
-               CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,TnoRaw,Latitude,Longitude);
+//               CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,TnoRaw,Latitude,Longitude);
+               CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,Latitude,Longitude);
                History.IRCurrentRecord.CIadjp = CIadjP;
             } else {
                History.IRCurrentRecord.CI = TnoRaw;
@@ -127,13 +129,15 @@ public class Intensity {
    
    /**
     * Compute initial Raw T-Number value using original Dvorak rules
-    * Inputs  : RedoIntensityFlag_Input - Redo Intensity Flag value
-    *           MWAnalysisFlag_Input    - MW Analysis Flag value
-    * Outputs : None
-    * Return  : Raw T# value
+    *
+    * @param RedoIntensityFlag Recalculate Intensity flag value.
+    * @param HistoryFileName Path to history file.
+    *
+    * @return Array of two doubles. First value represents
+    * intensity estimate, and the second is the analysis flag.
     */
-   public static double[] adt_TnoRaw(int RedoIntensityFlag,String HistoryFileName)
-
+   public static double[] adt_TnoRaw(int RedoIntensityFlag,
+                                     String HistoryFileName)
    {
 
       int XInc;
@@ -888,11 +892,14 @@ public class Intensity {
    
    /**
     * Compute time averaged T-Number value using previous and current
-    * intensity estimates.  Average using a time-weighted averaging
-    * scheme.
-    * Inputs  : TimeAvgDurationID : time average duration flag : 0=6 hour;1=3 hour
-    * Outputs : None
-    * Return  : Final T# value
+    * intensity estimates.
+    *
+    * <p>Average using a time-weighted averaging scheme.</p>
+    *
+    * @param TimeAvgDurationID Time average duration flag. Use {@code 0} for
+    *                          6 hour and {@code 1} for 3 hour.
+    *
+    * @return Final T# value.
     */
    public static double adt_TnoFinal(int TimeAvgDurationID) {
       /* double TnoFinalValue = 0.0; */
@@ -1001,11 +1008,14 @@ public class Intensity {
    
    /**
     * Compute final CI-Number applying various Dvorak Rules, such
-    * as the now famous Rule 9
-    * Inputs  : None
-    * Outputs : CurrentStrenghIDValue_Return - current strengthening/weakening flag
-    * Return  : Current Intensity (CI) #
+    * as the now famous Rule 9.
+    *
+    * @param HistoryFileName Path to history file.
+    *
+    * @return Array of two doubles. First value represents current intensity,
+    * and the second represents the current strengthening/weakening flag.
     */
+   // TODO(jon): WHAT IS THIS FAMOUS RULE NUMBER 9!?
    public static double[] adt_CIno(String HistoryFileName) {
 
       int RapidDissIDValue = 0;
@@ -1040,7 +1050,8 @@ public class Intensity {
             CurrentStrengthIDValue = 2;
          }
          /* Apply Latitude Bias Adjustment to CI value */
-         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,IntensityValue,Latitude,Longitude);
+//         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,IntensityValue,Latitude,Longitude);
+         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,Latitude,Longitude);
          History.IRCurrentRecord.CIadjp = CIadjP;
          /* return Raw T# for CI# for initial analysis */
          return new double[] { IntensityValue, (double)CurrentStrengthIDValue };                                /* EXIT */
@@ -1050,7 +1061,8 @@ public class Intensity {
       if((Rule8Current>=30)&&(Rule8Current<=33)) {
          IntensityValue = History.IRCurrentRecord.Tfinal;
          /* Apply Latitude Bias Adjustment to CI value */
-         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,IntensityValue,Latitude,Longitude);
+//         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,IntensityValue,Latitude,Longitude);
+         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,Latitude,Longitude);
          History.IRCurrentRecord.CIadjp = CIadjP;
          CurrentStrengthIDValue = 0;
          return new double[] { IntensityValue, (double)CurrentStrengthIDValue };                                /* EXIT */
@@ -1124,7 +1136,8 @@ public class Intensity {
          /* current record is before first record in history file */
          CurrentStrengthIDValue=0;
          /* Apply Latitude Bias Adjustment to CI value */
-         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,IntensityValue,Latitude,Longitude);
+//         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,IntensityValue,Latitude,Longitude);
+         CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,Latitude,Longitude);
          History.IRCurrentRecord.CIadjp = CIadjP;
          /* return Final T# for CI# for initial analysis */
          return new double[] { IntensityValue, (double)CurrentStrengthIDValue };                                /* EXIT */
@@ -1204,7 +1217,8 @@ public class Intensity {
          RapidDissIDValue = 0;
       }
       /* Apply Latitude Bias Adjustment to CI value */
-      CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,CIValue,Latitude,Longitude);
+//      CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,CIValue,Latitude,Longitude);
+      CIadjP = adt_latbias(InitStrengthTF,LandFlagTF,HistoryFileName,Latitude,Longitude);
       /* System.out.printf("CIno: ciadjp=%f\n",CIadjP); */
       History.IRCurrentRecord.CIadjp = CIadjP;
       History.IRCurrentRecord.rapiddiss = RapidDissIDValue;
@@ -1216,17 +1230,19 @@ public class Intensity {
    }
    
    /**
-    * Apply Latitude Bias Adjustment to CI value
-    * Inputs  : InitialCIValue - initial CI value
-    *           InputLatitude  - current latitude of storm
-    *           InputLongitude - current longitude of storm
-    * Outputs : None
-    * Return  : Adjusted MSLP value
+    * Apply Latitude Bias Adjustment to CI value.
+    *
+    * @param InitStrengthTF
+    * @param LandFlagTF Flag that represents land status.
+    * @param HistoryFileName Path to history file.
+    * @param InputLatitude Current latitude of storm.
+    * @param InputLongitude Current longitude of storm.
+    *
+    * @return Adjusted MSLP value.
     */
    public static double adt_latbias(boolean InitStrengthTF,
                                     boolean LandFlagTF,
                                     String HistoryFileName,
-                                    double InitialCIValue,
                                     double InputLatitude,
                                     double InputLongitude)
    {
@@ -1258,13 +1274,21 @@ public class Intensity {
    }
    
    /**
-    * Search for valid scene range for Latitude Bias Adjustment application
+    * Search for valid scene range for Latitude Bias Adjustment application.
     * Inputs  : None
     * Outputs : AdjustmentMultFactor_Return - multiplicative value for merging
     * Return  : 0 - first record in new history file
     *           1 - non Enhanced Infrared scene or intermediate/merging application
     *           2 - entering/leaving valid adjustment time period.  Also used for
     *               non-history file intensity analysis (full adjustment)
+    *
+    * @param HistoryFileName Path to history file.
+    * @param InitStrengthTF
+    * @param LandFlagTF Over land?
+    *
+    * @return Array of two doubles. The first value represents latitude bias
+    * adjustment, while the second value represents the adjustment's
+    * multiplicative factor.
     */
    public static double[] adt_scenesearch(String HistoryFileName,
                                           boolean InitStrengthTF,
@@ -1355,8 +1379,6 @@ public class Intensity {
             AdjustmentMultFactor = -999.0;
          }
       }
-            
       return new double[] { (double)LatBiasAdjFlagID, AdjustmentMultFactor };
    }
-
 }
