@@ -55,11 +55,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
         <td>&quot;AMSR-E L 1b&quot;</td>
         <td>&quot;AMSR&quot;</td>
     </tr>
-        <tr>
+    <tr>
         <td>&quot;AMSR-E L 2a&quot;</td>
         <td>&quot;AMSE&quot;</td>
     </tr>
-        <tr>
+    <tr>
         <td>&quot;AMSR-E Rain Product&quot;</td>
         <td>&quot;AMRR&quot;</td>
     </tr>
@@ -224,86 +224,85 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td valign="top">server=</td>
       <td>ADDE server</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">dataset=</td>
       <td>ADDE dataset group name</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">descriptor=</td>
       <td>ADDE dataset descriptor</td>
     </tr>
     </table></div>
     <div class="TwoTabIndent">Keywords - optional:</div>
   <div class="ThreeTabIndent2"><table class="noborder">
-        <tr>
+    <tr>
       <td valign="top">day=</td>
       <td>single day ('date 1') or as a day range ('begin date','end date'); default=most recent day included in data</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">time=</td>
       <td>('begin time','end time'); default=most recent time included in data</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">coordinateSystem=</td>
       <td>coordinate system to use for retrieving    data; default=server dependent<br>
       AREA = AREA file coordinates - zero based<br>
       LATLON = latitude and longitude coordinates<br>
       IMAGE = image coordinates - one based</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">location=</td>
       <td>(x,y); default=coordinateSystem dependent<br>
       x = AREA line, latitude, or IMAGE line<br>
       y = AREA element, longitude, or IMAGE element</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">place=</td>
       <td>CENTER places specified location (x,y) at    center of panel (default)<br>
           ULEFT places specified location (x,y) at upper-left    coordinate of panel</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">band=</td>
       <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">unit=</td>
       <td>calibration unit to request; default = 'BRIT'</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">position=</td>
       <td>time relative (negative values) or absolute    (positive values) position in the dataset; default=0 (most recent   image)</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">size=</td>
       <td>number of lines and elements to request. Use &quot;ALL&quot; to obtain the full size of the image; default=(480,640).</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">mag=</td>
       <td>magnification of data (line,element), negative    number used for sampling data; default=(1,1)</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">accounting=</td>
       <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">debug=</td>
       <td>send debug information to file; default=False</td>
     </tr>
-            <tr>
+    <tr>
       <td valign="top">track=</td>
       <td>
       True = with real-time data, will wait until the most recent image is complete before pulling it in<br>
       False = with real-time data, will not wait until the most recent image is complete before pulling it in. Dependent on when the loadADDEImage command is run, this may result in an incomplete image.<br>
       default=False</td>
     </tr>
-                <tr>
+    <tr>
       <td valign="top">showUrls=</td>
       <td>
         True = Prints the ADDE URL returned from the server to the Jython Shell once the command has completed<br>
           False = Does not print the ADDE URL returned from the server to the Jython Shell once the command has completed<br>
           default=True</td>
     </tr>
-        <tr>
 </table></div>
 <div class="OneTabIndent">Examples:</div>
   <div class="TwoTabIndent"><em>dataLocal = loadADDEImage(localEntry=desc, size='ALL', mag=(1,1), unit='BRIT',debug=True)</em></div>
@@ -326,102 +325,81 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
       <td>adde.ssec.wisc.edu</td>
     </tr>
     <tr>
-      <td valign="top">calibration-unit-name</td>
-      <td>None</td>
-    </tr>
-        <tr>
       <td valign="top">calibration-scale-factor</td>
       <td>1</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">bands</td>
       <td>[4]</td>
     </tr>
-        <tr>
-      <td valign="top">calinfo</td>
-      <td>[]</td>
-    </tr>
-        <tr>
+    <tr>
       <td valign="top">nominal-time</td>
       <td>2016-03-08 15:15:00Z</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">datetime</td>
       <td>2016-03-08 15:15:18Z</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">directory-block</td>
       <td>list of the first 64 words of the AREA</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">source-type</td>
       <td>'GVAR'</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">band-count</td>
       <td>1</td>
     </tr>
-        <tr>
-      <td valign="top">center-longitude</td>
-      <td>nan</td>
-    </tr>
-        <tr>
+    <tr>
       <td valign="top">lines</td>
       <td>480</td>
     </tr>
-        <tr>
-      <td valign="top">center-latitude-resolution</td>
-      <td>nan</td>
-    </tr>
-        <tr>
+    <tr>
       <td valign="top">day</td>
       <td>'2016068'</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">sensor-id</td>
       <td>180</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">satband-band-label</td>
       <td>10.7 um IR Surface/Cloud-top Temp</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">calibration-type</td>
       <td>'BRIT'</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">start-time</td>
       <td>2016-03-08 15:15:18Z</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">bandNumber</td>
       <td>4</td>
     </tr>
-            <tr>
-      <td valign="top">center-latitude</td>
-      <td>nan</td>
-    </tr>
-        <tr>
+    <tr>
       <td valign="top">url</td>
       <td>URL that prints to Jython Shell when data retrieved</td>
     </tr>
-        <tr>
-      <td valign="top">center-longitude-resolution</td>
-      <td>nan</td>
-    </tr>
-        <tr>
+    <tr>
       <td valign="top">memo-field</td>
       <td>any memos included with data (e.g. the calibration-type)</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">elements</td>
       <td>640</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">bandList</td>
       <td>[4]</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">sensor-type</td>
       <td>'GOES 13 imager'</td>
+    </tr>
     </table></div>
 <div class="TwoTabIndent">These keys and values can be printed as follows:</div>
 <div class="ThreeTabIndent"><em>print dataRemote['satband-band-label']</em></div>
@@ -496,137 +474,147 @@ default=True</td>
     <tr>
       <td valign="top"><strong>Key</strong></td>
       <td><strong>Example Value</strong></td>
+    </tr>
     <tr>
       <td valign="top">server</td>
       <td>'adde.ssec.wisc.edu'</td>
     </tr>
-
     <tr>
       <td valign="top">calibration-unit-name</td>
       <td>None</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">unitList</td>
       <td>['RAW', 'TEMP', 'BRIT']</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">calibration-scale-factor</td>
       <td>1</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">descriptor</td>
       <td>'GE-IR'</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">accounting</td>
       <td>('idv', '0')</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">bands</td>
       <td>[4]</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">resolution</td>
       <td>(4.03157, 4.58618)</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">calinfo</td>
       <td>['RAW', 'RAW', 'TEMP', 'TEMPERATURE', 'BRIT', 'BRIGHTNESS'</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">unitType</td>
       <td>'BRIT'</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">nominal-time</td>
       <td>2016-03-08 15:15:00Z</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">datetime</td>
       <td>2016-03-08 15:15:00Z</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">directory-block</td>
       <td>list of the first 64 words of the AREA</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">source-type</td>
       <td>'GVAR'</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">band-count</td>
       <td>1</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">imageSize</td>
       <td>(2726, 1732)</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">center-longitude</td>
       <td>-71.9527</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">lines</td>
       <td>2726</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">day</td>
       <td>'2016068'</td>
     </tr>
-            <tr>
+    <tr>
       <td valign="top">center-latitude-resolution</td>
       <td>4.03157</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">sensor-id</td>
       <td>180</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">debug</td>
       <td>'false'</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">centerLocation</td>
       <td>(-0.0459699, -71.9527)</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">calibration-type</td>
       <td>'BRIT'</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">start-time</td>
       <td>2016-03-08 15:15:18</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">bandNumber</td>
       <td>4</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">center-latitude</td>
       <td>-0.0459699</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">url</td>
       <td>URL that prints to Jython Shell when data retrieved</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">center-longitude-resolution</td>
       <td>4.58618</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">memo-field</td>
       <td>any memos included with data (e.g. the calibration-type)</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">elements</td>
       <td>1732</td>
     </tr>
-        <tr>
+    <tr>
       <td valign="top">bandList</td>
       <td>[4]</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">time</td>
       <td>'15:15:00'</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">sensor-type</td>
       <td>'GOES 13 imager'</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">dataset</td>
       <td>RTIMAGES</td>
+    </tr>
     </table></div>
 <div class="TwoTabIndent">These keys and values can be accessed the same way as defined in <strong>loadADDEImage</strong>.</div>
     <p><strong><a name="listADDEImageTimes" id="listADDEImageTimes"></a>listADDEImageTimes -</strong> Returns a list of available dates and times of data that match the keywords in the request</p>
@@ -698,15 +686,19 @@ default=True</td>
     <tr>
       <td valign="top"><strong>Key</strong></td>
       <td><strong>Example Value</strong></td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">datetime</td>
       <td>'2016-03-08 15:00:00Z'</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">time</td>
       <td>'15:15:00'</td>
-        <tr>
+    </tr>
+    <tr>
       <td valign="top">day</td>
       <td>'2016068'</td>
+    </tr>
     </table></div>
 <div class="TwoTabIndent">These keys and values can be accessed the same way as defined in <strong>loadADDEImage</strong> assuming that a data object returned from <strong>listADDEImageTimes</strong> was defined (e.g. <em>timeList = listADDEImageTimes(...)</em>).</div>
 <!-- InstanceEndEditable -->
