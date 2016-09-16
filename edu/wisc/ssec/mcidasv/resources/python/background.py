@@ -839,7 +839,10 @@ class _Display(_JavaProxy):
         
     @gui_invoke_later
     def getSize(self):
-        size = self._JavaProxy__javaObject.getComponent().getSize()
+        if getStaticMcv().getArgsManager().getIsOffScreen():
+            size = getStaticMcv().getStateManager().getViewSize()
+        else:
+            size = self._JavaProxy__javaObject.getComponent().getSize()
         return size.getWidth(), size.getHeight()
         
     @gui_invoke_later
