@@ -643,17 +643,17 @@ public class ParamGroupsEditor extends IdvManager implements ActionListener {
         JMenuBar menuBar  = new JMenuBar();
         JMenu    fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
-        fileMenu.add(GuiUtils.makeMenuItem("New Row", this, "addNewRow"));
+        fileMenu.add(GuiUtils.makeMenuItem("New Row...", this, "addNewRow"));
         fileMenu.addSeparator();
-        fileMenu.add(GuiUtils.makeMenuItem("Open", this, "doOpen"));
-        fileMenu.add(GuiUtils.makeMenuItem("Import", this, "doImport"));
+        fileMenu.add(GuiUtils.makeMenuItem("Open...", this, "doOpen"));
+        fileMenu.add(GuiUtils.makeMenuItem("Import...", this, "doImport"));
         fileMenu.addSeparator();
-        fileMenu.add(GuiUtils.makeMenuItem("Export to File", this,
+        fileMenu.add(GuiUtils.makeMenuItem("Export to File...", this,
                                            "doSaveAs"));
-        fileMenu.add(GuiUtils.makeMenuItem("Export to Plugin", this,
+        fileMenu.add(GuiUtils.makeMenuItem("Export to Plugin...", this,
                                            "exportToPlugin"));
-        fileMenu.add(GuiUtils.makeMenuItem("Export Selected to Plugin", this,
-                                           "exportSelectedToPlugin"));
+        fileMenu.add(GuiUtils.makeMenuItem("Export Selected to Plugin...",
+                                           this, "exportSelectedToPlugin"));
         fileMenu.addSeparator();
         fileMenu.add(GuiUtils.makeMenuItem("Close", this, "close"));
 
