@@ -32,7 +32,10 @@ package ucar.unidata.data.gis;
 
 
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
+import loci.formats.IFormatHandler;
 import loci.formats.in.TiffReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.geoloc.projection.*;
 import ucar.unidata.gis.epsg.CoordinateOperationMethod;
 import ucar.unidata.gis.epsg.CoordinateOperationParameter;
@@ -70,7 +73,11 @@ import java.util.List;
  * @version $Revision: 1.10 $
  */
 public class GeotiffAdapter {
-
+    
+    /** Logging object. */
+    public static final Logger logger =
+        LoggerFactory.getLogger(GeotiffAdapter.class);
+    
     /** no value flag */
     private static final int NOVALUE = -1;
 
@@ -244,7 +251,19 @@ public class GeotiffAdapter {
             return field;
         }
     }
-
+    
+    /**
+     * Attempt to extract a {@link DateTime} from the {@code DateTime}
+     * tag in {@code filename}.
+     *
+     * @param filename GeoTIFF file to use. Cannot be {@code null}.
+     *
+     * @return Either the extracted {@code DateTime}, or {@code null} if
+     * there was a problem.
+     *
+     * @throws IOException if {@link TiffForm#initHandler} had issues.
+     * @throws VisADException if {@link TiffForm#initHandler} had issues.
+     */
     private static DateTime extractDateTime(String filename)
         throws IOException, VisADException
     {
@@ -255,11 +274,18 @@ public class GeotiffAdapter {
         Hashtable tiffTags = reader.getMetadata();
         if (tiffTags.containsKey("DateTime")) {
             String s = (String) tiffTags.get("DateTime");
-            result = DateTime.createDateTime(s, "yyyy:MM:dd HH:mm:ss");
+            try {
+                result = DateTime.createDateTime(s, "yyyy:MM:dd HH:mm:ss");
+            } catch (VisADException e) {
+                logger.error("Could not convert DateTime value '"+s+"' using" +
+                    " the 'yyyy:MM:dd HH:mm:ss' format string", e);
+            }
         }
         return result;
     }
+    
 
+    
     /**
      * Get the directory for the TIFF image
      * @return   the directory
