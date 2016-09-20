@@ -837,7 +837,7 @@ public class ParamGroupsEditor extends IdvManager implements ActionListener {
      * @param i Which resource is this.
      */
     private void addList(Element root, int i) {
-        // ported over from ParamGroupsEditor
+        // ported over from ParamDefaultsEditor
         List    groups;
         boolean isWritable = resources.isWritableResource(i);
         if (root != null) {
