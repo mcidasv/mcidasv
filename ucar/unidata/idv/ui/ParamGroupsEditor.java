@@ -929,7 +929,9 @@ public class ParamGroupsEditor extends IdvManager implements ActionListener {
     public void doSave(List infoList, String filename) {
         try {
             Element root = createDom(XmlUtil.makeDocument(), infoList);
-            IOUtil.writeFile(filename, XmlUtil.toString(root));
+            File f = new File(filename);
+            byte[] bytes = XmlUtil.toString(root).getBytes("UTF-8");
+            IOUtil.writeBytes(f, bytes);
         } catch (Exception exc) {
             LogUtil.printException(log_, "Error writing file", exc);
         }

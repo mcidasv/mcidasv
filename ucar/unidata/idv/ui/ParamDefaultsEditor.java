@@ -61,6 +61,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -1140,7 +1141,9 @@ public class ParamDefaultsEditor extends IdvManager implements ActionListener {
     public void doSave(List infoList, String filename) {
         try {
             Element root = createDom(XmlUtil.makeDocument(), infoList);
-            IOUtil.writeFile(filename, XmlUtil.toString(root));
+            File f = new File(filename);
+            byte[] bytes = XmlUtil.toString(root).getBytes("UTF-8");
+            IOUtil.writeBytes(f, bytes);
         } catch (Exception exc) {
             LogUtil.printException(log_, "Error writing file", exc);
         }
