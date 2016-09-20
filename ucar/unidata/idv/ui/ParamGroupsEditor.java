@@ -23,6 +23,8 @@ package ucar.unidata.idv.ui;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -800,19 +802,18 @@ public class ParamGroupsEditor extends IdvManager implements ActionListener {
             if (root == null) {
                 return;
             }
-            //            List               infos = createDataGroupList(root);
-            //            ParamGroupsTable table = getCurrentTable();
-            //            table.getDataGroupList().addAll(infos);
-            //            table.tableChanged();
-            //            saveData();
+            List groups = DataGroup.readGroups(root, new Hashtable(), true);
+            ParamGroupsTable table = getCurrentTable();
+            table.getDataGroupList().addAll(groups);
+            table.tableChanged();
+            saveData();
         } catch (Exception exc) {
             LogUtil.printException(log_, "Error importing file", exc);
         }
     }
 
-
     /**
-     * Open  an xml param defaults file
+     * Open an xml param defaults file
      */
     public void doOpen() {
         String filename = FileManager.getReadFile(FileManager.FILTER_XML);
@@ -826,7 +827,7 @@ public class ParamGroupsEditor extends IdvManager implements ActionListener {
 
 
     /**
-     * Handle the CLOSEANCEL, OK, HELP,  events.
+     * Handle the CLOSE, CANCEL, OK, HELP, etc events.
      *
      * @param event The event
      */
