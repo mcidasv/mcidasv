@@ -822,9 +822,55 @@ public class ParamGroupsEditor extends IdvManager implements ActionListener {
         }
         resources.addResource(filename);
         int index = resources.size() - 1;
-        //TODO        addList(resources.getRoot(index), index);
+        addList(resources.getRoot(index), index);
     }
-
+    
+    /**
+     * Load in the {@link DataGroup DataGroups} defined in the XML from the
+     * given root {@code element}.
+     *
+     * This also creates a new {@link JTable} and adds it into the GUI under
+     * its own tab.
+     *
+     * @param root XML root. {@code null} is allowed, but will result in a tab
+     *             with an empty {@code JTable}.
+     * @param i Which resource is this.
+     */
+    private void addList(Element root, int i) {
+        // ported over from ParamGroupsEditor
+        List    groups;
+        boolean isWritable = resources.isWritableResource(i);
+        if (root != null) {
+            groups = DataGroup.readGroups(root, new Hashtable(), true);
+        } else {
+            if ( !isWritable) {
+                return;
+            }
+            groups = new ArrayList();
+        }
+        
+        if (groups.isEmpty()) {
+            //            infos.add(new ParamInfo("", null, null, null, null));
+        }
+        ParamGroupsTable table = new ParamGroupsTable(groups, isWritable);
+        table.setAutoCreateRowSorter(true);
+        table.getRowSorter().toggleSortOrder(0);
+        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+        String editableStr = "";
+        if ( !isWritable) {
+            editableStr = " (" + Msg.msg("non-editable") + ") ";
+        }
+        JLabel label = new JLabel("<html>"
+            + Msg.msg("Path: ${param1}",
+            resources.get(i)
+                + editableStr) + "</html>");
+        JPanel tablePanel = GuiUtils.topCenter(GuiUtils.inset(label, 4),
+            new JScrollPane(table));
+            
+        tableTabbedPane.add(resources.getShortName(i), tablePanel);
+        myTables.add(table);
+    }
+    
 
     /**
      * Handle the CLOSE, CANCEL, OK, HELP, etc events.
