@@ -1480,7 +1480,7 @@ class _Display(_JavaProxy):
         
         ImageUtils.writeImageToFile(image, kmlImagePath, quality)
         
-    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, bgtransparent=False, createDirectories=False):
+    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, index=-1, bgtransparent=False, createDirectories=False):
         """Save contents of display into the given filename.
         
         Args:
@@ -1548,14 +1548,19 @@ class _Display(_JavaProxy):
         # 
         # print 'isl=%s' % (isl[:-2])
         
-        islAsXml = ImageGenerator.makeXmlFromString(isl[:-2])
-        index = self._getDisplayIndex()
         if index >= 0:
-            xml = '%s\n<image file="%s" quality="%s" view="#%s">%s</image>' % (XmlUtil.getHeader(), filename, quality, index, islAsXml)
-        elif index == -1:
+            anim_index = "animation_index=\"%s\"" % (index)
+        else:
+            anim_index = ''
+        
+        islAsXml = ImageGenerator.makeXmlFromString(isl[:-2])
+        displayIndex = self._getDisplayIndex()
+        if displayIndex >= 0:
+            xml = '%s\n<image file="%s" quality="%s" view="#%s" %s>%s</image>' % (XmlUtil.getHeader(), filename, quality, displayIndex, anim_index, islAsXml)
+        elif displayIndex == -1:
             raise ValueError('Underlying display could not be found (display may have been closed).')
         else:
-            xml = '%s\n<image file="%s" quality="%s">%s</image>' % (XmlUtil.getHeader(), filename, quality, islAsXml)
+            xml = '%s\n<image file="%s" quality="%s" %s>%s</image>' % (XmlUtil.getHeader(), filename, quality, anim_index, islAsXml)
         print 'isl2xml=%s' % (xml)
         islInterpreter.captureImage(islInterpreter.applyMacros(filename), islInterpreter.makeElement(xml))
         
