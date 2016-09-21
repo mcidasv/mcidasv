@@ -28,6 +28,7 @@
 
 package ucar.unidata.idv.ui;
 
+import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -4279,6 +4280,9 @@ public class ImageGenerator extends IdvManager {
                 XmlUtil.getAttribute(
                     scriptingNode, ATTR_ANIMATION_INDEX,
                     "1"));
+        } else {
+            indices = CollectionHelpers.arrList();
+            indices.add(-1);
         }
         
         int idx = 0;
