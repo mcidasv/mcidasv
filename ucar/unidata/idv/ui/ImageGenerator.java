@@ -123,6 +123,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -4271,11 +4272,15 @@ public class ImageGenerator extends IdvManager {
         }
         pushProperties();
 
-        List<Integer> indices = StringUtil.parseIntegerListString(
-                                    XmlUtil.getAttribute(
-                                        scriptingNode, ATTR_ANIMATION_INDEX,
-                                        "1"));
-
+        List<Integer> indices = Collections.emptyList();
+        boolean hasIndices = XmlUtil.hasAttribute(scriptingNode, ATTR_ANIMATION_INDEX);
+        if (hasIndices) {
+            indices = StringUtil.parseIntegerListString(
+                XmlUtil.getAttribute(
+                    scriptingNode, ATTR_ANIMATION_INDEX,
+                    "1"));
+        }
+        
         int idx = 0;
         for (int j = 0; j < indices.size(); j++) {
             List<Image> images = new ArrayList<Image>();
@@ -4284,8 +4289,14 @@ public class ImageGenerator extends IdvManager {
                                  : filename;
             for (int i = 0; i < viewManagers.size(); i++) {
                 ViewManager viewManager = (ViewManager) viewManagers.get(i);
-                if (viewManager.getAnimation() != null)
-                   viewManager.getAnimation().setCurrent(indices.get(j));
+                if (viewManager.getAnimation() != null) {
+                    // if the indices have been specified, set the animation
+                    // to the relevant index. otherwise, simply capture
+                    // the current index.
+                    if (hasIndices) {
+                        viewManager.getAnimation().setCurrent(indices.get(j));
+                    }
+                }
                 putIndex(getProperties(), PROP_VIEWINDEX, idx);
                 String name = viewManager.getName();
                 if (name == null) {
