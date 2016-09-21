@@ -483,6 +483,14 @@ public class GeoGridDataSource extends GridDataSource {
 
 
         JTextArea    dumpText = new JTextArea();
+
+        // TJJ Sep 2016
+        // Metadata should not be editable in this context, this is for viewing only
+        // The setEnabled call helps visually emphasize the text is not editable.
+
+        dumpText.setEditable(false);
+        dumpText.setEnabled(false);
+
         TextSearcher searcher = new TextSearcher(dumpText);
         dumpText.setFont(Font.decode("monospaced"));
         //ByteArrayOutputStream bos = new ByteArrayOutputStream();
