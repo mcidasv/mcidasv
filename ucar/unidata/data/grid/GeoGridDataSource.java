@@ -489,7 +489,6 @@ public class GeoGridDataSource extends GridDataSource {
         // The setEnabled call helps visually emphasize the text is not editable.
 
         dumpText.setEditable(false);
-        dumpText.setEnabled(false);
 
         TextSearcher searcher = new TextSearcher(dumpText);
         dumpText.setFont(Font.decode("monospaced"));
