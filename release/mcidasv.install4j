@@ -19,8 +19,8 @@
       <variable name="SLF4J_VERSION" value="1.7.12" description="Version number used with jul-to-slf4j, log4j-over-slf4j, and slf4j-api." category="" />
       <variable name="LOGBACK_VERSION" value="1.1.3" description="Version number used with logback-classic and logback-core." category="" />
       <variable name="MIGLAYOUT_VERSION" value="5.0" description="Version number used with miglayout-core and miglayout-swing." category="" />
-      <variable name="JOGAMP_VERSION" value="2.2.3" description="Version number used with gluegen, gluegen-rt, joal, jocl, jogl-all, and the various native JARs." category="" />
-      <variable name="JAVA3D_VERSION" value="1.6.0-pre11" description="Version number used with j3dcore, j3dutils, and vecmath." category="" />
+      <variable name="JOGAMP_VERSION" value="2.3.2" description="Version number used with gluegen, gluegen-rt, joal, jocl, jogl-all, and the various native JARs." category="" />
+      <variable name="JAVA3D_VERSION" value="1.6.0-pre12" description="Version number used with j3dcore, j3dutils, and vecmath." category="" />
     </variables>
     <mergedProjects />
     <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pvkAndSpc" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
@@ -1689,12 +1689,7 @@ INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$
       <includedDownloadableComponents />
     </windows>
   </mediaSets>
-  <buildIds buildAll="false">
-    <mediaSet refId="8" />
-    <mediaSet refId="7720" />
-    <mediaSet refId="8509" />
-    <mediaSet refId="8430" />
-  </buildIds>
+  <buildIds buildAll="true" />
   <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
 </install4j>
 
