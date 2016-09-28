@@ -28,6 +28,7 @@
 
 package ucar.unidata.idv.ui;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -871,10 +872,15 @@ public class ImageGenerator extends IdvManager {
         for (int fileIdx = 0; fileIdx < scriptFiles.size(); fileIdx++) {
             String filename = (String) scriptFiles.get(fileIdx);
             if ( !processScriptFile(filename)) {
-                return;
+                boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
+                boolean isPython = filename.toLowerCase().endsWith(".py");
+                if (offScreen && isPython) {
+                    ((McIDASV)getIdv()).exitMcIDASV(1);
+                } else {
+                    return;
+                }
             }
         }
-
     }
 
 
@@ -4273,7 +4279,7 @@ public class ImageGenerator extends IdvManager {
         }
         pushProperties();
 
-        List<Integer> indices = Collections.emptyList();
+        List<Integer> indices;
         boolean hasIndices = XmlUtil.hasAttribute(scriptingNode, ATTR_ANIMATION_INDEX);
         if (hasIndices) {
             indices = StringUtil.parseIntegerListString(
