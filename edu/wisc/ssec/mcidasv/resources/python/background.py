@@ -2087,6 +2087,24 @@ class _Layer(_JavaProxy):
             raise TypeError('setLayerVisible accepts a single boolean argument')
             
     @gui_invoke_later
+    def getLegendLabel(self):
+        return self._JavaProxy__javaObject.getLegendLabelTemplate()
+        
+    @gui_invoke_later
+    def getExtraLegendLabel(self):
+        return self._JavaProxy__javaObject.getExtraLabelTemplate()
+        
+    @gui_invoke_later
+    def setLegendLabel(self, text):
+        self._JavaProxy__javaObject.setLegendLabelTemplate(text)
+        self._JavaProxy__javaObject.updateLegendLabel()
+        
+    @gui_invoke_later
+    def setExtraLegendLabel(self, text):
+        self._JavaProxy__javaObject.setExtraLabelTemplate(text)
+        self._JavaProxy__javaObject.updateLegendAndList()
+        
+    @gui_invoke_later
     def getLayerLabel(self):
         """Return current layer label text.
         
