@@ -87,7 +87,8 @@ class ImageOverlay(ImageFormatting):
         if image is not None:
             self.image = 'image=%s' % (image)
         else:
-            self.image = ''
+            from ucar.unidata.util.GuiUtils import MISSING_IMAGE
+            self.image = 'image=%s' % (MISSING_IMAGE)
             
         if place is not None:
             self.place = 'place=%s' % (place)
