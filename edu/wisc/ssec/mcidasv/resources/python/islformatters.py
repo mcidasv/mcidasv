@@ -122,8 +122,10 @@ class TextOverlay(ImageFormatting):
     def __init__(self, text=None, place=None, anchor=None, fontSize=None, fontFace=None, color=None, background=None, transparency=None, scale=None):
         """Create a new TextOverlay ISL formatting object.
         
-        Optional Args:
+        Required Args:
             text: Text to draw.
+        
+        Optional Args:
             place: Rectangle point on base image.
             anchor: Rectangle point on overlay.
             fontSize: Font size for text.
@@ -136,7 +138,7 @@ class TextOverlay(ImageFormatting):
         if text is not None:
             self.text = 'text=%s' % (text)
         else:
-            self.text = ''
+            raise TypeError("TextOverlay formatter requires the 'text' parameter")
             
         if place is not None:
             self.place = 'place=%s' % (place)
