@@ -341,6 +341,7 @@
 <!-- The list of station table xml files   -->
   <resources name="idv.resource.locations">
     <resource location="%USERPATH%/userstations.xml"/>
+    <!-- If the McV-specific list expands further, maybe put them below -->
     <resource location="%APPPATH%/places.xml"/>
     <resource location="%IDVPATH%/stations/places.xml"/>
     <resource
@@ -352,6 +353,7 @@
        location="%USERPATH%/nexradstations.xml"
        type="radar"/>
     <resource location="%IDVPATH%/stations/statelocations.xml"/>
+    <resource location="%APPPATH%/stations/greatlakes.xml"/>
   </resources>
 
 <!-- The list of help tip xml files   -->
