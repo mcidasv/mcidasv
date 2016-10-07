@@ -84,4 +84,8 @@ public class IdvStateCollector implements StateCollector {
         return "";
     }
     
+    public String getResolvSrvPath() {
+        return "";
+    }
+    
 }

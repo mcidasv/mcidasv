@@ -74,4 +74,8 @@ public class SimpleStateCollector implements StateCollector {
         return "";
     }
     
+    public String getResolvSrvPath() {
+        return "";
+    }
+    
 }
