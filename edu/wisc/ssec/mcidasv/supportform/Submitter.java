@@ -70,7 +70,7 @@ public class Submitter extends BackgroundTask<String> {
     private final SupportForm form;
 
     /** URL that we'll attempt to {@code POST} our requests at.*/
-    private final String requestUrl = "http://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
+    private final String requestUrl = "https://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
 
     /** Keeps track of the most recent redirect for {@code requestUrl}. */
     private String validFormUrl = requestUrl;
