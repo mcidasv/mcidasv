@@ -51,6 +51,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
           Guide</a></strong></li>
   </ul>
 </div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.7">Other
+    Changes</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#rbi1.7">Local mcidasv.rbi File Added</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#java1.7">Java 3D and JOGL Versions</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#lakes1.7">Great Lakes Location Labels</a></strong></li>
+  </ul>
+</div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.7" id="faq1_cat1_1.7"></a>Documentation
@@ -59,6 +68,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>McIDAS-V User's Guide</h4>
     <div class="faq-answer">Updated the McIDAS-V User's Guide to contain new
       features and more detailed content.</div>
+  </div>
+</div>
+<div class="faq-bottom">
+  <div class="faq-category-title"><a name="faq1_cat2_1.7" id="faq1_cat2_1.7"></a>Other
+    Changes</div>
+  <div class="faq-category"><a name="rbi1.7" id="rbi1.7"></a>
+    <h4>Local mcidasv.rbi File Added</h4>
+    <div class="faq-answer">Added a mcidasv.rbi file to the user's McIDAS-V directory. This RBI (Resource Bundle for the IDV) file allows for defining the location of different resources used by McIDAS-V. These different resources include color tables, formulas, help tips, etc.. Users can modify this mcidasv.rbi file to customize their sessions to only use specific resources. For example, a user can create a mcidasv.rbi file in a way that the resource used for color tables is only pulled from a sitepath directory (specified by the sitepath argument at startup) and not use the native color tables included with McIDAS-V. This mcidasv.rbi file also allows for user configuration of resources that can't be altered through the user interface, such as help tips. A user can create their own helptips.xml file and point to it in mcidasv.rbi, allowing for McIDAS-V to read and display their own custom help tips. For more information on this, see <a href="misc/SiteConfiguration.html">Site Configuration</a>.</div>
+  </div>
+  <div class="faq-category"><a name="java1.7" id="java1.7"></a>
+    <h4>Java 3D and JOGL Versions</h4>
+    <div class="faq-answer">
+      <p>Updated Java 3D from version 1.6.0-pre11 to 1.6.0-pre12.</p>
+      <p>Updated JOGL from version 2.2.3 to 2.3.2.</p>
+    </div>
+  </div>
+  <div class="faq-category"><a name="lakes1.7" id="lakes1.7"></a>
+    <h4>Great Lakes Location Labels</h4>
+    <div class="faq-answer">
+    Added location labels for the Great Lakes that can be added to the display from the <strong>Display>Plot Location Labels>US>Great Lakes</strong> menu item. </div>
   </div>
 </div>
 <!-- InstanceEndEditable -->

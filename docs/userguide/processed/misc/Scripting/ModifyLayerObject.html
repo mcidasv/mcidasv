@@ -176,6 +176,30 @@ Deep Convection'</td></tr></table></div>
     </tr>
     <tr>
 </table></div>
+<p><strong><a name="setLegendLabel" id="setLegendLabel"></a>setLegendLabel
+    -</strong> Sets the Legend Label of the displayed layer. The Legend Label is the blue text of the layer seen in the Legend of the Main Display window</p>
+    <div class="OneTabIndent">Usage: <em>myDataLayer.setLegendLabel(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">text=</td>
+      <td>legend label string. This can include macros</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setLayerLabel(text='Layer 1')</em></div>
+<p><strong><a name="setExtraLegendLabel" id="setExtraLegendLabel"></a>setExtraLegendLabel
+    -</strong> Sets the Extra Legend Label of the displayed layer. The Extra Legend Label is the text that lists below the blue Legend Label in the Legend of the Main Display window</p>
+    <div class="OneTabIndent">Usage: <em>myDataLayer.setExtraLegendLabel(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">text=</td>
+      <td>extra legend label string. This can include macros. Multiple lines can be created by using the HTML new line character: \n</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setExtraLegendLabel(text='%level%\n%shortname%')</em></div>
 <p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible
     -</strong> Toggles layer visibility on/off, this includes any color scale or layer labels for the layer</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(keywords)</em></div>
