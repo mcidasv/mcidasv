@@ -1574,7 +1574,8 @@ class _Display(_JavaProxy):
                     
     #@gui_invoke_later
     def annotate(self, text, lat=None, lon=None, line=None, element=None,
-        font=None, color='red', size=None, style=None, alignment=None):
+        font=None, color='red', size=None, style=None, alignment=None, 
+        bgColor=None):
         """Put a text annotation on this panel.
         
         Can specify location by a lat/lon point or number of pixels
@@ -1598,6 +1599,8 @@ class _Display(_JavaProxy):
                Font defaults come from ViewManager.getDisplayListFont()
            color: text color. Default red, for now I guess. this is GUI default.
                  (optional)
+           bgColor: Optional background color. Default behavior is to not set 
+                    a background color.
            alignment: 2-element tuple representing the (horizontal, vertical)
                 text alignment wrt to the given point.  "center" is valid
                 in both elements, "left" and "right" are valid for horizontal,
@@ -1690,6 +1693,10 @@ class _Display(_JavaProxy):
             
         newColor = colorutils.convertColorToJava(color)
         
+        if bgColor:
+            newBgColor = colorutils.convertColorToJava(bgColor)
+            glyph.setBgcolor(newBgColor)
+            
         currentFont = self._JavaProxy__javaObject.getDisplayListFont()
         newFont = _getNewFont(currentFont, fontName=font, size=size, style=style)
         
