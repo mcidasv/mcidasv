@@ -504,13 +504,15 @@ class _MappedGeoGridFlatField(_MappedFlatField):
     def getMacrosDict(self):
         """Return dictionary mapping IDV macro strings to reasonable defaults."""
         from os.path import basename
-        longname = self['description']
+        longname = self['description'] or self['field'] or ''
         shortname = self['field']
         #TODO: figure out how to actually set this macro (in createLayer)
         datasourcename = basename(self['filename'])
-        macros = {'longname': longname, 'shortname': shortname,
-                  'datasourcename': datasourcename 
-                  }
+        macros = {
+            'longname': longname, 
+            'shortname': shortname,
+            'datasourcename': datasourcename 
+        }
         return macros
 
     def getDefaultLayerLabel(self):
@@ -3522,7 +3524,7 @@ def loadGrid(filename=None, field=None, level='all',
         # fix for ABI DOE files
         adapterData = adapter.getFlatField(0, "")
 
-    if (GridUtil.isTimeSequence(adapterData)):
+    if GridUtil.isTimeSequence(adapterData):
         ff = adapterData.getSample(0)
     else:
         ff = adapterData
