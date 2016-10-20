@@ -37,12 +37,9 @@ import ucar.visad.display.*;
 
 import visad.*;
 
-import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
-import visad.georef.LatLonPoint;
 
 import java.awt.*;
-import java.awt.event.*;
 
 import java.rmi.RemoteException;
 
@@ -51,7 +48,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 
 
 /**
@@ -71,7 +67,13 @@ public class HighLowGlyph extends DrawingGlyph {
 
     /** The text drawn */
     private boolean high = true;
-
+    
+    /**
+     * {@code true} if we're showing {@literal "high/low/etc"}.
+     * {@code false} if we're showing {@literal "alto/bajo/etc"}.
+     */
+    private boolean useEnglish = true;
+    
     /** type for the symbol */
     private TextType textType1;
 
@@ -86,7 +88,15 @@ public class HighLowGlyph extends DrawingGlyph {
 
     /** for the properties dialog */
     JTextField pressureFld;
-
+    
+    /** Button group for language convention selection. May be {@code null}. */
+    ButtonGroup languageGroup;
+    
+    /** English conventions button. May be {@code null}. */
+    JRadioButton englishBtn;
+    
+    /** Spanish conventions button. May be {@code null}. */
+    JRadioButton spanishBtn;
 
 
     /**
@@ -126,8 +136,8 @@ public class HighLowGlyph extends DrawingGlyph {
      */
     public String getExtraDescription() {
         return (high
-                ? "High " + pressure
-                : "Low " + pressure);
+                ? getHighText() + ' ' + pressure
+                : getLowText() + ' ' + pressure);
     }
 
 
@@ -400,10 +410,12 @@ public class HighLowGlyph extends DrawingGlyph {
         } else {
             pressure = Misc.parseNumber(txt);
         }
+        
+        if (englishBtn != null) {
+            useEnglish = englishBtn.isSelected();
+        }
         return true;
     }
-
-
 
     /**
      * get the prop gui comps
@@ -419,12 +431,20 @@ public class HighLowGlyph extends DrawingGlyph {
                         ? Misc.format(pressure)
                         : "");
         pressureFld = new JTextField(label, 8);
+        
+        englishBtn = new JRadioButton("English (High, Low)", useEnglish);
+        spanishBtn = new JRadioButton("Spanish (Alto, Bajo)", !useEnglish);
+        
+        languageGroup = new ButtonGroup();
+        languageGroup.add(englishBtn);
+        languageGroup.add(spanishBtn);
+        
+        comps.add(GuiUtils.rLabel("Label Convention:"));
+        comps.add(GuiUtils.left(GuiUtils.topBottom(englishBtn, spanishBtn)));
         comps.add(GuiUtils.rLabel("Pressure:"));
         comps.add(GuiUtils.left(pressureFld));
     }
-
-
-
+    
     /**
      * Get the name of this glyph type
      *
@@ -432,10 +452,10 @@ public class HighLowGlyph extends DrawingGlyph {
      */
     public String getTypeName() {
         return (high
-                ? "High"
-                : "Low");
+                ? getHighText()
+                : getLowText());
     }
-
+    
     /**
      * Handle glyph moved
      *
@@ -448,8 +468,8 @@ public class HighLowGlyph extends DrawingGlyph {
             return;
         }
         Text t1       = new Text(textType1, (high
-                                             ? "H"
-                                             : "L"));
+                                             ? getHighLabel()
+                                             : getLowLabel()));
         Data theData1 = null;
         Text t2       = new Text(textType2, ((pressure == pressure)
                                              ? Misc.format(pressure)
@@ -526,7 +546,67 @@ public class HighLowGlyph extends DrawingGlyph {
     public boolean getHigh() {
         return high;
     }
-
-
+    
+    /**
+     * Change language convention.
+     *
+     * @param value {@code true} for English, {@code false} for Spanish.
+     */
+    public void setEnglish(boolean value) {
+        useEnglish = value;
+    }
+    
+    /**
+     * Determine language convention.
+     *
+     * @return {@code true} if English, {@code false} for Spanish.
+     */
+    public boolean getEnglish() {
+        return useEnglish;
+    }
+    
+    /**
+     * Get the label to use in the GUI for {@literal "high"}.
+     *
+     * English: {literal "High"}. Spanish: {@literal "Alto"}.
+     *
+     * @return Label to used in GUI widgets.
+     */
+    private String getHighText() {
+        return useEnglish ? "High" : "Alto";
+    }
+    
+    /**
+     * Get the label to use in the GUI for {@literal "low"}.
+     *
+     * English: {literal "Low"}. Spanish: {@literal "Bajo"}.
+     *
+     * @return Label to used in GUI widgets.
+     */
+    private String getLowText() {
+        return useEnglish ? "Low" : "Bajo";
+    }
+    
+    /**
+     * Get the label used to display {@literal "high"}.
+     *
+     * English: {@code A}. Spanish: {@code H}.
+     *
+     * @return Label to be used in main display.
+     */
+    private String getHighLabel() {
+        return useEnglish ? "H" : "A";
+    }
+    
+    /**
+     * Get the label used to display {@literal "low"}.
+     *
+     * English: {@code L}. Spanish: {@code B}.
+     *
+     * @return Label to be used in main display.
+     */
+    private String getLowLabel() {
+        return useEnglish ? "L" : "B";
+    }
 }
 
