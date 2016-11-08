@@ -124,9 +124,6 @@ public class Main {
       int HistoryFileRecords;
 
       History CurrentHistory = new History();
-      Scene SceneType = new Scene();
-      Intensity Intensity = new Intensity();
-      Output Output = new Output();
 
       HistoryFileName = InputHistoryFile;
 
@@ -148,7 +145,7 @@ public class Main {
       else {
           System.out.printf("Not utilizing a history file\n");
       }
-      HistoryFileRecords = CurrentHistory.HistoryNumberOfRecords();
+      HistoryFileRecords = History.HistoryNumberOfRecords();
       System.out.printf("Number of records in history file %s is %d\n",HistoryFileName,HistoryFileRecords);
     
       /* read topography file at center position */
@@ -203,7 +200,7 @@ public class Main {
           History.IRCurrentRecord.eyescene = Math.min(3,OverrideSceneTypeValue);
           Env.OverrideSceneType = -99;
       } else {
-          SceneType.DetermineSceneType(RunFullAnalysis);
+          Scene.DetermineSceneType(RunFullAnalysis);
           /* System.out.printf("after scene type determination\n"); */
           /* System.out.printf("OverrideScene=%b\n",OverrideScene); */
           if(OverrideScene) {
@@ -221,7 +218,7 @@ public class Main {
       /* Calculate Intensity Estimate Values */
 
       int RedoIntensityFlag = 0;
-      Intensity.CalculateIntensity(RedoIntensityFlag,RunFullAnalysis,HistoryFileName);
+      Intensity.CalculateIntensity(RedoIntensityFlag, RunFullAnalysis, HistoryFileName);
       /* System.out.printf("after calcintensity\n"); */
       /* Write Bulletin Output */
 
