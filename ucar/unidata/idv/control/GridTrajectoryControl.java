@@ -1369,8 +1369,8 @@ public class GridTrajectoryControl extends DrawingControl {
         Unit dUnit = ((FlatField) s.getSample(0)).getRangeUnits()[0][0];
         gridTrackControl.setDisplayUnit(dUnit);
 
-
-        final Set timeSet  = s.getDomainSet();
+        // TJJ Nov 2016 Use U component for time steps (will match V)
+        final Set timeSet  = u.getDomainSet();
         int       numTimes = timeSet.getLength();
         Unit      timeUnit = timeSet.getSetUnits()[0];
         final Unit paramUnit =
