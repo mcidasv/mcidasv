@@ -29,6 +29,8 @@
 package ucar.unidata.data.gis;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.*;
 import ucar.unidata.geoloc.LatLonPointImpl;
 
@@ -63,6 +65,9 @@ import java.io.InputStream;
 
 import java.net.URL;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
@@ -71,6 +76,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 
@@ -226,6 +232,8 @@ public class ShapeFileDataSource extends FilesDataSource {
      * Initialize if being unpersisted.
      */
     public void initAfterUnpersistence() {
+        
+        
         //From a legacy bundle
         if (sources == null) {
             sources = Misc.newList(getName());
@@ -267,6 +275,9 @@ public class ShapeFileDataSource extends FilesDataSource {
                                   "/auxdata/ui/icons/Map16.gif");
             addDataChoice(new DirectDataChoice(this, getSource(), name, name,
                     categories, props));
+//            DirectDataChoice ddc = new DirectDataChoice(this, name, name, name,
+//                categories, props);
+//            addDataChoice(ddc);
         }
     }
 
@@ -296,10 +307,47 @@ public class ShapeFileDataSource extends FilesDataSource {
             }
         }
     }
-
-
+    
     /**
-     * Actually get the data identified by the given DataChoce. The default is
+     * Fix for loading shape files from zipped bundles.
+     *
+     * <p>The problem is that the {@link DataChoice} associated with a
+     * {@link ucar.unidata.idv.control.DisplayControlImpl} may have an
+     * {@link DataChoice#id} that points to the original file, rather than
+     * the one from the zipped bundle.</p>
+     *
+     * <p>The solution is to check {@link Path#getFileName()} of {@code choice}
+     * against all of the paths in {@link #getSources()}. If there was a
+     * matching file name, the ID of {@code choice} will be changed to the
+     * match from {@code getSources()}.</p>
+     *
+     * <p>Put another way:
+     * <code>
+     *   Result of choice.getId():
+     *     /home/user/data/ne_10m_lakes/ne_10m_lakes.shp
+     *
+     *   Result from getSources():
+     *     /home/user/McIDAS-V/tmp/1478190157171_0_08101960429484834_13/ne_10m_lakes.shp
+     *
+     *   Because both strings contain "ne_10m_lakes.shp", we consider them the
+     *   same.
+     * </code></p>
+     *
+     * @param choice {@code DataChoice} to examine. Cannot be {@code null}.
+     */
+    private void fixBundledId(DataChoice choice) {
+        String id = choice.getStringId();
+        Path fromChoice = Paths.get(id).getFileName();
+        for (String source : (List<String>)getSources()) {
+            Path tmp = Paths.get(source).getFileName();
+            if (Objects.equals(fromChoice, tmp)) {
+                choice.setId(source);
+            }
+        }
+    }
+    
+    /**
+     * Actually get the data identified by the given DataChoice. The default is
      * to call the getDataInner that does not take the requestProperties. This
      * allows other, non unidata.data DataSource-s (that follow the old API)
      * to work.
@@ -355,8 +403,11 @@ public class ShapeFileDataSource extends FilesDataSource {
             useDbFile     = false;
         }
         lastCoarseness = coarseness;
-
-
+        
+        if (haveBeenUnPersisted && haveSources()) {
+            fixBundledId(dataChoice);
+        }
+        
         String filename = (String) dataChoice.getId();
         byte[] bytes    = null;
         try {
