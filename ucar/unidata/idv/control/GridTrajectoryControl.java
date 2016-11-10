@@ -1243,7 +1243,9 @@ public class GridTrajectoryControl extends DrawingControl {
                 pw, hPI, null);
         }
 
-        final Set timeSet  = s.getDomainSet();
+        // TJJ Nov 2016 Use U component for time steps (should match V and W)
+        final Set timeSet  = u.getDomainSet();
+
         int       numTimes = timeSet.getLength();
         Unit      timeUnit = timeSet.getSetUnits()[0];
         final Unit paramUnit =
