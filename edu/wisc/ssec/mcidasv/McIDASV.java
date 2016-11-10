@@ -74,7 +74,6 @@ import edu.wisc.ssec.mcidasv.util.SystemState;
 import edu.wisc.ssec.mcidasv.util.WebBrowser;
 import edu.wisc.ssec.mcidasv.util.WelcomeWindow;
 
-import org.jdesktop.swinghelper.debug.EventDispatchThreadHangMonitor;
 import org.joda.time.DateTime;
 import org.python.util.PythonInterpreter;
 import org.w3c.dom.Element;
@@ -137,6 +136,7 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.LayerAnimationWindow;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
+import edu.wisc.ssec.mcidasv.util.gui.EventDispatchThreadHangMonitor;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.DirectoryWatchService;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.SimpleDirectoryWatchService;
