@@ -481,7 +481,7 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
                 }
             });
             trajFormComponent =
-                GuiUtils.hbox(GuiUtils.rLabel("Trajecotry Form: "),
+                GuiUtils.hbox(GuiUtils.rLabel("Trajectory Form: "),
                               GuiUtils.filler(), trajFormBox,
                               GuiUtils.filler());
             trajLengthComponent = GuiUtils.hbox(trajFormComponent,
