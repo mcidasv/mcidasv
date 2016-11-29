@@ -39,7 +39,6 @@ import ch.qos.logback.core.rolling.RolloverFailure;
 import ch.qos.logback.core.rolling.TimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.helper.ArchiveRemover;
-import ch.qos.logback.core.rolling.helper.AsynchronousCompressor;
 import ch.qos.logback.core.rolling.helper.CompressionMode;
 import ch.qos.logback.core.rolling.helper.Compressor;
 import ch.qos.logback.core.rolling.helper.FileFilterUtil;
@@ -53,9 +52,7 @@ import ch.qos.logback.core.util.FileUtil;
  * issue. Even on Windows.
  */
 public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
-
-    private Compressor compressor;
-
+    
     Future<?> future;
 
     @Override public void rollover() throws RolloverFailure {
@@ -67,9 +64,11 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
         String elapsedPeriodsFileName =
             timeBasedFileNamingAndTriggeringPolicy.getElapsedPeriodsFileName();
 
-        String elapsedPeriodStem = FileFilterUtil.afterLastSlash(elapsedPeriodsFileName);
+        String elapsedPeriodStem =
+            FileFilterUtil.afterLastSlash(elapsedPeriodsFileName);
 
-        if (compressionMode == CompressionMode.NONE) {
+        // yes, "==" is okay here. we're checking an enum.
+        if (getCompressionMode() == CompressionMode.NONE) {
             String src = getParentsRawFileProperty();
             if (src != null) {
                 if (isFileEmpty(src)) {
@@ -77,28 +76,36 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
                 } else {
                     renameByCopying(src, elapsedPeriodsFileName);
                 }
-            } // else { nothing to do if CompressionMode == NONE and parentsRawFileProperty == null }
+            }
         } else {
             if (getParentsRawFileProperty() == null) {
-                future = asyncCompress(elapsedPeriodsFileName, elapsedPeriodsFileName, elapsedPeriodStem);
+                future = asyncCompress(elapsedPeriodsFileName,
+                                       elapsedPeriodsFileName,
+                                       elapsedPeriodStem);
             } else {
-                future = renamedRawAndAsyncCompress(elapsedPeriodsFileName, elapsedPeriodStem);
+                future = renamedRawAndAsyncCompress(elapsedPeriodsFileName,
+                                                    elapsedPeriodStem);
             }
         }
 
-        ArchiveRemover archiveRemover = getTimeBasedFileNamingAndTriggeringPolicy().getArchiveRemover();
+        ArchiveRemover archiveRemover =
+            getTimeBasedFileNamingAndTriggeringPolicy().getArchiveRemover();
 
         if (archiveRemover != null) {
-            archiveRemover.clean(new Date(timeBasedFileNamingAndTriggeringPolicy.getCurrentTime()));
+            Date d =
+                new Date(timeBasedFileNamingAndTriggeringPolicy.getCurrentTime());
+            archiveRemover.clean(d);
         }
     }
 
-    Future<?> asyncCompress(String nameOfFile2Compress,
-                            String nameOfCompressedFile, String innerEntryName)
+    Future<?> asyncCompress(String uncompressedPath,
+                            String compressedPath, String innerEntryName)
         throws RolloverFailure
     {
-        AsynchronousCompressor ac = new AsynchronousCompressor(compressor);
-        return ac.compressAsynchronously(nameOfFile2Compress, nameOfCompressedFile, innerEntryName);
+        Compressor compressor = new Compressor(getCompressionMode());
+        return compressor.asyncCompress(uncompressedPath,
+                                        compressedPath,
+                                        innerEntryName);
     }
 
     Future<?> renamedRawAndAsyncCompress(String nameOfCompressedFile,
@@ -125,7 +132,9 @@ public class TailFriendlyRollingPolicy<E> extends TimeBasedRollingPolicy<E> {
     {
         FileUtil fileUtil = new FileUtil(getContext());
         fileUtil.copy(src, target);
-        try (FileOutputStream writer = new FileOutputStream(src)) {
+        // using "ignored" this way is intentional; it's what takes care of the
+        // zeroing out.
+        try (FileOutputStream ignored = new FileOutputStream(src)) {
             addInfo("zeroing out " + src);
         } catch (IOException e) {
             addError("Could not reset " + src, e);
