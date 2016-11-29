@@ -180,14 +180,14 @@
 
     <!-- Use these properties to make changing the versions of related JARs
         (see SLF4J or Logback) a bit less tedious. -->
-    <property name="slf4j.version" value="1.7.12" />
-    <property name="logback.version" value="1.1.3" />
-    <property name="miglayout.version" value="5.0" />
+    <property name="slf4j.version" value="1.7.21" />
+    <property name="logback.version" value="1.1.7" />
+    <property name="miglayout.version" value="5.1-SNAPSHOT" />
     <property name="jogamp.version" value="2.3.2" />
     <property name="swingx.version" value="1.6.5-1" />
     <property name="eventbus.version" value="1.4" />
     <property name="commons-math.version" value="3.5" />
-    <property name="rsyntaxtextarea.version" value="2.5.8" />
+    <property name="rsyntaxtextarea.version" value="2.6.0" />
     <property name="sysout.version" value="1.0.2" />
     <property name="jython.version" value="2.7.0" />
     <property name="juniversalchardet.version" value="1.0.3" />
@@ -200,14 +200,14 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-    <property name="jar.base.classpath" value="aspectjrt.jar swing-debug.jar ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak-4.1.9.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.0.1.jar" />
+    <property name="jar.base.classpath" value="aspectjrt.jar ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak-4.1.9.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-3.0.1.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
          modifications to the "jar.base.classpath" property. -->
     <fileset id="mcv.libs" dir="${dist.dir}">
+        <!-- <include name="jansi-1.14.jar" /> -->
         <include name="aspectjrt.jar" />
-        <include name="swing-debug.jar" />
         <include name="commons-httpclient-3.1.jar" />
         <include name="swingx-common-${swingx.version}.jar" />
         <include name="sysout-over-slf4j-${sysout.version}.jar" />
