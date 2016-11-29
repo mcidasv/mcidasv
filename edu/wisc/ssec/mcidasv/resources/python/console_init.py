@@ -183,6 +183,8 @@ if _isInteractive:
                 globals()[modname] = __import__(modname, globals(), locals(), ['*'], -1)
             del modname, ext
             
+___init_finished = True
+
 # Clean up stuff that is only useful for this script/module. *almost* 
 # everything prefixed with "_" is a good candidate for clean up, though be 
 # aware that "_idv" is an exception to the rule!

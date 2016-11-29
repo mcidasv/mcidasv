@@ -85,6 +85,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -106,6 +107,7 @@ import javax.swing.text.JTextComponent;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ui.JythonEditor;
 import edu.wisc.ssec.mcidasv.util.FileFinder;
+import edu.wisc.ssec.mcidasv.util.LoudPyStringMap;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 
 import org.python.core.Py;
@@ -1027,6 +1029,8 @@ public class JythonManager extends IdvManager implements ActionListener,
         getIdvUIManager().showHelp(help);
     }
     
+    private static final AtomicInteger createInterpCount = new AtomicInteger(0);
+    
     /**
      * Factory method to create and interpreter. This
      * also adds the interpreter into the list of interpreters.
@@ -1034,7 +1038,8 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @return The new interpreter
      */
     public PythonInterpreter createInterpreter() {
-        PythonInterpreter interp = new PythonInterpreter();
+        PythonInterpreter interp = new PythonInterpreter(new LoudPyStringMap("createInterpreter " + createInterpCount.addAndGet(1)));
+        logger.debug("000 created new PythonInterpreter(new LoudPyStringMap())");
         addInterpreter(interp);
         // only needed for background output?
         if (getArgsManager().getIsOffScreen()) {
@@ -1165,7 +1170,7 @@ public class JythonManager extends IdvManager implements ActionListener,
     }
 
     /**
-     * Intializes a given {@link PythonInterpreter} so that it can either be
+     * Initializes a given {@link PythonInterpreter} so that it can either be
      * used to {@link PythonInterpreter#exec exec} a Jython Library module or
      * set up an interactive Jython Shell.
      *
@@ -1194,6 +1199,11 @@ public class JythonManager extends IdvManager implements ActionListener,
             interpreter.set("interpreter", interpreter);
             interpreter.set("datamanager", getDataManager());
             interpreter.set("installmanager", getInstallManager());
+            PyObject locals = interpreter.getLocals();
+            logger.trace("locals class: {}", locals.getClass().getCanonicalName());
+            if (locals instanceof LoudPyStringMap) {
+                ((LoudPyStringMap)locals).bake();
+            }
         } catch (IOException e) {
             logException("Failed to initialize Jython's sys.path.", e);
         }
@@ -1519,7 +1529,8 @@ public class JythonManager extends IdvManager implements ActionListener,
      */
     public PythonInterpreter getUiInterpreter() {
         if (uiInterpreter == null) {
-            uiInterpreter = new PythonInterpreter();
+            uiInterpreter = new PythonInterpreter(new LoudPyStringMap("getUiInterpreter"));
+            logger.debug("111 created new PythonInterpreter(new LoudPyStringMap())");
             addInterpreter(uiInterpreter);
             //            initBasicInterpreter(uiInterpreter);
         }
@@ -2282,6 +2293,8 @@ public class JythonManager extends IdvManager implements ActionListener,
             return label;
         }
         
+        private static final AtomicInteger getFuncCount = new AtomicInteger(0);
+        
         /**
          * Parse the functions if needed
          * 
@@ -2290,8 +2303,18 @@ public class JythonManager extends IdvManager implements ActionListener,
         public List<Object[]> getFunctions() {
             if (functions == null) {
 
-                PythonInterpreter interpreter = new PythonInterpreter();
+                LoudPyStringMap stringMap =
+                    new LoudPyStringMap("getFunctions " + getFuncCount.addAndGet(1));
+                PythonInterpreter interpreter = new PythonInterpreter(stringMap);
+                logger.debug("222 created new PythonInterpreter(new LoudPyStringMap())");
                 jythonManager.initJythonEnvironment(interpreter, false);
+                // bake() is here because i'm specifically curious why the
+                // init stuff done in console_init.py seems to fix the problem.
+                // putting bake() after the exec(getText()) call would mean that
+                // the formula code would also be considered the same as
+                // console_init.py.
+                stringMap.bake();
+                
                 try {
                     interpreter.exec(getText());
                 } catch (Exception exc) {
