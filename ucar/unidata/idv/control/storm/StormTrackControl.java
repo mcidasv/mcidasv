@@ -1630,7 +1630,7 @@ public class StormTrackControl extends DisplayControlImpl {
                             errorWindow.setLocation(
                                 (int) loc.getX(),
                                 (int) (loc.getY()
-                                       + yds.getButton().bounds().height));
+                                       + yds.getButton().getBounds().height));
 
                         } catch (Exception exc) {
                             //Ignore this incase the component isn't being shown

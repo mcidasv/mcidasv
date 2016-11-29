@@ -247,7 +247,7 @@ public class DataTreeDialog implements ActionListener {
             dialog.setLocation(50, 50);
         }
         dialog.pack();
-        dialog.show();
+        dialog.setVisible(true);
     }
 
 
@@ -412,7 +412,7 @@ public class DataTreeDialog implements ActionListener {
             idv.getIdvUIManager().removeDataSourceHolder(
                 (DataTree) dataTrees.get(i));
         }
-        dialog.hide();
+        dialog.setVisible(false);
     }
 
 

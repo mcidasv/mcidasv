@@ -552,7 +552,7 @@ public class AreaImageFlatField extends CachedFlatField implements SingleBandedI
             msg("readDataNewWay");
             //        Misc.printStack(mycnt +"  readData time: " + getStartTime(),15);
             String url = (aid.getImageInfo() != null)
-                         ? aid.getImageInfo().makeAddeUrl()
+                         ? aid.getImageInfo().getURLString()
                          : aid.getSource();
             AreaAdapter aa = new AreaAdapter(url, false);
             visad.meteorology.SingleBandedImageImpl ff =
@@ -612,7 +612,7 @@ public class AreaImageFlatField extends CachedFlatField implements SingleBandedI
         long tt1 = System.currentTimeMillis();
         AreaFile areaFile =
             AreaFileFactory.getAreaFileInstance((aid.getImageInfo() != null)
-                ? aid.getImageInfo().makeAddeUrl()
+                ? aid.getImageInfo().getURLString()
                 : aid.getSource());
         long tt2 = System.currentTimeMillis();
 

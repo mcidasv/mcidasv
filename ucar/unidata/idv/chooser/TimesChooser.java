@@ -275,8 +275,7 @@ public class TimesChooser extends IdvChooser {
                     if (checkIgnore()) {
                         return;
                     }
-                    List items =
-                        Misc.toList(getTimesList().getSelectedValues());
+                    List items = getTimesList().getSelectedValuesList();
                     setSelectedAbsoluteTimes(items);
                     absoluteTimesSelectionChanged();
                     if ((items.size() > 0) && usingTimeline) {
@@ -1078,7 +1077,8 @@ public class TimesChooser extends IdvChooser {
             return DatedObject.getObjects(timeline.getSelected());
         } else {
             return DatedObject.getObjects(
-                Misc.toList(getTimesList().getSelectedValues()));
+                getTimesList().getSelectedValuesList());
+//                Misc.toList(getTimesList().getSelectedValues()));
         }
     }
 
@@ -1620,10 +1620,8 @@ public class TimesChooser extends IdvChooser {
                 timeline = new Timeline();
             }
             List     selected = new ArrayList();
-            Object[] tmp      = list.getSelectedValues();
-            for (int i = 0; i < tmp.length; i++) {
-                selected.add(
-                    new DatedObject(Util.makeDate((DateTime) tmp[i])));
+            for (Object t : list.getSelectedValuesList()) {
+                selected.add(new DatedObject(Util.makeDate((DateTime)t)));
             }
 
             final JDialog dialog =

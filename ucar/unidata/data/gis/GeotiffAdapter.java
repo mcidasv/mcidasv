@@ -210,6 +210,7 @@ public class GeotiffAdapter {
      * @throws IOException              problem opening file
      * @throws VisADException           VisAD problem
      */
+    @SuppressWarnings("deprecation")
     private FieldImpl createData(boolean asRGB)
         throws VisADException, IOException
     {

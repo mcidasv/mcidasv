@@ -985,7 +985,7 @@ public class StormDisplayState {
         list.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 List<StormParam> selected = new ArrayList<StormParam>();
-                selected.addAll(Misc.toList(list.getSelectedValues()));
+                selected.addAll(list.getSelectedValuesList());
                 try {
                     params.put(id, selected);
                     updateDisplays();
@@ -1080,6 +1080,7 @@ public class StormDisplayState {
         return attrNames;
     }
     //RealType fixedtype;
+    @SuppressWarnings("deprecation")
     StormParam getFixedParam(){
         RealType rtype = RealType.getRealType("Fixed");
         if(rtype == null) {
@@ -1500,7 +1501,8 @@ public class StormDisplayState {
             public void run() {
                 DisplayMaster displayMaster =
                     stormTrackControl.getDisplayMaster();
-                boolean wasActive = displayMaster.ensureInactive();
+                boolean wasActive = displayMaster.isActive();
+                displayMaster.setDisplayInactive();
                 try {
                     synchronized (MUTEX) {
                         stormTrackControl.showWaitCursor();
@@ -1514,7 +1516,7 @@ public class StormDisplayState {
                     stormTrackControl.showNormalCursor();
                     if (wasActive) {
                         try {
-                            displayMaster.setActive(true);
+                            displayMaster.setDisplayActive();
                         } catch (Exception exc) {}
                     }
                 }
@@ -1777,7 +1779,8 @@ public class StormDisplayState {
      */
     protected void updateDisplays(boolean force) throws Exception {
         DisplayMaster displayMaster = stormTrackControl.getDisplayMaster();
-        boolean       wasActive     = displayMaster.ensureInactive();
+        boolean       wasActive     = displayMaster.isActive();
+        displayMaster.setDisplayInactive();
         try {
             List<WayDisplayState> wayDisplayStates = getWayDisplayStates();
             for (WayDisplayState wds : wayDisplayStates) {
@@ -1789,7 +1792,7 @@ public class StormDisplayState {
         } finally {
             if (wasActive) {
                 try {
-                    displayMaster.setActive(true);
+                    displayMaster.setDisplayActive();
                 } catch (Exception exc) {}
             }
         }
@@ -2334,24 +2337,24 @@ public class StormDisplayState {
 
         for (StormTrackPoint stp : track.getTrackPoints()) {
             if (rowCnt == 0) {
-                row = sheet.createRow((short) rowCnt++);
-                row.createCell((short) 0).setCellValue("Time");
-                row.createCell((short) 1).setCellValue("Latitude");
-                row.createCell((short) 2).setCellValue("Longitude");
+                row = sheet.createRow(rowCnt++);
+                row.createCell(0).setCellValue("Time");
+                row.createCell(1).setCellValue("Latitude");
+                row.createCell(2).setCellValue("Longitude");
                 for (int colIdx = 0; colIdx < params.size(); colIdx++) {
-                    row.createCell((short) (colIdx + 3)).setCellValue(
+                    row.createCell((colIdx + 3)).setCellValue(
                         params.get(colIdx).toString());
                 }
             }
-            row = sheet.createRow((short) rowCnt++);
-            row.createCell((short) 0).setCellValue(stp.getTime().toString());
-            row.createCell((short) 1).setCellValue(
+            row = sheet.createRow(rowCnt++);
+            row.createCell(0).setCellValue(stp.getTime().toString());
+            row.createCell(1).setCellValue(
                 stp.getLocation().getLatitude().getValue());
-            row.createCell((short) 2).setCellValue(
+            row.createCell(2).setCellValue(
                 stp.getLocation().getLongitude().getValue());
             for (int colIdx = 0; colIdx < params.size(); colIdx++) {
                 Real r = stp.getAttribute(params.get(colIdx));
-                cell = row.createCell((short) (colIdx + 3));
+                cell = row.createCell((colIdx + 3));
                 cell.setCellValue(r.getValue());
             }
         }
@@ -2690,7 +2693,8 @@ public class StormDisplayState {
             return;
         DisplayMaster displayMaster = stormTrackControl.getDisplayMaster();
         colorRangeChanged = true;
-        boolean       wasActive     = displayMaster.ensureInactive();
+        boolean       wasActive     = displayMaster.isActive();
+        displayMaster.setDisplayInactive();
         try {
             stormTrackControl.stormChanged(StormDisplayState.this);
             updateDisplays();

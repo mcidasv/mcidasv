@@ -2340,7 +2340,7 @@ public final class Util {
             String rtName = "util_" + unit.toString();
             //      return new Real(RealType.Generic,Misc.parseValue(valueString),unit);
             return new Real(RealType.getRealType(rtName, unit),
-                            Misc.parseValue(valueString), unit);
+                            Misc.parseNumber(valueString), unit);
         }
         return new Real(Double.valueOf(value).doubleValue());
     }

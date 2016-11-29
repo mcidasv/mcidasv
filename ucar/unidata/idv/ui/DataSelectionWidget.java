@@ -522,8 +522,9 @@ public class DataSelectionWidget {
                 membersForGui.add(o);
             }
 
-            Object[] selectedMembers = membersList.getSelectedValues();
-            if ((selectedMembers == null) || (selectedMembers.length == 0)) {
+            Object[] selectedMembers =
+                membersList.getSelectedValuesList().toArray();
+            if (selectedMembers.length == 0) {
                 List dcMembers = (List) dc.getProperty("prop.gridmembers");
                 if ((dcMembers != null) && !dcMembers.isEmpty()) {
                     selectedMembers = dcMembers.toArray();
@@ -577,9 +578,9 @@ public class DataSelectionWidget {
                     membersForGui.add(o);
                 }
 
-                Object[] selectedMembers = membersList.getSelectedValues();
-                if ((selectedMembers == null)
-                        || (selectedMembers.length == 0)) {
+                Object[] selectedMembers =
+                    membersList.getSelectedValuesList().toArray();
+                if (selectedMembers.length == 0) {
                     List dcMembers =
                         (List) dc.getProperty("prop.gridmembers");
                     if ((dcMembers != null) && !dcMembers.isEmpty()) {
@@ -633,8 +634,9 @@ public class DataSelectionWidget {
                 }
             }
 
-            Object[] selectedLevels = levelsList.getSelectedValues();
-            if ((selectedLevels == null) || (selectedLevels.length == 0)) {
+            Object[] selectedLevels =
+                levelsList.getSelectedValuesList().toArray();
+            if (selectedLevels.length == 0) {
                 List dcLevels =
                     (List) dc.getProperty(DataSelection.PROP_DEFAULT_LEVELS);
                 if ((dcLevels != null) && !dcLevels.isEmpty()) {
@@ -1194,7 +1196,7 @@ public class DataSelectionWidget {
         if (membersList == null) {
             return null;
         }
-        List selected = Misc.toList(membersList.getSelectedValues());
+        List selected = membersList.getSelectedValuesList();
 
         int  ssize    = selected.size();
         for (int i = 0; i < ssize; i++) {
@@ -1215,7 +1217,7 @@ public class DataSelectionWidget {
         if (timesList == null) {
             return new ArrayList();
         }
-        List selected = Misc.toList(timesList.getSelectedValues());
+        List selected = timesList.getSelectedValuesList();
         return Misc.getIndexList(selected, allDateTimes);
     }
 

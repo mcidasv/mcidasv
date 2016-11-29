@@ -40,7 +40,7 @@ import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
-import ucar.nc2.NetcdfFileWriteable;
+import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
 import ucar.nc2.constants.CF;
 import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
@@ -5845,26 +5845,25 @@ public class GridUtil {
                         if ((rowCnt >= MAXROWS) || (rowCnt == -1)) {
                             sheets.add(sheet = wb.createSheet());
                             row = sheet.createRow(0);
-                            row.createCell((short) 0).setCellValue(latFirst
+                            row.createCell(0).setCellValue(latFirst
                                     ? "Latitude"
                                     : "Longitude");
-                            row.createCell((short) 1).setCellValue(latFirst
+                            row.createCell(1).setCellValue(latFirst
                                     ? "Longitude"
                                     : "Latitude");
                             if (domainVals.length > 2) {
-                                row.createCell((short) 2).setCellValue(
-                                    "Altitude");
+                                row.createCell(2).setCellValue("Altitude");
                                 colOffset = 3;
                             }
                             rowCnt = 0;
                         }
                         row = sheet.createRow(rowCnt + 1);
-                        row.createCell((short) 0).setCellValue(
+                        row.createCell(0).setCellValue(
                             domainVals[0][rowIdx]);
-                        row.createCell((short) 1).setCellValue(
+                        row.createCell(1).setCellValue(
                             domainVals[1][rowIdx]);
                         if (domainVals.length > 2) {
-                            row.createCell((short) 2).setCellValue(
+                            row.createCell(2).setCellValue(
                                 domainVals[2][rowIdx]);
                         }
                         rowCnt++;
@@ -5879,16 +5878,16 @@ public class GridUtil {
                     if ((rowCnt == -1) || (rowCnt >= MAXROWS)) {
                         rowCnt = 0;
                         sheetCnt++;
-                        sheet = (HSSFSheet) sheets.get(sheetCnt);
+                        sheet = sheets.get(sheetCnt);
                         row   = sheet.getRow(0);
                         if (dt != null) {
-                            row.createCell((short) (colOffset
+                            row.createCell((colOffset
                                     + timeIdx)).setCellValue(dt.toString());
                         }
                     }
                     row = sheet.getRow(rowCnt + 1);
                     row.createCell(
-                        (short) (colOffset + timeIdx)).setCellValue(
+                        (colOffset + timeIdx)).setCellValue(
                         rangeVals[0][rowIdx]);
                     rowCnt++;
                 }
@@ -5938,8 +5937,13 @@ public class GridUtil {
         Object loadId =
             JobManager.getManager().startLoad("Writing grid to CF", true);
         try {
-            NetcdfFileWriteable ncfile =
-                NetcdfFileWriteable.createNew(makePathAbsolute(filename), false);
+//            NetcdfFileWriteable ncfile =
+//                NetcdfFileWriteable.createNew(makePathAbsolute(filename), false);
+            NetcdfFileWriter ncWriter = NetcdfFileWriter.createNew(
+                NetcdfFileWriter.Version.netcdf3,
+                makePathAbsolute(filename)
+            );
+//            NetcdfFile ncfile = ncWriter.getNetcdfFile();
             boolean         isTimeSequence = isTimeSequence(grid);
             List<Dimension> dims           = new ArrayList<Dimension>();
             // make variables for the time and xyz axes
@@ -5951,17 +5955,22 @@ public class GridUtil {
                 numTimes = timeSet.getLength();
                 Dimension timeDim = new Dimension("time", numTimes, true);
                 dims.add(timeDim);
-                ncfile.addDimension(null, timeDim);
-                Variable timeVar = new Variable(ncfile, null, null, "time",
+
+//                ncfile.addDimension(null, timeDim);
+                ncWriter.getNetcdfFile().addDimension(null, timeDim);
+
+                Variable timeVar = new Variable(ncWriter.getNetcdfFile(), null, null, "time",
                                        DataType.DOUBLE, "time");
                 timeVar.addAttribute(new Attribute("units",
                         units[0].toString()));
-                ncfile.addVariable(null, timeVar);
+
+                ncWriter.getNetcdfFile().addVariable(null, timeVar);
+//                ncfile.addVariable(null, timeVar);
             }
             GriddedSet domainSet = (GriddedSet) getSpatialDomain(grid);
             CoordinateSystem cs = domainSet.getCoordinateSystem();
             boolean haveEmpirical = cs instanceof EmpiricalCoordinateSystem;
-            HashMap<Variable, Array> varData = addSpatialVars(ncfile,
+            HashMap<Variable, Array> varData = addSpatialVars(ncWriter.getNetcdfFile(),
                                                    domainSet, dims);
 
             // TODO: figure out a better way to do this
@@ -5981,7 +5990,7 @@ public class GridUtil {
             RealType[] rTypes = tType.getRealComponents();
             for (int i = 0; i < rTypes.length; i++) {
                 RealType rt = rTypes[i];
-                Variable v  = new Variable(ncfile, null, null,
+                Variable v  = new Variable(ncWriter.getNetcdfFile(), null, null,
                                            getVarName(rt));
                 Unit     u  = rt.getDefaultUnit();
                 if (u != null) {
@@ -5990,7 +5999,7 @@ public class GridUtil {
                 }
                 if (projVar != null) {
                     v.addAttribute(new Attribute("grid_mapping",
-                            projVar.getName()));
+                            projVar.getFullName()));
                 }
                 if (haveEmpirical) {
                     v.addAttribute(new Attribute("coordinates",
@@ -5998,25 +6007,25 @@ public class GridUtil {
                 }
                 v.setDataType(DataType.FLOAT);
                 v.setDimensions(dims);
-                ncfile.addVariable(null, v);
+                ncWriter.getNetcdfFile().addVariable(null, v);
             }
-            ncfile.addGlobalAttribute(new Attribute("Conventions", "CF-1.X"));
-            ncfile.addGlobalAttribute(new Attribute("History",
-                    "Translated from VisAD grid to CF-1.X Conventions by IDV\n"
-                    + "Original Dataset = " + grid.getType()
-                    + "\nTranslation Date = " + new Date()));
-            ncfile.create();
+            ncWriter.getNetcdfFile().addAttribute(null, new Attribute("Conventions", "CF-1.X"));
+            ncWriter.getNetcdfFile().addAttribute(null,
+                new Attribute("History", "Translated from VisAD grid to CF-1.X Conventions by IDV\n"
+                                         + "Original Dataset = " + grid.getType()
+                                         + "\nTranslation Date = " + new Date()));
+            ncWriter.create();
             // fill in the data
             if (isTimeSequence) {
-                Variable   timeVar  = ncfile.findVariable("time");
+                Variable   timeVar  = ncWriter.getNetcdfFile().findVariable("time");
                 double[][] timeVals = timeSet.getDoubles(false);
                 Array varArray = Array.factory(DataType.DOUBLE,
                                      new int[] { numTimes }, timeVals[0]);
-                ncfile.write(timeVar.getName(), varArray);
+                ncWriter.write(timeVar, varArray);
             }
             for (Iterator it = keys.iterator(); it.hasNext(); ) {
                 Variable v = (Variable) it.next();
-                ncfile.write(v.getName(), varData.get(v));
+                ncWriter.write(v, varData.get(v));
             }
             int   numDims = dims.size();
             int[] sizes   = new int[numDims];
@@ -6038,22 +6047,22 @@ public class GridUtil {
                     float[][] samples = sample.getFloats(false);
                     for (int j = 0; j < rTypes.length; j++) {
                         Variable v =
-                            ncfile.findVariable(getVarName(rTypes[j]));
+                            ncWriter.getNetcdfFile().findVariable(getVarName(rTypes[j]));
                         arr = Array.factory(DataType.FLOAT, sizes,
                                             samples[j]);
-                        ncfile.write(v.getName(), origin, arr);
+                        ncWriter.write(v, origin, arr);
                     }
                 }
             } else {
                 float[][] samples = ((FlatField) grid).getFloats();
                 for (int j = 0; j < rTypes.length; j++) {
-                    Variable v = ncfile.findVariable(getVarName(rTypes[j]));
+                    Variable v = ncWriter.getNetcdfFile().findVariable(getVarName(rTypes[j]));
                     arr = Array.factory(DataType.FLOAT, sizes, samples[j]);
-                    ncfile.write(v.getName(), arr);
+                    ncWriter.write(v, arr);
                 }
             }
             // write the file
-            ncfile.close();
+            ncWriter.close();
         } catch (Exception exc) {
             LogUtil.logException("Writing grid to netCDF file: " + filename,
                                  exc);

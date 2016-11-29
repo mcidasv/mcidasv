@@ -915,7 +915,7 @@ public class StormDisplayState {
 		list.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				List<StormParam> selected = new ArrayList<StormParam>();
-				selected.addAll(Misc.toList(list.getSelectedValues()));
+				selected.addAll(list.getSelectedValuesList());
 				try {
 					params.put(id, selected);
 					updateDisplays();

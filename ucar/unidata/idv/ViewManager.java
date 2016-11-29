@@ -3618,6 +3618,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @param force  if true, force it active
      */
+    @SuppressWarnings("deprecation")
     public void setMasterActive(boolean force) {
 
         // Make sure we have an initialized DisplayMaster

@@ -605,7 +605,7 @@ public class StormTrackChart {
 	 */
 	private void getSelectedTimes() {
 		if (isHourly()) {
-			Object[] selects = chartTimeBox.getSelectedValues();
+			Object[] selects = chartTimeBox.getSelectedValuesList().toArray();
 			if (forecastHours == null) {
 				forecastHours = new ArrayList();
 			}
@@ -617,8 +617,8 @@ public class StormTrackChart {
 			}
 
 		} else {
-			forecastTimes = (List<DateTime>) Misc.toList(chartTimeBox
-					.getSelectedValues());
+			forecastTimes =
+				(List<DateTime>) chartTimeBox.getSelectedValuesList();
 
 		}
 	}
@@ -641,9 +641,9 @@ public class StormTrackChart {
 					tfos.add(new TwoFacedObject(i + "H", i));
 				}
 
-				Object[] selected = chartTimeBox.getSelectedValues();
+				List selected = chartTimeBox.getSelectedValuesList();
 				chartTimeBox.setListData(new Vector(tfos));
-				GuiUtils.setSelectedItems(chartTimeBox, Misc.toList(selected));
+				GuiUtils.setSelectedItems(chartTimeBox, selected);
 
 				if ((selected == null) && (tfos.size() > 0)) {
 					TwoFacedObject selected0 = tfos.get(0);
@@ -654,10 +654,10 @@ public class StormTrackChart {
 			} else {
 				List<DateTime> fTimes = findForecastTimes();
 
-				Object[] selected = chartTimeBox.getSelectedValues();
+				List selected = chartTimeBox.getSelectedValuesList();
 
 				chartTimeBox.setListData(new Vector(fTimes));
-				GuiUtils.setSelectedItems(chartTimeBox, Misc.toList(selected));
+				GuiUtils.setSelectedItems(chartTimeBox, selected);
 
 				if ((selected == null) && (fTimes.size() > 0)) {
 					DateTime dt0 = fTimes.get(0);
