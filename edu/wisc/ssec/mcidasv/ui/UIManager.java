@@ -1931,11 +1931,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         McVGuiUtils.setMenuImage(mi, Constants.ICON_FAVORITEMANAGE_SMALL);
         mi.setMnemonic(GuiUtils.charToKeyCode("M"));
         inBundleMenu.add(mi);
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                showBundleDialog(bundleType);
-            }
-        });
+        mi.addActionListener(ae -> showBundleDialog(bundleType));
 
         final List bundles = getPersistenceManager().getBundles(bundleType);
         if (bundles.isEmpty()) {
@@ -2030,11 +2026,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
             if (window.isVisible()) {
                 mi = new JMenuItem(title);
-                mi.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent ae) {
-                        window.toFront();
-                    }
-                });
+                mi.addActionListener(ae -> window.toFront());
 
                 if (first) {
                     windowMenu.addSeparator();
@@ -2166,25 +2158,25 @@ public class UIManager extends IdvUIManager implements ActionListener {
         String mod = getIdv().getProperty(PROP_KB_MODIFIER, "control");
         String acc = getIdv().getProperty(PROP_KB_SELECT_DISPLAY, "L");
         jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke(mod + " " + acc),
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
             "show_disp"
         );
 
         acc = getIdv().getProperty(PROP_KB_SHOW_DASHBOARD, "MINUS");
         jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke(mod + " " + acc),
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
             "show_dashboard"
         );
 
         acc = getIdv().getProperty(PROP_KB_DISPLAY_NEXT, "N");
         jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke(mod + " " + acc),
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
             "next_disp"
         );
 
         acc = getIdv().getProperty(PROP_KB_DISPLAY_PREV, "P");
         jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke(mod + " " + acc),
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
             "prev_disp"
         );
     }
