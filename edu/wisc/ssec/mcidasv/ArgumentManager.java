@@ -209,8 +209,6 @@ public class ArgumentManager extends ArgsManager {
             if (FileOption.booleanFromFormat(results[0])) {
                 argXidvFiles.add(results[1]);
             }
-            System.err.println("result[0]: "+FileOption.booleanFromFormat(results[0]));
-            System.err.println("result[1]: '"+results[1]+'\'');
         } else if (checkArg(arg, ARG_DOACTION, args, idx, 1)) {
             startupAction = args[idx++];
         } else {
