@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.python.core.Py;
@@ -59,6 +60,23 @@ public class LoudPyStringMap extends PyStringMap {
         }
     }
     
+    private boolean isAlwaysAllowed(String key) {
+        // __package__
+        // __doc__
+        // __name__
+        // __builtins__
+        return Objects.equals(key, "__builtins__")
+               || Objects.equals(key, "__doc__")
+               || Objects.equals(key, "__name__")
+               || Objects.equals(key, "__package__");
+    }
+    
+    private boolean isAlwaysAllowed(PyObject key) {
+        String str = key.toString();
+        logger.trace("key: '{}' str value: '{}'", key, str);
+        return isAlwaysAllowed(str);
+    }
+    
     private boolean checkForDone(Map<Object, PyObject> table) {
         boolean result = false;
         if (table.containsKey("___init_finished")) {
@@ -69,6 +87,9 @@ public class LoudPyStringMap extends PyStringMap {
     }
     
     @Override public PyObject __getitem__(String key) {
+        if (isAlwaysAllowed(key)) {
+            return super.__getitem__(key);
+        }
         Map<Object, PyObject> table = getMap();
         if ((initMap == null) && checkForDone(table)) {
             bake();
@@ -82,10 +103,14 @@ public class LoudPyStringMap extends PyStringMap {
     }
     
     @Override public PyObject __getitem__(PyObject key) {
+        if (isAlwaysAllowed(key)) {
+            return super.__getitem__(key);
+        }
         Map<Object, PyObject> table = getMap();
         if ((initMap == null) && checkForDone(table)) {
             bake();
         }
+
 //        if (initMap != null) {
 //            return initMap.get(pyToKey(key));
 //        } else {
@@ -103,6 +128,10 @@ public class LoudPyStringMap extends PyStringMap {
     }
     
     @Override public void __setitem__(String key, PyObject value) {
+        if (isAlwaysAllowed(key)) {
+            super.__setitem__(key, value);
+            return;
+        }
         Map<Object, PyObject> table = getMap();
         if ((initMap == null) && checkForDone(table)) {
             bake();
@@ -130,6 +159,10 @@ public class LoudPyStringMap extends PyStringMap {
 
     @Override public void __setitem__(PyObject key, PyObject value) {
 //        logger.trace("mapName: {} key='{}' value: {}", mapName, key, value);
+        if (isAlwaysAllowed(key)) {
+            super.__setitem__(key, value);
+            return;
+        }
         Map<Object, PyObject> table = getMap();
         if ((initMap == null) && checkForDone(table)) {
             bake();
@@ -156,6 +189,10 @@ public class LoudPyStringMap extends PyStringMap {
     }
     
     @Override public void __delitem__(String key) {
+        if (isAlwaysAllowed(key)) {
+            super.__delitem__(key);
+            return;
+        }
         Map<Object, PyObject> table = getMap();
         if ((initMap == null) && checkForDone(table)) {
             bake();
@@ -177,6 +214,10 @@ public class LoudPyStringMap extends PyStringMap {
     }
     
     @Override public void __delitem__(PyObject key) {
+        if (isAlwaysAllowed(key)) {
+            super.__delitem__(key);
+            return;
+        }
         Map<Object, PyObject> table = getMap();
         if ((initMap == null) && checkForDone(table)) {
             bake();
