@@ -23,4 +23,7 @@
   <button action="action:edit.removedisplaysanddata"/>
   <filler/>
   <button action="action:idv.stopload"/>
+  <filler/>
+  <button action="action:edit.jython"/>
+  <button action="action:jython.shell"/>
 </panel>
