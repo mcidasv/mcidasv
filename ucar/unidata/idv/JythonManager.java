@@ -2081,7 +2081,9 @@ public class JythonManager extends IdvManager implements ActionListener,
     public PythonInterpreter getDerivedDataInterpreter(String methodName) {
         synchronized (MUTEX) {
             if (derivedDataInterpreter == null) {
+                logger.debug("333 created new PythonInterpreter(new LoudPyStringMap())");
                 derivedDataInterpreter = createInterpreter();
+                
             }
             if ((methodName != null) && (seenMethods.get(methodName) == null)) {
                 seenMethods.put(methodName, methodName);
