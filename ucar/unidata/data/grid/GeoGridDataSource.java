@@ -1270,6 +1270,7 @@ public class GeoGridDataSource extends GridDataSource {
         boolean       gridRelativeWind = false;
         NetcdfDataset ncFile           = myDataset.getNetcdfDataset();
         Variable      windFlag         = ncFile.findVariable("ResCompFlag");
+
         if (windFlag != null) {  // found it
             try {
                 Array array = windFlag.read();
@@ -1297,9 +1298,12 @@ public class GeoGridDataSource extends GridDataSource {
             if ( !isZAxisOk(zaxis)) {
                 continue;
             }
+
+//            gcs.getDomain()
             CoordinateAxis1DTime tAxis    = gcs.getTimeAxis1D();
             List                 geoTimes = getGeoGridTimes(tAxis);
             uniqueTimes.addAll(geoTimes);
+
         }
 
         if ( !uniqueTimes.isEmpty()) {
@@ -2428,9 +2432,11 @@ public class GeoGridDataSource extends GridDataSource {
             if ((sizeZ == 0) || (sizeZ == 1)) {
                 //if (sizeZ == 0) {
                 int xLength               =
-                    (int)xaxis.getSize();
+//                    (int)xaxis.getSize();
+                cfield.getXDimension().getLength();
                 int yLength               =
-                    (int)yaxis.getSize();
+//                    (int)yaxis.getSize();
+                        cfield.getYDimension().getLength();
                 ucar.nc2.Dimension ensDim = cfield.getEnsembleDimension();
                 if (twoDDimensionsLabel == null) {
                     twoDDimensionsLabel = "Total grid size:  x: " + xLength
