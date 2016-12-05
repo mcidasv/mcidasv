@@ -43,6 +43,19 @@
   unit="°C"
   ci_interval="5"
   ci_base="0"/>
+  
+  <!-- rmc inquiry 1771 -->
+  <param ci_base="0.0"
+     name="^precip.*"
+     ci_interval="2.5"
+     ci_max="60.0"
+     ci_min="0.25"
+     ci_width="1"
+     range_max="60.0"
+     range_min="0.0"
+     table="Precip"
+     unit="mm"/>
+  <!-- end of inquiry 1771 -->
 
 </params>
 
