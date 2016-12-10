@@ -134,8 +134,9 @@ Deep Convection'</td></tr></table></div>
 </table></div>
 <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setLayerLabel('%displayname% %timestamp%', size=15, color='blue', style='BOLD'</em>)</div>
+  <div class="TwoTabIndent"><em>layer.setLayerLabel('%timestamp% - GOES East image', size=15, color='blue', style='BOLD'</em>)</div>
   <div class="OneTabIndent">Remarks:</div>
-  <div class="TwoTabIndent">There are a variety of macros that can be passed into the label keyword.  These macros may differ between data sources and can include:</div>
+  <div class="TwoTabIndent">There are a variety of macros that can be passed into the label keyword.  Note that these macros must be contained within the label= string so they must be surrounded by quotes. These macros may differ between data sources and can include:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">%displayname%</td>
@@ -155,11 +156,11 @@ Deep Convection'</td></tr></table></div>
     </tr>
     <tr>
       <td valign="top">%timestamp%</td>
-      <td><p>Lists the timestep of parameter currently being displayed. This defaults to the time format in the User Preferences. The time format can be changed by using the macro in the form of:<br>
+      <td>Lists the timestep of parameter currently being displayed. This defaults to the time format in the User Preferences. The time format can be changed by using the macro in the form of:<br>
         %time:&lt;time pattern&gt;%<br>
         For example:<br>
         %time:HHz EEE dd MMM yyyy% would show something like 20UTC Wed 02 Dec 2015
-      </p></td>
+      </td>
     </tr>
         <tr>
       <td valign="top">%fhour%</td>
