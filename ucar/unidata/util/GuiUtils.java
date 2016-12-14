@@ -2331,8 +2331,8 @@ public class GuiUtils extends LayoutUtil {
         }
         return dialog;
     }
-
-
+    
+    
     /**
      * Show a modeful  Ok/Cancel dialog.
      *
@@ -2352,6 +2352,32 @@ public class GuiUtils extends LayoutUtil {
                                              Component src,
                                              List actionComponents,
                                              String okLabel) {
+        return showOkCancelDialog(f, title, contents, src, actionComponents, okLabel, true);
+    }
+    
+
+    /**
+     * Show a modal Ok/Cancel dialog.
+     *
+     * @param f                The frame to attach to
+     * @param title            The window title
+     * @param contents         The gui contents to show
+     * @param src              Where should the window popup
+     * @param actionComponents If non-null then these are components
+     *                         in the contents (e.g., JTextField) that an
+     *                         action listener is added to to do the Ok
+     *                         on an action event
+     * @param okLabel          text for the OK button
+     * @param resizable        Whether or not the dialog can be resized.
+     * @return True if Ok was pressed, false otherwise
+     */
+    public static boolean showOkCancelDialog(Window f, String title,
+                                             Component contents,
+                                             Component src,
+                                             List actionComponents,
+                                             String okLabel,
+                                             boolean resizable
+    ) {
         if ( !LogUtil.getInteractiveMode()) {
             throw new IllegalStateException(
                 "Cannot show dialog in non-interactive mode");
@@ -2377,8 +2403,11 @@ public class GuiUtils extends LayoutUtil {
 
             }
         }
+        
+        dialog.setPreferredSize(contents.getPreferredSize());
         packDialog(dialog, centerBottom(contents, buttons));
         setDefaultButton(buttons, dialog.getRootPane());
+        dialog.setResizable(resizable);
         if (src != null) {
             dialog.setLocation(getLocation(src));
             dialog.setVisible(true);
