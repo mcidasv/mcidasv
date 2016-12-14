@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -93,7 +94,10 @@ public class HydraCombo extends HydraControl {
     private Map<String, Selector> selectorMap = new HashMap<String, Selector>();
 
     private static final String defaultButtonLabel = "Compute New Field";
+    private static final String NEW_FIELD = "New channel combination has been added to Field Selector";
+    private static final String EMPTY_MESSAGE = " ";
     private JButton computeButton = new JButton(defaultButtonLabel);
+    protected static JLabel notificationLabel = new JLabel();
 
     public HydraCombo() {
         super();
@@ -203,9 +207,14 @@ public class HydraCombo extends HydraControl {
                 showWaitCursor();
             }
         });
-        // wrap compute button in JPanel to retain preferred size
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        buttonPanel.add(computeButton);
+        // wrap compute button and notification label in JPanels to retain preferred sizes
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel botPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        topPanel.add(notificationLabel);
+        botPanel.add(computeButton);
+        buttonPanel.add(topPanel, BorderLayout.NORTH);
+        buttonPanel.add(botPanel, BorderLayout.SOUTH);
         JPanel tmp = GuiUtils.topCenterBottom(display.getDisplayComponent(), comboPanel.getPanel(), buttonPanel);
         return tmp;
     }
@@ -213,11 +222,13 @@ public class HydraCombo extends HydraControl {
     public void addCombination(final String name, final Data combination) {
         if (combination != null)
             source.addChoice(name, combination);
+        notificationLabel.setText(NEW_FIELD);
     }
     
     public void addCombination(final Combination combination) {
         if (combination != null)
             source.addChoice(combination.getName(), combination.getData());
+        notificationLabel.setText(NEW_FIELD);
     }
 
     protected void addSelector(final Selector selector) throws Exception {
@@ -451,6 +462,8 @@ public class HydraCombo extends HydraControl {
             combo.setSelectedItem(" ");
             combo.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
+                    // Blank out any previous notifications
+                    notificationLabel.setText(EMPTY_MESSAGE);
                     if (getOperation().equals(" ")) {
                         comboPanel.disableSelector(y, true);
                     } else {
@@ -508,6 +521,8 @@ public class HydraCombo extends HydraControl {
             combo.setSelectedItem(INVALID_OP);
             combo.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
+                    // Blank out any previous notifications
+                    notificationLabel.setText(EMPTY_MESSAGE);
                     if (getOperation().equals(" ")) {
                         y.disable();
                     } else {
@@ -645,6 +660,8 @@ public class HydraCombo extends HydraControl {
 
             wavenumber.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
+                    // Blank out any previous notifications
+                    notificationLabel.setText(EMPTY_MESSAGE);
                     String textVal = wavenumber.getText();
                     if (textVal.equals(BLANK))
                         return;
@@ -701,6 +718,8 @@ public class HydraCombo extends HydraControl {
             final SelectorWrapper wrapper = this;
             box.addActionListener(new ActionListener() {
                 public void actionPerformed(final ActionEvent e) {
+                    // Blank out any previous notifications
+                    notificationLabel.setText(EMPTY_MESSAGE);
                     String selected = (String)box.getSelectedItem();
                     float wave = Float.NaN;
 
