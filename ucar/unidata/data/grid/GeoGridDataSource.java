@@ -883,8 +883,8 @@ public class GeoGridDataSource extends GridDataSource {
         JLabel label = new JLabel(getNameForDataSource(this, 50, true));
         contents = GuiUtils.topCenter(label, contents);
         contents = GuiUtils.inset(contents, 5);
-        contents.setPreferredSize(new Dimension(1000, 500));
-        if ( !GuiUtils.showOkCancelDialog(null, "Select Fields", contents, null, null, CMD_OK, false)) {
+        Dimension prefSize = new Dimension(1000, 500);
+        if ( !GuiUtils.showOkCancelDialog(null, "Select Fields", contents, null, null, CMD_OK, false, prefSize)) {
             return null;
         }
 

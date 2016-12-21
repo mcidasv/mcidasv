@@ -2334,7 +2334,7 @@ public class GuiUtils extends LayoutUtil {
     
     
     /**
-     * Show a modeful  Ok/Cancel dialog.
+     * Show a modal Ok/Cancel dialog.
      *
      * @param f                The frame to attach to
      * @param title            The window title
@@ -2351,11 +2351,12 @@ public class GuiUtils extends LayoutUtil {
                                              Component contents,
                                              Component src,
                                              List actionComponents,
-                                             String okLabel) {
-        return showOkCancelDialog(f, title, contents, src, actionComponents, okLabel, true);
+                                             String okLabel)
+    {
+        return showOkCancelDialog(f, title, contents, src, actionComponents,
+                                  okLabel, true, null);
     }
     
-
     /**
      * Show a modal Ok/Cancel dialog.
      *
@@ -2369,6 +2370,8 @@ public class GuiUtils extends LayoutUtil {
      *                         on an action event
      * @param okLabel          text for the OK button
      * @param resizable        Whether or not the dialog can be resized.
+     * @param prefSize         If not {@code null}, use as preferred size of
+     *                         resulting dialog.
      * @return True if Ok was pressed, false otherwise
      */
     public static boolean showOkCancelDialog(Window f, String title,
@@ -2376,8 +2379,9 @@ public class GuiUtils extends LayoutUtil {
                                              Component src,
                                              List actionComponents,
                                              String okLabel,
-                                             boolean resizable
-    ) {
+                                             boolean resizable,
+                                             Dimension prefSize)
+    {
         if ( !LogUtil.getInteractiveMode()) {
             throw new IllegalStateException(
                 "Cannot show dialog in non-interactive mode");
@@ -2403,8 +2407,9 @@ public class GuiUtils extends LayoutUtil {
 
             }
         }
-        
-        dialog.setPreferredSize(contents.getPreferredSize());
+        if (prefSize != null) {
+            dialog.setPreferredSize(prefSize);
+        }
         packDialog(dialog, centerBottom(contents, buttons));
         setDefaultButton(buttons, dialog.getRootPane());
         dialog.setResizable(resizable);
