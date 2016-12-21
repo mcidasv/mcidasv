@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 
@@ -64,6 +65,8 @@ import ucar.unidata.idv.control.chart.DataChoiceWrapper;
 import ucar.unidata.idv.control.chart.HistogramWrapper;
 import ucar.unidata.idv.control.chart.MyHistogramDataset;
 import ucar.unidata.idv.control.multi.DisplayGroup;
+import ucar.unidata.ui.ImageUtils;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 
@@ -75,6 +78,8 @@ import visad.VisADException;
 
 /**
  * Wraps a JFreeChart histogram to ease working with VisAD data.
+ *
+ * @deprecated Use {@link ucar.unidata.idv.control.McVHistogramWrapper}.
  */
 public class McIDASVHistogramWrapper extends HistogramWrapper {
 
@@ -142,6 +147,29 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                     dataset.removeAllSeries();
                 }
             }
+        }
+    }
+
+    /**
+     * _more_
+     */
+    public void saveImage() {
+        JComboBox publishCbx =
+            imageControl.getViewManager().getPublishManager().getSelector(
+                "nc.export");
+        String filename = FileManager.getWriteFile(FileManager.FILTER_IMAGE,
+                              FileManager.SUFFIX_JPG, ((publishCbx != null)
+                ? GuiUtils.top(publishCbx)
+                : null));
+        if (filename == null) {
+            return;
+        }
+        try {
+            ImageUtils.writeImageToFile(getContents(), filename);
+            imageControl.getViewManager().getPublishManager().publishContent(
+                filename, null, publishCbx);
+        } catch (Exception exc) {
+            LogUtil.logException("Capturing image", exc);
         }
     }
 

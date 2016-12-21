@@ -315,7 +315,7 @@ public class McVHistogramWrapper extends HistogramWrapper {
      * @return {@code false} if {@link #plot} is {@code null}. {@code true}
      * otherwise.
      */
-    protected boolean modifyRange(double lowVal, double hiVal) {
+    public boolean modifyRange(double lowVal, double hiVal) {
         return modifyRange(lowVal, hiVal, true);
     }
 
@@ -329,7 +329,7 @@ public class McVHistogramWrapper extends HistogramWrapper {
      * @return {@code false} if {@link #plot} is {@code null}. {@code true}
      * otherwise.
      */
-    protected boolean modifyRange(double lowVal, double hiVal,
+    public boolean modifyRange(double lowVal, double hiVal,
                                   boolean notify) {
         try {
             if (plot == null) {
@@ -350,7 +350,7 @@ public class McVHistogramWrapper extends HistogramWrapper {
      *
      * @return _more_
      */
-    protected Range getRange() {
+    public Range getRange() {
         ValueAxis domainAxis = plot.getDomainAxis();
         return domainAxis.getRange();
     }
@@ -358,7 +358,7 @@ public class McVHistogramWrapper extends HistogramWrapper {
     /**
      * _more_
      */
-    protected void doReset() {
+    public void doReset() {
         resetPlot();
     }
 
@@ -451,7 +451,7 @@ public class McVHistogramWrapper extends HistogramWrapper {
      * @return The items list
      */
     @Override
-    protected List getPopupMenuItems(List items) {
+    public List getPopupMenuItems(List items) {
         items = super.getPopupMenuItems(items);
         for (Object o : items) {
             if (o instanceof JMenuItem) {
@@ -537,7 +537,7 @@ public class McVHistogramWrapper extends HistogramWrapper {
      * @return Success
      */
     @Override
-    protected boolean doApplyProperties() {
+    public boolean doApplyProperties() {
         applyProperties();
 
         //        try {

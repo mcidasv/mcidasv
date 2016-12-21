@@ -83,6 +83,7 @@ import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.idv.control.McVHistogramWrapper;
 import ucar.visad.display.XYDisplay;
 import visad.DataReference;
 import visad.DataReferenceImpl;
@@ -146,7 +147,7 @@ public class MultiSpectralControl extends HydraControl {
     private final List<Hashtable<String, Object>> spectraProperties = new ArrayList<>();
     private final List<Spectrum> spectra = new ArrayList<>();
 
-    private McIDASVHistogramWrapper histoWrapper;
+    private McVHistogramWrapper histoWrapper;
 
     private float rangeMin;
     private float rangeMax;
@@ -180,7 +181,7 @@ public class MultiSpectralControl extends HydraControl {
         PARAM = (String) props.get(MultiSpectralDataSource.paramKey);
 
         List<DataChoice> choices = Collections.singletonList(choice);
-        histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
+        histoWrapper = new McVHistogramWrapper("histo", choices, this);
 
         Float fieldSelectorChannel =
             (Float)getDataSelection().getProperty(Constants.PROP_CHAN);

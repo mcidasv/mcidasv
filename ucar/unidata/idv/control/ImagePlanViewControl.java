@@ -60,7 +60,7 @@ public class ImagePlanViewControl extends PlanViewControl {
     public List descripters;
 
     /** _more_ */
-    private McVHistogramWrapper histoWrapper;
+    protected McVHistogramWrapper histoWrapper;
 
     /** _more_ */
     private FlatField image;
@@ -273,12 +273,10 @@ public class ImagePlanViewControl extends PlanViewControl {
      */
     protected void getViewMenuItems(List items, boolean forMenuBar) {
         super.getViewMenuItems(items, forMenuBar);
-        if (true) {
-            items.add(GuiUtils.MENU_SEPARATOR);
-            items.add(GuiUtils.makeMenuItem("Save Chart Image...",
-                                            getChart(),
-                                            "saveImage"));
-        }
+        items.add(GuiUtils.MENU_SEPARATOR);
+        items.add(GuiUtils.makeMenuItem("Save Chart Image...",
+                                        getChart(),
+                                        "saveImage"));
     }
 
 
