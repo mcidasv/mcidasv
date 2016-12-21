@@ -11,6 +11,10 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands/>
   </derived>
@@ -25,6 +29,10 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands/>
   </derived>
@@ -39,6 +47,10 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands/>
   </derived>
@@ -53,6 +65,10 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands/>
   </derived>
@@ -67,6 +83,10 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands/>
   </derived>
@@ -81,6 +101,10 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands/>
   </derived>
@@ -95,6 +119,10 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands/>
   </derived>
@@ -139,6 +167,10 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands/>
   </derived>
@@ -153,6 +185,10 @@
          display="true"
          value="Image Filters"/>
       <category value="IMAGE-*-*"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands/>
   </derived>
@@ -166,6 +202,10 @@
       <category
          display="true"
          value="Image Filters"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
@@ -180,6 +220,10 @@
       <category
          display="true"
          value="Image Filters"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
       <category value="IMAGE-*-*"/>
     </categories>
     <operands/>
