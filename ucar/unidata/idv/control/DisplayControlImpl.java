@@ -3697,10 +3697,20 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         logger.trace("geoSelection={}", geoSelection);
         // always update the screen size
         NavigatedDisplay navDisplay = getNavigatedDisplay();
-      	Rectangle2D sbox = navDisplay.getScreenBounds();
-        logger.trace("navDisplay={} sbox={}", navDisplay, sbox);
-        geoSelection.setScreenBound(sbox);
-        logger.trace("new geoselection stuff={}", geoSelection);
+      	Rectangle2D sbox = null;
+      	
+      	// TJJ Inq 2167
+      	// navDisplay sometimes null here, e.g. when a 2nd Data Transect is added
+      	// to display using full-Earth imagery (see Inq for details). I'm sure
+      	// there's a good reason (off-Earth bounding box?), but this seems to fix it.
+      	
+      	if (navDisplay != null) {
+      	    sbox = navDisplay.getScreenBounds();
+      	    logger.trace("navDisplay={} sbox={}", navDisplay, sbox);
+      	    geoSelection.setScreenBound(sbox);
+      	    logger.trace("new geoselection stuff={}", geoSelection);
+      	}
+        
         boolean levelChanged = dataSelection.getProperty("levelChanged", false);
         //if (Misc.equals(dataSelection.getProperty(DataSelection.PROP_REGIONOPTION), 
         //		DataSelection.PROP_USEDISPLAYAREA) && !levelChanged) {
