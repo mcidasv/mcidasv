@@ -67,6 +67,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.adt.Data;
 import edu.wisc.ssec.mcidasv.adt.Env;
 import edu.wisc.ssec.mcidasv.adt.Functions;
@@ -90,6 +91,7 @@ import ucar.unidata.ui.LatLonWidget;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.PointProbe;
@@ -1114,22 +1116,56 @@ public class ADTControl extends DisplayControlImpl {
     private String selectHistoryFile() {
         
         String fileNameReturn = null;
-        String HistoryPath;
         
         JFrame historyFileFrame = new JFrame();
         JFileChooser historyFileChooser = new JFileChooser();
-        HistoryPath = System.getenv("ODTHISTORY");
-        if (HistoryPath == null) {
-            HistoryPath = System.getenv("HOME");
+        String historyPath = System.getenv("ODTHISTORY");
+        if (historyPath == null) {
+            historyPath = getLastPath("mcv.adt.lasthistorypath", System.getProperty("user.home"));
         }
-        historyFileChooser.setCurrentDirectory(new File(HistoryPath));
+        historyFileChooser.setCurrentDirectory(new File(historyPath));
         historyFileChooser.setDialogTitle("Select ADT History File");
         int returnVal = historyFileChooser.showOpenDialog(historyFileFrame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = historyFileChooser.getSelectedFile();
             fileNameReturn = file.getAbsolutePath();
+            setLastPath("mcv.adt.lasthistorypath", file.getPath());
         }
         return fileNameReturn;
+    }
+    
+    /**
+     * Returns the path that corresponds to the given McIDAS-V property ID.
+     *
+     * @param id ID used to store user's last selected path.
+     * @param defaultPath Path to use if {@code id} has not been set.
+     *
+     * @return Either the {@code String} representation of the last selected
+     * path, or {@code defaultPath}.
+     */
+    private String getLastPath(String id, String defaultPath) {
+        McIDASV mcv = (McIDASV)getIdv();
+        String path = defaultPath;
+        if (mcv != null) {
+            path = mcv.getObjectStore().get(id, defaultPath);
+        }
+        return path;
+    }
+    
+    /**
+     * Sets the value of the given McIDAS-V property ID to the specified path.
+     *
+     * @param id ID to store.
+     * @param path Path to associate with {@code id}.
+     */
+    private void setLastPath(String id, String path) {
+        String okayPath = (path != null) ? path : "";
+        McIDASV mcv = (McIDASV)getIdv();
+        if (mcv != null) {
+            XmlObjectStore store = mcv.getObjectStore();
+            store.put(id, okayPath);
+            store.saveIfNeeded();
+        }
     }
     
     private String selectHistoryFileOutput() {
@@ -1234,24 +1270,24 @@ public class ADTControl extends DisplayControlImpl {
     private String selectForecastFile() {
         
         String fileNameReturn = null;
-        String ForecastPath;
+//        String ForecastPath;
         
         logger.debug("in selectForecastFile");
         JFrame forecastFileFrame = new JFrame();
         JFileChooser forecastFileChooser = new JFileChooser();
-        ForecastPath = System.getenv("ODTAUTO");
-        if (ForecastPath == null) {
-            ForecastPath = System.getenv("HOME");
+        String forecastPath = System.getenv("ODTAUTO");
+        if (forecastPath == null) {
+            forecastPath = getLastPath("mcv.adt.lastforecastpath", System.getProperty("user.home"));
         }
-        logger.debug("forecast path={}", ForecastPath);
-        forecastFileChooser.setCurrentDirectory(new File(ForecastPath));
+        logger.debug("forecast path={}", forecastPath);
+        forecastFileChooser.setCurrentDirectory(new File(forecastPath));
         forecastFileChooser.setDialogTitle("Select ADT History File");
         int returnVal = forecastFileChooser.showOpenDialog(forecastFileFrame);
         logger.debug("retVal={}", returnVal);
-        
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = forecastFileChooser.getSelectedFile();
             fileNameReturn = file.getAbsolutePath();
+            setLastPath("mcv.adt.lastforecastpath", file.getPath());
         } else {
             logger.error("error with file chooser");
         }
