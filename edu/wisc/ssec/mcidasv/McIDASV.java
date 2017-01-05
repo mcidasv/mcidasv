@@ -983,6 +983,16 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * Returns the time it took for McIDAS-V to start up.
+     *
+     * @return These results are created from subtracting the results of two
+     * {@link System#nanoTime()} calls against one another.
+     */
+    public long getStartupDuration() {
+        return estimate;
+    }
+    
+    /**
      * <p>
      * Overridden so that the support form becomes non-modal if launched from
      * an exception dialog.
@@ -1091,7 +1101,8 @@ public class McIDASV extends IntegratedDataViewer {
         addeEntries.startLocalServer();
 
         estimate = System.nanoTime() - startTime;
-        logger.info("estimated startup duration: {} ms", estimate / 1e6);
+        logger.info("estimated startup duration: {} ms", estimate / 1.0e6);
+        System.setProperty("mcv.start.duration", Long.toString(estimate));
 
         // handle the -doAction <action id> startup option.
         ((ArgumentManager)getArgsManager()).runStartupAction();
