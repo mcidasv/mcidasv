@@ -235,9 +235,13 @@ public class ColorTableEditor extends WindowHolder {
         JMenuBar menuBar = doMakeMenuBar();
         contents = GuiUtils.topCenterBottom(menuBar, canvas.getContents(),
                                             bottom);
-
-
-	setMenuBar(menuBar);
+        
+        contents =
+            new JScrollPane(contents,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        
+        setMenuBar(menuBar);
         setDialogTitle();
         show();
     }
