@@ -616,6 +616,7 @@ public class TabbedAddeManager extends JFrame {
             BetterJTable.createStripedJScrollPane(remoteTable);
 
         remoteTable.setModel(new RemoteAddeTableModel(serverManager));
+        remoteTable.setAutoCreateRowSorter(true);
         remoteTable.setColumnSelectionAllowed(false);
         remoteTable.setRowSelectionAllowed(true);
         remoteTable.getTableHeader().setReorderingAllowed(false);
@@ -671,6 +672,7 @@ public class TabbedAddeManager extends JFrame {
         JScrollPane localScroller =
             BetterJTable.createStripedJScrollPane(localTable);
         localTable.setModel(new LocalAddeTableModel(serverManager));
+        localTable.setAutoCreateRowSorter(true);
         localTable.setColumnSelectionAllowed(false);
         localTable.setRowSelectionAllowed(true);
         localTable.getTableHeader().setReorderingAllowed(false);
@@ -784,7 +786,10 @@ public class TabbedAddeManager extends JFrame {
             selectedEntries = newLinkedHashSet((max - min) * AddeEntry.EntryType.values().length);
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
-                    List<RemoteAddeEntry> entries = tableModel.getEntriesAtRow(i);
+                    int realRow = remoteTable.convertRowIndexToModel(i);
+                    logger.trace("original row: {} real row: {}", i, realRow);
+                    List<RemoteAddeEntry> entries = tableModel.getEntriesAtRow(realRow);
+                    
                     selectedEntries.addAll(entries);
                     selectedRowCount++;
                 }
@@ -831,7 +836,8 @@ public class TabbedAddeManager extends JFrame {
             selectedEntries = newLinkedHashSet(max - min);
             for (int i = min; i <= max; i++) {
                 if (selModel.isSelectedIndex(i)) {
-                    selectedEntries.add(tableModel.getEntryAtRow(i));
+                    int realRow = localTable.convertRowIndexToModel(i);
+                    selectedEntries.add(tableModel.getEntryAtRow(realRow));
                 }
             }
         }
