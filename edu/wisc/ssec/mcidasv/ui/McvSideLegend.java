@@ -28,24 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Insets;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
-import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.ui.SideLegend;
-import ucar.unidata.idv.ui.SideLegend.CategoryPanel;
 //import ucar.unidata.idv.ui.SideLegend.DisplayControlLegendPanel;
-import ucar.unidata.util.GuiUtils;
 
 public class McvSideLegend extends SideLegend {
 
