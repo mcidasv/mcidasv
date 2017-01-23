@@ -33,6 +33,8 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,7 +98,7 @@ public class HydraCombo extends HydraControl {
     private static final String NEW_FIELD = "New channel combination has been added to Field Selector";
     private static final String EMPTY_MESSAGE = " ";
     private JButton computeButton = new JButton(defaultButtonLabel);
-    protected static JLabel notificationLabel = new JLabel();
+    protected JLabel notificationLabel = new JLabel();
     
     public HydraCombo() {
         setHelpUrl("idv.controls.hydra.channelcombinationcontrol");
@@ -269,7 +271,7 @@ public class HydraCombo extends HydraControl {
         private final MultiSpectralDisplay display;
         
         private final HydraCombo control;
-        
+
         private final Console console;
         
         private final Map<String, Selector> selectorMap = new HashMap<>();
@@ -305,10 +307,6 @@ public class HydraCombo extends HydraControl {
             
             abcd = new CombineOperations(this, ab, cd);
         }
-        
-//        public Console getConsole() {
-//            return console;
-//        }
         
         public void ranBlock(final String line) {
             PyObject jythonObj = console.getJythonObject("combo");
@@ -457,7 +455,7 @@ public class HydraCombo extends HydraControl {
             combo.setSelectedItem(" ");
             combo.addActionListener(e -> {
                 // Blank out any previous notifications
-                notificationLabel.setText(EMPTY_MESSAGE);
+                comboPanel.control.notificationLabel.setText(EMPTY_MESSAGE);
                 if (Objects.equals(getOperation(), " ")) {
                     comboPanel.disableSelector(y, true);
                 } else {
@@ -515,7 +513,7 @@ public class HydraCombo extends HydraControl {
             combo.setSelectedItem(INVALID_OP);
             combo.addActionListener(e -> {
                 // Blank out any previous notifications
-                notificationLabel.setText(EMPTY_MESSAGE);
+                comboPanel.control.notificationLabel.setText(EMPTY_MESSAGE);
                 if (Objects.equals(getOperation(), " ")) {
                     y.disable();
                 } else {
@@ -552,7 +550,7 @@ public class HydraCombo extends HydraControl {
         protected final Selector selector;
         protected final MultiSpectralDisplay display;
         protected final MultiSpectralData data;
-        private final JTextField scale = new JTextField(String.format("%3.1f", 1.0));
+        protected final JTextField scale = new JTextField(String.format("%3.1f", 1.0));
         protected WrapperState currentState = WrapperState.DISABLED;
         
         public SelectorWrapper(final String variable, final ConstantMap[] color, final HydraCombo control, final Console console) {
@@ -655,11 +653,28 @@ public class HydraCombo extends HydraControl {
             wavenumber = new JTextField(BLANK, 7);
             wavenumber.addActionListener(e -> {
                 // Blank out any previous notifications
-                notificationLabel.setText(EMPTY_MESSAGE);
+                control.notificationLabel.setText(EMPTY_MESSAGE);
                 String textVal = wavenumber.getText();
                 if (!Objects.equals(textVal, BLANK)) {
                     float wave = Float.parseFloat(textVal.trim());
                     control.updateComboPanel(getSelector().getId(), wave);
+                }
+            });
+            // TJJ Jan 2017 - clear any previous notifications on any UI changes
+            // This requires a key listener on the scale fields
+            scale.addKeyListener(new KeyListener() {
+                @Override
+                public void keyTyped(KeyEvent ke) {
+                    // Blank out any previous notifications
+                    control.notificationLabel.setText(EMPTY_MESSAGE);
+                }
+                @Override
+                public void keyPressed(KeyEvent ke) {
+                    // Nothing needed here
+                }
+                @Override
+                public void keyReleased(KeyEvent ke) {
+                    // Nothing needed here
                 }
             });
         }
@@ -711,7 +726,7 @@ public class HydraCombo extends HydraControl {
             final SelectorWrapper wrapper = this;
             box.addActionListener(e -> {
                 // Blank out any previous notifications
-                notificationLabel.setText(EMPTY_MESSAGE);
+                control.notificationLabel.setText(EMPTY_MESSAGE);
                 String selected = (String)box.getSelectedItem();
                 float wave = Float.NaN;
                 if (!Objects.equals(selected, BLANK)) {
