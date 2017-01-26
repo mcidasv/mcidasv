@@ -360,26 +360,21 @@ public class ADTControl extends DisplayControlImpl {
             listHistoryFile();
         });
     
+        // TJJ Jan 2017
+        // We'll keep the Manual vs. Automated PMW radio button group around
+        // in case code to support automated is added later. For now, only
+        // manual works in this version, so we'll just set the state of the
+        // buttons but not show them.
+        
         JRadioButton PMWManButton = new JRadioButton("Manual");
         PMWManButton.setActionCommand("Man");
-        PMWManButton.setSelected(false);
-        PMWManButton.setEnabled(false);
+        PMWManButton.setSelected(true);
+        PMWManButton.setEnabled(true);
         
         JRadioButton PMWAutoButton = new JRadioButton("Automated");
         PMWAutoButton.setActionCommand("Auto");
         PMWAutoButton.setSelected(false);
         PMWAutoButton.setEnabled(false);
-        
-
-
-        /* PMW Automated option */
-        PMWFileBtn = new JButton("Select PMW Input File");
-        PMWFileBtn.setPreferredSize(new Dimension(200, 30));
-        PMWFileBtn.addActionListener(hbtn -> {
-            GUIPMWFileName = selectPMWFile();
-            logger.debug("PMW file name={}", GUIPMWFileName);
-        });
-        PMWFileBtn.setEnabled(false);
         
         /* PMW Manual options */
         JLabel pmwManDateLabel = new JLabel("Date:");
@@ -671,9 +666,8 @@ public class ADTControl extends DisplayControlImpl {
                     filler(1,10),
                     left(hbox(arr(new JLabel("PMW ANALYSIS")), 10)),filler(),
                     left(hbox(arr(filler(30,1),PMWActivateButton,
-                        PMWManButton,
-                        pmwManDateLabel,pmwManDateTextField,pmwManTimeLabel,
-                        pmwManTimeTextField, pmwManScoreLabel,pmwManScoreTextField, PMWAutoButton, PMWFileBtn), 5)),filler(),
+                        pmwManDateLabel, pmwManDateTextField, pmwManTimeLabel,
+                        pmwManTimeTextField, pmwManScoreLabel, pmwManScoreTextField), 5)), filler(),
                     left(hbox(arr(blankfield))),
                     filler(1,10),
                     left(hbox(arr(new JLabel("MISCELLANEOUS OPTIONS")), 10)), filler(),
