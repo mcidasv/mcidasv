@@ -500,9 +500,9 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
             trajectoryBtn = new JRadioButton("Trajectories:", isTrajectories);
             cvectorBtn    = new JRadioButton("Curly Vectors:", isCVectors);
             trajectoryBtn.setToolTipText(
-                "Require mininmum four time steps for this display");
+                "A minimum of four time steps are required for this display");
             cvectorBtn.setToolTipText(
-                "Require mininmum four time steps for this display");
+                "A minimum of four time steps are required for this display");
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     JRadioButton source = (JRadioButton) e.getSource();
