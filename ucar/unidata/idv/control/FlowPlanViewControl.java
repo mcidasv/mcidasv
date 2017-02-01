@@ -441,6 +441,10 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
 
         JCheckBox autoSizeCbx = new JCheckBox("Autosize", autoSize);
         arrowCbx = new JCheckBox("Arrow", arrowHead);
+
+        // TJJ Feb 2017 - default state is selected (Inq #2360)
+        arrowCbx.setSelected(true);
+
         autoSizeCbx.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 autoSize = ((JCheckBox) e.getSource()).isSelected();
