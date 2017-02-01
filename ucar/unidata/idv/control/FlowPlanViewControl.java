@@ -833,9 +833,10 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
                         arrowHeadSizeValue, false);
             }
 
-            //getGridDisplay().setArrowHead(arrowHead);
-            //getGridDisplay().setTrajFormType(trajFormType);
-            //getGridDisplay().resetTrojectories();
+            // getGridDisplay().setTrajFormType(trajFormType);
+            // TJJ Feb 2017 Arrowheads were getting lost when toggling between forms
+            getGridDisplay().setArrowHead(arrowHead);
+            getGridDisplay().resetTrojectories();
             enableBarbSizeBox();
             enableDensityComponents();
             enableTrajLengthBox();
