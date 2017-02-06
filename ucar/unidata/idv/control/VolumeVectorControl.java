@@ -111,6 +111,9 @@ public class VolumeVectorControl extends GridDisplayControl implements FlowDispl
 
     /** arrow */
     boolean arrowHead = false;
+    
+    /** arrow on/off checkbox */
+    JCheckBox arrowCbx = null;
 
     /** a scale factor */
     protected final float scaleFactor = 0.02f;
@@ -344,7 +347,7 @@ public class VolumeVectorControl extends GridDisplayControl implements FlowDispl
         addRemovable(barbSizeWidget);
 
         JCheckBox autoSizeCbx = new JCheckBox("Autosize", autoSize);
-        JCheckBox arrowCbx    = new JCheckBox("Arrow", arrowHead);
+        arrowCbx    = new JCheckBox("Arrow", arrowHead);
 
         // TJJ Feb 2017 - default state is selected (Inq #2360)
         arrowCbx.setSelected(true);
@@ -553,6 +556,10 @@ public class VolumeVectorControl extends GridDisplayControl implements FlowDispl
             getGridDisplay().setIsTrajectories(isTrajectories);
             getGridDisplay().setTrojectoriesEnabled(isTrajectories,
                     arrowHeadSizeValue, false);
+            // TJJ Feb 2017 Arrowheads were getting lost when toggling between forms
+            arrowHead = arrowCbx.isSelected();
+            getGridDisplay().setArrowHead(arrowHead);
+            getGridDisplay().resetTrojectories();
             enableTrajLengthBox();
             enableVectorBox();
         }
