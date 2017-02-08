@@ -861,8 +861,9 @@ public class VolumeVectorControl extends GridDisplayControl implements FlowDispl
      */
     protected Container doMakeContents()
             throws VisADException, RemoteException {
-
-        return GuiUtils.left(doMakeWidgetComponent());
+        
+        return GuiUtils.top(
+            GuiUtils.vbox(Misc.newList(doMakeWidgetComponent())));
     }
 
 
