@@ -59,7 +59,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 
-
+import edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource;
 
 
 /**
@@ -947,7 +947,8 @@ public class DataSelector extends DataSourceHolder {
          * {@link GeoGridDataSource}.
          */
         private boolean isShowingNetcdf() {
-            return dataSource instanceof GeoGridDataSource;
+            return dataSource instanceof GeoGridDataSource
+                   || dataSource instanceof SuomiNPPDataSource;
         }
 
     }
