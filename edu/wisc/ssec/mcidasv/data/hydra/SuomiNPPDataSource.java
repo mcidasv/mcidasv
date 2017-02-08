@@ -301,6 +301,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	String pathToLat = null;
     	String pathToLon = null;
     	Set<String> pathToProducts = new LinkedHashSet<>();
+    	Map<String, String> prodToDesc = new HashMap<>();
     	
     	// flag to differentiate VIIRS from one of the other Suomi sensors
     	boolean isVIIRS = true;
@@ -689,6 +690,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								v.addAttribute(fillAtt);
     								pathToLat = v.getFullName();
     								pathToProducts.add(v.getFullName());
+    								prodToDesc.put(v.getFullName(), v.getDescription());
     								xDimNASA = v.getDimension(0).getLength();
     								yDimNASA = v.getDimension(1).getLength();
     							}
@@ -700,6 +702,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								v.addAttribute(fillAtt);
     								pathToLon = v.getFullName();
     								pathToProducts.add(v.getFullName());
+									prodToDesc.put(v.getFullName(), v.getDescription());
     							}
     						}
     	    			}
@@ -715,7 +718,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								v.getDimension(1).getLength() == yDimNASA) {
 	    							logger.debug("Adding product: " + v.getFullName());
 	    							pathToProducts.add(v.getFullName());
-	    							
+									prodToDesc.put(v.getFullName(), v.getDescription());
 	    							Attribute aUnsigned = v.findAttribute("_Unsigned");
 	    							if (aUnsigned != null) {
 	    								unsignedFlags.put(v.getFullName(), aUnsigned.getStringValue());
@@ -841,6 +844,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     										lutMap.put(vBT.getFullName(), i05LUT);
     									}
     									pathToProducts.add(vBT.getFullName());
+										prodToDesc.put(vBT.getFullName(), vBT.getDescription());
     									btProds.add(vBT);
 	    							}
     							}
@@ -857,6 +861,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								    (v.getShortName().equals("latitude"))) continue;
 	    							logger.debug("Adding product: " + v.getFullName());
 	    							pathToProducts.add(v.getFullName());
+									prodToDesc.put(v.getFullName(), v.getDescription());
     							}
     						}
     	    			}
@@ -1210,7 +1215,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     	    							logger.debug("Adding product: " + v.getFullName());
     	    							pathToProducts.add(v.getFullName());
-
+										prodToDesc.put(v.getFullName(), v.getDescription());
     	    						}
     	    					}
     	    				}
@@ -1231,6 +1236,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    		ncdff.addVariable(qfV.getGroup(), qfV);
     	    		logger.trace("Adding QF product: " + qfV.getFullName());
     	    		pathToProducts.add(qfV.getFullName());
+					prodToDesc.put(qfV.getFullName(), qfV.getDescription());
     	    		unsignedFlags.put(qfV.getFullName(), "true");
     	    		unpackFlags.put(qfV.getFullName(), "false");
     	    	}
@@ -1293,10 +1299,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	// TJJ is this even needed?  Is product_name used anywhere?
         	if (productName == null) productName = pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1);
         	swathTable.put("product_name", productName);
-        	
+			swathTable.put("_mapping", prodToDesc);
         	// array_name common to spectrum table
         	spectTable.put("array_name", pStr);
         	spectTable.put("product_name", productName);
+			spectTable.put("_mapping", prodToDesc);
         	
         	if (! isVIIRS) {
 
@@ -1636,13 +1643,20 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		for (int idx = 0; idx < adapters.length; idx++) {
     			DataChoice choice = null;
     			try {
-    				choice = doMakeDataChoice(idx, adapters[idx].getArrayName());
+    				Map<String, Object> metadata = adapters[idx].getMetadata();
+					String description = null;
+    				if (metadata.containsKey("_mapping")) {
+						String arrayName = metadata.get("array_name").toString();
+    					Map<String, String> mapping =
+							(Map<String, String>)metadata.get("_mapping");
+						description = mapping.get(arrayName);
+					}
+					choice = doMakeDataChoice(idx, adapters[idx].getArrayName(), description);
     				choice.setObjectProperty(Constants.PROP_GRANULE_COUNT, 
 							getProperty(Constants.PROP_GRANULE_COUNT, "1 Granule")); 
     			} 
     			catch (Exception e) {
-    				e.printStackTrace();
-    				logger.error("doMakeDataChoice failed");
+    				logger.error("doMakeDataChoice failed", e);
     			}
 
     			if (choice != null) {
@@ -1652,8 +1666,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	}
     }
 
-    private DataChoice doMakeDataChoice(int idx, String var) throws Exception {
+    private DataChoice doMakeDataChoice(int idx, String var, String description) throws Exception {
         String name = var;
+        if (description == null) {
+            description = name;
+        }
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
         Hashtable subset = new Hashtable();
         subset.put(new MultiDimensionSubset(), dataSel);
@@ -1667,7 +1684,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		name = name + "Reflectance";
         	}
         }
-        DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, subset);
+        DirectDataChoice ddc = new DirectDataChoice(this, idx, name, description, categories, subset);
         return ddc;
     }
     
