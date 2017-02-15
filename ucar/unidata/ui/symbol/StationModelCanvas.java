@@ -63,6 +63,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -604,7 +605,12 @@ public class StationModelCanvas extends EditCanvas {
     public void actionPerformed(ActionEvent event) {
         String action = event.getActionCommand();
         if (action.equals(GuiUtils.CMD_SAVE)) {
-            doSave();
+            StationModel sm = getStationModel();
+            if (Objects.equals(sm.getDisplayName(), StationModelManager.NEW_LAYOUT_MODEL)) {
+                doSaveAs();
+            } else {
+                doSave();
+            }
         } else if (action.equals(GuiUtils.CMD_SAVEAS)) {
             doSaveAs();
         } else if (action.equals(GuiUtils.CMD_RENAME)) {

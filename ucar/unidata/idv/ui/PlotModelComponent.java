@@ -34,6 +34,7 @@ import java.awt.event.*;
 
 import java.lang.reflect.Method;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -193,6 +194,8 @@ public class PlotModelComponent extends JPanel {
     public void editPlotModel() {
         if (plotModel != null) {
             idv.getStationModelManager().show(plotModel);
+        } else {
+            idv.getStationModelManager().show(new StationModel(StationModelManager.NEW_LAYOUT_MODEL, new ArrayList()));
         }
     }
 
