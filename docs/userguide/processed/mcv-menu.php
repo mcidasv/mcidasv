@@ -93,6 +93,7 @@ RAOB Sounding Data</span><br>
       <div class="indented" id="layercontrols_2">
         <span class="link" onClick="setPage('controls/PlanViewControl.html');">Plan View Controls</span><br>
         <span class="link" onClick="setPage('controls/FlowPlanViewControl.html');">Flow Display Controls</span><br>
+        <span class="link" onClick="setPage('controls/3DFlowPlanViewControl.html');">3D Flow Display Controls</span><br>
                 <span class="link" onClick="setPage('controls/ValuePlotControl.html');">Value Plot Controls </span><br>
         <span class="link" onClick="setPage('controls/CrossSectionControl.html');">Vertical Cross Section Controls</span><br>
         <span class="link" onClick="setPage('controls/ThreeDSurfaceControl.html');">3D Surface Controls</span><br>
@@ -280,6 +281,8 @@ RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('misc/Scripting/CreateObjectGrid.html');">Create an Object - Grids</span><br>
       <span class="link" onClick="setPage('misc/Scripting/ModifyDisplayObject.html');">Modify the Display Object</span><br>
       <span class="link" onClick="setPage('misc/Scripting/ModifyLayerObject.html');">Modify the Layer Object</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/ModifyPointLayerObject.html');">Modify the Layer Object - Point</span><br>
+      <span class="link" onClick="setPage('misc/Scripting/DataAnalysis.html');">Data Analysis</span><br>
       <span class="link" onClick="setPage('misc/Scripting/SaveDisplay.html');">Save the Display</span><br>
       <span class="link" onClick="setPage('misc/Scripting/Environment.html');">Environment</span><br>
       </div>

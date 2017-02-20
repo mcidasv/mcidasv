@@ -29,7 +29,10 @@ package edu.wisc.ssec.mcidasv.util;
 
 import ch.qos.logback.core.rolling.RollingFileAppender;
 
-import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.util.Objects;
 
 /**
  * Logback {@literal "file appender"} that uses some knowledge of McIDAS-V to
@@ -41,12 +44,15 @@ import java.io.File;
  */
 public class UserpathRollingFileAppender<E> extends RollingFileAppender<E> {
     @Override public void setFile(String file) {
-        if ("mcv.logpath_IS_UNDEFINED".equals(file)) {
-            String logPath = System.getProperty("mcv.userpath") + File.separatorChar + "mcidasv.log";
-            addInfo("using default logpath="+logPath);
+        if (Objects.equals("mcv.logpath_IS_UNDEFINED", file)) {
+//            Paths.get(System.getProperty("mcv.userpath"), "mcidasv.log");
+//            String logPath = System.getProperty("mcv.userpath") + File.separatorChar + "mcidasv.log";
+            Path p = Paths.get(System.getProperty("mcv.userpath"), "mcidasv.log");
+            String logPath = p.toAbsolutePath().toString();
+            addInfo("using default logpath: '"+logPath+'\'');
             super.setFile(logPath);
         } else {
-            addInfo("using specified logpath="+file);
+            addInfo("using specified logpath: '"+file+'\'');
             super.setFile(file);
         }
     }

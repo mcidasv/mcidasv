@@ -886,7 +886,7 @@ public class EntryTransforms {
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(filename))) {
             String result = entries.stream()
                                    .map(EntryTransforms::asResolvEntry)
-                                   .collect(Collectors.joining("\n"));
+                                   .collect(Collectors.joining("\n")) + '\n';
             bw.write(result);
         }
     }

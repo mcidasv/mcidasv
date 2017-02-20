@@ -61,6 +61,7 @@ import visad.CommonUnit;
 import visad.DateTime;
 
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -80,7 +81,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**
  * A chooser that allows for selecting times
@@ -145,7 +146,12 @@ public class TimesChooser extends IdvChooser {
     protected JComponent timesContainer;
 
     /** absolute times label */
-    private JLabel absTimesLbl = new JLabel("  ");
+    protected JLabel absTimesLbl = new JLabel("  ");
+
+    protected JPanel timelinePanel;
+    protected JPanel underTimelinePanel;
+    protected JPanel timelistPanel;
+    protected JPanel underTimelistPanel;
 
     /** times list */
     private ChooserList timesList;
@@ -707,13 +713,19 @@ public class TimesChooser extends IdvChooser {
             Font f = timesList.getFont();
             f = f.deriveFont(f.getSize() - 2f);
             timesList.setFont(f);
+            underTimelinePanel = GuiUtils.left(absTimesLbl);
+            underTimelistPanel = new JPanel(new BorderLayout());
+            timelinePanel = McVGuiUtils.topBottom(timeline.getContents(false),
+                                                  underTimelinePanel,
+                                                  McVGuiUtils.Prefer.TOP);
+
+            timelistPanel = McVGuiUtils.topBottom(timesList.getScroller(),
+                                                  underTimelistPanel,
+                                                  McVGuiUtils.Prefer.TOP);
             JSplitPane splitter =
-                GuiUtils.hsplit(timeline.getContents(false),
-                                timesList.getScroller(), 0.75);
+                GuiUtils.hsplit(timelinePanel, timelistPanel, 0.75);
             splitter.setOneTouchExpandable(true);
-            timesTab.add("Absolute",
-                         GuiUtils.centerBottom(splitter,
-                             GuiUtils.leftRight(absTimesLbl, absoluteExtra)));
+            timesTab.add("Absolute", splitter);
             timesTab.setPreferredSize(new Dimension(350, 150));
         } else {
             timesTab.add("Absolute",

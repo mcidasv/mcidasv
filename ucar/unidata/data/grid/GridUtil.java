@@ -35,6 +35,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import ucar.ma2.Array;
+import ucar.ma2.ArrayFloat;
 import ucar.ma2.DataType;
 
 import ucar.nc2.Attribute;
@@ -5487,15 +5488,15 @@ public class GridUtil {
             Gridded2DSet g   = allSets.get(polygonIdx);
             float[]      low = g.getLow();
             float[]      hi  = g.getHi();
-            lonLow[polygonIdx] = (latLonOrder
+            lonLow[polygonIdx] = (float)GeoUtils.normalizeLongitude((latLonOrder
                                   ? low[1]
-                                  : low[0]);
+                                  : low[0]));
             latLow[polygonIdx] = (latLonOrder
                                   ? low[0]
                                   : low[1]);
-            lonHi[polygonIdx]  = (latLonOrder
+            lonHi[polygonIdx]  = (float)GeoUtils.normalizeLongitude((latLonOrder
                                   ? hi[1]
-                                  : hi[0]);
+                                  : hi[0]));
             latHi[polygonIdx]  = (latLonOrder
                                   ? hi[0]
                                   : hi[1]);
@@ -6016,6 +6017,14 @@ public class GridUtil {
             }
             for (Iterator it = keys.iterator(); it.hasNext(); ) {
                 Variable v = (Variable) it.next();
+                if(v.getName().equals("ImageLine")){
+                    Array af =  varData.get(v);
+                    for(int i=0; i< af.getSize(); i++) {
+                        float t = af.getFloat(i) + 1;
+                        af.setFloat(i, t);
+                    }
+                    varData.put(v, af);
+                }
                 ncfile.write(v.getName(), varData.get(v));
             }
             int   numDims = dims.size();

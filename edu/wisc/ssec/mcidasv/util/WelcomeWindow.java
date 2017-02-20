@@ -34,14 +34,15 @@ import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import java.io.IOException;
 
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -50,7 +51,6 @@ import javax.swing.JTextPane;
 import javax.swing.LayoutStyle;
 import javax.swing.WindowConstants;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 /**
  * {@code WelcomeWindow} is really just intended to <i>try</i> to detect known
@@ -61,7 +61,8 @@ import javax.swing.event.HyperlinkListener;
  */
 // NOTE TO MCV CODERS:
 // **DOCUMENT WHAT CHECKS AND/OR DETECTION ARE BEING PERFORMED**
-public class WelcomeWindow extends JFrame {
+//public class WelcomeWindow extends JFrame {
+public class WelcomeWindow extends JDialog {
 
     /** Path to {@literal "header"} image. */
     private static final String LOGO_PATH = 
@@ -82,13 +83,28 @@ public class WelcomeWindow extends JFrame {
     /** Dimensions of the welcome window frame. */
     private static final Dimension WINDOW_SIZE = new Dimension(495, 431);
 
+    /** Default auto-quit delay (in milliseconds). */
+    public static final long DEFAULT_QUIT_DELAY = 2500;
+
     /** Java-friendly location of the path to the welcome message. */
     private final java.net.URL contents;
+
+    /** Whether or not the window should automatically close. */
+    private final boolean autoQuit;
+
+    /** Delay in milliseconds for auto-quitting. */
+    private final long autoQuitDelay;
 
     /** 
      * Creates new form WelcomeWindow.
      */
     public WelcomeWindow() {
+        this(false, Long.MAX_VALUE);
+    }
+
+    public WelcomeWindow(boolean autoQuit, long delay) {
+        this.autoQuit = autoQuit;
+        this.autoQuitDelay = delay;
         this.contents = WelcomeWindow.class.getResource(WELCOME_HTML);
         initComponents();
     }
@@ -123,11 +139,7 @@ public class WelcomeWindow extends JFrame {
             textPane.setText(ERROR_MESSAGE);
             e.printStackTrace();
         }
-        textPane.addHyperlinkListener(new HyperlinkListener() {
-            @Override public void hyperlinkUpdate(HyperlinkEvent evt) {
-                textPaneHyperlinkUpdate(evt);
-            }
-        });
+        textPane.addHyperlinkListener(this::textPaneHyperlinkUpdate);
         scrollPane.setViewportView(textPane);
 
         GroupLayout mainPanelLayout = new GroupLayout(mainPanel);
@@ -142,18 +154,10 @@ public class WelcomeWindow extends JFrame {
         );
 
         setButtonImage(startButton, McVGuiUtils.ICON_APPLY_SMALL);
-        startButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent evt) {
-                startButtonActionPerformed(evt);
-            }
-        });
+        startButton.addActionListener(this::startButtonActionPerformed);
 
         setButtonImage(quitButton, McVGuiUtils.ICON_CANCEL_SMALL);
-        quitButton.addActionListener(new ActionListener() {
-            @Override public void actionPerformed(ActionEvent evt) {
-                quitButtonActionPerformed(evt);
-            }
-        });
+        quitButton.addActionListener(this::quitButtonActionPerformed);
 
         GroupLayout buttonPanelLayout = new GroupLayout(buttonPanel);
         buttonPanel.setLayout(buttonPanelLayout);
@@ -199,17 +203,43 @@ public class WelcomeWindow extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setSize(WINDOW_SIZE);
+        setModal(true);
     }// </editor-fold>
 
     /**
+     * Show or close the Welcome Window.
+     *
+     * <p>Overridden in McV to handle auto-quitting. If we're supposed to
+     * auto-quit, a thread will be started that calls {@link JButton#doClick()}.
+     * </p>
+     *
+     * @param visible Whether or not the dialog should be opened or closed.
+     */
+    @Override public void setVisible(boolean visible) {
+        if (autoQuit) {
+            new Thread() {
+                public void run() {
+                    try {
+                        sleep(autoQuitDelay);
+                    } catch (InterruptedException ex) {
+                        // not much else to be done...
+                        ex.printStackTrace();
+                    } finally {
+                        EventQueue.invokeLater(startButton::doClick);
+                    }
+                }
+            }.start();
+        }
+        super.setVisible(visible);
+    }
+
+    /**
      * Handles the user clicking on {@link #startButton}. 
-     * Executes {@code System.exit(0)} in an effort to signal to the startup
-     * scripts that the window terminated {@literal "normally"}.
-     * 
+     *
      * @param evt Event to handle. Currently ignored.
      */
     private void startButtonActionPerformed(ActionEvent evt) {
-        System.exit(0);
+        this.setVisible(false);
     }
 
     /**
@@ -234,7 +264,7 @@ public class WelcomeWindow extends JFrame {
      * <p>An abnormal termination will result in the startup script 
      * terminating the launch of McIDAS-V.
      * 
-     * @param evt Note that this parameter is currently ignored.
+     * @param evt Event to handle. Currently ignored.
      */
     private void formWindowClosing(WindowEvent evt) {
         System.exit(1);
@@ -267,13 +297,25 @@ public class WelcomeWindow extends JFrame {
     }
 
     /**
-     * @param args the command line arguments
+     * Kick the tires.
+     *
+     * @param args Command line arguments
      */
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new WelcomeWindow().setVisible(true);
+        EventQueue.invokeLater(() -> {
+            WelcomeWindow ww;
+            if (args.length == 2) {
+                boolean autoQuit = "-autoquit".equals(args[0]);
+                long delay = Long.parseLong(args[1]);
+                ww = new WelcomeWindow(autoQuit, delay);
+            } else if (args.length == 1) {
+                boolean autoQuit = "-autoquit".equals(args[0]);
+                ww = new WelcomeWindow(autoQuit, DEFAULT_QUIT_DELAY);
             }
+            else {
+                ww = new WelcomeWindow();
+            }
+            ww.setVisible(true);
         });
     }
 

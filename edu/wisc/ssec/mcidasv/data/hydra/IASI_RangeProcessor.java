@@ -27,7 +27,7 @@
  */
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class IASI_RangeProcessor extends RangeProcessor {
 
@@ -35,11 +35,11 @@ public class IASI_RangeProcessor extends RangeProcessor {
 		super();
 	}
 
-	public float[] processRange(short[] values, HashMap subset) {
-		int channelIndex = (int) ((double[]) subset.get(SpectrumAdapter.channelIndex_name))[0];
+	public float[] processRange(short[] values, Map<String, double[]> subset) {
+		int channelIndex = (int) (subset.get(SpectrumAdapter.channelIndex_name))[0];
 
 		float[] new_values = IASI_L1C_Utility.getDecodedIASIImage(values, null, channelIndex);
-		double[] track_coords = (double[]) subset.get(SwathAdapter.track_name);
+		double[] track_coords = subset.get(SwathAdapter.track_name);
 		int numLines = ((int) (track_coords[1] - track_coords[0]) + 1);
 		new_values = IASI_L1C_Utility.psuedoScanReorder2(new_values, 60, numLines * 2);
 

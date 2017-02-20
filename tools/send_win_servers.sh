@@ -22,6 +22,9 @@ adirserv.exe agetserv.exe
 areaadir.exe areaaget.exe
 fsdxadir.exe fsdxaget.exe
 gvaradir.exe gvaraget.exe
+indiadir.exe indiaget.exe
+indsadir.exe indsaget.exe
+instadir.exe instaget.exe
 lv1badir.exe lv1baget.exe
 mod4adir.exe mod4aget.exe
 modradir.exe modraget.exe
@@ -31,6 +34,7 @@ msgtadir.exe msgtaget.exe
 msgxadir.exe msgxaget.exe
 omtpadir.exe omtpaget.exe
 poesadir.exe poesaget.exe
+wariadir.exe wariaget.exe
 
 amseadir.exe amseaget.exe
 amsradir.exe amsraget.exe
@@ -43,6 +47,8 @@ awipadir.exe awipaget.exe
 giniadir.exe giniaget.exe
 mod8adir.exe mod8aget.exe
 mtstadir.exe mtstaget.exe
+
+abinadir.exe abinaget.exe
 
 vpserv.exe
 atokserv.exe

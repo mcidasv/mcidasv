@@ -28,73 +28,58 @@
 
 package ucar.unidata.idv.control;
 
-
-import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
-import ucar.unidata.collab.Sharable;
-
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataInstance;
-import ucar.unidata.data.grid.GridUtil;
-import ucar.unidata.idv.ControlContext;
-
-
-import ucar.unidata.idv.DisplayConventions;
-import ucar.unidata.metdata.NamedStationImpl;
-import ucar.unidata.metdata.NamedStationTable;
-
-import ucar.unidata.metdata.Station;
-
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.ObjectListener;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.TwoFacedObject;
-
-import ucar.visad.Util;
-
-import ucar.visad.display.RadarGrid;
-import ucar.visad.quantities.CommonUnits;
-
-
-
-import visad.*;
-
-import visad.georef.EarthLocation;
-import visad.georef.EarthLocationTuple;
-import visad.georef.LatLonPoint;
-import visad.georef.LatLonTuple;
-import visad.georef.MapProjection;
-
-import java.awt.*;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.event.*;
-
-
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.geom.Rectangle2D;
-
 import java.rmi.RemoteException;
-
-import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 
-import javax.swing.event.*;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.grid.GridUtil;
+import ucar.unidata.metdata.NamedStationImpl;
+import ucar.unidata.metdata.NamedStationTable;
+import ucar.unidata.metdata.Station;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.ObjectListener;
+import ucar.visad.display.RadarGrid;
+import ucar.visad.quantities.CommonUnits;
 
+import visad.CommonUnit;
+import visad.DisplayEvent;
+import visad.FieldImpl;
+import visad.Unit;
+import visad.VisADException;
+import visad.georef.EarthLocation;
+import visad.georef.LatLonPoint;
+import visad.georef.LatLonTuple;
+import visad.georef.MapProjection;
 
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
 /**
  * Display control for a "RadarGrid," radar range-rings plus radial lines.
  *
  * @version $Revision: 1.103 $
  */
+
 public class RadarGridControl extends DisplayControlImpl implements ActionListener {
 
     /** command property for range ring spacing */
@@ -105,7 +90,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
     /** command property for radial spacing */
     static final String CMD_RAD_SPACING = "radspacing";
-
 
     /** command property for range ring color */
     static final String CMD_RR_COLOR = "rrcolor";
@@ -166,6 +150,9 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
     /** Do we reposition when the user clicks */
     private JCheckBox positionAtClickCbx;
+    
+    /** Link Color and Line Width changes button */
+    private JToggleButton linkColorAndLineWidthButton;
 
     /** default radial color */
     private Color radColor = Color.gray;
@@ -177,6 +164,14 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
     /** default label color */
     private Color lblColor = Color.gray;
+    
+    private ColorSwatchComponent radColorSwatch = null;
+    private ColorSwatchComponent rrColorSwatch = null;
+    private ColorSwatchComponent lblColorSwatch = null;
+    
+    private JComboBox radComboBox = null;
+    private JComboBox rrComboBox = null;
+    private JComboBox lblComboBox = null;
 
     /** list of range ring spacings */
     static final Vector rrSpacingList = Misc.toVector(new String[] {
@@ -479,6 +474,14 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
                     } else if (cmd.equals(CMD_LBL_COLOR)) {
                         rangeRings.setLabelColor(lblColor = c);
                     }
+                    if (linkColorAndLineWidthButton.isSelected()) {
+                        rangeRings.setAzimuthLineColor(radColor = c);
+                        rangeRings.setRangeRingColor(rrColor = c);
+                        rangeRings.setLabelColor(lblColor = c);
+                        radColorSwatch.setBackground(c);
+                        rrColorSwatch.setBackground(c);
+                        lblColorSwatch.setBackground(c);
+                    }
                 } catch (Exception exc) {
                     logException("setting color", exc);
                 }
@@ -646,46 +649,78 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         for (int i = 0; i < 3; i++) {
             distanceUnitLabels.add(new JLabel(distUnitText));
         }
-        Component[] comps    = new Component[] {
-            GuiUtils.filler(), GuiUtils.cLabel("Visible"),
-            GuiUtils.cLabel(" Spacing "), GuiUtils.cLabel(" Unit "),
-            GuiUtils.cLabel(" Color "), GuiUtils.filler(),
-            GuiUtils.cLabel(" Line Width "), GuiUtils.rLabel("Range Rings: "),
+        
+        // Create the link button for Color and Line Width
+        linkColorAndLineWidthButton =
+                GuiUtils.getToggleImageButton("/auxdata/ui/icons/link_break.png",
+                                              "/auxdata/ui/icons/link.png", 0, 0,
+                                              true);
+        linkColorAndLineWidthButton.setContentAreaFilled(false);
+        // Initialize link state as true (linked)
+        linkColorAndLineWidthButton.setSelected(true);
+        linkColorAndLineWidthButton.setToolTipText(
+                "If linked, Color and Line Width changes apply to Range Rings, Radials, and Labels.");
+            
+        rrColorSwatch = (ColorSwatchComponent) makeColorBox(CMD_RR_COLOR, rrColor);
+        radColorSwatch = (ColorSwatchComponent) makeColorBox(CMD_RAD_COLOR, radColor);
+        lblColorSwatch = (ColorSwatchComponent) makeColorBox(CMD_LBL_COLOR, lblColor);
+        
+        rrComboBox = makeLineWidthBox(CMD_RR_WIDTH, rrWidth);
+        radComboBox = makeLineWidthBox(CMD_RAD_WIDTH, radWidth);
+        lblComboBox = makeLineWidthBox(CMD_LBL_WIDTH, lblWidth);
+        
+        Component[] comps = new Component[] {
+                
+            // Header
+            GuiUtils.filler(), 
+            GuiUtils.cLabel("Visible"),
+            GuiUtils.cLabel(" Spacing "), 
+            GuiUtils.cLabel(" Unit "),
+            GuiUtils.cLabel(" Color "), 
+            GuiUtils.filler(),
+            GuiUtils.cLabel(" Line Width "), 
+            
+            // Row 1
+            GuiUtils.rLabel("Range Rings: "),
             GuiUtils.hbox(new JLabel("  "),
-                          makeCbx("", CMD_RR_VIS, rrVisible)),
+            makeCbx("", CMD_RR_VIS, rrVisible)),
             makeSpacingBox(rrSpacingList, CMD_RR_SPACING, rrSpacing),
-            distanceUnitLabels.get(0), makeColorBox(CMD_RR_COLOR, rrColor),
-            GuiUtils.filler(), makeLineWidthBox(CMD_RR_WIDTH, rrWidth),
+            distanceUnitLabels.get(0), 
+            rrColorSwatch,
+            GuiUtils.filler(), rrComboBox,
+            
+            // Row 2
             GuiUtils.rLabel("Radials: "),
             GuiUtils.hbox(new JLabel("  "),
-                          makeCbx("", CMD_RAD_VIS, radVisible)),
+            makeCbx("", CMD_RAD_VIS, radVisible)),
             makeSpacingBox(radSpacingList, CMD_RAD_SPACING, radSpacing),
-            new JLabel(" (deg) "), makeColorBox(CMD_RAD_COLOR, radColor),
-            GuiUtils.filler(), makeLineWidthBox(CMD_RAD_WIDTH, radWidth),
+            new JLabel(" (deg) "), 
+            radColorSwatch,
+            GuiUtils.filler(), radComboBox,
+            
+            // Row 3
             GuiUtils.rLabel("Labels: "),
             GuiUtils.hbox(new JLabel("  "),
-                          makeCbx("", CMD_LBL_VIS, lblVisible)),
+            makeCbx("", CMD_LBL_VIS, lblVisible)),
             makeSpacingBox(lblSpacingList, CMD_LBL_SPACING, lblSpacing),
-            distanceUnitLabels.get(1), makeColorBox(CMD_LBL_COLOR, lblColor),
-            GuiUtils.filler(), makeLineWidthBox(CMD_LBL_WIDTH, lblWidth),
+            distanceUnitLabels.get(1), 
+            lblColorSwatch,
+            GuiUtils.filler(), lblComboBox,
+            
+            // Final row
             GuiUtils.rLabel(" "), new JLabel("Max. Radius: "),
             makeSpacingBox(rrMaxRadiusList, CMD_RR_RADIUS, rrMaxRadius),
-            distanceUnitLabels.get(2), GuiUtils.filler(), GuiUtils.filler(),
-            GuiUtils.filler()
+            distanceUnitLabels.get(2), GuiUtils.filler(),
+            linkColorAndLineWidthButton
         };
 
         GuiUtils.tmpInsets = new Insets(2, 0, 2, 0);
         JPanel top = GuiUtils.doLayout(comps, 7, stretchy, GuiUtils.WT_N);
-
+        
         List   bottomComps = new ArrayList();
-
-
-
-
 
         stationCbx = new JComboBox();
         stationCbx.setFont(Font.decode("monospaced"));
-
 
         setStations();
         stationCbx.setSelectedIndex(stationIdx);
@@ -693,7 +728,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         stationCbx.setActionCommand(CMD_STATIONNAMES);
         bottomComps.add(GuiUtils.rLabel("Location:  "));
         bottomComps.add(GuiUtils.left(GuiUtils.wrap(stationCbx)));
-
 
         bottomComps.add(GuiUtils.rLabel("Center:"));
         bottomComps.add(
@@ -709,11 +743,10 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         bottomComps.add(GuiUtils.hgrid(doMakeZPositionSlider(),
                                        GuiUtils.filler()));
 
-
         GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
         JPanel bottom = GuiUtils.doLayout(bottomComps, 2, GuiUtils.WT_NY,
                                           GuiUtils.WT_N);
-        //        bottom.setBorder(BorderFactory.createTitledBorder("Location"));
+
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add("Location", GuiUtils.top(GuiUtils.inset(bottom, 5)));
         tabbedPane.add("Settings", GuiUtils.top(GuiUtils.inset(top, 5)));
@@ -848,6 +881,29 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         try {
             String cmd = event.getActionCommand();
 
+            // TJJ Check link state. if active, any color change
+            // or line width change affects all colors and line widths
+            
+            if (linkColorAndLineWidthButton.isSelected()) {
+                if (cmd.equals(CMD_RAD_COLOR) || cmd.equals(CMD_RR_COLOR) || cmd.equals(CMD_LBL_COLOR)) {
+                    rangeRings.setAzimuthLineColor(radColor = getColor(event));
+                    rangeRings.setRangeRingColor(rrColor = getColor(event));
+                    rangeRings.setLabelColor(lblColor = getColor(event));
+                    radColorSwatch.setBackground(getColor(event));
+                    rrColorSwatch.setBackground(getColor(event));
+                    lblColorSwatch.setBackground(getColor(event));
+                }
+
+                if (cmd.equals(CMD_RAD_WIDTH) || cmd.equals(CMD_RR_WIDTH) || cmd.equals(CMD_LBL_WIDTH)) {
+                    rangeRings.setRadialLineWidth(radWidth = getWidth(event));
+                    rangeRings.setRangeRingLineWidth(rrWidth = getWidth(event));
+                    rangeRings.setLabelLineWidth(lblWidth = getWidth(event));
+                    radComboBox.setSelectedItem(getWidth(event));
+                    rrComboBox.setSelectedItem(getWidth(event));
+                    lblComboBox.setSelectedItem(getWidth(event));
+                }
+            }
+            
             // if got change of radial line color
             if (cmd.equals(CMD_RAD_COLOR)) {
                 rangeRings.setAzimuthLineColor(radColor = getColor(event));

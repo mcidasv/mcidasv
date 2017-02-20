@@ -73,13 +73,19 @@ import visad.georef.TrivialMapProjection;
  *
  * <p>Geolocation is generously provided by Google.</p>
  */
+
 public class GoToAddressWindow extends JFrame {
+
+    /**
+     * Defaults
+     */
+    private static final long serialVersionUID = 1L;
 
     /** Logging object. */
     private static final Logger logger = LoggerFactory.getLogger(GoToAddressWindow.class);
 
     /** {@link #addressComboBox} tool tip. */
-    public static final String ADDRESS_TOOL_TIP = "<html>Examples:<br>12345 Oak Street, My Town, My State<br>Or: My Town, My State<br>Or: 80303 (zip code)<br>Or: latitude longitude<br>Or: \"ip\" for the location of this computer</html>";
+    public static final String ADDRESS_TOOL_TIP = "<html>Examples:<br>12345 Oak Street, My Town, My State<br>Or: My Town, My State<br>Or: 80303 (zip code)<br>Or: latitude longitude</html>";
 
     /** {@link #addressComboBox} label. */
     public static final String ADDRESS_LABEL = "Address: ";
@@ -134,7 +140,7 @@ public class GoToAddressWindow extends JFrame {
 
     /**
      * Initializes the {@literal "Go To Address"} window. Client code will need
-     * to call {@link #setVisible(boolean)} explicity. Please be aware that
+     * to call {@link #setVisible(boolean)} explicitly. Please be aware that
      * this should only ever be called from Swing's
      * {@literal "Event Dispatch Thread"}.
      *

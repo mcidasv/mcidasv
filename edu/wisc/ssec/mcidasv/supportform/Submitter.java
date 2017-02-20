@@ -70,7 +70,7 @@ public class Submitter extends BackgroundTask<String> {
     private final SupportForm form;
 
     /** URL that we'll attempt to {@code POST} our requests at.*/
-    private final String requestUrl = "http://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
+    private final String requestUrl = "https://www.ssec.wisc.edu/mcidas/misc/mc-v/supportreq/support.php";
 
     /** Keeps track of the most recent redirect for {@code requestUrl}. */
     private String validFormUrl = requestUrl;
@@ -185,9 +185,18 @@ public class Submitter extends BackgroundTask<String> {
         // attach system properties
         parts.add(buildFakeFilePart("form_data[att_extra]", form.getExtraStateName(), form.getExtraState()));
 
+        // attach mcidasv.log (if it exists)
         if (form.canSendLog()) {
             parts.add(buildRealFilePart("form_data[att_log]", form.getLogPath()));
         }
+        
+        // attach RESOLV.SRV (if it exists)
+        if (form.canSendResolvSrv()) {
+            parts.add(buildRealFilePart("form_data[att_resolvsrv]", form.getResolvSrvPath()));
+        }
+        
+        // tack on the contents of runMcV.prefs
+        parts.add(buildRealFilePart("form_data[att_prefs]", form.getPrefsPath()));
 
         Part[] arr = parts.toArray(new Part[0]);
         MultipartRequestEntity mpr = new MultipartRequestEntity(arr, method.getParams());

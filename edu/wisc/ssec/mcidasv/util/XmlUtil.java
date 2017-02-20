@@ -41,7 +41,7 @@ import org.w3c.dom.NodeList;
  * A collection of utilities for XML.
  */
 public abstract class XmlUtil extends ucar.unidata.xml.XmlUtil {
-
+    
     /**
      * Print all the attributes of the given node
      *

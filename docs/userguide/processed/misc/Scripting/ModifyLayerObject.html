@@ -22,7 +22,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
   <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="ModifyDisplayObject.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="SaveDisplay.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="ModifyPointLayerObject.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
@@ -134,8 +134,9 @@ Deep Convection'</td></tr></table></div>
 </table></div>
 <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setLayerLabel('%displayname% %timestamp%', size=15, color='blue', style='BOLD'</em>)</div>
+  <div class="TwoTabIndent"><em>layer.setLayerLabel('%timestamp% - GOES East image', size=15, color='blue', style='BOLD'</em>)</div>
   <div class="OneTabIndent">Remarks:</div>
-  <div class="TwoTabIndent">There are a variety of macros that can be passed into the label keyword.  These macros may differ between data sources and can include:</div>
+  <div class="TwoTabIndent">There are a variety of macros that can be passed into the label keyword.  Note that these macros must be contained within the label= string so they must be surrounded by quotes. These macros may differ between data sources and can include:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">%displayname%</td>
@@ -155,11 +156,11 @@ Deep Convection'</td></tr></table></div>
     </tr>
     <tr>
       <td valign="top">%timestamp%</td>
-      <td><p>Lists the timestep of parameter currently being displayed. This defaults to the time format in the User Preferences. The time format can be changed by using the macro in the form of:<br>
+      <td>Lists the timestep of parameter currently being displayed. This defaults to the time format in the User Preferences. The time format can be changed by using the macro in the form of:<br>
         %time:&lt;time pattern&gt;%<br>
         For example:<br>
         %time:HHz EEE dd MMM yyyy% would show something like 20UTC Wed 02 Dec 2015
-      </p></td>
+      </td>
     </tr>
         <tr>
       <td valign="top">%fhour%</td>
@@ -176,6 +177,30 @@ Deep Convection'</td></tr></table></div>
     </tr>
     <tr>
 </table></div>
+<p><strong><a name="setLegendLabel" id="setLegendLabel"></a>setLegendLabel
+    -</strong> Sets the Legend Label of the displayed layer. The Legend Label is the blue text of the layer seen in the Legend of the Main Display window</p>
+    <div class="OneTabIndent">Usage: <em>myDataLayer.setLegendLabel(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">text=</td>
+      <td>legend label string. This can include macros</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setLayerLabel(text='Layer 1')</em></div>
+<p><strong><a name="setExtraLegendLabel" id="setExtraLegendLabel"></a>setExtraLegendLabel
+    -</strong> Sets the Extra Legend Label of the displayed layer. The Extra Legend Label is the text that lists below the blue Legend Label in the Legend of the Main Display window</p>
+    <div class="OneTabIndent">Usage: <em>myDataLayer.setExtraLegendLabel(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">text=</td>
+      <td>extra legend label string. This can include macros. Multiple lines can be created by using the HTML new line character: \n</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setExtraLegendLabel(text='%level%\n%shortname%')</em></div>
 <p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible
     -</strong> Toggles layer visibility on/off, this includes any color scale or layer labels for the layer</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(keywords)</em></div>
@@ -202,11 +227,25 @@ Deep Convection'</td></tr></table></div>
 </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>layer.setVerticalPosition(1)</em></div>
+<p><strong><a name="getData" id="getData"></a>getData
+    -</strong> Returns a data object associated with the layer</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer.getData()</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layerData = layer.getData()</em></div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">The data object returned from the getData function (<em>layerData</em> from the above example) can now be passed through various formulas</div>
+<p><strong><a name="getLayer" id="getLayer"></a>getLayer
+    -</strong> Returns a reference to a displayed layer</p>
+<div class="OneTabIndent">Usage: <em>layer = panel[0].getLayer(index)</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>satLayer = panel[0].getLayer[1]</em></div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">This function returns a reference to a displayed error, which allows for passing this layer through other functions such as <em>setLayerVisible()</em>, <em>setEnhancement()</em>, and<em> setLayerLabel()</em>. The numerical value in the square brackets after <em>getLayer</em> in the example is the layer's index in the display. The index of displays in the displays begins with 0, which is the first layer displayed in the panel (normally the map layer). The second layer displayed would be index 1, the third layer display would be index 2, and so on.</div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
   <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="ModifyDisplayObject.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="SaveDisplay.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="ModifyPointLayerObject.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>

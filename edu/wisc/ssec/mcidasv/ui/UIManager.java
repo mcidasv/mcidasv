@@ -1931,11 +1931,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         McVGuiUtils.setMenuImage(mi, Constants.ICON_FAVORITEMANAGE_SMALL);
         mi.setMnemonic(GuiUtils.charToKeyCode("M"));
         inBundleMenu.add(mi);
-        mi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                showBundleDialog(bundleType);
-            }
-        });
+        mi.addActionListener(ae -> showBundleDialog(bundleType));
 
         final List bundles = getPersistenceManager().getBundles(bundleType);
         if (bundles.isEmpty()) {
@@ -2030,11 +2026,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
             if (window.isVisible()) {
                 mi = new JMenuItem(title);
-                mi.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent ae) {
-                        window.toFront();
-                    }
-                });
+                mi.addActionListener(ae -> window.toFront());
 
                 if (first) {
                     windowMenu.addSeparator();
@@ -2118,6 +2110,12 @@ public class UIManager extends IdvUIManager implements ActionListener {
 
     /** Key for showing the dashboard. Used in conjunction with {@code PROP_KB_MODIFIER}. */
     private static final String PROP_KB_SHOW_DASHBOARD = "mcidasv.tabbedui.display.kbdashboard";
+    
+    /** Key for showing the Jython Shell. Used in conjunction with {@code PROP_KB_MODIFIER}. */
+    private static final String PROP_KB_SHOW_SHELL = "mcidasv.tabbedui.display.kjythonshell";
+    
+    /** Key for showing the Jython Library (modifier is {@literal "alt"} key). */
+    private static final String PROP_KB_SHOW_LIBRARY = "mcidasv.tabbedui.display.kjythonlibrary";
 
     // TODO: make all this stuff static: mod + acc don't need to read the properties file.
     // look at: http://community.livejournal.com/jkff_en/341.html
@@ -2162,31 +2160,52 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 showDashboard();
             }
         });
+        jcomp.getActionMap().put("show_jython_shell", new AbstractAction() {
+            @Override public void actionPerformed(ActionEvent e) {
+                getJythonManager().createShell();
+            }
+        });
+        jcomp.getActionMap().put("show_jython_library", new AbstractAction() {
+            @Override public void actionPerformed(ActionEvent e) {
+                getJythonManager().showJythonEditor();
+            }
+        });
 
         String mod = getIdv().getProperty(PROP_KB_MODIFIER, "control");
         String acc = getIdv().getProperty(PROP_KB_SELECT_DISPLAY, "L");
         jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke(mod + " " + acc),
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
             "show_disp"
         );
 
         acc = getIdv().getProperty(PROP_KB_SHOW_DASHBOARD, "MINUS");
         jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke(mod + " " + acc),
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
             "show_dashboard"
         );
 
         acc = getIdv().getProperty(PROP_KB_DISPLAY_NEXT, "N");
         jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke(mod + " " + acc),
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
             "next_disp"
         );
 
         acc = getIdv().getProperty(PROP_KB_DISPLAY_PREV, "P");
         jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-            KeyStroke.getKeyStroke(mod + " " + acc),
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
             "prev_disp"
         );
+        
+        acc = getIdv().getProperty(PROP_KB_SHOW_SHELL, "J");
+        jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
+            "show_jython_shell");
+            
+        mod = "alt";
+        acc = getIdv().getProperty(PROP_KB_SHOW_LIBRARY, "J");
+        jcomp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+            KeyStroke.getKeyStroke(mod + ' ' + acc),
+            "show_jython_library");
     }
 
     /**

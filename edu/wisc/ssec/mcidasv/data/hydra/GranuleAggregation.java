@@ -45,7 +45,6 @@ import ucar.ma2.DataType;
 import ucar.ma2.Index;
 import ucar.ma2.IndexIterator;
 import ucar.ma2.Range;
-
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
@@ -104,18 +103,19 @@ public class GranuleAggregation implements MultiDimensionReader {
    private String crossTrackDimensionName = null;
    private Set<String> products;
    private String origName = null;
-   private boolean isEDR = false;
+   // assume we are working with VIIRS, will toggle if not
+   private boolean isVIIRS = true;
 
    public GranuleAggregation(List<NetCDFFile> ncdfal, Set<String> products,
 		   String inTrackDimensionName, String inTrackGeoDimensionName, 
-		   String crossTrackDimensionName, boolean isEDR) throws Exception {
+		   String crossTrackDimensionName, boolean isVIIRS) throws Exception {
 	   if (ncdfal == null) throw new Exception("No data: empty Suomi NPP aggregation object");
 	   this.inTrackDimensionName = inTrackDimensionName;
 	   this.crossTrackDimensionName = crossTrackDimensionName;
 	   this.inTrackGeoDimensionName = inTrackGeoDimensionName;
        this.ncdfal = ncdfal;
        this.products = products;
-       this.isEDR = isEDR;
+       this.isVIIRS = isVIIRS;
 	   init(ncdfal);
    }
    
@@ -181,20 +181,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   }
 	   }
 	   return array_name;
-   }
-
-   /**
-    * @return the isEDR
-    */
-   public boolean isEDR() {
-	   return isEDR;
-   }
-
-   /**
-    * @param isEDR the isEDR to set
-    */
-   public void setEDR(boolean isEDR) {
-	   this.isEDR = isEDR;
    }
 
    public float[] getFloatArray(String array_name, int[] start, int[] count, int[] stride) throws Exception {
@@ -286,7 +272,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   // good place to initialize the cut Range ArrayList for each granule
 		   Integer granuleIndex = new Integer(ncIdx);
 		   List<Range> al = new ArrayList<>();
-		   granCutRanges.put(granuleIndex, al);
+
 		   int cutScanCount = 0;
 		   
 		   ncfile = nclist.get(ncIdx); 
@@ -302,11 +288,15 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   // and if found, try to handle it by simply adjusting the dimensions
 			   // for this granule.  Sound like a plan?  We'll see...
 			   
-			   if (isEDR) {
+			   // TJJ May 2016 
+			   // "simply adjusting the dimensions" he says
+			   // Anyway, we now do this check for EDRs and SDRs, it can manifest for both
+			   
+			   if (isVIIRS) {
 				   
 				   // look through lat grid, look for missing scans
 				   String varName = var.getShortName();
-				   if ((varName.endsWith("Latitude")) || (varName.endsWith("Latitude_TC"))){
+				   if (varName.endsWith("Latitude")) {
 					   // iterate through the scan lines, looking for fill lines
 					   // NOTE: we only need to check the first column! so set
 					   // up an appropriate Range to cut the read down significantly
@@ -315,12 +305,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   alr.add(new Range(0, shape[0] - 1, 1));
 					   alr.add(new Range(0, 1, 1));
 					   Array a = var.read(alr);
+					   int granLength = shape[0];
 					   int scanLength = shape[1];
 					   Index index = a.getIndex();
 					   float fVal = 0.0f;
 
 					   int rangeOffset = 0;
-					   int rangeCount = 0;
 					   boolean prvScanWasCut = false;
 					   boolean needClosingRange = false;
 					   boolean hadCutRanges = false;
@@ -337,8 +327,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   if (someMissing) {
 							   hadCutRanges = true;
 							   cutScanCount++;
-							   logger.trace("Found a cut scan " + (i + 1)
-									   + ", last val: " + fVal);
+							   logger.trace("Found a cut scan " + i + ", last val: " + fVal);
 							   if ((prvScanWasCut) || (i == 0)) {
 								   if (i == 0) {
 									   rangeOffset = 0;
@@ -357,28 +346,26 @@ public class GranuleAggregation implements MultiDimensionReader {
 								   } catch (Exception e) {
 									   e.printStackTrace();
 								   }
-								   rangeCount = 0;
 								   rangeOffset = i;
 							   }
 							   prvScanWasCut = true;
 						   } else {
 							   prvScanWasCut = false;
-							   rangeCount += scanLength;
 						   }
 
 						   // check to see if closing Range needed, good data at end
-						   if ((! prvScanWasCut) && (i == (scanLength - 1))) {
-							   needClosingRange = true;
+						   if ((! prvScanWasCut) && (i == (granLength - 1))) {
+						       if (hadCutRanges) {
+							      needClosingRange = true;
+						       }
 						   }
 					   }
 
 					   if (needClosingRange) {
 						   // We are using 2D ranges
-						   al.add(new Range(rangeOffset, rangeOffset + shape[0]
-								   - 1, 1));
+                           logger.trace("Adding closing cut range: " + rangeOffset + ", " + (shape[0] - 1) + ", 1");
+						   al.add(new Range(rangeOffset, shape[0] - 1, 1));
 						   al.add(new Range(0, scanLength - 1, 1));
-						   logger.trace("Adding closing cut Range, offs: "
-								   + rangeOffset + ", len: " + rangeCount);
 					   }
 
 					   // if only one contiguous range, process as a normal clean granule
@@ -386,15 +373,13 @@ public class GranuleAggregation implements MultiDimensionReader {
 						   al.clear();
 					   }
 
-					   granCutScans.put(granuleIndex, new Integer(cutScanCount));
-					   logger.debug("Total scans cut this granule: "
-							   + cutScanCount);
+					   logger.debug("Total scans cut this granule: " + cutScanCount);
 
 				   }
-			   } else {
-				   granCutScans.put(granuleIndex, new Integer(0));
 			   }
 		   }
+		   granCutScans.put(granuleIndex, new Integer(cutScanCount));
+	       granCutRanges.put(granuleIndex, al);
 	   }
 	   
 	   for (int ncIdx = 0; ncIdx < nclist.size(); ncIdx++) {
@@ -477,7 +462,12 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   if (notDisplayable) continue;
 			   
 			   // adjust in-track dimension if needed (scans were cut)
-			   int cutScans = granCutScans.get(ncIdx);
+			   int cutScans = 0;
+			   if (! granCutScans.isEmpty() && granCutScans.containsKey(ncIdx)) {
+			       cutScans = granCutScans.get(new Integer(ncIdx));
+			   } else {
+			       granCutScans.put(new Integer(ncIdx), new Integer(0));
+			   }
 			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] - cutScans;
 			   
 			   // XXX TJJ - can below block go away?  Think so...
@@ -539,7 +529,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   (v.getFullName().endsWith("Longitude")) ||
 			   (v.getFullName().endsWith("latitude")) ||
 			   (v.getFullName().endsWith("longitude")) ||
-			   (v.getFullName().endsWith("LongitudeTC"))) {
+			   (v.getFullName().endsWith("Longitude_TC"))) {
 		   if ((v.getFullName().startsWith("All_Data")) || 
 			   (v.getFullName().startsWith("observation_data"))) {
 			   inTrackName = inTrackDimensionName;
@@ -608,6 +598,8 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // pull out a representative variable so we can determine which index is in-track
 	   Variable vTmp = varMapList.get(0).get(array_name);
+	   logger.trace("");
+	   logger.trace("Working on var: " + array_name);
 	   int vInTrackIndex = getInTrackIndex(vTmp);
 	   
 	   int loGranuleId = 0;
@@ -643,7 +635,13 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   break;
 		   }
 	   }
-
+       
+       int totalScansCut = 0;
+       for (int k = loGranuleId; k <= hiGranuleId; k++) {
+           totalScansCut += granCutScans.get(k); 
+       }
+       logger.debug("Scans cut for this selection: " + totalScansCut);
+       
 	   // next, we break out the offsets, counts, and strides for each granule
 	   int granuleSpan = hiGranuleId - loGranuleId + 1;
 	   
@@ -668,7 +666,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // this part is a little tricky - set the values for each granule we need to access for this read
 	   for (int i = 0; i < granuleSpan; i++) {
-           inTrackTotal += vGranuleLengths[loGranuleId+i];
+	       
+           inTrackTotal += vGranuleLengths[loGranuleId + i];
+           
 		   for (int j = 0; j < dimensionCount; j++) {
 			   // for all indeces other than the in-track index, the numbers match what was passed in
 			   if (j != vInTrackIndex) {
@@ -679,19 +679,33 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   // for the in-track index, it's not so easy...
 				   // for first granule, start is what's passed in
 				   if (i == 0) {
-					   startSet[i][j] = start[j] - (inTrackTotal - vGranuleLengths[loGranuleId]);
-				   } else {
-					   startSet[i][j] = (inTrackTotal - start[j]) % stride[j];
-					   // TJJ Sep 2013, zero-base starts that offset into subsequent granules
-					   if (startSet[i][j] > 0) {
-						   startSet[i][j]--;
-					   }
+				       if (inTrackTotal > vGranuleLengths[loGranuleId + i]) {
+					       startSet[i][j] = 
+					          (start[j] % (inTrackTotal - vGranuleLengths[loGranuleId + i]));
+				       } else {
+				           startSet[i][j] = start[j];
+				       }
+				   } else {  
+				       startSet[i][j] = 
+                          ((inTrackTotal - (vGranuleLengths[loGranuleId + i])) % stride[j]);
+				       // if there is a remainder, need to offset stride - remainder into next gran
+				       if (startSet[i][j] != 0) startSet[i][j] = stride[j] - startSet[i][j];
 				   }
+                   
 				   // counts may be different for start, end, and middle granules
 				   if (i == 0) {
 					   // is this the first and only granule?
 					   if (granuleSpan == 1) {
 						   countSet[i][j] = count[j] * stride[j];
+		                   // TJJ May 2016
+		                   // This condition manifests because there are times when 
+		                   // "fill" scans are cut from otherwise fine granules.
+	                       // e.g., to the chooser it may look like there are 3072 valid lines,
+                           // but by the time we get here we realize there are really 3056
+		                   // This typically shortens the granule by one scan (16 lines)
+		                   if (countSet[i][j] > (vGranuleLengths[loGranuleId+i])) 
+		                       countSet[i][j] = vGranuleLengths[loGranuleId+i];
+
 					   // or is this the first of multiple granules...
 					   } else {
 						   if ((inTrackTotal - start[j]) < (count[j] * stride[j])) {	
@@ -704,15 +718,19 @@ public class GranuleAggregation implements MultiDimensionReader {
 				   } else {
 					   // middle granules
 					   if (i < (granuleSpan - 1)) {
-						   countSet[i][j] = vGranuleLengths[loGranuleId+i];
+						   countSet[i][j] = vGranuleLengths[loGranuleId+i] - startSet[i][j];
 						   countSubtotal += countSet[i][j];
 					   } else {
 						   // the end granule
-						   countSet[i][j] = (count[j] * stride[j]) - countSubtotal;
-						   // XXX TJJ - limiting count to valid numbers here, why??
-						   // need to revisit, see why this condition manifests
-						   if (countSet[i][j] > (vGranuleLengths[loGranuleId+i] - startSet[i][j])) 
-							   countSet[i][j] = vGranuleLengths[loGranuleId+i] - startSet[i][j];
+						   countSet[i][j] = (count[j] * stride[j]) - countSubtotal - startSet[i][j];
+		                   // TJJ May 2016
+		                   // This condition manifests because there are times when 
+		                   // "fill" scans are cut from otherwise fine granules.
+						   // e.g., to the chooser it may look like there are 3072 valid lines,
+						   // but by the time we get here we realize there are really 3056
+		                   // This typically shortens the granule by one scan (16 lines)
+		                   if (countSet[i][j] > (vGranuleLengths[loGranuleId+i] - startSet[i][j])) 
+		                       countSet[i][j] = vGranuleLengths[loGranuleId+i] - startSet[i][j];
 					   }
 				   }
 				   // luckily, stride never changes
@@ -777,14 +795,16 @@ public class GranuleAggregation implements MultiDimensionReader {
 					   }
 
 					   // finally, apply subset ranges
+					   logger.debug("Size of cut src array: " + single.getSize());
 					   Array subarray = single.section(rangeList);
 					   totalLength += subarray.getSize();
 					   arrayList.add(subarray);
-					   logger.debug("Size of final data array: " + subarray.getSize());
+					   logger.debug("Size of cut sub array: " + subarray.getSize());
 
 				   } else {
 					   Array subarray = var.read(rangeList);
 					   totalLength += subarray.getSize();
+					   logger.debug("Size of reg sub array: " + subarray.getSize());
 					   arrayList.add(subarray);
 				   }
 				   
@@ -807,22 +827,46 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   else {
 		   outType = java.lang.Float.TYPE;
 	   }
-	   Object o = java.lang.reflect.Array.newInstance(outType, totalLength);
+	   logger.debug("Creating aggregated array, totalLength: " + totalLength);
+	   
+	   // TJJ May 2016
+	   // I'm starting to think there may be a bug in the Java NetCDF section/subarray
+	   // code - I have chased this quite a bit with no solution, the total length 
+	   // sectioned out sometimes exceeds the total requested. It's almost as if a
+	   // previous section length is retained. Anyway, as a hack for now I will just
+	   // truncate if this occurs. We also need to watch for overflow in the arraycopy
+	   // calls below
+	   
+	   if (count.length < 3) {
+	       if (totalLength > (count[0] * count[1])) {
+	           totalLength = count[0] * count[1];
+	       }
+	   }
+	   
+	   float[] finalArray = new float[totalLength];
            
 	   int destPos = 0;
 	   int granIdx = 0;
 
+	   int remaining = totalLength;
 	   for (Array a : arrayList) {
 		   if (a != null) {
 			   Object primArray = a.copyTo1DJavaArray();
-			   primArray = processArray(mapName, array_name, arrayType, granIdx, primArray, rngProcessor, start, count);
-			   System.arraycopy(primArray, 0, o, destPos, (int) a.getSize());
+			   primArray = processArray(
+			      mapName, array_name, arrayType, granIdx, primArray, rngProcessor, start, count
+			   );
+			   if (a.getSize() > remaining) {
+			       System.arraycopy(primArray, 0, finalArray, destPos, remaining);
+			   } else {
+			       System.arraycopy(primArray, 0, finalArray, destPos, (int) a.getSize());
+			   }
 			   destPos += a.getSize();
+			   remaining -= (int) a.getSize();
 		   }
 		   granIdx++;
 	   }
        
-	   return o;
+	   return finalArray;
    }
    
    /**
@@ -881,7 +925,6 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   } else if (arrayType == Double.TYPE) {
 			   outArray = rngProcessor.processRange((double[]) values, null);
 		   }
-
 
 		   return outArray;
 	   }

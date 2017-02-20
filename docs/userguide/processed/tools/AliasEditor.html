@@ -38,22 +38,26 @@ in particular data sets for the same quantity, such as for example "jan_mean_tem
 <div class="images"><img src="images/AliasEditor.jpg" alt="Image 1: Alias Editor"><br>
 <span class="caption">Image 1: Alias Editor</span></div>
 <p>Different data sets often have different names for the same physical quantity,
-such as the quantities for temperature or easterly wind speed component. You
-can make McIDAS-V recognize any particular data name as representing a standard
-quantity. The <strong>Alias Editor</strong> associates any particular variable
+such as the quantities for temperature or easterly wind speed component. McIDAS-V can recognize any particular variable name as representing a standard
+quantity with the use of a parameter alias. The Alias Editor associates any particular variable
 name that may appear in a data set (right column) with a canonical or McIDAS-V
-name or alias (left column).</p>
-<p>The Alias Editor has a number of tabs that display the user editable aliases and the non-editable system aliases. You can right-click on a row in the <strong>System Alias</strong> tab to copy that row to the <strong>User aliases</strong> tab.  You can edit a user's entry by right-clicking on the table row.</p>
-<p>When you attempt to create a new alias, a Data Alias dialog is shown where you can edit the name, label (descriptive text) and the aliases:</p>
+name or alias (left column). These columns are sorted in alphabetical order by default, and this order can be reversed by clicking on the name of the columns (e.g. '<strong>User aliases</strong>').</p>
+<p>The Alias Editor has a number of tabs that display the user editable aliases and the non-editable system aliases. To modify an alias in the <strong>Application aliases</strong> or the <strong>System aliases</strong> tabs, right-click on a row and select <strong>Edit Alias</strong>.  This will copy the alias to the <strong>User aliases</strong> tab, where it can be modified by the user. While this alias will still exist in the<strong> Application aliases</strong> or <strong>System aliases</strong> tab, the alias in the <strong>User aliases</strong> tab will be used first by McIDAS-V. User aliases can be modified in the same way, by right-clicking on a row and selecting <strong>Edit Entry</strong>. User aliases can be deleted by right-clicking on a row and selecting <strong>Delete Entry</strong>.</p>
+<p>When attempting to create a new alias or edit an existing one, a Data Alias dialog is shown:</p>
 <div class="images"><img src="images/AliasEditorProperties.jpg" alt="Image 2: Data Analysis Properties Dialog"><br>
 <span class="caption">Image 2: Data Alias Properties Dialog</span></div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Name -</strong> Sets the name of the alias. This is what all of the parameter names in the bottom part of this Data Alias window will be mapped to. This name can then be mapped to a <a href="ParameterDefaultsEditor.html">parameter default</a>.</li>
+<li class="propertylistitem"><strong>Label -</strong> Sets a description of the alias.</li>
+<li class="propertylistitem"><strong>Enter aliases one per line -</strong> Shows a listing of all of the parameter names being mapped to the alias. Only one parameter name should be entered per line.</li>
+</ul>
 <div class="pagesubtitle">Menus</div>
 <p>The <strong>File</strong> menu has these unique items:</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>New Alias -</strong> Opens a Data Alias dialog, where you can create a name, label, and the aliases.</li>
-<li class="propertylistitem"><strong>Export to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with all of your aliases loaded in.</li>
-<li class="propertylistitem"><strong>Export Selected to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with your selected aliases loaded in.</li>
-<li class="propertylistitem"><strong>Close -</strong> Closes the Data Alias dialog window.</li>
+<li class="propertylistitem"><strong>New Alias -</strong> Opens a Data Alias dialog, where a new alias can be created.</li>
+<li class="propertylistitem"><strong>Export to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with all of the aliases loaded in.</li>
+<li class="propertylistitem"><strong>Export Selected to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with the selected aliases loaded in.</li>
+<li class="propertylistitem"><strong>Close -</strong> Closes the Data Alias dialog.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

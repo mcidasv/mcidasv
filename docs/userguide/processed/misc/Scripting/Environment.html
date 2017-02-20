@@ -89,7 +89,62 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
 <div class="ThreeTabIndent">Sets the logging level&nbsp;for everything to <em>Trace</em> as long as a logging level for another directory hasn't already been set.</div>
 <div class="TwoTabIndent"><em>print getLogLevel()</em></div>
 <div class="ThreeTabIndent">Returns the global logging level in McIDAS-V.&nbsp; Both <em>level</em> and <em>effectiveLevel</em> are set to <em>TRACE</em>.</div>
-
+<p><strong><a name="importEnhancement" id="importEnhancement"></a>importEnhancement( ) -</strong> Imports a local enhancement file. This enhancement will then be available for use in a script as well as through the Color Table Editor in the current and future McIDAS-V sessions.</p>
+<div class="OneTabIndent">Usage: <em>importEnhancement(filename,keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">filename=</td>
+      <td>full path and file name of the local enhancement file</td>
+    </tr>
+    </table></div>
+<div class="TwoTabIndent">Keywords - optional:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">name=</td>
+      <td>name of the enhancement; default = the base filename without the extension (e.g. 'cape.xml' will become 'cape')</td>
+    </tr>
+    <tr>
+      <td valign="top">category=</td>
+      <td>the category that the enhancement will be saved under. This name is used in the Color Table Editor under the Color Tables menu and allows for organization of enhancements; default= 'Basic'.</td>
+    </tr>
+    <tr>
+      <td valign="top">overwrite=</td>
+      <td>sets if the command will overwrite any previously-existing enhancements with the same name. When set to False, an additional enhancement will be added to the list of color tables, and the name will be appended with '_#'. For example, if an enhancement named 'cape' already exists and an importEnhancement() command is run with the name specified as 'cape' and overwrite set to False, then the new enhancement will be saved with a name of 'cape_1'. If set to True, then the existing enhancement will be overwritten with the new one; default= False</td>
+    </tr>
+  </table>
+</div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">The list of supported enhancement formats with importEnhancement() is the same as what can be imported through the Color Table Editor:
+  <ul>
+  <li>IDV color table (*.xml)</li>
+  <li>GEMPAK color table (*.tbl)</li>
+  <li>3-column RGB color table (*.ascii)</li>
+  <li>McIDAS-X color table (*.et)</li>
+  <li>AWIPS II color table (*.cmap)</li>
+</ul>
+If the enhancement specified in the filename keyword of importEnhancement() was originally exported from McIDAS-V, then the name and category keywords will be set from the values that already exist in the enhancement file.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>importEnhancement(filename='C:\\Users\\myuser\\cape.xml', name='CAPE', category='Severe')</em></div>
+<p><strong><a name="see" id="see"></a>see( ) -</strong> Inspects an object passed through the function and prints out a list of different functions that can be used on the object.</p>
+<div class="OneTabIndent">
+    Usage: <em>setLogLevel(keywords)</em>
+</div>
+<div class="OneTabIndent">Keywords:</div>
+<div class="TwoTabIndent"><table class="noborder">
+<tr>
+      <td valign="top">obj=</td>
+      <td>data or layer object passed through the function. The returned functions can be applied on the obj object.</td>
+    </tr>
+<tr>
+      <td valign="top">pattern=</td>
+      <td>filters the list of commands returned from the function. Wildcards (*) can be used.</td>
+    </tr></table></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">If the obj keyword is omitted, the command will list all of the functions and packages that can be used in the current session.</div>
+<div class="OneTabIndent">Examples:</div>
+<div class="TwoTabIndent"><em>see(obj=data,pattern='.get*')</em></div>
+<div class="ThreeTabIndent">Returns a list of functions beginning with &quot;.get&quot; that can be applied on the data object.</div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

@@ -135,7 +135,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private String productName = null;
     
     // product related variables and flags
-    boolean isEDR = false;
     String whichEDR = "";
     
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
@@ -302,9 +301,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	String pathToLat = null;
     	String pathToLon = null;
     	Set<String> pathToProducts = new LinkedHashSet<>();
+    	Map<String, String> prodToDesc = new HashMap<>();
     	
-    	// flag to indicate data is 3-dimensions (X, Y, channel or band)
-    	boolean is3D = false;
+    	// flag to differentiate VIIRS from one of the other Suomi sensors
+    	boolean isVIIRS = true;
     	
     	// check source filenames to see if this is a combined product. everything
     	// from last file separator to first underscore should be product info
@@ -386,10 +386,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
 									// when we find the Data_Products group, go down another group level and pull out 
 									// what we will use for nominal day and time (for now anyway).
 									// XXX TJJ fileCount check is so we don't count the GEO file in time array!
-									if (g.getFullName().contains(
-											"Data_Products")
+									if (g.getFullName().contains("Data_Products")
 											&& (fileCount != fileNames.size())) {
-										boolean foundDateTime = false;
 										List<Group> dpg = g.getGroups();
 
 										// cycle through once looking for XML Product Profiles
@@ -407,7 +405,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
 												if (adtt != null) {
 													String baseName = adtt.getStringValue();
 													if ((baseName != null) && (baseName.equals("EDR"))) {
-														isEDR = true;
 														// have to loop through sub groups variables to determine band
 														List<Variable> tmpVar = subG.getVariables();
 														for (Variable v : tmpVar) {
@@ -454,27 +451,24 @@ public class SuomiNPPDataSource extends HydraDataSource {
 												Attribute aTime = v.findAttribute("AggregateBeginningTime");
 												// did we find the attributes we are looking for?
 												if ((aDate != null) && (aTime != null)) {
-													String sDate = aDate.getStringValue();
-													String sTime = aTime.getStringValue();
-													logger.trace("For day/time, using: " + sDate
-															+ sTime.substring(0, sTime.indexOf('Z') - 3));
-													Date d = sdf.parse(sDate
-																	+ sTime.substring(0, sTime.indexOf('Z') - 3));
-													theDate = d;
-													foundDateTime = true;
 													// set time for display to day/time of 1st granule examined
-													if (!nameHasBeenSet) {
-														setName(instrumentName.getStringValue() + " "
-																+ sdfOut.format(d));
-														nameHasBeenSet = true;
-													}
+												    if (! nameHasBeenSet) {
+												        String sDate = aDate.getStringValue();
+												        String sTime = aTime.getStringValue();
+												        logger.debug("For day/time, using: " + sDate
+												                + sTime.substring(0, sTime.indexOf('Z') - 3));
+												        Date d = sdf.parse(sDate
+												                + sTime.substring(0, sTime.indexOf('Z') - 3));
+												        theDate = d;
+												        setName(instrumentName.getStringValue() + " "
+												                + sdfOut.format(d));
+												        nameHasBeenSet = true;
+												    }
 													break;
 												}
 											}
-											if (foundDateTime)
-												break;
 										}
-										if (!foundDateTime) {
+										if (! nameHasBeenSet) {
 											throw new VisADException(
 													"No date time found in Suomi NPP granule");
 										}
@@ -696,6 +690,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								v.addAttribute(fillAtt);
     								pathToLat = v.getFullName();
     								pathToProducts.add(v.getFullName());
+    								prodToDesc.put(v.getFullName(), v.getDescription());
     								xDimNASA = v.getDimension(0).getLength();
     								yDimNASA = v.getDimension(1).getLength();
     							}
@@ -707,6 +702,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								v.addAttribute(fillAtt);
     								pathToLon = v.getFullName();
     								pathToProducts.add(v.getFullName());
+									prodToDesc.put(v.getFullName(), v.getDescription());
     							}
     						}
     	    			}
@@ -722,7 +718,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								v.getDimension(1).getLength() == yDimNASA) {
 	    							logger.debug("Adding product: " + v.getFullName());
 	    							pathToProducts.add(v.getFullName());
-	    							
+									prodToDesc.put(v.getFullName(), v.getDescription());
 	    							Attribute aUnsigned = v.findAttribute("_Unsigned");
 	    							if (aUnsigned != null) {
 	    								unsignedFlags.put(v.getFullName(), aUnsigned.getStringValue());
@@ -848,6 +844,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     										lutMap.put(vBT.getFullName(), i05LUT);
     									}
     									pathToProducts.add(vBT.getFullName());
+										prodToDesc.put(vBT.getFullName(), vBT.getDescription());
     									btProds.add(vBT);
 	    							}
     							}
@@ -864,6 +861,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     								    (v.getShortName().equals("latitude"))) continue;
 	    							logger.debug("Adding product: " + v.getFullName());
 	    							pathToProducts.add(v.getFullName());
+									prodToDesc.put(v.getFullName(), v.getDescription());
     							}
     						}
     	    			}
@@ -1083,8 +1081,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							if ((instrumentName.getStringValue().equals("CrIS")) ||
     	    									(instrumentName.getStringValue().equals("ATMS")) || 
     	    									(instrumentName.getStringValue().contains("OMPS"))) {
-    	    								is3D = true;
-    	    								logger.debug("Handling 3-D data source...");
+    	    								isVIIRS = false;
+    	    								logger.debug("Handling non-VIIRS data source...");
     	    							}
     	    						}
 
@@ -1217,7 +1215,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     	    							logger.debug("Adding product: " + v.getFullName());
     	    							pathToProducts.add(v.getFullName());
-
+										prodToDesc.put(v.getFullName(), v.getDescription());
     	    						}
     	    					}
     	    				}
@@ -1238,6 +1236,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    		ncdff.addVariable(qfV.getGroup(), qfV);
     	    		logger.trace("Adding QF product: " + qfV.getFullName());
     	    		pathToProducts.add(qfV.getFullName());
+					prodToDesc.put(qfV.getFullName(), qfV.getDescription());
     	    		unsignedFlags.put(qfV.getFullName(), "true");
     	    		unpackFlags.put(qfV.getFullName(), "false");
     	    	}
@@ -1263,10 +1262,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// initialize the aggregation reader object
     	try {
     		if (isNOAA) {
-    		    nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack", isEDR);
+    		    nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack", isVIIRS);
     		    ((GranuleAggregation) nppAggReader).setQfMap(qfMap);
     		} else {
-    			nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "number_of_lines", "number_of_pixels", isEDR);
+    			nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "number_of_lines", "number_of_pixels", isVIIRS);
     		    ((GranuleAggregation) nppAggReader).setLUTMap(lutMap);
     		}
     	} catch (Exception e) {
@@ -1300,12 +1299,13 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	// TJJ is this even needed?  Is product_name used anywhere?
         	if (productName == null) productName = pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1);
         	swathTable.put("product_name", productName);
-        	
+			swathTable.put("_mapping", prodToDesc);
         	// array_name common to spectrum table
         	spectTable.put("array_name", pStr);
         	spectTable.put("product_name", productName);
+			spectTable.put("_mapping", prodToDesc);
         	
-        	if (is3D) {
+        	if (! isVIIRS) {
 
         		// 3D data is either ATMS, OMPS, or CrIS
         		if ((instrumentName.getShortName() != null) && (instrumentName.getStringValue().equals("ATMS"))) {
@@ -1421,7 +1421,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	swathTable.put("range_check_after_scaling", "true");
         	
         	// pass in a GranuleAggregation reader...
-        	if (is3D) {
+        	if (! isVIIRS) {
                 if (instrumentName.getStringValue().equals("ATMS")) {
             		adapters[pIdx] = new SwathAdapter(nppAggReader, swathTable);
             		adapterCreated = true;
@@ -1643,13 +1643,20 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		for (int idx = 0; idx < adapters.length; idx++) {
     			DataChoice choice = null;
     			try {
-    				choice = doMakeDataChoice(idx, adapters[idx].getArrayName());
+    				Map<String, Object> metadata = adapters[idx].getMetadata();
+					String description = null;
+    				if (metadata.containsKey("_mapping")) {
+						String arrayName = metadata.get("array_name").toString();
+    					Map<String, String> mapping =
+							(Map<String, String>)metadata.get("_mapping");
+						description = mapping.get(arrayName);
+					}
+					choice = doMakeDataChoice(idx, adapters[idx].getArrayName(), description);
     				choice.setObjectProperty(Constants.PROP_GRANULE_COUNT, 
 							getProperty(Constants.PROP_GRANULE_COUNT, "1 Granule")); 
     			} 
     			catch (Exception e) {
-    				e.printStackTrace();
-    				logger.error("doMakeDataChoice failed");
+    				logger.error("doMakeDataChoice failed", e);
     			}
 
     			if (choice != null) {
@@ -1659,8 +1666,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	}
     }
 
-    private DataChoice doMakeDataChoice(int idx, String var) throws Exception {
+    private DataChoice doMakeDataChoice(int idx, String var, String description) throws Exception {
         String name = var;
+        if (description == null) {
+            description = name;
+        }
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
         Hashtable subset = new Hashtable();
         subset.put(new MultiDimensionSubset(), dataSel);
@@ -1674,7 +1684,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		name = name + "Reflectance";
         	}
         }
-        DirectDataChoice ddc = new DirectDataChoice(this, idx, name, name, categories, subset);
+        DirectDataChoice ddc = new DirectDataChoice(this, idx, name, description, categories, subset);
         return ddc;
     }
     
@@ -1821,7 +1831,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
                 if (props != null) {
                   if (props.containsKey(SpectrumAdapter.channelIndex_name)) {
                 	  logger.debug("Props contains channel index key...");
-                    double[] coords = (double[]) subset.get(SpectrumAdapter.channelIndex_name);
+                    double[] coords = subset.get(SpectrumAdapter.channelIndex_name);
                     int idx = ((Integer) props.get(SpectrumAdapter.channelIndex_name)).intValue();
                     coords[0] = (double) idx;
                     coords[1] = (double) idx;

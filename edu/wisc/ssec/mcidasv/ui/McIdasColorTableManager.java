@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.ui.colortable.ColorTableDefaults;
 
@@ -132,8 +134,12 @@ public class McIdasColorTableManager extends ColorTableManager {
         return null;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(McIdasColorTableManager.class);
+
     /**
-     * Try to load in one of the special colortables
+     * Try to load in one of the {@literal "special"} color table formats..
+     *
+     * <p>Special types include: </p>
      *
      * @param file file
      * @param name _more_
@@ -143,9 +149,11 @@ public class McIdasColorTableManager extends ColorTableManager {
      *
      * @throws IOException _more_
      */
-    private List processSpecial(String file, String name, String category)
-            throws IOException {
-
+    public List<ColorTable> handleColorTable(String file,
+                                             String name,
+                                             String category)
+        throws IOException
+    {
         String cat = category;
         if (name == null) {
             name = IOUtil.stripExtension(IOUtil.getFileTail(file));
@@ -155,7 +163,7 @@ public class McIdasColorTableManager extends ColorTableManager {
         }
 
         String suffix = file.toLowerCase();
-        List<ColorTable> cts = new ArrayList<ColorTable>();
+        List<ColorTable> cts = new ArrayList<>();
         if (suffix.endsWith(".et")) {
             if (category == null) {
                 cat = ColorTable.CATEGORY_SATELLITE;
@@ -184,7 +192,7 @@ public class McIdasColorTableManager extends ColorTableManager {
         } else if (suffix.endsWith(".rgb")) {
             cts.addAll(ColorTableDefaults.makeRgbColorTables(name, cat, file));
         } else if (suffix.endsWith(".cmap")) {
-              cts.addAll(McIdasColorTableDefaults.makeAwips2ColorTables(name, cat, file));
+            cts.addAll(McIdasColorTableDefaults.makeAwips2ColorTables(name, cat, file));
         } else if (suffix.endsWith(".ascii")) {
             if (category == null) {
                 cat = CATEGORY_HYDRA;
@@ -195,9 +203,27 @@ public class McIdasColorTableManager extends ColorTableManager {
             return null;
         }
         if (cts.isEmpty()) {
+            logger.trace("nothing to return!?");
             return null;
         }
         return cts;
+    }
+
+    /**
+     * Try to load in one of the special colortables
+     *
+     * @param file file
+     * @param name _more_
+     * @param category category
+     *
+     * @return the ct
+     *
+     * @throws IOException _more_
+     */
+    private List processSpecial(String file, String name, String category)
+            throws IOException
+    {
+        return handleColorTable(file, name, category);
     }
     
     /**

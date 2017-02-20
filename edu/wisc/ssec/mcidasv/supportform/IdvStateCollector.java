@@ -79,4 +79,13 @@ public class IdvStateCollector implements StateCollector {
     public String getLogPath() {
         return "";
     }
+    
+    public String getPrefsPath() {
+        return "";
+    }
+    
+    public String getResolvSrvPath() {
+        return "";
+    }
+    
 }

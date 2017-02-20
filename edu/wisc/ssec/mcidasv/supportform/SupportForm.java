@@ -59,6 +59,8 @@ import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import edu.wisc.ssec.mcidasv.util.FocusTraveller;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -420,6 +422,12 @@ public class SupportForm extends JFrame {
         return collector.getBundleAttachmentName();
     }
     
+    /**
+     * Determine if {@code mcidasv.log} can be sent to the Help Desk.
+     *
+     * @return {@code true} if {@code mcidasv.log} exists, {@code false}
+     * otherwise.
+     */
     public boolean canSendLog() {
         String path = collector.getLogPath();
         if (path == null || path.isEmpty()) {
@@ -428,8 +436,48 @@ public class SupportForm extends JFrame {
         return new File(path).exists();
     }
     
+    /**
+     * Get path to where {@code mcidasv.log} <b>should</b> be located.
+     *
+     * @return String representing the full path to the user's
+     * {@code mcidasv.log}. Note: <b>the file may not exist!</b>
+     */
     public String getLogPath() {
         return collector.getLogPath();
+    }
+    
+    /**
+     * Determine if {@code RESOLV.SRV} can be sent to the Help Desk.
+     *
+     * @return {@code true} if {@code RESOLV.SRV} exists, {@code false}
+     * otherwise.
+     */
+    public boolean canSendResolvSrv() {
+        String path = collector.getResolvSrvPath();
+        boolean result = false;
+        if ((path != null) && !path.isEmpty()) {
+            result = Files.exists(Paths.get(path));
+        }
+        return result;
+    }
+    
+    /**
+     * Get the path to where the user's {@code RESOLV.SRV} file <b>should</b>
+     * be located.
+     *
+     * @return Path to {@code RESOLV.SRV}. Note: <b>the file may not exist!</b>
+     */
+    public String getResolvSrvPath() {
+        return collector.getResolvSrvPath();
+    }
+    
+    /**
+     * Get path to McV prefs file.
+     *
+     * @return
+     */
+    public String getPrefsPath() {
+        return collector.getPrefsPath();
     }
     
     // TODO: dialogs are bad news bears.

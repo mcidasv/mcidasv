@@ -71,7 +71,8 @@ public class StationModelManager extends ResourceManager {
         new PatternFileFilter(".+\\.ism", "IDV station model file (*.ism)",
                               ".ism");
 
-
+    /** Name used for default {@literal "blank canvas"} layout model. */
+    public static final String NEW_LAYOUT_MODEL = "New Layout Model";
 
     /** The canvas for drawing. This does most of the work. */
     StationModelCanvas smc;

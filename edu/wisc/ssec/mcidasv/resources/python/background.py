@@ -269,16 +269,14 @@ class _MappedVIIRSFlatField(_MappedFlatField):
                 
         
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
-    def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime):
+    def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime, accounting, debug, server):
         """Make a _MappedAreaImageFlatField from an existing AreaImageFlatField."""
         # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
-        keys = [ 'band-count', 'bandList', 'bandNumber', 'bands',
+        keys = [ 'accounting', 'band-count', 'bandList', 'bandNumber', 'bands',
                  'calibration-scale-factor', 'calibration-type',
-                 'calibration-unit-name', 'calinfo', 'center-latitude',
-                 'center-latitude-resolution', 'center-longitude',
-                 'center-longitude-resolution', 'day', 'directory-block',
+                 'day', 'debug', 'directory-block',
                  'elements', 'lines', 'memo-field', 'nominal-time',
-                 'sensor-id', 'sensor-type', 'source-type', 'start-time',
+                 'sensor-id', 'sensor-type', 'server', 'source-type', 'start-time',
                  'datetime', 'url','satband-band-label', ]
                  
         _MappedData.__init__(self, keys)
@@ -286,6 +284,9 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         self.areaDirectory = areaDirectory
         self.addeDescriptor = addeDescriptor
         self.addeSatBands = None
+        self.accounting = accounting
+        self.debug = debug
+        self.server = server
         # call the copy constructor
         AreaImageFlatField.__init__(self, aiff, False, aiff.getType(),
             aiff.getDomainSet(), aiff.RangeCoordinateSystem,
@@ -296,7 +297,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         
     # http://stackoverflow.com/questions/141545/overloading-init-in-python
     @classmethod
-    def fromUrl(cls, imageUrl):
+    def fromUrl(cls, accounting, debug, server, imageUrl):
         """Create an AreaImageFlatField from a URL, then make a _MappedAreaImageFlatField."""
         aa = ErrorCodeAreaUtils.createAreaAdapter(imageUrl)
         areaFile = aa.getAreaFile()
@@ -313,7 +314,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
                 rangeCoordSys, rangeSets, units, samples, "READLABEL")
         areaFile.close()
         return cls(aiff, areaFile, areaDirectory, addeDescriptor,
-                ff.getStartTime())
+                ff.getStartTime(), accounting, debug, server)
 
     def clone(self):
         # i'm so sorry :(
@@ -368,22 +369,10 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             return self._getBand()
         elif key == 'day':
             return self._getDay()
-        elif key == 'calinfo':
-            return self._getCalInfo()
         elif key == 'calibration-scale-factor':
             return self.areaDirectory.getCalibrationScaleFactor()
         elif key == 'calibration-type':
             return str(self.areaDirectory.getCalibrationType())
-        elif key == 'calibration-unit-name':
-            return self.areaDirectory.getCalibrationUnitName()
-        elif key == 'center-latitude':
-            return self.areaDirectory.getCenterLatitude()
-        elif key == 'center-latitude-resolution':
-            return self.areaDirectory.getCenterLatitudeResolution()
-        elif key == 'center-longitude':
-            return self.areaDirectory.getCenterLongitude()
-        elif key == 'center-longitude-resolution':
-            return self.areaDirectory.getCenterLongitudeResolution()
         elif key == 'directory-block':
             return list(self.areaDirectory.getDirectoryBlock())
         elif key == 'elements':
@@ -408,6 +397,18 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
             return str(self.aid.getSource())
         elif key == 'satband-band-label':
             return self._handleSatBand()
+        elif key == 'accounting':
+            if isinstance(self.accounting, tuple):
+                self.accounting = (str(self.accounting[0]), str(self.accounting[1]))
+            return self.accounting
+        elif key == 'debug':
+            if isinstance(self.debug, str) and self.debug.lower() == 'true':
+                self.debug = True
+            elif isinstance(self.debug, str) and self.debug.lower() == 'false':
+                self.debug = False
+            return self.debug
+        elif key == 'server':
+            return self.server
         else:
             raise KeyError('should not be capable of reaching here: %s')
 
@@ -503,13 +504,15 @@ class _MappedGeoGridFlatField(_MappedFlatField):
     def getMacrosDict(self):
         """Return dictionary mapping IDV macro strings to reasonable defaults."""
         from os.path import basename
-        longname = self['description']
+        longname = self['description'] or self['field'] or ''
         shortname = self['field']
         #TODO: figure out how to actually set this macro (in createLayer)
         datasourcename = basename(self['filename'])
-        macros = {'longname': longname, 'shortname': shortname,
-                  'datasourcename': datasourcename 
-                  }
+        macros = {
+            'longname': longname, 
+            'shortname': shortname,
+            'datasourcename': datasourcename 
+        }
         return macros
 
     def getDefaultLayerLabel(self):
@@ -838,7 +841,10 @@ class _Display(_JavaProxy):
         
     @gui_invoke_later
     def getSize(self):
-        size = self._JavaProxy__javaObject.getComponent().getSize()
+        if getStaticMcv().getArgsManager().getIsOffScreen():
+            size = getStaticMcv().getStateManager().getViewSize()
+        else:
+            size = self._JavaProxy__javaObject.getComponent().getSize()
         return size.getWidth(), size.getHeight()
         
     @gui_invoke_later
@@ -1476,7 +1482,7 @@ class _Display(_JavaProxy):
         
         ImageUtils.writeImageToFile(image, kmlImagePath, quality)
         
-    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, bgtransparent=False, createDirectories=False):
+    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, index=-1, bgtransparent=False, createDirectories=False):
         """Save contents of display into the given filename.
         
         Args:
@@ -1544,14 +1550,19 @@ class _Display(_JavaProxy):
         # 
         # print 'isl=%s' % (isl[:-2])
         
-        islAsXml = ImageGenerator.makeXmlFromString(isl[:-2])
-        index = self._getDisplayIndex()
         if index >= 0:
-            xml = '%s\n<image file="%s" quality="%s" view="#%s">%s</image>' % (XmlUtil.getHeader(), filename, quality, index, islAsXml)
-        elif index == -1:
+            anim_index = "animation_index=\"%s\"" % (index)
+        else:
+            anim_index = ''
+        
+        islAsXml = ImageGenerator.makeXmlFromString(isl[:-2])
+        displayIndex = self._getDisplayIndex()
+        if displayIndex >= 0:
+            xml = '%s\n<image file="%s" quality="%s" view="#%s" %s>%s</image>' % (XmlUtil.getHeader(), filename, quality, displayIndex, anim_index, islAsXml)
+        elif displayIndex == -1:
             raise ValueError('Underlying display could not be found (display may have been closed).')
         else:
-            xml = '%s\n<image file="%s" quality="%s">%s</image>' % (XmlUtil.getHeader(), filename, quality, islAsXml)
+            xml = '%s\n<image file="%s" quality="%s" %s>%s</image>' % (XmlUtil.getHeader(), filename, quality, anim_index, islAsXml)
         print 'isl2xml=%s' % (xml)
         islInterpreter.captureImage(islInterpreter.applyMacros(filename), islInterpreter.makeElement(xml))
         
@@ -1565,7 +1576,8 @@ class _Display(_JavaProxy):
                     
     #@gui_invoke_later
     def annotate(self, text, lat=None, lon=None, line=None, element=None,
-        font=None, color='red', size=None, style=None, alignment=None):
+        font=None, color='red', size=None, style=None, alignment=None, 
+        bgColor=None):
         """Put a text annotation on this panel.
         
         Can specify location by a lat/lon point or number of pixels
@@ -1589,6 +1601,8 @@ class _Display(_JavaProxy):
                Font defaults come from ViewManager.getDisplayListFont()
            color: text color. Default red, for now I guess. this is GUI default.
                  (optional)
+           bgColor: Optional background color. Default behavior is to not set 
+                    a background color.
            alignment: 2-element tuple representing the (horizontal, vertical)
                 text alignment wrt to the given point.  "center" is valid
                 in both elements, "left" and "right" are valid for horizontal,
@@ -1681,6 +1695,10 @@ class _Display(_JavaProxy):
             
         newColor = colorutils.convertColorToJava(color)
         
+        if bgColor:
+            newBgColor = colorutils.convertColorToJava(bgColor)
+            glyph.setBgcolor(newBgColor)
+            
         currentFont = self._JavaProxy__javaObject.getDisplayListFont()
         newFont = _getNewFont(currentFont, fontName=font, size=size, style=style)
         
@@ -1723,6 +1741,20 @@ class _Display(_JavaProxy):
         # change the display to the saved viewpoint
         self._JavaProxy__javaObject.initWith(desiredViewpoint)
         
+    @gui_invoke_later
+    def setAutoDepth(self, value):
+        """Set whether or not the display should be using automatic depth offsetting.
+        
+        Args:
+            value: Boolean value for whether or not automatic depth offsetting should be enabled.
+        """
+        from ucar.unidata.idv.ViewManager import PREF_AUTO_DEPTH
+        self._JavaProxy__javaObject.setBp(PREF_AUTO_DEPTH, value)
+        
+    @gui_invoke_later
+    def getAutoDepth(self):
+        """Return whether or not this display is using automatic depth offsetting."""
+        return self._JavaProxy__javaObject.getAutoDepth()
         
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
@@ -1735,6 +1767,10 @@ class _Layer(_JavaProxy):
         #_JavaProxy.__init__(self, javaObject).addDisplayInfo()
         _JavaProxy.__init__(self, javaObject)
         self.usedTemporaryId = False
+        
+    @gui_invoke_later
+    def _refreshLayerList(self):
+        self._JavaProxy__javaObject.getViewManager().updateDisplayList()
         
     @gui_invoke_later
     def _getDisplayWrapper(self):
@@ -2060,6 +2096,24 @@ class _Layer(_JavaProxy):
             raise TypeError('setLayerVisible accepts a single boolean argument')
             
     @gui_invoke_later
+    def getLegendLabel(self):
+        return self._JavaProxy__javaObject.getLegendLabelTemplate()
+        
+    @gui_invoke_later
+    def getExtraLegendLabel(self):
+        return self._JavaProxy__javaObject.getExtraLabelTemplate()
+        
+    @gui_invoke_later
+    def setLegendLabel(self, text):
+        self._JavaProxy__javaObject.setLegendLabelTemplate(text)
+        self._JavaProxy__javaObject.updateLegendLabel()
+        
+    @gui_invoke_later
+    def setExtraLegendLabel(self, text):
+        self._JavaProxy__javaObject.setExtraLabelTemplate(text)
+        self._JavaProxy__javaObject.updateLegendAndList()
+        
+    @gui_invoke_later
     def getLayerLabel(self):
         """Return current layer label text.
         
@@ -2097,10 +2151,7 @@ class _Layer(_JavaProxy):
         if label is not None:
             label = str(label)  # convert to str if possible
             self._JavaProxy__javaObject.setDisplayListTemplate(label)
-            
-        self.setLayerLabelVisible(visible)
-        self._getDisplayWrapper().labelDict['visible'] = visible
-        
+                    
         if font is not None:
             self.setLayerLabelFont(fontName=font)
             
@@ -2113,7 +2164,11 @@ class _Layer(_JavaProxy):
         if color is not None:
             self.setLayerLabelColor(color)
             
-        self._JavaProxy__javaObject.getViewManager().updateDisplayList()
+        self.setLayerLabelVisible(visible)
+        self._getDisplayWrapper().labelDict['visible'] = visible
+        
+        # pause()
+        # self._refreshLayerList()
         
     @gui_invoke_later
     def getLayerVisible(self):
@@ -2160,7 +2215,9 @@ class _Layer(_JavaProxy):
         # self._JavaProxy__javaObject.getViewManager().setDisplayListColor(newColor)
         # self._JavaProxy__javaObject.setViewManagerDisplayListColor(newColor)
         self._JavaProxy__javaObject.setDisplayListColor(newColor, False)
+        self._JavaProxy__javaObject.setViewManagerDisplayListColor(newColor)
         self._getDisplayWrapper().labelDict['color'] = newColor
+        # self._JavaProxy__javaObject.applyColor()
         
     @gui_invoke_later
     def setLayerLabelFont(self, fontName=None, style=None, size=None):
@@ -2591,7 +2648,7 @@ def allColorTables():
     return [_ColorTable(colorTable) for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
     
 @gui_invoke_later
-def importColorTable(filename, name=None, category=None, overwrite=False):
+def importEnhancement(filename, name=None, category=None, overwrite=False):
     """Import color table using the given path.
     
     If the color table in question was exported from the Color Table Manager,
@@ -2629,7 +2686,7 @@ def importColorTable(filename, name=None, category=None, overwrite=False):
     if mcv:
         makeUnique = not overwrite
         ctm = mcv.getColorTableManager()
-        tables = ctm.processSpecial(filename, name, category)
+        tables = ctm.handleColorTable(filename, name, category)
         if tables:
             return _ColorTable(ctm.doImport(tables, makeUnique))
         else: 
@@ -3467,7 +3524,7 @@ def loadGrid(filename=None, field=None, level='all',
         # fix for ABI DOE files
         adapterData = adapter.getFlatField(0, "")
 
-    if (GridUtil.isTimeSequence(adapterData)):
+    if GridUtil.isTimeSequence(adapterData):
         ff = adapterData.getSample(0)
     else:
         ff = adapterData

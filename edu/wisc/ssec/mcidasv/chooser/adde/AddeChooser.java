@@ -1631,9 +1631,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         List groups = readGroups();
         popup.removeAll();
         if ((groups == null) || (groups.isEmpty())) {
-            popup.add(new JMenuItem("No public datasets available"));
-//            popup.setVisible(false);
-//            popup.setVisible(true);
+            popup.add(new JMenuItem("The list of public datasets is not available"));
+            popup.show(publicButton, 0, (int) publicButton.getBounds().getHeight());
             return;
         }
 
@@ -1659,7 +1658,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         }
         MenuScroller foo = new MenuScroller(popup, 125);
         foo.setParent(publicButton);
-//        popup.setVisible(false);
         popup.show(publicButton, 0, (int) publicButton.getBounds().getHeight());
     }
 

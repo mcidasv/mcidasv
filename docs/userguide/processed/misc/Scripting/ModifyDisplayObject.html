@@ -65,12 +65,21 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
     </tr>
     <tr>
       <td valign="top">color=</td>
-      <td>'color name'; default = 'red'<br>
+      <td>sets the color of the text. There are two ways this can be set:<br>
+        'color name'; default = 'red'<br>
       -or-<br>
-      [R,G,B] fractional scaling factor for each red, green and blue value (0.0 to 1.0)</td>
+      [R,G,B] fractional scaling factor for each red, green and blue value (0 to 255). For example, [255,0,0]</td>
     </tr>
       <td valign="top">alignment=</td>
       <td>sets the location of the text with respect to the latitude/longitude or line/element combination entered. The format is alignment=(horizontal,vertical).  For horizontal, values of "left", "right", and "center" can be used. For vertical, values of "top", "bottom" and "center" can be used.  The default is alignment=("center","center") which means the text will be centered at the location of the latitude/longitude or line/element values.</td>
+    </tr>
+        <tr>
+      <td valign="top">bgColor=</td>
+      <td>sets the background color of the text. default=None<br>
+      There are two ways this can be set:<br>
+      'color name'.  For example, 'green'
+          -or-<br>
+          [R,G,B] fractional scaling factor for each red, green and blue value (0 to 255).  For example, [0,255,0]</td>
     </tr>
 </table></div>
 <div class="OneTabIndent">Example:</div>

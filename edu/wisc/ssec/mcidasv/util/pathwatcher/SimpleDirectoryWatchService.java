@@ -300,12 +300,12 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
      * Method responsible for notifying listeners when a file matching their
      * relevant pattern has changed.
      *
-     * <p>Note: {@literal "change"} means one of:
+     * Note: {@literal "change"} means one of:
      * <ul>
      *   <li>file creation</li>
      *   <li>file removal</li>
      *   <li>file contents changing</li>
-     * </ul></p>
+     * </ul>
      *
      * @param key {@link #mWatchService} {@literal "registration"} key for
      *            one of the {@link Path Paths} being watched. Cannot be

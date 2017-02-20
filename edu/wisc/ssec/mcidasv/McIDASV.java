@@ -55,6 +55,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.Icon;
@@ -67,9 +68,14 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.OptionPaneClicker;
+import edu.wisc.ssec.mcidasv.util.SystemState;
+import edu.wisc.ssec.mcidasv.util.WebBrowser;
+import edu.wisc.ssec.mcidasv.util.WelcomeWindow;
 
+import org.joda.time.DateTime;
+import org.python.util.PythonInterpreter;
 import org.w3c.dom.Element;
 
 import ucar.nc2.NetcdfFile;
@@ -130,9 +136,7 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.LayerAnimationWindow;
 import edu.wisc.ssec.mcidasv.ui.McIdasColorTableManager;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.SystemState;
-import edu.wisc.ssec.mcidasv.util.WebBrowser;
+import edu.wisc.ssec.mcidasv.util.gui.EventDispatchThreadHangMonitor;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.DirectoryWatchService;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.SimpleDirectoryWatchService;
@@ -256,6 +260,15 @@ public class McIDASV extends IntegratedDataViewer {
         watchService = new SimpleDirectoryWatchService();
 
         this.init();
+    
+        // ensure jython init only happens once per application session
+        String cacheDir = getStore().getJythonCacheDir();
+        Properties pyProps = new Properties();
+        if (cacheDir != null) {
+            pyProps.put("python.home", cacheDir);
+        }
+        String[] blank = new String[] { "" };
+        PythonInterpreter.initialize(System.getProperties(), pyProps, blank);
     }
 
     // Generic registration with the Mac OS X application menu
@@ -535,17 +548,30 @@ public class McIDASV extends IntegratedDataViewer {
      * and additionally, if the action is a HTML link, we attempt to visit the
      * link in the user's preferred browser.
      */
-    @Override public boolean handleAction(String action, Hashtable properties, 
-        boolean checkForAlias) 
+    @Override public boolean handleAction(String action, Hashtable properties,
+                                          boolean checkForAlias)
     {
         actions.add(action);
 
+        boolean result = false;
+        DateTime start = DateTime.now();
+        logger.trace("started: action='{}', checkForAlias={}, properties='{}'", action, checkForAlias, properties);
         if (IOUtil.isHtmlFile(action)) {
             WebBrowser.browse(action);
-            return true;
+            result = true;
+        } else {
+            if (action.toLowerCase().contains("showsupportform")) {
+                logger.trace("showing support form 'manually'...");
+                getIdvUIManager().showSupportForm();
+                result = true;
+            } else {
+                result = super.handleAction(action, properties, checkForAlias);
+            }
         }
+        long duration = new DateTime().minus(start.getMillis()).getMillis();
+        logger.trace("finished: action='{}', duration: {} (ms), checkForAlias={}, properties='{}'", action, duration, checkForAlias, properties);
 
-        return super.handleAction(action, properties, checkForAlias);
+        return result;
     }
 
     /**
@@ -587,15 +613,11 @@ public class McIDASV extends IntegratedDataViewer {
         ucar.unidata.idv.JythonManager jyManager = getJythonManager();
         if (idvAction) {
             action = action.replace("&", "&amp;").substring(4);
-//            getJythonManager().evaluateUntrusted(action, hashProps);
             jyManager.evaluateUntrusted(action, hashProps);
             result = true;
         } else if (jythonAction) {
             action = action.substring(7);
-            jyManager.evaluateTrusted(action, hashProps);
-//            ucar.unidata.idv.JythonManager jyMan = new ucar.unidata.idv.JythonManager();
-//            jyMan
-//            getJythonManager().evaluateTrusted(action, hashProps);
+            jyManager.evaluateAction(action, hashProps);
             result = true;
         } else {
             result = super.handleFileOrUrlAction(action, properties);
@@ -961,6 +983,16 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * Returns the time it took for McIDAS-V to start up.
+     *
+     * @return These results are created from subtracting the results of two
+     * {@link System#nanoTime()} calls against one another.
+     */
+    public long getStartupDuration() {
+        return estimate;
+    }
+    
+    /**
      * <p>
      * Overridden so that the support form becomes non-modal if launched from
      * an exception dialog.
@@ -1062,9 +1094,15 @@ public class McIDASV extends IntegratedDataViewer {
         overridePreferences();
 
         detectAndHandleCrash();
+    
+        if (addeEntries == null) {
+            getServerManager();
+        }
+        addeEntries.startLocalServer();
 
         estimate = System.nanoTime() - startTime;
-        logger.info("estimated startup duration: {} ms", estimate / 1e6);
+        logger.info("estimated startup duration: {} ms", estimate / 1.0e6);
+        System.setProperty("mcv.start.duration", Long.toString(estimate));
 
         // handle the -doAction <action id> startup option.
         ((ArgumentManager)getArgsManager()).runStartupAction();
@@ -1075,6 +1113,8 @@ public class McIDASV extends IntegratedDataViewer {
         // turn on directory monitoring in the file choosers.
         startWatchService();
         EventBus.publish(Constants.EVENT_FILECHOOSER_START, "init finished");
+    
+        EventDispatchThreadHangMonitor.initMonitoring();
     }
 
     /**
@@ -1243,7 +1283,6 @@ public class McIDASV extends IntegratedDataViewer {
     public EntryStore getServerManager() {
         if (addeEntries == null) {
             addeEntries = new EntryStore(getStore(), getResourceManager());
-            addeEntries.startLocalServer();
         }
         return addeEntries;
     }
@@ -1678,6 +1717,41 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * Show the McIDAS-V {@literal "Welcome Window"} for the first start up.
+     *
+     * @param args Commandline arguments, used to handle autoquit stress testing.
+     */
+    private static void handleWelcomeWindow(String... args) {
+        boolean showWelcome = false;
+        boolean welcomeAutoQuit = false;
+        long welcomeAutoQuitDelay = WelcomeWindow.DEFAULT_QUIT_DELAY;
+        for (int i = 0; i < args.length; i++) {
+            if ("-welcomewindow".equals(args[i])) {
+                showWelcome = true;
+            } else if ("-autoquit".equals(args[i])) {
+                welcomeAutoQuit = true;
+                int delayIdx = i + 1;
+                if (delayIdx < args.length) {
+                    welcomeAutoQuitDelay = Long.parseLong(args[delayIdx]);
+                }
+            }
+        }
+
+        // if user elects to quit, System.exit(1) will be called.
+        // if the user decides to start, the welcome window will be simply be
+        // closed, allowing McV to continue starting up.
+        if (showWelcome) {
+            WelcomeWindow ww;
+            if (welcomeAutoQuit) {
+                ww = new WelcomeWindow(true, welcomeAutoQuitDelay);
+            } else {
+                ww = new WelcomeWindow();
+            }
+            ww.setVisible(true);
+        }
+    }
+
+    /**
      * The main. Configure the logging and create the McIDAS-V object
      * responsible for initializing the application session.
      *
@@ -1685,15 +1759,21 @@ public class McIDASV extends IntegratedDataViewer {
      *
      * @throws Exception When something untoward happens.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String... args) throws Exception {
+        // show the welcome window if needed.
+        // since the welcome window is intended to be a one time thing,
+        // it probably shouldn't count for the startTime stuff.
+        handleWelcomeWindow(args);
+
         startTime = System.nanoTime();
 
         // the following two lines are required if we want to embed JavaFX
         // widgets into McV (which is Swing). The first line initializes the
         // JavaFX runtime, and the second line allows the JavaFX runtime to
         // hang around even if there are no JavaFX windows.
-        JFXPanel dummy = new JFXPanel();
-        Platform.setImplicitExit(false);
+        // TODO(jon): commenting out for now
+        // JFXPanel dummy = new JFXPanel();
+        // Platform.setImplicitExit(false);
 
         try {
             applyArgs(args);
@@ -1706,6 +1786,10 @@ public class McIDASV extends IntegratedDataViewer {
             // add SLF4JBridgeHandler to j.u.l's root logger, should be done once during
             // the initialization phase of your application
             SLF4JBridgeHandler.install();
+
+//            Properties pythonProps = new Properties();
+//            logger.trace("calling PythonInterpreter.initialize...");
+//            PythonInterpreter.initialize(System.getProperties(), pythonProps, new String[] {""});
 
             LogUtil.configure();
 
@@ -1764,11 +1848,55 @@ public class McIDASV extends IntegratedDataViewer {
         removeSessionFile(SESSION_FILE);
 
         // shut down javafx runtime
-        Platform.exit();
+        // Platform.exit();
 
         logger.info("Exiting McIDAS-V @ {}", new Date());
 
         System.exit(exitCode);
+    }
+
+    /**
+     * This method is largely a copy of {@link IntegratedDataViewer#quit()},
+     * but allows for some GUI testing.
+     */
+    public boolean autoQuit() {
+        IdvObjectStore store = getStore();
+
+        boolean showQuitConfirm = store.get(PREF_SHOWQUITCONFIRM, true);
+        long quitDelay = store.get("mcidasv.autoexit.delay", 3000);
+
+        if (showQuitConfirm) {
+            JCheckBox cbx = new JCheckBox("Always ask", true);
+            JComponent comp =
+                GuiUtils.vbox(
+                    new JLabel("<html><b>Do you really want to exit?</b></html>"),
+                    GuiUtils.inset(cbx, new Insets(4, 15, 0, 10)));
+
+            JOptionPane pane = new JOptionPane(comp,
+                                               JOptionPane.QUESTION_MESSAGE,
+                                               JOptionPane.YES_NO_OPTION);
+
+            new OptionPaneClicker(pane, "Exit Confirmation", quitDelay, "Yes");
+            getStore().put(PREF_SHOWQUITCONFIRM, cbx.isSelected());
+        }
+
+        if (!getStationModelManager().checkCloseWindow()) {
+            return false;
+        }
+
+        if (!getJythonManager().saveOnExit()) {
+            return false;
+        }
+
+        store.saveIfNeeded();
+        store.cleanupTmpFiles();
+        getPluginManager().handleApplicationExit();
+        getJythonManager().handleApplicationExit();
+
+        if (getInteractiveMode()) {
+            exit(0);
+        }
+        return true;
     }
 
     /**

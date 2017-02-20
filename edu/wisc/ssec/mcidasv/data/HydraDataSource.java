@@ -28,17 +28,27 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.ui.TextSearcher;
+import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.WrapperException;
 import visad.Data;
 import visad.VisADException;
@@ -181,5 +191,40 @@ public class HydraDataSource extends DataSourceImpl  {
                                 Hashtable requestProperties)
             throws VisADException, RemoteException {
         return null;
+    }
+    
+    @Override public void addPropertiesTabs(JTabbedPane tabbedPane) {
+        super.addPropertiesTabs(tabbedPane);
+        if (sources == null) {
+            return;
+        }
+        
+        int height = 300;
+        int width  = 400;
+        
+        Dimension windowSize = new Dimension(width, height);
+        
+        JTextArea dumpText = new JTextArea();
+        dumpText.setEditable(false);
+    
+        TextSearcher searcher = new TextSearcher(dumpText);
+        dumpText.setFont(Font.decode("monospaced"));
+        
+        StringWriter bos = new StringWriter();
+        try {
+            for (Object source : sources) {
+                ucar.nc2.NCdumpW.print(source.toString(), bos, null);
+                bos.write("\n");
+            }
+        } catch (IOException ioe) {
+            logException("Dumping netcdf file", ioe);
+        }
+        dumpText.setText(bos.toString());
+        JScrollPane scroller = GuiUtils.makeScrollPane(dumpText, width, height);
+        scroller.setPreferredSize(windowSize);
+        scroller.setMinimumSize(windowSize);
+        tabbedPane.add("Metadata",
+            GuiUtils.inset(GuiUtils.centerBottom(scroller,
+                searcher), 5));
     }
 }

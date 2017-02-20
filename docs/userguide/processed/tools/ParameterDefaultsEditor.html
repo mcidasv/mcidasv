@@ -38,22 +38,19 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ParameterDe
   <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Parameter -</strong> Represents the name of the parameter. The double down arrows allow you to change the parameter to one of a loaded data source, or a predefined alias. The parameter name is included with data that is loaded into McIDAS-V. This field can also be the <strong>Name</strong> defined in the <a href="Formulas.html#name">Formula Editor</a>.</li>
-    <li class="propertylistitem"><strong>Color Table -</strong> Sets the color table to be used to display the parameter.</li>
-    <li class="propertylistitem"><strong>Range -</strong> Sets the range that the color bar will cover, from low to high.</li>
-    <li class="propertylistitem"><strong>Contours -</strong> Sets the spacing (difference in value) between contours.</li>
-    <li class="propertylistitem"><strong>Display Unit -</strong> Sets the unit used to display the parameter.</li>
+    <li class="propertylistitem"><strong>Parameter -</strong> Lists the name of the parameter.  The parameter name is included with data that is loaded into McIDAS-V. This field can also be the <strong>Name</strong> defined in the <a href="Formulas.html#name">Formula Editor</a> or a <a href="AliasEditor.html">parameter alias</a>.</li>
+    <li class="propertylistitem"><strong>Color Table -</strong> Lists the color table to be used to display the parameter.</li>
+    <li class="propertylistitem"><strong>Range -</strong> Lists the range that the color bar will cover.</li>
+    <li class="propertylistitem"><strong>Contours -</strong> Lists values related to the contours being displayed, including the interval, base, minimum, and maximum values.</li>
+    <li class="propertylistitem"><strong>Display Unit -</strong> Lists the unit used to display the parameter.</li>
 </ul>
-<p>This feature lets you preset conventional color and contouring choices, and lets
-you override system defaults.</p>
-<p>There are three sets of defaults: User defaults, Application defaults, and System defaults. While the items in the <strong>Application defaults</strong> and <strong>System defaults</strong> tabs cannot be modified within the tab, you can create a duplicate of the same parameter in the <strong>User defaults</strong> tab. If the same parameter is defined as a User default and an Application/System default, the User default will be used first. If you wish to modify an existing default, you can right-click on the item and select <strong>Copy Row to Users Defaults</strong>. When you do this
-  the Parameter Defaults window allows you to select what properties
-  you want to modify and define:</p>
+<p>This feature allows for presetting conventional color and contouring choices, and allows for overriding system defaults.</p>
+<p>There are three sets of defaults: User defaults, Application defaults, and System defaults. These columns are sorted in alphabetical order by default, and this   order can be reversed by clicking on the name of the columns (e.g. '<strong>Parameter</strong>'). While the items in the <strong>Application defaults</strong> and <strong>System defaults</strong> tabs cannot be modified within the tab, a duplicate of the same parameter can be copied in the <strong>User defaults</strong> tab. This can be done by right-clicking on a row and selecting <strong>Copy Row to Users Defaults</strong>. If the same parameter is defined as a User default and an Application/System default, the User default will be used first. Once this is done, a user default can be edited by right-clicking on a row and selecting <strong>Edit Settings</strong>. This opens a Parameter Defaults window that allows for modifying and defining properties of the default:</p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/ParamDefaultsProperties.gif" width="500" height="690" alt="Image 2: Parameter Defaults Properties"><br>
   <span class="caption">Image 2: Parameter Defaults Properties</span></div>
-<p>In the example above, any time a parameter named &quot;rh&quot; is used to define a field, the data will display with the <strong>Relative Humidity</strong> color bar, a range of 0-100, and contour values as specified in the window. If you wish to define an individual item, such as <strong>Range</strong>, make sure the <strong>Defined</strong> checkbox is selected. If it is not checked, then any values stored in this window will not be saved as a default. From the <strong>User defaults</strong> tab, you can also right-click
-on a row to add a new row, edit the settings for the row, delete the row, or export an individual row as a plugin. </p>
+<p>In the example above, any time a parameter named &quot;rh&quot; is used to define a field, the data will display with the <strong>Relative Humidity</strong> color bar, a range of 0-100, and contour values as specified in the window. To define an individual item, such as <strong>Range</strong>, the <strong>Defined</strong> checkbox must be selected. If it is not checked, then any values stored in this window will not be saved as a default. From the <strong>User defaults</strong> tab, right-clicking
+on a row to adding a new row, editing the settings for the row, deleting the row, or exporting an individual row as a plugin. </p>
 <p>The parameter names are given in regular expression syntax to help match with
     actual data names. Plain text is matched exactly. The string dot star, ".*",
 means "any text here." The ^ means "begin with the following text exactly&quot;.</p>
@@ -98,11 +95,11 @@ means "any text here." The ^ means "begin with the following text exactly&quot;.
 <ul class="propertylist">
 <li class="propertylistitem"><strong>New Row -</strong> Opens a <a href="#image2">Parameter Defaults</a> window, which allows you to select what properties
   you want to define.</li>
-<li class="propertylistitem"><strong>Open -</strong> Allows you to open an eXtensible Markup Language (XML) file (*.xml).</li>
-<li class="propertylistitem"><strong>Import -</strong> Allows you to import an eXtensible Markup Language (XML) file (*.xml).</li>
+<li class="propertylistitem"><strong>Open -</strong> Allows you to open an eXtensible Markup Language (XML) file (*.xml). This will add a new tab to the Parameter Defaults Editor window specifically for the parameter(s) in the file.</li>
+<li class="propertylistitem"><strong>Import -</strong> Allows you to import an eXtensible Markup Language (XML) file (*.xml). This will add a new row to the User Defaults tab for each default in the imported file.</li>
 <li class="propertylistitem"><strong>Export to File - </strong>Allows you to save your Parameter as an eXtensible Markup Language (XML) file (*.xml).</li>
-<li class="propertylistitem"><strong>Export to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with all of your aliases loaded in.</li>
-<li class="propertylistitem"><strong>Export Selected to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with your selected aliases loaded in.</li>
+<li class="propertylistitem"><strong>Export to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with all of the aliases loaded in.</li>
+<li class="propertylistitem"><strong>Export Selected to Plugin -</strong> Opens the <a href="PluginCreator.html">Plugin Creator</a> window with the selected aliases loaded in.</li>
 <li class="propertylistitem"><strong>Close -</strong> Closes the Parameter Defaults Editor window.</li>
 </ul>
 <!-- InstanceEndEditable -->

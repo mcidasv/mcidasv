@@ -29,10 +29,11 @@ package edu.wisc.ssec.mcidasv.chooser;
 
 import java.awt.BorderLayout;
 import java.io.File;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Vector;
 
@@ -45,7 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.wisc.ssec.mcidasv.data.hydra.JPSSUtilities;
-
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.StringUtil;
 
@@ -127,18 +127,23 @@ public class SuomiNPPChooser extends FileChooser {
     	}
     	
         // At present, Suomi NPP chooser only allows selecting sets of consecutive granules
-    	boolean granulesAreConsecutive = true;
-    	// TJJ Dec 2015, only doing conseq granule test for NOAA right now.
-    	// Need to add a test for NASA data, if we allow it (I think we should
-    	// with perhaps a max data size check)
+    	int granulesAreConsecutive = -1;
+        // Consecutive granule check - can only aggregate a contiguous set
     	if (files.length > 1) {
            granulesAreConsecutive = testConsecutiveGranules(files);
     	}
-        if (granulesAreConsecutive) {
+    	
+    	// Need to reverse file list, so granules are increasing time order
+    	if (granulesAreConsecutive == 1) {
+    	   Collections.reverse(Arrays.asList(files));
+    	}
+    	
+        if ((granulesAreConsecutive >= 0) || (files.length == 1)) {
         	return super.selectFilesInner(files, directory);
         } else {
         	// throw up a dialog to tell user the problem
-        	JOptionPane.showMessageDialog(this, "When selecting multiple granules, they must be consecutive.");
+            JOptionPane.showMessageDialog(this,
+                "When selecting multiple granules, they must be consecutive.");
         }
         return false;
     }
@@ -153,11 +158,14 @@ public class SuomiNPPChooser extends FileChooser {
      * one generated in SuomiNPPDataSource constructor.
      * 
      * @param files
-     * @return true if consecutive tests pass for all files
+     * @return 0 if consecutive tests pass for all files
+     *        -1 if tests fail
+     *         1 if tests pass but file order is backward 
+     *           (decreasing time order)
      */
     
-    private boolean testConsecutiveGranules(File[] files) {
-    	boolean testResult = false;
+    private int testConsecutiveGranules(File[] files) {
+    	int testResult = -1;
     	if (files == null) return testResult;
     	
     	// TJJ Jan 2016 - different checks for NASA data, 6 minutes per granule
@@ -166,7 +174,7 @@ public class SuomiNPPChooser extends FileChooser {
 			// compare start time of current granule with end time of previous
 	    	// difference should be very small - under a second
 	    	long prvTime = -1;
-	    	testResult = true;
+	    	testResult = 0;
 	        for (int i = 0; i < files.length; i++) {
 	            if ((files[i] != null) && !files[i].isDirectory()) {
 	                if (files[i].exists()) {
@@ -181,7 +189,7 @@ public class SuomiNPPChooser extends FileChooser {
 							dS = sdfNASA.parse(dateStr + timeStr);
 	                    } catch (ParseException pe) {
 							logger.error("Not recognized as valid Suomi NPP file name: " + fileName);
-							testResult = false;
+							testResult = -1;
 							break;
 	                    }
 						long curTime = dS.getTime();
@@ -190,9 +198,16 @@ public class SuomiNPPChooser extends FileChooser {
 							// make sure time diff does not exceed allowed threshold
 							// consecutive granules should be less than 1 minute apart
 							if ((curTime - prvTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS_NASA) {
-								testResult = false;
+								testResult = -1;
 								break;
 							}
+                            // TJJ Inq #2265, #2370. Granules need to be increasing time order 
+                            // to properly georeference. If they are reverse order but pass
+							// all consecutive tests, we just reverse the list before returning
+                            if (curTime < prvTime) {
+                                testResult = 1;
+                                break;
+                            }
 						}
 						prvTime = curTime;
 	                }
@@ -203,11 +218,21 @@ public class SuomiNPPChooser extends FileChooser {
 			// compare start time of current granule with end time of previous
 	    	// difference should be very small - under a second
 	    	long prvTime = -1;
-	    	testResult = true;
+            long prvStartTime = -1;
+	    	testResult = 0;
+            int lastSeparator = -1;
+            int firstUnderscore = -1;
+            String prodStr = "";
+            String prevPrd = "";
 	        for (int i = 0; i < files.length; i++) {
 	            if ((files[i] != null) && !files[i].isDirectory()) {
 	                if (files[i].exists()) {
 	                	String fileName = files[i].getName(); 
+                        lastSeparator = fileName.lastIndexOf(File.separatorChar);
+                        firstUnderscore = fileName.indexOf("_", lastSeparator + 1);
+                        prodStr = fileName.substring(lastSeparator + 1, firstUnderscore);
+                        // reset check if product changes
+                        if (! prodStr.equals(prevPrd)) prvTime = -1;
 	                	int dateIndex = fileName.lastIndexOf("_d2") + 2;
 	                	int timeIndexStart = fileName.lastIndexOf("_t") + 2;
 	                	int timeIndexEnd = fileName.lastIndexOf("_e") + 2;
@@ -218,7 +243,7 @@ public class SuomiNPPChooser extends FileChooser {
 	                	int fnLen = fileName.length();
 	                	if ((dateIndex > fnLen) || (timeIndexStart > fnLen) || (timeIndexEnd > fnLen)) {
 	                		logger.warn("unexpected file name length for: " + fileName);
-	                		testResult = false;
+	                		testResult = -1;
 	                		break;
 	                	}
 	                    // pull start and end time out of file name
@@ -242,7 +267,7 @@ public class SuomiNPPChooser extends FileChooser {
 							dE = sdf.parse(endDateStr + timeStrEnd);
 						} catch (ParseException e) {
 							logger.error("Not recognized as valid Suomi NPP file name: " + fileName);
-							testResult = false;
+							testResult = -1;
 							break;
 						}
 						long curTime = dS.getTime();
@@ -252,12 +277,21 @@ public class SuomiNPPChooser extends FileChooser {
 							// make sure time diff does not exceed allowed threshold
 							// consecutive granules should be less than 1 minute apart
 							if ((curTime - prvTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
-								testResult = false;
+								testResult = -1;
 								break;
+							}
+                            // TJJ Inq #2265, #2370. Granules need to be increasing time order 
+                            // to properly georeference. If they are reverse order but pass
+                            // all consecutive tests, we just reverse the list before returning
+							if (curTime < prvStartTime) {
+							    testResult = 1;
+							    break;
 							}
 						}
 						prvTime = endTime;
+						prvStartTime = curTime;
 	                }
+	                prevPrd = prodStr;
 	            }
 	        }
     	}

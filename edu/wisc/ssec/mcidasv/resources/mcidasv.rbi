@@ -341,6 +341,7 @@
 <!-- The list of station table xml files   -->
   <resources name="idv.resource.locations">
     <resource location="%USERPATH%/userstations.xml"/>
+    <!-- If the McV-specific list expands further, maybe put them below -->
     <resource location="%APPPATH%/places.xml"/>
     <resource location="%IDVPATH%/stations/places.xml"/>
     <resource
@@ -352,6 +353,7 @@
        location="%USERPATH%/nexradstations.xml"
        type="radar"/>
     <resource location="%IDVPATH%/stations/statelocations.xml"/>
+    <resource location="%APPPATH%/stations/greatlakes.xml"/>
   </resources>
 
 <!-- The list of help tip xml files   -->
@@ -470,7 +472,7 @@
     <resource label="Grid Diagnostics" location="%IDVPATH%/python/griddiag.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="Grid Routines" location="%IDVPATH%/python/grid.py">
+    <resource label="Grid Routines" location="%APPPATH%/python/grid.py">
       <property name="category" value="System"/>
     </resource>
     <resource label="Ensemble Grid Routines" location="%APPPATH%/python/ensemble.py">
@@ -484,6 +486,9 @@
       <property name="category" value="System"/>
     </resource>
     <resource label="Hydra" location="%APPPATH%/python/utilities/combineRGB.py">
+      <property name="category" value="System"/>
+    </resource>
+    <resource label="Sandwich Product" location="%APPPATH%/python/utilities/sandwich.py">
       <property name="category" value="System"/>
     </resource>
     <resource label="Image Routines" location="%IDVPATH%/python/image.py">

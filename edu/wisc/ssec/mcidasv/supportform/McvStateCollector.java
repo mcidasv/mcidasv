@@ -31,6 +31,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Properties;
 
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import ucar.unidata.util.LogUtil;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -38,16 +39,16 @@ import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.util.SystemState;
 
 public class McvStateCollector implements StateCollector {
-
+    
     /** Reference used to query McIDAS-V's application state. */
     private final McIDASV mcv;
-
+    
     /** Name of the attachment used for the system state bundle. */
     private static final String BUNDLE = "bundle" + Constants.SUFFIX_MCV;
-
+    
     /** Name of the attachment used for system properties. */
     private static final String EXTRA = "mcv.properties";
-
+    
     /**
      * Builds a state collector that knows how to query McIDAS-V for specific
      * information.
@@ -57,7 +58,7 @@ public class McvStateCollector implements StateCollector {
     public McvStateCollector(final McIDASV mcv) {
         this.mcv = requireNonNull(mcv);
     }
-
+    
     /**
      * What should the name of the bundled version of McIDAS-V's current state 
      * be named?
@@ -68,7 +69,7 @@ public class McvStateCollector implements StateCollector {
     public String getBundleAttachmentName() {
         return BUNDLE;
     }
-
+    
     /**
      * What should the set of McIDAS-V system properties be named?
      * 
@@ -78,11 +79,31 @@ public class McvStateCollector implements StateCollector {
     public String getExtraAttachmentName() {
         return EXTRA;
     }
-
+    
+    /**
+     * Return full path to McV log file
+     */
     public String getLogPath() {
         return mcv.getUserFile("mcidasv.log");
     }
-
+    
+    /**
+     * Return full path to user's startup preferences file.
+     */
+    public String getPrefsPath() {
+        return StartupManager.getInstance().getPlatform().getUserPrefs();
+    }
+    
+    /**
+     * Get the path to where the user's {@code RESOLV.SRV} file <b>should</b>
+     * be located.
+     *
+     * @return Path to {@code RESOLV.SRV}. Note: <b>the file may not exist!</b>
+     */
+    public String getResolvSrvPath() {
+        return mcv.getUserFile("RESOLV.SRV");
+    }
+    
     /**
      * Builds the McIDAS-V system properties and returns the results as a 
      * nicely formatted {@code String}.
@@ -94,7 +115,7 @@ public class McvStateCollector implements StateCollector {
     public String getContentsAsString() {
         return SystemState.getStateAsString(mcv, true);
     }
-
+    
     /**
      * The results of {@link #getContentsAsString()} as an array of {@code byte}s.
      * This makes for a particularly easy way to attach to a {@code HTTP POST}.
@@ -102,11 +123,7 @@ public class McvStateCollector implements StateCollector {
     public byte[] getContents() {
         return getContentsAsString().getBytes();
     }
-
-    public String toString() {
-        return String.format("[McvStateCollector@%x: canBundleState=%s, bundle=%s, extra=%s]", hashCode(), canBundleState(), getBundleAttachmentName(), getExtraAttachmentName());
-    }
-
+    
     /**
      * Whether or not this {@link StateCollector} allows for attaching current
      * McIDAS-V state as a bundle.
@@ -114,7 +131,7 @@ public class McvStateCollector implements StateCollector {
     public boolean canBundleState() {
         return true;
     }
-
+    
     /**
      * Current McIDAS-V state as an XML bundle named by 
      * {@link #getBundleAttachmentName()}.
@@ -127,5 +144,9 @@ public class McvStateCollector implements StateCollector {
             LogUtil.logException("Error saving state for support request", e);
         }
         return data.getBytes();
+    }
+    
+    public String toString() {
+        return String.format("[McvStateCollector@%x: canBundleState=%s, bundle=%s, extra=%s]", hashCode(), canBundleState(), getBundleAttachmentName(), getExtraAttachmentName());
     }
 }

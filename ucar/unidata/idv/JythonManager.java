@@ -28,6 +28,7 @@
 
 package ucar.unidata.idv;
 
+import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
 import static ucar.unidata.util.GuiUtils.MENU_SEPARATOR;
 import static ucar.unidata.util.GuiUtils.getInput;
 import static ucar.unidata.util.GuiUtils.inset;
@@ -48,7 +49,6 @@ import static ucar.unidata.util.IOUtil.readContents;
 import static ucar.unidata.util.IOUtil.writeFile;
 import static ucar.unidata.util.LogUtil.userErrorMessage;
 import static ucar.unidata.util.LogUtil.userMessage;
-import static ucar.unidata.util.Misc.toList;
 import static ucar.unidata.util.StringUtil.listToStringArray;
 import static ucar.unidata.util.StringUtil.removeWhitespace;
 import static ucar.unidata.util.StringUtil.replace;
@@ -85,6 +85,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -104,14 +105,15 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.text.JTextComponent;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.ui.JythonEditor;
+import edu.wisc.ssec.mcidasv.util.FileFinder;
+import edu.wisc.ssec.mcidasv.util.LoudPyStringMap;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 
 import org.python.core.Py;
+import org.python.core.PyFunction;
 import org.python.core.PyObject;
 import org.python.core.PyString;
-import org.python.core.PyFunction;
 import org.python.core.PyStringMap;
 import org.python.core.PySyntaxError;
 import org.python.core.PySystemState;
@@ -278,7 +280,7 @@ public class JythonManager extends IdvManager implements ActionListener,
             Misc.run(this::initPythonInner);
         }
     }
-    
+
     /**
      * Initialize the python interpreter. This gets called from initPython inside of a thread.
      */
@@ -310,20 +312,22 @@ public class JythonManager extends IdvManager implements ActionListener,
         if (cacheDir != null) {
             pythonProps.put("python.home", cacheDir);
         }
-        // TODO: is there a way to force console_init.py to load first?
-        PythonInterpreter.initialize(System.getProperties(), pythonProps, getArgsManager().commandLineArgs);
+
         doMakeContents();
+
         if (!getArgsManager().isScriptingMode()) {
             makeFormulasFromLib();
             try {
-                McIDASV.getStaticMcv().watchDirectory(pythonDir, "*.py", this);
+                McIDASV mcv = getStaticMcv();
+                if (mcv != null) {
+                    mcv.watchDirectory(pythonDir, "*.py", this);
+                } else {
+                    logger.warn("getStaticMcv() returned null! Could not watch directory '"+pythonDir+'\'');
+                }
             } catch (IOException e) {
-                logger.error("Could not watch directory '"+pythonDir+"'", e);
+                logger.error("Could not watch directory '"+pythonDir+ '\'', e);
             }
         }
-        //      PySystemState sys = Py.getSystemState ();
-        //      sys.add_package ("visad");
-        //      sys.add_package ("visad.python");
     }
 
     /**
@@ -525,16 +529,20 @@ public class JythonManager extends IdvManager implements ActionListener,
                 List files;
                 File file = new File(path);
                 if (file.exists() && file.isDirectory()) {
-                    File[] libFiles = file.listFiles((java.io.FileFilter)new PatternFileFilter(".*\\.py$"));
+//                    File[] libFiles = file.listFiles((java.io.FileFilter)new PatternFileFilter(".*\\.py$"));
 //                    files.addAll(toList(libFiles));
-                    files = toList(libFiles);
+//                    files = toList(libFiles);
+                    files = FileFinder.findFiles(file.getPath(), "*.py");
                 } else {
                     files = new ArrayList();
                     files.add(path);
                 }
                 for (int fileIdx = 0; fileIdx < files.size(); fileIdx++) {
-                    path = (String) files.get(fileIdx).toString();
+                    path = files.get(fileIdx).toString();
                     file = new File(path);
+                    if (file.getName().startsWith(".") || file.isDirectory()) {
+                        continue;
+                    }
                     String canonicalPath = replace(path, "\\", "/");
                     if (seen.get(canonicalPath) != null) {
                         continue;
@@ -553,6 +561,7 @@ public class JythonManager extends IdvManager implements ActionListener,
                     if (!editable && (new File(path).isDirectory() || (text == null))) {
                         continue;
                     }
+
                     libHolder = makeLibHolder(editable, label, path, text);
                     String category = resources.getProperty("category", i);
                     String treeCategory = null;
@@ -888,9 +897,17 @@ public class JythonManager extends IdvManager implements ActionListener,
         fileMenu.addSeparator();
         fileMenu.add(makeMenuItem("Close", this, "close"));
     }
-    
+
     /**
-     * Gets called when the IDV is quitting. Kills the editor process if there is one
+     * Allow external code to call {@link #applicationClosing()}.
+     */
+    public void handleApplicationExit() {
+        applicationClosing();
+    }
+
+    /**
+     * Gets called when the IDV is quitting. Kills the editor process if
+     * there is one.
      */
     protected void applicationClosing() {
         if (getArgsManager().isScriptingMode()) {
@@ -1012,6 +1029,8 @@ public class JythonManager extends IdvManager implements ActionListener,
         getIdvUIManager().showHelp(help);
     }
     
+    private static final AtomicInteger createInterpCount = new AtomicInteger(0);
+    
     /**
      * Factory method to create and interpreter. This
      * also adds the interpreter into the list of interpreters.
@@ -1019,7 +1038,8 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @return The new interpreter
      */
     public PythonInterpreter createInterpreter() {
-        PythonInterpreter interp = new PythonInterpreter();
+        PythonInterpreter interp = new PythonInterpreter(new LoudPyStringMap("createInterpreter " + createInterpCount.addAndGet(1)));
+        logger.debug("000 created new PythonInterpreter(new LoudPyStringMap())");
         addInterpreter(interp);
         // only needed for background output?
         if (getArgsManager().getIsOffScreen()) {
@@ -1034,10 +1054,41 @@ public class JythonManager extends IdvManager implements ActionListener,
 
                 @Override public void write(int b) { }
             };
+            // NOTE: because this only ever happens in background mode, we
+            // don't have to worry about calling resetOutputStreams(...);
+            // once our interpreter closes, we quit the session
             interp.setOut(outputStream);
             interp.setErr(outputStream);
+            
         }
         return interp;
+    }
+    
+    /**
+     * Reset Jython's STDERR/STDOUT streams.
+     */
+    private void resetOutputStreams() {
+        // The reason this method exists is because of Jython's overuse of
+        // static fields and the IDV's eagerness to create new Jython
+        // interpreters.
+        //
+        // Jython's STDERR/STDOUT is static, so if you change the
+        // streams for one Jython interpreter, you've changed the streams for
+        // *all* of the existing interpreters!
+        if (!interpreters.isEmpty()) {
+            PythonInterpreter i = interpreters.get(0);
+            PySystemState sysState = i.getSystemState();
+            
+            PyObject defaultErr = sysState.__stderr__;
+            PyObject defaultOut = sysState.__stdout__;
+            
+            if (!defaultErr.equals(sysState.stderr)) {
+                i.setErr(defaultErr);
+            }
+            if (!defaultOut.equals(sysState.stdout)) {
+                i.setOut(defaultOut);
+            }
+        }
     }
     
     /**
@@ -1067,6 +1118,7 @@ public class JythonManager extends IdvManager implements ActionListener,
      */
     public void removeInterpreter(PythonInterpreter interp) {
         interpreters.remove(interp);
+        resetOutputStreams();
     }
     
     /**
@@ -1118,7 +1170,7 @@ public class JythonManager extends IdvManager implements ActionListener,
     }
 
     /**
-     * Intializes a given {@link PythonInterpreter} so that it can either be
+     * Initializes a given {@link PythonInterpreter} so that it can either be
      * used to {@link PythonInterpreter#exec exec} a Jython Library module or
      * set up an interactive Jython Shell.
      *
@@ -1147,6 +1199,11 @@ public class JythonManager extends IdvManager implements ActionListener,
             interpreter.set("interpreter", interpreter);
             interpreter.set("datamanager", getDataManager());
             interpreter.set("installmanager", getInstallManager());
+            PyObject locals = interpreter.getLocals();
+            logger.trace("locals class: {}", locals.getClass().getCanonicalName());
+            if (locals instanceof LoudPyStringMap) {
+                ((LoudPyStringMap)locals).bake();
+            }
         } catch (IOException e) {
             logException("Failed to initialize Jython's sys.path.", e);
         }
@@ -1391,7 +1448,79 @@ public class JythonManager extends IdvManager implements ActionListener,
         }
         interp.exec(code);
     }
-    
+
+    /**
+     * Largely the same as {@link #evaluateTrusted(String, Map)}.
+     *
+     * <p>The key difference is that prior to running {@code action}, this
+     * method will check the namespace of its Jython interpreter for the
+     * {@literal "idv"} object. If not found, {@literal "idv"} is added to the
+     * namespace.</p>
+     *
+     * <p>The idea is to try to mitigate some issues we've seen
+     * (McV Inquiry 2109).</p>
+     *
+     * @param code Action code to evaluate.
+     * @param properties Any properties
+     */
+    public void evaluateAction(String code, Map<String, Object> properties) {
+        PythonInterpreter interp = getUiInterpreter();
+        if (properties != null) {
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                interp.set(entry.getKey(), entry.getValue());
+            }
+        }
+        if (code.startsWith("idv.")) {
+            PyObject locals = interp.getLocals();
+            PyStringMap map = (PyStringMap)locals;
+            if (!map.has_key("idv")) {
+                logger.warn("interpreter does not have 'idv'! adding it...");
+                PyObject mcvRef = getMcvReference(this);
+                if (mcvRef != null) {
+                    interp.set("idv", mcvRef);
+                }
+            } else {
+                boolean result = getStaticMcv() == map.__getitem__("idv").__tojava__(IntegratedDataViewer.class);
+                logger.trace("interpreter has idv; is value same as getStaticMcv? result={}", result);
+                if (!result) {
+                    logger.trace("idv was not the expected value! replacing with output of getStaticMcv()!");
+                    PyObject mcvRef = getMcvReference(this);
+                    if (mcvRef != null) {
+                        interp.set("idv", mcvRef);
+                    }
+                }
+            }
+        }
+        interp.exec(code);
+    }
+
+    /**
+     * Attempt to find a valid reference to the object used as a representation
+     * of the application session.
+     *
+     * @param jyManager Jython manager for the session. Cannot be {@code null}.
+     *
+     * @return The result of {@link McIDASV#getStaticMcv()},
+     * {@link IntegratedDataViewer#getIdv()}, or {@code null} if the previous
+     * two methods failed.
+     */
+    private static PyObject getMcvReference(JythonManager jyManager) {
+        PyObject result = null;
+        McIDASV mcv = getStaticMcv();
+        if (mcv != null) {
+            result = Py.java2py(mcv);
+        } else {
+            logger.warn("getStaticMcv() returned null! Trying getIdv()...");
+            IntegratedDataViewer idv = jyManager.getIdv();
+            if (idv != null) {
+                result = Py.java2py(idv);
+            } else {
+                logger.warn("getIdv() failed as well! Nothing left...");
+            }
+        }
+        return result;
+    }
+
     /**
      * Create (if needed) and initialize a Jython interpreter. The initialization is to map
      * the variable "idv" to this instance of the idv and map "datamanager" to the DataManager
@@ -1400,7 +1529,8 @@ public class JythonManager extends IdvManager implements ActionListener,
      */
     public PythonInterpreter getUiInterpreter() {
         if (uiInterpreter == null) {
-            uiInterpreter = new PythonInterpreter();
+            uiInterpreter = new PythonInterpreter(new LoudPyStringMap("getUiInterpreter"));
+            logger.debug("111 created new PythonInterpreter(new LoudPyStringMap())");
             addInterpreter(uiInterpreter);
             //            initBasicInterpreter(uiInterpreter);
         }
@@ -1521,12 +1651,14 @@ public class JythonManager extends IdvManager implements ActionListener,
         }
         try {
             Element root = getRoot(filename, getClass());
-            List descriptors = DerivedDataDescriptor.readDescriptors(getIdv(), root, true);
-            for (int i = 0; i < descriptors.size(); i++) {
-                DerivedDataDescriptor ddd = (DerivedDataDescriptor) descriptors.get(i);
-                if (!descriptors.contains(ddd)) {
-                    ddd.setIsLocalUsers(true);
-                    descriptorDataSource.addDescriptor(ddd);
+            // Descriptor list from file
+            List fileDescriptors = DerivedDataDescriptor.readDescriptors(getIdv(), root, true);
+            // List of current local descriptors
+            List localDescriptors = getLocalDescriptors();
+            for (int i = 0; i < fileDescriptors.size(); i++) {
+                DerivedDataDescriptor ddd = (DerivedDataDescriptor) fileDescriptors.get(i);
+                if (! localDescriptors.contains(ddd)) {
+                    addFormula(ddd);
                 }
             }
             writeUserFormulas();
@@ -1949,7 +2081,9 @@ public class JythonManager extends IdvManager implements ActionListener,
     public PythonInterpreter getDerivedDataInterpreter(String methodName) {
         synchronized (MUTEX) {
             if (derivedDataInterpreter == null) {
+                logger.debug("333 created new PythonInterpreter(new LoudPyStringMap())");
                 derivedDataInterpreter = createInterpreter();
+                
             }
             if ((methodName != null) && (seenMethods.get(methodName) == null)) {
                 seenMethods.put(methodName, methodName);
@@ -2161,6 +2295,8 @@ public class JythonManager extends IdvManager implements ActionListener,
             return label;
         }
         
+        private static final AtomicInteger getFuncCount = new AtomicInteger(0);
+        
         /**
          * Parse the functions if needed
          * 
@@ -2169,8 +2305,18 @@ public class JythonManager extends IdvManager implements ActionListener,
         public List<Object[]> getFunctions() {
             if (functions == null) {
 
-                PythonInterpreter interpreter = new PythonInterpreter();
+                LoudPyStringMap stringMap =
+                    new LoudPyStringMap("getFunctions " + getFuncCount.addAndGet(1));
+                PythonInterpreter interpreter = new PythonInterpreter(stringMap);
+                logger.debug("222 created new PythonInterpreter(new LoudPyStringMap())");
                 jythonManager.initJythonEnvironment(interpreter, false);
+                // bake() is here because i'm specifically curious why the
+                // init stuff done in console_init.py seems to fix the problem.
+                // putting bake() after the exec(getText()) call would mean that
+                // the formula code would also be considered the same as
+                // console_init.py.
+                stringMap.bake();
+                
                 try {
                     interpreter.exec(getText());
                 } catch (Exception exc) {

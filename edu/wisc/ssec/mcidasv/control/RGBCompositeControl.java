@@ -39,9 +39,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.miginfocom.swing.MigLayout;
 
 import ucar.unidata.data.DataChoice;
@@ -69,9 +66,6 @@ import edu.wisc.ssec.mcidasv.data.hydra.ImageRGBDisplayable;
 public class RGBCompositeControl extends DisplayControlImpl {
 
     public final static String FORMULA_IN_PROGRESS_FLAG = "Formula_Active";
-
-    private static final Logger logger =
-        LoggerFactory.getLogger(RGBCompositeControl.class);
 
     /** Displayable for the data */
     private ImageRGBDisplayable imageDisplay;
@@ -216,6 +210,7 @@ public class RGBCompositeControl extends DisplayControlImpl {
                 break;
             }
         }
+
         while (true) {
             if (null != bluMap.getControl()) {
                 bluTable = ((BaseColorControl) bluMap.getControl()).getTable();

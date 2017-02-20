@@ -3,7 +3,7 @@
   PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
          "http://java.sun.com/javase/technologies/desktop/javahelp/toc_1_0.dtd">
 <toc version="1.0">
-<tocitem text="McIDAS-V User's Guide, Version 1.6beta1" target="idv.toc">
+<tocitem text="McIDAS-V User's Guide, Version 1.7beta1" target="idv.toc">
 <tocitem text="What is McIDAS-V?" target="idv.mcidasv"/>
 <tocitem text="Overview" target="idv.page_overview">
     <tocitem text="Release Notes" target="idv.releasenotes"/>
@@ -51,6 +51,7 @@
         <tocitem text="Gridded Data Displays" target="idv.page_griddeddatadisplays">
             <tocitem text="Plan View Controls" target="idv.controls.planviewcontrol"/>
             <tocitem text="Flow Display Controls" target="idv.controls.flowplanviewcontrol"/>
+			<tocitem text="3D Flow Display Controls" target="idv.controls.3dflowplanviewcontrol"/>
 			<tocitem text="Value Plot Controls" target="idv.controls.valueplotcontrol"/>
             <tocitem text="Vertical Cross Section Controls" target="idv.controls.crosssectioncontrol"/>
             <tocitem text="3D Surface Controls" target="idv.controls.threedsurfacecontrol"/>
@@ -186,6 +187,8 @@
 		<tocitem text="Create an Object - Grids" target="idv.misc.scripting.createobjectgrid"/>
 		<tocitem text="Modify the Display Object" target="idv.misc.scripting.modifydisplayobject"/>
 		<tocitem text="Modify the Layer Object" target="idv.misc.scripting.modifylayerobject"/>
+		<tocitem text="Modify the Layer Object - Point" target="idv.misc.scripting.modifypointlayerobject"/>
+		<tocitem text="Data Analysis" target="idv.misc.scripting.dataanalysis"/>
 		<tocitem text="Save the Display" target="idv.misc.scripting.savedisplay"/>
 		<tocitem text="Environment" target="idv.misc.scripting.environment"/>
 	</tocitem>	

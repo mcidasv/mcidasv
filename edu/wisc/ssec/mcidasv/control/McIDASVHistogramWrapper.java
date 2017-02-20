@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 
@@ -57,12 +58,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.chart.DataChoiceWrapper;
 import ucar.unidata.idv.control.chart.HistogramWrapper;
 import ucar.unidata.idv.control.chart.MyHistogramDataset;
 import ucar.unidata.idv.control.multi.DisplayGroup;
+import ucar.unidata.ui.ImageUtils;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 
@@ -74,6 +78,8 @@ import visad.VisADException;
 
 /**
  * Wraps a JFreeChart histogram to ease working with VisAD data.
+ *
+ * @deprecated Use {@link ucar.unidata.idv.control.McVHistogramWrapper}.
  */
 public class McIDASVHistogramWrapper extends HistogramWrapper {
 
@@ -106,7 +112,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     }
 
     /**
-     * Create the chart
+     * Create the chart.
      */
     private void createChart() {
         if (chartPanel != null) {
@@ -129,19 +135,76 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     }
 
     /**
-     * Create the charts
+     * Clear the histogram.
+     */
+    public void clearHistogram() {
+        if (chartPanel != null) {
+            XYPlot tempPlot = chartPanel.getChart().getXYPlot();
+            for (int i = 0; i < tempPlot.getDatasetCount(); i++) {
+                MyHistogramDataset dataset =
+                        (MyHistogramDataset)tempPlot.getDataset(i);
+                if (dataset != null) {
+                    dataset.removeAllSeries();
+                }
+            }
+        }
+    }
+
+    /**
+     * _more_
+     */
+    public void saveImage() {
+        JComboBox publishCbx =
+            imageControl.getViewManager().getPublishManager().getSelector(
+                "nc.export");
+        String filename = FileManager.getWriteFile(FileManager.FILTER_IMAGE,
+                              FileManager.SUFFIX_JPG, ((publishCbx != null)
+                ? GuiUtils.top(publishCbx)
+                : null));
+        if (filename == null) {
+            return;
+        }
+        try {
+            ImageUtils.writeImageToFile(getContents(), filename);
+            imageControl.getViewManager().getPublishManager().publishContent(
+                filename, null, publishCbx);
+        } catch (Exception exc) {
+            LogUtil.logException("Capturing image", exc);
+        }
+    }
+
+    /**
+     * Create the histogram.
      *
+     * @param data Data to use in histogram.
+     *
+     * @throws IllegalArgumentException if {@code data} is all NaNs.
      * @throws RemoteException On badness
      * @throws VisADException On badness
      */
-    public void loadData(FlatField data) throws VisADException, RemoteException {
+    public void loadData(FlatField data) throws IllegalArgumentException, RemoteException, VisADException {
+        if ((data != null) && !GridUtil.isAllMissing(data)) {
+            reallyLoadData(data);
+        } else {
+            throw new IllegalArgumentException("Nothing to show in histogram");
+        }
+     }
+
+    /**
+     * Assumes that {@code data} has been validated and is okay to actually try
+     * loading.
+     *
+     * @param data Data to use in histogram. Cannot be {@code null} or all NaNs.
+     *
+     * @throws VisADException
+     * @throws RemoteException
+     */
+    private void reallyLoadData(FlatField data) throws VisADException, RemoteException {
         createChart();
         List dataChoiceWrappers = getDataChoiceWrappers();
+
         try {
-            for (int dataSetIdx = 0; dataSetIdx < plot.getDatasetCount(); dataSetIdx++) {
-                MyHistogramDataset dataset = (MyHistogramDataset)plot.getDataset(dataSetIdx);
-                dataset.removeAllSeries();
-            }
+            clearHistogram();
 
             Hashtable props = new Hashtable();
             ErrorEstimate[] errOut = new ErrorEstimate[1];
@@ -167,6 +230,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                 } else {
                     renderer = new XYBarRenderer();
                 }
+                if ((plot == null) && (chartPanel != null)) {
+                    plot = chartPanel.getChart().getXYPlot();
+                }
                 plot.setRenderer(paramIdx, renderer);
                 Color c = wrapper.getColor(paramIdx);
                 domainAxis.setLabelPaint(c);
@@ -174,7 +240,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
 
                 MyHistogramDataset dataset = new MyHistogramDataset();
                 dataset.setType(HistogramType.FREQUENCY);
-                dataset.addSeries(dataChoice.getName() + " [" + unit + "]",
+                dataset.addSeries(dataChoice.getName() + " [" + unit + ']',
                     actualValues, getBins());
                 samples = null;
                 actualValues = null;
@@ -202,7 +268,7 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
                             }
                             ((DisplayControlImpl) imageControl).setRange(newRange);
                         } catch (Exception e) {
-                            System.out.println("Can't set new range e=" + e);
+                            logger.error("Cannot change range", e);
                         }
                     }
                 });
@@ -215,7 +281,6 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         } catch (Exception exc) {
             System.out.println("Exception exc=" + exc);
             LogUtil.logException("Error creating data set", exc);
-            return;
         }
     }
 

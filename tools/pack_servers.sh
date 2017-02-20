@@ -20,6 +20,7 @@ adirserv agetserv
 areaadir areaaget
 fsdxadir fsdxaget
 gvaradir gvaraget
+indiadir indiaget
 indsadir indsaget
 instadir instaget
 lv1badir lv1baget
@@ -150,6 +151,9 @@ cd "${DEST_DIR}/pack_windows/adde/bin" && tar xvf mcv_windows_bin.tar && \
 cd "${DEST_DIR}/pack_windows/adde/data" && tar xvf mcv_windows_data.tar && \
         rm mcv_windows_data.tar && cd -
 cp "${DEST_DIR}/cygwin1.dll" "${DEST_DIR}/pack_windows/adde/bin/"
+cp "${DEST_DIR}/cyggfortran-3.dll" "${DEST_DIR}/pack_windows/adde/bin/"
+cp "${DEST_DIR}/cygquadmath-0.dll" "${DEST_DIR}/pack_windows/adde/bin/"
+cp "${DEST_DIR}/cyggcc_s-1.dll" "${DEST_DIR}/pack_windows/adde/bin/"
 echo "Zipping..."
 cd "${DEST_DIR}/pack_windows" && zip -r ../adde-windows.zip adde && cd -
 rm -Rf "${DEST_DIR}/pack_windows"
@@ -275,22 +279,15 @@ done
 
 # Special
 if [ "${PLATFORM_SHORT}" = "linux" ]; then
-	FILE=libg2c.so.0
-	echo "Copying ${FILE}..."
-	if [ -r "${DEST_DIR}/${FILE}.32bit" ]; then
-		cp ${DEST_DIR}/${FILE}.32bit ${DEST_DIR_BIN}/${FILE}
-	else
-		echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
-	fi
-fi
-if [ "${PLATFORM_SHORT}" = "linux64" ]; then
-	FILE=libg2c.so.0
-	echo "Copying ${FILE}..."
-	if [ -r "${DEST_DIR}/${FILE}.64bit" ]; then
-		cp ${DEST_DIR}/${FILE}.64bit ${DEST_DIR_BIN}/${FILE}
-	else
-		echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
-	fi
+        FILES="libgfortran.so.1 libnetcdf.so.7 libhdf5.so.8 libhdf5_hl.so.8"
+        for FILE in ${FILES}; do
+                echo "Copying ${FILE}..."
+                if [ -r "${DEST_DIR}/${FILE}" ]; then
+                        cp ${DEST_DIR}/${FILE} ${DEST_DIR_BIN}/${FILE}
+                else
+                        echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
+                fi
+        done
 fi
 if [ "${PLATFORM_SHORT}" = "darwin" ]; then
 	FILES="libgcc_s.1.dylib libgfortran.3.dylib libquadmath.0.dylib libnetcdf.7.dylib libhdf5.8.dylib libhdf5_hl.8.dylib"

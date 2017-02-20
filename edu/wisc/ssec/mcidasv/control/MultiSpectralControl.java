@@ -83,6 +83,7 @@ import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.idv.control.McVHistogramWrapper;
 import ucar.visad.display.XYDisplay;
 import visad.DataReference;
 import visad.DataReferenceImpl;
@@ -146,7 +147,7 @@ public class MultiSpectralControl extends HydraControl {
     private final List<Hashtable<String, Object>> spectraProperties = new ArrayList<>();
     private final List<Spectrum> spectra = new ArrayList<>();
 
-    private McIDASVHistogramWrapper histoWrapper;
+    private McVHistogramWrapper histoWrapper;
 
     private float rangeMin;
     private float rangeMax;
@@ -180,7 +181,7 @@ public class MultiSpectralControl extends HydraControl {
         PARAM = (String) props.get(MultiSpectralDataSource.paramKey);
 
         List<DataChoice> choices = Collections.singletonList(choice);
-        histoWrapper = new McIDASVHistogramWrapper("histo", choices, this);
+        histoWrapper = new McVHistogramWrapper("histo", choices, this);
 
         Float fieldSelectorChannel =
             (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
@@ -789,13 +790,21 @@ public class MultiSpectralControl extends HydraControl {
 
     private void updateHistogramTab() {
         try {
-            histoWrapper.loadData(display.getImageData());
+            FlatField ff = display.getImageData();
+            histoWrapper.loadData(ff);
             org.jfree.data.Range range = histoWrapper.getRange();
             rangeMin = (float)range.getLowerBound();
             rangeMax = (float)range.getUpperBound();
             minBox.setText(Integer.toString((int)rangeMin));
             maxBox.setText(Integer.toString((int)rangeMax));
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
+            histoWrapper.clearHistogram();
+            histoWrapper.resetPlot();
+            rangeMin = Float.NaN;
+            rangeMax = Float.NaN;
+            minBox.setText("NaN");
+            maxBox.setText("NaN");
+        } catch (RemoteException | VisADException e) {
             logException("MultiSpectralControl.getHistogramTabComponent", e);
         }
     }

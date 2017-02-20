@@ -56,7 +56,7 @@ public class MultiDimensionSubset extends DataSelection {
     while (iter.hasNext()) {
        String key = (String) iter.next();
        keys[cnt] = key;
-       coords[cnt] = (double[]) subset.get(key);
+       coords[cnt] = subset.get(key);
        cnt++;
     }
   }

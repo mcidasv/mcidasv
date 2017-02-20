@@ -35,6 +35,7 @@ import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.KeyStroke.getKeyStroke;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.IllegalComponentStateException;
@@ -235,9 +236,10 @@ public class AddeImageChooser extends AddeChooser implements
     /** Holds the properties */
     private JPanel propPanel;
 
-    /** archive day button and label */
-    protected JLabel archiveDayLabel;
+    /** Archive day selector button. */
     protected JButton archiveDayBtn;
+
+    protected JButton allImagesButton;
 
     /** Maps the PROP_ property name to the gui component */
     private Hashtable propToComps = new Hashtable();
@@ -392,11 +394,17 @@ public class AddeImageChooser extends AddeChooser implements
 //        AnnotationProcessor.process(this);
         addDescComp(loadButton);
 
-        archiveDayBtn = GuiUtils.makeImageButton(
-                "/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
-                true);
+        archiveDayBtn = new JButton("Select Day");
+        archiveDayBtn.addActionListener(e -> getArchiveDay());
         archiveDayBtn.setToolTipText("Select a day for archive datasets");
-        archiveDayLabel = new JLabel("Select Day");
+
+        allImagesButton = new JButton("List All Images");
+        allImagesButton.addActionListener(e -> readTimes(true));
+        allImagesButton.setToolTipText("<html>By default, up to the 100 most " +
+            "recent times are listed.<br/><br/>Clicking this button will ask " +
+            "the server for ALL relevant times.<br/>This may take awhile for" +
+            " datasets with many times.</html>");
+//        allImagesLabel = new JLabel("List All");
 
         this.addeDefaults = getImageDefaults();
     }
@@ -560,8 +568,8 @@ public class AddeImageChooser extends AddeChooser implements
      */
     @Override protected void readFromServer() {
         archiveDay = null;
-        if (archiveDayLabel != null) {
-            archiveDayLabel.setText("Select Day");
+        if (archiveDayBtn != null) {
+            archiveDayBtn.setText("Select Day");
         }
         readSatBands();
         super.readFromServer();
@@ -600,13 +608,13 @@ public class AddeImageChooser extends AddeChooser implements
                 String cmd = ae.getActionCommand();
                 if (cmd.equals(GuiUtils.CMD_REMOVE)) {
                     archiveDay = null;
-                    archiveDayLabel.setText("Select Day");
+                    archiveDayBtn.setText("Select Day");
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 } else if (cmd.equals(GuiUtils.CMD_OK)) {
                     try {
                         archiveDay = picker.getUserSelectedDay();
-                        archiveDayLabel.setText(archiveDay);
+                        archiveDayBtn.setText(archiveDay);
                     } catch (Exception e) {
                     }
                     // System.out.println("archiveDay = " + archiveDay);
@@ -631,7 +639,7 @@ public class AddeImageChooser extends AddeChooser implements
                     if (stroke.getKeyCode() == KeyEvent.VK_ENTER) {
                         try {
                             archiveDay = picker.getUserSelectedDay();
-                            archiveDayLabel.setText(archiveDay);
+                            archiveDayBtn.setText(archiveDay);
                         } catch (Exception ex) {
                             // nothing to do
                         }
@@ -1070,16 +1078,11 @@ public class AddeImageChooser extends AddeChooser implements
      * Set the relative and absolute extra components.
      */
     @Override protected JPanel makeTimesPanel() {
-        return super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
-    }
-
-    /**
-     * Get the time popup widget
-     * 
-     * @return a widget for selecing the day
-     */
-    @Override protected JComponent getExtraAbsoluteTimeComponent() {
-        return McVGuiUtils.makeLabeledComponent(archiveDayLabel, archiveDayBtn);
+        JPanel panel =
+            super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
+        underTimelistPanel.add(BorderLayout.WEST, allImagesButton);
+        underTimelistPanel.add(BorderLayout.EAST, archiveDayBtn);
+        return panel;
     }
 
     /**
@@ -1244,9 +1247,13 @@ public class AddeImageChooser extends AddeChooser implements
     /**
      * Read the set of image times available for the current server/group/type
      * This method is a wrapper, setting the wait cursor and wrapping the call
-     * to {@link #readTimesInner()}; in a try/catch block
+     * to {@link #readTimesInner(boolean)}; in a try/catch block
      */
     @Override public void readTimes() {
+        readTimes(false);
+    }
+
+    public void readTimes(boolean forceAll) {
         clearTimesList();
         if (!canReadTimes()) {
             return;
@@ -1256,7 +1263,7 @@ public class AddeImageChooser extends AddeChooser implements
                 updateStatus();
                 showWaitCursor();
                 try {
-                    readTimesInner();
+                    readTimesInner(forceAll);
                     checkSetNav();
                 } catch (Exception e) {
                     handleConnectionError(e);
@@ -1283,9 +1290,12 @@ public class AddeImageChooser extends AddeChooser implements
      * Set the list of dates/times based on the image selection
      * 
      */
-    protected void readTimesInner() {
+    protected void readTimesInner(boolean forceAll) {
         String descriptor = getDescriptor();
-        String pos = (getDoAbsoluteTimes() || (archiveDay != null)) ? "all" : "0";
+        String archivePosition = forceAll ? "all" : "-99";
+        String pos = (getDoAbsoluteTimes() || (archiveDay != null))
+                      ? archivePosition
+                      : "0";
 
         StringBuffer addeCmdBuff = getGroupUrl(REQ_IMAGEDIR, getGroup());
         String id = getSelectedStation();

@@ -1518,11 +1518,11 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         String filename = null;
 
         if (isInteractive() && (movieFileName == null)) {
-            JCheckBox writePositionsCbx = new JCheckBox("Save viewpoints",
-                                              writePositions);
-
-            writePositionsCbx.setToolTipText(
-                "Also save the viewpoint matrices as an 'xidv' file");
+//            JCheckBox writePositionsCbx = new JCheckBox("Save viewpoints",
+//                                              writePositions);
+//
+//            writePositionsCbx.setToolTipText(
+//                "Also save the viewpoint matrices as an 'xidv' file");
 
             JCheckBox otherGlobalPaletteBox =
                 new JCheckBox("Use 'global' GIF color palette",
@@ -1542,7 +1542,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             accessoryComps.add(
                 GuiUtils.leftRight(
                     GuiUtils.rLabel(" End Frame Pause: "), endPauseFld));
-            accessoryComps.add(writePositionsCbx);
+//            accessoryComps.add(writePositionsCbx);
             accessoryComps.add(otherGlobalPaletteBox);
 
             if (publishCbx == null) {
@@ -1562,7 +1562,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     FileManager.FILTER_AVI, FileManager.FILTER_ANIMATEDGIF,
                     FileManager.FILTER_ZIP, FileManager.FILTER_KMZ,
                     FILTER_ANIS), FileManager.SUFFIX_MOV, extra);
-            writePositions = writePositionsCbx.isSelected();
+//            writePositions = writePositionsCbx.isSelected();
         } else {
             filename = movieFileName;
         }

@@ -11,7 +11,7 @@
                     <property name="Sources">
                         <object class="java.util.ArrayList">
                             <method name="add">
-                                <string><![CDATA[http://weather.rsmas.miami.edu/thredds/dodsC/grib/NCEP/GFS/CONUS_80km/GFS_CONUS_80km_20150409_1200.grib1/GC]]></string>
+                                <string><![CDATA[http://thredds.ucar.edu/thredds/dodsC/grib/NCEP/GFS/CONUS_80km/GFS_CONUS_80km_20160608_0600.grib1]]></string>
                             </method>
                         </object>
                     </property>
@@ -46,11 +46,11 @@
                         <object class="java.util.Hashtable">
                             <method name="put">
                                 <string><![CDATA[RESOLVERURL]]></string>
-                                <string><![CDATA[http://weather.rsmas.miami.edu/thredds/catalog/grib/NCEP/GFS/CONUS_80km/latest.xml]]></string>
+                                <string><![CDATA[http://thredds.ucar.edu/thredds/catalog/grib/NCEP/GFS/CONUS_80km/latest.xml]]></string>
                             </method>
                             <method name="put">
                                 <string><![CDATA[idv.chooser.url]]></string>
-                                <string><![CDATA[http://www.ssec.wisc.edu/mcidas/software/v/threddsRTModels.xml]]></string>
+                                <string><![CDATA[http://thredds.ucar.edu/thredds/catalog/grib/NCEP/GFS/CONUS_80km/latest.xml]]></string>
                             </method>
                             <method name="put">
                                 <string><![CDATA[prop.chooserclassname]]></string>
@@ -66,7 +66,7 @@
                             </method>
                             <method name="put">
                                 <string><![CDATA[prop.service.http]]></string>
-                                <string><![CDATA[http://weather.rsmas.miami.edu/thredds/fileServer/grib/NCEP/GFS/CONUS_80km/GFS_CONUS_80km_20150409_1200.grib1/GC]]></string>
+                                <string><![CDATA[http://thredds.ucar.edu/thredds/dodsC/grib/NCEP/GFS/CONUS_80km/GFS_CONUS_80km_20160608_0600.grib1]]></string>
                             </method>
                             <method name="put">
                                 <string><![CDATA[Thredds.CatalogUrl]]></string>

@@ -1,7 +1,10 @@
 """HYDRA RGB helper module."""
 
+from ucar.unidata.data.grid import DerivedGridFactory
+from ucar.unidata.data.grid import GridUtil
 from visad import Data
 from visad import FieldImpl
+from visad.python.JPythonMethods import makeRealType
 
 uniqueID = 0
 

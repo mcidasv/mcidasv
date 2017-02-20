@@ -59,9 +59,6 @@
 
 package visad;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Random;
@@ -2052,8 +2049,6 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
     }
   }
 
-    private static final Logger logger = LoggerFactory.getLogger(FlatField.class);
-
   /** 
    * Return new Field with value 'this op data'.
    * test for various relations between types of this and data;
@@ -2081,8 +2076,6 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
       throw new TypeException("binary: new_type may not be null");
     }
 
-    logger.trace("FlatField binary!");
-
     if (data instanceof Field) {
       /*- TDR June  1998 */
       FunctionType data_type = (FunctionType) data.getType();
@@ -2096,7 +2089,6 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
         /*- TDR June  1998
         return data.binary(this, invertOp(op), sampling_mode, error_mode);
         */
-          logger.trace("#1");
         return data.binary(this, invertOp(op), new_type, sampling_mode, error_mode);
       }
       else if (!Type.equalsExceptName(data.getType())) {
@@ -2116,13 +2108,11 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
         /*- TDR June  1998
         return convertToField().binary(data, op, sampling_mode, error_mode);
         */
-          logger.trace("#2");
         return convertToField().binary(data, op, new_type, sampling_mode, error_mode);
       }
 
       // use DoubleSet rather than RangeSet for intermediate computation results
       if (isMissing() || data.isMissing()) {
-          logger.trace("#3");
           return new_type.missingData();
       }
 
@@ -2686,14 +2676,12 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
       if (thisValuesF!=null)
           new_field = cloneFloat (new_type, outUnits, outErrs, thisValuesF);
       new_field.clearMissing();
-      logger.trace("#4");
       new_field.setMetadataMap(getMetadataMap());
       return new_field;
     }
     else if (data instanceof Real || data instanceof RealTuple ||
              (data instanceof TupleIface &&
               ((TupleType) data.getType()).getFlat())) {
-      logger.trace("#5");
       MathType RangeType = ((FunctionType) Type).getRange();
       /*- TDR July 1998
       if (!RangeType.equalsExceptName(data.getType())) {
@@ -2708,7 +2696,6 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
 
       // use DoubleSet rather than RangeSet for intermediate computation results
       if (isMissing() || data.isMissing()) {
-        logger.trace("#6");
         return new_type.missingData();
       }
 
@@ -3188,7 +3175,6 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
           new_field = cloneFloat( new_type, outUnits, outErrs, thisValuesF);
 
       new_field.clearMissing();
-      logger.trace("#7");
       new_field.setMetadataMap(getMetadataMap());
       return new_field;
     }
@@ -4611,7 +4597,6 @@ public class FlatField extends FieldImpl implements FlatFieldIface {
     FlatField new_field =
       new FlatField(func_type, set, RangeCoordinateSystem,
                     RangeCoordinateSystems, sets, RangeUnits);
-    logger.trace("FlatField.resample setMetadataMap");
     new_field.setMetadataMap(getMetadataMap());
 
     if (isMissing()) return new_field;
@@ -5619,7 +5604,6 @@ if (pr) System.out.println("value = " + new_values[0][0]);
     // field.DoubleRange = values;
     field.setRangeErrors(errors);
     field.clearMissing();
-    logger.trace("cloneDouble setMetadataMap");
     field.setMetadataMap(getMetadataMap());
     return field;
   }
@@ -5678,7 +5662,6 @@ if (pr) System.out.println("value = " + new_values[0][0]);
     // field.DoubleRange = values;
     field.setRangeErrors(errors);
     field.clearMissing();
-    logger.trace("cloneFloat setMetadataMap");
     field.setMetadataMap(getMetadataMap());
     return field;
   }
@@ -5733,8 +5716,7 @@ if (pr) System.out.println("value = " + new_values[0][0]);
         }
       }
     }
-
-    logger.trace("FlatField clone!");
+    
     clone.setMetadataMap(getMetadataMap());
     return clone;
   }

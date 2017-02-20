@@ -92,6 +92,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import edu.wisc.ssec.mcidasv.util.GetMem;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -224,10 +225,22 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     private static DecimalFormat latlonFormat = new DecimalFormat();
     
     /** Provide some default values for the lat-lon preference drop down. */
-    private static final Set<String> defaultLatLonFormats = CollectionHelpers.set("##0","##0.0","##0.0#","##0.0##","0.0","0.00","0.000");
+    private static final Set<String> defaultLatLonFormats =
+        CollectionHelpers.set("##0",
+                              "##0.0",
+                              "##0.0#",
+                              "##0.0##",
+                              "0.0",
+                              "0.00",
+                              "0.000");
     
-    private static final Set<String> probeFormatsList = CollectionHelpers.set(DisplayControl.DEFAULT_PROBEFORMAT, "%rawvalue% [%rawunit%]", "%value%", "%rawvalue%", "%value% <i>%unit%</i>");
-    
+    private static final Set<String> probeFormatsList =
+        CollectionHelpers.set(DisplayControl.DEFAULT_PROBEFORMAT,
+                              "%rawvalue% [%rawunit%]",
+                              "%value%",
+                              "%rawvalue%",
+                              "%value% <i>%unit%</i>");
+
     /** 
      * Replacing the "incoming" IDV preference tab names with whatever's in
      * this map.
@@ -721,8 +734,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         Platform platform = startup.getPlatform();
         platform.setUserDirectory(
                 mcv.getObjectStore().getUserDirectory().toString());
-        platform.setAvailableMemory(
-               mcv.getStateManager().getProperty(Constants.PROP_SYSMEM, "0"));
+        platform.setAvailableMemory(GetMem.getMemory());
         JPanel smPanel = startup.getAdvancedPanel(true);
         List<JPanel> stuff = Collections.singletonList(smPanel);
         
@@ -1566,13 +1578,12 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JLabel probeLabel = McVGuiUtils.makeLabelRight("Probe Format:", Width.ONEHALF);
         
         String probeFormat = getStore().get(DisplayControl.PREF_PROBEFORMAT, DisplayControl.DEFAULT_PROBEFORMAT);
-//        List probeFormatsList = Misc.newList(DisplayControl.DEFAULT_PROBEFORMAT,
-//              "%rawvalue% [%rawunit%]", "%value%", "%rawvalue%", "%value% <i>%unit%</i>");
+
         JComboBox probeComboBox = McVGuiUtils.makeComboBox(probeFormatsList, probeFormat, Width.TRIPLE);
         widgets.put(DisplayControl.PREF_PROBEFORMAT, probeComboBox);
-        
+
         JComponent probeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.probeformat");
-        
+
         // Distance stuff
         JLabel distanceLabel = McVGuiUtils.makeLabelRight("Distance Unit:", Width.ONEHALF);
         
@@ -1661,8 +1672,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                     .addComponent(timeLabel))
                 .addPreferredGap(RELATED)
                 .addGroup(formatLayout.createParallelGroup(BASELINE)
-                    .addComponent(latlonComboBox)
                     .addComponent(latlonLabel)
+                    .addComponent(latlonComboBox)
                     .addComponent(latlonHelpButton)
                     .addComponent(latlonExLabel))
                 .addPreferredGap(RELATED)

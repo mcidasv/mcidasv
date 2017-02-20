@@ -29,6 +29,8 @@
 package ucar.unidata.data.grid;
 
 
+import static ucar.unidata.util.GuiUtils.CMD_OK;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -36,6 +38,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
@@ -483,6 +487,13 @@ public class GeoGridDataSource extends GridDataSource {
 
 
         JTextArea    dumpText = new JTextArea();
+
+        // TJJ Sep 2016
+        // Metadata should not be editable in this context, this is for viewing only
+        // The setEnabled call helps visually emphasize the text is not editable.
+
+        dumpText.setEditable(false);
+
         TextSearcher searcher = new TextSearcher(dumpText);
         dumpText.setFont(Font.decode("monospaced"));
         //ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -872,7 +883,8 @@ public class GeoGridDataSource extends GridDataSource {
         JLabel label = new JLabel(getNameForDataSource(this, 50, true));
         contents = GuiUtils.topCenter(label, contents);
         contents = GuiUtils.inset(contents, 5);
-        if ( !GuiUtils.showOkCancelDialog(null, "", contents, null)) {
+        Dimension prefSize = new Dimension(1000, 500);
+        if ( !GuiUtils.showOkCancelDialog(null, "Select Fields", contents, null, null, CMD_OK, false, prefSize)) {
             return null;
         }
 
@@ -1263,6 +1275,7 @@ public class GeoGridDataSource extends GridDataSource {
         boolean       gridRelativeWind = false;
         NetcdfDataset ncFile           = myDataset.getNetcdfDataset();
         Variable      windFlag         = ncFile.findVariable("ResCompFlag");
+
         if (windFlag != null) {  // found it
             try {
                 Array array = windFlag.read();
@@ -1290,9 +1303,12 @@ public class GeoGridDataSource extends GridDataSource {
             if ( !isZAxisOk(zaxis)) {
                 continue;
             }
+
+//            gcs.getDomain()
             CoordinateAxis1DTime tAxis    = gcs.getTimeAxis1D();
             List                 geoTimes = getGeoGridTimes(tAxis);
             uniqueTimes.addAll(geoTimes);
+
         }
 
         if ( !uniqueTimes.isEmpty()) {
@@ -2421,9 +2437,11 @@ public class GeoGridDataSource extends GridDataSource {
             if ((sizeZ == 0) || (sizeZ == 1)) {
                 //if (sizeZ == 0) {
                 int xLength               =
-                    (int)xaxis.getSize();
+//                    (int)xaxis.getSize();
+                cfield.getXDimension().getLength();
                 int yLength               =
-                    (int)yaxis.getSize();
+//                    (int)yaxis.getSize();
+                        cfield.getYDimension().getLength();
                 ucar.nc2.Dimension ensDim = cfield.getEnsembleDimension();
                 if (twoDDimensionsLabel == null) {
                     twoDDimensionsLabel = "Total grid size:  x: " + xLength

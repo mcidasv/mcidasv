@@ -1430,6 +1430,12 @@ public class PluginManager extends IdvManager {
         updatePlugins();
     }
 
+    /**
+     * Allow external code to call {@link #closeResources()}.
+     */
+    public void handleApplicationExit() {
+        closeResources();
+    }
 
     /**
      * This gets called on System.exit and closes any open plugin jar files

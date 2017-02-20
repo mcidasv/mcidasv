@@ -1285,12 +1285,13 @@ public class PersistenceManager extends IdvPersistenceManager {
      * each individual file into a blob.
      * 
      * <p>The current solution is to note that the data source's 
-     * {@link PollingInfo} is used by {@link ucar.unidata.data.FilesDataSource#initWithPollingInfo}
-     * to replace the contents of the data source's file paths. Simply 
-     * overwrite {@code PollingInfo#filePaths} with the path to the blob.
+     * {@link PollingInfo} is used by
+     * {@link ucar.unidata.data.FilesDataSource#initWithPollingInfo} to
+     * replace the contents of the data source's file paths. Simply overwrite
+     * {@code PollingInfo#filePaths} with the path to the blob.
      * 
-     * @param ds {@code List} of {@link DataSourceImpl}s to inspect and/or fix.
-     * Cannot be {@code null}.
+     * @param ds {@code List} of {@link DataSourceImpl DataSourceImpls} to
+     * inspect and/or fix. Cannot be {@code null}.
      * 
      * @see #isBulkDataSource(DataSourceImpl)
      */
