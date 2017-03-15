@@ -947,8 +947,14 @@ public class DataSelector extends DataSourceHolder {
          * {@link GeoGridDataSource}.
          */
         private boolean isShowingNetcdf() {
-            return dataSource instanceof GeoGridDataSource
-                   || dataSource instanceof SuomiNPPDataSource;
+            boolean result = false;
+            if (dataSource instanceof GeoGridDataSource) {
+                result = true;
+            } else if (dataSource instanceof SuomiNPPDataSource) {
+                SuomiNPPDataSource suomi = (SuomiNPPDataSource)dataSource;
+                result = !suomi.isNOAA();
+            }
+            return result;
         }
 
     }
