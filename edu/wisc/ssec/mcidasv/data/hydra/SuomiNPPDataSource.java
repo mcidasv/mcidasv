@@ -817,7 +817,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     									// Name is orig name plus suffix
     									vBT.setShortName(v.getShortName() + "_BT");
-    									
+
 	    								vBT.addAttribute(fillAtt);
 	    								vBT.addAttribute(aVMin);
 	    								vBT.addAttribute(aVMax);
@@ -844,7 +844,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     										lutMap.put(vBT.getFullName(), i05LUT);
     									}
     									pathToProducts.add(vBT.getFullName());
-										prodToDesc.put(vBT.getFullName(), vBT.getDescription());
+    									String newName = vBT.getDescription().replace("radiance", "brightness temperature");
+										prodToDesc.put(vBT.getFullName(), newName);
     									btProds.add(vBT);
 	    							}
     							}
