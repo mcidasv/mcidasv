@@ -1031,7 +1031,7 @@ public class ADTControl extends DisplayControlImpl {
                         // int[] InsertRecs = History.InsertHistoryRecord(runFullADTAnalysis,GUIHistoryFileName);
                         /* System.out.printf("*** Modified=%d InsertOverwriteFlag=%d***\n",InsertRecs[0],InsertRecs[1]); */
                         int NumRecs = History.WriteHistoryFile(GUIHistoryFileName);
-                        ErrorMessage = String.format("Number of records writen to history file=%d\n",NumRecs);
+                        ErrorMessage = String.format("Number of records written to history file: %d\n", NumRecs);
                     } catch (IOException exception) {
                         ErrorMessage = String.format("Error writing history file %s\n",GUIHistoryFileName);
                     }
@@ -1070,7 +1070,7 @@ public class ADTControl extends DisplayControlImpl {
         // int NumRecs = CurrentHistory.HistoryNumberOfRecords();
         /* System.out.printf("number of records=%d\n",NumRecs); */
         
-        HistoryListOutput = CurrentHistory.ListHistory(0, -1, "CIMS", "99X");
+        HistoryListOutput = History.ListHistory(0, -1, "CIMS", "99X");
         historyLabel.setText(GUIHistoryFileName);
         historyArea.setText(HistoryListOutput);
         historyFrame.pack();
@@ -1079,16 +1079,14 @@ public class ADTControl extends DisplayControlImpl {
     }
     
     private void modifyHistoryFile() {
-        
-        History CurrentHistory = new History();
 
         if (GUIDeleteTF) {
             // delete records
-            int DeleteReturn[] = CurrentHistory.DeleteHistoryRecords(runFullADTAnalysis,GUIHistoryFileName);
+            int DeleteReturn[] = History.DeleteHistoryRecords(runFullADTAnalysis,GUIHistoryFileName);
             logger.debug("deleted {} records... modified {} records", DeleteReturn[1],DeleteReturn[0]);
         } else if( GUICommentAddTF) {
             // 
-            int CommentAddReturn = CurrentHistory.CommentHistoryRecords(GUICommentString);
+            int CommentAddReturn = History.CommentHistoryRecords(GUICommentString);
             logger.debug("added comment to {} records",CommentAddReturn);
         } else {
             // invalid selection
@@ -1096,7 +1094,7 @@ public class ADTControl extends DisplayControlImpl {
         }
         
         try {
-            int HistoryFileRecords = CurrentHistory.WriteHistoryFile(GUIHistoryFileName);
+            int HistoryFileRecords = History.WriteHistoryFile(GUIHistoryFileName);
             if (HistoryFileRecords >= 0) {
                 logger.debug("wrote {} records to '{}'", HistoryFileRecords, GUIHistoryFileName);
             }
