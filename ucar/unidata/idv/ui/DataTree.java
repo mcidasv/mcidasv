@@ -36,19 +36,18 @@ import ucar.unidata.ui.DndTree;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -393,8 +392,12 @@ public class DataTree extends DataSourceHolder {
                                 }
                             }
                         }
-                        setToolTipText("<html> " + dc.getName() + "<br> "
-                                       + dc.getDescription() + "</html>");
+                        // TJJ Mar 2017 - if Name and Description are the same, don't show both
+                        if (Objects.equals(dc.getName(), dc.getDescription())) {
+                            setToolTipText("<html> " + dc.getName() +  "</html>");
+                        } else {
+                            setToolTipText("<html> " + dc.getName() + "<br> " + dc.getDescription() + "</html>");
+                        }
                     } else if (o instanceof DataSource) {
                         setToolTipText(((DataSource) o).getDescription());
                     }
