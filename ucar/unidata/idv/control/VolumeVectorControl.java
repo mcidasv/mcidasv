@@ -110,7 +110,7 @@ public class VolumeVectorControl extends GridDisplayControl implements FlowDispl
     boolean autoSize = false;
 
     /** arrow */
-    boolean arrowHead = false;
+    boolean arrowHead = true;
     
     /** arrow on/off checkbox */
     JCheckBox arrowCbx = null;
@@ -258,8 +258,8 @@ public class VolumeVectorControl extends GridDisplayControl implements FlowDispl
             }
         });
         myDisplay = (FlowDisplayable) createPlanDisplay();
-
         myDisplay.setPointSize(getPointSize());
+        myDisplay.setArrowHead(arrowHead);
         addDisplayable(myDisplay, getAttributeFlags());
 
         //Now, set the data. Return false if it fails.
