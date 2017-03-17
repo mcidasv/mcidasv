@@ -352,8 +352,7 @@ public class Statistics {
             .append("Kurtosis  :  ").append(fmtMe(((Real)s.kurtosis()).getValue())).append(endl)
             .append("Skewness  :  ").append(fmtMe(((Real)s.skewness()).getValue())).append(endl)
             .append("Std Dev   :  ").append(fmtMe(((Real)s.standardDeviation()).getValue())).append(endl)
-            .append("Variance  :  ").append(fmtMe(((Real)s.variance()).getValue())).append(endl)
-            .append("# Good Pts:  ").append(String.format("%d", s.getNumGoodPoints())).append(endl);
+            .append("Variance  :  ").append(fmtMe(((Real)s.variance()).getValue())).append(endl);
         return sb.toString();
     }
 
