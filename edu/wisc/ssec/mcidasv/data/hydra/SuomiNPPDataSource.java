@@ -149,7 +149,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private List categories;
     private boolean isCombinedProduct = false;
     private boolean nameHasBeenSet = false;
-    
+
+    private boolean isNOAA;
+
     // need our own separator char since it's always Unix-style in the Suomi NPP files
     private static final String SEPARATOR_CHAR = "/";
     
@@ -285,7 +287,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	public void setup() throws VisADException {
 
 		// which format, NASA or NOAA?
-		boolean isNOAA = false;
+		isNOAA = false;
 		
     	// store filenames for possible bundle unpersistence
     	for (Object o : sources) {
@@ -817,7 +819,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     									// Name is orig name plus suffix
     									vBT.setShortName(v.getShortName() + "_BT");
-    									
+
 	    								vBT.addAttribute(fillAtt);
 	    								vBT.addAttribute(aVMin);
 	    								vBT.addAttribute(aVMax);
@@ -844,7 +846,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     										lutMap.put(vBT.getFullName(), i05LUT);
     									}
     									pathToProducts.add(vBT.getFullName());
-										prodToDesc.put(vBT.getFullName(), vBT.getDescription());
+    									String newName = vBT.getDescription().replace("radiance", "brightness temperature");
+										prodToDesc.put(vBT.getFullName(), newName);
     									btProds.add(vBT);
 	    							}
     							}
@@ -1744,6 +1747,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
 	public void setDatasetName(String name) {
       filename = name;
+    }
+
+    /**
+     * Determine if this data source originated from a
+	 * {@literal "NOAA file"}.
+     *
+     * @return {@code true} if file came from NOAA, {@code false} otherwise.
+     */
+    public boolean isNOAA() {
+        return isNOAA;
     }
 
     public Map<String, double[]> getSubsetFromLonLatRect(MultiDimensionSubset select, GeoSelection geoSelection) {
