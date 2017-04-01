@@ -30,6 +30,8 @@ package edu.wisc.ssec.mcidasv.adt;
 
 import java.lang.String;
 
+import edu.wisc.ssec.mcidasv.control.ADTControl;
+
 public class Env {
 
    public static boolean RunADTTF;
@@ -61,7 +63,7 @@ public class Env {
    public static int EndHHMMSSTime;
    public static int HistoryListFormat;
    public static int MaxWindSpeedInputID;
-   public static int OverrideSceneType;
+   public static int OverrideSceneTypeIndex;
    public static double InitRawTValue;
    public static double RMWSize;
    public static double SubSatLatitude;
@@ -108,7 +110,8 @@ public class Env {
       EndHHMMSSTime = 000000;
       HistoryListFormat = 0;
       MaxWindSpeedInputID = 0;
-      OverrideSceneType = -99;
+      // TJJ Mar 2017 - initialize scene type for dropdown to last item in list
+      OverrideSceneTypeIndex = ADTControl.SCENE_TYPES.length - 1;
       
       InitRawTValue = 1.0;
       MWScore = -100000.0;

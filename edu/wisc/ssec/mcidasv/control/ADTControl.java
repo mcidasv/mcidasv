@@ -122,7 +122,7 @@ public class ADTControl extends DisplayControlImpl {
     
     private static final Logger logger = LoggerFactory.getLogger(ADTControl.class);
     
-    private static final String[] SCENE_TYPES = {
+    public static final String[] SCENE_TYPES = {
         "Eye", "Pinhole Eye", "Large Eye", "CDO", "Embedded Center",
         "Irregular CDO", "Curved Band", "Shear"
     };
@@ -177,7 +177,6 @@ public class ADTControl extends DisplayControlImpl {
     private static int GUIEndDate;
     private static int GUIEndTime;
     private static int GUIHistoryListFormat;
-    private static int GUIOverrideSceneType;
     
     private static double GUIRawTValue;
     private static double GUIMWScore;
@@ -203,9 +202,6 @@ public class ADTControl extends DisplayControlImpl {
     
     /** _more_ */
     private JComboBox<String> forecastTypeBox;
-    
-    /** _more_ */
-    private int overrideSceneTypeIndex = 0;
 
     private JFrame resultFrame;
     private JTextArea resultArea;
@@ -217,7 +213,7 @@ public class ADTControl extends DisplayControlImpl {
     private JFileChooser historyFileSaveChooser;
     
     private JFrame overrideSceneFrame;
-    private JTextField overrideSceneCurrentTextField;
+    private JLabel overrideSceneCurrentValueLabel;
     private JComboBox<String> overrideSceneTypeBox;
     
     private JLabel historyLabel;
@@ -225,6 +221,8 @@ public class ADTControl extends DisplayControlImpl {
     private static String HistoryListOutput;
         
     private static String GUIPMWFileName;
+    
+    private static final String SCENE_TYPE_PREFIX = "Current Scene Type: ";
     
 
     
@@ -522,30 +520,35 @@ public class ADTControl extends DisplayControlImpl {
         });
         
         /* Override option */
-        JLabel OverrideLabel = new JLabel("Manual Scene Override:");
-        JRadioButton OverrideYESButton = new JRadioButton("YES");
-        OverrideYESButton.setActionCommand("Yes");
-        OverrideYESButton.setSelected(false);
-        JRadioButton OverrideNOButton = new JRadioButton("NO");
-        OverrideNOButton.setActionCommand("No");
-        OverrideNOButton.setSelected(true);
-        ButtonGroup overridegroup = new ButtonGroup();
-        overridegroup.add(OverrideNOButton);
-        overridegroup.add(OverrideYESButton);
-
-        OverrideYESButton.addActionListener(ae -> {
-            GUIOverrideTF = true;
-            GUIOverrideSceneTF = true;
-            OverrideNOButton.setSelected(false);
-            OverrideYESButton.setSelected(true);
+        JButton sceneOverrideButton = new JButton("Override Scene Type");
+        JLabel OverrideLabel = new JLabel(SCENE_TYPE_PREFIX + SCENE_TYPES[Env.OverrideSceneTypeIndex]);
+        sceneOverrideButton.addActionListener(ae -> {
+            overrideSceneFrame.setVisible(true);
         });
-
-        OverrideNOButton.addActionListener(ae -> {
-            GUIOverrideTF = false;
-            GUIOverrideSceneTF = false;
-            OverrideNOButton.setSelected(true);
-            OverrideYESButton.setSelected(false);
-        });
+        
+//        JRadioButton OverrideYESButton = new JRadioButton("YES");
+//        OverrideYESButton.setActionCommand("Yes");
+//        OverrideYESButton.setSelected(false);
+//        JRadioButton OverrideNOButton = new JRadioButton("NO");
+//        OverrideNOButton.setActionCommand("No");
+//        OverrideNOButton.setSelected(true);
+//        ButtonGroup overridegroup = new ButtonGroup();
+//        overridegroup.add(OverrideNOButton);
+//        overridegroup.add(OverrideYESButton);
+//
+//        OverrideYESButton.addActionListener(ae -> {
+//            GUIOverrideTF = true;
+//            GUIOverrideSceneTF = true;
+//            OverrideNOButton.setSelected(false);
+//            OverrideYESButton.setSelected(true);
+//        });
+//
+//        OverrideNOButton.addActionListener(ae -> {
+//            GUIOverrideTF = false;
+//            GUIOverrideSceneTF = false;
+//            OverrideNOButton.setSelected(true);
+//            OverrideYESButton.setSelected(false);
+//        });
         
         /* ATCF Analysis Output Checkbox */
         
@@ -672,10 +675,10 @@ public class ADTControl extends DisplayControlImpl {
                     filler(1,10),
                     left(hbox(arr(new JLabel("MISCELLANEOUS OPTIONS")), 10)), filler(),
                     left(hbox(arr(filler(30,1),new JLabel("MSLP Conversion Method:"), mslpDvorakButton, mslpCKZButton, ckzPenvLabel, ckzPenvTextField, ckz34radiusLabel,ckz34radiusTextField), 5)),filler(),
-                    left(hbox(arr(filler(30,1),OverrideLabel,OverrideNOButton, OverrideYESButton), 5)),filler(),
+                    left(hbox(arr(filler(30, 1), sceneOverrideButton, OverrideLabel), 5)), filler(),
                     left(hbox(arr(filler(30,1),LandFlagLabel,LandONButton, LandOFFButton, filler(20,1), VOutLabel, V1MinButton, V10MinButton, filler(20,1),RawTLabel,RawTTextField, RMWLabel, RMWTextField), 5)),filler(),
                     left(hbox(arr(filler(30,1),ATCFOutputLabel, ATCFOutputButton,ATCFEntryStormLabel,ATCFEntryStormTextField, ATCFEntrySiteLabel,ATCFEntrySiteTextField), 5)),filler(),
-                    left(hbox(arr(filler(100,1), adtBtn, listBtn, GUIFileOverrideButton),50)),filler()));
+                    left(hbox(arr(filler(80, 1), adtBtn, listBtn, GUIFileOverrideButton), 20)), filler()));
                     
         JPanel controls = topLeft(widgets);
 
@@ -865,6 +868,7 @@ public class ADTControl extends DisplayControlImpl {
 
         /* set up Scene Type Override Window display window */
         overrideSceneFrame = new JFrame("Override Scene Type");
+        overrideSceneFrame.setSize(new Dimension(400, 300));
         Container overrideSceneContainer = overrideSceneFrame.getContentPane();
         overrideSceneFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         JPanel overrideSceneCurrentPanel = new JPanel();
@@ -872,16 +876,16 @@ public class ADTControl extends DisplayControlImpl {
         overrideSceneCurrentPanel.setLayout(OverrideSceneCurrentLayout);
         OverrideSceneCurrentLayout.setAlignment(FlowLayout.CENTER);
         JLabel overrideSceneCurrentLabel = new JLabel("Current Scene Type:");
-        overrideSceneCurrentTextField = new JTextField("N/A",10);
+        overrideSceneCurrentValueLabel = new JLabel(SCENE_TYPES[Env.OverrideSceneTypeIndex]);
         JPanel overrideSceneSelectPanel = new JPanel();
         FlowLayout OverrideSceneSelectLayout = new FlowLayout();
         overrideSceneCurrentPanel.setLayout(OverrideSceneSelectLayout);
         OverrideSceneSelectLayout.setAlignment(FlowLayout.CENTER);
         JLabel overrideSceneSelectLabel = new JLabel("Select New Scene Type:");
         overrideSceneTypeBox = new JComboBox<>(SCENE_TYPES);
-        overrideSceneTypeBox.setSelectedIndex(overrideSceneTypeIndex);
+        overrideSceneTypeBox.setSelectedIndex(Env.OverrideSceneTypeIndex);
         overrideSceneTypeBox.setPreferredSize(new Dimension(150,20));
-        overrideSceneTypeBox.addActionListener(ame -> overrideSceneTypeIndex = overrideSceneTypeBox.getSelectedIndex());
+        // overrideSceneTypeBox.addActionListener(ame -> Env.OverrideSceneTypeIndex = overrideSceneTypeBox.getSelectedIndex());
         JPanel overrideSceneButtonPanel = new JPanel();
         FlowLayout OverrideSceneButtonLayout = new FlowLayout();
         overrideSceneButtonPanel.setLayout(OverrideSceneButtonLayout);
@@ -890,21 +894,20 @@ public class ADTControl extends DisplayControlImpl {
         overrideSceneAcceptButton.setPreferredSize(new Dimension(190,20));
         overrideSceneAcceptButton.addActionListener(ae -> {
             // accept new scene selection
-            overrideSceneFrame.dispose();
-            /* GUIOverrideSceneTF=false; */
-            GUIOverrideSceneType = overrideSceneTypeIndex;
-            runADTmain();
+            overrideSceneFrame.setVisible(false);
+            Env.OverrideSceneTypeIndex = overrideSceneTypeBox.getSelectedIndex();
+            OverrideLabel.setText(SCENE_TYPE_PREFIX + SCENE_TYPES[Env.OverrideSceneTypeIndex]);
+            overrideSceneCurrentValueLabel.setText(SCENE_TYPES[Env.OverrideSceneTypeIndex]);
+            // runADTmain();
         });
         JButton overrideSceneCancelButton = new JButton("Keep Current Scene");
         overrideSceneCancelButton.setPreferredSize(new Dimension(190,20));
         overrideSceneCancelButton.addActionListener(ae -> {
-            overrideSceneFrame.dispose();
-            /* GUIOverrideSceneTF=false; */
-            GUIOverrideSceneType = Env.OverrideSceneType;
-            runADTmain();
+            overrideSceneFrame.setVisible(false);
+            // runADTmain();
         });
         overrideSceneCurrentPanel.add(overrideSceneCurrentLabel);
-        overrideSceneCurrentPanel.add(overrideSceneCurrentTextField);
+        overrideSceneCurrentPanel.add(overrideSceneCurrentValueLabel);
         overrideSceneSelectPanel.add(overrideSceneSelectLabel);
         overrideSceneSelectPanel.add(overrideSceneTypeBox);
         overrideSceneButtonPanel.add(overrideSceneAcceptButton);
@@ -1004,7 +1007,6 @@ public class ADTControl extends DisplayControlImpl {
             try {
                 logger.debug("RUNNING ADT ANALYSIS");
                 ADTRunOutput = StormADT.RunADTAnalysis(runFullADTAnalysis,GUIHistoryFileName);
-                GUIOverrideSceneType = -99;  // is this needed here anymore?
             } catch (IOException exception) {
                 ErrorMessage = "Error with call to StormADT.RunADT()\n";
                 System.out.printf(ErrorMessage);
@@ -1012,10 +1014,9 @@ public class ADTControl extends DisplayControlImpl {
                 ExitADT();
                 return;
             }
-            int InitialSceneTypeValue = Env.OverrideSceneType;
-            if (GUIOverrideSceneTF && (InitialSceneTypeValue >= 0)) {
+            if (GUIOverrideSceneTF) {
                 /* System.out.printf("Overriding scene type!!!  Scene value=%d\n",InitialSceneTypeValue); */
-                overrideSceneCurrentTextField.setText(SCENE_TYPES[InitialSceneTypeValue]);
+                overrideSceneCurrentValueLabel.setText(SCENE_TYPES[Env.OverrideSceneTypeIndex]);
                 overrideSceneFrame.pack();
                 overrideSceneFrame.setVisible(true);
                 ExitADT();
@@ -1352,7 +1353,7 @@ public class ADTControl extends DisplayControlImpl {
         GUIHistoryFileListingName = Env.ASCIIOutputFileName;   // needed?
         GUIATCFStormID = Env.StormIDString;
         GUIATCFSiteID = Env.ATCFSourceAgcyIDString;
-        GUIOverrideSceneType = Env.OverrideSceneType;
+
     }
 
     private void loadADTenvParameters() {
@@ -1399,7 +1400,6 @@ public class ADTControl extends DisplayControlImpl {
         Env.ASCIIOutputFileName = GUIHistoryFileListingName;   // needed?
         Env.StormIDString = GUIATCFStormID;
         Env.ATCFSourceAgcyIDString = GUIATCFSiteID;
-        Env.OverrideSceneType = GUIOverrideSceneType;
         
     }
     
@@ -1414,7 +1414,6 @@ public class ADTControl extends DisplayControlImpl {
         
         GUIOverrideTF = false;
         GUIOverrideSceneTF = false;
-        GUIOverrideSceneType = -99;
         GUICommentString = null;
         GUIRunAutoTF = true;
         GUIDeleteTF = false;

@@ -128,7 +128,7 @@ public class Main {
       HistoryFileName = InputHistoryFile;
 
       boolean OverrideScene = Env.OverSceneTF;
-      int OverrideSceneTypeValue = Env.OverrideSceneType;
+      int OverrideSceneTypeValue = Env.OverrideSceneTypeIndex;
 
       /* System.out.printf("MW Info : Date=%s JulianDate=%d Time=%d Score=%f\n",MWDate,Env.MWJulianDate,MWTime,MWScore); */
      
@@ -198,7 +198,7 @@ public class Main {
           History.IRCurrentRecord.eyesceneold = History.IRCurrentRecord.eyescene;
           History.IRCurrentRecord.cloudscene = Math.max(0,(OverrideSceneTypeValue - 3));
           History.IRCurrentRecord.eyescene = Math.min(3,OverrideSceneTypeValue);
-          Env.OverrideSceneType = -99;
+
       } else {
           Scene.DetermineSceneType(RunFullAnalysis);
           /* System.out.printf("after scene type determination\n"); */
@@ -206,9 +206,9 @@ public class Main {
           if(OverrideScene) {
               /* System.out.printf("overriding scene type : eye=%d cloud=%d\n",History.IRCurrentRecord.eyescene,History.IRCurrentRecord.cloudscene); */
               if (History.IRCurrentRecord.eyescene<3) {
-                  Env.OverrideSceneType = History.IRCurrentRecord.eyescene;
+                  Env.OverrideSceneTypeIndex = History.IRCurrentRecord.eyescene;
               } else {
-                  Env.OverrideSceneType = 3 + History.IRCurrentRecord.cloudscene;
+                  Env.OverrideSceneTypeIndex = 3 + History.IRCurrentRecord.cloudscene;
               }
               /* System.out.printf("ADTEnv.overridescenetype=%d\n", Env.OverrideSceneType); */
               return "override";
