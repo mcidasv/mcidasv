@@ -99,7 +99,7 @@
      properties="windowVisible=true;"/>
   <control
      id="imagedisplay"
-     categories="IMAGE-*-*"
+     categories="GRID-2D-*;IMAGE-*-*"
      class="edu.wisc.ssec.mcidasv.control.ImagePlanViewControl"
      description="Image Display"
      label="Image Display"

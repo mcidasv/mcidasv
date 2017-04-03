@@ -63,10 +63,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#rbi1.7">Local mcidasv.rbi File Added</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#java1.7">Java 3D and JOGL Versions</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#java1.7">Java, Java 3D, JOGL, and NetCDF Versions</a></strong></li>
     <li><strong><a class="faq-question-link" href="#scripting1.7">Scripting</a></strong></li>
     <li><strong><a class="faq-question-link" href="#lakes1.7">Great Lakes Location Labels</a></strong></li>
     <li><strong><a class="faq-question-link" href="#rangerings1.7">Range Ring Linking</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#ncdump1.7">ncdump Output of HYDRA Data Sources</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#shapefiles1.7">Shapefiles in Zipped Bundles</a></strong></li>
   </ul>
 </div>
 <hr>
@@ -95,10 +97,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-answer">Added a mcidasv.rbi file to the user's McIDAS-V directory. This RBI (Resource Bundle for the IDV) file allows for defining the location of different resources used by McIDAS-V. These different resources include color tables, formulas, help tips, etc.. Users can modify this mcidasv.rbi file to customize their sessions to only use specific resources. For example, a user can create a mcidasv.rbi file in a way that the resource used for color tables is only pulled from a sitepath directory (specified by the sitepath argument at startup) and not use the native color tables included with McIDAS-V. This mcidasv.rbi file also allows for user configuration of resources that can't be altered through the user interface, such as help tips. A user can create their own helptips.xml file and point to it in mcidasv.rbi, allowing for McIDAS-V to read and display their own custom help tips. For more information on this, see <a href="misc/SiteConfiguration.html">Site Configuration</a>.</div>
   </div>
   <div class="faq-category"><a name="java1.7" id="java1.7"></a>
-    <h4>Java 3D and JOGL Versions</h4>
+    <h4>Java, Java 3D, JOGL, and NetCDF Versions</h4>
     <div class="faq-answer">
+      <p>Updated Java from version 1.8.0_45 to 1.8.0_112</p>
       <p>Updated Java 3D from version 1.6.0-pre11 to 1.6.0-pre12.</p>
       <p>Updated JOGL from version 2.2.3 to 2.3.2.</p>
+      <p>Updated NetCDF from version 4.6.5 to 4.6.7-SNAPSHOT</p>
     </div>
   </div>
   <div class="faq-category"><a name="scripting1.7" id="scripting1.7"></a>
@@ -131,6 +135,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>Range Ring Linking</h4>
     <div class="faq-answer">
     Added the ability to link the Color and Line Width settings in the Range Ring controls between the Range Rings, Radials, and Labels. This makes it easy to set all of the components of the range rings to be the same color and width.</div>
+  </div>
+  <div class="faq-category"><a name="ncdump1.7" id="ncdump1.7"></a>
+    <h4>ncdump Output of HYDRA Data Sources</h4>
+    <div class="faq-answer">
+    Added the ability to view the ncdump output of a HYDRA data source.  Once the data source has been added to the Field Selector, right-click on the data source and choose Properties.  In the Properties window, there is a new Metadata tab that includes the ncdump output.</div>
+  </div>
+  <div class="faq-category"><a name="shapefiles1.7" id="shapefiles1.7"></a>
+    <h4>Shapefiles in Zipped Bundles</h4>
+    <div class="faq-answer">
+    Added the ability to save shapefiles in zipped bundles.</div>
   </div>
 </div>
 <!-- InstanceEndEditable -->
