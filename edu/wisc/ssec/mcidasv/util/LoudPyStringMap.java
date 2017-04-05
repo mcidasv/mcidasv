@@ -36,11 +36,11 @@ import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 public class LoudPyStringMap extends PyStringMap {
-    private static final Logger logger = LoggerFactory.getLogger(LoudPyStringMap.class);
+//    private static final Logger logger = LoggerFactory.getLogger(LoudPyStringMap.class);
     
     private final String mapName;
     
@@ -53,8 +53,6 @@ public class LoudPyStringMap extends PyStringMap {
     public void bake() {
         if (initMap == null) {
             initMap = new ConcurrentHashMap<>(this.getMap());
-            logger.trace("sealing up {}; no overwrites or deletions of existing vars?", mapName);
-            logger.trace("contents: {}", initMap);
         } else {
 //            logger.trace("already baked {}!", mapName);
         }
@@ -73,7 +71,7 @@ public class LoudPyStringMap extends PyStringMap {
     
     private boolean isAlwaysAllowed(PyObject key) {
         String str = key.toString();
-        logger.trace("key: '{}' str value: '{}'", key, str);
+//        logger.trace("key: '{}' str value: '{}'", key, str);
         return isAlwaysAllowed(str);
     }
     
@@ -145,13 +143,13 @@ public class LoudPyStringMap extends PyStringMap {
         
         if (!fromInit) {
             if (value == null) {
-                logger.trace("mapName: {} fromInit={} actually removing key: {} value: {}", mapName, fromInit, key, value);
+//                logger.trace("mapName: {} fromInit={} actually removing key: {} value: {}", mapName, fromInit, key, value);
             } else if (table.containsKey(key)) {
-                logger.trace("mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, fromInit, key, table.get(key), value);
+//                logger.trace("mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, fromInit, key, table.get(key), value);
             }
 //            super.__setitem__(key, value);
         } else {
-            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, fromInit, key, table.get(key), value);
+//            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, fromInit, key, table.get(key), value);
         }
     
         super.__setitem__(key, value);
@@ -177,13 +175,13 @@ public class LoudPyStringMap extends PyStringMap {
         
         if (!fromInit) {
             if (value == null) {
-                logger.trace("mapName: {} fromInit={} actually removing key: {} value: {}", mapName, key, value);
+//                logger.trace("mapName: {} fromInit={} actually removing key: {} value: {}", mapName, key, value);
             } else if (table.containsKey(convert)) {
-                logger.trace("mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, key, table.get(key), value);
+//                logger.trace("mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, key, table.get(key), value);
             }
 //            super.__setitem__(key, value);
         } else {
-            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, fromInit, key, table.get(key), value);
+//            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, fromInit, key, table.get(key), value);
         }
         super.__setitem__(key, value);
     }
@@ -205,10 +203,10 @@ public class LoudPyStringMap extends PyStringMap {
         }
         
         if (!fromInit) {
-            logger.trace("mapName: {} fromInit={} trying to remove '{}'", mapName, fromInit, key);
+//            logger.trace("mapName: {} fromInit={} trying to remove '{}'", mapName, fromInit, key);
 //            super.__delitem__(key);
         } else {
-            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {}", mapName, fromInit, key, table.get(key));
+//            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {}", mapName, fromInit, key, table.get(key));
         }
         super.__delitem__(key);
     }
@@ -231,10 +229,10 @@ public class LoudPyStringMap extends PyStringMap {
         }
         
         if (!fromInit) {
-            logger.trace("mapName: {} fromInit={} trying to remove '{}'", mapName, fromInit, key);
+//            logger.trace("mapName: {} fromInit={} trying to remove '{}'", mapName, fromInit, key);
 //            super.__delitem__(key);
         } else {
-            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {}", mapName, fromInit, key, table.get(key));
+//            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {}", mapName, fromInit, key, table.get(key));
         }
         super.__delitem__(key);
     }
