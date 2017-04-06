@@ -36,11 +36,8 @@ import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyStringMap;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 public class LoudPyStringMap extends PyStringMap {
-//    private static final Logger logger = LoggerFactory.getLogger(LoudPyStringMap.class);
     
     private final String mapName;
     
@@ -53,8 +50,6 @@ public class LoudPyStringMap extends PyStringMap {
     public void bake() {
         if (initMap == null) {
             initMap = new ConcurrentHashMap<>(this.getMap());
-        } else {
-//            logger.trace("already baked {}!", mapName);
         }
     }
     
@@ -71,7 +66,6 @@ public class LoudPyStringMap extends PyStringMap {
     
     private boolean isAlwaysAllowed(PyObject key) {
         String str = key.toString();
-//        logger.trace("key: '{}' str value: '{}'", key, str);
         return isAlwaysAllowed(str);
     }
     
@@ -80,7 +74,6 @@ public class LoudPyStringMap extends PyStringMap {
         if (table.containsKey("___init_finished")) {
             result = Py.py2boolean(table.get("___init_finished"));
         }
-//        logger.trace("mapname: '{}' namespace contains init_finished: {}", mapName, result);
         return result;
     }
     
@@ -134,29 +127,18 @@ public class LoudPyStringMap extends PyStringMap {
         if ((initMap == null) && checkForDone(table)) {
             bake();
         }
-        boolean fromInit = false;
-        if (initMap != null) {
-            fromInit = initMap.containsKey(key);
-        } else {
-//            logger.trace("initMap doesn't exist; bake() was never called for '{}'! (key='{}')", mapName, key);
-        }
-        
-        if (!fromInit) {
-            if (value == null) {
-//                logger.trace("mapName: {} fromInit={} actually removing key: {} value: {}", mapName, fromInit, key, value);
-            } else if (table.containsKey(key)) {
-//                logger.trace("mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, fromInit, key, table.get(key), value);
-            }
+//        boolean fromInit = false;
+//        if (initMap != null) {
+//            fromInit = initMap.containsKey(key);
+//        }
+//
+//        if (!fromInit) {
 //            super.__setitem__(key, value);
-        } else {
-//            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, fromInit, key, table.get(key), value);
-        }
-    
+//        }
         super.__setitem__(key, value);
     }
-
+    
     @Override public void __setitem__(PyObject key, PyObject value) {
-//        logger.trace("mapName: {} key='{}' value: {}", mapName, key, value);
         if (isAlwaysAllowed(key)) {
             super.__setitem__(key, value);
             return;
@@ -165,24 +147,15 @@ public class LoudPyStringMap extends PyStringMap {
         if ((initMap == null) && checkForDone(table)) {
             bake();
         }
-        Object convert = pyToKey(key);
-        boolean fromInit = false;
-        if (initMap != null) {
-            fromInit = initMap.containsKey(convert);
-        } else {
-//            logger.trace("initMap doesn't exist; bake() was never called for '{}'! (key='{}')", mapName, key);
-        }
-        
-        if (!fromInit) {
-            if (value == null) {
-//                logger.trace("mapName: {} fromInit={} actually removing key: {} value: {}", mapName, key, value);
-            } else if (table.containsKey(convert)) {
-//                logger.trace("mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, key, table.get(key), value);
-            }
+//        Object convert = pyToKey(key);
+//        boolean fromInit = false;
+//        if (initMap != null) {
+//            fromInit = initMap.containsKey(convert);
+//        }
+//
+//        if (!fromInit) {
 //            super.__setitem__(key, value);
-        } else {
-//            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {} newval: {}", mapName, fromInit, key, table.get(key), value);
-        }
+//        }
         super.__setitem__(key, value);
     }
     
@@ -195,19 +168,14 @@ public class LoudPyStringMap extends PyStringMap {
         if ((initMap == null) && checkForDone(table)) {
             bake();
         }
-        boolean fromInit = false;
-        if (initMap != null) {
-            fromInit = initMap.containsKey(key);
-        } else {
-//            logger.trace("initMap doesn't exist; bake() was never called for '{}'! (key='{}')", mapName, key);
-        }
-        
-        if (!fromInit) {
-//            logger.trace("mapName: {} fromInit={} trying to remove '{}'", mapName, fromInit, key);
+//        boolean fromInit = false;
+//        if (initMap != null) {
+//            fromInit = initMap.containsKey(key);
+//        }
+//
+//        if (!fromInit) {
 //            super.__delitem__(key);
-        } else {
-//            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {}", mapName, fromInit, key, table.get(key));
-        }
+//        }
         super.__delitem__(key);
     }
     
@@ -220,20 +188,15 @@ public class LoudPyStringMap extends PyStringMap {
         if ((initMap == null) && checkForDone(table)) {
             bake();
         }
-        Object convert = pyToKey(key);
-        boolean fromInit = false;
-        if (initMap != null) {
-            fromInit = initMap.containsKey(convert);
-        } else {
-//            logger.trace("initMap doesn't exist; bake() was never called for '{}'! (key='{}')", mapName, key);
-        }
-        
-        if (!fromInit) {
-//            logger.trace("mapName: {} fromInit={} trying to remove '{}'", mapName, fromInit, key);
+//        Object convert = pyToKey(key);
+//        boolean fromInit = false;
+//        if (initMap != null) {
+//            fromInit = initMap.containsKey(convert);
+//        }
+//
+//        if (!fromInit) {
 //            super.__delitem__(key);
-        } else {
-//            logger.trace("!!! *** mapName: {} fromInit={} changing key: {} oldval: {}", mapName, fromInit, key, table.get(key));
-        }
+//        }
         super.__delitem__(key);
     }
     
