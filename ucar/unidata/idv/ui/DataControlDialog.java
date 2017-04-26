@@ -21,12 +21,7 @@
 package ucar.unidata.idv.ui;
 
 
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataSource;
-import ucar.unidata.data.DataSourceImpl;
-import ucar.unidata.data.DerivedDataChoice;
-import ucar.unidata.data.GeoSelection;
-import ucar.unidata.data.GeoSelectionPanel;
+import ucar.unidata.data.*;
 
 
 import ucar.unidata.idv.*;
@@ -50,12 +45,8 @@ import visad.VisADException;
 import java.awt.*;
 import java.awt.event.*;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.*;
 import javax.swing.BoxLayout;
@@ -473,13 +464,18 @@ public class DataControlDialog implements ActionListener {
         }
         ControlDescriptor selected = getSelectedControl();
         Vector newList =
-            new Vector(
-                ControlDescriptor.getApplicableControlDescriptors(
-                    dataChoice.getCategories(),
-                    idv.getControlDescriptors(true)));
+                new Vector(
+                        ControlDescriptor.getApplicableControlDescriptors(
+                                dataChoice.getCategories(),
+                                idv.getControlDescriptors(true)));
         setControlList(newList);
         if ( !newList.contains(selected)) {
-            selected = null;
+            Object obj = getDataSourceProperty("selected_control", null);
+            if (obj != null) {
+                selected = findControlDescriptorById(obj.toString(), newList);
+            } else {
+                selected = null;
+            }
         }
         setSelectedControl(selected);
 
@@ -519,6 +515,54 @@ public class DataControlDialog implements ActionListener {
 
 
 
+    }
+
+    /**
+     * Return value associated with the given {@link DataSource} property.
+     *
+     * If {@link #dataSource} is {@code null} and {@link #dataChoice} is a
+     * {@link DirectDataChoice}, the {@code DataSource} within
+     * {@code dataChoice} will be used.
+     *
+     * @param property Property ID. Cannot be {@code null}.
+     * @param defaultValue Default value to be used if {@code property} has
+     *                     not been set.
+     *
+     * @return Either the value associated with {@code property},
+     * or {@code defaultValue}.
+     */
+    public Object getDataSourceProperty(String property, Object defaultValue) {
+        Object result = null;
+        if (dataSource != null) {
+            result = dataSource.getProperty(property);
+        } else if (dataChoice != null && dataChoice instanceof DirectDataChoice) {
+            result = ((DirectDataChoice)dataChoice).getDataSource().getProperty(property);
+        }
+        if (result == null) {
+            result = defaultValue;
+        }
+        return result;
+    }
+
+    /**
+     * Search a {@link List} of {@link ControlDescriptor ControlDescriptors}
+     * for a control with the given ID.
+     *
+     * @param id Control ID to find. Cannot be {@code null}.
+     * @param descriptors List of control descriptors to search. Cannot be
+     *                    {@code null}.
+     *
+     * @return Either a control descriptor with a matching ID, or {@code null}.
+     */
+    private static ControlDescriptor findControlDescriptorById(String id, List<ControlDescriptor> descriptors) {
+        ControlDescriptor descriptor = null;
+        for (ControlDescriptor cd : descriptors) {
+            if (Objects.equals(id, cd.getControlId())) {
+                descriptor = cd;
+                break;
+            }
+        }
+        return descriptor;
     }
 
 
