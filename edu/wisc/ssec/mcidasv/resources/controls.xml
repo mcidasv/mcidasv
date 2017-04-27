@@ -132,7 +132,7 @@
 		functionality in McV. See Inquiry #1187 -->
 	<control id="stormintesitydisplay" categories="IMAGE-*-*"
 		class="edu.wisc.ssec.mcidasv.control.ADTControl"
-		label="Storm Intensity" displaycategory="Probe" properties="">
+		label="Advanced Dvorak Technique" displaycategory="Probe" properties="">
 		<property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager" />
 	</control> 
   
