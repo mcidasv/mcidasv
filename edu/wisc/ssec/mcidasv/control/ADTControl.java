@@ -270,14 +270,15 @@ public class ADTControl extends DisplayControlImpl {
         JPanel latlonPanel = hbox(Misc.newList(latLonWidget));
 
         /* add Manual or Automated storm centering buttons */
-    
-        JTextField automanTextField = new JTextField("Select Storm Center In Image",25);
+
         JRadioButton manButton = new JRadioButton("Manual");
         manButton.setActionCommand("Manual");
         manButton.setSelected(true);
+        manButton.setToolTipText("Manually Select Storm Center In Image");
         JRadioButton autoButton = new JRadioButton("Automated");
         autoButton.setActionCommand("Automated");
         autoButton.setSelected(false);
+        autoButton.setToolTipText("Select Forecast File For First Guess Below");
         ButtonGroup automangroup = new ButtonGroup();
         automangroup.add(manButton);
         automangroup.add(autoButton);
@@ -289,7 +290,6 @@ public class ADTControl extends DisplayControlImpl {
         JTextField forecastTextField = new JTextField("No forecast file selected yet", 40);
         
         manButton.addActionListener(ae -> {
-            automanTextField.setText("Select Storm Center In Image");
             autoStormSelectLabel.setEnabled(false);
             forecastSelectLabel.setEnabled(false);
             forecastTextField.setEnabled(false);
@@ -299,7 +299,6 @@ public class ADTControl extends DisplayControlImpl {
         });
         
         autoButton.addActionListener(ae -> {
-            automanTextField.setText("Select Forecast File For First Guess Below");
             autoStormSelectLabel.setEnabled(true);
             forecastSelectLabel.setEnabled(true);
             forecastTextField.setEnabled(true);
@@ -651,7 +650,7 @@ public class ADTControl extends DisplayControlImpl {
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
         JComponent widgets =
             GuiUtils.formLayout(
-                arr(left(hbox(arr(new JLabel("Storm Center Selection:"), manButton, autoButton, automanTextField), 5)),
+                arr(left(hbox(arr(new JLabel("Storm Center Selection:"), manButton, autoButton), 5)),
                     filler(),
                     left(hbox(arr(new JLabel("MANUAL STORM SELECTION")), 10)),
                     filler(),
@@ -674,10 +673,10 @@ public class ADTControl extends DisplayControlImpl {
                     left(hbox(arr(blankfield))),
                     filler(1,10),
                     left(hbox(arr(new JLabel("MISCELLANEOUS OPTIONS")), 10)), filler(),
-                    left(hbox(arr(filler(30,1),new JLabel("MSLP Conversion Method:"), mslpDvorakButton, mslpCKZButton, ckzPenvLabel, ckzPenvTextField, ckz34radiusLabel,ckz34radiusTextField), 5)),filler(),
+                    left(hbox(arr(filler(30, 1),new JLabel("MSLP Conversion Method:"), mslpDvorakButton, mslpCKZButton, ckzPenvLabel, ckzPenvTextField, ckz34radiusLabel,ckz34radiusTextField), 5)),filler(),
                     left(hbox(arr(filler(30, 1), sceneOverrideButton, OverrideLabel), 5)), filler(),
-                    left(hbox(arr(filler(30,1),LandFlagLabel,LandONButton, LandOFFButton, filler(20,1), VOutLabel, V1MinButton, V10MinButton, filler(20,1),RawTLabel,RawTTextField, RMWLabel, RMWTextField), 5)),filler(),
-                    left(hbox(arr(filler(30,1),ATCFOutputLabel, ATCFOutputButton,ATCFEntryStormLabel,ATCFEntryStormTextField, ATCFEntrySiteLabel,ATCFEntrySiteTextField), 5)),filler(),
+                    left(hbox(arr(filler(30, 1),LandFlagLabel,LandONButton, LandOFFButton, filler(20,1), VOutLabel, V1MinButton, V10MinButton, filler(20,1),RawTLabel,RawTTextField, RMWLabel, RMWTextField), 5)),filler(),
+                    left(hbox(arr(filler(30, 1),ATCFOutputLabel, ATCFOutputButton,ATCFEntryStormLabel,ATCFEntryStormTextField, ATCFEntrySiteLabel,ATCFEntrySiteTextField), 5)),filler(),
                     left(hbox(arr(filler(80, 1), adtBtn, listBtn, GUIFileOverrideButton), 20)), filler()));
                     
         JPanel controls = topLeft(widgets);
