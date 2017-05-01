@@ -537,6 +537,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
      * @param forMenuBar Is this for the menu in the window's menu bar or
      * for a popup menu in the legend
      */
+    
     protected void getEditMenuItems(List items, boolean forMenuBar) {
         ObjectListener listener = new ObjectListener("") {
             public void actionPerformed(ActionEvent ae, Object obj) {
