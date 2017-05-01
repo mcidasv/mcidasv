@@ -537,23 +537,25 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
      * @param forMenuBar Is this for the menu in the window's menu bar or
      * for a popup menu in the legend
      */
-    protected void getEditMenuItems(List items, boolean forMenuBar) {
-        ObjectListener listener = new ObjectListener("") {
-            public void actionPerformed(ActionEvent ae, Object obj) {
-                stationTableName = ((NamedStationTable) obj).getFullName();
-                stationIdx       = 0;
-                setStations();
-            }
-        };
-        List stationTables = getControlContext().getLocationList();
-        items.add(
-            GuiUtils.makeMenu(
-                "Set Locations",
-                NamedStationTable.makeMenuItems(stationTables, listener)));
-
-        super.getEditMenuItems(items, forMenuBar);
-    }
-
+    /**
+     * BC: Commenting out section below as part of Inquiry 2465
+    * protected void getEditMenuItems(List items, boolean forMenuBar) {
+    *     ObjectListener listener = new ObjectListener("") {
+    *         public void actionPerformed(ActionEvent ae, Object obj) {
+    *             stationTableName = ((NamedStationTable) obj).getFullName();
+    *             stationIdx       = 0;
+    *             setStations();
+    *         }
+    *     };
+    *     List stationTables = getControlContext().getLocationList();
+    *     items.add(
+    *         GuiUtils.makeMenu(
+    *             "Set Locations",
+    *             NamedStationTable.makeMenuItems(stationTables, listener)));
+    * 
+    *     super.getEditMenuItems(items, forMenuBar);
+    * }
+    */
 
     /**
      * Make a selector for selecting the spacing
