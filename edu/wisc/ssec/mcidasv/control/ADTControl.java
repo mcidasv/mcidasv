@@ -129,7 +129,7 @@ public class ADTControl extends DisplayControlImpl {
     
     private static final String[] FORECAST_TYPES = {
         "ATCF", "DISC", "PACWARN", "GENERIC", "RMSC ICAO", "RMSC WTIO",
-        "TCWC AXAU", "(empty)", "BEST", "HURDAT"
+        "TCWC AXAU", "BEST", "HURDAT"
     };
     
     /** _more_ */
@@ -219,12 +219,8 @@ public class ADTControl extends DisplayControlImpl {
     private JLabel historyLabel;
     
     private static String HistoryListOutput;
-        
-    private static String GUIPMWFileName;
     
     private static final String SCENE_TYPE_PREFIX = "Current Scene Type: ";
-    
-
     
     /**
      * 
@@ -1283,31 +1279,6 @@ public class ADTControl extends DisplayControlImpl {
         } else {
             logger.error("error with file chooser");
         }
-        return fileNameReturn;
-    }
-    
-
-    
-    private String selectPMWFile() {
-        
-        String fileNameReturn = null;
-        String DataPath;
-        
-        JFrame PMWFileFrame = new JFrame();
-        JFileChooser PMWFileChooser = new JFileChooser();
-        // PMWFileChooser.setCurrentDirectory(new File("/home/tlo/Development/mcidasv/edu/wisc/ssec/mcidasv/adt/main"));
-        DataPath = System.getenv("ODTPMW");
-        if (DataPath == null) {
-            DataPath = System.getenv("HOME");
-        }
-        PMWFileChooser.setCurrentDirectory(new File(DataPath));
-        PMWFileChooser.setDialogTitle("Select PMW History File");
-        int returnVal = PMWFileChooser.showOpenDialog(PMWFileFrame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = PMWFileChooser.getSelectedFile();
-            fileNameReturn = file.getAbsolutePath();
-        }
-        
         return fileNameReturn;
     }
     
