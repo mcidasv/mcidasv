@@ -286,6 +286,9 @@ public class ADTControl extends DisplayControlImpl {
         JTextField forecastTextField = new JTextField("No forecast file selected yet", 40);
         
         manButton.addActionListener(ae -> {
+            // enable the manual lat/lon text boxes 
+            latLonWidget.getLonField().setEnabled(true);
+            latLonWidget.getLatField().setEnabled(true);
             autoStormSelectLabel.setEnabled(false);
             forecastSelectLabel.setEnabled(false);
             forecastTextField.setEnabled(false);
@@ -295,6 +298,9 @@ public class ADTControl extends DisplayControlImpl {
         });
         
         autoButton.addActionListener(ae -> {
+            // disable the manual lat/lon text boxes when in auto mode
+            latLonWidget.getLonField().setEnabled(false);
+            latLonWidget.getLatField().setEnabled(false);
             autoStormSelectLabel.setEnabled(true);
             forecastSelectLabel.setEnabled(true);
             forecastTextField.setEnabled(true);
