@@ -102,7 +102,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    private String inTrackGeoDimensionName = null;
    private String crossTrackDimensionName = null;
    private Set<String> products;
-   private String origName = null;
+   private String origName = "";
    // assume we are working with VIIRS, will toggle if not
    private boolean isVIIRS = true;
 
@@ -171,7 +171,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    private String mapNameIfLUTVar(String array_name) {
 	   // only applies if name is from a LUT pseudo variable
 	   // we pull data from a "mapped" variable name, and apply a LUT to that variable
-	   origName = "";
+
 	   if (lutMap != null) {
 		   if (lutMap.containsKey(array_name)) {
 			   origName = array_name;
@@ -818,15 +818,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // last, concatenate the individual NetCDF arrays pulled out 
 
-	   Class outType;
 	   Class arrayType = getArrayType(array_name);
 	   RangeProcessor rngProcessor = varToRangeProcessor.get(array_name);
-	   if (rngProcessor == null) {
-		   outType = getArrayType(array_name);
-	   }
-	   else {
-		   outType = java.lang.Float.TYPE;
-	   }
+
 	   logger.debug("Creating aggregated array, totalLength: " + totalLength);
 	   
 	   // TJJ May 2016
