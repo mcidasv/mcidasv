@@ -114,13 +114,22 @@ import visad.util.DataUtility;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 
 /**
- * Description of what this class provides...
+ * Advanced Dvorak Technique Display Control
+ * Algorithm developed at UW Madison/CIMSS to objectively determine tropical
+ * cyclone intensity from geostationary satellite infrared imagery.
  * 
  * @author Tim Olander
  */
+
 public class ADTControl extends DisplayControlImpl {
     
     private static final Logger logger = LoggerFactory.getLogger(ADTControl.class);
+    
+    // Tooltip strings for the various UI buttons and inputs
+    private static final String TOOLTIP_LAND_FLAG_ON = "Apply ADT Land Interaction Rule";
+    private static final String TOOLTIP_LAND_FLAG_OFF = "Do Not Apply ADT Land Interaction Rule";
+    private static final String TOOLTIP_MSLP_FROM_DVORAK = "Utilize Dvorak Technique to Derive MSLP";
+    private static final String TOOLTIP_MSLP_FROM_CKZ = "Utilize Coutney/Knaff/Zehr Wind Speed/Presssure Technique";
     
     public static final String[] SCENE_TYPES = {
         "Eye", "Pinhole Eye", "Large Eye", "CDO", "Embedded Center",
@@ -475,9 +484,11 @@ public class ADTControl extends DisplayControlImpl {
         JRadioButton mslpDvorakButton = new JRadioButton("Dvorak");
         mslpDvorakButton.setActionCommand("Dvorak");
         mslpDvorakButton.setSelected(true);
+        mslpDvorakButton.setToolTipText(TOOLTIP_MSLP_FROM_DVORAK);
         JRadioButton mslpCKZButton = new JRadioButton("CKZ");
         mslpCKZButton.setActionCommand("CKZ");
         mslpCKZButton.setSelected(false);
+        mslpCKZButton.setToolTipText(TOOLTIP_MSLP_FROM_CKZ);
         ButtonGroup mslpgroup = new ButtonGroup();
         mslpgroup.add(manButton);
         mslpgroup.add(autoButton);
@@ -591,9 +602,11 @@ public class ADTControl extends DisplayControlImpl {
         JRadioButton LandONButton = new JRadioButton("ON");
         LandONButton.setActionCommand("On");
         LandONButton.setSelected(true);
+        LandONButton.setToolTipText(TOOLTIP_LAND_FLAG_ON);
         JRadioButton LandOFFButton = new JRadioButton("OFF");
         LandOFFButton.setActionCommand("Off");
         LandOFFButton.setSelected(false);
+        LandOFFButton.setToolTipText(TOOLTIP_LAND_FLAG_OFF);
         ButtonGroup landgroup = new ButtonGroup();
         landgroup.add(LandONButton);
         landgroup.add(LandOFFButton);
