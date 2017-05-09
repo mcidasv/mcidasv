@@ -167,7 +167,8 @@ public class ADTControl extends DisplayControlImpl {
     private static boolean GUIInitStrengthTF;
     private static boolean GUILandFlagTF;
     private static boolean GUIUseCKZTF;
-    private static boolean GUIVmax1or10TF;
+    // Default Java boolean value is false - need to initialize if we want true
+    private static boolean GUIVmax1or10TF = true;
     private static boolean GUICommentAddTF;
     private static boolean GUIDeleteTF;
     private static boolean GUIATCFRecordOutputTF;
@@ -630,7 +631,7 @@ public class ADTControl extends DisplayControlImpl {
         V1MinButton.setSelected(true);
         JRadioButton V10MinButton = new JRadioButton("Ten-minute");
         V10MinButton.setActionCommand("Ten");
-        V10MinButton.setSelected(true);
+        V10MinButton.setSelected(false);
         ButtonGroup voutgroup = new ButtonGroup();
         voutgroup.add(V1MinButton);
         voutgroup.add(V10MinButton);

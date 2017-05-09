@@ -50,7 +50,8 @@ public class Env {
    public static boolean LandFlagTF;
    public static boolean CBSearchTF;
    public static boolean UseCKZTF;
-   public static boolean Vmax1or10TF;
+   // Default Java boolean value is false - need to initialize if we want true
+   public static boolean Vmax1or10TF = true;
    public static boolean UsePMWTF;
    public static int UserDefineDomain;               /* 0=automated; 1=manual */
    public static int DomainID;                /* Domain ID value : 0-Auto/Atl;1-Auto/Pac;2-Man/Atl;3-Man/Pac */
