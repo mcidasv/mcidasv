@@ -166,9 +166,11 @@ public class ADTControl extends DisplayControlImpl {
     private static boolean GUIATCFOutputTF;
     private static boolean GUIInitStrengthTF;
     private static boolean GUILandFlagTF;
-    private static boolean GUIUseCKZTF;
+
     // Default Java boolean value is false - need to initialize if we want true
+    private static boolean GUIUseCKZTF = true;
     private static boolean GUIVmax1or10TF = true;
+
     private static boolean GUICommentAddTF;
     private static boolean GUIDeleteTF;
     private static boolean GUIATCFRecordOutputTF;
