@@ -32,7 +32,6 @@ import static ucar.unidata.util.GuiUtils.hbox;
 import static ucar.unidata.util.GuiUtils.filler;
 import static ucar.unidata.util.GuiUtils.left;
 import static ucar.unidata.util.GuiUtils.topLeft;
-
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arr;
 
 import java.awt.BorderLayout;
@@ -44,7 +43,6 @@ import java.awt.Font;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,6 +59,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -74,6 +73,7 @@ import edu.wisc.ssec.mcidasv.adt.Functions;
 import edu.wisc.ssec.mcidasv.adt.History;
 import edu.wisc.ssec.mcidasv.adt.Main;
 import edu.wisc.ssec.mcidasv.adt.ReadIRImage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,6 @@ import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.PointProbe;
 import ucar.visad.quantities.AirTemperature;
-
 import visad.CommonUnit;
 import visad.DateTime;
 import visad.DisplayEvent;
@@ -110,7 +109,6 @@ import visad.VisADException;
 import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.util.DataUtility;
-
 import edu.wisc.ssec.mcidas.AreaDirectory;
 
 /**
@@ -368,7 +366,12 @@ public class ADTControl extends DisplayControlImpl {
         listBtn.setPreferredSize(new Dimension(250, 50));
         listBtn.addActionListener(ae -> {
             logger.debug("listing history file name={}", GUIHistoryFileName);
-            listHistoryFile();
+            try {
+                listHistoryFile();
+            } catch (NumberFormatException nfe) {
+                JOptionPane.showMessageDialog(null, 
+                    "Your selection does not appear to be a valid ADT History File.");
+            }
         });
     
         // TJJ Jan 2017
@@ -1075,18 +1078,24 @@ public class ADTControl extends DisplayControlImpl {
         
         History CurrentHistory = new History();
         
+        // Make sure a valid History File has been selected. At startup, value will be null
+        if (GUIHistoryFileName == null) {
+            JOptionPane.showMessageDialog(null, 
+            "Please first select a valid ADT History File.");
+            return;
+        }
+        
         try {
             logger.debug("trying to read history file {}", GUIHistoryFileName);
             CurrentHistory.ReadHistoryFile(GUIHistoryFileName);
         } catch (IOException exception) {
             String ErrorMessage = String.format("History file %s is not found",GUIHistoryFileName);
-            System.out.printf(ErrorMessage);
+            logger.warn(ErrorMessage);
             userMessage(ErrorMessage);
             return;
         }
         
-        // int NumRecs = CurrentHistory.HistoryNumberOfRecords();
-        /* System.out.printf("number of records=%d\n",NumRecs); */
+        logger.debug("Number of history records: ", History.HistoryNumberOfRecords());
         
         HistoryListOutput = History.ListHistory(0, -1, "CIMS", "99X");
         historyLabel.setText(GUIHistoryFileName);
