@@ -1073,6 +1073,18 @@ public class ADTControl extends DisplayControlImpl {
         adtBtn.setText("Run Analysis");
     }
     
+    /*
+     * Override for additional local cleanup
+     * (non-Javadoc)
+     * @see ucar.unidata.idv.control.DisplayControlImpl#doRemove()
+     */
+
+    @Override
+    public void doRemove() throws RemoteException, VisADException {
+        super.doRemove();
+        resultFrame.dispose();
+    }
+
     private void listHistoryFile() {
         HistoryListOutput = null;
         
