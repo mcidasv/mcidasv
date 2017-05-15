@@ -1082,7 +1082,8 @@ public class ADTControl extends DisplayControlImpl {
     @Override
     public void doRemove() throws RemoteException, VisADException {
         super.doRemove();
-        resultFrame.dispose();
+        if (resultFrame != null) resultFrame.dispose();
+        if (historyFrame != null) historyFrame.dispose();
     }
 
     private void listHistoryFile() {
