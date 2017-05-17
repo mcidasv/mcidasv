@@ -4903,6 +4903,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 animation.addPropertyChangeListener(
                     new PropertyChangeListener() {
                     public void propertyChange(PropertyChangeEvent evt) {
+                        if (getIsDestroyed()) {
+                            // mcv inquiry 2466
+                            // we need to bail out of handling events for
+                            // viewmanagers that have already been
+                            // destroyed.
+                            return;
+                        }
                         AnimationInfo aniInfo = animation.getAnimationInfo();
                         try {
                             if (evt.getPropertyName().equals(
@@ -5055,6 +5062,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         if (animationWidget != null) {
             animationWidget.destroy();
+            animationWidget = null;
         }
 
         if (master != null) {
