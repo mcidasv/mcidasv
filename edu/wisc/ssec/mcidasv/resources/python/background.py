@@ -33,6 +33,7 @@ from java.util import TimeZone
 from java.util.concurrent import FutureTask
 
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
+
 from ucar.unidata.idv import DisplayInfo
 from ucar.unidata.idv.ui import IdvWindow
 from ucar.unidata.idv.control import StationModelControl
@@ -43,8 +44,13 @@ from ucar.unidata.ui.colortable import ColorTableDefaults
 from ucar.unidata.util import GuiUtils
 from ucar.visad import Util
 from ucar.visad.data import GeoGridFlatField
+
+from visad import Data
 from visad import FieldImpl
 from visad import FlatField
+from visad import FunctionType
+from visad import RealType
+from visad import TupleType
 
 # from collections import namedtuple
 
@@ -3543,6 +3549,49 @@ def loadGrid(filename=None, field=None, level='all',
 def loadFile(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of loadFile has changed to loadGrid.  You'll need to update your scripts.  Sorry for the hassle!")
+
+def _findUnits(mathtype, foundUnits, rangeOnly, withinRange):
+    """Please use findUnits instead of this function."""
+    if isinstance(mathtype, FunctionType):
+        domain = mathtype.getDomain()
+        dims = domain.getDimension()
+        for dim in range(dims):
+            comp = domain.getComponent(dim)
+            _findUnits(comp, foundUnits, rangeOnly, False)
+        rng = mathtype.getRange()
+        _findUnits(rng, foundUnits, rangeOnly, True)
+    elif isinstance(mathtype, TupleType):
+        dims = mathtype.getDimension()
+        for dim in range(dims):
+            comp = mathtype.getComponent(dim)
+            _findUnits(comp, foundUnits, rangeOnly, withinRange)
+    elif isinstance(mathtype, RealType):
+        unit = mathtype.getDefaultUnit()
+        if unit is not None:
+            if rangeOnly and withinRange:
+                foundUnits.append(unit)
+            elif not rangeOnly:
+                foundUnits.append(unit)
+
+def findUnits(d, rangeOnly=True):
+    """Find units associated with a given VisAD Data object.
+
+    Args:
+        rangeOnly: Boolean value (defaults to True) that controls
+                   whether or not the returned units are only
+                   associated with range. Setting this to False
+                   essentially returns all units.
+    Returns:
+        List of units (may be an empty list).
+    """
+    if not isinstance(d, Data):
+        raise TypeError("Unknown type: {0}".format(type(d)))
+    units = []
+    if rangeOnly:
+        _findUnits(d.getType(), units, True, False)
+    else:
+        _findUnits(d.getType(), units, False, False)
+    return units
 
 def makeFlatFieldSequence(sequence):
     """Turn list of _MappedGeoGridFlatField's into a FieldImpl with time domain that is suitable for displaying.
