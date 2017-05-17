@@ -218,7 +218,7 @@ public class ADTControl extends DisplayControlImpl {
     private JFrame historyFrame;
     private JTextArea historyArea;
     
-    private JTextField historyTextField;
+    private JLabel selectedHistoryFile;
     
     private JFileChooser historyFileSaveChooser;
     
@@ -344,7 +344,7 @@ public class ADTControl extends DisplayControlImpl {
         forecastTypeBox.setEnabled(false);
 
         /* define default history file text field message */
-        historyTextField = new JTextField("No history file selected yet",40);
+        selectedHistoryFile = new JLabel("No history file selected yet");
 
         /* add history file selection button */
         JButton historyBtn = new JButton("Select History File");
@@ -353,7 +353,9 @@ public class ADTControl extends DisplayControlImpl {
             GUIHistoryFileName = selectHistoryFile();
             logger.debug("history file name={}", GUIHistoryFileName);
             runFullADTAnalysis = true;
-            historyTextField.setText(GUIHistoryFileName);
+            selectedHistoryFile.setText(
+               GUIHistoryFileName.substring(GUIHistoryFileName.lastIndexOf(File.separatorChar) + 1)
+            );
         });
 
         /* add main ADT analysis start button */
@@ -682,8 +684,8 @@ public class ADTControl extends DisplayControlImpl {
                     left(hbox(arr(blankfield))),
                     filler(1,10),
                     left(hbox(arr(new JLabel("HISTORY FILE INFORMATION")), 10)),filler(),
-                    left(hbox(arr(filler(30,1), historyBtn,new JLabel
-                        ("Selected History File:"), historyTextField),5)),
+                    left(hbox(arr(filler(30, 1), historyBtn, new JLabel
+                        ("Selected History File: "), selectedHistoryFile), 5)),
                     filler(),
                     left(hbox(arr(blankfield))),
                     filler(1,10),
