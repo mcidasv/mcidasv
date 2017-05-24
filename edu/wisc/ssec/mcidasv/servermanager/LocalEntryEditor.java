@@ -51,6 +51,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
+import javafx.stage.DirectoryChooser;
+
 import net.miginfocom.swing.MigLayout;
 
 import ucar.unidata.xml.XmlObjectStore;
@@ -61,6 +63,7 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EditorAction;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
+import edu.wisc.ssec.mcidasv.util.nativepathchooser.NativeDirectoryChooser;
 
 /**
  * A dialog that allows the user to define or modify
@@ -445,30 +448,37 @@ public class LocalEntryEditor extends JDialog {
             managerController.refreshDisplay();
         }
     }
-
+    
     /**
      * Ask the user for a data directory from which to create a MASK=
-     * 
-     * @param startDir If this is a valid path, then the file picker will 
-     * (presumably) use that as its initial location. Should not be 
+     *
+     * @param startDir If this is a valid path, then the file picker will
+     * (presumably) use that as its initial location. Should not be
      * {@code null}?
-     * 
+     *
      * @return Either a path to a data directory or {@code startDir}.
      */
     private String getDataDirectory(final String startDir) {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fileChooser.setSelectedFile(new File(startDir));
-        switch (fileChooser.showOpenDialog(this)) {
-            case JFileChooser.APPROVE_OPTION:
-                return fileChooser.getSelectedFile().getAbsolutePath();
-            case JFileChooser.CANCEL_OPTION:
-                return startDir;
-            default:
-                return startDir;
+        NativeDirectoryChooser chooser = new NativeDirectoryChooser(() -> {
+            DirectoryChooser ch = new DirectoryChooser();
+            ch.setTitle("Select the data directory");
+            File initialDirectory = new File(startDir);
+            if (!initialDirectory.exists()) {
+                initialDirectory = new File(System.getProperty("user.home"));
+            }
+            ch.setInitialDirectory(initialDirectory);
+            return ch;
+        });
+        
+        String s = startDir;
+        File chosenPath = chooser.showOpenDialog();
+        
+        if (chosenPath != null) {
+            s = chosenPath.getAbsolutePath();
         }
+        return s;
     }
-
+    
     /**
      * Returns the last {@link EditorAction} that was performed.
      *
