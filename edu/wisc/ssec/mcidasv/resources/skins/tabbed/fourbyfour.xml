@@ -35,82 +35,82 @@ See: /auxdata/docs/developer/contents/XmlUi.html
              class="ucar.unidata.idv.MapViewManager"
              viewid="view1%version%"
              id="view1"
-             properties="clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 1;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view2%version%"
              id="view2"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 2;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view3%version%"
              id="view3"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 3;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view4%version%"
              id="view4"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 4;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view5%version%"
              id="view5"
-             properties="clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 5;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view6%version%"
              id="view6"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 6;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view7%version%"
              id="view7"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 7;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view8%version%"
              id="view8"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 8;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view9%version%"
              id="view9"
-             properties="clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 9;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view10%version%"
              id="view10"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 10;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view11%version%"
              id="view11"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 11;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view12%version%"
              id="view12"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 12;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view13%version%"
              id="view13"
-             properties="clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 13;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view14%version%"
              id="view14"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 14;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view15%version%"
              id="view15"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 15;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
           <idv.view
              class="ucar.unidata.idv.MapViewManager"
              viewid="view16%version%"
              id="view16"
-             properties="showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
+             properties="name=Panel 16;showControlLegend=false;showToolBars=false;clickToFocus=true;shareViews=true;showControlLegend=false;size=%view.size%;shareGroup=view%versionuid%;"/>
         </panel>
       </panel>
       <idv.statusbar place="South"  id="bottom_bar"/>
