@@ -1417,8 +1417,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 }
                 cbx.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
             }
-            propertiesMap.put(cbx, bp);
-            props.add(GuiUtils.left(cbx));
+
+            // TJJ May 2017 Leave logo visibility out, since that is now moved to logo panel
+            // This block prevents that checkbox from being added to top panel
+            if (! bp.getId().equals(PREF_LOGO_VISIBILITY)) {
+                propertiesMap.put(cbx, bp);
+                props.add(GuiUtils.left(cbx));
+            }
         }
 
         GuiUtils.tmpInsets = new Insets(0, 5, 0, 5);
@@ -1486,7 +1491,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         fullScreenPanel.setBorder(
             BorderFactory.createTitledBorder("Full Screen Dimensions"));
 
-        // logoVisCbx = new JCheckBox("", getLogoVisibility());
+        logoVisCbx = new JCheckBox("Show Logo", getLogoVisibility());
         logoFileField = new JTextField(getLogoFile());
         logoFileField.setToolTipText("Enter a file or URL");
 
@@ -1529,7 +1534,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         sliderComps[0].setToolTipText("Change Logo Scale Value");
 
         JPanel logoPanel = GuiUtils.vbox(
-        // GuiUtils.leftCenter(GuiUtils.rLabel("Visible: "), GuiUtils.leftCenter(logoVisCbx, GuiUtils.filler())),
+        GuiUtils.left(GuiUtils.leftCenter(logoVisCbx, GuiUtils.filler())),
         GuiUtils.centerRight(logoFileField, browseButton), GuiUtils.hbox(
             GuiUtils.leftCenter(
                 GuiUtils.rLabel("Screen Position: "),
@@ -2821,6 +2826,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @param props  the properties
      */
+    
     protected void getInitialBooleanProperties(List props) {
         props.add(new BooleanProperty(PREF_WIREFRAME, "Show Wireframe Box",
                                       "", true));
@@ -2838,7 +2844,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                       "Show display labels in the display",
                                       true));
         props.add(new BooleanProperty(PREF_LOGO_VISIBILITY, "Show Logo",
-                                      "Toggle logo in display", false));
+                                      "Toggle logo in display", true));
         props.add(new BooleanProperty(PREF_TOPBAR_VISIBLE, "Show Top Bar",
                                       "Toggle top bar", true));
         /** inquiry 2053 */
@@ -3256,8 +3262,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
             animationWidget.setProperties(animationInfo);
         }
 
-        setLogoFile(getStore().get(PREF_LOGO, ""));
-        setLogoVisibility(getStore().get(PREF_LOGO_VISIBILITY, false));
+        setLogoFile(getStore().get(PREF_LOGO, Constants.ICON_MCIDASV_DEFAULT));
+        setLogoVisibility(getStore().get(PREF_LOGO_VISIBILITY, true));
         setLogoScale(getStore().get(PREF_LOGO_SCALE, 1.0f));
         setLogoPosition(getStore().get(PREF_LOGO_POSITION_OFFSET,
                                        "ll,10,-10"));

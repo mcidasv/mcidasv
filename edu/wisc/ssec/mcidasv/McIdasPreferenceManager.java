@@ -1044,10 +1044,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         final JCheckBox logoVizBox = new JCheckBox(
             "Show Logo in View",
             mcv.getStateManager().getPreferenceOrProperty(
-                ViewManager.PREF_LOGO_VISIBILITY, false));
+                ViewManager.PREF_LOGO_VISIBILITY, true));
         final JTextField logoField =
             new JTextField(mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO,
-                ""));
+                    ICON_MCIDASV_DEFAULT));
         logoField.setToolTipText("Enter a file or URL");
         // top panel
         JButton browseButton = new JButton("Browse..");
