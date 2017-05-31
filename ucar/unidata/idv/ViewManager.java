@@ -7708,8 +7708,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
     protected String getLogoFile() {
         if (logoFile == null) {
             logoFile =
-                getIdv().getStateManager().getPreferenceOrProperty(PREF_LOGO,
-                    "");
+                getIdv().getStateManager().getPreferenceOrProperty(
+                    PREF_LOGO,
+                    Constants.ICON_MCIDASV_DEFAULT
+                );
         }
 
         return logoFile;
