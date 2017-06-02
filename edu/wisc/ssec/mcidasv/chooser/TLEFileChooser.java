@@ -36,6 +36,8 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -61,7 +63,7 @@ import static ucar.unidata.idv.chooser.IdvChooser.PREF_DEFAULTDIR;
  * @author Gail Dengel and Tommy Jasmin
  *
  */
-public class TLEFileChooser extends JFileChooser implements PropertyChangeListener {
+public class TLEFileChooser extends JFileChooser implements AncestorListener, PropertyChangeListener {
     
     private static final String ID = "tlefilechooser";
     
@@ -76,6 +78,12 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
 
     /** This is mostly used to preemptively null-out the listener. */
     protected OnFileChangeListener watchListener;
+    
+    /** 
+     * Value is controlled via {@link #ancestorAdded(AncestorEvent)} and
+     * {@link #ancestorRemoved(AncestorEvent)}
+     */
+    private boolean trulyVisible;
     
     /**
      * Create the file chooser
@@ -97,7 +105,8 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
         setAcceptAllFileFilterUsed(false);
         setFileFilter(filter);
         addPropertyChangeListener(this);
-
+        addAncestorListener(this);
+        
         File tmpFile = new File(directory + File.separatorChar + filename);
 //        logger.trace("tmpFile='{}' exists='{}'", tmpFile, tmpFile.exists());
         setSelectedFile(null);
@@ -150,6 +159,7 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
     }
 
     @Override public void propertyChange(PropertyChangeEvent pce) {
+        logger.trace("pce={}",pce);
         String propName = pce.getPropertyName();
         if (propName.equals(SELECTED_FILE_CHANGED_PROPERTY)) {
             // tell the chooser we have a file to load
@@ -253,21 +263,21 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
             
         if ((watchService != null) && (watchListener != null)) {
             logger.trace("now watching '{}'", newPath);
-
+            
             setPath(newPath);
-
+            
             handleStopWatchService(
                 Constants.EVENT_FILECHOOSER_STOP,
                 "changed directory"
             );
-
+            
             handleStartWatchService(
                 Constants.EVENT_FILECHOOSER_START,
                 "new directory"
             );
         }
     }
-
+    
     /**
      * Begin monitoring the directory returned by {@link #getPath()} for
      * changes.
@@ -284,17 +294,17 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
         boolean offscreen = mcv.getArgsManager().getIsOffScreen();
         boolean initDone = mcv.getHaveInitialized();
         String watchPath = getPath();
-        if (!offscreen && initDone) {
+        if (isTrulyVisible() && !offscreen && initDone) {
             try {
                 watchListener = createWatcher();
                 mcv.watchDirectory(watchPath, "*", watchListener);
-//                logger.trace("watching '{}' pattern: '{}' (reason: '{}')", watchPath, "*", reason);
+                logger.trace("watching '{}' pattern: '{}' (reason: '{}')", watchPath, "*", reason);
             } catch (IOException e) {
                 logger.error("error creating watch service", e);
             }
         }
     }
-
+    
     /**
      * Disable directory monitoring (if it was enabled in the first place).
      *
@@ -306,16 +316,15 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
     public void handleStopWatchService(final String topic,
                                        final Object reason)
     {
-//        logger.trace("stopping service (reason: '{}')", reason);
-
+        logger.trace("stopping service (reason: '{}')", reason);
+        
         DirectoryWatchService service = getStaticMcv().getWatchService();
         service.unregister(watchListener);
-
+        
         service = null;
         watchListener = null;
-//        logger.trace("should be good to go!");
     }
-
+    
     /**
      * Creates a directory monitoring
      * {@link edu.wisc.ssec.mcidasv.util.pathwatcher.Service service}.
@@ -324,24 +333,25 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
      */
     private OnFileChangeListener createWatcher() {
         watchListener = new OnFileChangeListener() {
+            
+            /** {@inheritDoc} */
             @Override public void onFileCreate(String filePath) {
-                logger.trace("file created: '{}'", filePath);
                 DirectoryWatchService service = getStaticMcv().getWatchService();
                 if (service.isRunning()) {
                     SwingUtilities.invokeLater(() -> rescanCurrentDirectory());
                 }
             }
-
+            
+            /** {@inheritDoc} */
             @Override public void onFileModify(String filePath) {
-                logger.trace("file modified: '{}'", filePath);
                 DirectoryWatchService service = getStaticMcv().getWatchService();
                 if (service.isRunning()) {
                     SwingUtilities.invokeLater(() -> rescanCurrentDirectory());
                 }
             }
-
+            
+            /** {@inheritDoc} */
             @Override public void onFileDelete(String filePath) {
-                logger.trace("file deleted: '{}'", filePath);
                 DirectoryWatchService service = getStaticMcv().getWatchService();
                 if (service.isRunning()) {
                     SwingUtilities.invokeLater(() -> rescanCurrentDirectory());
@@ -350,4 +360,54 @@ public class TLEFileChooser extends JFileChooser implements PropertyChangeListen
         };
         return watchListener;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override public void ancestorAdded(AncestorEvent ancestorEvent) {
+        // keep the calls to setTrulyVisible as the first step. that way 
+        // isTrulyVisible should work as expected.
+        setTrulyVisible(true);
+        
+        handleStartWatchService(Constants.EVENT_FILECHOOSER_START, "chooser is visible");
+        SwingUtilities.invokeLater(this::rescanCurrentDirectory);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override public void ancestorRemoved(AncestorEvent ancestorEvent) {
+        // keep the calls to setTrulyVisible as the first step. that way 
+        // isTrulyVisible should work as expected.
+        setTrulyVisible(false);
+        
+        handleStopWatchService(Constants.EVENT_FILECHOOSER_STOP, "chooser is not visible");
+        
+    }
+    
+    /**
+     * Not implemented.
+     * 
+     * @param ancestorEvent Ignored.
+     */
+    @Override public void ancestorMoved(AncestorEvent ancestorEvent) {}
+    
+    /**
+     * Determine if this file chooser is actually visible to the user.
+     * 
+     * @return Whether or not this component has been made visible.
+     */
+    public boolean isTrulyVisible() {
+        return trulyVisible;
+    }
+    
+    /**
+     * Set whether or not this file chooser is actually visible to the user.
+     * 
+     * @param value {@code true} means visible.
+     */
+    private void setTrulyVisible(boolean value) {
+        trulyVisible = value;
+    }
+    
 }

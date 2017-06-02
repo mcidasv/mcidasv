@@ -35,21 +35,21 @@ package edu.wisc.ssec.mcidasv.util.pathwatcher;
  * watch is changed.
  */
 public interface OnFileChangeListener {
-
+    
     /**
      * Called when a file is created.
      *
      * @param filePath Path to file that was created.
      */
     default void onFileCreate(String filePath) {}
-
+    
     /**
      * Called when a file is modified.
      *
      * @param filePath Path to file that was modified.
      */
     default void onFileModify(String filePath) {}
-
+    
     /**
      * Called when a file is deleted.
      *
