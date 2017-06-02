@@ -56,4 +56,11 @@ public interface OnFileChangeListener {
      * @param filePath Path to file that was removed.
      */
     default void onFileDelete(String filePath) {}
+    
+    /**
+     * Called when the path being watched has been deleted.
+     * 
+     * @param filePath Path that was being watched.
+     */
+    default void onWatchInvalidation(String filePath) {}
 }

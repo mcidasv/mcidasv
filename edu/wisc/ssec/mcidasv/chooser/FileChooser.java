@@ -41,8 +41,11 @@ import java.awt.Insets;
 
 import java.beans.PropertyChangeListener;
 
+import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.ArrayList;
@@ -263,6 +266,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      * Override the base class method to catch the do update
      */
     public void doUpdate() {
+        fileChooser.setCurrentDirectory(new File(getPath()));
         fileChooser.rescanCurrentDirectory();
     }
     
@@ -398,11 +402,9 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      */
     protected PropertyChangeListener createPropertyListener() {
         return evt -> {
-            logger.trace("prop change: evt={}", evt);
             String name = evt.getPropertyName();
             if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(name)) {
                 String newPath = evt.getNewValue().toString();
-                logger.trace("old: '{}', new: '{}'", getPath(), newPath);
                 handleChangeWatchService(newPath);
             }
         };
@@ -439,6 +441,9 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      *
      * <p>If the path in the user's preferences is {@code null}
      * (or does not exist), {@code defaultValue} will be returned.</p>
+     * 
+     * <p>If there is a nonexistent path in the preferences file, 
+     * {@link #findValidParent(String)} will be used.</p>
      *
      * @param defaultValue Default path to use if there is a {@literal "bad"}
      *                     path in the user's preferences.
@@ -451,8 +456,10 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
     public String getPath(final String defaultValue) {
         Objects.requireNonNull(defaultValue, "Default value may not be null");
         String tempPath = (String)idv.getPreference(PREF_DEFAULTDIR + getId());
-        if ((tempPath == null) || !Paths.get(tempPath).toFile().exists()) {
+        if ((tempPath == null)) {
             tempPath = defaultValue;
+        } else if (!Files.exists(Paths.get(tempPath))) {
+            tempPath = findValidParent(tempPath);
         }
         return tempPath;
     }
@@ -468,19 +475,15 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
     public void handleChangeWatchService(final String newPath) {
         DirectoryWatchService watchService = getStaticMcv().getWatchService();
         if (watchService != null && watchListener != null) {
-            logger.trace("now watching '{}'", newPath);
+            logger.trace("trying to watch '{}'", newPath);
             
             setPath(newPath);
             
-            handleStopWatchService(
-                Constants.EVENT_FILECHOOSER_STOP,
-                "changed directory"
-            );
+            handleStopWatchService(Constants.EVENT_FILECHOOSER_STOP,
+                                   "changed directory");
             
-            handleStartWatchService(
-                Constants.EVENT_FILECHOOSER_START,
-                "new directory"
-            );
+            handleStartWatchService(Constants.EVENT_FILECHOOSER_START,
+                                    "new directory");
         }
     }
     
@@ -500,11 +503,18 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         boolean offscreen = mcv.getArgsManager().getIsOffScreen();
         boolean initDone = mcv.getHaveInitialized();
         String watchPath = getPath();
-        if (isTrulyVisible() && !offscreen && initDone) {
+        
+        DirectoryWatchService watchService = getStaticMcv().getWatchService();
+        if (!watchService.isRunning()) {
+            logger.warn("watch service is down! attempting restart...");
+            watchService.start();
+        }
+        
+        if ((watchListener == null) && isTrulyVisible() && !offscreen && initDone) {
             try {
                 watchListener = createWatcher();
                 mcv.watchDirectory(watchPath, "*", watchListener);
-                logger.trace("watching '{}' pattern: '{}' (reason: '{}')", watchPath, "*", reason);
+                logger.trace("watching '{}' pattern: '{}' running: '{}' (reason: '{}')", watchPath, "*", watchService.isRunning(), reason);
             } catch (IOException e) {
                 logger.error("error creating watch service", e);
             }
@@ -561,11 +571,40 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
             @Override public void onFileDelete(String filePath) {
                 DirectoryWatchService service = getStaticMcv().getWatchService();
                 if ((fileChooser != null) && service.isRunning()) {
+                    setPath(findValidParent(filePath));
+                    SwingUtilities.invokeLater(() -> doUpdate());
+                }
+            }
+            
+            /** {@inheritDoc} */
+            @Override public void onWatchInvalidation(String filePath) {
+                DirectoryWatchService service = getStaticMcv().getWatchService();
+                if ((fileChooser != null) && service.isRunning()) {
+                    setPath(findValidParent(filePath));
                     SwingUtilities.invokeLater(() -> doUpdate());
                 }
             }
         };
         return watchListener;
+    }
+
+    /**
+     * Find the closest valid {@literal "parent"} of the given path.
+     * 
+     * <p>Example: {@code /tmp/foo/bar/baz/} is {@code filePath}, but only 
+     * {@code /tmp/foo} exists. This method will return {@code /tmp/foo}.</p>
+     * 
+     * @param filePath Path to use a base. Cannot be {@code null}, but the path
+     *                 does not need to exist.
+     * 
+     * @return Closest existing ancestor of {@code filePath}.
+     */
+    public static String findValidParent(String filePath) {
+        Path p = Paths.get(filePath);
+        while (!Files.exists(p)) {
+            p = p.getParent();
+        }
+        return p.toString();
     }
     
     private JLabel statusLabel = new JLabel("Status");
@@ -700,7 +739,8 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         // isTrulyVisible should work as expected.
         setTrulyVisible(true);
         
-        handleStartWatchService(Constants.EVENT_FILECHOOSER_START, "chooser is visible");
+        handleStartWatchService(Constants.EVENT_FILECHOOSER_START, 
+                                "chooser is visible");
         SwingUtilities.invokeLater(this::doUpdate);
     }
     
@@ -710,7 +750,8 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         // isTrulyVisible should work as expected.
         setTrulyVisible(false);
         
-        handleStopWatchService(Constants.EVENT_FILECHOOSER_STOP, "chooser is not visible");
+        handleStopWatchService(Constants.EVENT_FILECHOOSER_STOP, 
+                               "chooser is not visible");
     }
     
     /**
@@ -735,7 +776,6 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      * @param value {@code true} means visible.
      */
     private void setTrulyVisible(boolean value) {
-        logger.trace("currently: {} newval: {}", trulyVisible, value);
         trulyVisible = value;
     }
     

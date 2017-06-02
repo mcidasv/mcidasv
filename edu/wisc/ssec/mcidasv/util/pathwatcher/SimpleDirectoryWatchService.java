@@ -340,6 +340,18 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
             }
         }
     }
+
+    /**
+     * Method responsible for notifying listeners when the path they are 
+     * watching has been deleted (or otherwise {@literal "invalidated"} 
+     * somehow).
+     * 
+     * @param key Key that has become invalid. Cannot be {@code null}.
+     */
+    private void notifyListenersOfInvalidation(WatchKey key) {
+        Path dir = getDirPath(key);
+        getListeners(dir).forEach(l -> l.onWatchInvalidation(dir.toString()));
+    }
     
     /**
      * {@inheritDoc}
@@ -388,14 +400,14 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
      */
     public void unregister(OnFileChangeListener listener) {
         Path dir = getDir(listener);
-
+        
         mDirPathToListenersMap.get(dir).remove(listener);
-
+        
         // is this step truly needed?
         if (mDirPathToListenersMap.get(dir).isEmpty()) {
             mDirPathToListenersMap.remove(dir);
         }
-
+        
         mListenerToFilePatternsMap.remove(listener);
         
         WatchKey key = getWatchKey(dir);
@@ -478,10 +490,10 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
             // Reset key to allow further events for this key to be processed.
             boolean valid = key.reset();
             if (!valid) {
+                // order matters here; if you remove the key first, we can't
+                // work out who the appropriate listeners are.
+                notifyListenersOfInvalidation(key);
                 mWatchKeyToDirPathMap.remove(key);
-                if (mWatchKeyToDirPathMap.isEmpty()) {
-                    break;
-                }
             }
         }
         

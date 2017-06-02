@@ -32,6 +32,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 
@@ -232,6 +233,9 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
      * <p>If the path in the user's preferences is {@code null}
      * (or does not exist), {@code defaultValue} will be returned.</p>
      *
+     * <p>If there is a nonexistent path in the preferences file, 
+     * {@link FileChooser#findValidParent(String)} will be used.</p>
+     *
      * @param defaultValue Default path to use if there is a {@literal "bad"}
      *                     path in the user's preferences.
      *                     Cannot be {@code null}.
@@ -242,9 +246,12 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
      */
     public String getPath(final String defaultValue) {
         Objects.requireNonNull(defaultValue, "Default value may not be null");
-        String tempPath = (String)potc.getIdv().getPreference(PREF_DEFAULTDIR + ID);
-        if ((tempPath == null) || !Paths.get(tempPath).toFile().exists()) {
+        String prop = PREF_DEFAULTDIR + ID;
+        String tempPath = (String)potc.getIdv().getPreference(prop);
+        if ((tempPath == null)) {
             tempPath = defaultValue;
+        } else if (!Files.exists(Paths.get(tempPath))) {
+            tempPath = FileChooser.findValidParent(tempPath);
         }
         return tempPath;
     }
@@ -266,15 +273,11 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
             
             setPath(newPath);
             
-            handleStopWatchService(
-                Constants.EVENT_FILECHOOSER_STOP,
-                "changed directory"
-            );
+            handleStopWatchService(Constants.EVENT_FILECHOOSER_STOP,
+                                   "changed directory");
             
-            handleStartWatchService(
-                Constants.EVENT_FILECHOOSER_START,
-                "new directory"
-            );
+            handleStartWatchService(Constants.EVENT_FILECHOOSER_START,
+                                    "new directory");
         }
     }
     
@@ -298,7 +301,8 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
             try {
                 watchListener = createWatcher();
                 mcv.watchDirectory(watchPath, "*", watchListener);
-                logger.trace("watching '{}' pattern: '{}' (reason: '{}')", watchPath, "*", reason);
+                logger.trace("watching '{}' pattern: '{}' (reason: '{}')", 
+                             watchPath, "*", reason);
             } catch (IOException e) {
                 logger.error("error creating watch service", e);
             }
@@ -336,7 +340,8 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
             
             /** {@inheritDoc} */
             @Override public void onFileCreate(String filePath) {
-                DirectoryWatchService service = getStaticMcv().getWatchService();
+                DirectoryWatchService service = 
+                    getStaticMcv().getWatchService();
                 if (service.isRunning()) {
                     SwingUtilities.invokeLater(() -> rescanCurrentDirectory());
                 }
@@ -344,7 +349,8 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
             
             /** {@inheritDoc} */
             @Override public void onFileModify(String filePath) {
-                DirectoryWatchService service = getStaticMcv().getWatchService();
+                DirectoryWatchService service = 
+                    getStaticMcv().getWatchService();
                 if (service.isRunning()) {
                     SwingUtilities.invokeLater(() -> rescanCurrentDirectory());
                 }
@@ -352,13 +358,32 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
             
             /** {@inheritDoc} */
             @Override public void onFileDelete(String filePath) {
-                DirectoryWatchService service = getStaticMcv().getWatchService();
-                if (service.isRunning()) {
-                    SwingUtilities.invokeLater(() -> rescanCurrentDirectory());
-                }
+                refreshIfNeeded(filePath);
+            }
+            
+            /** {@inheritDoc} */
+            @Override public void onWatchInvalidation(String filePath) {
+                refreshIfNeeded(filePath);
             }
         };
         return watchListener;
+    }
+
+    /**
+     * Used to handle the {@link OnFileChangeListener#onFileDelete(String)} and
+     * {@link OnFileChangeListener#onWatchInvalidation(String)} events.
+     * 
+     * @param filePath Path of interest. Cannot be {@code null}.
+     */
+    private void refreshIfNeeded(String filePath) {
+        DirectoryWatchService service = getStaticMcv().getWatchService();
+        if (service.isRunning()) {
+            setPath(FileChooser.findValidParent(filePath));
+            SwingUtilities.invokeLater(() -> {
+                setCurrentDirectory(new File(getPath()));
+                rescanCurrentDirectory();
+            });
+        }
     }
     
     /**
@@ -369,7 +394,8 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
         // isTrulyVisible should work as expected.
         setTrulyVisible(true);
         
-        handleStartWatchService(Constants.EVENT_FILECHOOSER_START, "chooser is visible");
+        handleStartWatchService(Constants.EVENT_FILECHOOSER_START, 
+                                "chooser is visible");
         SwingUtilities.invokeLater(this::rescanCurrentDirectory);
     }
     
@@ -381,7 +407,8 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
         // isTrulyVisible should work as expected.
         setTrulyVisible(false);
         
-        handleStopWatchService(Constants.EVENT_FILECHOOSER_STOP, "chooser is not visible");
+        handleStopWatchService(Constants.EVENT_FILECHOOSER_STOP, 
+                               "chooser is not visible");
         
     }
     
