@@ -65,35 +65,20 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.toedter.calendar.IDateEditor;
-import edu.wisc.ssec.mcidasv.ui.JCalendarDateEditor;
-import org.bushe.swing.event.annotation.AnnotationProcessor;
-import org.bushe.swing.event.annotation.EventTopicSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import edu.wisc.ssec.mcidas.AreaDirectory;
-import edu.wisc.ssec.mcidas.AreaDirectoryList;
-import edu.wisc.ssec.mcidas.McIDASException;
-import edu.wisc.ssec.mcidas.adde.AddeURLException;
-import edu.wisc.ssec.mcidas.adde.AddeSatBands;
-import edu.wisc.ssec.mcidas.adde.AddeURL;
-
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.idv.DisplayControl;
-import ucar.unidata.idv.control.DisplayControlImpl;
-import visad.DateTime;
-import visad.Gridded1DSet;
-import visad.VisADException;
-
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.AddeImageInfo;
 import ucar.unidata.data.imagery.BandInfo;
@@ -114,10 +99,18 @@ import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 import ucar.visad.UtcDate;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import visad.DateTime;
+import visad.Gridded1DSet;
+import visad.VisADException;
 
+import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidas.AreaDirectoryList;
+import edu.wisc.ssec.mcidas.McIDASException;
+import edu.wisc.ssec.mcidas.adde.AddeSatBands;
+import edu.wisc.ssec.mcidas.adde.AddeURL;
+import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
+import edu.wisc.ssec.mcidasv.ui.JCalendarDateEditor;
 import edu.wisc.ssec.mcidasv.ui.JCalendarPicker;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
@@ -128,6 +121,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * 
  * @author Don Murray
  */
+
 public class AddeImageChooser extends AddeChooser implements
         ucar.unidata.ui.imagery.ImageSelector {
 
@@ -232,6 +226,9 @@ public class AddeImageChooser extends AddeChooser implements
 
     /** archive date */
     protected String archiveDay = null;
+    
+    /** number of image times to list */
+    protected String numTimes = "all";
 
     /** Holds the properties */
     private JPanel propPanel;
@@ -239,7 +236,9 @@ public class AddeImageChooser extends AddeChooser implements
     /** Archive day selector button. */
     protected JButton archiveDayBtn;
 
-    protected JButton allImagesButton;
+    protected JButton numImagesButton;
+    
+    protected JTextField imageCountTextField;
 
     /** Maps the PROP_ property name to the gui component */
     private Hashtable propToComps = new Hashtable();
@@ -375,6 +374,8 @@ public class AddeImageChooser extends AddeChooser implements
      */
     private static final int SLIDER_MAX = 29;
 
+    private static final String DEFAULT_ARCHIVE_IMAGE_COUNT = "100";
+
     /**
      * the list of band infos
      */
@@ -398,15 +399,58 @@ public class AddeImageChooser extends AddeChooser implements
         archiveDayBtn.addActionListener(e -> getArchiveDay());
         archiveDayBtn.setToolTipText("Select a day for archive datasets");
 
-        allImagesButton = new JButton("List All Images");
-        allImagesButton.addActionListener(e -> readTimes(true));
-        allImagesButton.setToolTipText("<html>By default, up to the 100 most " +
-            "recent times are listed.<br/><br/>Clicking this button will ask " +
-            "the server for ALL relevant times.<br/>This may take awhile for" +
+        numImagesButton = new JButton("List Images");
+        numImagesButton.addActionListener(e -> readTimes(false));
+        numImagesButton.setToolTipText("<html>By default, up to the 100 most " +
+            "recent times are listed.<br/><br/>For a different image count, " +
+            "provide a positive integer in<br/>the adjacent text box,  " +                
+            "or \"ALL\" for ALL relevant times.<br/><br/>Choosing ALL may be slow for" +
             " datasets with many times.</html>");
-//        allImagesLabel = new JLabel("List All");
+        
+        // Initialize the image count to default
+        imageCountTextField = new JTextField(AddeImageChooser.DEFAULT_ARCHIVE_IMAGE_COUNT, 4);
+        imageCountTextField.setToolTipText("<html>By default, up to the 100 most " +
+            "recent times are listed.<br/><br/>You may set this field to any positive " +
+            "integer, or the value ALL.<br/>Using ALL may take awhile for" +
+            " datasets with many times.</html>");
 
         this.addeDefaults = getImageDefaults();
+    }
+
+    /**
+     * Number of absolute times to list in the chooser. 
+     * Must be a positive integer, or the word "ALL".
+     * Will throw up a dialog for invalid entries.
+     * 
+     * @return 0 for valid entries, -1 for invalid
+     */
+    
+    private int parseImageCount() {
+        String countStr = imageCountTextField.getText();
+        try {
+            int newCount = Integer.parseInt(countStr);
+            // Make sure it's reasonable 
+            if (newCount > 0) {
+                int addeParam = 0 - newCount + 1;
+                numTimes = "" + addeParam;
+            } else {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException nfe) {
+            // Still ok if they entered "ALL"
+            if (imageCountTextField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                        "Empty field, please enter a valid positive integer");
+                return -1;
+            }
+            if (! imageCountTextField.getText().equalsIgnoreCase("all")) {
+                JOptionPane.showMessageDialog(this, 
+                        "Invalid entry: " + imageCountTextField.getText());
+                return -1;
+            }
+            numTimes = imageCountTextField.getText();
+        }
+        return 0;
     }
 
     /**
@@ -1080,7 +1124,8 @@ public class AddeImageChooser extends AddeChooser implements
     @Override protected JPanel makeTimesPanel() {
         JPanel panel =
             super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
-        underTimelistPanel.add(BorderLayout.WEST, allImagesButton);
+        underTimelistPanel.add(BorderLayout.WEST, numImagesButton);
+        underTimelistPanel.add(BorderLayout.CENTER, imageCountTextField);
         underTimelistPanel.add(BorderLayout.EAST, archiveDayBtn);
         return panel;
     }
@@ -1254,6 +1299,10 @@ public class AddeImageChooser extends AddeChooser implements
     }
 
     public void readTimes(boolean forceAll) {
+        
+        // Make sure there is a valid entry in the image count text field
+        if (parseImageCount() < 0) return;
+        
         clearTimesList();
         if (!canReadTimes()) {
             return;
@@ -1292,7 +1341,8 @@ public class AddeImageChooser extends AddeChooser implements
      */
     protected void readTimesInner(boolean forceAll) {
         String descriptor = getDescriptor();
-        String archivePosition = forceAll ? "all" : "-99";
+        // String archivePosition = forceAll ? "all" : numTimes;
+        String archivePosition = numTimes;
         String pos = (getDoAbsoluteTimes() || (archiveDay != null))
                       ? archivePosition
                       : "0";
