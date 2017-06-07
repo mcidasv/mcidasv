@@ -1,5 +1,7 @@
 """Classes for 'Pythonic' usage of ISL formatting capabilities."""
 
+import os
+
 class ImageFormatting(object):
     
     """Base class for ISL formatting objects."""
@@ -85,6 +87,8 @@ class ImageOverlay(ImageFormatting):
             scale: Not currently functional.
         """
         if image is not None:
+            if not os.path.exists(image):
+                raise IOError("Image Overlay file '%s' does not exist" % (image))
             self.image = 'image=%s' % (image)
         else:
             from ucar.unidata.util.GuiUtils import MISSING_IMAGE
