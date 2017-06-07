@@ -210,6 +210,8 @@ public class ADTControl extends DisplayControlImpl {
     
     private JButton PMWFileBtn;
     
+    private JRadioButton manButton;
+    
     /** _more_ */
     private JComboBox<String> forecastTypeBox;
 
@@ -251,7 +253,7 @@ public class ADTControl extends DisplayControlImpl {
         probe = new PointProbe(new RealTuple(RealTupleType.SpatialEarth3DTuple,
                                 new double[] { 0, 0, 0 }));
 
-        probe.setManipulable(false);
+        probe.setManipulable(true);
         probe.setVisible(false);
         probe.setAutoSize(true);
 
@@ -263,6 +265,18 @@ public class ADTControl extends DisplayControlImpl {
         
         /* setup window contents in Controls Window */
         setContents(setupMainWindow());
+        
+        // TJJ Jun 2017
+        // We want to initialize probe to display center if in Manual mode
+        NavigatedDisplay d = getNavigatedDisplay();
+        if (manButton.isSelected()) {
+            if (d != null) {
+                EarthLocation el = d.getCenterPoint();
+                logger.debug("Initializing probe location to: " + el.getLatitude() + ", " + el.getLongitude());
+                probeLocation = el.getLatLonPoint();
+                probe.setVisible(true);
+            }
+        }
         updateProbeLocation();
         return true;
 
@@ -277,7 +291,7 @@ public class ADTControl extends DisplayControlImpl {
 
         /* add Manual or Automated storm centering buttons */
 
-        JRadioButton manButton = new JRadioButton("Manual");
+        manButton = new JRadioButton("Manual");
         manButton.setActionCommand("Manual");
         manButton.setSelected(true);
         manButton.setToolTipText("Manually Select Storm Center In Image");
