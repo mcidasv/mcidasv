@@ -941,9 +941,13 @@
     <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
       <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
-
+      
+      <!-- required for jython stuff to work without jigsaw-specific changes -->
+      <jvmarg value="--permit-illegal-access"/>
       <jvmarg value="--add-exports" />
       <jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />
+      <jvmarg value="--add-exports" />
+      <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
       <jvmarg value="--add-exports" />
       <jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />
       <jvmarg value="--add-exports" />
@@ -1027,9 +1031,13 @@
         <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
             <classpath refid="app.classpath" />
             <assertions refid="mcv.assertions"/>
-
+            
+            <!-- required for jython stuff to work without jigsaw-specific changes -->
+            <jvmarg value="--permit-illegal-access"/>
             <jvmarg value="--add-exports" />
             <jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
             <jvmarg value="--add-exports" />
             <jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />
             <jvmarg value="--add-exports" />
