@@ -1418,11 +1418,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 cbx.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
             }
 
-            // TJJ May 2017 Leave logo visibility out, since that is now moved to logo panel
+            // TJJ May 2017 
+            // Leave logo visibility out of UI, since that is now moved to logo panel
             // This block prevents that checkbox from being added to top panel
             if (! bp.getId().equals(PREF_LOGO_VISIBILITY)) {
                 propertiesMap.put(cbx, bp);
                 props.add(GuiUtils.left(cbx));
+            } else {
+                // we DO want the checkbox added to map of properties monitored, just not the UI
+                propertiesMap.put(cbx, bp);
             }
         }
 
@@ -2058,7 +2062,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 getMaster().setDisplayAspect(aspectRatio);
             }
 
-            // setLogoVisibility(logoVisCbx.isSelected());
+            setLogoVisibility(logoVisCbx.isSelected());
             logoFile = logoFileField.getText().trim();
 
             // setLogoAnchor(((TwoFacedObject) logoAnchorBox.getSelectedItem()).getId().toString());
