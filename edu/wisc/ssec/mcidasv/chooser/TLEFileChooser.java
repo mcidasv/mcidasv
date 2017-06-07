@@ -146,7 +146,6 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
      * Approve the selection
      */
     @Override public void approveSelection() {
-        logger.trace("firing");
         super.approveSelection();
         potc.doLoad();
     }
@@ -160,14 +159,12 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
     }
 
     @Override public void propertyChange(PropertyChangeEvent pce) {
-        logger.trace("pce={}",pce);
         String propName = pce.getPropertyName();
         if (propName.equals(SELECTED_FILE_CHANGED_PROPERTY)) {
             // tell the chooser we have a file to load
             handleFileChanged();
         } else if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(propName)) {
             String newPath = pce.getNewValue().toString();
-            logger.trace("old: '{}', new: '{}'", getPath(), newPath);
             handleChangeWatchService(newPath);
         }
     }
@@ -188,9 +185,6 @@ public class TLEFileChooser extends JFileChooser implements AncestorListener, Pr
                     potc.getIdv().getStateManager().writePreference(
                         potcFileId, file
                     );
-
-                    logger.trace("potcId='{}' value='{}'", potcId, dir);
-                    logger.trace("potcFileId='{}' value='{}'", potcFileId, file);
                     potc.enableLoadFromFile(true);
                 }
             } else {
