@@ -76,10 +76,9 @@ import java.util.List;
 import java.util.Vector;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
@@ -199,6 +198,8 @@ public class TimesChooser extends IdvChooser {
     /** the time driver component */
     protected JComponent timeDriverComp = null;
 
+    private int relativeTimes = 5;
+    
     /**
      * Create me.
      *
@@ -223,6 +224,14 @@ public class TimesChooser extends IdvChooser {
             return false;
         }
         return timesList.getModel().getSize() > 0;
+//        boolean result = false;
+//        try {
+//            int value = Integer.valueOf(relativeTimesField.getText());
+//            result = value > 0;
+//        } catch (NumberFormatException ex) {
+//            logger.warn("value must be an integer");
+//        }
+//        return result;
     }
 
 
@@ -701,10 +710,15 @@ public class TimesChooser extends IdvChooser {
         timesContainer     = GuiUtils.center(timesCardPanel);
         timesTab           = GuiUtils.getNestedTabbedPane();
         this.usingTimeline = useTimeLine;
+//        timesTab.add(
+//            "Relative",
+//            GuiUtils.centerBottom(
+//                getRelativeTimesList().getScroller(), relativeExtra));
+    
         timesTab.add(
             "Relative",
             GuiUtils.centerBottom(
-                getRelativeTimesList().getScroller(), relativeExtra));
+                getRelativeTimesChooser(), relativeExtra));
         if (useTimeLine) {
             //                timesTab.add("Timeline", timeline.getContents(false));
             timesList.getScroller().setHorizontalScrollBarPolicy(
@@ -1407,12 +1421,30 @@ public class TimesChooser extends IdvChooser {
 
 
     /**
-     * Create (if needed) and return the list that shows times.
-     *
-     * @return The times list.
+     * Create the widget responsible for handling relative time selection.
+     * 
+     * @return GUI widget.
      */
     public JComponent getRelativeTimesChooser() {
-        return getRelativeTimesList().getScroller();
+        JTextField relativeTimesField = 
+            McVGuiUtils.makeTextFieldAllow(String.valueOf(relativeTimes), 
+                                           0, 
+                                            false, 
+                                           '0', '1', '2', '3', '4', '5', 
+                                           '6', '7','8','9');
+                                           
+        relativeTimesField.addActionListener(e -> {
+            int old = relativeTimes;
+            String newVal = ((JTextField)e.getSource()).getText();
+            relativeTimes = Integer.valueOf(newVal);
+            logger.trace("old: {} new: {}", old, relativeTimes);
+        });
+
+        JPanel panel = GuiUtils.top(GuiUtils.label("Most Recent Images:", 
+                                                   relativeTimesField));
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setPreferredSize(new Dimension(120, 100));
+        return scrollPane;
     }
 
 
@@ -1422,13 +1454,11 @@ public class TimesChooser extends IdvChooser {
      * @return an array of indices
      */
     public int[] getRelativeTimeIndices() {
-        int   count   = getRelativeTimesList().getSelectedIndex() + 1;
-        int[] indices = new int[count];
+        int[] indices = new int[relativeTimes];
         for (int i = 0; i < indices.length; i++) {
             indices[i] = i;
         }
         return indices;
-        //        return getRelativeTimesList().getSelectedIndices();
     }
 
 
