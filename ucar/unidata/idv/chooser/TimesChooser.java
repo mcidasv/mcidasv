@@ -1428,7 +1428,7 @@ public class TimesChooser extends IdvChooser {
     public JComponent getRelativeTimesChooser() {
         JTextField relativeTimesField = 
             McVGuiUtils.makeTextFieldAllow(String.valueOf(relativeTimes), 
-                                           0, 
+                                           4, 
                                             false, 
                                            '0', '1', '2', '3', '4', '5', 
                                            '6', '7','8','9');
@@ -1439,11 +1439,12 @@ public class TimesChooser extends IdvChooser {
             relativeTimes = Integer.valueOf(newVal);
             logger.trace("old: {} new: {}", old, relativeTimes);
         });
-
-        JPanel panel = GuiUtils.top(GuiUtils.label("Most Recent Images:", 
-                                                   relativeTimesField));
+        
+        JPanel panel = 
+            GuiUtils.topLeft(GuiUtils.label("Number of images: ",
+                                            relativeTimesField));
         JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setPreferredSize(new Dimension(120, 100));
+        scrollPane.setPreferredSize(new Dimension(150, 100));
         return scrollPane;
     }
 

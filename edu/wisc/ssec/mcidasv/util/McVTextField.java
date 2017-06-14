@@ -179,24 +179,24 @@ public class McVTextField extends JTextField {
         if (characters == null) {
             return null;
         }
-        String string = ".*";
+        StringBuilder string = new StringBuilder(".*");
         if (characters.length > 0) {
-            string = "[";
+            string = new StringBuilder("[");
             for (char c : characters) {
                 if (c == '[') {
-                    string += "\\[";
+                    string.append("\\[");
                 } else if (c == ']') {
-                    string += "\\]";
+                    string.append("\\]");
                 } else if (c == '\\') {
-                    string += "\\\\";
+                    string.append("\\\\");
                 } else {
-                    string += c;
+                    string.append(c);
                 }
             }
-            string += "]";
+            string.append("]");
         }
         try {
-            return Pattern.compile(string);
+            return Pattern.compile(string.toString());
         } catch (PatternSyntaxException e) {
             return null;
         }
@@ -242,10 +242,11 @@ public class McVTextField extends JTextField {
     
     private void addInputVerifier() {
         this.setInputVerifier(new InputVerifier() {
-            public boolean verify(JComponent comp) {
+            @Override public boolean verify(JComponent comp) {
                 return verifyInput();
             }
-            public boolean shouldYieldFocus(JComponent comp) {
+            
+            @Override public boolean shouldYieldFocus(JComponent comp) {
                 boolean valid = verify(comp);
                 if (!valid) {
                     getToolkit().beep();
@@ -319,9 +320,9 @@ public class McVTextField extends JTextField {
             // have patterns
             if (hasPatterns) {
                 char[] characters = str.toCharArray();
-                String okString = "";
+                StringBuilder okString = new StringBuilder(characters.length);
                 for (char c : characters) {
-                    String s = "" + c;
+                    String s = String.valueOf(c);
                     if (deny != null) {
                         Matcher denyMatch = deny.matcher(s);
                         if (denyMatch.matches()) {
@@ -331,13 +332,13 @@ public class McVTextField extends JTextField {
                     if (allow != null) {
                         Matcher allowMatch = allow.matcher(s);
                         if (allowMatch.matches()) {
-                            okString += s;
+                            okString.append(s);
                         }
                     }
                 }
-                str = okString;
+                str = okString.toString();
             }
-            if (str.equals("")) {
+            if (str.isEmpty()) {
                 return;
             }
             
@@ -383,7 +384,7 @@ public class McVTextField extends JTextField {
                                                          DocumentListener 
     {
         
-        public enum FocusBehavior { ALWAYS, FOCUS_GAINED, FOCUS_LOST };
+        public enum FocusBehavior { ALWAYS, FOCUS_GAINED, FOCUS_LOST }
         
         private final JTextComponent component;
         
@@ -476,24 +477,24 @@ public class McVTextField extends JTextField {
         }
         
         // from FocusListener
-        public void focusGained(FocusEvent e) {
+        @Override public void focusGained(FocusEvent e) {
             checkForPrompt();
         }
-        
-        public void focusLost(FocusEvent e) {
+    
+        @Override public void focusLost(FocusEvent e) {
             focusLost++;
             checkForPrompt();
         }
         
         // from DocumentListener
-        public void insertUpdate(DocumentEvent e) {
+        @Override public void insertUpdate(DocumentEvent e) {
             checkForPrompt();
         }
-        
-        public void removeUpdate(DocumentEvent e) {
+    
+        @Override public void removeUpdate(DocumentEvent e) {
             checkForPrompt();
         }
-        
-        public void changedUpdate(DocumentEvent e) {}
+    
+        @Override public void changedUpdate(DocumentEvent e) {}
     }
 }
