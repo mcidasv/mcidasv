@@ -307,7 +307,7 @@ public class ADTControl extends DisplayControlImpl {
         JLabel autoStormSelectLabel = new JLabel("AUTOMATED STORM SELECTION");
         JLabel forecastSelectLabel = new JLabel("Selected Forecast File:");
     
-        JTextField forecastTextField = new JTextField("No forecast file selected yet", 40);
+        JLabel forecastLabel = new JLabel("No forecast file selected yet");
         
         manButton.addActionListener(ae -> {
             // enable the manual lat/lon text boxes 
@@ -315,7 +315,6 @@ public class ADTControl extends DisplayControlImpl {
             latLonWidget.getLatField().setEnabled(true);
             autoStormSelectLabel.setEnabled(false);
             forecastSelectLabel.setEnabled(false);
-            forecastTextField.setEnabled(false);
             forecastBtn.setEnabled(false);
             forecastTypeBox.setEnabled(false);
             GUIRunAutoTF = false;
@@ -327,7 +326,6 @@ public class ADTControl extends DisplayControlImpl {
             latLonWidget.getLatField().setEnabled(false);
             autoStormSelectLabel.setEnabled(true);
             forecastSelectLabel.setEnabled(true);
-            forecastTextField.setEnabled(true);
             forecastBtn.setEnabled(true);
             forecastTypeBox.setEnabled(true);
             GUIRunAutoTF = true;
@@ -338,8 +336,10 @@ public class ADTControl extends DisplayControlImpl {
         forecastBtn.setPreferredSize(new Dimension(200,30));
         forecastBtn.addActionListener(fbtn -> {
             GUIForecastFileName = selectForecastFile();
-            System.out.printf("forecast file name=%s\n",GUIForecastFileName);
-            forecastTextField.setText(GUIForecastFileName);
+            logger.trace("forecast file name=%s\n", GUIForecastFileName);
+            forecastLabel.setText(
+               GUIForecastFileName.substring(GUIForecastFileName.lastIndexOf(File.separatorChar) + 1)
+            );
         });
 
         forecastTypeBox = new JComboBox<>(FORECAST_TYPES);
@@ -347,13 +347,12 @@ public class ADTControl extends DisplayControlImpl {
         forecastTypeBox.setPreferredSize(new Dimension(150,20));
         forecastTypeBox.addActionListener(ame -> {
             GUIForecastType = forecastTypeBox.getSelectedIndex();
-            System.out.printf("forecast file type=%d\n",GUIForecastType);
+            logger.trace("forecast file type=%d\n", GUIForecastType);
         });
         
         forecastTypeBox.setToolTipText("Select Forecast File type.");
         autoStormSelectLabel.setEnabled(false);
         forecastSelectLabel.setEnabled(false);
-        forecastTextField.setEnabled(false);
         forecastBtn.setEnabled(false);
         forecastTypeBox.setEnabled(false);
 
@@ -694,7 +693,7 @@ public class ADTControl extends DisplayControlImpl {
                     left(hbox(arr(filler(30,1),latlonPanel))), filler(),
                     left(hbox(arr(autoStormSelectLabel), 10)), filler(),
                     left(hbox(arr(filler(30,1),forecastBtn, forecastTypeBox,
-                        forecastSelectLabel, forecastTextField),5)),filler(),
+                        forecastSelectLabel, forecastLabel), 5)), filler(),
                     left(hbox(arr(blankfield))),
                     filler(1,10),
                     left(hbox(arr(new JLabel("HISTORY FILE INFORMATION")), 10)),filler(),
@@ -1318,7 +1317,6 @@ public class ADTControl extends DisplayControlImpl {
     private String selectForecastFile() {
         
         String fileNameReturn = null;
-//        String ForecastPath;
         
         logger.debug("in selectForecastFile");
         JFrame forecastFileFrame = new JFrame();
@@ -1329,7 +1327,7 @@ public class ADTControl extends DisplayControlImpl {
         }
         logger.debug("forecast path={}", forecastPath);
         forecastFileChooser.setCurrentDirectory(new File(forecastPath));
-        forecastFileChooser.setDialogTitle("Select ADT History File");
+        forecastFileChooser.setDialogTitle("Select ADT Forecast File");
         int returnVal = forecastFileChooser.showOpenDialog(forecastFileFrame);
         logger.debug("retVal={}", returnVal);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
