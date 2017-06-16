@@ -88,7 +88,15 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * @author Unidata IDV Development Team
  */
 public class TimesChooser extends IdvChooser {
-
+    
+    /** Label to use with the relative times {@link JTextField}. */
+    private static final String RELATIVE_TIMES_LABEL = "Number of times: ";
+    
+    /** Tooltip for the relative times {@link JTextField}. */
+    private static final String RELATIVE_TIMES_TOOLTIP =
+        "<html>Load the N most recent images.<br/><br/>" +
+        "Values must be integers greater than zero.</html>";
+    
     /** Time matching widget label */
     private static final String TIME_MATCHING_LABEL = "Match Time Driver";
 
@@ -1433,19 +1441,54 @@ public class TimesChooser extends IdvChooser {
                                            '0', '1', '2', '3', '4', '5', 
                                            '6', '7','8','9');
                                            
+        // need to keep *both* the ActionListener and DocumentListener around.
+        // removing the ActionListener results in strange behavior when you've
+        // accidentally cleared out the text field.
         relativeTimesField.addActionListener(e -> {
-            int old = relativeTimes;
             String newVal = ((JTextField)e.getSource()).getText();
-            relativeTimes = Integer.valueOf(newVal);
-            logger.trace("old: {} new: {}", old, relativeTimes);
+            try {
+                relativeTimes = Integer.valueOf(newVal);
+            } catch (NumberFormatException ex) {
+                logger.warn("Could not convert '"+newVal+"' into an int", ex);
+            }
         });
+        relativeTimesField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) {
+                handleRelativeTimeChange(e);
+            }
+            
+            @Override public void removeUpdate(DocumentEvent e) {
+                handleRelativeTimeChange(e);
+            }
+            
+            @Override public void changedUpdate(DocumentEvent e) {
+                handleRelativeTimeChange(e);
+            }
+        });
+        relativeTimesField.setToolTipText(RELATIVE_TIMES_TOOLTIP);
         
         JPanel panel = 
-            GuiUtils.topLeft(GuiUtils.label("Number of images: ",
+            GuiUtils.topLeft(GuiUtils.label(RELATIVE_TIMES_LABEL,
                                             relativeTimesField));
         JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.setPreferredSize(new Dimension(150, 100));
         return scrollPane;
+    }
+    
+    /**
+     * Handle {@link DocumentListener} events for the {@link JTextField} 
+     * created by {@link #getRelativeTimesChooser()}.
+     * 
+     * @param event Event to handle. Cannot be {@code null}.
+     */
+    private void handleRelativeTimeChange(DocumentEvent event) {
+        int len = event.getDocument().getLength();
+        try {
+            String text = event.getDocument().getText(0, len);
+            relativeTimes = Integer.valueOf(text);
+        } catch (BadLocationException | NumberFormatException ex) {
+            logger.warn("Could not get contents of text field!", ex);
+        }
     }
 
 
