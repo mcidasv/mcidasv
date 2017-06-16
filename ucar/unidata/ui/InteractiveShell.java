@@ -333,6 +333,8 @@ public class InteractiveShell implements HyperlinkListener {
 
         commandArea = new RSyntaxTextArea(BLANK, 4, 30);
         ((RSyntaxTextArea)commandArea).setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
+        ((RSyntaxTextArea)commandArea).setTabsEmulated(true);
+        commandArea.setTabSize(4);
         GuiUtils.setFixedWidthFont(commandArea);
         GuiUtils.addKeyBindings(commandArea);
         commandArea.setTabSize(4);
