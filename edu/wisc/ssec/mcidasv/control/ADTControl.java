@@ -228,6 +228,12 @@ public class ADTControl extends DisplayControlImpl {
     private JLabel overrideSceneCurrentValueLabel;
     private JComboBox<String> overrideSceneTypeBox;
     
+    // CKZ params will need to be validated before running
+    JTextField ckzPenvTextField = null;
+    JTextField ckz34radiusTextField = null;
+    private static final String DEFAULT_PENV = "1012";
+    private static final String DEFAULT_RADIUS = "300";
+    
     private JLabel historyLabel;
     
     private static String HistoryListOutput;
@@ -489,12 +495,12 @@ public class ADTControl extends DisplayControlImpl {
         JLabel ckz34radiusLabel = new JLabel("34kt Radius:");
         ckz34radiusLabel.setEnabled(false);
         
-        JTextField ckzPenvTextField = new JTextField("1012", 5);
+        ckzPenvTextField = new JTextField(DEFAULT_PENV, 5);
         ckzPenvTextField.addActionListener(ae -> {
             JTextField src = (JTextField)ae.getSource();
             GUICKZPenv = Integer.valueOf(src.getText());
         });
-        JTextField ckz34radiusTextField = new JTextField("300", 5);
+        ckz34radiusTextField = new JTextField(DEFAULT_RADIUS, 5);
         ckz34radiusTextField.addActionListener(ae -> {
             JTextField src = (JTextField)ae.getSource();
             GUICKZGaleRadius = Integer.valueOf(src.getText());
@@ -1039,6 +1045,54 @@ public class ADTControl extends DisplayControlImpl {
                 return;
             }
             
+            // TJJ Jun 2019 Just about ready, a few more validation checks and we can run          
+            // If CKZ chosen as MSLP Conversion Method, need to validate Penv and 34kt Radius fields
+            // This may not be the best place to do this, but it's better than not doing it ;-)
+            
+            if (GUIUseCKZTF) {
+                
+                String newPenvStr = ckzPenvTextField.getText();
+                try {
+                    int newPenv = Integer.valueOf(newPenvStr);
+                    if (newPenv > 0) {
+                        GUICKZPenv = newPenv;
+                        Env.CKZPenv = GUICKZPenv;
+                    } else {
+                        throw (new NumberFormatException());
+                    }
+                } catch (NumberFormatException nfe) {
+                    // Throw up a warning and bail out
+                    JOptionPane.showMessageDialog(
+                        null, 
+                        "Invalid Penv value: " + newPenvStr + "\n" +
+                        "Please provide a positive integer."
+                    );
+                    ExitADT();
+                    return;
+                }
+                
+                String newRadiusStr = ckz34radiusTextField.getText();
+                try {
+                    int newRadius = Integer.valueOf(newRadiusStr);
+                    if (newRadius > 0) {
+                        GUICKZGaleRadius = newRadius;
+                        Env.CKZGaleRadius = GUICKZGaleRadius;
+                    } else {
+                        throw (new NumberFormatException());
+                    }
+                } catch (NumberFormatException nfe) {
+                    // Throw up a warning and bail out
+                    JOptionPane.showMessageDialog(
+                        null, 
+                        "Invalid Radius value: " + newRadiusStr + "\n" +
+                        "Please provide a positive integer."
+                    );
+                    ExitADT();
+                    return;
+                }
+                
+            }
+             
             try {
                 logger.debug("RUNNING ADT ANALYSIS");
                 ADTRunOutput = StormADT.RunADTAnalysis(runFullADTAnalysis,GUIHistoryFileName);
