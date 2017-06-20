@@ -120,7 +120,7 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
   private SelectorPoint locOnTrack;
 
   private DecimalFormat numFmt = new DecimalFormat();
-
+  
 
   public ProfileAlongTrackControl() {
     super();
@@ -182,8 +182,12 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
     if (dataChoice == null) {
        return null;
     }
+   
+    Hashtable table = dataChoice.getProperties();
+    table.put(MultiDimensionSubset.key, subset);
+    
 
-    track = (FlatField) dataSource.getData(dataSource.findDataChoice("Track3D"), null, getDataSelection(), dataSource.getProperties());
+    track = (FlatField) dataSource.getData(dataChoice, null, getDataSelection(), dataSource.getProperties());
 
     LineDrawing trackDsp = new LineDrawing("track");
     trackDsp.setLineWidth(2f);

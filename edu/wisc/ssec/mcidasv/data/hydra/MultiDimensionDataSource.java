@@ -301,6 +301,88 @@ public class MultiDimensionDataSource extends HydraDataSource {
             categoriesArray[arrayNames.length+k] = DataCategory.parseCategories("5km swath;GRID-2D;");
           }
        }
+       else if (name.contains("HSRL2_B200") && name.endsWith(".h5")) {
+         Map<String, Object> table;
+         adapters = new MultiDimensionAdapter[5];
+         defaultSubsets = new HashMap[5];
+         propsArray = new Hashtable[5];
+         
+         String dataPath = "DataProducts/";
+         String[] arrayNames = new String[] {"532_total_attn_bsc", "1064_total_attn_bsc", "355_total_attn_bsc"};
+         String[] rangeNames = new String[] {"Total_Attenuated_Backscatter_532", "Total_Attenuated_Backscatter_1064", "Total_Attenuated_Backscatter_355"};
+         
+         String[] arrayNameAOT = new String[] {"532_AOT_hi_col", "355_AOT_hi_col"};
+         String[] rangeNamesAOT = new String[] {};
+         
+
+         for (int k=0; k<arrayNames.length; k++) {
+            table = ProfileAlongTrack.getEmptyMetadataTable();
+            table.put(ProfileAlongTrack.array_name, dataPath+arrayNames[k]);
+            table.put(ProfileAlongTrack.range_name, rangeNames[k]);
+            table.put(ProfileAlongTrack.trackDim_name, "dim0");
+            table.put(ProfileAlongTrack.vertDim_name, "dim1");
+            table.put(ProfileAlongTrack.profileTime_name, "ApplanixIMU/gps_time");
+            table.put(ProfileAlongTrack.longitude_name, "ApplanixIMU/gps_lon");
+            table.put(ProfileAlongTrack.latitude_name, "ApplanixIMU/gps_lat");
+            table.put("array_dimension_names", new String[] {"dim0", "dim1"});
+            ProfileAlongTrack adapter = new HSRL2D(reader, table);
+            ProfileAlongTrack3D adapter3D = new ProfileAlongTrack3D(adapter);
+            Map<String, double[]> subset = adapter.getDefaultSubset();
+            adapters[k] = adapter3D;
+            defaultSubset = subset;
+            defaultSubsets[k] = defaultSubset;
+
+            properties.put("medianFilter", new String[] {Double.toString(12), Double.toString(24)});
+            properties.put("setBelowSfcMissing", new String[] {"true"});
+            propsArray[k] = properties;
+         }
+         
+         DataCategory.createCategory("ProfileAlongTrack");
+         categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
+
+         hasTrackPreview = true;
+
+         ArrayAdapter[] adapter_s = new ArrayAdapter[3];
+         table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "ApplanixIMU/gps_lat");
+         table.put(ProfileAlongTrack.trackDim_name, "dim0");
+         table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
+         adapter_s[0] = new ArrayAdapter(reader, table);
+
+         table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "UserInput/DEM_altitude");
+         table.put(ProfileAlongTrack.trackDim_name, "dim0");
+         table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
+         adapter_s[1] = new ArrayAdapter(reader, table);
+         /*
+         adapter_s[1].setRangeProcessor(new RangeProcessor() { // Eventually handle unit conversions better.
+              public float[] processRange(float[] fvals, Map<String, double[]> subset) {
+                 for (int i=0; i<fvals.length; i++) {
+                    fvals[i] *= 1000; //km -> m
+                 }
+                 return fvals;
+              }
+         });
+         */
+
+         table = ProfileAlongTrack.getEmptyMetadataTable();
+         table.put(ProfileAlongTrack.array_name, "ApplanixIMU/gps_lon");
+         table.put(ProfileAlongTrack.trackDim_name, "dim0");
+         table.put(ProfileAlongTrack.vertDim_name, "dim1");
+         table.put("array_dimension_names", new String[] {"dim0", "dim1"});
+         adapter_s[2] = new ArrayAdapter(reader, table);
+
+         TrackDomain track_domain = new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]);
+         track_adapter = new TrackAdapter(track_domain, adapter_s[1]);
+         
+         TrackAdapter trkAdapter = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0], adapter_s[1]), adapter_s[1]);
+         trkAdapter.setName("Track3D");
+         
+         trkAdapter = new TrackAdapter(new TrackDomain(adapter_s[2], adapter_s[0]), adapter_s[1]);
+         trkAdapter.setName("Track2D");
+       }
        else if (name.startsWith("CAL_LID_L1")) {
 
     	   // Make sure the variables we need are present. If not, this is not a valid
@@ -343,7 +425,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          DataCategory.createCategory("ProfileAlongTrack");
          categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
 
-         properties.put("medianFilter", new String[] {Double.toString(8), Double.toString(16)});
+         properties.put("medianFilter", new String[] {Double.toString(12), Double.toString(32)});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          propsArray[0] = properties;
 
@@ -1020,7 +1102,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
           for (int i=0; i<lens[vrtIdx]; i++) {
             if (vrtIdx < trkIdx) k = i + j*lens[0];
             if (trkIdx < vrtIdx) k = j + i*lens[0];
-            if (samples[2][k] <= val || samples[2][k] < 0.0) {
+            if (samples[2][k] <= val) {
               range_values[k] = Float.NaN;
             }
           }
@@ -1038,7 +1120,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
         try {
           FlatField image = (FlatField) getDataInner(dataChoice, null, null, null);
           components.add(new PreviewSelection(dataChoice, image, null));
-          //components.add(new edu.wisc.ssec.mcidasv.data.PreviewSelectionNew(dataChoice, image));
         } catch (Exception e) {
           logger.error("cannot make preview selection", e);
         }
@@ -1046,7 +1127,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
       if (hasTrackPreview) {
         try {
           FlatField track = track_adapter.getData(track_adapter.getDefaultSubset());     
-          trackSelection = new TrackSelection(dataChoice, track, this);
+          Map defaultSubset = (adapterMap.get(dataChoice.getName())).getDefaultSubset();
+          trackSelection = new TrackSelection(dataChoice, track, defaultSubset);
           components.add(trackSelection);
         } catch (Exception e) {
           logger.error("cannot make preview selection", e);
