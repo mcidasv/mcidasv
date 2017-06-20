@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import java.awt.BorderLayout;
+
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -40,8 +41,10 @@ import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -132,33 +135,91 @@ public class McVTextField extends JTextField {
         super.setDocument(document);
     }
     
-    public void setAllow(String string) {
-        this.document.setAllow(makePattern(string));
-        super.setDocument(document);
-    }
-    
-    public void setDeny(String string) {
-        this.document.setDeny(makePattern(string));
-        super.setDocument(document);
-    }
-    
+    /** @see #setAllow(Pattern, boolean) */
     public void setAllow(char... characters) {
-        this.document.setAllow(makePattern(characters));
-        super.setDocument(document);
+        setAllow(makePattern(characters), false);
     }
     
-    public void setDeny(char... characters) {
-        this.document.setDeny(makePattern(characters));
-        super.setDocument(document);
+    /** @see #setAllow(Pattern, boolean) */
+    public void setAllow(String string) {
+        setAllow(makePattern(string), false);
     }
     
+    /** @see #setAllow(Pattern, boolean) */
     public void setAllow(Pattern newPattern) {
+        setAllow(newPattern, false);
+    }
+    
+    /** @see #setAllow(Pattern, boolean) */
+    public void setAllow(String string, boolean useComplete) {
+        setAllow(makePattern(string), useComplete);
+    }
+    
+    /** @see #setAllow(Pattern, boolean) */
+    public void setAllow(char[] characters, boolean useComplete) {
+        setAllow(makePattern(characters), useComplete);
+    }
+    
+    /** @see #setDeny(Pattern, boolean) */
+    public void setDeny(char... characters) {
+        setDeny(characters, false);
+    }
+    
+    /** @see #setDeny(Pattern, boolean) */
+    public void setDeny(String string) {
+        setDeny(makePattern(string), false);
+    }
+    
+    /** @see #setDeny(Pattern, boolean) */
+    public void setDeny(Pattern newPattern) {
+        setDeny(newPattern, false);
+    }
+    
+    /** @see #setDeny(Pattern, boolean) */
+    public void setDeny(String string, boolean useComplete) {
+        setDeny(makePattern(string), useComplete);
+    }
+    
+    /** @see #setDeny(Pattern, boolean) */
+    public void setDeny(char[] characters, boolean useComplete) {
+        setDeny(makePattern(characters), useComplete);
+    }
+    
+    /**
+     * Change the regular expression used to match allowed strings.
+     * 
+     * <p>Note: if set to {@code true}, {@code useComplete} parameter will allow
+     * you to match {@code newPattern} against the complete text of this text 
+     * field, including the tentative updates. If set to {@code false}, 
+     * {@code newPattern} will be used against the <i>only</i> the updated 
+     * characters.</p>
+     * 
+     * @param newPattern New regular expression. Cannot be {@code null}.
+     * @param useComplete Whether or not the complete contents of the text field
+     *                    should be used.
+     */
+    public void setAllow(Pattern newPattern, boolean useComplete) {
         this.document.setAllow(newPattern);
+        this.document.setUseComplete(useComplete);
         super.setDocument(document);
     }
     
-    public void setDeny(Pattern newPattern) {
+    /**
+     * Change the regular expression used to match denied strings.
+     *
+     * <p>Note: if set to {@code true}, {@code useComplete} parameter will allow
+     * you to match {@code newPattern} against the complete text of this text 
+     * field, including the tentative updates. If set to {@code false}, 
+     * {@code newPattern} will be used against the <i>only</i> the updated 
+     * characters.</p>
+     *
+     * @param newPattern New regular expression. Cannot be {@code null}.
+     * @param useComplete Whether or not the complete contents of the text field
+     *                    should be used.
+     */
+    public void setDeny(Pattern newPattern, boolean useComplete) {
         this.document.setDeny(newPattern);
+        this.document.setUseComplete(useComplete);
         super.setDocument(document);
     }
     
@@ -293,6 +354,7 @@ public class McVTextField extends JTextField {
         private int limit;
         private boolean toUppercase = false;
         private boolean hasPatterns = false;
+        private boolean useComplete = false;
         private Pattern allow = Pattern.compile(".*");
         private Pattern deny = null;
         
@@ -305,6 +367,35 @@ public class McVTextField extends JTextField {
             setLimit(limit);
             setUppercase(upper);
         }
+    
+        /**
+         * Apply the given {@code update} to the {@code offset} within the 
+         * {@code original} string.
+         * 
+         * @param original Text field contents before update.
+         * @param offset Offset within {@code original}.
+         * @param update Update to apply.
+         * 
+         * @return String that represents text field contents after a 
+         * {@link JTextField} change.
+         */
+        private String makeComplete(String original, int offset, String update) 
+        {
+            StringBuilder sb = 
+                new StringBuilder(original.length() + update.length());
+            // TODO(jon): probably a smarter way to do this...
+            if (offset >= original.length()) {
+                sb.append(original).append(update);
+            } else {
+                for (int i = 0; i < original.length(); i++) {
+                    if (i == offset) {
+                        sb.append(update);
+                    }
+                    sb.append(original.charAt(i));
+                }
+            }
+            return sb.toString();
+        }
         
         public void insertString(int offset, String str, AttributeSet attr) 
             throws BadLocationException 
@@ -314,6 +405,11 @@ public class McVTextField extends JTextField {
             }
             if (toUppercase) {
                 str = str.toUpperCase();
+            }
+    
+            String update = str;
+            if (useComplete) {
+                str = makeComplete(getText(0, getLength()), offset, str);
             }
             
             // Only allow certain patterns, and only check if we think we 
@@ -338,6 +434,11 @@ public class McVTextField extends JTextField {
                 }
                 str = okString.toString();
             }
+            
+            if (useComplete) {
+                str = update;
+            }
+            
             if (str.isEmpty()) {
                 return;
             }
@@ -377,6 +478,10 @@ public class McVTextField extends JTextField {
             }
             this.deny = newPattern;
             hasPatterns = true;
+        }
+        
+        public void setUseComplete(boolean useComplete) {
+            this.useComplete = useComplete;
         }
     }
     

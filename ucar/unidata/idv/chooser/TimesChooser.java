@@ -28,19 +28,17 @@
 
 package ucar.unidata.idv.chooser;
 
-
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataUtil;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvTimeline;
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.ui.Timeline;
@@ -54,20 +52,20 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 
 import ucar.visad.Util;
-import ucar.visad.display.Animation;
-import ucar.visad.display.AnimationSetInfo;
 
 import visad.CommonUnit;
 import visad.DateTime;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.*;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,10 +73,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
@@ -88,14 +102,6 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * @author Unidata IDV Development Team
  */
 public class TimesChooser extends IdvChooser {
-    
-    /** Label to use with the relative times {@link JTextField}. */
-    private static final String RELATIVE_TIMES_LABEL = "Number of times: ";
-    
-    /** Tooltip for the relative times {@link JTextField}. */
-    private static final String RELATIVE_TIMES_TOOLTIP =
-        "<html>Load the N most recent images.<br/><br/>" +
-        "Values must be integers greater than zero.</html>";
     
     /** Time matching widget label */
     private static final String TIME_MATCHING_LABEL = "Match Time Driver";
@@ -205,8 +211,6 @@ public class TimesChooser extends IdvChooser {
 
     /** the time driver component */
     protected JComponent timeDriverComp = null;
-
-    private int relativeTimes = 5;
     
     /**
      * Create me.
@@ -1434,75 +1438,23 @@ public class TimesChooser extends IdvChooser {
      * @return GUI widget.
      */
     public JComponent getRelativeTimesChooser() {
-        JTextField relativeTimesField = 
-            McVGuiUtils.makeTextFieldAllow(String.valueOf(relativeTimes), 
-                                           4, 
-                                            false, 
-                                           '0', '1', '2', '3', '4', '5', 
-                                           '6', '7','8','9');
-                                           
-        // need to keep *both* the ActionListener and DocumentListener around.
-        // removing the ActionListener results in strange behavior when you've
-        // accidentally cleared out the text field.
-        relativeTimesField.addActionListener(e -> {
-            String newVal = ((JTextField)e.getSource()).getText();
-            try {
-                relativeTimes = Integer.valueOf(newVal);
-            } catch (NumberFormatException ex) {
-                logger.warn("Could not convert '"+newVal+"' into an int", ex);
-            }
-        });
-        relativeTimesField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override public void insertUpdate(DocumentEvent e) {
-                handleRelativeTimeChange(e);
-            }
-            
-            @Override public void removeUpdate(DocumentEvent e) {
-                handleRelativeTimeChange(e);
-            }
-            
-            @Override public void changedUpdate(DocumentEvent e) {
-                handleRelativeTimeChange(e);
-            }
-        });
-        relativeTimesField.setToolTipText(RELATIVE_TIMES_TOOLTIP);
-        
-        JPanel panel = 
-            GuiUtils.topLeft(GuiUtils.label(RELATIVE_TIMES_LABEL,
-                                            relativeTimesField));
-        JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setPreferredSize(new Dimension(150, 100));
-        return scrollPane;
+        return getRelativeTimesList().getScroller();
     }
     
-    /**
-     * Handle {@link DocumentListener} events for the {@link JTextField} 
-     * created by {@link #getRelativeTimesChooser()}.
-     * 
-     * @param event Event to handle. Cannot be {@code null}.
-     */
-    private void handleRelativeTimeChange(DocumentEvent event) {
-        int len = event.getDocument().getLength();
-        try {
-            String text = event.getDocument().getText(0, len);
-            relativeTimes = Integer.valueOf(text);
-        } catch (BadLocationException | NumberFormatException ex) {
-            logger.warn("Could not get contents of text field!", ex);
-        }
-    }
-
-
+    
     /**
      * Get the relative time indices
      *
      * @return an array of indices
      */
     public int[] getRelativeTimeIndices() {
-        int[] indices = new int[relativeTimes];
+        int   count   = getRelativeTimesList().getSelectedIndex() + 1;
+        int[] indices = new int[count];
         for (int i = 0; i < indices.length; i++) {
             indices[i] = i;
         }
         return indices;
+        //        return getRelativeTimesList().getSelectedIndices();
     }
 
 

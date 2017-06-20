@@ -41,6 +41,7 @@ import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -66,6 +67,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -77,11 +79,16 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
 import edu.wisc.ssec.mcidasv.ui.MenuScroller;
+import edu.wisc.ssec.mcidasv.util.McVTextField;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;
@@ -137,6 +144,14 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     
     private static final Logger logger = LoggerFactory.getLogger(AddeChooser.class);
     
+    /** Label to use with the relative times {@link JTextField}. */
+    private static final String RELATIVE_TIMES_LABEL = "Number of times: ";
+    
+    /** Tooltip for the relative times {@link JTextField}. */
+    private static final String RELATIVE_TIMES_TOOLTIP =
+        "<html>Load the N most recent images.<br/><br/>" +
+        "Values must be integers greater than zero.</html>";
+        
     private JComboBox serverSelector;
     
     /** List of descriptors */
@@ -235,7 +250,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
     /** Maps favorite type to the BundleTree that shows the Manage window for the type */
     private Hashtable parameterTrees = new Hashtable();
-
+    
+    /** Number of relative time steps to load */
+    private int relativeTimes = 5;
+    
     /**
      * Create an AddeChooser associated with an IdvChooser
      *
@@ -1925,7 +1943,106 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     protected void setInnerPanel(JPanel newInnerPanel) {
         innerPanel = newInnerPanel;
     }
-
+    
+    /**
+     * Create the widget responsible for handling relative time selection.
+     *
+     * @return GUI widget.
+     */
+    @Override public JComponent getRelativeTimesChooser() {
+        McVTextField relativeTimesField =
+            McVGuiUtils.makeTextFieldAllow(String.valueOf(relativeTimes),
+                                           4,
+                                           false,
+                                           '0', '1', '2', '3', '4', '5', 
+                                           '6', '7','8','9');
+                                           
+        // need to keep *both* the ActionListener and DocumentListener around.
+        // removing the ActionListener results in strange behavior when you've
+        // accidentally cleared out the text field.
+        relativeTimesField.setAllow(Pattern.compile("^[1-9][0-9]*$"), true);
+//        relativeTimesField.setDeny(Pattern.compile("^0$"), true);
+        relativeTimesField.setColumns(4);
+        relativeTimesField.addActionListener(e -> {
+            String text = ((JTextField)e.getSource()).getText();
+            validateRelativeTimeInput(text);
+        });
+        relativeTimesField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) {
+                handleRelativeTimeChange(e);
+            }
+            
+            @Override public void removeUpdate(DocumentEvent e) {
+                handleRelativeTimeChange(e);
+            }
+            
+            @Override public void changedUpdate(DocumentEvent e) {
+                handleRelativeTimeChange(e);
+            }
+        });
+        relativeTimesField.setToolTipText(RELATIVE_TIMES_TOOLTIP);
+        
+        JPanel panel =
+            GuiUtils.topLeft(GuiUtils.label(RELATIVE_TIMES_LABEL,
+                relativeTimesField));
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setPreferredSize(new Dimension(150, 100));
+        return scrollPane;
+    }
+    
+    /**
+     * Validate the contents of the relative times text field.
+     * 
+     * <p>This method overwrites {@link #relativeTimes} if {@code text} is an 
+     * integer greater than zero.</p>
+     * 
+     * @param text Contents of the text field.
+     */
+    private void validateRelativeTimeInput(String text) {
+        try {
+            int value = Integer.valueOf(text);
+            if (value > 0) {
+                relativeTimes = value;
+                setHaveData(true);
+                setState(STATE_CONNECTED);
+                updateStatus();
+            }
+        } catch (NumberFormatException e) {
+            setState(STATUS_ERROR);
+            setHaveData(false);
+            setStatus("Please provide an integer value greater than zero.");
+        }
+    }
+    
+    /**
+     * Handle {@link DocumentListener} events for the {@link JTextField}
+     * created by {@link #getRelativeTimesChooser()}.
+     *
+     * @param event Event to handle. Cannot be {@code null}.
+     */
+    private void handleRelativeTimeChange(DocumentEvent event) {
+        int len = event.getDocument().getLength();
+        try {
+            String text = event.getDocument().getText(0, len);
+            validateRelativeTimeInput(text);
+        } catch (BadLocationException ex) {
+            logger.warn("Could not get contents of text field!", ex);
+        }
+    }
+    
+    /**
+     * Get the relative time indices
+     *
+     * @return an array of indices
+     */
+    @Override public int[] getRelativeTimeIndices() {
+        int[] indices = new int[relativeTimes];
+        for (int i = 0; i < indices.length; i++) {
+            indices[i] = i;
+        }
+        return indices;
+    }
+    
     /**
      * Make the UI for this selector.
      *
@@ -1954,7 +2071,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         connectButton.setActionCommand(CMD_CONNECT);
         connectButton.addActionListener(this);
 
-        /** Set the attributes for the descriptor label and combo box, even though
+        /* Set the attributes for the descriptor label and combo box, even though
          * they are not used here.  Extending classes can add them to the panel if
          * necessary.
          */
