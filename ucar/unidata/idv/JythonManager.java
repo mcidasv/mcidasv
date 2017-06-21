@@ -56,28 +56,23 @@ import static ucar.unidata.util.StringUtil.split;
 import static ucar.unidata.util.StringUtil.stringMatch;
 import static ucar.unidata.xml.XmlUtil.getRoot;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Vector;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -85,6 +80,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JButton;
@@ -146,7 +151,6 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
-import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.ResourceCollection;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
@@ -330,14 +334,22 @@ public class JythonManager extends IdvManager implements ActionListener,
         }
     }
 
+    public boolean isFileInJythonLibrary(String filePath) {
+        return libHolders.stream()
+                         .anyMatch(holder -> 
+                                   Objects.equals(holder.filePath, filePath));
+    }
+    
     /**
      * Respond to files being created in the user's Jython directory.
      *
      * @param filePath The file path.
      */
     public void onFileCreate(String filePath) {
-        logger.trace("filePath='{}'", filePath);
-        createNewLibrary(filePath);
+        if (!isFileInJythonLibrary(filePath)) {
+            logger.trace("filePath='{}'", filePath);
+            createNewLibrary(filePath);
+        }
     }
 
     /**
@@ -349,7 +361,10 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @param filePath The file path.
      */
     public void onFileModify(String filePath) {
-        logger.trace("filePath='{}'", filePath);
+        if (isFileInJythonLibrary(filePath)) {
+            logger.trace("filePath='{}'", filePath);
+            updateLibrary(filePath);
+        }
     }
 
     /**
@@ -361,6 +376,9 @@ public class JythonManager extends IdvManager implements ActionListener,
      */
     public void onFileDelete(String filePath) {
         logger.trace("filePath='{}'", filePath);
+        if (isFileInJythonLibrary(filePath)) {
+            quietRemoveLibrary(filePath);
+        }
     }
 
     // TODO(jon): dox!
@@ -647,7 +665,17 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @throws VisADException On badness
      */
     private LibHolder makeLibHolder(boolean editable, String label, String path, String text)
-            throws VisADException 
+            throws VisADException
+    {
+        return makeLibHolder(editable, label, path, text, true);
+    }
+    
+    private LibHolder makeLibHolder(boolean editable, 
+                                    String label, 
+                                    String path, 
+                                    String text, 
+                                    boolean addToLibrary)
+        throws VisADException
     {
         final LibHolder[] holderArray  = { null };
         JythonEditor jythonEditor = new JythonEditor() {
@@ -751,10 +779,13 @@ public class JythonManager extends IdvManager implements ActionListener,
         LibHolder libHolder = new LibHolder(editable, this, label, jythonEditor, path, wrapper);
         
         holderArray[0] = libHolder;
-        if (mainHolder == null) {
-            mainHolder = libHolder;
+        
+        if (addToLibrary) {
+            if (mainHolder == null) {
+                mainHolder = libHolder;
+            }
+            libHolders.add(libHolder);
         }
-        libHolders.add(libHolder);
         //        tabContents.add(BorderLayout.SOUTH, GuiUtils.wrap(libHolder.saveBtn));
         if (text == null) {
             text = "";
@@ -832,6 +863,26 @@ public class JythonManager extends IdvManager implements ActionListener,
         }
     }
 
+    public void updateLibrary(String path) {
+        Path p = Paths.get(path);
+        try {
+            for (LibHolder holder : getLibHolders()) {
+                if (Objects.equals(holder.filePath, path)) {
+                    logger.trace("trying to update {}", holder.filePath);
+                    String contents = readContents(p.toFile());
+                    holder.setText(contents);
+                    if (holder.saveBtn != null) {
+                        holder.saveBtn.setEnabled(false);
+                    }
+                    holder.wrapper.repaint();
+                    evaluateLibJython(false, holder);
+                }
+            }
+        } catch (Exception e) {
+            logException("An error occurred refreshing the jython library", e);
+        }
+    }
+     
     public void createNewLibrary(String path) {
         Path p = Paths.get(path);
         String name = p.getFileName().toString();
@@ -875,6 +926,22 @@ public class JythonManager extends IdvManager implements ActionListener,
         }
     }
     
+    public void quietRemoveLibrary(String filePath) {
+        LibHolder match = null;
+        for (LibHolder holder : getLibHolders()) {
+            if (Objects.equals(holder.filePath, filePath)) {
+//                libHolders.remove(holder);
+//                treePanel.removeComponent(holder.outerContents);
+                match = holder;
+            }
+        }
+        if (match != null) {
+            libHolders.remove(match);
+            treePanel.removeComponent(match.outerContents);
+            treePanel.repaint();
+        }
+    }
+    
     /**
      * make men
      *
@@ -897,7 +964,7 @@ public class JythonManager extends IdvManager implements ActionListener,
         fileMenu.addSeparator();
         fileMenu.add(makeMenuItem("Close", this, "close"));
     }
-
+    
     /**
      * Allow external code to call {@link #applicationClosing()}.
      */
