@@ -111,6 +111,19 @@ public class DataTransectControl extends CrossSectionControl {
 
         NavigatedDisplay mapDisplay = getNavigatedDisplay();
 
+        // TJJ Jun 2017
+        // Timing/threading/bundle issue? We see this pattern a lot in IDV code
+        // We come up with a reasonable default behavior to avoid the NPEs.
+        if (mapDisplay == null) {
+            csSelector = new CrossSectionSelector(
+                    new RealTuple(RealTupleType.SpatialEarth3DTuple,
+                    new double[] { 0, 0, 0 }),
+                    new RealTuple(RealTupleType.SpatialEarth3DTuple,
+                    new double[] { 0, 0, 0 })
+            );
+            return;
+        }
+
         double[]         right      = mapDisplay.getScreenUpperRight();
         double[]         center     = mapDisplay.getScreenCenter();
         right[1] = center[1];
@@ -122,9 +135,6 @@ public class DataTransectControl extends CrossSectionControl {
         EarthLocationTuple loc2 =
             (EarthLocationTuple) mapDisplay.getEarthLocation(center[0]
                 + 0.6 * width, right[1], 0, false);
-
-
-
 
         createCrossSectionSelector(loc1, loc2);
     }
