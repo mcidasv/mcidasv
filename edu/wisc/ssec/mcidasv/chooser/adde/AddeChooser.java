@@ -145,10 +145,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     private static final Logger logger = LoggerFactory.getLogger(AddeChooser.class);
     
     /** Label to use with the relative times {@link JTextField}. */
-    private static final String RELATIVE_TIMES_LABEL = "Number of times: ";
+    public static final String RELATIVE_TIMES_LABEL = "Number of times: ";
     
     /** Tooltip for the relative times {@link JTextField}. */
-    private static final String RELATIVE_TIMES_TOOLTIP =
+    public static final String RELATIVE_TIMES_TOOLTIP =
         "<html>Load the N most recent images.<br/><br/>" +
         "Values must be integers greater than zero.</html>";
         
