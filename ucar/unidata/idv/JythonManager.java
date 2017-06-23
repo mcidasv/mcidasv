@@ -151,11 +151,12 @@ import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
+
 import ucar.unidata.util.ResourceCollection;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 
-/**
+/** 
  * Manages Jython-related functionality:
  * <ul>
  *   <li>Jython interpreters used in the application</li>
@@ -346,10 +347,10 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @param filePath The file path.
      */
     public void onFileCreate(String filePath) {
-        if (!isFileInJythonLibrary(filePath)) {
-            logger.trace("filePath='{}'", filePath);
-            createNewLibrary(filePath);
-        }
+//        if (!isFileInJythonLibrary(filePath)) {
+//            logger.trace("filePath='{}'", filePath);
+//            createNewLibrary(filePath);
+//        }
     }
 
     /**
@@ -361,10 +362,10 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @param filePath The file path.
      */
     public void onFileModify(String filePath) {
-        if (isFileInJythonLibrary(filePath)) {
-            logger.trace("filePath='{}'", filePath);
-            updateLibrary(filePath);
-        }
+//        if (isFileInJythonLibrary(filePath)) {
+//            logger.trace("filePath='{}'", filePath);
+//            updateLibrary(filePath);
+//        }
     }
 
     /**
@@ -375,10 +376,10 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @param filePath The file path.
      */
     public void onFileDelete(String filePath) {
-        logger.trace("filePath='{}'", filePath);
-        if (isFileInJythonLibrary(filePath)) {
-            quietRemoveLibrary(filePath);
-        }
+//        logger.trace("filePath='{}'", filePath);
+//        if (isFileInJythonLibrary(filePath)) {
+//            quietRemoveLibrary(filePath);
+//        }
     }
 
     // TODO(jon): dox!
