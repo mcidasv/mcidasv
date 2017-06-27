@@ -122,6 +122,7 @@ public interface Constants extends IdvConstants {
     String ICON_GETTINGSTARTED_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/book_next.png";
     String ICON_NOTE_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/note.png";
     String ICON_MCIDASV_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/mcidasv-round16.png";
+    String ICON_MCIDASV_DEFAULT = "/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-default-logo.png";
     
     String ICON_DEFAULTLAYOUT_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/key.png";
     String ICON_DEFAULTLAYOUTADD_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/key_add.png";

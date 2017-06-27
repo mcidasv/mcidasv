@@ -28,19 +28,17 @@
 
 package ucar.unidata.idv.chooser;
 
-
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
-import ucar.unidata.data.DataSource;
 import ucar.unidata.data.DataUtil;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.idv.DisplayControl;
 import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.ui.IdvTimeline;
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.ui.Timeline;
@@ -54,20 +52,20 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 
 import ucar.visad.Util;
-import ucar.visad.display.Animation;
-import ucar.visad.display.AnimationSetInfo;
 
 import visad.CommonUnit;
 import visad.DateTime;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.*;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,7 +73,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -89,7 +102,7 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * @author Unidata IDV Development Team
  */
 public class TimesChooser extends IdvChooser {
-
+    
     /** Time matching widget label */
     private static final String TIME_MATCHING_LABEL = "Match Time Driver";
 
@@ -198,7 +211,7 @@ public class TimesChooser extends IdvChooser {
 
     /** the time driver component */
     protected JComponent timeDriverComp = null;
-
+    
     /**
      * Create me.
      *
@@ -223,6 +236,14 @@ public class TimesChooser extends IdvChooser {
             return false;
         }
         return timesList.getModel().getSize() > 0;
+//        boolean result = false;
+//        try {
+//            int value = Integer.valueOf(relativeTimesField.getText());
+//            result = value > 0;
+//        } catch (NumberFormatException ex) {
+//            logger.warn("value must be an integer");
+//        }
+//        return result;
     }
 
 
@@ -701,10 +722,15 @@ public class TimesChooser extends IdvChooser {
         timesContainer     = GuiUtils.center(timesCardPanel);
         timesTab           = GuiUtils.getNestedTabbedPane();
         this.usingTimeline = useTimeLine;
+//        timesTab.add(
+//            "Relative",
+//            GuiUtils.centerBottom(
+//                getRelativeTimesList().getScroller(), relativeExtra));
+    
         timesTab.add(
             "Relative",
             GuiUtils.centerBottom(
-                getRelativeTimesList().getScroller(), relativeExtra));
+                getRelativeTimesChooser(), relativeExtra));
         if (useTimeLine) {
             //                timesTab.add("Timeline", timeline.getContents(false));
             timesList.getScroller().setHorizontalScrollBarPolicy(
@@ -1407,15 +1433,15 @@ public class TimesChooser extends IdvChooser {
 
 
     /**
-     * Create (if needed) and return the list that shows times.
-     *
-     * @return The times list.
+     * Create the widget responsible for handling relative time selection.
+     * 
+     * @return GUI widget.
      */
     public JComponent getRelativeTimesChooser() {
         return getRelativeTimesList().getScroller();
     }
-
-
+    
+    
     /**
      * Get the relative time indices
      *

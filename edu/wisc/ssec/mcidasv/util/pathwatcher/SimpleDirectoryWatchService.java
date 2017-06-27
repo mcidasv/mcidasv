@@ -69,33 +69,33 @@ import org.slf4j.LoggerFactory;
 public class SimpleDirectoryWatchService implements DirectoryWatchService,
         Runnable
 {
-
+    
     /** Logging object. */
     private static final Logger logger =
-            LoggerFactory.getLogger(SimpleDirectoryWatchService.class);
-
+        LoggerFactory.getLogger(SimpleDirectoryWatchService.class);
+        
     /**
      * {@code WatchService} used to monitor changes in various
      * {@link Path Paths}.
      */
     private final WatchService mWatchService;
-
+    
     /** Whether or not this {@link DirectoryWatchService} is running. */
     private final AtomicBoolean mIsRunning;
-
+    
     /**
      * Mapping of monitoring {@literal "registration"} keys to the
      * {@link Path} that it will be watching.
      */
     private final Map<WatchKey, Path> mWatchKeyToDirPathMap;
-
+    
     /**
      * Mapping of {@link Path Paths} to the {@link Set} of
      * {@link OnFileChangeListener OnFileChangeListeners} listening for
      * changes to the associated {@code Path}.
      */
     private final Map<Path, Set<OnFileChangeListener>> mDirPathToListenersMap;
-
+    
     /**
      * Mapping of {@link OnFileChangeListener OnFileChangeListeners} to the
      * {@link Set} of patterns being used to observe changes in
@@ -103,7 +103,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
      */
     private final Map<OnFileChangeListener, Set<PathMatcher>>
         mListenerToFilePatternsMap;
-
+        
     /**
      * A simple no argument constructor for creating a
      * {@code SimpleDirectoryWatchService}.
@@ -117,7 +117,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
         mDirPathToListenersMap = concurrentMap();
         mListenerToFilePatternsMap = concurrentMap();
     }
-
+    
     /**
      * Utility method used to make {@literal "valid"} casts of the given
      * {@code event} to a specific type of {@link WatchEvent}.
@@ -131,7 +131,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     private static <T> WatchEvent<T> cast(WatchEvent<?> event) {
         return (WatchEvent<T>)event;
     }
-
+    
     /**
      * Returns a {@link PathMatcher} that performs {@literal "glob"} matches
      * with the given {@code globPattern} against the {@code String}
@@ -151,10 +151,10 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
         if ((globPattern == null) || globPattern.isEmpty()) {
             globPattern = "*";
         }
-
+        
         return FileSystems.getDefault().getPathMatcher("glob:"+globPattern);
     }
-
+    
     /**
      * Check the given {@code input} {@link Path} against the given {@code
      * pattern}.
@@ -167,7 +167,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     public static boolean matches(Path input, PathMatcher pattern) {
         return pattern.matches(input);
     }
-
+    
     /**
      * Check the given {@code input} {@link Path} against <i>all</i> of the
      * specified {@code patterns}.
@@ -185,10 +185,10 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
                 return true;
             }
         }
-
+        
         return false;
     }
-
+    
     /**
      * Get the path associated with the given {@link WatchKey}.
      *
@@ -200,7 +200,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     private Path getDirPath(WatchKey key) {
         return mWatchKeyToDirPathMap.get(key);
     }
-
+    
     /**
      * Get the {@link OnFileChangeListener OnFileChangeListeners} associated
      * with the given {@code path}.
@@ -214,7 +214,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     private Set<OnFileChangeListener> getListeners(Path path) {
         return mDirPathToListenersMap.get(path);
     }
-
+    
     /**
      * Get the {@link Set} of patterns associated with the given
      * {@link OnFileChangeListener}.
@@ -227,7 +227,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     private Set<PathMatcher> getPatterns(OnFileChangeListener listener) {
         return mListenerToFilePatternsMap.get(listener);
     }
-
+    
     /**
      * Get the {@link Path} associated with the given
      * {@link OnFileChangeListener}.
@@ -238,10 +238,10 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
      *         {@code null}.
      */
     private Path getDir(OnFileChangeListener listener) {
-
+        
         Set<Map.Entry<Path, Set<OnFileChangeListener>>> entries =
                 mDirPathToListenersMap.entrySet();
-
+                
         Path result = null;
         for (Map.Entry<Path, Set<OnFileChangeListener>> entry : entries) {
             Set<OnFileChangeListener> listeners = entry.getValue();
@@ -250,10 +250,10 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
                 break;
             }
         }
-
+        
         return result;
     }
-
+    
     /**
      * Get the monitoring {@literal "registration"} key associated with the
      * given {@link Path}.
@@ -266,7 +266,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     private WatchKey getWatchKey(Path dir) {
         Set<Map.Entry<WatchKey, Path>> entries =
             mWatchKeyToDirPathMap.entrySet();
-
+            
         WatchKey key = null;
         for (Map.Entry<WatchKey, Path> entry : entries) {
             if (entry.getValue().equals(dir)) {
@@ -274,10 +274,10 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
                 break;
             }
         }
-
+        
         return key;
     }
-
+    
     /**
      * Get the {@link Set} of
      * {@link OnFileChangeListener OnFileChangeListeners} that should be
@@ -295,7 +295,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
                 .filter(listener -> matchesAny(file, getPatterns(listener)))
                 .collect(Collectors.toSet());
     }
-
+    
     /**
      * Method responsible for notifying listeners when a file matching their
      * relevant pattern has changed.
@@ -316,18 +316,18 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     private void notifyListeners(WatchKey key) {
         for (WatchEvent<?> event : key.pollEvents()) {
             WatchEvent.Kind eventKind = event.kind();
-
+            
             // Overflow occurs when the watch event queue is overflown
             // with events.
             if (eventKind.equals(OVERFLOW)) {
                 // TODO: Notify all listeners.
                 return;
             }
-
+            
             WatchEvent<Path> pathEvent = cast(event);
             Path file = pathEvent.context();
             String completePath =  getDirPath(key).resolve(file).toString();
-
+            
             if (eventKind.equals(ENTRY_CREATE)) {
                 matchedListeners(getDirPath(key), file)
                     .forEach(l -> l.onFileCreate(completePath));
@@ -342,6 +342,18 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
     }
 
     /**
+     * Method responsible for notifying listeners when the path they are 
+     * watching has been deleted (or otherwise {@literal "invalidated"} 
+     * somehow).
+     * 
+     * @param key Key that has become invalid. Cannot be {@code null}.
+     */
+    private void notifyListenersOfInvalidation(WatchKey key) {
+        Path dir = getDirPath(key);
+        getListeners(dir).forEach(l -> l.onWatchInvalidation(dir.toString()));
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override public void register(OnFileChangeListener listener,
@@ -349,55 +361,55 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
             throws IOException
     {
         Path dir = Paths.get(dirPath);
-
+        
         if (!Files.isDirectory(dir)) {
             throw new IllegalArgumentException(dirPath + " not a directory.");
         }
-
+        
         if (!mDirPathToListenersMap.containsKey(dir)) {
             // May throw
             WatchKey key = dir.register(
                 mWatchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE
             );
-
+            
             mWatchKeyToDirPathMap.put(key, dir);
             mDirPathToListenersMap.put(dir, concurrentSet());
         }
-
+        
         getListeners(dir).add(listener);
-
+        
         Set<PathMatcher> patterns = concurrentSet();
-
+        
         for (String globPattern : globPatterns) {
             patterns.add(matcherForGlobExpression(globPattern));
         }
-
+        
         if (patterns.isEmpty()) {
             // Match everything if no filter is found
             patterns.add(matcherForGlobExpression("*"));
         }
-
+        
         mListenerToFilePatternsMap.put(listener, patterns);
-
+        
         logger.trace("Watching files matching {} under '{}' for changes",
                 Arrays.toString(globPatterns), dirPath);
     }
-
+    
     /**
      * {@inheritDoc}
      */
     public void unregister(OnFileChangeListener listener) {
         Path dir = getDir(listener);
-
+        
         mDirPathToListenersMap.get(dir).remove(listener);
-
+        
         // is this step truly needed?
         if (mDirPathToListenersMap.get(dir).isEmpty()) {
             mDirPathToListenersMap.remove(dir);
         }
-
+        
         mListenerToFilePatternsMap.remove(listener);
-
+        
         WatchKey key = getWatchKey(dir);
         if (key != null) {
             mWatchKeyToDirPathMap.remove(key);
@@ -405,19 +417,19 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
         }
         logger.trace("listener unregistered");
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override public void unregisterAll() {
         // can't simply clear the key->dir map; need to cancel
         mWatchKeyToDirPathMap.keySet().forEach(WatchKey::cancel);
-
+        
         mWatchKeyToDirPathMap.clear();
         mDirPathToListenersMap.clear();
         mListenerToFilePatternsMap.clear();
     }
-
+    
     /**
      * Start this {@code SimpleDirectoryWatchService} instance by spawning a
      * new thread.
@@ -431,7 +443,7 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
             runnerThread.start();
         }
     }
-
+    
     /**
      * Stop this {@code SimpleDirectoryWatchService} thread.
      *
@@ -444,20 +456,20 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
         // Kill thread lazily
         mIsRunning.set(false);
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override public boolean isRunning() {
         return mIsRunning.get();
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override public void run() {
         logger.info("Starting file watcher service.");
-
+        
         while (mIsRunning.get()) {
             WatchKey key;
             try {
@@ -467,24 +479,24 @@ public class SimpleDirectoryWatchService implements DirectoryWatchService,
                         DirectoryWatchService.class.getSimpleName());
                 break;
             }
-
+            
             if (null == getDirPath(key)) {
                 logger.error("Watch key not recognized.");
                 continue;
             }
-
+            
             notifyListeners(key);
-
+            
             // Reset key to allow further events for this key to be processed.
             boolean valid = key.reset();
             if (!valid) {
+                // order matters here; if you remove the key first, we can't
+                // work out who the appropriate listeners are.
+                notifyListenersOfInvalidation(key);
                 mWatchKeyToDirPathMap.remove(key);
-                if (mWatchKeyToDirPathMap.isEmpty()) {
-                    break;
-                }
             }
         }
-
+        
         mIsRunning.set(false);
         logger.trace("Stopping file watcher service.");
     }

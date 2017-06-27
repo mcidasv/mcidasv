@@ -58,6 +58,7 @@ public class SuomiNPPQfControl extends ImagePlanViewControl {
      * @return Either the first {@code DataSourceImpl} for this control, or
      * {@code null}.
      */
+
     public DataSourceImpl getDataSource() {
         DataSourceImpl ds = null;
         List dataSources = getDataSources();
@@ -72,10 +73,13 @@ public class SuomiNPPQfControl extends ImagePlanViewControl {
                                                    int animationStep,
                                                    List<ReadoutInfo> samples) throws Exception {
         try {
-        
+
+            // TJJ May 2017 - Current slice getting mucked with?
             if (currentSlice == null) {
+                logger.debug("TJJ currentSlice null in getCursorReadoutInner()...");
                 return null;
             }
+
             List result = new ArrayList();
             Real r = GridUtil.sampleToReal(
                          currentSlice, el, animationValue, getSamplingModeValue(NEAREST_NEIGHBOR));

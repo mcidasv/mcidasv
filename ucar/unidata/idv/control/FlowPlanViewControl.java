@@ -29,6 +29,8 @@
 package ucar.unidata.idv.control;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
@@ -43,12 +45,7 @@ import ucar.visad.display.DisplayableData;
 import ucar.visad.display.FlowDisplayable;
 import ucar.visad.display.WindBarbDisplayable;
 
-import visad.Data;
-import visad.FieldImpl;
-import visad.Real;
-import visad.RealTuple;
-import visad.Unit;
-import visad.VisADException;
+import visad.*;
 
 import visad.georef.EarthLocation;
 
@@ -73,6 +70,9 @@ import javax.swing.*;
  */
 public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayControl {
 
+    private static final Logger logger = 
+        LoggerFactory.getLogger(FlowPlanViewControl.class);
+    
     /** a component to change the barb size */
     ValueSliderWidget barbSizeWidget;
 
@@ -836,7 +836,16 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
             // getGridDisplay().setTrajFormType(trajFormType);
             // TJJ Feb 2017 Arrowheads were getting lost when toggling between forms
             getGridDisplay().setArrowHead(arrowHead);
-            getGridDisplay().resetTrojectories();
+            
+            try {
+                Set timeSet = getTimeSet();
+                if (timeSet.getLength() > 1) {
+                    getGridDisplay().resetTrojectories();
+                }
+            } catch (VisADException | RemoteException ex) {
+                logger.warn("could not reset trajectories properly", ex);
+            }
+            
             enableBarbSizeBox();
             enableDensityComponents();
             enableTrajLengthBox();
@@ -1454,6 +1463,29 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
         return flowColorRange;
     }
 
+    /**
+     * _more_
+     *
+     * @throws RemoteException _more_
+     * @throws VisADException _more_
+     */
+    public Range getRange() throws RemoteException, VisADException {
+        return super.getRange();
+    }
+
+    /**
+     * _more_
+     *
+     * @param nRange _more_
+     *
+     * @throws RemoteException _more_
+     * @throws VisADException _more_
+     */
+    public void setRange(Range nRange)
+            throws RemoteException, VisADException {
+        super.setRange(nRange);
+        setFlowColorRange(nRange);
+    }
     /**
      * Get the cursor data
      *

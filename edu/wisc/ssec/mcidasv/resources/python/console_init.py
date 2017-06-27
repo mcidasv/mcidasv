@@ -148,7 +148,7 @@ if _isInteractive:
     from background import (
         activeDisplay, allActions, allColorTables, allDisplays, allFontNames,
         allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
-        colorTableNames, findWindow, firstDisplay, firstWindow, getColorTable, 
+        colorTableNames, findWindow, findUnits, firstDisplay, firstWindow, getColorTable,
         getProjection, listVIIRSFieldsInFile, listVIIRSTimesInField, 
         managedDataSource, pause, performAction, projectionNames, 
         removeAllData, removeAllLayers, setViewSize, _MappedAreaImageFlatField, 

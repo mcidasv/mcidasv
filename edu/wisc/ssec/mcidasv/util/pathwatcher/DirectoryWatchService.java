@@ -39,9 +39,9 @@ import java.io.IOException;
  * <em>listen</em> to file system events coming from a specific directory.
  */
 public interface DirectoryWatchService extends Service {
-
+    
     @Override void start(); /* Suppress Exception */
-
+    
     /**
      * Notifies the implementation of <em>this</em> interface that
      * {@code dirPath} should be monitored for file system events. If the
@@ -59,7 +59,7 @@ public interface DirectoryWatchService extends Service {
     void register(OnFileChangeListener listener, String dirPath,
                   String... globPatterns)
             throws IOException;
-
+            
     /**
      * Notifies the implementation of <em>this</em> interface that
      * {@code listener} should cease to be notified of file system events.
@@ -67,10 +67,10 @@ public interface DirectoryWatchService extends Service {
      * @param listener Listener to unregister. Cannot be {@code null}.
      */
     void unregister(OnFileChangeListener listener);
-
+    
     /**
      * Unregisters <em>all</em> listeners.
      */
     void unregisterAll();
-
+    
 }

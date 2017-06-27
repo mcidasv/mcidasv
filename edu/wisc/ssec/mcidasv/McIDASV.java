@@ -74,6 +74,8 @@ import edu.wisc.ssec.mcidasv.util.SystemState;
 import edu.wisc.ssec.mcidasv.util.WebBrowser;
 import edu.wisc.ssec.mcidasv.util.WelcomeWindow;
 
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import org.joda.time.DateTime;
 import org.python.util.PythonInterpreter;
 import org.w3c.dom.Element;
@@ -1764,17 +1766,16 @@ public class McIDASV extends IntegratedDataViewer {
         // since the welcome window is intended to be a one time thing,
         // it probably shouldn't count for the startTime stuff.
         handleWelcomeWindow(args);
-
+        
         startTime = System.nanoTime();
-
+        
         // the following two lines are required if we want to embed JavaFX
         // widgets into McV (which is Swing). The first line initializes the
         // JavaFX runtime, and the second line allows the JavaFX runtime to
         // hang around even if there are no JavaFX windows.
-        // TODO(jon): commenting out for now
-        // JFXPanel dummy = new JFXPanel();
-        // Platform.setImplicitExit(false);
-
+         JFXPanel dummy = new JFXPanel();
+         Platform.setImplicitExit(false);
+        
         try {
             applyArgs(args);
 
@@ -1822,7 +1823,7 @@ public class McIDASV extends IntegratedDataViewer {
             }
         }
     }
-
+    
     /**
      * Attempts a clean shutdown of McIDAS-V. Currently this entails 
      * suppressing any error dialogs, explicitly killing the 
@@ -1835,26 +1836,26 @@ public class McIDASV extends IntegratedDataViewer {
      */
     @Override protected void exit(int exitCode) {
         LogUtil.setShowErrorsInGui(false);
-
+        
         // turn off the directory monitors in the file choosers.
         EventBus.publish(Constants.EVENT_FILECHOOSER_STOP, "shutting down");
         stopWatchService();
-
+        
         if (addeEntries != null) {
             addeEntries.saveForShutdown();
             addeEntries.stopLocalServer();
         }
-
+        
         removeSessionFile(SESSION_FILE);
-
+        
         // shut down javafx runtime
-        // Platform.exit();
-
+         Platform.exit();
+        
         logger.info("Exiting McIDAS-V @ {}", new Date());
-
+        
         System.exit(exitCode);
     }
-
+    
     /**
      * This method is largely a copy of {@link IntegratedDataViewer#quit()},
      * but allows for some GUI testing.

@@ -87,19 +87,17 @@ public class Functions {
    
    private static double ANGLE90DEGRADIANS = 1.570797;
    
-   private static double PI = 3.14159265358979;
-   
    private static double EARTHRADIUSKM = 6371.0;
    
    private static int[] JulianDateMonthArray =
        { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 };
 
    private static double deg_to_rad(double deg) {
-      return ((deg * PI) / 180.0);
+      return ((deg * Math.PI) / 180.0);
    }
 
    private static double rad_to_deg(double rad) {
-      return ((rad * 180.0) / PI);
+      return ((rad * 180.0) / Math.PI);
    }
 
    private static double a_sign(double x,double y) {
@@ -343,7 +341,7 @@ public class Functions {
       /* Compute Final Angle */
       if (Math.abs(Distance_Final) > 0.0001) {
          Angle_Final = (sin(StartLongitude_Radians - EndLongitude_Radians) *
-                        sin((PI/2.0)-EndLatitude_Radians)) /
+                        sin((Math.PI / 2.0) - EndLatitude_Radians)) /
                         sin(Distance_Intermediate);
       } else {
          Angle_Final = 0.0;

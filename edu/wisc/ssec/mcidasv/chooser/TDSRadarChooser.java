@@ -37,7 +37,7 @@ import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -55,12 +56,21 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
 
+import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
+import edu.wisc.ssec.mcidasv.util.McVTextField;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import thredds.catalog.XMLEntityResolver;
@@ -92,20 +102,19 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
-
 /**
- * Created by IntelliJ IDEA.
- * User: yuanho
- * Date: Jan 16, 2008
- * Time: 11:17:51 AM
- * To change this template use File | Settings | File Templates.
+ * This class is responsible for the {@literal "Remote Level II Radar"} 
+ * chooser in McIDAS-V.
  */
 public class TDSRadarChooser extends TimesChooser implements Constants {
-
+    
+    /** Loggging object. */
+    private static final Logger logger = 
+        LoggerFactory.getLogger(TDSRadarChooser.class);
+        
     /** The collection */
     private TDSRadarDatasetCollection collection;
-
-
+    
     /** The currently selected station */
     private NamedStation selectedStation;
 
@@ -116,7 +125,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
     //"http://motherlode.ucar.edu:8080/thredds/radarServer/catalog.xml";
     private String serverUrl;
 
-    /** Each dataset collection URL */
+    ///** Each dataset collection URL */
     //"http://motherlode.ucar.edu:8080/thredds/radarServer/level2/idd/dataset.xml";
     //private String collectionUrl;
 
@@ -149,14 +158,16 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
     /** Command for connecting */
     protected static final String CMD_CONNECT = "cmd.connect";
-
+    
     /** _more_          */
     private boolean isLevel3;
-
+    
     /** _more_          */
     public static final String[] level3_ExName = { "NVW", "DPA" };
-
-
+    
+    /** Number of relative time steps to load */
+    private int relativeTimes = 5;
+    
     /**
      * Create the RadarChooser.
      *
@@ -679,8 +690,8 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                 }
                 dateSelection.setTimes(times);
             } else {
-                int count = getRelativeTimesList().getSelectedIndex() + 1;
-                if (count == 0) {
+//                int count = getRelativeTimesList().getSelectedIndex() + 1;
+                if (relativeTimes == 0) {
                     LogUtil.userMessage("No relative times selected");
                     return;
                 }
@@ -692,7 +703,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
                 dateSelection.setStartFixedTime(fromDate);
                 dateSelection.setEndFixedTime(toDate);
-                dateSelection.setCount(count);
+                dateSelection.setCount(relativeTimes);
             }
             makeDataSource(radarQuery, "FILE.RADAR", ht);
         } catch (Exception exc) {
@@ -894,17 +905,114 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
     private JLabel statusLabel = new JLabel("Status");
 
-    @Override
-    public void setStatus(String statusString, String foo) {
-        if (statusString == null)
+    @Override public void setStatus(String statusString, String foo) {
+        if (statusString == null) {
             statusString = "";
+        }
         statusLabel.setText(statusString);
     }
-        
+    
     protected void setInnerPanel(JPanel newInnerPanel) {
         innerPanel = newInnerPanel;
     }
-
+    
+    /**
+     * Create the widget responsible for handling relative time selection.
+     *
+     * @return GUI widget.
+     */
+    @Override public JComponent getRelativeTimesChooser() {
+        McVTextField relativeTimesField =
+            McVGuiUtils.makeTextFieldAllow(String.valueOf(relativeTimes),
+                                           4,
+                                           false,
+                                           '0', '1', '2', '3', '4', '5', '6',
+                                           '7','8','9');
+                                           
+        // need to keep *both* the ActionListener and DocumentListener around.
+        // removing the ActionListener results in strange behavior when you've
+        // accidentally cleared out the text field.
+        relativeTimesField.setAllow(Pattern.compile("^[1-9][0-9]*$"), true);
+//        relativeTimesField.setDeny(Pattern.compile("^0$"), true);
+        relativeTimesField.setColumns(4);
+        relativeTimesField.addActionListener(e -> {
+            String text = ((JTextField)e.getSource()).getText();
+            validateRelativeTimeInput(text);
+        });
+        relativeTimesField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent e) {
+                handleRelativeTimeChange(e);
+            }
+            
+            @Override public void removeUpdate(DocumentEvent e) {
+                handleRelativeTimeChange(e);
+            }
+            
+            @Override public void changedUpdate(DocumentEvent e) {
+                handleRelativeTimeChange(e);
+            }
+        });
+        relativeTimesField.setToolTipText(AddeChooser.RELATIVE_TIMES_TOOLTIP);
+        
+        JPanel panel =
+            GuiUtils.topLeft(GuiUtils.label(AddeChooser.RELATIVE_TIMES_LABEL,
+                relativeTimesField));
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setPreferredSize(new Dimension(150, 100));
+        return scrollPane;
+    }
+    
+    /**
+     * Validate the contents of the relative times text field.
+     *
+     * <p>This method overwrites {@link #relativeTimes} if {@code text} is an 
+     * integer greater than zero.</p>
+     *
+     * @param text Contents of the text field.
+     */
+    private void validateRelativeTimeInput(String text) {
+        try {
+            int value = Integer.valueOf(text);
+            if (value > 0) {
+                relativeTimes = value;
+                setHaveData(true);
+                updateStatus();
+            }
+        } catch (NumberFormatException e) {
+            setHaveData(false);
+            setStatus("Please provide an integer value greater than zero.");
+        }
+    }
+    
+    /**
+     * Handle {@link DocumentListener} events for the {@link JTextField}
+     * created by {@link #getRelativeTimesChooser()}.
+     *
+     * @param event Event to handle. Cannot be {@code null}.
+     */
+    private void handleRelativeTimeChange(DocumentEvent event) {
+        int len = event.getDocument().getLength();
+        try {
+            String text = event.getDocument().getText(0, len);
+            validateRelativeTimeInput(text);
+        } catch (BadLocationException ex) {
+            logger.warn("Could not get contents of text field!", ex);
+        }
+    }
+    
+    /**
+     * Get the relative time indices
+     *
+     * @return an array of indices
+     */
+    @Override public int[] getRelativeTimeIndices() {
+        int[] indices = new int[relativeTimes];
+        for (int i = 0; i < indices.length; i++) {
+            indices[i] = i;
+        }
+        return indices;
+    }
+    
     /**
      * Make the UI for this selector.
      *
@@ -914,18 +1022,15 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      */
     public JComponent doMakeContents() {
         JPanel outerPanel = new JPanel();
-
+        
         JLabel serverLabel = McVGuiUtils.makeLabelRight("Catalog:");                
-
+        
         //Get the list of catalogs but remove the old catalog.xml entry
         urlListHandler = getPreferenceList(PREF_TDSRADARSERVER);
-
-        ActionListener catListListener = new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                if ( !okToDoUrlListEvents) {
-                    return;
-                }
-                setServer((String) urlBox.getSelectedItem());
+        
+        ActionListener catListListener = ae -> {
+            if (okToDoUrlListEvents) {
+                setServer((String)urlBox.getSelectedItem());
             }
         };
         
@@ -933,14 +1038,14 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         McVGuiUtils.setComponentWidth(urlBox, Width.DOUBLEDOUBLE);
         
         // productComboBox gets created a little too tall--set to same height as urlBox
-        if (productComboBox!=null)
+        if (productComboBox != null) {
             McVGuiUtils.setComponentHeight(productComboBox, urlBox);
-                
+        }
         JButton connectButton = McVGuiUtils.makeImageTextButton(ICON_CONNECT_SMALL, "Connect");
         McVGuiUtils.setComponentWidth(connectButton, Width.DOUBLE);
         connectButton.setActionCommand(GuiUtils.CMD_UPDATE);
         connectButton.addActionListener(this);
-                
+        
         JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
         
         statusLabel.setText("Status");
@@ -956,7 +1061,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         refreshButton.addActionListener(this);
         
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
-
+        
         GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
@@ -1010,10 +1115,6 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                     .addComponent(helpButton))
                 .addContainerGap())
         );
-    
         return outerPanel;
-
     }
-
 }
-

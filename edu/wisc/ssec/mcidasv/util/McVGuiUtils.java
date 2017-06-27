@@ -1051,19 +1051,21 @@ public class McVGuiUtils implements Constants {
     }
     
     /**
-     * Executes the specified {@link Callable} on the EDT thread. If the calling
-     * thread is already the EDT thread, this invocation simply delegates to
-     * call(), otherwise the callable is placed in Swing's event dispatch queue
-     * and the method waits for the result.
-     * <p>
-     * @param <V> the result type of the {@code callable}
-     * @param callable the callable task
-     * @return computed result
+     * Executes the specified {@link Callable} on the EDT thread. 
+     * 
+     * <p>If the calling thread is already the EDT thread, this invocation 
+     * simply delegates to call(), otherwise the callable is placed in Swing's 
+     * event dispatch queue and the method waits for the result.</p>
+     * 
+     * @param <T> Result type of the {@code callable}.
+     * @param callable Callable task. Cannot be {@code null}.
+     * 
+     * @return Computed result
      */
-    public static <V> V getFromEDT(final Callable<V> callable) {
+    public static <T> T getFromEDT(final Callable<T> callable) {
         // credit for this belongs to:
         // http://stackoverflow.com/a/31156045
-        final RunnableFuture<V> f = new FutureTask<>(callable);
+        final RunnableFuture<T> f = new FutureTask<>(callable);
         
         if (SwingUtilities.isEventDispatchThread()) {
             f.run();
@@ -1071,7 +1073,7 @@ public class McVGuiUtils implements Constants {
             SwingUtilities.invokeLater(f);
         }
         
-        V result = null;
+        T result = null;
         try {
             result = f.get();
         } catch (InterruptedException | ExecutionException e) {

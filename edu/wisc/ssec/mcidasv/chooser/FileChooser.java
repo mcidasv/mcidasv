@@ -38,13 +38,14 @@ import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
 
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import java.beans.PropertyChangeListener;
 
+import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.ArrayList;
@@ -61,6 +62,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.filechooser.FileFilter;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
@@ -103,22 +106,22 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * {@code "datasourceid"} attribute.
  */
 public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
-    implements Constants
+    implements Constants, AncestorListener
 {
-
+    
     /** Logging object. */
     private static final Logger logger =
         LoggerFactory.getLogger(FileChooser.class);
-
+        
     /** 
      * Chooser attribute that controls selecting the default data source.
      * @see #selectDefaultDataSource
      */
     public static final String ATTR_SELECT_DSID = "selectdatasourceid";
-
+    
     /** Default data source ID for this chooser. Defaults to {@code null}. */
     private final String defaultDataSourceId;
-
+    
     /** 
      * Whether or not to select the data source corresponding to 
      * {@link #defaultDataSourceId} within the {@link JComboBox} returned by
@@ -136,7 +139,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
     
     /** Get a handle on the actual file chooser. */
     protected JFileChooser fileChooser;
-
+    
     /** Panels that might need to be enabled/disabled. */
     protected JPanel topPanel = new JPanel();
     protected JPanel centerPanel = new JPanel();
@@ -153,8 +156,13 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
 
     /** This is mostly used to preemptively null-out the listener. */
     protected OnFileChangeListener watchListener;
-
-
+    
+    /**
+     * Value is controlled via {@link #ancestorAdded(AncestorEvent)} and
+     * {@link #ancestorRemoved(AncestorEvent)}
+     */
+    private boolean trulyVisible;
+    
     /**
      * Creates a {@code FileChooser} and bubbles up {@code mgr} and 
      * {@code root} to {@link FileChooser}.
@@ -164,15 +172,14 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      */
     public FileChooser(final IdvChooserManager mgr, final Element root) {
         super(mgr, root);
-
+        
         AnnotationProcessor.process(this);
-
+        
         String id = XmlUtil.getAttribute(root, ATTR_DATASOURCEID, (String)null);
         defaultDataSourceId = (id != null) ? id.toLowerCase() : id;
-
+        
         selectDefaultDataSource =
             XmlUtil.getAttribute(root, ATTR_SELECT_DSID, false);
-        
     }
     
     /**
@@ -183,7 +190,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
     protected String getDataSourcesLabel() {
         return "Data Type:";
     }
-
+    
     /**
      * Overridden so that McIDAS-V can attempt auto-selecting the default data
      * source type.
@@ -201,7 +208,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         }
         return sourceComboBox;
     }
-
+    
     /**
      * Maps data source IDs to their index within {@code box}. This method is 
      * only applicable to {@link JComboBox}es created for {@link FileChooser}s.
@@ -212,11 +219,12 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      */
     private static Map<String, Integer> comboBoxContents(final JComboBox box) {
         assert box != null;
-        Map<String, Integer> map = new HashMap<String, Integer>();
+        Map<String, Integer> map = new HashMap<>(box.getItemCount());
         for (int i = 0; i < box.getItemCount(); i++) {
             Object o = box.getItemAt(i);
-            if (!(o instanceof TwoFacedObject))
+            if (!(o instanceof TwoFacedObject)) {
                 continue;
+            }
             TwoFacedObject tfo = (TwoFacedObject)o;
             map.put(TwoFacedObject.getIdString(tfo), i);
         }
@@ -245,7 +253,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
                 FileManager.makeDirectoryHistoryComponent(
                     fileChooser, false), new Insets(13, 0, 0, 0)));
     }
-
+    
     /**
      * Override the base class method to catch the do load
      */
@@ -253,11 +261,12 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         selectFiles(fileChooser.getSelectedFiles(),
                     fileChooser.getCurrentDirectory());
     }
-
+    
     /**
      * Override the base class method to catch the do update
      */
     public void doUpdate() {
+        fileChooser.setCurrentDirectory(new File(getPath()));
         fileChooser.rescanCurrentDirectory();
     }
     
@@ -286,14 +295,15 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      */
     protected void updateStatus() {
         super.updateStatus();
-        if(!getHaveData()) {
-            if (getAllowMultiple())
+        if (!getHaveData()) {
+            if (getAllowMultiple()) {
                 setStatus("Select one or more files");
-            else
-                setStatus("Select a file"); 
+            } else {
+                setStatus("Select a file");
+            }
         }
     }
-        
+    
     /**
      * Get the top components for the chooser
      *
@@ -301,13 +311,15 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      */
     protected void getTopComponents(List comps) {
         Element chooserNode = getXmlNode();
-
+        
         // Force ATTR_DSCOMP to be false before calling super.getTopComponents
         // We call getDataSourcesComponent later on
         boolean dscomp = XmlUtil.getAttribute(chooserNode, ATTR_DSCOMP, true);
         XmlUtil.setAttributes(chooserNode, new String[] { ATTR_DSCOMP, "false" });
         super.getTopComponents(comps);
-        if (dscomp) XmlUtil.setAttributes(chooserNode, new String[] { ATTR_DSCOMP, "true" });
+        if (dscomp) {
+            XmlUtil.setAttributes(chooserNode, new String[] { ATTR_DSCOMP, "true" });
+        }
     }
     
     /**
@@ -317,7 +329,9 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
     protected JPanel getTopPanel() {
         List topComps  = new ArrayList();
         getTopComponents(topComps);
-        if (topComps.size() == 0) return null;
+        if (topComps.size() == 0) {
+            return null;
+        }
         JPanel topPanel = GuiUtils.left(GuiUtils.doLayout(topComps, 0, GuiUtils.WT_N, GuiUtils.WT_N));
         topPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         
@@ -331,7 +345,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
     protected JPanel getBottomPanel() {
         return null;
     }
-        
+    
     /**
      * Get the center panel for the chooser
      * @return the center panel
@@ -342,7 +356,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         fileChooser = doMakeFileChooser(getPath());
         fileChooser.setPreferredSize(new Dimension(300, 300));
         fileChooser.setMultiSelectionEnabled(getAllowMultiple());
-
+        
         fileChooser.addPropertyChangeListener(
             JFileChooser.DIRECTORY_CHANGED_PROPERTY,
             createPropertyListener()
@@ -350,19 +364,19 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         
         List filters = new ArrayList();
         String filterString = XmlUtil.getAttribute(chooserNode, ATTR_FILTERS, (String) null);
-
+        
         filters.addAll(getDataManager().getFileFilters());
         if (filterString != null) {
             filters.addAll(PatternFileFilter.createFilters(filterString));
         }
-
-        if ( !filters.isEmpty()) {
+        
+        if (!filters.isEmpty()) {
             for (int i = 0; i < filters.size(); i++) {
                 fileChooser.addChoosableFileFilter((FileFilter) filters.get(i));
             }
             fileChooser.setFileFilter(fileChooser.getAcceptAllFileFilter());
         }
-
+        
         JPanel centerPanel;
         JComponent accessory = getAccessory();
         if (accessory == null) {
@@ -374,7 +388,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         setHaveData(false);
         return McVGuiUtils.makeLabeledComponent("Files:", centerPanel);
     }
-
+    
     /**
      * Creates a {@link PropertyChangeListener} that listens for
      * {@link JFileChooser#DIRECTORY_CHANGED_PROPERTY}.
@@ -388,16 +402,14 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      */
     protected PropertyChangeListener createPropertyListener() {
         return evt -> {
-            logger.trace("prop change: evt={}", evt);
             String name = evt.getPropertyName();
             if (JFileChooser.DIRECTORY_CHANGED_PROPERTY.equals(name)) {
                 String newPath = evt.getNewValue().toString();
-                logger.trace("old: '{}', new: '{}'", getPath(), newPath);
                 handleChangeWatchService(newPath);
             }
         };
     }
-
+    
     /**
      * Change the path that the file chooser is presenting to the user.
      *
@@ -410,7 +422,7 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         String id = PREF_DEFAULTDIR + getId();
         idv.getStateManager().writePreference(id, newPath);
     }
-
+    
     /**
      * See the javadoc for {@link #getPath(String)}.
      *
@@ -423,12 +435,15 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
     public String getPath() {
         return getPath(System.getProperty("user.home"));
     }
-
+    
     /**
      * Get the path the {@link JFileChooser} should be using.
      *
      * <p>If the path in the user's preferences is {@code null}
      * (or does not exist), {@code defaultValue} will be returned.</p>
+     * 
+     * <p>If there is a nonexistent path in the preferences file, 
+     * {@link #findValidParent(String)} will be used.</p>
      *
      * @param defaultValue Default path to use if there is a {@literal "bad"}
      *                     path in the user's preferences.
@@ -441,12 +456,14 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
     public String getPath(final String defaultValue) {
         Objects.requireNonNull(defaultValue, "Default value may not be null");
         String tempPath = (String)idv.getPreference(PREF_DEFAULTDIR + getId());
-        if ((tempPath == null) || !Paths.get(tempPath).toFile().exists()) {
+        if ((tempPath == null)) {
             tempPath = defaultValue;
+        } else if (!Files.exists(Paths.get(tempPath))) {
+            tempPath = findValidParent(tempPath);
         }
         return tempPath;
     }
-
+    
     /**
      * Respond to path changes in the {@code JFileChooser}.
      *
@@ -458,22 +475,18 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
     public void handleChangeWatchService(final String newPath) {
         DirectoryWatchService watchService = getStaticMcv().getWatchService();
         if (watchService != null && watchListener != null) {
-            logger.trace("now watching '{}'", newPath);
-
+            logger.trace("trying to watch '{}'", newPath);
+            
             setPath(newPath);
-
-            handleStopWatchService(
-                Constants.EVENT_FILECHOOSER_STOP,
-                "changed directory"
-            );
-
-            handleStartWatchService(
-                Constants.EVENT_FILECHOOSER_START,
-                "new directory"
-            );
+            
+            handleStopWatchService(Constants.EVENT_FILECHOOSER_STOP,
+                                   "changed directory");
+            
+            handleStartWatchService(Constants.EVENT_FILECHOOSER_START,
+                                    "new directory");
         }
     }
-
+    
     /**
      * Begin monitoring the directory returned by {@link #getPath()} for
      * changes.
@@ -490,17 +503,24 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         boolean offscreen = mcv.getArgsManager().getIsOffScreen();
         boolean initDone = mcv.getHaveInitialized();
         String watchPath = getPath();
-        if (!offscreen && initDone) {
+        
+        DirectoryWatchService watchService = getStaticMcv().getWatchService();
+        if (!watchService.isRunning()) {
+            logger.warn("watch service is down! attempting restart...");
+            watchService.start();
+        }
+        
+        if ((watchListener == null) && isTrulyVisible() && !offscreen && initDone) {
             try {
                 watchListener = createWatcher();
                 mcv.watchDirectory(watchPath, "*", watchListener);
-                logger.trace("watching '{}' pattern: '{}' (reason: '{}')", watchPath, "*", reason);
+                logger.trace("watching '{}' pattern: '{}' running: '{}' (reason: '{}')", watchPath, "*", watchService.isRunning(), reason);
             } catch (IOException e) {
                 logger.error("error creating watch service", e);
             }
         }
     }
-
+    
     /**
      * Disable directory monitoring (if it was enabled in the first place).
      *
@@ -513,15 +533,15 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
                                        final Object reason)
     {
         logger.trace("stopping service (reason: '{}')", reason);
-
+        
         DirectoryWatchService service = getStaticMcv().getWatchService();
         service.unregister(watchListener);
-
+        
         service = null;
         watchListener = null;
         logger.trace("should be good to go!");
     }
-
+    
     /**
      * Creates a directory monitoring
      * {@link edu.wisc.ssec.mcidasv.util.pathwatcher.Service Service}.
@@ -530,26 +550,37 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
      */
     protected OnFileChangeListener createWatcher() {
         watchListener = new OnFileChangeListener() {
+            
+            /** {@inheritDoc} */
             @Override public void onFileCreate(String filePath) {
-                logger.trace("file created: '{}'", filePath);
                 DirectoryWatchService service = getStaticMcv().getWatchService();
                 if ((fileChooser != null) && service.isRunning()) {
                     SwingUtilities.invokeLater(() -> doUpdate());
                 }
             }
-
+            
+            /** {@inheritDoc} */
             @Override public void onFileModify(String filePath) {
-                logger.trace("file modified: '{}'", filePath);
                 DirectoryWatchService service = getStaticMcv().getWatchService();
                 if ((fileChooser != null) && service.isRunning()) {
                     SwingUtilities.invokeLater(() -> doUpdate());
                 }
             }
-
+            
+            /** {@inheritDoc} */
             @Override public void onFileDelete(String filePath) {
-                logger.trace("file deleted: '{}'", filePath);
                 DirectoryWatchService service = getStaticMcv().getWatchService();
                 if ((fileChooser != null) && service.isRunning()) {
+                    setPath(findValidParent(filePath));
+                    SwingUtilities.invokeLater(() -> doUpdate());
+                }
+            }
+            
+            /** {@inheritDoc} */
+            @Override public void onWatchInvalidation(String filePath) {
+                DirectoryWatchService service = getStaticMcv().getWatchService();
+                if ((fileChooser != null) && service.isRunning()) {
+                    setPath(findValidParent(filePath));
                     SwingUtilities.invokeLater(() -> doUpdate());
                 }
             }
@@ -557,15 +588,34 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         return watchListener;
     }
 
+    /**
+     * Find the closest valid {@literal "parent"} of the given path.
+     * 
+     * <p>Example: {@code /tmp/foo/bar/baz/} is {@code filePath}, but only 
+     * {@code /tmp/foo} exists. This method will return {@code /tmp/foo}.</p>
+     * 
+     * @param filePath Path to use a base. Cannot be {@code null}, but the path
+     *                 does not need to exist.
+     * 
+     * @return Closest existing ancestor of {@code filePath}.
+     */
+    public static String findValidParent(String filePath) {
+        Path p = Paths.get(filePath);
+        while (!Files.exists(p)) {
+            p = p.getParent();
+        }
+        return p.toString();
+    }
+    
     private JLabel statusLabel = new JLabel("Status");
-
-    @Override
-    public void setStatus(String statusString, String foo) {
-        if (statusString == null)
+    
+    @Override public void setStatus(String statusString, String foo) {
+        if (statusString == null) {
             statusString = "";
+        }
         statusLabel.setText(statusString);
     }
-        
+    
     /**
      * Create a more McIDAS-V-like GUI layout
      */
@@ -574,43 +624,44 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         // It does some initialization on private components that we can't get at
         JComponent parentContents = super.doMakeContents();
         Element chooserNode = getXmlNode();
-
+        
         String pathFromXml =
             XmlUtil.getAttribute(chooserNode, ATTR_PATH, (String)null);
         if (pathFromXml != null && Paths.get(pathFromXml).toFile().exists()) {
             setPath(pathFromXml);
         }
-
+        
         JComponent typeComponent = new JPanel();
         if (XmlUtil.getAttribute(chooserNode, ATTR_DSCOMP, true)) {
             typeComponent = getDataSourcesComponent();
         }
+        
         if (defaultDataSourceName != null) {
             typeComponent = new JLabel(defaultDataSourceName);
-            McVGuiUtils.setLabelBold((JLabel)typeComponent, true);
+            McVGuiUtils.setLabelBold((JLabel) typeComponent, true);
             McVGuiUtils.setComponentHeight(typeComponent, new JComboBox());
         }
-                        
+        
         // Create the different panels... extending classes can override these
         topPanel = getTopPanel();
         centerPanel = getCenterPanel();
         bottomPanel = getBottomPanel();
         
         JPanel innerPanel = centerPanel;
-        if (topPanel!=null && bottomPanel!=null)
+        if (topPanel != null && bottomPanel != null) {
             innerPanel = McVGuiUtils.topCenterBottom(topPanel, centerPanel, bottomPanel);
-        else if (topPanel!=null) 
+        } else if (topPanel != null) {
             innerPanel = McVGuiUtils.topBottom(topPanel, centerPanel, McVGuiUtils.Prefer.BOTTOM);
-        else if (bottomPanel!=null)
+        } else if (bottomPanel != null) {
             innerPanel = McVGuiUtils.topBottom(centerPanel, bottomPanel, McVGuiUtils.Prefer.TOP);
-        
+        }
         // Start building the whole thing here
         JPanel outerPanel = new JPanel();
-
+        
         JLabel typeLabel = McVGuiUtils.makeLabelRight(getDataSourcesLabel());
-                
+        
         JLabel statusLabelLabel = McVGuiUtils.makeLabelRight("");
-                
+        
         McVGuiUtils.setLabelPosition(statusLabel, Position.RIGHT);
         McVGuiUtils.setComponentColor(statusLabel, TextColor.STATUS);
         
@@ -626,18 +677,11 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         McVGuiUtils.setComponentWidth(loadButton, Width.DOUBLE);
         
         // This is how we know if the action was initiated by a button press
-        loadButton.addActionListener(new ActionListener() {
-                   public void actionPerformed(ActionEvent e) {
-                       buttonPressed = true;
-                       Misc.runInABit(1000, new Runnable() {
-                           public void run() {
-                               buttonPressed = false;
-                           }
-                       });
-                   }
-              }
-        );
-
+        loadButton.addActionListener(e -> {
+            buttonPressed = true;
+            Misc.runInABit(1000, () -> buttonPressed = false);
+        });
+        
         GroupLayout layout = new GroupLayout(outerPanel);
         outerPanel.setLayout(layout);
         layout.setHorizontalGroup(
@@ -685,9 +729,54 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
                     .addComponent(helpButton))
                 .addContainerGap())
         );
-    
+        outerPanel.addAncestorListener(this);
         return outerPanel;
-
+    }
+    
+    /** {@inheritDoc} */
+    @Override public void ancestorAdded(AncestorEvent event) {
+        // keep the calls to setTrulyVisible as the first step. that way 
+        // isTrulyVisible should work as expected.
+        setTrulyVisible(true);
+        
+        handleStartWatchService(Constants.EVENT_FILECHOOSER_START, 
+                                "chooser is visible");
+        SwingUtilities.invokeLater(this::doUpdate);
+    }
+    
+    /** {@inheritDoc} */
+    @Override public void ancestorRemoved(AncestorEvent event) {
+        // keep the calls to setTrulyVisible as the first step. that way 
+        // isTrulyVisible should work as expected.
+        setTrulyVisible(false);
+        
+        handleStopWatchService(Constants.EVENT_FILECHOOSER_STOP, 
+                               "chooser is not visible");
+    }
+    
+    /**
+     * Not implemented.
+     *
+     * @param event Ignored.
+     */
+    @Override public void ancestorMoved(AncestorEvent event) {}
+    
+    /**
+     * Determine if this file chooser is actually visible to the user.
+     *
+     * @return Whether or not this component has been made visible.
+     */
+    public boolean isTrulyVisible() {
+        return trulyVisible;
+    }
+    
+    /**
+     * Set whether or not this file chooser is actually visible to the user.
+     *
+     * @param value {@code true} means visible.
+     */
+    private void setTrulyVisible(boolean value) {
+        trulyVisible = value;
     }
     
 }

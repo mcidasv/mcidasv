@@ -34,7 +34,7 @@ package edu.wisc.ssec.mcidasv.util.pathwatcher;
  * Interface definition for services.
  */
 public interface Service {
-
+    
     /**
      * Starts the service. This method blocks until the service has completely
      * started.
@@ -42,13 +42,13 @@ public interface Service {
      * @throws Exception if there was a problem starting the service
      */
     void start() throws Exception;
-
+    
     /**
      * Stops the service. This method blocks until the service has completely
      * shut down.
      */
     void stop();
-
+    
     /**
      * Checks to see if the service is still running.
      *

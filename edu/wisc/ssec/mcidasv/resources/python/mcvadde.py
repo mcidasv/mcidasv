@@ -888,7 +888,8 @@ def listADDEImageTimes(localEntry=None,
             d = { 
                 'day': str(dt.formattedString('yyyyDDD', tz)), 
                 'time': str(dt.formattedString('HH:mm:ss', tz)),
-                'datetime': dt,
+                #'datetime': dt,
+                'datetime': DateTime(d.getStartTime()),
             }
             times.append(d)
             uniques.add(dt)
@@ -1130,7 +1131,8 @@ def listADDEImages(localEntry=None,
                     'accounting': accounting,
                     'day': tempDay,
                     'time': tempTime,
-                    'datetime': tempDateTime,
+                    #'datetime': tempDateTime,
+                    'datetime': DateTime(d.getStartTime()),
                     'imageSize': (d.getLines(), d.getElements()),
                     'centerLocation': (d.getCenterLatitude(), d.getCenterLongitude()),
                     'resolution': (d.getCenterLatitudeResolution(), d.getCenterLongitudeResolution()),

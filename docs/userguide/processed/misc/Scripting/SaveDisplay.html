@@ -85,7 +85,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
     </ul>
   <li class="propertylistitem"><strong>Colorbar -</strong> Adds a colorbar to the output image. By default, no colorbar is added to the image.</li>
     <ul class="propertylist">
-      <li class="propertylistitem"><strong>display -</strong> Sets the display to add the colorbar for. This is the name given to the layer at createLayer.</li>
+      <li class="propertylistitem"><strong>display -</strong> Sets the layer to add the colorbar for. This is the name given to the layer at createLayer.</li>
       <li class="propertylistitem"><strong>width -</strong> Sets the horizontal width of the colorbar in pixels.</li>
       <li class="propertylistitem"><strong>height -</strong> Sets the vertical height of the colorbar in pixels.</li>
       <li class="propertylistitem"><strong>orientation -</strong> Sets the location of the tickmarks and labels with respect to the colorbar. Valid options for this keyword are &quot;top&quot;, &quot;bottom&quot;, &quot;left&quot;, and &quot;right&quot;. Default=&quot;bottom&quot;.</li>
@@ -149,7 +149,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
     </ul>
   <li class="propertylistitem"><strong>ImageOverlay -</strong> Adds an image, such as a logo, to the output image.</li>
     <ul class="propertylist">
-      <li class="propertylistitem"><strong>image -</strong> Specifies the image to add to the output image. The full path to the logo file must be specified.</li>
+      <li class="propertylistitem"><strong>image -</strong> Specifies the image to add to the output image. The full path to the image file must be specified. If this keyword isn't specified, then a McIDAS-V logo (<img src="../images/smallMcvLogo.gif" width="22" height="22" align="absmiddle" alt="Small McIDAS-V Logo">) will be used.</li>
       <li class="propertylistitem"><strong>place -</strong> Sets the location of the image along with x and y pixel offsets.  Valid options are:<br>
       <table class="noborder">
     <tr>

@@ -35,26 +35,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <meta name="jhid" value="idv.controls.radargridcontrol">
 <p>The range rings control displays a set of concentric circles labeled by distance
 from the central point, with radial lines, useful for judging distance and angle
-from a geographic location. You display range rings from the Main Display window with the <strong>Display-&gt;Add
+from a geographic location. Range rings can be added to the Main Display window with the <strong>Display-&gt;Add
     Range Rings</strong> menu item. Range rings are often used with radar imagery, but they can be used with any data. The
 control window is composed of two tabs: <strong>Location</strong> and <strong>Settings</strong>.</p>
-<p>The <strong>Location</strong> tab allows you to specify
+<p>The <strong>Location</strong> tab allows for specifying
   the location to center the range rings:</p>
 <div class="images"><img  src="images/RadarGridControlGui1.gif"  alt="Image 1: Location Tab of the Range Rings Properties Dialog" ><br>
 <span class="caption">Image 1: Location Tab of the Range Rings Properties Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Location -</strong>  Displays range rings centered at the location chosen in the drop-down menu.</li>
-  <li class="propertylistitem"><strong>Center -</strong> Centers the rings at the entered  lat/lon values. Note: West longitudes are negative.</li>
-  <li class="propertylistitem"><strong>Position at click -</strong> Centers range rings where you left-click in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Location -</strong>  Displays range rings centered at the location chosen in the drop-down menu. This defaults to listing NEXRAD stations. The <strong>Edit-&gt;Set Locations</strong> menu item allows for changing this menu to list other locations.</li>
+  <li class="propertylistitem"><strong>Center -</strong> Centers the range rings at the specified lat/lon values. Note: West longitudes are negative.</li>
+  <li class="propertylistitem"><strong>Position at click -</strong> Centers the range rings where the mouse is left-clicked in the Main Display window.</li>
   <li class="propertylistitem"><strong>Vertical Position -</strong> Sets the vertical position of the range rings with respect to other data being displayed. This can be changed by dragging the slider or typing in a value and pressing Enter.</li>
 </ul>
-<p>The <strong>Settings</strong> tab allows you to control how the range rings are displayed:</p>
+<p>The <strong>Settings</strong> tab allows for controlling how the range rings are displayed:</p>
 <div class="images"><img src="images/RadarGridControlGui2.gif" width="672" height="250" alt="Image 2: Settings Tab of the Range Rings Properties Dialog"><br>
 <span class="caption">Image 2: Settings Tab of the Range Rings Properties Dialog</span></div>
 <p>The range rings are oriented with local north-south on the displayed map projection.
   In some cases, the eastward radial line may not be horizontal. The range rings will appear centered on the map projection.
-    You can move the range rings by resetting the latitude-longitude or the station. McIDAS-V can display multiple range rings at once and at any location.</p>
+    The range rings can be moved by resetting the latitude-longitude or the station. McIDAS-V can display multiple range rings at once and at any location.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Visible -</strong> Toggles the visibility of the range rings, labels, and radials
@@ -63,7 +63,7 @@ control window is composed of two tabs: <strong>Location</strong> and <strong>Se
       menu item.</li>
   <li class="propertylistitem"><strong>Spacing -</strong> Sets the ring spacing, label spacing, and the azimuth interval
       of the radials using the control window. The values appear in the text
-      fields under <strong>Spacing</strong>. You can give new values
+      fields under <strong>Spacing</strong>. This can be set in
       two ways: enter a new value in the text field  and press Enter, or click on the pull-down arrow
       on the right side of the text field to see a list of common values.</li>
   <li class="propertylistitem"><strong>Max. Radius -</strong> Sets the maximum radius  of the range
@@ -77,7 +77,7 @@ control window is composed of two tabs: <strong>Location</strong> and <strong>Se
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there is one option that is unique to this display.</p>
 <p>The <strong>Edit</strong> menu has this unique option:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Set Locations -</strong> Allows the user to select a specific location, radar site, earthquake location, etc. to center the range rings about.</li>
+  <li class="propertylistitem"><strong>Set Locations -</strong> Allows the user to select a specific location, radar site, earthquake location, etc. to center the range rings about. This menu item controls the listing of locations under the<strong> Location</strong> dropdown above, where the default it to list all NEXRAD stations.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

@@ -1425,12 +1425,13 @@ public class MapViewManager extends NavigatedViewManager {
         }
 
         final JCheckBox logoVizBox = new JCheckBox(
-                                         "Show Logo in View",
-                                         stateManager.getPreferenceOrProperty(
-                                             PREF_LOGO_VISIBILITY, false));
+           "Show Logo in View",
+           stateManager.getPreferenceOrProperty(
+           PREF_LOGO_VISIBILITY, 
+           true)
+        );
         final JTextField logoField =
-            new JTextField(stateManager.getPreferenceOrProperty(PREF_LOGO,
-                ""));
+           new JTextField(stateManager.getPreferenceOrProperty(PREF_LOGO, Constants.ICON_MCIDASV_DEFAULT));
         logoField.setToolTipText("Enter a file or URL");
         // top panel
         JButton browseButton = new JButton("Browse..");

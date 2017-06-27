@@ -32,7 +32,6 @@ import static ucar.unidata.util.GuiUtils.hbox;
 import static ucar.unidata.util.GuiUtils.filler;
 import static ucar.unidata.util.GuiUtils.left;
 import static ucar.unidata.util.GuiUtils.topLeft;
-
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arr;
 
 import java.awt.BorderLayout;
@@ -44,7 +43,6 @@ import java.awt.Font;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,6 +59,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -74,6 +73,7 @@ import edu.wisc.ssec.mcidasv.adt.Functions;
 import edu.wisc.ssec.mcidasv.adt.History;
 import edu.wisc.ssec.mcidasv.adt.Main;
 import edu.wisc.ssec.mcidasv.adt.ReadIRImage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +96,6 @@ import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.PointProbe;
 import ucar.visad.quantities.AirTemperature;
-
 import visad.CommonUnit;
 import visad.DateTime;
 import visad.DisplayEvent;
@@ -110,17 +109,25 @@ import visad.VisADException;
 import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.util.DataUtility;
-
 import edu.wisc.ssec.mcidas.AreaDirectory;
 
 /**
- * Description of what this class provides...
+ * Advanced Dvorak Technique Display Control
+ * Algorithm developed at UW Madison/CIMSS to objectively determine tropical
+ * cyclone intensity from geostationary satellite infrared imagery.
  * 
  * @author Tim Olander
  */
+
 public class ADTControl extends DisplayControlImpl {
     
     private static final Logger logger = LoggerFactory.getLogger(ADTControl.class);
+    
+    // Tooltip strings for the various UI buttons and inputs
+    private static final String TOOLTIP_LAND_FLAG_ON = "Apply ADT Land Interaction Rule";
+    private static final String TOOLTIP_LAND_FLAG_OFF = "Do Not Apply ADT Land Interaction Rule";
+    private static final String TOOLTIP_MSLP_FROM_DVORAK = "Utilize Dvorak Technique to Derive MSLP";
+    private static final String TOOLTIP_MSLP_FROM_CKZ = "Utilize Coutney/Knaff/Zehr Wind Speed/Presssure Technique";
     
     public static final String[] SCENE_TYPES = {
         "Eye", "Pinhole Eye", "Large Eye", "CDO", "Embedded Center",
@@ -129,7 +136,7 @@ public class ADTControl extends DisplayControlImpl {
     
     private static final String[] FORECAST_TYPES = {
         "ATCF", "DISC", "PACWARN", "GENERIC", "RMSC ICAO", "RMSC WTIO",
-        "TCWC AXAU", "(empty)", "BEST", "HURDAT"
+        "TCWC AXAU", "BEST", "HURDAT"
     };
     
     /** _more_ */
@@ -157,8 +164,11 @@ public class ADTControl extends DisplayControlImpl {
     private static boolean GUIATCFOutputTF;
     private static boolean GUIInitStrengthTF;
     private static boolean GUILandFlagTF;
-    private static boolean GUIUseCKZTF;
-    private static boolean GUIVmax1or10TF;
+
+    // Default Java boolean value is false - need to initialize if we want true
+    private static boolean GUIUseCKZTF = true;
+    private static boolean GUIVmax1or10TF = true;
+
     private static boolean GUICommentAddTF;
     private static boolean GUIDeleteTF;
     private static boolean GUIATCFRecordOutputTF;
@@ -200,6 +210,8 @@ public class ADTControl extends DisplayControlImpl {
     
     private JButton PMWFileBtn;
     
+    private JRadioButton manButton;
+    
     /** _more_ */
     private JComboBox<String> forecastTypeBox;
 
@@ -208,7 +220,7 @@ public class ADTControl extends DisplayControlImpl {
     private JFrame historyFrame;
     private JTextArea historyArea;
     
-    private JTextField historyTextField;
+    private JLabel selectedHistoryFile;
     
     private JFileChooser historyFileSaveChooser;
     
@@ -216,15 +228,17 @@ public class ADTControl extends DisplayControlImpl {
     private JLabel overrideSceneCurrentValueLabel;
     private JComboBox<String> overrideSceneTypeBox;
     
+    // CKZ params will need to be validated before running
+    JTextField ckzPenvTextField = null;
+    JTextField ckz34radiusTextField = null;
+    private static final String DEFAULT_PENV = "1012";
+    private static final String DEFAULT_RADIUS = "300";
+    
     private JLabel historyLabel;
     
     private static String HistoryListOutput;
-        
-    private static String GUIPMWFileName;
     
     private static final String SCENE_TYPE_PREFIX = "Current Scene Type: ";
-    
-
     
     /**
      * 
@@ -245,7 +259,7 @@ public class ADTControl extends DisplayControlImpl {
         probe = new PointProbe(new RealTuple(RealTupleType.SpatialEarth3DTuple,
                                 new double[] { 0, 0, 0 }));
 
-        probe.setManipulable(false);
+        probe.setManipulable(true);
         probe.setVisible(false);
         probe.setAutoSize(true);
 
@@ -257,6 +271,18 @@ public class ADTControl extends DisplayControlImpl {
         
         /* setup window contents in Controls Window */
         setContents(setupMainWindow());
+        
+        // TJJ Jun 2017
+        // We want to initialize probe to display center if in Manual mode
+        NavigatedDisplay d = getNavigatedDisplay();
+        if (manButton.isSelected()) {
+            if (d != null) {
+                EarthLocation el = d.getCenterPoint();
+                logger.debug("Initializing probe location to: " + el.getLatitude() + ", " + el.getLongitude());
+                probeLocation = el.getLatLonPoint();
+                probe.setVisible(true);
+            }
+        }
         updateProbeLocation();
         return true;
 
@@ -270,14 +296,15 @@ public class ADTControl extends DisplayControlImpl {
         JPanel latlonPanel = hbox(Misc.newList(latLonWidget));
 
         /* add Manual or Automated storm centering buttons */
-    
-        JTextField automanTextField = new JTextField("Select Storm Center In Image",25);
-        JRadioButton manButton = new JRadioButton("Manual");
+
+        manButton = new JRadioButton("Manual");
         manButton.setActionCommand("Manual");
         manButton.setSelected(true);
+        manButton.setToolTipText("Manually Select Storm Center In Image");
         JRadioButton autoButton = new JRadioButton("Automated");
         autoButton.setActionCommand("Automated");
         autoButton.setSelected(false);
+        autoButton.setToolTipText("Select Forecast File For First Guess Below");
         ButtonGroup automangroup = new ButtonGroup();
         automangroup.add(manButton);
         automangroup.add(autoButton);
@@ -286,23 +313,25 @@ public class ADTControl extends DisplayControlImpl {
         JLabel autoStormSelectLabel = new JLabel("AUTOMATED STORM SELECTION");
         JLabel forecastSelectLabel = new JLabel("Selected Forecast File:");
     
-        JTextField forecastTextField = new JTextField("No forecast file selected yet", 40);
+        JLabel forecastLabel = new JLabel("No forecast file selected yet");
         
         manButton.addActionListener(ae -> {
-            automanTextField.setText("Select Storm Center In Image");
+            // enable the manual lat/lon text boxes 
+            latLonWidget.getLonField().setEnabled(true);
+            latLonWidget.getLatField().setEnabled(true);
             autoStormSelectLabel.setEnabled(false);
             forecastSelectLabel.setEnabled(false);
-            forecastTextField.setEnabled(false);
             forecastBtn.setEnabled(false);
             forecastTypeBox.setEnabled(false);
             GUIRunAutoTF = false;
         });
         
         autoButton.addActionListener(ae -> {
-            automanTextField.setText("Select Forecast File For First Guess Below");
+            // disable the manual lat/lon text boxes when in auto mode
+            latLonWidget.getLonField().setEnabled(false);
+            latLonWidget.getLatField().setEnabled(false);
             autoStormSelectLabel.setEnabled(true);
             forecastSelectLabel.setEnabled(true);
-            forecastTextField.setEnabled(true);
             forecastBtn.setEnabled(true);
             forecastTypeBox.setEnabled(true);
             GUIRunAutoTF = true;
@@ -313,8 +342,10 @@ public class ADTControl extends DisplayControlImpl {
         forecastBtn.setPreferredSize(new Dimension(200,30));
         forecastBtn.addActionListener(fbtn -> {
             GUIForecastFileName = selectForecastFile();
-            System.out.printf("forecast file name=%s\n",GUIForecastFileName);
-            forecastTextField.setText(GUIForecastFileName);
+            logger.trace("forecast file name=%s\n", GUIForecastFileName);
+            forecastLabel.setText(
+               GUIForecastFileName.substring(GUIForecastFileName.lastIndexOf(File.separatorChar) + 1)
+            );
         });
 
         forecastTypeBox = new JComboBox<>(FORECAST_TYPES);
@@ -322,18 +353,17 @@ public class ADTControl extends DisplayControlImpl {
         forecastTypeBox.setPreferredSize(new Dimension(150,20));
         forecastTypeBox.addActionListener(ame -> {
             GUIForecastType = forecastTypeBox.getSelectedIndex();
-            System.out.printf("forecast file type=%d\n",GUIForecastType);
+            logger.trace("forecast file type=%d\n", GUIForecastType);
         });
         
         forecastTypeBox.setToolTipText("Select Forecast File type.");
         autoStormSelectLabel.setEnabled(false);
         forecastSelectLabel.setEnabled(false);
-        forecastTextField.setEnabled(false);
         forecastBtn.setEnabled(false);
         forecastTypeBox.setEnabled(false);
 
         /* define default history file text field message */
-        historyTextField = new JTextField("No history file selected yet",40);
+        selectedHistoryFile = new JLabel("No history file selected yet");
 
         /* add history file selection button */
         JButton historyBtn = new JButton("Select History File");
@@ -342,7 +372,9 @@ public class ADTControl extends DisplayControlImpl {
             GUIHistoryFileName = selectHistoryFile();
             logger.debug("history file name={}", GUIHistoryFileName);
             runFullADTAnalysis = true;
-            historyTextField.setText(GUIHistoryFileName);
+            selectedHistoryFile.setText(
+               GUIHistoryFileName.substring(GUIHistoryFileName.lastIndexOf(File.separatorChar) + 1)
+            );
         });
 
         /* add main ADT analysis start button */
@@ -355,7 +387,12 @@ public class ADTControl extends DisplayControlImpl {
         listBtn.setPreferredSize(new Dimension(250, 50));
         listBtn.addActionListener(ae -> {
             logger.debug("listing history file name={}", GUIHistoryFileName);
-            listHistoryFile();
+            try {
+                listHistoryFile();
+            } catch (NumberFormatException nfe) {
+                JOptionPane.showMessageDialog(null, 
+                    "Your selection does not appear to be a valid ADT History File.");
+            }
         });
     
         // TJJ Jan 2017
@@ -458,12 +495,12 @@ public class ADTControl extends DisplayControlImpl {
         JLabel ckz34radiusLabel = new JLabel("34kt Radius:");
         ckz34radiusLabel.setEnabled(false);
         
-        JTextField ckzPenvTextField = new JTextField("1012", 5);
+        ckzPenvTextField = new JTextField(DEFAULT_PENV, 5);
         ckzPenvTextField.addActionListener(ae -> {
             JTextField src = (JTextField)ae.getSource();
             GUICKZPenv = Integer.valueOf(src.getText());
         });
-        JTextField ckz34radiusTextField = new JTextField("300", 5);
+        ckz34radiusTextField = new JTextField(DEFAULT_RADIUS, 5);
         ckz34radiusTextField.addActionListener(ae -> {
             JTextField src = (JTextField)ae.getSource();
             GUICKZGaleRadius = Integer.valueOf(src.getText());
@@ -474,9 +511,11 @@ public class ADTControl extends DisplayControlImpl {
         JRadioButton mslpDvorakButton = new JRadioButton("Dvorak");
         mslpDvorakButton.setActionCommand("Dvorak");
         mslpDvorakButton.setSelected(true);
+        mslpDvorakButton.setToolTipText(TOOLTIP_MSLP_FROM_DVORAK);
         JRadioButton mslpCKZButton = new JRadioButton("CKZ");
         mslpCKZButton.setActionCommand("CKZ");
         mslpCKZButton.setSelected(false);
+        mslpCKZButton.setToolTipText(TOOLTIP_MSLP_FROM_CKZ);
         ButtonGroup mslpgroup = new ButtonGroup();
         mslpgroup.add(manButton);
         mslpgroup.add(autoButton);
@@ -590,9 +629,11 @@ public class ADTControl extends DisplayControlImpl {
         JRadioButton LandONButton = new JRadioButton("ON");
         LandONButton.setActionCommand("On");
         LandONButton.setSelected(true);
+        LandONButton.setToolTipText(TOOLTIP_LAND_FLAG_ON);
         JRadioButton LandOFFButton = new JRadioButton("OFF");
         LandOFFButton.setActionCommand("Off");
         LandOFFButton.setSelected(false);
+        LandOFFButton.setToolTipText(TOOLTIP_LAND_FLAG_OFF);
         ButtonGroup landgroup = new ButtonGroup();
         landgroup.add(LandONButton);
         landgroup.add(LandOFFButton);
@@ -616,7 +657,7 @@ public class ADTControl extends DisplayControlImpl {
         V1MinButton.setSelected(true);
         JRadioButton V10MinButton = new JRadioButton("Ten-minute");
         V10MinButton.setActionCommand("Ten");
-        V10MinButton.setSelected(true);
+        V10MinButton.setSelected(false);
         ButtonGroup voutgroup = new ButtonGroup();
         voutgroup.add(V1MinButton);
         voutgroup.add(V10MinButton);
@@ -651,19 +692,19 @@ public class ADTControl extends DisplayControlImpl {
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
         JComponent widgets =
             GuiUtils.formLayout(
-                arr(left(hbox(arr(new JLabel("Storm Center Selection:"), manButton, autoButton, automanTextField), 5)),
+                arr(left(hbox(arr(new JLabel("Storm Center Selection:"), manButton, autoButton), 5)),
                     filler(),
                     left(hbox(arr(new JLabel("MANUAL STORM SELECTION")), 10)),
                     filler(),
                     left(hbox(arr(filler(30,1),latlonPanel))), filler(),
                     left(hbox(arr(autoStormSelectLabel), 10)), filler(),
                     left(hbox(arr(filler(30,1),forecastBtn, forecastTypeBox,
-                        forecastSelectLabel, forecastTextField),5)),filler(),
+                        forecastSelectLabel, forecastLabel), 5)), filler(),
                     left(hbox(arr(blankfield))),
                     filler(1,10),
                     left(hbox(arr(new JLabel("HISTORY FILE INFORMATION")), 10)),filler(),
-                    left(hbox(arr(filler(30,1), historyBtn,new JLabel
-                        ("Selected History File:"), historyTextField),5)),
+                    left(hbox(arr(filler(30, 1), historyBtn, new JLabel
+                        ("Selected History File: "), selectedHistoryFile), 5)),
                     filler(),
                     left(hbox(arr(blankfield))),
                     filler(1,10),
@@ -674,10 +715,10 @@ public class ADTControl extends DisplayControlImpl {
                     left(hbox(arr(blankfield))),
                     filler(1,10),
                     left(hbox(arr(new JLabel("MISCELLANEOUS OPTIONS")), 10)), filler(),
-                    left(hbox(arr(filler(30,1),new JLabel("MSLP Conversion Method:"), mslpDvorakButton, mslpCKZButton, ckzPenvLabel, ckzPenvTextField, ckz34radiusLabel,ckz34radiusTextField), 5)),filler(),
+                    left(hbox(arr(filler(30, 1),new JLabel("MSLP Conversion Method:"), mslpDvorakButton, mslpCKZButton, ckzPenvLabel, ckzPenvTextField, ckz34radiusLabel,ckz34radiusTextField), 5)),filler(),
                     left(hbox(arr(filler(30, 1), sceneOverrideButton, OverrideLabel), 5)), filler(),
-                    left(hbox(arr(filler(30,1),LandFlagLabel,LandONButton, LandOFFButton, filler(20,1), VOutLabel, V1MinButton, V10MinButton, filler(20,1),RawTLabel,RawTTextField, RMWLabel, RMWTextField), 5)),filler(),
-                    left(hbox(arr(filler(30,1),ATCFOutputLabel, ATCFOutputButton,ATCFEntryStormLabel,ATCFEntryStormTextField, ATCFEntrySiteLabel,ATCFEntrySiteTextField), 5)),filler(),
+                    left(hbox(arr(filler(30, 1),LandFlagLabel,LandONButton, LandOFFButton, filler(20,1), VOutLabel, V1MinButton, V10MinButton, filler(20,1),RawTLabel,RawTTextField, RMWLabel, RMWTextField), 5)),filler(),
+                    left(hbox(arr(filler(30, 1),ATCFOutputLabel, ATCFOutputButton,ATCFEntryStormLabel,ATCFEntryStormTextField, ATCFEntrySiteLabel,ATCFEntrySiteTextField), 5)),filler(),
                     left(hbox(arr(filler(80, 1), adtBtn, listBtn, GUIFileOverrideButton), 20)), filler()));
                     
         JPanel controls = topLeft(widgets);
@@ -1004,6 +1045,54 @@ public class ADTControl extends DisplayControlImpl {
                 return;
             }
             
+            // TJJ Jun 2019 Just about ready, a few more validation checks and we can run          
+            // If CKZ chosen as MSLP Conversion Method, need to validate Penv and 34kt Radius fields
+            // This may not be the best place to do this, but it's better than not doing it ;-)
+            
+            if (GUIUseCKZTF) {
+                
+                String newPenvStr = ckzPenvTextField.getText();
+                try {
+                    int newPenv = Integer.valueOf(newPenvStr);
+                    if (newPenv > 0) {
+                        GUICKZPenv = newPenv;
+                        Env.CKZPenv = GUICKZPenv;
+                    } else {
+                        throw (new NumberFormatException());
+                    }
+                } catch (NumberFormatException nfe) {
+                    // Throw up a warning and bail out
+                    JOptionPane.showMessageDialog(
+                        null, 
+                        "Invalid Penv value: " + newPenvStr + "\n" +
+                        "Please provide a positive integer."
+                    );
+                    ExitADT();
+                    return;
+                }
+                
+                String newRadiusStr = ckz34radiusTextField.getText();
+                try {
+                    int newRadius = Integer.valueOf(newRadiusStr);
+                    if (newRadius > 0) {
+                        GUICKZGaleRadius = newRadius;
+                        Env.CKZGaleRadius = GUICKZGaleRadius;
+                    } else {
+                        throw (new NumberFormatException());
+                    }
+                } catch (NumberFormatException nfe) {
+                    // Throw up a warning and bail out
+                    JOptionPane.showMessageDialog(
+                        null, 
+                        "Invalid Radius value: " + newRadiusStr + "\n" +
+                        "Please provide a positive integer."
+                    );
+                    ExitADT();
+                    return;
+                }
+                
+            }
+             
             try {
                 logger.debug("RUNNING ADT ANALYSIS");
                 ADTRunOutput = StormADT.RunADTAnalysis(runFullADTAnalysis,GUIHistoryFileName);
@@ -1053,23 +1142,42 @@ public class ADTControl extends DisplayControlImpl {
         adtBtn.setText("Run Analysis");
     }
     
+    /*
+     * Override for additional local cleanup
+     * (non-Javadoc)
+     * @see ucar.unidata.idv.control.DisplayControlImpl#doRemove()
+     */
+
+    @Override
+    public void doRemove() throws RemoteException, VisADException {
+        super.doRemove();
+        if (resultFrame != null) resultFrame.dispose();
+        if (historyFrame != null) historyFrame.dispose();
+    }
+
     private void listHistoryFile() {
         HistoryListOutput = null;
         
         History CurrentHistory = new History();
+        
+        // Make sure a valid History File has been selected. At startup, value will be null
+        if (GUIHistoryFileName == null) {
+            JOptionPane.showMessageDialog(null, 
+            "Please first select a valid ADT History File.");
+            return;
+        }
         
         try {
             logger.debug("trying to read history file {}", GUIHistoryFileName);
             CurrentHistory.ReadHistoryFile(GUIHistoryFileName);
         } catch (IOException exception) {
             String ErrorMessage = String.format("History file %s is not found",GUIHistoryFileName);
-            System.out.printf(ErrorMessage);
+            logger.warn(ErrorMessage);
             userMessage(ErrorMessage);
             return;
         }
         
-        // int NumRecs = CurrentHistory.HistoryNumberOfRecords();
-        /* System.out.printf("number of records=%d\n",NumRecs); */
+        logger.debug("Number of history records: ", History.HistoryNumberOfRecords());
         
         HistoryListOutput = History.ListHistory(0, -1, "CIMS", "99X");
         historyLabel.setText(GUIHistoryFileName);
@@ -1263,7 +1371,6 @@ public class ADTControl extends DisplayControlImpl {
     private String selectForecastFile() {
         
         String fileNameReturn = null;
-//        String ForecastPath;
         
         logger.debug("in selectForecastFile");
         JFrame forecastFileFrame = new JFrame();
@@ -1274,7 +1381,7 @@ public class ADTControl extends DisplayControlImpl {
         }
         logger.debug("forecast path={}", forecastPath);
         forecastFileChooser.setCurrentDirectory(new File(forecastPath));
-        forecastFileChooser.setDialogTitle("Select ADT History File");
+        forecastFileChooser.setDialogTitle("Select ADT Forecast File");
         int returnVal = forecastFileChooser.showOpenDialog(forecastFileFrame);
         logger.debug("retVal={}", returnVal);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -1284,31 +1391,6 @@ public class ADTControl extends DisplayControlImpl {
         } else {
             logger.error("error with file chooser");
         }
-        return fileNameReturn;
-    }
-    
-
-    
-    private String selectPMWFile() {
-        
-        String fileNameReturn = null;
-        String DataPath;
-        
-        JFrame PMWFileFrame = new JFrame();
-        JFileChooser PMWFileChooser = new JFileChooser();
-        // PMWFileChooser.setCurrentDirectory(new File("/home/tlo/Development/mcidasv/edu/wisc/ssec/mcidasv/adt/main"));
-        DataPath = System.getenv("ODTPMW");
-        if (DataPath == null) {
-            DataPath = System.getenv("HOME");
-        }
-        PMWFileChooser.setCurrentDirectory(new File(DataPath));
-        PMWFileChooser.setDialogTitle("Select PMW History File");
-        int returnVal = PMWFileChooser.showOpenDialog(PMWFileFrame);
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = PMWFileChooser.getSelectedFile();
-            fileNameReturn = file.getAbsolutePath();
-        }
-        
         return fileNameReturn;
     }
     
