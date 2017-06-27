@@ -28,32 +28,19 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
-import visad.FlatField;
 import visad.Set;
 import visad.Gridded1DSet;
 import visad.CoordinateSystem;
 import visad.RealType;
 import visad.RealTupleType;
-import visad.SetType;
 import visad.Linear1DSet;
 import visad.Linear2DSet;
 import visad.Unit;
 import visad.FunctionType;
 import visad.VisADException;
 import visad.QuickSort;
-import java.rmi.RemoteException;
-
-import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 
 public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
@@ -106,6 +93,9 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       boolean isVertDimAlt = true;
 
       CoordinateSystem cs = null;
+      
+      int medianFilterTrackWidth = 10;
+      int medianFilterVertWidth = 10;
 
       public static Map<String, double[]> getEmptySubset() {
         Map<String, double[]> subset = new HashMap<>();
@@ -212,7 +202,7 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         catch (Exception e) {
           System.out.println(e);
         }
-
+        
       }
 
       public int getTrackLength() {
@@ -237,6 +227,14 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
 
       public int getTrackTupIdx() {
         return track_tup_idx;
+      }
+      
+      public int getMedianFilterWindowWidth() {
+        return medianFilterTrackWidth;
+      }
+      
+      public int getMedianFilterWindowHeight() {
+        return medianFilterVertWidth;
       }
                                                                                                                                                      
       public Set makeDomain(Map<String, double[]> subset) throws Exception {
