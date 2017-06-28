@@ -332,7 +332,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
             defaultSubset = subset;
             defaultSubsets[k] = defaultSubset;
 
-            properties.put("medianFilter", new String[] {Double.toString(adapter.getMedianFilterWindowHeight()), Double.toString(adapter.getMedianFilterWindowWidth())});
+            properties.put("medianFilter", new String[] {Integer.toString(adapter.getMedianFilterWindowHeight()), Integer.toString(adapter.getMedianFilterWindowWidth())});
             properties.put("setBelowSfcMissing", new String[] {"true"});
             propsArray[k] = properties;
          }
@@ -425,7 +425,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          DataCategory.createCategory("ProfileAlongTrack");
          categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
 
-         properties.put("medianFilter", new String[] {Double.toString(adapter.getMedianFilterWindowHeight()), Double.toString(adapter.getMedianFilterWindowWidth())});
+         properties.put("medianFilter", new String[] {Integer.toString(adapter.getMedianFilterWindowHeight()), Integer.toString(adapter.getMedianFilterWindowWidth())});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          propsArray[0] = properties;
 
@@ -620,7 +620,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          defaultSubsets[1] = adapters[1].getDefaultSubset();
 
 
-         properties.put("medianFilter", new String[] {Double.toString(adapter.getMedianFilterWindowHeight()), Double.toString(adapter.getMedianFilterWindowWidth())});
+         properties.put("medianFilter", new String[] {Integer.toString(adapter.getMedianFilterWindowHeight()), Integer.toString(adapter.getMedianFilterWindowWidth())});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          propsArray[0] = properties;
          hasTrackPreview = true;
@@ -1074,8 +1074,8 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
       if (requestProperties.containsKey("medianFilter")) {
         String[] items = (String[]) requestProperties.get("medianFilter");
-        int windowVertLen = (int) Double.parseDouble(items[0]);
-        int windowHorzLen = (int) Double.parseDouble(items[1]);
+        int windowVertLen = Integer.parseInt(items[0]);
+        int windowHorzLen = Integer.parseInt(items[1]);
         GriddedSet domainSet = (GriddedSet) ((FlatField)data).getDomainSet();
         int[] lens = domainSet.getLengths();
         float[] range_values = (((FlatField)data).getFloats())[0];
