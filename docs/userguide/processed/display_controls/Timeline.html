@@ -29,31 +29,31 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Timeline Controls</div>
 <p>McIDAS-V makes use of a timeline widget in a variety of areas. The timeline allows
-you to see the temporal distribution of a set of times and easily select them.
-There can also be a date selection mechanism (see below) that allows you to select
+for viewing the temporal distribution of a set of times and selecting them.
+There can also be a date selection mechanism (see below) that allows for selecting
 based on a range, interval, etc. The <strong>Match Time Driver</strong> checkbox automatically selects the dates and times that match closest to the time driver, assuming a time driver has been set. For more information, see <a href="../misc/TimeMatching.html">Time Matching</a>.</p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/timeline.gif" width="730" height="193" alt="Image 1: Relative Times Chooser"><br>
+<div class="images"><img src="../quickstart/images/RelativeTimes.gif" width="707" height="184" alt="Image 1: Relative Times Chooser"><br>
   <span class="caption">Image 1: Relative Times Chooser</span></div>
 <a name="image2" id="image2"></a>
-<div class="images"><img src="images/Timeline1.gif" width="730" height="194" alt="Image 2: Absolute Times Chooser"><br>
+<div class="images"><img src="../quickstart/images/AbsoluteImageTimes.gif" width="707" height="184" alt="Image 2: Absolute Times Chooser"><br>
 <span class="caption">Image 2: Absolute Times Chooser</span></div>
   <div class="pagesubtitle">Date Selection</div>
 <p>The date selection settings can be accessed by right-clicking in the timeline
-to show a popup menu. The menu allows you explicitly define these settings through
-a Properties dialog or set them directly with sub-menu choices.
+to show a popup menu. The menu allows for defining these settings through
+a Properties dialog or setting them directly with sub-menu choices.
 The date selection settings are listed below.</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Properties -</strong> Opens a Date Selection window, where you can set a starting and ending time, as well as an interval, max number of images, and a skip factor.</li>
+  <li class="propertylistitem"><strong>Properties -</strong> Opens a Date Selection window, where a starting and ending time, as well as an interval, max number of images, and a skip factor can be set.</li>
   <li class="propertylistitem"><strong>Set Visible Range -</strong> Stretches out the timeline seen in the <strong>Absolute</strong> tab to cover the selected time range.</li>
   <li class="propertylistitem"><strong>Set Date Selection -</strong> Selects all of the times in the time range selected.</li>
   <li class="propertylistitem"><strong>Use Visible Range -</strong> Selects all of the times currently visible in the <strong>Absolute</strong> tab.</li>
   <li class="propertylistitem"><strong>Start/End date -</strong> Defines the range to look within.</li>
-  <li class="propertylistitem"><strong>Interval -</strong> Allows you to select dates every N time units.</li>
+  <li class="propertylistitem"><strong>Interval -</strong> Allows for selecting dates every N time units.</li>
   <li class="propertylistitem"><strong>Skip Factor -</strong> Skips every N'th time that would be selected.</li>
   <li class="propertylistitem"><strong>Count -</strong> Specifies a max number of times that will be selected. Only the most recent N times will be selected.</li>
   <li class="propertylistitem"><strong>Sunrise/Sunset -</strong> Shades the background of the times in yellow when the sun is up, and in white when the sun is down.</li>
-  <li class="propertylistitem"><strong>Before/After Range -</strong> Displays as the little gray triangles in the timeline. By default, the ranges that we use are one half the size of the interval. However, you can set the range both before and after the interval tick. So for example, if you want to just consider times within 15 minutes before the interval but nothing after the interval set the Before Range to be 15 minutes and the After Range to be 0 minutes.</li>
+  <li class="propertylistitem"><strong>Before/After Range -</strong> Displays as the little gray triangles in the timeline. By default, the ranges that we use are one half the size of the interval. However, the user can set the range both before and after the interval tick. So for example, if the user want to just consider times within 15 minutes before the interval but nothing after the interval set the Before Range to be 15 minutes and the After Range to be 0 minutes.</li>
 </ul>
 <p>The View Managers use the timeline to show the animation time set and the times of the different displays. Here, the timeline is used for informational purposes and is not used to select times. This can be shown through the <strong>View-&gt;Animation Timeline</strong> menu from the Main Display window. The gray timeline represents non-visible displays. Double clicking in a timeline sets the animation step to that time.</p>
 <a name="image3" id="image3"></a>

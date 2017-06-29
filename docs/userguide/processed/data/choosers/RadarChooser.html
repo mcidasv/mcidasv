@@ -32,8 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Rad
 <div class="pagetitle">Choosing NEXRAD Level III Radar Data</div>
 <p>The <strong>Radar-&gt;Level III</strong> chooser allows you to choose NEXRAD Level III radar data on remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/RadarLevelIII.html">Getting Started - Displaying Level III Radar Imagery</a>.</p>
 <a name="image1" id="image1"></a>
-<div class="images"><img src="images/Level3Chooser.gif" alt="Image 1: Level III Radar Chooser">
-<br>
+<div class="images"><img src="images/Level3Chooser.gif" width="1013" height="679" alt="Image 1: Level III Radar Chooser"><br>
 <span class="caption">Image 1: Level III Radar Chooser</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
@@ -54,8 +53,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Rad
       <li class="propertylistitem"><img src="images/ViewLeft.gif" alt="Move view left" width="18" height="18" align=absmiddle> <strong> Move View Left</strong> - Moves the view left (map right).</li>
       <li class="propertylistitem"><img src="images/ViewRight.gif" alt="Move view right" width="18" height="18" align=absmiddle> <strong> Move View Right</strong> - Moves the view right (map left).</li>
 </ul>
-    <li class="propertylistitem"><strong>Times: Relative</strong> - Allows you to select a group of up to the last 50 times.</li>
-    <li class="propertylistitem"><a name="absolute" id="absolute"></a><strong>Times: Absolute</strong> - Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Ctrl+click or Shift+click. See the <a href="../../display_controls/Timeline.html">Timeline Controls</a> section for details on its use. Click on the <img src="images/SelectDay1.gif" alt="Select Archive Day button" width="16" height="16"align=absmiddle> <strong>Select Day</strong> button to narrow down a large dataset to one day.</li>
+    <li class="propertylistitem"><strong>Times: Relative</strong> - Allows for adding any number of relative (most recent) images.</li>
+    <li class="propertylistitem"><a name="absolute" id="absolute"></a><strong>Times: Absolute</strong> - Allows for selecting one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Ctrl+click or Shift+click. See the <a href="../../display_controls/Timeline.html">Timeline Controls</a> section for details on its use. Click on the <img src="images/SelectDay1.gif" alt="Select Archive Day button" width="16" height="16"align=absmiddle> <strong>Select Day</strong> button to narrow down a large dataset to one day.</li>
     <li class="propertylistitem"><strong>Match Time Driver -</strong> Selects times that match the time driver, assuming one has been set. For more information on this feature, see <a href="../../misc/TimeMatching.html">Time Matching</a>.  This option is only available if a time driver has been set in the session.</li>
     <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align=absmiddle> <strong> Help</strong> - Brings up this help page.</li>
     <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align=absmiddle> <strong> Refresh</strong> - Updates the Level III radar chooser with the most recent data.</li>
