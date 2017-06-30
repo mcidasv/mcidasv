@@ -62,6 +62,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#relative1.7">Relative Times Tab Update</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#absolute1.7">Absolute Times Tab Update</a></strong></li>
     <li><strong><a class="faq-question-link" href="#rbi1.7">Local mcidasv.rbi File Added</a></strong></li>
     <li><strong><a class="faq-question-link" href="#java1.7">Java, Java 3D, JOGL, and NetCDF Versions</a></strong></li>
     <li><strong><a class="faq-question-link" href="#scripting1.7">Scripting</a></strong></li>
@@ -96,6 +98,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat3_1.7" id="faq1_cat3_1.7"></a>Other
     Changes</div>
+    <div class="faq-category"><a name="relative1.7" id="relative1.7"></a>
+    <h4>Relative Times Tab Update</h4>
+    <div class="faq-answer">Updated the Relative Times tab in the Satellite&gt;Imagery, Radar Level II&gt;Remote, Radar&gt;Level III, and Point Observations&gt;Plot/Contour choosers to have a text entry box for the user to enter the number of relative times to load. In the past, users were limited to selecting a maximum of 100 relative times, but this limit has been removed.</div>
+  </div>
+    <div class="faq-category"><a name="absolute1.7" id="absolute1.7"></a>
+    <h4>Absolute Times Tab Update</h4>
+    <div class="faq-answer">Updated the Absolute Times tab in the Satellite&gt;Imagery chooser to have a text entry box for the user to enter the number of absolute times to list in the chooser. In the past, the default was to list the last 100 times, and the only alternative was to list all of the times in the dataset. Now, a user can enter any integer value greater than zero and click the List Images button. As an alternative to a numerical value, entering &quot;ALL&quot; will return all of the times in the dataset.</div>
+  </div>
   <div class="faq-category"><a name="rbi1.7" id="rbi1.7"></a>
     <h4>Local mcidasv.rbi File Added</h4>
     <div class="faq-answer">Added a mcidasv.rbi file to the user's McIDAS-V directory. This RBI (Resource Bundle for the IDV) file allows for defining the location of different resources used by McIDAS-V. These different resources include color tables, formulas, help tips, etc.. Users can modify this mcidasv.rbi file to customize their sessions to only use specific resources. For example, a user can create a mcidasv.rbi file in a way that the resource used for color tables is only pulled from a sitepath directory (specified by the sitepath argument at startup) and not use the native color tables included with McIDAS-V. This mcidasv.rbi file also allows for user configuration of resources that can't be altered through the user interface, such as help tips. A user can create their own helptips.xml file and point to it in mcidasv.rbi, allowing for McIDAS-V to read and display their own custom help tips. For more information on this, see <a href="misc/SiteConfiguration.html">Site Configuration</a>.</div>
