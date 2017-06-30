@@ -332,7 +332,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
             defaultSubset = subset;
             defaultSubsets[k] = defaultSubset;
 
-            properties.put("medianFilter", new String[] {Double.toString(12), Double.toString(24)});
+            properties.put("medianFilter", new String[] {Integer.toString(adapter.getMedianFilterWindowHeight()), Integer.toString(adapter.getMedianFilterWindowWidth())});
             properties.put("setBelowSfcMissing", new String[] {"true"});
             propsArray[k] = properties;
          }
@@ -425,7 +425,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          DataCategory.createCategory("ProfileAlongTrack");
          categories = DataCategory.parseCategories("ProfileAlongTrack;ProfileAlongTrack;");
 
-         properties.put("medianFilter", new String[] {Double.toString(12), Double.toString(32)});
+         properties.put("medianFilter", new String[] {Integer.toString(adapter.getMedianFilterWindowHeight()), Integer.toString(adapter.getMedianFilterWindowWidth())});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          propsArray[0] = properties;
 
@@ -620,7 +620,7 @@ public class MultiDimensionDataSource extends HydraDataSource {
          defaultSubsets[1] = adapters[1].getDefaultSubset();
 
 
-         properties.put("medianFilter", new String[] {Double.toString(6), Double.toString(14)});
+         properties.put("medianFilter", new String[] {Integer.toString(adapter.getMedianFilterWindowHeight()), Integer.toString(adapter.getMedianFilterWindowWidth())});
          properties.put("setBelowSfcMissing", new String[] {"true"});
          propsArray[0] = properties;
          hasTrackPreview = true;
@@ -1074,14 +1074,13 @@ public class MultiDimensionDataSource extends HydraDataSource {
 
       if (requestProperties.containsKey("medianFilter")) {
         String[] items = (String[]) requestProperties.get("medianFilter");
-        double window_lenx = Double.parseDouble(items[0]);
-        double window_leny = Double.parseDouble(items[1]);
+        int windowVertLen = Integer.parseInt(items[0]);
+        int windowHorzLen = Integer.parseInt(items[1]);
         GriddedSet domainSet = (GriddedSet) ((FlatField)data).getDomainSet();
         int[] lens = domainSet.getLengths();
         float[] range_values = (((FlatField)data).getFloats())[0];
         range_values =
-           ProfileAlongTrack.medianFilter(range_values, lens[0], lens[1],
-                               (int)window_lenx, (int)window_leny);
+           ProfileAlongTrack.medianFilter(range_values, lens[0], lens[1], windowHorzLen, windowVertLen);
         ((FlatField)new_data).setSamples(new float[][] {range_values});
       }
       if (requestProperties.containsKey("setBelowSfcMissing")) {
