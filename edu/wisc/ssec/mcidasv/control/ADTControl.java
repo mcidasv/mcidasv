@@ -40,6 +40,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -107,6 +108,7 @@ import visad.RealTupleType;
 import visad.Set;
 import visad.VisADException;
 import visad.georef.EarthLocation;
+import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonPoint;
 import visad.util.DataUtility;
 import edu.wisc.ssec.mcidas.AreaDirectory;
@@ -212,6 +214,9 @@ public class ADTControl extends DisplayControlImpl {
     
     private JRadioButton manButton;
     
+    // Button to relocate probe
+    private JButton moveProbeButton;
+    
     /** _more_ */
     private JComboBox<String> forecastTypeBox;
 
@@ -294,6 +299,42 @@ public class ADTControl extends DisplayControlImpl {
         latLonWidget = new LatLonWidget(GuiUtils.makeActionListener(this,
                         "latLonWidgetChanged", null));
         JPanel latlonPanel = hbox(Misc.newList(latLonWidget));
+        moveProbeButton = new JButton("Move Probe");
+        moveProbeButton.addActionListener(ae -> {
+            // Validate the manual lat/lon text boxes 
+            String validLL = latLonWidget.isValidValues();
+            if (validLL == null) {
+                // User provided valid lat/lon data, see if it's within
+                // our display bounds. If so, move the probe
+                NavigatedDisplay d = getNavigatedDisplay();
+                if (manButton.isSelected()) {
+                    if (d != null) {
+                        EarthLocationTuple elt = null;
+                        try {
+                            elt = new EarthLocationTuple(latLonWidget.getLat(), latLonWidget.getLon(), Double.NaN);
+                            // Make sure the new Earth location is within the bounds of our satellite IR image
+                            Rectangle2D.Double bounds = d.getLatLonBox();
+                            logger.debug("Bounds min, max X: " + bounds.getMinX() + ", " + bounds.getMaxX());
+                            logger.debug("Bounds min, max Y: " + bounds.getMinY() + ", " + bounds.getMaxY());
+                            logger.debug("ELT LatVal, LonVal: " + elt.getLatitude().getValue() + ", " + elt.getLongitude().getValue());
+                            if (bounds.contains(elt.getLongitude().getValue(), elt.getLatitude().getValue())) {
+                                probeLocation = elt.getLatLonPoint();
+                                updateProbeLocation();
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Location provided is outside image bounds");
+                            }
+                        } catch (VisADException ve) {
+                            ve.printStackTrace();
+                        } catch (RemoteException re) {
+                            re.printStackTrace();
+                        }
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, validLL);
+            }
+        });
+        latlonPanel.add(moveProbeButton);
 
         /* add Manual or Automated storm centering buttons */
 
@@ -321,6 +362,7 @@ public class ADTControl extends DisplayControlImpl {
             latLonWidget.getLatField().setEnabled(true);
             autoStormSelectLabel.setEnabled(false);
             forecastSelectLabel.setEnabled(false);
+            moveProbeButton.setEnabled(true);
             forecastBtn.setEnabled(false);
             forecastTypeBox.setEnabled(false);
             GUIRunAutoTF = false;
@@ -332,6 +374,7 @@ public class ADTControl extends DisplayControlImpl {
             latLonWidget.getLatField().setEnabled(false);
             autoStormSelectLabel.setEnabled(true);
             forecastSelectLabel.setEnabled(true);
+            moveProbeButton.setEnabled(false);
             forecastBtn.setEnabled(true);
             forecastTypeBox.setEnabled(true);
             GUIRunAutoTF = true;
@@ -1045,7 +1088,7 @@ public class ADTControl extends DisplayControlImpl {
                 return;
             }
             
-            // TJJ Jun 2019 Just about ready, a few more validation checks and we can run          
+            // TJJ Jun 2017 Just about ready, a few more validation checks and we can run          
             // If CKZ chosen as MSLP Conversion Method, need to validate Penv and 34kt Radius fields
             // This may not be the best place to do this, but it's better than not doing it ;-)
             
