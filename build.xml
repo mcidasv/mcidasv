@@ -943,25 +943,25 @@
       <assertions refid="mcv.assertions"/>
       
       <!-- required for jython stuff to work without jigsaw-specific changes -->
-      <jvmarg value="--permit-illegal-access"/>
-      <jvmarg value="--add-exports" />
-      <jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />
-      <jvmarg value="--add-exports" />
-      <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
-      <jvmarg value="--add-exports" />
-      <jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />
-      <jvmarg value="--add-exports" />
-      <jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />
-      <jvmarg value="--add-exports" />
-      <jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />
-      <jvmarg value="--add-opens" />
-      <jvmarg value="java.base/java.lang=ALL-UNNAMED" />
-      <jvmarg value="--add-opens" />
-      <jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />
-      <jvmarg value="--add-opens" />
-      <jvmarg value="java.management/sun.management=ALL-UNNAMED" />
-      <jvmarg value="--add-opens" />
-      <jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />
+      <!--<jvmarg value="&#45;&#45;permit-illegal-access"/>-->
+      <!--<jvmarg value="&#45;&#45;add-exports" />-->
+      <!--<jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />-->
+      <!--<jvmarg value="&#45;&#45;add-exports" />-->
+      <!--<jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />-->
+      <!--<jvmarg value="&#45;&#45;add-exports" />-->
+      <!--<jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />-->
+      <!--<jvmarg value="&#45;&#45;add-exports" />-->
+      <!--<jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />-->
+      <!--<jvmarg value="&#45;&#45;add-exports" />-->
+      <!--<jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />-->
+      <!--<jvmarg value="&#45;&#45;add-opens" />-->
+      <!--<jvmarg value="java.base/java.lang=ALL-UNNAMED" />-->
+      <!--<jvmarg value="&#45;&#45;add-opens" />-->
+      <!--<jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />-->
+      <!--<jvmarg value="&#45;&#45;add-opens" />-->
+      <!--<jvmarg value="java.management/sun.management=ALL-UNNAMED" />-->
+      <!--<jvmarg value="&#45;&#45;add-opens" />-->
+      <!--<jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />-->
       <jvmarg value="-noverify" />
       <jvmarg value="-XX:+DoEscapeAnalysis" />
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
