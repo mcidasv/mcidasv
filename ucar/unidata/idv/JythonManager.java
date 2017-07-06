@@ -58,6 +58,7 @@ import static ucar.unidata.xml.XmlUtil.getRoot;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -347,10 +348,10 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @param filePath The file path.
      */
     public void onFileCreate(String filePath) {
-//        if (!isFileInJythonLibrary(filePath)) {
-//            logger.trace("filePath='{}'", filePath);
-//            createNewLibrary(filePath);
-//        }
+        if (!isFileInJythonLibrary(filePath)) {
+            logger.trace("filePath='{}'", filePath);
+            createNewLibrary(filePath);
+        }
     }
 
     /**
@@ -362,10 +363,10 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @param filePath The file path.
      */
     public void onFileModify(String filePath) {
-//        if (isFileInJythonLibrary(filePath)) {
-//            logger.trace("filePath='{}'", filePath);
-//            updateLibrary(filePath);
-//        }
+        if (isFileInJythonLibrary(filePath)) {
+            logger.trace("filePath='{}'", filePath);
+            updateLibrary(filePath);
+        }
     }
 
     /**
@@ -376,10 +377,10 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @param filePath The file path.
      */
     public void onFileDelete(String filePath) {
-//        logger.trace("filePath='{}'", filePath);
-//        if (isFileInJythonLibrary(filePath)) {
-//            quietRemoveLibrary(filePath);
-//        }
+        logger.trace("filePath='{}'", filePath);
+        if (isFileInJythonLibrary(filePath)) {
+            quietRemoveLibrary(filePath);
+        }
     }
 
     // TODO(jon): dox!
@@ -863,24 +864,78 @@ public class JythonManager extends IdvManager implements ActionListener,
                          exc);
         }
     }
-
-    public void updateLibrary(String path) {
-        Path p = Paths.get(path);
-        try {
+    
+    /**
+     * Determine which {@link LibHolder} is visible to the user, if any.
+     * 
+     * @return Either the visible {@code LibHolder} or {@code null}.
+     */
+    private LibHolder getVisibleLibrary() {
+        LibHolder visible = null;
+        if (treePanel != null) {
+            // TODO(jon): need to verify the reliability of this method
+            Component vizComp = treePanel.getVisibleComponent();
             for (LibHolder holder : getLibHolders()) {
-                if (Objects.equals(holder.filePath, path)) {
-                    logger.trace("trying to update {}", holder.filePath);
-                    String contents = readContents(p.toFile());
-                    holder.setText(contents);
-                    if (holder.saveBtn != null) {
-                        holder.saveBtn.setEnabled(false);
-                    }
-                    holder.wrapper.repaint();
-                    evaluateLibJython(false, holder);
+                if (Objects.equals(vizComp, holder.outerContents)) {
+                    visible = holder;
+                    break;
                 }
             }
-        } catch (Exception e) {
-            logException("An error occurred refreshing the jython library", e);
+        }
+        return visible;
+    }
+    
+    /**
+     * Update the {@literal "Jython Library"} GUI.
+     * 
+     * <p>Note: when {@code modifiedLibrary} is the library that is currently 
+     * visible to the user (say the user decided to save the file), we appear
+     * to be deadlocking Windows somehow. Bottom line (for now): 
+     * {@code modifiedLibrary} should <b>not</b> be the currently visible 
+     * library.</p>
+     * 
+     * @param modifiedLibrary Jython Library that was modified. 
+     *                        Cannot be {@code null}.
+     */
+    private void updateLibraryGui(LibHolder modifiedLibrary) {
+        try {
+            Path libraryPath = Paths.get(modifiedLibrary.filePath);
+            String contents = readContents(libraryPath.toFile());
+            modifiedLibrary.setText(contents);
+            if (modifiedLibrary.saveBtn != null) {
+                modifiedLibrary.saveBtn.setEnabled(false);
+            }
+            // TODO(jon): might be as simple as removing this
+            // repaint call...need to get Windows VM working!
+            modifiedLibrary.wrapper.repaint();
+        } catch (IOException e) {
+            logException("Could not read " + modifiedLibrary.filePath, e);
+        }
+    }
+    
+    /**
+     * Handle updating the given (pre-existing) Jython Library file.
+     * 
+     * <b>{@literal "Updating"} means having the Jython Shell essentially 
+     * do a Python-style {@code reload()}, and then ensuring that the Jython 
+     * Library is also up-to-date.</b>
+     * 
+     * @param path Path to the modified Jython library file. 
+     *             Cannot be {@code null}.
+     * 
+     * @throws NullPointerException if {@code path} is {@code null}.
+     */
+    public void updateLibrary(String path) {
+        Objects.requireNonNull(path);
+        LibHolder viz = getVisibleLibrary();
+        for (LibHolder holder : getLibHolders()) {
+            if (Objects.equals(holder.filePath, path)) {
+                logger.trace("trying to update {}", holder.filePath);
+                if ((viz == null) || !Objects.equals(viz, holder)) {
+                    SwingUtilities.invokeLater(() -> updateLibraryGui(holder));
+                }
+                evaluateLibJython(false, holder);
+            }
         }
     }
      
