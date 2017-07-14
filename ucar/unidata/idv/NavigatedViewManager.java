@@ -963,6 +963,7 @@ public abstract class NavigatedViewManager extends ViewManager {
 
         createCBMI(showMenu, PREF_3DCLIP);
         createCBMI(showMenu, PREF_SHOWCURSOR);
+        createCBMI(showMenu, PREF_LOGO_VISIBILITY);
 
         return showMenu;
     }

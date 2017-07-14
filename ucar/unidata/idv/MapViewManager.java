@@ -30,7 +30,6 @@ package ucar.unidata.idv;
 
 
 import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
@@ -1431,7 +1430,9 @@ public class MapViewManager extends NavigatedViewManager {
            true)
         );
         final JTextField logoField =
-           new JTextField(stateManager.getPreferenceOrProperty(PREF_LOGO, Constants.ICON_MCIDASV_DEFAULT));
+           new JTextField(
+               stateManager.getPreferenceOrProperty(PREF_LOGO, Constants.ICON_MCIDASV_DEFAULT)
+           );
         logoField.setToolTipText("Enter a file or URL");
         // top panel
         JButton browseButton = new JButton("Browse..");
@@ -1898,7 +1899,7 @@ public class MapViewManager extends NavigatedViewManager {
         createCBMI(showMenu, PREF_ANIREADOUT);
         createCBMI(showMenu, PREF_SHOWPIP);
         createCBMI(showMenu, PREF_SHOWEARTHNAVPANEL);
-        createCBMI(showMenu, PREF_LOGO_VISIBILITY);
+
         return showMenu;
     }
 
