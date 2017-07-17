@@ -282,9 +282,9 @@ public class ImagePlanViewControl extends PlanViewControl {
     protected void getViewMenuItems(List items, boolean forMenuBar) {
         super.getViewMenuItems(items, forMenuBar);
         items.add(GuiUtils.MENU_SEPARATOR);
-        items.add(GuiUtils.makeMenuItem("Save Chart Image...",
-                                        getChart(),
-                                        "saveImage"));
+        JMenuItem saveMenuItem = new JMenuItem("Save Chart Image...");
+        saveMenuItem.addActionListener(e -> getChart().saveImage());
+        items.add(saveMenuItem);
     }
 
 
