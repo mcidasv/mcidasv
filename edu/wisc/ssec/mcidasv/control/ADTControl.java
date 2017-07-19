@@ -325,10 +325,8 @@ public class ADTControl extends DisplayControlImpl {
                             } else {
                                 JOptionPane.showMessageDialog(null, "Location provided is outside image bounds");
                             }
-                        } catch (VisADException ve) {
-                            ve.printStackTrace();
-                        } catch (RemoteException re) {
-                            re.printStackTrace();
+                        } catch (VisADException | RemoteException ve) {
+                            logException(ve);
                         }
                     }
                 }
@@ -387,7 +385,7 @@ public class ADTControl extends DisplayControlImpl {
         forecastBtn.setPreferredSize(new Dimension(200,30));
         forecastBtn.addActionListener(fbtn -> {
             GUIForecastFileName = selectForecastFile();
-            logger.trace("forecast file name=%s\n", GUIForecastFileName);
+            logger.trace("forecast file name={}", GUIForecastFileName);
             forecastLabel.setText(
                GUIForecastFileName.substring(GUIForecastFileName.lastIndexOf(File.separatorChar) + 1)
             );
@@ -398,7 +396,7 @@ public class ADTControl extends DisplayControlImpl {
         forecastTypeBox.setPreferredSize(new Dimension(150,20));
         forecastTypeBox.addActionListener(ame -> {
             GUIForecastType = forecastTypeBox.getSelectedIndex();
-            logger.trace("forecast file type=%d\n", GUIForecastType);
+            logger.trace("forecast file type={}", GUIForecastType);
         });
         
         forecastTypeBox.setToolTipText("Select Forecast File type.");
@@ -1082,7 +1080,6 @@ public class ADTControl extends DisplayControlImpl {
                 /* System.out.printf("latitude=%f longitude=%f domain=%d\n",CenterLatitude,CenterLongitude,DomainID); */
                 GetImageData(CenterLatitude, CenterLongitude);
             } catch (Exception e) {
-                // e.printStackTrace();
                 ErrorMessage = "Error reading IR data in getimagedata()\n";
                 logger.error(ErrorMessage.trim(), e);
                 userMessage(ErrorMessage);
@@ -1097,42 +1094,42 @@ public class ADTControl extends DisplayControlImpl {
             if (GUIUseCKZTF) {
                 
                 String newPenvStr = ckzPenvTextField.getText();
+                boolean badPenv = false;
                 try {
                     int newPenv = Integer.valueOf(newPenvStr);
                     if (newPenv > 0) {
                         GUICKZPenv = newPenv;
                         Env.CKZPenv = GUICKZPenv;
                     } else {
-                        throw (new NumberFormatException());
+                        badPenv = true;
                     }
                 } catch (NumberFormatException nfe) {
+                    badPenv = true;
+                }
+                
+                if (badPenv) {
                     // Throw up a warning and bail out
-                    JOptionPane.showMessageDialog(
-                        null, 
-                        "Invalid Penv value: " + newPenvStr + "\n" +
-                        "Please provide a positive integer."
-                    );
-                    ExitADT();
+                    showBadIntWarning("Penv", newPenvStr);
                     return;
                 }
                 
                 String newRadiusStr = ckz34radiusTextField.getText();
+                boolean badNewRadius = false;
                 try {
                     int newRadius = Integer.valueOf(newRadiusStr);
                     if (newRadius > 0) {
                         GUICKZGaleRadius = newRadius;
                         Env.CKZGaleRadius = GUICKZGaleRadius;
                     } else {
-                        throw (new NumberFormatException());
+                        badNewRadius = true;
                     }
                 } catch (NumberFormatException nfe) {
+                    badNewRadius = true;
+                }
+                
+                if (badNewRadius) {
                     // Throw up a warning and bail out
-                    JOptionPane.showMessageDialog(
-                        null, 
-                        "Invalid Radius value: " + newRadiusStr + "\n" +
-                        "Please provide a positive integer."
-                    );
-                    ExitADT();
+                    showBadIntWarning("Radius", newRadiusStr);
                     return;
                 }
                 
@@ -1143,7 +1140,7 @@ public class ADTControl extends DisplayControlImpl {
                 ADTRunOutput = StormADT.RunADTAnalysis(runFullADTAnalysis,GUIHistoryFileName);
             } catch (IOException exception) {
                 ErrorMessage = "Error with call to StormADT.RunADT()\n";
-                System.out.printf(ErrorMessage);
+                logger.error(ErrorMessage.trim(), exception);
                 userMessage(ErrorMessage);
                 ExitADT();
                 return;
@@ -1170,7 +1167,7 @@ public class ADTControl extends DisplayControlImpl {
                     } catch (IOException exception) {
                         ErrorMessage = String.format("Error writing history file %s\n",GUIHistoryFileName);
                     }
-                    System.out.printf(ErrorMessage);
+                    logger.warn(ErrorMessage.trim());
                     userMessage(ErrorMessage);
                 }
                 if (GUIATCFRecordOutputTF) {
@@ -1179,6 +1176,19 @@ public class ADTControl extends DisplayControlImpl {
                 ExitADT();
             }
         }
+    }
+    
+    /**
+     * Show a warning about a certain parameter needing to be greater than zero.
+     * 
+     * @param type Parameter name. Cannot be {@code null}.
+     * @param badValue Erroneous value. Cannot be {@code null}.
+     */
+    private void showBadIntWarning(String type, String badValue) {
+        String msg = "Invalid %s value: %s\nPlease provide a positive integer.";
+        JOptionPane.showMessageDialog(null, 
+                                      String.format(msg, type, badValue));
+        ExitADT();
     }
     
     private void ExitADT() {
@@ -1193,11 +1203,14 @@ public class ADTControl extends DisplayControlImpl {
      * @see ucar.unidata.idv.control.DisplayControlImpl#doRemove()
      */
 
-    @Override
-    public void doRemove() throws RemoteException, VisADException {
+    @Override public void doRemove() throws RemoteException, VisADException {
         super.doRemove();
-        if (resultFrame != null) resultFrame.dispose();
-        if (historyFrame != null) historyFrame.dispose();
+        if (resultFrame != null) {
+            resultFrame.dispose();
+        }
+        if (historyFrame != null) {
+            historyFrame.dispose();
+        }
     }
 
     private void listHistoryFile() {
@@ -1222,7 +1235,7 @@ public class ADTControl extends DisplayControlImpl {
             return;
         }
         
-        logger.debug("Number of history records: ", History.HistoryNumberOfRecords());
+        logger.debug("Number of history records: {}", History.HistoryNumberOfRecords());
         
         HistoryListOutput = History.ListHistory(0, -1, "CIMS", "99X");
         historyLabel.setText(GUIHistoryFileName);
@@ -1337,7 +1350,7 @@ public class ADTControl extends DisplayControlImpl {
                 /* outFile.flush(); */
                 ErrorMessage = String.format("success writing history file output file %s\n",saveFile.toString());
             } catch (IOException ex) {
-                ex.printStackTrace();
+                logger.error("problem writing to history file output", ex);
                 ErrorMessage = String.format("error writing history file output file %s\n",saveFile.toString());
             }
             System.out.printf(ErrorMessage);
@@ -1405,7 +1418,7 @@ public class ADTControl extends DisplayControlImpl {
                 /* outFile.flush(); */
                 ATCFMessage = String.format("Success writing ATCF file %s",saveFile);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                logger.error("problem writing to ATCF file", ex);
                 ATCFMessage = String.format("Error writing ATCF file %s",saveFile);
             }
             System.out.printf(ATCFMessage);
