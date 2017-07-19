@@ -41,6 +41,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -66,6 +67,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.adt.Data;
@@ -96,6 +98,7 @@ import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.PointProbe;
+import ucar.visad.display.SelectorDisplayable;
 import ucar.visad.quantities.AirTemperature;
 import visad.CommonUnit;
 import visad.DateTime;
@@ -252,7 +255,7 @@ public class ADTControl extends DisplayControlImpl {
         super();
     }
     
-    public boolean init(DataChoice choice) throws VisADException,
+    @Override public boolean init(DataChoice choice) throws VisADException,
                         RemoteException {
         logger.info("ADTControl constructor begin...");
         
@@ -260,21 +263,21 @@ public class ADTControl extends DisplayControlImpl {
             return false;
         }
         this.choice = choice;
-
+        
         probe = new PointProbe(new RealTuple(RealTupleType.SpatialEarth3DTuple,
-                                new double[] { 0, 0, 0 }));
-
-        probe.setManipulable(true);
+                               new double[] { 0.0, 0.0, 0.0 }));
+                               
         probe.setVisible(false);
         probe.setAutoSize(true);
-
+        probe.addPropertyChangeListener(this);
+        
         probe.setPointSize(getDisplayScale());
         addDisplayable(probe, FLAG_COLOR);
         
-        /* obtain initial ADT environmental parameters */
+        // obtain initial ADT environmental parameters
         getADTenvParameters();
         
-        /* setup window contents in Controls Window */
+        // setup window contents in Controls Window
         setContents(setupMainWindow());
         
         // TJJ Jun 2017
@@ -283,16 +286,15 @@ public class ADTControl extends DisplayControlImpl {
         if (manButton.isSelected()) {
             if (d != null) {
                 EarthLocation el = d.getCenterPoint();
-                logger.debug("Initializing probe location to: " + el.getLatitude() + ", " + el.getLongitude());
+                logger.debug("Initializing probe location to: {}, {}", el.getLatitude(), el.getLongitude());
                 probeLocation = el.getLatLonPoint();
                 probe.setVisible(true);
             }
         }
         updateProbeLocation();
         return true;
-
     }
-
+    
     private Container setupMainWindow() {
 
         /* add Lat/Lon position display text areas */  
@@ -1672,19 +1674,61 @@ public class ADTControl extends DisplayControlImpl {
     public void handleDisplayChanged(DisplayEvent event) {
         super.handleDisplayChanged(event);
         if (canHandleEvents()) {
-            int id = event.getId();
-            // String idstring = event.toString();
-            // InputEvent inputEvent = event.getInputEvent();
-            // System.out.printf("event ID=%d %s\n",id,idstring);
+//            int id = event.getId();
+//            // String idstring = event.toString();
+//            // InputEvent inputEvent = event.getInputEvent();
+//            // System.out.printf("event ID=%d %s\n",id,idstring);
+//            try {
+//                if (id == DisplayEvent.MOUSE_PRESSED_LEFT) {
+//                    logger.debug("Manual Position Selection");
+//                    probeLocation = toEarth(event).getLatLonPoint();
+//                    updateProbeLocation();
+//                }
+//            } catch (Exception e) {
+//                logException("Error selecting position with mouse", e);
+//            }
+        }
+    }
+    
+    /**
+     * Respond to the probe being dragged.
+     * 
+     * @param event Event to handle.
+     */
+    @Override public void propertyChange(PropertyChangeEvent event) {
+        if (canHandleEvents() && SelectorDisplayable.PROPERTY_POSITION.equals(event.getPropertyName())) {
             try {
-                if (id == DisplayEvent.MOUSE_PRESSED_LEFT) {
-                    logger.debug("Manual Position Selection");
-                    probeLocation = toEarth(event).getLatLonPoint();
-                    updateProbeLocation();
-                }
-            } catch (Exception e) {
-                logException("Error selecting position with mouse", e);
+                RealTuple position = probe.getPosition();
+                double[] loc = position.getValues();
+                logger.debug("Manual Position Selection loc={}", loc);
+                // note: loc[1] is apparently latitude, and loc[0] is longitude!
+                probeLocation = 
+                    makeEarthLocation(loc[1], loc[0], loc[2]).getLatLonPoint();
+                SwingUtilities.invokeLater(this::updatePositionWidget);
+            } catch (VisADException | RemoteException ex) {
+                logger.error("Error updating probe location", ex);
             }
+        } else {
+            super.propertyChange(event);
+        }
+    }
+    
+    /**
+     * Update {@link #latLonWidget} if it exists.
+     * 
+     * <p>Note: must be called from the event dispatch thread.</p>
+     */
+    private void updatePositionWidget() {
+        if (latLonWidget != null) {
+            try {
+                logger.trace("attempting to update widget! lat={} lon={}", probeLocation.getLatitude(), probeLocation.getLongitude());
+                latLonWidget.setLat(getDisplayConventions().formatLatLon(probeLocation.getLatitude().getValue(CommonUnit.degree)));
+                latLonWidget.setLon(getDisplayConventions().formatLatLon(probeLocation.getLongitude().getValue(CommonUnit.degree)));
+            } catch (VisADException ex) {
+                logger.error("Error updating GUI with probe position", ex);
+            }
+        } else {
+            logger.trace("no lat/lon widget to update!");
         }
     }
     
