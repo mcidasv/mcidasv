@@ -1621,6 +1621,7 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
      */
     public void setLineWidth(int width)
             throws RemoteException, VisADException {
+
         width = (width < 1)
                 ? 1
                 : width;
@@ -1631,7 +1632,9 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
                 getGridDisplay().setRibbonWidth(width);
             }
 
-            getGridDisplay().resetTrojectories();
+            // TJJ Jul 2017 - Inq #2519
+            // Display may not be initialized yet if loading from bundle
+            if (getGridDisplay() != null) getGridDisplay().resetTrojectories();
         }
 
         super.setLineWidth(width);
