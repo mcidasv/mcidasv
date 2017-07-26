@@ -131,8 +131,18 @@ public class ADTControl extends DisplayControlImpl {
     // Tooltip strings for the various UI buttons and inputs
     private static final String TOOLTIP_LAND_FLAG_ON = "Apply ADT Land Interaction Rule";
     private static final String TOOLTIP_LAND_FLAG_OFF = "Do Not Apply ADT Land Interaction Rule";
+    private static final String TOOLTIP_MANUAL = "Manually Select Storm Center In Image";
+    private static final String TOOLTIP_AUTOMATIC = "Select Forecast File For First Guess Below";
+    private static final String TOOLTIP_HISTORY = "Choose a File to Retain and Store ADT Output Data";
+    private static final String TOOLTIP_PMW = "Supplement Analysis With Passive Microwave Eye Score";
+    private static final String TOOLTIP_PENV = "Environmental Mean Sea Level Pressure";
+    private static final String TOOLTIP_34KT = "34 Knot Wind/Gale Radius";
     private static final String TOOLTIP_MSLP_FROM_DVORAK = "Utilize Dvorak Technique to Derive MSLP";
     private static final String TOOLTIP_MSLP_FROM_CKZ = "Utilize Coutney/Knaff/Zehr Wind Speed/Presssure Technique";
+    private static final String TOOLTIP_RMW = "Manually Input Radius of Maximum Wind";
+    private static final String TOOLTIP_RAW_T = "Manually Define Initial Value for New Storm";
+    private static final String TOOLTIP_STORM_ID = "Three Character WMO Storm Identfier";
+    private static final String TOOLTIP_SITE_ID = "Four Character Site Analysis Identifier";
     
     public static final String[] SCENE_TYPES = {
         "Eye", "Pinhole Eye", "Large Eye", "CDO", "Embedded Center",
@@ -341,11 +351,11 @@ public class ADTControl extends DisplayControlImpl {
         manButton = new JRadioButton("Manual");
         manButton.setActionCommand("Manual");
         manButton.setSelected(true);
-        manButton.setToolTipText("Manually Select Storm Center In Image");
+        manButton.setToolTipText(TOOLTIP_MANUAL);
         JRadioButton autoButton = new JRadioButton("Automated");
         autoButton.setActionCommand("Automated");
         autoButton.setSelected(false);
-        autoButton.setToolTipText("Select Forecast File For First Guess Below");
+        autoButton.setToolTipText(TOOLTIP_AUTOMATIC);
         ButtonGroup automangroup = new ButtonGroup();
         automangroup.add(manButton);
         automangroup.add(autoButton);
@@ -399,7 +409,7 @@ public class ADTControl extends DisplayControlImpl {
             logger.trace("forecast file type={}", GUIForecastType);
         });
         
-        forecastTypeBox.setToolTipText("Select Forecast File type.");
+        forecastTypeBox.setToolTipText("Select Forecast File Type.");
         autoStormSelectLabel.setEnabled(false);
         forecastSelectLabel.setEnabled(false);
         forecastBtn.setEnabled(false);
@@ -410,6 +420,7 @@ public class ADTControl extends DisplayControlImpl {
 
         /* add history file selection button */
         JButton historyBtn = new JButton("Select History File");
+        historyBtn.setToolTipText(TOOLTIP_HISTORY);
         historyBtn.setPreferredSize(new Dimension(200, 30));
         historyBtn.addActionListener(hbtn -> {
             GUIHistoryFileName = selectHistoryFile();
@@ -459,24 +470,27 @@ public class ADTControl extends DisplayControlImpl {
         JLabel pmwManTimeLabel = new JLabel("Time:");
         JLabel pmwManScoreLabel = new JLabel("Score:");
         JTextField pmwManDateTextField = new JTextField("1900JAN01", 8);
+        pmwManDateTextField.setToolTipText("YYYYMMMDD");
         pmwManDateTextField.addActionListener(ae -> {
             /* read PMW overpass date */
-            JTextField src = (JTextField)ae.getSource();
+            JTextField src = (JTextField) ae.getSource();
             GUIMWJulianDate =
                 Functions.cmonth2julian(src.getText());
             GUIMWScore = -99.0;
         });
-        JTextField pmwManTimeTextField = new JTextField("000000",6);
+        JTextField pmwManTimeTextField = new JTextField("000000", 6);
+        pmwManTimeTextField.setToolTipText("HHMMSS");
         pmwManTimeTextField.addActionListener(ae -> {
             /* read PMW overpass time */
-            JTextField src = (JTextField)ae.getSource();
+            JTextField src = (JTextField) ae.getSource();
             GUIMWHHMMSSTime = Integer.valueOf(src.getText());
             GUIMWScore = -99.0;
         });
-        JTextField pmwManScoreTextField = new JTextField("-99.0",4);
+        JTextField pmwManScoreTextField = new JTextField("-99.0", 4);
+        pmwManScoreTextField.setToolTipText("Eye Score Value");
         pmwManScoreTextField.addActionListener(ae -> {
             /* read PMW overpass score */
-            JTextField src = (JTextField)ae.getSource();
+            JTextField src = (JTextField) ae.getSource();
             GUIMWScore = Double.valueOf(src.getText());
         });
         pmwManDateTextField.setEnabled(false);
@@ -517,6 +531,7 @@ public class ADTControl extends DisplayControlImpl {
         PMWActivateButton.setActionCommand("PMW");
         PMWActivateButton.setSelected(false);
         PMWActivateButton.setEnabled(true);
+        PMWActivateButton.setToolTipText(TOOLTIP_PMW);
         PMWActivateButton.addActionListener(ae -> {
             // if on, turn off and vice versa
             GUIPMWActivateTF = !GUIPMWActivateTF;
@@ -539,11 +554,13 @@ public class ADTControl extends DisplayControlImpl {
         ckz34radiusLabel.setEnabled(false);
         
         ckzPenvTextField = new JTextField(DEFAULT_PENV, 5);
+        ckzPenvTextField.setToolTipText(TOOLTIP_PENV);
         ckzPenvTextField.addActionListener(ae -> {
             JTextField src = (JTextField)ae.getSource();
             GUICKZPenv = Integer.valueOf(src.getText());
         });
         ckz34radiusTextField = new JTextField(DEFAULT_RADIUS, 5);
+        ckz34radiusTextField.setToolTipText(TOOLTIP_34KT);
         ckz34radiusTextField.addActionListener(ae -> {
             JTextField src = (JTextField)ae.getSource();
             GUICKZGaleRadius = Integer.valueOf(src.getText());
@@ -587,6 +604,7 @@ public class ADTControl extends DisplayControlImpl {
         /* Initial classification entry -- RAWT */
         JLabel RawTLabel = new JLabel("Raw T:");
         JTextField RawTTextField = new JTextField("1.0", 4);
+        RawTTextField.setToolTipText(TOOLTIP_RAW_T);
         RawTTextField.addActionListener(ae -> {
             JTextField src = (JTextField)ae.getSource();
             GUIRawTValue = Double.valueOf(src.getText());
@@ -595,7 +613,8 @@ public class ADTControl extends DisplayControlImpl {
         
         /* Radius of Max Wind entry -- RMW */
         JLabel RMWLabel = new JLabel("RMW:");
-        JTextField RMWTextField = new JTextField("-99",4);
+        JTextField RMWTextField = new JTextField("-99", 4);
+        RMWTextField.setToolTipText(TOOLTIP_RMW);
         RMWTextField.addActionListener(ae -> {
             JTextField src = (JTextField)ae.getSource();
             GUIRMWSize = Double.valueOf(src.getText());
@@ -641,9 +660,11 @@ public class ADTControl extends DisplayControlImpl {
         ATCFOutputButton.setEnabled(true);
     
         JLabel ATCFEntryStormLabel = new JLabel("Storm ID:");
-        JTextField ATCFEntryStormTextField = new JTextField("XXX",8);
+        JTextField ATCFEntryStormTextField = new JTextField("XXX", 8);
+        ATCFEntryStormTextField.setToolTipText(TOOLTIP_STORM_ID);
         JLabel ATCFEntrySiteLabel = new JLabel("Site ID:");
-        JTextField ATCFEntrySiteTextField = new JTextField("XXXX",8);
+        JTextField ATCFEntrySiteTextField = new JTextField("XXXX", 8);
+        ATCFEntrySiteTextField.setToolTipText(TOOLTIP_SITE_ID);
         ATCFEntryStormLabel.setEnabled(false);
         ATCFEntryStormTextField.setEnabled(false);
         ATCFEntrySiteLabel.setEnabled(false);
@@ -698,9 +719,11 @@ public class ADTControl extends DisplayControlImpl {
         JRadioButton V1MinButton = new JRadioButton("One-minute");
         V1MinButton.setActionCommand("One");
         V1MinButton.setSelected(true);
+        V1MinButton.setToolTipText("Maximum Wind Speed Averaged Over");
         JRadioButton V10MinButton = new JRadioButton("Ten-minute");
         V10MinButton.setActionCommand("Ten");
         V10MinButton.setSelected(false);
+        V10MinButton.setToolTipText("Maximum Wind Speed Averaged Over");
         ButtonGroup voutgroup = new ButtonGroup();
         voutgroup.add(V1MinButton);
         voutgroup.add(V10MinButton);
