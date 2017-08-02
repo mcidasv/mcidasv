@@ -799,7 +799,18 @@ public class DataSelectionWidget {
 
         return newDataSource;
     }
-
+    
+    /**
+     * Create a default {@link GeoSelection}.
+     * 
+     * Uses {@link GeoSelection#getDefaultBoundingBox()}.
+     * 
+     * @return Default bounding box.
+     */
+    private static GeoSelection getDefaultGeoSelection() {
+        return new GeoSelection(GeoSelection.getDefaultBoundingBox());
+    }
+    
     /**
      * Create the data selection from everything selected by the user
      *
@@ -877,9 +888,12 @@ public class DataSelectionWidget {
             }
         }
 
-        if (dataSelectionComponents != null && dataSelectionComponents.size() == 2 )
+        if (dataSelectionComponents != null && dataSelectionComponents.size() == 2)
         {
             geoSelection = dataSelection.getGeoSelection();
+            if (geoSelection == null) {
+                geoSelection = getDefaultGeoSelection();
+            }
             regionOption =
                     dataSelection.getProperty(DataSelection.PROP_REGIONOPTION,
                             USE_DEFAULTREGION);
@@ -895,7 +909,7 @@ public class DataSelectionWidget {
                     geoSelection.clearStride();
                 }
                 if ( regionOption.equals(DataSelection.PROP_USEDEFAULTAREA)) {
-                    geoSelection.setBoundingBox(null);
+                    geoSelection.setBoundingBox(null);/**/
                     geoSelection.setUseFullBounds(false);
                     geoSelection.setUseViewBounds(false);
                 } else if (regionOption.equals(DataSelection.PROP_USEDISPLAYAREA) &&
