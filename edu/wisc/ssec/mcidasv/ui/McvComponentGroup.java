@@ -41,17 +41,16 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -73,7 +72,6 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Msg;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 
 /**
@@ -736,18 +734,26 @@ public class McvComponentGroup extends IdvComponentGroup {
      * 
      * @param idx Index of the component holder.
      */
+    
     protected void renameDisplay(final int idx) {
-        final String title =
-            JOptionPane.showInputDialog(
-                IdvWindow.getActiveWindow().getFrame(), "Enter new name",
-                makeWindowTitle("Rename Tab"), JOptionPane.PLAIN_MESSAGE);
+        
+        // TJJ Aug 2017 - gonna make JOptionPane resizable here for long names
+        
+        JLabel tabNameLabel = new JLabel("Enter new name:");
+        JTextField jtf = new JTextField();
+        // Initialize dialog with current tab name
+        jtf.setText(getHolderAt(idx).getName());
+        Object[] array = { tabNameLabel, jtf };
+        JOptionPane pane = new JOptionPane(array, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        JDialog dialog = pane.createDialog(null, "Rename Tab");
+        dialog.setResizable(true);
+        dialog.setVisible(true);
+        String title = jtf.getText();
 
         if (title == null) {
             return;
         }
 
-//        final List<ComponentHolder> comps = getDisplayComponents();
-//        comps.get(idx).setName(title);
         getHolderAt(idx).setName(title);
         tabRenamed = true;
         if (window != null) {
