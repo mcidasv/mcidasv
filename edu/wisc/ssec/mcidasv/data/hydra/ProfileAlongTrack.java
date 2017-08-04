@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import java.rmi.RemoteException;
 import visad.Set;
 import visad.Gridded1DSet;
 import visad.CoordinateSystem;
@@ -35,10 +36,14 @@ import visad.RealType;
 import visad.RealTupleType;
 import visad.Linear1DSet;
 import visad.Linear2DSet;
+import visad.Gridded2DSet;
+import visad.SampledSet;
 import visad.Unit;
 import visad.FunctionType;
 import visad.VisADException;
 import visad.QuickSort;
+import visad.FlatField;
+import visad.FieldImpl;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -445,6 +450,36 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       public abstract float[] getTrackLongitude() throws Exception;
       public abstract float[] getTrackLatitude() throws Exception;
 
+      public static FieldImpl medianFilter(FieldImpl field, int window_lenx, int window_leny) throws VisADException, RemoteException, CloneNotSupportedException  {
+         Set dSet = field.getDomainSet();
+         if (dSet.getManifoldDimension() != 1) {
+            throw new VisADException("medianFilter: outer field domain must have manifoldDimension = 1");
+         }
+         int outerLen = dSet.getLength();
+         
+         FieldImpl filtField = (FieldImpl)field.clone();
+         
+         for (int t=0; t<outerLen; t++) {
+            FlatField ff = (FlatField) filtField.getSample(t, false);
+            medianFilter(ff, window_lenx, window_leny);
+         }
+         
+         return filtField;
+      }
+      public static FlatField medianFilter(FlatField fltFld, int window_lenx, int window_leny) throws VisADException {
+         FlatField filtFld = (FlatField) fltFld.clone();
+         Gridded2DSet dSet = (Gridded2DSet) filtFld.getDomainSet();
+         int[] lens = dSet.getLengths();
+         if (lens.length != 2) {
+            throw new VisADException("medianFilter only supports manifoldDimension = 2");
+         }
+         float[][] rngVals = filtFld.getFloats(false);
+         int rngTupleDim = rngVals.length;
+         for (int t=0; t<rngTupleDim; t++) {
+            rngVals[t] = medianFilter(rngVals[t], lens[0], lens[1], window_lenx, window_leny); 
+         }
+         return filtFld;
+      }
       
       public static float[] medianFilter(float[] A, int lenx, int leny, int window_lenx, int window_leny)
            throws VisADException {
