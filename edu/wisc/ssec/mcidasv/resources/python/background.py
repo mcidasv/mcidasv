@@ -3790,9 +3790,12 @@ def listVIIRSFieldsInFile(filename):
     f = NetcdfFile.open(filename)
     try:
         variables = f.getVariables()
-        # Get rid of 'All_Data/' b/c we want to match what gets shown in
+        # Get rid of path prefix b/c we want to match what gets shown in
         # Field Selector (which is also what loadVIIRSImage actually accepts)
+        # NOAA data path prefix is 'All_Data'
         names = [v.getFullName().replace('All_Data/', '') for v in variables]
+        # NASA data path prefix is 'observation_data'
+        names = [v.getFullName().replace('observation_data/', '') for v in variables]
         for name in names:
             print name
     finally:
