@@ -1556,11 +1556,17 @@ class _Display(_JavaProxy):
         # 
         # print 'isl=%s' % (isl[:-2])
         
-        if index >= 0:
+        stepCount = self._JavaProxy__javaObject.getAnimation().getNumSteps()
+        if index >= 0 and index < stepCount:
             anim_index = "animation_index=\"%s\"" % (index)
+        elif stepCount == 0 and index != 0:
+            raise ValueError('Invalid index (%s). Note: this display has no time steps, so an index is not needed.' % (index))
+        elif stepCount == 0 and index == 0:
+            print("*** NOTE: There are no time steps associated with this display, so the 'index' parameter is unnecessary.")
         else:
-            anim_index = ''
-        
+            raise ValueError('Invalid index (%s) specified; valid index must conform to 0 <= index < %s' % (index, stepCount)) 
+            
+        anim_index = ''
         islAsXml = ImageGenerator.makeXmlFromString(isl[:-2])
         displayIndex = self._getDisplayIndex()
         if displayIndex >= 0:
