@@ -3810,17 +3810,31 @@ def listVIIRSTimesInField(filename, field=None):
     """
     from ucar.nc2 import NetcdfFile
     f = NetcdfFile.open(filename)
-    try:
-        dprods_grps = f.getRootGroup().findGroup('Data_Products').getGroups()
-        for g in dprods_grps:
-            for v in g.getVariables():
-                if v.findAttribute('AggregateBeginningDate'):
-                    date = v.findAttribute('AggregateBeginningDate').getStringValue()
-                    time = v.findAttribute('AggregateBeginningTime').getStringValue()
-        datetime = '{} {}'.format(date, time)
-        print(datetime)
-    finally:
-        f.close()
+    
+    # TJJ Aug 2017 - very hacky way to distinguish data sources, should change this to a regex match
+    # NOAA data - HDF5
+    if (filename.endswith(".h5")):
+        try:
+            dprods_grps = f.getRootGroup().findGroup('Data_Products').getGroups()
+            for g in dprods_grps:
+                for v in g.getVariables():
+                    if v.findAttribute('AggregateBeginningDate'):
+                        date = v.findAttribute('AggregateBeginningDate').getStringValue()
+                        time = v.findAttribute('AggregateBeginningTime').getStringValue()
+            datetime = '{} {}'.format(date, time)
+            print(datetime)
+        finally:
+            f.close()
+
+    # NASA data - NetCDF 4
+    if (filename.endswith(".nc")):
+        try:
+            date = f.getRootGroup().findAttribute('time_coverage_start')
+            datetime = '{}'.format(date)
+            print(datetime)
+        finally:
+            f.close()
+                
     return datetime
 
 def writeMovie(file, globalPalette=True, params='', createDirectories=False):
