@@ -758,40 +758,40 @@ public final class CollectionHelpers {
         return bs;
     }
 
-//    /**
-//     * {@literal "Generics-friendly"} way to cast an object of some superclass
-//     * ({@code A}) to a subclass or implementation ({@code B}). This method will
-//     * fail if you attempt to cast to a type that is not a subclass of type
-//     * {@code A}.
-//     *
-//     * <p>Example/Justification:<br/>
-//     * Consider a method like {@link ucar.unidata.xml.XmlUtil#findChildren(org.w3c.dom.Node, String) XmlUtil.findChildren(Node, String)}.<br/>
-//     * Despite {@code findChildren} only returning lists containing {@code Node}
-//     * objects, Java will generate a warning for the following code:
-//     * <pre>
-//     * import ucar.unidata.xml.XmlUtil;
-//     * ....
-//     * List&lt;Node&gt; nodes = XmlUtil.findChildren(panel, "blah");
-//     * </pre>
-//     * {@code cast} is a nice and terse way to avoid those warnings. Here's the
-//     * previous example (with static imports of {@code cast} and {@code findChildren}):
-//     * <pre>
-//     * import static ucar.unidata.xml.XmlUtil.findChildren;
-//     * import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
-//     * ....
-//     * List&lt;Node&gt; nodes = cast(findChildren(panel, "blah"));
-//     * </pre>
-//     *
-//     * @param <A> Superclass of {@code B}. This is what you are
-//     * {@literal "casting from"}...likely {@code Object} in most cases
-//     * @param <B> Subclass of {@code A}. This is what you are
-//     * {@literal "casting to"}.
-//     *
-//     * @param o The object whose type you are casting.
-//     *
-//     * @return {@code o}, casted from type {@code A} to {@code B}. Enjoy!
-//     */
-//    @SuppressWarnings("unchecked") public static <A, B extends A> B cast(A o) {
-//        return (B)o;
-//    }
+    /**
+     * {@literal "Generics-friendly"} way to cast an object of some superclass
+     * ({@code A}) to a subclass or implementation ({@code B}). This method will
+     * fail if you attempt to cast to a type that is not a subclass of type
+     * {@code A}.
+     *
+     * <p>Example/Justification:<br>
+     * Consider a method like {@link ucar.unidata.xml.XmlUtil#findChildren(org.w3c.dom.Node, String) XmlUtil.findChildren(Node, String)}.<br/>
+     * Despite {@code findChildren} only returning lists containing {@code Node}
+     * objects, Java will generate a warning for the following code:
+     * <pre>
+     * import ucar.unidata.xml.XmlUtil;
+     * ....
+     * List&lt;Node&gt; nodes = XmlUtil.findChildren(panel, "blah");
+     * </pre>
+     * {@code cast} is a nice and terse way to avoid those warnings. Here's the
+     * previous example (with static imports of {@code cast} and {@code findChildren}):
+     * <pre>
+     * import static ucar.unidata.xml.XmlUtil.findChildren;
+     * import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+     * ....
+     * List&lt;Node&gt; nodes = cast(findChildren(panel, "blah"));
+     * </pre>
+     *
+     * @param <A> Superclass of {@code B}. This is what you are
+     * {@literal "casting from"}...likely {@code Object} in most cases
+     * @param <B> Subclass of {@code A}. This is what you are
+     * {@literal "casting to"}.
+     *
+     * @param o The object whose type you are casting.
+     *
+     * @return {@code o}, casted from type {@code A} to {@code B}. Enjoy!
+     */
+    @SuppressWarnings("unchecked") public static <A, B extends A> B cast(A o) {
+        return (B)o;
+    }
 }
