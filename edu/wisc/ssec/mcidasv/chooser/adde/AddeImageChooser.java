@@ -556,7 +556,7 @@ public class AddeImageChooser extends AddeChooser implements
             String[] suffixes = { "AMSU", "HIRS", "HRPT", "GAC", "LAC" };
             for (int i=0; i<suffixes.length; i++) {
                 Pattern p = Pattern.compile("N\\d\\d" + suffixes[i]);
-                Matcher m = p.matcher(descriptor);              
+                Matcher m = p.matcher(descriptor);
                 if (m.find()) {
                     navComboBox.setSelectedIndex(1);
                     break;
@@ -2829,7 +2829,7 @@ public class AddeImageChooser extends AddeChooser implements
         if (bandName != null && !(bandName.equals(ALLBANDS.toString()))) {
             ht.put(DATA_NAME_KEY, bandName);
         }
-//        ht.put("allBands", bandDirs);
+        ht.put("allBands", bandDirs);
         makeDataSource(ids, getDataSourceId(), ht);
         saveServerState();
         // uncheck the check box every time click the add source button
