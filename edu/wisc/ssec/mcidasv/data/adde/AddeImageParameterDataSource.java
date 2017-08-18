@@ -2500,6 +2500,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             int size = ad.getLines() * ad.getElements();
             if (size > maxSize) {
                 largestArea = tempDescriptor;
+                maxSize = size;
             }
         }
         logger.trace("return directory: {}", largestArea.getDirectory());
