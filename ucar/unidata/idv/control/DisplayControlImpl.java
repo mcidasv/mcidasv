@@ -1605,7 +1605,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     }
 
     /**
-     * Used to apply all of the display attributes taht are active
+     * Used to apply all of the display attributes that are active
      * to the {@link ucar.visad.display.Displayable}-s
      *
      * @throws RemoteException
@@ -1641,7 +1641,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
     /**
      * Add the given attribute flag (e.g., FLAG_COLORTABLE)
-     * to the attrbiute  flag map.
+     * to the attribute flag map.
      *
      * @param f The flag (e.g., FLAG_COLORTABLE)
      */
@@ -8743,46 +8743,55 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         }
 
-
+        // TJJ Aug 2017 - Before, this method was returning false here if time was null.
+        // Existing code below implies there is one more thing to try, and seems to be
+        // working for case where timestamp macro is applied to loaded image. We still
+        // safely and quickly bail out if getDataTimeSet() returns null.
+        
         if (time == null) {
-            return false;
-        }
-        try {
-            Set timeSet = getDataTimeSet();
-            if (timeSet == null) {
-                currentTime = null;
-                firstTime   = null;
-            } else {
-                currentTime = new DateTime(time);
-                Unit setUnit = timeSet.getSetUnits()[0];
-
-                if (Unit.canConvert(time.getUnit(), setUnit)) {
-                    if (timeSet.getLength() > 0) {
-                        Data firstSetTime = timeSet.__getitem__(0);
-                        if (firstSetTime instanceof Real) {
-                            double firstTimeValue =
-                                ((Real) firstSetTime).getValue(
-                                    currentTime.getUnit());
-                            firstTime = new DateTime(
-                                time.cloneButValue(firstTimeValue));
+            try {
+                Set timeSet = getDataTimeSet();
+                if (timeSet == null) {
+                    currentTime = null;
+                    firstTime   = null;
+                    return false;
+                } else {
+                    
+                    // TJJ Aug 2017 - if we got here, we got the data time set
+                    // Init time for timestamp label to first in set
+                    time = (Real) timeSet.__getitem__(0);
+                    
+                    currentTime = new DateTime(time);
+                    Unit setUnit = timeSet.getSetUnits()[0];
+    
+                    if (Unit.canConvert(time.getUnit(), setUnit)) {
+                        if (timeSet.getLength() > 0) {
+                            Data firstSetTime = timeSet.__getitem__(0);
+                            if (firstSetTime instanceof Real) {
+                                double firstTimeValue =
+                                    ((Real) firstSetTime).getValue(
+                                        currentTime.getUnit());
+                                firstTime = new DateTime(
+                                    time.cloneButValue(firstTimeValue));
+                            }
+                        }
+                        double timeVal = time.getValue(setUnit);
+                        int    index   = timeSet.doubleToIndex(new double[][] {
+                            new double[] { timeVal }
+                        })[0];
+                        if (index >= 0) {
+                            RealTuple rt = DataUtility.getSample(timeSet, index);
+                            DateTime dataTime =
+                                new DateTime((Real) rt.getComponent(0));
+    
+                            currentTime = dataTime;
                         }
                     }
-                    double timeVal = time.getValue(setUnit);
-                    int    index   = timeSet.doubleToIndex(new double[][] {
-                        new double[] { timeVal }
-                    })[0];
-                    if (index >= 0) {
-                        RealTuple rt = DataUtility.getSample(timeSet, index);
-                        DateTime dataTime =
-                            new DateTime((Real) rt.getComponent(0));
-
-                        currentTime = dataTime;
-                    }
                 }
+            } catch (Exception exc) {
+                logException("Setting time string", exc);
+    
             }
-        } catch (Exception exc) {
-            logException("Setting time string", exc);
-
         }
 
         return true;
