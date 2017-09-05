@@ -46,6 +46,7 @@ import visad.FlatField;
 import visad.FieldImpl;
 import java.util.HashMap;
 import java.util.Map;
+import visad.GriddedSet;
 
 
 public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
@@ -449,7 +450,7 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
       public abstract RealType makeTrackTimeType() throws Exception;
       public abstract float[] getTrackLongitude() throws Exception;
       public abstract float[] getTrackLatitude() throws Exception;
-
+      
       public static FieldImpl medianFilter(FieldImpl field, int window_lenx, int window_leny) throws VisADException, RemoteException, CloneNotSupportedException  {
          Set dSet = field.getDomainSet();
          if (dSet.getManifoldDimension() != 1) {
@@ -466,18 +467,42 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
          
          return filtField;
       }
-      public static FlatField medianFilter(FlatField fltFld, int window_lenx, int window_leny) throws VisADException {
-         FlatField filtFld = (FlatField) fltFld.clone();
-         Gridded2DSet dSet = (Gridded2DSet) filtFld.getDomainSet();
-         int[] lens = dSet.getLengths();
-         if (lens.length != 2) {
-            throw new VisADException("medianFilter only supports manifoldDimension = 2");
-         }
-         float[][] rngVals = filtFld.getFloats(false);
+      
+      public static FlatField medianFilter(FlatField fltFld, int window_lenx, int window_leny) throws VisADException, RemoteException {
+         GriddedSet domSet = (GriddedSet) fltFld.getDomainSet();
+         FlatField filtFld = new FlatField((FunctionType)fltFld.getType(), domSet);
+         
+         int[] lens = domSet.getLengths();
+         int manifoldDimension = domSet.getManifoldDimension();
+         
+         float[][] rngVals = fltFld.getFloats(false);
          int rngTupleDim = rngVals.length;
-         for (int t=0; t<rngTupleDim; t++) {
-            rngVals[t] = medianFilter(rngVals[t], lens[0], lens[1], window_lenx, window_leny); 
+         float[][] filtVals = new float[rngTupleDim][];
+         
+         if (manifoldDimension == 2) {
+            for (int t=0; t<rngTupleDim; t++) {
+               filtVals[t] = medianFilter(rngVals[t], lens[0], lens[1], window_lenx, window_leny);
+            }
          }
+         else if (manifoldDimension == 3) {
+            int outerDimLen = lens[0];
+            filtVals = new float[rngTupleDim][lens[0]*lens[1]*lens[2]];
+            float[] rngVals2D = new float[lens[1]*lens[2]];
+            
+            for (int k = 0; k<outerDimLen; k++) {
+               int idx = k*lens[1]*lens[2];
+               for (int t=0; t<rngTupleDim; t++) {
+                  System.arraycopy(rngVals[t], idx, rngVals2D, 0, lens[1]*lens[2]);
+                  
+                  float[] fltA = medianFilter(rngVals2D, lens[1], lens[2], window_lenx, window_leny);
+                  
+                  System.arraycopy(fltA, 0, filtVals[t], idx, lens[1]*lens[2]);
+               }
+            }
+         }
+         
+         filtFld.setSamples(filtVals, false);
+         
          return filtFld;
       }
       
@@ -525,7 +550,6 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
           for (int j=0; j<leny; j++) {             
             a_idx = j*lenx + i;
             
-            
             if (j > 0) {
               ncnt = 0;
               for (int t=0; t<cnt; t++) {
@@ -552,7 +576,7 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
                     indexesB[ncnt] = k;
                     ncnt++;
                  }
-              } 
+              }
               
               
               // Add the new points from sliding the window to the overlap points above
@@ -566,28 +590,37 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
                  int k = ww_jj*lenx+ww_ii;
                   if (k >= 0 && k < lenA) {
                      float val = A[k];
-                        int t = ncnt-1;
-                        if (val >= window[t]) {
-                              valsAfter[0][numAfter[0]] = val;
-                              idxsAfter[0][numAfter[0]] = k;
-                              numAfter[0]++;  
-                              continue;
-                        }
-                        t = 0;
-                        if (val < window[t]) {
-                              valsBefore[0][numBefore[0]] = val;
-                              idxsBefore[0][numBefore[0]] = k;
-                              numBefore[0]++;  
-                              continue;
-                        }
-                        for (t=0; t<ncnt-1; t++) {
-                           if (val >= window[t] && val < window[t+1]) {
-                              valsToInsert[t][numToInsertAt[t]] = val;
-                              idxsToInsert[t][numToInsertAt[t]] = k;
-                              numToInsertAt[t]++;
-                              break;
+                        if (ncnt > 0) {
+                           int t = 0;
+                           if (val < window[t]) {
+                                 valsBefore[0][numBefore[0]] = val;
+                                 idxsBefore[0][numBefore[0]] = k;
+                                 numBefore[0]++;  
+                                 continue;
+                           }                     
+                           t = ncnt-1;
+                           if (val >= window[t]) {
+                                 valsAfter[0][numAfter[0]] = val;
+                                 idxsAfter[0][numAfter[0]] = k;
+                                 numAfter[0]++;  
+                                 continue;
                            }
-                        }                        
+
+                           for (t=0; t<ncnt-1; t++) {
+                              if (val >= window[t] && val < window[t+1]) {
+                                 valsToInsert[t][numToInsertAt[t]] = val;
+                                 idxsToInsert[t][numToInsertAt[t]] = k;
+                                 numToInsertAt[t]++;
+                                 break;
+                              }
+                           } 
+                        }
+                        else if (!Float.isNaN(val)) {
+                                 valsBefore[0][numBefore[0]] = val;
+                                 idxsBefore[0][numBefore[0]] = k;
+                                 numBefore[0]++;  
+                                 continue;                           
+                        }
                   }
               }
 
@@ -652,9 +685,13 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
               // Now sort the new unsorted and overlap sorted points together to get the new window median
               
               System.arraycopy(sortedArray, 0, sortedWindow, 0, tcnt);
-              sort_indexes = QuickSort.sort(sortedWindow, 0, tcnt-1);
-              
-              median = sortedWindow[tcnt/2];
+              if (tcnt > 0) {
+                 sort_indexes = QuickSort.sort(sortedWindow, 0, tcnt-1);
+                 median = sortedWindow[tcnt/2];
+              }
+              else {
+                 median = Float.NaN;
+              }
               cnt = tcnt;
 
             }
@@ -680,9 +717,15 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
             
             
                System.arraycopy(window, 0, sortedWindow, 0, cnt);
-               sort_indexes = QuickSort.sort(sortedWindow, 0, cnt-1);
-               midx = cnt/2;
-               median = sortedWindow[midx];
+               if (cnt > 0) {
+                  sort_indexes = QuickSort.sort(sortedWindow, 0, cnt-1);
+                  midx = cnt/2;
+                  median = sortedWindow[midx];
+               }
+               else {
+                  median = Float.NaN;
+               }
+               
             }
             
             if (Float.isNaN(A[a_idx])) {
