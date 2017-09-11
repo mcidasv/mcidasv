@@ -60,7 +60,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1128,7 +1127,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 ++bandIdx;
             }
         }
-
+//        previewDir = getPreviewDirectory(aid);
         AddeImageDescriptor previewDescriptor = getPreviewDirectory(aid);
         previewDir = previewDescriptor.getDirectory();
         logger.trace("using previewDir={}", previewDir);
@@ -1139,9 +1138,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //        }
         int eMag = 1;
         int lMag = 1;
-        
-        // TODO(jon): 
-        // if we're trying to dynamically adjust the mag 
         int eSize = 1;
         int lSize = 1;
         try {
@@ -1175,10 +1171,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         eSize = 525;
         lSize = 500;
-        
-        // TODO(jon): hrm...
-//        eMag = 1;
-//        lMag = 1;
         if ((baseSource == null) || msgFlag) {
             logger.trace("replacing\nbaseSource={}\nsource={}", baseSource, source);
             baseSource = source;
@@ -1202,8 +1194,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         src = replaceKey(src, LINELE_KEY, uLStr);
         src = replaceKey(src, PLACE_KEY, "ULEFT");
         src = replaceKey(src, SIZE_KEY,(lSize + " " + eSize));
-//        src = replaceKey(src, MAG_KEY, (lMag + " " + eMag));
-        src = replaceKey(src, MAG_KEY, "1 1");
+        src = replaceKey(src, MAG_KEY, (lMag + " " + eMag));
         src = replaceKey(src, BAND_KEY, bi.getBandNumber());
         src = replaceKey(src, UNIT_KEY, unit);
 //        if (aid.getIsRelative()) {
@@ -2477,37 +2468,74 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         return subChoices;
     }
-    
-    /**
-     * Iterate over {@link #imageList} to find the {@link AddeImageDescriptor}
-     * covering the largest geographical area.
-     * 
-     * <p>This is done in an effort to produce a {@literal "reasonable"} preview
-     * image, but the heuristic does not work so well for satellites with a 
-     * polar orbit.</p>
-     * 
-     * @return Either the descriptor covering the largest area, or {@code aid}.
-     */
-    private AddeImageDescriptor getPreviewDirectory(AddeImageDescriptor aid) {
-        logger.trace("incoming directory: {}", aid.getDirectory());
-        AddeImageDescriptor largestArea = aid;
-        List<AddeImageDescriptor> descriptors = 
-            CollectionHelpers.cast(imageList);
-        int maxSize = Integer.MIN_VALUE;
-        for (AddeImageDescriptor tempDescriptor : descriptors) {
-            AreaDirectory ad = tempDescriptor.getDirectory();
-            logger.trace("iterating directory: {}", ad);
-            int size = ad.getLines() * ad.getElements();
-            if (size > maxSize) {
-                largestArea = tempDescriptor;
-                maxSize = size;
-            }
-        }
-        logger.trace("return directory: {}", largestArea.getDirectory());
-        return largestArea;
+
+    private List<AreaDirectory> getPreviewDirectories(final AddeImageDescriptor imageDescriptor) {
+        List<AreaDirectory> directories = new ArrayList<AreaDirectory>(imageTimes.size());
+        
+        return directories;
     }
     
-    private AddeImageDescriptor getPreviewDirectory2(AddeImageDescriptor aid) {
+//    private AreaDirectory getPreviewDirectory(AddeImageDescriptor aid) {
+//        AreaDirectory directory = aid.getDirectory();
+//        AddeImageDescriptor descriptor = null;
+//        int times = imageTimes.size();
+//        if (times == 1) {
+//            logger.trace("only looking for a single time; returning AreaDirectory grabbed from incoming AddeImageDescriptor. directory={}", directory);
+//            return directory;
+//        }
+//        String src = aid.getSource();
+//        logger.trace("URL for incoming AddeImageDescriptor: {}", src);
+//        src = removeKey(src, LATLON_KEY);
+//        src = removeKey(src, LINELE_KEY);
+//        src = removeKey(src, PLACE_KEY);
+//        src = removeKey(src, SIZE_KEY);
+//        src = removeKey(src, UNIT_KEY);
+//        src = removeKey(src, MAG_KEY);
+//        src = removeKey(src, SPAC_KEY);
+//        src = removeKey(src, NAV_KEY);
+//        src = removeKey(src, AUX_KEY);
+//        src = removeKey(src, DOC_KEY);
+//
+//        int maxLine = 0;
+//        int maxEle = 0;
+//        int imageSize = 0;
+//        src = src.replace("imagedata", "imagedir");
+//        boolean isRelative = aid.getIsRelative();
+//        for (int i=0; i<times; i++) {
+//            if (isRelative) {
+//                src = replaceKey(src, "POS", new Integer(i).toString());
+//            } else {
+//                DateTime dt = (DateTime)imageTimes.get(i);
+//                String timeStr = dt.timeString();
+//                timeStr = timeStr.replace("Z", " ");
+//                src = removeKey(src, "POS");
+//                src = replaceKey(src, "TIME", timeStr + timeStr + "I");
+//            }
+//            try {
+//                logger.trace("attempting to create AreaDirectoryList using src={}", src);
+//                AreaDirectoryList dirList = new AreaDirectoryList(src);
+//                List ad = dirList.getDirs();
+//                AreaDirectory areaDir = (AreaDirectory)ad.get(0);
+//                logger.trace("created AreaDirectory: {}", areaDir);
+//                int lines = areaDir.getLines();
+//                int eles =  areaDir.getElements();
+//                if (imageSize < lines*eles) {
+//                    imageSize = lines * eles;
+//                    maxLine = lines;
+//                    maxEle = eles;
+//                    directory = areaDir;
+//                    descriptor = new AddeImageDescriptor(src);
+//                }
+//            } catch (Exception e) {
+//                logger.error("problem when dealing with AREA directory", e);
+//            }
+//        }
+//        logger.trace("returning AreaDirectory: {}", directory);
+//        logger.trace("could return AddeImageDescriptor:\nisRelative={}\nrelativeIndex={}\ntime={}\ndirectory={}\n", new Object[] { descriptor.getIsRelative(), descriptor.getRelativeIndex(), descriptor.getImageTime(), descriptor.getDirectory()});
+//        return directory;
+//    }
+
+    private AddeImageDescriptor getPreviewDirectory(AddeImageDescriptor aid) {
         AreaDirectory directory = aid.getDirectory();
         AddeImageDescriptor descriptor = null;
         int times = imageTimes.size();
@@ -2540,48 +2568,47 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         List<String> previewUrls = new ArrayList<String>(times);
 
         if (isRelative) {
-    
-            // TJJ Mar 2015 - (1891, R14)
-            // Iterate through list to determine relative position diffferent
-            // if the objects are VisAD DateTime instead of TwoFacedObject
-    
-            boolean isTwoFaced = false;
-            List<?> tmpList = getAllDateTimes();
-            if ((tmpList != null) && (!tmpList.isEmpty())) {
-                Object firstItem = tmpList.get(0);
-                if (firstItem instanceof TwoFacedObject) isTwoFaced = true;
-            }
-    
-            int maxIndex;
-            if (isTwoFaced) {
-                maxIndex = Integer.MIN_VALUE;
-                for (TwoFacedObject tfo : (List<TwoFacedObject>)getAllDateTimes()) {
-                    int relativeIndex = ((Integer)tfo.getId()).intValue();
-                    if (relativeIndex > maxIndex) {
-                        maxIndex = relativeIndex;
-                    }
-                }
-            } else {
-                maxIndex = Integer.MIN_VALUE;
-                int relativeIndex = 0;
-                double maxTime = Double.MIN_VALUE;
-                for (DateTime dt : (List<DateTime>)getAllDateTimes()) {
-                    double d = dt.getValue();
-                    if (d > maxTime) {
-                        maxIndex = relativeIndex;
-                        maxTime = d;
-                    }
-                    relativeIndex++;
-                }
-            }
-
+        	
+        	// TJJ Mar 2015 - (1891, R14)
+        	// Iterate through list to determine relative position diffferent
+        	// if the objects are VisAD DateTime instead of TwoFacedObject
+        	
+        	boolean isTwoFaced = false;
+        	List<?> tmpList = getAllDateTimes();
+        	if ((tmpList != null) && (! tmpList.isEmpty())) {
+        		Object firstItem = tmpList.get(0);
+        		if (firstItem instanceof TwoFacedObject) isTwoFaced = true;
+        	}
+        	
+        	int maxIndex;
+			if (isTwoFaced) {
+				maxIndex = Integer.MIN_VALUE;
+				for (TwoFacedObject tfo : (List<TwoFacedObject>) getAllDateTimes()) {
+					int relativeIndex = ((Integer) tfo.getId()).intValue();
+					if (relativeIndex > maxIndex) {
+						maxIndex = relativeIndex;
+					}
+				}
+			} else {
+				maxIndex = Integer.MIN_VALUE;
+				int relativeIndex = 0;
+				double maxTime = Double.MIN_VALUE;
+				for (DateTime dt : (List<DateTime>) getAllDateTimes()) {
+					double d = dt.getValue();
+					if (d > maxTime) {
+						maxIndex = relativeIndex;
+						maxTime = d;
+					}
+					relativeIndex++;
+				}
+			}
+            
 //            TwoFacedObject tfo = (TwoFacedObject)this.getAllDateTimes().get(0);
             // negate maxIndex so we can get things like POS=0 or POS=-4
             maxIndex = 0 - maxIndex;
             logger.trace("using maxIndex={}", maxIndex);
             src = replaceKey(src, "POS", Integer.toString(maxIndex));
             previewUrls.add(src);
-//        } else if (urlHasCoords(src)) {
         } else {
             for (int i = 0; i < times; i++) {
                 DateTime dt = (DateTime)imageTimes.get(i);
@@ -2589,20 +2616,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 timeStr = timeStr.replace("Z", " ");
                 src = removeKey(src, "POS");
                 src = replaceKey(src, "TIME", timeStr + timeStr + 'I');
-                logger.trace("using time value: {}", timeStr + timeStr + 'I');
+                logger.trace("using time value: ", timeStr + timeStr + 'I');
                 logger.trace("added absolute time preview url: {}", src);
                 previewUrls.add(src);
             }
-//        } else {
-//            previewUrls.add(src);
         }
 
         logger.trace("preparing to examine previewUrls={}", previewUrls);
 
-        //
-        // so why not just pass in the line/ele pairs from the chooser?
-        //
-        
         try {
             for (String previewUrl : previewUrls) {
                 logger.trace("attempting to create AreaDirectoryList using previewUrl={}", previewUrl);
@@ -2717,11 +2738,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         return descriptor;
     }
 
-    private static boolean urlHasCoords(String url) {
-        String foo = url.toLowerCase();
-        return foo.contains("latlon") || foo.contains("linele");
-    }
-    
     private String getServer(String urlString) {
         int ix = urlString.indexOf("//") + 2;
         String temp = urlString.substring(ix);
