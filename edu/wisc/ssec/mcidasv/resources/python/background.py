@@ -3838,11 +3838,17 @@ def listVIIRSTimesInField(filename, field=None):
                 
     return datetime
 
-def writeMovie(file, globalPalette=True, params='', createDirectories=False):
+def writeMovie(file, globalPalette=True, params='', createDirectories=False,
+               framesPerSecond=2, endFramePause=2):
     dirname = os.path.dirname(file)
     if not os.path.exists(dirname):
         if createDirectories:
             os.makedirs(dirname)
         else:
-            raise ValueError("Could not create '%s'; directory '%s' does not exist." % (file, dirname))
-    islInterpreter.writeMovie(file, globalPalette, params)
+            raise ValueError("Could not create '%s'; directory '%s' does not "
+                             "exist." % (file, dirname))
+    islInterpreter.writeMovie(file,
+                              int(framesPerSecond),
+                              int(endFramePause),
+                              globalPalette,
+                              params)

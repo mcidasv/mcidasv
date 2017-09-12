@@ -2970,7 +2970,39 @@ public class ImageGenerator extends IdvManager {
     public void writeMovie(String filename, String params) throws Exception {
         writeMovie(filename, false, params);
     }
-
+    
+    /**
+     * Capture a movie and write it out. This is typically called from Jython.
+     *
+     * @param filename Movie filename.
+     * @param fps Frames per second.
+     * @param endFramePause Number of seconds to pause before restarting. 
+     * Only applicable when {@code filename} is a GIF.
+     * @param globalPalette Whether or not to use a {@literal "global"} color
+     * palette for animated GIF output.
+     * @param params XML parameters of the the form:
+     * {@literal "task arg=val arg2=val; task2 arg3=val"}.
+     *
+     * @throws Exception On badness
+     */
+    public void writeMovie(String filename, 
+                           int fps, 
+                           int endFramePause, 
+                           boolean globalPalette, 
+                           String params) 
+        throws Exception 
+    {
+        String isl = makeXmlFromString(params);
+        String fmtString =
+            "%s\n"+
+            "<movie file=\"%s\" imagesuffix=\".png\" framerate=\"%s\" endframepause=\"%s\">"+
+            "%s</movie>";
+        String xml = String.format(fmtString, 
+            XmlUtil.getHeader(),
+            filename, fps, endFramePause, isl);
+        captureMovie(applyMacros(filename), globalPalette, makeElement(xml));
+    }
+    
     /**
      * Capture a movie and write it out. This is typically called by the jython scripting
      *
@@ -2982,13 +3014,12 @@ public class ImageGenerator extends IdvManager {
      *
      * @throws Exception On badness
      */
-    public void writeMovie(String filename, boolean globalPalette, String params) throws Exception {
-
-        String isl = makeXmlFromString(params);
-
-        String xml = XmlUtil.getHeader()+"\n<movie file=\"" + filename + "\" imagesuffix=\".png\">"
-            + isl + "</movie>";
-        captureMovie(applyMacros(filename), globalPalette, makeElement(xml));
+    public void writeMovie(String filename, 
+                           boolean globalPalette, 
+                           String params) 
+        throws Exception 
+    {
+        writeMovie(filename, 2, 2, globalPalette, params);
     }
 
     /**
