@@ -2479,6 +2479,39 @@ class _Layer(_JavaProxy):
         if self._JavaProxy__javaObject.getShouldUseAltitude():
             self._JavaProxy__javaObject.updateVerticalPosition(False)
             
+    @gui_invoke_later
+    def getDisplayUnit(self):
+        """Return the layer's display unit.
+        
+        Returns:
+            Display unit associated with this layer.
+        """
+        return self._JavaProxy__javaObject.getDisplayUnit()
+        
+    @gui_invoke_later
+    def setDisplayUnit(self, unitname):
+        """Change the layer's display unit.
+        
+        Args:
+            unitname: String representation of the unit that will be used as 
+                      the new display unit.
+            
+        Raises:
+            ValueError: if unitname could not be interpreted by 
+                        Util.parseUnit().
+        """
+        from visad import VisADException
+        try:
+            newUnit = Util.parseUnit(unitname)
+            # this looping business is what the idv code does!
+            while True:
+                if self._JavaProxy__javaObject.setNewDisplayUnit(newUnit, True):
+                    break
+            shareProp = self._JavaProxy__javaObject.SHARE_DISPLAYUNIT
+            self._JavaProxy__javaObject.doShareExternal(shareProp, newUnit)
+        except VisADException:
+            raise ValueError('Could not interpret "%s" as a unit' % unitname)
+            
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
 class _DataSource(_JavaProxy):
