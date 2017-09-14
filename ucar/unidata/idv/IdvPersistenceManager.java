@@ -28,8 +28,6 @@
 
 package ucar.unidata.idv;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -62,20 +60,17 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
 import visad.util.ThreadManager;
 
-
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -86,6 +81,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -104,7 +101,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
-
 
 /**
  * This class defines what is to be saved when we are
@@ -1001,21 +997,19 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                 }
             }
         });
-
-
-
-
-        GuiUtils.tmpInsets = new Insets(0, 3, 0, 3);
-        JPanel catPanel = GuiUtils.left(catBox);
-
-        GuiUtils.tmpInsets = new Insets(3, 3, 3, 3);
-        JPanel panel = GuiUtils.doLayout(new Component[] {
-                           GuiUtils.rLabel("Category: "),
-                           catPanel, GuiUtils.rLabel("Name: "), fileBox }, 4,
-                               GuiUtils.WT_NY, GuiUtils.WT_N);
-
-
-
+        
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+        // Match insets to GuiUtils default
+        panel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.add(new JLabel("Category: "), BorderLayout.WEST);
+        leftPanel.add(catBox, BorderLayout.CENTER);
+        JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.add(new JLabel(" Name: "), BorderLayout.WEST);
+        rightPanel.add(fileBox, BorderLayout.CENTER);
+        panel.add(leftPanel);
+        panel.add(rightPanel);
 
         //Do we add in the file accessory subset panel
         if (showSubsetPanel) {
@@ -1026,10 +1020,24 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
             panel = GuiUtils.vbox(panel, zidvComp);
         }
 
+        // While OK/Retry...
         while (true) {
-            if ( !GuiUtils.askOkCancel(title, panel)) {
+            
+            // TJJ Sep 2017 - Inq #2480
+            // Wrap whole UI in a Pane so we can use a dialog and resize it
+            
+            Object[] array = { "", panel };
+            JOptionPane pane = new JOptionPane(array, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+            JDialog dialog = pane.createDialog(null, "Save As Favorite");
+            dialog.setResizable(true);
+            dialog.setVisible(true);
+            
+            // User closed window or hit Cancel. Values defined in JOptionPane
+            if ((pane.getValue() == null) || (pane.getValue().equals(JOptionPane.CANCEL_OPTION))) {
+                dialog.dispose();
                 return null;
             }
+
             filename = fileBox.getSelectedItem().toString().trim();
             filename = IOUtil.cleanFileName(filename);
             if (filename.length() == 0) {
@@ -1077,6 +1085,9 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                     continue;
                 }
             }
+            
+            // Get rid of the dialog, we are done
+            dialog.dispose();
             return fullFile.toString();
         }
 
