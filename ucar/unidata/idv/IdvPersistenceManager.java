@@ -82,6 +82,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -965,7 +966,6 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         });
         final JComboBox fileBox = new JComboBox();
         fileBox.setEditable(true);
-        fileBox.setPreferredSize(new Dimension(150, 20));
         List tails = new ArrayList();
 
         if (bundles != null) {
@@ -1005,8 +1005,10 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         JPanel leftPanel = new JPanel(new BorderLayout());
         leftPanel.add(new JLabel("Category: "), BorderLayout.WEST);
         leftPanel.add(catBox, BorderLayout.CENTER);
+        // A little padding between Category and Name
+        leftPanel.add(Box.createHorizontalStrut(10), BorderLayout.EAST);
         JPanel rightPanel = new JPanel(new BorderLayout());
-        rightPanel.add(new JLabel(" Name: "), BorderLayout.WEST);
+        rightPanel.add(new JLabel("Name: "), BorderLayout.WEST);
         rightPanel.add(fileBox, BorderLayout.CENTER);
         panel.add(leftPanel);
         panel.add(rightPanel);
