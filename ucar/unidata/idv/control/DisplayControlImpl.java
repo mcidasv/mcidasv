@@ -28,7 +28,6 @@
 
 package ucar.unidata.idv.control;
 
-
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
@@ -96,10 +95,6 @@ import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.georef.MapProjection;
 import visad.util.DataUtility;
-
-
-
-
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -8724,14 +8719,23 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *
      * @return true if the time is in the label
      */
+    
     private boolean checkTimestampLabel(Real time) {
 
         boolean hasTimestamp = shouldAddAnimationListener();
 
-        if ( !hasTimestamp) {
+        if (! hasTimestamp) {
             return false;
         }
-        if (time == null) {
+        
+        // A non-null time was passed in, use this
+        if (time != null) {
+            try {
+                currentTime = new DateTime(time);
+            } catch (VisADException vade) {
+                vade.printStackTrace();
+            }
+        } else {
             try {
                 Animation animation = getSomeAnimation();
                 if (animation != null) {
