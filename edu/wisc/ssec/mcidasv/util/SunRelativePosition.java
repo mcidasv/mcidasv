@@ -17,7 +17,7 @@
  *    NOTE: permission has been given to the JScience project (http://www.jscience.org)
  *          to distribute this file under BSD-like license.
  */
-package edu.wisc.ssec.adapter;
+package edu.wisc.ssec.mcidasv.util;
 
 // J2SE dependencies
 import java.awt.geom.Point2D;
