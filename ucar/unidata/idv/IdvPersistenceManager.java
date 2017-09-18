@@ -966,6 +966,7 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         });
         final JComboBox fileBox = new JComboBox();
         fileBox.setEditable(true);
+        fileBox.setPrototypeDisplayValue("default name length");
         List tails = new ArrayList();
 
         if (bundles != null) {
