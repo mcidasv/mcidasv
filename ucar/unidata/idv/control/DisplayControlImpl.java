@@ -9350,6 +9350,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     /**
      * Change the display unit.
      */
+
     public void changeDisplayUnit() {
         Unit newUnit = null;
         while (true) {
@@ -9362,6 +9363,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         }
         doShareExternal(SHARE_DISPLAYUNIT, newUnit);
+
+        // TJJ Oct 2017 - http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2573
+        // Not sure why this is needed after changing display units, but seems to work.
+        displayableToFront();
     }
 
 
