@@ -3882,14 +3882,14 @@ def writeMovie(file, globalPalette=True, params='', createDirectories=False,
                              "exist." % (file, dirname))
                              
     if framesPerSecond < 0:
-        raise ValueError('"framesPerSecond" must be an integer value greater '
-                         'than or equal to zero')
+        raise ValueError('"framesPerSecond" must be an value greater than or '
+                         'equal to zero')
     if endFramePause < 0:
-        raise ValueError('"endFramePause" must be an integer value greater '
-                         'than or equal to zero')
+        raise ValueError('"endFramePause" must be an value greater than or '
+                         'equal to zero')
                          
     islInterpreter.writeMovie(file,
-                              int(framesPerSecond),
-                              int(endFramePause),
+                              framesPerSecond,
+                              endFramePause,
                               globalPalette,
                               params)
