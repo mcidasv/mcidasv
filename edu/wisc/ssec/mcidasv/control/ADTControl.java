@@ -362,6 +362,7 @@ public class ADTControl extends DisplayControlImpl {
         
         /* add forecast file file selector button and file type menu */
         JLabel autoStormSelectLabel = new JLabel("AUTOMATED STORM SELECTION");
+        JLabel manualStormSelectLabel = new JLabel("MANUAL STORM SELECTION");
         JLabel forecastSelectLabel = new JLabel("Selected Forecast File:");
     
         JLabel forecastLabel = new JLabel("No forecast file selected yet");
@@ -371,6 +372,7 @@ public class ADTControl extends DisplayControlImpl {
             latLonWidget.getLonField().setEnabled(true);
             latLonWidget.getLatField().setEnabled(true);
             autoStormSelectLabel.setEnabled(false);
+            manualStormSelectLabel.setEnabled(true);
             forecastSelectLabel.setEnabled(false);
             moveProbeButton.setEnabled(true);
             forecastBtn.setEnabled(false);
@@ -383,6 +385,7 @@ public class ADTControl extends DisplayControlImpl {
             latLonWidget.getLonField().setEnabled(false);
             latLonWidget.getLatField().setEnabled(false);
             autoStormSelectLabel.setEnabled(true);
+            manualStormSelectLabel.setEnabled(false);
             forecastSelectLabel.setEnabled(true);
             moveProbeButton.setEnabled(false);
             forecastBtn.setEnabled(true);
@@ -760,7 +763,7 @@ public class ADTControl extends DisplayControlImpl {
             GuiUtils.formLayout(
                 arr(left(hbox(arr(new JLabel("Storm Center Selection:"), manButton, autoButton), 5)),
                     filler(),
-                    left(hbox(arr(new JLabel("MANUAL STORM SELECTION")), 10)),
+                    left(hbox(arr(manualStormSelectLabel), 10)),
                     filler(),
                     left(hbox(arr(filler(30,1),latlonPanel))), filler(),
                     left(hbox(arr(autoStormSelectLabel), 10)), filler(),
