@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.TimeZone;
 
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -310,8 +311,10 @@ public class ADTControl extends DisplayControlImpl {
         /* add Lat/Lon position display text areas */  
         latLonWidget = new LatLonWidget(GuiUtils.makeActionListener(this,
                         "latLonWidgetChanged", null));
-        JPanel latlonPanel = hbox(Misc.newList(latLonWidget));
         moveProbeButton = new JButton("Move Probe");
+        // TJJ add a strut and Probe button to the Lat-Lon widget panel
+        latLonWidget.add(Box.createHorizontalStrut(6));
+        latLonWidget.add(moveProbeButton);
         moveProbeButton.addActionListener(ae -> {
             // Validate the manual lat/lon text boxes 
             String validLL = latLonWidget.isValidValues();
@@ -344,7 +347,6 @@ public class ADTControl extends DisplayControlImpl {
                 JOptionPane.showMessageDialog(null, validLL);
             }
         });
-        latlonPanel.add(moveProbeButton);
 
         /* add Manual or Automated storm centering buttons */
 
@@ -363,7 +365,7 @@ public class ADTControl extends DisplayControlImpl {
         /* add forecast file file selector button and file type menu */
         JLabel autoStormSelectLabel = new JLabel("AUTOMATED STORM SELECTION");
         JLabel manualStormSelectLabel = new JLabel("MANUAL STORM SELECTION");
-        JLabel forecastSelectLabel = new JLabel("Selected Forecast File:");
+        JLabel forecastSelectLabel = new JLabel("Selected Forecast File: ");
     
         JLabel forecastLabel = new JLabel("No forecast file selected yet");
         
@@ -765,7 +767,7 @@ public class ADTControl extends DisplayControlImpl {
                     filler(),
                     left(hbox(arr(manualStormSelectLabel), 10)),
                     filler(),
-                    left(hbox(arr(filler(30,1),latlonPanel))), filler(),
+                    left(hbox(arr(filler(30,1), latLonWidget))), filler(),
                     left(hbox(arr(autoStormSelectLabel), 10)), filler(),
                     left(hbox(arr(filler(30,1),forecastBtn, forecastTypeBox,
                         forecastSelectLabel, forecastLabel), 5)), filler(),
