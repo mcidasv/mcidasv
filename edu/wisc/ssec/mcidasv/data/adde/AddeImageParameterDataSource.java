@@ -70,10 +70,10 @@ import edu.wisc.ssec.mcidas.AreaFile;
 import edu.wisc.ssec.mcidas.AreaFileException;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
+import edu.wisc.ssec.mcidas.adde.AddeURL;
+import edu.wisc.ssec.mcidasv.data.GeoLatLonSelection;
+import edu.wisc.ssec.mcidasv.data.GeoPreviewSelection;
 
-import ucar.unidata.data.DataSourceImpl;
-import ucar.unidata.util.Misc;
-import ucar.visad.UtcDate;
 import visad.CommonUnit;
 import visad.Data;
 import visad.DateTime;
@@ -89,9 +89,7 @@ import visad.data.mcidas.AreaAdapter;
 import visad.georef.MapProjection;
 import visad.meteorology.ImageSequence;
 import visad.meteorology.ImageSequenceImpl;
-import visad.meteorology.ImageSequenceManager;
 import visad.meteorology.SingleBandedImage;
-import visad.util.ThreadManager;
 
 import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
 import ucar.unidata.data.BadDataException;
@@ -119,16 +117,14 @@ import ucar.unidata.util.PollingInfo;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.ThreeDSize;
 import ucar.unidata.util.TwoFacedObject;
+import ucar.visad.UtcDate;
 import ucar.visad.Util;
 import ucar.visad.data.AreaImageFlatField;
-
-import edu.wisc.ssec.mcidasv.chooser.adde.AddeImageParameterChooser;
-import edu.wisc.ssec.mcidasv.data.GeoLatLonSelection;
-import edu.wisc.ssec.mcidasv.data.GeoPreviewSelection;
 
 /**
  * Abstract DataSource class for images files.
  */
+
 public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private static final Logger logger = LoggerFactory.getLogger(AddeImageParameterDataSource.class);
@@ -155,18 +151,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     /** The first projection we find */
     protected ProjectionImpl sampleProjection;
     public MapProjection sampleMapProjection;
-
-    /** list of twod categories */
-    private List twoDCategories;
-
-    /** list of 2D time series categories */
-    private List twoDTimeSeriesCategories;
-
-    /** list of twod categories */
-    private List bandCategories;
-
-    /** list of 2D time series categories */
-    private List bandTimeSeriesCategories;
 
     /* ADDE request string */
     private String source;
@@ -287,6 +271,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * 
      * @throws VisADException
      */
+    
     public AddeImageParameterDataSource(DataSourceDescriptor descriptor, ImageDataset ids,
                            Hashtable properties) throws VisADException {
         super(descriptor, ids, properties);
@@ -369,7 +354,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
         
         this.fromBundle = true;
-        List<AddeImageDescriptor> descriptors = (List<AddeImageDescriptor>)getImageList();
+        List<AddeImageDescriptor> descriptors = (List<AddeImageDescriptor>) getImageList();
         this.source = descriptors.get(0).getSource(); // TODO: why not use the source from
                                                       // each AddeImageDescriptor?
         for (AddeImageDescriptor descriptor : descriptors) {
@@ -410,6 +395,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      *
      * @throws Exception On badness
      */
+    
     @Override protected List saveDataToLocalDisk(String prefix, Object loadId, boolean changeLinks) throws Exception {
         logger.trace("prefix={} loadId={} changeLinks={}", new Object[] { prefix, loadId, changeLinks });
         final List<JCheckBox> checkboxes = new ArrayList<JCheckBox>();
@@ -496,11 +482,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 }
             }
         });
-        List catComps = new ArrayList();
+
         JTabbedPane tab = new JTabbedPane(JTabbedPane.LEFT);
 
         for (int i = 0; i < categories.size(); i++) {
-            List comps = (List)catMap.get(categories.get(i));
+            List comps = (List) catMap.get(categories.get(i));
             JPanel innerPanel = GuiUtils.doLayout(comps, 3, GuiUtils.WT_NYN, GuiUtils.WT_N);
             JScrollPane sp = new JScrollPane(GuiUtils.top(innerPanel));
             sp.setPreferredSize(new Dimension(500, 400));
@@ -615,7 +601,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             return null;
         }
 
-        //Start the load, showing the dialog
+        // Start the load, showing the dialog
         List<String> suffixes = new ArrayList<String>();
         SimpleDateFormat sdf = new SimpleDateFormat("_" + DATAPATH_DATE_FORMAT);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -1012,7 +998,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     logger.trace("even reaching this point?");
                     this.previewSel = new GeoPreviewSelection(this, dataChoice, this.previewImage, 
                             this.laLoSel, this.previewProjection,
-                            this.lineMag, this.elementMag, true);
+                            this.lineMag, this.elementMag, showPreview);
                     logger.trace("how about this one?");
                 } catch (Exception e) {
                     logger.error("problem making selection components", e);
@@ -1143,26 +1129,26 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         try {
             int plMag = 1;
             int peMag = 1;
-            Object magKey = (Object)"mag";
+            Object magKey = (Object) "mag";
             if (sourceProps.containsKey(magKey)) {
                 String magVal = (String)(sourceProps.get(magKey));
                 String[] magVals = magVal.split(" ");
                 peMag = new Integer(magVals[0]).intValue();
                 plMag = new Integer(magVals[1]).intValue();
             }
-            double feSize = (double)previewDir.getElements();
-            double flSize = (double)previewDir.getLines();
-            double feMag = (double)peMag;
-            double flMag = (double)plMag;
+            double feSize = (double) previewDir.getElements();
+            double flSize = (double) previewDir.getLines();
+            double feMag = (double) peMag;
+            double flMag = (double) plMag;
             if (feSize > flSize) {
-                feMag = feSize/525.0;
-                flMag = feMag * (double)plMag/(double)peMag;
+                feMag = feSize / 525.0;
+                flMag = feMag * (double) plMag / (double) peMag;
             } else {
                 flMag = flSize/500.0;
-                feMag = flMag * (double)peMag/(double)plMag;
+                feMag = flMag * (double) peMag / (double) plMag;
             }
-            eMag = (int)Math.ceil(feMag);
-            lMag = (int)Math.ceil(flMag);
+            eMag = (int) Math.ceil(feMag);
+            lMag = (int) Math.ceil(flMag);
         } catch(Exception excp) {
            handlePreviewImageError(3, excp);
         }
@@ -1331,9 +1317,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * all of the image time steps. We create a set of children
      * {@link ucar.unidata.data.DirectDataChoice}, one for each time step.
      */
+    
     public void doMakeDataChoices() {
         super.doMakeDataChoices();
-        List<BandInfo> bandInfos = (List<BandInfo>)getProperty(PROP_BANDINFO, (Object)null);
+        List<BandInfo> bandInfos = (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
         String name = "";
         if (this.choiceName != null) {
             name = this.choiceName;
@@ -1359,14 +1346,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             name = makeBandParam(bi);
         }
         else if (sourceProps.containsKey(BANDINFO_KEY)) {
-            ArrayList al = (ArrayList)sourceProps.get(BANDINFO_KEY);
-            bi = (BandInfo)al.get(0);
+            ArrayList al = (ArrayList) sourceProps.get(BANDINFO_KEY);
+            bi = (BandInfo) al.get(0);
             name = makeBandParam(bi);
         }
         if (stashedChoices != null) {
             int numChoices = stashedChoices.size();
             for (int i = 0; i < numChoices; i++) {
-               DataChoice choice = (DataChoice)stashedChoices.get(i);
+               DataChoice choice = (DataChoice) stashedChoices.get(i);
                if (name.equals(choice.getName())) {
                    setProperty(PROP_DATACHOICENAME, choice.getName());
                }
@@ -1378,6 +1365,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * Overridden so that McIDAS-V can <i>attempt</i> to return the correct
      * {@code DataSelection} for the current {@code DataChoice}.
      */
+    
     @Override public DataSelection getDataSelection() {
         DataSelection tmp;
 
@@ -1407,6 +1395,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * Overridden so that McIDAS-V can associate this data source's current 
      * {@code DataChoice} with the given {@code DataSelection}.
      */
+    
     @Override public void setDataSelection(DataSelection s) {
         GeoSelection tmp = s.getGeoSelection();
         if (tmp != null && this.laLoSel != null) {
@@ -1427,31 +1416,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         logger.trace("setting selection props={} geo={}", s.getProperties(), s.getGeoSelection());
     }
     
-//    @Override public int canShowParameter(String name) {
-//        int result = super.canShowParameter(name);
-//        switch (result) {
-//            case 0: //show=yes
-//                logger.trace("can show param={}", name);
-//                break;
-//            case 1: // show=hide
-//                logger.trace("hide param={}", name);
-//                break;
-//            case 2: // show=no
-//                logger.trace("no show param={}", name);
-//                break;
-//            default:
-//                logger.trace("trouble for param={}", name);
-//                break;
-//        }
-//        return result;
-//
-//    }
-    
     /**
      * Insert the new DataChoice into the dataChoice list.
      *
      * @param choice   new choice to add
      */
+    
     protected void addDataChoice(DataChoice choice) {
         logger.trace("choice={}", choice);
         super.addDataChoice(choice);
@@ -1459,21 +1429,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             stashedChoices = new ArrayList();
         }
         stashedChoices.add(choice);
-    }
-
-
-    /**
-     * Initialize the {@link ucar.unidata.data.DataCategory} objects that
-     * this data source uses. 
-     */
-    private void makeCategories() {
-        twoDTimeSeriesCategories =
-            DataCategory.parseCategories("IMAGE-2D-TIME;", false);
-        twoDCategories = DataCategory.parseCategories("IMAGE-2D;", false);
-        bandCategories = DataCategory.parseCategories("IMAGE-BAND;", false);
-        bandTimeSeriesCategories =
-            DataCategory.parseCategories("IMAGE-BAND-TIME;", false);
-
     }
 
     /**
@@ -1487,6 +1442,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * 
      * @return {@code true} if {@code descriptor}'s source is a valid path.
      */
+    
     public static boolean isFromFile(final AddeImageDescriptor descriptor) {
         return new File(descriptor.getSource()).exists();
     }
@@ -1509,6 +1465,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * @throws RemoteException    Java RMI problem
      * @throws VisADException     VisAD problem
      */
+    
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataSelection,
                                 Hashtable requestProperties)
@@ -1537,7 +1494,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         this.selectionProps = dataSelection.getProperties();
         Enumeration propEnum = this.selectionProps.keys();
-        for (int i = 0; propEnum.hasMoreElements(); i++) {
+        while (propEnum.hasMoreElements()) {
             String key = propEnum.nextElement().toString();
             if (key.compareToIgnoreCase(LATLON_KEY) == 0) {
                 String val = (String)this.selectionProps.get(key);
@@ -1577,12 +1534,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
 
     /**
-     * Check if the DataChoice has a BandInfo for it's Id
+     * Check if the DataChoice has a BandInfo for its ID
      *
      * @param dataChoice  choice to check
      *
      * @return true if the choice ID is a BandInfo
      */
+    
     private boolean hasBandInfo(DataChoice dataChoice) {
         Object id = dataChoice.getId();
         return id instanceof BandInfo;
@@ -1601,6 +1559,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * @throws RemoteException    Java RMI problem
      * @throws VisADException     VisAD problem
      */
+    
     protected ImageSequence makeImageSequence(DataChoice dataChoice, DataSelection subset)
             throws VisADException, RemoteException {
 
@@ -1611,7 +1570,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         Enumeration propEnum = subsetProperties.keys();
         int numLines = 0;
         int numEles = 0;
-        for (int i = 0; propEnum.hasMoreElements(); i++) {
+        while (propEnum.hasMoreElements()) {
             String key = propEnum.nextElement().toString();
             if (key.compareToIgnoreCase(SIZE_KEY) == 0) {
                 String sizeStr = (String)(subsetProperties.get(key));
@@ -1703,23 +1662,21 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             AddeImageInfo biggestPosition = null;
             int           pos             = 0;
             boolean       anyRelative     = false;
-            // Find the descriptor with the largets position
-            for (Iterator iter =
-                    descriptorsToUse.iterator(); iter.hasNext(); ) {
+            // Find the descriptor with the largest position
+            for (Iterator iter = descriptorsToUse.iterator(); iter.hasNext(); ) {
                 AddeImageDescriptor aid = (AddeImageDescriptor) iter.next();
                 if (aid.getIsRelative()) {
                     anyRelative = true;
                 }
                 AddeImageInfo       aii = aid.getImageInfo();
 
-                //Are we dealing with area files here?
+                // Are we dealing with area files here?
                 if (aii == null) {
                     break;
                 }
 
-                //Check if this is absolute time
-                if ((aii.getStartDate() != null)
-                        || (aii.getEndDate() != null)) {
+                // Check if this is absolute time
+                if ((aii.getStartDate() != null) || (aii.getEndDate() != null)) {
                     biggestPosition = null;
                     break;
                 }
@@ -1738,10 +1695,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 currentDirs = null;
             }
 
-            ThreadManager threadManager = new ThreadManager("image data reading");
-            final ImageSequenceManager sequenceManager = new ImageSequenceManager();
-            int           cnt      = 1;
-            DataChoice    parent   = dataChoice.getParent();
+            int cnt = 1;
+            DataChoice parent = dataChoice.getParent();
             final List<SingleBandedImage> images = new ArrayList<SingleBandedImage>();
             MathType rangeType = null;
             for (Iterator iter = descriptorsToUse.iterator(); iter.hasNext(); ) {
@@ -1857,15 +1812,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             throw new ucar.unidata.util.WrapperException(exc);
         }
     }
-
-//    private String extractTimestampFromUrl(final String url) {
-//        String day = getKey(url, "DAY");
-//        String time = getKey(url, "TIME");
-//        
-//    }
     
     /**
-     * Create the single image defined by the given {@link ucar.unidata.data.imagery.AddeImageDescriptor AddeImageDescriptor}.
+     * Create the single image defined by the given 
+     * {@link ucar.unidata.data.imagery.AddeImageDescriptor AddeImageDescriptor}.
      *
      * @param aid Holds image directory and location of the desired image.
      * @param rangeType {@literal "rangeType"} to use (if non-{@code null}).
@@ -1878,6 +1828,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * @throws RemoteException Java RMI problem
      * @throws VisADException VisAD problem
      */
+    
     private SingleBandedImage makeImage(AddeImageDescriptor aid,
                                         MathType rangeType,
                                         boolean fromSequence, 
@@ -1898,8 +1849,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (aid.getIsRelative()) {
             areaDirectoryKey = getKey(src, "POS");
         } else {
-            String keyDate = getKey(src, "DAY");
-            String keyTime = getKey(src, "TIME");
             areaDirectoryKey = aid.getImageTime().toString();
 //            areaDirectoryKey = getKey(src, "TIME");
         }
@@ -1934,7 +1883,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             return result;
         }
 
-        //For now handle non adde urls here
+        // For now handle non ADDE URLs here
         try {
             AddeImageInfo aii = aid.getImageInfo();
             AreaDirectory areaDir = null;
@@ -1945,7 +1894,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         int pos = Math.abs(aii.getDatasetPosition());
                         int band = 0;
                         String bandString = aii.getBand();
-                        if ((bandString != null) && !aii.ALL.equals(bandString)) {
+                        if ((bandString != null) && !AddeURL.ALL.equals(bandString)) {
                             band = new Integer(bandString).intValue();
                         }
                         // TODO: even though the band is non-zero we might only 
@@ -1982,13 +1931,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
             if (areaDir != null) {
                 if (isFromFile(aid)) {
-                  int hash = ((aii != null)
-                              ? aii.getURLString().hashCode()
-                              : areaDir.hashCode());
                   if (rangeType == null) {
                       result = AreaImageFlatField.createImmediate(aid, readLabel);
                   } else {
-                      //Else, pass in the already created range type
+                      // Else, pass in the already created range type
                       result  = AreaImageFlatField.create(aid, areaDir, rangeType, readLabel);
                   }
                 }
@@ -2081,12 +2027,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
     
     /**
-     * Make a parmeter name for the BandInfo
+     * Make a parameter name for the BandInfo
      *
      * @param bi    the BandInfo in question
      *
      * @return  a name for the parameter
      */
+    
     private static String makeBandParam(BandInfo bi) {
         return new StringBuilder()
             .append(bi.getSensor())
@@ -2110,52 +2057,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
 
     /**
-     * Get the object that we use to display relative time. Relative time is defined
-     * using an integer index, 0...n. We don't want to show the actual integer.
-     * Rather we want to show "Third most recent", "Fourth most recent", etc.
-     *
-     * @param aid The image descriptor
-     * @return The object that represents the relative time index of the aid
-     */
-    private Object getRelativeTimeObject(AddeImageDescriptor aid) {
-        return new TwoFacedObject(aid.toString(),
-                                  new Integer(aid.getRelativeIndex()));
-    }
-
-    /**
-     * Sort the list of data choices on their time
-     *
-     * @param choices The data choices
-     *
-     * @return The data choices sorted
-     */
-    private List sortChoices(List choices) {
-        Object[]   choicesArray = choices.toArray();
-        Comparator comp         = new Comparator() {
-            public int compare(Object o1, Object o2) {
-                AddeImageDescriptor aid1 = getDescriptor(o1);
-                AddeImageDescriptor aid2 = getDescriptor(o2);
-                if ((aid1 == null) || (aid2 == null)) {
-                    return -1;
-                }
-                if (aid1.getIsRelative()) {
-                    if (aid1.getRelativeIndex() < aid2.getRelativeIndex()) {
-                        return 0;
-                    } else if (aid1.getRelativeIndex()
-                               == aid2.getRelativeIndex()) {
-                        return 1;
-                    }
-                    return -1;
-                }
-                return aid1.getImageTime().compareTo(aid2.getImageTime());
-            }
-        };
-        Arrays.sort(choicesArray, comp);
-        return new ArrayList(Arrays.asList(choicesArray));
-
-    }
-
-    /**
      * Get a list of descriptors from the choice and subset
      *
      * @param dataChoice  Data choice
@@ -2163,6 +2064,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      *
      * @return  list of descriptors matching the selection
      */
+    
     public List getDescriptors(DataChoice dataChoice, DataSelection subset) {
 //        logger.trace("choice={} subset props={} geo={}", new Object[] { dataChoice, subset.getProperties(), subset.getGeoSelection() });
         int linRes = this.lineResolution;
@@ -2185,10 +2087,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
 //        List<AddeImageDescriptor> descriptors = new ArrayList<AddeImageDescriptor>(times.size());
         List descriptors = new ArrayList();
-        Object choiceId = dataChoice.getId();
-//        if (choiceId instanceof BandInfo) {
-//            
-//        }
+
         if (usingTimeDriver) {
             if (imageList.isEmpty()) {
                 return imageList;
@@ -2230,7 +2129,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         aii.setEndDate(new Date((long) (end
                             .getValue(CommonUnit.secondsSinceTheEpoch) * 1000)));
                         // make the request for the times (AreaDirectoryList)
-                        aii.setRequestType(aii.REQ_IMAGEDIR);
+                        aii.setRequestType(AddeURL.REQ_IMAGEDIR);
                         AreaDirectoryList ad;
                         try {  // we may be asking for a date that doesn't exist
                             ad = new AreaDirectoryList(aii.getURLString());
@@ -2300,9 +2199,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
         }
 
-        int choiceBandNum = ((BandInfo)dataChoice.getId()).getBandNumber();
-        int choiceSensorId = ((BandInfo)dataChoice.getId()).getSensor();
-        String choicePrefUnit = ((BandInfo)dataChoice.getId()).getPreferredUnit();
+        int choiceBandNum = ((BandInfo) dataChoice.getId()).getBandNumber();
+        int choiceSensorId = ((BandInfo) dataChoice.getId()).getSensor();
+        String choicePrefUnit = ((BandInfo) dataChoice.getId()).getPreferredUnit();
         for (Iterator iter = times.iterator(); iter.hasNext(); ) {
             Object time  = iter.next();
             AddeImageDescriptor found = null;
@@ -2351,19 +2250,19 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             if (found != null) {
                 try {
                     AddeImageDescriptor desc = new AddeImageDescriptor(found);
-                    //Sometimes we might have a null imageinfo
-                    if(desc.getImageInfo()!=null) {
+                    // Sometimes we might have a null imageinfo
+                    if (desc.getImageInfo() != null) {
                         AddeImageInfo aii =
                             (AddeImageInfo) desc.getImageInfo().clone();
                         BandInfo bi = (BandInfo) dataChoice.getId();
                         List<BandInfo> bandInfos =
                             (List<BandInfo>) getProperty(PROP_BANDINFO, (Object) null);
                         boolean hasBand = true;
-                        //If this data source has been changed after we have create a display 
-                        //then the possibility exists that the bandinfo contained by the incoming
-                        //data choice might not be valid. If it isn't then default to the first 
-                        //one in the list
-                        if(bandInfos != null) {
+                        // If this data source has been changed after we have create a display 
+                        // then the possibility exists that the bandinfo contained by the incoming
+                        // data choice might not be valid. If it isn't then default to the first 
+                        // one in the list
+                        if (bandInfos != null) {
                             hasBand = bandInfos.contains(bi);
                             if(!hasBand) {
                             }
@@ -2379,8 +2278,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         try {
                             AddeImageDescriptor newAid = new AddeImageDescriptor(aii.getURLString());
                             AreaDirectory newAd = newAid.getDirectory();
-//                            newLinRes = newAd.getValue(11);
-//                            newEleRes = newAd.getValue(12);
                             newLinRes = newAd.getValue(AreaFile.AD_LINERES);
                             newEleRes = newAd.getValue(AreaFile.AD_ELEMRES);
                         } catch (Exception e) {
@@ -2390,16 +2287,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         double[][] projCoords = new double[2][2];
                         try {
                             AreaDirectory ad = desc.getDirectory();
-//                            double lin = (double)ad.getValue(5);
-//                            double ele = (double)ad.getValue(6);
-                            double lin = (double)ad.getValue(AreaFile.AD_STLINE);
-                            double ele = (double)ad.getValue(AreaFile.AD_STELEM);
+                            double lin = (double) ad.getValue(AreaFile.AD_STLINE);
+                            double ele = (double) ad.getValue(AreaFile.AD_STELEM);
                             aii.setLocateKey("LINELE");
                             aii.setLocateValue((int)lin + " " + (int)ele);
                             projCoords[0][0] = lin;
                             projCoords[1][0] = ele;
-//                            lin += (double)ad.getValue(8);
-//                            ele += (double)ad.getValue(9);
                             lin += (double)ad.getValue(AreaFile.AD_NUMLINES);
                             ele += (double)ad.getValue(AreaFile.AD_NUMELEMS);
                             projCoords[0][1] = lin;
@@ -2445,6 +2338,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      *
      * @return subset list
      */
+    
     private List getChoicesFromSubset(CompositeDataChoice choice,
                                       DataSelection subset) {
         List choices = choice.getDataChoices();
@@ -2786,12 +2680,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             String[] cards = StringUtil.listToStringArray(lines);
             logger.trace("cards: {}", cards);
 
-            for (int i=0; i<cards.length; i++) {
+            for (int i = 0; i < cards.length; i++) {
                 if ( ! cards[i].startsWith("Sat ")) continue;
                 StringTokenizer st = new StringTokenizer(cards[i]," ");
                 String temp = st.nextToken();  // throw away the key
                 int m = st.countTokens();
-                for (int k=0; k<m; k++) {
+                for (int k = 0; k < m; k++) {
                     int ss = Integer.parseInt(st.nextToken().trim());
                     if (ss == sensor) {
                         gotit = i;
@@ -2809,7 +2703,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
 
             int gotSrc = -1;
-            for (int i=gotit; i<cards.length; i++) {
+            for (int i = gotit; i < cards.length; i++) {
                 if (cards[i].startsWith("EndSat")) {
                     return res;
                 }
@@ -2832,7 +2726,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         return res;
     }
 
-
     /**
      * Read the adde text url and return the lines of text.
      * If unsuccessful return null.
@@ -2841,6 +2734,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      *
      * @return List of lines or {@code null} if in error.
      */
+    
     protected List readTextLines(String url) {
         AddeTextReader reader = new AddeTextReader(url);
         List lines = null;
@@ -2855,6 +2749,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      * 
      * @return ADDE URL prefix
      */
+    
     protected String getUrl() {
         String str = source;
         str = str.replaceFirst("imagedata", "text");
@@ -2872,14 +2767,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         this.sourceProps = sourceProps;
     }
 
-//    public MapProjection getSampleMapProjection() {
-//        return this.sampleMapProjection;
-//    }
-//
-//    public void setSampleMapProjection(MapProjection sampleMapProjection) {
-//        this.sampleMapProjection = sampleMapProjection;
-//    }
-
     public String getChoiceName() {
         return this.choiceName;
     }
@@ -2887,22 +2774,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public void setChoiceName(String choiceName) {
         this.choiceName = choiceName;
     }
-
-//    public MapProjection getPreviewProjection() {
-//        return this.previewProjection;
-//    }
-//
-//    public void setPreviewProjection(MapProjection previewProjection) {
-//        this.previewProjection = previewProjection;
-//    }
-//
-//    public AreaDirectory getPreviewDir() {
-//        return this.previewDir;
-//    }
-//
-//    public void setPreviewDir(AreaDirectory previewDir) {
-//        this.previewDir = previewDir;
-//    }
 
     public String getSavePlace() {
         return this.savePlace;
@@ -3002,6 +2873,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
      *
      * @return  DataSelection times
      */
+    
     public List getDateTimeSelection() {
 //        return super.getDateTimeSelection();
         DataSelection s = getDataSelection();
@@ -3013,12 +2885,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
     }
 
-//    /**
-//     * Set the list of selected times for this data source. This is used
-//     * for XML persistence.
-//     *
-//     * @param selectedTimes   List of selected times
-//     */
+    /**
+     * Set the list of selected times for this data source. This is used
+     * for XML persistence.
+     *
+     * @param selectedTimes   List of selected times
+     */
+    
     public void setDateTimeSelection(List selectedTimes) {
 //        //Check to see if we need to convert the absolute times into an index list.
 //        if (holdsDateTimes(selectedTimes) && (timesList != null)) {
