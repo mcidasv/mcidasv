@@ -28,28 +28,18 @@
 
 package edu.wisc.ssec.mcidasv.data.adde;
 
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceDescriptor;
-import ucar.unidata.data.point.PointObFactory;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
-
-import visad.*;
-import visad.data.mcidas.PointDataAdapter;
-import ucar.unidata.geoloc.LatLonPoint;
-import ucar.unidata.geoloc.LatLonRect;
-import edu.wisc.ssec.mcidas.adde.AddePointURL;
 import ucar.visad.quantities.CommonUnits;
-
+import visad.Real;
+import visad.RealType;
+import visad.VisADException;
 
 /**
  * A data source for ADDE point data
@@ -57,6 +47,7 @@ import ucar.visad.quantities.CommonUnits;
  * @author Don Murray
  * @version $Revision$ $Date$
  */
+
 public class AddePointDataSource extends ucar.unidata.data.point.AddePointDataSource {
 
     /** list of levels names */
@@ -76,6 +67,7 @@ public class AddePointDataSource extends ucar.unidata.data.point.AddePointDataSo
      *
      * @throws VisADException
      */
+    
     public AddePointDataSource() throws VisADException {
         super();
     }
@@ -90,6 +82,7 @@ public class AddePointDataSource extends ucar.unidata.data.point.AddePointDataSo
      *
      * @throws VisADException  couldn't create the VisAD data
      */
+    
     public AddePointDataSource(DataSourceDescriptor descriptor,
                                String source, Hashtable properties)
             throws VisADException {
@@ -103,6 +96,7 @@ public class AddePointDataSource extends ucar.unidata.data.point.AddePointDataSo
      * @param dataChoice The data choice we are getting levels for
      * @return  List of all available levels
      */
+    
     public List getAllLevels(DataChoice dataChoice, DataSelection dataSelection) {
         return getLevels();
     }
@@ -111,6 +105,7 @@ public class AddePointDataSource extends ucar.unidata.data.point.AddePointDataSo
      * Get the levels property
      * @return levels;
      */
+    
     private List getLevels() {
     	List levels = new ArrayList();
     	try {

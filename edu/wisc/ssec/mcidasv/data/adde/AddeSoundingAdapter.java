@@ -28,7 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.data.adde;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -60,9 +59,13 @@ import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
  * a SoundingOb for each of the stations on the remote server for the
  * latest available data.
  */
+
 public class AddeSoundingAdapter extends SoundingAdapterImpl implements SoundingAdapter {
 
-	/** observed or satellite sounding? */
+	/** Default */
+    private static final long serialVersionUID = 1L;
+
+    /** observed or satellite sounding? */
 	private boolean satelliteSounding = false;
 	
 	/** these are only really used for satellite soundings */
@@ -96,7 +99,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     /** URL protocol identifier */
     private static final String URL_PROTOCOL = "adde";
 
-    /** server propert */
+    /** server property */
     private NonVetoableProperty serverProperty;
 
     /** mandatory data set property */
@@ -162,7 +165,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     /** name of station elevation variable */
     private String eleVar = "zs";
 
-
     /** server name */
     private String server;
 
@@ -190,8 +192,8 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
 
     /** Used to grab accounting information for a currently selected server. */
     private AddeChooser addeChooser;
-    /**
-        
+    
+    /**   
      * Construct an empty AddeSoundingAdapter
      */
     public AddeSoundingAdapter() {
@@ -199,7 +201,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     }
 
     /**
-     * Retreive upper air data from a remote ADDE server using only
+     * Retrieve upper air data from a remote ADDE server using only
      * mandatory data.
      *
      * @param    server   name or IP address of remote server
@@ -212,7 +214,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     }
 
     /**
-     * Retreive upper air data from a remote ADDE server using only
+     * Retrieve upper air data from a remote ADDE server using only
      * mandatory data.
      *
      * @param    server   name or IP address of remote server
@@ -226,10 +228,8 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         this(server, dataset, null);
     }
 
-
-
     /**
-     * Retreive upper air data from a remote ADDE server using only
+     * Retrieve upper air data from a remote ADDE server using only
      * mandatory data.
      *
      * @param    server       name or IP address of remote server
@@ -248,7 +248,7 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
     }
 
     /**
-     * Retreive upper air data from a remote ADDE server using only
+     * Retrieve upper air data from a remote ADDE server using only
      * mandatory data.
      *
      * @param    server       name or IP address of remote server
@@ -397,7 +397,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         return Misc.makeUrl(URL_PROTOCOL, server, urlRoot, args);
     }
 
-
     /**
      * Update this adapter for new data
      */
@@ -416,9 +415,9 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      * Load the data into them.
      */
     private void loadStations() {
-        times     = new ArrayList(8);
-        stations  = new ArrayList(100);
-        soundings = new ArrayList(100);
+        times     = new ArrayList<DateTime>(8);
+        stations  = new ArrayList<SoundingStation>(100);
+        soundings = new ArrayList<SoundingOb>(100);
         try {
             if ((server != null) && (mandDataset != null)) {
                 loadStationsInner();
@@ -439,10 +438,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         }
         stationsProperty.setValueAndNotifyListeners(stations);
         soundingTimesProperty.setValueAndNotifyListeners(times);
-    }
-
-    private String getServer() {
-        return this.server;
     }
 
     /**
@@ -499,7 +494,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
         //System.err.println("loading stations: " + request);
 
         AddePointDataReader dataReader = new AddePointDataReader(request);
-        String[]            units      = dataReader.getUnits();
         int[]               scales     = dataReader.getScales();
         int[][]             data       = dataReader.getData();
 
@@ -678,7 +672,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
             }
 
             apdr = new AddePointDataReader(request);
-            String[] params = apdr.getParams();
             int[]    scales = apdr.getScales();
             String[] units  = apdr.getUnits();
             int[][]  data   = apdr.getData();
@@ -688,7 +681,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
             if (satelliteSounding && data[0].length == 0) {
             	request = request.replaceAll("DAY [0-9-]+;?", "");
                 apdr = new AddePointDataReader(request);
-                params = apdr.getParams();
                 scales = apdr.getScales();
                 units  = apdr.getUnits();
                 data   = apdr.getData();
@@ -774,9 +766,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
             }
 
             apdr = new AddePointDataReader(request);
-            String[] params = apdr.getParams();
-            int[]    scales = apdr.getScales();
-            String[] units  = apdr.getUnits();
             int[][]  data   = apdr.getData();
 
             numLevels = data[0].length;
@@ -1142,12 +1131,6 @@ public class AddeSoundingAdapter extends SoundingAdapterImpl implements Sounding
      */
     public String toString() {
         return "SoundingAdapter:" + server;
-
     }
 
-
-
-
-
 }
-
