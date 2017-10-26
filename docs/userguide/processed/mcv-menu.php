@@ -117,6 +117,7 @@ RAOB Sounding Data</span><br>
 			<span class="link" onClick="setPage('controls/hydra/MultispectralDisplayControl.html');">MultiSpectral Display Controls</span><br>
 			<span class="link" onClick="setPage('controls/hydra/LinearCombinationControl.html');">Linear Combination Controls</span><br>
 			<span class="link" onClick="setPage('controls/hydra/ChannelCombinationControl.html');">4 Channel Combination Controls</span><br>
+			<span class="link" onClick="setPage('controls/hydra/ProfileAlongTrackControl.html');">ProfileAlongTrack Controls</span><br>
 		</div>
 		
         <span class="link" onClick="setPage('controls/LevelIIIControl.html');">WSR-88D Level III Controls</span><br>

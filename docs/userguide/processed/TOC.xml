@@ -67,6 +67,7 @@
                 <tocitem text="MultiSpectral Display Controls" target="idv.controls.hydra.multispectraldisplaycontrol"/>
                 <tocitem text="Linear Combination Controls" target="idv.controls.hydra.linearcombinationcontrol"/>
                 <tocitem text="4 Channel Combination Controls" target="idv.controls.hydra.channelcombinationcontrol"/>
+                <tocitem text="ProfileAlongTrack Controls" target="idv.controls.hydra.profilealongtrackcontrol"/>
             </tocitem>
             <tocitem text="WSR-88D Level III Controls" target="idv.controls.leveliiicontrol"/>
             <tocitem text="Level 2 Radar Layer Controls" target="idv.page_level2radardisplaycontrols">

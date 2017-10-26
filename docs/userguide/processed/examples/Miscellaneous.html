@@ -31,6 +31,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('examples/Miscella
 <ul class="childlist">
   <li><a href="#globedisplay">Globe Display</a></li>
   <li><a href="#multipanel">Multi-Panel Display</a></li>
+  <li><a href="#profileAlongTrack">ProfileAlongTrack Display</a></li>
   <li><a href="#transect">Data Transect Display</a></li>
   <li><a href="#gridtable">Grid Table Display</a></li>
   <li><a href="#omnidisplay">Omni Display</a></li>
@@ -52,14 +53,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('examples/Miscella
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/MultiPanelDisplay.gif" width="928" height="542" alt="Image 2: Four Panel Map Display"><br>
   <span class="caption">Image 2: Four Panel Map Display</span></div>
+<div class="pagesubtitle"><a name="profileAlongTrack" id="profileAlongTrack"></a>ProfileAlongTrack Display</div>
+  <p>The ProfileAlongTrack display plots CALIPSO, CloudSat, and HSRL2 lidar data.  See <a href="../controls/hydra/ProfileAlongTrackControl.html">ProfileAlongTrack Controls</a> for more information on this display. The image below shows CloudSat radar reflectivity (vertical curtain) displayed using the ProfileAlongTrack display type overlaid on a GOES-16 ABI image.
+<div class="images"><img src="images/ProfileAlongTrack.gif" width="715" height="461" alt="Image 3: ProfileAlongTrack Display"><br><span class="caption">Image 3: ProfileAlongTrack Display</span></div>
 <div class="pagesubtitle"><a name="transect" id="transect"></a>Data Transect Display</div>
-  <p>The Data Transect display plots in the <strong>Layer Controls</strong> tab of the Data Explorer, and plots a line of data at a constant height. The X-axis of the plot represents distance, and the Y-axis represents the numerical value of the parameter you are plotting. In the Main Display window, you can drag the end points of the transect line, to move the transect to your desired location. See <a href="../controls/DataTransectControl.html">Data Transect Controls</a> for more information on this display.
-<div class="images"><img src="images/DataTransect.gif" width="614" height="446" alt="Image 3: Data Transect Display"><br><span class="caption">Image 3: Data Transect Display</span></div>
+<p>The Data Transect display plots in the <strong>Layer Controls</strong> tab of the Data Explorer, and plots a line of data at a constant height. The X-axis of the plot represents distance, and the Y-axis represents the numerical value of the parameter you are plotting. In the Main Display window, you can drag the end points of the transect line, to move the transect to your desired location. See <a href="../controls/DataTransectControl.html">Data Transect Controls</a> for more information on this display.
+<div class="images"><img src="images/DataTransect.gif" width="614" height="446" alt="Image 4: Data Transect Display"><br><span class="caption">Image 4: Data Transect Display</span></div>
 <div class="pagesubtitle"></div>
 <div class="pagesubtitle"><a name="gridtable" id="gridtable"></a>Grid Table Display</div>
 <p>The Grid Table display plots in the <strong>Layer Controls</strong> tab of the Data Explorer, and plots a chart of the numerical value of the field you are displaying at individual latitudes, longitudes, and altitudes (if available). See <a href="../controls/misc/GridTable.html">Grid Table Controls</a> for more information on this display.</p>
-<div class="images"><img src="images/GridTable.gif" width="658" height="372" alt="Image 4: Grid Table Display"><br>
-<span class="caption">Image 4: Grid Table Display</span></div>
+<div class="images"><img src="images/GridTable.gif" width="658" height="372" alt="Image 5: Grid Table Display"><br>
+<span class="caption">Image 5: Grid Table Display</span></div>
 <div class="pagesubtitle"><a name="omnidisplay" id="omnidisplay"></a>Omni Display</div>
 <p>The Omni display is a VisAD Spread Sheet, loaded with the parameter selected
   and its coordinates and units. The Spread Sheet is used to create a display
@@ -67,15 +71,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('examples/Miscella
   is colored, and so on. See more in the <a href="../controls/misc/OmniControl.html">Omni
   Control</a>.</p>
 <p>For use of the Spread Sheet, see the VisAD Spread Sheet document at <a href="http://www.ssec.wisc.edu/~curtis/ss.html" target="_blank">http://www.ssec.wisc.edu/~curtis/ss.html</a>.</p>
-<div class="images"><img src="images/OmniControl.gif" alt="Image 5: Omni Control Display"><br>
-<span class="caption">Image 5: Omni Control Display</span></div>
+<div class="images"><img src="images/OmniControl.gif" alt="Image 6: Omni Control Display"><br>
+<span class="caption">Image 6: Omni Control Display</span></div>
 <div class="pagesubtitle"><a name="maptransect" id="maptransect"></a>Map and Transect Display</div>
 <p>The Main Display window allows for various configurations of maps and transects. Through the Main Display window, use the <strong>File-&gt;New
 Display Tab (Window)-&gt;Transect Display-&gt;# panel(s)</strong> to create a tab that contains anywhere from one to four transects. Additionally, as shown below, there are a few panel configurations that allow for having maps and transects in the same display. These configurations can be found under <strong>File-&gt;New
 Display Tab (Window)-&gt;Misc</strong>, where there are options for one map and one transect, one map and two transects, as well as two maps and one transect.</p>
 <p>For more on using the transect panel type, see <a href="../ui/TransectViewManager.html">Transect Views</a>.</p>
-<div class="images"><img src="images/MapAndTransect.gif" width="928" height="512" alt="Image 6 - Map and Transect Display"><br>
-<span class="caption">Image 6: Map and Transect Display</span></div>
+<div class="images"><img src="images/MapAndTransect.gif" width="928" height="512" alt="Image 7 - Map and Transect Display"><br>
+<span class="caption">Image 7: Map and Transect Display</span></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
