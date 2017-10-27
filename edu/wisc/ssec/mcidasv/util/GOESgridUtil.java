@@ -348,12 +348,12 @@ public class GOESgridUtil {
                    float dx11 = xidxs[i] - (iR+1);
                    float dy11 = yidxs[j] - (jR+1);                      
 
-                   float dst00 = (float) Math.sqrt(dx00*dx00 + dy00*dy00);
-                   float dst01 = (float) Math.sqrt(dx01*dx01 + dy01*dy01);
-                   float dst10 = (float) Math.sqrt(dx10*dx10 + dy10*dy10);
-                   float dst11 = (float) Math.sqrt(dx11*dx11 + dy11*dy11);
+                   float dst00 = (float) (dx00*dx00 + dy00*dy00);
+                   float dst01 = (float) (dx01*dx01 + dy01*dy01);
+                   float dst10 = (float) (dx10*dx10 + dy10*dy10);
+                   float dst11 = (float) (dx11*dx11 + dy11*dy11);
 
-                   float sum = dst00 + dst01 + dst10 + dst11;
+                   float sum = 1/dst00 + 1/dst01 + 1/dst10 + 1/dst11;
 
                    if (mode == Data.NEAREST_NEIGHBOR) {
                       flts[0] = dst00;
@@ -380,10 +380,10 @@ public class GOESgridUtil {
                       }
                    }
                    else {
-                      float w00 = dst00/sum;
-                      float w01 = dst01/sum;
-                      float w10 = dst10/sum;
-                      float w11 = dst11/sum;
+                      float w00 = 1/dst00;
+                      float w01 = 1/dst01;
+                      float w10 = 1/dst10;
+                      float w11 = 1/dst11;
 
                       for (int t=0; t<tupleDimLen;t++) {
                          float val = 0;
@@ -392,7 +392,7 @@ public class GOESgridUtil {
                          val += w10*values[t][kR+lenX];
                          val += w11*values[t][kR+lenX+1];
 
-                         targetValues[t][k] = val;
+                         targetValues[t][k] = val/sum;
                       }
                    }
                 }
@@ -462,7 +462,7 @@ public class GOESgridUtil {
     }
     for (int i=0; i<length; i++) {
       v = value0[i];
-      grid0[i] = (float) ((l < v && v < h) ? (v - First) * Invstep : Float.NaN);
+      grid0[i] = (float) ((l <= v && v <= h) ? (v - First) * Invstep : Float.NaN);
     }
     return grid;
   }    
