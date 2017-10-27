@@ -82,11 +82,11 @@ When McIDAS-V is started for the first time, the application writes out an examp
     &lt;resource location=&quot;http://www.somewebsite.edu/somepath/colortables.xml&quot;/&gt;
   &lt;/resources&gt;
 </pre>
-<p>The example above tells McIDAS-V to look for color tables in the user path, sitepath, and an online URL<a name="resources" id="resources"></a>. McIDAS-V uses the first entry in this list as the file path to write out color tables that are created using the color table editor.</p>
+<p>The example above tells McIDAS-V to look for color tables in the user path, sitepath, and an online URL. McIDAS-V uses the first entry in this list as the file path to write out color tables that are created using the color table editor.</p>
 <p>The loadmore tag for the colortable resource is set to &quot;true&quot; by default.  When this is set to true, then the colortables resource contained in all of the directories in the idv.resourcefiles property will be used, meaning the user will have access to system color tables (in the %APPPATH% directory) as well.  If this loadmore tag were set to &quot;false&quot;, then only the mcidasv.rbi contained in the %USERPATH% directory (the first path contained in the idv.resourcefiles property) would be used for the colortables resource, system resource.</p>
 <p>This gives the flexibility to customize McIDAS-V to us only resources set by the user and not those used by McIDAS-V by default. This mcidasv.rbi file does not contain all of the resource files available for use by McIDAS-V, but instead contains a subset of commonly-used resources.  Additional resources can be added to this file by the user. </p>
 <p>An example use case of this mcidasv.rbi file is if your site needs to use a set of special color tables that you have created. Once the color tables have been created in McIDAS-V, they are saved to ~user/McIDAS-V/colortables.xml (as defined by the resource paths defined in the app path's mcidasv.rbi). This file can then be copied to a web site or on a shared file system that is pointed to by the McIDAS-V -sitepath flag. Now, your users simply need to define the -sitepath at startup and they will naturally pick up the color tables saved in colortables.xml.</p>
-<div class="pagesubtitle">Resource</div>
+<div class="pagesubtitle">Resource<a name="resources" id="resources"></a></div>
 Here is the list of the resource identifiers, description and file pattern (for use with plugins) of the different resources McIDAS-V uses.
 <table class="noborder" style="margin-left:10px;">
 <tr>
