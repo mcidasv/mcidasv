@@ -343,7 +343,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
 
             int line = lineMid;
             int ele = eleMid;
-            if (laloSel.getPlace().equals(laloSel.PLACE_ULEFT)) {
+            if (laloSel.getPlace().equals(GeoLatLonSelection.PLACE_ULEFT)) {
                 line = (int)Math.floor(uLLine + 0.5);
                 ele = (int)Math.floor(uLEle + 0.5);
             }
