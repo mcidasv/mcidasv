@@ -8185,8 +8185,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     protected boolean isDisplayUnitAlsoColorUnit() {
         return true;
     }
-
-
+    
+    
     /**
      * The user has chosen a new unit for display.
      *
@@ -8199,8 +8199,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (newUnit == null) {
             return true;
         }
-
-
+        
+        
         //If we haven't initialized yet just set the unit and return
         if ( !getHaveInitialized()) {
             /*            if (isDisplayUnitAlsoColorUnit()) {
@@ -8211,77 +8211,84 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             setDisplayUnit(newUnit);
             return true;
         }
-
+        
         Unit oldUnit = getDisplayUnit();
         try {
-            //Do this first because it uses displayUnit as the old unit
-            if (isDisplayUnitAlsoColorUnit()) {
-                if ( !setNewColorUnit(newUnit, false)) {
-                    return false;
-                }
-            }
-            setDisplayUnit(newUnit);
-            ContourInfo contourInfo = getContourInfo();
-            if ((contourInfo != null) && (oldUnit != null)) {
-
-                ContourInfo newContourInfo = new ContourInfo(contourInfo);
-
-                //New interval setting code:
-                //Try to preserve how many lines there were between min and max
-                double oldRange = newContourInfo.getMax()
-                                  - newContourInfo.getMin();
-                int howMany = ((newContourInfo.getInterval() != 0.0)
-                               ? (int) (oldRange
-                                        / newContourInfo.getInterval())
-                               : 0);
-                //                newContourInfo.setInterval(
-                //                    (float) newUnit.toThis(
-                //                        newContourInfo.getInterval(), oldUnit));
-
-                newContourInfo.setBase(
-                    (float) newUnit.toThis(
-                        newContourInfo.getBase(), oldUnit));
-                newContourInfo.setMin(
-                    (float) newUnit.toThis(newContourInfo.getMin(), oldUnit));
-                newContourInfo.setMax(
-                    (float) newUnit.toThis(newContourInfo.getMax(), oldUnit));
-
-
-
-                //New interval setting code:
-                double newRange = newContourInfo.getMax()
-                                  - newContourInfo.getMin();
-                if (howMany > 0) {
-                    newContourInfo.setInterval((float) (newRange / howMany));
-                } else {
-                    newContourInfo.setInterval(
-                        (float) newUnit.toThis(
-                            newContourInfo.getInterval(), oldUnit));
-                }
-
-
-
-                setContourInfo(newContourInfo);
-            }
-            if (applyToDisplayable) {
-                applyDisplayUnit();
-            }
-            updateListOrLegendWithMacro(MACRO_DISPLAYUNIT);
-
-            displayUnitChanged(oldUnit, newUnit);
-            if ( !applyProperties()) {
-                return false;
-            }
+            return innerChangeDisplayUnit(newUnit, applyToDisplayable);
         } catch (Exception exc) {
             //logException ("Error setting unit from: " + oldUnit + " to: " + newUnit + "\n", exc);
             userMessage("Error setting unit from: " + oldUnit + " to: "
-                        + newUnit + "\n" + exc);
+                + newUnit + "\n" + exc);
             setDisplayUnit(oldUnit);
+            return false;
+        }
+    }
+    
+    private boolean innerChangeDisplayUnit(Unit newUnit, boolean applyToDisplayable)
+        throws Exception
+    {
+        if (newUnit == null) {
+            return true;
+        }
+        
+        //If we haven't initialized yet just set the unit and return
+        if ( !getHaveInitialized()) {
+            setDisplayUnit(newUnit);
+            return true;
+        }
+        
+        Unit oldUnit = getDisplayUnit();
+        //Do this first because it uses displayUnit as the old unit
+        if (isDisplayUnitAlsoColorUnit()) {
+            if ( !innerChangeColorUnit(newUnit, false)) {
+                return false;
+            }
+        }
+        setDisplayUnit(newUnit);
+        ContourInfo contourInfo = getContourInfo();
+        if ((contourInfo != null) && (oldUnit != null)) {
+            ContourInfo newContourInfo = new ContourInfo(contourInfo);
+            
+            //New interval setting code:
+            //Try to preserve how many lines there were between min and max
+            double oldRange =
+                newContourInfo.getMax() - newContourInfo.getMin();
+            int howMany = ((newContourInfo.getInterval() != 0.0)
+                ? (int) (oldRange
+                / newContourInfo.getInterval())
+                : 0);
+                
+            newContourInfo.setBase(
+                (float) newUnit.toThis(newContourInfo.getBase(), oldUnit));
+            newContourInfo.setMin(
+                (float) newUnit.toThis(newContourInfo.getMin(), oldUnit));
+            newContourInfo.setMax(
+                (float) newUnit.toThis(newContourInfo.getMax(), oldUnit));
+                
+            //New interval setting code:
+            double newRange =
+                newContourInfo.getMax() - newContourInfo.getMin();
+            if (howMany > 0) {
+                newContourInfo.setInterval((float) (newRange / howMany));
+            } else {
+                newContourInfo.setInterval(
+                    (float) newUnit.toThis(
+                        newContourInfo.getInterval(), oldUnit));
+            }
+            setContourInfo(newContourInfo);
+        }
+        if (applyToDisplayable) {
+            applyDisplayUnit();
+        }
+        updateListOrLegendWithMacro(MACRO_DISPLAYUNIT);
+        
+        displayUnitChanged(oldUnit, newUnit);
+        if ( !applyProperties()) {
             return false;
         }
         return true;
     }
-
+    
     /**
      * If the display list or legend templates contain <code>macro</code>
      * update the appropriate UI component
@@ -8302,6 +8309,47 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
     }
 
+    private boolean innerChangeColorUnit(Unit newUnit, boolean applyToDisplayable)
+        throws VisADException
+    {
+        if (newUnit == null) {
+            return true;
+        }
+        //        System.err.println ("setNewColorUnit:" + getHaveInitialized());
+        if (!getHaveInitialized()) {
+            setUnitForColor(newUnit);
+            return true;
+        }
+    
+        Unit oldUnit = getUnitForColor();
+        try {
+            setUnitForColor(newUnit);
+            Range currentRange = getRange();
+            if (currentRange != null) {
+                Range newRange;
+                if (oldUnit != null) {
+                    newRange =
+                        new Range(newUnit.toThis(currentRange.getMin(),
+                            oldUnit), newUnit.toThis(currentRange.getMax(),
+                            oldUnit));
+                } else {
+                    newRange = getInitialRange();
+                }
+                if (newRange != null) {
+                    setRange(newRange);
+                }
+            }
+            if (applyToDisplayable) {
+                applyColorUnit();
+            }
+            colorUnitChanged(oldUnit, newUnit);
+            return true;
+        } catch (Exception e) {
+            setUnitForColor(oldUnit);
+            throw new VisADException(e);
+        }
+    }
+    
     /**
      * The user has chosen a new unit for color.
      *
@@ -8322,33 +8370,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
         Unit oldUnit = getUnitForColor();
         try {
-            setUnitForColor(newUnit);
-            Range currentRange = getRange();
-            if (currentRange != null) {
-                Range newRange;
-                if (oldUnit != null) {
-                    newRange =
-                        new Range(newUnit.toThis(currentRange.getMin(),
-                            oldUnit), newUnit.toThis(currentRange.getMax(),
-                                oldUnit));
-                } else {
-                    newRange = getInitialRange();
-                }
-                if (newRange != null) {
-                    setRange(newRange);
-                }
-            }
-            if (applyToDisplayable) {
-                applyColorUnit();
-            }
-            colorUnitChanged(oldUnit, newUnit);
+            return innerChangeColorUnit(newUnit, applyToDisplayable);
         } catch (Exception exc) {
             setUnitForColor(oldUnit);
             //      logException ("Error setting unit from: " + oldUnit + " to: " + newUnit + "\n", exc);
             userMessage("Error setting unit: " + exc);
             return false;
         }
-        return true;
     }
 
 

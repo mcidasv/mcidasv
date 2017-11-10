@@ -2498,19 +2498,25 @@ class _Layer(_JavaProxy):
             
         Raises:
             ValueError: if unitname could not be interpreted by 
-                        Util.parseUnit().
+                        Util.parseUnit(), or if unitname is not valid for the
+                        display.
         """
+        from java.lang import Exception
         from visad import VisADException
         try:
             newUnit = Util.parseUnit(unitname)
-            # this looping business is what the idv code does!
-            while True:
-                if self._JavaProxy__javaObject.setNewDisplayUnit(newUnit, True):
-                    break
-            shareProp = self._JavaProxy__javaObject.SHARE_DISPLAYUNIT
-            self._JavaProxy__javaObject.doShareExternal(shareProp, newUnit)
         except VisADException:
             raise ValueError('Could not interpret "%s" as a unit' % unitname)
+
+        # this looping business is what the idv code does!
+        while True:
+            try:
+                if self._JavaProxy__javaObject.innerChangeDisplayUnit(newUnit, True):
+                    break
+            except Exception, e:
+                raise ValueError('Could not change unit to "%s"' % unitname)
+        shareProp = self._JavaProxy__javaObject.SHARE_DISPLAYUNIT
+        self._JavaProxy__javaObject.doShareExternal(shareProp, newUnit)
             
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
