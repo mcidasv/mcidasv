@@ -28,7 +28,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Modify the Layer Object</div>
-<p><strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong></strong> Displays
+<p><strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong> Displays
   color scale on a panel and specifies its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setColorScale(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - optional:</div>
@@ -75,7 +75,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setColorScale(placement='Left',font='SansSerif',size=18.0,color='green',showUnit=True</em>)</div>
 <p><strong><a name="setEnhancement" id="setEnhancement"></a>setEnhancement -&nbsp;</strong>Applies
-  a color table and defines data range of data in a layer<br>
+	a color table and defines data range of data in a layer</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setEnhancement(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
@@ -166,7 +166,6 @@ Deep Convection'</td></tr></table></div>
       <td valign="top">%fhour%</td>
       <td>Forecast hour of grid being displayed followed by an 'H' for hour</td>
     </tr>
-    <tr>
         <tr>
       <td valign="top">%fhour2%</td>
       <td>Forecast hour of grid being displayed without being followed by an 'H' for hour</td>
@@ -175,7 +174,6 @@ Deep Convection'</td></tr></table></div>
       <td valign="top">%level%</td>
       <td>Lists the vertical level of the parameter being displayed</td>
     </tr>
-    <tr>
 </table></div>
 <p><strong><a name="setLegendLabel" id="setLegendLabel"></a>setLegendLabel
     -</strong> Sets the Legend Label of the displayed layer. The Legend Label is the blue text of the layer seen in the Legend of the Main Display window</p>
@@ -241,6 +239,23 @@ Deep Convection'</td></tr></table></div>
 <div class="TwoTabIndent"><em>satLayer = panel[0].getLayer[1]</em></div>
   <div class="OneTabIndent">Remarks:</div>
   <div class="TwoTabIndent">This function returns a reference to a displayed error, which allows for passing this layer through other functions such as <em>setLayerVisible()</em>, <em>setEnhancement()</em>, and<em> setLayerLabel()</em>. The numerical value in the square brackets after <em>getLayer</em> in the example is the layer's index in the display. The index of displays in the displays begins with 0, which is the first layer displayed in the panel (normally the map layer). The second layer displayed would be index 1, the third layer display would be index 2, and so on.</div>
+<p><strong><a name="getDisplayUnit" id="getDisplayUnit"></a>getDisplayUnit
+    -</strong> Returns the unit of a displayed layer</p>
+  <div class="OneTabIndent">Usage: <em>myDataLayer.getDisplayUnit()</em></div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.getDisplayUnit()</em></div>
+<p><strong><a name="setDisplayUnit" id="setDisplayUnit"></a>setDisplayUnit
+    -</strong> Sets the unit of a displayed layer</p>
+  <div class="OneTabIndent">Usage: <em>myDataLayer.getDisplayUnit()</em></div>
+  <div class="TwoTabIndent">Keywords - required:</div>
+  <div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">unitname=</td>
+      <td>Sets the unit to be applied to the displayed layer.</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setDisplayUnit('hPa')</em></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
