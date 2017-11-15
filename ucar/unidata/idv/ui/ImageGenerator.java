@@ -2986,8 +2986,8 @@ public class ImageGenerator extends IdvManager {
      * @throws Exception On badness
      */
     public void writeMovie(String filename, 
-                           int fps, 
-                           int endFramePause, 
+                           double fps, 
+                           double endFramePause, 
                            boolean globalPalette, 
                            String params) 
         throws Exception 
