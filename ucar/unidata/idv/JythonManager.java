@@ -65,7 +65,9 @@ import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -116,7 +118,9 @@ import edu.wisc.ssec.mcidasv.util.FileFinder;
 import edu.wisc.ssec.mcidasv.util.LoudPyStringMap;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 
+import org.python.core.CompileMode;
 import org.python.core.Py;
+import org.python.core.PyCode;
 import org.python.core.PyFunction;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -1274,10 +1278,10 @@ public class JythonManager extends IdvManager implements ActionListener,
                         continue;
                     }
                 }
-                userErrorMessage("Syntax error in the Python library:" + resourceName + '\n' + pse);
+                userErrorMessage("Syntax error in the Jython library:" + resourceName + '\n' + pse);
                 inError = true;
             } catch (Exception exc) {
-                logException("An error occurred reading jython library: "+ resourceName, exc);
+                logException("An error occurred reading Jython library: "+ resourceName, exc);
                 inError = true;
             }
         }
@@ -1455,19 +1459,24 @@ public class JythonManager extends IdvManager implements ActionListener,
             try {
                 if (forWriting) {
                     if (GuiUtils.showYesNoDialog(null,
-                            "There was an error in the Python library:"
-                            + pse, "Python error", "Save anyways",
+                            "There was an error in the Jython library:"
+                            + pse, "Jython error", "Save anyways",
                                    "Cancel")) {
                         return true;
                     }
                 } else {
-                    logException("There was an error in the Python library:" + pse, pse);
+                    if (pse.toString().contains("expecting DEDENT")) {
+                        logException("McIDAS-V could not automatically add \""+ holderToWrite.filePath+"\" to your Jython Library due to a syntax error.\n\nA somewhat common problem is text editors using both tab and space characters as indentation.\n\n\nOriginal Exception:\n", pse);
+                    } else {
+                        logException("There was an error in the Jython library:" + pse, pse);
+                    }
+                    
                 }
             } catch (Throwable exc) {
-                logException("Writing jython library " + exc.getClass().getName(), exc);
+                logException("Writing Jython library " + exc.getClass().getName(), exc);
             }
         } catch (Throwable exc) {
-            logException("Writing jython library " + exc.getClass().getName(), exc);
+            logException("Writing Jython library " + exc.getClass().getName(), exc);
         }
         return ok;
     }
@@ -1537,7 +1546,7 @@ public class JythonManager extends IdvManager implements ActionListener,
      */
     public void evaluateUntrusted(String jythonCode, Map<String, Object> properties) {
         if (!checkUntrustedJython(jythonCode)) {
-            userMessage("Malformed jython code:\n" + jythonCode);
+            userMessage("Malformed Jython code:\n" + jythonCode);
             return;
         }
         evaluateTrusted(jythonCode, properties);
