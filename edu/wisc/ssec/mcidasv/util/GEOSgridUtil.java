@@ -1,37 +1,45 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import java.rmi.RemoteException;
+
+import visad.CommonUnit;
+import visad.Data;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.Linear1DSet;
 import visad.Linear2DSet;
 import visad.MathType;
 import visad.RealTupleType;
-import visad.VisADException;
-import java.lang.Math;
-import visad.CommonUnit;
-import visad.Data;
 import visad.RealType;
 import visad.Set;
 import visad.SetException;
 import visad.SetType;
+import visad.VisADException;
 
 /**
- * Utilities for efficiently upscaling and downscaling data referenced on the GOES-16
- * 2km, 1km and hkm Fixed Grid Frame (FGF). Adapted from Visad resample, but realizes 
- * efficiencies when target and source domain sets are both rectilinear, especially 
- * avoiding the expansion of the domain samples (getSamples), in this special case.
- * Follows resampling rules outlined in the GOES-16 ABI ATBD for the Cloud and Moisture
- * Imagery Product (CMIP) when incoming grids are at the their full resolution. 
+ * Utilities for efficiently upscaling and downscaling data referenced on the
+ * GOES-16 2km, 1km and hkm Fixed Grid Frame (FGF).
+ *
+ * <p>Adapted from VisAD's {@link FlatField#resample(Set) resample}, but realizes
+ * efficiencies when target and source domain sets are both rectilinear,
+ * especially avoiding the expansion of the domain samples (getSamples) for
+ * this special case.</p>
+ *
+ * <p>Follows resampling rules outlined in the
+ * <a href="http://www.goes-r.gov/products/ATBDs/baseline/Imagery_v2.0_no_color.pdf">
+ * GOES-16 ABI ATBD for the Cloud and Moisture Imagery Product</a> when
+ * incoming grids are at the their full resolution.
  * Should be thought of as a grid transfer operation, to be used in conjunction with, 
- * not necessarily a replacement for, FlatField.resample.
+ * not necessarily a replacement for, {@code FlatField.resample}.</p>
  */
 public class GEOSgridUtil {
    
-   public static RealTupleType LamdaTheta;
+   public static RealTupleType LambdaTheta;
    static {
       try {
-         LamdaTheta = new RealTupleType(RealType.getRealType("lamda", CommonUnit.radian), RealType.getRealType("theta", CommonUnit.radian));
+         LambdaTheta = new RealTupleType(
+             RealType.getRealType("lambda", CommonUnit.radian),
+             RealType.getRealType("theta", CommonUnit.radian));
       }
       catch (VisADException e) {
       }
@@ -44,61 +52,68 @@ public class GEOSgridUtil {
    private static float accumTolerance = 0.01f;
    
    /**
-    * 
+    * DomainSets of {@code red}, {@code green}, {@code blue} must be (lambda, theta): the intermediate view angle coordinates (radians)
+    * for the Fixed Grid Frame. See {@link #makeGEOSRadiansDomainField}.
+    * TargetSet is taken as that of the first component field ({@code red}).
+    *
     * @param red
-    * @param grn
-    * @param blu
-    * 
-    * DomainSets of red, grn, blu must be (lamda, theta): the intermediate view angle coordinates (radians)
-    * for the Fixed Grid Frame. See makeGEOSRadiansDomainField below. 
-    * TargetSet is taken as that of the first component field (red).
+    * @param green
+    * @param blue
     * 
     * @return
+    *
     * @throws VisADException
-    * @throws RemoteException 
+    * @throws RemoteException
+    *
+    * @see #makeGEOSRadiansDomainField(FlatField, double, double, double, double)
     */
-   public static FlatField geosRGB(FlatField red, FlatField grn, FlatField blu) throws VisADException, RemoteException {
-      return geosRGB(red, grn, blu, (Linear2DSet)red.getDomainSet(), false);
+   public static FlatField geosRGB(FlatField red, FlatField green, FlatField blue) throws VisADException, RemoteException {
+      return geosRGB(red, green, blue, (Linear2DSet)red.getDomainSet(), false);
    }
    
    /**
     * 
     * @param red
-    * @param grn
-    * @param blu
+    * @param green
+    * @param blue
     * @param targetSet
+    *
     * @return
+    *
     * @throws VisADException
     * @throws RemoteException 
     */
-   public static FlatField geosRGB(FlatField red, FlatField grn, FlatField blu, Linear2DSet targetSet) throws VisADException, RemoteException {
-      return geosRGB(red, grn, blu, targetSet, true);
+   public static FlatField geosRGB(FlatField red, FlatField green, FlatField blue, Linear2DSet targetSet) throws VisADException, RemoteException {
+      return geosRGB(red, green, blue, targetSet, true);
    }
 
    /**
-    * 
+    * DomainSets of {@code red}, {@code green}, {@code blue} and {@code targetSet}
+    * must be (lambda, theta): the intermediate view angle coordinates (radians)
+    * for the Fixed Grid Frame.
+    * See {@link #makeGEOSRadiansDomainField(FlatField, double, double, double, double)}.
+    *
     * @param red
-    * @param grn
-    * @param blu
+    * @param green
+    * @param blue
     * @param targetSet the target, or outgoing domain
     * @param copy to copy range of resulting RGB FlatField (default=true)
-    * 
-    * DomainSets of red, grn, blu and targetSet must be (lamda, theta): the intermediate view angle coordinates (radians)
-    * for the Fixed Grid Frame. See makeGEOSRadiansDomainField below.
-    * 
+    *
     * @return
     * @throws VisADException
-    * @throws RemoteException 
+    * @throws RemoteException
+    *
+    * @see #makeGEOSRadiansDomainField(FlatField, double, double, double, double)
     */   
-   public static FlatField geosRGB(FlatField red, FlatField grn, FlatField blu, Linear2DSet targetSet, boolean copy) throws VisADException, RemoteException {
+   public static FlatField geosRGB(FlatField red, FlatField green, FlatField blue, Linear2DSet targetSet, boolean copy) throws VisADException, RemoteException {
      
        Linear2DSet setR = (Linear2DSet) red.getDomainSet();
-       Linear2DSet setG = (Linear2DSet) grn.getDomainSet();
-       Linear2DSet setB = (Linear2DSet) blu.getDomainSet();
+       Linear2DSet setG = (Linear2DSet) green.getDomainSet();
+       Linear2DSet setB = (Linear2DSet) blue.getDomainSet();
        
        float[] redValues;
-       float[] grnValues;
-       float[] bluValues;
+       float[] greenValues;
+       float[] blueValues;
        
        RealTupleType newRangeType = new RealTupleType(new RealType[] 
            {RealType.getRealType("redimage_"+uniqueID), RealType.getRealType("greenimage_"+uniqueID), RealType.getRealType("blueimage_"+uniqueID)});
@@ -107,25 +122,25 @@ public class GEOSgridUtil {
        
        if (targetSet.equals(setR) && targetSet.equals(setB) && targetSet.equals(setG)) {
           redValues = red.getFloats(false)[0];
-          grnValues = grn.getFloats(false)[0];
-          bluValues = blu.getFloats(false)[0];
+          greenValues = green.getFloats(false)[0];
+          blueValues = blue.getFloats(false)[0];
        }
        else {
           redValues = geosResample(red, targetSet).getFloats(false)[0];
-          grnValues = geosResample(grn, targetSet).getFloats(false)[0];
-          bluValues = geosResample(blu, targetSet).getFloats(false)[0];
+          greenValues = geosResample(green, targetSet).getFloats(false)[0];
+          blueValues = geosResample(blue, targetSet).getFloats(false)[0];
        }
           
        // For RGB composite, if any NaN -> all NaN
        for (int k=0; k<redValues.length; k++) {
-          if (Float.isNaN(redValues[k]) || Float.isNaN(grnValues[k]) || Float.isNaN(bluValues[k])) {
+          if (Float.isNaN(redValues[k]) || Float.isNaN(greenValues[k]) || Float.isNaN(blueValues[k])) {
              redValues[k] = Float.NaN;
-             grnValues[k] = Float.NaN;
-             bluValues[k] = Float.NaN;
+             greenValues[k] = Float.NaN;
+             blueValues[k] = Float.NaN;
           }
        }
           
-       rgb.setSamples(new float[][] {redValues, grnValues, bluValues}, copy);                     
+       rgb.setSamples(new float[][] {redValues, greenValues, blueValues}, copy);
           
        uniqueID++;
        return rgb;
@@ -133,14 +148,16 @@ public class GEOSgridUtil {
    
    
    /**
-    * Transforms FlatField with DomainCoordinateSystem (fgf_x, fgf_y) <-> (Lon,Lat) based on the Geostationary projection 
-    * from fixed grid coordinates to intermediate coordinates view angle coordinates in radians (lamda, theta).
+    * Transforms FlatField with DomainCoordinateSystem
+    * {@code (fgf_x, fgf_y) <-> (Lon,Lat)} based on the Geostationary projection
+    * from fixed grid coordinates to intermediate coordinates view angle
+    * coordinates in radians (lambda, theta).
     *
     * @param fltFld
     *         The incoming FlatField 
     * @param scaleX
     * @param offsetX
-    *         To transform to fgf_x -> lamda (radians)
+    *         To transform to fgf_x -> lambda (radians)
     * @param scaleY
     * @param offsetY
     *         To transform to fgf_y -> theta (radians)
@@ -164,7 +181,7 @@ public class GEOSgridUtil {
        double lastY = setY.getLast()*scaleY + offsetY;   
 
        Linear2DSet dSetRadians = new Linear2DSet(firstX, lastX, lenX, firstY, lastY, lenY);
-       fltFld = new FlatField(new FunctionType(LamdaTheta, rangeType), dSetRadians);
+       fltFld = new FlatField(new FunctionType(LambdaTheta, rangeType), dSetRadians);
        fltFld.setSamples(rangeVals, false);  
        return fltFld;
    }
@@ -172,18 +189,20 @@ public class GEOSgridUtil {
   /**
    * Efficiently upscales or downscales between ABI fields with domainSets on the Fixed Grid Frame. 
    * Can be seen as grid transfer process, to be used in conjunction with, not a replacement for, VisAD resample.
-   * 
+   *
+   * DomainSets must be (lambda, theta): the intermediate view angle coordinates (radians)
+   * for the Fixed Grid Frame. See {@link #makeGEOSRadiansDomainField}.
+   *
    * @param fld
    * @param targetSet
-   * 
-   * DomainSets must be (lamda, theta): the intermediate view angle coordinates (radians)
-   * for the Fixed Grid Frame. See makeGEOSRadiansDomainField below.
-   * 
-   * @return result field with targetSet domain.
+   *
+   * @return Result field with targetSet domain.
+   *
    * @throws VisADException
-   * @throws RemoteException 
+   * @throws RemoteException
+   *
+   * @see #makeGEOSRadiansDomainField(FlatField, double, double, double, double)
    */
-   
   public static FlatField geosResample(FlatField fld, Linear2DSet targetSet) throws VisADException, RemoteException {
      return geosResample(fld, targetSet, Data.WEIGHTED_AVERAGE);
   }
@@ -191,17 +210,20 @@ public class GEOSgridUtil {
   /**
    * Efficiently upscales or downscales between ABI fields with domainSets on the Fixed Grid Frame. 
    * Can be seen as grid transfer process, to be used in conjunction with, not a replacement for, VisAD resample.
-   * 
+   *
+   * DomainSets must be (lambda, theta): the intermediate view angle coordinates (radians)
+   * for the Fixed Grid Frame. See {@link #makeGEOSRadiansDomainField}.
+   *
    * @param fld
    * @param targetSet
    * @param mode VisAD resample mode
-   * 
-   * DomainSets must be (lamda, theta): the intermediate view angle coordinates (radians)
-   * for the Fixed Grid Frame. See makeGEOSRadiansDomainField below.
-   * 
-   * @return result field with targetSet domain.
+   *
+   * @return Result field with targetSet domain.
+   *
    * @throws VisADException
-   * @throws RemoteException 
+   * @throws RemoteException
+   *
+   * @see #makeGEOSRadiansDomainField(FlatField, double, double, double, double)
    */
   public static FlatField geosResample(FlatField fld, Linear2DSet targetSet, int mode) throws VisADException, RemoteException {
           
@@ -431,10 +453,13 @@ public class GEOSgridUtil {
    * val >= First and val <= Last, First > Last
    * val <= First and val >= Last, Last > First
    * i.e., clamp to inside the interval inclusive
+   *
    * @param set
    * @param value
+   *
    * @return
-   * @throws VisADException 
+   *
+   * @throws VisADException
    */
   private static float[][] valueToGrid(Linear1DSet set, float[][] value) throws VisADException {
     if (value.length != 1) {
