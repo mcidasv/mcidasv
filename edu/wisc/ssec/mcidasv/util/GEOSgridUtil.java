@@ -21,13 +21,12 @@ import visad.SetType;
  * 2km, 1km and hkm Fixed Grid Frame (FGF). Adapted from Visad resample, but realizes 
  * efficiencies when target and source domain sets are both rectilinear, especially 
  * avoiding the expansion of the domain samples (getSamples), in this special case.
- * Follows resampling rules outlined in the GOES-16 ABI ATBD for the Clould and Moisture 
+ * Follows resampling rules outlined in the GOES-16 ABI ATBD for the Cloud and Moisture
  * Imagery Product (CMIP) when incoming grids are at the their full resolution. 
  * Should be thought of as a grid transfer operation, to be used in conjunction with, 
  * not necessarily a replacement for, FlatField.resample.
  */
-
-public class GOESgridUtil {
+public class GEOSgridUtil {
    
    public static RealTupleType LamdaTheta;
    static {
@@ -58,8 +57,8 @@ public class GOESgridUtil {
     * @throws VisADException
     * @throws RemoteException 
     */
-   public static FlatField combineRGB(FlatField red, FlatField grn, FlatField blu) throws VisADException, RemoteException {
-      return combineRGB(red, grn, blu, (Linear2DSet)red.getDomainSet(), false);
+   public static FlatField geosRGB(FlatField red, FlatField grn, FlatField blu) throws VisADException, RemoteException {
+      return geosRGB(red, grn, blu, (Linear2DSet)red.getDomainSet(), false);
    }
    
    /**
@@ -72,8 +71,8 @@ public class GOESgridUtil {
     * @throws VisADException
     * @throws RemoteException 
     */
-   public static FlatField combineRGB(FlatField red, FlatField grn, FlatField blu, Linear2DSet targetSet) throws VisADException, RemoteException {
-      return combineRGB(red, grn, blu, targetSet, true);
+   public static FlatField geosRGB(FlatField red, FlatField grn, FlatField blu, Linear2DSet targetSet) throws VisADException, RemoteException {
+      return geosRGB(red, grn, blu, targetSet, true);
    }
 
    /**
@@ -91,7 +90,7 @@ public class GOESgridUtil {
     * @throws VisADException
     * @throws RemoteException 
     */   
-   public static FlatField combineRGB(FlatField red, FlatField grn, FlatField blu, Linear2DSet targetSet, boolean copy) throws VisADException, RemoteException {
+   public static FlatField geosRGB(FlatField red, FlatField grn, FlatField blu, Linear2DSet targetSet, boolean copy) throws VisADException, RemoteException {
      
        Linear2DSet setR = (Linear2DSet) red.getDomainSet();
        Linear2DSet setG = (Linear2DSet) grn.getDomainSet();
@@ -112,9 +111,9 @@ public class GOESgridUtil {
           bluValues = blu.getFloats(false)[0];
        }
        else {
-          redValues = goesResample(red, targetSet).getFloats(false)[0];
-          grnValues = goesResample(grn, targetSet).getFloats(false)[0];
-          bluValues = goesResample(blu, targetSet).getFloats(false)[0];
+          redValues = geosResample(red, targetSet).getFloats(false)[0];
+          grnValues = geosResample(grn, targetSet).getFloats(false)[0];
+          bluValues = geosResample(blu, targetSet).getFloats(false)[0];
        }
           
        // For RGB composite, if any NaN -> all NaN
@@ -185,8 +184,8 @@ public class GOESgridUtil {
    * @throws RemoteException 
    */
    
-  public static FlatField goesResample(FlatField fld, Linear2DSet targetSet) throws VisADException, RemoteException {
-     return goesResample(fld, targetSet, Data.WEIGHTED_AVERAGE); 
+  public static FlatField geosResample(FlatField fld, Linear2DSet targetSet) throws VisADException, RemoteException {
+     return geosResample(fld, targetSet, Data.WEIGHTED_AVERAGE);
   }
   
   /**
@@ -204,7 +203,7 @@ public class GOESgridUtil {
    * @throws VisADException
    * @throws RemoteException 
    */
-  public static FlatField goesResample(FlatField fld, Linear2DSet targetSet, int mode) throws VisADException, RemoteException {
+  public static FlatField geosResample(FlatField fld, Linear2DSet targetSet, int mode) throws VisADException, RemoteException {
           
        double targetStepX = targetSet.getX().getStep();
        double targetStepY = targetSet.getY().getStep();
@@ -276,7 +275,7 @@ public class GOESgridUtil {
              yidxs[k] = Float.isNaN(y) ? -1 : (int) Math.floor(y);                
           }
 
-          goesUpsample(yidxs, xidxs, lenYR, lenXR, values, lenY, lenX, targetValues, mode);
+          geosUpsample(yidxs, xidxs, lenYR, lenXR, values, lenY, lenX, targetValues, mode);
        }
 
        target.setSamples(targetValues, false);
@@ -284,7 +283,7 @@ public class GOESgridUtil {
        return target;
    }
   
-   static void goesUpsample(int[] yidxs, int[] xidxs, int lenY, int lenX, float[][] values, int targetLenY, int targetLenX, float[][] targetValues, int mode) {
+   static void geosUpsample(int[] yidxs, int[] xidxs, int lenY, int lenX, float[][] values, int targetLenY, int targetLenX, float[][] targetValues, int mode) {
        int tupleDimLen = values.length;
        for (int j=0; j<targetLenY; j++) {
           int jR = yidxs[j];
