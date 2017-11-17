@@ -2163,7 +2163,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             displayRate = imageGenerator.applyMacros(scriptingNode,
             		ImageGenerator.ATTR_FRAMERATE, displayRate);
             endPause = imageGenerator.applyMacros(scriptingNode,
-            		ImageGenerator.ATTR_ENDFRAMEPAUSE, -1);
+            		ImageGenerator.ATTR_ENDFRAMEPAUSE, -1.0d);
         }
 
         createMovie(movieFile, images, size, displayRate, scriptingNode,
