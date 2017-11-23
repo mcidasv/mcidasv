@@ -340,11 +340,19 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
     </tr>
     <tr>
       <td valign="top">globalPalette=</td>
-      <td>sets if the animated GIF will use the color palette of each individual image or if the same colors will be used in each frame. Setting this to true helps to mitigate the flickering effect that can sometimes be seen in the color scale attached to the image. One circumstance where disabling this option may be ideal is if the movie starts with a low-light scene (not many colors) and there is no color scale in the display. default=True</td>
+      <td>sets if the animated GIF will use the color palette of each individual image or if the same colors will be used in each frame. Setting this to true helps to mitigate the flickering effect that can sometimes be seen in the color scale attached to the image. One circumstance where disabling this option may be ideal is if the movie starts with a low-light scene (not many colors) and there is no color scale in the display; default=True</td>
     </tr>
     <tr>
       <td valign="top">createDirectories=</td>
       <td>creates the directory specified in the file keyword if it does not already exist when set to True; default=False</td>
+    </tr>
+    <tr>
+      <td valign="top">framesPerSecond=</td>
+      <td>defines the number of frames to show each second in an animated GIF.  The higher the number, the faster the GIF will play; default=2</td>
+    </tr>
+    <tr>
+      <td valign="top">endFramePause=</td>
+      <td>defines the number of seconds to show the last frame in an animated GIF.  The higher the number, the longer the last frame will be displayed before the animation returns to the beginning; default=2</td>
     </tr>
   </table></div>
 <div class="OneTabIndent">Example:</div>
