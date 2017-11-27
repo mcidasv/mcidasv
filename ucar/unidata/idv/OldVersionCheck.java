@@ -29,6 +29,7 @@
 package ucar.unidata.idv;
 
 
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.Misc;
 
@@ -183,8 +184,7 @@ public class OldVersionCheck {
         StringBuilder response = new StringBuilder();
 
         try {
-            URL           website    = new URL(IDV_VERSION_URL);
-            URLConnection connection = website.openConnection();
+            URLConnection connection = IOUtil.getUrlConnection(IDV_VERSION_URL);
             BufferedReader in = new BufferedReader(
                                     new InputStreamReader(
                                         connection.getInputStream()));

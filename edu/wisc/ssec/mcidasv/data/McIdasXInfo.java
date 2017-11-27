@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import ucar.unidata.util.IOUtil;
+
 /**
  * Class McIdasXInfo Holds the state of the McIDAS-X session
  * on the other end of the bridge
@@ -291,16 +293,14 @@ public class McIdasXInfo {
      * @return a DataInputStream
      */
     private DataInputStream getXInputStream(String newRequest) {
-        URL url;
         URLConnection urlc;
         DataInputStream retStream = null;
         try {
-            url = new URL(newRequest);
-            urlc = url.openConnection();
+            urlc = IOUtil.getUrlConnection(newRequest);
             InputStream is = urlc.getInputStream();
             retStream = new DataInputStream(new BufferedInputStream(is));
         } catch (Exception e) {
-        	return retStream;
+            return retStream;
         }
         return retStream;
     }
