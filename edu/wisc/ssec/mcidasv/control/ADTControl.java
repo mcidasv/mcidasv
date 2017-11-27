@@ -213,8 +213,8 @@ public class ADTControl extends DisplayControlImpl {
     private static double GUIUserLongitude;
     
     private static String GUIForecastFileName;
-    private static String GUIATCFStormID;
-    private static String GUIATCFSiteID;
+    private String GUIATCFStormID = null;
+    private String GUIATCFSiteID = null;
     private static String GUIHistoryFileName;
     private static String GUIHistoryFileListingName;
     private static String GUICommentString;
@@ -258,6 +258,9 @@ public class ADTControl extends DisplayControlImpl {
     private static String HistoryListOutput;
     
     private static final String SCENE_TYPE_PREFIX = "Current Scene Type: ";
+    
+    JTextField ATCFEntryStormTextField = null;
+    JTextField ATCFEntrySiteTextField = null;
     
     /**
      * 
@@ -665,10 +668,10 @@ public class ADTControl extends DisplayControlImpl {
         ATCFOutputButton.setEnabled(true);
     
         JLabel ATCFEntryStormLabel = new JLabel("Storm ID:");
-        JTextField ATCFEntryStormTextField = new JTextField("XXX", 8);
+        ATCFEntryStormTextField = new JTextField("XXX", 8);
         ATCFEntryStormTextField.setToolTipText(TOOLTIP_STORM_ID);
         JLabel ATCFEntrySiteLabel = new JLabel("Site ID:");
-        JTextField ATCFEntrySiteTextField = new JTextField("XXXX", 8);
+        ATCFEntrySiteTextField = new JTextField("XXXX", 8);
         ATCFEntrySiteTextField.setToolTipText(TOOLTIP_SITE_ID);
         ATCFEntryStormLabel.setEnabled(false);
         ATCFEntryStormTextField.setEnabled(false);
@@ -1429,7 +1432,31 @@ public class ADTControl extends DisplayControlImpl {
             logger.debug("saving ATCF history listing file name={} writeTF={}", saveFile, writefileTF);
         } else {
             
+            GUIATCFStormID = ATCFEntryStormTextField.getText();
+            GUIATCFSiteID = ATCFEntrySiteTextField.getText();
+            
             if ((GUIATCFStormID == null) || (GUIATCFSiteID == null)) {
+                JOptionPane.showMessageDialog(null, "Please provide valid Storm and Site IDs for ATCF output.");
+                return false;
+            }
+            
+            // Validate the Storm ID and Site ID inputs
+            boolean siteStormValid = true;
+            // Storm must be 3-char
+            if (GUIATCFStormID.length() != 3) {
+                siteStormValid = false;
+            } else {
+                // It is 3-char, make sure it's DDC (digit-digit-char)
+                if (! GUIATCFStormID.matches("\\d\\d[A-Z]")) {
+                    siteStormValid = false;
+                }
+            }
+            // Site must be 4-char
+            if (GUIATCFSiteID.length() != 4) {
+                siteStormValid = false;
+            }
+            
+            if (! siteStormValid) {
                 JOptionPane.showMessageDialog(null, "Please provide valid Storm and Site IDs for ATCF output.");
                 return false;
             }
@@ -1582,7 +1609,7 @@ public class ADTControl extends DisplayControlImpl {
         
     }
     
-    private static int ReadGUIOverrideInputFile(String GUIOverrideFile) {
+    private int ReadGUIOverrideInputFile(String GUIOverrideFile) {
         
         logger.debug("opening file '{}'", GUIOverrideFile);
         
