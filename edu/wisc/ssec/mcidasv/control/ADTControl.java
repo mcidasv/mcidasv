@@ -1399,7 +1399,7 @@ public class ADTControl extends DisplayControlImpl {
 
     }
     
-    private void ATCFFileOutput(int outputstyle) {
+    private boolean ATCFFileOutput(int outputstyle) {
         File saveFile = null;
         String ATCFOutputFileName;
         String ATCFOutputFilePath;
@@ -1407,6 +1407,7 @@ public class ADTControl extends DisplayControlImpl {
         String ATCFMessage;
         String HistoryPath;
         boolean writefileTF = false;
+        boolean returnStatus = true;
         
         if (outputstyle == 0) {
             // output entire history file in ATCF
@@ -1427,6 +1428,12 @@ public class ADTControl extends DisplayControlImpl {
             }
             logger.debug("saving ATCF history listing file name={} writeTF={}", saveFile, writefileTF);
         } else {
+            
+            if ((GUIATCFStormID == null) || (GUIATCFSiteID == null)) {
+                JOptionPane.showMessageDialog(null, "Please provide valid Storm and Site IDs for ATCF output.");
+                return false;
+            }
+            
             // call routine to generate ATCF file name for single analysis record
             logger.debug("stormID={} siteID={}", GUIATCFStormID, GUIATCFSiteID);
             ATCFOutputFileName = Functions.adt_atcffilename(GUIATCFStormID,GUIATCFSiteID);
@@ -1455,6 +1462,7 @@ public class ADTControl extends DisplayControlImpl {
             System.out.printf(ATCFMessage);
             userMessage(ATCFMessage);
         }
+        return returnStatus;
     }
     
     private String selectForecastFile() {
