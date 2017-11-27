@@ -441,8 +441,8 @@ public class ADTControl extends DisplayControlImpl {
         adtBtn.setPreferredSize(new Dimension(250, 50));
         adtBtn.addActionListener(ae -> runADTmain());
         
-        /* add history file list/edit button */
-        JButton listBtn = new JButton("List/Edit History File");
+        /* add history file list/write button */
+        JButton listBtn = new JButton("List/Write History File");
         listBtn.setPreferredSize(new Dimension(250, 50));
         listBtn.addActionListener(ae -> {
             logger.debug("listing history file name={}", GUIHistoryFileName);
@@ -856,13 +856,7 @@ public class ADTControl extends DisplayControlImpl {
         FlowLayout HistoryButtonLayout = new FlowLayout();
         historyButtonPanel.setLayout(HistoryButtonLayout);
         HistoryButtonLayout.setAlignment(FlowLayout.CENTER);
-        JButton historyEditBtn = new JButton("Edit History File");
-        historyEditBtn.setPreferredSize(new Dimension(200,20));
-        historyEditBtn.addActionListener(ae -> {
-            historyDateFrame.pack();
-            historyDateFrame.setVisible(true);
-            logger.debug("editing history file name={}", GUIHistoryFileName);
-        });
+
         JButton historySaveListingBtn = new JButton("Output Listing");
         historySaveListingBtn.setPreferredSize(new Dimension(200,20));
         historySaveListingBtn.addActionListener(ae -> {
@@ -882,7 +876,7 @@ public class ADTControl extends DisplayControlImpl {
         historyLabelPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         historyTextPanel.add(historyScroller);
         historyTextPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        historyButtonPanel.add(historyEditBtn);
+
         historyButtonPanel.add(historySaveListingBtn);
         historyButtonPanel.add(historyWriteATCFBtn);
         historyButtonPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
