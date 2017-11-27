@@ -1068,6 +1068,15 @@ public class ADTControl extends DisplayControlImpl {
         loadADTenvParameters();
         
         boolean RunAuto = Env.AutoTF;
+        
+        // In auto mode, make sure a valid forecast file was selected
+        if (RunAuto) {
+            if (GUIForecastFileName == null) {
+                userMessage("A valid forecast file must be selected to use Automated mode.");
+                ExitADT();
+                return;
+            }
+        }
 
         /* set storm position either through automated storm selection or by manual choice */
         GetImageDateTime();

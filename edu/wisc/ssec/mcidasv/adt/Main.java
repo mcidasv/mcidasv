@@ -56,6 +56,9 @@ public class Main {
        if(RunAuto) {
           try {
               AutoMode1Return = AutoMode.AutoMode1(ForecastFileName,ForecastFileType);
+              
+              if (AutoMode1Return == null) return -1;
+              
               if(((int)AutoMode1Return[0])<0) {
                   System.out.printf("ERROR with interpolation/extrapolation : return code %d\n", (int)AutoMode1Return[0]);
                   return -1;

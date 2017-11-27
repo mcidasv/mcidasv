@@ -32,8 +32,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Forecasts {
 
+   private static final Logger logger = LoggerFactory.getLogger(Forecasts.class);
+    
    private static double ForecastLatitudes[] = new double[10];
    
    private static double ForecastLongitudes[] = new double[10];
@@ -91,6 +96,8 @@ public class Forecasts {
       double WEFactor;
 
       ReturnFlagValue = 0;
+      
+      logger.debug("ReadForecasts in...");
       System.out.printf("Forecast File Name=%s Type=%d\n", ForecastFileName,ForecastFileType);
       File forecastfile = new File(ForecastFileName);
       Scanner in = new Scanner(forecastfile);
@@ -104,6 +111,8 @@ public class Forecasts {
       int XInc=0;
       int YInc=0;
       FcstTimeIntValPrev=-1;
+      
+      try {
 
       /* char aChar = ATCFStormIDString.charAt(2); */
       if(ForecastFileType==0) {
@@ -713,6 +722,11 @@ public class Forecasts {
       } else {
          ReturnFlagValue = -2;
       }
+      } catch (Exception e) {
+          System.err.println("Failed to read Forecast file...");
+          in.close();
+          return null;
+      }
  
       int ZInc;
       int MinFcstValue;
@@ -839,6 +853,7 @@ public class Forecasts {
 
       /* McIDAS-V Conversion */
       ReturnLongitudeInterpolation = -1.0 * ReturnLongitudeInterpolation;
+      logger.debug("ReadForecasts out...");
       
       return new double[] {
          (double)ReturnFlagValue,
