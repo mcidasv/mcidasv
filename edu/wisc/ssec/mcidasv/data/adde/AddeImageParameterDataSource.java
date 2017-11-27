@@ -40,7 +40,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -2456,6 +2455,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         int maxLine = 0;
         int maxEle = 0;
         int imageSize = 0;
+        int prevSize = 0;
         src = src.replace("imagedata", "imagedir");
         boolean isRelative = aid.getIsRelative();
 
@@ -2519,25 +2519,41 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         logger.trace("preparing to examine previewUrls={}", previewUrls);
 
         try {
-            for (String previewUrl : previewUrls) {
+            
+            // TJJ Nov 2017
+            // As an interim speedup, for Inq #2496, we are going to binary search the list
+            // intstead of iterating through every single URL to make large loop times 
+            // (e.g. 50 GOES-16 MESO images) more tolerable.
+            
+            int loIdx = 0;
+            int hiIdx = previewUrls.size() - 1;
+            boolean directionInc = true;
+            boolean sizeMatch = false;
+            int iterations = 0;
+            
+            while (! sizeMatch) {
+            // for (String previewUrl : previewUrls) {
+                String previewUrl = null;
+                if (directionInc) {
+                    previewUrl = previewUrls.get(loIdx);
+                    loIdx++;
+                    directionInc = false;
+                } else {
+                    previewUrl = previewUrls.get(hiIdx);
+                    hiIdx--;
+                    directionInc = true;
+                }
+                
+                // Sanity check - if we get to the middle, we just quit and use what we found
+                if (loIdx >= hiIdx) break;
+                
                 logger.trace("attempting to create AreaDirectoryList using previewUrl={}", previewUrl);
                 AreaDirectoryList directoryList = new AreaDirectoryList(previewUrl);
                 logger.trace("created directoryList! size={}\n{}", directoryList.getDirs().size(), directoryList);
-                List<AreaDirectory> areaDirectories = (List<AreaDirectory>)directoryList.getDirs();
-//                if (isRelative) {
-//                    int requestedRelativePosition = Integer.valueOf(getKey(previewUrl, "POS"));
-//                    // remember, you're requesting the number of available AREA directories,
-//                    // not a position! 
-//                    int availablePositions = 0 - (directoryList.getDirs().size() - 1);
-//                    
-//                    logger.trace("validating relative positions: requested position={}, available={}", requestedRelativePosition, availablePositions);
-//                    if (requestedRelativePosition != availablePositions) {
-//                        previewUrl = replaceKey(previewUrl, "POS", availablePositions);
-//                    }
-//                }
-                
-//                for (AreaDirectory areaDirectory : areaDirectories) {
+                List<AreaDirectory> areaDirectories = (List<AreaDirectory>) directoryList.getDirs();
+
                 for (int i = 0; i < areaDirectories.size(); i++) {
+                    iterations++;
                     AreaDirectory areaDirectory = areaDirectories.get(i);
                     String pos = Integer.toString(0 - i);
                     int lines = areaDirectory.getLines();
@@ -2588,6 +2604,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //                        descriptor.setDirectory(areaDirectory);
 //                        descriptor = new AddeImageDescriptor(areaDirectory, previewUrl);
                     }
+                    
+                    if (prevSize == currentDimensions) {
+                        logger.debug("Exiting Preview URL loop after " + iterations + " iterations...");
+                        sizeMatch = true;
+                    }
+                    prevSize = currentDimensions;
                 }
             }
         } catch (AreaFileException areaException) {
