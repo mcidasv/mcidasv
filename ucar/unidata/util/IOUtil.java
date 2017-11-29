@@ -61,8 +61,18 @@ import org.slf4j.LoggerFactory;
  */
 public class IOUtil {
     
-    public static final AtomicInteger MAX_REDIRECTS =
-        new AtomicInteger(5);
+    /** Maximum number of HTTP redirects to follow. */
+    public static final int MAX_REDIRECTS = 5;
+    
+    /**
+     * Elements within this array are considered {@literal "valid redirect"}
+     * status codes.
+     */
+    public static final int[] HTTP_REDIRECT_STATUSES =
+        { 301, 302, 303, 307, 308 };
+    
+    /** HTTP connection timeout (milliseconds). */
+    public static final int HTTP_TIMEOUT = 30000;
     
     private static final Logger logger = LoggerFactory.getLogger(IOUtil.class);
     
@@ -602,22 +612,36 @@ public class IOUtil {
         InputStream   is         = connection.getInputStream();
         return readContents(is);
     }
-
+    
     /**
      * Attempt to create a {@link URLConnection} to the given {@code url}.
      *
-     * <p>This method <i>will</i> follow redirects.</p>
+     * <p>This method <i>will</i> follow redirects, and will use
+     * {@link #HTTP_TIMEOUT}, {@link #MAX_REDIRECTS}, and
+     * {@link #HTTP_REDIRECT_STATUSES} as default values to pass to
+     * {@link #getUrlConnection(String, boolean, boolean, int, int, int[])}.
+     * </p>
      *
      * @param url Request URL.
      *
      * @return Connection to {@code url}.
      *
-     * @throws IOException if there were any I/O errors while trying to connect.
+     * @throws IOException if there were any I/O errors while trying to
+     *                     connect.
+     *
+     * @see #HTTP_TIMEOUT
+     * @see #MAX_REDIRECTS
+     * @see #HTTP_REDIRECT_STATUSES
      */
     public static URLConnection getUrlConnection(String url)
         throws IOException
     {
-        return getUrlConnection(url, true);
+        return getUrlConnection(url,
+            true,
+            true,
+            HTTP_TIMEOUT,
+            MAX_REDIRECTS,
+            HTTP_REDIRECT_STATUSES);
     }
     
     /**
@@ -629,38 +653,52 @@ public class IOUtil {
      * will not follow any redirects.</p>
      *
      * @param url Request URL.
+     * @param allowUserInteraction Passed to {@link URLConnection#setAllowUserInteraction(boolean)}.
      * @param followRedirects Whether or not HTTP redirect codes should be
      *                        followed.
+     * @param timeout HTTP connection timeout (milliseconds).
+     * @param maxRedirects Maximum number of redirects to follow.
+     * @param redirectStatuses Status codes that are considered HTTP
+     *                         redirects.
      *
      * @return Connection to {@code url}.
      *
-     * @throws IOException if there were any I/O errors while trying to connect.
+     * @throws IOException if there were any I/O errors while trying to
+     *                     connect.
      */
     public static URLConnection getUrlConnection(String url,
-                                                 boolean followRedirects)
+                                                 boolean allowUserInteraction,
+                                                 boolean followRedirects,
+                                                 int timeout,
+                                                 int maxRedirects,
+                                                 int[] redirectStatuses)
         throws IOException
     {
         URL from = new URL(url);
         URLConnection connection = from.openConnection();
+        connection.setAllowUserInteraction(allowUserInteraction);
+        connection.setConnectTimeout(timeout);
         if (connection instanceof HttpURLConnection) {
             HttpURLConnection huc = (HttpURLConnection)connection;
             int redirects = 0;
-            while (followRedirects && (redirects++ < MAX_REDIRECTS.get())) {
+            while (followRedirects && (redirects++ < maxRedirects)) {
                 int status = huc.getResponseCode();
-                if ((status >= 300) && (status <= 399)) {
+                // previously used ((status >= 300) && (status <= 399))
+                if (Arrays.binarySearch(redirectStatuses, status) >= 0) {
                     String newUrl = huc.getHeaderField("Location");
                     if ((newUrl != null) && !newUrl.isEmpty()) {
-                        logger.trace("redirect! original: '{}' new: '{}' status: {}", url, newUrl, huc.getResponseCode());
+                        boolean oldAllowUserInteraction =
+                            connection.getAllowUserInteraction();
                         from = new URL(newUrl);
                         connection = from.openConnection();
-                        connection.setAllowUserInteraction(true);
+                        connection.setAllowUserInteraction(oldAllowUserInteraction);
+                        connection.setConnectTimeout(timeout);
                         huc = (HttpURLConnection)connection;
                         continue;
-                    } else {
-                        logger.trace("bad redirect? original: '{}' newUrl: '{}'", url, newUrl);
                     }
-                } else {
-                    logger.trace("final url: '{}' status: {}", from, huc.getResponseCode());
+                    // not much to be done if the server didn't provide a
+                    // location header. See the end of the following:
+                    // https://www.eff.org/https-everywhere/faq#why-use-a-whitelist-of-sites-that-support-https-why-cant-you-try-to-use-https-for-every-last-site-and-only-fall-back-to-http-if-it-isnt-available
                 }
                 // either we had a problem or we've arrived at the destination
                 break;
@@ -668,6 +706,7 @@ public class IOUtil {
         }
         return connection;
     }
+
 
     /**
      * Write to the file from the URL stream
@@ -1329,8 +1368,13 @@ public class IOUtil {
         try {
             URL url = getURL(filename, origin);
             if (url != null) {
-                URLConnection connection = getUrlConnection(url.toExternalForm());
-                connection.setAllowUserInteraction(true);
+                URLConnection connection =
+                    getUrlConnection(url.toExternalForm(),
+                        true,
+                        true,
+                        HTTP_TIMEOUT,
+                        MAX_REDIRECTS,
+                        HTTP_REDIRECT_STATUSES);
                 if (connection instanceof HttpURLConnection) {
                     HttpURLConnection huc = (HttpURLConnection) connection;
                     if (huc.getResponseCode() == 401) {
@@ -1372,8 +1416,7 @@ public class IOUtil {
                 return connection.getInputStream();
             }
         } catch (Exception exc) {
-            throw new IOException("Could not load resource:" + filename
-                                  + " error:" + exc);
+            throw new IOException("Could not load resource:" + filename, exc);
         }
         throw new FileNotFoundException("Could not load resource:"
                                         + filename);
