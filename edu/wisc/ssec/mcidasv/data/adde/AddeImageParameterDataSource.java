@@ -2464,7 +2464,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (isRelative) {
         	
         	// TJJ Mar 2015 - (1891, R14)
-        	// Iterate through list to determine relative position diffferent
+        	// Iterate through list to determine relative position different
         	// if the objects are VisAD DateTime instead of TwoFacedObject
         	
         	boolean isTwoFaced = false;
@@ -2503,6 +2503,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             logger.trace("using maxIndex={}", maxIndex);
             src = replaceKey(src, "POS", Integer.toString(maxIndex));
             previewUrls.add(src);
+            
         } else {
             for (int i = 0; i < times; i++) {
                 DateTime dt = (DateTime)imageTimes.get(i);
@@ -2515,9 +2516,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 previewUrls.add(src);
             }
         }
-
-        logger.trace("preparing to examine previewUrls={}", previewUrls);
-
+        
+        if (isRelative && (previewUrls.size() == 1)) {
+            logger.trace("only a single previewUrl; returning '{}'", previewUrls.get(0));
+            return new AddeImageDescriptor(previewUrls.get(0));
+        } else {
+            logger.trace("preparing to examine previewUrls={}", previewUrls);
+        }
+        
         try {
             
             // TJJ Nov 2017
