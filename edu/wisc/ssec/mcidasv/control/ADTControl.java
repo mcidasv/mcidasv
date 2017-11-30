@@ -635,30 +635,6 @@ public class ADTControl extends DisplayControlImpl {
             overrideSceneFrame.setVisible(true);
         });
         
-//        JRadioButton OverrideYESButton = new JRadioButton("YES");
-//        OverrideYESButton.setActionCommand("Yes");
-//        OverrideYESButton.setSelected(false);
-//        JRadioButton OverrideNOButton = new JRadioButton("NO");
-//        OverrideNOButton.setActionCommand("No");
-//        OverrideNOButton.setSelected(true);
-//        ButtonGroup overridegroup = new ButtonGroup();
-//        overridegroup.add(OverrideNOButton);
-//        overridegroup.add(OverrideYESButton);
-//
-//        OverrideYESButton.addActionListener(ae -> {
-//            GUIOverrideTF = true;
-//            GUIOverrideSceneTF = true;
-//            OverrideNOButton.setSelected(false);
-//            OverrideYESButton.setSelected(true);
-//        });
-//
-//        OverrideNOButton.addActionListener(ae -> {
-//            GUIOverrideTF = false;
-//            GUIOverrideSceneTF = false;
-//            OverrideNOButton.setSelected(true);
-//            OverrideYESButton.setSelected(false);
-//        });
-        
         /* ATCF Analysis Output Checkbox */
         
         JLabel ATCFOutputLabel = new JLabel("ATCF Output:");
@@ -748,19 +724,6 @@ public class ADTControl extends DisplayControlImpl {
             GUIVmax1or10TF = false;
         });
         
-        JCheckBox GUIFileOverrideButton = new JCheckBox("GUI File Override");
-        GUIFileOverrideButton.setActionCommand("Override");
-        GUIFileOverrideButton.setSelected(false);
-        GUIFileOverrideButton.setEnabled(true);
-        GUIFileOverrideButton.addActionListener(ae -> {
-            if (GUIFileOverrideTF) {
-                GUIFileOverrideTF = false;
-                getADTenvParameters();
-            } else {
-                GUIFileOverrideTF = true;
-            }
-            GUIFileOverrideButton.setSelected(GUIFileOverrideTF);
-        });
         JLabel blankfield = new JLabel("");
 
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
@@ -775,25 +738,25 @@ public class ADTControl extends DisplayControlImpl {
                     left(hbox(arr(filler(30,1),forecastBtn, forecastTypeBox,
                         forecastSelectLabel, forecastLabel), 5)), filler(),
                     left(hbox(arr(blankfield))),
-                    filler(1,10),
+                    filler(1, 5),
                     left(hbox(arr(new JLabel("HISTORY FILE INFORMATION")), 10)),filler(),
                     left(hbox(arr(filler(30, 1), historyBtn, new JLabel
                         ("Selected History File: "), selectedHistoryFile), 5)),
                     filler(),
                     left(hbox(arr(blankfield))),
-                    filler(1,10),
+                    filler(1, 5),
                     left(hbox(arr(new JLabel("PMW ANALYSIS")), 10)),filler(),
                     left(hbox(arr(filler(30,1),PMWActivateButton,
                         pmwManDateLabel, pmwManDateTextField, pmwManTimeLabel,
                         pmwManTimeTextField, pmwManScoreLabel, pmwManScoreTextField), 5)), filler(),
                     left(hbox(arr(blankfield))),
-                    filler(1,10),
+                    filler(1, 5),
                     left(hbox(arr(new JLabel("MISCELLANEOUS OPTIONS")), 10)), filler(),
                     left(hbox(arr(filler(30, 1),new JLabel("MSLP Conversion Method:"), mslpDvorakButton, mslpCKZButton, ckzPenvLabel, ckzPenvTextField, ckz34radiusLabel,ckz34radiusTextField), 5)),filler(),
                     left(hbox(arr(filler(30, 1), sceneOverrideButton, OverrideLabel), 5)), filler(),
                     left(hbox(arr(filler(30, 1),LandFlagLabel,LandONButton, LandOFFButton, filler(20,1), VOutLabel, V1MinButton, V10MinButton, filler(20,1),RawTLabel,RawTTextField, RMWLabel, RMWTextField), 5)),filler(),
                     left(hbox(arr(filler(30, 1),ATCFOutputLabel, ATCFOutputButton,ATCFEntryStormLabel,ATCFEntryStormTextField, ATCFEntrySiteLabel,ATCFEntrySiteTextField), 5)),filler(),
-                    left(hbox(arr(filler(80, 1), adtBtn, listBtn, GUIFileOverrideButton), 20)), filler()));
+                    left(hbox(arr(filler(80, 1), adtBtn, listBtn), 20)), filler()));
                     
         JPanel controls = topLeft(widgets);
 
@@ -1025,7 +988,9 @@ public class ADTControl extends DisplayControlImpl {
         overrideSceneContainer.add(overrideSceneSelectPanel, BorderLayout.CENTER);
         overrideSceneContainer.add(overrideSceneButtonPanel, BorderLayout.SOUTH);
 
-        return controls;
+        JScrollPane scrollPane = new JScrollPane(controls);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        return scrollPane;
     }
 
     private void runADTmain() {
