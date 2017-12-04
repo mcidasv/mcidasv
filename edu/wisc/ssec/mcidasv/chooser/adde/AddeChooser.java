@@ -98,6 +98,7 @@ import org.w3c.dom.Element;
 import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 
+import ucar.unidata.util.IOUtil;
 import visad.DateTime;
 
 import ucar.unidata.idv.chooser.IdvChooser;
@@ -1333,8 +1334,8 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         try {
             StringBuffer buff = getUrl(REQ_TEXT);
             appendKeyValue(buff, PROP_FILE, FILE_PUBLICSRV);
-            URL           url  = new URL(buff.toString());
-            URLConnection urlc = url.openConnection();
+//            URL           url  = new URL(buff.toString());
+            URLConnection urlc = IOUtil.getUrlConnection(buff.toString());
             InputStream   is   = urlc.getInputStream();
             is.close();
             return STATUS_OK;

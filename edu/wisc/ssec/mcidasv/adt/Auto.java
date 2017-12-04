@@ -36,8 +36,9 @@ import static java.lang.Math.max;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.pow;
 
-
 import java.io.IOException;
+
+import javax.swing.JOptionPane;
 
 class Remap {
    /** Block size (bytes) input file */
@@ -202,6 +203,12 @@ public class Auto {
       /* Read Forecast File */
       double ThresholdTime = 24.0;
       double[] ForecastFileOutput = Forecasts.ReadForecasts(ForecastFile,ForecastFileType,ThresholdTime);
+      
+      if (ForecastFileOutput == null) {
+          JOptionPane.showMessageDialog(null, "Unable to process Forecast File, please ensure a valid file is present.");
+          return null;
+      }
+      
       InterpolatedReturnFlag = (int)ForecastFileOutput[0];
       InterpolatedLatitude = ForecastFileOutput[1];
       InterpolatedLongitude = ForecastFileOutput[2];

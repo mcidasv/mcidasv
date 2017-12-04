@@ -55,6 +55,7 @@ import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.StringUtil;
 
 import visad.Data;
@@ -165,8 +166,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 key = PolarOrbitTrackChooser.URL_NAME_KEY;
                 String urlStr = (String)(properties.get(key));
                 logger.debug("URL request: {}", urlStr);
-                URL url = new URL(urlStr);
-                URLConnection urlCon = url.openConnection();
+                URLConnection urlCon = IOUtil.getUrlConnection(urlStr);
                 InputStreamReader isr = new InputStreamReader(urlCon.getInputStream());
                 BufferedReader tleReader = new BufferedReader(isr);
                 String nextLine = null;

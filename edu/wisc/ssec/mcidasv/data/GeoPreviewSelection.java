@@ -33,9 +33,7 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-
 import java.net.URL;
-
 import java.rmi.RemoteException;
 
 import javax.swing.JComponent;
@@ -52,12 +50,10 @@ import visad.ScalarMap;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
-
 import ucar.visad.display.Displayable;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.MapLines;
-
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSourceImpl;
@@ -66,6 +62,7 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.Range;
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
@@ -178,7 +175,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         rbb = new GeoSubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         mvm = new MapViewManager(dataSource.getDataContext().getIdv());
         store = dataSource.getDataContext().getIdv().getStore();
-        rbb.setColor((Color)store.get(mvm.PREF_FGCOLOR, Color.GREEN));
+        rbb.setColor((Color)store.get(ViewManager.PREF_FGCOLOR, Color.GREEN));
         rbb.addAction(new CellImpl() {
             public void doAction() throws VisADException, RemoteException {
                 eraseBox();
@@ -403,15 +400,15 @@ public class GeoPreviewSelection extends DataSelectionComponent {
             laloSel.getGeoLocationInfo(line, ele);
             String type = laloSel.getCoordinateType();
             int pos = 0;
-            if (laloSel.getPlace().equals(laloSel.PLACE_ULEFT)) pos = 1;
-            if (type.equals(laloSel.TYPE_LATLON)) {
+            if (laloSel.getPlace().equals(GeoLatLonSelection.PLACE_ULEFT)) pos = 1;
+            if (type.equals(GeoLatLonSelection.TYPE_LATLON)) {
                 double[][] pts = laloSel.getLatLonPoints();
                 laloSel.setLatitude(pts[0][pos]);
                 laloSel.setLongitude(pts[1][pos]);
                 laloSel.convertToLineEle();
             } else {
                 double[][] pts = laloSel.getImagePoints();
-                if (type.equals(laloSel.TYPE_AREA))
+                if (type.equals(GeoLatLonSelection.TYPE_AREA))
                     pts = laloSel.getAreaPoints();
                 laloSel.setElement((int)Math.floor(pts[0][pos] + 0.5));
                 laloSel.setLine((int)Math.floor(pts[1][pos] + 0.5));
@@ -472,7 +469,7 @@ public class GeoPreviewSelection extends DataSelectionComponent {
         if (box == null) {
             try {
                 box = new LineDrawing("box");
-                box.setColor((Color)store.get(mvm.PREF_FGCOLOR, Color.GREEN));
+                box.setColor((Color)store.get(ViewManager.PREF_FGCOLOR, Color.GREEN));
                 dspMaster.addDisplayable(box);
             } catch (Exception e) {
                 logger.error("error making box", e);

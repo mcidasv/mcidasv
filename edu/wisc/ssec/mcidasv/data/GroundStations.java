@@ -41,6 +41,7 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.util.IOUtil;
 import visad.georef.EarthLocationTuple;
 
 public class GroundStations
@@ -75,8 +76,8 @@ public class GroundStations
             else
             {
                 // read from web
-                URL url = new URL("http://www.gano.name/shawn/JSatTrak/" + groundStationDB);
-                URLConnection c = url.openConnection();
+                String url = "http://www.gano.name/shawn/JSatTrak/" + groundStationDB;
+                URLConnection c = IOUtil.getUrlConnection(url);
                 InputStreamReader isr = new InputStreamReader(c.getInputStream());
                 gsReader = new BufferedReader(isr); // from the web
             }

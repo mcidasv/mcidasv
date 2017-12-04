@@ -356,12 +356,12 @@
 		" />
 	</panel>
 
-	<panel title="Imagery - Suomi NPP" category="Under Development" layout="border"
-        tabtooltip="For accessing Suomi NPP data">
-		<chooser id="chooser.npp" title="Suomi NPP" menutitle="Suomi NPP data"
+	<panel title="Imagery - JPSS" category="Under Development" layout="border"
+        tabtooltip="For accessing JPSS data">
+		<chooser id="chooser.npp" title="JPSS" menutitle="JPSS data"
             showinmenu="true" helppath="idv.data.choosers.suominppchooser"
             showpolling="false" filepattern=".*" selectdatasourceid="true"
-            datasourceid="SuomiNPP" class="edu.wisc.ssec.mcidasv.chooser.SuomiNPPChooser" />
+            datasourceid="JPSS" class="edu.wisc.ssec.mcidasv.chooser.SuomiNPPChooser" />
 	</panel>
 
     <panel title="Imagery - Satellite Orbit Track" category="Under Development" layout="border"

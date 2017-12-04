@@ -213,8 +213,8 @@ public class ADTControl extends DisplayControlImpl {
     private static double GUIUserLongitude;
     
     private static String GUIForecastFileName;
-    private static String GUIATCFStormID;
-    private static String GUIATCFSiteID;
+    private String GUIATCFStormID = null;
+    private String GUIATCFSiteID = null;
     private static String GUIHistoryFileName;
     private static String GUIHistoryFileListingName;
     private static String GUICommentString;
@@ -258,6 +258,9 @@ public class ADTControl extends DisplayControlImpl {
     private static String HistoryListOutput;
     
     private static final String SCENE_TYPE_PREFIX = "Current Scene Type: ";
+    
+    JTextField ATCFEntryStormTextField = null;
+    JTextField ATCFEntrySiteTextField = null;
     
     /**
      * 
@@ -441,8 +444,8 @@ public class ADTControl extends DisplayControlImpl {
         adtBtn.setPreferredSize(new Dimension(250, 50));
         adtBtn.addActionListener(ae -> runADTmain());
         
-        /* add history file list/edit button */
-        JButton listBtn = new JButton("List/Edit History File");
+        /* add history file list/write button */
+        JButton listBtn = new JButton("List/Write History File");
         listBtn.setPreferredSize(new Dimension(250, 50));
         listBtn.addActionListener(ae -> {
             logger.debug("listing history file name={}", GUIHistoryFileName);
@@ -632,30 +635,6 @@ public class ADTControl extends DisplayControlImpl {
             overrideSceneFrame.setVisible(true);
         });
         
-//        JRadioButton OverrideYESButton = new JRadioButton("YES");
-//        OverrideYESButton.setActionCommand("Yes");
-//        OverrideYESButton.setSelected(false);
-//        JRadioButton OverrideNOButton = new JRadioButton("NO");
-//        OverrideNOButton.setActionCommand("No");
-//        OverrideNOButton.setSelected(true);
-//        ButtonGroup overridegroup = new ButtonGroup();
-//        overridegroup.add(OverrideNOButton);
-//        overridegroup.add(OverrideYESButton);
-//
-//        OverrideYESButton.addActionListener(ae -> {
-//            GUIOverrideTF = true;
-//            GUIOverrideSceneTF = true;
-//            OverrideNOButton.setSelected(false);
-//            OverrideYESButton.setSelected(true);
-//        });
-//
-//        OverrideNOButton.addActionListener(ae -> {
-//            GUIOverrideTF = false;
-//            GUIOverrideSceneTF = false;
-//            OverrideNOButton.setSelected(true);
-//            OverrideYESButton.setSelected(false);
-//        });
-        
         /* ATCF Analysis Output Checkbox */
         
         JLabel ATCFOutputLabel = new JLabel("ATCF Output:");
@@ -665,10 +644,10 @@ public class ADTControl extends DisplayControlImpl {
         ATCFOutputButton.setEnabled(true);
     
         JLabel ATCFEntryStormLabel = new JLabel("Storm ID:");
-        JTextField ATCFEntryStormTextField = new JTextField("XXX", 8);
+        ATCFEntryStormTextField = new JTextField("XXX", 8);
         ATCFEntryStormTextField.setToolTipText(TOOLTIP_STORM_ID);
         JLabel ATCFEntrySiteLabel = new JLabel("Site ID:");
-        JTextField ATCFEntrySiteTextField = new JTextField("XXXX", 8);
+        ATCFEntrySiteTextField = new JTextField("XXXX", 8);
         ATCFEntrySiteTextField.setToolTipText(TOOLTIP_SITE_ID);
         ATCFEntryStormLabel.setEnabled(false);
         ATCFEntryStormTextField.setEnabled(false);
@@ -745,19 +724,6 @@ public class ADTControl extends DisplayControlImpl {
             GUIVmax1or10TF = false;
         });
         
-        JCheckBox GUIFileOverrideButton = new JCheckBox("GUI File Override");
-        GUIFileOverrideButton.setActionCommand("Override");
-        GUIFileOverrideButton.setSelected(false);
-        GUIFileOverrideButton.setEnabled(true);
-        GUIFileOverrideButton.addActionListener(ae -> {
-            if (GUIFileOverrideTF) {
-                GUIFileOverrideTF = false;
-                getADTenvParameters();
-            } else {
-                GUIFileOverrideTF = true;
-            }
-            GUIFileOverrideButton.setSelected(GUIFileOverrideTF);
-        });
         JLabel blankfield = new JLabel("");
 
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
@@ -772,25 +738,25 @@ public class ADTControl extends DisplayControlImpl {
                     left(hbox(arr(filler(30,1),forecastBtn, forecastTypeBox,
                         forecastSelectLabel, forecastLabel), 5)), filler(),
                     left(hbox(arr(blankfield))),
-                    filler(1,10),
+                    filler(1, 5),
                     left(hbox(arr(new JLabel("HISTORY FILE INFORMATION")), 10)),filler(),
                     left(hbox(arr(filler(30, 1), historyBtn, new JLabel
                         ("Selected History File: "), selectedHistoryFile), 5)),
                     filler(),
                     left(hbox(arr(blankfield))),
-                    filler(1,10),
+                    filler(1, 5),
                     left(hbox(arr(new JLabel("PMW ANALYSIS")), 10)),filler(),
                     left(hbox(arr(filler(30,1),PMWActivateButton,
                         pmwManDateLabel, pmwManDateTextField, pmwManTimeLabel,
                         pmwManTimeTextField, pmwManScoreLabel, pmwManScoreTextField), 5)), filler(),
                     left(hbox(arr(blankfield))),
-                    filler(1,10),
+                    filler(1, 5),
                     left(hbox(arr(new JLabel("MISCELLANEOUS OPTIONS")), 10)), filler(),
                     left(hbox(arr(filler(30, 1),new JLabel("MSLP Conversion Method:"), mslpDvorakButton, mslpCKZButton, ckzPenvLabel, ckzPenvTextField, ckz34radiusLabel,ckz34radiusTextField), 5)),filler(),
                     left(hbox(arr(filler(30, 1), sceneOverrideButton, OverrideLabel), 5)), filler(),
                     left(hbox(arr(filler(30, 1),LandFlagLabel,LandONButton, LandOFFButton, filler(20,1), VOutLabel, V1MinButton, V10MinButton, filler(20,1),RawTLabel,RawTTextField, RMWLabel, RMWTextField), 5)),filler(),
                     left(hbox(arr(filler(30, 1),ATCFOutputLabel, ATCFOutputButton,ATCFEntryStormLabel,ATCFEntryStormTextField, ATCFEntrySiteLabel,ATCFEntrySiteTextField), 5)),filler(),
-                    left(hbox(arr(filler(80, 1), adtBtn, listBtn, GUIFileOverrideButton), 20)), filler()));
+                    left(hbox(arr(filler(80, 1), adtBtn, listBtn), 20)), filler()));
                     
         JPanel controls = topLeft(widgets);
 
@@ -856,13 +822,7 @@ public class ADTControl extends DisplayControlImpl {
         FlowLayout HistoryButtonLayout = new FlowLayout();
         historyButtonPanel.setLayout(HistoryButtonLayout);
         HistoryButtonLayout.setAlignment(FlowLayout.CENTER);
-        JButton historyEditBtn = new JButton("Edit History File");
-        historyEditBtn.setPreferredSize(new Dimension(200,20));
-        historyEditBtn.addActionListener(ae -> {
-            historyDateFrame.pack();
-            historyDateFrame.setVisible(true);
-            logger.debug("editing history file name={}", GUIHistoryFileName);
-        });
+
         JButton historySaveListingBtn = new JButton("Output Listing");
         historySaveListingBtn.setPreferredSize(new Dimension(200,20));
         historySaveListingBtn.addActionListener(ae -> {
@@ -882,7 +842,7 @@ public class ADTControl extends DisplayControlImpl {
         historyLabelPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         historyTextPanel.add(historyScroller);
         historyTextPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        historyButtonPanel.add(historyEditBtn);
+
         historyButtonPanel.add(historySaveListingBtn);
         historyButtonPanel.add(historyWriteATCFBtn);
         historyButtonPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
@@ -1028,7 +988,9 @@ public class ADTControl extends DisplayControlImpl {
         overrideSceneContainer.add(overrideSceneSelectPanel, BorderLayout.CENTER);
         overrideSceneContainer.add(overrideSceneButtonPanel, BorderLayout.SOUTH);
 
-        return controls;
+        JScrollPane scrollPane = new JScrollPane(controls);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        return scrollPane;
     }
 
     private void runADTmain() {
@@ -1068,6 +1030,15 @@ public class ADTControl extends DisplayControlImpl {
         loadADTenvParameters();
         
         boolean RunAuto = Env.AutoTF;
+        
+        // In auto mode, make sure a valid forecast file was selected
+        if (RunAuto) {
+            if (GUIForecastFileName == null) {
+                userMessage("A valid forecast file must be selected to use Automated mode.");
+                ExitADT();
+                return;
+            }
+        }
 
         /* set storm position either through automated storm selection or by manual choice */
         GetImageDateTime();
@@ -1396,7 +1367,7 @@ public class ADTControl extends DisplayControlImpl {
 
     }
     
-    private void ATCFFileOutput(int outputstyle) {
+    private boolean ATCFFileOutput(int outputstyle) {
         File saveFile = null;
         String ATCFOutputFileName;
         String ATCFOutputFilePath;
@@ -1404,6 +1375,7 @@ public class ADTControl extends DisplayControlImpl {
         String ATCFMessage;
         String HistoryPath;
         boolean writefileTF = false;
+        boolean returnStatus = true;
         
         if (outputstyle == 0) {
             // output entire history file in ATCF
@@ -1424,6 +1396,36 @@ public class ADTControl extends DisplayControlImpl {
             }
             logger.debug("saving ATCF history listing file name={} writeTF={}", saveFile, writefileTF);
         } else {
+            
+            GUIATCFStormID = ATCFEntryStormTextField.getText();
+            GUIATCFSiteID = ATCFEntrySiteTextField.getText();
+            
+            if ((GUIATCFStormID == null) || (GUIATCFSiteID == null)) {
+                JOptionPane.showMessageDialog(null, "Please provide valid Storm and Site IDs for ATCF output.");
+                return false;
+            }
+            
+            // Validate the Storm ID and Site ID inputs
+            boolean siteStormValid = true;
+            // Storm must be 3-char
+            if (GUIATCFStormID.length() != 3) {
+                siteStormValid = false;
+            } else {
+                // It is 3-char, make sure it's DDC (digit-digit-char)
+                if (! GUIATCFStormID.matches("\\d\\d[A-Z]")) {
+                    siteStormValid = false;
+                }
+            }
+            // Site must be 4-char
+            if (GUIATCFSiteID.length() != 4) {
+                siteStormValid = false;
+            }
+            
+            if (! siteStormValid) {
+                JOptionPane.showMessageDialog(null, "Please provide valid Storm and Site IDs for ATCF output.");
+                return false;
+            }
+            
             // call routine to generate ATCF file name for single analysis record
             logger.debug("stormID={} siteID={}", GUIATCFStormID, GUIATCFSiteID);
             ATCFOutputFileName = Functions.adt_atcffilename(GUIATCFStormID,GUIATCFSiteID);
@@ -1452,6 +1454,7 @@ public class ADTControl extends DisplayControlImpl {
             System.out.printf(ATCFMessage);
             userMessage(ATCFMessage);
         }
+        return returnStatus;
     }
     
     private String selectForecastFile() {
@@ -1571,7 +1574,7 @@ public class ADTControl extends DisplayControlImpl {
         
     }
     
-    private static int ReadGUIOverrideInputFile(String GUIOverrideFile) {
+    private int ReadGUIOverrideInputFile(String GUIOverrideFile) {
         
         logger.debug("opening file '{}'", GUIOverrideFile);
         
