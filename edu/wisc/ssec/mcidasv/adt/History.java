@@ -148,6 +148,7 @@ public class History {
         while (in.hasNextLine()) {
             HistoryFile[HistoryFileRecords] = new IRHistoryRecord();
             String historyRec = in.nextLine();
+            logger.debug("Parsing History file line: " + historyRec);
             String[] tokens = historyRec.split(delims);
             /* for(String histVals : tokens) {
              *  System.out.println(histVals);
@@ -203,6 +204,7 @@ public class History {
             HistoryFileRecords++;
         }
         in.close();
+        logger.debug("Done reading History file, number of records: " + HistoryFileRecords);
    }
     
     public static int HistoryNumberOfRecords() {
@@ -219,6 +221,7 @@ public class History {
      *
      * @return Matching part of the ASCII history file.
      */
+    
     public static String ListHistory(int OutputStyle,
                                      int OutputFormatTypeID,
                                      String ATCFFileSourceIDString,
@@ -392,25 +395,25 @@ public class History {
             } else {
                 Env.CKZGaleRadius = R34Distance;
                 Env.CKZPenv = EnvironMSLP;
-                CIPressureValue = Functions.adt_getpwval(0,CI,Latitude,Longitude);
-                CIWindValue = Functions.adt_getpwval(1,CI,Latitude,Longitude);
+                CIPressureValue = Functions.adt_getpwval(0, CI, Latitude, Longitude);
+                CIWindValue = Functions.adt_getpwval(1, CI, Latitude, Longitude);
                 if (!Vmax1or10TF) {
                     /* convert 1-minute to 10-minute average Vmax for output */
-                    CIWindValue=0.88*CIWindValue;
+                    CIWindValue = 0.88 * CIWindValue;
                 }
-                if ((CloudScene==3)||(CloudScene==4)) {
+                if ((CloudScene == 3) || (CloudScene == 4)) {
                     SceneTypeString = String.format("%s",CloudSceneString[CloudScene]);
                 } else if(EyeScene<3) {
                     SceneTypeString = String.format("%s",EyeSceneString[EyeScene]);
                 } else {
                     SceneTypeString = String.format("%s",CloudSceneString[CloudScene]);
                 }
-                if ((CloudScene<=5)&&(EyeScene<=2)) {
+                if ((CloudScene <= 5) && (EyeScene <= 2)) {
                     RadiusMaxWindString = String.format("%3d IR",(int)RadiusMaxWind);
                 } else {
                     RadiusMaxWindString = String.format("%s","  N/A ");
                 }
-                if (MWEyeScore>=-99.0) {
+                if (MWEyeScore >= -99.0) {
                     MWScoreString = String.format("%5.1f",MWEyeScore);
                 } else {
                     MWScoreString = String.format("%s","  N/A");
@@ -462,9 +465,9 @@ public class History {
                 String LatitudeString = String.format("%4d%1s",(int)(Math.abs(Latitude)*100),NSString_ATCF);
                 String LongitudeString = String.format("%5d%1s",(int)(Math.abs(Longitude)*100),EWString_ATCF);
             
-                int StormIDNum = Integer.parseInt(ATCFStormIDString.substring(0,2));
+                int StormIDNum = Integer.parseInt(ATCFStormIDString.substring(0, 2));
                 char aChar = ATCFStormIDString.charAt(2);
-                String StormIDNumString = String.format("%02d",StormIDNum);
+                String StormIDNumString = String.format("%02d", StormIDNum);
             
                 String BasinIDString_ATCF = "";
                 if (aChar == 'L') {
@@ -494,16 +497,16 @@ public class History {
                     StormIDNumString = "XX";
                 }
             
-                int MaxWindSpeed_ATCF = (int)(CIWindValue);
-                int Pressure_ATCF = (int)(CIPressureValue+CIPresAdj);
-                int CI_ATCF = (int)((CI+0.01)*10);
+                int MaxWindSpeed_ATCF = (int) (CIWindValue);
+                int Pressure_ATCF = (int) (CIPressureValue + CIPresAdj);
+                int CI_ATCF = (int) ((CI + 0.01) * 10);
                 int RawTnoValue_ATCF = 0;
                 if (RawTFlag_ATCF==0) {
-                    RawTnoValue_ATCF = (int)((RawTAdj+0.01)*10);  /* adjusted Raw T# - default */
+                    RawTnoValue_ATCF = (int) ((RawTAdj + 0.01) * 10);  /* adjusted Raw T# - default */
                 } else {
-                    RawTnoValue_ATCF = (int)((RawTOrig+0.01)*10); /* unadjusted Raw T# */
+                    RawTnoValue_ATCF = (int) ((RawTOrig + 0.01) * 10); /* unadjusted Raw T# */
                 }
-                int FinalTnoValue_ATCF = (int)((FinalT+0.01)*10);
+                int FinalTnoValue_ATCF = (int) ((FinalT + 0.01) * 10);
                 String TnoAveTimeFlagString_ATCF = String.format("%s","L");
                 int TnoAveTimeFlag_ATCF = 3;   /* Final T# - default */
                 int EyeTempValue = (int)(EyeTemp);
@@ -524,22 +527,22 @@ public class History {
                     Rule89Value = 0;
                 } else {
                     Rule89Value = 0;
-                    if((Rule8Flag%10)>0) {
+                    if ((Rule8Flag % 10) > 0) {
                         Rule89Value = 1;
                     }
-                    if(Rule9Flag==1) {
+                    if (Rule9Flag == 1) {
                         Rule89Value = 2;
                     }
-                    if(((Rule8Flag%10)>0)&&(Rule9Flag==1)) {
+                    if (((Rule8Flag % 10) > 0) && (Rule9Flag == 1)) {
                         Rule89Value = 3;
                     }
-                    if((CloudScene==3)||(CloudScene==4)) {
+                    if ((CloudScene == 3) || (CloudScene == 4)) {
                         SceneTypeString = String.format("%s",CloudSceneString_ATCF[CloudScene]);
                         CIConfidence = 2;
                         WindSpeedConfidence = 2;
                         PressureConfidence = 2;
                         PositionConfidence = 3;
-                    } else if(EyeScene<3) {
+                    } else if (EyeScene < 3) {
                         SceneTypeString = String.format("%s"," EYE");
                         CIConfidence = 1;
                         WindSpeedConfidence = 1;
@@ -559,7 +562,7 @@ public class History {
                 
                 /* determine ATCF center/intensity ID */
                 String CenterFixMethodID_ATCF = "";
-                if(AutoCenteringValue>=4) {
+                if (AutoCenteringValue >= 4) {
                     /* center fix by autofix method */
                     CenterFixMethodID_ATCF = String.format("%s","CI");
                 } else {
@@ -573,7 +576,7 @@ public class History {
                     }
                 }
                 String AutoCenterMethodString_ATCF = "";
-                if(AutoCenteringValue==0) {
+                if (AutoCenteringValue == 0) {
                     AutoCenterMethodString_ATCF = String.format("%s","MAN");
                 } else {
                     AutoCenterMethodString_ATCF = String.format("%s","AUT");
@@ -642,7 +645,7 @@ public class History {
         double CurrentTime = Functions.calctime(ImageDate,ImageTime);
           
         int XInc = 0;
-        while (XInc<NumRecsHistory) {
+        while (XInc < NumRecsHistory) {
             int RecDate = HistoryFile[XInc].date;
             int RecTime = HistoryFile[XInc].time;
             double HistoryRecTime = Functions.calctime(RecDate,RecTime);

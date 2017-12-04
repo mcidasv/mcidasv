@@ -433,10 +433,18 @@ public class ADTControl extends DisplayControlImpl {
         historyBtn.addActionListener(hbtn -> {
             GUIHistoryFileName = selectHistoryFile();
             logger.debug("history file name={}", GUIHistoryFileName);
-            runFullADTAnalysis = true;
-            selectedHistoryFile.setText(
-               GUIHistoryFileName.substring(GUIHistoryFileName.lastIndexOf(File.separatorChar) + 1)
-            );
+            
+            // TJJ Dec 2017 
+            // Do some cursory validation on History file before plowing ahead
+            if (! validHistoryFile(GUIHistoryFileName)) {
+                JOptionPane.showMessageDialog(null, 
+                    "Your selection does not appear to be a valid ADT History File.");
+            } else {
+                runFullADTAnalysis = true;
+                selectedHistoryFile.setText(
+                   GUIHistoryFileName.substring(GUIHistoryFileName.lastIndexOf(File.separatorChar) + 1)
+                );
+            }
         });
 
         /* add main ADT analysis start button */
@@ -993,6 +1001,30 @@ public class ADTControl extends DisplayControlImpl {
         return scrollPane;
     }
 
+    /**
+     * Do some cursory checking on validity of selected History file
+     * @param historyFileName
+     * @return true is seems ok
+     */
+    
+    private boolean validHistoryFile(String historyFileName) {
+        boolean seemsOk = true;
+        
+        History CurrentHistory = new History();
+        
+        try {
+            logger.debug("trying to read history file {}", historyFileName);
+            CurrentHistory.ReadHistoryFile(historyFileName);
+        } catch (IOException exception) {
+            logger.warn("History file %s is not valid", historyFileName);
+            seemsOk = false;
+        }
+        
+        logger.debug("Number of history records: {}", History.HistoryNumberOfRecords());
+        if (History.HistoryNumberOfRecords() == 0) seemsOk = false;
+        return seemsOk;
+    }
+
     private void runADTmain() {
         if (!running) {
             running = true;
@@ -1289,6 +1321,7 @@ public class ADTControl extends DisplayControlImpl {
             fileNameReturn = file.getAbsolutePath();
             setLastPath("mcv.adt.lasthistorypath", file.getPath());
         }
+        
         return fileNameReturn;
     }
     
