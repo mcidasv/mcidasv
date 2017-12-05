@@ -45,7 +45,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -73,7 +72,7 @@ public class IOUtil {
     
     /** HTTP connection timeout (milliseconds). */
     public static final int HTTP_TIMEOUT = 30000;
-    
+
     private static final Logger logger = LoggerFactory.getLogger(IOUtil.class);
     
     /** Holds the filename/urls that we have checked if they are html */
@@ -674,6 +673,7 @@ public class IOUtil {
                                                  int[] redirectStatuses)
         throws IOException
     {
+        logger.trace("trying to read from '{}'", url);
         URL from = new URL(url);
         URLConnection connection = from.openConnection();
         connection.setAllowUserInteraction(allowUserInteraction);
