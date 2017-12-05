@@ -278,7 +278,10 @@ public class DataManager {
      */
     public DataManager(DataContext dataContext) {
         this.dataContext = dataContext;
-        initURLStreamHandlers();
+        // McIDASV inquiry 2610: McV needed to register these proto handlers
+        // earlier in its initialization, so we've moved that stuff into
+        // McIDASV#registerProtocolHandlers
+        // initURLStreamHandlers();
         initCache();
 
     }

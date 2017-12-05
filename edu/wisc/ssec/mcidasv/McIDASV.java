@@ -44,6 +44,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.rmi.RemoteException;
 
 import java.util.Collections;
@@ -68,6 +71,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
+import edu.wisc.ssec.mcidas.adde.AddeURL;
+import edu.wisc.ssec.mcidas.adde.AddeURLStreamHandler;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.OptionPaneClicker;
 import edu.wisc.ssec.mcidasv.util.SystemState;
@@ -1754,6 +1759,43 @@ public class McIDASV extends IntegratedDataViewer {
     }
 
     /**
+     * Register {@literal "adde"} and {@literal "idvresource"} URL protocols.
+     *
+     * <p>This needs to be called pretty early in the McIDAS-V initialization
+     * process. They're currently being registered immediately after the
+     * session file is created.</p>
+     */
+    private static void registerProtocolHandlers() {
+        try {
+            URL.setURLStreamHandlerFactory(protocol -> {
+                switch (protocol.toLowerCase()) {
+                    case AddeURL.ADDE_PROTOCOL:
+                        return new AddeURLStreamHandler();
+                    case PluginManager.PLUGIN_PROTOCOL:
+                        return new IdvResourceStreamHandler();
+                    default:
+                        return null;
+                }
+            });
+        } catch (Throwable e) {
+            logger.error("Could not register protocol handlers!", e);
+        }
+    }
+
+    /**
+     * Responsible for handling {@literal "idvresource"} URLs.
+     *
+     * <p>Really just a redirect to {@link IOUtil#getURL(String, Class)}.</p>
+     */
+    private static class IdvResourceStreamHandler extends URLStreamHandler {
+        @Override protected URLConnection openConnection(URL u)
+            throws IOException
+        {
+            return IOUtil.getURL(u.getPath(), McIDASV.class).openConnection();
+        }
+    }
+
+    /**
      * The main. Configure the logging and create the McIDAS-V object
      * responsible for initializing the application session.
      *
@@ -1811,6 +1853,7 @@ public class McIDASV extends IntegratedDataViewer {
             }
 
             createSessionFile(SESSION_FILE);
+            registerProtocolHandlers();
 
             McIDASV myself = new McIDASV(args);
         } catch (IllegalArgumentException e) {
