@@ -741,44 +741,44 @@ public class ADTControl extends DisplayControlImpl {
                     filler(),
                     left(hbox(arr(manualStormSelectLabel), 10)),
                     filler(),
-                    left(hbox(arr(filler(30,1), latLonWidget))), filler(),
+                    left(hbox(arr(filler(30, 1), latLonWidget))), filler(),
                     left(hbox(arr(autoStormSelectLabel), 10)), filler(),
-                    left(hbox(arr(filler(30,1),forecastBtn, forecastTypeBox,
+                    left(hbox(arr(filler(30, 1), forecastBtn, forecastTypeBox,
                         forecastSelectLabel, forecastLabel), 5)), filler(),
                     left(hbox(arr(blankfield))),
                     filler(1, 5),
-                    left(hbox(arr(new JLabel("HISTORY FILE INFORMATION")), 10)),filler(),
+                    left(hbox(arr(new JLabel("HISTORY FILE INFORMATION")), 10)), filler(),
                     left(hbox(arr(filler(30, 1), historyBtn, new JLabel
                         ("Selected History File: "), selectedHistoryFile), 5)),
                     filler(),
                     left(hbox(arr(blankfield))),
                     filler(1, 5),
-                    left(hbox(arr(new JLabel("PMW ANALYSIS")), 10)),filler(),
-                    left(hbox(arr(filler(30,1),PMWActivateButton,
+                    left(hbox(arr(new JLabel("PMW ANALYSIS")), 10)), filler(),
+                    left(hbox(arr(filler(30, 1), PMWActivateButton,
                         pmwManDateLabel, pmwManDateTextField, pmwManTimeLabel,
                         pmwManTimeTextField, pmwManScoreLabel, pmwManScoreTextField), 5)), filler(),
                     left(hbox(arr(blankfield))),
                     filler(1, 5),
                     left(hbox(arr(new JLabel("MISCELLANEOUS OPTIONS")), 10)), filler(),
-                    left(hbox(arr(filler(30, 1),new JLabel("MSLP Conversion Method:"), mslpDvorakButton, mslpCKZButton, ckzPenvLabel, ckzPenvTextField, ckz34radiusLabel,ckz34radiusTextField), 5)),filler(),
+                    left(hbox(arr(filler(30, 1), new JLabel("MSLP Conversion Method:"), mslpDvorakButton, mslpCKZButton, ckzPenvLabel, ckzPenvTextField, ckz34radiusLabel, ckz34radiusTextField), 5)), filler(),
                     left(hbox(arr(filler(30, 1), sceneOverrideButton, OverrideLabel), 5)), filler(),
-                    left(hbox(arr(filler(30, 1),LandFlagLabel,LandONButton, LandOFFButton, filler(20,1), VOutLabel, V1MinButton, V10MinButton, filler(20,1),RawTLabel,RawTTextField, RMWLabel, RMWTextField), 5)),filler(),
-                    left(hbox(arr(filler(30, 1),ATCFOutputLabel, ATCFOutputButton,ATCFEntryStormLabel,ATCFEntryStormTextField, ATCFEntrySiteLabel,ATCFEntrySiteTextField), 5)),filler(),
+                    left(hbox(arr(filler(30, 1), LandFlagLabel, LandONButton, LandOFFButton, filler(20, 1), VOutLabel, V1MinButton, V10MinButton, filler(20, 1), RawTLabel, RawTTextField, RMWLabel, RMWTextField), 5)), filler(),
+                    left(hbox(arr(filler(30, 1), ATCFOutputLabel, ATCFOutputButton, ATCFEntryStormLabel, ATCFEntryStormTextField, ATCFEntrySiteLabel, ATCFEntrySiteTextField), 5)), filler(),
                     left(hbox(arr(filler(80, 1), adtBtn, listBtn), 20)), filler()));
                     
         JPanel controls = topLeft(widgets);
 
         /* set up ADT Bulletin display area */
         resultArea = new JTextArea();
-        JScrollPane resultScroller = new JScrollPane(resultArea);
-        resultScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        resultScroller.setPreferredSize(new Dimension(400, 200));
+        resultArea.setEditable(false);
 
         Font c = new Font("Courier", Font.BOLD, 12);
         
         resultFrame = new JFrame("ADT Results");
         resultFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        resultFrame.add(resultArea,BorderLayout.CENTER);
+        JScrollPane resultScroller = new JScrollPane(resultArea);
+        resultScroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        resultFrame.add(resultScroller, BorderLayout.CENTER);
         resultFrame.setPreferredSize(new Dimension(400, 600));
         resultFrame.setFont(c);
 
@@ -804,7 +804,7 @@ public class ADTControl extends DisplayControlImpl {
         historyLabelPanel.setLayout(HistoryLabelLayout);
         HistoryLabelLayout.setAlignment(FlowLayout.CENTER);
         historyLabel = new JLabel("No History File Selected");
-        historyLabel.setPreferredSize(new Dimension(800,20));
+        historyLabel.setPreferredSize(new Dimension(800, 20));
         historyLabel.setFont(c);
         
         /* history file Editing Date Selection window */
@@ -832,14 +832,14 @@ public class ADTControl extends DisplayControlImpl {
         HistoryButtonLayout.setAlignment(FlowLayout.CENTER);
 
         JButton historySaveListingBtn = new JButton("Output Listing");
-        historySaveListingBtn.setPreferredSize(new Dimension(200,20));
+        historySaveListingBtn.setPreferredSize(new Dimension(200, 20));
         historySaveListingBtn.addActionListener(ae -> {
             GUIHistoryFileListingName = selectHistoryFileOutput();
             logger.debug("saving history listing file name={}", GUIHistoryFileListingName);
             GUIHistoryListFormat = -1;
         });
         JButton historyWriteATCFBtn = new JButton("Write ATCF");
-        historyWriteATCFBtn.setPreferredSize(new Dimension(200,20));
+        historyWriteATCFBtn.setPreferredSize(new Dimension(200, 20));
         historyWriteATCFBtn.addActionListener(ae -> {
             GUIATCFOutputTF = true;
             GUIHistoryListFormat = 0;
@@ -920,10 +920,10 @@ public class ADTControl extends DisplayControlImpl {
         historyEditInputPanel.setLayout(EditInputButtonLayout);
         EditInputButtonLayout.setAlignment(FlowLayout.CENTER);
         JButton historyEditApplyButton = new JButton("Apply Edits");
-        historyEditApplyButton.setPreferredSize(new Dimension(150,20));
+        historyEditApplyButton.setPreferredSize(new Dimension(150, 20));
         historyEditApplyButton.addActionListener(ae -> modifyHistoryFile());
         JButton historyEditCancelButton = new JButton("Cancel");
-        historyEditCancelButton.setPreferredSize(new Dimension(150,20));
+        historyEditCancelButton.setPreferredSize(new Dimension(150, 20));
         historyEditCancelButton.addActionListener(ae -> historyDateFrame.dispose());
         historyDatePanel.add(historyDateStartLabel);
         historyDatePanel.add(historyDateStartDateLabel);
@@ -964,14 +964,14 @@ public class ADTControl extends DisplayControlImpl {
         JLabel overrideSceneSelectLabel = new JLabel("Select New Scene Type:");
         overrideSceneTypeBox = new JComboBox<>(SCENE_TYPES);
         overrideSceneTypeBox.setSelectedIndex(Env.OverrideSceneTypeIndex);
-        overrideSceneTypeBox.setPreferredSize(new Dimension(150,20));
+        overrideSceneTypeBox.setPreferredSize(new Dimension(150, 20));
         // overrideSceneTypeBox.addActionListener(ame -> Env.OverrideSceneTypeIndex = overrideSceneTypeBox.getSelectedIndex());
         JPanel overrideSceneButtonPanel = new JPanel();
         FlowLayout OverrideSceneButtonLayout = new FlowLayout();
         overrideSceneButtonPanel.setLayout(OverrideSceneButtonLayout);
         OverrideSceneButtonLayout.setAlignment(FlowLayout.CENTER);
         JButton overrideSceneAcceptButton = new JButton("Accept New Scene");
-        overrideSceneAcceptButton.setPreferredSize(new Dimension(190,20));
+        overrideSceneAcceptButton.setPreferredSize(new Dimension(190, 20));
         overrideSceneAcceptButton.addActionListener(ae -> {
             // accept new scene selection
             overrideSceneFrame.setVisible(false);
@@ -981,7 +981,7 @@ public class ADTControl extends DisplayControlImpl {
             // runADTmain();
         });
         JButton overrideSceneCancelButton = new JButton("Keep Current Scene");
-        overrideSceneCancelButton.setPreferredSize(new Dimension(190,20));
+        overrideSceneCancelButton.setPreferredSize(new Dimension(190, 20));
         overrideSceneCancelButton.addActionListener(ae -> {
             overrideSceneFrame.setVisible(false);
             // runADTmain();
