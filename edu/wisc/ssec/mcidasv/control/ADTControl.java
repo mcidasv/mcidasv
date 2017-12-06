@@ -182,7 +182,7 @@ public class ADTControl extends DisplayControlImpl {
     private static boolean GUILandFlagTF;
 
     // Default Java boolean value is false - need to initialize if we want true
-    private static boolean GUIUseCKZTF = true;
+    private boolean GUIUseCKZTF = false;
     private static boolean GUIVmax1or10TF = true;
 
     private static boolean GUICommentAddTF;
@@ -593,8 +593,8 @@ public class ADTControl extends DisplayControlImpl {
         mslpCKZButton.setSelected(false);
         mslpCKZButton.setToolTipText(TOOLTIP_MSLP_FROM_CKZ);
         ButtonGroup mslpgroup = new ButtonGroup();
-        mslpgroup.add(manButton);
-        mslpgroup.add(autoButton);
+        mslpgroup.add(mslpDvorakButton);
+        mslpgroup.add(mslpCKZButton);
         mslpDvorakButton.addActionListener(ae -> {
             // Dvorak
             ckzPenvTextField.setEnabled(false);
