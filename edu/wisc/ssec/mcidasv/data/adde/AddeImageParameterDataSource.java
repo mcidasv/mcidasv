@@ -200,6 +200,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private int previewLineRes = 1;
     private int previewEleRes = 1;
+    
+    // Do binary search on preview bounds for GEO sensors to speed up overall response time
+    boolean doGeoSpeedup = false;
 
     /** Whether or not this DataSource was loaded from a bundle. */
     private boolean fromBundle = false;
@@ -1059,6 +1062,15 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
             // pull out the list of cal units, we'll need for type check later...
             calList = bi.getCalibrationUnits();
+            
+            // TJJ Dec 2017
+            // Pretty hacky - do our geo speedup code for any GOES sensor IDs
+            // TODO: at very least, fix hardcoded GOES Sensor ID range
+            int sensorID = bi.getSensor();
+            if ((sensorID >= 180) && (sensorID <= 190)) {
+                doGeoSpeedup = true;
+            }
+
             logger.trace("replacing band: new={} from={}", bi.getBandNumber(), source);
 //            source = replaceKey(source, BAND_KEY, (Object) (bi.getBandNumber()));
             source = replaceKey(source, BAND_KEY, bi.getBandNumber());
@@ -2531,91 +2543,148 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             // intstead of iterating through every single URL to make large loop times 
             // (e.g. 50 GOES-16 MESO images) more tolerable.
             
-            int loIdx = 0;
-            int hiIdx = previewUrls.size() - 1;
-            boolean directionInc = true;
-            boolean sizeMatch = false;
-            int iterations = 0;
-            
-            while (! sizeMatch) {
-            // for (String previewUrl : previewUrls) {
-                String previewUrl = null;
-                if (directionInc) {
-                    previewUrl = previewUrls.get(loIdx);
-                    loIdx++;
-                    directionInc = false;
-                } else {
-                    previewUrl = previewUrls.get(hiIdx);
-                    hiIdx--;
-                    directionInc = true;
-                }
-                
-                // Sanity check - if we get to the middle, we just quit and use what we found
-                if (loIdx >= hiIdx) break;
-                
-                logger.trace("attempting to create AreaDirectoryList using previewUrl={}", previewUrl);
-                AreaDirectoryList directoryList = new AreaDirectoryList(previewUrl);
-                logger.trace("created directoryList! size={}\n{}", directoryList.getDirs().size(), directoryList);
-                List<AreaDirectory> areaDirectories = (List<AreaDirectory>) directoryList.getDirs();
+            if (doGeoSpeedup) {
+                int loIdx = 0;
+                int hiIdx = previewUrls.size() - 1;
+                boolean directionInc = true;
+                boolean sizeMatch = false;
+                int iterations = 0;
 
-                for (int i = 0; i < areaDirectories.size(); i++) {
-                    iterations++;
-                    AreaDirectory areaDirectory = areaDirectories.get(i);
-                    String pos = Integer.toString(0 - i);
-                    int lines = areaDirectory.getLines();
-                    int elements = areaDirectory.getElements();
-                    int currentDimensions = lines * elements;
-                    logger.trace("image pos={} lines={} elements={} lat={} lon={} startTime='{}' nominalTime='{}' currentDimensions={} areaDirectory={}", new Object[] { pos, lines, elements, areaDirectory.getCenterLatitude(), areaDirectory.getCenterLongitude(), areaDirectory.getStartTime(), areaDirectory.getNominalTime(), currentDimensions, areaDirectory });
-                    String key = null;
-                    if (isRelative) {
-                        key = pos;
+                while (! sizeMatch) {
+                    // for (String previewUrl : previewUrls) {
+                    String previewUrl = null;
+                    if (directionInc) {
+                        previewUrl = previewUrls.get(loIdx);
+                        loIdx++;
+                        directionInc = false;
                     } else {
-                        try {
-                            DateTime reformatted = new DateTime(areaDirectory.getNominalTime());
-                            key = reformatted.toString();
-                        } catch (VisADException e) {
-                            logger.error("could not reformat time string='"+areaDirectory.getNominalTime().toString()+"'", e);
-                            key = areaDirectory.getNominalTime().toString();
-                        }
+                        previewUrl = previewUrls.get(hiIdx);
+                        hiIdx--;
+                        directionInc = true;
                     }
-                    requestIdToDirectory.put(key, areaDirectory);
-                    if (imageSize < currentDimensions) {
-                        
-                        imageSize = currentDimensions;
-                        maxLine = lines;
-                        maxEle = elements;
-                        directory = areaDirectory;
-                        // TODO(jon): should be grabbing coord sys from chooser setting (HOW TO DO THAT!?)
-                        String latlonString = areaDirectory.getCenterLatitude() + " " + areaDirectory.getCenterLongitude() + " E";
-                        String largestPreviewUrl = previewUrl.replace("imagedir", "imagedata");
-                        largestPreviewUrl = replaceKey(largestPreviewUrl, "PLACE", "CENTER");
-                        largestPreviewUrl = replaceKey(largestPreviewUrl, "LATLON", latlonString);
-                        Hashtable dataSourceProperties = this.getProperties();
-                        if (dataSourceProperties.containsKey("navigation")) {
-                            largestPreviewUrl = replaceKey(largestPreviewUrl, "NAV", dataSourceProperties.get("navigation"));
-                            
-                        }
-                        
+
+                    // Sanity check - if we get to the middle, we just quit and use what we found
+                    if (loIdx >= hiIdx) break;
+
+                    logger.trace("attempting to create AreaDirectoryList using previewUrl={}", previewUrl);
+                    AreaDirectoryList directoryList = new AreaDirectoryList(previewUrl);
+                    logger.trace("created directoryList! size={}\n{}", directoryList.getDirs().size(), directoryList);
+                    List<AreaDirectory> areaDirectories = (List<AreaDirectory>) directoryList.getDirs();
+
+                    for (int i = 0; i < areaDirectories.size(); i++) {
+                        iterations++;
+                        AreaDirectory areaDirectory = areaDirectories.get(i);
+                        String pos = Integer.toString(0 - i);
+                        int lines = areaDirectory.getLines();
+                        int elements = areaDirectory.getElements();
+                        int currentDimensions = lines * elements;
+                        logger.trace("image pos={} lines={} elements={} lat={} lon={} startTime='{}' nominalTime='{}' currentDimensions={} areaDirectory={}", new Object[] { pos, lines, elements, areaDirectory.getCenterLatitude(), areaDirectory.getCenterLongitude(), areaDirectory.getStartTime(), areaDirectory.getNominalTime(), currentDimensions, areaDirectory });
+                        String key = null;
                         if (isRelative) {
-                            largestPreviewUrl = replaceKey(largestPreviewUrl, "POS", pos);
+                            key = pos;
                         } else {
-                            logger.trace("need to set DAY and TIME keywords for absolute times!");
+                            try {
+                                DateTime reformatted = new DateTime(areaDirectory.getNominalTime());
+                                key = reformatted.toString();
+                            } catch (VisADException e) {
+                                logger.error("could not reformat time string='"+areaDirectory.getNominalTime().toString()+"'", e);
+                                key = areaDirectory.getNominalTime().toString();
+                            }
                         }
-//                        previewUrl = previewUrl.replace("imagedir", "imagedata");
-//                        logger.trace("found new max size! old={} new={} url={}", new Object[] { imageSize, currentDimensions, previewUrl });
-//                        descriptor = new AddeImageDescriptor(areaDirectory, previewUrl);
-                        logger.trace("found new max size! old={} new={} url={}", new Object[] { imageSize, currentDimensions, largestPreviewUrl });
-                        descriptor = new AddeImageDescriptor(areaDirectory, largestPreviewUrl);
-//                        descriptor = new AddeImageDescriptor(previewUrl);
-//                        descriptor.setDirectory(areaDirectory);
-//                        descriptor = new AddeImageDescriptor(areaDirectory, previewUrl);
+                        requestIdToDirectory.put(key, areaDirectory);
+                        if (imageSize < currentDimensions) {
+
+                            imageSize = currentDimensions;
+                            maxLine = lines;
+                            maxEle = elements;
+                            directory = areaDirectory;
+                            // TODO(jon): should be grabbing coord sys from chooser setting (HOW TO DO THAT!?)
+                            String latlonString = areaDirectory.getCenterLatitude() + " " + areaDirectory.getCenterLongitude() + " E";
+                            String largestPreviewUrl = previewUrl.replace("imagedir", "imagedata");
+                            largestPreviewUrl = replaceKey(largestPreviewUrl, "PLACE", "CENTER");
+                            largestPreviewUrl = replaceKey(largestPreviewUrl, "LATLON", latlonString);
+                            Hashtable dataSourceProperties = this.getProperties();
+                            if (dataSourceProperties.containsKey("navigation")) {
+                                largestPreviewUrl = replaceKey(largestPreviewUrl, "NAV", dataSourceProperties.get("navigation"));
+                            }
+
+                            if (isRelative) {
+                                largestPreviewUrl = replaceKey(largestPreviewUrl, "POS", pos);
+                            } else {
+                                logger.trace("need to set DAY and TIME keywords for absolute times!");
+                            }
+
+                            logger.trace("found new max size! old={} new={} url={}", new Object[] { imageSize, currentDimensions, largestPreviewUrl });
+                            descriptor = new AddeImageDescriptor(areaDirectory, largestPreviewUrl);
+
+                        }
+
+                        if (prevSize == currentDimensions) {
+                            logger.debug("Exiting Preview URL loop after " + iterations + " iterations...");
+                            sizeMatch = true;
+                        }
+                        prevSize = currentDimensions;
                     }
-                    
-                    if (prevSize == currentDimensions) {
-                        logger.debug("Exiting Preview URL loop after " + iterations + " iterations...");
-                        sizeMatch = true;
+                }
+            } else {
+                
+                // Old way - go through all preview URLs looking for largest geographic coverage
+
+                for (String previewUrl : previewUrls) {
+
+                    logger.trace("attempting to create AreaDirectoryList using previewUrl={}", previewUrl);
+                    AreaDirectoryList directoryList = new AreaDirectoryList(previewUrl);
+                    logger.trace("created directoryList! size={}\n{}", directoryList.getDirs().size(), directoryList);
+                    List<AreaDirectory> areaDirectories = (List<AreaDirectory>) directoryList.getDirs();
+
+                    for (int i = 0; i < areaDirectories.size(); i++) {
+
+                        AreaDirectory areaDirectory = areaDirectories.get(i);
+                        String pos = Integer.toString(0 - i);
+                        int lines = areaDirectory.getLines();
+                        int elements = areaDirectory.getElements();
+                        int currentDimensions = lines * elements;
+                        logger.trace("image pos={} lines={} elements={} lat={} lon={} startTime='{}' nominalTime='{}' currentDimensions={} areaDirectory={}", new Object[] { pos, lines, elements, areaDirectory.getCenterLatitude(), areaDirectory.getCenterLongitude(), areaDirectory.getStartTime(), areaDirectory.getNominalTime(), currentDimensions, areaDirectory });
+                        String key = null;
+                        if (isRelative) {
+                            key = pos;
+                        } else {
+                            try {
+                                DateTime reformatted = new DateTime(areaDirectory.getNominalTime());
+                                key = reformatted.toString();
+                            } catch (VisADException e) {
+                                logger.error("could not reformat time string='"+areaDirectory.getNominalTime().toString()+"'", e);
+                                key = areaDirectory.getNominalTime().toString();
+                            }
+                        }
+                        requestIdToDirectory.put(key, areaDirectory);
+                        if (imageSize < currentDimensions) {
+
+                            imageSize = currentDimensions;
+                            maxLine = lines;
+                            maxEle = elements;
+                            directory = areaDirectory;
+                            // TODO(jon): should be grabbing coord sys from chooser setting (HOW TO DO THAT!?)
+                            String latlonString = areaDirectory.getCenterLatitude() + " " + areaDirectory.getCenterLongitude() + " E";
+                            String largestPreviewUrl = previewUrl.replace("imagedir", "imagedata");
+                            largestPreviewUrl = replaceKey(largestPreviewUrl, "PLACE", "CENTER");
+                            largestPreviewUrl = replaceKey(largestPreviewUrl, "LATLON", latlonString);
+                            Hashtable dataSourceProperties = this.getProperties();
+                            if (dataSourceProperties.containsKey("navigation")) {
+                                largestPreviewUrl = replaceKey(largestPreviewUrl, "NAV", dataSourceProperties.get("navigation"));
+                            }
+
+                            if (isRelative) {
+                                largestPreviewUrl = replaceKey(largestPreviewUrl, "POS", pos);
+                            } else {
+                                logger.trace("need to set DAY and TIME keywords for absolute times!");
+                            }
+
+                            logger.trace("found new max size! old={} new={} url={}", new Object[] { imageSize, currentDimensions, largestPreviewUrl });
+                            descriptor = new AddeImageDescriptor(areaDirectory, largestPreviewUrl);
+
+                        }
                     }
-                    prevSize = currentDimensions;
                 }
             }
         } catch (AreaFileException areaException) {
