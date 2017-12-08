@@ -1189,21 +1189,36 @@ public class ADTControl extends DisplayControlImpl {
                 resultFrame.pack();
                 resultFrame.setVisible(true);
  
-                if (GUIHistoryFileName != null) {
-                    try {
-                        // int[] InsertRecs = History.InsertHistoryRecord(runFullADTAnalysis,GUIHistoryFileName);
-                        /* System.out.printf("*** Modified=%d InsertOverwriteFlag=%d***\n",InsertRecs[0],InsertRecs[1]); */
-                        int NumRecs = History.WriteHistoryFile(GUIHistoryFileName);
-                        ErrorMessage = String.format("Number of records written to history file: %d\n", NumRecs);
-                    } catch (IOException exception) {
-                        ErrorMessage = String.format("Error writing history file %s\n",GUIHistoryFileName);
-                    }
-                    logger.warn(ErrorMessage.trim());
-                    userMessage(ErrorMessage);
-                }
+                // TJJ Dec 2017
+                // This is in reference to Request #11, Bug #17 from
+                // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1187
+                // Since the intent here is to modify the currently active history file by appending
+                // one record, and since that record insert had been previously commented out below,
+                // we'll assume this was never working properly in the first place.  To prevent the
+                // current History File from being clobbered, we just won't do the re-write for now,
+                // since as is, a deep Exception zeros out the file, and the original file should 
+                // at the very least remain unmodified.
+                
+//                if (GUIHistoryFileName != null) {
+//                    try {
+//                        // int[] InsertRecs = History.InsertHistoryRecord(runFullADTAnalysis,GUIHistoryFileName);
+//                        /* System.out.printf("*** Modified=%d InsertOverwriteFlag=%d***\n",InsertRecs[0],InsertRecs[1]); */
+//                        int NumRecs = History.WriteHistoryFile(GUIHistoryFileName);
+//                        ErrorMessage = String.format("Number of records written to history file: %d\n", NumRecs);
+//                    } catch (IOException exception) {
+//                        ErrorMessage = String.format("Error writing history file %s\n", GUIHistoryFileName);
+//                    } catch (Exception e) {
+//                        logger.error("Exception: ", e);
+//                        ErrorMessage = String.format("Error writing history file %s\n", GUIHistoryFileName);
+//                    }
+//                    logger.warn(ErrorMessage.trim());
+//                    userMessage(ErrorMessage);
+//                }
+                
                 if (GUIATCFRecordOutputTF) {
                     ATCFFileOutput(-1);
                 }
+                
                 ExitADT();
             }
         }
