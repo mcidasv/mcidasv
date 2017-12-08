@@ -1488,7 +1488,7 @@ class _Display(_JavaProxy):
         
         ImageUtils.writeImageToFile(image, kmlImagePath, quality)
         
-    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, index=-1, bgtransparent=False, createDirectories=False):
+    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, index=0, bgtransparent=False, createDirectories=False):
         """Save contents of display into the given filename.
         
         Args:
