@@ -2529,7 +2529,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
         }
         
-        if (isRelative && (previewUrls.size() == 1)) {
+        if (! isRelative && (previewUrls.size() == 1)) {
             logger.trace("only a single previewUrl; returning '{}'", previewUrls.get(0));
             return new AddeImageDescriptor(previewUrls.get(0));
         } else {
