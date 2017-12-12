@@ -40,7 +40,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileWriter;
@@ -89,6 +88,7 @@ import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.imagery.AddeImageDataSource;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.ImageDataSource;
+import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.idv.DisplayInfo;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.LatLonWidget;
@@ -331,11 +331,11 @@ public class ADTControl extends DisplayControlImpl {
                         try {
                             elt = new EarthLocationTuple(latLonWidget.getLat(), latLonWidget.getLon(), Double.NaN);
                             // Make sure the new Earth location is within the bounds of our satellite IR image
-                            Rectangle2D.Double bounds = d.getLatLonBox();
-                            logger.debug("Bounds min, max X: " + bounds.getMinX() + ", " + bounds.getMaxX());
-                            logger.debug("Bounds min, max Y: " + bounds.getMinY() + ", " + bounds.getMaxY());
+                            LatLonRect bounds = d.getLatLonRect();
+                            logger.debug("Bounds min, max Lat: " + bounds.getLatMin() + ", " + bounds.getLatMax());
+                            logger.debug("Bounds min, max Lon: " + bounds.getLonMin() + ", " + bounds.getLonMax());
                             logger.debug("ELT LatVal, LonVal: " + elt.getLatitude().getValue() + ", " + elt.getLongitude().getValue());
-                            if (bounds.contains(elt.getLongitude().getValue(), elt.getLatitude().getValue())) {
+                            if (bounds.contains(elt.getLatitude().getValue(), elt.getLongitude().getValue())) {
                                 probeLocation = elt.getLatLonPoint();
                                 updateProbeLocation();
                             } else {
