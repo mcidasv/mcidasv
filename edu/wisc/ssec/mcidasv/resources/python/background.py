@@ -1567,7 +1567,9 @@ class _Display(_JavaProxy):
                 print("*** NOTE: There are no time steps associated with this display, so the 'index' parameter is unnecessary.")
             else:
                 raise ValueError('Invalid index (%s) specified; valid index must conform to 0 <= index < %s' % (index, stepCount)) 
-                
+        else:
+            raise ValueError('Index value must be greater than or equal to 0')
+
         islAsXml = ImageGenerator.makeXmlFromString(isl[:-2])
         displayIndex = self._getDisplayIndex()
         if displayIndex >= 0:
