@@ -1102,6 +1102,9 @@ public class ADTControl extends DisplayControlImpl {
                     userMessage(ErrorMessage);
                     ExitADT();
                     return;
+                } else {
+                    Env.SelectedLatitude = probeLocation.getLatitude().getValue();
+                    Env.SelectedLongitude = probeLocation.getLongitude().getValue();
                 }
             }
             
