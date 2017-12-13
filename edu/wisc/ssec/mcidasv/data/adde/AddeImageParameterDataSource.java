@@ -1064,10 +1064,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             calList = bi.getCalibrationUnits();
             
             // TJJ Dec 2017
-            // Pretty hacky - do our geo speedup code for any GOES sensor IDs
-            // TODO: at very least, fix hardcoded GOES Sensor ID range
+            // Pretty hacky - do our geo speedup code for newer GOES and AHI sensor IDs
+            // TODO: at very least, fix hardcoded Sensor ID ranges
             int sensorID = bi.getSensor();
-            if ((sensorID >= 180) && (sensorID <= 190)) {
+            if (((sensorID >= 180) && (sensorID <= 190)) ||
+                 (sensorID == 86) || 
+                ((sensorID >= 286) && (sensorID <= 288))) {
                 doGeoSpeedup = true;
             }
 
