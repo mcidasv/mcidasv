@@ -1064,12 +1064,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             calList = bi.getCalibrationUnits();
             
             // TJJ Dec 2017
-            // Pretty hacky - do our geo speedup code for newer GOES and AHI sensor IDs
-            // TODO: at very least, fix hardcoded Sensor ID ranges
+            // Kinda hacky (but then again so is this entire class) :-/
+            // Do our GEO speedup code for known GEO sensor IDs
             int sensorID = bi.getSensor();
-            if (((sensorID >= 180) && (sensorID <= 190)) ||
-                 (sensorID == 86) || 
-                ((sensorID >= 286) && (sensorID <= 288))) {
+            if (sensorIsGEO(sensorID)) {
                 doGeoSpeedup = true;
             }
 
@@ -1222,6 +1220,48 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         baseSource = src;
         getIdv().showNormalCursor();
         return true;
+    }
+
+    /**
+     * Return true if the Sensor is Geostationary
+     * 
+     * @param McIDAS Sensor Source number. 
+     *  See https://www.ssec.wisc.edu/mcidas/doc/users_guide/2017.2/app_c-1.html
+     * @return true if ID matches a defined GEO sensor
+     */
+    
+    private boolean sensorIsGEO(int sensorID) {
+        boolean isGEO = false;
+        
+        // early GEO through FY
+        if ((sensorID >= 12) && (sensorID <= 40)) isGEO = true; 
+        
+        // Meteosat
+        if ((sensorID >= 51) && (sensorID <= 58)) isGEO = true;
+        if (sensorID == 354) isGEO = true;
+
+        // GOES 8 - 12
+        if ((sensorID >= 70) && (sensorID <= 79)) isGEO = true;
+
+        // GMS, MTSAT (which is actually pre-8 Himawari), H-8/9
+        if ((sensorID >= 82) && (sensorID <= 86)) isGEO = true;
+        if ((sensorID >= 286) && (sensorID <= 288)) isGEO = true;
+
+        // Feng Yun
+        if ((sensorID >= 95) && (sensorID <= 97)) isGEO = true;
+        if ((sensorID >= 275) && (sensorID <= 277)) isGEO = true;
+
+        // GOES 13 - 17
+        // NOTE: Assumes GOES-17 will take the 188 to 190 slots
+        if ((sensorID >= 180) && (sensorID <= 190)) isGEO = true;
+
+        // Kalpana and INSAT
+        if ((sensorID >= 230) && (sensorID <= 232)) isGEO = true;
+
+        // COMS
+        if (sensorID == 250) isGEO = true;
+        
+        return isGEO;
     }
 
     /**
