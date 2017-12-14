@@ -49,6 +49,7 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.rmi.RemoteException;
 
+import java.security.Security;
 import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
@@ -1781,6 +1782,11 @@ public class McIDASV extends IntegratedDataViewer {
         handleWelcomeWindow(args);
         
         startTime = System.nanoTime();
+        
+        // allow use of the "unlimited strength" crypto policy.
+        // this becomes the default in 1.8.0_162, but we need to ship with
+        // 1.8.0_152.
+        Security.setProperty("crypto.policy", "unlimited");
         
         // the following two lines are required if we want to embed JavaFX
         // widgets into McV (which is Swing). The first line initializes the
