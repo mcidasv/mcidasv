@@ -396,7 +396,7 @@ public class ADTControl extends DisplayControlImpl {
             forecastBtn.setEnabled(true);
             forecastTypeBox.setEnabled(true);
             GUIRunAutoTF = true;
-            System.out.printf("running automated ADT!!!\n");
+            System.out.println("running automated ADT!!!\n");
         });
 
         forecastBtn = new JButton("Select Forecast File");
@@ -831,7 +831,7 @@ public class ADTControl extends DisplayControlImpl {
         historyButtonPanel.setLayout(HistoryButtonLayout);
         HistoryButtonLayout.setAlignment(FlowLayout.CENTER);
 
-        JButton historySaveListingBtn = new JButton("Output Listing");
+        JButton historySaveListingBtn = new JButton("Write History");
         historySaveListingBtn.setPreferredSize(new Dimension(200, 20));
         historySaveListingBtn.addActionListener(ae -> {
             GUIHistoryFileListingName = selectHistoryFileOutput();
@@ -1052,7 +1052,7 @@ public class ADTControl extends DisplayControlImpl {
             int RetVal = ReadGUIOverrideInputFile(GUIOverrideFile);
             if (RetVal == -1) {
                 ErrorMessage = String.format("Error reading GUI override file %s\n",GUIOverrideFile);
-                System.out.printf(ErrorMessage);
+                System.out.println(ErrorMessage);
                 userMessage(ErrorMessage);
                 ExitADT();
                 return;
@@ -1077,7 +1077,7 @@ public class ADTControl extends DisplayControlImpl {
         int ReturnVal = StormADT.GetInitialPosition();  // should set up to throw exception instead of return value
         if (ReturnVal < 0) {
             ErrorMessage = "Error obtaining initial position... exiting ADT\n";
-            System.out.printf(ErrorMessage);
+            System.out.println(ErrorMessage);
             userMessage(ErrorMessage);
             ExitADT();
         } else {
@@ -1085,11 +1085,11 @@ public class ADTControl extends DisplayControlImpl {
                 try {
                     float CenterLatitude = (float)Env.SelectedLatitude;
                     float CenterLongitude =  (float)Env.SelectedLongitude;
-                    /* System.out.printf("pre-ARCHER latitude=%f longitude=%f\n",CenterLatitude,CenterLongitude); */
+                    /* System.out.println("pre-ARCHER latitude=%f longitude=%f\n",CenterLatitude,CenterLongitude); */
                     GetImageData(CenterLatitude, CenterLongitude);
                 } catch (Exception exception) {
                     ErrorMessage = "Error reading IR data pre-ARCHER\n";
-                    System.out.printf(ErrorMessage);
+                    System.out.println(ErrorMessage);
                     userMessage(ErrorMessage);
                     ExitADT();
                     return;
@@ -1098,7 +1098,7 @@ public class ADTControl extends DisplayControlImpl {
             } else {
                 if (probeLocation == null) {
                     ErrorMessage = "Please select storm center location manually and try again";
-                    System.out.printf(ErrorMessage);
+                    System.out.println(ErrorMessage);
                     userMessage(ErrorMessage);
                     ExitADT();
                     return;
@@ -1111,7 +1111,7 @@ public class ADTControl extends DisplayControlImpl {
             try {
                 float CenterLatitude = (float) Env.SelectedLatitude;
                 float CenterLongitude =  (float) Env.SelectedLongitude;
-                /* System.out.printf("latitude=%f longitude=%f domain=%d\n",CenterLatitude,CenterLongitude,DomainID); */
+                /* System.out.println("latitude=%f longitude=%f domain=%d\n",CenterLatitude,CenterLongitude,DomainID); */
                 GetImageData(CenterLatitude, CenterLongitude);
             } catch (Exception e) {
                 ErrorMessage = "Error reading IR data in getimagedata()\n";
@@ -1180,7 +1180,7 @@ public class ADTControl extends DisplayControlImpl {
                 return;
             }
             if (GUIOverrideSceneTF) {
-                /* System.out.printf("Overriding scene type!!!  Scene value=%d\n",InitialSceneTypeValue); */
+                /* System.out.println("Overriding scene type!!!  Scene value=%d\n",InitialSceneTypeValue); */
                 overrideSceneCurrentValueLabel.setText(SCENE_TYPES[Env.OverrideSceneTypeIndex]);
                 overrideSceneFrame.pack();
                 overrideSceneFrame.setVisible(true);
@@ -1205,7 +1205,7 @@ public class ADTControl extends DisplayControlImpl {
 //                if (GUIHistoryFileName != null) {
 //                    try {
 //                        // int[] InsertRecs = History.InsertHistoryRecord(runFullADTAnalysis,GUIHistoryFileName);
-//                        /* System.out.printf("*** Modified=%d InsertOverwriteFlag=%d***\n",InsertRecs[0],InsertRecs[1]); */
+//                        /* System.out.println("*** Modified=%d InsertOverwriteFlag=%d***\n",InsertRecs[0],InsertRecs[1]); */
 //                        int NumRecs = History.WriteHistoryFile(GUIHistoryFileName);
 //                        ErrorMessage = String.format("Number of records written to history file: %d\n", NumRecs);
 //                    } catch (IOException exception) {
@@ -1316,7 +1316,7 @@ public class ADTControl extends DisplayControlImpl {
             }
         } catch (IOException exception) {
             String ErrorMessage = String.format("error updating history file %s",GUIHistoryFileName);
-            System.out.printf(ErrorMessage);
+            System.out.println(ErrorMessage);
             userMessage(ErrorMessage);
         }
     }
@@ -1377,46 +1377,48 @@ public class ADTControl extends DisplayControlImpl {
         }
     }
     
+    /**
+     * Write a new ADT History File
+     * @return true if ok
+     */
+    
     private String selectHistoryFileOutput() {
         
         File saveFile = null;
-        String HistoryPath;
         String ErrorMessage;
         
         historyFileSaveChooser = new JFileChooser();
-        HistoryPath = System.getenv("ODTHISTORY");
-        if (HistoryPath == null) {
-            HistoryPath = System.getenv("HOME");
-        }
-        historyFileSaveChooser.setCurrentDirectory(new File(HistoryPath));
-        /* historyFileSaveChooser.setSelectedFile(new File(GUIHistoryFileName + ".txt")); */
-        historyFileSaveChooser.setDialogTitle("Select ADT History Listing File");
-        int returnVal = historyFileSaveChooser.showSaveDialog(historyFileSaveChooser);
+        historyFileSaveChooser.setCurrentDirectory(null);
+        historyFileSaveChooser.setDialogTitle("Save ADT History File");
+        int returnVal = historyFileSaveChooser.showSaveDialog(historyFrame);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             saveFile = historyFileSaveChooser.getSelectedFile();
             try (FileWriter outFile = new FileWriter(saveFile)) {
                 outFile.write(HistoryListOutput);
+                outFile.flush();
                 outFile.close();
-                /* outFile.flush(); */
                 ErrorMessage = String.format("success writing history file output file %s\n",saveFile.toString());
             } catch (IOException ex) {
                 logger.error("problem writing to history file output", ex);
                 ErrorMessage = String.format("error writing history file output file %s\n",saveFile.toString());
             }
-            System.out.printf(ErrorMessage);
+            System.out.println(ErrorMessage);
             userMessage(ErrorMessage);
         }
-        //else if (returnVal == JFileChooser.CANCEL_OPTION) {
-        //    // User has pressed cancel button
-        //}
             
         String saveFilePath = null;
         if (saveFile != null) {
-            saveFilePath = saveFile.toString();
+            saveFilePath = saveFile.getAbsolutePath();
         }
         return saveFilePath;
 
     }
+    
+    /**
+     * Write out the ATCF file
+     * @param outputstyle
+     * @return true if written ok
+     */
     
     private boolean ATCFFileOutput(int outputstyle) {
         File saveFile = null;
@@ -1424,20 +1426,15 @@ public class ADTControl extends DisplayControlImpl {
         String ATCFOutputFilePath;
         String ATCFFileOutput;
         String ATCFMessage;
-        String HistoryPath;
         boolean writefileTF = false;
         boolean returnStatus = true;
         
         if (outputstyle == 0) {
             // output entire history file in ATCF
             historyFileSaveChooser = new JFileChooser();
-            HistoryPath = System.getenv("ODTHISTORY");
-            if (HistoryPath == null) {
-                HistoryPath = System.getenv("HOME");
-            }
-            historyFileSaveChooser.setCurrentDirectory(new File(HistoryPath));
-            historyFileSaveChooser.setDialogTitle("Select ATCF History Listing File");
-            int returnVal = historyFileSaveChooser.showSaveDialog(historyFileSaveChooser);
+            historyFileSaveChooser.setCurrentDirectory(null);
+            historyFileSaveChooser.setDialogTitle("Write ATCF File");
+            int returnVal = historyFileSaveChooser.showSaveDialog(historyFrame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 saveFile = historyFileSaveChooser.getSelectedFile();
                 writefileTF = true;
@@ -1452,7 +1449,7 @@ public class ADTControl extends DisplayControlImpl {
             GUIATCFSiteID = ATCFEntrySiteTextField.getText();
             
             if ((GUIATCFStormID == null) || (GUIATCFSiteID == null)) {
-                JOptionPane.showMessageDialog(null, "Please provide valid Storm and Site IDs for ATCF output.");
+                JOptionPane.showMessageDialog(this.getMainPanel(), "Please provide valid Storm and Site IDs for ATCF output.");
                 return false;
             }
             
@@ -1486,23 +1483,28 @@ public class ADTControl extends DisplayControlImpl {
                 ATCFOutputFilePath = System.getenv("HOME");
             }
             logger.debug("atcf output path={}*", ATCFOutputFilePath);
-            saveFile = new File(ATCFOutputFilePath + "/" + ATCFOutputFileName);
+            saveFile = new File(ATCFOutputFilePath + File.separator + ATCFOutputFileName);
             logger.debug("atcf output name={}*", saveFile.toString());
             writefileTF = true;
         }
         // call routine to output file
-        ATCFFileOutput = History.ListHistory(outputstyle,GUIHistoryListFormat,GUIATCFSiteID,GUIATCFStormID);
+        logger.info("Site ID: " + GUIATCFSiteID + ", Storm ID: " + GUIATCFStormID);
+        if ((GUIATCFSiteID == null) || (GUIATCFStormID == null)) {
+            JOptionPane.showMessageDialog(historyFrame, "You must first activate ATCF output");
+            return returnStatus;
+        }
+        ATCFFileOutput = History.ListHistory(outputstyle, GUIHistoryListFormat, GUIATCFSiteID, GUIATCFStormID);
         if (writefileTF) {
             try (FileWriter outFile = new FileWriter(saveFile)) {
                 outFile.write(ATCFFileOutput);
+                outFile.flush();
                 outFile.close();
-                /* outFile.flush(); */
                 ATCFMessage = String.format("Success writing ATCF file %s",saveFile);
             } catch (IOException ex) {
                 logger.error("problem writing to ATCF file", ex);
                 ATCFMessage = String.format("Error writing ATCF file %s",saveFile);
             }
-            System.out.printf(ATCFMessage);
+            System.out.println(ATCFMessage);
             userMessage(ATCFMessage);
         }
         return returnStatus;
@@ -1658,7 +1660,7 @@ public class ADTControl extends DisplayControlImpl {
                     String[] tokens = line.split(delims);
                     String IDstring = tokens[0];
                     String RecValue = tokens[1];
-                    /* System.out.printf("scanning IDstring=%s\n",IDstring); */
+                    /* System.out.println("scanning IDstring=%s\n",IDstring); */
                     switch (IDstring) {
                         case "ATCFOutputTF":
                             GUIATCFOutputTF = Boolean.valueOf(RecValue);
@@ -1772,7 +1774,7 @@ public class ADTControl extends DisplayControlImpl {
 //            int id = event.getId();
 //            // String idstring = event.toString();
 //            // InputEvent inputEvent = event.getInputEvent();
-//            // System.out.printf("event ID=%d %s\n",id,idstring);
+//            // System.out.println("event ID=%d %s\n",id,idstring);
 //            try {
 //                if (id == DisplayEvent.MOUSE_PRESSED_LEFT) {
 //                    logger.debug("Manual Position Selection");
@@ -1928,7 +1930,7 @@ public class ADTControl extends DisplayControlImpl {
         String HHMMSSTime = timeformat.format(datevalue);
         int ImageDateInt = Integer.valueOf(JulianDate);
         int ImageTimeInt = Integer.valueOf(HHMMSSTime);
-        // System.out.printf("image date = %d  image time=%d\n",ImageDateInt,ImageTimeInt); */
+        // System.out.println("image date = %d  image time=%d\n",ImageDateInt,ImageTimeInt); */
         
         Data.IRData_JulianDate = ImageDateInt;
         Data.IRData_HHMMSSTime = ImageTimeInt;
