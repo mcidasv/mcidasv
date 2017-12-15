@@ -2586,6 +2586,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             // (e.g. 50 GOES-16 MESO images) more tolerable.
             
             if (doGeoSpeedup) {
+
                 int loIdx = 0;
                 int hiIdx = previewUrls.size() - 1;
                 boolean directionInc = true;
@@ -2593,7 +2594,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 int iterations = 0;
 
                 while (! sizeMatch) {
-                    // for (String previewUrl : previewUrls) {
+
                     String previewUrl = null;
                     if (directionInc) {
                         previewUrl = previewUrls.get(loIdx);
@@ -2606,7 +2607,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     }
 
                     // Sanity check - if we get to the middle, we just quit and use what we found
-                    if (loIdx >= hiIdx) break;
+                    if ((loIdx >= hiIdx) && (! isRelative)) break;
 
                     logger.trace("attempting to create AreaDirectoryList using previewUrl={}", previewUrl);
                     AreaDirectoryList directoryList = new AreaDirectoryList(previewUrl);
