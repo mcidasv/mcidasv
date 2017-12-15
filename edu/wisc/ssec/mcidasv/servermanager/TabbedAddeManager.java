@@ -761,7 +761,7 @@ public class TabbedAddeManager extends JFrame {
             removeMenuItem.setEnabled(hasSelection);
             setLastTab(index);
         }
-        logger.trace("index={} hasRemote={} hasLocal={} guiInit={}", new Object[] {index, hasRemoteSelection(), hasLocalSelection(), guiInitialized});
+        logger.trace("index={} hasRemote={} hasLocal={} guiInit={}", index, hasRemoteSelection(), hasLocalSelection(), guiInitialized);
     }
 
     /**

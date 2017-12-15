@@ -147,6 +147,9 @@ public class RemoteEntryEditor extends JDialog {
      */
     private final Set<JTextField> badFields = newLinkedHashSet(25);
 
+    /** Server manager GUI. Value may be {@code null}. */
+    private final TabbedAddeManager manager;
+    
     /** Reference back to the server manager. */
     private final EntryStore entryStore;
 
@@ -195,7 +198,7 @@ public class RemoteEntryEditor extends JDialog {
     public RemoteEntryEditor(EntryStore entryStore, String address, String group) {
         super((JDialog)null, true);
         this.entryStore = entryStore;
-//        this.manager = null;
+        this.manager = null;
         this.serverText = address;
         this.datasetText = group;
         initComponents(RemoteAddeEntry.INVALID_ENTRIES);
@@ -214,7 +217,7 @@ public class RemoteEntryEditor extends JDialog {
     public RemoteEntryEditor(Frame parent, boolean modal, final TabbedAddeManager manager, final EntryStore store, final List<RemoteAddeEntry> entries) {
         super(manager, modal);
         this.entryStore = store;
-//        this.manager = manager;
+        this.manager = manager;
         this.serverText = null;
         this.datasetText = null;
         if (! entries.equals(RemoteAddeEntry.INVALID_ENTRIES)) {
@@ -820,6 +823,7 @@ public class RemoteEntryEditor extends JDialog {
             }
         }
         pack();
+        setLocationRelativeTo(manager);
     }// </editor-fold>
 
     private void acctBoxActionPerformed(ActionEvent evt) {
