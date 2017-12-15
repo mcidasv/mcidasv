@@ -815,33 +815,35 @@ public class GridTrajectoryControlNew extends DrawingControl {
             tmpSelection.setToLevel(null);
             DataChoice wchoice = null;
 
-            if (coloredByAnother) {
-                DerivedDataChoice derivedDataChoice =
-                    ((DerivedDataChoice) ((DerivedDataChoice) choice).getChoices()
-                    .get(0));
-                if (is2D) {
-                    wchoice =
-                        ((DataChoice) (derivedDataChoice).getChoices().get(
-                            0));
-                } else {
-                    wchoice =
-                        ((DataChoice) (derivedDataChoice).getChoices().get(
-                            2));
-                }
-            } else if (is2D) {
-                wchoice =
-                    ((DataChoice) ((DerivedDataChoice) choice).getChoices()
-                    .get(0));
-            } else {
-                wchoice =
-                    ((DataChoice) ((DerivedDataChoice) choice).getChoices()
-                    .get(2));
-            }
-            List     levelsList = wchoice.getAllLevels(tmpSelection);
             Object[] levels     = null;
-            if ((levelsList != null) && (levelsList.size() > 0)) {
-                levels = (Object[]) levelsList.toArray(
-                    new Object[levelsList.size()]);
+            
+            // TJJ Dec 2017 
+            // Path of Formulas -> Grids -> Grid 2D Trajectory
+            // was not setting 2D vs 3D correctly because by the time Grid Trajectory Control was
+            // trying to initialize, the direct datachoices have not been selected yet. Working
+            // around a couple 3D NPEs gets it working pending further investigation.
+            
+            try {
+                if (coloredByAnother) {
+                    DerivedDataChoice derivedDataChoice = ((DerivedDataChoice) ((DerivedDataChoice) choice)
+                            .getChoices().get(0));
+                    if (is2D) {
+                        wchoice = ((DataChoice) (derivedDataChoice).getChoices().get(0));
+                    } else {
+                        wchoice = ((DataChoice) (derivedDataChoice).getChoices().get(2));
+                    }
+                } else if (is2D) {
+                    wchoice = ((DataChoice) ((DerivedDataChoice) choice).getChoices().get(0));
+                } else {
+                    wchoice = ((DataChoice) ((DerivedDataChoice) choice).getChoices().get(2));
+                }
+                List levelsList = wchoice.getAllLevels(tmpSelection);
+
+                if ((levelsList != null) && (levelsList.size() > 0)) {
+                    levels = (Object[]) levelsList.toArray(new Object[levelsList.size()]);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             if (levels == null) {
@@ -2303,7 +2305,12 @@ public class GridTrajectoryControlNew extends DrawingControl {
             float[][] geoVals = getEarthLocationPoints(latIndex, lonIndex,
                                     domain2D, alt, getSkipValue());
             float[][] setLocs = cs.toReference(geoVals);
-            setLocs[2] = mpd.scaleVerticalValues(setLocs[2]);
+            
+            // See other comment labeled "TJJ Dec 2017"
+            
+            if (setLocs != null) {
+                setLocs[2] = mpd.scaleVerticalValues(setLocs[2]);
+            }
 
             RealTupleType types = cs.getReference();
             gridTrackControl.myDisplay.setStartPoints(types, setLocs);
