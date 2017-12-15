@@ -52,13 +52,13 @@ This file overrides IDV addeservers.xml
   </server>
   <server name="lead.unidata.ucar.edu">
     <group
-      names="BLIZZARD,CIMSS,GINICOMP,GINIEAST,GINIWEST,NEXRCOMP,NPGOESR,RTGOESR,RTIMAGES,TOPO"
+      names="CIMSS,EAST,GINICOMP,GINIEAST,GINIWEST,NEXRCOMP,NPGOESR,RTGOESR,RTIMAGES,TOPO"
       type="image" />
     <group
       names="RTGRIDS"
       type="grid" />
     <group
-      names="RTNEXRAD,RTTWDR,NEXRALL"
+      names="RTNEXRAD,RTTDWR,NEXRALL"
       type="radar" />
     <group
       names="RTPTSRC"
