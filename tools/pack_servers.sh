@@ -289,8 +289,19 @@ if [ "${PLATFORM_SHORT}" = "linux" ]; then
                 fi
         done
 fi
+if [ "${PLATFORM_SHORT}" = "linux64" ]; then
+        FILES="libgfortran.so.1 libnetcdf.so.7 libhdf5.so.8 libhdf5_hl.so.8"
+        for FILE in ${FILES}; do
+                echo "Copying ${FILE}..."
+                if [ -r "${DEST_DIR}/${FILE}" ]; then
+                        cp ${DEST_DIR}/${FILE} ${DEST_DIR_BIN}/${FILE}
+                else
+                        echo "WARNING: ${DEST_DIR}/${FILE} does not exist"
+                fi
+        done
+fi
 if [ "${PLATFORM_SHORT}" = "darwin" ]; then
-	FILES="libgcc_s.1.dylib libgfortran.3.dylib libquadmath.0.dylib libnetcdf.7.dylib libhdf5.8.dylib libhdf5_hl.8.dylib"
+	FILES="libgcc_s.1.dylib libgfortran.4.dylib libquadmath.0.dylib libnetcdf.11.dylib libhdf5.8.dylib libhdf5_hl.8.dylib"
 	for FILE in ${FILES}; do
 		echo "Copying ${FILE}..."
 		if [ -r "${DEST_DIR}/${FILE}" ]; then
