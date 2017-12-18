@@ -2607,7 +2607,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     }
 
                     // Sanity check - if we get to the middle, we just quit and use what we found
-                    if ((loIdx >= hiIdx) && (! isRelative)) break;
+                    if ((loIdx > hiIdx) && (! isRelative)) break;
 
                     logger.trace("attempting to create AreaDirectoryList using previewUrl={}", previewUrl);
                     AreaDirectoryList directoryList = new AreaDirectoryList(previewUrl);
