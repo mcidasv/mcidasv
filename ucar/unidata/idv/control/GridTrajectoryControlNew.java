@@ -2347,6 +2347,8 @@ public class GridTrajectoryControlNew extends DrawingControl {
 
         controlPane.setVisible(true);
         controlPane.add(gridTrackControl.doMakeContents());
+        // TJJ Dec 2017 - force revalidate so new subpanel shows right away
+        controlPane.revalidate();
 
         //Unit cUnit = getDisplayUnit();
 
