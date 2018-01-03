@@ -35,6 +35,7 @@
         <mapID target="idv.controls.drawingcontrol"                  url="controls/misc/DrawingControl.html" />
 		<mapID target="idv.controls.ensemblegridcontrol"			 url="controls/EnsembleGridControl.html" />
 		<mapID target="idv.controls.gridtrajectory"					 url="controls/GridTrajectory.html" />
+        <mapID target="idv.controls.gridtrajectory1p6"				 url="controls/GridTrajectory1p6.html" />
         <mapID target="idv.controls.flowplanviewcontrol"             url="controls/FlowPlanViewControl.html" />
 		<mapID target="idv.controls.frontcontrol"					 url="controls/FrontControl.html" />
 		<mapID target="idv.controls.hovmollercontrol"				 url="controls/HovmollerControl.html" />

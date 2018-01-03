@@ -64,6 +64,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sa
       <td valign="top">createDirectories=</td>
       <td>creates the directory specified in the file keyword if it does not already exist when set to True; default=False</td>
     </tr>
+    <tr>
+      <td valign="top">index=</td>
+      <td>specifies the frame (index) in the display to capture when multiple frames are displayed in a loop.  This is a 0-based list, where the first frame is index 0, the second frame is index 1, and so on; default=0</td>
+    </tr>
   </table></div>
 <ul class="propertylist">
   <li class="propertylistitem">There are a variety of keywords that can be passed through the keyword parameter of captureImage. Below is a list of these formatting keywords and options for each of them. See the second example below for an example of passing various formatting options through captureImage with a dictionary.</li>

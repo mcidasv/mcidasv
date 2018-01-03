@@ -51,11 +51,11 @@ public class Env {
    public static boolean CBSearchTF;
 
    // Default Java boolean value is false - need to initialize if we want true
-   public static boolean UseCKZTF = true;
+   public static boolean UseCKZTF = false;
    public static boolean Vmax1or10TF = true;
 
    public static boolean UsePMWTF;
-   public static int UserDefineDomain;               /* 0=automated; 1=manual */
+   public static int UserDefineDomain;        /* 0=automated; 1=manual */
    public static int DomainID;                /* Domain ID value : 0-Auto/Atl;1-Auto/Pac;2-Man/Atl;3-Man/Pac */
    public static int ForecastFileType;
    public static int MWJulianDate;

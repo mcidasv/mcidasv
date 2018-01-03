@@ -50,6 +50,26 @@ This file overrides IDV addeservers.xml
        names="RTWXTEXT"
        type="text"/>
   </server>
+  <server name="lead.unidata.ucar.edu">
+    <group
+      names="CIMSS,EAST,GINICOMP,GINIEAST,GINIWEST,NEXRCOMP,NPGOESR,RTGOESR,RTIMAGES,TOPO"
+      type="image" />
+    <group
+      names="RTGRIDS"
+      type="grid" />
+    <group
+      names="RTNEXRAD,RTTDWR,NEXRALL"
+      type="radar" />
+    <group
+      names="RTPTSRC"
+      type="point" />
+    <group
+      names="RTWXTEXT"
+      type="text" />
+    <group
+      names="RTWXTEXT"
+      type="wxtext" />
+  </server>
   <server name="atm.ucar.edu" active="true">
     <group
             names="RTIMAGES,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINICOMP,NEXRCOMP,TOPO,GLOBAL,GINIALL,IMAGEALL,NEXRCALL"

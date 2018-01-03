@@ -51,15 +51,28 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
           Guide</a></strong></li>
   </ul>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.7">Display
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat2_1.7">Data
+    Changes</a></div>
+<div class="faq-category">
+  <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#speed1.7">Image Chooser Speedup</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#remoteABI1.7">GOES 16 ABI Remote Server</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#localservers1.7">Local Servers</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#glm1.7">GLM Plugin</a></strong></li>
+  </ul>
+</div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.7">Display
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#profileAlongTrack1.7">ProfileAlongTrack Display</a></strong></li>
     <li><strong><a class="faq-question-link" href="#spanish1.7">Spanish Characters for High and Low Symbols</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#logo1.7">Default McIDAS-V Logo</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#ncdump1.7">ncdump Output of HYDRA Data Sources</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#traj1.7">Grid Trajectory Controls</a></strong></li>
   </ul>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.7">Other
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.7">Other
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
@@ -70,14 +83,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#scripting1.7">Scripting</a></strong></li>
     <li><strong><a class="faq-question-link" href="#lakes1.7">Great Lakes Location Labels</a></strong></li>
     <li><strong><a class="faq-question-link" href="#rangerings1.7">Range Ring Linking</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#ncdump1.7">ncdump Output of HYDRA Data Sources</a></strong></li>
     <li><strong><a class="faq-question-link" href="#shapefiles1.7">Shapefiles in Zipped Bundles</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#urlredirects1.7">URL Redirects</a></strong></li>
   </ul>
 </div>
-<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.7">Under Development</a></div>
+<div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.7">Under Development</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#npp1.7">Suomi NPP Chooser</a></strong></li></ul></div>
+    <li><strong><a class="faq-question-link" href="#npp1.7">Suomi NPP Chooser</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#adt1.7">Advanced Dvorak Technique Display</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.7" id="faq1_cat1_1.7"></a>Documentation
@@ -89,7 +103,36 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   </div>
 </div>
 <div class="faq-bottom">
-  <div class="faq-category-title"><a name="faq1_cat2_1.7" id="faq1_cat2_1.7"></a>Display
+  <div class="faq-category-title"><a name="faq1_cat2_1.7" id="faq1_cat2_1.7"></a>Data
+    Changes</div>
+  <div class="faq-category"><a name="speed1.7" id="speed1.7"></a>
+    <h4>Image Chooser Speedup</h4>
+    <div class="faq-answer">Improved the speed of the <strong>Satellite&gt;Imagery</strong> chooser when using a dataset of geostationary data. The speed increase will be most noticeable with large datasets, as now only one ADDE call is made to generate the preview image. This improvement will be seen in the <strong>Field Selector</strong> tab of the Data Explorer. Once the band and calibration have been selected, the subset tabs (<strong>Times</strong>, <strong>Region</strong>, and <strong>Advanced</strong>) tabs will appear quicker than in previous versions of McIDAS-V.</div>
+  </div>
+  <div class="faq-category"><a name="remoteABI1.7" id="remoteABI1.7"></a>
+    <h4>GOES 16 ABI Remote Server</h4>
+    <div class="faq-answer">Added a new remote ADDE server to the <strong>Satellite&gt;Imagery</strong> chooser (lead.unidata.ucar.edu) that contains realtime remote GOES 16 level 1b data and level 2 products. There are three different datasets on this server for GOES 16 data: EAST, NPGOESR, and RTGOESR. This server is maintained by Unidata.</div>
+  </div>
+  <div class="faq-category"><a name="localservers1.7" id="localservers1.7"></a>
+    <h4>Local Servers</h4>
+    <div class="faq-answer">Updated local ADDE servers on Linux and OS X platforms. In conjunction with this, navigation improvements have been made to GOES 16 ABI and Himawari data loaded via ADDE. For specific information about the local ADDE servers, see <a href="tools/LocalDataManager.html">Local ADDE Data Manager</a>.</div>
+  </div>
+  <div class="faq-category"><a name="glm1.7" id="glm1.7"></a>
+    <h4>GLM Plugin</h4>
+    <div class="faq-answer">Added a new plugin to the <a href="tools/Plugins.html">Plugin Manager</a> under <strong>Data Sources&gt;GLM NetCDF Files</strong>. After this plugin is installed, local GLM netCDF files can be loaded through the <strong>General&gt;Files/Directories</strong> chooser with the three new data types designed plot event data (GLM Events Data files), flash data (GLM Flashes Data files), and group data (GLM Groups Data files). To plot flash data, select the data file (or multiple data files can be selected at once to create a loop), choose the GLM Flashes Data files Data Type, and click Add Source. Note that the files must be mission-standard format and     follow the GRB naming convention, and thus look similar to     <strong>OR_GLM-L2-LCFA_G16_s20172151749200_e20172151749400_c20172151749467.nc</strong>. Once in the Field Selector, it is suggested to adjust the <a href="data/DataSource.html#basicproperties">time binning</a> settings of the data source. Each point in the data is its own time, and time binning allows for creating a loop where multiple points are plotted at the same time step. For example, Bin Size and Round To can be set to '5 minutes' to create a loop with time intervals of 5 minutes. This data can be plotted using the Point Data Plot display type. Note that new GLM layout models have been added for event, flash, and group data.</div>
+  </div>
+  <div class="faq-category"><a name="ncdump1.7" id="ncdump1.7"></a>
+    <h4>ncdump Output of HYDRA Data Sources</h4>
+    <div class="faq-answer">
+    Added the ability to view the ncdump output of a HYDRA data source.  Once the data source has been added to the Field Selector, right-click on the data source and choose Properties.  In the Properties window, there is a new Metadata tab that includes the ncdump output.</div>
+  </div>
+  <div class="faq-category"><a name="traj1.7" id="traj1.7"></a>
+    <h4>Grid Trajectory Controls</h4>
+    <div class="faq-answer">
+    Expanded the <a href="controls/GridTrajectory.html">Grid Trajectory Controls</a> to add the ability to set the trajectory initial area as well as the trajectory form (e.g. Ribbon, Line, Cylinder).  A new trajectory form, Points, was also added.</div>
+</div>
+<div class="faq-bottom">
+  <div class="faq-category-title"><a name="faq1_cat3_1.7" id="faq1_cat3_1.7"></a>Display
     Changes</div>
   <div class="faq-category"><a name="profileAlongTrack1.7" id="profileAlongTrack1.7"></a>
     <h4>ProfileAlongTrack Display</h4>
@@ -98,10 +141,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div class="faq-category"><a name="spanish1.7" id="spanish1.7"></a>
     <h4>Spanish Characters for High and Low Symbols</h4>
     <div class="faq-answer">Added the ability to change the 'H' and 'L' shapes (High and Low) from the Drawing Controls to 'A' and 'B' for the Spanish words 'Alto' (high) and 'Bajo' (low).</div>
-  </div>
 </div>
+  </div>
+  <div class="faq-category"><a name="logo1.7" id="logo1.7"></a>
+    <h4>Default McIDAS-V Logo</h4>
+    <div class="faq-answer">Added a default McIDAS-V logo to the Display Window Preferences tab of the User Preferences. By default, this logo is positioned at the bottom left corner of each display panel.</div>
+  </div>
 <div class="faq-bottom">
-  <div class="faq-category-title"><a name="faq1_cat3_1.7" id="faq1_cat3_1.7"></a>Other
+  <div class="faq-category-title"><a name="faq1_cat4_1.7" id="faq1_cat4_1.7"></a>Other
     Changes</div>
     <div class="faq-category"><a name="relative1.7" id="relative1.7"></a>
     <h4>Relative Times Tab Update</h4>
@@ -121,7 +168,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       <p>Updated Java from version 1.8.0_45 to 1.8.0_112</p>
       <p>Updated Java 3D from version 1.6.0-pre11 to 1.6.0-pre12.</p>
       <p>Updated JOGL from version 2.2.3 to 2.3.2.</p>
-      <p>Updated NetCDF from version 4.6.5 to 4.6.7-SNAPSHOT</p>
+      <p>Updated NetCDF from version 4.6.5 to 4.6.11</p>
     </div>
   </div>
   <div class="faq-category"><a name="scripting1.7" id="scripting1.7"></a>
@@ -140,6 +187,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       <ul>
       <li>Added a new keyword to annotate() called bgColor, which adds a background color to annotated text. The default is for the text to not have a background.</li>
       <li>Added new keywords to writeMovie() that allow for defining the number of frames to show per second (framesPerSecond) and how long to show the last frame in the animated GIF (endFramePause).</li>
+      <li>Added a new keyword to captureImage() called index that allows for specifying which frame (index) to capture when multiple frames are displayed in a loop.</li>
       </ul>
     <li>Miscellaneous scripting-related changes:</li>
       <ul>
@@ -158,24 +206,30 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-answer">
     Added the ability to link the Color and Line Width settings in the Range Ring controls between the Range Rings, Radials, and Labels. This makes it easy to set all of the components of the range rings to be the same color and width.</div>
   </div>
-  <div class="faq-category"><a name="ncdump1.7" id="ncdump1.7"></a>
-    <h4>ncdump Output of HYDRA Data Sources</h4>
-    <div class="faq-answer">
-    Added the ability to view the ncdump output of a HYDRA data source.  Once the data source has been added to the Field Selector, right-click on the data source and choose Properties.  In the Properties window, there is a new Metadata tab that includes the ncdump output.</div>
-  </div>
   <div class="faq-category"><a name="shapefiles1.7" id="shapefiles1.7"></a>
     <h4>Shapefiles in Zipped Bundles</h4>
     <div class="faq-answer">
     Added the ability to save shapefiles in zipped bundles.</div>
   </div>
+  <div class="faq-category"><a name="urlredirects1.7" id="urlredirects1.7"></a>
+    <h4>URL Redirects</h4>
+    <div class="faq-answer">
+    Added the ability for McIDAS-V to handle URL redirects in all locations where URLs can be used, including the <strong>General&gt;URLs</strong> chooser. A common case of this would be an HTTP URL that is redirected to HTTPS.</div>
+  </div>
 </div>
 <div class="faq-bottom">
-  <div class="faq-category-title"><a name="faq1_cat4_1.7" id="faq1_cat4_1.7"></a>Under Development</div>
+  <div class="faq-category-title"><a name="faq1_cat5_1.7" id="faq1_cat5_1.7"></a>Under Development</div>
   <div class="faq-category"><a name="npp1.7" id="npp1.7"></a>
     <h4>Suomi NPP Chooser</h4>
     <div class="faq-answer">
       <p>Added a button to change the listing of fields in the Field Selector between variable names and the long_name attribute of each variable.  This button is only available if the variable names and long_name attributes are different.</p>
       <p>Added support for the VIIRS Cloud Mask EDR (Environmental Data Record) with the naming convention of VICMO, which was released in March 2017. The same EDR product with the previous naming convention of IICMO is supported as well.</p>
+    </div>
+  </div>
+  <div class="faq-category"><a name="adt1.7" id="adt1.7"></a>
+    <h4>Advanced Dvorak Technique Display</h4>
+    <div class="faq-answer">
+      <p>Added a new display type, Advanced Dvorak Technique (Under Development), that provides Advanced Dvorak Technique (ADT) analysis results for local and remote ADDE satellite data.  Note that this display type is considered to be under development.  Current documentation can be found here: <a href="ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/McV_ADT_1p7.docx" target="_blank">ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/McV_ADT_1p7.docx</a>.</p>
     </div>
   </div>
 </div>

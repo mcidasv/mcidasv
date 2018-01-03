@@ -33,6 +33,7 @@ import ucar.unidata.data.DataUtil;
 
 import ucar.unidata.util.Misc;
 
+import ucar.unidata.util.Range;
 import ucar.visad.UtcDate;
 import ucar.visad.Util;
 import ucar.visad.quantities.AirPressure;
@@ -1325,7 +1326,34 @@ public class DerivedGridFactory {
         return GridUtil.setParamType(uvwGrid, earthVectorType,
                                      false /* copy */);
     }
+    /**
+     * _more_
+     *
+     * @param uGrid _more_
+     * @param vGrid _more_
+     *
+     * @return _more_
+     *
+     * @throws RemoteException _more_
+     * @throws VisADException _more_
+     */
+    public static FieldImpl createFlowVectorsN(FieldImpl uGrid,
+                                               FieldImpl vGrid)
+            throws VisADException, RemoteException {
 
+        //FieldImpl uvwGrid = combineGrids(new FieldImpl[] { uGrid, vGrid, w },
+        //                                true);
+        FieldImpl uvGrid = combineGrids(new FieldImpl[]{uGrid, vGrid}, GridUtil.DEFAULT_SAMPLING_MODE,
+                GridUtil.DEFAULT_ERROR_MODE, true);
+        TupleType paramType = GridUtil.getParamType(uvGrid);
+        RealType[] reals = Util.ensureUnit(paramType.getRealComponents(),
+                CommonUnit.meterPerSecond);
+        RealTupleType earthVectorType = new EarthVectorType(reals[0],
+                reals[1]);
+
+        return GridUtil.setParamType(uvGrid, earthVectorType,
+                false /* copy */);
+    }
     /**
      * _more_
      *
@@ -1493,6 +1521,26 @@ public class DerivedGridFactory {
         return combineGrids(grid1, grid2, false);
     }
 
+    /**
+     * Combine two Fields into one.  If the grids are on different
+     * spatial domains, the second is resampled to the domain of the first.
+     *
+     * @param grid1  first grid.  This will be used for the time/space domain
+     * @param grid2  second grid.
+     *
+     * @return combined grid.
+     *
+     * @throws RemoteException  Java RMI error
+     * @throws VisADException   VisAD Error
+     */
+    public static FieldImpl combineGridsN(FieldImpl grid1, FieldImpl grid2)
+            throws VisADException, RemoteException {
+        SampledSet grid1Domain = GridUtil.getSpatialDomain(grid1);
+        if(!grid1Domain.equals(GridUtil.getSpatialDomain(grid2))){
+            grid2 = GridUtil.resampleGrid(grid2, grid1Domain);
+        }
+        return combineGrids(grid1, grid2, false);
+    }
     /**
      * Combine two Fields into one.  If the grids are on different
      * time domains, the second is resampled to the domain of the first.
@@ -2373,6 +2421,23 @@ public class DerivedGridFactory {
         // make es from temperature
         FlatField esFF =
             (FlatField) SaturationVaporPressure.create((FlatField) temp);
+        Unit percentUnit = CommonUnits.PERCENT;
+        Unit rUnit = rh.getRangeUnits()[0][0];
+        FunctionType newFFType;
+        if( rUnit == null || !(rUnit.isConvertible(percentUnit))){
+
+            Range[] range = GridUtil.fieldMinMax(rh);
+            if(range[0].max <= 1.1 && range[0].min > 0){
+                //it is fraction
+                rh = (FlatField)rh.__mul__(100.0);
+
+            }
+            RealType rt = GridUtil.getParamType(rh).getRealComponents()[0];
+            RealType newType = Util.makeRealType(rt.getName(), percentUnit);
+
+            rh = (FlatField) GridUtil.setParamType(rh, newType);
+
+        }
 
         // make grid of actual vapor pressure
         FlatField eFF = (FlatField) (GridMath.multiply(esFF, (FlatField) rh));

@@ -292,8 +292,9 @@ public class LocalEntryEditor extends JDialog {
         c.add(saveButton,     "flowx, split 2, skip 1, alignx right, aligny top");
         c.add(cancelButton,   "alignx right, aligny top");
         pack();
+        setLocationRelativeTo(managerController);
     }// </editor-fold>
-
+ 
     /**
      * Triggered when the {@literal "add"} button is clicked.
      *
@@ -318,7 +319,12 @@ public class LocalEntryEditor extends JDialog {
      * @param evt Ignored.
      */
     private void browseButtonActionPerformed(final ActionEvent evt) {
-        String lastPath = getLastPath();
+        String lastPath;
+        if (currentEntry != null) {
+            lastPath = currentEntry.getMask();
+        } else {
+            lastPath = getLastPath();
+        }
         selectedPath = getDataDirectory(lastPath);
         // yes, the "!=" is intentional! getDataDirectory(String) will return
         // the exact String it is given if the user cancelled the file picker

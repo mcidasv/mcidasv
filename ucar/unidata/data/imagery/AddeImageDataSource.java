@@ -125,6 +125,8 @@ public class AddeImageDataSource extends ImageDataSource {
     /** _more_ */
     private AREACoordinateSystem acs;
 
+    private String imageType = "unknown";
+    
     /** _more_ */
     BandInfo bandId;
 
@@ -211,6 +213,8 @@ public class AddeImageDataSource extends ImageDataSource {
         if (oj != null) {
             this.bandId = (BandInfo) oj.get(0);
         }
+        
+        this.imageType = ((String)properties.getOrDefault("prop.imagetype", "unknown")).toLowerCase();
     }
 
     /**
@@ -1666,8 +1670,11 @@ public class AddeImageDataSource extends ImageDataSource {
             getDataContext().getIdv().showNormalCursor();
             return;
         }
-        components.add(addeImageDataSelection.getRegionPanel());
-        components.add(addeImageDataSelection.getAdvancedPanel());
+        
+        if (!Objects.equals(imageType, "radar")) {
+            components.add(addeImageDataSelection.getRegionPanel());
+            components.add(addeImageDataSelection.getAdvancedPanel());
+        }
         getDataContext().getIdv().showNormalCursor();
     }
 
