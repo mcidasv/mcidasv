@@ -76,6 +76,7 @@ import edu.wisc.ssec.mcidasv.adt.Functions;
 import edu.wisc.ssec.mcidasv.adt.History;
 import edu.wisc.ssec.mcidasv.adt.Main;
 import edu.wisc.ssec.mcidasv.adt.ReadIRImage;
+import edu.wisc.ssec.mcidasv.util.WebBrowser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -733,6 +734,13 @@ public class ADTControl extends DisplayControlImpl {
         });
         
         JLabel blankfield = new JLabel("");
+        
+        // TJJ Jan 2018 - interim link to Help for McV 1.7 release 
+        JButton helpLinkLabel = new JButton("<html><a href=\"http://www.ssec.wisc.edu\">Help</a></html>");
+        helpLinkLabel.setToolTipText("Opens ADT Help PDF in your system web browser");
+        helpLinkLabel.addActionListener(e -> {
+            WebBrowser.browse("http://www.ssec.wisc.edu/mcidas/software/v/resources/adt/McV_ADT_1p7.pdf");
+        });
 
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
         JComponent widgets =
@@ -764,7 +772,7 @@ public class ADTControl extends DisplayControlImpl {
                     left(hbox(arr(filler(30, 1), sceneOverrideButton, OverrideLabel), 5)), filler(),
                     left(hbox(arr(filler(30, 1), LandFlagLabel, LandONButton, LandOFFButton, filler(20, 1), VOutLabel, V1MinButton, V10MinButton, filler(20, 1), RawTLabel, RawTTextField, RMWLabel, RMWTextField), 5)), filler(),
                     left(hbox(arr(filler(30, 1), ATCFOutputLabel, ATCFOutputButton, ATCFEntryStormLabel, ATCFEntryStormTextField, ATCFEntrySiteLabel, ATCFEntrySiteTextField), 5)), filler(),
-                    left(hbox(arr(filler(80, 1), adtBtn, listBtn), 20)), filler()));
+                    left(hbox(arr(filler(80, 1), adtBtn, listBtn, helpLinkLabel), 20)), filler()));
                     
         JPanel controls = topLeft(widgets);
 
