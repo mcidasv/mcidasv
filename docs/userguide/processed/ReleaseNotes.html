@@ -69,6 +69,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#spanish1.7">Spanish Characters for High and Low Symbols</a></strong></li>
     <li><strong><a class="faq-question-link" href="#logo1.7">Default McIDAS-V Logo</a></strong></li>
     <li><strong><a class="faq-question-link" href="#ncdump1.7">ncdump Output of HYDRA Data Sources</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#traj1.7">Grid Trajectory Controls</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.7">Other
@@ -89,7 +90,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.7">Under Development</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#npp1.7">Suomi NPP Chooser</a></strong></li></ul></div>
+    <li><strong><a class="faq-question-link" href="#npp1.7">Suomi NPP Chooser</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#adt1.7">Advanced Dvorak Technique Display</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.7" id="faq1_cat1_1.7"></a>Documentation
@@ -124,6 +126,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-answer">
     Added the ability to view the ncdump output of a HYDRA data source.  Once the data source has been added to the Field Selector, right-click on the data source and choose Properties.  In the Properties window, there is a new Metadata tab that includes the ncdump output.</div>
   </div>
+  <div class="faq-category"><a name="traj1.7" id="traj1.7"></a>
+    <h4>Grid Trajectory Controls</h4>
+    <div class="faq-answer">
+    Expanded the <a href="controls/GridTrajectory.html">Grid Trajectory Controls</a> to add the ability to set the trajectory initial area as well as the trajectory form (e.g. Ribbon, Line, Cylinder).  A new trajectory form, Points, was also added.</div>
 </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat3_1.7" id="faq1_cat3_1.7"></a>Display
@@ -218,6 +224,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-answer">
       <p>Added a button to change the listing of fields in the Field Selector between variable names and the long_name attribute of each variable.  This button is only available if the variable names and long_name attributes are different.</p>
       <p>Added support for the VIIRS Cloud Mask EDR (Environmental Data Record) with the naming convention of VICMO, which was released in March 2017. The same EDR product with the previous naming convention of IICMO is supported as well.</p>
+    </div>
+  </div>
+  <div class="faq-category"><a name="adt1.7" id="adt1.7"></a>
+    <h4>Advanced Dvorak Technique Display</h4>
+    <div class="faq-answer">
+      <p>Added a new display type, Advanced Dvorak Technique (Under Development), that provides Advanced Dvorak Technique (ADT) analysis results for local and remote ADDE satellite data.  Note that this display type is considered to be under development.  Current documentation can be found here: <a href="ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/McV_ADT_1p7.docx" target="_blank">ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/McV_ADT_1p7.docx</a>.</p>
     </div>
   </div>
 </div>
