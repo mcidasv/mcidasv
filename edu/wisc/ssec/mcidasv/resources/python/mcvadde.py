@@ -35,12 +35,17 @@ from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 
 from edu.wisc.ssec.mcidasv.util import ErrorCodeAreaUtils
 
+from edu.wisc.ssec.mcidasv.servermanager import AddeAccount
+from edu.wisc.ssec.mcidasv.servermanager import AddeEntry
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from edu.wisc.ssec.mcidasv.servermanager import LocalAddeEntry
+from edu.wisc.ssec.mcidasv.servermanager import RemoteAddeEntry
 from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryStatus
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import addeFormatToStr
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import serverNameToStr
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToAddeFormat
+from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToEntrySource
+from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToEntryType
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToServerName
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import AddeFormat
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import ServerName
@@ -622,6 +627,57 @@ def getLocalADDEEntry(dataset, imageType):
             return entry
     # no matching descriptor was found so return an error value:
     return None
+    
+def getRemoteADDEEntry(server, dataset, datasetType=None):
+    # TODO(jon): maybe figure out a way to aggregate the RemoteAddeEntry objects
+    #            to simplify things for scripting?
+    if not datasetType:
+        datasetType = [ 'IMAGE', 'POINT', 'GRID', 'TEXT', 'NAV', 'RADAR' ]
+    elif isinstance(datasetType, str):
+        datasetType = [ datasetType ]
+        
+    datasetTypes = [ strToEntryType(dtype) for dtype in datasetType ]
+    
+    remoteEntries = getStaticMcv().getServerManager().getRemoteEntries()
+    results = []
+    for e in remoteEntries:
+        if e.getAddress() == server and e.getGroup() == dataset and e.getEntryType() in datasetTypes:
+            results.append(e)
+    return results
+    
+def makeRemoteADDEEntry(server, dataset, datasetType, accounting=None, save=False):
+    # TODO(jon): docs!
+    if len(dataset) > 8 or not dataset.isupper() or any(c in dataset for c in "/. []%"):
+        raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
+        
+    if not accounting:
+        user = AddeEntry.DEFAULT_ACCOUNT.getUsername()
+        proj = AddeEntry.DEFAULT_ACCOUNT.getProject()
+    elif isinstance(accounting, (tuple, list)) and len(accounting) == 2:
+        user = accounting[0]
+        proj = str(accounting[1])
+    else:
+        raise AddeJythonInvalidAccountingError("The 'accounting' parameter should be a tuple or list that contains your ADDE username and project number. Both values should be strings.")
+        
+    if not datasetType:
+        datasetTypes = []
+    elif isinstance(datasetType, str):
+        datasetTypes = [ strToEntryType(datasetType) ]
+    elif isinstance(datasetType, (tuple, list)):
+        datasetTypes = [ strToEntryType(dtype) for dtype in datasetType ]
+    else:
+        datasetTypes = []
+        
+    if not datasetTypes:
+        raise AddeJythonError("The 'datasetType' parameter can be either a single string or a list of strings. Valid strings are 'IMAGE', 'POINT', 'GRID', 'TEXT', 'NAV', and 'RADAR'.")
+        
+    results = []
+    src = AddeEntry.EntrySource.USER
+    for x in datasetTypes:
+        entry = RemoteAddeEntry.Builder(server, dataset).account(user, proj).type(x).source(src).temporary(not save).build()
+        results.append(entry)
+    getStaticMcv().getServerManager().addEntries(results)
+    return results
     
 def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     """Create a local ADDE entry in the server table.
