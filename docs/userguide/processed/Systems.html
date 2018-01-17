@@ -31,8 +31,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">System Requirements</div>
 <p>McIDAS-V should run on any platform that fully supports <b>Java</b> and <b>Java
-          3D</b>.  It has been tested on <b>Linux, Mac
-          OS X, and Windows</b>.
+          3D</b>.  It has been tested on <b>Linux, macOS,</b> and <b>Windows</b>.
           AIX and IRIX support the requirements in certain configurations,
           but have not been tested.
 </p>
@@ -68,9 +67,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
           bit)</td>
     </tr>
     <tr>
-        <td><b>Mac OS X<sup>(2)</sup></b></td>
-        <td>Mac OS X 10.8+</td>
-        <td>Mac OS X 10.9</td>
+        <td><b>OS X/macOS<sup>(2)</sup></b></td>
+        <td>OS X 10.8+</td>
+        <td>macOS 10.12</td>
     </tr>
     <tr>
       <td><b>Windows</b></td>
@@ -127,9 +126,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
       controller&quot;.</li>
   </ul>
 </li>
-<li><strong>Mac OS X </strong>
+<li><strong>OS X/macOS</strong>
   <ul>
-    <li><strong>10.8:</strong> Open the Apple menu and select &quot;About This Mac&quot;. Click on the &quot;More Info...&quot; button to open the About This Mac window. The graphics card will list next to <strong>Graphics</strong>.</li>
+    <li><strong>10.8:</strong> Open the Apple menu and select &quot;About This Mac&quot;. Click on the
+       &quot;More Info...&quot; button to open the About This Mac window. The graphics card will be 
+       listed next to <strong>Graphics</strong>.</li>
+    <li><strong>10.12:</strong> Open the Apple menu and select &quot;About This Mac&quot;. Click on the
+       &quot;Displays&quot; tab. The graphics card will be listed under the display information.</li>        
   </ul>
 </li>
 </ul>
@@ -172,7 +175,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
     <td><div align="center">2.3.2</div></td>
   </tr>
   <tr>
-    <td><strong>Mac OS X</strong></td>
+    <td><strong>OS X/macOS</strong></td>
     <td><div align="center">1.8.0<sup></sup></div></td>
 
     <td><div align="center">1.6.0</div></td>
@@ -194,9 +197,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
     <td><div align="center">2.3.2</div></td>
   </tr>
 </table>
-<p>The necessary versions of the JRE, Java3D and JOGL are included with the
-    Linux, Mac OS X, and Windows installers. If other
-  platforms fully support Java version 1.8+, Java 3D version 1.6+, and JOGL 2.3.2 they should also work, but have not been tested.</p>
+<p>The necessary versions of the JRE, Java3D and JOGL are included with the  Linux, OS X/macOS,
+   and Windows installers. If other platforms fully support Java version 1.8+, Java 3D version 1.6+,
+   and JOGL 2.3.2 they should also work, but have not been tested.</p>
 <blockquote>
 
   <p><b>Notes:</b> <br>
@@ -204,8 +207,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('Systems.html',tru
         Red Hat Linux may be incompatible with Java 3D packaged with McIDAS-V.
         If you experience X server crashes when exiting McIDAS-V, you will need
 to build and install Mesa from source available at <a href="http://www.mesa3d.org" target="_blank"> http://www.mesa3d.org</a>. </blockquote>
-<h3> 
-<a name="memory"></a></h3>
+
+<h3>System Memory and Processor Speed<a name="memory"></a></h3>
   <p>McIDAS-V can be demanding of hardware speed and memory depending on the
     size of the datasets you wish to work with. It is recommended that the system
     have a <b>minimum</b> of
@@ -220,8 +223,8 @@ to build and install Mesa from source available at <a href="http://www.mesa3d.or
 <p>For reasonable performance, it is recommended that an Intel system running
   McIDAS-V have at least a <b>2 GHz processor and 4 GB memory (RAM)</b>. Performance
   will be even better with faster processors and more memory.</p>
-<h3>
-Networking<a name="networking" id="networking"></a></h3>
+  
+<h3>Networking<a name="networking" id="networking"></a></h3>
   <p>McIDAS-V is designed to access data on remote servers on the Internet, as
   well as from local files. Downloading data from remote servers benefits from
     a fast connection to the Internet, since many data fields are large.</p>
