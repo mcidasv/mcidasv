@@ -35,7 +35,6 @@ import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -160,8 +159,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     /** Logger object. */
     private static final Logger logger = LoggerFactory.getLogger(McIdasPreferenceManager.class);
     
-    private static final float LOGO_SCALE_MIN = 0.1f;
-    private static final float LOGO_SCALE_MAX = 2.0f;
+    public static final float LOGO_SCALE_MIN = 0.1f;
+    public static final float LOGO_SCALE_MAX = 2.0f;
     
     /** 
      * <p>Controls how the preference panel list is displayed. Want to modify 
@@ -1082,8 +1081,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         logoPosBox.setSelectedItem(ViewManager.findLoc(logos[0]));
 
         final JTextField logoOffsetField = new JTextField(logos[1]);
-        // provide enough space for 12 characters
-        logoOffsetField.setColumns(12);
+        // provide enough space for 8 characters
+        logoOffsetField.setColumns(8);
         logoOffsetField.setToolTipText("Set an offset from the position (x,y)");
 
         JPanel logoScalePanel = new JPanel(new FlowLayout());
@@ -1136,17 +1135,14 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         logoScalePanel.add(logoSizeTextField);
         logoScalePanel.add(logoScaleSlider);
 
-        JPanel logoTop = new JPanel();
-        logoTop.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JPanel logoTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoTop.add(logoVizBox);
         
-        JPanel logoMiddle = new JPanel();
-        logoMiddle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JPanel logoMiddle = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoMiddle.add(logoField);
         logoMiddle.add(browseButton);
         
-        JPanel logoBottom = new JPanel();
-        logoBottom.setAlignmentX(Component.LEFT_ALIGNMENT);
+        JPanel logoBottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoBottom.add(new JLabel("Screen Position:"));
         logoBottom.add(logoPosBox);
         logoBottom.add(new JLabel("Offset:"));
@@ -1154,9 +1150,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         logoBottom.add(new JLabel("Scale:"));
         logoBottom.add(logoScalePanel);
         
-        logoPanel.add(logoTop, BorderLayout.NORTH);
-        logoPanel.add(logoMiddle, BorderLayout.CENTER);
-        logoPanel.add(logoBottom, BorderLayout.SOUTH);
+        logoPanel.add(logoTop);
+        logoPanel.add(logoMiddle);
+        logoPanel.add(logoBottom);
         
         logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
         
