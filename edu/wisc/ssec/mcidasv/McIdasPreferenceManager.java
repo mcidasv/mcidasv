@@ -1142,17 +1142,19 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         logoMiddle.add(logoField);
         logoMiddle.add(browseButton);
         
-        JPanel logoBottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        logoBottom.add(new JLabel("Screen Position:"));
-        logoBottom.add(logoPosBox);
-        logoBottom.add(new JLabel("Offset:"));
-        logoBottom.add(logoOffsetField);
-        logoBottom.add(new JLabel("Scale:"));
-        logoBottom.add(logoScalePanel);
+        JPanel logoBottomOne = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoBottomOne.add(new JLabel("Screen Position:"));
+        logoBottomOne.add(logoPosBox);
+        logoBottomOne.add(new JLabel("Offset:"));
+        logoBottomOne.add(logoOffsetField);
+        JPanel logoBottomTwo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoBottomTwo.add(new JLabel("Scale:"));
+        logoBottomTwo.add(logoScalePanel);
         
         logoPanel.add(logoTop);
         logoPanel.add(logoMiddle);
-        logoPanel.add(logoBottom);
+        logoPanel.add(logoBottomOne);
+        logoPanel.add(logoBottomTwo);
         
         logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
         

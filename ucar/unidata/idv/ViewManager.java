@@ -1525,17 +1525,17 @@ public class ViewManager extends SharableImpl implements ActionListener,
         JPanel logoPanel = new JPanel();
         logoPanel.setLayout(new BoxLayout(logoPanel, BoxLayout.PAGE_AXIS));
 
-        final JTextField logoOffsetField = new JTextField(logos[1]);
+        logoOffsetTextField = new JTextField(logos[1]);
         // provide enough space for 8 characters
-        logoOffsetField.setColumns(8);
-        logoOffsetField.setToolTipText("Set an offset from the position (x,y)");
+        logoOffsetTextField.setColumns(8);
+        logoOffsetTextField.setToolTipText("Set an offset from the position (x,y)");
 
         JPanel logoScalePanel = new JPanel(new FlowLayout());
         float scaleMin = McIdasPreferenceManager.LOGO_SCALE_MIN;
         float scaleMax = McIdasPreferenceManager.LOGO_SCALE_MAX;
         float logoScaleFactor =
             (float) idv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO_SCALE, 1.0);
-        final JSlider  logoScaleSlider = new JSlider(1, 20, 1);
+        logoSizer = new JSlider(1, 20, 1);
         final JTextField logoSizeTextField = new JTextField("" + logoScaleFactor);
         ActionListener logoListener = new ActionListener() {
 
@@ -1544,7 +1544,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 try {
                     float val = Float.parseFloat(logoSizeTextField.getText());
                     if ((val >= scaleMin) && (val <= scaleMax)) {
-                        logoScaleSlider.setValue((int) (val * 10));
+                        logoSizer.setValue((int) (val * 10));
                     } else {
                         JOptionPane.showMessageDialog(null, "Value provided is not a floating point number within valid range (0.1 to 2.0)");
                     }
@@ -1556,8 +1556,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
         };
         logoSizeTextField.addActionListener(logoListener);
 
-        logoScaleSlider.setMinorTickSpacing(1);
-        logoScaleSlider.setPaintTicks(true);
+        logoSizer.setMinorTickSpacing(1);
+        logoSizer.setPaintTicks(true);
         
         // TJJ Jan 2018 - create custom labels since we want float values for scale multiplier
         Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
@@ -1566,19 +1566,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
         labelTable.put(10, new JLabel("1.0"));
         labelTable.put(15, new JLabel("1.5"));
         labelTable.put(20, new JLabel("2.0"));
-        logoScaleSlider.setLabelTable(labelTable);
-        logoScaleSlider.setPaintLabels(true);
-        logoScaleSlider.setValue((int) (logoScaleFactor * 10));
+        logoSizer.setLabelTable(labelTable);
+        logoSizer.setPaintLabels(true);
+        logoSizer.setValue((int) (logoScaleFactor * 10));
         ChangeListener scaleListener = new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                logoSizeTextField.setText("" + logoScaleSlider.getValue() / 10.f);
+                logoSizeTextField.setText("" + logoSizer.getValue() / 10.f);
             }
         };
-        logoScaleSlider.addChangeListener(scaleListener);
-        logoScaleSlider.setToolTipText("Change Logo Scale Value");
+        logoSizer.addChangeListener(scaleListener);
+        logoSizer.setToolTipText("Change Logo Scale Value");
         
         logoScalePanel.add(logoSizeTextField);
-        logoScalePanel.add(logoScaleSlider);
+        logoScalePanel.add(logoSizer);
 
         JPanel logoTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoTop.add(logoVisCbx);
@@ -1587,17 +1587,20 @@ public class ViewManager extends SharableImpl implements ActionListener,
         logoMiddle.add(logoFileField);
         logoMiddle.add(browseButton);
         
-        JPanel logoBottom = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        logoBottom.add(new JLabel("Screen Position:"));
-        logoBottom.add(logoPositionBox);
-        logoBottom.add(new JLabel("Offset:"));
-        logoBottom.add(logoOffsetField);
-        logoBottom.add(new JLabel("Scale:"));
-        logoBottom.add(logoScalePanel);
+        JPanel logoBottomOne = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoBottomOne.add(new JLabel("Screen Position:"));
+        logoBottomOne.add(logoPositionBox);
+        logoBottomOne.add(new JLabel("Offset:"));
+        logoBottomOne.add(logoOffsetTextField);
+        
+        JPanel logoBottomTwo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoBottomTwo.add(new JLabel("Scale:"));
+        logoBottomTwo.add(logoScalePanel);
         
         logoPanel.add(logoTop);
         logoPanel.add(logoMiddle);
-        logoPanel.add(logoBottom);
+        logoPanel.add(logoBottomOne);
+        logoPanel.add(logoBottomTwo);
         
         logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
         
