@@ -1537,6 +1537,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
             (float) idv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO_SCALE, 1.0);
         logoSizer = new JSlider(1, 20, 1);
         final JTextField logoSizeTextField = new JTextField("" + logoScaleFactor);
+        // Legal values will never be more than three characters, e.g. 1.5
+        logoSizeTextField.setColumns(3);
+        
         ActionListener logoListener = new ActionListener() {
 
             @Override
