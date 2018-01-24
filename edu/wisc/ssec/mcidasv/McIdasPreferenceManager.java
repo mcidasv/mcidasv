@@ -715,6 +715,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 public void propertyChange(final PropertyChangeEvent e) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
+                            boolean internalSel = store.get(id, value);
+                            
                             cb.setSelected(store.get(id, value));
                         }
                     });
@@ -942,7 +944,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         Object[][] panelObjects = {
             { "Show Globe Background", MapViewManager.PREF_SHOWGLOBEBACKGROUND, Boolean.valueOf(getStore().get(MapViewManager.PREF_SHOWGLOBEBACKGROUND, false)) },
-            { "Show Top Bar", MapViewManager.PREF_TOPBAR_VISIBLE, Boolean.valueOf(mappy.getTopBarVisible()) },
             { "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, Boolean.valueOf(mappy.getWireframe()) },
             { "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR, Boolean.valueOf(mappy.getShowCursor()) },
             { "Clip View At Box", MapViewManager.PREF_3DCLIP, Boolean.valueOf(mappy.getClipping()) },
@@ -1053,7 +1054,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 ViewManager.PREF_LOGO_VISIBILITY, true));
         final JTextField logoField =
             new JTextField(mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO,
-                    Constants.ICON_MCIDASV_DEFAULT));
+                    ICON_MCIDASV_DEFAULT));
         logoField.setToolTipText("Enter a file or URL");
 
         JButton browseButton = new JButton("Browse..");
@@ -1560,6 +1561,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         final JComboBox timeComboBox = McVGuiUtils.makeComboBox(zoneStrings, timeString, Width.TRIPLE);
         widgets.put(PREF_TIMEZONE, timeComboBox);
+        
+        JComponent timeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.dateformat");
         
         try {
             dateExLabel.setText("ex:  " + new DateTime().toString());
