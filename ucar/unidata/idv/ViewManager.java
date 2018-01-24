@@ -121,6 +121,7 @@ import visad.java3d.GraphicsModeControlJ3D;
 
 
 
+
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -1533,10 +1534,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
         JPanel logoScalePanel = new JPanel(new FlowLayout());
         float scaleMin = McIdasPreferenceManager.LOGO_SCALE_MIN;
         float scaleMax = McIdasPreferenceManager.LOGO_SCALE_MAX;
-        float logoScaleFactor =
-            (float) idv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO_SCALE, 1.0);
         logoSizer = new JSlider(1, 20, 1);
-        final JTextField logoSizeTextField = new JTextField("" + logoScaleFactor);
+        final JTextField logoSizeTextField = new JTextField("" + logoScale);
         // Legal values will never be more than three characters, e.g. 1.5
         logoSizeTextField.setColumns(3);
         
@@ -1571,7 +1570,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         labelTable.put(20, new JLabel("2.0"));
         logoSizer.setLabelTable(labelTable);
         logoSizer.setPaintLabels(true);
-        logoSizer.setValue((int) (logoScaleFactor * 10));
+        logoSizer.setValue((int) (logoScale * 10));
         ChangeListener scaleListener = new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 logoSizeTextField.setText("" + logoSizer.getValue() / 10.f);
