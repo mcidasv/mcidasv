@@ -36,32 +36,27 @@ import java.awt.event.KeyEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ucar.unidata.util.GuiUtils;
 
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
 
 public class MemoryOption extends AbstractOption implements ActionListener {
-    
-    /** Logger object. */
-    private static final Logger logger = LoggerFactory.getLogger(MemoryOption.class);
-    
     public enum Prefix {
         MEGA("M", "megabytes"),
         GIGA("G", "gigabytes"),
@@ -134,6 +129,8 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     private JRadioButton jrbNumber = new JRadioButton();
     
+    private ButtonGroup jtbBg = GuiUtils.buttonGroup(jrbSlider, jrbNumber);
+    
     private JPanel sliderPanel = new JPanel();
     
     private JLabel sliderLabel = new JLabel();
@@ -150,8 +147,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private int maxSliderValue = 80;
     private int initSliderValue = minSliderValue;
     
-    //private int maxmem = StartupManager.getMaximumHeapSize();
-    private long maxmem = Runtime.getRuntime().maxMemory();
+    private int maxmem = StartupManager.getMaximumHeapSize();
     
     private State currentState = State.VALID;
     
@@ -235,47 +231,18 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     };
     
     private void handleNewValue(final JTextField field, final JComboBox box) {
-        
         if (!textPanel.isEnabled()) return;
         assert field != null;
         assert box != null;
         
         try {
             String newValue = field.getText();
-            String memWithSuffix = ((Prefix) box.getSelectedItem()).getJavaFormat(newValue);
+            String huh = ((Prefix)box.getSelectedItem()).getJavaFormat(newValue);
             
             if (!isValid()) {
                 setState(State.VALID);
             }
-            long newMemVal = -1;
-            String memWithoutSuffix = memWithSuffix.substring(0, memWithSuffix.length() - 1);
-            try {
-                newMemVal = Integer.valueOf(memWithoutSuffix);
-            } catch (NumberFormatException nfe) {
-                // TJJ this should never happen, since validation is done live on keystrokes
-                // But if somebody ever changed the UI, better log an exception
-                logger.error("Memory value error: ", nfe);
-            }
-            if ((memWithSuffix != null) && (memWithSuffix.endsWith("M"))) {
-                // Bytes per Megabyte
-                newMemVal = newMemVal * 1024 * 1024;
-            }
-            if ((memWithSuffix != null) && (memWithSuffix.endsWith("G"))) {
-                // Bytes per Gigabyte
-                newMemVal = newMemVal * 1024 * 1024 * 1024;
-            }
-            if ((memWithSuffix != null) && (memWithSuffix.endsWith("T"))) {
-                // Bytes per Terabyte
-                newMemVal = newMemVal * 1024 * 1024 * 1024 * 1024;
-            }
-
-            if (newMemVal > maxmem) {
-                long memInGB = maxmem / 1024 / 1024 / 1024;
-            	JOptionPane.showMessageDialog(null, "Value exceeds your maximum available memory (" + memInGB +
-            			" GB)");
-            	return;
-            }
-            setValue(memWithSuffix);
+            setValue(huh);
         } catch (IllegalArgumentException e) {
             setState(State.ERROR);
             text.setToolTipText("This value must be an integer greater than zero.");
@@ -301,7 +268,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     public JComponent getSliderComponent() {
         sliderLabel = new JLabel("Use " + initSliderValue + "% ");
-        String memoryString = (maxmem / 1024 / 1024 / 1024) + " GB";
+        String memoryString = maxmem + "mb";
         if (maxmem == 0) {
             memoryString="Unknown";
         }
