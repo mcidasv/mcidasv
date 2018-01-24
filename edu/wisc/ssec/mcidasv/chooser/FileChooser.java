@@ -457,15 +457,15 @@ public class FileChooser extends ucar.unidata.idv.chooser.FileChooser
         Objects.requireNonNull(defaultValue, 
                        "Default value may not be null");
         String tempPath = (String)idv.getPreference(PREF_DEFAULTDIR + getId());
-        if ((tempPath == null)) {
-            tempPath = defaultValue;
-        } else if (!Files.exists(Paths.get(tempPath))) {
-            try {
-                tempPath = findValidParent(tempPath);
-            } catch (NullPointerException npe) {
-                logger.warn("Could not find valid parent directory for '"+tempPath+"', using '"+defaultValue+'\'');
+        try {
+            if ((tempPath == null)) {
                 tempPath = defaultValue;
+            } else if (!Files.exists(Paths.get(tempPath))) {
+                tempPath = findValidParent(tempPath);
             }
+        } catch (Exception e) {
+            logger.warn("Could not find valid parent directory for '"+tempPath+"', using '"+defaultValue+'\'');
+            tempPath = defaultValue;
         }
         return tempPath;
     }
