@@ -30,7 +30,9 @@ package ucar.unidata.idv;
 
 /**** BEGIN MCV ADDONS ****/
 import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+
 import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +84,6 @@ import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
-
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.AnimationInfo;
@@ -92,7 +93,6 @@ import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.Displayable;
 import ucar.visad.display.TextDisplayable;
-
 import visad.ConstantMap;
 import visad.ControlEvent;
 import visad.ControlListener;
@@ -111,14 +111,15 @@ import visad.ProjectionControl;
 import visad.Real;
 import visad.Set;
 import visad.VisADException;
-
 import visad.bom.annotations.ImageJ3D;
 import visad.bom.annotations.ScreenAnnotatorJ3D;
-
 import visad.java2d.GraphicsModeControlJ2D;
 import visad.java3d.DisplayImplJ3D;
 import visad.java3d.DisplayRendererJ3D;
 import visad.java3d.GraphicsModeControlJ3D;
+
+
+
 
 
 import java.awt.AWTException;
@@ -128,6 +129,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -150,20 +152,15 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.print.PrinterJob;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-
 import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -178,8 +175,8 @@ import java.util.zip.ZipOutputStream;
 
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
-
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -192,6 +189,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
@@ -207,7 +205,6 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
@@ -1521,34 +1518,94 @@ public class ViewManager extends SharableImpl implements ActionListener,
         logoPositionBox = new JComboBox(logoPoses);
         logoPositionBox.setToolTipText("Set the logo position on the screen");
         logoPositionBox.setSelectedItem(findLoc(logos[0]));
-        logoOffsetTextField = new JTextField(logos[1]);
-        logoOffsetTextField.setToolTipText(
-            "Set an offset from the position (x,y)");
         logoSizeLabel = new JLabel("" + getLogoScale());
 
-        ChangeListener listener = new ChangeListener() {
+        // TJJ Jan 2018 - reworking Logo panel layout
+        // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1933
+        
+        JPanel logoPanel = new JPanel();
+        logoPanel.setLayout(new BoxLayout(logoPanel, BoxLayout.PAGE_AXIS));
+
+        logoOffsetTextField = new JTextField(logos[1]);
+        // provide enough space for 8 characters
+        logoOffsetTextField.setColumns(8);
+        logoOffsetTextField.setToolTipText("Set an offset from the position (x,y)");
+
+        JPanel logoScalePanel = new JPanel(new FlowLayout());
+        float scaleMin = McIdasPreferenceManager.LOGO_SCALE_MIN;
+        float scaleMax = McIdasPreferenceManager.LOGO_SCALE_MAX;
+        logoSizer = new JSlider(1, 20, 1);
+        final JTextField logoSizeTextField = new JTextField("" + logoScale);
+        // Legal values will never be more than three characters, e.g. 1.5
+        logoSizeTextField.setColumns(3);
+        
+        ActionListener logoListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    float val = Float.parseFloat(logoSizeTextField.getText());
+                    if ((val >= scaleMin) && (val <= scaleMax)) {
+                        logoSizer.setValue((int) (val * 10));
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Value provided is not a floating point number within valid range (0.1 to 2.0)");
+                    }
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(null, "Value provided is not a floating point number within valid range (0.1 to 2.0)");
+                }
+            }
+            
+        };
+        logoSizeTextField.addActionListener(logoListener);
+
+        logoSizer.setMinorTickSpacing(1);
+        logoSizer.setPaintTicks(true);
+        
+        // TJJ Jan 2018 - create custom labels since we want float values for scale multiplier
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+        labelTable.put(1, new JLabel("0.1"));
+        labelTable.put(5, new JLabel("0.5"));
+        labelTable.put(10, new JLabel("1.0"));
+        labelTable.put(15, new JLabel("1.5"));
+        labelTable.put(20, new JLabel("2.0"));
+        logoSizer.setLabelTable(labelTable);
+        logoSizer.setPaintLabels(true);
+        logoSizer.setValue((int) (logoScale * 10));
+        ChangeListener scaleListener = new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                logoSizeLabel.setText("" + logoSizer.getValue() / 10.f);
+                logoSizeTextField.setText("" + logoSizer.getValue() / 10.f);
             }
         };
-        JComponent[] sliderComps = GuiUtils.makeSliderPopup(1, 20,
-                                       (int) (getLogoScale() * 10), listener);
+        logoSizer.addChangeListener(scaleListener);
+        logoSizer.setToolTipText("Change Logo Scale Value");
+        
+        logoScalePanel.add(logoSizeTextField);
+        logoScalePanel.add(logoSizer);
 
-        logoSizer = (JSlider) sliderComps[1];
-        sliderComps[0].setToolTipText("Change Logo Scale Value");
-
-        JPanel logoPanel = GuiUtils.vbox(
-        GuiUtils.left(GuiUtils.leftCenter(logoVisCbx, GuiUtils.filler())),
-        GuiUtils.centerRight(logoFileField, browseButton), GuiUtils.hbox(
-            GuiUtils.leftCenter(
-                GuiUtils.rLabel("Screen Position: "),
-                logoPositionBox), GuiUtils.leftCenter(
-                    GuiUtils.rLabel("Offset: "),
-                    logoOffsetTextField), GuiUtils.leftCenter(
-                        GuiUtils.rLabel("Scale: "),
-                        GuiUtils.leftRight(logoSizeLabel, sliderComps[0]))));
-
+        JPanel logoTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoTop.add(logoVisCbx);
+        
+        JPanel logoMiddle = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoMiddle.add(logoFileField);
+        logoMiddle.add(browseButton);
+        
+        JPanel logoBottomOne = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoBottomOne.add(new JLabel("Screen Position:"));
+        logoBottomOne.add(logoPositionBox);
+        logoBottomOne.add(new JLabel("Offset:"));
+        logoBottomOne.add(logoOffsetTextField);
+        
+        JPanel logoBottomTwo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoBottomTwo.add(new JLabel("Scale:"));
+        logoBottomTwo.add(logoScalePanel);
+        
+        logoPanel.add(logoTop);
+        logoPanel.add(logoMiddle);
+        logoPanel.add(logoBottomOne);
+        logoPanel.add(logoBottomTwo);
+        
         logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
+        
         propsComp = GuiUtils.vbox(new Component[] { propsComp,
                 GuiUtils.inset(colorPanel, new Insets(10, 5, 5, 5)),
                 GuiUtils.inset(fontPanel, new Insets(10, 5, 5, 5)),

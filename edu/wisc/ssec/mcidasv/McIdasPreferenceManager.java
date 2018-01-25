@@ -40,6 +40,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -67,6 +68,7 @@ import java.util.TimeZone;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -77,6 +79,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -93,6 +96,7 @@ import javax.swing.event.ListSelectionListener;
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import edu.wisc.ssec.mcidasv.util.GetMem;
+
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
@@ -155,6 +159,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     /** Logger object. */
     private static final Logger logger = LoggerFactory.getLogger(McIdasPreferenceManager.class);
     
+    public static final float LOGO_SCALE_MIN = 0.1f;
+    public static final float LOGO_SCALE_MAX = 2.0f;
+    
     /** 
      * <p>Controls how the preference panel list is displayed. Want to modify 
      * the preferences UI in some way? PREF_PANELS is your friend. Think of 
@@ -169,7 +176,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      * </ol>
      *
      * <p>The {@link JList} in the preferences window will order the panels
-     * basedupon {@code PREF_PANELS}.</p>
+     * based upon {@code PREF_PANELS}.</p>
      */
     public static final String[][] PREF_PANELS = {
         { Constants.PREF_LIST_GENERAL, "/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-round32.png", "idv.tools.preferences.generalpreferences" },
@@ -708,8 +715,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 public void propertyChange(final PropertyChangeEvent e) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            boolean internalSel = store.get(id, value);
-                            
                             cb.setSelected(store.get(id, value));
                         }
                     });
@@ -937,6 +942,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 
         Object[][] panelObjects = {
             { "Show Globe Background", MapViewManager.PREF_SHOWGLOBEBACKGROUND, Boolean.valueOf(getStore().get(MapViewManager.PREF_SHOWGLOBEBACKGROUND, false)) },
+            { "Show Top Bar", MapViewManager.PREF_TOPBAR_VISIBLE, Boolean.valueOf(mappy.getTopBarVisible()) },
             { "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, Boolean.valueOf(mappy.getWireframe()) },
             { "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR, Boolean.valueOf(mappy.getShowCursor()) },
             { "Clip View At Box", MapViewManager.PREF_3DCLIP, Boolean.valueOf(mappy.getClipping()) },
@@ -1047,15 +1053,14 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 ViewManager.PREF_LOGO_VISIBILITY, true));
         final JTextField logoField =
             new JTextField(mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO,
-                    ICON_MCIDASV_DEFAULT));
+                    Constants.ICON_MCIDASV_DEFAULT));
         logoField.setToolTipText("Enter a file or URL");
-        // top panel
+
         JButton browseButton = new JButton("Browse..");
         browseButton.setToolTipText("Choose a logo from disk");
         browseButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                String filename =
-                    FileManager.getReadFile(FileManager.FILTER_IMAGE);
+                String filename = FileManager.getReadFile(FileManager.FILTER_IMAGE);
                 if (filename == null) {
                     return;
                 }
@@ -1063,6 +1068,11 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             }
         });
 
+        // TJJ Jan 2018 - reworking Logo panel layout
+        // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1933
+        
+        JPanel logoPanel = new JPanel();
+        logoPanel.setLayout(new BoxLayout(logoPanel, BoxLayout.PAGE_AXIS));
         String[] logos = ViewManager.parseLogoPosition(
         		mcv.getStateManager().getPreferenceOrProperty(
         				ViewManager.PREF_LOGO_POSITION_OFFSET, ""));
@@ -1071,42 +1081,82 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         logoPosBox.setSelectedItem(ViewManager.findLoc(logos[0]));
 
         final JTextField logoOffsetField = new JTextField(logos[1]);
-        // provide enough space for 12 characters
-        logoOffsetField.setColumns(12);
-        logoOffsetField.setToolTipText(
-        		"Set an offset from the position (x,y)");
+        // provide enough space for 8 characters
+        logoOffsetField.setColumns(8);
+        logoOffsetField.setToolTipText("Set an offset from the position (x,y)");
 
+        JPanel logoScalePanel = new JPanel(new FlowLayout());
+        float scaleMin = LOGO_SCALE_MIN;
+        float scaleMax = LOGO_SCALE_MAX;
         float logoScaleFactor =
-        		(float) mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO_SCALE,
-        				1.0);
-        final JLabel logoSizeLab = new JLabel("" + logoScaleFactor);
-        JComponent[] sliderComps = GuiUtils.makeSliderPopup(1, 20,
-        		(int) (logoScaleFactor * 10), null);
-        final JSlider  logoScaleSlider = (JSlider) sliderComps[1];
-        ChangeListener listener        = new ChangeListener() {
+        	(float) mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO_SCALE, 1.0);
+        final JSlider  logoScaleSlider = new JSlider(1, 20, 1);
+        final JTextField logoSizeTextField = new JTextField("" + logoScaleFactor);
+        // Legal values will never be more than three characters, e.g. 1.5
+        logoSizeTextField.setColumns(3);
+        ActionListener logoListener = new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    float val = Float.parseFloat(logoSizeTextField.getText());
+                    if ((val >= scaleMin) && (val <= scaleMax)) {
+                        logoScaleSlider.setValue((int) (val * 10));
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Value provided is not a floating point number within valid range (0.1 to 2.0)");
+                    }
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(null, "Value provided is not a floating point number within valid range (0.1 to 2.0)");
+                }
+            }
+            
+        };
+        logoSizeTextField.addActionListener(logoListener);
+
+        logoScaleSlider.setMinorTickSpacing(1);
+        logoScaleSlider.setPaintTicks(true);
+        
+        // TJJ Jan 2018 - create custom labels since we want float values for scale multiplier
+        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+        labelTable.put(1, new JLabel("0.1"));
+        labelTable.put(5, new JLabel("0.5"));
+        labelTable.put(10, new JLabel("1.0"));
+        labelTable.put(15, new JLabel("1.5"));
+        labelTable.put(20, new JLabel("2.0"));
+        logoScaleSlider.setLabelTable(labelTable);
+        logoScaleSlider.setPaintLabels(true);
+        logoScaleSlider.setValue((int) (logoScaleFactor * 10));
+        ChangeListener listener = new ChangeListener() {
         	public void stateChanged(ChangeEvent e) {
-        		logoSizeLab.setText("" + logoScaleSlider.getValue() / 10.f);
+        		logoSizeTextField.setText("" + logoScaleSlider.getValue() / 10.f);
         	}
         };
         logoScaleSlider.addChangeListener(listener);
-        sliderComps[0].setToolTipText("Change Logo Scale Value");
+        logoScaleSlider.setToolTipText("Change Logo Scale Value");
+        
+        logoScalePanel.add(logoSizeTextField);
+        logoScalePanel.add(logoScaleSlider);
 
-        JPanel logoPanel =
-        		GuiUtils.vbox(
-        				GuiUtils.left(logoVizBox),
-        				GuiUtils.centerRight(logoField, browseButton),
-        				GuiUtils.hbox(
-        						GuiUtils.leftCenter(
-        								GuiUtils.rLabel("Screen Position: "),
-        								logoPosBox), GuiUtils.leftCenter(
-        										GuiUtils.rLabel("Offset: "),
-        										logoOffsetField), GuiUtils.leftCenter(
-        												GuiUtils.rLabel("Scale: "),
-        												GuiUtils.leftRight(
-        														logoSizeLab, sliderComps[0]))));
-        logoPanel = GuiUtils.vbox(GuiUtils.lLabel(""),
-        		GuiUtils.left(GuiUtils.inset(logoPanel,
-        				new Insets(5, 5, 0, 0))));
+        JPanel logoTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoTop.add(logoVizBox);
+        
+        JPanel logoMiddle = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoMiddle.add(logoField);
+        logoMiddle.add(browseButton);
+        
+        JPanel logoBottomOne = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoBottomOne.add(new JLabel("Screen Position:"));
+        logoBottomOne.add(logoPosBox);
+        logoBottomOne.add(new JLabel("Offset:"));
+        logoBottomOne.add(logoOffsetField);
+        JPanel logoBottomTwo = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        logoBottomTwo.add(new JLabel("Scale:"));
+        logoBottomTwo.add(logoScalePanel);
+        
+        logoPanel.add(logoTop);
+        logoPanel.add(logoMiddle);
+        logoPanel.add(logoBottomOne);
+        logoPanel.add(logoBottomTwo);
         
         logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
         
@@ -1510,8 +1560,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         final JComboBox timeComboBox = McVGuiUtils.makeComboBox(zoneStrings, timeString, Width.TRIPLE);
         widgets.put(PREF_TIMEZONE, timeComboBox);
-        
-        JComponent timeHelpButton = getIdv().makeHelpButton("idv.tools.preferences.dateformat");
         
         try {
             dateExLabel.setText("ex:  " + new DateTime().toString());
