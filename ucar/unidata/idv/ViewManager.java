@@ -1585,9 +1585,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
         JPanel logoTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoTop.add(logoVisCbx);
         
-        JPanel logoMiddle = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        logoMiddle.add(logoFileField);
-        logoMiddle.add(browseButton);
+        JPanel logoMiddle = new JPanel(new BorderLayout());
+        logoMiddle.add(logoFileField, BorderLayout.CENTER);
+        logoMiddle.add(browseButton, BorderLayout.LINE_END);
         
         JPanel logoBottomOne = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoBottomOne.add(new JLabel("Screen Position:"));

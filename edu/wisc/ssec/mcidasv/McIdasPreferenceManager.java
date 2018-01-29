@@ -35,6 +35,7 @@ import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -133,10 +134,8 @@ import ucar.unidata.xml.PreferenceManager;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
 import ucar.visad.UtcDate;
-
 import visad.DateTime;
 import visad.Unit;
-
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.AddePreferences;
 import edu.wisc.ssec.mcidasv.servermanager.AddePreferences.AddePrefConglomeration;
@@ -1140,9 +1139,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         JPanel logoTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoTop.add(logoVizBox);
         
-        JPanel logoMiddle = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        logoMiddle.add(logoField);
-        logoMiddle.add(browseButton);
+        JPanel logoMiddle = new JPanel(new BorderLayout());
+        logoMiddle.add(logoField, BorderLayout.CENTER);
+        logoMiddle.add(browseButton, BorderLayout.LINE_END);
         
         JPanel logoBottomOne = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoBottomOne.add(new JLabel("Screen Position:"));
