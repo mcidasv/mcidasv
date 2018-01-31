@@ -32,6 +32,8 @@ package ucar.unidata.idv;
 
 //~--- non-JDK imports --------------------------------------------------------
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
 import org.slf4j.Logger;
@@ -278,14 +280,18 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
 
 
             // Find all visible displays
-            final List<DisplayControl> onDisplays = new ArrayList<DisplayControl>();
-
-            for (DisplayControl control : (List<DisplayControl>) viewManager.getControls()) {
+            final List<DisplayControl> controls = cast(viewManager.getControls());
+            final List<DisplayControl> onDisplays = new ArrayList<>(controls.size());
+            
+            // McV Inquiry 1139: the list of displays was reversed compared to
+            // the main display window. this should fix the problem:
+            for (int i = controls.size() - 1; i >= 0; i--) {
+                DisplayControl control = controls.get(i);
                 if (control.getDisplayVisibility()) {
                     onDisplays.add(control);
                 }
             }
-
+            
             // Turn off all non-raster
 //            for (DisplayControl control : (List<DisplayControl>) onDisplays) {
 //                control.toggleVisibilityForVectorGraphicsRendering(DisplayControl.RASTERMODE_SHOWRASTER);
