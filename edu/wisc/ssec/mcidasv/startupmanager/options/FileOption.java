@@ -47,6 +47,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**
@@ -76,11 +77,7 @@ public final class FileOption extends AbstractOption {
      * Regular expression pattern for ensuring that no quote marks are present.
      */
     private static final Pattern CLEAN_VALUE_REGEX = Pattern.compile("\"");
-
-    /** Formatting string used by {@link #toString()}. */
-    private static final String FORMAT =
-        "[FileOption@%x: optionId=%s, value=%s]";
-
+    
     /** Tool tip used by {@link #bundleField}. */
     public static final String BUNDLE_FIELD_TIP =
         "Path to default bundle. An empty path signifies that there is no"
@@ -283,7 +280,9 @@ public final class FileOption extends AbstractOption {
      * @return {@code String} containing relevant info about the option.
      */
     @Override public String toString() {
-        return String.format(FORMAT, hashCode(), getOptionId(), getValue());
+        return MakeToString.fromInstance(this)
+                           .add("optionId", getOptionId())
+                           .add("value", getValue()).toString();
     }
 
     /**

@@ -57,6 +57,7 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager.TreeCellRenderer;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,6 +216,8 @@ public final class DirectoryOption extends AbstractOption {
     }
 
     public String toString() {
-        return String.format("[DirectoryOption@%x: optionId=%s, value=%s]", hashCode(), getOptionId(), getValue());
+        return MakeToString.fromInstance(this)
+                           .add("optionId", getOptionId())
+                           .add("value", getValue()).toString();
     }
 }

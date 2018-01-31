@@ -41,6 +41,7 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 
 public class SliderOption extends AbstractOption {
     
@@ -106,6 +107,8 @@ public class SliderOption extends AbstractOption {
     }
     
     public String toString() {
-        return String.format("[SliderOption@%x: optionId=%s, value=%s]", hashCode(), getOptionId(), getValue());
+        return MakeToString.fromInstance(this)
+                           .add("optionId", getOptionId())
+                           .add("value", getValue()).toString();
     }
 }

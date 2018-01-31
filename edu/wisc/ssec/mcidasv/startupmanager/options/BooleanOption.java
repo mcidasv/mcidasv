@@ -34,6 +34,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 
+import edu.wisc.ssec.mcidasv.util.MakeToString;
+
 public class BooleanOption extends AbstractOption {
     private String value = "0";
     
@@ -71,7 +73,8 @@ public class BooleanOption extends AbstractOption {
     }
     
     public String toString() {
-        return String.format("[BooleanOption@%x: optionId=%s, value=%s]", 
-            hashCode(), getOptionId(), getValue());
+        return MakeToString.fromInstance(this)
+                           .add("optionId", getOptionId())
+                           .add("value", getValue()).toString();
     }
 }

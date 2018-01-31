@@ -33,6 +33,7 @@ import java.awt.event.ItemListener;
 import javax.swing.JComboBox;
 import javax.swing.SwingUtilities;
 
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
@@ -231,7 +232,7 @@ public class LoggerLevelOption extends AbstractOption {
      * {@literal "[LoggerLevel@7825114a: currentChoice=INFO]"}.
      */
     public String toString() {
-        return String.format("[LoggerLevelOption@%x: currentChoice=%s]",
-                hashCode(), currentChoice);
+        return MakeToString.fromInstance(this)
+                           .add("currentChoice", currentChoice).toString();
     }
 }
