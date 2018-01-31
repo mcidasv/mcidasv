@@ -34,48 +34,50 @@ import java.io.InputStream;
 
 public class Topo {
 
-   public Topo() {
-   }
+    public Topo() {
+    }
 
-   public static int ReadTopoFile(String topofile, double inputlat, double inputlon) throws IOException {
+    public static int ReadTopoFile(String topofile, double inputlat, double inputlon)
+            throws IOException {
 
-      int    num_lon_elev=5760;
-      int    num_lat_elev=2880;
-      double first_lon_elev=0.0;
-      double first_lat_elev=90.0;
-      double last_lon_elev=360.0;
-      double last_lat_elev=-90.0;
-      
-      double ax = inputlat;
-      double bx = inputlon;  /* to make mcidas compliant */
-      System.out.printf("TOPO: lat: %f  lon: %f\n",ax,bx);
+        int num_lon_elev = 5760;
+        int num_lat_elev = 2880;
+        double first_lon_elev = 0.0;
+        double first_lat_elev = 90.0;
+        double last_lon_elev = 360.0;
+        double last_lat_elev = -90.0;
 
-      InputStream filestream = Topo.class.getResourceAsStream(topofile);
-      DataInputStream dis = new DataInputStream(filestream);
+        double ax = inputlat;
+        double bx = inputlon; /* to make mcidas compliant */
+        System.out.printf("TOPO: lat: %f  lon: %f\n", ax, bx);
 
-      double del_lon_elev = (last_lon_elev-first_lon_elev)/num_lon_elev;
-      double del_lat_elev = (first_lat_elev-last_lat_elev)/num_lat_elev;
-      System.out.printf("TOPO: dlat: %f  dlon: %f\n",del_lon_elev,del_lat_elev);
-     
-      int ay = (int)((90.0-ax)/del_lat_elev);
-      if(bx<0.0) bx = bx+360.0;
-      int by = (int)(bx/del_lon_elev);
-      System.out.printf("TOPO: lat: %d  lon: %d \n",ay,by);
-      long position = (long)(2*((ay*((double)num_lon_elev))+by));
-      System.out.printf("TOPO: position=%d\n",position);
-      // filestream.seek(position+1);
-      dis.skip(position);
-      System.err.println("After skip, about to read val...");
+        InputStream filestream = Topo.class.getResourceAsStream(topofile);
+        DataInputStream dis = new DataInputStream(filestream);
 
-      int i = dis.readShort();
-      System.err.println("After read, val: " + i);
+        double del_lon_elev = (last_lon_elev - first_lon_elev) / num_lon_elev;
+        double del_lat_elev = (first_lat_elev - last_lat_elev) / num_lat_elev;
+        System.out.printf("TOPO: dlat: %f  dlon: %f\n", del_lon_elev, del_lat_elev);
 
-      int ichar = (i==0) ? 2 : 1;
-      System.err.println("After read, returning: " + ichar);
-      System.out.printf("TOPO: position=%d Value=%d landflag=%d \n ",position,i,ichar);
-      filestream.close();
+        int ay = (int) ((90.0 - ax) / del_lat_elev);
+        if (bx < 0.0)
+            bx = bx + 360.0;
+        int by = (int) (bx / del_lon_elev);
+        System.out.printf("TOPO: lat: %d  lon: %d \n", ay, by);
+        long position = (long) (2 * ((ay * ((double) num_lon_elev)) + by));
+        System.out.printf("TOPO: position=%d\n", position);
+        // filestream.seek(position+1);
+        dis.skip(position);
+        System.err.println("After skip, about to read val...");
 
-      return ichar; 
-   }
+        int i = dis.readShort();
+        System.err.println("After read, val: " + i);
+
+        int ichar = (i == 0) ? 2 : 1;
+        System.err.println("After read, returning: " + ichar);
+        System.out.printf("TOPO: position=%d Value=%d landflag=%d \n ", position, i, ichar);
+        filestream.close();
+
+        return ichar;
+    }
 
 }
