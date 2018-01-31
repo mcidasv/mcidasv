@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +53,6 @@ import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntrySource;
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryStatus;
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
-import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor.AddeStatus;
 
 public class RemoteAddeEntry implements AddeEntry {
@@ -311,7 +308,16 @@ public class RemoteAddeEntry implements AddeEntry {
     }
 
     public String toString() {
-        return String.format("[RemoteAddeEntry@%x: address=%s, group=%s, entryType=%s, entryValidity=%s, account=%s, status=%s, source=%s, temporary=%s, alias=%s]", hashCode(), address, group, entryType, entryValidity, account, entryStatus.name(), entrySource, isTemporary, entryAlias);
+        return MakeToString.fromInstance(this)
+                           .add("address", address)
+                           .add("group", group)
+                           .add("entryType", entryType)
+                           .add("entryValidity", entryValidity)
+                           .add("account", account)
+                           .add("entryStatus", entryStatus.name())
+                           .add("entrySource", entrySource)
+                           .add("isTemporary", isTemporary)
+                           .add("entryAlias", entryAlias).toString();
     }
 
     /**
@@ -600,8 +606,7 @@ public class RemoteAddeEntry implements AddeEntry {
         if (host.startsWith("localhost:")) {
             connected = true;
         } else {
-            Socket socket = new Socket();
-            try {
+            try (Socket socket = new Socket()){
                 socket.connect(new InetSocketAddress(host, ADDE_PORT), 1000);
                 connected = true;
                 socket.close();
