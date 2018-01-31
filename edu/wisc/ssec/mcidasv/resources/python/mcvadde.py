@@ -41,6 +41,7 @@ from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from edu.wisc.ssec.mcidasv.servermanager import LocalAddeEntry
 from edu.wisc.ssec.mcidasv.servermanager import RemoteAddeEntry
 from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryStatus
+from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryValidity
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import addeFormatToStr
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import serverNameToStr
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToAddeFormat
@@ -49,6 +50,7 @@ from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToEntryType
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToServerName
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import AddeFormat
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import ServerName
+from edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor import AddeStatus
 
 from visad import DateTime
 
@@ -673,10 +675,23 @@ def makeRemoteADDEEntry(server, dataset, datasetType, accounting=None, save=Fals
         
     results = []
     src = AddeEntry.EntrySource.USER
+    checkHost = True
     for x in datasetTypes:
-        entry = RemoteAddeEntry.Builder(server, dataset).account(user, proj).type(x).source(src).temporary(not save).build()
-        results.append(entry)
-    getStaticMcv().getServerManager().addEntries(results)
+        entry = RemoteAddeEntry.Builder(server, dataset).account(user, proj).type(x).source(src).temporary(not save).validity(EntryValidity.VERIFIED).build()
+        
+        if checkHost:
+            if not RemoteAddeEntry.checkHost(entry):
+                raise AddeJythonError("Invalid server address")
+            checkHost = False
+            
+        status = RemoteAddeEntry.checkEntry(False, entry)
+        if status == AddeStatus.OK:
+            results.append(entry)
+        elif status == AddeStatus.BAD_ACCOUNTING or status == AddeStatus.BAD_GROUP:
+            raise AddeJythonInvalidAccountingError("Please verify that the specified ADDE accounting information is correct.")
+            
+    if results:
+        getStaticMcv().getServerManager().addEntries(results)
     return results
     
 def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
