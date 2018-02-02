@@ -73,7 +73,7 @@ public final class CollectionHelpers {
      * Cannot be {@code null}, and (for now) the items should be of the 
      * <i>same</i> type.
      * 
-     * @return An array populated with each item from {@code ts}.
+     * @return Array populated with each item from {@code ts}.
      */
     @SafeVarargs
     public static <T> T[] arr(T... ts) { 
@@ -91,11 +91,12 @@ public final class CollectionHelpers {
      * @param elements Items that will make up the elements of the returned
      * {@code List}.
      * 
-     * @return A {@code List} whose elements are each item within {@code elements}.
+     * @return {@code List} whose elements are each item within 
+     * {@code elements}.
      */
     @SafeVarargs
     public static <E> List<E> list(E... elements) {
-        List<E> newList = arrList(elements.length);
+        List<E> newList = new ArrayList<>(elements.length);
         Collections.addAll(newList, elements);
         return newList;
     }
@@ -146,7 +147,9 @@ public final class CollectionHelpers {
      * @see #set(Object...)
      */
     @SuppressWarnings({ "unchecked", "rawtypes" }) // the only things being added to the collection are objects of type "E"
-    public static <E> Collection<E> collect(Class<? extends Collection> cl, E... elements) {
+    public static <E> Collection<E> collect(Class<? extends Collection> cl,
+                                            E... elements)
+    {
         try {
             Collection<E> c = cl.getConstructor().newInstance();
             Collections.addAll(c, elements);
@@ -196,7 +199,7 @@ public final class CollectionHelpers {
             }
             len = count;
         } else if (o instanceof Iterable<?>) {
-            len = len(((Iterable<?>)o).iterator());
+            len = CollectionHelpers.len(((Iterable<?>)o).iterator());
         } else {
             throw new IllegalArgumentException("Don't know how to find the length of a " + o.getClass().getName());
         }
@@ -255,7 +258,8 @@ public final class CollectionHelpers {
             }
             return false;
         } else if (collection instanceof Iterable<?>) {
-            return contains(((Iterable<?>) collection).iterator(), item);
+            Iterator<?> it = ((Iterable<?>)collection).iterator();
+            return CollectionHelpers.contains(it, item);
         } else if (collection.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(collection); i++) {
                 if (Array.get(collection, i).equals(item)) {
@@ -525,7 +529,7 @@ public final class CollectionHelpers {
      *
      * @param <E> Type of items that will be added to the resulting collection.
      *
-     * @return A new, empty {@code CopyOnWriteArraySet}.
+     * @return New, empty {@code CopyOnWriteArraySet}.
      */
     public static <E> Set<E> concurrentSet() {
         return new CopyOnWriteArraySet<>();
@@ -540,7 +544,7 @@ public final class CollectionHelpers {
      * @param <E> Type of items that will be added to the resulting collection.
      * @param original Collection to be copied into the new set.
      * 
-     * @return A new {@code CopyOnWriteArraySet} whose contents are the same as
+     * @return {@code CopyOnWriteArraySet} whose contents are the same as
      * {@code original}.
      */
     public static <E> Set<E> concurrentSet(Collection<E> original) {
@@ -556,8 +560,7 @@ public final class CollectionHelpers {
      * @param <E> Type of items that will be added to the resulting collection.
      * @param elems Elements that will be contained in the resulting set.
      * 
-     * @return A new {@code CopyOnWriteArraySet} that contains the incoming 
-     * objects.
+     * @return {@code CopyOnWriteArraySet} that contains the incoming objects.
      */
     @SafeVarargs
     public static <E> Set<E> concurrentSet(E... elems) {
@@ -645,7 +648,9 @@ public final class CollectionHelpers {
      */
     // not sure about the utility of this one...
     @SuppressWarnings({ "unchecked", "rawtypes" }) // again, only adding items of type "E"
-    public static <E> Collection<E> recollect(Class<? extends Collection> cl, Collection<E> old) {
+    public static <E> Collection<E> recollect(Class<? extends Collection> cl,
+                                              Collection<E> old) 
+    {
         try {
             Collection<E> c = cl.getConstructor().newInstance();
             c.addAll(old);
@@ -714,7 +719,9 @@ public final class CollectionHelpers {
      * 
      * @see #zipMap(Object[], Object[])
      */
-    public static <K, V> Map<K, V> zipMap(Collection<? extends K> keys, Collection<? extends V> values) {
+    public static <K, V> Map<K, V> zipMap(Collection<? extends K> keys,
+                                          Collection<? extends V> values)
+    {
         Map<K, V> zipped = new LinkedHashMap<>(keys.size());
         Iterator<? extends K> keyIterator = keys.iterator();
         Iterator<? extends V> valueIterator = values.iterator();
@@ -736,7 +743,7 @@ public final class CollectionHelpers {
      * being passed through {@code f}.
      */
     public static <A, B> List<B> map(final Function<A, B> f, List<A> as) {
-        List<B> bs = arrList(as.size());
+        List<B> bs = new ArrayList<>(as.size());
         bs.addAll(as.stream().map(f::apply).collect(Collectors.toList()));
         return bs;
     }
@@ -753,7 +760,7 @@ public final class CollectionHelpers {
      * in {@code as} through {@code f}.
      */
     public static <A, B> Set<B> map(final Function<A, B> f, Set<A> as) {
-        Set<B> bs = newLinkedHashSet(as.size());
+        Set<B> bs = new LinkedHashSet<>(as.size());
         bs.addAll(as.stream().map(f::apply).collect(Collectors.toList()));
         return bs;
     }

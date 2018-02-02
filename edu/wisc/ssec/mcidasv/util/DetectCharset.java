@@ -39,11 +39,13 @@ import java.io.InputStream;
 /**
  * Based on the juniversalchardet example code.
  *
- * This code is primarily used by the {@literal "editFile"} function in {@code interactive.py}.
+ * This code is primarily used by the {@literal "editFile"} function in 
+ * {@code interactive.py}.
  */
 public final class DetectCharset {
 
-    private static final Logger logger = LoggerFactory.getLogger(DetectCharset.class);
+    private static final Logger logger = 
+        LoggerFactory.getLogger(DetectCharset.class);
 
     private DetectCharset() { }
 

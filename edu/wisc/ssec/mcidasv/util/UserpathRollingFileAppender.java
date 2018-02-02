@@ -45,8 +45,6 @@ import java.util.Objects;
 public class UserpathRollingFileAppender<E> extends RollingFileAppender<E> {
     @Override public void setFile(String file) {
         if (Objects.equals("mcv.logpath_IS_UNDEFINED", file)) {
-//            Paths.get(System.getProperty("mcv.userpath"), "mcidasv.log");
-//            String logPath = System.getProperty("mcv.userpath") + File.separatorChar + "mcidasv.log";
             Path p = Paths.get(System.getProperty("mcv.userpath"), "mcidasv.log");
             String logPath = p.toAbsolutePath().toString();
             addInfo("using default logpath: '"+logPath+'\'');
