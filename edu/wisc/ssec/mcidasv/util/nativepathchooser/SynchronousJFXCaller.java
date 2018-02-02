@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -25,6 +25,7 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.util.nativepathchooser;
 
 import javax.swing.SwingUtilities;
