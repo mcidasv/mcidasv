@@ -6167,12 +6167,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
             comps.add(new JLabel("Capture What:"));
             
             // TJJ Feb 2018
-            // Don't include All Views button for Soundings
+            // Don't include All Views button for Soundings or Hodographs
             // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2570
             
             String viewManagerType = getTypeName();
-            if ((viewManagerType != null) && (viewManagerType.contains("Sounding"))) {
-                logger.debug("Leaving All Views button out of UI since this is a Sounding Display...");
+            if ((viewManagerType != null) && 
+                     (viewManagerType.contains("Sounding") || 
+                      viewManagerType.contains("Hodograph"))) {
+                logger.debug("Leaving All Views button out of UI since this is a Sounding or Hodograph Display...");
                 comps.add(GuiUtils.inset(GuiUtils.vbox(mainDisplayBtn,
                         contentsBtn, fullWindowBtn), new Insets(2,
                             8, 10, 0)));
