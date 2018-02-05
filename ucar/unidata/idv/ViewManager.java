@@ -6147,8 +6147,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 contentsBtn    = new JRadioButton("Current View & Legend",
                         false);
                 fullWindowBtn = new JRadioButton("Full Window", false);
-                GuiUtils.buttonGroup(mainDisplayBtn, allViewsBtn,
-                                     fullWindowBtn).add(contentsBtn);
+                GuiUtils.buttonGroup(mainDisplayBtn, allViewsBtn, fullWindowBtn).add(contentsBtn);
             }
 
             if (publishCbx == null) {
@@ -6166,9 +6165,23 @@ public class ViewManager extends SharableImpl implements ActionListener,
             List comps = new ArrayList();
 
             comps.add(new JLabel("Capture What:"));
-            comps.add(GuiUtils.inset(GuiUtils.vbox(mainDisplayBtn,
-                    contentsBtn, allViewsBtn, fullWindowBtn), new Insets(2,
-                        8, 10, 0)));
+            
+            // TJJ Feb 2018
+            // Don't include All Views button for Soundings
+            // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2570
+            
+            String viewManagerType = getTypeName();
+            if ((viewManagerType != null) && (viewManagerType.contains("Sounding"))) {
+                logger.debug("Leaving All Views button out of UI since this is a Sounding Display...");
+                comps.add(GuiUtils.inset(GuiUtils.vbox(mainDisplayBtn,
+                        contentsBtn, fullWindowBtn), new Insets(2,
+                            8, 10, 0)));
+            } else {
+                comps.add(GuiUtils.inset(GuiUtils.vbox(mainDisplayBtn,
+                        contentsBtn, allViewsBtn, fullWindowBtn), new Insets(2,
+                            8, 10, 0)));                
+            }
+            
             comps.add(new JLabel("Quality:"));
             comps.add(GuiUtils.inset(GuiUtils.hbox(hiBtn, medBtn, lowBtn),
                                      new Insets(3, 0, 1, 0)));
