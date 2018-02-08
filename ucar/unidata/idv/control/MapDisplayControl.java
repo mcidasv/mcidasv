@@ -301,8 +301,7 @@ public class MapDisplayControl extends DisplayControlImpl {
         this.defaultLonData      = mapInfo.getLonData();
         this.defaultLatLabelData = mapInfo.getLatLabelData();
         this.defaultLonLabelData = mapInfo.getLonLabelData();
-        // TJJ
-        //System.err.println("XXX");
+
         defaultLatLabelData.setAlignment(Glyph.PT_UL);
         defaultLonLabelData.setAlignment(Glyph.PT_UR);
 
@@ -1081,11 +1080,6 @@ public class MapDisplayControl extends DisplayControlImpl {
 
         sp.setBorder(null);
         sp.getVerticalScrollBar().setUnitIncrement(10);
-
-        //System.err.println("TJJ TEST...");
-        // JViewport vp = sp.getViewport();
-//        vp.setViewSize(new Dimension(600, 220));
-//        sp.setPreferredSize(new Dimension(600, 220));
 
         applyToAllLatLonBtn =
             GuiUtils.getToggleImageButton("/auxdata/ui/icons/link_break.png",
@@ -1974,12 +1968,6 @@ public class MapDisplayControl extends DisplayControlImpl {
                                   && ( !Arrays.equals(values,
                                       getLabelLines()));
             super.setLabelLines(values);
-            // TJJ unlink
-//            if (shouldShare && (other != null)) {
-//                other.okToShare = false;
-//                other.setLabelLines(values);
-//                other.stateWasShared();
-//            }
         }
 
         /**
@@ -2006,12 +1994,6 @@ public class MapDisplayControl extends DisplayControlImpl {
         public void setBaseValue(float value) {
             boolean shouldShare = shouldShare() && (value != getBaseValue());
             super.setBaseValue(value);
-            // TJJ Jun 2014 unlink
-//            if (shouldShare) {
-//                other.okToShare = false;
-//                other.setBaseValue(value);
-//                other.stateWasShared();
-//            }
         }
 
         /**
@@ -2039,12 +2021,6 @@ public class MapDisplayControl extends DisplayControlImpl {
             boolean shouldShare = shouldShare()
                                   && ( !Misc.equals(value, getAlignment()));
             super.setAlignment(value);
-            // TJJ unlink these Jun 2014
-//            if (shouldShare) {
-//                other.okToShare = false;
-//                other.setAlignment(value);
-//                other.stateWasShared();
-//            }
         }
 
         /**
