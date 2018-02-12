@@ -31,10 +31,7 @@ package ucar.unidata.idv.control;
 
 import ucar.nc2.dataset.*;
 import ucar.nc2.dt.GridCoordSystem;
-
 import ucar.unidata.data.*;
-
-
 import ucar.unidata.data.gis.MapMaker;
 import ucar.unidata.data.grid.DerivedGridFactory;
 import ucar.unidata.data.grid.GridDataInstance;
@@ -45,42 +42,25 @@ import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.control.drawing.*;
 import ucar.unidata.ui.FineLineBorder;
-
 import ucar.unidata.ui.colortable.ColorTableDefaults;
 import ucar.unidata.util.*;
-
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
-
 import ucar.unidata.xml.XmlUtil;
-
-
 import ucar.visad.Util;
 import ucar.visad.display.*;
-
-
 import ucar.visad.quantities.CommonUnits;
-
 import visad.*;
-
 import visad.CoordinateSystem;
-
 import visad.georef.EarthLocation;
 import visad.georef.EarthLocationLite;
 import visad.georef.LatLonPoint;
-
 import visad.georef.MapProjection;
-
 import visad.util.DataUtility;
-
 
 import java.awt.*;
 import java.awt.event.*;
-
-
 import java.rmi.RemoteException;
-
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -695,6 +675,17 @@ public class GridTrajectoryControlNew extends DrawingControl {
                                 TwoFacedObject select =
                                     (TwoFacedObject) ((JComboBox) e.getSource()).getSelectedItem();
                                 setTrajFormType(select.getId().hashCode());
+                                
+                                // TJJ Feb 2018
+                                // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2362
+                                // Disable arrowhead functions for nonlinear shapes
+
+                                if (((JComboBox<String>) e.getSource()).getSelectedIndex() != 0) {
+                                    arrowCbx.setEnabled(false);
+                                } else {
+                                    arrowCbx.setEnabled(true);
+                                }
+                                
                             }
                         });
                 trajFormComponent =

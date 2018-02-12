@@ -403,6 +403,17 @@ public class VolumeVectorControl extends GridDisplayControl implements FlowDispl
                         (TwoFacedObject) ((JComboBox) e.getSource())
                             .getSelectedItem();
                     setTrajFormType(select.getId().hashCode());
+                    
+                    // TJJ Feb 2018
+                    // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2362
+                    // Disable arrowhead functions for nonlinear shapes
+
+                    if (((JComboBox<String>) e.getSource()).getSelectedIndex() != 0) {
+                        arrowCbx.setEnabled(false);
+                    } else {
+                        arrowCbx.setEnabled(true);
+                    }
+                    
                 }
             });
             trajFormComponent =
