@@ -28,25 +28,24 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import javax.swing.event.ChangeEvent;
 import java.awt.event.ActionListener;
-import javax.swing.event.ChangeListener;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
+import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.JSlider;
-import javax.swing.DefaultBoundedRangeModel;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,29 +53,21 @@ import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSelectionComponent;
-import ucar.unidata.data.GeoLocationInfo;
-import ucar.unidata.data.GeoSelection;
-import ucar.unidata.geoloc.projection.LatLonProjection;
-import ucar.unidata.view.geoloc.MapProjectionDisplay;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
-import ucar.unidata.view.geoloc.MapProjectionDisplayJ2D;
 import ucar.unidata.geoloc.ProjectionRect;
+import ucar.unidata.geoloc.projection.LatLonProjection;
+import ucar.unidata.view.geoloc.MapProjectionDisplayJ2D;
 import ucar.visad.ProjectionCoordinateSystem;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.MapLines;
-import ucar.visad.display.RubberBandBox;
-import visad.CellImpl;
+
 import visad.FlatField;
 import visad.Gridded2DSet;
+import visad.GriddedSet;
 import visad.RealTupleType;
-import visad.RealType;
-import visad.SampledSet;
-import visad.UnionSet;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
-import visad.GriddedSet;
 
 public class TrackSelection extends DataSelectionComponent {
 
@@ -111,7 +102,7 @@ public class TrackSelection extends DataSelectionComponent {
         Map defaultSubset;
 
 	TrackSelection(DataChoice dataChoice, FlatField track, Map defaultSubset) throws VisADException, RemoteException {
-		super("track");
+		super("Track");
 		this.dataChoice = dataChoice;
 		this.track = track;
                 this.defaultSubset = defaultSubset;
@@ -225,7 +216,7 @@ public class TrackSelection extends DataSelectionComponent {
 			stridePanel.add(trkStr);
 			stridePanel.add(new JLabel("Vertical Stride: "));
 			stridePanel.add(vrtStr);
-                        stridePanel.add(new JLabel("Width%: "));
+                        stridePanel.add(new JLabel("Length %: "));
                         stridePanel.add(widthFld);
 
                         JPanel selectPanel = new JPanel(new GridLayout(2,0));
