@@ -29,7 +29,6 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -60,7 +59,6 @@ import ucar.visad.ProjectionCoordinateSystem;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.MapLines;
-
 import visad.FlatField;
 import visad.Gridded2DSet;
 import visad.GriddedSet;
@@ -89,7 +87,7 @@ public class TrackSelection extends DataSelectionComponent {
 
 	JTextField trkStr;
 	JTextField vrtStr;
-        JTextField widthFld;
+        JTextField lengthField;
 
         LineDrawing trackSelectDsp;
         float[][] trackLocs;
@@ -97,7 +95,7 @@ public class TrackSelection extends DataSelectionComponent {
         int trackPos;
         int trackStart;
         int trackStop;
-        double trackWidthPercent = 5;
+        int trackWidthPercent = 5;
         int selectWidth;
         Map defaultSubset;
 
@@ -113,7 +111,7 @@ public class TrackSelection extends DataSelectionComponent {
                 float[][] values = gset.getSamples();
                 
                 trackLen = values[0].length;
-                selectWidth = (int) (trackLen*(trackWidthPercent/100));
+                selectWidth = (int) (trackLen * ((float) trackWidthPercent / 100.0f));
                 selectWidth /= 2;
                 trackPos = trackLen/2;
                 trackStart = trackPos - selectWidth;
@@ -192,9 +190,12 @@ public class TrackSelection extends DataSelectionComponent {
 			panel.add("Center", dspMaster.getDisplayComponent());
 
 			JPanel stridePanel = new JPanel(new FlowLayout());
-			trkStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_TRACK_STRIDE), 3);
-			vrtStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_VERTICAL_STRIDE), 3);
-                        widthFld = new JTextField(Double.toString(trackWidthPercent), 3);
+			trkStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_TRACK_STRIDE), 2);
+			trkStr.setToolTipText("Sets the horizontal stride along the track (X/Y-axes)");
+			vrtStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_VERTICAL_STRIDE), 2);
+			vrtStr.setToolTipText("Sets the vertical stride (Z-axis)");
+            lengthField = new JTextField(Double.toString(trackWidthPercent), 2);
+            lengthField.setToolTipText("Sets the percentage length of total track to display");
                         
 			trkStr.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae) {
@@ -206,22 +207,34 @@ public class TrackSelection extends DataSelectionComponent {
 					setVerticalStride(Integer.valueOf(vrtStr.getText().trim()));
 				}
 			});
-                        widthFld.addActionListener(new ActionListener() {
+                        lengthField.addActionListener(new ActionListener() {
                                 public void actionPerformed(ActionEvent ae) {
-                                        setWidthPercent(Double.valueOf(widthFld.getText().trim()));
+                                        setWidthPercent(Integer.valueOf(lengthField.getText().trim()));
                                 }
                         });
 
-			stridePanel.add(new JLabel("Track Stride: "));
+			stridePanel.add(new JLabel("Track Stride:"));
 			stridePanel.add(trkStr);
-			stridePanel.add(new JLabel("Vertical Stride: "));
+			stridePanel.add(new JLabel("Vertical Stride:"));
 			stridePanel.add(vrtStr);
-                        stridePanel.add(new JLabel("Length %: "));
-                        stridePanel.add(widthFld);
+                        stridePanel.add(new JLabel("Length %:"));
+                        stridePanel.add(lengthField);
 
-                        JPanel selectPanel = new JPanel(new GridLayout(2,0));
+                        JPanel selectPanel = new JPanel(new BorderLayout());
                         DefaultBoundedRangeModel brm = new DefaultBoundedRangeModel(trackStart, 0, 0, trackLen); 
                         JSlider trackSelect = new JSlider(brm);
+                        trackSelect.setToolTipText(
+                                "<html>" +
+                                "Sets the location of the track to display (with respect to Length % below). <br>" +
+                                "The slider represents the middle of the length to be plotted.  The left end of <br>" +
+                                "the slider is the beginning of the track, and the right is the end. The portion <br>" +
+                                "of the track to be displayed is outlined in green." +
+                                "</html>");
+                        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+                        labelTable.put(0, new JLabel("Track Start"));
+                        labelTable.put(trackLen, new JLabel("Track End"));
+                        trackSelect.setLabelTable(labelTable);
+                        trackSelect.setPaintLabels(true);
                         trackSelect.addChangeListener( new ChangeListener() {
                            public void stateChanged(ChangeEvent e) {
                               trackPos = (int) ((JSlider)e.getSource()).getValue();
@@ -229,9 +242,9 @@ public class TrackSelection extends DataSelectionComponent {
                            }
                         }
                         );
-                        selectPanel.add(trackSelect);
-                        selectPanel.add(stridePanel);
-			panel.add("South", selectPanel);
+                        selectPanel.add(trackSelect, BorderLayout.NORTH);
+                        selectPanel.add(stridePanel, BorderLayout.SOUTH);
+			panel.add(selectPanel, BorderLayout.SOUTH);
 
 			return panel;
 		} catch (Exception e) {
@@ -248,9 +261,9 @@ public class TrackSelection extends DataSelectionComponent {
 		verticalStride = stride;
 	}
         
-        public void setWidthPercent(double percent) {
+        public void setWidthPercent(int percent) {
                 trackWidthPercent = percent;
-                selectWidth = (int) (trackLen*(trackWidthPercent/100));
+                selectWidth = (int) (trackLen * ((float) trackWidthPercent / 100.0f));
                 selectWidth /= 2;
                 updateTrackSelect();
         }
@@ -310,7 +323,7 @@ public class TrackSelection extends DataSelectionComponent {
 	public boolean setWidthPercent() {
 		boolean setOk = false;
 		try {
-			double newWidth = Double.valueOf(widthFld.getText().trim());
+			int newWidth = Integer.valueOf(lengthField.getText().trim());
 			trackWidthPercent = newWidth;
 			setOk = true;
 		} catch (NumberFormatException nfe) {
@@ -338,27 +351,31 @@ public class TrackSelection extends DataSelectionComponent {
                }           
         }
         
+    /**
+     * Apply new settings
+     */
+        
 	public void applyToDataSelection(DataSelection dataSelection) {
 		setTrackStride();
 		setVerticalStride();
-                setWidthPercent();
+        setWidthPercent();
 
-                HashMap subset = (HashMap) ((HashMap)defaultSubset).clone();
-                double[] coords = (double[]) subset.get(ProfileAlongTrack.vertDim_name);
+        HashMap subset = (HashMap) ((HashMap)defaultSubset).clone();
+        double[] coords = (double[]) subset.get(ProfileAlongTrack.vertDim_name);
 
-                subset.put(ProfileAlongTrack.trackDim_name, new double[] {trackStart, trackStop, trackStride});
-                subset.put(ProfileAlongTrack.vertDim_name, new double[] {coords[0], coords[1], verticalStride});
-                  
- 
-                MultiDimensionSubset select = new MultiDimensionSubset(subset);
+        subset.put(ProfileAlongTrack.trackDim_name, new double[] {trackStart, trackStop, trackStride});
+        subset.put(ProfileAlongTrack.vertDim_name, new double[] {coords[0], coords[1], verticalStride});
+          
+        MultiDimensionSubset select = new MultiDimensionSubset(subset);
 
-                Hashtable table = dataChoice.getProperties();
-                table.put(MultiDimensionSubset.key, select);
+        Hashtable table = dataChoice.getProperties();
+        table.put(MultiDimensionSubset.key, select);
 
-                table = dataSelection.getProperties();
-                table.put(MultiDimensionSubset.key, select);
+        table = dataSelection.getProperties();
+        table.put(MultiDimensionSubset.key, select);
 
-                dataChoice.setDataSelection(dataSelection);
+        dataChoice.setDataSelection(dataSelection);
 
 	}
+	
 }
