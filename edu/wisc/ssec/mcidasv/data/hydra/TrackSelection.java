@@ -25,9 +25,11 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -69,303 +71,301 @@ import visad.georef.MapProjection;
 
 public class TrackSelection extends DataSelectionComponent {
 
-	private static final Logger logger = LoggerFactory.getLogger(TrackSelection.class);
-	
-	public static final int DEFAULT_TRACK_STRIDE = 5;
-	public static final int DEFAULT_VERTICAL_STRIDE = 2;
-	
-	DataChoice dataChoice;
-	FlatField track;
+    private static final Logger logger = LoggerFactory.getLogger(TrackSelection.class);
 
-	double[] x_coords = new double[2];
-	double[] y_coords = new double[2];
-	MapProjectionDisplayJ2D mapProjDsp;
-	DisplayMaster dspMaster;
+    public static final int DEFAULT_TRACK_STRIDE = 5;
+    public static final int DEFAULT_VERTICAL_STRIDE = 2;
 
-	int trackStride;
-	int verticalStride;
+    DataChoice dataChoice;
+    FlatField track;
 
-	JTextField trkStr;
-	JTextField vrtStr;
-        JTextField lengthField;
+    double[] x_coords = new double[2];
+    double[] y_coords = new double[2];
+    MapProjectionDisplayJ2D mapProjDsp;
+    DisplayMaster dspMaster;
 
-        LineDrawing trackSelectDsp;
-        float[][] trackLocs;
-        int trackLen;
-        int trackPos;
-        int trackStart;
-        int trackStop;
-        int trackWidthPercent = 5;
-        int selectWidth;
-        Map defaultSubset;
+    int trackStride;
+    int verticalStride;
 
-	TrackSelection(DataChoice dataChoice, FlatField track, Map defaultSubset) throws VisADException, RemoteException {
-		super("Track");
-		this.dataChoice = dataChoice;
-		this.track = track;
-                this.defaultSubset = defaultSubset;
+    JTextField trkStr;
+    JTextField vrtStr;
+    JTextField lengthField;
 
-                GriddedSet gset = (GriddedSet)track.getDomainSet();
-                float[] lo = gset.getLow();
-                float[] hi = gset.getHi();
-                float[][] values = gset.getSamples();
-                
-                trackLen = values[0].length;
-                selectWidth = (int) (trackLen * ((float) trackWidthPercent / 100.0f));
-                selectWidth /= 2;
-                trackPos = trackLen/2;
-                trackStart = trackPos - selectWidth;
-                trackStop = trackPos + selectWidth;
-                
-                trackLocs = values;
-                Gridded2DSet track2D = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {values[0], values[1]}, values[0].length);
-		//mapProjDsp = new MapProjectionDisplayJ3D(MapProjectionDisplay.MODE_2Din3D);
-		mapProjDsp = new MapProjectionDisplayJ2D();
-		//mapProjDsp.enableRubberBanding(false);
-		dspMaster = mapProjDsp;
-		mapProjDsp.setMapProjection(getDataProjection(new ProjectionRect(lo[0],lo[1],hi[0],hi[1])));
-		LineDrawing trackDsp = new LineDrawing("track");
-		trackDsp.setLineWidth(0.5f);
-                trackDsp.setData(track2D);
-                
-                trackSelectDsp = new LineDrawing("trackSelect");
-                trackSelectDsp.setLineWidth(3f);
-                trackSelectDsp.setColor(java.awt.Color.green);
-                
-                updateTrackSelect();
-                
-		mapProjDsp.addDisplayable(trackDsp);
-                mapProjDsp.addDisplayable(trackSelectDsp);
+    LineDrawing trackSelectDsp;
+    float[][] trackLocs;
+    int trackLen;
+    int trackPos;
+    int trackStart;
+    int trackStop;
+    int trackWidthPercent = 5;
+    int selectWidth;
+    Map defaultSubset;
 
-		MapLines mapLines = new MapLines("maplines");
-		URL mapSource = mapProjDsp.getClass().getResource(
-				"/auxdata/maps/OUTLSUPU");
-		try {
-			BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-			mapLines.setMapLines(mapAdapter.getData());
-			mapLines.setColor(java.awt.Color.cyan);
-			//mapProjDsp.addDisplayable(mapLines);
-		} catch (Exception excp) {
-			logger.error("cannot open map file: " + mapSource, excp);
-		}
+    TrackSelection(DataChoice dataChoice, FlatField track, Map defaultSubset)
+            throws VisADException, RemoteException {
+        super("Track");
+        this.dataChoice = dataChoice;
+        this.track = track;
+        this.defaultSubset = defaultSubset;
 
-		mapLines = new MapLines("maplines");
-		mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
-		try {
-			BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-			mapLines.setMapLines(mapAdapter.getData());
-			mapLines.setColor(java.awt.Color.cyan);
-			mapProjDsp.addDisplayable(mapLines);
-		} catch (Exception excp) {
-			logger.error("cannot open map file: " + mapSource, excp);
-		}
+        GriddedSet gset = (GriddedSet) track.getDomainSet();
+        float[] lo = gset.getLow();
+        float[] hi = gset.getHi();
+        float[][] values = gset.getSamples();
 
-		mapLines = new MapLines("maplines");
-		mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
-		try {
-			BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
-			mapLines.setMapLines(mapAdapter.getData());
-			mapLines.setColor(java.awt.Color.cyan);
-			//mapProjDsp.addDisplayable(mapLines);
-		} catch (Exception excp) {
-			logger.error("cannot open map file: " + mapSource, excp);
-		}
+        trackLen = values[0].length;
+        selectWidth = (int) (trackLen * ((float) trackWidthPercent / 100.0f));
+        selectWidth /= 2;
+        trackPos = trackLen / 2;
+        trackStart = trackPos - selectWidth;
+        trackStop = trackPos + selectWidth;
 
-		dspMaster.draw();
-	}
+        trackLocs = values;
+        Gridded2DSet track2D = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {
+                values[0], values[1] }, values[0].length);
 
-	public MapProjection getDataProjection(ProjectionRect rect) {
-		MapProjection mp = null;
-		try {
-			mp = new ProjectionCoordinateSystem(new LatLonProjection("blah", rect));
-		} catch (Exception e) {
-			logger.error("error getting data projection", e);
-		}
-		return mp;
-	}
+        mapProjDsp = new MapProjectionDisplayJ2D();
 
-	protected JComponent doMakeContents() {
-		try {
-			JPanel panel = new JPanel(new BorderLayout());
-			panel.add("Center", dspMaster.getDisplayComponent());
+        dspMaster = mapProjDsp;
+        mapProjDsp.setMapProjection(getDataProjection(new ProjectionRect(lo[0], lo[1], hi[0], hi[1])));
+        LineDrawing trackDsp = new LineDrawing("track");
+        trackDsp.setLineWidth(0.5f);
+        trackDsp.setData(track2D);
 
-			JPanel stridePanel = new JPanel(new FlowLayout());
-			trkStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_TRACK_STRIDE), 2);
-			trkStr.setToolTipText("Sets the horizontal stride along the track (X/Y-axes)");
-			vrtStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_VERTICAL_STRIDE), 2);
-			vrtStr.setToolTipText("Sets the vertical stride (Z-axis)");
+        trackSelectDsp = new LineDrawing("trackSelect");
+        trackSelectDsp.setLineWidth(3f);
+        trackSelectDsp.setColor(java.awt.Color.green);
+
+        updateTrackSelect();
+
+        mapProjDsp.addDisplayable(trackDsp);
+        mapProjDsp.addDisplayable(trackSelectDsp);
+
+        MapLines mapLines = new MapLines("maplines");
+        URL mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(Color.cyan);
+        } catch (Exception excp) {
+            logger.error("cannot open map file: " + mapSource, excp);
+        }
+
+        mapLines = new MapLines("maplines");
+        mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPW");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(Color.cyan);
+            mapProjDsp.addDisplayable(mapLines);
+        } catch (Exception excp) {
+            logger.error("cannot open map file: " + mapSource, excp);
+        }
+
+        mapLines = new MapLines("maplines");
+        mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLHPOL");
+        try {
+            BaseMapAdapter mapAdapter = new BaseMapAdapter(mapSource);
+            mapLines.setMapLines(mapAdapter.getData());
+            mapLines.setColor(Color.cyan);
+        } catch (Exception excp) {
+            logger.error("cannot open map file: " + mapSource, excp);
+        }
+
+        dspMaster.draw();
+    }
+
+    public MapProjection getDataProjection(ProjectionRect rect) {
+        MapProjection mp = null;
+        try {
+            mp = new ProjectionCoordinateSystem(new LatLonProjection("blah", rect));
+        } catch (Exception e) {
+            logger.error("error getting data projection", e);
+        }
+        return mp;
+    }
+
+    protected JComponent doMakeContents() {
+        try {
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add("Center", dspMaster.getDisplayComponent());
+
+            JPanel stridePanel = new JPanel(new FlowLayout());
+            trkStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_TRACK_STRIDE), 2);
+            trkStr.setToolTipText("Sets the horizontal stride along the track (X/Y-axes)");
+            vrtStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_VERTICAL_STRIDE), 2);
+            vrtStr.setToolTipText("Sets the vertical stride (Z-axis)");
             lengthField = new JTextField(Double.toString(trackWidthPercent), 2);
             lengthField.setToolTipText("Sets the percentage length of total track to display");
-                        
-			trkStr.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					setTrackStride(Integer.valueOf(trkStr.getText().trim()));
-				}
-			});
-			vrtStr.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
-					setVerticalStride(Integer.valueOf(vrtStr.getText().trim()));
-				}
-			});
-                        lengthField.addActionListener(new ActionListener() {
-                                public void actionPerformed(ActionEvent ae) {
-                                        setWidthPercent(Integer.valueOf(lengthField.getText().trim()));
-                                }
-                        });
 
-			stridePanel.add(new JLabel("Track Stride:"));
-			stridePanel.add(trkStr);
-			stridePanel.add(new JLabel("Vertical Stride:"));
-			stridePanel.add(vrtStr);
-                        stridePanel.add(new JLabel("Length %:"));
-                        stridePanel.add(lengthField);
+            trkStr.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    setTrackStride(Integer.valueOf(trkStr.getText().trim()));
+                }
+            });
+            vrtStr.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    setVerticalStride(Integer.valueOf(vrtStr.getText().trim()));
+                }
+            });
+            lengthField.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent ae) {
+                    setWidthPercent(Integer.valueOf(lengthField.getText().trim()));
+                }
+            });
 
-                        JPanel selectPanel = new JPanel(new BorderLayout());
-                        DefaultBoundedRangeModel brm = new DefaultBoundedRangeModel(trackStart, 0, 0, trackLen); 
-                        JSlider trackSelect = new JSlider(brm);
-                        trackSelect.setToolTipText(
-                                "<html>" +
-                                "Sets the location of the track to display (with respect to Length % below). <br>" +
-                                "The slider represents the middle of the length to be plotted.  The left end of <br>" +
-                                "the slider is the beginning of the track, and the right is the end. The portion <br>" +
-                                "of the track to be displayed is outlined in green." +
-                                "</html>");
-                        Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-                        labelTable.put(0, new JLabel("Track Start"));
-                        labelTable.put(trackLen, new JLabel("Track End"));
-                        trackSelect.setLabelTable(labelTable);
-                        trackSelect.setPaintLabels(true);
-                        trackSelect.addChangeListener( new ChangeListener() {
-                           public void stateChanged(ChangeEvent e) {
-                              trackPos = (int) ((JSlider)e.getSource()).getValue();
-                              updateTrackSelect();
-                           }
-                        }
-                        );
-                        selectPanel.add(trackSelect, BorderLayout.NORTH);
-                        selectPanel.add(stridePanel, BorderLayout.SOUTH);
-			panel.add(selectPanel, BorderLayout.SOUTH);
+            stridePanel.add(new JLabel("Track Stride:"));
+            stridePanel.add(trkStr);
+            stridePanel.add(new JLabel("Vertical Stride:"));
+            stridePanel.add(vrtStr);
+            stridePanel.add(new JLabel("Length %:"));
+            stridePanel.add(lengthField);
 
-			return panel;
-		} catch (Exception e) {
-			logger.error("error creating contents", e);
-		}
-		return null;
-	}
+            JPanel selectPanel = new JPanel(new BorderLayout());
+            DefaultBoundedRangeModel brm = new DefaultBoundedRangeModel(trackStart, 0, 0, trackLen);
+            JSlider trackSelect = new JSlider(brm);
+            trackSelect
+                    .setToolTipText("<html>"
+                            + "Sets the location of the track to display (with respect to Length % below). <br>"
+                            + "The slider represents the middle of the length to be plotted.  The left end of <br>"
+                            + "the slider is the beginning of the track, and the right is the end. The portion <br>"
+                            + "of the track to be displayed is outlined in green." + "</html>");
+            Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
+            labelTable.put(0, new JLabel("Track Start"));
+            labelTable.put(trackLen, new JLabel("Track End"));
+            trackSelect.setLabelTable(labelTable);
+            trackSelect.setPaintLabels(true);
+            trackSelect.addChangeListener(new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    trackPos = (int) ((JSlider) e.getSource()).getValue();
+                    updateTrackSelect();
+                }
+            });
+            selectPanel.add(trackSelect, BorderLayout.NORTH);
+            selectPanel.add(stridePanel, BorderLayout.SOUTH);
+            panel.add(selectPanel, BorderLayout.SOUTH);
 
-	public void setTrackStride(int stride) {
-		trackStride = stride;
-	}
-
-	public void setVerticalStride(int stride) {
-		verticalStride = stride;
-	}
-        
-        public void setWidthPercent(int percent) {
-                trackWidthPercent = percent;
-                selectWidth = (int) (trackLen * ((float) trackWidthPercent / 100.0f));
-                selectWidth /= 2;
-                updateTrackSelect();
+            return panel;
+        } catch (Exception e) {
+            logger.error("error creating contents", e);
         }
+        return null;
+    }
 
-	/**
-	 * Update Track Stride if input text box holds a positive integer.
-	 * 
-	 * @return true if trackStride was updated
-	 */
-	
-	public boolean setTrackStride() {
-		boolean setOk = false;
-		try {
-			int newStride = Integer.valueOf(trkStr.getText().trim());
-                        if (newStride >= 1) {
-			   trackStride = newStride;
-			   setOk = true;
-                        }
-                        else {
-                           setOk = false;
-                        }
-		} catch (NumberFormatException nfe) {
-			// do nothing, will return correct result code
-		}
-		return setOk;
-	}
+    public void setTrackStride(int stride) {
+        trackStride = stride;
+    }
 
-	/**
-	 * Update Vertical Stride if input text box holds a positive integer.
-	 * 
-	 * @return true if verticalStride was updated
-	 */
-	
-	public boolean setVerticalStride() {
-		boolean setOk = false;
-		try {
-			int newStride = Integer.valueOf(vrtStr.getText().trim());
-                        if (newStride >= 1) {
-   		  	   verticalStride = newStride;
-			   setOk = true;
-                        }
-                        else {
-                           setOk = false;
-                        }
-		} catch (NumberFormatException nfe) {
-			// do nothing, will return correct result code
-		}
-		return setOk;
-	}
+    public void setVerticalStride(int stride) {
+        verticalStride = stride;
+    }
 
-        /**
-	 * Update Vertical Stride if input text box holds a positive integer.
-	 * 
-	 * @return true if verticalStride was updated
-	 */
-	
-	public boolean setWidthPercent() {
-		boolean setOk = false;
-		try {
-			int newWidth = Integer.valueOf(lengthField.getText().trim());
-			trackWidthPercent = newWidth;
-			setOk = true;
-		} catch (NumberFormatException nfe) {
-			// do nothing, will return correct result code
-		}
-		return setOk;
-	}
-        
-        void updateTrackSelect() {
-               trackStart = trackPos - selectWidth;
-               if (trackStart < 0) trackStart = 0;
-               
-               trackStop = trackPos + selectWidth;
-               if (trackStop >= trackLen) trackStop = trackLen - 1;
-               
-               try {
-                  Gridded2DSet trck = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple,
-                         new float[][] {java.util.Arrays.copyOfRange(trackLocs[0], trackStart, trackStop), 
-                                        java.util.Arrays.copyOfRange(trackLocs[1], trackStart, trackStop)}, 
-                               (trackStop - trackStart));
-                  trackSelectDsp.setData(trck);
-               }
-               catch (Exception exc) {
-                  exc.printStackTrace();
-               }           
+    public void setWidthPercent(int percent) {
+        trackWidthPercent = percent;
+        selectWidth = (int) (trackLen * ((float) trackWidthPercent / 100.0f));
+        selectWidth /= 2;
+        updateTrackSelect();
+    }
+
+    /**
+     * Update Track Stride if input text box holds a positive integer.
+     * 
+     * @return true if trackStride was updated
+     */
+
+    public boolean setTrackStride() {
+        boolean setOk = false;
+        try {
+            int newStride = Integer.valueOf(trkStr.getText().trim());
+            if (newStride >= 1) {
+                trackStride = newStride;
+                setOk = true;
+            } else {
+                setOk = false;
+            }
+        } catch (NumberFormatException nfe) {
+            // do nothing, will return correct result code
         }
-        
+        return setOk;
+    }
+
+    /**
+     * Update Vertical Stride if input text box holds a positive integer.
+     * 
+     * @return true if verticalStride was updated
+     */
+
+    public boolean setVerticalStride() {
+        boolean setOk = false;
+        try {
+            int newStride = Integer.valueOf(vrtStr.getText().trim());
+            if (newStride >= 1) {
+                verticalStride = newStride;
+                setOk = true;
+            } else {
+                setOk = false;
+            }
+        } catch (NumberFormatException nfe) {
+            // do nothing, will return correct result code
+        }
+        return setOk;
+    }
+
+    /**
+     * Update Vertical Stride if input text box holds a positive integer.
+     * 
+     * @return true if verticalStride was updated
+     */
+
+    public boolean setWidthPercent() {
+        boolean setOk = false;
+        try {
+            int newWidth = Integer.valueOf(lengthField.getText().trim());
+            trackWidthPercent = newWidth;
+            setOk = true;
+        } catch (NumberFormatException nfe) {
+            // do nothing, will return correct result code
+        }
+        return setOk;
+    }
+
+    void updateTrackSelect() {
+        trackStart = trackPos - selectWidth;
+        if (trackStart < 0)
+            trackStart = 0;
+
+        trackStop = trackPos + selectWidth;
+        if (trackStop >= trackLen)
+            trackStop = trackLen - 1;
+
+        try {
+            Gridded2DSet trck = new Gridded2DSet(RealTupleType.SpatialEarth2DTuple, new float[][] {
+                    java.util.Arrays.copyOfRange(trackLocs[0], trackStart, trackStop),
+                    java.util.Arrays.copyOfRange(trackLocs[1], trackStart, trackStop) },
+                    (trackStop - trackStart));
+            trackSelectDsp.setData(trck);
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+    }
+
     /**
      * Apply new settings
      */
-        
-	public void applyToDataSelection(DataSelection dataSelection) {
-		setTrackStride();
-		setVerticalStride();
+
+    public void applyToDataSelection(DataSelection dataSelection) {
+        setTrackStride();
+        setVerticalStride();
         setWidthPercent();
 
-        HashMap subset = (HashMap) ((HashMap)defaultSubset).clone();
+        HashMap subset = (HashMap) ((HashMap) defaultSubset).clone();
         double[] coords = (double[]) subset.get(ProfileAlongTrack.vertDim_name);
 
-        subset.put(ProfileAlongTrack.trackDim_name, new double[] {trackStart, trackStop, trackStride});
-        subset.put(ProfileAlongTrack.vertDim_name, new double[] {coords[0], coords[1], verticalStride});
-          
+        subset.put(ProfileAlongTrack.trackDim_name, new double[] { trackStart, trackStop,
+                trackStride });
+        subset.put(ProfileAlongTrack.vertDim_name, new double[] { coords[0], coords[1],
+                verticalStride });
+
         MultiDimensionSubset select = new MultiDimensionSubset(subset);
 
         Hashtable table = dataChoice.getProperties();
@@ -376,6 +376,6 @@ public class TrackSelection extends DataSelectionComponent {
 
         dataChoice.setDataSelection(dataSelection);
 
-	}
-	
+    }
+
 }
