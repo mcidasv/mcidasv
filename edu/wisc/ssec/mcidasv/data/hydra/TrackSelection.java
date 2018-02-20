@@ -61,6 +61,7 @@ import ucar.visad.ProjectionCoordinateSystem;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.MapLines;
+
 import visad.FlatField;
 import visad.Gridded2DSet;
 import visad.GriddedSet;
@@ -75,6 +76,7 @@ public class TrackSelection extends DataSelectionComponent {
 
     public static final int DEFAULT_TRACK_STRIDE = 5;
     public static final int DEFAULT_VERTICAL_STRIDE = 2;
+    public static final int DEFAULT_TRACK_LENGTH_PERCENT = 5;
 
     DataChoice dataChoice;
     FlatField track;
@@ -97,7 +99,7 @@ public class TrackSelection extends DataSelectionComponent {
     int trackPos;
     int trackStart;
     int trackStop;
-    int trackWidthPercent = 5;
+    int trackLengthPercent = DEFAULT_TRACK_LENGTH_PERCENT;
     int selectWidth;
     Map defaultSubset;
 
@@ -114,7 +116,7 @@ public class TrackSelection extends DataSelectionComponent {
         float[][] values = gset.getSamples();
 
         trackLen = values[0].length;
-        selectWidth = (int) (trackLen * ((float) trackWidthPercent / 100.0f));
+        selectWidth = (int) (trackLen * ((float) trackLengthPercent / 100.0f));
         selectWidth /= 2;
         trackPos = trackLen / 2;
         trackStart = trackPos - selectWidth;
@@ -191,11 +193,15 @@ public class TrackSelection extends DataSelectionComponent {
             panel.add("Center", dspMaster.getDisplayComponent());
 
             JPanel stridePanel = new JPanel(new FlowLayout());
+            
+            // initialize the UI components
             trkStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_TRACK_STRIDE), 2);
-            trkStr.setToolTipText("Sets the horizontal stride along the track (X/Y-axes)");
             vrtStr = new JTextField(Integer.toString(TrackSelection.DEFAULT_VERTICAL_STRIDE), 2);
+            lengthField = new JTextField(Integer.toString(TrackSelection.DEFAULT_TRACK_LENGTH_PERCENT), 2);
+            
+            // set tooltip hints
+            trkStr.setToolTipText("Sets the horizontal stride along the track (X/Y-axes)");
             vrtStr.setToolTipText("Sets the vertical stride (Z-axis)");
-            lengthField = new JTextField(Double.toString(trackWidthPercent), 2);
             lengthField.setToolTipText("Sets the percentage length of total track to display");
 
             trkStr.addActionListener(new ActionListener() {
@@ -210,7 +216,7 @@ public class TrackSelection extends DataSelectionComponent {
             });
             lengthField.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent ae) {
-                    setWidthPercent(Integer.valueOf(lengthField.getText().trim()));
+                    setLengthPercent(Integer.valueOf(lengthField.getText().trim()));
                 }
             });
 
@@ -260,9 +266,9 @@ public class TrackSelection extends DataSelectionComponent {
         verticalStride = stride;
     }
 
-    public void setWidthPercent(int percent) {
-        trackWidthPercent = percent;
-        selectWidth = (int) (trackLen * ((float) trackWidthPercent / 100.0f));
+    public void setLengthPercent(int percent) {
+        trackLengthPercent = percent;
+        selectWidth = (int) (trackLen * ((float) trackLengthPercent / 100.0f));
         selectWidth /= 2;
         updateTrackSelect();
     }
@@ -312,17 +318,20 @@ public class TrackSelection extends DataSelectionComponent {
     }
 
     /**
-     * Update Vertical Stride if input text box holds a positive integer.
+     * Update Track Length percentage if input text box holds a positive integer
+     * between 1 and 100.
      * 
-     * @return true if verticalStride was updated
+     * @return true if trackLengthPercent was updated
      */
 
-    public boolean setWidthPercent() {
+    public boolean setLengthPercent() {
         boolean setOk = false;
         try {
             int newWidth = Integer.valueOf(lengthField.getText().trim());
-            trackWidthPercent = newWidth;
-            setOk = true;
+            if ((newWidth > 0) && (newWidth <= 100)) {
+                trackLengthPercent = newWidth;
+                setOk = true;
+            } 
         } catch (NumberFormatException nfe) {
             // do nothing, will return correct result code
         }
@@ -356,7 +365,7 @@ public class TrackSelection extends DataSelectionComponent {
     public void applyToDataSelection(DataSelection dataSelection) {
         setTrackStride();
         setVerticalStride();
-        setWidthPercent();
+        setLengthPercent();
 
         HashMap subset = (HashMap) ((HashMap) defaultSubset).clone();
         double[] coords = (double[]) subset.get(ProfileAlongTrack.vertDim_name);

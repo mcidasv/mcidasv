@@ -1043,6 +1043,29 @@ public class MultiDimensionDataSource extends HydraDataSource {
               }
             }
             else { // no IDV incoming spatial selection info, so check for HYDRA specific via Properties
+                
+                if (trackSelection != null) {
+                    boolean trackStrideOk = trackSelection.setTrackStride();
+                    boolean verticalStrideOk = trackSelection.setVerticalStride();
+                    if ((! trackStrideOk) || (! verticalStrideOk)) {
+                        // one of the strides is not an integer, let user know
+                        String msg = "Either the Track or Vertical Stride is invalid.\n" +
+                                "Stride values must be positive integers.\n";
+                        Object[] params = { msg };
+                        JOptionPane.showMessageDialog(null, params, "Invalid Stride", JOptionPane.OK_OPTION);
+                        return null;
+                    }
+                    boolean lengthPercent = trackSelection.setLengthPercent();
+                    if (! lengthPercent) {
+                        // specified percentage of total track is invalid
+                        String msg = "Percent of total track is invalid.\n" +
+                                "Value must be between 1 and 100.\n";
+                        Object[] params = { msg };
+                        JOptionPane.showMessageDialog(null, params, "Invalid Track Percentage", JOptionPane.OK_OPTION);
+                        return null;
+                    }
+                }
+                
               if (select != null) {
                 subset = select.getSubset();
               }
