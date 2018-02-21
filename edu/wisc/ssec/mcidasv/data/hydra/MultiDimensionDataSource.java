@@ -303,9 +303,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
        }
        else if (name.contains("HSRL2_B200") && name.endsWith(".h5")) {
          Map<String, Object> table;
-         adapters = new MultiDimensionAdapter[5];
-         defaultSubsets = new HashMap[5];
-         propsArray = new Hashtable[5];
          
          String dataPath = "DataProducts/";
          String[] arrayNames = new String[] {"532_total_attn_bsc", "1064_total_attn_bsc", "355_total_attn_bsc"};
@@ -314,8 +311,12 @@ public class MultiDimensionDataSource extends HydraDataSource {
          String[] arrayNameAOT = new String[] {"532_AOT_hi_col", "355_AOT_hi_col"};
          String[] rangeNamesAOT = new String[] {};
          
-
-         for (int k=0; k<arrayNames.length; k++) {
+         int numAdapters = arrayNames.length;
+         adapters = new MultiDimensionAdapter[numAdapters];
+         defaultSubsets = new HashMap[numAdapters];
+         propsArray = new Hashtable[numAdapters];
+         
+         for (int k = 0; k < numAdapters; k++) {
             table = ProfileAlongTrack.getEmptyMetadataTable();
             table.put(ProfileAlongTrack.array_name, dataPath+arrayNames[k]);
             table.put(ProfileAlongTrack.range_name, rangeNames[k]);
@@ -547,9 +548,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
          hasTrackPreview = true;
        }
        else if (name.indexOf("2B-GEOPROF") > 0) {
-         adapters = new MultiDimensionAdapter[4];
-         defaultSubsets = new HashMap[4];
-         propsArray = new Hashtable[4];
+         adapters = new MultiDimensionAdapter[3];
+         defaultSubsets = new HashMap[3];
+         propsArray = new Hashtable[3];
 
          Map<String, Object> table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Data_Fields/Radar_Reflectivity");
