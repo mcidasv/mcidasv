@@ -3851,6 +3851,7 @@ def listVIIRSTimesInField(filename, field=None):
     but it doesn't do anything right now.
     """
     from ucar.nc2 import NetcdfFile
+    from datetime import datetime
     f = NetcdfFile.open(filename)
     
     # TJJ Aug 2017 - very hacky way to distinguish data sources, should change this to a regex match
@@ -3863,8 +3864,8 @@ def listVIIRSTimesInField(filename, field=None):
                     if v.findAttribute('AggregateBeginningDate'):
                         date = v.findAttribute('AggregateBeginningDate').getStringValue()
                         time = v.findAttribute('AggregateBeginningTime').getStringValue()
-            datetime = '{} {}'.format(date, time)
-            print(datetime)
+            datetimeobj = datetime.strptime(date + time[0:5], '%Y%m%d%H%M%S')
+            print(str(datetimeobj) + str(time[-1]))
         finally:
             f.close()
 
