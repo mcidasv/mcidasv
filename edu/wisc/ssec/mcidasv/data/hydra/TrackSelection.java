@@ -136,12 +136,12 @@ public class TrackSelection extends DataSelectionComponent {
 
         trackSelectDsp = new LineDrawing("trackSelect");
         trackSelectDsp.setLineWidth(3f);
-        trackSelectDsp.setColor(java.awt.Color.green);
+        trackSelectDsp.setColor(java.awt.Color.magenta);
 
         updateTrackSelect();
-
-        mapProjDsp.addDisplayable(trackDsp);
+    
         mapProjDsp.addDisplayable(trackSelectDsp);
+        mapProjDsp.addDisplayable(trackDsp);
 
         MapLines mapLines = new MapLines("maplines");
         URL mapSource = mapProjDsp.getClass().getResource("/auxdata/maps/OUTLSUPU");
