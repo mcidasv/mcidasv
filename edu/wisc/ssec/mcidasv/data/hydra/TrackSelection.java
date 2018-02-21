@@ -235,7 +235,7 @@ public class TrackSelection extends DataSelectionComponent {
                             + "Sets the location of the track to display (with respect to Length % below). <br>"
                             + "The slider represents the middle of the length to be plotted.  The left end of <br>"
                             + "the slider is the beginning of the track, and the right is the end. The portion <br>"
-                            + "of the track to be displayed is outlined in green." + "</html>");
+                            + "of the track to be displayed is outlined in magenta." + "</html>");
             Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
             labelTable.put(0, new JLabel("Track Start"));
             labelTable.put(trackLen, new JLabel("Track End"));
