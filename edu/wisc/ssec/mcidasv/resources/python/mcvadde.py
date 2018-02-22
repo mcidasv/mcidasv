@@ -648,8 +648,17 @@ def getRemoteADDEEntry(server, dataset, datasetType=None):
     return results
     
 def makeRemoteADDEEntry(server, dataset, datasetType, accounting=None, save=False):
+
     # TODO(jon): docs!
-    if len(dataset) > 8 or not dataset.isupper() or any(c in dataset for c in "/. []%"):
+    
+    # TJJ - Feb 2018
+    # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2590
+    # Upper case dataset if it is not already, and alert the user we have done so
+    if (not dataset.isupper()):
+        dataset = dataset.upper()
+        print '* WARNING: provided dataset has been converted to upper case: ' + dataset + '\n'
+        
+    if len(dataset) > 8 or any(c in dataset for c in "/. []%"):
         raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
         
     if not accounting:
@@ -738,7 +747,15 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     Returns:
         The newly created local ADDE dataset.
     """
-    if len(dataset) > 8 or not dataset.isupper() or any(c in dataset for c in "/. []%"):
+    
+    # TJJ - Feb 2018
+    # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2590
+    # Upper case dataset if it is not already, and alert the user we have done so
+    if (not dataset.isupper()):
+        dataset = dataset.upper()
+        print '* WARNING: provided dataset has been converted to upper case: ' + dataset + '\n'
+        
+    if len(dataset) > 8 or any(c in dataset for c in "/. []%"):
         raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
         
     convertedFormat = _formats.get(format, AddeFormat.INVALID)
