@@ -1253,6 +1253,13 @@ class _Display(_JavaProxy):
         Required Args:
             scale: New logo scale.
         """
+        
+        # TJJ Feb 2018
+        # make sure scale param is positive
+        # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2630
+        if (scale <= 0):
+            raise ValueError("Logo scale parameter must be a positive number")
+            
         vis = self._JavaProxy__javaObject.getLogoVisibility()
         self._JavaProxy__javaObject.setLogoScale(scale)
         # display doesn't update without this step.
