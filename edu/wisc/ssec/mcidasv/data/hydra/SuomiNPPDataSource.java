@@ -41,6 +41,7 @@ import java.io.FilenameFilter;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -83,6 +84,7 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.util.Misc;
+
 import visad.Data;
 import visad.DateTime;
 import visad.DerivedUnit;
@@ -100,7 +102,9 @@ import visad.util.Util;
 
 /**
  * A data source for NPOESS Preparatory Project (Suomi NPP) data
- * This will probably move, but we are placing it here for now
+ * and JPSS data (JPSS-1 now officially NOAA-20).
+ * 
+ * This should probably move, but we are placing it here for now
  * since we are leveraging some existing code used for HYDRA.
  */
 
@@ -146,7 +150,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private Map<String, double[]> defaultSubset;
     public TrackAdapter track_adapter;
 
-    private List categories;
+    private List<DataCategory> categories;
     private boolean isCombinedProduct = false;
     private boolean nameHasBeenSet = false;
 
@@ -1262,6 +1266,23 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		}
     	}
     	
+    	// TJJ Feb 2018 
+    	// Doing a reorder of variable names here, as per HP's request from
+    	// http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2613
+
+    	// Copy the variable Set to a sortable List
+    	List<String> sortedList = new ArrayList(pathToProducts);
+    	Collections.sort(sortedList, new VIIRSSort());
+    	
+    	// Clear the original data structure which retains insert order
+    	// (it's a LinkedHashSet)
+    	pathToProducts.clear();
+    	
+    	// Re-add the variables in corrected order
+        for (String s : sortedList) {
+            pathToProducts.add(s);
+        }
+        
     	// initialize the aggregation reader object
     	try {
     		if (isNOAA) {
@@ -1543,7 +1564,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
                 // mjh fix absolute paths in filenameMap
                 logger.debug("original filenameMap: {}", filenameMap);
-                Iterator keyIterator = filenameMap.keySet().iterator();
+                Iterator<String> keyIterator = filenameMap.keySet().iterator();
                 while (keyIterator.hasNext()) {
                     String keyStr = (String) keyIterator.next();
                     List<String> fileNames = (List<String>) filenameMap.get(keyStr);
