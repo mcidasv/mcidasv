@@ -72,7 +72,7 @@ This file overrides IDV addeservers.xml
   </server>
   <server name="atm.ucar.edu" active="true">
     <group
-            names="RTIMAGES,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINICOMP,NEXRCOMP,TOPO,GLOBAL,GINIALL,IMAGEALL,NEXRCALL"
+            names="RTIMAGES,RTGOESR,NPGOESR,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINICOMP,NEXRCOMP,TOPO,GLOBAL,GINIALL,IMAGEALL,NEXRCALL"
             type="image"/>
     <group
             names="RTNEXRAD,NEXRALL"
