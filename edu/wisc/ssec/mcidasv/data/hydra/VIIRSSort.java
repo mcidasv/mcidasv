@@ -87,7 +87,6 @@ public class VIIRSSort implements Comparator<String> {
                 }
                 
                 result = band1.compareTo(band2);
-                System.err.println("TJJ Comparing: " + band1 + " to: " + band2 + ", result: " + result);
                 
             }
         }
