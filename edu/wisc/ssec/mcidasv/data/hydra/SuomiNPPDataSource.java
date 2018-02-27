@@ -1270,18 +1270,20 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	// Doing a reorder of variable names here, as per HP's request from
     	// http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2613
 
-    	// Copy the variable Set to a sortable List
-    	List<String> sortedList = new ArrayList(pathToProducts);
-    	Collections.sort(sortedList, new VIIRSSort());
-    	
-    	// Clear the original data structure which retains insert order
-    	// (it's a LinkedHashSet)
-    	pathToProducts.clear();
-    	
-    	// Re-add the variables in corrected order
-        for (String s : sortedList) {
-            pathToProducts.add(s);
-        }
+    	if (isVIIRS) {
+    	    // Copy the variable Set to a sortable List
+    	    List<String> sortedList = new ArrayList(pathToProducts);
+    	    Collections.sort(sortedList, new VIIRSSort());
+
+    	    // Clear the original data structure which retains insert order
+    	    // (it's a LinkedHashSet)
+    	    pathToProducts.clear();
+
+    	    // Re-add the variables in corrected order
+    	    for (String s : sortedList) {
+    	        pathToProducts.add(s);
+    	    }
+    	}
         
     	// initialize the aggregation reader object
     	try {
