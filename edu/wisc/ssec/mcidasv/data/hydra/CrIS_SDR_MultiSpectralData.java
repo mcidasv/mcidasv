@@ -28,25 +28,12 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
-import visad.CoordinateSystem;
 import visad.FlatField;
-import visad.FunctionType;
 import visad.Gridded2DSet;
-import visad.Linear1DSet;
-import visad.Linear2DSet;
-import visad.Real;
 import visad.RealTuple;
 import visad.RealTupleType;
-import visad.RealType;
-import visad.SampledSet;
-import visad.Set;
-import visad.SetType;
 import visad.VisADException;
 
 public class CrIS_SDR_MultiSpectralData extends MultiSpectralData {
