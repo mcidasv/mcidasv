@@ -3038,11 +3038,7 @@ public class MapViewManager extends NavigatedViewManager {
                 getDisplayConventions().getMapProjectionLabel(mp, control);
             JMenuItem mi = new JMenuItem(label);
             displaysMenu.add(mi);
-            mi.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    setMapProjection(mp, false, label);
-                }
-            });
+            mi.addActionListener(ae -> setMapProjection(mp, true, label));
             cnt++;
         }
         if (cnt == 0) {
