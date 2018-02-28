@@ -3872,6 +3872,7 @@ def listVIIRSTimesInField(filename, field=None):
                         date = v.findAttribute('AggregateBeginningDate').getStringValue()
                         time = v.findAttribute('AggregateBeginningTime').getStringValue()
             datetimeobj = datetime.strptime(date + time[0:5], '%Y%m%d%H%M%S')
+            # print and tack on the Z suffix
             print(str(datetimeobj) + str(time[-1]))
         finally:
             f.close()
@@ -3880,8 +3881,21 @@ def listVIIRSTimesInField(filename, field=None):
     if (filename.endswith(".nc")):
         try:
             date = f.getRootGroup().findAttribute('time_coverage_start')
-            datetime = '{}'.format(date)
-            print(datetime)
+            
+            # TJJ - we want the NASA output to match NOAA output, so need
+            # to muck with it a bit. We start with something like this:
+            # time_coverage_start = "2017-05-01T18:24:00.000Z"
+            # and want to convert that to:
+            # 2017-05-01 18:24:00Z
+            
+            # convert NetCDF Attribute to string
+            datetimestr = date.getStringValue()
+
+            # make datetime object with just the slice we care about
+            datetimeobj = datetime.strptime(datetimestr[0:19], '%Y-%m-%dT%H:%M:%S')
+            
+            # print and tack on the Z suffix
+            print(str(datetimeobj) + datetimestr[-1])
         finally:
             f.close()
                 
