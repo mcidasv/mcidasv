@@ -3433,7 +3433,7 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
     islInterpreter.captureImage(macros, elem)
 
 def loadGrid(filename=None, field=None, level='all',
-        time=None, stride=None, xStride=0, yStride=0,
+        time=None, stride=None, xStride=None, yStride=None,
         xRange=None, yRange=None, latLonBounds=None, **kwargs): 
     """Load gridded fields; analagous to the "Gridded Data" chooser.
 
@@ -3473,21 +3473,30 @@ def loadGrid(filename=None, field=None, level='all',
     from ucar.visad import Util
     from visad import DateTime, RealType
 
-    # if stride is specified, let it set both xStride and yStride.
-    if stride is not None:
-        # TJJ Mar 2018
-        # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2621
-        # don't let users specify both stride and any combination of
-        # xstride and/or ystride
-        if (xStride >= 1) or (yStride >= 1):
-            raise ValueError("stride should not be used in combination with xStride or yStride")
-        if stride < 1:
-            raise ValueError("stride must be greater than zero")
-        xStride = stride
-        yStride = stride
+    # Default stride is 1, otherwise validate whatever combination they use
+    if (stride is None) and (xStride is None) and (yStride is None):
+        stride = 1
+        xStride = 1
+        yStride = 1
     else:
-        if (xStride < 1) or (yStride < 1):
-            raise ValueError("xStride and yStride must be 1 or greater")
+        if stride is not None:
+            # TJJ Mar 2018
+            # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2621
+            # don't let users specify both stride and any combination of
+            # xstride and/or ystride
+            if (xStride is not None) or (yStride is not None):
+                raise ValueError("stride should not be used in combination with xStride or yStride")
+            if (stride < 1):
+                raise ValueError("stride must be greater than zero")
+            xStride = stride
+            yStride = stride
+        else:
+            if (xStride is None):
+                xStride = 1
+            if (yStride is None):
+                yStride = 1
+            if (xStride < 1) or (yStride < 1):
+                raise ValueError("xStride and yStride must be 1 or greater")
 
     dataType = 'Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)'
 
