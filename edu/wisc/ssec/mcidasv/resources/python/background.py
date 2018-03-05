@@ -3886,7 +3886,7 @@ def listVIIRSTimesInField(filename, field=None):
                     if v.findAttribute('AggregateBeginningDate'):
                         date = v.findAttribute('AggregateBeginningDate').getStringValue()
                         time = v.findAttribute('AggregateBeginningTime').getStringValue()
-            datetimeobj = datetime.strptime(date + time[0:5], '%Y%m%d%H%M%S')
+            datetimeobj = datetime.strptime(date + time[0:6], '%Y%m%d%H%M%S')
             # print and tack on the Z suffix
             print(str(datetimeobj) + str(time[-1]))
         finally:
