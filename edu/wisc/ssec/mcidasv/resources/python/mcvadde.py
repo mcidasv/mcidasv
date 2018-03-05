@@ -227,17 +227,18 @@ _formats = {
 }
 
 _human_units_to_adde = {
-    'ALB':         'ALB',
-    'ALBEDO':      'ALB',
-    'BRIT':        'BRIT',
-    'BRIGHTNESS':  'BRIT',
-    'TEMP':        'TEMP',
-    'TEMPERATURE': 'TEMP',
-    'RAD':         'RAD',
-    'RADIANCE':    'RAD',
-    'RAW':         'RAW',
-    'REFL':        'REFL',
-    'REFLECTANCE': 'REFL',
+    'ALB':          'ALB',
+    'ALBEDO':       'ALB',
+    'BRIT':         'BRIT',
+    'BRIGHTNESS':   'BRIT',
+    'TEMP':         'TEMP',
+    'TEMPERATURE':  'TEMP',
+    'RAD':          'RAD',
+    'RADIANCE':     'RAD',
+    'RAW':          'RAW',
+    'REFL':         'REFL',
+    'REFLECTANCE':  'REFL',
+    'REFLECTIVITY': 'REFL',
 }
 DEFAULT_ACCOUNTING = ('idv', '0')
 DEFAULT_SIZE = (480, 640)
