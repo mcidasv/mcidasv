@@ -230,6 +230,7 @@ _human_units_to_adde = {
     'ALBEDO': 'ALB',
     'TEMPERATURE': 'TEMP',
     'BRIGHTNESS': 'BRIT', 
+    'RADIANCE': 'RAD',
 }
 DEFAULT_ACCOUNTING = ('idv', '0')
 DEFAULT_SIZE = (480, 640)
