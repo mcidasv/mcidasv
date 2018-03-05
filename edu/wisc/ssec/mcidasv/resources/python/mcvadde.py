@@ -227,10 +227,17 @@ _formats = {
 }
 
 _human_units_to_adde = {
-    'ALBEDO': 'ALB',
+    'ALB':         'ALB',
+    'ALBEDO':      'ALB',
+    'BRIT':        'BRIT',
+    'BRIGHTNESS':  'BRIT',
+    'TEMP':        'TEMP',
     'TEMPERATURE': 'TEMP',
-    'BRIGHTNESS': 'BRIT', 
-    'RADIANCE': 'RAD',
+    'RAD':         'RAD',
+    'RADIANCE':    'RAD',
+    'RAW':         'RAW',
+    'REFL':        'REFL',
+    'REFLECTANCE': 'REFL',
 }
 DEFAULT_ACCOUNTING = ('idv', '0')
 DEFAULT_SIZE = (480, 640)
