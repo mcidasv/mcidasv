@@ -226,6 +226,11 @@ _formats = {
     "INSAT-3D Sounder":                                        AddeFormat.INSAT3D_SOUNDER,
 }
 
+_human_units_to_adde = {
+    'ALBEDO': 'ALB',
+    'TEMPERATURE': 'TEMP',
+    'BRIGHTNESS': 'BRIT', 
+}
 DEFAULT_ACCOUNTING = ('idv', '0')
 DEFAULT_SIZE = (480, 640)
 
@@ -1434,7 +1439,8 @@ def _getADDEImage(localEntry=None,
     if unit or kwargs.get('unitType'):
         try:
             result = _argHandler(explicit=('unit', unit), implicit=('unitType', kwargs.get('unitType')))
-            unit = '&UNIT=%s' % (str(result))
+            addeUnit = _human_units_to_adde[str(result).upper()]
+            unit = '&UNIT=%s' % (addeUnit)
         except:
             raise ValueError("unit must a str value; could not convert '%s' to to a str (type=%s)." % (unit, type(unit)))
     else:
