@@ -3800,7 +3800,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
 
     # First, need to create the data source:
     # TODO: how to avoid re-creating identical data sources?
-    descriptor = _mcv.getDataManager().getDescriptor('SuomiNPP')
+    descriptor = _mcv.getDataManager().getDescriptor('JPSS')
     # We get lucky; there's already a constructor that takes a list of files:
     data_source = SuomiNPPDataSource(descriptor, file_list, None)
 
@@ -3831,7 +3831,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
         if isinstance(thing, MultiDimensionSubset):
             multi_dimension_subset = thing
             break
-    #print 'xStride: ', xStride, 'yStride: ', yStride
+    # print 'xStride: ', xStride, 'yStride: ', yStride
     multi_dimension_subset.coords[0][2] = xStride
     multi_dimension_subset.coords[1][2] = yStride
 
