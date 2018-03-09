@@ -3873,14 +3873,66 @@ def listVIIRSFieldsInFile(filename):
         f.close()
     return names
 
+def listVIIRSTimeInFile(filename):
+    """Print and return timestamp associated with a VIIRS .h5 (NOAA) or .nc (NASA) file.
+    
+    """
+    from ucar.nc2 import NetcdfFile
+    from datetime import datetime
+    f = NetcdfFile.open(filename)
+    
+    # TJJ Aug 2017 - very hacky way to distinguish data sources, should change this to a regex match
+    # NOAA data - HDF5
+    if (filename.endswith(".h5")):
+        try:
+            dprods_grps = f.getRootGroup().findGroup('Data_Products').getGroups()
+            for g in dprods_grps:
+                for v in g.getVariables():
+                    if v.findAttribute('AggregateBeginningDate'):
+                        date = v.findAttribute('AggregateBeginningDate').getStringValue()
+                        time = v.findAttribute('AggregateBeginningTime').getStringValue()
+            datetimeobj = datetime.strptime(date + time[0:6], '%Y%m%d%H%M%S')
+            # print and tack on the Z suffix
+            print(str(datetimeobj) + str(time[-1]))
+        finally:
+            f.close()
+
+    # NASA data - NetCDF 4
+    if (filename.endswith(".nc")):
+        try:
+            date = f.getRootGroup().findAttribute('time_coverage_start')
+            
+            # TJJ - we want the NASA output to match NOAA output, so need
+            # to muck with it a bit. We start with something like this:
+            # time_coverage_start = "2017-05-01T18:24:00.000Z"
+            # and want to convert that to:
+            # 2017-05-01 18:24:00Z
+            
+            # convert NetCDF Attribute to string
+            datetimestr = date.getStringValue()
+
+            # make datetime object with just the slice we care about
+            datetimeobj = datetime.strptime(datetimestr[0:19], '%Y-%m-%dT%H:%M:%S')
+            
+            # print and tack on the Z suffix
+            print(str(datetimeobj) + datetimestr[-1])
+        finally:
+            f.close()
+                
+    return datetime
+    
 def listVIIRSTimesInField(filename, field=None):
-    """Print and return timestamp associated with a VIIRS .h5 file.
+    """Print and return timestamp associated with a VIIRS .h5 (NOAA) or .nc (NASA) file.
     
     'field' is accepted as an arg to match signature of listGridLevelsInField
     but it doesn't do anything right now.
     """
     from ucar.nc2 import NetcdfFile
     from datetime import datetime
+    
+    # Warn users that this function is deprecated
+    print '* WARNING: this function is deprecated, please update your scripts to use listVIIRSTimeInFile instead.'
+    
     f = NetcdfFile.open(filename)
     
     # TJJ Aug 2017 - very hacky way to distinguish data sources, should change this to a regex match
