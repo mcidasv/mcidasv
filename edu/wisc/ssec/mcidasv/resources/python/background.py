@@ -3850,7 +3850,10 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
 
 def listVIIRSFieldsInFile(filename):
     """Print and return a list of all fields in a VIIRS .h5 file."""
+    from java.util import ArrayList
+    from java.util import Collections
     from ucar.nc2 import NetcdfFile
+    from edu.wisc.ssec.mcidasv.data.hydra import VIIRSSort
     f = NetcdfFile.open(filename)
     try:
         variables = f.getVariables()
@@ -3860,7 +3863,11 @@ def listVIIRSFieldsInFile(filename):
         names = [v.getFullName().replace('All_Data/', '') for v in variables]
         # NASA data path prefix is 'observation_data'
         names = [v.getFullName().replace('observation_data/', '') for v in variables]
-        for name in names:
+        # TJJ Mar 2018 - sort fields in sensible band/product order
+        sortedList = ArrayList(names);
+        viirsSort = VIIRSSort();
+        Collections.sort(sortedList, viirsSort);
+        for name in sortedList:
             print name
     finally:
         f.close()
