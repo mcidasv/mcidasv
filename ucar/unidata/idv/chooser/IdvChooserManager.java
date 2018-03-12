@@ -30,6 +30,8 @@ package ucar.unidata.idv.chooser;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -835,7 +837,14 @@ public class IdvChooserManager extends IdvManager {
             throw new IllegalArgumentException(
                 "Unable to create chooser class: " + className);
         }
-        Component contents = chooser.getContents();
+        Component contents;
+        try {
+            contents = chooser.getContents();
+        } catch (Exception e) {
+            logger.error("Could not create chooser", e);
+            Component innerContents = new JLabel("Could not create chooser; please report this issue!");
+            contents = GuiUtils.inset(innerContents, 5);
+        }
         if (choosersWeAreCreating != null) {
             choosersWeAreCreating.add(chooser);
         }
@@ -854,7 +863,7 @@ public class IdvChooserManager extends IdvManager {
 
         return chooserContents;
     }
-
+    private static final Logger logger = LoggerFactory.getLogger(IdvChooserManager.class);
 
     /**
      * Make the chooser menu items
