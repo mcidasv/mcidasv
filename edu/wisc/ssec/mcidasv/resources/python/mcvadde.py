@@ -798,7 +798,8 @@ def listADDEImageTimes(localEntry=None,
     band=None,
     mag=None,
     size=None,
-    showUrls=True):
+    showUrls=True,
+    **kwargs):
     """Create a list of ADDE image times.
     
     Args:
@@ -1016,7 +1017,8 @@ def listADDEImages(localEntry=None,
     band=None,
     mag=None,
     size=None,
-    showUrls=True):
+    showUrls=True,
+    **kwargs):
     """Create a list of ADDE images.
     
     Args:
