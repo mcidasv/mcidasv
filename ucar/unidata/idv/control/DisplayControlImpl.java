@@ -7633,7 +7633,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         } catch (Exception exc) {
             LogUtil.consoleMessage("Error getting cursor readout");
             LogUtil.consoleMessage(LogUtil.getStackTrace(exc));
-            setDoCursorReadout(false);
         }
         return null;
     }
