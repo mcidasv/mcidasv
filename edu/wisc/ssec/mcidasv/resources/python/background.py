@@ -3762,6 +3762,95 @@ def getVIIRSImage(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of getVIIRSImage has changed to loadVIIRSImage.  You'll need to update your scripts.  Sorry for the hassle!")
 
+def loadJPSSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
+    """Load JPSS (VIIRS, ATMS, or CrIS) imagery.
+
+    file_list: list of NPP *data* files.  You need to have geolocation files
+               in the same *directory* as these files, but *do not* include
+               the geolocation files in file_list.
+
+    field:  the name of the field you want to display, as shown in the Field 
+            Selector, e.g., 'VIIRS-M15-SDR_ALL/BrightnessTemperature'
+ 
+    xStride: Optional; set the stride in the cross-track direction.  Default
+             is full-res (1).  Must be >= 1.
+
+    yStride: Optional; set the stride in the along-track direction.  Default
+             is full-res (1).  Must be >= 1.
+
+    stride: Optional; set both xStride and yStride. If specified, xStride and
+            yStride have no effect.
+    """
+    from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
+    from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
+
+    # Warn users that this function is deprecated
+    print '* WARNING: this function is deprecated, please update your scripts to use loadJPSSImage instead.'
+    
+    # try some quick input validation before doing any real work
+    if not file_list:
+        raise ValueError('File list must contain at least one file.')
+    
+    if xStride < 1 or yStride < 1:
+        raise ValueError("xStride and yStride must be greater than zero")
+
+    # if stride is specified, let it set both xStride and yStride.
+    if stride is not None:
+        if stride < 1:
+            raise ValueError("stride must be greater than zero")
+        xStride = stride
+        yStride = stride
+
+    # First, need to create the data source:
+    # TODO: how to avoid re-creating identical data sources?
+    descriptor = _mcv.getDataManager().getDescriptor('JPSS')
+    # We get lucky; there's already a constructor that takes a list of files:
+    data_source = SuomiNPPDataSource(descriptor, file_list, None)
+
+    # make all data choices so we can do error checking on the field parameter.
+    data_source.doMakeDataChoices()
+
+    # find out if 'field' exists in the data choices list
+    data_choice = None
+    for data_choice_in_list in data_source.getDataChoices():
+        if data_choice_in_list.getName().lower() == field.lower():
+            data_choice = data_choice_in_list
+            field = data_choice.getName() # make sure param defaults get applied.
+            break
+    # TODO: wouldn't it be cool to suggest the correct spelling if we
+    #       found a 'close' match here?
+    # http://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/StringUtils.html#getLevenshteinDistance(java.lang.CharSequence,%20java.lang.CharSequence)
+    if not data_choice:
+        raise ValueError('The "field" you specified (%s) doesn\'t exist in the data.  Make sure "field" parameter matches the name shown in the Field Selector.' %
+                             (field) )
+
+    # set the stride as desired.
+    # Note: there might be a cleaner way to do this using 
+    #       SwathAdapter.getDefaultSubset and setDefaultStride; but this works
+    #       for now.
+    # Note2:  For some reason the MultiDimensionSubset isn't associated 
+    #         with a key... so I can't think of a better way to do this...
+    for thing in data_choice.getProperties().values():
+        if isinstance(thing, MultiDimensionSubset):
+            multi_dimension_subset = thing
+            break
+    # print 'xStride: ', xStride, 'yStride: ', yStride
+    multi_dimension_subset.coords[0][2] = xStride
+    multi_dimension_subset.coords[1][2] = yStride
+
+    fi = data_source.getData(data_choice, None, None, None)
+    if not fi:
+        # For certain (somewhat unpredictable) values of stride, SwathNavigation.createInterpSet
+        # fails.  unfortunately the data source doesn't propagate the InvalidRangeException
+        # so we have just check for a null flatfield here.
+        raise ValueError("Failed to get data. Please try a different stride value; certain values fail due to a possible bug in the subsetting code.")
+    ff = fi.getSample(0)
+
+    # make a _MappedFlatField.
+    mapped_ff = _MappedVIIRSFlatField(ff, field)
+
+    return mapped_ff
+    
 def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
     """Load VIIRS imagery.
 
@@ -3784,6 +3873,9 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
     from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
 
+    # Warn users that this function is deprecated
+    print '* WARNING: this function is deprecated, please update your scripts to use loadJPSSImage instead.'
+    
     # try some quick input validation before doing any real work
     if not file_list:
         raise ValueError('File list must contain at least one file.')
@@ -3848,8 +3940,8 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
 
     return mapped_ff
 
-def listVIIRSFieldsInFile(filename):
-    """Print and return a list of all fields in a VIIRS .h5 file."""
+def listJPSSFieldsInFile(filename):
+    """Print and return a list of all fields in a JPSS (VIIRS, ATMS, or CrIS) .h5 file."""
     from java.util import ArrayList
     from java.util import Collections
     from ucar.nc2 import NetcdfFile
@@ -3872,10 +3964,40 @@ def listVIIRSFieldsInFile(filename):
     finally:
         f.close()
     return names
-
-def listVIIRSTimeInFile(filename):
-    """Print and return timestamp associated with a VIIRS .h5 (NOAA) or .nc (NASA) file.
     
+def listVIIRSFieldsInFile(filename):
+    """Print and return a list of all fields in a VIIRS .h5 file."""
+    from java.util import ArrayList
+    from java.util import Collections
+    from ucar.nc2 import NetcdfFile
+    from edu.wisc.ssec.mcidasv.data.hydra import VIIRSSort
+    
+    # Warn users that this function is deprecated
+    print '* WARNING: this function is deprecated, please update your scripts to use listJPSSFieldsInFile instead.'
+    
+    f = NetcdfFile.open(filename)
+    try:
+        variables = f.getVariables()
+        # Get rid of path prefix b/c we want to match what gets shown in
+        # Field Selector (which is also what loadVIIRSImage actually accepts)
+        # NOAA data path prefix is 'All_Data'
+        names = [v.getFullName().replace('All_Data/', '') for v in variables]
+        # NASA data path prefix is 'observation_data'
+        names = [v.getFullName().replace('observation_data/', '') for v in variables]
+        # TJJ Mar 2018 - sort fields in sensible band/product order
+        sortedList = ArrayList(names);
+        viirsSort = VIIRSSort();
+        Collections.sort(sortedList, viirsSort);
+        for name in sortedList:
+            print name
+    finally:
+        f.close()
+    return names
+
+def listJPSSTimeInFile(filename):
+    """Print and return timestamp associated with a JPSS .h5 (NOAA) or .nc (NASA) file.
+       The function works for VIIRS, ATMS, and CrIS data.
+       
     """
     from ucar.nc2 import NetcdfFile
     from datetime import datetime
@@ -3931,7 +4053,7 @@ def listVIIRSTimesInField(filename, field=None):
     from datetime import datetime
     
     # Warn users that this function is deprecated
-    print '* WARNING: this function is deprecated, please update your scripts to use listVIIRSTimeInFile instead.'
+    print '* WARNING: this function is deprecated, please update your scripts to use listJPSSTimeInFile instead.'
     
     f = NetcdfFile.open(filename)
     
