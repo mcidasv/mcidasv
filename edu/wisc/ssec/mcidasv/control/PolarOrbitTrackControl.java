@@ -28,8 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
-
 import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
 import edu.wisc.ssec.mcidasv.data.TimeRangeSelection;
@@ -132,10 +132,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private JComboBox locationComboBox;
     private JComboBox jcbStationsPlotted;
-    String [] lineStyles = new String[] { "_____", "_ _ _", ".....", "_._._" };
-    private JComboBox jcbTrackLineStyle = new JComboBox(lineStyles);
-    private JComboBox jcbEdgeLineStyle = new JComboBox(lineStyles);
-    private JComboBox jcbStationLineStyle = new JComboBox(lineStyles);
+
+    private JComboBox<String> jcbTrackLineStyle = new JComboBox<String>(Constants.lineStyles);
+    private JComboBox<String> jcbEdgeLineStyle = new JComboBox<String>(Constants.lineStyles);
+    private JComboBox<String> jcbStationLineStyle = new JComboBox<String>(Constants.lineStyles);
     private JCheckBox jcbLabels;
     private JCheckBox jcbSwathEdges;
     
@@ -1144,7 +1144,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	JPanel jp = new JPanel(new MigLayout());
         jp.setBorder(BorderFactory.createTitledBorder(" Ground Station Controls "));
 
-        jcbStationLineStyle = new JComboBox(lineStyles);
+        jcbStationLineStyle = new JComboBox<String>(Constants.lineStyles);
         jcbStationLineStyle.addActionListener(this);
         jcbStationLineStyle.setSelectedIndex(1);
         prvStationLineStyle = jcbStationLineStyle.getSelectedIndex();

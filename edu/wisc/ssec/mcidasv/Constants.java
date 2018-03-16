@@ -81,6 +81,12 @@ public interface Constants extends IdvConstants {
     int ELEMENT_ONEHALF_WIDTH = (int)Math.round(ELEMENT_WIDTH * 1.5);
     int ELEMENT_HALF_WIDTH = Math.round(ELEMENT_WIDTH / 2);
     int ELEMENT_DOUBLEDOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 24;
+    
+    /**
+     * Common line styles used in various UI controls
+     */
+    
+    String [] lineStyles = new String[] { "_____", "_ _ _", ".....", "_._._" };
 
     /** Icon locations for buttons. */
     String ICON_APPLY_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/action_go.gif";
