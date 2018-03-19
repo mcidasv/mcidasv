@@ -32,7 +32,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -110,6 +109,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
      * @param properties    extra properties for this source
      *
      */
+
     public PolarOrbitTrackDataSource(DataSourceDescriptor descriptor,
                               String filename, Hashtable properties)
            throws VisADException {
@@ -138,7 +138,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             key = PolarOrbitTrackChooser.TLE_PROJECT_NUMBER_KEY;
             Object proj = properties.get(key);
             key = PolarOrbitTrackChooser.DATASET_NAME_KEY;
-            Object descr = properties.get(key);
+            String descr = (String) properties.get(key);
             String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + descr;
             AddeTextReader reader = new AddeTextReader(url);
             List lines = null;
@@ -153,11 +153,30 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 for (int i = 0; i < cards.length; i++) {
                     String str = cards[i];
                     if (str.length() > 0) {
-                        tleCards.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
-                        int indx = cards[i].indexOf(" ");
-                        if (indx < 0) {
-                            choices.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
+                        
+                        // TJJ Mar 2018 - only take records that match descriptor
+                        // remove trailing description part of passed in descriptor
+                        String satOnly = descr;
+                        if (satOnly.indexOf(" ") > 0) {
+                            satOnly = satOnly.substring(0, satOnly.indexOf(" "));
                         }
+                        if (str.startsWith(satOnly)) {
+                            tleCards.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
+                            
+                            // TJJ - wish I knew what these lines were all about!
+                            // I think I added them at some point - skip blank lines maybe?
+                            // Better just leave it for now.
+                            int indx = cards[i].indexOf(" ");
+                            if (indx < 0) {
+                                choices.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
+                            }
+                            
+                            // Grab the next two lines and exit loop
+                            tleCards.add(XmlUtil.stripNonValidXMLCharacters(cards[i + 1]));
+                            tleCards.add(XmlUtil.stripNonValidXMLCharacters(cards[i + 2]));
+                            break;
+                        }
+
                     }
                 }
             }
