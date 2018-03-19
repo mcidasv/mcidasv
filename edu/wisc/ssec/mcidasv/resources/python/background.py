@@ -1074,6 +1074,12 @@ class _Display(_JavaProxy):
         raise KeyError("No map matching '%s'" % originalDescription)
         
     @gui_invoke_later
+    def setMapLayerVisibility(self, visibility):
+        """Toggle the visibility of the current display's map layer."""
+        mapLayer = self.getMapLayer()
+        mapLayer.setLayerVisible(visibility)
+        
+    @gui_invoke_later
     def getCenter(self, includeScale=False):
         """Return latitude and longitude at the display's center."""
         position = self._JavaProxy__javaObject.getScreenCenter()
