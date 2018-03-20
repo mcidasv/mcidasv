@@ -39,10 +39,13 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
 import jsattrak.objects.SatelliteTleSGP4;
 import jsattrak.utilities.TLE;
 import name.gano.astro.propogators.sgp4_cssi.SGP4SatData;
 import name.gano.astro.time.Time;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,13 +59,11 @@ import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.StringUtil;
-
 import visad.Data;
 import visad.Text;
 import visad.Tuple;
 import visad.VisADException;
 import visad.georef.LatLonTuple;
-
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
@@ -531,16 +532,19 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         return dTime;
     }
 
-    private int getInt(int beg, int end,  String card) {
+    private int getInt(int beg, int end, String card) {
         String str = card.substring(beg, end);
         str = str.trim();
-        // TODO(jon): remove check and parseInteger upon switch to java 7+
-        String javaVersion = System.getProperty("java.version");
-        int tmp;
-        if (javaVersion.startsWith("1.6")) {
-            tmp = parseInteger(str);
-        } else {
+        int tmp = -1;
+        try {
             tmp = Integer.valueOf(str);
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(
+                null, 
+                "Error parsing integer value from TLE card, potentially corrupt data source.", 
+                "Orbit Track Data Source Error", 
+                JOptionPane.ERROR_MESSAGE
+            );
         }
         return tmp;
     }
