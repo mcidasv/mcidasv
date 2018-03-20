@@ -174,9 +174,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private Font gsCurFont = FontSelector.DEFAULT_FONT;
     
     // line width combo boxes, GS: Ground Station, SC: Swath Center, SE: Swath Edge
-    private JComboBox jcbGSLineWidth;
-    private JComboBox jcbSCLineWidth;
-    private JComboBox jcbSELineWidth;
+    private JComboBox<String> jcbGSLineWidth;
+    private JComboBox<String> jcbSCLineWidth;
+    private JComboBox<String> jcbSELineWidth;
     private JSpinner js = null;
 
     private CompositeDisplayable trackDsp;
@@ -431,7 +431,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 			                    }
 			                    
 	                            String str = ((Text) tupleComps[0]).getValue();
-	                            logger.debug("Adding time for str: " + str);
 	                            int indx = str.indexOf(" ") + 1;
 	                            String subStr = "- " + str.substring(indx, indx+5);
 	                            TextDisplayable time = new TextDisplayable(SWATH_MODS, otTextType);
@@ -1004,12 +1003,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	lonLabel = new JLabel();
     	altLabel = new JLabel();
         String [] lineWidths = {"1", "2", "3", "4"};
-        jcbGSLineWidth = new JComboBox(lineWidths);
-        jcbSCLineWidth = new JComboBox(lineWidths);
+        jcbGSLineWidth = new JComboBox<String>(lineWidths);
+        jcbSCLineWidth = new JComboBox<String>(lineWidths);
         // initialize swath center (track line) to width 2
         jcbSCLineWidth.setSelectedIndex(1);
         jcbEdgeLineStyle.setSelectedIndex(1);
-        jcbSELineWidth = new JComboBox(lineWidths);
+        jcbSELineWidth = new JComboBox<String>(lineWidths);
         otFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         otFontSelector.setFont(FontSelector.DEFAULT_FONT);
         gsFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
