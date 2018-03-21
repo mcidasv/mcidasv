@@ -22,14 +22,13 @@ package ucar.unidata.idv;
 
 
 import ucar.unidata.view.sounding.Hodograph3DDisplay;
-
 import ucar.visad.display.AnimationInfo;
 import ucar.visad.display.DisplayMaster;
-
 import visad.VisADException;
 
-
 import java.rmi.RemoteException;
+
+import javax.swing.JMenu;
 
 
 
@@ -108,6 +107,17 @@ public class HodographViewManager extends ViewManager {
         setDisplayMaster(master);
     }
 
+    /**
+     * Initialize the view menu
+     *
+     * @param viewMenu the view menu
+     */
+    public void initializeViewMenu(JMenu viewMenu) {
+        showControlMenu = false;
+        super.initializeViewMenu(viewMenu);
+        viewMenu.add(makeColorMenu());
+    }
+    
     /**
      * Factory method for creating the display master.
      *
