@@ -31,7 +31,6 @@ import static edu.wisc.ssec.mcidasv.data.StatsTable.fmtMe;
 import static java.util.Arrays.asList;
 
 import java.rmi.RemoteException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -40,10 +39,8 @@ import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.StatUtils;
-
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import visad.Data;
 import visad.FlatField;
 import visad.FunctionType;
@@ -318,8 +315,6 @@ public class Statistics {
         return histogram;
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(Statistics.class);
-
     public static String describe(FlatField field) throws VisADException, RemoteException {
         StringBuilder sb = new StringBuilder(1024);
         Statistics s = new Statistics(field);
@@ -336,9 +331,9 @@ public class Statistics {
                 tmp.append(", ");
             }
         }
-
+        
         char endl = '\n';
-        sb.append("Histogram :  ").append(sparkline(field)).append(endl)
+        sb.append("Histogram :  ").append(sparkline(field, s)).append(endl)
             .append("Length    :  ").append(String.format("%d", s.numPoints())).append(endl)
             .append("Min       :  ").append(fmtMe(((Real) s.min()).getValue())).append(endl)
             .append("Max       :  ").append(fmtMe(((Real) s.max()).getValue())).append(endl)
@@ -366,25 +361,34 @@ public class Statistics {
         return buf.toString();
     }
 
-    public static String sparkline(FlatField field) throws VisADException, RemoteException {
+    public static String sparkline(FlatField field, Statistics s) throws VisADException, RemoteException {
         Long[] values = histogram(field, 20);
+        Real sMin = (Real) s.min();
+        Real sMax = (Real) s.max();
         Collection<Long> collection = asList(values);
         long max = Collections.max(collection);
         long min = Collections.min(collection);
         float scale = (max - min) / 7f;
         final StringBuilder buf = new StringBuilder(values.length);
+        
+        // TJJ Mar 2018 - sandwich with min/max
+        // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2548
+        buf.append(fmtMe((sMin).getValue()));
         for (Long value : values) {
             int index = Math.round((value - min) / scale);
             buf.append(CHARS.get(index));
         }
+        buf.append(fmtMe((sMax).getValue()));
+        
         return buf.toString();
     }
 
     public static String sparkline(FlatField... fields) throws VisADException, RemoteException {
-        // assumming sparkline is only using 20 bins
+        // assuming sparkline is only using 20 bins
         StringBuilder sb = new StringBuilder(25 * fields.length);
         for (FlatField field : fields) {
-            sb.append(sparkline(field)).append('\n');
+            Statistics s = new Statistics(field);
+            sb.append(sparkline(field, s)).append('\n');
         }
         return sb.toString();
     }
