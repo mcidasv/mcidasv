@@ -261,7 +261,18 @@ public class CursorReadoutWindow {
         Real         aniValue  = animation.getAniValue();
 
         boolean      didone    = false;
-
+    
+        if (aniValue == null) {
+            // McV Inq 1521: Animation's "aniValue" field is not set by the standard
+            // "choose data" -> display data process; either you have to manually 
+            // select a time step or sit through your animation loop once.
+            // 
+            // in fact, it looks as through it would be strictly better to
+            // simply always use getCurrentAnimationValue() rather than 
+            // getAniValue()...but for now I'll take the less adventurous route.
+            aniValue = animation.getCurrentAnimationValue();
+        }
+        
         try {
             if (showDisplays) {
                 for (int i = 0; i < controls.size(); i++) {
