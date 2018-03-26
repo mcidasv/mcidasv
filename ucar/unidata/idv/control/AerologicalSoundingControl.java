@@ -1349,7 +1349,7 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
 
         viewTabs = new JTabbedPane();
         viewTabs.add("Sounding Chart", soundingComp);
-        viewTabs.add(HODOGRAPH_DISPLAY, hodoView.getComponent());
+        viewTabs.add(HODOGRAPH_DISPLAY, hodoView.getContents());
         JScrollPane tableSP =
             new JScrollPane(
                 soundingTable,
