@@ -114,7 +114,7 @@ public abstract class WindProfileDisplay extends DisplayMaster {
     private WindProfileDisplayRenderer renderer;
 
     /** map for altitude */
-    private ScalarMap altitudeMap;
+    protected ScalarMap altitudeMap;
 
     /** map for color by altitude */
     private ScalarMap altitudeColorMap;

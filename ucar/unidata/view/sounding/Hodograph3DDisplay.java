@@ -24,6 +24,9 @@
 package ucar.unidata.view.sounding;
 
 
+import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
+import static ucar.unidata.idv.ViewManager.PREF_FGCOLOR;
+
 import ucar.visad.display.*;
 import ucar.visad.functiontypes.*;
 import ucar.visad.quantities.*;
@@ -49,6 +52,9 @@ import javax.media.j3d.Transform3D;
 
 import javax.swing.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Provides support for displaying a 3D wind hodograph.
@@ -58,7 +64,10 @@ import javax.swing.*;
  * @version $Id: Hodograph3DDisplay.java,v 1.25 2005/05/13 18:33:30 jeffmc Exp $
  */
 public class Hodograph3DDisplay extends WindProfileDisplay {
-
+    
+    private static final Logger logger = 
+        LoggerFactory.getLogger(Hodograph3DDisplay.class);
+    
     /**
      * The default maximum wind speed.
      */
@@ -213,7 +222,13 @@ public class Hodograph3DDisplay extends WindProfileDisplay {
                 new Dimension(400, 400));
         }
         saveProjection();
-
+            
+        Color defaultForeground = 
+            getStaticMcv().getStore().get(PREF_FGCOLOR, Color.white);
+        
+        if ((altitudeMap != null) && (altitudeMap.getAxisScale() != null)) {
+            altitudeMap.getAxisScale().setColor(defaultForeground);
+        }
         /*
          * Wind ScalarMap-s:
          */
@@ -242,16 +257,18 @@ public class Hodograph3DDisplay extends WindProfileDisplay {
 
         lowerRingSet.addConstantMap(new ConstantMap(-1, Display.ZAxis));
         lowerRingSet.setHSV(0, 0, 1);
+        lowerRingSet.setColor(defaultForeground);
         addDisplayable(lowerRingSet);
 
         upperRingSet = new RingSet("upperRingSet", polarType);
 
         upperRingSet.addConstantMap(new ConstantMap(1, Display.ZAxis));
         upperRingSet.setHSV(0, 0, 1);
+        upperRingSet.setColor(defaultForeground);
         addDisplayable(upperRingSet);
 
         intermediateRings = new IntermediateRings(polarType);
-
+        
         addDisplayable(intermediateRings);
 
         /*
@@ -261,6 +278,7 @@ public class Hodograph3DDisplay extends WindProfileDisplay {
 
         speedLabels.addConstantMap(new ConstantMap(-1, Display.ZAxis));
         speedLabels.addConstantMap(new ConstantMap(0, Display.YAxis));
+        speedLabels.setColor(defaultForeground);
         addDisplayable(speedLabels);
 
         /*
@@ -269,6 +287,7 @@ public class Hodograph3DDisplay extends WindProfileDisplay {
         compassLabels = new CompassLabels();
 
         compassLabels.addConstantMap(new ConstantMap(-1, Display.ZAxis));
+        compassLabels.setColor(defaultForeground);
         addDisplayable(compassLabels);
 
         // Cross Hairs:
@@ -277,6 +296,7 @@ public class Hodograph3DDisplay extends WindProfileDisplay {
                           PolarHorizontalWind.getRealTupleType());
 
         lowerCrossHair.addConstantMap(new ConstantMap(-1, Display.ZAxis));
+        lowerCrossHair.setColor(defaultForeground);
         addDisplayable(lowerCrossHair);
 
         upperCrossHair =
@@ -284,12 +304,12 @@ public class Hodograph3DDisplay extends WindProfileDisplay {
                           PolarHorizontalWind.getRealTupleType());
 
         upperCrossHair.addConstantMap(new ConstantMap(1, Display.ZAxis));
+        upperCrossHair.setColor(defaultForeground);
         addDisplayable(upperCrossHair);
 
         // Center Pole:
         centerPole = new CenterPole("centerPole",
                                     GeopotentialAltitude.getRealType());
-
         addDisplayable(centerPole);
 
         // Wind profiles:
@@ -862,7 +882,26 @@ public class Hodograph3DDisplay extends WindProfileDisplay {
     protected Displayable newMeanWind() {
         return missingMeanWindTrace;
     }
-
+    
+    /**
+     * Change the color of the {@literal "non-data"} displayables.
+     * 
+     * @param color New foreground color. Cannot be {@code null}.
+     */
+    @Override public void setForeground(Color color) {
+        try {
+            upperRingSet.setColor(color);
+            upperCrossHair.setColor(color);
+            lowerRingSet.setColor(color);
+            lowerCrossHair.setColor(color);
+            compassLabels.setColor(color);
+            speedLabels.setColor(color);
+            altitudeMap.getAxisScale().setColor(color);
+        } catch (VisADException | RemoteException e) {
+            logger.error("Could not set color!", e);
+        }
+    }
+    
     /**
      * Tests this class.
      * @param args              Test arguments. Ignored.
