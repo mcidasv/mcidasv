@@ -132,7 +132,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private Map<String, QualityFlag> qfMap = new HashMap<>();
     private Map<String, float[]> lutMap = new HashMap<>();
 
-    private static final String DATA_DESCRIPTION = "Suomi NPP Data";
+    private static final String DATA_DESCRIPTION = "JPSS Data";
     
     // instrument related variables and flags
     Attribute instrumentName = null;
@@ -228,11 +228,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
         logger.debug("SuomiNPPDataSource constructor called, file count: " + sources.size());
 
         filename = (String) sources.get(0);
-        setDescription("Suomi NPP");
+        setDescription(DATA_DESCRIPTION);
         
         // NASA data is UTC, pre-set time zone
         SimpleTimeZone stz = new SimpleTimeZone(0, "UTC");
-        sdfNASA.setTimeZone(stz);;
+        sdfNASA.setTimeZone(stz);
         
         // build the filename map - matches each product to set of files for that product
         filenameMap = new HashMap<>();
@@ -250,14 +250,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	}
         }
         
-        // pass 2, create a list of files for each product in this data source
+        // Pass 2, create a list of files for each product in this data source
         for (Object o : sources) {
         	String filename = (String) o;
         	// first five characters of any product go together
         	int lastSeparator = filename.lastIndexOf(File.separatorChar);
         	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
         	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
-        	List l = (List) filenameMap.get(prodStr);
+        	List<String> l = filenameMap.get(prodStr);
         	l.add(filename);
         	filenameMap.put(prodStr, l);
         }
