@@ -139,6 +139,18 @@ public class ValuePlanViewControl extends PlanViewControl {
                 getControlContext().getJythonManager());
         pointDisplay.setStationModel(getLayoutModel());
         addAttributedDisplayable(pointDisplay);
+        
+        // TJJ Apr 2018
+        // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1635
+        // Set the initial scale from the display master
+        float scale = this.getViewManager().getMaster().getDisplayScale();
+        try {
+            setScaleOnLayout(scale);
+        } catch (RemoteException | VisADException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         return pointDisplay;
     }
 
