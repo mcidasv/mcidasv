@@ -249,6 +249,16 @@ public class StationModelCanvas extends EditCanvas {
             if (result == JOptionPane.CANCEL_OPTION) {
                 return false;
             }
+
+            // TJJ Apr 2018
+            // Fix bug where graphics were inadvertently getting saved to
+            // Layout Models being edited.
+            // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2543
+
+            if (result == JOptionPane.NO_OPTION) {
+                clearAll();
+            }
+
             if (result == JOptionPane.YES_OPTION) {
                 doSave();
             }
