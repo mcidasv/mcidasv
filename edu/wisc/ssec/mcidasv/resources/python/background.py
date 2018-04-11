@@ -1076,9 +1076,25 @@ class _Display(_JavaProxy):
     @gui_invoke_later
     def setMapLayerVisibility(self, visibility):
         """Toggle the visibility of the current display's map layer."""
+        from ucar.visad.display import CompositeDisplayable
         mapLayer = self.getMapLayer()
         mapLayer.setLayerVisible(visibility)
         
+        # what follows is due to Inquiry 1741, Request 4.
+        # when running in the background, the CompositeDisplayable latLonHolder
+        # (which holds lat/lon lines and labels), loses sync with the visibility
+        # of the lat/lon lines and labels checkboxes.
+        # this stuff manually resyncs things.
+        obj = mapLayer.getJavaInstance()
+        held = obj.latLonHolder.getDisplayables()
+        heldCount = held.size()
+        if heldCount >= 2:
+            held.get(0).setVisible(obj.getLatState().getRealVisibility())
+            held.get(1).setVisible(obj.getLonState().getRealVisibility())
+        if heldCount >= 4:
+            held.get(2).setVisible(obj.getLatLabelState().getRealVisibility())
+            held.get(3).setVisible(obj.getLonLabelState().getRealVisibility())
+            
     @gui_invoke_later
     def getCenter(self, includeScale=False):
         """Return latitude and longitude at the display's center."""
