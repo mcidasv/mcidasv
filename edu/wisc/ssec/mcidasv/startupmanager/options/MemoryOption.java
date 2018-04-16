@@ -49,6 +49,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeListener;
 
 import edu.wisc.ssec.mcidasv.util.MakeToString;
+import edu.wisc.ssec.mcidasv.util.SystemState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,7 +174,8 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private int initSliderValue = minSliderValue;
     
     // max size of current jvm, in *megabytes*
-    private long maxmem = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+//    private long maxmem = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+    private long maxmem = getSystemMemory() / (1024 * 1024);
     
     private State currentState = State.VALID;
     
@@ -195,7 +197,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             setValue(value);
         }
         text.setAllow('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'M', 
-                      'G', 'T');
+                      'G', 'T', 'B');
         text.setUppercase(true);
         jrbSlider.setActionCommand("slider");
         jrbSlider.addActionListener(this);
@@ -272,8 +274,16 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             }
             
             long newMemVal = -1;
+            // need to deal with both "G" and "GB" suffixes
+            int suffixLength = 1;
+            if (memWithSuffix.endsWith("MB") || memWithSuffix.endsWith("GB") 
+                || memWithSuffix.endsWith("TB") 
+                || memWithSuffix.endsWith("PB")) 
+            {
+                suffixLength = 2;
+            }
             String memWithoutSuffix = 
-                memWithSuffix.substring(0, memWithSuffix.length() - 1);
+                memWithSuffix.substring(0, memWithSuffix.length() - suffixLength);
             
             try {
                 newMemVal = Long.parseLong(memWithoutSuffix);
@@ -283,11 +293,11 @@ public class MemoryOption extends AbstractOption implements ActionListener {
                 logger.error("Memory value error:", nfe);
             }
             
-            if (memWithSuffix.endsWith("G")) {
+            if (memWithSuffix.endsWith("G") || memWithSuffix.endsWith("GB")) {
                 // megabytes per Gigabyte
                 newMemVal = newMemVal * Prefix.GIGA.getScale();
             }
-            if (memWithSuffix.endsWith("T")) {
+            if (memWithSuffix.endsWith("T") || memWithSuffix.endsWith("TB")) {
                 // megabytes per Terabyte
                 newMemVal = newMemVal * Prefix.TERA.getScale();
             }
@@ -344,7 +354,8 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     }
     
     public JComponent getTextComponent() {
-        text.setText(initTextValue + currentPrefix.getJavaChar().toUpperCase());
+//        text.setText(initTextValue + currentPrefix.getJavaChar().toUpperCase());
+        text.setText(initTextValue + 'M');
         text.addKeyListener(new KeyAdapter() {
             public void keyReleased(final KeyEvent e) {
                 handleNewValue(text);
@@ -448,5 +459,10 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             }
         }
         throw new IllegalArgumentException(String.format(NO_MEM_PREFIX_FMT, prefix, newValue));
+    }
+    
+    private static long getSystemMemory() {
+        String val = SystemState.queryOpSysProps().get("opsys.memory.physical.total");
+        return Long.parseLong(val);
     }
 }
