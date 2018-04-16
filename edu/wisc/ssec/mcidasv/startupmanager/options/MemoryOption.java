@@ -199,6 +199,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         text.setAllow('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'M', 
                       'G', 'T', 'B');
         text.setUppercase(true);
+        text.setToolTipText("Numerical value followed by unit, e.g. M, G, T, or P (no spaces).");
         jrbSlider.setActionCommand("slider");
         jrbSlider.addActionListener(this);
         jrbNumber.setActionCommand("number");
