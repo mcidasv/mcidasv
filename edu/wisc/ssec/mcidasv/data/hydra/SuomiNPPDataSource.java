@@ -429,8 +429,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
 												if (axpp != null) {
 													String baseName = axpp.getStringValue();
 													productName = baseName;
+													
+													// TJJ Apr 2018
+													// Hack so we can look at CrIS Full Spectrum, until we can
+													// track down existence of an official Product Profile for it.
+													// http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2634
+													// The regular SDR profile lets us visualize it.
+													if (productName.equals("CrIS-FS-SDR")) productName = "CrIS-SDR";
+													
 													String productProfileFileName = nppPP
-															.getProfileFileName(baseName);
+															.getProfileFileName(productName);
 													logger.trace("Found profile: " + productProfileFileName);
 													if (productProfileFileName == null) {
 														throw new Exception(
