@@ -1299,25 +1299,25 @@
 
     <!-- Remove the docs/ directory from auxdata.jar -->
     <target name="auxdata.nodocs" description="Remove the docs/ directory from auxdata.jar">
-        <mkdir dir="${idvlib.dir}/tmp" />
-        <unzip src="${idvlib.dir}/auxdata.jar" dest="${idvlib.dir}/tmp" />
+        <mkdir dir="${dist.dir}/tmp" />
+        <unzip src="${sharedlib.dir}/auxdata-${idv.version}.jar" dest="${dist.dir}/tmp" />
 
-        <delete dir="${idvlib.dir}/tmp/auxdata/docs" failonerror="false" />
-        <delete file="${idvlib.dir}/auxdata.jar" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/auxdata/docs" failonerror="false" />
+        <delete file="${dist.dir}/auxdata-${idv.version}.jar" failonerror="false" />
 
-        <jar destfile="${idvlib.dir}/auxdata.jar" basedir="${idvlib.dir}/tmp" index="true" />
-        <delete dir="${idvlib.dir}/tmp" failonerror="false" />
+        <jar destfile="${dist.dir}/auxdata-${idv.version}.jar" basedir="${dist.dir}/tmp" index="true" />
+        <delete dir="${dist.dir}/tmp" failonerror="false" />
     </target>
 
     <!-- Remove the org/slf4j directory from ncIdv.jar. -->
     <target name="ncidv.nolog" depends="build" description="Remove the org/slf4j directory from ncIdv.jar">
         <mkdir dir="${dist.dir}/tmp" />
-        <unzip src="${dist.dir}/ncIdv.jar" dest="${dist.dir}/tmp" />
+        <unzip src="${dist.dir}/ncIdv-${ncidv.version}.jar" dest="${dist.dir}/tmp" />
 
         <delete dir="${dist.dir}/tmp/org/slf4j" failonerror="false" />
-        <delete file="${dist.dir}/ncIdv.jar" failonerror="false" />
+        <delete file="${dist.dir}/ncIdv-${ncidv.version}.jar" failonerror="false" />
 
-        <jar destfile="${dist.dir}/ncIdv.jar" 
+        <jar destfile="${dist.dir}/ncIdv-${ncidv.version}.jar" 
              basedir="${dist.dir}/tmp" 
              index="true"
              manifest="${dist.dir}/tmp/META-INF/MANIFEST.MF"/>
@@ -1331,12 +1331,12 @@
     -->
     <target name="external.cleanup" depends="build" description="Remove redundant/unneeded class files from external.jar">
         <mkdir dir="${dist.dir}/tmp" />
-        <unzip src="${dist.dir}/external.jar" dest="${dist.dir}/tmp" />
+        <unzip src="${dist.dir}/external-${idv.version}.jar" dest="${dist.dir}/tmp" />
         <delete dir="${dist.dir}/tmp/org/slf4j" failonerror="false" />
         <delete file="${dist.dir}/tmp/jythonlib.jar" failonerror="false" />
-        <delete file="${dist.dir}/external.jar" failonerror="false" />
+        <delete file="${dist.dir}/external-${idv.version}.jar" failonerror="false" />
         
-        <jar destfile="${dist.dir}/external.jar" 
+        <jar destfile="${dist.dir}/external-${idv.version}.jar" 
              basedir="${dist.dir}/tmp" 
              index="true"
              manifest="${dist.dir}/tmp/META-INF/MANIFEST.MF"/>
