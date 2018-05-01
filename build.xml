@@ -103,6 +103,8 @@
 
     <!-- Attempt to load the version property file -->
     <property file="${resource.dir}/version.properties" />
+    <property name="mcv.version" value="${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release}-SNAPSHOT" />
+    
     <property name="media.dir" location="${base.dir}/../install4j/media" />
     <property name="source.file" value="McIDAS-V_${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release}_source.jar" />
 
@@ -120,11 +122,11 @@
     <property name="build.props" value="${resource.dir}/build.properties" />
 
     <!-- Jar file names -->
-    <property name="app.jarname" value="mcidasv.jar" />
-    <property name="local-idv.jarname" value="local-idv.jar" />
-    <property name="javadoc.jarname" value="mcv_javadoc.jar" />
-    <property name="userguide.jarname" value="mcv_userguide.jar" />
-    <property name="source.jarname" value="mcv_source.jar" />
+    <property name="app.jarname" value="mcidasv-${mcv.version}.jar" />
+    <property name="local-idv.jarname" value="local-idv-${mcv.version}.jar" />
+    <property name="javadoc.jarname" value="mcv_javadoc-${mcv.version}.jar" />
+    <property name="userguide.jarname" value="mcv_userguide-${mcv.version}.jar" />
+    <property name="source.jarname" value="mcv_source-${mcv.version}.jar" />
 
     <!-- Jar signing -->
     <property name="key.store" location="${release.dir}/mcv-keystore" />
@@ -136,11 +138,11 @@
     <!-- Main class for startup manager -->
     <property name="app.smclass"
     value="edu.wisc.ssec.mcidasv.startupmanager.StartupManager" />
-    <property name="app.smjar" value="startupmanager.jar" />
+    <property name="app.smjar" value="startupmanager-${mcv.version}.jar" />
 
     <!-- Properties for the Jython console -->
     <property name="jython.class" value="edu.wisc.ssec.mcidasv.jython.Console" />
-    <property name="jython.jarfile" value="console.jar" />
+    <property name="jython.jarfile" value="console-${mcv.version}.jar" />
     <property name="jython.dir" value="${base.dir}/edu/wisc/ssec/mcidasv/jython" />
     <property name="jython.lib" value="${idvlib.dir}/jython.jar" />
 
@@ -184,7 +186,7 @@
          
          Higher values means javadoc will take longer to finish. -->
     <property name="javadoc.warnings.maxnum" value="100" />
-
+    
     <!-- Use these properties to make changing the versions of related JARs
         (see SLF4J or Logback) a bit less tedious. -->
     <property name="slf4j.version" value="1.7.25" />
@@ -200,6 +202,9 @@
     <property name="juniversalchardet.version" value="2.1.0" />
     <property name="jsattrack.version" value="4.1.11" />
     <property name="commons-httpclient.version" value="3.1" />
+    <property name="idv.version" value="5.4u1-SNAPSHOT" />
+    <property name="ncidv.version" value="4.6.12-SNAPSHOT" />
+    <property name="visad.version" value="2.0-SNAPSHOT" />
 
     <!-- note that the J3D JARs available from http://jogamp.org/deployment/java3d/
          do not (as of 20140915) have the version string in the filenames.
@@ -209,7 +214,7 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-    <property name="jar.base.classpath" value="ncIdv.jar external.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar local-idv.jar repositorytds.jar commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
+    <property name="jar.base.classpath" value="ncIdv-${ncidv.version}.jar external-${idv.version}.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
@@ -226,8 +231,7 @@
         <include name="logback-classic-${logback.version}.jar" />
         <include name="log4j-over-slf4j-${slf4j.version}.jar" />
         <include name="slf4j-api-${slf4j.version}.jar" />
-        <include name="local-idv.jar" />
-        <include name="repositorytds.jar" />
+        <include name="${local-idv.jarname}" />
         <include name="commons-math3-${commons-math.version}.jar" />
         <include name="rsyntaxtextarea-${rsyntaxtextarea.version}.jar" />
         <include name="jul-to-slf4j-${slf4j.version}.jar" />
@@ -249,20 +253,16 @@
          it turns out that both ncIdv.jar and external.jar ship different
          versions of org.apache.http.impl.client.AbstractHttpClient! -->
     <fileset id="netcdf.libs" dir="${dist.dir}">
-        <include name="ncIdv.jar"/>
+        <include name="ncIdv-${ncidv.version}.jar" />
     </fileset>
 
     <!-- List of IDV jars -->
     <fileset id="idv.libs" dir="${dist.dir}">
-        <include name="auxdata.jar" />
-        <include name="local-visad.jar" />
-        <include name="visad.jar" />
-        <include name="commons-net-1.4.1.jar" />
-        <include name="external.jar" />
-        <include name="extra.jar" />
-        <include name="jcommon.jar" />
-        <include name="texttonc.jar" />
-        <include name="idv.jar" />
+        <include name="auxdata-${idv.version}.jar" />
+        <include name="local-visad-${idv.version}.jar" />
+        <include name="visad-${visad.version}.jar" />
+        <include name="external-${idv.version}.jar" />
+        <include name="idv-${idv.version}.jar" />
     </fileset>
 
     <fileset id="linux_x64.libs" dir="${dist.dir}">
@@ -307,16 +307,16 @@
 
     <!-- Shared classpath -->
     <path id="app.classpath">
-        <pathelement location="${dist.dir}/mcidasv.jar" />
-        <pathelement location="${dist.dir}/local-idv.jar" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${dist.dir}/${local-idv.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
     </path>
 
     <path id="linux_x64.app.classpath">
-        <pathelement location="${dist.dir}/mcidasv.jar" />
-        <pathelement location="${dist.dir}/local-idv.jar" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${dist.dir}/${local-idv.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
@@ -324,8 +324,8 @@
     </path>
 
     <path id="linux_x86.app.classpath">
-        <pathelement location="${dist.dir}/mcidasv.jar" />
-        <pathelement location="${dist.dir}/local-idv.jar" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${dist.dir}/${local-idv.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
@@ -333,8 +333,8 @@
     </path>
 
     <path id="windows_x64.app.classpath">
-        <pathelement location="${dist.dir}/mcidasv.jar" />
-        <pathelement location="${dist.dir}/local-idv.jar" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${dist.dir}/${local-idv.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
@@ -342,8 +342,8 @@
     </path>
 
     <path id="windows_x86.app.classpath">
-        <pathelement location="${dist.dir}/mcidasv.jar" />
-        <pathelement location="${dist.dir}/local-idv.jar" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${dist.dir}/${local-idv.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
@@ -351,8 +351,8 @@
     </path>
 
     <path id="macosx.app.classpath">
-        <pathelement location="${dist.dir}/mcidasv.jar" />
-        <pathelement location="${dist.dir}/local-idv.jar" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${dist.dir}/${local-idv.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
@@ -361,8 +361,8 @@
 
 
     <path id="bundle.classpath">
-        <pathelement location="${dist.dir}/mcidasv.jar" />
-        <pathelement location="${dist.dir}/local-idv.jar" />
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${dist.dir}/${local-idv.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
@@ -634,10 +634,10 @@
         <mkdir dir="${build.dir}" />
         <mkdir dir="${dist.dir}" />
         <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${idvlib.dir}">
-                <include name="**/*.jar" />
-                <exclude name="**/jython.jar" />
-            </fileset>
+            <!--<fileset dir="${idvlib.dir}">-->
+                <!--<include name="**/*.jar" />-->
+                <!--<exclude name="**/jython.jar" />-->
+            <!--</fileset>-->
             <!--<fileset dir="${lib.dir}" includes="**/*.jar" />-->
             <fileset dir="${sharedlib.dir}" includes="**/*.jar" />
         </copy>
@@ -707,7 +707,7 @@
                 <attribute name="Build-By" value="${user.name}" />
                 <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
                 <attribute name="Class-Path"
-                value="idv.jar mcidasv.jar mcv_userguide.jar" />
+                value="idv-${idv.version}.jar mcidasv-${mcv.version}.jar mcv_userguide-${mcv.version}.jar" />
                 <attribute name="Main-Class" value="${app.smclass}" />
             </manifest>
         </jar>
@@ -726,7 +726,7 @@
             <manifest>
                 <attribute name="Build-By" value="${user.name}" />
                 <attribute name="Build-Date" value="${jar.TODAY} ${jar.TSTAMP}" />
-                <attribute name="Class-Path" value="sysout-over-slf4j-1.0.2.jar miglayout-core-4.2.jar miglayout-swing-4.2.jar eventbus-1.4.jar logback-core-1.1.1.jar logback-classic-1.1.1.jar log4j-over-slf4j-1.7.6.jar slf4j-api-1.7.6.jar local-idv.jar repositorytds.jar commons-math3-3.2.jar rsyntaxtextarea-2.5.1.jar jul-to-slf4j-1.7.6.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar" />
+                <attribute name="Class-Path" value="sysout-over-slf4j-1.0.2.jar miglayout-core-4.2.jar miglayout-swing-4.2.jar eventbus-1.4.jar logback-core-1.1.1.jar logback-classic-1.1.1.jar log4j-over-slf4j-1.7.6.jar slf4j-api-1.7.6.jar local-idv.jar commons-math3-3.2.jar rsyntaxtextarea-2.5.1.jar jul-to-slf4j-1.7.6.jar local-idv.jar visad.jar idv.jar repositorytds.jar mcv_userguide.jar" />
                 <attribute name="Main-Class" value="${jython.class}" />
             </manifest>
         </jar>
@@ -737,7 +737,7 @@
         <!-- <mkdir dir="${dist.dir}" /> -->
         <!-- <delete file="${dist.dir}/${app.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
-        <manifestclasspath property="mcidasv.class.path" jarfile="${dist.dir}/{${app.jarname}">
+        <manifestclasspath property="mcidasv.class.path" jarfile="${dist.dir}/${app.jarname}">
             <!--<classpath refid="app.classpath" />-->
             <classpath refid="linux_x64.app.classpath" />
             <classpath refid="linux_x86.app.classpath" />
@@ -764,7 +764,7 @@
         <!-- <mkdir dir="${dist.dir}" /> -->
         <!-- <delete file="${dist.dir}/${local-idv.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
-        <manifestclasspath property="local-idv.class.path" jarfile="${dist.dir}/{${local-idv.jarname}">
+        <manifestclasspath property="local-idv.class.path" jarfile="${dist.dir}/${local-idv.jarname}">
             <!--<classpath refid="app.classpath" />-->
             <classpath refid="linux_x64.app.classpath" />
             <classpath refid="linux_x86.app.classpath" />
@@ -806,7 +806,7 @@
         keystore="${key.store}" storepass="${storepass}" />
         <signjar jar="${dist.dir}/${local-idv.jarname}" alias="${key.alias}"
         keystore="${key.store}" storepass="${storepass}" />
-        <signjar jar="${dist.dir}/mcv_userguide.jar" alias="${key.alias}"
+        <signjar jar="${dist.dir}/mcv_userguide-${mcv.version}.jar" alias="${key.alias}"
         keystore="${key.store}" storepass="${storepass}" />
     </target>
 
@@ -825,7 +825,7 @@
         </unzip>
 
         <!-- Override default VisAD classes with custom ones -->
-        <unzip src="${idvlib.dir}/local-visad.jar" dest="${build.dir}" />
+        <unzip src="${idvlib.dir}/local-visad-${idv.version}.jar" dest="${build.dir}" />
 
         <!-- Override default IDV classes with custom ones -->
         <!-- <unzip src="${idvlib.dir}/local-idv.jar" dest="${build.dir}" /> -->
@@ -882,7 +882,7 @@
 
   <!-- Build and run McIDAS-V application (large memory) -->
   <target name="jar.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
-    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
+    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/${app.jarname}">
       <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
       <!-- <jvmarg value="-XX:+UseG1GC" /> -->
@@ -941,7 +941,7 @@
   </target>
 
   <target name="jar.runlarge9" depends="jar" description="Build and run McIDAS-V application (large memory)">
-    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
+    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv-${mcv.version}.jar">
       <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
       
@@ -1097,7 +1097,7 @@
     }
   -->
   <target name="jar.runscript" depends="jar" description="Build McIDAS-V and run a Jython script (large memory).">
-    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv.jar">
+    <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/${app.jarname}">
       <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
       <jvmarg value="-XX:+UseConcMarkSweepGC" />
@@ -1413,7 +1413,7 @@
     <target name="archive" depends="jar" description="Build McIDAS-V JARs and create mcidasv-tiny.zip and mcidasv-alljars.zip.">
         <!-- zip task defaults to overwriting destfile.  -->
         <zip destfile="${dist.dir}/mcidasv-tiny.zip">
-            <fileset dir="${dist.dir}" includes="local-idv.jar, mcidasv.jar"/>
+            <fileset dir="${dist.dir}" includes="${local-idv.jarname}, ${app.jarname}"/>
         </zip>
         <zip destfile="${dist.dir}/mcidasv-alljars.zip">
             <fileset dir="${dist.dir}" includes="*.jar"/>

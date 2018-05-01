@@ -39,6 +39,7 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 
 import java.net.URL;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -61,9 +62,11 @@ import java.util.jar.Manifest;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.VirtualUniverse;
 
+import com.google.common.base.Splitter;
 import org.python.core.Py;
 import org.python.core.PySystemState;
 
+import org.python.modules.posix.PosixModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,13 +84,14 @@ import edu.wisc.ssec.mcidasv.StateManager;
  * Utility methods for querying the state of the user's machine.
  */
 public class SystemState {
-
+    
     /** Handy logging object. */
-    private static final Logger logger = LoggerFactory.getLogger(SystemState.class);
-
+    private static final Logger logger = 
+        LoggerFactory.getLogger(SystemState.class);
+        
     // Don't allow outside instantiation.
     private SystemState() { }
-
+    
     public static String escapeWhitespaceChars(final CharSequence sequence) {
         StringBuilder sb = new StringBuilder(sequence.length() * 7);
         for (int i = 0; i < sequence.length(); i++) {
@@ -108,7 +112,7 @@ public class SystemState {
         logger.trace("incoming={} outgoing={}", sequence.length(), sb.length());
         return sb.toString();
     }
-
+    
     /**
      * Attempt to invoke {@code OperatingSystemMXBean.methodName} via 
      * reflection.
@@ -139,7 +143,7 @@ public class SystemState {
         }
         return result;
     }
-
+    
     /**
      * Returns the contents of Jython's registry (basically just Jython-specific
      * properties) as well as some of the information from Python's 
@@ -161,7 +165,7 @@ public class SystemState {
         properties.put("sys.version_info", PySystemState.version_info);
         return properties;
     }
-
+    
     /**
      * Attempts to call methods belonging to 
      * {@code com.sun.management.OperatingSystemMXBean}. If successful, we'll
@@ -188,10 +192,10 @@ public class SystemState {
         long totalMemory = hackyMethodCall("getTotalPhysicalMemorySize", Long.MIN_VALUE);
         long totalSwap = hackyMethodCall("getTotalSwapSpaceSize", Long.MIN_VALUE);
         double loadAvg = hackyMethodCall("getSystemLoadAverage", Double.NaN);
-
+        
         Runtime rt = Runtime.getRuntime();
         long currentMem = rt.totalMemory() - rt.freeMemory();
-
+        
         properties.put("opsys.cpu.time", Long.toString(cpuTime));
         properties.put("opsys.load", Double.toString(loadAvg));
         properties.put("opsys.memory.jvm.current", Long.toString(currentMem));
@@ -201,10 +205,10 @@ public class SystemState {
         properties.put("opsys.memory.physical.total", Long.toString(totalMemory));
         properties.put("opsys.memory.swap.free", Long.toString(freeSwap));
         properties.put("opsys.memory.swap.total", Long.toString(totalSwap));
-
+        
         return properties;
     }
-
+    
     /**
      * Polls Java for information about the user's machine. We're specifically
      * after memory statistics, number of processors, and display information.
@@ -213,18 +217,18 @@ public class SystemState {
      */
     public static Map<String, String> queryMachine() {
         Map<String, String> props = newLinkedHashMap();
-
+        
         // cpu count and whatnot
         int processors = Runtime.getRuntime().availableProcessors();
         props.put("opsys.cpu.count", Integer.toString(processors));
-
+        
         // memory: available, used, etc
         props.putAll(queryOpSysProps());
-
+        
         // screen: count, resolution(s)
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         int displayCount = ge.getScreenDevices().length;
-
+        
         for (int i = 0; i < displayCount; i++) {
             String baseId = "opsys.display."+i+'.';
             GraphicsDevice dev = ge.getScreenDevices()[i];
@@ -237,7 +241,7 @@ public class SystemState {
         }
         return props;
     }
-
+    
     /**
      * Returns a mapping of display number to a {@link java.awt.Rectangle} 
      * that represents the {@literal "bounds"} of the display.
@@ -256,7 +260,7 @@ public class SystemState {
         }
         return map;
     }
-
+    
     // TODO(jon): this should really be a polygon
     public static Rectangle getVirtualDisplayBounds() {
         Rectangle virtualBounds = new Rectangle();
@@ -265,7 +269,7 @@ public class SystemState {
         }
         return virtualBounds;
     }
-
+    
     /**
      * Polls Java 3D for information about its environment. Specifically, we 
      * call {@link VirtualUniverse#getProperties()} and 
@@ -275,21 +279,21 @@ public class SystemState {
      */
     @SuppressWarnings("unchecked") // casting to Object, so this should be fine.
     public static Map<String, Object> queryJava3d() {
-
+        
         Map<String, Object> universeProps = 
             (Map<String, Object>)VirtualUniverse.getProperties();
-
+            
         GraphicsConfiguration config =
             DisplayUtil.getPreferredConfig(null, true, false);
         Map<String, Object> c3dMap = new Canvas3D(config).queryProperties();
-
+        
         Map<String, Object> props =
                 newLinkedHashMap(universeProps.size() + c3dMap.size());
         props.putAll(universeProps);
         props.putAll(c3dMap);
         return props;
     }
-
+    
     /**
      * Gets a human-friendly representation of the information embedded within
      * IDV's {@code build.properties}.
@@ -303,7 +307,7 @@ public class SystemState {
                info.get("idv.version.minor") + info.get("idv.version.revision") +
                " built " + info.get("idv.build.date");
     }
-
+    
     /**
      * Gets a human-friendly representation of the information embedded within
      * McIDAS-V's {@code build.properties}.
@@ -317,7 +321,7 @@ public class SystemState {
                info.get(Constants.PROP_VERSION_MINOR) + info.get(Constants.PROP_VERSION_RELEASE) +
                " built " + info.get(Constants.PROP_BUILD_DATE);
     }
-
+    
     /**
      * Gets a human-friendly representation of the version information embedded 
      * within VisAD's {@literal "DATE"} file.
@@ -330,7 +334,7 @@ public class SystemState {
         Map<String, String> props = queryVisadBuildProperties();
         return "VisAD version " + props.get(Constants.PROP_VISAD_REVISION) + " built " + props.get(Constants.PROP_VISAD_DATE);
     }
-
+    
     /**
      * Gets a human-friendly representation of the ncIdv.jar version
      * information.
@@ -342,7 +346,7 @@ public class SystemState {
         Map<String, String> props = queryNcidvBuildProperties();
         return "netCDF-Java version " + props.get("version") + " built " + props.get("buildDate");
     }
-
+    
     /**
      * Open a file for reading.
      *
@@ -351,10 +355,10 @@ public class SystemState {
      * @return {@code InputStream} used to read {@code name}, or {@code null}
      * if {@code name} could not be found.
      */
-    private static InputStream getResourceAsStream(final String name) {
+    private static InputStream resourceAsStream(final String name) {
         return ClassLoader.getSystemResourceAsStream(name);
     }
-
+    
     /**
      * Returns a {@link Map} containing any relevant version information. 
      * 
@@ -365,10 +369,11 @@ public class SystemState {
      */
     public static Map<String, String> queryVisadBuildProperties() {
         Map<String, String> props = newLinkedHashMap(4);
-        BufferedReader input = null;
         
-        try {
-            input = new BufferedReader(new InputStreamReader(getResourceAsStream("DATE")));
+        try (BufferedReader input = new BufferedReader(
+                                        new InputStreamReader(
+                                            resourceAsStream("DATE")))) 
+        {
             String contents = input.readLine();
             // string should look like: Thu Mar 22 13:01:31 CDT 2012  Rev:5952
             String splitAt = "  Rev:";
@@ -385,20 +390,69 @@ public class SystemState {
             props.put(Constants.PROP_VISAD_PARSE_FAIL, parseFail);
             props.put(Constants.PROP_VISAD_DATE, buildDate);
             props.put(Constants.PROP_VISAD_REVISION, revision);
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.error("could not read from VisAD DATE file", e);
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (Exception e) {
-                    logger.error("could not close VisAD DATE file", e);
-                }
-            }
         }
         return props;
     }
-
+    
+    /**
+     * Return McIDAS-V's classpath.
+     *
+     * <p>This may differ from what is reported by 
+     * {@code System.getProperty("java.class.path")}. This is because McIDAS-V
+     * specifies its classpath using {@code META-INF/MANIFEST.MF} in 
+     * {@code mcidasv.jar}.
+     * </p>
+     *
+     * @return Either a list of strings containing the path to each JAR file
+     * in the classpath, or an empty list.
+     */
+    public static List<String> getMcvJarClasspath() {
+        // TODO(jon): not really a fan of either method.
+//        ClassLoader cl = ClassLoader.getSystemClassLoader();
+//        URL[] urls = ((URLClassLoader) cl).getURLs();
+//        for (URL url : urls) {
+//            Path p = Paths.get(url.toString()).getParent();
+//            jarDir = p.toString();
+//            break;
+//        }
+//        if (jarDir == null) {
+//            jarDir = System.getProperty("user.dir");
+//        }
+        String jarDir = System.getProperty("user.dir");
+        if (jarDir == null) {
+            jarDir = PosixModule.getcwd().toString();
+        }
+        
+        SystemState sysState = new SystemState();
+        
+        // 64 chosen because we're currently at 38 JARs.
+        List<String> jars = arrList(64);
+        try {
+            URL resource = sysState.getClass()
+                                   .getClassLoader()
+                                   .getResource("META-INF/MANIFEST.MF");
+            InputStream stream = resource.openStream();
+            if (stream != null) {
+                Manifest manifest = new Manifest(stream);
+                Attributes attrs = manifest.getMainAttributes();
+                if (attrs != null) {
+                    String classpath = attrs.getValue("Class-Path");
+                    Splitter split = Splitter.on(' ')
+                        .trimResults()
+                        .omitEmptyStrings();
+                    for (String jar : split.split(classpath)) {
+                        jars.add(Paths.get(jarDir, jar).toFile().toString());
+                    }
+                }
+            }
+        } catch (IOException | NullPointerException e) {
+            logger.warn("Exception occurred:", e);
+        }
+        return jars;
+    }
+    
     /**
      * Returns a {@link Map} containing {@code version} and {@code buildDate}
      * keys.
@@ -408,7 +462,7 @@ public class SystemState {
     public static Map<String, String> queryNcidvBuildProperties() {
         // largely taken from LibVersionUtil's getBuildInfo method.
         GribConverterUtility util = new GribConverterUtility();
-        HashMap<String, String> buildInfo = new HashMap<>(4);
+        Map<String, String> buildInfo = new HashMap<>(4);
         // format from ncidv.jar
         SimpleDateFormat formatIn =
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -417,15 +471,18 @@ public class SystemState {
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
         formatOut.setTimeZone(TimeZone.getTimeZone("UTC"));
         try {
-            Enumeration<URL> resources =
-                util.getClass().getClassLoader().getResources(
-                    "META-INF/MANIFEST.MF");
+            Enumeration<URL> resources = 
+                util.getClass()
+                    .getClassLoader()
+                    .getResources("META-INF/MANIFEST.MF");
+                    
             while (resources.hasMoreElements()) {
                 Manifest manifest =
                     new Manifest(resources.nextElement().openStream());
                 Attributes attrs = manifest.getMainAttributes();
                 if (attrs != null) {
-                    String implTitle = attrs.getValue("Implementation-Title");
+                    String implTitle = 
+                        attrs.getValue("Implementation-Title");
                     if ((implTitle != null) && implTitle.contains("ncIdv")) {
                         buildInfo.put(
                             "version",
@@ -444,7 +501,7 @@ public class SystemState {
         }
         return buildInfo;
     }
-
+    
     /**
      * Returns a {@link Map} of the (currently) most useful contents of
      * {@code ucar/unidata/idv/resources/build.properties}.
@@ -465,7 +522,7 @@ public class SystemState {
         Map<String, String> versions = newLinkedHashMap(4);
         InputStream input = null;
         try {
-            input = getResourceAsStream("ucar/unidata/idv/resources/build.properties");
+            input = resourceAsStream("ucar/unidata/idv/resources/build.properties");
             Properties props = new Properties();
             props.load(input);
             String major = props.getProperty("idv.version.major", "no_major");
@@ -489,7 +546,7 @@ public class SystemState {
         }
         return versions;
     }
-
+    
     /**
      * Returns a {@link Map} of the (currently) most useful contents of
      * {@code edu/wisc/ssec/mcidasv/resources/build.properties}.
@@ -513,7 +570,7 @@ public class SystemState {
         Map<String, String> versions = newLinkedHashMap(4);
         InputStream input = null;
         try {
-            input = getResourceAsStream("edu/wisc/ssec/mcidasv/resources/build.properties");
+            input = resourceAsStream("edu/wisc/ssec/mcidasv/resources/build.properties");
             Properties props = new Properties();
             props.load(input);
             String major = props.getProperty(Constants.PROP_VERSION_MAJOR, "0");
@@ -537,7 +594,7 @@ public class SystemState {
         }
         return versions;
     }
-
+    
     /**
      * Queries McIDAS-V for information about its state. There's not a good way
      * to characterize what we're interested in, so let's leave it at 
@@ -551,7 +608,7 @@ public class SystemState {
     public static Map<String, Object> queryMcvState(final McIDASV mcv) {
         // through some simple verification, props generally has under 250 elements
         Map<String, Object> props = newLinkedHashMap(250);
-
+        
         ArgsManager args = mcv.getArgsManager();
         props.put("mcv.state.islinteractive", args.getIslInteractive());
         props.put("mcv.state.offscreen", args.getIsOffScreen());
@@ -559,7 +616,7 @@ public class SystemState {
         props.put("mcv.state.actions", mcv.getActionHistory());
         props.put("mcv.plugins.installed", args.installPlugins);
         props.put("mcv.state.commandline", mcv.getCommandLineArgs());
-
+        
         // loop through resources
         List<IdvResource> resources =
                 (List<IdvResource>)mcv.getResourceManager().getResources();
@@ -571,8 +628,9 @@ public class SystemState {
             } else {
                 props.put(id+".pattern", resource.getPattern());
             }
-
-            ResourceCollection rc = mcv.getResourceManager().getResources(resource);
+            
+            ResourceCollection rc = 
+                mcv.getResourceManager().getResources(resource);
             int rcSize = rc.size();
             List<String> specified = arrList(rcSize);
             List<String> valid = arrList(rcSize);
@@ -583,13 +641,13 @@ public class SystemState {
                     valid.add(tmpResource);
                 }
             }
-
+            
             props.put(id+".specified", specified);
             props.put(id+".existing", valid);
         }
         return props;
     }
-
+    
     /**
      * Builds a (filtered) subset of the McIDAS-V system properties and returns
      * the results as a {@code String}.
@@ -605,7 +663,7 @@ public class SystemState {
     public static String getStateAsString(final McIDASV mcv) {
         return getStateAsString(mcv, false);
     }
-
+    
     /**
      * Builds the McIDAS-V system properties and returns the results as a 
      * {@code String}.
@@ -620,22 +678,22 @@ public class SystemState {
     public static String getStateAsString(final McIDASV mcv, final boolean firehose) {
         int builderSize = firehose ? 45000 : 1000;
         StringBuilder buf = new StringBuilder(builderSize);
-
+        
         Map<String, String> versions = ((StateManager)mcv.getStateManager()).getVersionInfo();
         Properties sysProps = System.getProperties();
         Map<String, Object> j3dProps = queryJava3d();
         Map<String, String> machineProps = queryMachine();
         Map<Object, Object> jythonProps = queryJythonProps();
         Map<String, Object> mcvProps = queryMcvState(mcv);
-
+        
         if (sysProps.contains("line.separator")) {
             sysProps.put("line.separator", escapeWhitespaceChars((String)sysProps.get("line.separator")));
             logger.trace("grr='{}'", sysProps.get("line.separator"));
         }
-
+        
         String maxMem = Long.toString(Long.valueOf(machineProps.get("opsys.memory.jvm.max")) / 1048576L);
         String curMem = Long.toString(Long.valueOf(machineProps.get("opsys.memory.jvm.current")) / 1048576L);
-
+        
         buf.append("# Software Versions:")
             .append("\n# McIDAS-V:    ").append(versions.get("mcv.version.general")).append(" (").append(versions.get("mcv.version.build")).append(')')
             .append("\n# VisAD:       ").append(versions.get("visad.version.general")).append(" (").append(versions.get("visad.version.build")).append(')')
@@ -660,33 +718,33 @@ public class SystemState {
             .append("\n\n# Jython:")
             .append("\n# Version:     ").append(jythonProps.get("sys.version_info"))
             .append("\n# python.home: ").append(jythonProps.get("python.home"));
-
+            
         if (firehose) {
             buf.append("\n\n\n#Firehose:\n\n# SOFTWARE VERSIONS\n");
             for (String key : new TreeSet<>(versions.keySet())) {
                 buf.append(key).append('=').append(versions.get(key)).append('\n');
             }
-
+            
             buf.append("\n# MACHINE PROPERTIES\n");
             for (String key : new TreeSet<>(machineProps.keySet())) {
                 buf.append(key).append('=').append(machineProps.get(key)).append('\n');
             }
-
+            
             buf.append("\n# JAVA SYSTEM PROPERTIES\n");
             for (Object key : new TreeSet<>(sysProps.keySet())) {
                 buf.append(key).append('=').append(sysProps.get(key)).append('\n');
             }
-
+            
             buf.append("\n# JAVA3D/JOGL PROPERTIES\n");
             for (String key : new TreeSet<>(j3dProps.keySet())) {
                 buf.append(key).append('=').append(j3dProps.get(key)).append('\n');
             }
-
+            
             buf.append("\n# JYTHON PROPERTIES\n");
             for (Object key : new TreeSet<>(jythonProps.keySet())) {
                 buf.append(key).append('=').append(jythonProps.get(key)).append('\n');
             }
-
+            
             // get idv/mcv properties
             buf.append("\n# IDV AND MCIDAS-V PROPERTIES\n");
             for (String key : new TreeSet<>(mcvProps.keySet())) {
