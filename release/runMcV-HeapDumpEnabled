@@ -9,6 +9,9 @@ fi
 
 MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 
+MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
+USERGUIDE_JAR=$(find . -maxdepth 1 -name "mcv_userguide*.jar" -print)
+
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
   if [ "$1" = "-userpath" ]; then
@@ -124,7 +127,7 @@ if [ "${SHOW_WELCOME}" = "1" ]; then
         OSX_FLAGS=""
     fi
     
-    ${JAVA_BIN} ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
+    ${JAVA_BIN} ${OSX_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp $MCV_JAR edu.wisc.ssec.mcidasv.util.WelcomeWindow 2>/dev/null
     if [ $? -eq 1 ]; then
         exit 1
     fi
@@ -133,7 +136,7 @@ fi
 # Get the version and amount of system memory
 echo "Reading system configuration..."
 # SYS_VER=`${JAVA_BIN} -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetVer 2>/dev/null`
-SYS_MEM=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+SYS_MEM=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp $MCV_JAR edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
 echo "sys mem: ${SYS_MEM}"
 
 # We have system memory, so try to set heap size if a percent was requested
@@ -250,7 +253,7 @@ MCV_FLAGS="${MCV_FLAGS} -userpath \"${MCV_USERPATH}\" ${DEFAULT_BUNDLE}"
 #   fi
 # fi
 
-MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
+MCV_CLASSPATH=".:$USERGUIDE_JAR:$MCV_JAR"
 
 # # Log this session
 # echo "################" >>"${MCV_LOG}"

@@ -10,6 +10,9 @@ fi
 MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
 
+MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
+USERGUIDE_JAR=$(find . -maxdepth 1 -name "mcv_userguide*.jar" -print)
+
 USE_TEMPUSERPATH="0"
 
 # Check for -userpath parameter
@@ -150,7 +153,7 @@ echo "Reading system configuration..."
 
 # We have system memory, so try to set heap size if a percent was requested
 if [ ${HEAP_PERCENT} -gt 0 ]; then
-  SYS_MEM=`"${JAVA_BIN}" -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+  SYS_MEM=`"${JAVA_BIN}" -Dmcv.userpath=\"${MCV_USERPATH}\" -cp $MCV_JAR edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
   echo "sys mem: ${SYS_MEM}"
   if [ ${SYS_MEM} -gt 0 ]; then
     HEAP_SIZE=$(( ${SYS_MEM} * ${HEAP_PERCENT} / 100 ))
@@ -292,7 +295,7 @@ fi
 MCV_FLAGS="${MCV_FLAGS} -userpath \"${MCV_USERPATH}\" ${USE_LAYOUT_BUNDLE} ${DEFAULT_BUNDLE}"
 echo "mcv flags: ${MCV_FLAGS}"
 
-MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
+MCV_CLASSPATH=".:$USERGUIDE_JAR:$MCV_JAR"
 
 # Run it
 # "${JAVA_BIN}" ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1

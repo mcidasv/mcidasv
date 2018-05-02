@@ -8,6 +8,9 @@ fi
 MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 MCV_PARAMS="$@"
 
+MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
+USERGUIDE_JAR=$(find . -maxdepth 1 -name "mcv_userguide*.jar" -print)
+
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
   if [ "$1" = "-userpath" ]; then
@@ -73,7 +76,7 @@ fi
 
 # Get the amount of system memory
 echo "Reading system configuration..."
-SYS_MEM=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+SYS_MEM=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp $MCV_JAR edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
 
 ################################################################################
 # OS specific settings
@@ -88,7 +91,7 @@ fi
 # Done with OS specific settings
 ################################################################################
 
-MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
+MCV_CLASSPATH=".:$USERGUIDE_JAR:$MCV_JAR"
 
 # McV supplies all of its dependencies; there's no need for the JRE to look elsewhere.
 MCV_EXTDIR="-Djava.ext.dirs=\"${JAVA_HOME}/lib/ext\""
