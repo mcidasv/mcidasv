@@ -53,7 +53,6 @@ import java.awt.event.MouseEvent;
 import java.io.EOFException;
 import java.io.InputStream;
 import java.net.ConnectException;
-import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -184,7 +183,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             this, "doManager", null, "Manage servers");
 
     /** Public button--we need to draw a menu from this */
-    JButton publicButton =
+    protected JButton publicButton =
         McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls22.png",
             this, "showGroups", null, "List public datasets");
 
