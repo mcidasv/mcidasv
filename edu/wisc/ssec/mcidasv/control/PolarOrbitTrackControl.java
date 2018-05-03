@@ -365,6 +365,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		
     		boolean fontChanged = true;
     		boolean swathChanged = false;
+    		float scale = getViewManager().getMaster().getDisplayScale();
     		curSwathCenterWidth = jcbSCLineWidth.getSelectedIndex() + 1;
     		curSwathEdgeWidth = jcbSELineWidth.getSelectedIndex() + 1;
     		if (curSwathCenterWidth != prvSwathCenterWidth) swathChanged = true;
@@ -438,7 +439,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 	                            time.setVerticalJustification(TextControl.Justification.CENTER);
 	                            time.setColor(curSwathColor);
 	                            time.setFont(otFontSelector.getFont());
-	                            time.setTextSize((float) otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
+	                            time.setTextSize((float) scale * otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
 	                            time.setSphere(inGlobeDisplay());
 	                            
 	                            RealTuple lonLat =
@@ -464,7 +465,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 					vade.printStackTrace();
 				}
     		}
-    		
+            
     		updateDisplayList();
     		return;
     	}
@@ -1110,6 +1111,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private void labelGroundStation(String station) {
+        
+        float scale = getViewManager().getMaster().getDisplayScale();
     	try {
     		String str = "+ " + station;
     		logger.debug("Drawing station: " + str);
@@ -1119,7 +1122,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
     		groundStationDsp.setColor(getAntColor());
     		groundStationDsp.setFont(gsFontSelector.getFont());
-    		groundStationDsp.setTextSize((float) gsFontSelector.getFontSize() / FONT_SCALE_FACTOR);
+    		groundStationDsp.setTextSize((float) scale * gsFontSelector.getFontSize() / FONT_SCALE_FACTOR);
     		groundStationDsp.setSphere(inGlobeDisplay());
 
     		double dlat = getLatitude();
