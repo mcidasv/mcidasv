@@ -209,7 +209,7 @@
     <!-- note that the J3D JARs available from http://jogamp.org/deployment/java3d/
          do not (as of 20140915) have the version string in the filenames.
          this must be done manually for now. -->
-    <property name="java3d.version" value="1.6.0-pre12" />
+    <property name="java3d.version" value="1.6.0" />
 
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
