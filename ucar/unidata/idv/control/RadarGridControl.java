@@ -880,7 +880,13 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             return;
         }
         try {
+
             String cmd = event.getActionCommand();
+
+            // TJJ May 2018
+            // Scale labels appropriately on all actions
+            float lblScale = getViewManager().getMaster().getDisplayScale();
+            rangeRings.setLabelSize(lblScale);
 
             // TJJ Check link state. if active, any color change
             // or line width change affects all colors and line widths
