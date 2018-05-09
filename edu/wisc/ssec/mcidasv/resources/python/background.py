@@ -3805,9 +3805,6 @@ def loadJPSSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs)
     """
     from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
-
-    # Warn users that this function is deprecated
-    print '* WARNING: this function is deprecated, please update your scripts to use loadJPSSImage instead.'
     
     # try some quick input validation before doing any real work
     if not file_list:
@@ -3896,7 +3893,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
 
     # Warn users that this function is deprecated
-    print '* WARNING: this function is deprecated, please update your scripts to use loadJPSSImage instead.'
+    print '* WARNING: loadVIIRSImage is deprecated, please update your scripts to use loadJPSSImage instead.'
     
     # try some quick input validation before doing any real work
     if not file_list:
@@ -3995,7 +3992,7 @@ def listVIIRSFieldsInFile(filename):
     from edu.wisc.ssec.mcidasv.data.hydra import VIIRSSort
     
     # Warn users that this function is deprecated
-    print '* WARNING: this function is deprecated, please update your scripts to use listJPSSFieldsInFile instead.'
+    print '* WARNING: listVIIRSFieldsInFile is deprecated, please update your scripts to use listJPSSFieldsInFile instead.'
     
     f = NetcdfFile.open(filename)
     try:
@@ -4075,7 +4072,7 @@ def listVIIRSTimesInField(filename, field=None):
     from datetime import datetime
     
     # Warn users that this function is deprecated
-    print '* WARNING: this function is deprecated, please update your scripts to use listJPSSTimeInFile instead.'
+    print '* WARNING: listVIIRSTimesInField is deprecated, please update your scripts to use listJPSSTimeInFile instead.'
     
     f = NetcdfFile.open(filename)
     
