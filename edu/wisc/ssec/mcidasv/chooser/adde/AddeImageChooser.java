@@ -665,12 +665,7 @@ public class AddeImageChooser extends AddeChooser implements
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
-                if (cmd.equals(GuiUtils.CMD_REMOVE)) {
-                    archiveDay = null;
-                    archiveDayBtn.setText(DAY_TIME_RANGE_LABEL);
-                    setDoAbsoluteTimes(true);
-                    descriptorChanged();
-                } else if (cmd.equals(GuiUtils.CMD_OK)) {
+                if (cmd.equals(GuiUtils.CMD_OK)) {
                     
                     // bad time range, throw up error window
                     if (! trp.timeRangeOk()) {
@@ -724,7 +719,7 @@ public class AddeImageChooser extends AddeChooser implements
         });
 
         JPanel buttons = GuiUtils.makeButtons(listener, new String[] {
-                GuiUtils.CMD_OK, GuiUtils.CMD_REMOVE, GuiUtils.CMD_CANCEL });
+                GuiUtils.CMD_OK, GuiUtils.CMD_CANCEL });
 
         JPanel dateTimePanel = new JPanel(new FlowLayout());
         dateTimePanel.add(picker);
@@ -1156,9 +1151,11 @@ public class AddeImageChooser extends AddeChooser implements
     @Override protected JPanel makeTimesPanel() {
         JPanel panel =
             super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
-        underTimelistPanel.add(BorderLayout.WEST, archiveDayBtn);
-        underTimelistPanel.add(BorderLayout.CENTER, numImagesButton);
-        underTimelistPanel.add(BorderLayout.EAST, imageCountTextField);
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(archiveDayBtn);
+        buttonPanel.add(numImagesButton);
+        buttonPanel.add(imageCountTextField);
+        underTimelistPanel.add(BorderLayout.CENTER, buttonPanel);
         return panel;
     }
 

@@ -33,6 +33,7 @@ import static javax.swing.UIManager.getColor;
 
 import com.toedter.calendar.DateUtil;
 import com.toedter.calendar.IDateEditor;
+
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,7 @@ import java.awt.event.FocusListener;
 
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -54,7 +56,6 @@ import javax.swing.text.MaskFormatter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -69,6 +70,9 @@ import java.util.regex.Pattern;
 public class JCalendarDateEditor extends JFormattedTextField implements
     IDateEditor, CaretListener, FocusListener, ActionListener
 {
+
+    private static final long serialVersionUID = 1L;
+
     /** Match day of year. */
     private static final Pattern dayOnly = Pattern.compile("\\d{1,3}");
 
@@ -410,13 +414,17 @@ public class JCalendarDateEditor extends JFormattedTextField implements
     }
 
     /**
-     * Returns the preferred size. If a date pattern is set, it is the size the
-     * date pattern would take.
+     * Returns the preferred size, enough to accommodate longest date someone could enter
      */
+    
     @Override public Dimension getPreferredSize() {
-        return (datePattern != null)
-               ? new JTextField(datePattern).getPreferredSize()
-               : super.getPreferredSize();
+        
+        // TJJ May 2018 
+        // This didn't seem to work in all cases. So let's set the preferred size
+        // to a dimension that will accommodate the longest date someone could enter
+        Dimension d = new JTextField("September 28, 1999").getPreferredSize();
+        return d;
+
     }
 
     /**

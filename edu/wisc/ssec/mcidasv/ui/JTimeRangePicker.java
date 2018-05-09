@@ -36,6 +36,7 @@ import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 import java.awt.Dimension;
 import java.util.Calendar;
 
+import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -71,8 +72,6 @@ public class JTimeRangePicker extends JPanel {
     // TJJ use this to seed time objects with year/month/day
     Calendar cal = Calendar.getInstance();
 
-    // private JPanel timeRangeComp = new JPanel();
-
     public JTimeRangePicker() {
         doMakeContents();
     }
@@ -81,12 +80,14 @@ public class JTimeRangePicker extends JPanel {
 
         logger.debug("creating the JTimeRangePicker panel...");
 
-        JLabel begTimeLab = new JLabel("  Beg Time:");
-        JLabel endTimeLab = new JLabel("  End Time:");
-        beginTimeFld = new JTextField(defaultBegTime, 8);
+        JLabel begTimeLab = new JLabel("Beg Time:");
+        JLabel endTimeLab = new JLabel("End Time:");
+        beginTimeFld = new JTextField(defaultBegTime, 6);
         beginTimeFld.setMaximumSize(new Dimension(80, 40));
-        endTimeFld = new JTextField(defaultEndTime, 8);
+        beginTimeFld.setToolTipText("HH:MM");
+        endTimeFld = new JTextField(defaultEndTime, 6);
         endTimeFld.setMaximumSize(new Dimension(80, 40));
+        endTimeFld.setToolTipText("HH:MM");
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -94,25 +95,29 @@ public class JTimeRangePicker extends JPanel {
                 .createParallelGroup(LEADING)
 
                 .addGroup(
-                        layout.createSequentialGroup().addComponent(begTimeLab)
-                                .addComponent(beginTimeFld))
+                        layout.createSequentialGroup()
+                            .addComponent(begTimeLab)
+                            .addComponent(beginTimeFld))
 
                 .addGroup(
-                        layout.createSequentialGroup().addComponent(endTimeLab)
-                                .addComponent(endTimeFld)));
+                        layout.createSequentialGroup()
+                            .addComponent(endTimeLab)
+                            .addComponent(endTimeFld)));
 
         layout.setVerticalGroup(layout.createParallelGroup(LEADING).addGroup(
                 layout.createSequentialGroup()
 
                         .addGroup(
-                                layout.createParallelGroup(BASELINE).addComponent(begTimeLab)
-                                        .addComponent(beginTimeFld))
+                                layout.createParallelGroup(BASELINE)
+                                    .addComponent(begTimeLab)
+                                    .addComponent(beginTimeFld))
                         .addPreferredGap(RELATED)
                         .addPreferredGap(UNRELATED)
 
                         .addGroup(
-                                layout.createParallelGroup(BASELINE).addComponent(endTimeLab)
-                                        .addComponent(endTimeFld)).addPreferredGap(RELATED)));
+                                layout.createParallelGroup(BASELINE)
+                                    .addComponent(endTimeLab)
+                                    .addComponent(endTimeFld)).addPreferredGap(RELATED)));
 
         return this;
     }
