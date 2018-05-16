@@ -228,6 +228,7 @@ _formats = {
 
 _human_units_to_adde = {
     'ALB':          'ALB',
+    'ALBE':         'ALB',
     'ALBEDO':       'ALB',
     'BRIT':         'BRIT',
     'BRIGHTNESS':   'BRIT',
@@ -240,6 +241,7 @@ _human_units_to_adde = {
     'REFLECTANCE':  'REFL',
     'REFLECTIVITY': 'REFL',
 }
+
 DEFAULT_ACCOUNTING = ('idv', '0')
 DEFAULT_SIZE = (480, 640)
 
@@ -589,7 +591,12 @@ params_sizeall = dict(
     band=1,
 )
 
-
+def listValidUnits():
+    """List the valid ADDE units."""
+    print('Accepted ADDE unit strings:')
+    for unitname in sorted(_human_units_to_adde.iterkeys()):
+        print('\t'+unitname)
+    
 def enableAddeDebug():
     """Enable ADDE debug messages."""
     EntryStore.setAddeDebugEnabled(True)
@@ -1453,7 +1460,10 @@ def _getADDEImage(localEntry=None,
             addeUnit = _human_units_to_adde[str(result).upper()]
             unit = '&UNIT=%s' % (addeUnit)
         except:
-            raise ValueError("unit must a str value; could not convert '%s' to to a str (type=%s)." % (unit, type(unit)))
+            unitstr = ''
+            for unitname in sorted(_human_units_to_adde.iterkeys()):
+                unitstr += '%s, ' % unitname
+            raise ValueError("unit must a str value; could not convert '%s' to to a known unit string (type=%s). Valid unit strings are: %s" % (unit, type(unit), unitstr[0:-2]))
     else:
         unit = '&UNIT=BRIT'
         
