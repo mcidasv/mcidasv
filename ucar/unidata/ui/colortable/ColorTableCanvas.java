@@ -2806,6 +2806,10 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
             g.setColor(Color.gray);
             int lineX = cursorPosition;
             g.drawLine(lineX, box.y, lineX, box.y + box.height);
+            // TJJ May 2018 - add alpha value to mouse-over readout
+            // See http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1625
+            Color c = (Color) colorList.get(index);
+            value = value + ", Alpha= " + c.getAlpha();
             g.drawString(value, lineX, lineHeight + MARGIN_V + box.height);
         }
 
