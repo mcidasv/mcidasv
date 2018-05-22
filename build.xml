@@ -214,7 +214,7 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-    <property name="jar.base.classpath" value="ncIdv-${ncidv.version}.jar external-${idv.version}.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
+    <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
@@ -309,6 +309,7 @@
     <path id="app.classpath">
         <pathelement location="${dist.dir}/${app.jarname}" />
         <pathelement location="${dist.dir}/${local-idv.jarname}" />
+        <pathelement location="${dist.dir}/${userguide.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
@@ -317,6 +318,7 @@
     <path id="linux_x64.app.classpath">
         <pathelement location="${dist.dir}/${app.jarname}" />
         <pathelement location="${dist.dir}/${local-idv.jarname}" />
+        <pathelement location="${dist.dir}/${userguide.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
@@ -326,6 +328,7 @@
     <path id="linux_x86.app.classpath">
         <pathelement location="${dist.dir}/${app.jarname}" />
         <pathelement location="${dist.dir}/${local-idv.jarname}" />
+        <pathelement location="${dist.dir}/${userguide.jarname}" />
         <fileset refid="mcv.libs" />
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
@@ -579,6 +582,7 @@
             <compilerarg value="-Xlint:${xlint}" />
             <classpath refid="linux_x86.app.classpath" />
         </javac>
+        <pathconvert property="platform.classpath" refid="linux_x86.app.classpath" />
     </target>
 
     <target name="_build.linux.x86_64" description="" if="isLinux.x86_64">
@@ -591,6 +595,7 @@
             <compilerarg value="-Xlint:${xlint}" />
             <classpath refid="linux_x64.app.classpath" />
         </javac>
+        <pathconvert property="platform.classpath" refid="linux_x64.app.classpath" />
     </target>
 
     <target name="_build.windows.x86" description="" if="isWindows.x86">
@@ -603,6 +608,7 @@
             <compilerarg value="-Xlint:${xlint}" />
             <classpath refid="windows_x86.app.classpath" />
         </javac>
+        <pathconvert property="platform.classpath" refid="windows_x86.app.classpath" />
     </target>
 
     <target name="_build.windows.x86_64" description="" if="isWindows.x86_64">
@@ -615,6 +621,7 @@
             <compilerarg value="-Xlint:${xlint}" />
             <classpath refid="windows_x64.app.classpath" />
         </javac>
+        <pathconvert property="platform.classpath" refid="windows_x64.app.classpath" />
     </target>
 
     <target name="_build.macosx" description="" if="isMac">
@@ -627,8 +634,13 @@
             <compilerarg value="-Xlint:${xlint}" />
             <classpath refid="macosx.app.classpath" />
         </javac>
+        <pathconvert property="platform.classpath" refid="macosx.app.classpath" />
     </target>
 
+    <taskdef name="antcallback" 
+             classpath="lib/build/ant-contrib-1.0b3.jar" 
+             classname="net.sf.antcontrib.logic.AntCallBack" />
+             
     <!-- Build the edu tree -->
     <target name="build" description="Build the edu tree">
         <mkdir dir="${build.dir}" />
@@ -678,13 +690,13 @@
         <condition property="isMac">
             <os family="mac" />
         </condition>
-
-        <antcall target="_build.linux.x86" />
-        <antcall target="_build.linux.x86_64" />
-        <antcall target="_build.windows.x86" />
-        <antcall target="_build.windows.x86_64" />
-        <antcall target="_build.macosx"  />
-
+        
+        <antcallback target="_build.linux.x86" return="platform.classpath" />
+        <antcallback target="_build.linux.x86_64" return="platform.classpath" />
+        <antcallback target="_build.windows.x86" return="platform.classpath" />
+        <antcallback target="_build.windows.x86_64" return="platform.classpath" />
+        <antcallback target="_build.macosx" return="platform.classpath" />
+        
         <copy todir="${build.dir}" preservelastmodified="true">
             <fileset dir="${base.dir}">
                 <patternset refid="jar.includes" />
@@ -737,14 +749,19 @@
         <!-- <mkdir dir="${dist.dir}" /> -->
         <!-- <delete file="${dist.dir}/${app.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
+
         <manifestclasspath property="mcidasv.class.path" jarfile="${dist.dir}/${app.jarname}">
-            <!--<classpath refid="app.classpath" />-->
-            <classpath refid="linux_x64.app.classpath" />
-            <classpath refid="linux_x86.app.classpath" />
-            <classpath refid="windows_x64.app.classpath" />
-            <classpath refid="windows_x86.app.classpath" />
-            <classpath refid="macosx.app.classpath" />
+            <classpath>
+                <!-- 
+                  this will be the platform-specific classpath.
+                  all of that stuff happens via the "antcallback" stuff in the
+                  "build" target. 
+                -->
+                <pathelement path="${platform.classpath}" />
+            </classpath>
         </manifestclasspath>
+
+
         <jar destfile="${dist.dir}/${app.jarname}" index="false">
             <!-- <fileset dir="${base.dir}"> -->
             <fileset dir="${build.dir}">
@@ -757,6 +774,10 @@
                 <attribute name="Main-Class" value="${app.mainclass}" />
             </manifest>
         </jar>
+        <echo>manifest classpath:</echo>
+        <echo>${mcidasv.class.path}</echo>
+        <echo></echo>
+        <echo>userguide jar: ${userguide.jarname}</echo>
     </target>
 
     <!-- Jar the local-idv jar file -->
