@@ -9,7 +9,6 @@ MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 MCV_PARAMS="$@"
 
 MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
-USERGUIDE_JAR=$(find . -maxdepth 1 -name "mcv_userguide*.jar" -print)
 
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
@@ -78,24 +77,11 @@ fi
 echo "Reading system configuration..."
 SYS_MEM=`${JAVA_BIN} -Dmcv.userpath=\"${MCV_USERPATH}\" -cp $MCV_JAR edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
 
-################################################################################
-# OS specific settings
-
-# Mac OS X settings
-if [ `uname -s` = "Darwin" ]; then
-  # Set the menu bar name
-  JAVA_FLAGS="${JAVA_FLAGS} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
-fi
-# Done with Mac OS X settings
-
-# Done with OS specific settings
-################################################################################
-
 MCV_CLASSPATH=".:$USERGUIDE_JAR:$MCV_JAR"
 
 # McV supplies all of its dependencies; there's no need for the JRE to look elsewhere.
-MCV_EXTDIR="-Djava.ext.dirs=\"${JAVA_HOME}/lib/ext\""
-MCV_LIBPATH="-Djava.library.path=\"${JAVA_HOME}/lib/ext\""
+#MCV_EXTDIR="-Djava.ext.dirs=\"${JAVA_HOME}/lib/ext\""
+#MCV_LIBPATH="-Djava.library.path=\"${JAVA_HOME}/lib/ext\""
 
 # Run it
-${JAVA_BIN} ${JAVA_FLAGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dmcv.userpath=\"${MCV_USERPATH}\" -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=${SYS_MEM} -userpath "${MCV_USERPATH}" $*
+${JAVA_BIN} ${JAVA_FLAGS} -Dmcv.userpath=\"${MCV_USERPATH}\" -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=${SYS_MEM} -userpath "${MCV_USERPATH}" $*

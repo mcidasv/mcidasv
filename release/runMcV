@@ -11,7 +11,6 @@ MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
 
 MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
-USERGUIDE_JAR=$(find . -maxdepth 1 -name "mcv_userguide*.jar" -print)
 
 USE_TEMPUSERPATH="0"
 
@@ -254,51 +253,9 @@ if [ "${SHOW_WELCOME}" = "1" ]; then
   fi
 fi
 
-################################################################################
-# OS specific settings
-
-# Mac OS X settings
-if [ `uname -s` = "Darwin" ]; then
-
-  # Look for the Java3D/JOGL package
-  XBOOTCLASSPATH=
-  if [ -d "java3d" ]; then
-    JAVA3D_LIB="${PWD}/java3d"
-    JAVA3D_CP="\"${JAVA3D_LIB}/j3dcore.jar\":\"${JAVA3D_LIB}/j3dutils.jar\":\"${JAVA3D_LIB}/vecmath.jar\""
-    XBOOTCLASSPATH="-Xbootclasspath/p:${JAVA3D_CP}"
-    if [ -d "jogl" -a "${JOGL_TOGL}" -eq 1 ]; then
-      JOGL_LIB="${PWD}/jogl"
-      JOGL_CP="\"${JOGL_LIB}\":\"${JOGL_LIB}/jogl.jar\":\"${JOGL_LIB}/gluegen-rt.jar\""
-      export DYLD_LIBRARY_PATH="${JOGL_LIB}"
-      XBOOTCLASSPATH="-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
-    fi
-  fi
-
-  # If we are on Leopard (or later?):
-  # Use aqua look & feel to get rid of lightweight/heavyweight 3D overlay problems
-  # Get rid of any XBOOTCLASSPATH business and just use system Java3D
-  LEOPARD_OR_BETTER_TEST=`sw_vers -productVersion | cut -d '.' -f 2`
-  if [ "${LEOPARD_OR_BETTER_TEST}" -gt 4 ]; then
-      MCV_FLAGS="${MCV_FLAGS} -forceaqua"
-      XBOOTCLASSPATH=
-  fi
-
-  # Build JAVA_FLAGS and set the dock/menu bar name
-  JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
-
-fi
-# Done with Mac OS X settings
-
-# Done with OS specific settings
-################################################################################
-
 MCV_FLAGS="${MCV_FLAGS} -userpath \"${MCV_USERPATH}\" ${USE_LAYOUT_BUNDLE} ${DEFAULT_BUNDLE}"
-echo "mcv flags: ${MCV_FLAGS}"
-
-MCV_CLASSPATH=".:$USERGUIDE_JAR:$MCV_JAR"
 
 # Run it
-# "${JAVA_BIN}" ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1
-EXEC_CMD="\"${JAVA_BIN}\" ${JAVA_FLAGS} -classpath \"${MCV_CLASSPATH}\" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
+EXEC_CMD="\"$JAVA_BIN\" $JAVA_FLAGS -classpath $MCV_JAR -da edu.wisc.ssec.mcidasv.McIDASV $MCV_FLAGS $MCV_PARAMS"
 echo "${EXEC_CMD}"
 eval "${EXEC_CMD}"

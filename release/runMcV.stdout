@@ -9,7 +9,6 @@ MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 MCV_PARAMS="$@"
 
 MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
-USERGUIDE_JAR=$(find . -maxdepth 1 -name "mcv_userguide*.jar" -print)
 
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
@@ -187,44 +186,6 @@ LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 # Gather up previously set values.
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${JVM_ARGS} -Dlogback.configurationFile=${LOGBACK_CONFIG} -Dmcv.userpath=\"${MCV_USERPATH}\""
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -Didv.sysmem=${SYS_MEM} ${DEFAULT_BUNDLE} -userpath ${MCV_USERPATH}"
-echo "mcv flags: ${MCV_FLAGS}"
-################################################################################
-# OS specific settings
-
-# Mac OS X settings
-if [ `uname -s` = "Darwin" ]; then
-
-  # Look for the Java3D/JOGL package
-  XBOOTCLASSPATH=
-  if [ -d "java3d" ]; then
-    JAVA3D_LIB=${PWD}/java3d
-    JAVA3D_CP=${JAVA3D_LIB}/j3dcore.jar:${JAVA3D_LIB}/j3dutils.jar:${JAVA3D_LIB}/vecmath.jar
-    XBOOTCLASSPATH=-Xbootclasspath/p:${JAVA3D_CP}
-    if [ -d "jogl" -a "${JOGL_TOGL}" -eq 1 ]; then
-      JOGL_LIB=${PWD}/jogl
-      JOGL_CP=${JOGL_LIB}:${JOGL_LIB}/jogl.jar:${JOGL_LIB}/gluegen-rt.jar
-      export DYLD_LIBRARY_PATH=${JOGL_LIB}
-      XBOOTCLASSPATH=-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}
-    fi
-  fi
-  
-  # If we are on Leopard (or later?):
-  # Use aqua look & feel to get rid of lightweight/heavyweight 3D overlay problems
-  # Get rid of any XBOOTCLASSPATH business and just use system Java3D
-  LEOPARD_OR_BETTER_TEST=`sw_vers -productVersion | cut -d '.' -f 2`
-  if [ "${LEOPARD_OR_BETTER_TEST}" -gt 4 ]; then
-      MCV_FLAGS="${MCV_FLAGS} -forceaqua"
-      XBOOTCLASSPATH=
-  fi
-  
-  # Build JAVA_FLAGS and set the dock/menu bar name
-  JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
-
-fi
-# Done with Mac OS X settings
-
-# Done with OS specific settings
-################################################################################
 
 # Clean the log
 if [ -f "${MCV_LOG}" ]; then
@@ -239,15 +200,12 @@ if [ -f "${MCV_LOG}" ]; then
   fi
 fi
 
-MCV_CLASSPATH=".:$USERGUIDE_JAR:$MCV_JAR"
-
 # Log this session
 echo "################" >>"${MCV_LOG}"
 date >>"${MCV_LOG}"
 echo "${SYS_VER}" >>"${MCV_LOG}"
 echo "${SYS_MEM} MB system memory" >>"${MCV_LOG}"
-echo "Command line: ${JAVA_BIN} ${JAVA_FLAGS} -classpath ${MCV_CLASSPATH} -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
+echo "Command line: ${JAVA_BIN} ${JAVA_FLAGS} -jar $MCV_JAR -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
 
 # Run it
-# ${JAVA_BIN} ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -jar mcidasv.jar ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1
-${JAVA_BIN} ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}
+${JAVA_BIN} ${JAVA_FLAGS} -jar "$MCV_JAR" ${MCV_FLAGS} ${MCV_PARAMS}
