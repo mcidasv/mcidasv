@@ -10,8 +10,6 @@ fi
 MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 MCV_LOGPATH="${MCV_USERPATH}/mcidasv.log"
 
-MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
-
 USE_TEMPUSERPATH="0"
 
 # Check for -userpath parameter
@@ -62,8 +60,11 @@ fi
 if [ -z "${scriptname}" ]; then
   scriptname="$0"
 fi
+
 dirname=`dirname "$scriptname"`
-cd "$dirname"
+cd "$dirname/lib"
+
+MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
 
 # Default heap size to use if none can be determined
 HEAP_DEFAULT="512M"
@@ -82,11 +83,11 @@ MCV_LOG="${MCV_USERPATH}/mcidasv.log"
 MCV_LOG_LINES="10000"
 
 # Always run the default prefs; user can override as much as they want
-if [ ! -f ./runMcV.prefs ]; then
+if [ ! -f "$dirname/runMcV.prefs" ]; then
   echo "This script must be run from within the McIDAS-V installation directory"
   exit 1
 else
-  . ./runMcV.prefs
+  . "$dirname/runMcV.prefs"
 fi
 
 # Create MCV_USERPATH directory if it doesn't already exist
@@ -231,16 +232,6 @@ LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 # Gather up previously set values.
 MCV_USERPATH_ESCAPED=`echo ${MCV_USERPATH} |sed -e 's/ /\\\\ /g'`
 
-# restrict java.ext.dirs and java.library.path to the JRE
-if [ -n "${JAVA_HOME}" ]; then
-  MCV_EXTDIR="-Djava.ext.dirs=\"${JAVA_HOME}/lib/ext\""
-  MCV_LIBPATH="-Djava.library.path=\"${JAVA_HOME}/lib/ext\""
-else
-  echo "Warning: Please consider setting JAVA_HOME."
-  MCV_EXTDIR=""
-  MCV_LIBPATH=""
-fi
-
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -DtextureWidthMax=${TEXTURE_SIZE}"
 
@@ -256,6 +247,6 @@ fi
 MCV_FLAGS="${MCV_FLAGS} -userpath \"${MCV_USERPATH}\" ${USE_LAYOUT_BUNDLE} ${DEFAULT_BUNDLE}"
 
 # Run it
-EXEC_CMD="\"$JAVA_BIN\" $JAVA_FLAGS -classpath $MCV_JAR -da edu.wisc.ssec.mcidasv.McIDASV $MCV_FLAGS $MCV_PARAMS"
+EXEC_CMD="\"$JAVA_BIN\" $JAVA_FLAGS -jar $MCV_JAR $MCV_FLAGS $MCV_PARAMS"
 echo "${EXEC_CMD}"
 eval "${EXEC_CMD}"

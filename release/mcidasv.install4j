@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.15" transformSequenceNumber="4">
-  <directoryPresets config="${compiler:MCVDIR}/dist/ncIdv-${compiler:IDV_VERSION}.jar" />
+  <directoryPresets config="${compiler:MCVDIR}/dist/idv-${compiler:IDV_VERSION}.jar" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.8beta1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.8" javaMaxVersion="1.9" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -64,6 +64,7 @@
     </roots>
     <mountPoints>
       <mountPoint id="1" root="" location="" mode="755" />
+      <mountPoint id="8741" root="" location="lib" mode="755" />
       <mountPoint id="7339" root="7335" location="" mode="755" />
       <mountPoint id="7338" root="7333" location="" mode="755" />
       <mountPoint id="8607" root="8604" location="" mode="755" />
@@ -73,35 +74,35 @@
       <mountPoint id="7469" root="7407" location="" mode="755" />
       <mountPoint id="7467" root="7411" location="" mode="755" />
       <mountPoint id="7468" root="7415" location="" mode="755" />
-      <mountPoint id="8095" root="8086" location="" mode="755" />
-      <mountPoint id="8096" root="8088" location="" mode="755" />
-      <mountPoint id="8097" root="8090" location="" mode="755" />
-      <mountPoint id="8098" root="8092" location="" mode="755" />
-      <mountPoint id="8099" root="8094" location="" mode="755" />
+      <mountPoint id="8742" root="8086" location="lib" mode="755" />
+      <mountPoint id="8743" root="8088" location="lib" mode="755" />
+      <mountPoint id="8744" root="8090" location="lib" mode="755" />
+      <mountPoint id="8745" root="8092" location="lib" mode="755" />
+      <mountPoint id="8746" root="8094" location="lib" mode="755" />
     </mountPoints>
     <entries>
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/idv-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/auxdata-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/external-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/local-visad-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/visad-${compiler:VISAD_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/ncIdv-${compiler:NCIDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <dirEntry mountPoint="1" file="${compiler:MCVDIR}/lib/share/" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="1" file="${compiler:MCVDIR}/release/licenses" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="licenses" excludeSuffixes="" dirMode="755" overrideDirMode="true">
+        <exclude />
+      </dirEntry>
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/idv-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/auxdata-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/external-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/local-visad-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/visad-${compiler:VISAD_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/ncIdv-${compiler:NCIDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <dirEntry mountPoint="8741" file="${compiler:MCVDIR}/lib/share/" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location="CVS" fileType="regular" />
         </exclude>
       </dirEntry>
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcidasv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/jython-standalone-2.7.1.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/local-idv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/startupmanager-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_userguide-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/mcv_javadoc-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/GetMem.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="1" file="${compiler:MCVDIR}/dist/GetVer.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <dirEntry mountPoint="1" file="${compiler:MCVDIR}/release/licenses" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="licenses" excludeSuffixes="" dirMode="755" overrideDirMode="true">
-        <exclude />
-      </dirEntry>
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcidasv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/jython-standalone-2.7.1.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/local-idv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/startupmanager-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcv_userguide-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcv_javadoc-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/GetMem.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/GetVer.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-Config" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV.prefs" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -129,31 +130,31 @@
       <fileEntry mountPoint="7469" file="${compiler:ADDEDIR}/adde-windows.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7467" file="${compiler:ADDEDIR}/adde-soli86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7468" file="${compiler:ADDEDIR}/adde-solaris.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8095" file="${compiler:MCVDIR}/lib/linux-i586/gluegen-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8095" file="${compiler:MCVDIR}/lib/linux-i586/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8095" file="${compiler:MCVDIR}/lib/linux-i586/joal-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8095" file="${compiler:MCVDIR}/lib/linux-i586/jocl-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8095" file="${compiler:MCVDIR}/lib/linux-i586/jogl-all-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8096" file="${compiler:MCVDIR}/lib/linux-amd64/gluegen-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8096" file="${compiler:MCVDIR}/lib/linux-amd64/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8096" file="${compiler:MCVDIR}/lib/linux-amd64/joal-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8096" file="${compiler:MCVDIR}/lib/linux-amd64/jocl-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8096" file="${compiler:MCVDIR}/lib/linux-amd64/jogl-all-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8097" file="${compiler:MCVDIR}/lib/windows-i586/gluegen-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8097" file="${compiler:MCVDIR}/lib/windows-i586/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8097" file="${compiler:MCVDIR}/lib/windows-i586/joal-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8097" file="${compiler:MCVDIR}/lib/windows-i586/jocl-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8097" file="${compiler:MCVDIR}/lib/windows-i586/jogl-all-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8098" file="${compiler:MCVDIR}/lib/windows-amd64/gluegen-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8098" file="${compiler:MCVDIR}/lib/windows-amd64/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8098" file="${compiler:MCVDIR}/lib/windows-amd64/joal-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8098" file="${compiler:MCVDIR}/lib/windows-amd64/jocl-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8098" file="${compiler:MCVDIR}/lib/windows-amd64/jogl-all-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8099" file="${compiler:MCVDIR}/lib/macosx/gluegen-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8099" file="${compiler:MCVDIR}/lib/macosx/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8099" file="${compiler:MCVDIR}/lib/macosx/joal-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8099" file="${compiler:MCVDIR}/lib/macosx/jocl-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8099" file="${compiler:MCVDIR}/lib/macosx/jogl-all-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8742" file="${compiler:MCVDIR}/lib/linux-i586/gluegen-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8742" file="${compiler:MCVDIR}/lib/linux-i586/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8742" file="${compiler:MCVDIR}/lib/linux-i586/joal-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8742" file="${compiler:MCVDIR}/lib/linux-i586/jocl-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8742" file="${compiler:MCVDIR}/lib/linux-i586/jogl-all-${compiler:JOGAMP_VERSION}-natives-linux-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8743" file="${compiler:MCVDIR}/lib/linux-amd64/gluegen-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8743" file="${compiler:MCVDIR}/lib/linux-amd64/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8743" file="${compiler:MCVDIR}/lib/linux-amd64/joal-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8743" file="${compiler:MCVDIR}/lib/linux-amd64/jocl-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8743" file="${compiler:MCVDIR}/lib/linux-amd64/jogl-all-${compiler:JOGAMP_VERSION}-natives-linux-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8744" file="${compiler:MCVDIR}/lib/windows-i586/gluegen-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8744" file="${compiler:MCVDIR}/lib/windows-i586/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8744" file="${compiler:MCVDIR}/lib/windows-i586/joal-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8744" file="${compiler:MCVDIR}/lib/windows-i586/jocl-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8744" file="${compiler:MCVDIR}/lib/windows-i586/jogl-all-${compiler:JOGAMP_VERSION}-natives-windows-i586.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8745" file="${compiler:MCVDIR}/lib/windows-amd64/gluegen-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8745" file="${compiler:MCVDIR}/lib/windows-amd64/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8745" file="${compiler:MCVDIR}/lib/windows-amd64/joal-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8745" file="${compiler:MCVDIR}/lib/windows-amd64/jocl-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8745" file="${compiler:MCVDIR}/lib/windows-amd64/jogl-all-${compiler:JOGAMP_VERSION}-natives-windows-amd64.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8746" file="${compiler:MCVDIR}/lib/macosx/gluegen-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8746" file="${compiler:MCVDIR}/lib/macosx/gluegen-rt-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8746" file="${compiler:MCVDIR}/lib/macosx/joal-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8746" file="${compiler:MCVDIR}/lib/macosx/jocl-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8746" file="${compiler:MCVDIR}/lib/macosx/jogl-all-${compiler:JOGAMP_VERSION}-natives-macosx-universal.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
     </entries>
     <components>
       <component name="Base components" id="67" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="false" downloadable="false" hidden="false">
@@ -1694,6 +1695,6 @@ INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$
     </windows>
   </mediaSets>
   <buildIds buildAll="true" />
-  <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
+  <buildOptions verbose="true" faster="false" disableSigning="false" debug="false" />
 </install4j>
 

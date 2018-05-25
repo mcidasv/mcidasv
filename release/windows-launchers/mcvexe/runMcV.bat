@@ -5,10 +5,16 @@ SET MCV_LOGPATH=%MCV_USERPATH%\mcidasv.log
 SET MCV_PARAMS=%*
 SET USE_TEMPUSERPATH=0
 
+SET MCV_DIR=%~dp0%
+
+SET CURRENT_DIR=%cd%
+
+CD %MCV_DIR%\lib
+
 SET MCV_JAR=
 FOR /F %%a IN ('DIR /b mcidasv-*.jar 2^>nul') DO SET MCV_JAR=%%a
 IF DEFINED MCV_JAR (
-    GOTO donefindingjars
+    GOTO finduserguide
 ) ELSE (
     ECHO "*** ERROR: Could not find McIDAS-V JAR file"
     GOTO end
@@ -87,8 +93,8 @@ SET MCV_LOG=%MCV_USERPATH%\mcidasv.log
 SET MCV_LOG_LINES=10000
 
 REM Always run the default prefs; user can override as much as they want
-IF NOT EXIST runMcV-Prefs.bat echo This script must be run from within the McIDAS-V installation directory && goto end
-CALL runMcV-Prefs.bat
+IF NOT EXIST "%MCV_DIR%\runMcV-Prefs.bat" echo This script must be run from within the McIDAS-V installation directory && goto end
+CALL "%MCV_DIR%\runMcV-Prefs.bat"
 
 REM Toggle the welcome window if MCV_USERPATH does not exist
 IF NOT EXIST "%MCV_USERPATH%" SET SHOW_WELCOME=1
@@ -200,7 +206,7 @@ GOTO goodheap
 REM Get the amount of system memory
 echo Reading system configuration...
 SET /a SYS_MEM=0
-FOR /F %%i IN ('jre\bin\java.exe -cp %MCV_JAR% edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
+FOR /F %%i IN ('%MCV_DIR%\jre\bin\java.exe -cp %MCV_JAR% edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT% && GOTO goodheap
 set HEAP_PERCENT=%HEAP_SIZE:~0,-1%
 set /a HEAP_SIZE=%SYS_MEM% * %HEAP_PERCENT% / 100
