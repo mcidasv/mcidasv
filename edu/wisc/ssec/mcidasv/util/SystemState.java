@@ -31,6 +31,8 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashMap;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,6 +41,7 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 
 import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,6 +76,7 @@ import org.slf4j.LoggerFactory;
 import ucar.nc2.grib.GribConverterUtility;
 import ucar.unidata.idv.ArgsManager;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.ResourceCollection;
 import ucar.visad.display.DisplayUtil;
 
@@ -397,6 +401,38 @@ public class SystemState {
     }
     
     /**
+     * Determine the actual name of the McIDAS-V JAR file.
+     *
+     * <p>This is needed because we're now following the Maven naming
+     * convention, and this means that {@literal "mcidasv.jar"} no longer
+     * exists.</p>
+     *
+     * @param jarDir Directory containing all of the McIDAS-V JARs.
+     *               Cannot be {@code null}.
+     *
+     * @return Name (note: not path) of the McIDAS-V JAR file.
+     *
+     * @throws IOException if there was a problem locating the McIDAS-V JAR.
+     */
+    private static String getMcvJarname(String jarDir)
+        throws IOException
+    {
+        File dir = new File(jarDir);
+        File[] files = dir.listFiles();
+        if (files == null) {
+            throw new IOException("Could not get list of files within " +
+                "'"+jarDir+"'");
+        }
+        for (File f : files) {
+            String name = f.getName();
+            if (name.startsWith("mcidasv-") && name.endsWith(".jar")) {
+                return name;
+            }
+        }
+        throw new FileNotFoundException("Could not find McIDAS-V JAR file");
+    }
+    
+    /**
      * Return McIDAS-V's classpath.
      *
      * <p>This may differ from what is reported by 
@@ -405,35 +441,25 @@ public class SystemState {
      * {@code mcidasv.jar}.
      * </p>
      *
+     * <p>This is used by console_init.py to figure out where the VisAD,
+     * IDV, and McIDAS-V JAR files are located.</p>
+     *
      * @return Either a list of strings containing the path to each JAR file
      * in the classpath, or an empty list.
      */
     public static List<String> getMcvJarClasspath() {
-        // TODO(jon): not really a fan of either method.
-//        ClassLoader cl = ClassLoader.getSystemClassLoader();
-//        URL[] urls = ((URLClassLoader) cl).getURLs();
-//        for (URL url : urls) {
-//            Path p = Paths.get(url.toString()).getParent();
-//            jarDir = p.toString();
-//            break;
-//        }
-//        if (jarDir == null) {
-//            jarDir = System.getProperty("user.dir");
-//        }
         String jarDir = System.getProperty("user.dir");
         if (jarDir == null) {
             jarDir = PosixModule.getcwd().toString();
         }
-        
-        SystemState sysState = new SystemState();
-        
+
         // 64 chosen because we're currently at 38 JARs.
         List<String> jars = arrList(64);
         try {
-            URL resource = sysState.getClass()
-                                   .getClassLoader()
-                                   .getResource("META-INF/MANIFEST.MF");
-            InputStream stream = resource.openStream();
+            String mcvJar = getMcvJarname(jarDir);
+            Path p = Paths.get(jarDir, mcvJar);
+            String path = "jar:file:"+p.toString()+"!/META-INF/MANIFEST.MF";
+            InputStream stream = IOUtil.getInputStream(path);
             if (stream != null) {
                 Manifest manifest = new Manifest(stream);
                 Attributes attrs = manifest.getMainAttributes();
