@@ -2809,10 +2809,14 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
             // TJJ May 2018 - add alpha value to mouse-over readout
             // See http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1625
             Color c = (Color) colorList.get(index);
-            value = value + ", Alpha= " + c.getAlpha();
+            // Get the 0 - 255 alpha value
+            int tmpAlpha = c.getAlpha();
+            // Convert it to fractional value, then percent
+            double fraction = 1 - (tmpAlpha / 255.0d);
+            int intPercent = (int) (fraction * 100 + 0.5);
+            value = value + ", Alpha= " + intPercent + "%";
             g.drawString(value, lineX, lineHeight + MARGIN_V + box.height);
         }
-
 
     }
 
