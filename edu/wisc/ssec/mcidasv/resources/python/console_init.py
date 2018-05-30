@@ -54,7 +54,6 @@ def _mcvinit_jythonpaths():
         A list of paths suitable for appending to Jython's sys.path.
     """
     jars = _mcvinit_classpath_hack()
-    print "jars:", jars
     return [
         jars['mcidasv'],
         jars['mcidasv'] + '/edu/wisc/ssec/mcidasv/resources/python',
