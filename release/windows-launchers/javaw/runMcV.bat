@@ -14,7 +14,7 @@ CD %MCV_DIR%\lib
 SET MCV_JAR=
 FOR /F %%a IN ('DIR /b mcidasv-*.jar 2^>nul') DO SET MCV_JAR=%%a
 IF DEFINED MCV_JAR (
-    GOTO finduserguide
+    GOTO donefindingjars
 ) ELSE (
     ECHO "*** ERROR: Could not find McIDAS-V JAR file"
     GOTO end

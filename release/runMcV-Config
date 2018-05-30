@@ -1,5 +1,37 @@
 #!/bin/sh
 
+# _file "path" : print the file of a path.
+function _file(){
+    printf '%s' "${1##*/}"
+}
+
+# _cd "path" : change the directory of a path.
+function _cd(){
+    cd "$(printf '%s' "${1%/*}")" 2>/dev/null
+}
+
+# get_realpath "path" : echo the realpath as logical or physical.
+function get_realpath(){
+    # 0 : Good.
+    # 1 : Fail : no file/symlink broken/not regular file errors.
+    # 2 : Fail : unspecified physical file path construction error.
+    # 3 : Fail : unspecified logical or physical directory construction error. 
+    [[ ! -f "$1" ]] && return 1 # Code 1.
+    if [[ -z "$no_symlinks" ]]
+    then
+        local _pwd='pwd'
+    else
+        local _pwd='pwd -P'
+        if [[ -L "$1" ]]
+        then
+            local _ls="$( ls -dl "$1" 2>/dev/null )" &&
+            local _link="$( printf '%s' "${_ls#*"${1} -> "}" )" &&
+            echo "$( _cd "$1"; _cd "$_link" && $_pwd )"/"$(_file "$_link")" && return 0 || return 2 # Code 2.
+        fi
+    fi
+    echo "$( _cd "$1"; $_pwd )"/"$(_file "$1")" && return 0 || return 3 # Code 3.
+}
+
 DOCUMENT_DIRECTORY=${HOME}
 if [ `uname -s` = "Darwin" ]; then
   DOCUMENT_DIRECTORY=${HOME}/Documents
@@ -7,8 +39,6 @@ fi
 
 MCV_USERPATH="${DOCUMENT_DIRECTORY}/McIDAS-V"
 MCV_PARAMS="$@"
-
-MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
 
 # Check for -userpath parameter
 while [ "$1" != "" ]; do
@@ -30,17 +60,22 @@ if [ -d "${HOME}/.mcidasv" ]; then
 fi
 
 # Change to the directory that the script resides in before executing
-HAVEWHICH=`which which >/dev/null 2>&1`
-if [ $? -eq 0 ]; then
-  scriptname=`which "$0" 2>/dev/null`
-else
-  scriptname="$0"
-fi
-if [ -z "${scriptname}" ]; then
-  scriptname="$0"
-fi
-dirname=`dirname "$scriptname"`
-cd "$dirname"
+#HAVEWHICH=`which which >/dev/null 2>&1`
+#if [ $? -eq 0 ]; then
+#  scriptname=`which "$0" 2>/dev/null`
+#else
+#  scriptname="$0"
+#fi
+#if [ -z "${scriptname}" ]; then
+#  scriptname="$0"
+#fi
+
+scriptname=$(get_realpath "$0")
+dirname=$(dirname "$scriptname")
+
+cd "$dirname/lib"
+
+MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
 
 # Create MCV_USERPATH directory if it doesn't already exist
 if [ ! -d "${MCV_USERPATH}" ]; then
@@ -49,20 +84,20 @@ fi
 
 # Copy prefs to MCV_USERPATH directory if it doesn't already exist
 if [ ! -f "${MCV_USERPATH}/runMcV.prefs" ]; then
-  cp runMcV.prefs "${MCV_USERPATH}/runMcV.prefs"
+  cp "$dirname/runMcV.prefs" "${MCV_USERPATH}/runMcV.prefs"
 fi
 
 JAVA_FLAGS=
 
 # Point at McV's bundled JRE on OS X. 
 if [ `uname -s` = "Darwin" ]; then
-  JAVA_HOME="$PWD/.install4j/jre.bundle/Contents/Home/jre"
+  JAVA_HOME="$dirname/.install4j/jre.bundle/Contents/Home/jre"
 fi
 
 # Look for java
 JAVA_BIN="java"
 if [ -f "./jre/bin/java" ]; then
-  JAVA_HOME="$PWD/jre"
+  JAVA_HOME="$dirname/jre"
 fi
 
 if [ -n "${JAVA_HOME}" ]; then
