@@ -1455,10 +1455,13 @@ def _getADDEImage(localEntry=None,
         band = ''
         
     if unit or kwargs.get('unitType'):
+        result = _argHandler(explicit=('unit', unit), implicit=('unitType', kwargs.get('unitType')))
         try:
-            result = _argHandler(explicit=('unit', unit), implicit=('unitType', kwargs.get('unitType')))
             addeUnit = _human_units_to_adde[str(result).upper()]
-            unit = '&UNIT=%s' % (addeUnit)
+            unit = '&UNIT=%s' % addeUnit
+        except KeyError:
+            # fall through if unit mapping is not defined.
+            unit = '&UNIT=%s' % result
         except:
             unitstr = ''
             for unitname in sorted(_human_units_to_adde.iterkeys()):
