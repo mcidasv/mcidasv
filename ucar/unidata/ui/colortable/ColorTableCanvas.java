@@ -2814,7 +2814,7 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
             // Convert it to fractional value, then percent
             double fraction = 1 - (tmpAlpha / 255.0d);
             int intPercent = (int) (fraction * 100 + 0.5);
-            value = value + ", Alpha= " + intPercent + "%";
+            value = value + ", Transp= " + intPercent + "%";
             g.drawString(value, lineX, lineHeight + MARGIN_V + box.height);
         }
 
