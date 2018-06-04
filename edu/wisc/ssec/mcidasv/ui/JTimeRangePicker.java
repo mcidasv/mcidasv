@@ -36,7 +36,6 @@ import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 import java.awt.Dimension;
 import java.util.Calendar;
 
-import javax.swing.Box;
 import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -56,8 +55,8 @@ public class JTimeRangePicker extends JPanel {
 
     private JTextField beginTimeFld;
     private JTextField endTimeFld;
-    private String defaultBegTime = "00:00";
-    private String defaultEndTime = "23:59";
+    private String defaultBegTime = "00:00:00";
+    private String defaultEndTime = "23:59:59";
 
     public static final String PROP_BEGTIME = "BeginTime";
     public static final String PROP_ENDTIME = "EndTime";
@@ -82,12 +81,12 @@ public class JTimeRangePicker extends JPanel {
 
         JLabel begTimeLab = new JLabel("Beg Time:");
         JLabel endTimeLab = new JLabel("End Time:");
-        beginTimeFld = new JTextField(defaultBegTime, 6);
+        beginTimeFld = new JTextField(defaultBegTime, 8);
         beginTimeFld.setMaximumSize(new Dimension(80, 40));
-        beginTimeFld.setToolTipText("HH:MM");
-        endTimeFld = new JTextField(defaultEndTime, 6);
+        beginTimeFld.setToolTipText("HH:MM:SS");
+        endTimeFld = new JTextField(defaultEndTime, 8);
         endTimeFld.setMaximumSize(new Dimension(80, 40));
-        endTimeFld.setToolTipText("HH:MM");
+        endTimeFld.setToolTipText("HH:MM:SS");
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -135,13 +134,15 @@ public class JTimeRangePicker extends JPanel {
         String begTime = beginTimeFld.getText();
         String[] timeStrings = begTime.split(":");
         int num = timeStrings.length;
-        if (num != 2)
+        if (num != 3)
             return false;
         int hours = -1;
         int mins = -1;
+        int seconds = -1;
         try {
             hours = Integer.parseInt(timeStrings[0]);
             mins = Integer.parseInt(timeStrings[1]);
+            seconds = Integer.parseInt(timeStrings[2]);
         } catch (NumberFormatException nfe) {
             return false;
         }
@@ -149,7 +150,9 @@ public class JTimeRangePicker extends JPanel {
             return false;
         if ((mins < 0) || (mins > 59))
             return false;
-
+        if ((seconds < 0) || (seconds > 59))
+            return false;
+        
         return true;
     }
 
@@ -162,13 +165,15 @@ public class JTimeRangePicker extends JPanel {
         String endTime = endTimeFld.getText();
         String[] timeStrings = endTime.split(":");
         int num = timeStrings.length;
-        if (num != 2)
+        if (num != 3)
             return false;
         int hours = -1;
         int mins = -1;
+        int seconds = -1;
         try {
             hours = Integer.parseInt(timeStrings[0]);
             mins = Integer.parseInt(timeStrings[1]);
+            seconds = Integer.parseInt(timeStrings[2]);
         } catch (NumberFormatException nfe) {
             return false;
         }
@@ -176,6 +181,9 @@ public class JTimeRangePicker extends JPanel {
             return false;
         if ((mins < 0) || (mins > 59))
             return false;
+        if ((seconds < 0) || (seconds > 59))
+            return false;
+        
         return true;
     }
 
@@ -188,13 +196,14 @@ public class JTimeRangePicker extends JPanel {
 
     public boolean timeRangeOk() {
 
-        if (!begTimeOk())
+        if (! begTimeOk())
             return false;
-        if (!endTimeOk())
+        if (! endTimeOk())
             return false;
 
         int hours = 0;
         int mins = 0;
+        int seconds = 0;
 
         String begTime = beginTimeFld.getText();
         String[] timeStrings = begTime.split(":");
@@ -203,9 +212,11 @@ public class JTimeRangePicker extends JPanel {
             hours = (new Integer(timeStrings[0])).intValue();
         if (num > 1)
             mins = (new Integer(timeStrings[1])).intValue();
-
-        // Year, Month, Day, and Seconds are arbitrary, just need to match eTime vals
-        Time bTime = new Time(2017, 2, 2, hours, mins, 0);
+        if (num > 2)
+            seconds = (new Integer(timeStrings[2])).intValue();
+        
+        // Year, Month, and Day are arbitrary, just need to match eTime vals
+        Time bTime = new Time(2017, 2, 2, hours, mins, seconds);
 
         String endTime = endTimeFld.getText();
         timeStrings = endTime.split(":");
@@ -214,9 +225,11 @@ public class JTimeRangePicker extends JPanel {
             hours = (new Integer(timeStrings[0])).intValue();
         if (num > 1)
             mins = (new Integer(timeStrings[1])).intValue();
-
-        // Year, Month, Day, and Seconds are arbitrary, just need to match bTime vals
-        Time eTime = new Time(2017, 2, 2, hours, mins, 0);
+        if (num > 2)
+            seconds = (new Integer(timeStrings[2])).intValue();
+        
+        // Year, Month, and Day are arbitrary, just need to match bTime vals
+        Time eTime = new Time(2017, 2, 2, hours, mins, seconds);
 
         if (eTime.getJulianDate() < bTime.getJulianDate()) {
             return false;

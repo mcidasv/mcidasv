@@ -127,6 +127,8 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 public class AddeImageChooser extends AddeChooser implements
         ucar.unidata.ui.imagery.ImageSelector {
 
+    private static final long serialVersionUID = 1L;
+
     private static final Logger logger = LoggerFactory.getLogger(AddeImageChooser.class);
 
     // TODO: get rid of this button right?
@@ -211,7 +213,7 @@ public class AddeImageChooser extends AddeChooser implements
     /** Xml tag name for the defaults */
     protected static final String TAG_DEFAULT = "default";
 
-    /** identifiere for the default value */
+    /** identifier for the default value */
     protected static final String VALUE_DEFAULT = "default";
 
     /** Xml attr name for the defaults */
@@ -269,7 +271,7 @@ public class AddeImageChooser extends AddeChooser implements
     /** Input for lat/lon center point */
     protected LatLonWidget latLonWidget;
 
-    /** Widget for the line magnfication in the advanced section */
+    /** Widget for the line magnification in the advanced section */
     protected JSlider lineMagSlider;
 
     /** Label for the line mag. in the advanced section */
@@ -670,8 +672,8 @@ public class AddeImageChooser extends AddeChooser implements
                     // bad time range, throw up error window
                     if (! trp.timeRangeOk()) {
                         String msg = "Time range is invalid.\n" + 
-                                     "Please provide valid hours and minutes,\n" +
-                                     "with End Time > Start Time.";
+                                     "Please provide valid hours, minutes and\n" +
+                                     "seconds, with End Time > Start Time.";
                         Object[] params = { msg };
                         JOptionPane.showMessageDialog(null, params, "Invalid Time Range", JOptionPane.OK_OPTION);
                         return;
@@ -684,7 +686,7 @@ public class AddeImageChooser extends AddeChooser implements
                         archiveDayBtn.setText(archiveDay);
                     } catch (Exception e) {
                     }
-                    // System.out.println("archiveDay = " + archiveDay);
+
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 }
@@ -2452,10 +2454,6 @@ public class AddeImageChooser extends AddeChooser implements
                 return;
             }
         } catch (Exception e) {
-            return;
-        }
-
-        if (lines == null) {
             return;
         }
 
