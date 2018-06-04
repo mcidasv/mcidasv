@@ -1153,8 +1153,11 @@ public class AddeImageChooser extends AddeChooser implements
             super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(archiveDayBtn);
-        buttonPanel.add(numImagesButton);
-        buttonPanel.add(imageCountTextField);
+        // TJJ stack num images button and associated text field, helps with smaller screens
+        JPanel imgCountPanel = new JPanel(new BorderLayout());
+        imgCountPanel.add(numImagesButton, BorderLayout.NORTH);
+        imgCountPanel.add(imageCountTextField, BorderLayout.SOUTH);
+        buttonPanel.add(imgCountPanel);
         underTimelistPanel.add(BorderLayout.CENTER, buttonPanel);
         return panel;
     }
