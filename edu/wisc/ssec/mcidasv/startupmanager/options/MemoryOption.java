@@ -144,7 +144,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private Prefix currentPrefix = Prefix.MEGA;
     
     private static final Pattern MEMSTRING = 
-        Pattern.compile("^(\\d+)([M|G|T|P]?)$", Pattern.CASE_INSENSITIVE);
+        Pattern.compile("^(\\d+)(M|G|T|P|MB|GB|TB|PB)$", Pattern.CASE_INSENSITIVE);
     
     private final String defaultPrefValue;
     
@@ -174,7 +174,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private int initSliderValue = minSliderValue;
     
     // max size of current jvm, in *megabytes*
-//    private long maxmem = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+    // private long maxmem = Runtime.getRuntime().maxMemory() / (1024 * 1024);
     private long maxmem = getSystemMemory() / (1024 * 1024);
     
     private State currentState = State.VALID;
@@ -206,15 +206,6 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         jrbNumber.addActionListener(this);
         sliderPanel.setEnabled(false);
         textPanel.setEnabled(false);
-    }
-    
-    private String[] getNames(final Prefix[] arr) {
-        assert arr != null;
-        String[] newArr = new String[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            newArr[i] = arr[i].getName();
-        }
-        return newArr;
     }
     
     private void setState(final State newState) {
@@ -267,7 +258,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         assert field != null;
         
         try {
-            String newValue = field.getText();
+
             String memWithSuffix = field.getText();
             
             if (!isValid()) {
@@ -439,7 +430,9 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         }
         
         for (Prefix tmp : MemoryOption.PREFIXES) {
-            if (prefix.toUpperCase().equals(tmp.getJavaChar())) {
+            String newPrefix = prefix;
+            if (prefix.length() > 1) newPrefix = prefix.substring(0, 1);
+            if (newPrefix.toUpperCase().equals(tmp.getJavaChar())) {
                 currentPrefix = tmp;
                 
                 // Work around all the default settings going on
