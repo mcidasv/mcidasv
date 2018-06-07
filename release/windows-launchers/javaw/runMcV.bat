@@ -239,13 +239,13 @@ set MCV_CLASSPATH=%MCV_JAR%;%USERGUIDE_JAR%
 set MCV_EXTPATH=-Djava.ext.dirs="jre\lib\ext"
 set MCV_LIBPATH=-Djava.library.path="jre\lib\ext"
 
-@echo Command line: mcidasv.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+@echo Command line: "%MCV_DIR%\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
 
 IF DEFINED MCV_UNWELCOME_WINDOW (
-    start /B /WAIT %MCV_DIR%\jre\bin\javaw.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+    start /B /WAIT "McIDAS-V" "%MCV_DIR%\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
     EXIT
 ) ELSE (
-    start /B %MCV_DIR%\jre\bin\javaw.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+    start /B "McIDAS-V" "%MCV_DIR%\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
 )
 :end
 
