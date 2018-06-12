@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -32,7 +32,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -40,10 +39,13 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
 import jsattrak.objects.SatelliteTleSGP4;
 import jsattrak.utilities.TLE;
 import name.gano.astro.propogators.sgp4_cssi.SGP4SatData;
 import name.gano.astro.time.Time;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,13 +59,11 @@ import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.StringUtil;
-
 import visad.Data;
 import visad.Text;
 import visad.Tuple;
 import visad.VisADException;
 import visad.georef.LatLonTuple;
-
 import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser;
 import edu.wisc.ssec.mcidasv.util.XmlUtil;
@@ -110,6 +110,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
      * @param properties    extra properties for this source
      *
      */
+
     public PolarOrbitTrackDataSource(DataSourceDescriptor descriptor,
                               String filename, Hashtable properties)
            throws VisADException {
@@ -138,7 +139,7 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             key = PolarOrbitTrackChooser.TLE_PROJECT_NUMBER_KEY;
             Object proj = properties.get(key);
             key = PolarOrbitTrackChooser.DATASET_NAME_KEY;
-            Object descr = properties.get(key);
+            String descr = (String) properties.get(key);
             String url = "adde://" + server + "/textdata?&PORT=112&COMPRESS=gzip&USER=" + user + "&PROJ=" + proj + "&GROUP=" + group + "&DESCR=" + descr;
             AddeTextReader reader = new AddeTextReader(url);
             List lines = null;
@@ -153,11 +154,30 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 for (int i = 0; i < cards.length; i++) {
                     String str = cards[i];
                     if (str.length() > 0) {
-                        tleCards.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
-                        int indx = cards[i].indexOf(" ");
-                        if (indx < 0) {
-                            choices.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
+                        
+                        // TJJ Mar 2018 - only take records that match descriptor
+                        // remove trailing description part of passed in descriptor
+                        String satOnly = descr;
+                        if (satOnly.indexOf(" ") > 0) {
+                            satOnly = satOnly.substring(0, satOnly.indexOf(" "));
                         }
+                        if (str.startsWith(satOnly)) {
+                            tleCards.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
+                            
+                            // TJJ - wish I knew what these lines were all about!
+                            // I think I added them at some point - skip blank lines maybe?
+                            // Better just leave it for now.
+                            int indx = cards[i].indexOf(" ");
+                            if (indx < 0) {
+                                choices.add(XmlUtil.stripNonValidXMLCharacters(cards[i]));
+                            }
+                            
+                            // Grab the next two lines and exit loop
+                            tleCards.add(XmlUtil.stripNonValidXMLCharacters(cards[i + 1]));
+                            tleCards.add(XmlUtil.stripNonValidXMLCharacters(cards[i + 2]));
+                            break;
+                        }
+
                     }
                 }
             }
@@ -512,16 +532,19 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         return dTime;
     }
 
-    private int getInt(int beg, int end,  String card) {
+    private int getInt(int beg, int end, String card) {
         String str = card.substring(beg, end);
         str = str.trim();
-        // TODO(jon): remove check and parseInteger upon switch to java 7+
-        String javaVersion = System.getProperty("java.version");
-        int tmp;
-        if (javaVersion.startsWith("1.6")) {
-            tmp = parseInteger(str);
-        } else {
+        int tmp = -1;
+        try {
             tmp = Integer.valueOf(str);
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(
+                null, 
+                "Error parsing integer value from TLE card, potentially corrupt data source.", 
+                "Orbit Track Data Source Error", 
+                JOptionPane.ERROR_MESSAGE
+            );
         }
         return tmp;
     }
@@ -651,65 +674,9 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
      */
 
     public boolean showPropertiesDialog(String initTabName, boolean modal) {
-        //System.out.println("\n\nshowPropertiesDialog:");
         boolean ret = super.showPropertiesDialog(initTabName, modal);
         return ret;
     }
 
-    // taken and slightly simplified version of GNU Classpath's Integer.parseInt:
-    // http://cvs.savannah.gnu.org/viewvc/classpath/java/lang/Integer.java?root=classpath&view=markup
-    // TODO(jon): remove upon switch to java 7+
-    private static int parseInteger(String str) throws NumberFormatException {
-        int radix = 10;
-        if (str == null) {
-            throw new NumberFormatException();
-        }
-
-        int len = str.length();
-
-        if (len == 0) {
-            throw new NumberFormatException("string length is null");
-        }
-
-        int index = 0;
-        boolean isNeg = false;
-        int ch = str.charAt(index);
-        if (ch == '-') {
-            if (len == 1) {
-                throw new NumberFormatException("pure '-'");
-            }
-            isNeg = true;
-            ch = str.charAt(++index);
-        } else if (ch == '+') {
-            if (len == 1) {
-                throw new NumberFormatException("pure '+'");
-            }
-            ch = str.charAt(++index);
-        }
-
-        if (index == len) {
-            throw new NumberFormatException("non terminated number: " + str);
-        }
-
-        int max = Integer.MAX_VALUE / radix;
-        // We can't directly write `max = (MAX_VALUE + 1) / radix'.
-        // So instead we fake it.
-        if (isNeg && ((Integer.MAX_VALUE % radix) == (radix - 1))) {
-            ++max;
-        }
-
-        int val = 0;
-        while (index < len) {
-            if ((val < 0) || (val > max)) {
-                throw new NumberFormatException("number overflow (pos=" + index + ") : " + str);
-            }
-            ch = Character.digit(str.charAt(index++), radix);
-            val = val * radix + ch;
-            if ((ch < 0) || (((val < 0) && (!isNeg || (val != Integer.MIN_VALUE))))) {
-                throw new NumberFormatException("invalid character at position " + index + " in " + str);
-            }
-        }
-        return isNeg ? -val : val;
-    }
 }
 

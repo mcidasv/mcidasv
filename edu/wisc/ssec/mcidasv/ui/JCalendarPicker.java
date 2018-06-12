@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -29,12 +29,12 @@
 package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.BorderLayout;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
+import javax.swing.Box;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -123,7 +123,8 @@ public class JCalendarPicker extends JPanel {
         } else {
             timeComp = new JLabel(timeZoneLabel);
         }
-        add(BorderLayout.CENTER, GuiUtils.hbox(dateChooser, timeComp));
+        add(BorderLayout.CENTER, GuiUtils.hbox(dateChooser, 
+                GuiUtils.hbox(timeComp, Box.createHorizontalStrut(8))));
         if (date != null) {
             setDate(date);
         }

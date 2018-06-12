@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -73,8 +73,8 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
         LoggerFactory.getLogger(ColorSwatchComponent.class);
 
     /** Flag for alpha. */
-    boolean doAlpha = false;
-
+    boolean doAlpha = true;
+    
     /** Color of the swatch. */
     Color color;
 
@@ -98,7 +98,7 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
      * @param dialogLabel Dialog title.
      */
     public ColorSwatchComponent(XmlObjectStore store, Color c, String dialogLabel) {
-        this(store, c, dialogLabel, false);
+        this(store, c, dialogLabel, true);
     }
 
     /**

@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -81,6 +81,12 @@ public interface Constants extends IdvConstants {
     int ELEMENT_ONEHALF_WIDTH = (int)Math.round(ELEMENT_WIDTH * 1.5);
     int ELEMENT_HALF_WIDTH = Math.round(ELEMENT_WIDTH / 2);
     int ELEMENT_DOUBLEDOUBLE_WIDTH = (ELEMENT_DOUBLE_WIDTH * 2) + ELEMENT_WIDTH + (GAP_RELATED * 3) + 24;
+    
+    /**
+     * Common line styles used in various UI controls
+     */
+    
+    String [] lineStyles = new String[] { "_____", "_ _ _", ".....", "_._._" };
 
     /** Icon locations for buttons. */
     String ICON_APPLY_SMALL = "/edu/wisc/ssec/mcidasv/resources/icons/buttons/action_go.gif";
@@ -236,9 +242,12 @@ public interface Constants extends IdvConstants {
      */
     int VIIRS_PLUGIN_VERSION_NUMBER = 2;
 
-
+    /** Alert user VIIRS plugin needs updating */
     String PREF_VIIRS_PLUGIN =
         "mcidasv.viirs.pluginversion" + VIIRS_PLUGIN_VERSION_NUMBER;
+    
+    /** Used to alert user they are modifying default color table */
+    String PREF_MODIFY_DEFAULT_COLOR_TABLE = "mcidasv.default.colortable.modify";
 
     /** Whether or not to show the McIDAS-V {@literal "system"} bundles. */
     String PREF_SHOW_SYSTEM_BUNDLES = "mcidasv.showsystembundles";

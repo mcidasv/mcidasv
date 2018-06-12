@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2016
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -28,30 +28,9 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
-import visad.FlatField;
-import visad.Set;
-import visad.CoordinateSystem;
-import visad.RealType;
-import visad.RealTupleType;
-import visad.SetType;
-import visad.Linear2DSet;
-import visad.Unit;
-import visad.FunctionType;
-import visad.VisADException;
-import java.rmi.RemoteException;
-
-import java.util.Hashtable;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
+import visad.RealType;
 
 public class HSRL2D extends ProfileAlongTrack {
 
@@ -107,13 +86,13 @@ public class HSRL2D extends ProfileAlongTrack {
 
         double[] coords = subset.get("TrackDim");
         coords[0] = 0.0;
-        coords[1] = (TrackLen) - 1;
+        coords[1] = TrackLen - 1;
         coords[2] = 5.0;
         subset.put("TrackDim", coords);
 
         coords = subset.get("VertDim");
         coords[0] = 0.0;
-        coords[1] = (VertLen) - 1;
+        coords[1] = VertLen - 1;
         coords[2] = 2.0;
         subset.put("VertDim", coords);
         return subset;

@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -33,6 +33,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 
 public class BooleanOption extends AbstractOption {
     private String value = "0";
@@ -71,7 +73,8 @@ public class BooleanOption extends AbstractOption {
     }
     
     public String toString() {
-        return String.format("[BooleanOption@%x: optionId=%s, value=%s]", 
-            hashCode(), getOptionId(), getValue());
+        return MakeToString.fromInstance(this)
+                           .add("optionId", getOptionId())
+                           .add("value", getValue()).toString();
     }
 }

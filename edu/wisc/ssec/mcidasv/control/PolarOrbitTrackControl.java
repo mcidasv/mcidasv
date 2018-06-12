@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -28,8 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.control;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
-
 import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
 import edu.wisc.ssec.mcidasv.data.TimeRangeSelection;
@@ -132,10 +132,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private JComboBox locationComboBox;
     private JComboBox jcbStationsPlotted;
-    String [] lineStyles = new String[] { "_____", "_ _ _", ".....", "_._._" };
-    private JComboBox jcbTrackLineStyle = new JComboBox(lineStyles);
-    private JComboBox jcbEdgeLineStyle = new JComboBox(lineStyles);
-    private JComboBox jcbStationLineStyle = new JComboBox(lineStyles);
+
+    private JComboBox<String> jcbTrackLineStyle = new JComboBox<String>(Constants.lineStyles);
+    private JComboBox<String> jcbEdgeLineStyle = new JComboBox<String>(Constants.lineStyles);
+    private JComboBox<String> jcbStationLineStyle = new JComboBox<String>(Constants.lineStyles);
     private JCheckBox jcbLabels;
     private JCheckBox jcbSwathEdges;
     
@@ -174,9 +174,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private Font gsCurFont = FontSelector.DEFAULT_FONT;
     
     // line width combo boxes, GS: Ground Station, SC: Swath Center, SE: Swath Edge
-    private JComboBox jcbGSLineWidth;
-    private JComboBox jcbSCLineWidth;
-    private JComboBox jcbSELineWidth;
+    private JComboBox<String> jcbGSLineWidth;
+    private JComboBox<String> jcbSCLineWidth;
+    private JComboBox<String> jcbSELineWidth;
     private JSpinner js = null;
 
     private CompositeDisplayable trackDsp;
@@ -365,6 +365,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		
     		boolean fontChanged = true;
     		boolean swathChanged = false;
+    		float scale = getViewManager().getMaster().getDisplayScale();
     		curSwathCenterWidth = jcbSCLineWidth.getSelectedIndex() + 1;
     		curSwathEdgeWidth = jcbSELineWidth.getSelectedIndex() + 1;
     		if (curSwathCenterWidth != prvSwathCenterWidth) swathChanged = true;
@@ -431,7 +432,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 			                    }
 			                    
 	                            String str = ((Text) tupleComps[0]).getValue();
-	                            logger.debug("Adding time for str: " + str);
 	                            int indx = str.indexOf(" ") + 1;
 	                            String subStr = "- " + str.substring(indx, indx+5);
 	                            TextDisplayable time = new TextDisplayable(SWATH_MODS, otTextType);
@@ -439,7 +439,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 	                            time.setVerticalJustification(TextControl.Justification.CENTER);
 	                            time.setColor(curSwathColor);
 	                            time.setFont(otFontSelector.getFont());
-	                            time.setTextSize((float) otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
+	                            time.setTextSize((float) scale * otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
 	                            time.setSphere(inGlobeDisplay());
 	                            
 	                            RealTuple lonLat =
@@ -465,7 +465,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 					vade.printStackTrace();
 				}
     		}
-    		
+            
     		updateDisplayList();
     		return;
     	}
@@ -1004,12 +1004,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	lonLabel = new JLabel();
     	altLabel = new JLabel();
         String [] lineWidths = {"1", "2", "3", "4"};
-        jcbGSLineWidth = new JComboBox(lineWidths);
-        jcbSCLineWidth = new JComboBox(lineWidths);
+        jcbGSLineWidth = new JComboBox<String>(lineWidths);
+        jcbSCLineWidth = new JComboBox<String>(lineWidths);
         // initialize swath center (track line) to width 2
         jcbSCLineWidth.setSelectedIndex(1);
         jcbEdgeLineStyle.setSelectedIndex(1);
-        jcbSELineWidth = new JComboBox(lineWidths);
+        jcbSELineWidth = new JComboBox<String>(lineWidths);
         otFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         otFontSelector.setFont(FontSelector.DEFAULT_FONT);
         gsFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
@@ -1111,6 +1111,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     private void labelGroundStation(String station) {
+        
+        float scale = getViewManager().getMaster().getDisplayScale();
     	try {
     		String str = "+ " + station;
     		logger.debug("Drawing station: " + str);
@@ -1120,7 +1122,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
     		groundStationDsp.setColor(getAntColor());
     		groundStationDsp.setFont(gsFontSelector.getFont());
-    		groundStationDsp.setTextSize((float) gsFontSelector.getFontSize() / FONT_SCALE_FACTOR);
+    		groundStationDsp.setTextSize((float) scale * gsFontSelector.getFontSize() / FONT_SCALE_FACTOR);
     		groundStationDsp.setSphere(inGlobeDisplay());
 
     		double dlat = getLatitude();
@@ -1144,7 +1146,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	JPanel jp = new JPanel(new MigLayout());
         jp.setBorder(BorderFactory.createTitledBorder(" Ground Station Controls "));
 
-        jcbStationLineStyle = new JComboBox(lineStyles);
+        jcbStationLineStyle = new JComboBox<String>(Constants.lineStyles);
         jcbStationLineStyle.addActionListener(this);
         jcbStationLineStyle.setSelectedIndex(1);
         prvStationLineStyle = jcbStationLineStyle.getSelectedIndex();

@@ -35,15 +35,22 @@ from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 
 from edu.wisc.ssec.mcidasv.util import ErrorCodeAreaUtils
 
+from edu.wisc.ssec.mcidasv.servermanager import AddeAccount
+from edu.wisc.ssec.mcidasv.servermanager import AddeEntry
 from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from edu.wisc.ssec.mcidasv.servermanager import LocalAddeEntry
+from edu.wisc.ssec.mcidasv.servermanager import RemoteAddeEntry
 from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryStatus
+from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryValidity
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import addeFormatToStr
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import serverNameToStr
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToAddeFormat
+from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToEntrySource
+from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToEntryType
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import strToServerName
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import AddeFormat
 from edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry import ServerName
+from edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor import AddeStatus
 
 from visad import DateTime
 
@@ -217,6 +224,22 @@ _formats = {
     "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
     "INSAT3D_SOUNDER":                                         AddeFormat.INSAT3D_SOUNDER,
     "INSAT-3D Sounder":                                        AddeFormat.INSAT3D_SOUNDER,
+}
+
+_human_units_to_adde = {
+    'ALB':          'ALB',
+    'ALBE':         'ALB',
+    'ALBEDO':       'ALB',
+    'BRIT':         'BRIT',
+    'BRIGHTNESS':   'BRIT',
+    'TEMP':         'TEMP',
+    'TEMPERATURE':  'TEMP',
+    'RAD':          'RAD',
+    'RADIANCE':     'RAD',
+    'RAW':          'RAW',
+    'REFL':         'REFL',
+    'REFLECTANCE':  'REFL',
+    'REFLECTIVITY': 'REFL',
 }
 
 DEFAULT_ACCOUNTING = ('idv', '0')
@@ -568,7 +591,12 @@ params_sizeall = dict(
     band=1,
 )
 
-
+def listValidUnits():
+    """List the valid ADDE units."""
+    print('Accepted ADDE unit strings:')
+    for unitname in sorted(_human_units_to_adde.iterkeys()):
+        print('\t'+unitname)
+    
 def enableAddeDebug():
     """Enable ADDE debug messages."""
     EntryStore.setAddeDebugEnabled(True)
@@ -623,6 +651,79 @@ def getLocalADDEEntry(dataset, imageType):
     # no matching descriptor was found so return an error value:
     return None
     
+def getRemoteADDEEntry(server, dataset, datasetType=None):
+    # TODO(jon): maybe figure out a way to aggregate the RemoteAddeEntry objects
+    #            to simplify things for scripting?
+    if not datasetType:
+        datasetType = [ 'IMAGE', 'POINT', 'GRID', 'TEXT', 'NAV', 'RADAR' ]
+    elif isinstance(datasetType, str):
+        datasetType = [ datasetType ]
+        
+    datasetTypes = [ strToEntryType(dtype) for dtype in datasetType ]
+    
+    remoteEntries = getStaticMcv().getServerManager().getRemoteEntries()
+    results = []
+    for e in remoteEntries:
+        if e.getAddress() == server and e.getGroup() == dataset and e.getEntryType() in datasetTypes:
+            results.append(e)
+    return results
+    
+def makeRemoteADDEEntry(server, dataset, datasetType, accounting=None, save=False):
+
+    # TODO(jon): docs!
+    
+    # TJJ - Feb 2018
+    # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2590
+    # Upper case dataset if it is not already, and alert the user we have done so
+    if (not dataset.isupper()):
+        dataset = dataset.upper()
+        print '* WARNING: provided dataset has been converted to upper case: ' + dataset + '\n'
+        
+    if len(dataset) > 8 or any(c in dataset for c in "/. []%"):
+        raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
+        
+    if not accounting:
+        user = AddeEntry.DEFAULT_ACCOUNT.getUsername()
+        proj = AddeEntry.DEFAULT_ACCOUNT.getProject()
+    elif isinstance(accounting, (tuple, list)) and len(accounting) == 2:
+        user = accounting[0]
+        proj = str(accounting[1])
+    else:
+        raise AddeJythonInvalidAccountingError("The 'accounting' parameter should be a tuple or list that contains your ADDE username and project number. Both values should be strings.")
+        
+    if not datasetType:
+        datasetTypes = []
+    elif isinstance(datasetType, str):
+        datasetTypes = [ strToEntryType(datasetType) ]
+    elif isinstance(datasetType, (tuple, list)):
+        datasetTypes = [ strToEntryType(dtype) for dtype in datasetType ]
+    else:
+        datasetTypes = []
+        
+    if not datasetTypes:
+        raise AddeJythonError("The 'datasetType' parameter can be either a single string or a list of strings. Valid strings are 'IMAGE', 'POINT', 'GRID', 'TEXT', 'NAV', and 'RADAR'.")
+        
+    results = []
+    src = AddeEntry.EntrySource.USER
+    checkHost = True
+    for x in datasetTypes:
+        entry = RemoteAddeEntry.Builder(server, dataset).account(user, proj).type(x).source(src).temporary(not save).validity(EntryValidity.VERIFIED).build()
+        
+        if checkHost:
+            if not RemoteAddeEntry.checkHost(entry):
+                raise AddeJythonError("Invalid server address")
+            checkHost = False
+            
+        status = RemoteAddeEntry.checkEntry(False, entry)
+        if status == AddeStatus.OK:
+            results.append(entry)
+        elif status == AddeStatus.BAD_ACCOUNTING or status == AddeStatus.BAD_GROUP:
+            raise AddeJythonInvalidAccountingError("Please verify that the specified ADDE accounting information is correct.")
+            
+    if results:
+        getStaticMcv().getServerManager().addEntries(results)
+    return results
+    
 def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     """Create a local ADDE entry in the server table.
     
@@ -667,7 +768,15 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     Returns:
         The newly created local ADDE dataset.
     """
-    if len(dataset) > 8 or not dataset.isupper() or any(c in dataset for c in "/. []%"):
+    
+    # TJJ - Feb 2018
+    # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2590
+    # Upper case dataset if it is not already, and alert the user we have done so
+    if (not dataset.isupper()):
+        dataset = dataset.upper()
+        print '* WARNING: provided dataset has been converted to upper case: ' + dataset + '\n'
+        
+    if len(dataset) > 8 or any(c in dataset for c in "/. []%"):
         raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
         
     convertedFormat = _formats.get(format, AddeFormat.INVALID)
@@ -696,7 +805,8 @@ def listADDEImageTimes(localEntry=None,
     band=None,
     mag=None,
     size=None,
-    showUrls=True):
+    showUrls=True,
+    **kwargs):
     """Create a list of ADDE image times.
     
     Args:
@@ -914,7 +1024,8 @@ def listADDEImages(localEntry=None,
     band=None,
     mag=None,
     size=None,
-    showUrls=True):
+    showUrls=True,
+    **kwargs):
     """Create a list of ADDE images.
     
     Args:
@@ -1344,11 +1455,18 @@ def _getADDEImage(localEntry=None,
         band = ''
         
     if unit or kwargs.get('unitType'):
+        result = _argHandler(explicit=('unit', unit), implicit=('unitType', kwargs.get('unitType')))
         try:
-            result = _argHandler(explicit=('unit', unit), implicit=('unitType', kwargs.get('unitType')))
-            unit = '&UNIT=%s' % (str(result))
+            addeUnit = _human_units_to_adde[str(result).upper()]
+            unit = '&UNIT=%s' % addeUnit
+        except KeyError:
+            # fall through if unit mapping is not defined.
+            unit = '&UNIT=%s' % result
         except:
-            raise ValueError("unit must a str value; could not convert '%s' to to a str (type=%s)." % (unit, type(unit)))
+            unitstr = ''
+            for unitname in sorted(_human_units_to_adde.iterkeys()):
+                unitstr += '%s, ' % unitname
+            raise ValueError("unit must a str value; could not convert '%s' to to a known unit string (type=%s). Valid unit strings are: %s" % (unit, type(unit), unitstr[0:-2]))
     else:
         unit = '&UNIT=BRIT'
         

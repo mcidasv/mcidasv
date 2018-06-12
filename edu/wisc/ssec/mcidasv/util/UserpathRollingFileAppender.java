@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -45,8 +45,6 @@ import java.util.Objects;
 public class UserpathRollingFileAppender<E> extends RollingFileAppender<E> {
     @Override public void setFile(String file) {
         if (Objects.equals("mcv.logpath_IS_UNDEFINED", file)) {
-//            Paths.get(System.getProperty("mcv.userpath"), "mcidasv.log");
-//            String logPath = System.getProperty("mcv.userpath") + File.separatorChar + "mcidasv.log";
             Path p = Paths.get(System.getProperty("mcv.userpath"), "mcidasv.log");
             String logPath = p.toAbsolutePath().toString();
             addInfo("using default logpath: '"+logPath+'\'');

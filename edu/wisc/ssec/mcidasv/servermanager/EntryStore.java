@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -36,6 +36,8 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newLinkedHashSet;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -214,7 +216,7 @@ public class EntryStore {
         USER_DIRECTORY = mcv.getUserDirectory();
         ADDE_RESOLV = mcv.getUserFile("RESOLV.SRV");
         MCTRACE = "0";
-
+        
         if (McIDASV.isWindows()) {
             ADDE_MCSERVL = ADDE_BIN + "\\mcservl.exe";
         } else {
@@ -1185,7 +1187,14 @@ public class EntryStore {
         if (System.getProperties().containsKey(PROP_DEBUG_LOCALROOT)) {
             return System.getProperty(PROP_DEBUG_LOCALROOT);
         }
-        return System.getProperty("user.dir") + File.separatorChar + "adde";
+        String userDir = System.getProperty("user.dir");
+        Path p;
+        if (userDir.endsWith("lib") || userDir.endsWith("lib/")) {
+            p = Paths.get(userDir, "..", "adde");
+        } else {
+            p = Paths.get(userDir, "adde");
+        }
+        return p.normalize().toString();
     }
 
     /**

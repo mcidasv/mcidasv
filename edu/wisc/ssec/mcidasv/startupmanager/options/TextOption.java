@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -42,6 +42,7 @@ import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -147,8 +148,9 @@ public class TextOption extends AbstractOption {
      * {@literal "[TextOption@7825114a: optionId=BLAH value=USER INPUT]"}.
      */
     public String toString() {
-        return String.format("[TextOption@%x: optionId=%s, value=%s]",
-            hashCode(), getOptionId(), getValue());
+        return MakeToString.fromInstance(this)
+                           .add("optionId", getOptionId())
+                           .addQuoted("value", getValue()).toString();
     }
 
     /**

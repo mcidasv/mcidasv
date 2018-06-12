@@ -1,5 +1,37 @@
 #!/bin/bash
 
+# _file "path" : print the file of a path.
+function _file(){
+    printf '%s' "${1##*/}"
+}
+
+# _cd "path" : change the directory of a path.
+function _cd(){
+    cd "$(printf '%s' "${1%/*}")" 2>/dev/null
+}
+
+# get_realpath "path" : echo the realpath as logical or physical.
+function get_realpath(){
+    # 0 : Good.
+    # 1 : Fail : no file/symlink broken/not regular file errors.
+    # 2 : Fail : unspecified physical file path construction error.
+    # 3 : Fail : unspecified logical or physical directory construction error. 
+    [[ ! -f "$1" ]] && return 1 # Code 1.
+    if [[ -z "$no_symlinks" ]]
+    then
+        local _pwd='pwd'
+    else
+        local _pwd='pwd -P'
+        if [[ -L "$1" ]]
+        then
+            local _ls="$( ls -dl "$1" 2>/dev/null )" &&
+            local _link="$( printf '%s' "${_ls#*"${1} -> "}" )" &&
+            echo "$( _cd "$1"; _cd "$_link" && $_pwd )"/"$(_file "$_link")" && return 0 || return 2 # Code 2.
+        fi
+    fi
+    echo "$( _cd "$1"; $_pwd )"/"$(_file "$1")" && return 0 || return 3 # Code 3.
+}
+
 MCV_PARAMS="$@"
 
 DOCUMENT_DIRECTORY="${HOME}"
@@ -51,17 +83,22 @@ if [ -d "${HOME}/.mcidasv" ]; then
 fi
 
 # Change to the directory that the script resides in before executing
-HAVEWHICH=`which which >/dev/null 2>&1`
-if [ $? -eq 0 ]; then
-  scriptname=`which "$0" 2>/dev/null`
-else
-  scriptname="$0"
-fi
-if [ -z "${scriptname}" ]; then
-  scriptname="$0"
-fi
-dirname=`dirname "$scriptname"`
-cd "$dirname"
+#HAVEWHICH=`which which >/dev/null 2>&1`
+#if [ $? -eq 0 ]; then
+#  scriptname=`which "$0" 2>/dev/null`
+#else
+#  scriptname="$0"
+#fi
+#if [ -z "${scriptname}" ]; then
+#  scriptname="$0"
+#fi
+
+scriptname=$(get_realpath "$0")
+dirname=$(dirname "$scriptname")
+
+cd "$dirname/lib"
+
+MCV_JAR=$(find . -maxdepth 1 -name "mcidasv*.jar" -print)
 
 # Default heap size to use if none can be determined
 HEAP_DEFAULT="512M"
@@ -80,11 +117,11 @@ MCV_LOG="${MCV_USERPATH}/mcidasv.log"
 MCV_LOG_LINES="10000"
 
 # Always run the default prefs; user can override as much as they want
-if [ ! -f ./runMcV.prefs ]; then
+if [ ! -f "$dirname/runMcV.prefs" ]; then
   echo "This script must be run from within the McIDAS-V installation directory"
   exit 1
 else
-  . ./runMcV.prefs
+  . "$dirname/runMcV.prefs"
 fi
 
 # Create MCV_USERPATH directory if it doesn't already exist
@@ -101,7 +138,7 @@ fi
 
 # Copy prefs to MCV_USERPATH directory if it doesn't already exist
 if [ ! -f "${MCV_USERPATH}/runMcV.prefs" ]; then
-  cp runMcV.prefs "${MCV_USERPATH}/runMcV.prefs"
+  cp "$dirname/runMcV.prefs" "${MCV_USERPATH}/runMcV.prefs"
 fi
 
 # If MCV_USERPATH/runMcV.prefs exists, source it to populate the current environment
@@ -128,13 +165,13 @@ fi
 
 # Point at McV's bundled JRE on OS X. 
 if [ `uname -s` = "Darwin" ]; then
-  JAVA_HOME="$PWD/.install4j/jre.bundle/Contents/Home/jre"
+  JAVA_HOME="$dirname/.install4j/jre.bundle/Contents/Home/jre"
 fi
 
 # Look for java
 JAVA_BIN="java"
-if [ -f "./jre/bin/java" ]; then
-  JAVA_HOME="$PWD/jre"
+if [ -f "$dirname/jre/bin/java" ]; then
+  JAVA_HOME="$dirname/jre"
 fi
 
 if [ -n "${JAVA_HOME}" ]; then
@@ -150,7 +187,7 @@ echo "Reading system configuration..."
 
 # We have system memory, so try to set heap size if a percent was requested
 if [ ${HEAP_PERCENT} -gt 0 ]; then
-  SYS_MEM=`"${JAVA_BIN}" -Dmcv.userpath=\"${MCV_USERPATH}\" -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
+  SYS_MEM=`"${JAVA_BIN}" -Dmcv.userpath=\"${MCV_USERPATH}\" -cp $MCV_JAR edu.wisc.ssec.mcidasv.util.GetMem 2>/dev/null`
   echo "sys mem: ${SYS_MEM}"
   if [ ${SYS_MEM} -gt 0 ]; then
     HEAP_SIZE=$(( ${SYS_MEM} * ${HEAP_PERCENT} / 100 ))
@@ -223,21 +260,11 @@ if [ -n "${TEXTURE_WIDTH}" ]; then
 else
   TEXTURE_SIZE="4096"
 fi
-
+ 
 LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 
 # Gather up previously set values.
 MCV_USERPATH_ESCAPED=`echo ${MCV_USERPATH} |sed -e 's/ /\\\\ /g'`
-
-# restrict java.ext.dirs and java.library.path to the JRE
-if [ -n "${JAVA_HOME}" ]; then
-  MCV_EXTDIR="-Djava.ext.dirs=\"${JAVA_HOME}/lib/ext\""
-  MCV_LIBPATH="-Djava.library.path=\"${JAVA_HOME}/lib/ext\""
-else
-  echo "Warning: Please consider setting JAVA_HOME."
-  MCV_EXTDIR=""
-  MCV_LIBPATH=""
-fi
 
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -DtextureWidthMax=${TEXTURE_SIZE}"
@@ -251,51 +278,9 @@ if [ "${SHOW_WELCOME}" = "1" ]; then
   fi
 fi
 
-################################################################################
-# OS specific settings
-
-# Mac OS X settings
-if [ `uname -s` = "Darwin" ]; then
-
-  # Look for the Java3D/JOGL package
-  XBOOTCLASSPATH=
-  if [ -d "java3d" ]; then
-    JAVA3D_LIB="${PWD}/java3d"
-    JAVA3D_CP="\"${JAVA3D_LIB}/j3dcore.jar\":\"${JAVA3D_LIB}/j3dutils.jar\":\"${JAVA3D_LIB}/vecmath.jar\""
-    XBOOTCLASSPATH="-Xbootclasspath/p:${JAVA3D_CP}"
-    if [ -d "jogl" -a "${JOGL_TOGL}" -eq 1 ]; then
-      JOGL_LIB="${PWD}/jogl"
-      JOGL_CP="\"${JOGL_LIB}\":\"${JOGL_LIB}/jogl.jar\":\"${JOGL_LIB}/gluegen-rt.jar\""
-      export DYLD_LIBRARY_PATH="${JOGL_LIB}"
-      XBOOTCLASSPATH="-Xbootclasspath/p:${JOGL_CP}:${JAVA3D_CP}"
-    fi
-  fi
-
-  # If we are on Leopard (or later?):
-  # Use aqua look & feel to get rid of lightweight/heavyweight 3D overlay problems
-  # Get rid of any XBOOTCLASSPATH business and just use system Java3D
-  LEOPARD_OR_BETTER_TEST=`sw_vers -productVersion | cut -d '.' -f 2`
-  if [ "${LEOPARD_OR_BETTER_TEST}" -gt 4 ]; then
-      MCV_FLAGS="${MCV_FLAGS} -forceaqua"
-      XBOOTCLASSPATH=
-  fi
-
-  # Build JAVA_FLAGS and set the dock/menu bar name
-  JAVA_FLAGS="${JAVA_FLAGS} ${XBOOTCLASSPATH} -Xdock:name=McIDAS-V -Xdock:icon=mcidasv.icns"
-
-fi
-# Done with Mac OS X settings
-
-# Done with OS specific settings
-################################################################################
-
 MCV_FLAGS="${MCV_FLAGS} -userpath \"${MCV_USERPATH}\" ${USE_LAYOUT_BUNDLE} ${DEFAULT_BUNDLE}"
-echo "mcv flags: ${MCV_FLAGS}"
-
-MCV_CLASSPATH=".:./mcv_userguide.jar:./mcidasv.jar"
 
 # Run it
-# "${JAVA_BIN}" ${JAVA_FLAGS} -classpath "${MCV_CLASSPATH}" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS} >>"${MCV_LOG}" 2>&1
-EXEC_CMD="\"${JAVA_BIN}\" ${JAVA_FLAGS} -classpath \"${MCV_CLASSPATH}\" -da edu.wisc.ssec.mcidasv.McIDASV ${MCV_FLAGS} ${MCV_PARAMS}"
+EXEC_CMD="\"$JAVA_BIN\" $JAVA_FLAGS -jar $MCV_JAR $MCV_FLAGS $MCV_PARAMS"
 echo "${EXEC_CMD}"
 eval "${EXEC_CMD}"

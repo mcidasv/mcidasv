@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -41,6 +41,7 @@ import java.io.FilenameFilter;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -83,6 +84,7 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.util.Misc;
+
 import visad.Data;
 import visad.DateTime;
 import visad.DerivedUnit;
@@ -100,7 +102,9 @@ import visad.util.Util;
 
 /**
  * A data source for NPOESS Preparatory Project (Suomi NPP) data
- * This will probably move, but we are placing it here for now
+ * and JPSS data (JPSS-1 now officially NOAA-20).
+ * 
+ * This should probably move, but we are placing it here for now
  * since we are leveraging some existing code used for HYDRA.
  */
 
@@ -128,7 +132,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private Map<String, QualityFlag> qfMap = new HashMap<>();
     private Map<String, float[]> lutMap = new HashMap<>();
 
-    private static final String DATA_DESCRIPTION = "Suomi NPP Data";
+    private static final String DATA_DESCRIPTION = "JPSS Data";
     
     // instrument related variables and flags
     Attribute instrumentName = null;
@@ -146,7 +150,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private Map<String, double[]> defaultSubset;
     public TrackAdapter track_adapter;
 
-    private List categories;
+    private List<DataCategory> categories;
     private boolean isCombinedProduct = false;
     private boolean nameHasBeenSet = false;
 
@@ -224,11 +228,11 @@ public class SuomiNPPDataSource extends HydraDataSource {
         logger.debug("SuomiNPPDataSource constructor called, file count: " + sources.size());
 
         filename = (String) sources.get(0);
-        setDescription("Suomi NPP");
+        setDescription(DATA_DESCRIPTION);
         
         // NASA data is UTC, pre-set time zone
         SimpleTimeZone stz = new SimpleTimeZone(0, "UTC");
-        sdfNASA.setTimeZone(stz);;
+        sdfNASA.setTimeZone(stz);
         
         // build the filename map - matches each product to set of files for that product
         filenameMap = new HashMap<>();
@@ -246,14 +250,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	}
         }
         
-        // pass 2, create a list of files for each product in this data source
+        // Pass 2, create a list of files for each product in this data source
         for (Object o : sources) {
         	String filename = (String) o;
         	// first five characters of any product go together
         	int lastSeparator = filename.lastIndexOf(File.separatorChar);
         	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
         	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
-        	List l = (List) filenameMap.get(prodStr);
+        	List<String> l = filenameMap.get(prodStr);
         	l.add(filename);
         	filenameMap.put(prodStr, l);
         }
@@ -425,8 +429,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
 												if (axpp != null) {
 													String baseName = axpp.getStringValue();
 													productName = baseName;
+													
+													// TJJ Apr 2018
+													// Hack so we can look at CrIS Full Spectrum, until we can
+													// track down existence of an official Product Profile for it.
+													// http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2634
+													// The regular SDR profile lets us visualize it.
+													if (productName.equals("CrIS-FS-SDR")) productName = "CrIS-SDR";
+													
 													String productProfileFileName = nppPP
-															.getProfileFileName(baseName);
+															.getProfileFileName(productName);
 													logger.trace("Found profile: " + productProfileFileName);
 													if (productProfileFileName == null) {
 														throw new Exception(
@@ -1262,6 +1274,25 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		}
     	}
     	
+    	// TJJ Feb 2018 
+    	// Doing a reorder of variable names here, as per HP's request from
+    	// http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2613
+
+    	if (isVIIRS) {
+    	    // Copy the variable Set to a sortable List
+    	    List<String> sortedList = new ArrayList(pathToProducts);
+    	    Collections.sort(sortedList, new VIIRSSort());
+
+    	    // Clear the original data structure which retains insert order
+    	    // (it's a LinkedHashSet)
+    	    pathToProducts.clear();
+
+    	    // Re-add the variables in corrected order
+    	    for (String s : sortedList) {
+    	        pathToProducts.add(s);
+    	    }
+    	}
+        
     	// initialize the aggregation reader object
     	try {
     		if (isNOAA) {
@@ -1543,7 +1574,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
                 // mjh fix absolute paths in filenameMap
                 logger.debug("original filenameMap: {}", filenameMap);
-                Iterator keyIterator = filenameMap.keySet().iterator();
+                Iterator<String> keyIterator = filenameMap.keySet().iterator();
                 while (keyIterator.hasNext()) {
                     String keyStr = (String) keyIterator.next();
                     List<String> fileNames = (List<String>) filenameMap.get(keyStr);

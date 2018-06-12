@@ -1,21 +1,29 @@
 /*
- * Copyright 1997-2017 Unidata Program Center/University Corporation for
- * Atmospheric Research, P.O. Box 3000, Boulder, CO 80307,
- * support@unidata.ucar.edu.
+ * This file is part of McIDAS-V
  *
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at
- * your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
- * General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library; if not, write to the Free Software Foundation,
- * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * Copyright 2007-2018
+ * Space Science and Engineering Center (SSEC)
+ * University of Wisconsin - Madison
+ * 1225 W. Dayton Street, Madison, WI 53706, USA
+ * http://www.ssec.wisc.edu/mcidas
+ * 
+ * All Rights Reserved
+ * 
+ * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
+ * some McIDAS-V source code is based on IDV and VisAD source code.  
+ * 
+ * McIDAS-V is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * McIDAS-V is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser Public License
+ * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
 package ucar.unidata.idv.control;
@@ -23,10 +31,7 @@ package ucar.unidata.idv.control;
 
 import ucar.nc2.dataset.*;
 import ucar.nc2.dt.GridCoordSystem;
-
 import ucar.unidata.data.*;
-
-
 import ucar.unidata.data.gis.MapMaker;
 import ucar.unidata.data.grid.DerivedGridFactory;
 import ucar.unidata.data.grid.GridDataInstance;
@@ -37,42 +42,25 @@ import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.control.drawing.*;
 import ucar.unidata.ui.FineLineBorder;
-
 import ucar.unidata.ui.colortable.ColorTableDefaults;
 import ucar.unidata.util.*;
-
 import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
-
 import ucar.unidata.xml.XmlUtil;
-
-
 import ucar.visad.Util;
 import ucar.visad.display.*;
-
-
 import ucar.visad.quantities.CommonUnits;
-
 import visad.*;
-
 import visad.CoordinateSystem;
-
 import visad.georef.EarthLocation;
 import visad.georef.EarthLocationLite;
 import visad.georef.LatLonPoint;
-
 import visad.georef.MapProjection;
-
 import visad.util.DataUtility;
-
 
 import java.awt.*;
 import java.awt.event.*;
-
-
 import java.rmi.RemoteException;
-
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -687,6 +675,17 @@ public class GridTrajectoryControlNew extends DrawingControl {
                                 TwoFacedObject select =
                                     (TwoFacedObject) ((JComboBox) e.getSource()).getSelectedItem();
                                 setTrajFormType(select.getId().hashCode());
+                                
+                                // TJJ Feb 2018
+                                // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2362
+                                // Disable arrowhead functions for nonlinear shapes
+
+                                if (((JComboBox<String>) e.getSource()).getSelectedIndex() != 0) {
+                                    arrowCbx.setEnabled(false);
+                                } else {
+                                    arrowCbx.setEnabled(true);
+                                }
+                                
                             }
                         });
                 trajFormComponent =

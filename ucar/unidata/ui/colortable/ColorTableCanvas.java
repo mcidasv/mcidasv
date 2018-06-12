@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -2806,9 +2806,17 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
             g.setColor(Color.gray);
             int lineX = cursorPosition;
             g.drawLine(lineX, box.y, lineX, box.y + box.height);
+            // TJJ May 2018 - add alpha value to mouse-over readout
+            // See http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1625
+            Color c = (Color) colorList.get(index);
+            // Get the 0 - 255 alpha value
+            int tmpAlpha = c.getAlpha();
+            // Convert it to fractional value, then percent
+            double fraction = 1 - (tmpAlpha / 255.0d);
+            int intPercent = (int) (fraction * 100 + 0.5);
+            value = value + ", Transp= " + intPercent + "%";
             g.drawString(value, lineX, lineHeight + MARGIN_V + box.height);
         }
-
 
     }
 

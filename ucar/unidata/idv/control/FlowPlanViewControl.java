@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -31,6 +31,7 @@ package ucar.unidata.idv.control;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
@@ -39,24 +40,18 @@ import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.grid.GridTrajectory;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.util.*;
-
 import ucar.visad.Util;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.FlowDisplayable;
 import ucar.visad.display.WindBarbDisplayable;
-
 import visad.*;
-
 import visad.georef.EarthLocation;
-
 
 import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -482,6 +477,19 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
                         (TwoFacedObject) ((JComboBox) e.getSource())
                             .getSelectedItem();
                     setTrajFormType(select.getId().hashCode());
+                    
+                    // TJJ Feb 2018
+                    // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2362
+                    // Disable arrowhead functions for nonlinear shapes
+                    
+                    if (((JComboBox<String>) e.getSource()).getSelectedIndex() != 0) {
+                        arrowCbx.setEnabled(false);
+                        vectorAHSizeWidget.setEnabled(false);
+                    } else {
+                        arrowCbx.setEnabled(true);
+                        vectorAHSizeWidget.setEnabled(true);
+                    }
+                    
                 }
             });
             trajFormComponent =
@@ -491,6 +499,7 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
             trajLengthComponent = GuiUtils.hbox(trajFormComponent,
                     GuiUtils.rLabel("Length Offset: "),
                     trajLengthWidget.getContents(false), arrowCbx);
+            enableTrajLengthBox();
             cvectorLengthWidget = new ValueSliderWidget(this, 1, 21,
                     "VectorLength", "Curly Vector Length");
             cvectorLengthComponent =

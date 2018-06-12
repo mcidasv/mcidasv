@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -29,6 +29,8 @@
 package edu.wisc.ssec.mcidasv.servermanager;
 
 import static java.util.Objects.requireNonNull;
+
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 
 /**
  * Simplistic representation of ADDE accounting information. This is an
@@ -126,7 +128,9 @@ public class AddeAccount {
      * @return {@link String} representation of this ADDE account.
      */
     public String toString() {
-        return String.format("[AddeAccount@%x: username=%s, project=%s]", hashCode(), username, project);
+        return MakeToString.fromInstance(this)
+                           .add("username", username)
+                           .add("project", project).toString();
     }
 
     /**

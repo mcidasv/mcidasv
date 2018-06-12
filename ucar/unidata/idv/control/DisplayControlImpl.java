@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -7633,7 +7633,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         } catch (Exception exc) {
             LogUtil.consoleMessage("Error getting cursor readout");
             LogUtil.consoleMessage(LogUtil.getStackTrace(exc));
-            setDoCursorReadout(false);
         }
         return null;
     }

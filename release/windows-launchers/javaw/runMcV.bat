@@ -5,6 +5,23 @@ SET MCV_LOGPATH=%MCV_USERPATH%\mcidasv.log
 SET MCV_PARAMS=%*
 SET USE_TEMPUSERPATH=0
 
+SET MCV_DIR=%~dp0%
+
+SET CURRENT_DIR=%cd%
+
+CD %MCV_DIR%\lib
+
+SET MCV_JAR=
+FOR /F %%a IN ('DIR /b mcidasv-*.jar 2^>nul') DO SET MCV_JAR=%%a
+IF DEFINED MCV_JAR (
+    GOTO donefindingjars
+) ELSE (
+    ECHO "*** ERROR: Could not find McIDAS-V JAR file"
+    GOTO end
+)
+
+:donefindingjars
+
 REM If _JAVA_OPTIONS is set it takes precedence over command line
 SET _JAVA_OPTIONS=
 
@@ -76,8 +93,8 @@ SET MCV_LOG=%MCV_USERPATH%\mcidasv.log
 SET MCV_LOG_LINES=10000
 
 REM Always run the default prefs; user can override as much as they want
-IF NOT EXIST runMcV-Prefs.bat echo This script must be run from within the McIDAS-V installation directory && goto end
-CALL runMcV-Prefs.bat
+IF NOT EXIST "%MCV_DIR%\runMcV-Prefs.bat" echo This script must be run from within the McIDAS-V installation directory && goto end
+CALL "%MCV_DIR%\runMcV-Prefs.bat"
 
 REM Toggle the welcome window if MCV_USERPATH does not exist
 IF NOT EXIST "%MCV_USERPATH%" SET SHOW_WELCOME=1
@@ -200,7 +217,7 @@ GOTO goodheap
 REM Get the amount of system memory
 echo Reading system configuration...
 SET /a SYS_MEM=0
-FOR /F %%i IN ('jre\bin\java.exe -cp mcidasv.jar edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
+FOR /F %%i IN ('%MCV_DIR%\jre\bin\java.exe -cp %MCV_JAR% edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT% && GOTO goodheap
 set HEAP_PERCENT=%HEAP_SIZE:~0,-1%
 set /a HEAP_SIZE=%SYS_MEM% * %HEAP_PERCENT% / 100
@@ -217,17 +234,19 @@ IF EXIST "jre\bin\client\classes.jsa" (
 @echo *** notice: not using class data sharing
 )
 
-set MCV_CLASSPATH=%CD%\;%CD%\mcv_userguide.jar;%CD%\mcidasv.jar
+set MCV_CLASSPATH=%MCV_JAR%;%USERGUIDE_JAR%
 
 set MCV_EXTPATH=-Djava.ext.dirs="jre\lib\ext"
 set MCV_LIBPATH=-Djava.library.path="jre\lib\ext"
 
-@echo Command line: mcidasv.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+@echo Command line: "%MCV_DIR%\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
 
 IF DEFINED MCV_UNWELCOME_WINDOW (
-    start /B /WAIT jre\bin\java.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+    start /B /WAIT "McIDAS-V" "%MCV_DIR%\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
     EXIT
 ) ELSE (
-    start /B jre\bin\javaw.exe -Xmx%HEAP_SIZE% %GC_ARGS% %JVM_ARGS% %MCV_EXTPATH% %MCV_LIBPATH% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.McIDASV %MCV_FLAGS% %MCV_PARAMS%
+    start /B "McIDAS-V" "%MCV_DIR%\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
 )
 :end
+
+CD %CURRENT_DIR%

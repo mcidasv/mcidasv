@@ -24,23 +24,21 @@ def _mcvinit_classpath_hack():
     Returns:
         A dictionary with "mcidasv", "idv", and "visad" keys.
     """
-    classpath = System.getProperty('java.class.path')
+    from edu.wisc.ssec.mcidasv.util import SystemState
     
-    # supply platform-dependent paths to various JAR files
-    # (in case they somehow are not present in the classpath)
-    osname = System.getProperty('os.name')
-    current_dir = os.path.normpath(os.getcwd())
-    mcv_jar = os.path.join(current_dir, 'mcidasv.jar')
-    idv_jar = os.path.join(current_dir, 'idv.jar')
-    visad_jar = os.path.join(current_dir, 'visad.jar')
+    mcv_jar = ""
+    idv_jar = ""
+    visad_jar = ""
     
-    # allow the actual classpath to override any default JAR paths
-    for entry in classpath.split(System.getProperty('path.separator')):
-        if entry.endswith('mcidasv.jar'):
+    #for entry in classpath.split(System.getProperty('path.separator')):
+    for entry in SystemState.getMcvJarClasspath():
+        entry = str(entry).replace('file:', '')
+        jardir, jar = os.path.split(entry)
+        if jar.startswith('mcidasv'):
             mcv_jar = entry
-        elif entry.endswith('idv.jar'):
+        elif jar.startswith('idv'):
             idv_jar = entry
-        elif entry.endswith('visad.jar'):
+        elif jar.startswith('visad'):
             visad_jar = entry
             
     return {'mcidasv': mcv_jar, 'idv': idv_jar, 'visad': visad_jar}

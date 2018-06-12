@@ -1074,6 +1074,28 @@ class _Display(_JavaProxy):
         raise KeyError("No map matching '%s'" % originalDescription)
         
     @gui_invoke_later
+    def setMapLayerVisibility(self, visibility):
+        """Toggle the visibility of the current display's map layer."""
+        from ucar.visad.display import CompositeDisplayable
+        mapLayer = self.getMapLayer()
+        mapLayer.setLayerVisible(visibility)
+        
+        # what follows is due to Inquiry 1741, Request 4.
+        # when running in the background, the CompositeDisplayable latLonHolder
+        # (which holds lat/lon lines and labels), loses sync with the visibility
+        # of the lat/lon lines and labels checkboxes.
+        # this stuff manually resyncs things.
+        obj = mapLayer.getJavaInstance()
+        held = obj.latLonHolder.getDisplayables()
+        heldCount = held.size()
+        if heldCount >= 2:
+            held.get(0).setVisible(obj.getLatState().getRealVisibility())
+            held.get(1).setVisible(obj.getLonState().getRealVisibility())
+        if heldCount >= 4:
+            held.get(2).setVisible(obj.getLatLabelState().getRealVisibility())
+            held.get(3).setVisible(obj.getLonLabelState().getRealVisibility())
+            
+    @gui_invoke_later
     def getCenter(self, includeScale=False):
         """Return latitude and longitude at the display's center."""
         position = self._JavaProxy__javaObject.getScreenCenter()
@@ -1253,6 +1275,13 @@ class _Display(_JavaProxy):
         Required Args:
             scale: New logo scale.
         """
+        
+        # TJJ Feb 2018
+        # make sure scale param is positive
+        # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2630
+        if (scale <= 0):
+            raise ValueError("Logo scale parameter must be a positive number")
+            
         vis = self._JavaProxy__javaObject.getLogoVisibility()
         self._JavaProxy__javaObject.setLogoScale(scale)
         # display doesn't update without this step.
@@ -3426,7 +3455,7 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
     islInterpreter.captureImage(macros, elem)
 
 def loadGrid(filename=None, field=None, level='all',
-        time=None, stride=None, xStride=1, yStride=1, 
+        time=None, stride=None, xStride=None, yStride=None,
         xRange=None, yRange=None, latLonBounds=None, **kwargs): 
     """Load gridded fields; analagous to the "Gridded Data" chooser.
 
@@ -3466,15 +3495,30 @@ def loadGrid(filename=None, field=None, level='all',
     from ucar.visad import Util
     from visad import DateTime, RealType
 
-    if (xStride < 1) or (yStride < 1):
-        raise ValueError("xStride and yStride must be 1 or greater")
-
-    # if stride is specified, let it set both xStride and yStride.
-    if stride is not None:
-        if stride < 1:
-            raise ValueError("stride must be greater than zero")
-        xStride = stride
-        yStride = stride
+    # Default stride is 1, otherwise validate whatever combination they use
+    if (stride is None) and (xStride is None) and (yStride is None):
+        stride = 1
+        xStride = 1
+        yStride = 1
+    else:
+        if stride is not None:
+            # TJJ Mar 2018
+            # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2621
+            # don't let users specify both stride and any combination of
+            # xstride and/or ystride
+            if (xStride is not None) or (yStride is not None):
+                raise ValueError("stride should not be used in combination with xStride or yStride")
+            if (stride < 1):
+                raise ValueError("stride must be greater than zero")
+            xStride = stride
+            yStride = stride
+        else:
+            if (xStride is None):
+                xStride = 1
+            if (yStride is None):
+                yStride = 1
+            if (xStride < 1) or (yStride < 1):
+                raise ValueError("xStride and yStride must be 1 or greater")
 
     dataType = 'Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)'
 
@@ -3740,8 +3784,8 @@ def getVIIRSImage(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of getVIIRSImage has changed to loadVIIRSImage.  You'll need to update your scripts.  Sorry for the hassle!")
 
-def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
-    """Load VIIRS imagery.
+def loadJPSSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
+    """Load JPSS (VIIRS, ATMS, or CrIS) imagery.
 
     file_list: list of NPP *data* files.  You need to have geolocation files
                in the same *directory* as these files, but *do not* include
@@ -3761,7 +3805,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
     """
     from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
-
+    
     # try some quick input validation before doing any real work
     if not file_list:
         raise ValueError('File list must contain at least one file.')
@@ -3778,7 +3822,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
 
     # First, need to create the data source:
     # TODO: how to avoid re-creating identical data sources?
-    descriptor = _mcv.getDataManager().getDescriptor('SuomiNPP')
+    descriptor = _mcv.getDataManager().getDescriptor('JPSS')
     # We get lucky; there's already a constructor that takes a list of files:
     data_source = SuomiNPPDataSource(descriptor, file_list, None)
 
@@ -3809,7 +3853,96 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
         if isinstance(thing, MultiDimensionSubset):
             multi_dimension_subset = thing
             break
-    #print 'xStride: ', xStride, 'yStride: ', yStride
+    # print 'xStride: ', xStride, 'yStride: ', yStride
+    multi_dimension_subset.coords[0][2] = xStride
+    multi_dimension_subset.coords[1][2] = yStride
+
+    fi = data_source.getData(data_choice, None, None, None)
+    if not fi:
+        # For certain (somewhat unpredictable) values of stride, SwathNavigation.createInterpSet
+        # fails.  unfortunately the data source doesn't propagate the InvalidRangeException
+        # so we have just check for a null flatfield here.
+        raise ValueError("Failed to get data. Please try a different stride value; certain values fail due to a possible bug in the subsetting code.")
+    ff = fi.getSample(0)
+
+    # make a _MappedFlatField.
+    mapped_ff = _MappedVIIRSFlatField(ff, field)
+
+    return mapped_ff
+    
+def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
+    """Load VIIRS imagery.
+
+    file_list: list of NPP *data* files.  You need to have geolocation files
+               in the same *directory* as these files, but *do not* include
+               the geolocation files in file_list.
+
+    field:  the name of the field you want to display, as shown in the Field 
+            Selector, e.g., 'VIIRS-M15-SDR_ALL/BrightnessTemperature'
+ 
+    xStride: Optional; set the stride in the cross-track direction.  Default
+             is full-res (1).  Must be >= 1.
+
+    yStride: Optional; set the stride in the along-track direction.  Default
+             is full-res (1).  Must be >= 1.
+
+    stride: Optional; set both xStride and yStride. If specified, xStride and
+            yStride have no effect.
+    """
+    from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
+    from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
+
+    # Warn users that this function is deprecated
+    print '* WARNING: loadVIIRSImage is deprecated, please update your scripts to use loadJPSSImage instead.'
+    
+    # try some quick input validation before doing any real work
+    if not file_list:
+        raise ValueError('File list must contain at least one file.')
+    
+    if xStride < 1 or yStride < 1:
+        raise ValueError("xStride and yStride must be greater than zero")
+
+    # if stride is specified, let it set both xStride and yStride.
+    if stride is not None:
+        if stride < 1:
+            raise ValueError("stride must be greater than zero")
+        xStride = stride
+        yStride = stride
+
+    # First, need to create the data source:
+    # TODO: how to avoid re-creating identical data sources?
+    descriptor = _mcv.getDataManager().getDescriptor('JPSS')
+    # We get lucky; there's already a constructor that takes a list of files:
+    data_source = SuomiNPPDataSource(descriptor, file_list, None)
+
+    # make all data choices so we can do error checking on the field parameter.
+    data_source.doMakeDataChoices()
+
+    # find out if 'field' exists in the data choices list
+    data_choice = None
+    for data_choice_in_list in data_source.getDataChoices():
+        if data_choice_in_list.getName().lower() == field.lower():
+            data_choice = data_choice_in_list
+            field = data_choice.getName() # make sure param defaults get applied.
+            break
+    # TODO: wouldn't it be cool to suggest the correct spelling if we
+    #       found a 'close' match here?
+    # http://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/StringUtils.html#getLevenshteinDistance(java.lang.CharSequence,%20java.lang.CharSequence)
+    if not data_choice:
+        raise ValueError('The "field" you specified (%s) doesn\'t exist in the data.  Make sure "field" parameter matches the name shown in the Field Selector.' %
+                             (field) )
+
+    # set the stride as desired.
+    # Note: there might be a cleaner way to do this using 
+    #       SwathAdapter.getDefaultSubset and setDefaultStride; but this works
+    #       for now.
+    # Note2:  For some reason the MultiDimensionSubset isn't associated 
+    #         with a key... so I can't think of a better way to do this...
+    for thing in data_choice.getProperties().values():
+        if isinstance(thing, MultiDimensionSubset):
+            multi_dimension_subset = thing
+            break
+    # print 'xStride: ', xStride, 'yStride: ', yStride
     multi_dimension_subset.coords[0][2] = xStride
     multi_dimension_subset.coords[1][2] = yStride
 
@@ -3826,9 +3959,12 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
 
     return mapped_ff
 
-def listVIIRSFieldsInFile(filename):
-    """Print and return a list of all fields in a VIIRS .h5 file."""
+def listJPSSFieldsInFile(filename):
+    """Print and return a list of all fields in a JPSS (VIIRS, ATMS, or CrIS) .h5 file."""
+    from java.util import ArrayList
+    from java.util import Collections
     from ucar.nc2 import NetcdfFile
+    from edu.wisc.ssec.mcidasv.data.hydra import VIIRSSort
     f = NetcdfFile.open(filename)
     try:
         variables = f.getVariables()
@@ -3838,19 +3974,52 @@ def listVIIRSFieldsInFile(filename):
         names = [v.getFullName().replace('All_Data/', '') for v in variables]
         # NASA data path prefix is 'observation_data'
         names = [v.getFullName().replace('observation_data/', '') for v in variables]
-        for name in names:
+        # TJJ Mar 2018 - sort fields in sensible band/product order
+        sortedList = ArrayList(names);
+        viirsSort = VIIRSSort();
+        Collections.sort(sortedList, viirsSort);
+        for name in sortedList:
+            print name
+    finally:
+        f.close()
+    return names
+    
+def listVIIRSFieldsInFile(filename):
+    """Print and return a list of all fields in a VIIRS .h5 file."""
+    from java.util import ArrayList
+    from java.util import Collections
+    from ucar.nc2 import NetcdfFile
+    from edu.wisc.ssec.mcidasv.data.hydra import VIIRSSort
+    
+    # Warn users that this function is deprecated
+    print '* WARNING: listVIIRSFieldsInFile is deprecated, please update your scripts to use listJPSSFieldsInFile instead.'
+    
+    f = NetcdfFile.open(filename)
+    try:
+        variables = f.getVariables()
+        # Get rid of path prefix b/c we want to match what gets shown in
+        # Field Selector (which is also what loadVIIRSImage actually accepts)
+        # NOAA data path prefix is 'All_Data'
+        names = [v.getFullName().replace('All_Data/', '') for v in variables]
+        # NASA data path prefix is 'observation_data'
+        names = [v.getFullName().replace('observation_data/', '') for v in variables]
+        # TJJ Mar 2018 - sort fields in sensible band/product order
+        sortedList = ArrayList(names);
+        viirsSort = VIIRSSort();
+        Collections.sort(sortedList, viirsSort);
+        for name in sortedList:
             print name
     finally:
         f.close()
     return names
 
-def listVIIRSTimesInField(filename, field=None):
-    """Print and return timestamp associated with a VIIRS .h5 file.
-    
-    'field' is accepted as an arg to match signature of listGridLevelsInField
-    but it doesn't do anything right now.
+def listJPSSTimeInFile(filename):
+    """Print and return timestamp associated with a JPSS .h5 (NOAA) or .nc (NASA) file.
+       The function works for VIIRS, ATMS, and CrIS data.
+       
     """
     from ucar.nc2 import NetcdfFile
+    from datetime import datetime
     f = NetcdfFile.open(filename)
     
     # TJJ Aug 2017 - very hacky way to distinguish data sources, should change this to a regex match
@@ -3863,8 +4032,9 @@ def listVIIRSTimesInField(filename, field=None):
                     if v.findAttribute('AggregateBeginningDate'):
                         date = v.findAttribute('AggregateBeginningDate').getStringValue()
                         time = v.findAttribute('AggregateBeginningTime').getStringValue()
-            datetime = '{} {}'.format(date, time)
-            print(datetime)
+            datetimeobj = datetime.strptime(date + time[0:6], '%Y%m%d%H%M%S')
+            # print and tack on the Z suffix
+            print(str(datetimeobj) + str(time[-1]))
         finally:
             f.close()
 
@@ -3872,8 +4042,75 @@ def listVIIRSTimesInField(filename, field=None):
     if (filename.endswith(".nc")):
         try:
             date = f.getRootGroup().findAttribute('time_coverage_start')
-            datetime = '{}'.format(date)
-            print(datetime)
+            
+            # TJJ - we want the NASA output to match NOAA output, so need
+            # to muck with it a bit. We start with something like this:
+            # time_coverage_start = "2017-05-01T18:24:00.000Z"
+            # and want to convert that to:
+            # 2017-05-01 18:24:00Z
+            
+            # convert NetCDF Attribute to string
+            datetimestr = date.getStringValue()
+
+            # make datetime object with just the slice we care about
+            datetimeobj = datetime.strptime(datetimestr[0:19], '%Y-%m-%dT%H:%M:%S')
+            
+            # print and tack on the Z suffix
+            print(str(datetimeobj) + datetimestr[-1])
+        finally:
+            f.close()
+                
+    return datetime
+    
+def listVIIRSTimesInField(filename, field=None):
+    """Print and return timestamp associated with a VIIRS .h5 (NOAA) or .nc (NASA) file.
+    
+    'field' is accepted as an arg to match signature of listGridLevelsInField
+    but it doesn't do anything right now.
+    """
+    from ucar.nc2 import NetcdfFile
+    from datetime import datetime
+    
+    # Warn users that this function is deprecated
+    print '* WARNING: listVIIRSTimesInField is deprecated, please update your scripts to use listJPSSTimeInFile instead.'
+    
+    f = NetcdfFile.open(filename)
+    
+    # TJJ Aug 2017 - very hacky way to distinguish data sources, should change this to a regex match
+    # NOAA data - HDF5
+    if (filename.endswith(".h5")):
+        try:
+            dprods_grps = f.getRootGroup().findGroup('Data_Products').getGroups()
+            for g in dprods_grps:
+                for v in g.getVariables():
+                    if v.findAttribute('AggregateBeginningDate'):
+                        date = v.findAttribute('AggregateBeginningDate').getStringValue()
+                        time = v.findAttribute('AggregateBeginningTime').getStringValue()
+            datetimeobj = datetime.strptime(date + time[0:6], '%Y%m%d%H%M%S')
+            # print and tack on the Z suffix
+            print(str(datetimeobj) + str(time[-1]))
+        finally:
+            f.close()
+
+    # NASA data - NetCDF 4
+    if (filename.endswith(".nc")):
+        try:
+            date = f.getRootGroup().findAttribute('time_coverage_start')
+            
+            # TJJ - we want the NASA output to match NOAA output, so need
+            # to muck with it a bit. We start with something like this:
+            # time_coverage_start = "2017-05-01T18:24:00.000Z"
+            # and want to convert that to:
+            # 2017-05-01 18:24:00Z
+            
+            # convert NetCDF Attribute to string
+            datetimestr = date.getStringValue()
+
+            # make datetime object with just the slice we care about
+            datetimeobj = datetime.strptime(datetimestr[0:19], '%Y-%m-%dT%H:%M:%S')
+            
+            # print and tack on the Z suffix
+            print(str(datetimeobj) + datetimestr[-1])
         finally:
             f.close()
                 

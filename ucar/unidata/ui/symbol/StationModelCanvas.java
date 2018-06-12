@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -249,6 +249,16 @@ public class StationModelCanvas extends EditCanvas {
             if (result == JOptionPane.CANCEL_OPTION) {
                 return false;
             }
+
+            // TJJ Apr 2018
+            // Fix bug where graphics were inadvertently getting saved to
+            // Layout Models being edited.
+            // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2543
+
+            if (result == JOptionPane.NO_OPTION) {
+                clearAll();
+            }
+
             if (result == JOptionPane.YES_OPTION) {
                 doSave();
             }

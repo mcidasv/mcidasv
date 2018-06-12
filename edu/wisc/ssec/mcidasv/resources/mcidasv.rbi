@@ -342,8 +342,12 @@
   <resources name="idv.resource.locations">
     <resource location="%USERPATH%/userstations.xml"/>
     <!-- If the McV-specific list expands further, maybe put them below -->
-    <resource location="%APPPATH%/places.xml"/>
-    <resource location="%IDVPATH%/stations/places.xml"/>
+
+    <!-- Using McV places file while pull request is pending for Earthquake data -->
+    <!-- http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2611 -->
+    <!-- <resource location="%IDVPATH%/stations/places.xml"/> -->
+    <resource location="%APPPATH%/stations/places.xml"/>
+    
     <resource
        id="nexrad"
        location="%IDVPATH%/stations/nexradstns.xml"

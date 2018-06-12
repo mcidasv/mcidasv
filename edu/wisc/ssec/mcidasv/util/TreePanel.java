@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -27,8 +27,9 @@
  */
 package edu.wisc.ssec.mcidasv.util;
 
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.newMap;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -479,7 +480,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
             
             // Traverse children
             if (node.getChildCount() >= 0) {
-                for (Enumeration<TreeNode> e = node.children(); e.hasMoreElements();) {
+                for (Enumeration<TreeNode> e = cast(node.children()); e.hasMoreElements();) {
                     TreeNode n = e.nextElement();
                     TreePath path = parent.pathByAddingChild(n);
                     TreePath result = searchTree(path, nodes, depth + 1);
@@ -507,7 +508,7 @@ public class TreePanel extends JPanel implements TreeSelectionListener {
             return searchPath;
         }
         
-        for (Enumeration<TreeNode> e = node.children(); e.hasMoreElements();) {
+        for (Enumeration<TreeNode> e = cast(node.children()); e.hasMoreElements();) {
             TreeNode n = e.nextElement();
             TreePath newPath = searchPath.pathByAddingChild(n);
             TreePath result = getPathToFirstLeaf(newPath);

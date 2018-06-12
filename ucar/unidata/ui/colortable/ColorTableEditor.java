@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -32,7 +32,6 @@ package ucar.unidata.ui.colortable;
 
 
 import ucar.unidata.ui.WindowHolder;
-
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -43,21 +42,20 @@ import ucar.unidata.util.Range;
 
 
 
+
+
 import java.awt.*;
-
 import java.awt.event.*;
-
 import java.beans.*;
-
-
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.*;
-
 import javax.swing.event.*;
+
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.McIDASV;
 
 
 
@@ -535,12 +533,41 @@ public class ColorTableEditor extends WindowHolder {
     /**
      * Save the current color table with the current name
      */
+    
     private void doSave() {
+        theColorTable = canvas.getCurrentColorTable();
+        
+        // TJJ Mar 2018
+        // If the user wants to modify default color table, make them confirm
+        // the action, with option to not be bothered about this again in future.
+        
+        if (theColorTable.getName().equals(ColorTableDefaults.NAME_DEFAULT)) {
+            defaultSaveCheck();
+        }
+        
         ctm.addUsers(theColorTable = canvas.getCurrentColorTable());
         doMakeViewMenu();
     }
 
-
+    /**
+     * Make sure user knows they are modifying the default color table
+     */
+    
+    private void defaultSaveCheck() {
+        boolean modOk = McIDASV.getStaticMcv().getStore().get(Constants.PREF_MODIFY_DEFAULT_COLOR_TABLE, false);
+        // don't create a dialog though if we are running in background/offscreen mode
+        boolean offScreen = McIDASV.getStaticMcv().getArgsManager().getIsOffScreen();
+        if (! offScreen) {
+            if (! modOk) {
+                String msg = "Are you sure you want to modify the default color table?\n";
+                JCheckBox jcbPlugin = new JCheckBox("Do not show this message again");
+                Object[] params = { msg, jcbPlugin };
+                JOptionPane.showMessageDialog(null, params, "Modifying Default Color Table Notice", JOptionPane.OK_OPTION);
+                boolean dontShow = jcbPlugin.isSelected();
+                McIDASV.getStaticMcv().getStore().put(Constants.PREF_MODIFY_DEFAULT_COLOR_TABLE, dontShow);
+            }   
+        }
+    }
 
 
     /**

@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -1165,8 +1165,9 @@ public class JythonManager extends IdvManager implements ActionListener,
      * @return The new interpreter
      */
     public PythonInterpreter createInterpreter() {
-        PythonInterpreter interp = new PythonInterpreter(new LoudPyStringMap("createInterpreter " + createInterpCount.addAndGet(1)));
-        logger.debug("000 created new PythonInterpreter(new LoudPyStringMap())");
+        PythonInterpreter interp = new PythonInterpreter();
+//        PythonInterpreter interp = new PythonInterpreter(new LoudPyStringMap("createInterpreter " + createInterpCount.addAndGet(1)));
+//        logger.debug("000 created new PythonInterpreter(new LoudPyStringMap())");
         addInterpreter(interp);
         // only needed for background output?
         if (getArgsManager().getIsOffScreen()) {
@@ -1661,8 +1662,9 @@ public class JythonManager extends IdvManager implements ActionListener,
      */
     public PythonInterpreter getUiInterpreter() {
         if (uiInterpreter == null) {
-            uiInterpreter = new PythonInterpreter(new LoudPyStringMap("getUiInterpreter"));
-            logger.debug("111 created new PythonInterpreter(new LoudPyStringMap())");
+//            uiInterpreter = new PythonInterpreter(new LoudPyStringMap("getUiInterpreter"));
+//            logger.debug("111 created new PythonInterpreter(new LoudPyStringMap())");
+            uiInterpreter = new PythonInterpreter();
             addInterpreter(uiInterpreter);
             //            initBasicInterpreter(uiInterpreter);
         }
@@ -2437,17 +2439,18 @@ public class JythonManager extends IdvManager implements ActionListener,
         public List<Object[]> getFunctions() {
             if (functions == null) {
 
-                LoudPyStringMap stringMap =
-                    new LoudPyStringMap("getFunctions " + getFuncCount.addAndGet(1));
-                PythonInterpreter interpreter = new PythonInterpreter(stringMap);
-                logger.debug("222 created new PythonInterpreter(new LoudPyStringMap())");
+//                LoudPyStringMap stringMap =
+//                    new LoudPyStringMap("getFunctions " + getFuncCount.addAndGet(1));
+//                PythonInterpreter interpreter = new PythonInterpreter(stringMap);
+//                logger.debug("222 created new PythonInterpreter(new LoudPyStringMap())");
+                PythonInterpreter interpreter = new PythonInterpreter();
                 jythonManager.initJythonEnvironment(interpreter, false);
                 // bake() is here because i'm specifically curious why the
                 // init stuff done in console_init.py seems to fix the problem.
                 // putting bake() after the exec(getText()) call would mean that
                 // the formula code would also be considered the same as
                 // console_init.py.
-                stringMap.bake();
+                //stringMap.bake();
                 
                 try {
                     interpreter.exec(getText());

@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -3038,11 +3038,7 @@ public class MapViewManager extends NavigatedViewManager {
                 getDisplayConventions().getMapProjectionLabel(mp, control);
             JMenuItem mi = new JMenuItem(label);
             displaysMenu.add(mi);
-            mi.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ae) {
-                    setMapProjection(mp, false, label);
-                }
-            });
+            mi.addActionListener(ae -> setMapProjection(mp, true, label));
             cnt++;
         }
         if (cnt == 0) {

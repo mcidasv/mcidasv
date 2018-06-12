@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -303,9 +303,6 @@ public class MultiDimensionDataSource extends HydraDataSource {
        }
        else if (name.contains("HSRL2_B200") && name.endsWith(".h5")) {
          Map<String, Object> table;
-         adapters = new MultiDimensionAdapter[5];
-         defaultSubsets = new HashMap[5];
-         propsArray = new Hashtable[5];
          
          String dataPath = "DataProducts/";
          String[] arrayNames = new String[] {"532_total_attn_bsc", "1064_total_attn_bsc", "355_total_attn_bsc"};
@@ -314,8 +311,12 @@ public class MultiDimensionDataSource extends HydraDataSource {
          String[] arrayNameAOT = new String[] {"532_AOT_hi_col", "355_AOT_hi_col"};
          String[] rangeNamesAOT = new String[] {};
          
-
-         for (int k=0; k<arrayNames.length; k++) {
+         int numAdapters = arrayNames.length;
+         adapters = new MultiDimensionAdapter[numAdapters];
+         defaultSubsets = new HashMap[numAdapters];
+         propsArray = new Hashtable[numAdapters];
+         
+         for (int k = 0; k < numAdapters; k++) {
             table = ProfileAlongTrack.getEmptyMetadataTable();
             table.put(ProfileAlongTrack.array_name, dataPath+arrayNames[k]);
             table.put(ProfileAlongTrack.range_name, rangeNames[k]);
@@ -547,9 +548,9 @@ public class MultiDimensionDataSource extends HydraDataSource {
          hasTrackPreview = true;
        }
        else if (name.indexOf("2B-GEOPROF") > 0) {
-         adapters = new MultiDimensionAdapter[4];
-         defaultSubsets = new HashMap[4];
-         propsArray = new Hashtable[4];
+         adapters = new MultiDimensionAdapter[3];
+         defaultSubsets = new HashMap[3];
+         propsArray = new Hashtable[3];
 
          Map<String, Object> table = ProfileAlongTrack.getEmptyMetadataTable();
          table.put(ProfileAlongTrack.array_name, "2B-GEOPROF/Data_Fields/Radar_Reflectivity");
@@ -1043,6 +1044,29 @@ public class MultiDimensionDataSource extends HydraDataSource {
               }
             }
             else { // no IDV incoming spatial selection info, so check for HYDRA specific via Properties
+                
+                if (trackSelection != null) {
+                    boolean trackStrideOk = trackSelection.setTrackStride();
+                    boolean verticalStrideOk = trackSelection.setVerticalStride();
+                    if ((! trackStrideOk) || (! verticalStrideOk)) {
+                        // one of the strides is not an integer, let user know
+                        String msg = "Either the Track or Vertical Stride is invalid.\n" +
+                                "Stride values must be positive integers.\n";
+                        Object[] params = { msg };
+                        JOptionPane.showMessageDialog(null, params, "Invalid Stride", JOptionPane.OK_OPTION);
+                        return null;
+                    }
+                    boolean lengthPercent = trackSelection.setLengthPercent();
+                    if (! lengthPercent) {
+                        // specified percentage of total track is invalid
+                        String msg = "Percent of total track is invalid.\n" +
+                                "Value must be between 1 and 100.\n";
+                        Object[] params = { msg };
+                        JOptionPane.showMessageDialog(null, params, "Invalid Track Percentage", JOptionPane.OK_OPTION);
+                        return null;
+                    }
+                }
+                
               if (select != null) {
                 subset = select.getSubset();
               }

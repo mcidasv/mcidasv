@@ -302,8 +302,8 @@
     <action id="help.introduction"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help%d.png"
         group="Help"
-        description="Show Help"
-        action="help:idv.introduction"/>
+        description="Show User's Guide"
+        action="help:help.introduction"/>
 
     <action id="help.showhelptips"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/dialog-information%d.png"

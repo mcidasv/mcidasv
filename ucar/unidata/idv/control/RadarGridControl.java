@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -25,6 +25,7 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
+
 package ucar.unidata.idv.control;
 
 import java.awt.Color;
@@ -879,7 +880,13 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             return;
         }
         try {
+
             String cmd = event.getActionCommand();
+
+            // TJJ May 2018
+            // Scale labels appropriately on all actions
+            float lblScale = getViewManager().getMaster().getDisplayScale();
+            rangeRings.setLabelSize(lblScale);
 
             // TJJ Check link state. if active, any color change
             // or line width change affects all colors and line widths

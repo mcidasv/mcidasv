@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -40,6 +40,7 @@ import ucar.unidata.idv.DisplayConventions;
 
 import ucar.unidata.ui.drawing.*;
 import ucar.unidata.ui.symbol.*;
+import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
@@ -138,6 +139,18 @@ public class ValuePlanViewControl extends PlanViewControl {
                 getControlContext().getJythonManager());
         pointDisplay.setStationModel(getLayoutModel());
         addAttributedDisplayable(pointDisplay);
+        
+        // TJJ Apr 2018
+        // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1635
+        // Set the initial scale from the display master
+        float scale = this.getViewManager().getMaster().getDisplayScale();
+        try {
+            setScaleOnLayout(scale);
+        } catch (RemoteException | VisADException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
         return pointDisplay;
     }
 
@@ -358,7 +371,35 @@ public class ValuePlanViewControl extends PlanViewControl {
         }
         return stationData;
     }
-
+    
+    /**
+     * Export displayed data to file.
+     * 
+     * <p>Overridden so that we can export the actual data, rather than just
+     * the displayed data.</p>
+     * 
+     * @param type Not used.
+     */
+    @Override public void exportDisplayedData(String type) {
+        try {
+            FieldImpl d = getCurrentSlice();
+            JComboBox publishCbx =
+                getIdv().getPublishManager().getSelector("nc.export");
+            String filename =
+                FileManager.getWriteFile(FileManager.FILTER_NETCDF,
+                    FileManager.SUFFIX_NETCDF, ((publishCbx != null)
+                        ? GuiUtils.top(publishCbx)
+                        : null));
+            if (filename == null) {
+                return;
+            }
+            GridUtil.exportGridToNetcdf((FieldImpl) d, filename);
+            getIdv().getPublishManager().publishContent(filename,
+                null, publishCbx);
+        } catch (Exception e) {
+            logException("Unable to export the data", e);
+        }
+    }
 
     /**
      * Set the current station model view.

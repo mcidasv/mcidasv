@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -59,6 +59,8 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.PatternFileFilter;
 import ucar.unidata.util.StringUtil;
 
+import org.python.core.Py;
+import org.python.core.PyString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +100,7 @@ public class ArgumentManager extends ArgsManager {
     public static final String NO_PYTHON_MODULE = "<none>";
 
     /** Jython arguments, if any. */
-    private List<String> jythonArguments;
+    private List<PyString> jythonArguments;
     
     /**
      * Jython script to execute, or {@literal "<none>"} if one was not given.
@@ -130,10 +132,10 @@ public class ArgumentManager extends ArgsManager {
         jythonScript = NO_PYTHON_MODULE;
     }
 
-    private static List<String> extractJythonArgs(int index, String... args) {
-        List<String> jythonArgs = new ArrayList<>(args.length);
+    private static List<PyString> extractJythonArgs(int index, String... args) {
+        List<PyString> jythonArgs = new ArrayList<>(args.length);
         for (int i = index; i < args.length; i++) {
-            jythonArgs.add(args[i]);
+            jythonArgs.add(Py.newString(args[i]));
         }
         return jythonArgs;
     }
@@ -423,7 +425,7 @@ public class ArgumentManager extends ArgsManager {
      * @return Either a {@link List} of {@link String Strings} containing the
      * arguments or an empty {@code List} if there were no arguments given.
      */
-    public List<String> getJythonArguments() {
+    public List<PyString> getJythonArguments() {
         return jythonArguments;
     }
     

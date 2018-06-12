@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -56,6 +56,7 @@ public class SuomiNPPFilter extends FileFilter {
 	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPFilter.class);
 	private static final String PRODUCT_SEPARATOR = "-";
 	private static String PREV_DIRECTORY = null;
+	private static String DATA_DESCRIPTION = "JPSS Data";
 	private HashMap<String, File> seenGranules = new HashMap<String, File>();
 	private HashMap<String, File> validGranules = new HashMap<String, File>();
     	
@@ -351,7 +352,7 @@ public class SuomiNPPFilter extends FileFilter {
         
         // The description of this filter
         public String getDescription() {
-            return "Suomi NPP Data";
+            return DATA_DESCRIPTION;
         }
         
     }

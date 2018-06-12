@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -46,10 +46,10 @@ import visad.VisADException;
 public class ReadIRImage {
 
     private static final Logger logger = LoggerFactory.getLogger(ReadIRImage.class);
-    
+
     public ReadIRImage() {
     }
-    
+
     public static class ImgCoeffs {
         String sat_id;
         int sat_num;
@@ -76,20 +76,15 @@ public class ReadIRImage {
             conv_b = Float.parseFloat(toks.get(9));
             conv_g = Float.parseFloat(toks.get(10));
         }
-        
+
         public String getSat_id() {
             return sat_id;
         }
     }
-    
-    public static void ReadIRDataFile(FlatField satgrid,
-                                      float cenlat,
-                                      float cenlon,
-                                      int SatelliteID,
-                                      int satChannel,
-                                      boolean isTemperature)
-        throws IOException, VisADException, RemoteException
-    {
+
+    public static void ReadIRDataFile(FlatField satgrid, float cenlat, float cenlon,
+            int SatelliteID, int satChannel, boolean isTemperature) throws IOException,
+            VisADException, RemoteException {
         // Retrieve temperatures from image. This to be done in IDV
         GridUtil.Grid2D g2d = GridUtil.makeGrid2D(satgrid);
         float[][] temps = null;
@@ -99,30 +94,30 @@ public class ReadIRImage {
         float[][] LocalLatitude = new float[200][200];
         float[][] LocalLongitude = new float[200][200];
         float[][] LocalTemperature = new float[200][200];
-        
+
         // now spatial subset numx by numy
         GridUtil.Grid2D g2d1 = spatialSubset(g2d, cenlat, cenlon, numx, numy);
-        
+
         satimage = g2d1.getvalues();
         float[][] temp0 = satimage[0];
-        
+
         if (isTemperature) {
             temps = temp0;
         } else {
             temps = im_gvtota(numx, numy, temp0, SatelliteID, satChannel);
         }
-        
+
         Data.IRData_NumberRows = numy;
         Data.IRData_NumberColumns = numx;
         Data.IRData_CenterLatitude = cenlat;
         Data.IRData_CenterLongitude = cenlon;
-        
+
         LocalTemperature = temps;
         LocalLatitude = g2d1.getlats();
         LocalLongitude = g2d1.getlons();
-        
-        for(int XInc = 0; XInc < numx; XInc++) {
-            for(int YInc = 0; YInc < numy; YInc++) {
+
+        for (int XInc = 0; XInc < numx; XInc++) {
+            for (int YInc = 0; YInc < numy; YInc++) {
                 // must flip x/y to y/x for ADT automated routines
                 Data.IRData_Latitude[YInc][XInc] = LocalLatitude[XInc][YInc];
                 Data.IRData_Longitude[YInc][XInc] = LocalLongitude[XInc][YInc];
@@ -131,49 +126,43 @@ public class ReadIRImage {
         }
         int CenterXPos = Data.IRData_NumberColumns / 2;
         int CenterYPos = Data.IRData_NumberRows / 2;
-        
-        double LocalValue[] =
-            Functions.distance_angle(
+
+        double LocalValue[] = Functions.distance_angle(
                 Data.IRData_Latitude[CenterYPos][CenterXPos],
                 Data.IRData_Longitude[CenterYPos][CenterXPos],
-                Data.IRData_Latitude[CenterYPos+1][CenterXPos],
-                Data.IRData_Longitude[CenterYPos][CenterXPos],
-                1);
-                
+                Data.IRData_Latitude[CenterYPos + 1][CenterXPos],
+                Data.IRData_Longitude[CenterYPos][CenterXPos], 1);
+
         Data.IRData_ImageResolution = LocalValue[0];
-        
+
         History.IRCurrentRecord.date = Data.IRData_JulianDate;
         History.IRCurrentRecord.time = Data.IRData_HHMMSSTime;
         History.IRCurrentRecord.latitude = Data.IRData_CenterLatitude;
         History.IRCurrentRecord.longitude = Data.IRData_CenterLongitude;
         History.IRCurrentRecord.sattype = SatelliteID;
-        
+
         int RetVal[] = Functions.adt_oceanbasin(Data.IRData_CenterLatitude,
-                                                Data.IRData_CenterLongitude);
+                Data.IRData_CenterLongitude);
         Env.DomainID = RetVal[1];
         // System.out.printf("lat=%f lon=%f domainID=%d\n",Data.IRData_CenterLatitude,Data.IRData_CenterLongitude,Env.DomainID);
     }
-    
-    private static GridUtil.Grid2D spatialSubset(GridUtil.Grid2D g2d,
-                                                 float cenlat,
-                                                 float cenlon,
-                                                 int numx,
-                                                 int numy)
-    {
+
+    private static GridUtil.Grid2D spatialSubset(GridUtil.Grid2D g2d, float cenlat, float cenlon,
+            int numx, int numy) {
         float[][] lats = g2d.getlats();
         float[][] lons = g2d.getlons();
         float[][][] values = g2d.getvalues();
         float[][] slats = new float[numx][numy];
         float[][] slons = new float[numx][numy];
         float[][][] svalues = new float[1][numx][numy];
-        
+
         int ly = lats[0].length;
         int ly0 = ly / 2;
         int lx = lats.length;
         logger.debug("lenx: {}, leny: {}", lx, ly);
         int lx0 = lx / 2;
         int ii = numx / 2, jj = numy / 2;
-        
+
         for (int j = 0; j < ly - 1; j++) {
             if (Float.isNaN(lats[lx0][j])) {
                 continue;
@@ -194,7 +183,7 @@ public class ReadIRImage {
         int starty = jj - (numy / 2 - 1);
         logger.debug("startx: {}, starty: {}", startx, starty);
         logger.debug("numx: {}, numy: {}", numx, numy);
-        
+
         if (startx < 0) {
             startx = 0;
         }
@@ -222,7 +211,7 @@ public class ReadIRImage {
         }
         return new GridUtil.Grid2D(slats, slons, svalues);
     }
-    
+
     /**
      * im_gvtota
      *
@@ -241,15 +230,10 @@ public class ReadIRImage {
      * Log: D.W.Plummer/NCEP 02/03 D.W.Plummer/NCEP 06/03 Add coeff G for 2nd
      * order poly conv T. Piper/SAIC 07/06 Added tmpdbl to eliminate warning
      */
-    private static float[][] im_gvtota(int nx,
-                                       int ny,
-                                       float[][] gv,
-                                       int imsorc,
-                                       int imtype)
-    {
+    private static float[][] im_gvtota(int nx, int ny, float[][] gv, int imsorc, int imtype) {
         double c1 = 1.191066E-5;
         double c2 = 1.438833;
-          
+
         int ii;
         int ip;
         int chan;
@@ -259,13 +243,13 @@ public class ReadIRImage {
         double tmpdbl;
         float[][] ta = new float[nx][ny];
         String fp = "/ucar/unidata/data/storm/ImgCoeffs.tbl";
-          
+
         for (ii = 0; ii < nx; ii++) {
             for (int jj = 0; jj < ny; jj++) {
                 ta[ii][jj] = Float.NaN;
             }
         }
-        
+
         // Read in coefficient table if necessary.
         String s = null;
         try {
@@ -273,7 +257,7 @@ public class ReadIRImage {
         } catch (Exception re) {
             logger.warn("Failed to read coefficient table", re);
         }
-        
+
         int i = 0;
         ImgCoeffs[] ImageConvInfo = new ImgCoeffs[50];
         for (String line : StringUtil.split(s, "\n", true, true)) {
@@ -289,7 +273,7 @@ public class ReadIRImage {
         ii = 0;
         while ((ii < nImgRecs) && (found == 0)) {
             int tmp = ImageConvInfo[ii].chan - 1;
-            tmpdbl = (double)(tmp * tmp);
+            tmpdbl = (double) (tmp * tmp);
             chan = G_NINT(tmpdbl);
             if ((imsorc == ImageConvInfo[ii].sat_num) && (imtype == chan)) {
                 found = 1;
@@ -297,34 +281,29 @@ public class ReadIRImage {
                 ii++;
             }
         }
-        
+
         if (found == 0) {
             return null;
         } else {
             ip = ii;
             for (ii = 0; ii < nx; ii++) {
                 for (int jj = 0; jj < ny; jj++) {
-                     // Convert GVAR count (gv) to Scene Radiance
+                    // Convert GVAR count (gv) to Scene Radiance
                     Rad = ((double) gv[ii][jj] - ImageConvInfo[ip].scal_b) /
                     // -------------------------------------
-                    ImageConvInfo[ip].scal_m;
-                      
+                            ImageConvInfo[ip].scal_m;
+
                     Rad = Math.max(Rad, 0.0);
-                    
+
                     // Convert Scene Radiance to Effective Temperature
-                    Teff = (c2 * ImageConvInfo[ip].conv_n)
-                                    /
-                                    /*
-                                     * --------------------------------------------------
-                                     * -----
-                                     */
-                                    (Math.log(1.0
-                                                    + (c1 * Math.pow(ImageConvInfo[ip].conv_n,
-                                                                    3.0)) / Rad));
+                    Teff = (c2 * ImageConvInfo[ip].conv_n) /
+                    /*
+                     * -------------------------------------------------- -----
+                     */
+                    (Math.log(1.0 + (c1 * Math.pow(ImageConvInfo[ip].conv_n, 3.0)) / Rad));
                     // Convert Effective Temperature to Temperature
-                    ta[ii][jj] = (float) (ImageConvInfo[ip].conv_a
-                                    + ImageConvInfo[ip].conv_b * Teff + ImageConvInfo[ip].conv_g
-                                    * Teff * Teff);
+                    ta[ii][jj] = (float) (ImageConvInfo[ip].conv_a + ImageConvInfo[ip].conv_b
+                            * Teff + ImageConvInfo[ip].conv_g * Teff * Teff);
                 }
             }
         }
@@ -333,8 +312,7 @@ public class ReadIRImage {
 
     public static int G_NINT(double x) {
         return (((x) < 0.0F) ? ((((x) - (float) ((int) (x))) <= -.5f) ? (int) ((x) - .5f)
-               : (int) (x))
-               : ((((x) - (float) ((int) (x))) >= .5f) ? (int) ((x) + .5f)
-                                          : (int) (x)));
-      }
+                : (int) (x)) : ((((x) - (float) ((int) (x))) >= .5f) ? (int) ((x) + .5f)
+                : (int) (x)));
+    }
 }

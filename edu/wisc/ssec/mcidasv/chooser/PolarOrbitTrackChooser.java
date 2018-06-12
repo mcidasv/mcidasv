@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -100,11 +100,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     JButton manageButton =
         McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system22.png",
             this, "doManager", null, "Manage servers");
-
-    /** Public button--we need to draw a menu from this. */
-    JButton publicButton =
-        McVGuiUtils.makeImageButton("/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-layer-controls22.png",
-            this, "showGroups", null, "List public datasets");
 
     private JComboBox serverSelector;
     private JRadioButton localBtn;
@@ -701,8 +696,19 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         }
     }
 
+    /* (non-Javadoc)
+     * @see edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser#showGroups()
+     */
+    @Override
+    public void showGroups() {
+        super.showGroups();
+    }
+
     private String getDatasetName() {
-        return (String) descriptorComboBox.getSelectedItem();
+        String dsName = (String) descriptorComboBox.getSelectedItem();
+        // strip out description part
+        dsName = dsName.substring(0, dsName.indexOf(" "));
+        return dsName;
     }
 
     @Override public void handleConnectFromThread() {

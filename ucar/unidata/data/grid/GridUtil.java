@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -3864,11 +3864,34 @@ public class GridUtil {
         //System.out.println("     from start lat, lon "+ start);
 
         int pi = 0;
+        
+        // TJJ Apr 2018
+        // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2660
+        // Bandaid to fix transects and vertical cross sections that span the Prime Meridian,
+        // which the following commit :
+        // https://github.com/Unidata/IDV/commit/7715ffb2c656336ece50a059e057066c3e4bf4a3
+        // ...appears to have broken (it worked *just* before that commit)
+        // With this test, they both work.
+        
+        boolean crossesPrimeMeridian = false;
+        LatLonPoint llpStart = points.get(0);
+        LatLonPoint llpEnd = points.get(points.size() - 1);
+        double lonBeg = llpStart.getLongitude().getValue();
+        double lonEnd = llpEnd.getLongitude().getValue();
+        if (((lonBeg > 0) && (lonEnd < 0)) || ((lonEnd > 0) && (lonBeg < 0))) {
+            crossesPrimeMeridian = true;
+        }
+        
         for (LatLonPoint llp : points) {
             endpoints[latIndex][pi] =
                 (float) llp.getLatitude().getValue(CommonUnit.degree);
-            endpoints[lonIndex][pi] =
-                (float) LatLonPointImpl.lonNormal360(llp.getLongitude().getValue(CommonUnit.degree));
+            if (crossesPrimeMeridian) {
+                endpoints[lonIndex][pi] =
+                        (float) llp.getLongitude().getValue(CommonUnit.degree);
+            } else {
+                endpoints[lonIndex][pi] =
+                        (float) LatLonPointImpl.lonNormal360(llp.getLongitude().getValue(CommonUnit.degree));
+            }
 
             if (is3D) {
                 //endpoints[otherIndex][0] = 0.f;  // set vertical to 0

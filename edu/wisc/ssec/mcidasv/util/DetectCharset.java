@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -39,11 +39,13 @@ import java.io.InputStream;
 /**
  * Based on the juniversalchardet example code.
  *
- * This code is primarily used by the {@literal "editFile"} function in {@code interactive.py}.
+ * This code is primarily used by the {@literal "editFile"} function in 
+ * {@code interactive.py}.
  */
 public final class DetectCharset {
 
-    private static final Logger logger = LoggerFactory.getLogger(DetectCharset.class);
+    private static final Logger logger = 
+        LoggerFactory.getLogger(DetectCharset.class);
 
     private DetectCharset() { }
 

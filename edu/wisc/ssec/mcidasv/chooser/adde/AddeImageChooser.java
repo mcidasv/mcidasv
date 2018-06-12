@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2017
+ * Copyright 2007-2018
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -38,6 +38,7 @@ import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.IllegalComponentStateException;
 import java.awt.Insets;
 import java.awt.Point;
@@ -112,6 +113,7 @@ import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.ui.JCalendarDateEditor;
 import edu.wisc.ssec.mcidasv.ui.JCalendarPicker;
+import edu.wisc.ssec.mcidasv.ui.JTimeRangePicker;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**
@@ -124,6 +126,8 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 public class AddeImageChooser extends AddeChooser implements
         ucar.unidata.ui.imagery.ImageSelector {
+
+    private static final long serialVersionUID = 1L;
 
     private static final Logger logger = LoggerFactory.getLogger(AddeImageChooser.class);
 
@@ -209,7 +213,7 @@ public class AddeImageChooser extends AddeChooser implements
     /** Xml tag name for the defaults */
     protected static final String TAG_DEFAULT = "default";
 
-    /** identifiere for the default value */
+    /** identifier for the default value */
     protected static final String VALUE_DEFAULT = "default";
 
     /** Xml attr name for the defaults */
@@ -217,6 +221,9 @@ public class AddeImageChooser extends AddeChooser implements
 
     /** Xml attr name for the defaults */
     protected static final String ATTR_PATTERN = "pattern";
+    
+    /** Button label for day and optional time range selection */
+    protected final static String DAY_TIME_RANGE_LABEL = "Set Day/Time Range";
 
     /** flag for setting properties */
     private boolean amSettingProperties = false;
@@ -226,6 +233,12 @@ public class AddeImageChooser extends AddeChooser implements
 
     /** archive date */
     protected String archiveDay = null;
+    
+    /** archive date */
+    protected String archiveBegTime = null;
+    
+    /** archive date */
+    protected String archiveEndTime = null;
     
     /** number of image times to list */
     protected String numTimes = "all";
@@ -258,7 +271,7 @@ public class AddeImageChooser extends AddeChooser implements
     /** Input for lat/lon center point */
     protected LatLonWidget latLonWidget;
 
-    /** Widget for the line magnfication in the advanced section */
+    /** Widget for the line magnification in the advanced section */
     protected JSlider lineMagSlider;
 
     /** Label for the line mag. in the advanced section */
@@ -392,12 +405,12 @@ public class AddeImageChooser extends AddeChooser implements
      */
     public AddeImageChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
-//        AnnotationProcessor.process(this);
+
         addDescComp(loadButton);
 
-        archiveDayBtn = new JButton("Select Day");
+        archiveDayBtn = new JButton(DAY_TIME_RANGE_LABEL);
         archiveDayBtn.addActionListener(e -> getArchiveDay());
-        archiveDayBtn.setToolTipText("Select a day for archive datasets");
+        archiveDayBtn.setToolTipText("Select a specific day and time range");
 
         numImagesButton = new JButton("List Images");
         numImagesButton.addActionListener(e -> readTimes(false));
@@ -613,7 +626,7 @@ public class AddeImageChooser extends AddeChooser implements
     @Override protected void readFromServer() {
         archiveDay = null;
         if (archiveDayBtn != null) {
-            archiveDayBtn.setText("Select Day");
+            archiveDayBtn.setText(DAY_TIME_RANGE_LABEL);
         }
         readSatBands();
         super.readFromServer();
@@ -628,12 +641,16 @@ public class AddeImageChooser extends AddeChooser implements
     }
 
     /**
-     * Show the archive dialog. This method is not meant to be called but is
+     * Show the day and time range dialog. This method is not meant to be called but is
      * public by reason of implementation (or insanity).
      */
+    
     public void getArchiveDay() {
-        final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
+        
+        final JDialog dialog = GuiUtils.createDialog("Set Day and Time Range", true);
         final JCalendarPicker picker = new JCalendarPicker(false);
+        final JTimeRangePicker trp = new JTimeRangePicker();
+
         if (archiveDay != null) {
             if (archiveDayFormatter == null) {
                 archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
@@ -650,18 +667,26 @@ public class AddeImageChooser extends AddeChooser implements
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
-                if (cmd.equals(GuiUtils.CMD_REMOVE)) {
-                    archiveDay = null;
-                    archiveDayBtn.setText("Select Day");
-                    setDoAbsoluteTimes(true);
-                    descriptorChanged();
-                } else if (cmd.equals(GuiUtils.CMD_OK)) {
+                if (cmd.equals(GuiUtils.CMD_OK)) {
+                    
+                    // bad time range, throw up error window
+                    if (! trp.timeRangeOk()) {
+                        String msg = "Time range is invalid.\n" + 
+                                     "Please provide valid hours, minutes and\n" +
+                                     "seconds, with End Time > Start Time.";
+                        Object[] params = { msg };
+                        JOptionPane.showMessageDialog(null, params, "Invalid Time Range", JOptionPane.OK_OPTION);
+                        return;
+                    } else {
+                        archiveBegTime = trp.getBegTimeStr(); 
+                        archiveEndTime = trp.getEndTimeStr(); 
+                    }
                     try {
                         archiveDay = picker.getUserSelectedDay();
                         archiveDayBtn.setText(archiveDay);
                     } catch (Exception e) {
                     }
-                    // System.out.println("archiveDay = " + archiveDay);
+
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 }
@@ -696,11 +721,15 @@ public class AddeImageChooser extends AddeChooser implements
         });
 
         JPanel buttons = GuiUtils.makeButtons(listener, new String[] {
-                GuiUtils.CMD_OK, GuiUtils.CMD_REMOVE, GuiUtils.CMD_CANCEL });
+                GuiUtils.CMD_OK, GuiUtils.CMD_CANCEL });
 
+        JPanel dateTimePanel = new JPanel(new FlowLayout());
+        dateTimePanel.add(picker);
+        dateTimePanel.add(trp);
+        
         JComponent contents = GuiUtils.topCenterBottom(GuiUtils.inset(GuiUtils
-                .lLabel("Please select a day for this dataset:"), 10), GuiUtils
-                .inset(picker, 10), buttons);
+                .lLabel("Please select a day and optional time range for this dataset:"), 10), GuiUtils
+                .inset(dateTimePanel, 10), buttons);
         Point p = new Point(200, 200);
         if (archiveDayBtn != null) {
             try {
@@ -1124,9 +1153,14 @@ public class AddeImageChooser extends AddeChooser implements
     @Override protected JPanel makeTimesPanel() {
         JPanel panel =
             super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
-        underTimelistPanel.add(BorderLayout.WEST, numImagesButton);
-        underTimelistPanel.add(BorderLayout.CENTER, imageCountTextField);
-        underTimelistPanel.add(BorderLayout.EAST, archiveDayBtn);
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(archiveDayBtn);
+        // TJJ stack num images button and associated text field, helps with smaller screens
+        JPanel imgCountPanel = new JPanel(new BorderLayout());
+        imgCountPanel.add(numImagesButton, BorderLayout.NORTH);
+        imgCountPanel.add(imageCountTextField, BorderLayout.SOUTH);
+        buttonPanel.add(imgCountPanel);
+        underTimelistPanel.add(BorderLayout.CENTER, buttonPanel);
         return panel;
     }
 
@@ -1339,6 +1373,7 @@ public class AddeImageChooser extends AddeChooser implements
      * Set the list of dates/times based on the image selection
      * 
      */
+    
     protected void readTimesInner(boolean forceAll) {
         String descriptor = getDescriptor();
         // String archivePosition = forceAll ? "all" : numTimes;
@@ -1356,6 +1391,7 @@ public class AddeImageChooser extends AddeChooser implements
         appendKeyValue(addeCmdBuff, PROP_POS, "" + pos);
         if (archiveDay != null) {
             appendKeyValue(addeCmdBuff, PROP_DAY, archiveDay);
+            appendKeyValue(addeCmdBuff, PROP_TIME, archiveBegTime + " " + archiveEndTime);
         }
         String url = addeCmdBuff.toString();
         readTimesTask = startTask();
@@ -2418,10 +2454,6 @@ public class AddeImageChooser extends AddeChooser implements
                 return;
             }
         } catch (Exception e) {
-            return;
-        }
-
-        if (lines == null) {
             return;
         }
 
