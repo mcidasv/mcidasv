@@ -16,15 +16,7 @@
       <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../IDV/lib" description="Directory containing IDV JAR files." category="" />
       <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" category="" />
       <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../adde" description="Directory containing the local ADDE server ZIP files." category="" />
-      <variable name="SLF4J_VERSION" value="1.7.25" description="Version number used with jul-to-slf4j, log4j-over-slf4j, and slf4j-api." category="" />
-      <variable name="LOGBACK_VERSION" value="1.2.3" description="Version number used with logback-classic and logback-core." category="" />
-      <variable name="MIGLAYOUT_VERSION" value="5.1-SNAPSHOT" description="Version number used with miglayout-core and miglayout-swing." category="" />
-      <variable name="JOGAMP_VERSION" value="2.3.2" description="Version number used with gluegen, gluegen-rt, joal, jocl, jogl-all, and the various native JARs." category="" />
-      <variable name="JAVA3D_VERSION" value="1.6.0-pre12" description="Version number used with j3dcore, j3dutils, and vecmath." category="" />
-      <variable name="IDV_VERSION" value="5.4u1-SNAPSHOT" description="" category="" />
-      <variable name="VISAD_VERSION" value="2.0-SNAPSHOT" description="" category="" />
       <variable name="MCV_VERSION" value="${compiler:sys.version}-SNAPSHOT" description="" category="" />
-      <variable name="NCIDV_VERSION" value="4.6.12-SNAPSHOT" description="" category="" />
     </variables>
     <mergedProjects />
     <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pvkAndSpc" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
@@ -66,24 +58,16 @@
       <mountPoint id="7468" root="7415" location="" mode="755" />
     </mountPoints>
     <entries>
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/idv-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/auxdata-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/external-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/local-visad-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/visad-${compiler:VISAD_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/ncIdv-${compiler:NCIDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <dirEntry mountPoint="8741" file="${compiler:MCVDIR}/lib/share/" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude />
       </dirEntry>
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcidasv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/jython-standalone-2.7.1.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/local-idv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/startupmanager-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcv_userguide-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcv_javadoc-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/GetMem.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/GetVer.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/jogamp-fat-${compiler:JOGAMP_VERSION}.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
       <dirEntry mountPoint="1" file="${compiler:MCVDIR}/release/licenses" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="licenses" excludeSuffixes="" dirMode="755" overrideDirMode="true">
         <exclude />
       </dirEntry>
@@ -1617,6 +1601,6 @@ INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$
     </windows>
   </mediaSets>
   <buildIds buildAll="true" />
-  <buildOptions verbose="true" faster="false" disableSigning="false" debug="false" />
+  <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
 </install4j>
 
