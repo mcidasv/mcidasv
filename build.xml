@@ -214,7 +214,7 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-    <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar gluegen-rt-${jogamp.version}.jar gluegen-${jogamp.version}.jar joal-${jogamp.version}.jar jocl-${jogamp.version}.jar jogl-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
+    <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-fat-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
@@ -239,12 +239,7 @@
         <include name="j3dcore-${java3d.version}.jar" />
         <include name="j3dutils-${java3d.version}.jar" />
         <include name="vecmath-${java3d.version}.jar" />
-        <include name="gluegen-rt-${jogamp.version}.jar" />
-        <include name="gluegen-${jogamp.version}.jar" />
-        <include name="joal-${jogamp.version}.jar" />
-        <include name="jocl-${jogamp.version}.jar" />
-        <include name="jogl-all-noawt.jar" />
-        <include name="jogl-all-${jogamp.version}.jar" />
+        <include name="jogamp-fat-${jogamp.version}.jar" />
         <include name="jython-standalone-${jython.version}.jar" />
         <include name="juniversalchardet-${juniversalchardet.version}.jar" />
     </fileset>
@@ -264,47 +259,7 @@
         <include name="external-${idv.version}.jar" />
         <include name="idv-${idv.version}.jar" />
     </fileset>
-
-    <fileset id="linux_x64.libs" dir="${dist.dir}">
-        <!-- <include name="gluegen-${jogamp.version}-natives-linux-amd64.jar" /> -->
-        <include name="gluegen-rt-${jogamp.version}-natives-linux-amd64.jar" />
-        <include name="joal-${jogamp.version}-natives-linux-amd64.jar" />
-        <include name="jocl-${jogamp.version}-natives-linux-amd64.jar" />
-        <include name="jogl-all-${jogamp.version}-natives-linux-amd64.jar" />
-    </fileset>
-
-    <fileset id="linux_x86.libs" dir="${dist.dir}">
-        <!-- <include name="gluegen-${jogamp.version}-natives-linux-i586.jar" /> -->
-        <include name="gluegen-rt-${jogamp.version}-natives-linux-i586.jar" />
-        <include name="joal-${jogamp.version}-natives-linux-i586.jar" />
-        <include name="jocl-${jogamp.version}-natives-linux-i586.jar" />
-        <include name="jogl-all-${jogamp.version}-natives-linux-i586.jar" />
-    </fileset>
-
-    <fileset id="windows_x64.libs" dir="${dist.dir}">
-        <!-- <include name="gluegen-${jogamp.version}-natives-windows-amd64.jar" /> -->
-        <include name="gluegen-rt-${jogamp.version}-natives-windows-amd64.jar" />
-        <include name="joal-${jogamp.version}-natives-windows-amd64.jar" />
-        <include name="jocl-${jogamp.version}-natives-windows-amd64.jar" />
-        <include name="jogl-all-${jogamp.version}-natives-windows-amd64.jar" />
-    </fileset>
-
-    <fileset id="windows_x86.libs" dir="${dist.dir}">
-        <!-- <include name="gluegen-${jogamp.version}-natives-windows-i586.jar" /> -->
-        <include name="gluegen-rt-${jogamp.version}-natives-windows-i586.jar" />
-        <include name="joal-${jogamp.version}-natives-windows-i586.jar" />
-        <include name="jocl-${jogamp.version}-natives-windows-i586.jar" />
-        <include name="jogl-all-${jogamp.version}-natives-windows-i586.jar" />
-    </fileset>
-
-    <fileset id="macosx.libs" dir="${dist.dir}">
-        <!-- <include name="gluegen-${jogamp.version}-natives-macosx-universal.jar" /> -->
-        <include name="gluegen-rt-${jogamp.version}-natives-macosx-universal.jar" />
-        <include name="joal-${jogamp.version}-natives-macosx-universal.jar" />
-        <include name="jocl-${jogamp.version}-natives-macosx-universal.jar" />
-        <include name="jogl-all-${jogamp.version}-natives-macosx-universal.jar" />
-    </fileset>
-
+    
     <!-- Shared classpath -->
     <path id="app.classpath">
         <pathelement location="${dist.dir}/${app.jarname}" />
@@ -314,55 +269,7 @@
         <fileset refid="netcdf.libs" />
         <fileset refid="idv.libs" />
     </path>
-
-    <path id="linux_x64.app.classpath">
-        <pathelement location="${dist.dir}/${app.jarname}" />
-        <pathelement location="${dist.dir}/${local-idv.jarname}" />
-        <pathelement location="${dist.dir}/${userguide.jarname}" />
-        <fileset refid="mcv.libs" />
-        <fileset refid="netcdf.libs" />
-        <fileset refid="idv.libs" />
-        <fileset refid="linux_x64.libs" />
-    </path>
-
-    <path id="linux_x86.app.classpath">
-        <pathelement location="${dist.dir}/${app.jarname}" />
-        <pathelement location="${dist.dir}/${local-idv.jarname}" />
-        <pathelement location="${dist.dir}/${userguide.jarname}" />
-        <fileset refid="mcv.libs" />
-        <fileset refid="netcdf.libs" />
-        <fileset refid="idv.libs" />
-        <fileset refid="linux_x86.libs" />
-    </path>
-
-    <path id="windows_x64.app.classpath">
-        <pathelement location="${dist.dir}/${app.jarname}" />
-        <pathelement location="${dist.dir}/${local-idv.jarname}" />
-        <fileset refid="mcv.libs" />
-        <fileset refid="netcdf.libs" />
-        <fileset refid="idv.libs" />
-        <fileset refid="windows_x64.libs" />
-    </path>
-
-    <path id="windows_x86.app.classpath">
-        <pathelement location="${dist.dir}/${app.jarname}" />
-        <pathelement location="${dist.dir}/${local-idv.jarname}" />
-        <fileset refid="mcv.libs" />
-        <fileset refid="netcdf.libs" />
-        <fileset refid="idv.libs" />
-        <fileset refid="windows_x86.libs" />
-    </path>
-
-    <path id="macosx.app.classpath">
-        <pathelement location="${dist.dir}/${app.jarname}" />
-        <pathelement location="${dist.dir}/${local-idv.jarname}" />
-        <fileset refid="mcv.libs" />
-        <fileset refid="netcdf.libs" />
-        <fileset refid="idv.libs" />
-        <fileset refid="macosx.libs" />
-    </path>
-
-
+    
     <path id="bundle.classpath">
         <pathelement location="${dist.dir}/${app.jarname}" />
         <pathelement location="${dist.dir}/${local-idv.jarname}" />
@@ -572,75 +479,6 @@
         </copy>
     </target>
 
-    <target name="_build.linux.x86" description="" if="isLinux.x86">
-        <echo>Building linuxx86</echo>
-        <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${linuxx86lib.dir}" includes="**/*.jar" />
-        </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
-            <classpath refid="linux_x86.app.classpath" />
-        </javac>
-        <pathconvert property="platform.classpath" refid="linux_x86.app.classpath" />
-    </target>
-
-    <target name="_build.linux.x86_64" description="" if="isLinux.x86_64">
-        <echo>Building linuxx64</echo>
-        <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${linuxx64lib.dir}" includes="**/*.jar" />
-        </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
-            <classpath refid="linux_x64.app.classpath" />
-        </javac>
-        <pathconvert property="platform.classpath" refid="linux_x64.app.classpath" />
-    </target>
-
-    <target name="_build.windows.x86" description="" if="isWindows.x86">
-        <echo>Building winx86</echo>
-        <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${windowsx86lib.dir}" includes="**/*.jar" />
-        </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
-            <classpath refid="windows_x86.app.classpath" />
-        </javac>
-        <pathconvert property="platform.classpath" refid="windows_x86.app.classpath" />
-    </target>
-
-    <target name="_build.windows.x86_64" description="" if="isWindows.x86_64">
-        <echo>Building winx64</echo>
-        <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${windowsx64lib.dir}" includes="**/*.jar" />
-        </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
-            <classpath refid="windows_x64.app.classpath" />
-        </javac>
-        <pathconvert property="platform.classpath" refid="windows_x64.app.classpath" />
-    </target>
-
-    <target name="_build.macosx" description="" if="isMac">
-        <echo>Building macosx</echo>
-        <copy todir="${dist.dir}" preservelastmodified="true">
-            <fileset dir="${macosxlib.dir}" includes="**/*.jar" />
-        </copy>
-        <javac srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
-               debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
-            <compilerarg value="-Xlint:${xlint}" />
-            <classpath refid="macosx.app.classpath" />
-        </javac>
-        <pathconvert property="platform.classpath" refid="macosx.app.classpath" />
-    </target>
-
-    <taskdef name="antcallback" 
-             classpath="lib/build/ant-contrib-1.0b3.jar" 
-             classname="net.sf.antcontrib.logic.AntCallBack" />
-             
     <!-- Build the edu tree -->
     <target name="build" description="Build the edu tree">
         <mkdir dir="${build.dir}" />
@@ -690,12 +528,6 @@
         <condition property="isMac">
             <os family="mac" />
         </condition>
-        
-        <antcallback target="_build.linux.x86" return="platform.classpath" />
-        <antcallback target="_build.linux.x86_64" return="platform.classpath" />
-        <antcallback target="_build.windows.x86" return="platform.classpath" />
-        <antcallback target="_build.windows.x86_64" return="platform.classpath" />
-        <antcallback target="_build.macosx" return="platform.classpath" />
         
         <copy todir="${build.dir}" preservelastmodified="true">
             <fileset dir="${base.dir}">
@@ -751,16 +583,8 @@
         <tstamp prefix="jar" />
 
         <manifestclasspath property="mcidasv.class.path" jarfile="${dist.dir}/${app.jarname}">
-            <classpath>
-                <!-- 
-                  this will be the platform-specific classpath.
-                  all of that stuff happens via the "antcallback" stuff in the
-                  "build" target. 
-                -->
-                <pathelement path="${platform.classpath}" />
-            </classpath>
+            <classpath refid="app.classpath" />
         </manifestclasspath>
-
 
         <jar destfile="${dist.dir}/${app.jarname}" index="false">
             <!-- <fileset dir="${base.dir}"> -->
@@ -786,12 +610,7 @@
         <!-- <delete file="${dist.dir}/${local-idv.jarname}" failonerror="false" /> -->
         <tstamp prefix="jar" />
         <manifestclasspath property="local-idv.class.path" jarfile="${dist.dir}/${local-idv.jarname}">
-            <!--<classpath refid="app.classpath" />-->
-            <classpath refid="linux_x64.app.classpath" />
-            <classpath refid="linux_x86.app.classpath" />
-            <classpath refid="windows_x64.app.classpath" />
-            <classpath refid="windows_x86.app.classpath" />
-            <classpath refid="macosx.app.classpath" />
+            <classpath refid="app.classpath" />
         </manifestclasspath>
         <jar destfile="${dist.dir}/${local-idv.jarname}" index="false">
             <!-- <fileset dir="${base.dir}"> -->
@@ -1501,7 +1320,7 @@
             <arg value="echo ${runtime_18} | perl -pe 's/^.*\/([\-\.\w]+\.jdk)\/.*$/$1/'" />
         </exec>
 
-        <bundleapp classpathref="macosx.app.classpath"
+        <bundleapp classpathref="app.classpath"
                    outputdirectory="${dist.dir}"
                    name="${bundle.name}"
                    displayname="McIDAS-V"
