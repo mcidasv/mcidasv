@@ -2173,7 +2173,15 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         JComponent panel = GuiUtils.vbox(GuiUtils.inset(label, 5),
                                          GuiUtils.vbox(comps));
 
-        if ( !GuiUtils.askOkCancel("Make Data Sources Relative", panel)) {
+        // TJJ Jun 2018
+        // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2672
+        // Wrap the whole thing in a scrollpane since lots of data sources will
+        // exceed available real estate
+
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setPreferredSize(new Dimension(700, 400));
+
+        if ( !GuiUtils.askOkCancel("Make Data Sources Relative", scrollPane)) {
             return false;
         }
 
