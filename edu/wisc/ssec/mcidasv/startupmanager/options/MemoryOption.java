@@ -296,7 +296,13 @@ public class MemoryOption extends AbstractOption implements ActionListener {
 
             if (newMemVal > maxmem) {
                 long memInGB = maxmem;
+                // Temporarily disable the text entry box, since Enter key in the modal
+                // dialog would just cycle back through the text field key handler and
+                // bring up a new dialog!
+                text.setEnabled(false);
                 JOptionPane.showMessageDialog(null, String.format(TOO_BIG_FMT, memInGB));
+                // Re-enable text field, user dismissed warning dialog
+                text.setEnabled(true);
                 setState(State.ERROR);
             } else {
                 setValue(memWithSuffix);
