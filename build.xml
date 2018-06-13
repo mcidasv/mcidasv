@@ -214,7 +214,7 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-    <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-fat-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
+    <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-bug1299fix-fat-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
@@ -239,7 +239,7 @@
         <include name="j3dcore-${java3d.version}.jar" />
         <include name="j3dutils-${java3d.version}.jar" />
         <include name="vecmath-${java3d.version}.jar" />
-        <include name="jogamp-fat-${jogamp.version}.jar" />
+        <include name="jogamp-bug1299fix-fat-${jogamp.version}.jar" />
         <include name="jython-standalone-${jython.version}.jar" />
         <include name="juniversalchardet-${juniversalchardet.version}.jar" />
     </fileset>
