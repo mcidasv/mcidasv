@@ -745,14 +745,13 @@ class _Tab(_JavaProxy):
         """
         _JavaProxy.__init__(self, javaObject)
         
-    @gui_invoke_later
     def getName(self):
         """Return name of this tab."""
         return self._JavaProxy__javaObject.getName()
         
-    @gui_invoke_later
     def setName(self, newTabName):
         """Set this tab's name to a given string value."""
+        from edu.wisc.ssec.mcidasv.util.McVGuiUtils import idvGroupsToMcv
         self._JavaProxy__javaObject.setName(newTabName)
         
     @gui_invoke_later
