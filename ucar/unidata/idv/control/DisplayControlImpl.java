@@ -28,75 +28,6 @@
 
 package ucar.unidata.idv.control;
 
-import edu.wisc.ssec.mcidasv.Constants;
-import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
-import edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource;
-import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
-
-import org.bushe.swing.event.EventBus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import ucar.nc2.time.Calendar;
-import ucar.unidata.collab.Sharable;
-import ucar.unidata.collab.SharableImpl;
-import ucar.unidata.data.*;
-import ucar.unidata.data.grid.GridDataInstance;
-import ucar.unidata.data.grid.GridUtil;
-import ucar.unidata.data.imagery.AddeImageDataSource;
-import ucar.unidata.data.imagery.ImageDataSource;
-import ucar.unidata.geoloc.LatLonPointImpl;
-import ucar.unidata.geoloc.LatLonRect;
-import ucar.unidata.idv.ControlContext;
-import ucar.unidata.idv.ControlDescriptor;
-import ucar.unidata.idv.DisplayControl;
-import ucar.unidata.idv.DisplayConventions;
-import ucar.unidata.idv.DisplayInfo;
-import ucar.unidata.idv.IdvConstants;
-import ucar.unidata.idv.IntegratedDataViewer;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.NavigatedViewManager;
-import ucar.unidata.idv.TransectViewManager;
-import ucar.unidata.idv.ViewContext;
-import ucar.unidata.idv.ViewDescriptor;
-import ucar.unidata.idv.ViewManager;
-import ucar.unidata.idv.ui.*;
-import ucar.unidata.ui.DndImageButton;
-import ucar.unidata.ui.FontSelector;
-import ucar.unidata.ui.Help;
-import ucar.unidata.ui.ImageUtils;
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.ContourInfo;
-import ucar.unidata.util.FileManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.Msg;
-import ucar.unidata.util.ObjectListener;
-import ucar.unidata.util.PropertyValue;
-import ucar.unidata.util.Prototypable;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.Removable;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.Trace;
-import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.view.geoloc.GlobeDisplay;
-import ucar.unidata.view.geoloc.NavigatedDisplay;
-import ucar.unidata.xml.XmlObjectStore;
-import ucar.visad.UtcDate;
-import ucar.visad.Util;
-import ucar.visad.data.CalendarDateTime;
-import ucar.visad.data.CalendarDateTimeSet;
-import ucar.visad.display.*;
-import visad.*;
-import visad.Set;
-import visad.georef.EarthLocation;
-import visad.georef.LatLonPoint;
-import visad.georef.MapProjection;
-import visad.util.DataUtility;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -130,8 +61,12 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
-import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -171,7 +106,122 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
+import org.bushe.swing.event.EventBus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ucar.nc2.time.Calendar;
+import ucar.unidata.collab.Sharable;
+import ucar.unidata.collab.SharableImpl;
+import ucar.unidata.data.DataCancelException;
+import ucar.unidata.data.DataChangeListener;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataDataChoice;
+import ucar.unidata.data.DataInstance;
+import ucar.unidata.data.DataOperand;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DataSelectionComponent;
+import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.DataTimeRange;
+import ucar.unidata.data.DerivedDataChoice;
+import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.data.GeoSelection;
+import ucar.unidata.data.GeoSelectionPanel;
+import ucar.unidata.data.grid.GridDataInstance;
+import ucar.unidata.data.grid.GridUtil;
+import ucar.unidata.data.imagery.AddeImageDataSource;
+import ucar.unidata.data.imagery.ImageDataSource;
+import ucar.unidata.geoloc.LatLonPointImpl;
+import ucar.unidata.geoloc.LatLonRect;
+import ucar.unidata.idv.ControlContext;
+import ucar.unidata.idv.ControlDescriptor;
+import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.DisplayConventions;
+import ucar.unidata.idv.DisplayInfo;
+import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.idv.IntegratedDataViewer;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.NavigatedViewManager;
+import ucar.unidata.idv.TransectViewManager;
+import ucar.unidata.idv.ViewContext;
+import ucar.unidata.idv.ViewDescriptor;
+import ucar.unidata.idv.ViewManager;
+import ucar.unidata.idv.ui.DataSelectionWidget;
+import ucar.unidata.idv.ui.DataSelector;
+import ucar.unidata.idv.ui.DataTreeDialog;
+import ucar.unidata.idv.ui.IdvComponentHolder;
+import ucar.unidata.idv.ui.IdvWindow;
+import ucar.unidata.ui.DndImageButton;
+import ucar.unidata.ui.FontSelector;
+import ucar.unidata.ui.Help;
+import ucar.unidata.ui.ImageUtils;
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.ContourInfo;
+import ucar.unidata.util.FileManager;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.Msg;
+import ucar.unidata.util.ObjectListener;
+import ucar.unidata.util.PropertyValue;
+import ucar.unidata.util.Prototypable;
+import ucar.unidata.util.Range;
+import ucar.unidata.util.Removable;
+import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.Trace;
+import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.view.geoloc.GlobeDisplay;
+import ucar.unidata.view.geoloc.NavigatedDisplay;
+import ucar.unidata.xml.XmlObjectStore;
+import ucar.visad.UtcDate;
+import ucar.visad.Util;
+import ucar.visad.data.CalendarDateTime;
+import ucar.visad.data.CalendarDateTimeSet;
+import ucar.visad.display.Animation;
+import ucar.visad.display.AnimationInfo;
+import ucar.visad.display.AnimationWidget;
+import ucar.visad.display.ColorScale;
+import ucar.visad.display.ColorScaleInfo;
+import ucar.visad.display.DisplayMaster;
+import ucar.visad.display.Displayable;
+import ucar.visad.display.DisplayableData;
+import ucar.visad.display.TextDisplayable;
+
+import visad.CommonUnit;
+import visad.ControlEvent;
+import visad.ControlListener;
+import visad.Data;
+import visad.DateTime;
+import visad.DisplayEvent;
+import visad.DisplayListener;
+import visad.DisplayRealType;
+import visad.FieldImpl;
+import visad.FunctionType;
+import visad.GriddedSet;
+import visad.LocalDisplay;
+import visad.ProjectionControl;
+import visad.Real;
+import visad.RealTuple;
+import visad.RealType;
+import visad.Set;
+import visad.SetType;
+import visad.Text;
+import visad.TextType;
+import visad.Unit;
+import visad.VisADException;
+import visad.georef.EarthLocation;
+import visad.georef.LatLonPoint;
+import visad.georef.MapProjection;
+import visad.util.DataUtility;
+
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.data.ComboDataChoice;
 import edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource;
+import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
+import edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource;
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
 
 /**
@@ -7993,6 +8043,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *
      * @return the slider
      */
+    
     protected JSlider doMakeTextureSlider() {
         if (textureSlider == null) {
             textureSlider = GuiUtils.makeSlider(1, 21, textureQuality, this,
@@ -8001,13 +8052,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             labels.put(new Integer(1), GuiUtils.lLabel("High"));
             labels.put(new Integer(10), GuiUtils.cLabel("Medium"));
             labels.put(new Integer(21), GuiUtils.rLabel("Low"));
+            
+            // TJJ Jun 2018 - invert so low on left, high on right
+            textureSlider.setInverted(true);
             textureSlider.setLabelTable(labels);
             textureSlider.setPaintLabels(true);
         }
         return textureSlider;
     }
-
-
 
     /**
      * Create the z position slider panel
