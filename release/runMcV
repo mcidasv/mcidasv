@@ -266,6 +266,16 @@ LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 # Gather up previously set values.
 MCV_USERPATH_ESCAPED=`echo ${MCV_USERPATH} |sed -e 's/ /\\\\ /g'`
 
+# restrict java.ext.dirs and java.library.path to the JRE
+if [ -n "${JAVA_HOME}" ]; then
+  MCV_EXTDIR="-Djava.ext.dirs=\"${JAVA_HOME}/lib/ext\""
+  MCV_LIBPATH="-Djava.library.path=\"${JAVA_HOME}/lib/ext\""
+else
+  echo "Warning: Please consider setting JAVA_HOME."
+  MCV_EXTDIR=""
+  MCV_LIBPATH=""
+fi
+
 JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} ${MCV_EXTDIR} ${MCV_LIBPATH} -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false"
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -DtextureWidthMax=${TEXTURE_SIZE}"
 
