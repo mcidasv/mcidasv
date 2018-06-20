@@ -2190,6 +2190,12 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
         dialog.setResizable(true);
         dialog.setVisible(true);
 
+        // This is the case where user closed window
+        if (pane.getValue() == null) {
+            return false;
+        }
+
+        // Otherwise, check which button was clicked
         int returnVal = ((Integer) pane.getValue()).intValue();
         if (returnVal == JOptionPane.CANCEL_OPTION) {
             return false;
