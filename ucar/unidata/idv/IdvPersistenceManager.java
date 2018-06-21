@@ -2172,16 +2172,32 @@ public class IdvPersistenceManager extends IdvManager implements PrototypeManage
                 "Select the data sources that should be saved with relative paths");
         JComponent panel = GuiUtils.vbox(GuiUtils.inset(label, 5),
                                          GuiUtils.vbox(comps));
+        // Anchor the file list to top of panel
+        JPanel anchorPanel = new JPanel(new BorderLayout());
+        anchorPanel.add(panel, BorderLayout.NORTH);
 
         // TJJ Jun 2018
         // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2672
-        // Wrap the whole thing in a scrollpane since lots of data sources will
-        // exceed available real estate
+        // Wrap the whole thing in a resizable scrollpane since lots of data sources will
+        // exceed available real estate.
 
-        JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setPreferredSize(new Dimension(700, 400));
+        JScrollPane scrollPane = new JScrollPane(anchorPanel);
+        scrollPane.setPreferredSize(new Dimension(600, 400));
 
-        if ( !GuiUtils.askOkCancel("Make Data Sources Relative", scrollPane)) {
+        Object[] array = { null, scrollPane };
+        JOptionPane pane = new JOptionPane(array, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        JDialog dialog = pane.createDialog(null, "Make Data Sources Relative");
+        dialog.setResizable(true);
+        dialog.setVisible(true);
+
+        // This is the case where user closed window
+        if (pane.getValue() == null) {
+            return false;
+        }
+
+        // Otherwise, check which button was clicked
+        int returnVal = ((Integer) pane.getValue()).intValue();
+        if (returnVal == JOptionPane.CANCEL_OPTION) {
             return false;
         }
 
