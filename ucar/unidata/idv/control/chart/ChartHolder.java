@@ -49,11 +49,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.DateAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.event.ChartChangeEvent;
@@ -64,17 +62,15 @@ import org.jfree.data.xy.XYDataset;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import ucar.unidata.ui.ImageUtils;
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 
-
-
-
 /**
- * Class ChartHolder hodls a chart
+ * Class ChartHolder holds a chart
  *
  *
  * @author IDV Development Team
@@ -85,10 +81,6 @@ public class ChartHolder {
 
     /** my manager */
     private ChartManager chartManager;
-
-    /** last axis side */
-    protected AxisLocation lastSide;
-
 
     /** how many params */
     private int paramCount = 0;
@@ -220,6 +212,7 @@ public class ChartHolder {
      * apply props
      */
     protected void applyPlotProperties() {
+        
         if (plot == null) {
             return;
         }
@@ -439,10 +432,12 @@ public class ChartHolder {
     }
 
     private static final Logger logger = LoggerFactory.getLogger(ChartHolder.class);
+    
     /**
      * create new chart panel
      */
     protected void resetChartPanel() {
+        
         if (plot == null) {
             init();
         }
@@ -568,14 +563,10 @@ public class ChartHolder {
         }
     }
 
-
-
-
     /**
      * init
      */
     protected void initChart() {
-        lastSide   = null;
         paramCount = 0;
     }
 
@@ -598,7 +589,6 @@ public class ChartHolder {
         return true;
     }
 
-
     /**
      * add data set
      *
@@ -607,23 +597,41 @@ public class ChartHolder {
      * @param renderer renderer
      * @param side which side
      */
+    
     protected void add(XYDataset dataset, ValueAxis rangeAxis,
-                       XYItemRenderer renderer, AxisLocation side) {
+                       XYItemRenderer renderer) {
         synchronized (chartManager.getMutex()) {
             XYPlot xyPlot = (XYPlot) plot;
             xyPlot.setRangeAxis(paramCount, rangeAxis, false);
             xyPlot.setDataset(paramCount, dataset);
             xyPlot.mapDatasetToRangeAxis(paramCount, paramCount);
             xyPlot.setRenderer(paramCount, renderer);
-            if (side != null) {
-                xyPlot.setRangeAxisLocation(paramCount, side);
-            }
             paramCount++;
         }
     }
 
-
-
+    /**
+     * add data set
+     *
+     * @param dataset dataset
+     * @param rangeAxis axis
+     * @param domainAxis axis
+     * @param renderer renderer
+     * @param side which side
+     */
+    
+    protected void add(XYDataset dataset, ValueAxis rangeAxis, ValueAxis domainAxis,
+                       XYItemRenderer renderer) {
+        synchronized (chartManager.getMutex()) {
+            XYPlot xyPlot = (XYPlot) plot;
+            xyPlot.setRangeAxis(paramCount, rangeAxis, false);
+            xyPlot.setDomainAxis(paramCount, domainAxis, false);
+            xyPlot.setDataset(paramCount, dataset);
+            xyPlot.mapDatasetToRangeAxis(paramCount, paramCount);
+            xyPlot.setRenderer(paramCount, renderer);
+            paramCount++;
+        }
+    }
 
     /**
      * ahs parameters
