@@ -143,9 +143,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     
     // for now, we are only handling CrIS variables that match this filter and SCAN dimensions
     private String crisFilter = "ES_Real";
-    
-    // for now, we are only handling OMPS variables that match this filter and SCAN dimensions
-    private String ompsFilter = "Radiance";
 
     private Map<String, double[]> defaultSubset;
     public TrackAdapter track_adapter;
@@ -1033,14 +1030,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							}
     	    						}
 
-    	    						// for OMPS, only Radiance for now...
-    	    						if (instrumentName.getStringValue().contains("OMPS")) {
-    	    							if (! varShortName.startsWith(ompsFilter)) {
-    	    								logger.trace("Skipping OMPS variable: " + varShortName);
-    	    								continue;
-    	    							}
-    	    						}
-
     	    						DataType dt = v.getDataType();
     	    						if ((dt.getSize() != 4) && (dt.getSize() != 2) && (dt.getSize() != 1)) {
     	    							continue;
@@ -1113,8 +1102,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							//   endif
 
     	    							String factorsVarName = nppPP.getScaleFactorName(varShortName);
-    	    							logger.debug("Mapping: " + varShortName + " to: " + factorsVarName);
     	    							if (factorsVarName != null) {
+                                            logger.debug("Mapping: " + varShortName + " to: " + factorsVarName);
     	    								for (Variable fV : vl) {
     	    									if (fV.getShortName().equals(factorsVarName)) {
     	    										logger.trace("Pulling scale and offset values from variable: " + fV.getShortName());
