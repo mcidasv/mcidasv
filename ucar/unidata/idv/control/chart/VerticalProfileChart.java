@@ -184,6 +184,7 @@ public class VerticalProfileChart extends XYChartManager {
 
         rangeAxis.setVisible(rangeVisible);
 
+
         ucar.unidata.util.Range r = lineState.getRange();
         if (r != null) {
             rangeAxis.setRange(new org.jfree.data.Range(r.getMin(),
@@ -203,18 +204,24 @@ public class VerticalProfileChart extends XYChartManager {
             rangeAxis.setVisible(false);
         }
 
+        AxisLocation side        = null;
         ChartHolder  chartHolder = getChartHolder(lineState);
-        
-        // TJJ Jun 2018
-        // Give LineState a handle to the actual chart
-        // Much easier to deal with property changes
-        lineState.setChartHandle(chartHolder.getChartPanel().getChart());
-        
+        if (rangeAxis.isVisible()) {
+            if (lineState.getSide() == LineState.SIDE_UNDEFINED) {
+                side = AxisLocation.BOTTOM_OR_RIGHT;
+            } else if (lineState.getSide() == LineState.SIDE_LEFT) {
+                side = AxisLocation.TOP_OR_LEFT;
+            } else {
+                side = AxisLocation.BOTTOM_OR_RIGHT;
+            }
+            chartHolder.lastSide = side;
+        }
+
         synchronized (MUTEX) {
-            if (domainAxis == null)
-                chartHolder.add(dataset, rangeAxis, renderer);
+            if(domainAxis == null)
+                chartHolder.add(dataset, rangeAxis, renderer, side);
             else
-                chartHolder.add(dataset, rangeAxis, domainAxis, renderer);
+                chartHolder.add(dataset, rangeAxis, domainAxis, renderer, side);
         }
 
         return rangeAxis;

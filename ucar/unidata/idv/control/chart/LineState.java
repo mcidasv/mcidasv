@@ -28,57 +28,45 @@
 
 package ucar.unidata.idv.control.chart;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.GeneralPath;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.JTextField;
-
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.AxisLocation;
-
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
-import ucar.unidata.xml.XmlObjectStore;
 
+import ucar.unidata.xml.XmlObjectStore;
 import visad.DateTime;
 import visad.Real;
+
 import visad.Unit;
 
-import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
+
+import javax.swing.*;
+import javax.swing.event.*;
+
 
 /**
  * Holds  graphics state
  *
+ *
  * @author IDV Development Team
  * @version $Revision: 1.23 $
  */
-
 public class LineState {
 
-    /** Handle to actual chart, for ease in applying certain properties */
-    JFreeChart jfc = null;
-    
     /** vertical position value */
     public static final int VPOS_TOP = 0;
 
@@ -156,26 +144,29 @@ public class LineState {
         "Bar Chart"
     };
 
-    /** which side in legend for each Axis - default state */
-    public static final int SIDE_DEFAULT = 0;
 
-    /** which side in legend for each Axis - toggled state */
-    public static final int SIDE_TOGGLED = 1;
-    
     /** which side in legend */
-    public static final int[] SIDES = { SIDE_DEFAULT, SIDE_TOGGLED };
+    public static final int SIDE_UNDEFINED = 0;
 
-    /** States for X Axis side in legend */
-    public static final String[] XSIDELABELS = { "Bottom", "Top" };
+    /** which side in legend */
+    public static final int SIDE_LEFT = 1;
 
-    /** States for Y Axis side in legend */
-    public static final String[] YSIDELABELS = { "Left", "Right" };
+    /** which side in legend */
+    public static final int SIDE_RIGHT = 2;
 
-    /** Initial X Axis side in legend */
-    private int xAxisSide = SIDE_DEFAULT;
+    /** which side in legend */
+    public static final int[] SIDES = { SIDE_UNDEFINED, SIDE_LEFT,
+                                        SIDE_RIGHT };
 
-    /** Initial Y Axis side in legend */
-    private int yAxisSide = SIDE_DEFAULT;
+    /** which side in legend */
+    public static final String[] SIDELABELS = { "Default", "Left", "Right" };
+
+
+
+    /** which side in legend */
+    private int side = SIDE_UNDEFINED;
+
+
 
     /** Stroke type */
     public static final int STROKE_SOLID = 0;
@@ -267,12 +258,9 @@ public class LineState {
     /** for gui */
     JCheckBox axisVisibleCbx;
 
-    /** Dropdown to toggle X Axis location */
-    JComboBox xAxisLoc;
+    /** for gui */
+    JComboBox sideCbx;
 
-    /** Dropdown to toggle Y Axis location */
-    JComboBox yAxisLoc;
-    
     /** for gui */
     ColorSwatchComponent colorSwatch;
 
@@ -561,13 +549,10 @@ public class LineState {
             comps.add(GuiUtils.left(chartNameBox));
         }
 
-        xAxisLoc = GuiUtils.makeComboBox(SIDES, XSIDELABELS, getXAxisSide());
-        yAxisLoc = GuiUtils.makeComboBox(SIDES, YSIDELABELS, getYAxisSide());
+        this.sideCbx = GuiUtils.makeComboBox(SIDES, SIDELABELS, getSide());
         if (full) {
-            comps.add(GuiUtils.rLabel("X Axis Location:"));
-            comps.add(GuiUtils.left(xAxisLoc));
-            comps.add(GuiUtils.rLabel("Y Axis Location:"));
-            comps.add(GuiUtils.left(yAxisLoc));
+            comps.add(GuiUtils.rLabel("Axis Side:"));
+            comps.add(GuiUtils.left(sideCbx));
         }
 
         if (full) {
@@ -701,7 +686,6 @@ public class LineState {
      * @return Was successful
      */
     protected boolean applyProperties() {
-        
         if (colorSwatch != null) {
             color = colorSwatch.getSwatchColor();
         }
@@ -711,27 +695,9 @@ public class LineState {
         if (typeCbx != null) {
             lineType = GuiUtils.getValueFromBox(typeCbx);
         }
-        
-        // TJJ Jun 2018
-        // Each Axis state is binary.
-        // X can be along bottom or top, Y along left or right, so just toggle state
-        
-        if (xAxisLoc != null) {
-            if (GuiUtils.getValueFromBox(xAxisLoc) != xAxisSide) {
-                xAxisSide = GuiUtils.getValueFromBox(xAxisLoc);
-                AxisLocation ald = jfc.getXYPlot().getRangeAxisLocation().getOpposite();
-                jfc.getXYPlot().setRangeAxisLocation(ald);
-            }
+        if (sideCbx != null) {
+            side = GuiUtils.getValueFromBox(sideCbx);
         }
-        
-        if (yAxisLoc != null) {
-            if (GuiUtils.getValueFromBox(yAxisLoc) != yAxisSide) {
-                yAxisSide = GuiUtils.getValueFromBox(yAxisLoc);
-                AxisLocation alr = jfc.getXYPlot().getDomainAxisLocation().getOpposite();
-                jfc.getXYPlot().setDomainAxisLocation(alr);
-            }
-        }
-        
         if (verticalPositionCbx != null) {
             verticalPosition = GuiUtils.getValueFromBox(verticalPositionCbx);
         }
@@ -1083,16 +1049,6 @@ public class LineState {
     }
 
     /**
-     * Set the chart handle
-     *
-     * @param chart A handle to the enclosing chart
-     */
-    
-    public void setChartHandle(JFreeChart chart) {
-        jfc = chart;
-    }
-    
-    /**
      * Set the chart name property.
      *
      * @param value The new value for chart name
@@ -1210,41 +1166,23 @@ public class LineState {
     }
 
     /**
-     * Set the X Axis Side property.
+     * Set the Side property.
      *
      * @param value The new value for Side
      */
-    public void setXAxisSide(int value) {
-        xAxisSide = value;
+    public void setSide(int value) {
+        side = value;
     }
 
     /**
-     * Get the X Axis Side property.
+     * Get the Side property.
      *
      * @return The Side
      */
-    public int getXAxisSide() {
-        return xAxisSide;
+    public int getSide() {
+        return side;
     }
 
-    /**
-     * Set the Y Axis Side property.
-     *
-     * @param value The new value for Side
-     */
-    public void setYAxisSide(int value) {
-        yAxisSide = value;
-    }
-
-    /**
-     * Get the Y Axis Side property.
-     *
-     * @return The Side
-     */
-    public int getYAxisSide() {
-        return yAxisSide;
-    }
-    
     /**
      * Set the AxisVisible property.
      *
