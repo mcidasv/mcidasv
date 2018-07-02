@@ -154,12 +154,17 @@ public class LineState {
     /** which side in legend */
     public static final int SIDE_RIGHT = 2;
 
-    /** which side in legend */
-    public static final int[] SIDES = { SIDE_UNDEFINED, SIDE_LEFT,
-                                        SIDE_RIGHT };
+    // TJJ Jul 2018
+    // It's almost as if the domain and range are transposed in these charts?
+    // These controls actually move the X Axis Labels, not Y.
+    // So for now we're simply renaming and shuffling the dropdown labels
+    // A proper fix proved very non-trivial and would touch a lot of classes
 
     /** which side in legend */
-    public static final String[] SIDELABELS = { "Default", "Left", "Right" };
+    public static final int[] SIDES = { SIDE_RIGHT, SIDE_LEFT };
+
+    /** which side in legend */
+    public static final String[] SIDELABELS = { "Bottom", "Top" };
 
 
 
@@ -551,7 +556,7 @@ public class LineState {
 
         this.sideCbx = GuiUtils.makeComboBox(SIDES, SIDELABELS, getSide());
         if (full) {
-            comps.add(GuiUtils.rLabel("Axis Side:"));
+            comps.add(GuiUtils.rLabel("X Axis Label Location:"));
             comps.add(GuiUtils.left(sideCbx));
         }
 
