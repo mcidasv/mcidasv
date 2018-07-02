@@ -468,6 +468,16 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
          return filtField;
       }
       
+      /**
+       * Apply a median filter to FlatField range If domain dimension == 3, range is filtered as succession of
+       * 2D filtered layers along the slowest varying dimension.
+       * @param fltFld incoming FlatField to be filtered
+       * @param window_lenx filter window (kernel) dimensions; x: fastest varying dimensions
+       * @param window_leny
+       * @return FlatField with filtered (copied) range
+       * @throws VisADException
+       * @throws RemoteException 
+       */
       public static FlatField medianFilter(FlatField fltFld, int window_lenx, int window_leny) throws VisADException, RemoteException {
          GriddedSet domSet = (GriddedSet) fltFld.getDomainSet();
          FlatField filtFld = new FlatField((FunctionType)fltFld.getType(), domSet);
@@ -506,6 +516,16 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
          return filtFld;
       }
       
+      /**
+       * Apply median filter to 2D array of values
+       * @param A 2D array to filter
+       * @param lenx Dimensions of A, x varies fastest
+       * @param leny
+       * @param window_lenx Dimensions of window (kernel) x fastest varying
+       * @param window_leny
+       * @return
+       * @throws VisADException 
+       */
       public static float[] medianFilter(float[] A, int lenx, int leny, int window_lenx, int window_leny)
            throws VisADException {
         float[] result =  new float[A.length];
@@ -740,47 +760,5 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
         
         return result;
       }
-      
-      public static float[] medianFilterOrg(float[] A, int lenx, int leny, int window_lenx, int window_leny)
-           throws VisADException {
-        float[] result =  new float[A.length];
-        float[] window =  new float[window_lenx*window_leny];
-        float[] new_window =  new float[window_lenx*window_leny];
-        int[] sort_indexes = new int[window_lenx*window_leny];
-                                                                                                                                    
-        int a_idx;
-        int w_idx;
-                                                                                                                                    
-        int w_lenx = window_lenx/2;
-        int w_leny = window_leny/2;
-                                                                                                                                    
-        int lo;
-        int hi;
-        int ww_jj;
-        int ww_ii;
-        int cnt;
-                                                                                                                                    
-        for (int j=0; j<leny; j++) {
-          for (int i=0; i<lenx; i++) {
-            a_idx = j*lenx + i;
-            cnt = 0;
-            for (int w_j=-w_leny; w_j<w_leny; w_j++) {
-              for (int w_i=-w_lenx; w_i<w_lenx; w_i++) {
-                ww_jj = w_j + j;
-                ww_ii = w_i + i;
-                w_idx = (w_j+w_leny)*window_lenx + (w_i+w_lenx);
-                if ((ww_jj >= 0) && (ww_ii >=0) && (ww_jj < leny) && (ww_ii < lenx)) {
-                  window[cnt] = A[ww_jj*lenx+ww_ii];
-                  cnt++;
-                }
-              }
-            }
-            System.arraycopy(window, 0, new_window, 0, cnt);
-            //-sort_indexes = QuickSort.sort(new_window, sort_indexes);
-            sort_indexes = QuickSort.sort(new_window);
-            result[a_idx] = new_window[cnt/2];
-          }
-        }
-        return result;
-      }
+
 }

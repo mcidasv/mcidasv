@@ -33,6 +33,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.TimeZone;
+import visad.Data;
 
 
 /**
@@ -154,6 +155,15 @@ public class SunRelativePosition {
      * Value is in milliseconds ellapsed since midnight UTC, January 1st, 1970.
      */
     private long time = System.currentTimeMillis();
+    
+    private double julianDay = Double.NaN;
+    
+    private double jddate;
+    
+    double solarDec;
+    double eqTime;
+    
+    private boolean timeUpdated = false;
 
     /**
      * {@code true} is the elevation and azimuth are computed, or {@code false}
@@ -434,11 +444,17 @@ public class SunRelativePosition {
 
         // Compute: 1) Julian day (days ellapsed since January 1, 4723 BC at 12:00 GMT).
         //          2) Time as the centuries ellapsed since January 1, 2000 at 12:00 GMT.
-        final double julianDay = Calendar.julianDay(this.time);
-        final double time      = (julianDay-2451545)/36525;
+        
+        if (!timeUpdated) {
+           julianDay = Calendar.julianDay(this.time);
+           final double time      = (julianDay-2451545)/36525;
 
-        double solarDec = sunDeclination(time);
-        double eqTime   = equationOfTime(time);
+           solarDec = sunDeclination(time);
+           eqTime   = equationOfTime(time);
+           timeUpdated = true;
+        }
+        
+        
         this.noonTime   = Math.round(solarNoonTime(longitude, eqTime) * (60*1000)) +
                           (this.time/DAY_MILLIS)*DAY_MILLIS;
 
@@ -549,6 +565,7 @@ public class SunRelativePosition {
         if (time != this.time) {
             this.time = time;
             this.updated = false;
+            this.timeUpdated = false;
         }
     }
 
@@ -650,7 +667,28 @@ public class SunRelativePosition {
         }
         return new Date(noonTime);
     }
-
+    
+    public static float[] getSolarZenith(float[] longitudes, float[] latitudes, Date dateTime, float[] solzen) throws Exception {
+       SunRelativePosition calculator = new SunRelativePosition();
+       
+       int numPts = longitudes.length;
+       if (numPts != latitudes.length) {
+          throw new Exception("number of longitudes and latitudes must match");
+       }
+       
+       if (solzen == null) {
+          solzen = new float[numPts];
+       }
+       
+       calculator.setDate(dateTime);
+       for (int k=0; k<numPts; k++) {
+          calculator.setCoordinate(longitudes[k], latitudes[k]);
+          solzen[k] = (float) calculator.getSolarZenith();
+       }
+       
+       return solzen;
+    }
+    
     /**
      * Affiche la position du soleil Ã  la date et coordonnÃ©es spÃ©cifiÃ©e.
      * Cette application peut Ãªtre lancÃ©e avec la syntaxe suivante:
