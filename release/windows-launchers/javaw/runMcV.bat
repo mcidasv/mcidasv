@@ -1,15 +1,15 @@
 @ECHO OFF
 
-SET MCV_USERPATH=%USERPROFILE%\McIDAS-V
-SET MCV_LOGPATH=%MCV_USERPATH%\mcidasv.log
-SET MCV_PARAMS=%*
+SET MCV_USERPATH="%USERPROFILE%\McIDAS-V"
+SET MCV_LOGPATH="%MCV_USERPATH%\mcidasv.log"
 SET USE_TEMPUSERPATH=0
+SET WAIT_FOR_EXIT=1
 
-SET MCV_DIR=%~dp0%
+SET CURRENT_DIR="%CD%"
 
-SET CURRENT_DIR=%cd%
+IF NOT EXIST "lib" echo This script must be run from within the McIDAS-V installation directory && goto end
 
-CD %MCV_DIR%\lib
+PUSHD lib
 
 SET MCV_JAR=
 FOR /F %%a IN ('DIR /b mcidasv-*.jar 2^>nul') DO SET MCV_JAR=%%a
@@ -17,7 +17,7 @@ IF DEFINED MCV_JAR (
     GOTO donefindingjars
 ) ELSE (
     ECHO "*** ERROR: Could not find McIDAS-V JAR file"
-    GOTO end
+    GOTO cleanup
 )
 
 :donefindingjars
@@ -25,13 +25,26 @@ IF DEFINED MCV_JAR (
 REM If _JAVA_OPTIONS is set it takes precedence over command line
 SET _JAVA_OPTIONS=
 
-REM Check for -userpath parameter
+REM need to explicitly zero out Skip because batch files aren't run
+REM in a subshell, so the value would be set to whatever the previous
+REM invocation of runMcV set it to!
+SET Skip=0
+
+REM Check for our supported runMcV arguments, and then pass 'em
+REM off to the appropriate argument handler (i.e. setuserpath, setlogpath, etc)
 :checkparameters
 IF '%1' == '' GOTO endparameters
 IF '%1' == '-userpath' GOTO setuserpath
 IF '%1' == '-logpath' GOTO setlogpath
 IF '%1' == '-tempuserpath' GOTO settempuserpath
+IF '%1' == '-guistart' GOTO setguistart
 SHIFT
+GOTO checkparameters
+
+:setguistart
+SET WAIT_FOR_EXIT=0
+SHIFT
+SET /A Skip += 1
 GOTO checkparameters
 
 :setuserpath
@@ -40,6 +53,7 @@ SET "MCV_USERPATH=%~2"
 setlocal EnableDelayedExpansion
 SHIFT
 SHIFT
+SET /A Skip += 2
 GOTO checkparameters
 
 :setlogpath
@@ -48,6 +62,8 @@ SET "MCV_LOGPATH=%~2"
 setlocal EnableDelayedExpansion
 SHIFT
 SHIFT
+SET /A Skip += 2
+SET USER_SPECIFIED_LOGPATH="%MCV_LOGPATH%"
 GOTO checkparameters
 
 :settempuserpath
@@ -56,9 +72,28 @@ SET USE_TEMPUSERPATH=1
 SET TEMPUSERPATH=%TMP%\mcidasv-%RANDOM%-%TIME:~6,5%.tmp
 IF EXIST "%TEMPUSERPATH%" GOTO :maketempname
 SHIFT
+SET /A Skip += 1
 GOTO checkparameters
 
 :endparameters
+
+REM the following crazy stuff is courtesy of https://stackoverflow.com/a/20702597
+REM the problem is that the typical way of getting all parameters passed to
+REM a batch file (aka "%*") apparently never changes, so all of the "SHIFT"
+REM stuff in the above lines doesn't work.
+REM another annoyance is that if Skip isn't incremented by one for each SHIFT
+REM in the arg handlers, things will misbehave.
+
+(
+SETLOCAL ENABLEDELAYEDEXPANSION
+FOR %%I IN (%*) DO IF !Skip! LEQ 0 ( 
+        SET params=!params! %%I
+    ) ELSE SET /A Skip-=1
+)
+(
+ENDLOCAL
+SET MCV_PARAMS=%params%
+)
 
 IF NOT "%MCV_USERPATH%"=="%USERPROFILE%\McIDAS-V" (
     SET MCV_LOGPATH="%MCV_USERPATH%\mcidasv.log"
@@ -67,8 +102,14 @@ IF NOT "%MCV_USERPATH%"=="%USERPROFILE%\McIDAS-V" (
 IF "%USE_TEMPUSERPATH%"=="1" (
     SET MCV_USERPATH=%TEMPUSERPATH%
     SET MCV_LOGPATH=%TEMPUSERPATH%\mcidasv.log
-    SET MCV_PARAMS=%MCV_PARAMS:-tempuserpath= %
+    REM SET MCV_PARAMS=%MCV_PARAMS:-tempuserpath= %
     ECHO Using randomly generated userpath: %TEMPUSERPATH%
+)
+
+REM this check is done so that users specify a log file outside
+REM of the McV user directory. Especially helpful with -tempuserpath!
+IF DEFINED USER_SPECIFIED_LOGPATH (
+    SET MCV_LOGPATH=%USER_SPECIFIED_LOGPATH%
 )
 
 REM Initialize new userpath
@@ -89,12 +130,12 @@ REM Controls whether or not the welcome window appears (0 = no, 1 = yes)
 SET SHOW_WELCOME=0
 
 REM Put the log files in the user's MCV_USERPATH directory (which should be writeable)
-SET MCV_LOG=%MCV_USERPATH%\mcidasv.log
+SET MCV_LOG="%MCV_USERPATH%\mcidasv.log"
 SET MCV_LOG_LINES=10000
 
 REM Always run the default prefs; user can override as much as they want
-IF NOT EXIST "%MCV_DIR%\runMcV-Prefs.bat" echo This script must be run from within the McIDAS-V installation directory && goto end
-CALL "%MCV_DIR%\runMcV-Prefs.bat"
+IF NOT EXIST "..\runMcV-Prefs.bat" echo This script must be run from within the McIDAS-V installation directory && goto cleanup
+CALL "..\runMcV-Prefs.bat"
 
 REM Toggle the welcome window if MCV_USERPATH does not exist
 IF NOT EXIST "%MCV_USERPATH%" SET SHOW_WELCOME=1
@@ -103,7 +144,7 @@ REM Create MCV_USERPATH directory if it doesn't already exist
 IF NOT EXIST "%MCV_USERPATH%" mkdir "%MCV_USERPATH%"
 
 REM Copy prefs to MCV_USERPATH directory if it doesn't already exist
-IF NOT EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" COPY runMcV-Prefs.bat "%MCV_USERPATH%\runMcV-Prefs.bat"
+IF NOT EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" COPY "..\runMcV-Prefs.bat" "%MCV_USERPATH%\runMcV-Prefs.bat"
 
 REM If MCV_USERPATH\runMcV-Prefs.bat exists, call it to populate the current environment
 IF EXIST "%MCV_USERPATH%\runMcV-Prefs.bat" CALL "%MCV_USERPATH%\runMcV-Prefs.bat"
@@ -217,8 +258,8 @@ GOTO goodheap
 REM Get the amount of system memory
 echo Reading system configuration...
 SET /a SYS_MEM=0
-FOR /F %%i IN ('%MCV_DIR%\jre\bin\java.exe -cp %MCV_JAR% edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
-IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT% && GOTO goodheap
+FOR /F %%i IN ('..\jre\bin\java.exe -cp %MCV_JAR% edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
+IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT% && ECHO DAMN && GOTO goodheap
 set HEAP_PERCENT=%HEAP_SIZE:~0,-1%
 set /a HEAP_SIZE=%SYS_MEM% * %HEAP_PERCENT% / 100
 set HEAP_SIZE=%HEAP_SIZE%M
@@ -228,25 +269,33 @@ set HEAP_SIZE=%HEAP_SIZE%M
 :startup
 REM Start McIDAS-V
 
-IF EXIST "jre\bin\client\classes.jsa" (
+IF EXIST "..\jre\bin\client\classes.jsa" (
 @echo *** notice: using class data sharing
-) ELSE (
-@echo *** notice: not using class data sharing
 )
-
-set MCV_CLASSPATH=%MCV_JAR%;%USERGUIDE_JAR%
 
 set MCV_EXTPATH=-Djava.ext.dirs="jre\lib\ext"
 set MCV_LIBPATH=-Djava.library.path="jre\lib\ext"
 
-@echo Command line: "%MCV_DIR%\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+@echo Command line: "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
 
 IF DEFINED MCV_UNWELCOME_WINDOW (
-    start /B /WAIT "McIDAS-V" "%MCV_DIR%\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
-    EXIT
+    IF "%WAIT_FOR_EXIT%"=="1" (
+        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        GOTO cleanup
+    ) ELSE (
+        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+    )
 ) ELSE (
-    start /B "McIDAS-V" "%MCV_DIR%\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath="%MCV_LOGPATH%" -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+    IF "%WAIT_FOR_EXIT%"=="1" (
+        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        GOTO cleanup
+    ) ELSE (
+        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+    )
 )
-:end
 
-CD %CURRENT_DIR%
+:cleanup
+REM CHDIR "%CURRENT_DIR%"
+POPD
+
+:end

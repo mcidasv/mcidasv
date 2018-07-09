@@ -819,6 +819,9 @@ return allowed;</validation>
                 <serializedBean>
                   <java class="java.beans.XMLDecoder">
                     <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
+                      <void property="arguments">
+                        <string>-guistart</string>
+                      </void>
                       <void property="description">
                         <string>Run ${compiler:sys.fullName} ${compiler:sys.version}</string>
                       </void>
