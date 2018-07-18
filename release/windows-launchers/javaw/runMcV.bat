@@ -8,8 +8,8 @@ SET WAIT_FOR_EXIT=1
 SET CURRENT_DIR="%CD%"
 
 IF NOT EXIST "lib" echo This script must be run from within the McIDAS-V installation directory && goto end
-
-PUSHD lib
+setlocal
+CD lib
 
 SET MCV_JAR=
 FOR /F %%a IN ('DIR /b mcidasv-*.jar 2^>nul') DO SET MCV_JAR=%%a
@@ -295,7 +295,6 @@ IF DEFINED MCV_UNWELCOME_WINDOW (
 )
 
 :cleanup
-REM CHDIR "%CURRENT_DIR%"
-POPD
+endlocal
 
 :end
