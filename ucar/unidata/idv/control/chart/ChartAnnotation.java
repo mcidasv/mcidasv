@@ -289,7 +289,9 @@ public abstract class ChartAnnotation extends PropertiedThing implements XYAnnot
         comps.add(GuiUtils.rLabel("Name: "));
         comps.add(nameFld = new JTextField(getName()));
         if (showColorInProperties()) {
-            XmlObjectStore store = plotWrapper.getControl().getStore();
+            // mcv histogram change
+            XmlObjectStore store = plotWrapper.getIdv().getStore();
+            // end mcv histogram change
             JComponent[] colorSwatchComps =
                 GuiUtils.makeColorSwatchWidget(store, color, "Chart Color: ");
             colorSwatch = colorSwatchComps[0];

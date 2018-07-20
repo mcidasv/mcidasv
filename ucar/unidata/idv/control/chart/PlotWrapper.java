@@ -29,6 +29,7 @@
 package ucar.unidata.idv.control.chart;
 
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
@@ -44,6 +45,8 @@ import org.jfree.ui.*;
 import ucar.unidata.data.DataAlias;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
+import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.grid.GridUtil;
 
 
@@ -55,7 +58,8 @@ import ucar.unidata.data.sounding.TrackDataSource;
 import ucar.unidata.gis.SpatialGrid;
 
 
-
+import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.control.DisplayControlImpl;
 
 import ucar.unidata.ui.TableSorter;
@@ -244,9 +248,11 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
         return new String[] { "Data", "Display" };
     }
 
-    public DisplayControlImpl getControl() {
+    // mcv histogram change
+    public DisplayControl getControl() {
         return displayControl;
     }
+    // end mcv histogram change
 
     /**
      * Create the properties contents
@@ -264,7 +270,9 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
             return;
         }
         if (canDoColors()) {
-            XmlObjectStore store = this.displayControl.getStore();
+            // mcv histogram change
+            XmlObjectStore store = getIdv().getStore();
+            // end mcv histogram change
             backgroundSwatch =
                 GuiUtils.makeColorSwatchWidget(store, backgroundColor, "")[0];
             dataAreaSwatch = GuiUtils.makeColorSwatchWidget(store, dataAreaColor,
@@ -875,8 +883,5 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
     public boolean getAutoRange() {
         return autoRange;
     }
-
-
-
 }
 

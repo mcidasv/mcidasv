@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.control.DisplayControlBase;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.idv.control.chart.DataChoiceWrapper;
 import ucar.unidata.idv.control.chart.HistogramWrapper;
@@ -109,6 +110,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
     public McIDASVHistogramWrapper(String name, List dataChoices, DisplayControlImpl control) {
         super(name, dataChoices);
         imageControl = control;
+        // mcv histogram change
+        displayControl = control;
+        // end mcv histogram change
     }
 
     /**
@@ -461,7 +465,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
             }
 
             if (hasDisplayControl()) {
-                getDisplayControl().removeDisplayComponent(this);
+                // mcv histogram change
+                ((DisplayControlBase)getDisplayControl()).removeDisplayComponent(this);
+                // end mcv histogram change
             }
             return true;
         } else {
@@ -498,7 +504,9 @@ public class McIDASVHistogramWrapper extends HistogramWrapper {
         isRemoved = true;
         List displayables = getDisplayables();
         if (hasDisplayControl() && !displayables.isEmpty()) {
-            getDisplayControl().removeDisplayables(displayables);
+            // mcv histogram change
+            ((DisplayControlBase)getDisplayControl()).removeDisplayables(displayables);
+            // end mcv histogram change
         }
         firePropertyChange(PROP_REMOVED, null, this);
     }
