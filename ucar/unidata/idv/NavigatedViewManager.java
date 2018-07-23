@@ -74,13 +74,20 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  *
  * @author IDV development team
  */
 public abstract class NavigatedViewManager extends ViewManager {
-
+    
+    /** Logging object. */
+    private static final Logger logger = 
+        LoggerFactory.getLogger(NavigatedViewManager.class);
+    
     /** Action command to  pan down */
     public static final String CMD_NAV_DOWN = "cmd.nav.down";
 
@@ -151,6 +158,10 @@ public abstract class NavigatedViewManager extends ViewManager {
     /** Defines the rubber band box for sharing state */
     public static final String SHARE_RUBBERBAND = "NavigatedViewManager.SHARE_RUBBERBAND";
 
+    /** Defines the perspective view for sharing state. */
+    public static final String SHARE_TOGGLEPERSPECTIVE = 
+        "NavigatedViewManager.SHARE_TOGGLEPERSPECTIVE";
+    
     /** How far do we zoom on a zoom in or out */
     public static final double ZOOM_FACTOR =
         NavigatedDisplayToolBar.ZOOM_FACTOR;
@@ -486,6 +497,7 @@ public abstract class NavigatedViewManager extends ViewManager {
 
                     super.changePerspectiveView(v);
                     perspectiveViewChanged(v);
+                    doShare(SHARE_TOGGLEPERSPECTIVE, v);
                 }
                 protected void applyVerticalRange(VertScaleInfo transfer)
                         throws Exception {
@@ -568,6 +580,15 @@ public abstract class NavigatedViewManager extends ViewManager {
         if (dataId.equals(SHARE_RUBBERBAND)) {
     	    //System.out.println("NVM: Rubber Band Box changed from share");
             notifyDisplayControls(SHARE_RUBBERBAND);
+            return;
+        }
+        
+        if (dataId.equals(SHARE_TOGGLEPERSPECTIVE)) {
+            if ((viewpointControl != null) && (data[0] instanceof Boolean)) {
+                boolean value = (Boolean)data[0];
+                viewpointControl.changePerspectiveView(value);
+                perspectiveViewChanged(value);
+            }
             return;
         }
 
