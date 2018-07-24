@@ -134,7 +134,7 @@ SET MCV_LOG="%MCV_USERPATH%\mcidasv.log"
 SET MCV_LOG_LINES=10000
 
 REM Always run the default prefs; user can override as much as they want
-IF NOT EXIST "..\runMcV-Prefs.bat" echo This script must be run from within the McIDAS-V installation directory && goto cleanup
+IF NOT EXIST "..\runMcV-Prefs.bat" echo "This script must be run from within the McIDAS-V installation directory" && goto cleanup
 CALL "..\runMcV-Prefs.bat"
 
 REM Toggle the welcome window if MCV_USERPATH does not exist
@@ -259,7 +259,7 @@ REM Get the amount of system memory
 echo Reading system configuration...
 SET /a SYS_MEM=0
 FOR /F %%i IN ('..\jre\bin\java.exe -cp %MCV_JAR% edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
-IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT% && ECHO DAMN && GOTO goodheap
+IF %SYS_MEM% LEQ 0 SET HEAP_SIZE=%HEAP_DEFAULT% && ECHO UHOH && GOTO goodheap
 set HEAP_PERCENT=%HEAP_SIZE:~0,-1%
 set /a HEAP_SIZE=%SYS_MEM% * %HEAP_PERCENT% / 100
 set HEAP_SIZE=%HEAP_SIZE%M
