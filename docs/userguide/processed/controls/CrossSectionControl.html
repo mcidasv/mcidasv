@@ -33,7 +33,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/CrossSec
 -->
 <div class="pagesubtitle">Overview</div>
 <p>The Vertical Cross Section Controls are used to adjust vertical cross section
-  displays. Vertical cross sections can be made in three types of displays: Contour, Color-Filled Contour, and  Color-Shaded. The control window has two tabs: <strong>Display</strong> and <strong>Settings</strong>. You can change the endpoints of the cross section by clicking and dragging the endpoints in the Main Display window.</p>
+  displays. Vertical cross sections can be made in three types of displays: Contour, Color-Filled Contour, and  Color-Shaded. The control window has two tabs: <strong>Display</strong> and <strong>Settings</strong>. The endpoints of the cross section can be moved by clicking and dragging the endpoints in the Main Display window.</p>
 <p>The <strong>Display</strong> tab includes a duplicate of
   the display in the Main Display window:</p>
 <div class="images"><img  src="images/CrossSectionControlGui1.gif"  alt="Image 1: Display Tab of the Layer Controls Tab"><br>
@@ -62,8 +62,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/CrossSec
       shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows you to open the <a  href="../tools/ColorTableEditor.html">Color Table Editor</a>,
     change the range, select other color tables, etc.</li>
   <li class="propertylistitem"><strong>Visible Range -</strong> Sets the range of data displayed when using the Color-Shaded Cross Section display type.</li>
-  <li class="propertylistitem"><strong>Selector Position -</strong> Changes
-    the position of the selector in the main display. You can change this by using the slider or by typing a value into the field and hitting Enter.</li>
+  <li class="propertylistitem"><strong>Selector Position -</strong> Sets
+    the position of the selector in the Main Display. This can be changed by using the slider or by typing a value into the field and hitting Enter.</li>
   <li class="propertylistitem"><strong>Smoothing -</strong> Smooths the grid that can be used to smooth contour lines or flow fields
     in the display. There are seven types of smoothing: None, 5-point, 9-point, Gaussian, Cressman, Circular, and Rectangular
     weighted smoothers. The smoothing factor can be adjusted for all except the 5-point and 9-point smoothers. The higher the value, the smoother the grid. For the Cressman, Circular and Rectangular aperture smoothing types, the smoothing factor is the radius in grid spacing units.</li>
@@ -78,12 +78,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/CrossSec
 <p>The <strong>Edit</strong> menu has this unique option:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Change Contours - </strong>Opens the <a href="misc/ContourDialog.html">Contour Properties Editor</a> to change how the contours appear in the Main Display window. This is an option for the Contour Cross Section and Color-Filled Contour Cross Section display types.</li>
+  <li class="propertylistitem"><strong>Properties -</strong> Opens a Properties window that includes a Cross Section tab. The Cross Section tab allows for controlling most aspects of the display in the Layer Controls.</li>
 </ul>
 <p>The <strong>View</strong> menu has these unique options:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Use Data Projection -</strong> Re-centers the display and resets the zoom level back to the display's   initial settings without changing any other preferences you have   modified.</li>
   <li class="propertylistitem"><strong>Enable Adaptive Resolution (Under Development) -</strong> Turns <a href="../misc/AdaptiveResolution.html">adaptive resolution</a> on or off for the layer. This menu item is only available if adaptive resolution is enabled in the <a href="../tools/preferences/DisplayWindowPreferences.html#enableAdaptiveResolution">User Preferences</a>. Note that adaptive resolution is still under development.</li>
-  <li class="propertylistitem"><strong>Cross Section -</strong> Enables you to capture an image or movie of your display, or open a Properties window which allows you to modify many aesthetic aspects of the Main Display window.</li>
+  <li class="propertylistitem"><strong>Cross Section -</strong> Allows for capturing an image or movie of the cross section display. Additional properties of the Cross Section, such as the background color, can also be set.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
