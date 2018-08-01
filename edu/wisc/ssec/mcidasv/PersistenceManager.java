@@ -1299,8 +1299,9 @@ public class PersistenceManager extends IdvPersistenceManager {
         String zidvPath = getStateManager().getProperty(PROP_ZIDVPATH, "");
 
         // bail out if the macro replacement cannot work
+        // return true because this is ok, just no data bundled
         if (zidvPath.isEmpty()) {
-            return false;
+            return true;
         }
 
         for (DataSourceImpl d : ds) {
