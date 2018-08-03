@@ -69,6 +69,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#scripting1.8">Scripting</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#colorTableEditor1.8">Color Table Editor Transparency Readout</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.8">Under Development</a></div>
@@ -111,7 +112,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       <ul>
       <li>New functions:</li>
       <ul>
-        <li>placeholder</li>
+        <li>setMapLayerVisibility - Sets the visibility of the map layer in the Main Display</li>
       </ul>
     <li>New functionality with existing functions:</li>
       <ul>
@@ -121,15 +122,21 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       <ul>
         <li>placeholder</li>
       </ul>
-    </ul></div>
+		</ul></div></div>
+<div class="faq-category"><a name="colorTableEditor1.8" id="colorTableEditor1.8"></a>
+    <h4>Color Table Editor Transparency Readout</h4>
+    <div class="faq-answer">
+    Added transparency readout to the color bar of the Color Table Editor when the cursor is moved over the color bar.
   </div>
+	</div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat5_1.8" id="faq1_cat5_1.8"></a>Under Development</div>
   <div class="faq-category"><a name="jpss1.8" id="jpss1.8"></a>
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
-      <p>Improved the ordering of fields in the Field Selector tab of the Data Explorer when working with a multi-banded SVM granule from NOAA CLASS. All of the field names are now listed in numerical order based on band number with quality flags grouped with the physical values (i.e. radiance, reflectance, brightness temperature) for each band.</p>
+      <p>Improved the ordering of fields in the Field Selector tab of the Data Explorer when working with a multi-banded SVM granule from NOAA CLASS. All of the field names are now listed in numerical order based on band number with quality flags grouped with the physical values (i.e. radiance, reflectance, brightness temperature) for each band. The output of the listVIIRSFieldsInFile() function is now returned in order of band number as well, with the calibrated values and quality flags listing together for each band.</p>
       <p>Improved the date/time format returned from listVIIRSTimesInField() for both NOAA CLASS and NASA-formatted data. This format now matches what is seen in the layer label of a displayed VIIRS layer as well as what is in the Time Animation Widget of the Main Display window.</p>
+      <p>Added the ability to display CrIS SCRIF full spectral Science SDR data.</p>
     </div>
   </div>
 </div>

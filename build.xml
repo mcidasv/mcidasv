@@ -1250,7 +1250,7 @@
 
     <!-- Zip up McIDAS-V JARs. mcidasv-tiny.zip contains only local-idv.jar  -->
     <!-- and mcidasv.jar. mcidasv-alljars.zip contains all McIDAS-V JARs.    -->
-    <target name="archive" depends="jar" description="Build McIDAS-V JARs and create mcidasv-tiny.zip and mcidasv-alljars.zip.">
+    <target name="archive" depends="ncidv.nolog, external.cleanup, jar" description="Build McIDAS-V JARs and create mcidasv-tiny.zip and mcidasv-alljars.zip.">
         <!-- zip task defaults to overwriting destfile.  -->
         <zip destfile="${dist.dir}/mcidasv-tiny.zip">
             <fileset dir="${dist.dir}" includes="${local-idv.jarname}, ${app.jarname}"/>

@@ -51,15 +51,14 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.python.core.PyObject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -100,7 +99,6 @@ import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlResourceCollection;
-
 import edu.wisc.ssec.mcidasv.control.ImagePlanViewControl;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
@@ -1292,15 +1290,18 @@ public class PersistenceManager extends IdvPersistenceManager {
      * 
      * @param ds {@code List} of {@link DataSourceImpl DataSourceImpls} to
      * inspect and/or fix. Cannot be {@code null}.
+     * @return true if able to load data ok
      * 
      * @see #isBulkDataSource(DataSourceImpl)
      */
-    private void fixBulkDataSources(final List<DataSourceImpl> ds) {
+    
+    private boolean fixBulkDataSources(final List<DataSourceImpl> ds) {
         String zidvPath = getStateManager().getProperty(PROP_ZIDVPATH, "");
 
         // bail out if the macro replacement cannot work
+        // return true because this is ok, just no data bundled
         if (zidvPath.isEmpty()) {
-            return;
+            return true;
         }
 
         for (DataSourceImpl d : ds) {
@@ -1311,13 +1312,24 @@ public class PersistenceManager extends IdvPersistenceManager {
 
             // err... now do the macro sub and replace the contents of 
             // data paths with the singular element in temp paths?
-            List<String> tempPaths = new ArrayList<>(d.getTmpPaths());
+            List<String> tempPaths = null;
+            try {
+                tempPaths = new ArrayList<>(d.getTmpPaths());
+            } catch (NullPointerException npe) {
+                // one of the strides is not an integer, let user know
+                String msg = "It appears there is some invalid data in this bundle.\n" +
+                             "Please ensure correctness of the original data sources.\n";
+                Object[] params = { msg };
+                JOptionPane.showMessageDialog(null, params, "Invalid Bundle", JOptionPane.OK_OPTION);
+                return false;
+            }
             String tempPath = tempPaths.get(0);
             tempPath = tempPath.replace(MACRO_ZIDVPATH, zidvPath);
             tempPaths.set(0, tempPath);
             PollingInfo p = d.getPollingInfo();
             p.setFilePaths(tempPaths);
         }
+        return true;
     }
 
     /**
@@ -1444,7 +1456,12 @@ public class PersistenceManager extends IdvPersistenceManager {
 
         List<DataSourceImpl> dataSources = (List)ht.get("datasources");
         if (dataSources != null) {
-            fixBulkDataSources(dataSources);
+            // TJJ - sometimes this will fail if underlying data is corrupt
+            boolean ok = fixBulkDataSources(dataSources);
+            if (! ok) {
+                bundleLoading = false;
+                return;
+            }
         }
 
         // older hydra bundles may contain ReadoutProbes in the list of

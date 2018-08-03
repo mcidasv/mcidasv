@@ -269,7 +269,15 @@ public class LatLonLabelData {
             f = null;
         }
         lll.setFont(f);
-        lll.setTextSize(size / 12.f);
+
+        // TJJ Jul 2018
+        // Take display scale into account when making font changes
+        // Inquiry: http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2685
+        float scale = 1.0f;
+        if ((myLatLonLabels != null) && (myLatLonLabels.getDisplayMaster() != null)) {
+            scale = myLatLonLabels.getDisplayMaster().getDisplayScale();
+        }
+        lll.setTextSize(scale * (size / 12.f));
     }
 
     /**

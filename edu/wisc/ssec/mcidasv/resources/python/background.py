@@ -3786,7 +3786,7 @@ def getVIIRSImage(*args, **kwargs):
 def loadJPSSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
     """Load JPSS (VIIRS, ATMS, or CrIS) imagery.
 
-    file_list: list of NPP *data* files.  You need to have geolocation files
+    file_list: list of JPSS *data* files.  You need to have geolocation files
                in the same *directory* as these files, but *do not* include
                the geolocation files in file_list.
 
