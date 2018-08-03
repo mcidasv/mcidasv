@@ -34,6 +34,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.TimeZone;
 import visad.Data;
+import visad.FlatField;
 
 
 /**
@@ -668,6 +669,41 @@ public class SunRelativePosition {
         return new Date(noonTime);
     }
     
+    /**
+     * @param longitudes float[] of degrees
+     * @param latitudes float[] of degrees
+     * @param dateTime java.util.Date
+     * @param output FlatField of which computed angles (degrees) will be written into the range
+     * @throws Exception 
+     */    
+    public static void getCosSolarZenith(float[] longitudes, float[] latitudes, Date dateTime, FlatField output) throws Exception {
+       float[][] values = output.getFloats(false);
+       getSolarZenith(longitudes, latitudes, dateTime, values[0]);
+       for (int i=0; i<values[0].length; i++) {
+          values[0][i] = (float) Math.cos(values[0][i]*Data.DEGREES_TO_RADIANS);
+       }       
+    }
+    
+    /**
+     * @param longitudes float[] of degrees
+     * @param latitudes float[] of degrees
+     * @param dateTime java.util.Date
+     * @param output FlatField of which computed angles (degrees) will be written into the range
+     * @throws Exception 
+     */    
+    public static void getSolarZenith(float[] longitudes, float[] latitudes, Date dateTime, FlatField output) throws Exception {
+       float[][] values = output.getFloats(false);
+       getSolarZenith(longitudes, latitudes, dateTime, values[0]);       
+    }
+    
+    /**
+     * @param longitudes float[] of degrees
+     * @param latitudes float[] of degrees
+     * @param dateTime java.util.Date
+     * @param solzen float[] of computed solar zenith angle (degrees). If null, array will be allocated.
+     * @return the compute values
+     * @throws Exception 
+     */
     public static float[] getSolarZenith(float[] longitudes, float[] latitudes, Date dateTime, float[] solzen) throws Exception {
        SunRelativePosition calculator = new SunRelativePosition();
        
