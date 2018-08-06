@@ -1270,7 +1270,8 @@ def listADDEImages(localEntry=None,
                     'start-time': DateTime(d.getStartTime()),
                     'url': urls[i],
                 }
-            temp.append(dt)
+            # TJJ Aug 2018 - now sorting key list returned
+            temp.append(sorted(dt))
                 
     if unit and not foundUnit:
         raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
