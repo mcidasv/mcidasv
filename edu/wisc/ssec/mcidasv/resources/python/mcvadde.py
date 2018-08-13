@@ -10,6 +10,7 @@ import java.lang.Exception
 
 from background import _MappedAreaImageFlatField
 
+from collections import OrderedDict
 from collections import namedtuple
 
 from java.util.concurrent import Callable
@@ -1271,10 +1272,7 @@ def listADDEImages(localEntry=None,
                     'url': urls[i],
                 }
             # TJJ Aug 2018 - now reordering returned dictionary by key alphabetical order
-            sorted_dt = dict()
-            for k, v in sorted(dt.items()):
-                sorted_dt[k] = v
-            temp.append(sorted_dt)
+            temp.append(OrderedDict(sorted(dt.items())))
                 
     if unit and not foundUnit:
         raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
