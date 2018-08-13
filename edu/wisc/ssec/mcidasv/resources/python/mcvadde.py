@@ -1270,7 +1270,11 @@ def listADDEImages(localEntry=None,
                     'start-time': DateTime(d.getStartTime()),
                     'url': urls[i],
                 }
-            temp.append(dt)
+            # TJJ Aug 2018 - now reordering returned dictionary by key alphabetical order
+            sorted_dt = dict()
+            for k, v in sorted(dt.items()):
+                sorted_dt[k] = v
+            temp.append(sorted_dt)
                 
     if unit and not foundUnit:
         raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
