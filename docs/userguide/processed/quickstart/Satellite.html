@@ -47,12 +47,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/Satell
 Sources</strong></a> tab. On the left side of this tab, select <strong>Satellite-&gt;Imagery</strong> from
 the list of available choosers. For more information about the imagery chooser,
 see <a href="../data/choosers/ImageChooser.html">Choosing Satellite Imagery</a>.</p>
-<div class="images"><img src="images/ImageChooser.gif" width="1010" height="494" alt="Image 2: Data Sources tab of the Data Explorer"><br>
+<div class="images"><img src="images/ImageChooser.gif" width="1007" height="477" alt=""/><br>
 <span class="caption">Image 2: Data Sources Tab of the Data Explorer</span></div>
 <ol>
-  <li>Choose the ADDE Server: <strong>adde.ssec.wisc.edu</strong> and
-    the Dataset: <strong>RTIMAGES</strong>.
-    <div class="images"><img src="images/ImageServer.gif" width="576" height="27" alt="Adde server and dataset selection menus"></div></li>
+  <li>Choose the ADDE Server: <strong>lead.unidata.ucar.edu</strong> and
+    the Dataset: <strong>RTGOESR</strong>.
+    <div class="images"><img src="images/ImageServer.gif" width="577" height="31" alt=""/></div></li>
   <p>McIDAS-V comes pre-configured with a list of ADDE servers and datasets,
       or you can enter your own. See <a href="../data/DataSources.html">Available
         data</a> for a description of these pre-defined data sets.</p>
@@ -60,16 +60,16 @@ see <a href="../data/choosers/ImageChooser.html">Choosing Satellite Imagery</a>.
     image types.
     <div class="images"><img src="images/Connect.gif" alt="Connect button"></div></li>
   <li><a name="imagetype" id="imagetype"></a>Select the <strong>Image Type</strong> to use (in the example
-    below, <strong>GE-IR</strong> for GOES-East 10.7um IR
-    images).
-    <div class="images"><img src="images/ImageType.gif" width="577" height="34" alt="Image Type dropdown menu"></div></li>
+    below, <strong>CONUSC14</strong> for GOES-16 11.2um IR
+    CONUS images).
+    <div class="images"><img src="images/ImageType.gif" width="575" height="33" alt=""/></div></li>
   <li>Choose the image time(s) you want. Either choose a set of relative times
     as shown in the example below (5 most recent), or a set of absolute times
     as shown in step 5.
     <div class="images"><img src="images/RelativeTimes.gif" width="707" height="184" alt="Relative Times"></div></li>
-  <li><a name="abstime" id="abstime"></a>A set of absolute times (e.g., 17:15:00 UTC, 19:15:00 UTC).
+  <li><a name="abstime" id="abstime"></a>A set of absolute times (e.g., 16:02:29 UTC, 16:22:29 UTC).
     <div class="images">
-      <p><img src="images/AbsoluteImageTimes.gif" width="707" height="184" alt="Absolute times"><br>When choosing absolute times for the first time McIDAS-V needs
+      <p><img src="images/AbsoluteImageTimes.gif" width="707" height="213" alt=""/><br>When choosing absolute times for the first time McIDAS-V needs
             to query the ADDE server for the times. This may take some time.
   To select more than one time use Ctrl+click or Shift+click. </p></div></li>
   <li>Select the Navigation type (either Default or Lat/Lon). Choose Lat/Lon
@@ -87,7 +87,7 @@ Selector</strong></a> tab. The available display types are listed in the <strong
 the times are listed in the <strong>Times</strong> tab, the preview image or map is displayed
 in the <strong>Region</strong> tab, and the geographical selection parameters are listed in the
 <strong>Advanced</strong> tab. </p>
-<div class="images"><img src="images/ImageSelector1.gif" width="1012" height="489" alt="Image 3: Field Selector Tab of the Data Explorer"><br>
+<div class="images"><img src="images/ImageSelector1.gif" width="1007" height="476" alt=""/><br>
 <span class="caption">Image 3: Field Selector Tab of the Data Explorer</span></div>
 <ol>
   <li>Select the calibration that you wish to display in the <strong>Fields</strong> panel.
@@ -97,8 +97,7 @@ in the <strong>Region</strong> tab, and the geographical selection parameters ar
     for satellite and Level III radar images in almost all cases.</li>
   <li>Click the <strong>Region</strong> tab to view the Preview Image. Use the mouse to Shift+left
     click and drag to select the geographical boundaries of your image.
-    <div class="images">
-    <img src="images/RegionTab.gif" alt="Region tab of subset menu in the Field Selector" width="310" height="233"></div>
+    <div class="images"><img src="images/RegionTab.gif" width="394" height="225" alt=""/></div>
   </li>
   <li>Click  <img src="images/CreateDisplay.gif" alt="Create Display button" width="116" height="26"align="absmiddle"> to display the image(s) in the Main Display window. To control
       time animation use the <a href="../ui/Animation.html#animation">Time Animation
@@ -108,8 +107,7 @@ in the <strong>Region</strong> tab, and the geographical selection parameters ar
   display, click &quot;Image Contours&quot; in the <strong>Displays</strong> panel
   to contour your data.  To change your contour colors, right click on the color
   bar in the <a href="../ui/Legend.html">Legend</a>, and choose one of the color tables shown in the list.</p>
-<div class="images">
-  <img src="images/SatelliteContour.gif" alt="Image 4: Satellite Image with Contours in the Main Display Window" width="593" height="481"><br>
+<div class="images"><img src="images/SatelliteContour.gif" width="507" height="323" alt=""/><br>
 <span class="caption">Image 4: Satellite Image with Contours in the Main Display Window</span></div>
 <p>Due to the variability in brightness values in satellite images, some changes may need to be made to the contours to produce a quality image. To reduce the number of contours in the image, the contour interval can be increased by clicking the <img src="images/Change.gif" width="77" height="26" alt="Change button"align="absmiddle"> button next to <strong>Contour</strong> in the <strong>Layer Controls</strong> tab of the Data Explorer, and entering a higher value for the <strong>Contour Interval</strong>. To decrease the rigidness of the contours, select a new <strong>Smoothing</strong> method in the <strong>Layer Controls</strong> tab and enter a higher smoothing factor.</p>
 <div class="pagesubtitle"><a name="polar" id="polar"></a>Displaying a Single Polar Orbiting Satellite Image
