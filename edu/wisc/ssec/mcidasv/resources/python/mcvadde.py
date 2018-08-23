@@ -999,10 +999,9 @@ def listADDEImageTimes(localEntry=None,
             d = { 
                 'day': str(dt.formattedString('yyyyDDD', tz)), 
                 'time': str(dt.formattedString('HH:mm:ss', tz)),
-                #'datetime': dt,
                 'datetime': DateTime(d.getStartTime()),
             }
-            times.append(d)
+            times.append(OrderedDict(sorted(d.items())))
             uniques.add(dt)
             
     if unit and not foundUnit:
