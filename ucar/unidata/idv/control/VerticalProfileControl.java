@@ -28,50 +28,66 @@
 
 package ucar.unidata.idv.control;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
-import ucar.unidata.collab.Sharable;
+import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.AbstractTableModel;
+import javax.vecmath.Point3d;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.grid.GridDataInstance;
 import ucar.unidata.data.grid.GridUtil;
-
-import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.control.chart.LineState;
 import ucar.unidata.idv.control.chart.VerticalProfileChart;
-
 import ucar.unidata.ui.LatLonWidget;
-
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.Range;
-import ucar.unidata.util.TwoFacedObject;
 
-import ucar.visad.display.Animation;
-
-
-import visad.*;
-
+import visad.CommonUnit;
+import visad.CoordinateSystem;
+import visad.ErrorEstimate;
+import visad.FieldImpl;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded1DSet;
+import visad.MathType;
+import visad.Real;
+import visad.RealTuple;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SampledSet;
+import visad.Set;
+import visad.SetType;
+import visad.TupleType;
+import visad.Unit;
+import visad.VisADException;
 import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.beans.*;
-
-import java.rmi.RemoteException;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.table.*;
-
-import javax.vecmath.Point3d;
-
 
 /**
  * Given a VisAD Field, make a 2D plot of the range data against
@@ -80,6 +96,7 @@ import javax.vecmath.Point3d;
  * @author IDV Development Team
  * @version $Revision: 1.16 $Date: 2007/07/24 15:59:26 $
  */
+
 public class VerticalProfileControl extends LineProbeControl {
 
     /** Column name property */
@@ -119,8 +136,8 @@ public class VerticalProfileControl extends LineProbeControl {
     /** The animation widget */
     private JComponent aniWidget;
 
-    /** Show the jtable */
-    private boolean showTable = false;
+    /** Show the parameter table - visible by default */
+    private boolean showTable = true;
 
     /**
      * Default constructor; set attribute flags
@@ -181,6 +198,8 @@ public class VerticalProfileControl extends LineProbeControl {
         } catch (Exception exc) {
             logException("initDone", exc);
         }
+        // Enable table panel after UI is initialized
+        tablePanel.setVisible(showTable);
     }
 
     /**
@@ -336,13 +355,12 @@ public class VerticalProfileControl extends LineProbeControl {
         paramsTable.getColumnModel().getColumn(COL_SAMPLING).setCellEditor(
             new SamplingEditor());
 
-
-        JTableHeader header = paramsTable.getTableHeader();
+        scrollPane.setPreferredSize(new Dimension(200, 100));
         tablePanel = new JPanel();
-        tablePanel.setVisible(showTable);
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         tablePanel.add(scrollPane);
-        scrollPane.setPreferredSize(new Dimension(200, 100));
+        // TJJ - don't enable until UI is completely initialized
+        tablePanel.setVisible(false);
         JComponent bottomPanel = GuiUtils.leftRight(aniWidget, latLonWidget);
         bottomPanel = GuiUtils.inset(bottomPanel, 5);
         JComponent bottom = GuiUtils.centerBottom(tablePanel, bottomPanel);
