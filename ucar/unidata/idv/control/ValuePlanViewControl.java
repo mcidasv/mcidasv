@@ -38,6 +38,8 @@ import ucar.unidata.data.point.*;
 import ucar.unidata.gis.SpatialGrid;
 import ucar.unidata.idv.DisplayConventions;
 
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.ui.drawing.*;
 import ucar.unidata.ui.symbol.*;
 import ucar.unidata.util.FileManager;
@@ -92,6 +94,10 @@ import javax.swing.event.*;
  */
 public class ValuePlanViewControl extends PlanViewControl {
 
+    /** Logging object. */
+    private static final Logger logger = 
+        LoggerFactory.getLogger(ValuePlanViewControl.class);
+    
     /** local copy of the grid display */
     private GridValueDisplayable pointDisplay = null;
 
@@ -142,18 +148,24 @@ public class ValuePlanViewControl extends PlanViewControl {
         
         // TJJ Apr 2018
         // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1635
-        // Set the initial scale from the display master
-        float scale = this.getViewManager().getMaster().getDisplayScale();
-        try {
-            setScaleOnLayout(scale);
-        } catch (RemoteException | VisADException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2693
+        // Set the initial scale from the display master, but only if 
+        // auto-set is disabled!
+        ViewManager vm = getViewManager();
+        if (vm instanceof MapViewManager) {
+            boolean autoset = ((MapViewManager)vm).getUseProjectionFromData();
+            try {
+                if (autoset) {
+                    setScaleOnLayout(vm.getMaster().getDisplayScale());
+                } else {
+                    setScaleOnLayout(1.0f);
+                }
+            } catch (RemoteException | VisADException e) {
+                logger.warn("Couldn't set the scale", e);
+            }
         }
-        
         return pointDisplay;
     }
-
 
     /**
      * Init is done
