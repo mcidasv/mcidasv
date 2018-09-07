@@ -156,9 +156,9 @@ public class ValuePlanViewControl extends PlanViewControl {
             boolean autoset = ((MapViewManager)vm).getUseProjectionFromData();
             try {
                 if (autoset) {
-                    setScaleOnLayout(vm.getMaster().getDisplayScale());
-                } else {
                     setScaleOnLayout(1.0f);
+                } else {
+                    setScaleOnLayout(vm.getMaster().getDisplayScale());
                 }
             } catch (RemoteException | VisADException e) {
                 logger.warn("Couldn't set the scale", e);
