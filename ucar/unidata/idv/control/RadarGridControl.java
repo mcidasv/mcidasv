@@ -53,6 +53,8 @@ import javax.swing.JToggleButton;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.grid.GridUtil;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.ViewManager;
 import ucar.unidata.metdata.NamedStationImpl;
 import ucar.unidata.metdata.NamedStationTable;
 import ucar.unidata.metdata.Station;
@@ -875,6 +877,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
      *
      * @param event    event to check
      */
+    
     public void actionPerformed(ActionEvent event) {
         if ( !getOkToFireEvents()) {
             return;
@@ -885,8 +888,14 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
             // TJJ May 2018
             // Scale labels appropriately on all actions
-            float lblScale = getViewManager().getMaster().getDisplayScale();
-            rangeRings.setLabelSize(lblScale);
+            
+            ViewManager vm = getViewManager();
+            boolean autoset = ((MapViewManager) vm).getUseProjectionFromData();
+            if (autoset) {
+                rangeRings.setLabelSize(1.0f);
+            } else {
+                rangeRings.setLabelSize(vm.getMaster().getDisplayScale());
+            }
 
             // TJJ Check link state. if active, any color change
             // or line width change affects all colors and line widths
@@ -917,6 +926,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             } else if (cmd.equals(CMD_RR_COLOR)) {
                 rangeRings.setRangeRingColor(rrColor = getColor(event));
             } else if (cmd.equals(CMD_RR_RADIUS)) {
+                System.err.println("TJJ what's going wrong here??");
                 rangeRings.setMaxRadius(rrMaxRadius = getMaxRadius(event,
                         1.0, 6000.0));
             } else if (cmd.equals(CMD_LBL_COLOR)) {
@@ -924,6 +934,12 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             } else if (cmd.equals(CMD_RR_SPACING)) {
                 rangeRings.setRangeRingSpacing(rrSpacing = getSpacing(event,
                         0.01, 6000.0), rrMaxRadius);
+                System.err.println("TJJ Labels get re-created here!");
+                if (autoset) {
+                    rangeRings.setLabelSize(1.0f);
+                } else {
+                    rangeRings.setLabelSize(vm.getMaster().getDisplayScale());
+                }
             } else if (cmd.equals(CMD_LBL_SPACING)) {
                 rangeRings.setLabelSpacing(lblSpacing = getSpacing(event,
                         0.01, 6000.0));

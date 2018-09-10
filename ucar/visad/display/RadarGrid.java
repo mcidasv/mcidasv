@@ -419,8 +419,16 @@ public class RadarGrid extends CompositeDisplayable {
         // redraw the radials which now may be too short or too long
         setRadialInterval(radialInc);
         // need new labels too; remove old ones first
+        // TJJ Sep 2018 - set initial scale appropriately
+        DisplayMaster dm = getDisplayMaster();
+        if (dm != null) {
+           labelSize = dm.getDisplayScale();
+        } else {
+           labelSize = 1.0f;
+        }
         removeDisplayable(labels);
         makeLabels();
+        labels.setTextSize(labelSize);
     }
 
 
