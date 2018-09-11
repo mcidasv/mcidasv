@@ -926,7 +926,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             } else if (cmd.equals(CMD_RR_COLOR)) {
                 rangeRings.setRangeRingColor(rrColor = getColor(event));
             } else if (cmd.equals(CMD_RR_RADIUS)) {
-                System.err.println("TJJ what's going wrong here??");
                 rangeRings.setMaxRadius(rrMaxRadius = getMaxRadius(event,
                         1.0, 6000.0));
             } else if (cmd.equals(CMD_LBL_COLOR)) {
@@ -934,7 +933,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             } else if (cmd.equals(CMD_RR_SPACING)) {
                 rangeRings.setRangeRingSpacing(rrSpacing = getSpacing(event,
                         0.01, 6000.0), rrMaxRadius);
-                System.err.println("TJJ Labels get re-created here!");
                 if (autoset) {
                     rangeRings.setLabelSize(1.0f);
                 } else {
