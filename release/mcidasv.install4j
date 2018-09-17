@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="5.1.15" transformSequenceNumber="4">
-  <directoryPresets config="${compiler:MCVDIR}/dist/jogamp-fat-${compiler:JOGAMP_VERSION}.jar" />
+  <directoryPresets config="${compiler:MCVDIR}/dist/external-${compiler:IDV_VERSION}.jar" />
   <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.8beta1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.8" javaMaxVersion="1.9" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
@@ -17,6 +17,7 @@
       <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" category="" />
       <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../adde" description="Directory containing the local ADDE server ZIP files." category="" />
       <variable name="MCV_VERSION" value="${compiler:sys.version}-SNAPSHOT" description="" category="" />
+      <variable name="IDV_VERSION" value="5.4u1-SNAPSHOT" description="" category="" />
     </variables>
     <mergedProjects />
     <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pvkAndSpc" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
@@ -59,8 +60,11 @@
     </mountPoints>
     <entries>
       <dirEntry mountPoint="8741" file="${compiler:MCVDIR}/lib/share/" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="false">
-        <exclude />
+        <exclude>
+          <entry location="external-5.4u1-SNAPSHOT.jar" fileType="regular" />
+        </exclude>
       </dirEntry>
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/external-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcidasv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/local-idv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/startupmanager-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
