@@ -65,8 +65,7 @@ import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
 public class MemoryOption extends AbstractOption implements ActionListener {
     
     /** Logger object. */
-    private static final Logger logger = 
-        LoggerFactory.getLogger(MemoryOption.class);
+    private static final Logger logger = LoggerFactory.getLogger(MemoryOption.class);
     
     private static final String TOO_BIG_FMT = "Value exceeds your maximum available memory (%s MB)";
     
@@ -156,8 +155,6 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     private JRadioButton jrbNumber = new JRadioButton();
     
-    private ButtonGroup jtbBg = GuiUtils.buttonGroup(jrbSlider, jrbNumber);
-    
     private JPanel sliderPanel = new JPanel();
     
     private JLabel sliderLabel = new JLabel();
@@ -167,14 +164,12 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private JPanel textPanel = new JPanel();
     private McVTextField text = new McVTextField();
     private String initTextValue = value;
-    private Prefix initPrefixValue = currentPrefix;
     
     private int minSliderValue = 10;
     private int maxSliderValue = 80;
     private int initSliderValue = minSliderValue;
     
-    // max size of current jvm, in *megabytes*
-    // private long maxmem = Runtime.getRuntime().maxMemory() / (1024 * 1024);
+    // max size of current JVM, in *megabytes*
     private long maxmem = getSystemMemory() / (1024 * 1024);
     
     private State currentState = State.VALID;
@@ -186,6 +181,9 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         final Visibility optionVisibility) 
     {
         super(id, label, Type.MEMORY, optionPlatform, optionVisibility);
+        
+        // Link the slider and numeric entry box as a button group
+        GuiUtils.buttonGroup(jrbSlider, jrbNumber);
         if (maxmem == 0) {
             defaultPrefValue = failsafeValue;
         } else {
@@ -268,7 +266,8 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             long newMemVal = -1;
             // need to deal with both "G" and "GB" suffixes
             int suffixLength = 1;
-            if (memWithSuffix.endsWith("MB") || memWithSuffix.endsWith("GB") 
+            if (memWithSuffix.endsWith("MB") 
+                || memWithSuffix.endsWith("GB") 
                 || memWithSuffix.endsWith("TB") 
                 || memWithSuffix.endsWith("PB")) 
             {
@@ -352,8 +351,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     }
     
     public JComponent getTextComponent() {
-//        text.setText(initTextValue + currentPrefix.getJavaChar().toUpperCase());
-        text.setText(initTextValue + 'M');
+
         text.addKeyListener(new KeyAdapter() {
             public void keyReleased(final KeyEvent e) {
                 handleNewValue(text);
@@ -391,7 +389,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     public void setValue(final String newValue) {
         Matcher m = MEMSTRING.matcher(newValue);
-        if (!m.matches()) {
+        if (! m.matches()) {
             
             throw new IllegalArgumentException(String.format(BAD_MEM_FMT, newValue));
         }
@@ -422,14 +420,13 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             
             // Work around all the default settings going on
             initSliderValue = Integer.parseInt(value);
-            initPrefixValue = Prefix.MEGA;
             initTextValue = String.valueOf((int) Math.round(initSliderValue * maxmem / 100.0));
             
             sliderLabel.setText(String.format(SLIDER_LABEL_FMT, value));
             if (maxmem > 0) {
                 text.setText(initTextValue + prefix);
             }
-            if (!doneInit) {
+            if (! doneInit) {
                 jrbSlider.setSelected(true);
             }
             return;
@@ -443,7 +440,6 @@ public class MemoryOption extends AbstractOption implements ActionListener {
                 
                 // Work around all the default settings going on
                 initSliderValue = minSliderValue;
-                initPrefixValue = currentPrefix;
                 initTextValue = value;
                 
                 if (maxmem > 0) {
@@ -452,9 +448,10 @@ public class MemoryOption extends AbstractOption implements ActionListener {
                     slider.setValue(initSliderValue);
                     sliderLabel.setText(String.format(SLIDER_LABEL_FMT, initSliderValue));
                 }
-                if (!doneInit) {
+                if (! doneInit) {
                     jrbNumber.setSelected(true);
                 }
+                text.setText(value + currentPrefix.javaChar);
                 return;
             }
         }
