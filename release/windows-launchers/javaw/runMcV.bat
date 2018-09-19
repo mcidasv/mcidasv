@@ -1,6 +1,6 @@
 @ECHO OFF
 
-SET MCV_USERPATH="%USERPROFILE%\McIDAS-V"
+SET MCV_USERPATH=%USERPROFILE%\McIDAS-V
 SET MCV_LOGPATH="%MCV_USERPATH%\mcidasv.log"
 SET USE_TEMPUSERPATH=0
 SET WAIT_FOR_EXIT=1
@@ -49,7 +49,7 @@ GOTO checkparameters
 
 :setuserpath
 setlocal DisableDelayedExpansion
-SET "MCV_USERPATH=%~2"
+SET MCV_USERPATH=%~2
 setlocal EnableDelayedExpansion
 SHIFT
 SHIFT
