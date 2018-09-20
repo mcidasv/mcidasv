@@ -35,11 +35,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -50,12 +48,12 @@ import javax.swing.event.ChangeListener;
 
 import edu.wisc.ssec.mcidasv.util.MakeToString;
 import edu.wisc.ssec.mcidasv.util.SystemState;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LayoutUtil;
-
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
@@ -73,15 +71,18 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     private static final String LTE_ZERO_FMT = "Memory cannot be less than or equal to zero: %s";
     
-    private static final String SLIDER_LABEL_FMT = "Use %s percent";
+    private static final String SLIDER_LABEL_FMT = "Using %s percent";
+    
+    private static final String SLIDER_LESS_THAN_MIN_LABEL_FMT = "Using < %s percent";
+    
+    private static final String SLIDER_GREATER_THAN_MAX_LABEL_FMT = "Using > %s percent";
     
     private static final String NO_MEM_PREFIX_FMT = "Could not find matching memory prefix for \"%s\" in string: %s";
     
     public enum Prefix {
         MEGA("M", "megabytes", 1),
         GIGA("G", "gigabytes", 1024),
-        TERA("T", "terabytes", 1024 * 1024),
-        PERCENT("P", "percent", 0);
+        TERA("T", "terabytes", 1024 * 1024);
         
         private final String javaChar;
         private final String name;
@@ -141,6 +142,8 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private static final Prefix[] PREFIXES = { Prefix.MEGA, Prefix.GIGA, Prefix.TERA };
     
     private Prefix currentPrefix = Prefix.MEGA;
+    
+    private boolean sliderActive = false;
     
     private static final Pattern MEMSTRING = 
         Pattern.compile("^(\\d+)(M|G|T|P|MB|GB|TB|PB)$", Pattern.CASE_INSENSITIVE);
@@ -218,11 +221,12 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     }
     
     private boolean isSlider() {
-        return currentPrefix.equals(Prefix.PERCENT);
+        return sliderActive;
     }
     
     public void actionPerformed(ActionEvent e) {
         if ("slider".equals(e.getActionCommand())) {
+            sliderActive = true;
             GuiUtils.enableTree(sliderPanel, true);
             GuiUtils.enableTree(textPanel, false);
             // Trigger the listener
@@ -234,6 +238,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             }
             slider.setValue(sliderValue);
         } else {
+            sliderActive = false;
             GuiUtils.enableTree(sliderPanel, false);
             GuiUtils.enableTree(textPanel, true);
             // Trigger the listener
@@ -243,9 +248,10 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     private ChangeListener percentListener = evt -> {
         if (sliderPanel.isEnabled()) {
-            int sliderValue = ((JSlider)evt.getSource()).getValue();
-            setValue(sliderValue + Prefix.PERCENT.getJavaChar());
-            text.setText(String.valueOf(Math.round(sliderValue / 100.0 * maxmem)) + 'M');
+            int sliderValue = ((JSlider) evt.getSource()).getValue();
+            setValue(sliderValue + "P");
+            text.setText(String.valueOf(Math.round(sliderValue / 100.0 * 
+                    (maxmem / currentPrefix.getScale()))) + "GB");
         }
     };
     
@@ -258,6 +264,11 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         try {
 
             String memWithSuffix = field.getText();
+            
+            if (memWithSuffix.isEmpty()) {
+                setState(State.ERROR);
+                return;
+            }
             
             if (!isValid()) {
                 setState(State.VALID);
@@ -397,7 +408,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         String prefix = m.group(2);
         
         // Fall back on failsafe value if user wants a percentage of an unknown maxmem
-        if ((maxmem == 0) && prefix.toUpperCase().equals(Prefix.PERCENT.getJavaChar())) {
+        if ((maxmem == 0) && sliderActive) {
             m = MEMSTRING.matcher(failsafeValue);
             if (!m.matches()) {
                 throw new IllegalArgumentException(String.format(BAD_MEM_FMT, failsafeValue));
@@ -415,8 +426,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             prefix = "M";
         }
         value = quantity;
-        if (prefix.toUpperCase().equals(Prefix.PERCENT.getJavaChar())) {
-            currentPrefix = Prefix.PERCENT;
+        if (sliderActive) {
             
             // Work around all the default settings going on
             initSliderValue = Integer.parseInt(value);
@@ -424,7 +434,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             
             sliderLabel.setText(String.format(SLIDER_LABEL_FMT, value));
             if (maxmem > 0) {
-                text.setText(initTextValue + prefix);
+                text.setText(initTextValue + "MB");
             }
             if (! doneInit) {
                 jrbSlider.setSelected(true);
@@ -443,15 +453,27 @@ public class MemoryOption extends AbstractOption implements ActionListener {
                 initTextValue = value;
                 
                 if (maxmem > 0) {
-                    initSliderValue = (int)Math.round(Integer.parseInt(value) * 100.0 * currentPrefix.getScale() / maxmem);
+                    initSliderValue = (int) Math.round(Integer.parseInt(value) * 100.0 * currentPrefix.getScale() / maxmem);
+                    boolean aboveMin = true;
+                    boolean aboveMax = false;
+                    if (initSliderValue < 10) aboveMin = false;
+                    if (initSliderValue > 80) aboveMax = true;
                     initSliderValue = Math.max(Math.min(initSliderValue, maxSliderValue), minSliderValue);
                     slider.setValue(initSliderValue);
-                    sliderLabel.setText(String.format(SLIDER_LABEL_FMT, initSliderValue));
+                    if (aboveMin) {
+                        if (aboveMax) {
+                            sliderLabel.setText(String.format(SLIDER_GREATER_THAN_MAX_LABEL_FMT, initSliderValue));
+                        } else {
+                            sliderLabel.setText(String.format(SLIDER_LABEL_FMT, initSliderValue));
+                        }
+                    } else {
+                        sliderLabel.setText(String.format(SLIDER_LESS_THAN_MIN_LABEL_FMT, initSliderValue));
+                    }
                 }
                 if (! doneInit) {
                     jrbNumber.setSelected(true);
                 }
-                text.setText(value + currentPrefix.javaChar);
+                text.setText(newValue);
                 return;
             }
         }
