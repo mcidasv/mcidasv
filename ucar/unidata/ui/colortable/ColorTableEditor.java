@@ -28,8 +28,23 @@
 
 package ucar.unidata.ui.colortable;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
-
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 import ucar.unidata.ui.WindowHolder;
 import ucar.unidata.util.ColorTable;
@@ -38,26 +53,8 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Msg;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.Range;
-
-
-
-
-
-
-import java.awt.*;
-import java.awt.event.*;
-import java.beans.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.event.*;
-
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
-
-
 
 /**
  * Class ColorTableEditor handles some of the editing of colortables.
@@ -68,6 +65,7 @@ import edu.wisc.ssec.mcidasv.McIDASV;
  *
  * @author IDV development team
  */
+
 public class ColorTableEditor extends WindowHolder {
 
     /** For logging errors */
@@ -541,32 +539,44 @@ public class ColorTableEditor extends WindowHolder {
         // If the user wants to modify default color table, make them confirm
         // the action, with option to not be bothered about this again in future.
         
+        boolean saveOk = false;
         if (theColorTable.getName().equals(ColorTableDefaults.NAME_DEFAULT)) {
-            defaultSaveCheck();
+            saveOk = defaultSaveCheck();
         }
         
-        ctm.addUsers(theColorTable = canvas.getCurrentColorTable());
-        doMakeViewMenu();
+        if (saveOk) {
+            ctm.addUsers(theColorTable = canvas.getCurrentColorTable());
+            doMakeViewMenu();
+        }
     }
 
     /**
      * Make sure user knows they are modifying the default color table
      */
     
-    private void defaultSaveCheck() {
+    private boolean defaultSaveCheck() {
+        
+        boolean saveOk = true;
         boolean modOk = McIDASV.getStaticMcv().getStore().get(Constants.PREF_MODIFY_DEFAULT_COLOR_TABLE, false);
         // don't create a dialog though if we are running in background/offscreen mode
         boolean offScreen = McIDASV.getStaticMcv().getArgsManager().getIsOffScreen();
+        
         if (! offScreen) {
             if (! modOk) {
                 String msg = "Are you sure you want to modify the default color table?\n";
-                JCheckBox jcbPlugin = new JCheckBox("Do not show this message again");
-                Object[] params = { msg, jcbPlugin };
-                JOptionPane.showMessageDialog(null, params, "Modifying Default Color Table Notice", JOptionPane.OK_OPTION);
-                boolean dontShow = jcbPlugin.isSelected();
+                JCheckBox jcb = new JCheckBox("Do not show this message again");
+                Object[] params = { msg, jcb };
+                int optionChosen = JOptionPane.showConfirmDialog(
+                        null, params, "Modifying Default Color Table Notice", JOptionPane.OK_CANCEL_OPTION
+                );
+                if ((optionChosen == JOptionPane.CANCEL_OPTION) || (optionChosen == JOptionPane.CLOSED_OPTION)) {
+                    saveOk = false;
+                }
+                boolean dontShow = jcb.isSelected();
                 McIDASV.getStaticMcv().getStore().put(Constants.PREF_MODIFY_DEFAULT_COLOR_TABLE, dontShow);
             }   
         }
+        return saveOk;
     }
 
 
