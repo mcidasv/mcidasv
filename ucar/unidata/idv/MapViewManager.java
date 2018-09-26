@@ -1750,6 +1750,10 @@ public class MapViewManager extends NavigatedViewManager {
             setMapProjection(((MapProjection) data[0]), false);
             return;
         }
+        if (dataId.equals(MapViewManager.PREF_PERSPECTIVEVIEW)) {
+            setPerspectiveView((boolean)data[0]);
+            return;
+        }
         super.receiveShareData(from, dataId, data);
     }
 
@@ -3364,6 +3368,7 @@ public class MapViewManager extends NavigatedViewManager {
             if (hasViewpointControl()) {
                 getViewpointControl().setPerspectiveView(value);
             }
+            doShare(MapViewManager.PREF_PERSPECTIVEVIEW, value);
         }
     }
 
@@ -3446,6 +3451,7 @@ public class MapViewManager extends NavigatedViewManager {
      */
     public void setPerspectiveView(boolean value) {
         setBp(PREF_PERSPECTIVEVIEW, value);
+        doShare(MapViewManager.PREF_PERSPECTIVEVIEW, value);
     }
 
     /**
