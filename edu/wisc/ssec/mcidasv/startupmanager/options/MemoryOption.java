@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.startupmanager.options;
 
+import static java.lang.Math.ceil;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 
 import java.awt.Color;
@@ -150,7 +151,9 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     private final String defaultPrefValue;
     
-    private String failsafeValue = "512M";
+    // default to 80% of system memory (in gigabytes)
+    private String failsafeValue = 
+        String.valueOf((int)ceil(0.8 * (getSystemMemory() / 1073741824))) + 'G';
     
     private String value = failsafeValue; // bootstrap
     
