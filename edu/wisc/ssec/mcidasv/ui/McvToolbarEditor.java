@@ -53,6 +53,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -71,6 +73,10 @@ import ucar.unidata.xml.XmlUtil;
 
 public class McvToolbarEditor implements ActionListener {
 
+    /** Icon used when an action does not have one  set (monkey!). */
+    private static final String UNKNOWN_ICON = 
+        "/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png";
+    
     /** Size of the icons to be shown in the {@link TwoListPanel}. */
     protected static final int ICON_SIZE = 16;
 
@@ -139,8 +145,9 @@ public class McvToolbarEditor implements ActionListener {
      */
     public McvToolbarEditor(final UIManager mngr) {
         uiManager = mngr;
-        resources = mngr.getIdv().getResourceManager().getXmlResources(
-            IdvResourceManager.RSC_TOOLBAR);
+        resources = 
+            mngr.getIdv().getResourceManager()
+                .getXmlResources(IdvResourceManager.RSC_TOOLBAR);
         init();
     }
 
@@ -153,7 +160,7 @@ public class McvToolbarEditor implements ActionListener {
 
     /**
      * Determines if a given toolbar entry (in the form of a 
-     * {@link ucar.unidata.util.TwoFacedObject}) represents a space.
+     * {@link TwoFacedObject}) represents a space.
      * 
      * @param tfo The entry to test.
      * 
@@ -162,19 +169,20 @@ public class McvToolbarEditor implements ActionListener {
     public static boolean isSpace(final TwoFacedObject tfo) {
         return SPACE.equals(tfo.toString());
     }
-
+    
     /**
      * @return Current toolbar contents as action IDs mapped to labels.
      */
     private List<TwoFacedObject> getCurrentToolbar() {
-
         List<String> currentIcons = uiManager.getCachedButtons();
         IdvActions allActions = uiManager.getCachedActions();
         List<TwoFacedObject> icons = new ArrayList<>(currentIcons.size());
         for (String actionId : currentIcons) {
             TwoFacedObject tfo;
             if (actionId != null) {
-                String desc = allActions.getAttributeForAction(actionId, ActionAttribute.DESCRIPTION);
+                String desc = 
+                    allActions.getAttributeForAction(actionId, 
+                                                     ActionAttribute.DESCRIPTION);
                 if (desc == null) {
                     desc = "No description associated with action \""+actionId+"\"";
                 }
@@ -188,19 +196,26 @@ public class McvToolbarEditor implements ActionListener {
     }
 
     /**
-     * Returns a {@link List} of {@link TwoFacedObject}s containing all of the
-     * actions known to McIDAS-V.
+     * Returns a {@link List} of {@link TwoFacedObject TwoFacedObjects} 
+     * containing all of the actions known to McIDAS-V.
      */
     private List<TwoFacedObject> getAllActions() {
         IdvActions allActions = uiManager.getCachedActions();
         List<String> actionIds = allActions.getAttributes(ActionAttribute.ID);
         List<TwoFacedObject> actions = new ArrayList<>(actionIds.size());
         for (String actionId : actionIds) {
-            String label = allActions.getAttributeForAction(actionId, ActionAttribute.DESCRIPTION);
+            String label =
+                allActions.getAttributeForAction(actionId, 
+                                                 ActionAttribute.DESCRIPTION);
             if (label == null) {
                 label = actionId;
             }
-            actions.add(new TwoFacedObject(label, actionId));
+            String icon = 
+                allActions.getAttributeForAction(actionId, 
+                                                 ActionAttribute.ICON);
+            if (!UNKNOWN_ICON.equals(icon)) {
+                actions.add(new TwoFacedObject(label, actionId));
+            }
         }
         return actions;
     }
@@ -473,8 +488,8 @@ public class McvToolbarEditor implements ActionListener {
     }
 
     /**
-     * Renders a toolbar action and its icon within the {@link TwoListPanel}'s 
-     * {@link JList}s.
+     * Renders a toolbar action and its icon within the 
+     * {@link TwoListPanel TwoListPanel's} {@link JList JLists}.
      */
     private static class IconCellRenderer implements ListCellRenderer {
 
