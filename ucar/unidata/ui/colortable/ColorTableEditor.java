@@ -539,9 +539,11 @@ public class ColorTableEditor extends WindowHolder {
         // If the user wants to modify default color table, make them confirm
         // the action, with option to not be bothered about this again in future.
         
-        boolean saveOk = false;
-        if (theColorTable.getName().equals(ColorTableDefaults.NAME_DEFAULT)) {
-            saveOk = defaultSaveCheck();
+        boolean saveOk = true;
+        boolean isLocal = ctm.isUsers(theColorTable);
+        
+        if (! isLocal) {
+            saveOk = confirmSave(theColorTable.getName());
         }
         
         if (saveOk) {
@@ -554,7 +556,7 @@ public class ColorTableEditor extends WindowHolder {
      * Make sure user knows they are modifying the default color table
      */
     
-    private boolean defaultSaveCheck() {
+    private boolean confirmSave(String colorTableName) {
         
         boolean saveOk = true;
         boolean modOk = McIDASV.getStaticMcv().getStore().get(Constants.PREF_MODIFY_DEFAULT_COLOR_TABLE, false);
@@ -563,11 +565,11 @@ public class ColorTableEditor extends WindowHolder {
         
         if (! offScreen) {
             if (! modOk) {
-                String msg = "Are you sure you want to modify the default color table?\n";
+                String msg = "Are you sure you want to modify color table: " + colorTableName + "?\n";
                 JCheckBox jcb = new JCheckBox("Do not show this message again");
                 Object[] params = { msg, jcb };
                 int optionChosen = JOptionPane.showConfirmDialog(
-                        null, params, "Modifying Default Color Table Notice", JOptionPane.OK_CANCEL_OPTION
+                        null, params, "Color Table: " + colorTableName, JOptionPane.OK_CANCEL_OPTION
                 );
                 if ((optionChosen == JOptionPane.CANCEL_OPTION) || (optionChosen == JOptionPane.CLOSED_OPTION)) {
                     saveOk = false;
