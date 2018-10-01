@@ -56,6 +56,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import edu.wisc.ssec.mcidasv.startupmanager.options.FileOption;
+import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
 import org.python.core.PyObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +101,7 @@ import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlEncoder;
 import ucar.unidata.xml.XmlResourceCollection;
+
 import edu.wisc.ssec.mcidasv.control.ImagePlanViewControl;
 import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 import edu.wisc.ssec.mcidasv.ui.McvComponentGroup;
@@ -390,7 +393,29 @@ public class PersistenceManager extends IdvPersistenceManager {
         }
         makeDataEditable = prevMakeDataEditable;
         makeDataRelative = prevMakeDataRelative;
-
+    }
+    
+    /**
+     * Overridden because McIDAS-V has a different definition of 
+     * {@literal "default bundle"} than the IDV.
+     * 
+     * <p>The McV default bundle is the {@literal "startup bundle"} from the 
+     * advanced preferences.</p>
+     */
+    @Override public void doOpenDefault() {
+        OptionMaster optMaster = OptionMaster.getInstance();
+        FileOption startupBundle = optMaster.getFileOption("STARTUP_BUNDLE");
+        String path = startupBundle.getBundlePath();
+        if ((path == null) || path.isEmpty()) {
+            LogUtil.userMessage("No default bundle has been set.");
+            return;
+        }
+        File f = new File(path);
+        if (!f.exists()) {
+            LogUtil.userMessage("The default bundle: "+ f.getName() +" does not exist.");
+            return;
+        }
+        decodeXmlFile(path, true);
     }
 
     /**
