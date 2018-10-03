@@ -32,8 +32,10 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,6 +58,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.options.FileOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
 import org.python.core.PyObject;
@@ -396,6 +399,42 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
     
     /**
+     * Extract the {@code STARTUP_BUNDLE} value from the user's 
+     * {@code runMcV.prefs} file.
+     * 
+     * <p>Be aware that the value returned will <b>not</b> simply be a path to
+     * the bundle. Instead, see {@link FileOption#parseFormat(String)}.</p>
+     * 
+     * @return Either the value associated with {@code STARTUP_BUNDLE} 
+     *         or an empty string. Be sure to read the {@code parseFormat} 
+     *         javadoc linked to above.
+     */
+    private String getStartupBundleValue() {
+        OptionMaster optMaster = OptionMaster.getInstance();
+        File script =
+            new File(StartupManager.getInstance().getPlatform().getUserPrefs());
+        
+        String result = "";
+        try (BufferedReader br = new BufferedReader(new FileReader(script))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith("STARTUP_BUNDLE")) {
+                    continue;
+                }
+    
+                int splitAt = line.indexOf('=');
+                if (splitAt >= 0) {
+                    result = line.substring(splitAt);
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            logger.warn("Problem reading from '"+script.getPath()+'\'', e);
+        }
+        return result;
+    }
+    
+    /**
      * Overridden because McIDAS-V has a different definition of 
      * {@literal "default bundle"} than the IDV.
      * 
@@ -403,9 +442,9 @@ public class PersistenceManager extends IdvPersistenceManager {
      * advanced preferences.</p>
      */
     @Override public void doOpenDefault() {
-        OptionMaster optMaster = OptionMaster.getInstance();
-        FileOption startupBundle = optMaster.getFileOption("STARTUP_BUNDLE");
-        String path = startupBundle.getBundlePath();
+        String bundle = getStartupBundleValue();
+        String path = FileOption.parseFormat(bundle)[1];
+        logger.trace("bundle path: {}", path);
         if ((path == null) || path.isEmpty()) {
             LogUtil.userMessage("No default bundle has been set.");
             return;
