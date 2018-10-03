@@ -130,7 +130,7 @@ public class Level2RadarChooser extends FileChooser {
      * @return {@code String} to use as the label for data sources selector.
      */
     protected String getDataSourcesLabel() {
-        return "";
+        return "Station: ";
     }
 
     /**
@@ -142,7 +142,6 @@ public class Level2RadarChooser extends FileChooser {
         List stations = Misc.newList(UNKNOWN_STATION);
         stations.addAll(nexradStations = getStations());
         DisplayControlBase.setStations(stations, stationsCbx, false);
-        stationsCbx.setVisible(false);
         return stationsCbx;
     }
     
@@ -348,9 +347,9 @@ public class Level2RadarChooser extends FileChooser {
         public void setCurrentDirectory(File file) {
             super.setCurrentDirectory(file);
             if ( !Misc.equals(file, lastDirectory)) {
-//                if (myChooser != null) {
-//                    myChooser.guessAtStation(file);
-//                }
+                if (myChooser != null) {
+                    myChooser.guessAtStation(file);
+                }
                 lastDirectory = file;
             }
         }
@@ -362,9 +361,9 @@ public class Level2RadarChooser extends FileChooser {
      */
     protected JPanel getBottomPanel() {       
         // do this because the original check is made before the list is inited
-//        if (getFileChooser() != null) {
-//            guessAtStation(getFileChooser().getCurrentDirectory());
-//        }
+        if (getFileChooser() != null) {
+            guessAtStation(getFileChooser().getCurrentDirectory());
+        }
         JComponent recentComponent = getRecentFilesComponent();
     	Component [] components = recentComponent.getComponents();
     	if (components != null) {
