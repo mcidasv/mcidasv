@@ -28,54 +28,38 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
-
-import org.w3c.dom.Element;
-
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-
-import ucar.unidata.data.DataSource;
-
-import ucar.unidata.data.DataSourceDescriptor;
-import ucar.unidata.data.radar.Level2RadarDataSource;
-
-import ucar.unidata.idv.*;
-import ucar.unidata.idv.chooser.IdvChooserManager;
-import ucar.unidata.idv.control.DisplayControlBase;
-
-import ucar.unidata.metdata.*;
-
-import ucar.unidata.ui.ChooserPanel;
-import ucar.unidata.util.FileManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.Misc;
-
-import ucar.unidata.util.PatternFileFilter;
-import ucar.unidata.util.PollingInfo;
-import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlResourceCollection;
-
-
-import ucar.unidata.xml.XmlUtil;
-
-import java.awt.*;
-import java.awt.event.*;
-
+import java.awt.Component;
 import java.io.File;
-
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import javax.swing.filechooser.FileFilter;
+import org.w3c.dom.Element;
 
+import ucar.unidata.data.DataSource;
+import ucar.unidata.data.radar.Level2RadarDataSource;
+import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.control.DisplayControlBase;
+import ucar.unidata.metdata.NamedStation;
+import ucar.unidata.metdata.NamedStationTable;
+import ucar.unidata.util.FileManager;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.PatternFileFilter;
+import ucar.unidata.util.PollingInfo;
+import ucar.unidata.util.TwoFacedObject;
 
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**
  * A chooser for Level II NEXRAD data. This loads in
