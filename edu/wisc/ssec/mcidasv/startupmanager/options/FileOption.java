@@ -34,7 +34,6 @@ import static edu.wisc.ssec.mcidasv.util.McVGuiUtils.topBottom;
 import java.io.File;
 
 import java.nio.file.Paths;
-import java.util.regex.Pattern;
 
 import java.awt.event.ActionEvent;
 
@@ -72,11 +71,9 @@ public final class FileOption extends AbstractOption {
 
     /** Constant that represents string version of the {@code 0} boolean. */
     private static final String FALSE_STRING = "0";
-
-    /**
-     * Regular expression pattern for ensuring that no quote marks are present.
-     */
-    private static final Pattern CLEAN_VALUE_REGEX = Pattern.compile("\"");
+    
+    /** Used to ensure that no quote marks are present. */
+    private static final String QUOTE = "\"";
     
     /** Tool tip used by {@link #bundleField}. */
     public static final String BUNDLE_FIELD_TIP =
@@ -306,7 +303,9 @@ public final class FileOption extends AbstractOption {
      * @see #booleanFromFormat(String)
      */
     public static String[] parseFormat(String format) {
-        format = CLEAN_VALUE_REGEX.matcher(format).replaceAll("");
+        if (format.startsWith(QUOTE) || format.endsWith(QUOTE)) {
+            format = format.replace(QUOTE, "");
+        }
         String checkBox = TRUE_STRING;
         String path;
         int splitAt = format.indexOf(';');

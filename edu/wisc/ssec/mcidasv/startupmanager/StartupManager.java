@@ -28,6 +28,9 @@
 
 package edu.wisc.ssec.mcidasv.startupmanager;
 
+import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.EMPTY_STRING;
+import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.SET_PREFIX;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -39,14 +42,18 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -735,6 +742,40 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
                                    getDefaultProperties());
         platform.setUserDirectory(props.getProperty("userpath"));
         platform.setAvailableMemory(GetMem.getMemory());
+    }
+    
+    /**
+     * Extracts all startup preferences and returns them in a convenient 
+     * {@code Map}.
+     * 
+     * @return Either a {@link HashMap} mapping {@literal "preference ID"} to 
+     *         its corresponding value, or an empty map.
+     */
+    public static Map<String, String> getStartupPrefs() {
+        StartupManager sm = StartupManager.getInstance();
+        int size = OptionMaster.getInstance().blahblah.length;
+        File script = new File(sm.getPlatform().getUserPrefs());
+        Map<String, String> startupPrefs = new HashMap<>(size);
+        try (BufferedReader br = new BufferedReader(new FileReader(script))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("#")) {
+                    continue;
+                }
+                if (line.startsWith(SET_PREFIX)) {
+                    line = line.replace(SET_PREFIX, EMPTY_STRING);
+                }
+                int splitAt = line.indexOf('=');
+                if (splitAt >= 0) {
+                    String k = line.substring(0, splitAt);
+                    String v = line.substring(splitAt + 1);
+                    startupPrefs.put(k, v);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Problem reading from '"+script.getPath()+"': "+e.getMessage());
+        }
+        return startupPrefs;
     }
     
     public static void main(String[] args) {

@@ -399,42 +399,6 @@ public class PersistenceManager extends IdvPersistenceManager {
     }
     
     /**
-     * Extract the {@code STARTUP_BUNDLE} value from the user's 
-     * {@code runMcV.prefs} file.
-     * 
-     * <p>Be aware that the value returned will <b>not</b> simply be a path to
-     * the bundle. Instead, see {@link FileOption#parseFormat(String)}.</p>
-     * 
-     * @return Either the value associated with {@code STARTUP_BUNDLE} 
-     *         or an empty string. Be sure to read the {@code parseFormat} 
-     *         javadoc linked to above.
-     */
-    private String getStartupBundleValue() {
-        OptionMaster optMaster = OptionMaster.getInstance();
-        File script =
-            new File(StartupManager.getInstance().getPlatform().getUserPrefs());
-        
-        String result = "";
-        try (BufferedReader br = new BufferedReader(new FileReader(script))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (!line.startsWith("STARTUP_BUNDLE")) {
-                    continue;
-                }
-    
-                int splitAt = line.indexOf('=');
-                if (splitAt >= 0) {
-                    result = line.substring(splitAt);
-                    break;
-                }
-            }
-        } catch (IOException e) {
-            logger.warn("Problem reading from '"+script.getPath()+'\'', e);
-        }
-        return result;
-    }
-    
-    /**
      * Overridden because McIDAS-V has a different definition of 
      * {@literal "default bundle"} than the IDV.
      * 
@@ -442,9 +406,9 @@ public class PersistenceManager extends IdvPersistenceManager {
      * advanced preferences.</p>
      */
     @Override public void doOpenDefault() {
-        String bundle = getStartupBundleValue();
+        String bundle = StartupManager.getStartupPrefs().get("STARTUP_BUNDLE");
+        // see javadoc for FileOption#parseFormat(String)
         String path = FileOption.parseFormat(bundle)[1];
-        logger.trace("bundle path: {}", path);
         if ((path == null) || path.isEmpty()) {
             LogUtil.userMessage("No default bundle has been set.");
             return;
