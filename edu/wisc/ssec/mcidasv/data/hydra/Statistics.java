@@ -32,6 +32,7 @@ import static java.util.Arrays.asList;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -39,11 +40,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jnr.ffi.provider.converters.EnumSetConverter;
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import visad.Data;
 import visad.FlatField;
@@ -318,12 +322,6 @@ public class Statistics {
         }
         return histogram;
     }
-
-    public static String describe(FlatField field) 
-        throws VisADException, RemoteException 
-    {
-       return describe(field, (String)null);
-    }
     
     enum DescribeParams {
         HISTOGRAM,
@@ -344,10 +342,10 @@ public class Statistics {
         GOODPTS
     }
     
-    private static EnumSet<DescribeParams> parseParams(String[] ps) {
+    private static EnumSet<DescribeParams> parseParams(List<String> ps) {
         Set<DescribeParams> params = Collections.emptySet();
         if (ps != null) {
-            params = new HashSet<>(ps.length);
+            params = new HashSet<>(ps.size());
             for (String p : ps) {
                 params.add(DescribeParams.valueOf(p.toUpperCase()));
             }
@@ -358,12 +356,12 @@ public class Statistics {
     public static class Description {
         private final FlatField field;
         private final EnumSet<DescribeParams> params;
-        public Description(FlatField field, String... params) {
+        public Description(FlatField field, List<String> params) {
             this.field = field;
-            if (params != null) {
-                this.params = parseParams(params);
-            } else {
+            if ((params == null) || params.isEmpty()) {
                 this.params = EnumSet.allOf(DescribeParams.class);
+            } else {
+                this.params = parseParams(params);
             }
         }
         
@@ -437,20 +435,29 @@ public class Statistics {
         }
     }
     
-    public static String describe(FlatField field, String... params) 
-        throws VisADException, RemoteException 
-    {
-        Description d = new Description(field, params);
-        return d.makeDescription();
-    }
-
-    public static String describe(FlatField... fields) throws VisADException, RemoteException {
-        // 350 is just slightly more than required
-        StringBuilder buf = new StringBuilder(350 * fields.length);
-        for (FlatField field : fields) {
-            buf.append(describe(field)).append('\n');
+    private static final Logger logger = LoggerFactory.getLogger(Statistics.class);
+    
+    public static String describe(Object... params) throws VisADException, RemoteException {
+        
+        if (params != null) {
+            List<FlatField> fields = new ArrayList<>(params.length);
+            List<String> descs = new ArrayList<>(params.length); 
+            for (Object param : params) {
+                if (param instanceof FlatField) {
+                    fields.add((FlatField)param);
+                } else if (param instanceof String) {
+                    descs.add((String)param);
+                }
+            }
+            
+            StringBuilder buf = new StringBuilder(350 * descs.size());
+            for (FlatField field : fields) {
+                Description d = new Description(field, descs);
+                buf.append(d.makeDescription());
+            }
+            return buf.toString();
         }
-        return buf.toString();
+        return "";
     }
 
     public static String sparkline(FlatField field, Statistics s) throws VisADException, RemoteException {
