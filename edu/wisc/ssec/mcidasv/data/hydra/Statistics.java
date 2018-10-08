@@ -30,7 +30,6 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import static edu.wisc.ssec.mcidasv.data.StatsTable.fmtMe;
 import static java.util.Arrays.asList;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,14 +39,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jnr.ffi.provider.converters.EnumSetConverter;
 import org.apache.commons.math3.random.EmpiricalDistribution;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import visad.Data;
 import visad.FlatField;
@@ -61,21 +57,47 @@ import visad.TupleType;
 import visad.VisADException;
 
 public class Statistics {
-
-    private static final List<Character> CHARS = asList('\u2581', '\u2582', '\u2583', '\u2584', '\u2585', '\u2586', '\u2587', '\u2588');
-
+    
+    enum DescribeParams {
+        HISTOGRAM,
+        LENGTH,
+        MIN,
+        MAX,
+        RANGE,
+        Q1,
+        Q2,
+        Q3,
+        IQR,
+        MEAN,
+        MODE,
+        KURTOSIS,
+        SKEWNESS,
+        STDDEV,
+        VARIANCE,
+        GOODPTS
+    }
+    
+    private static final List<Character> CHARS = 
+        asList('\u2581', '\u2582', '\u2583', '\u2584', '\u2585', '\u2586', 
+               '\u2587', '\u2588');
+    
    DescriptiveStatistics[] descriptiveStats = null;
+   
    double[][] values_x;
    double[][] rngVals;
+   
    int rngTupLen;
+   
    int numPoints;
+   
    int[] numGoodPoints;
+   
    MathType statType;
 
    PearsonsCorrelation pCorrelation = null;
 
 
-   public Statistics(FlatField fltFld) throws VisADException, RemoteException {
+   public Statistics(FlatField fltFld) throws VisADException {
       rngVals = fltFld.getValues(false);
       rngTupLen = rngVals.length;
       numPoints = fltFld.getDomainSet().getLength();
@@ -101,14 +123,14 @@ public class Statistics {
           statType = new RealTupleType(rttypes);
         }
         else {
-          statType = (RealType) rttypes[0];
+          statType = rttypes[0];
         }
       }
       else if (rangeType instanceof RealType) {
-        statType = (RealType) rangeType;
+        statType = rangeType;
       }
       else {
-         throw new VisADException("incoming type must be RealTupleType or RealType");
+         throw new VisADException("fltFld must be RealTupleType or RealType");
       }
 
       pCorrelation = new PearsonsCorrelation();
@@ -260,12 +282,14 @@ public class Statistics {
      return makeStat(stats);
    }
 
-   public Data correlation(FlatField fltFld) throws VisADException, RemoteException {
+   public Data correlation(FlatField fltFld) 
+       throws VisADException, RemoteException 
+   {
      double[][] values_x = this.rngVals;
      double[][] values_y = fltFld.getValues(false);
 
      if (values_y.length != rngTupLen) {
-       throw new VisADException("both fields must have same range tuple length");
+       throw new VisADException("fields must have same range tuple length");
      }
 
      double[] stats = new double[rngTupLen];
@@ -278,7 +302,9 @@ public class Statistics {
      return makeStat(stats);
    }
 
-   private Data makeStat(double[] stats) throws VisADException, RemoteException {
+   private Data makeStat(double[] stats) 
+       throws VisADException, RemoteException 
+   {
      if (statType instanceof RealType) {
        return new Real((RealType)statType, stats[0]);
      }
@@ -312,7 +338,9 @@ public class Statistics {
      }
    }
 
-    public static Long[] histogram(FlatField field, int bins) throws VisADException, RemoteException {
+    public static Long[] histogram(FlatField field, int bins) 
+        throws VisADException 
+    {
         Long[] histogram = new Long[bins];
         EmpiricalDistribution distribution = new EmpiricalDistribution(bins);
         distribution.load(field.getValues(false)[0]);
@@ -323,122 +351,10 @@ public class Statistics {
         return histogram;
     }
     
-    enum DescribeParams {
-        HISTOGRAM,
-        LENGTH,
-        MIN,
-        MAX,
-        RANGE,
-        Q1,
-        Q2,
-        Q3,
-        IQR,
-        MEAN,
-        MODE,
-        KURTOSIS,
-        SKEWNESS,
-        STDDEV,
-        VARIANCE,
-        GOODPTS
-    }
-    
-    private static EnumSet<DescribeParams> parseParams(List<String> ps) {
-        Set<DescribeParams> params = Collections.emptySet();
-        if (ps != null) {
-            params = new HashSet<>(ps.size());
-            for (String p : ps) {
-                params.add(DescribeParams.valueOf(p.toUpperCase()));
-            }
-        }
-        return EnumSet.copyOf(params);
-    }
-    
-    public static class Description {
-        private final FlatField field;
-        private final EnumSet<DescribeParams> params;
-        public Description(FlatField field, List<String> params) {
-            this.field = field;
-            if ((params == null) || params.isEmpty()) {
-                this.params = EnumSet.allOf(DescribeParams.class);
-            } else {
-                this.params = parseParams(params);
-            }
-        }
-        
-        public String makeDescription() throws VisADException, RemoteException {
-            StringBuilder sb = new StringBuilder(1024);
-            Statistics s = new Statistics(field);
-            double max = ((Real)s.max()).getValue();
-            double min = ((Real)s.min()).getValue();
-            double q1 = ((Real)s.percentile(25.0)).getValue();
-            double q3 = ((Real)s.percentile(75.0)).getValue();
-            double[] modes = StatUtils.mode(field.getValues(false)[0]);
-    
-            StringBuilder tmp = new StringBuilder(128);
-            for (int i = 0; i < modes.length; i++) {
-                tmp.append(fmtMe(modes[i]));
-                if ((i+1) < modes.length) {
-                    tmp.append(", ");
-                }
-            }
-    
-            char endl = '\n';
-            if (params.contains(DescribeParams.HISTOGRAM)) {
-                sb.append("Histogram :  ").append(sparkline(field, s)).append(endl);
-            }
-            if (params.contains(DescribeParams.LENGTH)) {
-                sb.append("Length    :  ").append(String.format("%d", s.numPoints())).append(endl);
-            }
-            if (params.contains(DescribeParams.MIN)) {
-                sb.append("Min       :  ").append(fmtMe(((Real) s.min()).getValue())).append(endl);
-            }
-            if (params.contains(DescribeParams.MAX)) {
-                sb.append("Max       :  ").append(fmtMe(((Real) s.max()).getValue())).append(endl);
-            }
-            if (params.contains(DescribeParams.RANGE)) {
-                sb.append("Range     :  ").append(fmtMe(max - min)).append(endl);
-            }
-            if (params.contains(DescribeParams.Q1)) {
-                sb.append("Q1        :  ").append(fmtMe(q1)).append(endl);
-            }
-            if (params.contains(DescribeParams.Q2)) {
-                sb.append("Q2        :  ").append(fmtMe(((Real)s.percentile(50.0)).getValue())).append(endl);
-            }
-            if (params.contains(DescribeParams.Q3)) {
-                sb.append("Q3        :  ").append(fmtMe(q3)).append(endl);
-            }
-            if (params.contains(DescribeParams.IQR)) {
-                sb.append("IQR       :  ").append(fmtMe(q3 - q1)).append(endl);
-            }
-            if (params.contains(DescribeParams.MEAN)) {
-                sb.append("Mean      :  ").append(fmtMe(((Real)s.mean()).getValue())).append(endl);
-            }
-            if (params.contains(DescribeParams.MODE)) {
-                sb.append("Mode      :  ").append(tmp.toString()).append(endl);
-            }
-            if (params.contains(DescribeParams.KURTOSIS)) {
-                sb.append("Kurtosis  :  ").append(fmtMe(((Real)s.kurtosis()).getValue())).append(endl);
-            }
-            if (params.contains(DescribeParams.SKEWNESS)) {
-                sb.append("Skewness  :  ").append(fmtMe(((Real)s.skewness()).getValue())).append(endl);
-            }
-            if (params.contains(DescribeParams.STDDEV)) {
-                sb.append("Std Dev   :  ").append(fmtMe(((Real)s.standardDeviation()).getValue())).append(endl);
-            }
-            if (params.contains(DescribeParams.VARIANCE)) {
-                sb.append("Variance  :  ").append(fmtMe(((Real)s.variance()).getValue())).append(endl);
-            }
-            if (params.contains(DescribeParams.GOODPTS)) {
-                sb.append("# Good Pts:  ").append(String.format("%d", s.getNumGoodPoints()[0])).append(endl);
-            }
-            return sb.toString();
-        }
-    }
-    
-    private static final Logger logger = LoggerFactory.getLogger(Statistics.class);
-    
-    public static String describe(Object... params) throws VisADException, RemoteException {
-        
+    public static String describe(Object... params) 
+        throws VisADException, RemoteException 
+    {
+        String result = "";
         if (params != null) {
             List<FlatField> fields = new ArrayList<>(params.length);
             List<String> descs = new ArrayList<>(params.length); 
@@ -450,17 +366,21 @@ public class Statistics {
                 }
             }
             
+            // 350 is typical size of a single, "complete" describe call with
+           // one field.
             StringBuilder buf = new StringBuilder(350 * descs.size());
             for (FlatField field : fields) {
                 Description d = new Description(field, descs);
                 buf.append(d.makeDescription());
             }
-            return buf.toString();
+            result = buf.toString();
         }
-        return "";
+        return result;
     }
 
-    public static String sparkline(FlatField field, Statistics s) throws VisADException, RemoteException {
+    public static String sparkline(FlatField field, Statistics s) 
+        throws VisADException, RemoteException 
+    {
         Long[] values = histogram(field, 20);
         Real sMin = (Real) s.min();
         Real sMax = (Real) s.max();
@@ -482,7 +402,9 @@ public class Statistics {
         return buf.toString();
     }
 
-    public static String sparkline(FlatField... fields) throws VisADException, RemoteException {
+    public static String sparkline(FlatField... fields) 
+        throws VisADException, RemoteException 
+    {
         // assuming sparkline is only using 20 bins
         StringBuilder sb = new StringBuilder(25 * fields.length);
         for (FlatField field : fields) {
@@ -490,5 +412,117 @@ public class Statistics {
             sb.append(sparkline(field, s)).append('\n');
         }
         return sb.toString();
+    }
+    
+    private static EnumSet<DescribeParams> parseParams(List<String> ps) {
+        Set<DescribeParams> params = Collections.emptySet();
+        if (ps != null) {
+            params = new HashSet<>(ps.size());
+            for (String p : ps) {
+                params.add(DescribeParams.valueOf(p.toUpperCase()));
+            }
+        }
+        return EnumSet.copyOf(params);
+    }
+    
+    public static class Description {
+        
+        private final FlatField field;
+        
+        private final EnumSet<DescribeParams> params;
+        
+        public Description(FlatField field, List<String> params) {
+            this.field = field;
+            if ((params == null) || params.isEmpty()) {
+                this.params = EnumSet.allOf(DescribeParams.class);
+            } else {
+                this.params = parseParams(params);
+            }
+        }
+        
+        public String makeDescription() 
+            throws VisADException, RemoteException 
+        {
+            StringBuilder sb = new StringBuilder(1024);
+            Statistics s = new Statistics(field);
+            double max = ((Real)s.max()).getValue();
+            double min = ((Real)s.min()).getValue();
+            double q1 = ((Real)s.percentile(25.0)).getValue();
+            double q3 = ((Real)s.percentile(75.0)).getValue();
+            double[] modes = StatUtils.mode(field.getValues(false)[0]);
+            
+            StringBuilder tmp = new StringBuilder(128);
+            for (int i = 0; i < modes.length; i++) {
+                tmp.append(fmtMe(modes[i]));
+                if ((i+1) < modes.length) {
+                    tmp.append(", ");
+                }
+            }
+            
+            String temp;
+            char endl = '\n';
+            if (params.contains(DescribeParams.HISTOGRAM)) {
+                temp = sparkline(field, s);
+                sb.append("Histogram :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.LENGTH)) {
+                temp = String.format("%d", s.numPoints());
+                sb.append("Length    :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.MIN)) {
+                temp = fmtMe(((Real) s.min()).getValue());
+                sb.append("Min       :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.MAX)) {
+                temp = fmtMe(((Real) s.max()).getValue());
+                sb.append("Max       :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.RANGE)) {
+                temp = fmtMe(max - min);
+                sb.append("Range     :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.Q1)) {
+                sb.append("Q1        :  ").append(fmtMe(q1)).append(endl);
+            }
+            if (params.contains(DescribeParams.Q2)) {
+                temp = fmtMe(((Real)s.percentile(50.0)).getValue());
+                sb.append("Q2        :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.Q3)) {
+                sb.append("Q3        :  ").append(fmtMe(q3)).append(endl);
+            }
+            if (params.contains(DescribeParams.IQR)) {
+                temp = fmtMe(q3 - q1);
+                sb.append("IQR       :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.MEAN)) {
+                temp = fmtMe(((Real)s.mean()).getValue());
+                sb.append("Mean      :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.MODE)) {
+                sb.append("Mode      :  ").append(tmp).append(endl);
+            }
+            if (params.contains(DescribeParams.KURTOSIS)) {
+                temp = fmtMe(((Real)s.kurtosis()).getValue());
+                sb.append("Kurtosis  :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.SKEWNESS)) {
+                temp = fmtMe(((Real)s.skewness()).getValue());
+                sb.append("Skewness  :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.STDDEV)) {
+                temp = fmtMe(((Real)s.standardDeviation()).getValue());
+                sb.append("Std Dev   :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.VARIANCE)) {
+                temp = fmtMe(((Real)s.variance()).getValue());
+                sb.append("Variance  :  ").append(temp).append(endl);
+            }
+            if (params.contains(DescribeParams.GOODPTS)) {
+                temp = String.format("%d", s.getNumGoodPoints()[0]);
+                sb.append("# Good Pts:  ").append(temp).append(endl);
+            }
+            return sb.toString();
+        }
     }
 }
