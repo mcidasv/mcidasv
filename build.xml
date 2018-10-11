@@ -30,7 +30,7 @@
       try setting this value to 2. Note: this only applies to the
       "jar.runlarge9" and "debug.runlarge9" targets (they use Java 9).
     -->
-    <property name="uiscale" value="1" />
+    <property name="uiscale" value="2" />
 
     <!--
       This section attempts to set the path to the local ADDE servers in
@@ -787,24 +787,83 @@
       
       <!-- required for jython stuff to work without jigsaw-specific changes -->
       <!--<jvmarg value="&#45;&#45;permit-illegal-access"/>-->
-      <!--<jvmarg value="&#45;&#45;add-exports" />-->
-      <!--<jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />-->
-      <!--<jvmarg value="&#45;&#45;add-exports" />-->
-      <!--<jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />-->
-      <!--<jvmarg value="&#45;&#45;add-exports" />-->
-      <!--<jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />-->
-      <!--<jvmarg value="&#45;&#45;add-exports" />-->
-      <!--<jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />-->
-      <!--<jvmarg value="&#45;&#45;add-exports" />-->
-      <!--<jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />-->
-      <!--<jvmarg value="&#45;&#45;add-opens" />-->
-      <!--<jvmarg value="java.base/java.lang=ALL-UNNAMED" />-->
-      <!--<jvmarg value="&#45;&#45;add-opens" />-->
-      <!--<jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />-->
-      <!--<jvmarg value="&#45;&#45;add-opens" />-->
-      <!--<jvmarg value="java.management/sun.management=ALL-UNNAMED" />-->
-      <!--<jvmarg value="&#45;&#45;add-opens" />-->
-      <!--<jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />-->
+      <jvmarg value="--illegal-access=warn" />
+      <!-- add-exports allows reading from public types -->
+        <jvmarg value="--add-exports" />
+      <jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />
+      <jvmarg value="--add-exports" />
+      <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
+      <jvmarg value="--add-exports" />
+      <jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />
+      <jvmarg value="--add-exports" />
+      <jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />
+      <jvmarg value="--add-exports" />
+      <jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />
+
+
+        <!-- add-opens opens up everything -->
+      <jvmarg value="--add-opens" />
+      <jvmarg value="java.base/java.lang=ALL-UNNAMED" />
+      <jvmarg value="--add-opens" />
+      <jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />
+      <jvmarg value="--add-opens" />
+      <jvmarg value="java.management/sun.management=ALL-UNNAMED" />
+      <jvmarg value="--add-opens" />
+      <jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.io=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.net=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/javax.security.auth.x500=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.security=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.security.cert=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.security.spec=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/javax.net=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/javax.net.ssl=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/sun.nio.ch=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.nio=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.nio.channels=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.nio.charset=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.text=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.util=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.util.concurrent=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.util.concurrent.atomic=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/java.util.concurrent.locks=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.base/sun.util.calendar=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.security.jgss/org.ietf.jgss=ALL-UNNAMED" />
+      <jvmarg value="--add-opens" />
+      <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.desktop/java.awt.geom=ALL-UNNAMED" />
+      <jvmarg value="--add-opens" />
+      <jvmarg value="java.desktop/javax.swing=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.desktop/javax.swing.plaf.basic=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.desktop/javax.accessibility=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.desktop/sun.java2d.opengl=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.naming/javax.naming.ldap=ALL-UNNAMED" />
+        <jvmarg value="--add-opens" />
+        <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
       <jvmarg value="-noverify" />
       <jvmarg value="-XX:+DoEscapeAnalysis" />
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
@@ -878,25 +937,25 @@
             <assertions refid="mcv.assertions"/>
             
             <!--&lt;!&ndash; required for jython stuff to work without jigsaw-specific changes &ndash;&gt;-->
-            <!--<jvmarg value="&#45;&#45;permit-illegal-access"/>-->
-            <!--<jvmarg value="&#45;&#45;add-exports" />-->
-            <!--<jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />-->
-            <!--<jvmarg value="&#45;&#45;add-exports" />-->
-            <!--<jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />-->
-            <!--<jvmarg value="&#45;&#45;add-exports" />-->
-            <!--<jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />-->
-            <!--<jvmarg value="&#45;&#45;add-exports" />-->
-            <!--<jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />-->
-            <!--<jvmarg value="&#45;&#45;add-exports" />-->
-            <!--<jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />-->
-            <!--<jvmarg value="&#45;&#45;add-opens" />-->
-            <!--<jvmarg value="java.base/java.lang=ALL-UNNAMED" />-->
-            <!--<jvmarg value="&#45;&#45;add-opens" />-->
-            <!--<jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />-->
-            <!--<jvmarg value="&#45;&#45;add-opens" />-->
-            <!--<jvmarg value="java.management/sun.management=ALL-UNNAMED" />-->
-            <!--<jvmarg value="&#45;&#45;add-opens" />-->
-            <!--<jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />-->
+            <jvmarg value="--permit-illegal-access"/>
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.management/sun.management=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />
             <!-- Prepares the JVM for a debugging session on port 8001 -->
             <jvmarg value="-Xdebug"/>
             <jvmarg value="-Xrunjdwp:transport=dt_socket,server=y,address=8001,suspend=y"/>
