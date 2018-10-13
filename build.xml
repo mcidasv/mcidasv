@@ -30,7 +30,7 @@
       try setting this value to 2. Note: this only applies to the
       "jar.runlarge9" and "debug.runlarge9" targets (they use Java 9).
     -->
-    <property name="uiscale" value="2" />
+    <property name="uiscale" value="1" />
 
     <!--
       This section attempts to set the path to the local ADDE servers in
