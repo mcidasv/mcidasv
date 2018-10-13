@@ -82,6 +82,7 @@
     label="Scatter Analysis"
     displaycategory="Imagery"
     properties="windowVisible=true;displayName=ScatterDisplay"/>
+    
   <control
     id="4chancombo"
     categories="MultiSpectral"
@@ -147,4 +148,15 @@
 		<property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager" />
 	</control>
 
+  <!-- Inquiry 2730: Don't show IDV's version of scatter plot -->
+  <control
+    id="imagedisplayqqq"
+    categories=""
+    class="ucar.unidata.idv.control.ScatterDisplay"
+    label="Scatter Display"
+    icon="/ucar/unidata/idv/images/planview.png"
+    displaycategory="Imagery"
+    properties="windowVisible=true;">
+    <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
+  </control>
 </controls>
