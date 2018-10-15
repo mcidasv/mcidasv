@@ -317,10 +317,6 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
     			}
     		}
     	}
-    	if (singleTime) {
-    		userMessage("Select at least two times for a time series");
-    		return false;
-    	}
         
         if ((_levels != null) && (infos.size() == 0)) {
             //We have legacy muli-list table state
