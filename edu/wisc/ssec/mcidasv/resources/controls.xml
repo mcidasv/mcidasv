@@ -156,7 +156,7 @@
     label="Scatter Display"
     icon="/ucar/unidata/idv/images/planview.png"
     displaycategory="Imagery"
-    properties="windowVisible=true;">
+    properties="windowVisible=true;disabled=true;">
     <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
   </control>
 </controls>

@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv;
 
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import java.awt.Insets;
@@ -1682,14 +1683,21 @@ public class McIDASV extends IntegratedDataViewer {
      * @return re-ordered List of shown control descriptors
      */
     @Override public List getControlDescriptors(boolean includeTemplates) {
-        List l = super.getControlDescriptors(includeTemplates);
+        List<ControlDescriptor> l = 
+            cast(super.getControlDescriptors(includeTemplates));
         for (int i = 0; i < l.size(); i++) {
-            ControlDescriptor cd = (ControlDescriptor) l.get(i);
+            ControlDescriptor cd = l.get(i);
             if (cd.getControlId().equals("omni")) {
                 // move the omni control to the end of the list
                 // so it will never be "default" in Field Selector
                 l.remove(i);
                 l.add(cd);
+            }
+            
+            Hashtable<String, String> props = cast(cd.getProperties());
+            String v = props.getOrDefault("disabled", "false");
+            if (Objects.equals(v, "true")) {
+                l.remove(i);
             }
         }
         return l;
