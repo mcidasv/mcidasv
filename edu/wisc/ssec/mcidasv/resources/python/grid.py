@@ -439,3 +439,18 @@ def make2DFlowTraj(u,v,s,s0):
   """
   ff = GridTrajectory.createTrajectoryGrid(u,v,s,s0)
   return ff
+
+def setLevel(grid, level, unit):
+  return GridUtil.addLevelToGrid(grid, float(level), unit)
+
+def thetaSurface(grid, theta0):
+  return DerivedGridFactory.extractGridOverThetaTopoSurface(grid, float(theta0))
+
+def thetaSurfaceA(grid, grid1, theta0):
+  return DerivedGridFactory.extractGridOverThetaTopoSurface(grid, grid1, float(theta0))
+
+def thetaSurfaceV(gridt, gridu, gridv, theta0):
+  return DerivedGridFactory.extractUVGridOverThetaTopoSurface(gridt, gridu, gridv, float(theta0))
+
+def thetaSurfaceV(gridt, griduv, theta0):
+  return DerivedGridFactory.extractVectorGridOverThetaTopoSurface(gridt, griduv, float(theta0))
