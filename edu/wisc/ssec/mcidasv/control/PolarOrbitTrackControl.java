@@ -131,7 +131,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     public final String PREF_GROUNDSTATIONS = "mcv.groundstations";
 
     private JComboBox locationComboBox;
-    private JComboBox jcbStationsPlotted;
+    private JComboBox<String> jcbStationsPlotted;
 
     private JComboBox<String> jcbTrackLineStyle = new JComboBox<String>(Constants.lineStyles);
     private JComboBox<String> jcbEdgeLineStyle = new JComboBox<String>(Constants.lineStyles);
@@ -559,6 +559,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     			swathEdgeDsp = new CompositeDisplayable();
     			trackDsp = new CompositeDisplayable();
     			createTrackDisplay(data, true);
+                trackDsp.setConstantPosition(trackZ, navDsp.getDisplayAltitudeType());
+                timeLabelDsp.setConstantPosition(trackZ, navDsp.getDisplayAltitudeType());
+                stationLabelDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
     		} catch (Exception e) {
     			e.printStackTrace();
     		}
@@ -848,7 +851,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         DataSourceImpl ds = null;
         List dataSources = getDataSources();
         boolean gotit = false;
-        if (!dataSources.isEmpty()) {
+        if (! dataSources.isEmpty()) {
             int nsrc = dataSources.size();
             for (int i = 0; i < nsrc; i++) {
                 ds = (DataSourceImpl) dataSources.get(nsrc - i - 1);
@@ -858,7 +861,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 }
             }
         }
-        if (!gotit) return null;
+        if (! gotit) return null;
         return (PolarOrbitTrackDataSource) ds;
     }
 
@@ -1152,7 +1155,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         prvStationLineStyle = jcbStationLineStyle.getSelectedIndex();
         
         locationComboBox = new JComboBox();
-        jcbStationsPlotted = new JComboBox();
+        jcbStationsPlotted = new JComboBox<String>();
 
         // Ground Stations are now a natural-order map (alphabetical)
         GroundStations gs = new GroundStations(null);
