@@ -237,6 +237,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 	private static final String CUSTOM_ADD = "AddCustom";
 
     private Element root = null;
+    
+    // initial scale for labeling 
+    float scale = 1.0f;
 
     public PolarOrbitTrackControl() {
         super();
@@ -246,6 +249,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             final String xml =
                 IOUtil.readContents(SWATH_WIDTHS, McIdasPreferenceManager.class);
             root = XmlUtil.getRoot(xml);
+            scale = getViewManager().getMaster().getDisplayScale();
         } catch (Exception e) {
             logger.error("problem reading swathwidths.xml");
             e.printStackTrace();
@@ -365,7 +369,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		
     		boolean fontChanged = true;
     		boolean swathChanged = false;
-    		float scale = getViewManager().getMaster().getDisplayScale();
+    		scale = getViewManager().getMaster().getDisplayScale();
     		curSwathCenterWidth = jcbSCLineWidth.getSelectedIndex() + 1;
     		curSwathEdgeWidth = jcbSELineWidth.getSelectedIndex() + 1;
     		if (curSwathCenterWidth != prvSwathCenterWidth) swathChanged = true;
@@ -569,7 +573,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
     
     private void createTrackDisplay(Data data, boolean doTrack) {
+        
     	logger.debug("createTrackDisplay() in...");
+    	// Always check for View scale change (user zoomed in or out)
+    	scale = getViewManager().getMaster().getDisplayScale();
         try {
             List<String> dts = new ArrayList<String>();
             if (data instanceof Tuple) {
@@ -608,7 +615,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             time.setJustification(TextControl.Justification.LEFT);
                             time.setVerticalJustification(TextControl.Justification.CENTER);
                             time.setColor(curSwathColor);
-                    		time.setTextSize((float) otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
+                    		time.setTextSize((float) scale * otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
                     		time.setFont(otFontSelector.getFont());
                     		time.setSphere(inGlobeDisplay());
                             
@@ -1115,7 +1122,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private void labelGroundStation(String station) {
         
-        float scale = getViewManager().getMaster().getDisplayScale();
+        scale = getViewManager().getMaster().getDisplayScale();
     	try {
     		String str = "+ " + station;
     		logger.debug("Drawing station: " + str);
