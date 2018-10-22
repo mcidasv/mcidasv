@@ -557,11 +557,17 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		try {
     			removeDisplayable(swathEdgeDsp);
     			removeDisplayable(trackDsp);
+    			removeDisplayable(timeLabelDsp);
+    			removeDisplayable(stationLabelDsp);
     			swathEdgeDsp = null;
     			trackDsp = null;
+    			timeLabelDsp = null;
+    			stationLabelDsp = null;
     			Data data = getData(getDataInstance());
     			swathEdgeDsp = new CompositeDisplayable();
     			trackDsp = new CompositeDisplayable();
+    			timeLabelDsp = new CompositeDisplayable();
+    			stationLabelDsp = new CompositeDisplayable();
     			createTrackDisplay(data, true);
                 trackDsp.setConstantPosition(trackZ, navDsp.getDisplayAltitudeType());
                 timeLabelDsp.setConstantPosition(trackZ, navDsp.getDisplayAltitudeType());
