@@ -42,6 +42,7 @@ from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from edu.wisc.ssec.mcidasv.servermanager import LocalAddeEntry
 from edu.wisc.ssec.mcidasv.servermanager import RemoteAddeEntry
 from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryStatus
+from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryType
 from edu.wisc.ssec.mcidasv.servermanager.AddeEntry import EntryValidity
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import addeFormatToStr
 from edu.wisc.ssec.mcidasv.servermanager.EntryTransforms import serverNameToStr
@@ -707,7 +708,11 @@ def makeRemoteADDEEntry(server, dataset, datasetType, accounting=None, save=Fals
     results = []
     src = AddeEntry.EntrySource.USER
     checkHost = True
+    radarHack = False
     for x in datasetTypes:
+        if x == EntryType.RADAR:
+            radarHack = True
+            x = EntryType.IMAGE
         entry = RemoteAddeEntry.Builder(server, dataset).account(user, proj).type(x).source(src).temporary(not save).validity(EntryValidity.VERIFIED).build()
         
         if checkHost:
@@ -715,8 +720,11 @@ def makeRemoteADDEEntry(server, dataset, datasetType, accounting=None, save=Fals
                 raise AddeJythonError("Invalid server address")
             checkHost = False
             
-        status = RemoteAddeEntry.checkEntry(False, entry)
+        status = RemoteAddeEntry.checkEntry(True, entry)
         if status == AddeStatus.OK:
+            if radarHack:
+                entry.entryType = EntryType.RADAR
+                radarHack = False
             results.append(entry)
         elif status == AddeStatus.BAD_ACCOUNTING or status == AddeStatus.BAD_GROUP:
             raise AddeJythonInvalidAccountingError("Please verify that the specified ADDE accounting information is correct.")

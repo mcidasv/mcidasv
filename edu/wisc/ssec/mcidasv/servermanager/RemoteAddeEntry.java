@@ -618,7 +618,7 @@ public class RemoteAddeEntry implements AddeEntry {
                 connected = false;
             }
         }
-        logger.trace("host={} result={}", entry.getAddress(), connected);
+        logger.trace("host={} type={} result={}", entry.getAddress(), entry.getEntryType(), connected);
         return connected;
     }
 
