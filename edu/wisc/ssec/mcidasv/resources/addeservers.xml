@@ -87,11 +87,12 @@ This file overrides IDV addeservers.xml
             names="RTWXTEXT"
             type="text"/>
   </server>
+  <!-- Removing as part of inq 2736 - RMC 10/25/18
   <server name="goessouth.unidata.ucar.edu">
     <group
        names="SOUTH"
        type="image"/>
-  </server>
+  </server> -->
 
 <!--   <server name="idd.unl.edu">
     <group
@@ -115,7 +116,7 @@ This file overrides IDV addeservers.xml
   </server>
 
   <!-- satepsanone.nesdis.noaa.gov is changing to an IP address
-  from inq 2735 - RMC 10/25/18
+  from inq 2731 - RMC 10/25/18
   <server name="satepsanone.nesdis.noaa.gov">  -->
   <server name="140.90.213.161">
     <group
