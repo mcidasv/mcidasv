@@ -114,7 +114,10 @@ This file overrides IDV addeservers.xml
        type="image"/>
   </server>
 
-  <server name="satepsanone.nesdis.noaa.gov">
+  <!-- satepsanone.nesdis.noaa.gov is changing to an IP address
+  from inq 2735 - RMC 10/25/18
+  <server name="satepsanone.nesdis.noaa.gov">  -->
+  <server name="140.90.213.161">
     <group
        names="PUB"
        type="image"/>
