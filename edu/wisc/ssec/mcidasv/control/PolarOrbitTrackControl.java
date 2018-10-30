@@ -528,12 +528,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      * Apply the map (height) position to the displays
      */
     
-    private void applyTrackPosition() {
+    private void applyDisplayableLevels() {
         try {
             DisplayRealType dispType = navDsp.getDisplayAltitudeType();
             trackDsp.setConstantPosition(trackZ, dispType);
             timeLabelDsp.setConstantPosition(trackZ, dispType);
             stationLabelDsp.setConstantPosition(gsZ, dispType);
+            swathEdgeDsp.setConstantPosition(trackZ, dispType);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -569,9 +570,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     			timeLabelDsp = new CompositeDisplayable();
     			stationLabelDsp = new CompositeDisplayable();
     			createTrackDisplay(data, true);
-                trackDsp.setConstantPosition(trackZ, navDsp.getDisplayAltitudeType());
-                timeLabelDsp.setConstantPosition(trackZ, navDsp.getDisplayAltitudeType());
-                stationLabelDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
+    			applyDisplayableLevels();
     		} catch (Exception e) {
     			e.printStackTrace();
     		}
@@ -1088,7 +1087,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             if (trackZ > 1.0f) trackZ = 1.0f;
             if (gsZ > 1.0f) gsZ = 1.0f;
             if (! inGlobeDisplay()) {
-            	applyTrackPosition();
+            	applyDisplayableLevels();
             }
         } catch (Exception e) {
             logger.error("get display center e=" + e);
@@ -1362,10 +1361,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 }
     		}
     		addDisplayable(circleDsp, FLAG_COLORTABLE);
+    		circleDsp.setConstantPosition(trackZ, navDsp.getDisplayAltitudeType());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.control.DisplayControlImpl#projectionChanged()
+     */
+    @Override
+    public void projectionChanged() {
+        super.projectionChanged();
+        applyDisplayableLevels();
     }
 
     public void setAntColor(Color c) {
