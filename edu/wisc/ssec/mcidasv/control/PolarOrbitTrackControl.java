@@ -83,7 +83,6 @@ import ucar.visad.UtcDate;
 import ucar.visad.Util;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.TextDisplayable;
-
 import visad.Data;
 import visad.DisplayRealType;
 import visad.Gridded2DSet;
@@ -911,6 +910,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
 	public double getLatitude() {
         return latitude;
+    }
+
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.control.DisplayControlImpl#getLegendLabelTemplate()
+     */
+    @Override
+    public String getLegendLabelTemplate() {
+        return DisplayControlImpl.MACRO_DISPLAYNAME;
     }
 
     public double getLongitude() {
