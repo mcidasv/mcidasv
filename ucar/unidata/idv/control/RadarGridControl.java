@@ -890,11 +890,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
                 return;
             }
             
-            // TJJ May 2018
-            // Scale labels appropriately on all actions
-            
-            ViewManager vm = getViewManager();
-            
             // TJJ Check link state. if active, any color change
             // or line width change affects all colors and line widths
             
