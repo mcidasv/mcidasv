@@ -40,6 +40,7 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -885,18 +886,15 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         try {
 
             String cmd = event.getActionCommand();
-
+            if (Objects.equals("comboBoxEdited", cmd)) {
+                return;
+            }
+            
             // TJJ May 2018
             // Scale labels appropriately on all actions
             
             ViewManager vm = getViewManager();
-            boolean autoset = ((MapViewManager) vm).getUseProjectionFromData();
-            if (autoset) {
-                rangeRings.setLabelSize(1.0f);
-            } else {
-                rangeRings.setLabelSize(vm.getMaster().getDisplayScale());
-            }
-
+            
             // TJJ Check link state. if active, any color change
             // or line width change affects all colors and line widths
             
@@ -933,11 +931,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             } else if (cmd.equals(CMD_RR_SPACING)) {
                 rangeRings.setRangeRingSpacing(rrSpacing = getSpacing(event,
                         0.01, 6000.0), rrMaxRadius);
-                if (autoset) {
-                    rangeRings.setLabelSize(1.0f);
-                } else {
-                    rangeRings.setLabelSize(vm.getMaster().getDisplayScale());
-                }
             } else if (cmd.equals(CMD_LBL_SPACING)) {
                 rangeRings.setLabelSpacing(lblSpacing = getSpacing(event,
                         0.01, 6000.0));
