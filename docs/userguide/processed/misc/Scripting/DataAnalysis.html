@@ -28,13 +28,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Da
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Data Analysis</div>
-<p><strong><a name="describe" id="describe"></a>describe -</strong></strong> Returns a variety of statistical parameters about an imagery or gridded data object</p>
-<div class="OneTabIndent">Usage: <em>describe(myData)</em></div>
+<p><strong><a name="describe" id="describe"></a>describe -</strong></strong> Returns a variety of statistical parameters about an imagery or gridded data objects</p>
+<div class="OneTabIndent">Usage: <em>describe(myData1)</em></div>
 <div class="ThreeTabIndent"></div>
 <div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>describe(imageryData)</em></div>
+  <div class="TwoTabIndent"><em>describe(imageryData1, imageryData2)</em></div>
+  <div class="TwoTabIndent"><em>describe(imageryData1, imageryData2, 'Histogram', 'Mean')</em></div>
   <div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">This function returns the following statistical parameters of data objects returned from loadADDEImage and loadGrid:
+<div class="TwoTabIndent">By default, this function returns all of the following statistical parameters of data objects returned from loadADDEImage and loadGrid:
   <ul>
     <li>Histogram</li>
     <li>Length</li>
@@ -49,11 +50,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Da
     <li>Mode</li>
     <li>Kurtosis</li>
     <li>Skewness</li>
-    <li>Std Dev</li>
+    <li>Stddev - Standard deviation</li>
     <li>Variance</li>
-    <li># Good Pts</li>
+    <li>Goodpts - Number of good points</li>
   </ul>
-Multiple data objects can be passed through describe() at once, separated by commas (example: <em>describe(imageryIR,imageryVIS)</em>).</div>
+  <p>Multiple data objects can be passed through describe() at once, separated by commas (example: <em>describe(imageryIR,imageryVIS)</em>).</p>
+  <p>Users may select to output only certain statistical parameters for their data. When doing this, the first parameter(s) passed through describe() should be the data objects, and the last parameters should be the statistical parameters to output. These statistical parameters are included in the list above, and they should be entered as strings and quoted (see example 2 above).</p>
+</div>
 <p><strong><a name="sparkline" id="sparkline"></a>sparkline -</strong> Returns a histogram of data values in a data object returned from loadADDEImage and loadGrid</p>
 <div class="OneTabIndent">Usage: <em>sparkline(myData)</em></div>
   <div class="OneTabIndent">Example:</div>

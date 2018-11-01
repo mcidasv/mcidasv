@@ -40,6 +40,7 @@ import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.JCheckBox;
@@ -366,8 +367,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
                                    + initStationLocation);
             }
         }
-
-
+        
         return true;
     }
 
@@ -436,6 +436,9 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
     protected boolean setData(LatLonPoint llp)
             throws VisADException, RemoteException {
         rangeRings.setCenterPoint(llp);
+        
+        // Since setCenterPoint RECREATES EVERYTHING, we need to rescale labels
+        rescaleLabels();
 
         // set location label, if available.
         if (positionLabel != null) {
@@ -444,6 +447,17 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         return true;
     }
 
+
+    /**
+     * Any time labels get recreated, need to scale them based on current view
+     */
+    
+    private void rescaleLabels() {
+        // TJJ Nov 2018 - make sure labels scale correct on any changes
+        // to the ring display
+        ViewManager vm = getViewManager();
+        rangeRings.setLabelSize(vm.getMaster().getDisplayScale());
+    }
 
     /**
      * Return the RadarGrid displayable
@@ -628,6 +642,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         if (set) {
             try {
                 rangeRings.setCenterPoint(lat, lon);
+                rescaleLabels();
             } catch (Exception exc) {
                 logException("setting center point", exc);
             }
@@ -879,24 +894,21 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
      */
     
     public void actionPerformed(ActionEvent event) {
-        if ( !getOkToFireEvents()) {
+        
+        String cmd = event.getActionCommand();
+
+        if (! getOkToFireEvents()) {
             return;
         }
+        
         try {
-
-            String cmd = event.getActionCommand();
-
-            // TJJ May 2018
-            // Scale labels appropriately on all actions
             
-            ViewManager vm = getViewManager();
-            boolean autoset = ((MapViewManager) vm).getUseProjectionFromData();
-            if (autoset) {
-                rangeRings.setLabelSize(1.0f);
-            } else {
-                rangeRings.setLabelSize(vm.getMaster().getDisplayScale());
+            // TJJ Nov 2018 - skip all the GUI color and sizing changes on
+            // the generic UI events (only aware of one)
+            if (Objects.equals("comboBoxEdited", cmd)) {
+                return;
             }
-
+            
             // TJJ Check link state. if active, any color change
             // or line width change affects all colors and line widths
             
@@ -933,11 +945,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             } else if (cmd.equals(CMD_RR_SPACING)) {
                 rangeRings.setRangeRingSpacing(rrSpacing = getSpacing(event,
                         0.01, 6000.0), rrMaxRadius);
-                if (autoset) {
-                    rangeRings.setLabelSize(1.0f);
-                } else {
-                    rangeRings.setLabelSize(vm.getMaster().getDisplayScale());
-                }
             } else if (cmd.equals(CMD_LBL_SPACING)) {
                 rangeRings.setLabelSpacing(lblSpacing = getSpacing(event,
                         0.01, 6000.0));
@@ -982,6 +989,18 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         } catch (Exception exc) {
             logException("RadarGridControl.actionPerformed", exc);
         }
+        
+        // TJJ Nov 2018 - do not rescale if we just toggled visibility
+        if (Objects.equals(CMD_RR_VIS, cmd)) {
+            return;
+        }
+        if (Objects.equals(CMD_RAD_VIS, cmd)) {
+            return;
+        }
+        if (Objects.equals(CMD_LBL_VIS, cmd)) {
+            return;
+        }
+        rescaleLabels();
     }
 
 
@@ -998,6 +1017,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             this.lat = lat;
             this.lon = lon;
             rangeRings.setCenterPoint(lat, lon);
+            rescaleLabels();
             if (stationCbx != null) {
                 if (andResetStationMenu) {
                     stationCbx.setSelectedIndex(0);
@@ -1010,7 +1030,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         } catch (Exception exc) {
             logException("Setting lat/lon", exc);
         }
-
 
     }
 
@@ -1029,9 +1048,10 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
      *
      * @param event The event
      */
+    
     public void handleDisplayChanged(DisplayEvent event) {
-        if ((positionAtClickCbx == null)
-                || !positionAtClickCbx.isSelected()) {
+        
+        if ((positionAtClickCbx == null) || (! positionAtClickCbx.isSelected())) {
             return;
         }
 

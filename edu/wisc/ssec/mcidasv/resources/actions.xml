@@ -83,7 +83,7 @@
         action="jython:getStaticMcv().doMakeControl('rangeandbearing')"/>
 
     <action id="display.textnote"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-desktop-font%d.png"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png"
         group="Special Displays"
         description="Create Text Note"
         action="jython:getStaticMcv().doMakeControl('notecontrol')"/>
