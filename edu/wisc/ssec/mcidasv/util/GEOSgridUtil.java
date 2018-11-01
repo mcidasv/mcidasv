@@ -373,12 +373,14 @@ public class GEOSgridUtil {
                             }
                         } else {
                             for (int t=0; t<tupleDimLen; t++) {
-                                float val = 0;
-                                val += values[t][kR];
-                                val += values[t][kR+1];
-                                val += values[t][kR+lenX];
-                                val += values[t][kR+lenX+1];
-                                targetValues[t][k] = val/4;
+                                if (iR < lenX-1 && jR < lenY-1) { // This check should not be needed for NN
+                                   float val = 0;
+                                   val += values[t][kR];
+                                   val += values[t][kR+1];
+                                   val += values[t][kR+lenX];
+                                   val += values[t][kR+lenX+1];
+                                   targetValues[t][k] = val/4;
+                                }
                             }
                         }
                     }
@@ -404,12 +406,12 @@ public class GEOSgridUtil {
         for (int j=0; j<targetLenY; j++) {
             float y = yidxs[j];
             int jR = Float.isNaN(y) ? -1 : (int) Math.floor(y);
-            if (jR >= 0 && jR < lenY) {
+            if (jR >= 0 && jR < lenY-1) {
                 
                 for (int i=0; i<targetLenX; i++) {
                     float x = xidxs[i];
                     int iR = Float.isNaN(x) ? -1 : (int) Math.floor(x);
-                    if (iR >= 0 && iR < lenX) {
+                    if (iR >= 0 && iR < lenX-1) {
                         int k = j*targetLenX + i;
                         int kR = jR*lenX + iR;
                         
@@ -429,8 +431,6 @@ public class GEOSgridUtil {
                         float dst01 = (float) (dx01*dx01 + dy01*dy01);
                         float dst10 = (float) (dx10*dx10 + dy10*dy10);
                         float dst11 = (float) (dx11*dx11 + dy11*dy11);
-                        
-                        float sum = 1/dst00 + 1/dst01 + 1/dst10 + 1/dst11;
                         
                         if (mode == Data.NEAREST_NEIGHBOR) {
                             flts[0] = dst00;
@@ -457,6 +457,36 @@ public class GEOSgridUtil {
                             float w01 = 1/dst01;
                             float w10 = 1/dst10;
                             float w11 = 1/dst11;
+                            float sum = w00 + w01 + w10 + w11;
+                            
+                            if (Float.isInfinite(w00)) {
+                                sum = 1f;
+                                w00 = 1f;
+                                w01 = 0;
+                                w10 = 0;
+                                w11 = 0;             
+                            } 
+                            else if (Float.isInfinite(w01)) {
+                                sum = 1f;
+                                w00 = 0;
+                                w01 = 1f;
+                                w10 = 0;
+                                w11 = 0;              
+                            }
+                            else if (Float.isInfinite(w10)) {
+                                sum = 1f;
+                                w00 = 0;
+                                w01 = 0;
+                                w10 = 1f;
+                                w11 = 0;                        
+                            }
+                            else if (Float.isInfinite(w11)) {
+                                sum = 1f;
+                                w00 = 0;
+                                w01 = 0;
+                                w10 = 0;
+                                w11 = 1f;  
+                            }
                             
                             for (int t=0; t<tupleDimLen;t++) {
                                 float val = 0;
