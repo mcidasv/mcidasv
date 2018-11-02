@@ -75,6 +75,8 @@ import javax.swing.ToolTipManager;
 
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidas.adde.AddeURLStreamHandler;
+
+import edu.wisc.ssec.mcidasv.collaboration.CollaborationManager;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.OptionPaneClicker;
 import edu.wisc.ssec.mcidasv.util.SystemState;
@@ -103,6 +105,7 @@ import ucar.unidata.idv.VMManager;
 import ucar.unidata.idv.ViewDescriptor;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
+import ucar.unidata.idv.collab.CollabManager;
 import ucar.unidata.idv.ui.IdvUIManager;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.ui.InteractiveShell.ShellHistoryEntry;
@@ -1153,6 +1156,15 @@ public class McIDASV extends IntegratedDataViewer {
     @Override protected JythonManager doMakeJythonManager() {
         logger.debug("returning a new JythonManager");
         return new JythonManager(this);
+    }
+    
+    /**
+     * Factory method to create a McIDAS-V {@link CollaborationManager}.
+     *
+     * @return New {@code CollaborationManager}.
+     */
+    @Override protected CollabManager doMakeCollabManager() {
+        return new CollaborationManager(this);
     }
     
     /**
