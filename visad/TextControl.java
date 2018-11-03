@@ -127,6 +127,9 @@ public class TextControl extends Control {
       pc.removeControlListener(pcl);
     }
     */
+    if ((autoSize != auto) && (pcl != null)) {
+      pcl.setPfirst(true);
+    }
     autoSize = auto;
     try {
       changeControl(true);
@@ -274,7 +277,7 @@ public class TextControl extends Control {
     changeControl(true);
   }
 
-  private void setSizeForAuto(double autoSizeFactor)
+  public void setSizeForAuto(double autoSizeFactor)
           throws VisADException, RemoteException {
     this.autoSizeFactor = autoSizeFactor;
     size = factor*autoSizeFactor;
@@ -284,6 +287,11 @@ public class TextControl extends Control {
   /** return the size */
   public double getSize() {
     return size;
+  }
+  
+  public double getSizeForAuto() {
+    // not wild about the method name, but setSizeForAuto already exists...
+    return autoSizeFactor;
   }
 
   // WLH 31 May 2000
@@ -629,6 +637,10 @@ public class TextControl extends Control {
       active = onoroff;
     }
 
+    public void setPfirst(boolean newValue) {
+      pfirst = newValue;
+    }
+    
     public void controlChanged(ControlEvent e)
            throws VisADException, RemoteException {
       if (!active) return;

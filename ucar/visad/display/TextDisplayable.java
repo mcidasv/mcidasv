@@ -277,6 +277,22 @@ public class TextDisplayable extends LineDrawing {
     public void setTextSize(float size)
             throws VisADException, RemoteException {
         if ((textControl != null) && (size != textSize)) {
+            // TODO(jon): clean this up prior to making any pull requests!
+            // McV Inquiry 2685:
+            // the root of the problem described in the inquiry is that the
+            // textcontrol's autoSizeFactor can cause the text sizing to go
+            // out of whack; in some cases we've seen the value go as high
+            // as ~26.
+            // 
+            // however, it's not enough to simply force the autoSizeFactor 
+            // to 1.0; as the "matrix" returned from the textcontrol's 
+            // projectioncontrol will not also be adjusted. the "setAutoSize" 
+            // calls are doing--essentially just resetting the projection 
+            // matrix.
+            textControl.setSizeForAuto(1.0f);
+            boolean auto = textControl.getAutoSize();
+            textControl.setAutoSize(!auto);
+            textControl.setAutoSize(auto);
             textControl.setSize(size);
         }
         textSize = size;
