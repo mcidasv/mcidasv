@@ -28,11 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.startupmanager.options;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 
 import edu.wisc.ssec.mcidasv.util.MakeToString;
 

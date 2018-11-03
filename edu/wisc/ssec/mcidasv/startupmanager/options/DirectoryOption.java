@@ -30,22 +30,16 @@ package edu.wisc.ssec.mcidasv.startupmanager.options;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.regex.Pattern;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -58,16 +52,13 @@ import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
 import edu.wisc.ssec.mcidasv.util.MakeToString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents a startup option that should be selected from the contents of a
  * given directory. The visual representation of this class is a tree.
  */
-public final class DirectoryOption extends AbstractOption {
 
-    private static final Logger logger = LoggerFactory.getLogger(DirectoryOption.class);
+public final class DirectoryOption extends AbstractOption {
 
     /** Regular expression pattern for ensuring that no quote marks are present in {@link #value}. */
     private static final Pattern CLEAN_VALUE_REGEX = Pattern.compile("\"");

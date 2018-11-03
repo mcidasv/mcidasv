@@ -29,7 +29,6 @@ package edu.wisc.ssec.mcidasv.startupmanager.options;
 
 import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.EMPTY_STRING;
 import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.QUOTE_CHAR;
-import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.QUOTE_STRING;
 import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.SET_PREFIX;
 
 import javax.swing.JCheckBox;
