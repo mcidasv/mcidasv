@@ -81,6 +81,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private static final String NO_MEM_PREFIX_FMT = "Could not find matching memory prefix for \"%s\" in string: %s";
     
     public enum Prefix {
+        PERCENT("P", "percent", 1),
         MEGA("M", "megabytes", 1),
         GIGA("G", "gigabytes", 1024),
         TERA("T", "terabytes", 1024 * 1024);
@@ -147,7 +148,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     private boolean sliderActive = false;
     
     private static final Pattern MEMSTRING = 
-        Pattern.compile("^(\\d+)(M|G|T|P|MB|GB|TB|PB)$", Pattern.CASE_INSENSITIVE);
+        Pattern.compile("^(\\d+)(M|G|T|P|MB|GB|TB)$", Pattern.CASE_INSENSITIVE);
     
     private final String defaultPrefValue;
     
@@ -254,12 +255,13 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             int sliderValue = ((JSlider) evt.getSource()).getValue();
             setValue(sliderValue + "P");
             text.setText(String.valueOf(Math.round(sliderValue / 100.0 * 
-                    (maxmem / currentPrefix.getScale()))) + "GB");
+                    (maxmem / 1024))) + "GB");
         }
     };
     
     private void handleNewValue(final McVTextField field) {
-        if (!textPanel.isEnabled()) {
+        
+        if (! textPanel.isEnabled()) {
             return;
         }
         assert field != null;
@@ -282,8 +284,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             int suffixLength = 1;
             if (memWithSuffix.endsWith("MB") 
                 || memWithSuffix.endsWith("GB") 
-                || memWithSuffix.endsWith("TB") 
-                || memWithSuffix.endsWith("PB")) 
+                || memWithSuffix.endsWith("TB")) 
             {
                 suffixLength = 2;
             }
@@ -385,7 +386,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     }
     
     public String getValue() {
-        if (!isValid()) {
+        if (! isValid()) {
             return defaultPrefValue;
         }
         return currentPrefix.getJavaFormat(value);
@@ -400,11 +401,11 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             setValue(failsafeValue);
         }
     }
-    
+
     public void setValue(final String newValue) {
+        
         Matcher m = MEMSTRING.matcher(newValue);
-        if (! m.matches()) {
-            
+        if (! m.matches()) {            
             throw new IllegalArgumentException(String.format(BAD_MEM_FMT, newValue));
         }
         String quantity = m.group(1);
@@ -422,26 +423,35 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         
         int intVal = Integer.parseInt(quantity);
         if (intVal <= 0) {
-            
             throw new IllegalArgumentException(String.format(LTE_ZERO_FMT, newValue));
         }
         if (prefix.isEmpty()) {
             prefix = "M";
         }
         value = quantity;
+        
+        // TJJ Nov 2018 - if unit is P (Percentage), activate slider. 
+        // This also lets fresh install initialize correctly
+        if (prefix.equals("P")) {
+            sliderActive = true;
+        } else {
+            sliderActive = false;
+        }
+        
         if (sliderActive) {
             
             // Work around all the default settings going on
             initSliderValue = Integer.parseInt(value);
-            initTextValue = String.valueOf((int) Math.round(initSliderValue * maxmem / 100.0));
+            initTextValue = String.valueOf((int) Math.round(initSliderValue * maxmem / 100.0 / 1024));
             
             sliderLabel.setText(String.format(SLIDER_LABEL_FMT, value));
             if (maxmem > 0) {
-                text.setText(initTextValue + "MB");
+                text.setText(initTextValue + "GB");
             }
             if (! doneInit) {
                 jrbSlider.setSelected(true);
             }
+            currentPrefix = MemoryOption.Prefix.PERCENT;
             return;
         }
         

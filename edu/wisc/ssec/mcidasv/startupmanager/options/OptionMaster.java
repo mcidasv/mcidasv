@@ -54,7 +54,8 @@ public class OptionMaster {
 
     // TODO(jon): write CollectionHelpers.zip() and CollectionHelpers.zipWith()
     public final Object[][] blahblah = {
-        { "HEAP_SIZE", "Memory", "80", Type.MEMORY, OptionPlatform.ALL, Visibility.VISIBLE },
+        // Default memory initial setting is 80% of system memory
+        { "HEAP_SIZE", "Memory", "80P", Type.MEMORY, OptionPlatform.ALL, Visibility.VISIBLE },
         { "JOGL_TOGL", "Enable JOGL", "1", Type.BOOLEAN, OptionPlatform.UNIXLIKE, Visibility.VISIBLE },
         { "USE_3DSTUFF", "Enable 3D controls", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
         { "DEFAULT_LAYOUT", "Load default layout", "1", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
