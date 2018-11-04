@@ -28,12 +28,10 @@
 package edu.wisc.ssec.mcidasv.startupmanager.options;
 
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.JComboBox;
 import javax.swing.SwingUtilities;
 
-import edu.wisc.ssec.mcidasv.util.MakeToString;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.classic.Level;
@@ -42,6 +40,7 @@ import ch.qos.logback.classic.Logger;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.OptionPlatform;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Type;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.Visibility;
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
 /**

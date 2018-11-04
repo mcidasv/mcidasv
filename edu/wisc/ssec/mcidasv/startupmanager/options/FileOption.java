@@ -80,9 +80,6 @@ public final class FileOption extends AbstractOption {
         "Path to default bundle. An empty path signifies that there is no"
         + " default bundle in use.";
 
-    /** Default option value. See {@link OptionMaster#blahblah}. */
-    private final String defaultValue;
-
     /** Default state of {@link #enableCheckBox}. */
     private final boolean defaultCheckBox;
 
@@ -127,7 +124,6 @@ public final class FileOption extends AbstractOption {
         final OptionMaster.Visibility visibility)
     {
         super(id, label, OptionMaster.Type.DIRTREE, platform, visibility);
-        this.defaultValue = defaultValue;
         String[] defaults = parseFormat(defaultValue);
         this.defaultCheckBox = booleanFromFormat(defaults[0]);
         this.defaultBundle = defaults[1];
