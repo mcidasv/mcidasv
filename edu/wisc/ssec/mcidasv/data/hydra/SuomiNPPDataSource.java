@@ -65,6 +65,7 @@ import org.jdom2.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.ma2.Array;
 import ucar.ma2.ArrayFloat;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
@@ -102,7 +103,7 @@ import visad.util.Util;
 
 /**
  * A data source for NPOESS Preparatory Project (Suomi NPP) data
- * and JPSS data (JPSS-1 now officially NOAA-20).
+ * and JPSS data (JPSS-1 is officially NOAA-20).
  * 
  * This should probably move, but we are placing it here for now
  * since we are leveraging some existing code used for HYDRA.
@@ -743,6 +744,45 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    								unitsNASA.put(v.getShortName(), unitAtt.getStringValue());
 	    							} else {
 	    								unitsNASA.put(v.getShortName(), "Unknown");
+	    							}
+	    							
+	    							// TJJ Nov 2018 - SIPS V2+ mods
+	    							// Regridding with bow-tie interpolation wasn't working since there are
+	    							// now multiple fill value categories and we need to look specifically
+	    							// for the bowtie deletion flag
+	    							
+	    							Attribute longNameAtt = v.findAttribute("long_name");
+	    							String longName = "empty";
+	    							if (longNameAtt != null) longName = longNameAtt.getStringValue();
+	    							if (longName.contains("reflectance")) {
+	    							    
+	    							    Attribute flagMeanings = v.findAttribute(JPSSUtilities.SIPS_FLAG_MEANINGS_ATTRIBUTE);
+	    							    // If this is not null, we must be v2.0.0 or higher
+	    							    if (flagMeanings != null) {
+	    							        String meanings = flagMeanings.getStringValue();
+	    							        // Tokenize meanings string, multiple flags defined there
+	    							        StringTokenizer st = new StringTokenizer(meanings);
+	    							        int bowtieIdx = -1;
+	    							        boolean foundBowTieAttribute = false;
+	    							        String tokStr = null;
+	    							        while (st.hasMoreTokens()) {
+	    							            tokStr = st.nextToken();
+	    							            bowtieIdx++;
+	    							            if (tokStr.equals(JPSSUtilities.SIPS_BOWTIE_DELETED_FLAG)) {
+	    							                foundBowTieAttribute = true;
+	    							                break;
+	    							            }
+	    							        }
+
+	    							        if (foundBowTieAttribute) {
+	    							            Attribute flagValues = v.findAttribute(JPSSUtilities.SIPS_FLAG_VALUES_ATTRIBUTE);
+	    							            Array flagValsArr = flagValues.getValues();
+	    							            int bowTieVal = (int) flagValsArr.getInt(bowtieIdx);
+	    							            Attribute a1 = new Attribute("_FillValue", bowTieVal);
+	    							            v.addAttribute(a1);
+	    							        }
+	    							    }
+
 	    							}
 	    							
 	    							// TJJ Feb 2016 - Create BT variables where applicable
