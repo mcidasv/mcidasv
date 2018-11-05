@@ -27,23 +27,18 @@
  */
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.Data;
-import visad.FlatField;
-import visad.VisADException;
-import visad.FunctionType;
-import visad.RealType;
-import visad.RealTupleType;
-import visad.Linear1DSet;
-import visad.Linear2DSet;
-import visad.Gridded2DSet;
-import visad.CoordinateSystem;
-import visad.CommonUnit;
-import visad.SetType;
-import visad.georef.MapProjection;
-import visad.util.ThreadManager;
-
-import java.util.Arrays;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+
+import visad.CoordinateSystem;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Linear2DSet;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SetType;
+import visad.VisADException;
+import visad.util.ThreadManager;
 
 public class ReprojectSwath {
   private static int count = 0;
