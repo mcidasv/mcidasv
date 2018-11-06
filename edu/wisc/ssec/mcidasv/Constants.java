@@ -337,7 +337,7 @@ public interface Constants extends IdvConstants {
         "/edu/wisc/ssec/mcidasv/resources/mcidasv.properties";
 
     /** McIDAS-V base URL. */
-    String HOMEPAGE_URL = "http://www.ssec.wisc.edu/mcidas/software/v";
+    String HOMEPAGE_URL = "https://www.ssec.wisc.edu/mcidas/software/v";
 
     /** Location of latest version file under base URL. */
     String VERSION_URL = "stable/version.txt";

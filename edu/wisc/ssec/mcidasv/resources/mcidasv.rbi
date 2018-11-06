@@ -11,7 +11,7 @@
 
     Just for kicks:
 
-    http://www.ssec.wisc.edu/~jbeavers/latency/
+    https://www.ssec.wisc.edu/~jbeavers/latency/
 
     And yes, I am very aware that I am referencing a remote resource while
     warning against doing exactly that.
@@ -344,7 +344,7 @@
     <!-- If the McV-specific list expands further, maybe put them below -->
 
     <!-- Using McV places file while pull request is pending for Earthquake data -->
-    <!-- http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2611 -->
+    <!-- https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2611 -->
     <!-- <resource location="%IDVPATH%/stations/places.xml"/> -->
     <resource location="%APPPATH%/stations/places.xml"/>
     
@@ -616,7 +616,7 @@
 
   <!-- Where to look for the *list* of available plugins. -->
   <resources name="idv.resource.pluginindex">
-    <resource label="Plugin Index" location="http://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml">
+    <resource label="Plugin Index" location="https://www.ssec.wisc.edu/mcidas/software/v/resources/plugins/plugins.xml">
       <property name="default" value="%APPPATH%/plugins.xml"/>
     </resource>
   </resources>
