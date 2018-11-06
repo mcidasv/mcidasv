@@ -72,11 +72,11 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     private static final String LTE_ZERO_FMT = "Memory cannot be less than or equal to zero: %s";
     
-    private static final String SLIDER_LABEL_FMT = "Using %s percent";
+    private static final String SLIDER_LABEL_FMT = "Using %s";
     
-    private static final String SLIDER_LESS_THAN_MIN_LABEL_FMT = "Using < %s percent";
+    private static final String SLIDER_LESS_THAN_MIN_LABEL_FMT = "Using < %s";
     
-    private static final String SLIDER_GREATER_THAN_MAX_LABEL_FMT = "Using > %s percent";
+    private static final String SLIDER_GREATER_THAN_MAX_LABEL_FMT = "Using > %s";
     
     private static final String NO_MEM_PREFIX_FMT = "Could not find matching memory prefix for \"%s\" in string: %s";
     
@@ -346,7 +346,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     }
     
     public JComponent getSliderComponent() {
-        sliderLabel = new JLabel("Use " + initSliderValue + "% ");
+        sliderLabel = new JLabel("Using " + initSliderValue + "% ");
         String memoryString = (maxmem / 1024) + " GB";
         if (maxmem == 0) {
             memoryString = "Unknown";
@@ -444,7 +444,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             initSliderValue = Integer.parseInt(value);
             initTextValue = String.valueOf((int) Math.round(initSliderValue * maxmem / 100.0 / 1024));
             
-            sliderLabel.setText(String.format(SLIDER_LABEL_FMT, value));
+            sliderLabel.setText(String.format(SLIDER_LABEL_FMT, value) + "% ");
             if (maxmem > 0) {
                 text.setText(initTextValue + "GB");
             }
@@ -475,12 +475,12 @@ public class MemoryOption extends AbstractOption implements ActionListener {
                     slider.setValue(initSliderValue);
                     if (aboveMin) {
                         if (aboveMax) {
-                            sliderLabel.setText(String.format(SLIDER_GREATER_THAN_MAX_LABEL_FMT, initSliderValue));
+                            sliderLabel.setText(String.format(SLIDER_GREATER_THAN_MAX_LABEL_FMT, initSliderValue) + "% ");
                         } else {
-                            sliderLabel.setText(String.format(SLIDER_LABEL_FMT, initSliderValue));
+                            sliderLabel.setText(String.format(SLIDER_LABEL_FMT, initSliderValue) + "% ");
                         }
                     } else {
-                        sliderLabel.setText(String.format(SLIDER_LESS_THAN_MIN_LABEL_FMT, initSliderValue));
+                        sliderLabel.setText(String.format(SLIDER_LESS_THAN_MIN_LABEL_FMT, initSliderValue) + "% ");
                     }
                 }
                 if (! doneInit) {
