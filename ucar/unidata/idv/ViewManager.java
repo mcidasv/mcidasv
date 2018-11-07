@@ -2800,18 +2800,45 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     return;
                 }
                 
-                // some display controls shouldn't show up in the list, so
-                // we need to filter them out
+                // loop over this viewmanager's controls to determine which
+                // ones should be drawn.
                 List controls = getControls();
-                List<DisplayControl> filtered = new ArrayList<>(controls.size());
+                List<String> labels = new ArrayList<>(controls.size());
                 for (int i = 0; i < controls.size(); i++) {
                     DisplayControl control = (DisplayControl)controls.get(i);
                     if (control.getShowInDisplayList() && control.getDisplayVisibility()) {
-                        filtered.add(control);
+                        Data displayListData = control.getDataForDisplayList();
+                        String label;
+                        if (displayListData instanceof FieldImpl) {
+                            FieldImpl data = (FieldImpl) control.getDataForDisplayList();
+                            Text controlLabel = (Text) data.getSample(0);
+                            Animation a = getAnimation();
+                            label = controlLabel.getValue();
+                            if (a != null) {
+                                Real now = a.getCurrentAnimationValue();
+                                if (now != null) {
+                                    Data rangeVal = data.evaluate(now, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+                                    if ((rangeVal != null) && (rangeVal instanceof Text)) {
+                                        label = ((Text)rangeVal).getValue();
+                                        if (label == null) {
+                                            label = controlLabel.getValue();
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            Text controlLabel = (Text) control.getDataForDisplayList();
+                            label = controlLabel.getValue();
+                        }
+                        
+                        if ((label == null) || label.isEmpty()) {
+                            continue;
+                        }
+                        labels.add(label);
                     }
                 }
                 
-                if (filtered.isEmpty()) {
+                if (labels.isEmpty()) {
                     // if we've filtered out everything that means we may as 
                     // well draw. if you don't do this you can get a layer
                     // label to remain visible despite disabling the visibility
@@ -2848,34 +2875,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 
                 Font listFont = getDisplayListFont();
                 
-                for (int i = 0; i < filtered.size(); i++) {
-                    DisplayControl control = filtered.get(i);
-                    Data displayListData = control.getDataForDisplayList();
-                    String label;
-                    if (displayListData instanceof FieldImpl) {
-                        FieldImpl data = (FieldImpl) control.getDataForDisplayList();
-                        Text controlLabel = (Text) data.getSample(0);
-                        Animation a = getAnimation();
-                        label = controlLabel.getValue();
-                        if (a != null) {
-                            Real now = a.getCurrentAnimationValue();
-                            if (now != null) {
-                                Data rangeVal = data.evaluate(now, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
-                                if ((rangeVal != null) && (rangeVal instanceof Text)) {
-                                    label = ((Text)rangeVal).getValue();
-                                    if (label == null) {
-                                        label = controlLabel.getValue();
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        Text controlLabel = (Text) control.getDataForDisplayList();
-                        label = controlLabel.getValue();
-                    }
-                    
-                    int listIdx = (filtered.size() - 1) - i;
-                    logger.trace("control: {} attempting to draw label: '{}'", control, label);
+                for (int i = 0; i < labels.size(); i++) {
+                    String label = labels.get(i);
+                    int listIdx = (labels.size() - 1) - i;
                     centerString(g2, bounds, label, listFont, listIdx);
                 }
                 ImageJ3D g2dTest = new ImageJ3D(listImage,
