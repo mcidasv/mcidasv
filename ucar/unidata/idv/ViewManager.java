@@ -110,8 +110,10 @@ import visad.KeyboardBehavior;
 import visad.ProjectionControl;
 import visad.Real;
 import visad.Set;
+import visad.Text;
 import visad.VisADException;
 import visad.bom.annotations.ImageJ3D;
+import visad.bom.annotations.JLabelJ3D;
 import visad.bom.annotations.ScreenAnnotatorJ3D;
 import visad.java2d.GraphicsModeControlJ2D;
 import visad.java3d.DisplayImplJ3D;
@@ -132,12 +134,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -150,6 +154,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.print.PrinterJob;
 import java.beans.PropertyChangeEvent;
@@ -175,6 +183,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
+import javax.media.j3d.Text3D;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -207,9 +216,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
-
-
-//import org.apache.batik.svggen.SVGGraphics2D;
 
 /**
  * A wrapper around a {@link ucar.visad.display.DisplayMaster}.
@@ -2140,6 +2146,15 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
+    private Rectangle getStringBounds(Graphics2D g2, String str,
+                                      float x, float y)
+    {
+        FontRenderContext frc = g2.getFontRenderContext();
+        GlyphVector gv = g2.getFont().createGlyphVector(frc, str);
+        return gv.getPixelBounds(null, x, y);
+    }
+    
+
     /**
      * Update the annotations
      */
@@ -2155,19 +2170,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 annotator.clear();
 
                 Component comp = display.getComponent();
-
                 if (comp == null) {
                     return;
                 }
 
                 Rectangle bounds = comp.getBounds();
-
-                // System.out.println("window bounds: " + bounds);
                 if ((bounds.width == 0) || (bounds.height == 0)
-                        || (logoFile == null) || logoFile.isEmpty()
-                        || !getLogoVisibility()) {
+                    || (logoFile == null) || logoFile.isEmpty()
+                    || !getLogoVisibility()) 
+                {
                     annotator.draw();
-
                     return;
                 }
 
@@ -2192,16 +2204,52 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                    : display.getDisplayRenderer().getMode2D()
                                      ? 1.5f
                                      : 2;
+                
                 ImageJ3D logoJ3D = new ImageJ3D(logo,
                                        getImageAnchor(getLogoPosition()),
                                        baseX, baseY, zval, getLogoScale());
-
+                logger.trace("adding logo at: baseX={}, baseY={}, zval={}", baseX, baseY, zval);
                 annotator.add(logoJ3D);
                 annotator.draw();
             }
         } catch (Exception exp) {
             logException("updating annotations", exp);
         }
+    }
+
+    public int[] centerString(Graphics g, Rectangle r, String s,
+                             Font font, int row) {
+        FontRenderContext frc2 =
+            new FontRenderContext(null, true, true);
+        
+        FontRenderContext frc = ((Graphics2D)g).getFontRenderContext();
+        TextLayout layout = new TextLayout(s, font, frc2);
+        Rectangle2D r2D = layout.getBounds();
+        int rWidth = (int)Math.round(r2D.getWidth());
+        int rHeight = (int)Math.round(r2D.getHeight());
+        int rX = (int)Math.round(r2D.getX());
+        int rY = (int)Math.round(r2D.getY());
+        
+        int a = (r.width / 2) - (rWidth / 2) - rX;
+        int b = 10;
+        logger.trace("rect={} a={} b={} r.x+a={} r.y+b={}", r, a, b, r.x+a,r.y+b);
+//        boolean makeBackground = getStore().get("mcv.annotator.showbg", false);
+//        int arcWidth = getStore().get("mcv.annotator.arcwidth", 12);
+//        int arcHeight = getStore().get("mcv.annotator.archeight", 12);
+//        Color bgColor = getStore().get("mcv.annotator.bgcolor", new Color(58, 58, 58));
+
+        Color c = getDisplayListColor();
+        if (c == null) {
+            c = Color.WHITE;
+        }
+        g.setColor(c);
+        g.setFont(font);
+//        g.drawString(s, r.x + a, r.y + b);
+        int startY = r.height - b;
+        GlyphVector gv = font.createGlyphVector(frc, s);
+        Rectangle2D rr = gv.getLogicalBounds();
+        g.drawString(s, r.x + a, startY-(row * (int)rr.getHeight()));
+        return new int[] { r.x + a, (int)rr.getHeight() };
     }
 
     /**
@@ -2714,113 +2762,92 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     }
 
+    private ScreenAnnotatorJ3D displayLister = null;
+    
     /**
      * Populate the display list
      */
     public void updateDisplayList() {
-
+        
         try {
             synchronized (MUTEX_DISPLAYLIST) {
                 if ( !hasDisplayMaster()) {
                     return;
                 }
-
-                if (displayListDisplayables == null) {
-                    displayListDisplayables = new CompositeDisplayable();
-                    displayListDisplayables.setUseTimesInAnimation(false);
-                } else {
-                    getMaster().removeDisplayable(displayListDisplayables);
-                    displayListDisplayables.clearDisplayables();
-                }
-
+                
                 if ( !getShowDisplayList()) {
                     return;
                 }
-
+                
+                if (displayLister == null) {
+                    displayLister = new ScreenAnnotatorJ3D((DisplayImpl)getMaster().getDisplay());
+                }
+                
+                displayLister.clear();
+                
+                DisplayImpl display = (DisplayImpl) getMaster().getDisplay();
+                Component comp = display.getComponent();
+                
+                if (comp == null) {
+                    return;
+                }
+                
+                Rectangle bounds = comp.getBounds();
                 List controls = getControls();
-                Hashtable<String, List<TextDisplayable>> catMap =
-                    new Hashtable<String, List<TextDisplayable>>();
-                List<String>          cats = new ArrayList<String>();
-                List<TextDisplayable> textDisplayables =
-                    new ArrayList<TextDisplayable>();
-
-                // Seed the list first so we get the right order
-                if (sideLegend != null) {
-                    for (String cat : sideLegend.getDisplayCategories()) {
-                        cats.add(cat);
-                        catMap.put(cat, new ArrayList<TextDisplayable>());
+                
+                List<DisplayControl> filtered = new ArrayList<>(controls.size());
+                for (int i = 0; i < controls.size(); i++) {
+                    DisplayControl control = (DisplayControl)controls.get(i);
+                    if (control.getShowInDisplayList() && control.getDisplayVisibility()) {
+                        filtered.add(control);
                     }
                 }
-
-                for (int i = controls.size() - 1; i >= 0; i--) {
-                    DisplayControl control = (DisplayControl) controls.get(i);
-
-                    if ( !control.getShowInDisplayList()
-                            || !control.getDisplayVisibility()) {
-                        continue;
+                
+                for (int i = 0; i < filtered.size(); i++) {
+                    DisplayControl control = filtered.get(i);
+                    float    zval    = getPerspectiveView()
+                        ? 1
+                        : display.getDisplayRenderer().getMode2D()
+                        ? 1.5f
+                        : 2;
+                    
+                    Data ugh = control.getDataForDisplayList();
+                    String label;
+                    if (ugh instanceof FieldImpl) {
+                        FieldImpl data = (FieldImpl) control.getDataForDisplayList();
+                        Text controlLabel = (Text) data.getSample(0);
+                        label = controlLabel.getValue();
+                    } else {
+                        Text controlLabel = (Text) control.getDataForDisplayList();
+                        label = controlLabel.getValue();
                     }
-
-                    TextDisplayable d =
-                        (TextDisplayable) control.getDisplayListDisplayable(
-                            this);
-
-                    if (d == null) {
-                        continue;
+                    
+                    BufferedImage off_Image =
+                        new BufferedImage(bounds.width, 
+                                          bounds.height,
+                                          BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2 = off_Image.createGraphics();
+                    
+                    g2.setRenderingHint(
+                        RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+                    g2.setRenderingHint(
+                        RenderingHints.KEY_FRACTIONALMETRICS,
+                        RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+                        
+                    Font f = getDisplayListFont();
+                    Color c = getDisplayListColor();
+                    if (c == null) {
+                        c = Color.WHITE;
                     }
-
-                    String cat = control.getDisplayCategory();
-
-                    if (cat == null) {
-                        cat = "Displays";
-                    }
-
-                    List<TextDisplayable> l = catMap.get(cat);
-
-                    if (l == null) {
-                        l = new ArrayList<TextDisplayable>();
-                        catMap.put(cat, l);
-                        cats.add(cat);
-                    }
-
-                    l.add(d);
-                    textDisplayables.add(d);
+                    int[] tuple = centerString(g2, bounds, label, f, (filtered.size() - 1) - i);
+                    int midpoint = tuple[0];
+                    int labelHeight = tuple[1];
+                    
+                    ImageJ3D g2dTest = new ImageJ3D(off_Image, ImageJ3D.TOP_LEFT, 0, 0, zval, 1.0f);
+                    displayLister.add(g2dTest);
                 }
-
-                boolean grouped = getStateManager().getPreferenceOrProperty(
-                                      IdvConstants.PROP_DISPLAYLIST_GROUP,
-                                      false);
-
-                if (grouped) {
-                    int count = 0;
-
-                    for (int i = cats.size() - 1; i >= 0; i--) {
-                        String                cat          = cats.get(i);
-                        List<TextDisplayable> displayables = catMap.get(cat);
-
-                        for (int j = displayables.size() - 1; j >= 0; j--) {
-                            TextDisplayable d = displayables.get(j);
-
-                            count++;
-
-                            if (setDisplayablePosition(d, count)) {
-                                displayListDisplayables.addDisplayable(d);
-                            }
-                        }
-                    }
-                } else {
-                    for (int count = 0; count < textDisplayables.size();
-                            count++) {
-                        TextDisplayable d = textDisplayables.get(count);
-
-                        if (setDisplayablePosition(d, count + 1)) {
-                            displayListDisplayables.addDisplayable(d);
-                        }
-                    }
-                }
-
-                getMaster().addDisplayable(displayListDisplayables);
-
-                // displayListDisplayables.setVisible(true);
+                displayLister.draw();
             }
         } catch (Exception exp) {
             logException("Setting display list", exp);
@@ -6582,6 +6609,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
             int lineWidth = fm.stringWidth(text);
 
+
+            graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+            graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
             graphics.drawString(text, width / 2 - lineWidth / 2,
                                 startY + offsetY * cnt);
             totalHeight += Math.abs(offsetY);
@@ -7832,9 +7864,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public float getLogoScale() {
         if (logoScale < 0) {
+            String uiscale = System.getProperty("sun.java2d.uiScale", "1");
+            // this ends up changing the property; need to do this where the image is actually scaled
+            float fltVal = Float.parseFloat(uiscale);
             logoScale =
                 (float) getIdv().getStateManager().getPreferenceOrProperty(
-                    PREF_LOGO_SCALE, 1f);
+                    PREF_LOGO_SCALE, 1f) * fltVal;
         }
 
         return logoScale;
@@ -7864,9 +7899,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @return the logo visibility
      */
     public boolean getLogoVisibility() {
-        return getBp(PREF_LOGO_VISIBILITY);
+        
+        return getBp(PREF_LOGO_VISIBILITY, true);
     }
 
+    private static String PREF_LOGO_CHANGED = "idv.viewmanager.logo.somethingchanged";
+    
     /**
      * Ensure that there is only one time driver for this view
      *
