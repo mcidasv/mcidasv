@@ -92,7 +92,7 @@ import ucar.visad.display.AnimationWidget;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.Displayable;
-import ucar.visad.display.TextDisplayable;
+
 import visad.ConstantMap;
 import visad.ControlEvent;
 import visad.ControlListener;
@@ -113,7 +113,6 @@ import visad.Set;
 import visad.Text;
 import visad.VisADException;
 import visad.bom.annotations.ImageJ3D;
-import visad.bom.annotations.JLabelJ3D;
 import visad.bom.annotations.ScreenAnnotatorJ3D;
 import visad.java2d.GraphicsModeControlJ2D;
 import visad.java3d.DisplayImplJ3D;
@@ -165,8 +164,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -178,12 +175,12 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
-import javax.media.j3d.Text3D;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -2797,10 +2794,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 }
                 
                 Rectangle bounds = comp.getBounds();
-                List controls = getControls();
+                if (bounds.x == 0 && bounds.y == 0 && bounds.width == 0 && bounds.height == 0) {
+                    return;
+                }
                 
                 // some display controls shouldn't show up in the list, so
                 // we need to filter them out
+                List controls = getControls();
                 List<DisplayControl> filtered = new ArrayList<>(controls.size());
                 for (int i = 0; i < controls.size(); i++) {
                     DisplayControl control = (DisplayControl)controls.get(i);
