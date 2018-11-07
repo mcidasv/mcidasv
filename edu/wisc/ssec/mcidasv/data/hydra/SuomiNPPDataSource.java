@@ -754,7 +754,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	    							Attribute longNameAtt = v.findAttribute("long_name");
 	    							String longName = "empty";
 	    							if (longNameAtt != null) longName = longNameAtt.getStringValue();
-	    							if (longName.contains("reflectance")) {
+	    							if (longName.contains("reflectance") || longName.contains("radiance")) {
 	    							    
 	    							    Attribute flagMeanings = v.findAttribute(JPSSUtilities.SIPS_FLAG_MEANINGS_ATTRIBUTE);
 	    							    // If this is not null, we must be v2.0.0 or higher
