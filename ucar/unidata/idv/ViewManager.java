@@ -2585,9 +2585,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
     }
 
     /**
-     * The time changed
+     * Called when the animation timestep changes.
      */
-    protected void animationTimeChanged() {}
+    protected void animationTimeChanged() {
+        updateDisplayList();
+    }
 
     /**
      * update the timelines display
@@ -2810,6 +2812,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 }
                 
                 if (filtered.isEmpty()) {
+                    // if we've filtered out everything that means we may as 
+                    // well draw. if you don't do this you can get a layer
+                    // label to remain visible despite disabling the visibility
+                    // of all layers
+                    displayLister.draw();
                     return;
                 }
                 
@@ -2848,13 +2855,27 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     if (displayListData instanceof FieldImpl) {
                         FieldImpl data = (FieldImpl) control.getDataForDisplayList();
                         Text controlLabel = (Text) data.getSample(0);
+                        Animation a = getAnimation();
                         label = controlLabel.getValue();
+                        if (a != null) {
+                            Real now = a.getCurrentAnimationValue();
+                            if (now != null) {
+                                Data rangeVal = data.evaluate(now, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+                                if ((rangeVal != null) && (rangeVal instanceof Text)) {
+                                    label = ((Text)rangeVal).getValue();
+                                    if (label == null) {
+                                        label = controlLabel.getValue();
+                                    }
+                                }
+                            }
+                        }
                     } else {
                         Text controlLabel = (Text) control.getDataForDisplayList();
                         label = controlLabel.getValue();
                     }
                     
                     int listIdx = (filtered.size() - 1) - i;
+                    logger.trace("control: {} attempting to draw label: '{}'", control, label);
                     centerString(g2, bounds, label, listFont, listIdx);
                 }
                 ImageJ3D g2dTest = new ImageJ3D(listImage,
