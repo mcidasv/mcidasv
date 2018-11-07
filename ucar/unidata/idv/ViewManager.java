@@ -2217,8 +2217,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-    public int[] centerString(Graphics g, Rectangle r, String s,
-                             Font font, int row) {
+    protected void centerString(Graphics g, 
+                                Rectangle r, 
+                                String s,
+                                Font font, 
+                                int row) 
+    {
         FontRenderContext frc2 =
             new FontRenderContext(null, true, true);
         
@@ -2232,7 +2236,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         
         int a = (r.width / 2) - (rWidth / 2) - rX;
         int b = 10;
-        logger.trace("rect={} a={} b={} r.x+a={} r.y+b={}", r, a, b, r.x+a,r.y+b);
+//        logger.trace("rect={} a={} b={} r.x+a={} r.y+b={}", r, a, b, r.x+a,r.y+b);
 //        boolean makeBackground = getStore().get("mcv.annotator.showbg", false);
 //        int arcWidth = getStore().get("mcv.annotator.arcwidth", 12);
 //        int arcHeight = getStore().get("mcv.annotator.archeight", 12);
@@ -2249,7 +2253,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         GlyphVector gv = font.createGlyphVector(frc, s);
         Rectangle2D rr = gv.getLogicalBounds();
         g.drawString(s, r.x + a, startY-(row * (int)rr.getHeight()));
-        return new int[] { r.x + a, (int)rr.getHeight() };
+//        return new int[] { r.x + a, (int)rr.getHeight() };
     }
 
     /**
@@ -2795,6 +2799,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 Rectangle bounds = comp.getBounds();
                 List controls = getControls();
                 
+                // some display controls shouldn't show up in the list, so
+                // we need to filter them out
                 List<DisplayControl> filtered = new ArrayList<>(controls.size());
                 for (int i = 0; i < controls.size(); i++) {
                     DisplayControl control = (DisplayControl)controls.get(i);
@@ -2803,17 +2809,43 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     }
                 }
                 
+                if (filtered.isEmpty()) {
+                    return;
+                }
+                
+                // essentially just creating a transparent image that's the
+                // same size as the display. this is where we'll draw our
+                // labels
+                BufferedImage listImage =
+                    new BufferedImage(bounds.width,
+                                      bounds.height,
+                                      BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2 = listImage.createGraphics();
+                
+                // notes: 
+                //   - definitely leave antialiasing on!
+                //   - the fractional metrics stuff can't hurt, but it may be 
+                //     tough trying to spot what it does
+                g2.setRenderingHint(
+                    RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+                g2.setRenderingHint(
+                    RenderingHints.KEY_FRACTIONALMETRICS,
+                    RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+                
+                float zval = getPerspectiveView()
+                    ? 1
+                    : display.getDisplayRenderer().getMode2D()
+                    ? 1.5f
+                    : 2;
+                
+                Font listFont = getDisplayListFont();
+                
                 for (int i = 0; i < filtered.size(); i++) {
                     DisplayControl control = filtered.get(i);
-                    float    zval    = getPerspectiveView()
-                        ? 1
-                        : display.getDisplayRenderer().getMode2D()
-                        ? 1.5f
-                        : 2;
-                    
-                    Data ugh = control.getDataForDisplayList();
+                    Data displayListData = control.getDataForDisplayList();
                     String label;
-                    if (ugh instanceof FieldImpl) {
+                    if (displayListData instanceof FieldImpl) {
                         FieldImpl data = (FieldImpl) control.getDataForDisplayList();
                         Text controlLabel = (Text) data.getSample(0);
                         label = controlLabel.getValue();
@@ -2822,39 +2854,25 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         label = controlLabel.getValue();
                     }
                     
-                    BufferedImage off_Image =
-                        new BufferedImage(bounds.width, 
-                                          bounds.height,
-                                          BufferedImage.TYPE_INT_ARGB);
-                    Graphics2D g2 = off_Image.createGraphics();
-                    
-                    g2.setRenderingHint(
-                        RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-                    g2.setRenderingHint(
-                        RenderingHints.KEY_FRACTIONALMETRICS,
-                        RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-                        
-                    Font f = getDisplayListFont();
-                    Color c = getDisplayListColor();
-                    if (c == null) {
-                        c = Color.WHITE;
-                    }
-                    int[] tuple = centerString(g2, bounds, label, f, (filtered.size() - 1) - i);
-                    int midpoint = tuple[0];
-                    int labelHeight = tuple[1];
-                    
-                    ImageJ3D g2dTest = new ImageJ3D(off_Image, ImageJ3D.TOP_LEFT, 0, 0, zval, 1.0f);
-                    displayLister.add(g2dTest);
+                    int listIdx = (filtered.size() - 1) - i;
+                    centerString(g2, bounds, label, listFont, listIdx);
                 }
+                ImageJ3D g2dTest = new ImageJ3D(listImage,
+                                                ImageJ3D.TOP_LEFT,
+                                                0,
+                                                0,
+                                                zval,
+                                                1.0f);
+                displayLister.add(g2dTest);
                 displayLister.draw();
             }
         } catch (Exception exp) {
             logException("Setting display list", exp);
         }
-
     }
 
+    
+    
     /**
      * Set the position of the displayable
      *
