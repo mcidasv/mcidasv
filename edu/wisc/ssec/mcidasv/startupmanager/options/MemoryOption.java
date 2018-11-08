@@ -28,7 +28,6 @@
 
 package edu.wisc.ssec.mcidasv.startupmanager.options;
 
-import static java.lang.Math.ceil;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 
 import java.awt.Color;
@@ -65,6 +64,8 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     /** Logger object. */
     private static final Logger logger = LoggerFactory.getLogger(MemoryOption.class);
+    
+    private static final long GIGA_BYTES_TO_BYTES = 1024 * 1024 * 1024;
     
     private static final String TOO_BIG_FMT = "Value exceeds your maximum available memory (%s MB)";
     
@@ -154,7 +155,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     // default to 80% of system memory (in gigabytes)
     private String failsafeValue = 
-        String.valueOf((int)ceil(0.8 * (getSystemMemory() / 1073741824))) + 'G';
+        String.valueOf((int) Math.ceil(0.8 * (getSystemMemory() / MemoryOption.GIGA_BYTES_TO_BYTES))) + 'G';
     
     private String value = failsafeValue; // bootstrap
     
@@ -253,8 +254,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         if (sliderPanel.isEnabled()) {
             int sliderValue = ((JSlider) evt.getSource()).getValue();
             setValue(sliderValue + "P");
-            text.setText(String.valueOf(Math.round(sliderValue / 100.0 * 
-                    (maxmem / 1024))) + "GB");
+            text.setText(String.valueOf(Math.round(sliderValue / 100.0 * maxmem)) + "MB");
         }
     };
     
@@ -345,7 +345,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     public JComponent getSliderComponent() {
         sliderLabel = new JLabel("Using " + initSliderValue + "% ");
-        String memoryString = (maxmem / 1024) + " GB";
+        String memoryString = maxmem + " MB";
         if (maxmem == 0) {
             memoryString = "Unknown";
         }
@@ -440,11 +440,11 @@ public class MemoryOption extends AbstractOption implements ActionListener {
             
             // Work around all the default settings going on
             initSliderValue = Integer.parseInt(value);
-            initTextValue = String.valueOf((int) Math.round(initSliderValue * maxmem / 100.0 / 1024));
+            initTextValue = String.valueOf((int) Math.round(initSliderValue * maxmem / 100.0));
             
             sliderLabel.setText(String.format(SLIDER_LABEL_FMT, value) + "% ");
             if (maxmem > 0) {
-                text.setText(initTextValue + "GB");
+                text.setText(initTextValue + "MB");
             }
             if (! doneInit) {
                 jrbSlider.setSelected(true);
