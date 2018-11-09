@@ -154,8 +154,14 @@
         description="Edit user preferences"
         action="jython:getStaticMcv().showPreferenceManager();"/>
 
+    <!--
     <action id="collab.showcapture"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/preferences-system-session%d.png"
+        description="Event Capture"
+        action="jython:getStaticMcv().getCollabManager().showCapture ();"/>
+    -->
+    <action id="collab.showcapture"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png"
         description="Event Capture"
         action="jython:getStaticMcv().getCollabManager().showCapture ();"/>
 
