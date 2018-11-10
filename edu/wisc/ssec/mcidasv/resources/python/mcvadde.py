@@ -1504,19 +1504,27 @@ def _getADDEImage(localEntry=None,
         print url
         
     try:
-        mapped = _MappedAreaImageFlatField.fromUrl(accounting, debug, server, url)
-        
         # build an object that returns the SATBAND file.
         satBandRequest = _SatBandReq(_satBandUrl(**formatValues))
         
         # submit the request
         futureSatband = ecs.submit(satBandRequest)
         
-        # the commented code will immediately attempt to grab the SATBAND file;
-        # the uncommented code *should* be lazy-loaded.
-        # mapped.addeSatBands = futureSatband.get()
-        mapped.addeSatBands = futureSatband
-        return mapped.getDictionary(), mapped
+        # note: if you need to *immediately* attempt to grab the SATBAND file,
+        # use futureSatband.get(). Be aware that this will block the currently 
+        # executing thread!
+        mapped = _MappedAreaImageFlatField.fromUrl(accounting,
+                                                   debug,
+                                                   server,
+                                                   url,
+                                                   futureSatband)
+        
+        # the following is a dirty, dirty hack that ensures we don't potentially
+        # block our thread simply by creating a new _MappedAreaImageFlatField.
+        # see the note in the _MappedAreaImageFlatField constructor for more.
+        tup = mapped.getDictionary(), mapped
+        mapped._keys.append('satband-band-label')
+        return tup
     except AreaFileException, e:
         raise AddeJythonError(e)
     except AddeURLException, e:
