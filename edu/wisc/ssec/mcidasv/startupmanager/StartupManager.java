@@ -32,6 +32,7 @@ import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.EMPTY_ST
 import static edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster.SET_PREFIX;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -41,7 +42,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,7 +50,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +78,7 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
@@ -88,11 +88,9 @@ import ucar.unidata.ui.Help;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.StringUtil;
-
 import edu.wisc.ssec.mcidasv.ArgumentManager;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.startupmanager.options.BooleanOption;
-import edu.wisc.ssec.mcidasv.startupmanager.options.DirectoryOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.LoggerLevelOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.MemoryOption;
 import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
@@ -341,6 +339,12 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         JTextField jvmArgsField = jvmArgs.getComponent();
         JPanel jvmPanel = McVGuiUtils.makeLabeledComponent("Java Flags:", jvmArgsField);
+        
+        // TJJ Nov 2018 
+        // Add note at top of Startup Options alerting user a restart may be needed
+        JLabel restartLabel = new JLabel("Note: Most startup options require a McIDAS-V restart to take effect");
+        restartLabel.setForeground(Color.red);
+        restartLabel.setBorder(new EmptyBorder(6, 6, 6, 6));
 
         Component[] visadComponents = {
             useGeometryByRefCheckBox,
@@ -355,6 +359,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         startupPanel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
             panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addComponent(restartLabel)
                 .addComponent(heapPanel)
                 .addComponent(j3dPanel)
                 .addComponent(bundlePanel)
@@ -366,6 +371,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(panelLayout.createSequentialGroup()
+                .addComponent(restartLabel)
                 .addComponent(heapPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(bundlePanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
