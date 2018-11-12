@@ -220,7 +220,7 @@ _formats = {
     "TMIN":                                                    AddeFormat.TRMM,
     "GINI":                                                    AddeFormat.GINI,
     # The following servers are not supported on Windows
-    "GOES ABI":                                                AddeFormat.GOES_ABI,
+    "GOES ABI":                                                AddeFormat.GOES16_ABI,
     "Himawari-8":                                              AddeFormat.HIMAWARI8,
     "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
     "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
