@@ -122,7 +122,7 @@ public class LocalAddeEntry implements AddeEntry {
         AMSRE_L2A(ServerName.AMSE, "AMSR-E L 2a", "AMSR-E Level 2a"),
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),
         GINI(ServerName.GINI, "GINI"),
-        GOES_ABI(ServerName.ABIN, "GOES ABI", "GOES ABI"),
+        GOES16_ABI(ServerName.ABIN, "GOES ABI", "GOES ABI"),
         HIMAWARI8(ServerName.WARI, "Himawari 8", "Himawari 8"),        
         INSAT3D_IMAGER(ServerName.INDI, "INSAT-3D Imager", "INSAT-3D Imager"),
         INSAT3D_SOUNDER(ServerName.INDS, "INSAT-3D Sounder", "INSAT-3D Sounder"),
