@@ -28,6 +28,8 @@ import ucar.unidata.collab.Sharable;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
+import ucar.unidata.data.DataSource;
+import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.radar.CDMRadarDataSource;
 import ucar.unidata.data.radar.RadarConstants;
@@ -51,6 +53,7 @@ import visad.bom.Radar2DCoordinateSystem;
 import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonPoint;
+import visad.georef.NamedLocationTuple;
 
 
 import java.awt.Component;
@@ -65,6 +68,8 @@ import java.util.Vector;
 
 import javax.swing.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -95,7 +100,9 @@ public class RadarSweepControl extends ColorPlanViewControl {
     /**
      * Default constructor.
      */
-    public RadarSweepControl() {}
+    public RadarSweepControl() {
+        setLegendLabelTemplate(getDefaultDisplayListTemplate() + " - " + MACRO_DISPLAYNAME);
+    }
 
     /**
      * Set the data in the control.
@@ -468,5 +475,46 @@ public class RadarSweepControl extends ColorPlanViewControl {
             //rewrite.rewrite();
             ncfileIn.close();
         }
+    }
+    
+    private static final Logger logger = LoggerFactory.getLogger(RadarSweepControl.class);
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override protected void getMacroNames(List names, List labels) {
+        super.getMacroNames(names, labels);
+        names.add(MACRO_RADARSITE);
+        labels.add("Radar Site Name");
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override protected void addLabelMacros(String template, List patterns, List values) {
+        super.addLabelMacros(template, patterns, values);
+        patterns.add(MACRO_RADARSITE);
+        values.add(getRadarSite());
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override protected String getDefaultDisplayListTemplate() {
+        return MACRO_RADARSITE + " - " + MACRO_LONGNAME;
+    }
+    
+    public String getRadarSite() {
+        String value = "Unknown";
+        DataChoice choice = getDataChoice();
+        if (choice instanceof DirectDataChoice) {
+            DataSource dataSource = ((DirectDataChoice)choice).getDataSource();
+            Object propVal = dataSource.getProperty("station location");
+            if (propVal instanceof NamedLocationTuple) {
+                NamedLocationTuple loc = (NamedLocationTuple)propVal;
+                value = loc.getIdentifier().toString();
+            }
+        }
+        return value;
     }
 }
