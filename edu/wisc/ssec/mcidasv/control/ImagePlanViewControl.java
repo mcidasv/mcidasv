@@ -54,28 +54,11 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
-import edu.wisc.ssec.mcidasv.data.hydra.SuomiNPPDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import ucar.unidata.data.DataDataChoice;
-import ucar.unidata.data.DataSource;
-import ucar.unidata.data.gis.WmsDataSource;
-import ucar.unidata.data.imagery.AddeImageDataSource;
-import ucar.unidata.data.imagery.ImageDataSource;
-import ucar.unidata.idv.control.McVHistogramWrapper;
-import visad.Data;
-import visad.DateTime;
-import visad.FieldImpl;
-import visad.FlatField;
-import visad.Unit;
-import visad.VisADException;
-import visad.meteorology.ImageSequence;
-import visad.meteorology.ImageSequenceImpl;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
@@ -84,14 +67,21 @@ import ucar.unidata.data.imagery.AddeImageDescriptor;
 import ucar.unidata.data.imagery.BandInfo;
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvResourceManager;
-import ucar.unidata.idv.control.ColorTableWidget;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.control.McVHistogramWrapper;
 import ucar.unidata.ui.XmlTree;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Range;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
+
+import visad.Data;
+import visad.DateTime;
+import visad.FieldImpl;
+import visad.FlatField;
+import visad.VisADException;
+import visad.meteorology.ImageSequenceImpl;
 
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 import edu.wisc.ssec.mcidasv.chooser.ImageParameters;
@@ -103,6 +93,7 @@ import edu.wisc.ssec.mcidasv.data.adde.AddeImageParameterDataSource;
  * specific extensions. Namely parameter sets and support for inverted 
  * parameter defaults.
  */
+
 public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanViewControl {
 
     private static final Logger logger = LoggerFactory.getLogger(ImagePlanViewControl.class);
@@ -126,9 +117,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     private static String newFolder;
 
     private XmlTree xmlTree;
-
-    /** Install new folder fld */
-    private JTextField folderFld;
 
     /** Holds the current save set tree */
     private JPanel treePanel;
@@ -167,7 +155,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     public ImagePlanViewControl() {
         super();
         logger.trace("created new imageplanviewcontrol={}", Integer.toHexString(hashCode()));
-        this.imageDefaults = getImageDefaults();
+        ImagePlanViewControl.imageDefaults = getImageDefaults();
     }
 
     @Override public boolean init(DataChoice dataChoice) 
@@ -802,7 +790,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             imageDefaults = getImageDefaults();
         }
         if (!node.hasAttribute(ATTR_NAME)) return;
-        JLabel label = new JLabel("New name: ");
         JTextField nameFld = new JTextField("", 20);
         JComponent contents = GuiUtils.doLayout(new Component[] {
             GuiUtils.rLabel("New name: "), nameFld, }, 2,
@@ -971,8 +958,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     private class MyTabbedPane extends JTabbedPane implements ChangeListener {
         /** Have we been painted */
         boolean painted = false;
-
-        boolean popupFlag = false;
         
         boolean haveDoneHistogramInit = false;
 
@@ -1000,13 +985,6 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                 getIdv().clearWaitCursor();
 //                haveDoneHistogramInit = true;
             }
-        }
-
-        /**
-         * MH: Not really doing anything useful...but will leave it here for now...
-         */
-        private void setPopupFlag(boolean flag) {
-            this.popupFlag = flag;
         }
 
         /**
