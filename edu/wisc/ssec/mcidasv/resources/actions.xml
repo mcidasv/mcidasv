@@ -91,7 +91,7 @@
     <action id="bundle.default.remove"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/printer-error%d.png"
         group="Bundles"
-        description="Delete default bundle"
+        description="Delete default layout"
         action="jython:getStaticMcv().doClearDefaults();"/>
 
     <action id="edit.addedatasets"
@@ -309,7 +309,7 @@
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/show-help%d.png"
         group="Help"
         description="Show User's Guide"
-        action="help:help.introduction"/>
+        action="help:idv.introduction"/>
 
     <action id="help.showhelptips"
         image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/dialog-information%d.png"
