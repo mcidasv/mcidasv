@@ -74,7 +74,7 @@
   <alias aliases="Power, .*_Band17_FPWR" label="ABI L2 Fire Radiative Power" name="ABI_L2_FDC_Power"/>
   <alias aliases="VAH,.*_Band26_VAH,ACH_QF" label="ABI L2 VAA Ash Cloud Height" name="ABI_L2_VAA_Height"/>
   <alias aliases="VAML,.*_Band27_VAML,AML_QF" label="ABI L2 Volcanic Ash Mass Loading" name="ABI_L2_VAA_Mass"/>
-  <alias aliases="Mask, .*_Band16_FMSK" label="ABI L2 Fire Mask" name="ABI_L2_FDC_Mask"/>
+  <alias aliases="Mask, 18.*_Band16_FMSK" label="ABI L2 Fire Mask" name="ABI_L2_FDC_Mask"/>
   <alias aliases="Aerosol, .*_Band19_ARSL" label="ABI L2 Aerosol Detection - Aerosol" name="ABI_L2_ADP_Aerosol"/>
   <alias aliases="Smoke, *._Band20_SMOK" label="ABI L2 Aerosol Detection - Smoke" name="ABI_L2_ADP_Smoke"/>
   <alias aliases="Dust, .*_Band21_DUST" label="ABI L2 Aerosol Detection - Dust" name="ABI_L2_ADP_Dust"/>
