@@ -80,7 +80,7 @@
   <param ci_base="0.0" ci_interval="100.0" ci_max="1100.0" ci_min="0.0" ci_width="1" name="ABI_L2_CTP" range_max="1100.0" range_min="0.0" table="Cloud Top Pressure" unit="hPa"/>
   <param ci_base="0.0" ci_interval="0.1" ci_max="1.0" ci_min="0.0" ci_width="1" name="ABI_L2_AOD" range_max="1.0" range_min="0.0" table="L2 Aerosol Optical Depth" unit="percent*100"/>
   <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="0.0" ci_width="1" name="ABI_L2_FSC" range_max="1.0" range_min="0.0" table="Fractional Snow Cover"/>
-  <param ci_base="0.0" ci_interval="20.0" ci_max="340.0" ci_min="0.0" ci_width="1" name="ABI_L2_VAA_Mass" range_max="300.0" range_min="0.0" table="Volcanic Ash Mass Loading" unit="t km-2"/>
+  <param ci_base="0.0" ci_interval="20.0" ci_max="340.0" ci_min="0.0" ci_width="1" name="ABI_L2_VAA_Mass" range_max="50.0" range_min="0.0" table="Volcanic Ash Mass Loading" unit="t km-2"/>
   <param ci_base="0.0" ci_interval="35.0" ci_max="280.0" ci_min="0.0" ci_width="1" name="ABI_L2_FDC_Mask" range_max="245.0" range_min="0.0" table="Fire Mask"/>
   <param name="ABI_L2_ADP_Aerosol" range_max="1.0" range_min="0.0" table="Aerosol Detection - Aerosol"/>
   <param name="ABI_L2_ADP_Smoke" range_max="1.0" range_min="0.0" table="Aerosol Detection - Smoke"/>
