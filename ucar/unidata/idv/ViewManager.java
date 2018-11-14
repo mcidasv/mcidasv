@@ -143,6 +143,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -2588,7 +2589,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * Called when the animation timestep changes.
      */
     protected void animationTimeChanged() {
-        updateDisplayList();
+        logger.trace("called");
+        SwingUtilities.invokeLater(() -> {
+            updateDisplayList();
+        });
     }
 
     /**
@@ -2799,6 +2803,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 if (bounds.x == 0 && bounds.y == 0 && bounds.width == 0 && bounds.height == 0) {
                     return;
                 }
+                logger.trace("called; and work will be done");
+                int oldHeight = bounds.height;
+                bounds.height = bounds.height - (int)(bounds.height * 0.75);
                 
                 // loop over this viewmanager's controls to determine which
                 // ones should be drawn.
@@ -2850,23 +2857,34 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 // essentially just creating a transparent image that's the
                 // same size as the display. this is where we'll draw our
                 // labels
-                BufferedImage listImage =
-                    new BufferedImage(bounds.width,
-                                      bounds.height,
-                                      BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g2 = listImage.createGraphics();
-                
-                // notes: 
-                //   - definitely leave antialiasing on!
-                //   - the fractional metrics stuff can't hurt, but it may be 
-                //     tough trying to spot what it does
-                g2.setRenderingHint(
-                    RenderingHints.KEY_TEXT_ANTIALIASING,
-                    RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-                g2.setRenderingHint(
-                    RenderingHints.KEY_FRACTIONALMETRICS,
-                    RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-                
+//                if (!hasGraphics || (bounds.width != oldWidth || bounds.height != oldHeight)) {
+                    GraphicsConfiguration gc = comp.getGraphicsConfiguration();
+                    BufferedImage listImage = gc.createCompatibleImage(bounds.width, bounds.height, Transparency.BITMASK);
+//                BufferedImage listImage =
+//                    new BufferedImage(bounds.width,
+//                                      bounds.height,
+//                                      BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2 = listImage.createGraphics();
+    
+                    // notes: 
+                    //   - definitely leave antialiasing on!
+                    //   - the fractional metrics stuff can't hurt, but it may be 
+                    //     tough trying to spot what it does
+                    g2.setRenderingHint(
+                        RenderingHints.KEY_TEXT_ANTIALIASING,
+                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+//                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+                    g2.setRenderingHint(
+                        RenderingHints.KEY_FRACTIONALMETRICS,
+//                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                        RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+                    
+//                    oldX = bounds.x;
+//                    oldY = bounds.y;
+//                    oldWidth = bounds.width;
+//                    oldHeight = bounds.height;
+//                    hasGraphics = true;
+//                }
                 float zval = getPerspectiveView()
                     ? 1
                     : display.getDisplayRenderer().getMode2D()
@@ -2881,9 +2899,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     centerString(g2, bounds, label, listFont, listIdx);
                 }
                 ImageJ3D g2dTest = new ImageJ3D(listImage,
-                                                ImageJ3D.TOP_LEFT,
+                                                ImageJ3D.BOTTOM_LEFT,
                                                 0,
-                                                0,
+                                                oldHeight,
                                                 zval,
                                                 1.0f);
                 displayLister.add(g2dTest);
@@ -2894,7 +2912,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
 
-    
+//    private boolean hasGraphics;
+//    private GraphicsConfiguration gc;
+//    private BufferedImage listImage;
+//    private Graphics2D g2;
+//    private int oldX;
+//    private int oldY;
+//    private int oldWidth;
+//    private int oldHeight;
     
     /**
      * Set the position of the displayable
@@ -7932,6 +7957,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void setLogoVisibility(boolean on) {
         setBp(PREF_LOGO_VISIBILITY, on);
+        getStore().put(PREF_LOGO_CHANGED, true);
     }
 
     /**
@@ -7940,8 +7966,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @return the logo visibility
      */
     public boolean getLogoVisibility() {
+        boolean visible = getBp(PREF_LOGO_VISIBILITY, true);
+        if (getStore().getKeys().contains(PREF_LOGO_CHANGED)) {
+            return visible;
+        } 
         
-        return getBp(PREF_LOGO_VISIBILITY, true);
+        String logoPath = getLogoFile();
+        
+        if (!Objects.equals(Constants.ICON_MCIDASV_DEFAULT, logoPath)) {
+            return visible;
+        } else {
+            return true;
+        }
     }
 
     private static String PREF_LOGO_CHANGED = "idv.viewmanager.logo.somethingchanged";
