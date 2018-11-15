@@ -231,7 +231,8 @@ def anomalyFromTimeMeans(grid):
     """
     avggrid=averageOverTime(grid,1)
     return  grid.subtract(avggrid)
-def anomalyFromTimeMeans(grid,meanType="None"):
+
+def anomalyFromTimeMeansType(grid,meanType="None"):
   """ Returns deviation from time means, timemean can be monthly, daily etc..
       eg.., meanType="day" will return deviation of each step from its
       corresponding daily mean.
@@ -246,7 +247,9 @@ def anomalyFromTimeMeans(grid,meanType="None"):
   from visad import VisADException
   timeMean=createTimeMeans(grid,meanType)
   grid.subtract(timeMean)
-  if (str(meanType).lower() in ("mon","month","months","montly")):
+  if (str(meanType).lower() in ("year","yr","years","yearly")):
+     searchFormat="yyyy"
+  elif (str(meanType).lower() in ("mon","month","months","monthly")):
      searchFormat="MM"
   elif (str(meanType).lower() in ("day","d","days","daily")):
      searchFormat="dd"
@@ -259,6 +262,7 @@ def anomalyFromTimeMeans(grid,meanType="None"):
   else:
        raise VisADException("Unrecognized time mean type, use yearly or monthly etc")
   return grid.subtract(timeMean,NEAREST_NEIGHBOR,NO_ERRORS)
+
 def getTimeDict(grid):
   """ A helper function to return timestamps of grid as dictionary of years, months etc.
   """
@@ -291,7 +295,6 @@ def getTimeDict(grid):
   else:
     raise VisADException("This grid is not a time sequence")
   return timeDict
-
 
 def setValuestoGridAverage(variable,avgvariable):
   """ Set all values at each grid in a grid by spatial average,
