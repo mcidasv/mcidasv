@@ -83,6 +83,7 @@ import ucar.visad.UtcDate;
 import ucar.visad.Util;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.TextDisplayable;
+
 import visad.Data;
 import visad.DisplayRealType;
 import visad.Gridded2DSet;
@@ -99,6 +100,8 @@ import visad.UnionSet;
 import visad.VisADException;
 import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonTuple;
+import visad.georef.MapProjection;
+import visad.georef.TrivialMapProjection;
 
 /**
  * {@link ucar.unidata.idv.control.DisplayControlImpl} with some McIDAS-V
@@ -924,6 +927,18 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return longitude;
     }
 
+    @Override public MapProjection getDataProjection() {
+        
+        MapProjection mp = null;
+        try {
+            mp = new TrivialMapProjection();
+        } catch (Exception e) {
+            logger.error("Error setting default projection", e);
+        }
+
+        return mp;
+    }
+    
     public String getStation() {
         return station;
     }
@@ -1036,6 +1051,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         otFontSelector.setFont(FontSelector.DEFAULT_FONT);
         gsFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         gsFontSelector.setFont(FontSelector.DEFAULT_FONT);
+        
+        // Bump default font size down just a bit...
+        otFontSelector.setFontSize(9);
+        gsFontSelector.setFontSize(9);
+        otCurFont = otFontSelector.getFont();
+        gsCurFont = gsFontSelector.getFont();
+        
     	this.dataChoice = dataChoice;
         String choiceName = dataChoice.getName();
         NodeList nodeList = root.getElementsByTagName(TAG_SATELLITE);
