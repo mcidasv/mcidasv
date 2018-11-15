@@ -687,7 +687,11 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         if (urlBtn.isSelected()) {
             String s = (String) box.getSelectedItem();
             if ((s != null) && !s.isEmpty()) {
-                ht.put(URL_NAME_KEY, box.getSelectedItem());
+                // TJJ Nov 2018
+                // Until we can update Java 8 distributed with McV, Celestrak cert authority
+                // isn't recognized, so revert to HTTP whenever HTTPS is used
+                s = s.replaceAll("(?i)https", "http");
+                ht.put(URL_NAME_KEY, s);
                 propsOk = true;
             } else {
                 JOptionPane.showMessageDialog(this, "Please provide a valid URL.");
