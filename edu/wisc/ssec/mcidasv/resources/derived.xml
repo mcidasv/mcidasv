@@ -48,7 +48,7 @@
         </categories>
         <operands/>
     </derived>
-    --->
+    -->
     <derived description="Compute anomaly from daily means" formula="anomalyFromTimeMeansType(grid,&quot;daily&quot;)" id="anomaly from daily mean" isdefault="false" isenduser="true">
         <categories>
             <category display="true" value="Grids-Time Mean and Anomaly"/>
