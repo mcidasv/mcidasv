@@ -479,7 +479,7 @@
     <resource label="Grid Routines" location="%APPPATH%/python/grid.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="Mapes Collection" location="%IDVPATH%/python/MapesCollection.py">
+    <resource label="Mapes Collection" location="%APPPATH%/python/MapesCollection.py">
       <property name="category" value="System"/>
     </resource>
     <resource label="Ensemble Grid Routines" location="%APPPATH%/python/ensemble.py">
