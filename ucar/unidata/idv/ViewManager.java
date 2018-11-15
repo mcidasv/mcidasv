@@ -33,6 +33,7 @@ import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
+import edu.wisc.ssec.mcidasv.util.StringMetrics;
 import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2857,51 +2858,62 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 // essentially just creating a transparent image that's the
                 // same size as the display. this is where we'll draw our
                 // labels
-//                if (!hasGraphics || (bounds.width != oldWidth || bounds.height != oldHeight)) {
-                    GraphicsConfiguration gc = comp.getGraphicsConfiguration();
-                    BufferedImage listImage = gc.createCompatibleImage(bounds.width, bounds.height, Transparency.BITMASK);
-//                BufferedImage listImage =
-//                    new BufferedImage(bounds.width,
-//                                      bounds.height,
-//                                      BufferedImage.TYPE_INT_ARGB);
-                    Graphics2D g2 = listImage.createGraphics();
-    
-                    // notes: 
-                    //   - definitely leave antialiasing on!
-                    //   - the fractional metrics stuff can't hurt, but it may be 
-                    //     tough trying to spot what it does
-                    g2.setRenderingHint(
-                        RenderingHints.KEY_TEXT_ANTIALIASING,
-                        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-//                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-                    g2.setRenderingHint(
-                        RenderingHints.KEY_FRACTIONALMETRICS,
-//                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-                        RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
-                    
-//                    oldX = bounds.x;
-//                    oldY = bounds.y;
-//                    oldWidth = bounds.width;
-//                    oldHeight = bounds.height;
-//                    hasGraphics = true;
-//                }
+                GraphicsConfiguration gc = comp.getGraphicsConfiguration();
+                BufferedImage listImage = gc.createCompatibleImage(bounds.width, bounds.height, Transparency.BITMASK);
+                Graphics2D g2 = listImage.createGraphics();
+                Font listFont = getDisplayListFont();
+                double maxWidth = 0;
+                double totalHeight = 0;
+                StringMetrics sm = new StringMetrics(g2); 
+                for (String label : labels) {
+                    Rectangle2D r2d = sm.getBounds(listFont, label);
+                    double width = r2d.getWidth();
+                    double height = r2d.getHeight();
+                    if (r2d.getWidth() > maxWidth) {
+                        maxWidth = width;
+                    }
+                    totalHeight += height + 10;
+                }
+                
                 float zval = getPerspectiveView()
                     ? 1
                     : display.getDisplayRenderer().getMode2D()
                     ? 1.5f
                     : 2;
                 
-                Font listFont = getDisplayListFont();
+                Rectangle limitedBounds;
+                if (maxWidth > bounds.width) {
+                    limitedBounds = new Rectangle(0, 0, bounds.width, (int)totalHeight);
+                } else {
+                    limitedBounds = new Rectangle(0, 0, (int)maxWidth, (int)totalHeight);
+                }
+    
+                listImage = gc.createCompatibleImage(limitedBounds.width, limitedBounds.height, Transparency.BITMASK);
+                g2 = listImage.createGraphics();
+    
+                // notes: 
+                //   - definitely leave antialiasing on!
+                //   - the fractional metrics stuff can't hurt, but it may be 
+                //     tough trying to spot what it does
+                g2.setRenderingHint(
+                    RenderingHints.KEY_TEXT_ANTIALIASING,
+                    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+//                        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+                g2.setRenderingHint(
+                    RenderingHints.KEY_FRACTIONALMETRICS,
+//                        RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                    RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
                 
                 for (int i = 0; i < labels.size(); i++) {
                     String label = labels.get(i);
                     int listIdx = (labels.size() - 1) - i;
-                    centerString(g2, bounds, label, listFont, listIdx);
+                    centerString(g2, limitedBounds, label, listFont, listIdx);
                 }
+                int x = (bounds.width - limitedBounds.width) / 2;
                 ImageJ3D g2dTest = new ImageJ3D(listImage,
                                                 ImageJ3D.BOTTOM_LEFT,
-                                                0,
-                                                oldHeight,
+                                                x,
+                                                oldHeight - 5,
                                                 zval,
                                                 1.0f);
                 displayLister.add(g2dTest);
