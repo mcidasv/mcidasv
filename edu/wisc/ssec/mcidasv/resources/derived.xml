@@ -41,8 +41,7 @@
         </categories>
         <operands/>
     </derived>
-    <!-- Unable to get working RMC inq 2732, setting isenduser to false -->
-    <derived description="Change Unit of a parameter" formula="createNewUnit(grid,user_newUnitName[isUser=true,default=anystring,label=Create/Set to new unit name],user_multiplyfactor[isUser=true,default=1.0,label=Scale data by factor])" id="new unit" isdefault="false" isenduser="false">
+    <derived description="Change Unit of a parameter" formula="createNewUnit(grid,user_newUnitName[isUser=true,default=anystring,label=Create/Set to new unit name],user_multiplyfactor[isUser=true,default=1.0,label=Scale data by factor])" id="new unit" isdefault="false" isenduser="true">
         <categories>
             <category display="true" value="Grids"/>
         </categories>
@@ -66,8 +65,7 @@
         </categories>
         <operands/>
     </derived>
-    <!-- Unable to get working RMC inq 2732, setting isenduser to false -->
-    <derived description="Compute anomaly from time means at specified time type" formula="anomalyFromTimeMeansType(grid,meanType[isuser=true,default=&quot;yearly&quot;,label=Time mean type as a string])" id="anomaly from time mean" isdefault="false" isenduser="false">
+    <derived description="Compute anomaly from time means at specified time type" formula="anomalyFromTimeMeansType(grid,meanType[isuser=true,default=&quot;yearly&quot;,label=Time mean type as a string])" id="anomaly from time mean" isdefault="false" isenduser="true">
         <categories>
             <category display="true" value="Grids-Time Mean and Anomaly"/>
         </categories>
