@@ -497,6 +497,8 @@ public class MemoryOption extends AbstractOption implements ActionListener {
         if (Objects.equals(System.getProperty("os.name"), "Windows XP")) {
             logger.trace("returning 1536 * 1024 * 1024 (for XP)");
             return 1536 * (1024 * 1024);
+        } else {
+            logger.trace("different os.name: '{}'", System.getProperty("os.name"));
         }
         return Long.parseLong(val);
     }
