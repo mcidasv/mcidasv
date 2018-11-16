@@ -493,13 +493,9 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     }
     
     private static long getSystemMemory() {
-        logger.trace("OS Name: " + System.getProperty("os.name"));
         String val = SystemState.queryOpSysProps().get("opsys.memory.physical.total");
         if (Objects.equals(System.getProperty("os.name"), "Windows XP")) {
-            logger.trace("returning 1536 * 1024 * 1024 (for XP)");
             return 1536 * (1024 * 1024);
-        } else {
-            logger.trace("different os.name: '{}'", System.getProperty("os.name"));
         }
         return Long.parseLong(val);
     }
