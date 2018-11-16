@@ -523,7 +523,7 @@ def createNewUnit(field,unit,multiplyfactor=1.0):
   BaseUnit.addBaseUnit(unit,unit)
   rt = GridUtil.getParamType(field).getRealComponents()[0]
   newtype= Util.makeRealType(rt.getName(),BaseUnit.unitNameToUnit(unit) )
-  field=field*multiplyfactor
+  field=field*float(multiplyfactor)
   return GridUtil.setParamType(field,newtype,0)
 
 def makeTimeComposite(variable,avgvariable,minvalue,maxvalue):
