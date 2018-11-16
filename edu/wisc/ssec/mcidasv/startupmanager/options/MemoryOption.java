@@ -66,7 +66,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     /** Logger object. */
     private static final Logger logger = LoggerFactory.getLogger(MemoryOption.class);
     
-    private static final long GIGA_BYTES_TO_BYTES = 1024 * 1024 * 1024;
+    private static final long MEGA_BYTES_TO_BYTES = 1024 * 1024;
     
     private static final String TOO_BIG_FMT = "Value exceeds your maximum available memory (%s MB)";
     
@@ -154,9 +154,9 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     
     private final String defaultPrefValue;
     
-    // default to 80% of system memory (in gigabytes)
+    // default to 80% of system memory (in megabytes)
     private String failsafeValue = 
-        String.valueOf((int) Math.ceil(0.8 * (getSystemMemory() / MemoryOption.GIGA_BYTES_TO_BYTES))) + 'G';
+        String.valueOf((int) Math.ceil(0.8 * (getSystemMemory() / MemoryOption.MEGA_BYTES_TO_BYTES))) + 'M';
     
     private String value = failsafeValue; // bootstrap
     
@@ -493,6 +493,7 @@ public class MemoryOption extends AbstractOption implements ActionListener {
     }
     
     private static long getSystemMemory() {
+        logger.trace("OS Name: " + System.getProperty("os.name"));
         String val = SystemState.queryOpSysProps().get("opsys.memory.physical.total");
         if (Objects.equals(System.getProperty("os.name"), "Windows XP")) {
             logger.trace("returning 1536 * 1024 * 1024 (for XP)");
