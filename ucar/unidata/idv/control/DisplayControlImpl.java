@@ -1516,14 +1516,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public void initDone() {}
     
-    public void forceUpdateList() {
-        List vms = getViewManagers();
-        for (Object o : vms) {
-            ViewManager vm = (ViewManager)o;
-            vm.updateDisplayList();
-        }
-    }
-
     /**
      * Add a property change listener.
      *
@@ -4057,7 +4049,6 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 logException("Setting display list data", ve);
             } catch (RemoteException re) {}
         }
-        forceUpdateList();
     }
 
 
