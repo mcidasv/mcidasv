@@ -7852,7 +7852,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setLogoScale(float scale) {
         logoScale = scale;
     }
-
+    
+    // START MCV INQUIRY 2718 changes
+    public static String PREF_LOGO_CHANGED = "idv.viewmanager.logo.somethingchanged";
+    
     /**
      * Set the logo visibility
      *
@@ -7860,7 +7863,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
      */
     public void setLogoVisibility(boolean on) {
         setBp(PREF_LOGO_VISIBILITY, on);
-        getStore().put(PREF_LOGO_CHANGED, true);
     }
 
     /**
@@ -7872,18 +7874,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         boolean visible = getBp(PREF_LOGO_VISIBILITY, true);
         if (getStore().getKeys().contains(PREF_LOGO_CHANGED)) {
             return visible;
-        } 
-        
-        String logoPath = getLogoFile();
-        
-        if (!Objects.equals(Constants.ICON_MCIDASV_DEFAULT, logoPath)) {
-            return visible;
         } else {
             return true;
         }
     }
-
-    private static String PREF_LOGO_CHANGED = "idv.viewmanager.logo.somethingchanged";
+    // END MCV INQUIRY 2718 CHANGES
     
     /**
      * Ensure that there is only one time driver for this view

@@ -1046,10 +1046,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         McIDASV mcv = (McIDASV)getIdv();
         
+        boolean logoViz = true;
+        if (getStore().getKeys().contains(ViewManager.PREF_LOGO_CHANGED)) {
+            logoViz = mcv.getStateManager().getPreferenceOrProperty(
+                ViewManager.PREF_LOGO_VISIBILITY, true);
+        }
         final JCheckBox logoVizBox = new JCheckBox(
-            "Show Logo in View",
-            mcv.getStateManager().getPreferenceOrProperty(
-                ViewManager.PREF_LOGO_VISIBILITY, true));
+            "Show Logo in View", logoViz);
         final JTextField logoField =
             new JTextField(mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO,
                     Constants.ICON_MCIDASV_DEFAULT));
@@ -1204,9 +1207,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         PreferenceManager miscManager = new PreferenceManager() {
             // applyWidgets called the same way the IDV does it.
             public void applyPreference(XmlObjectStore theStore, Object data) {
-//                IdvPreferenceManager.applyWidgets((Hashtable)data, theStore);
                 savePrefsFromWidgets((Hashtable)data, theStore);
 
+                theStore.put(ViewManager.PREF_LOGO_CHANGED, true);
+                
                 Object projBoxSelection = projBox.getSelectedItem();
                 if (projBoxSelection instanceof String) {
                     String projName = (String)projBoxSelection;
