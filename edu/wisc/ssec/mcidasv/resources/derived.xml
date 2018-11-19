@@ -65,7 +65,7 @@
         </categories>
         <operands/>
     </derived>
-    <derived description="Compute anomaly from time means at specified time type" formula="anomalyFromTimeMeansType(grid,meanType[isuser=true,default=&quot;yearly&quot;,label=Time mean type as a string])" id="anomaly from time mean" isdefault="false" isenduser="true">
+    <derived description="Compute anomaly from time means at specified time type" formula="anomalyFromTimeMeansType(grid,meanType[isuser=true,default=yearly,label=Time mean type as a string])" id="anomaly from time mean" isdefault="false" isenduser="true">
         <categories>
             <category display="true" value="Grids-Time Mean and Anomaly"/>
         </categories>
