@@ -9,6 +9,18 @@
     label="Drawing Control"
     displaycategory="General"
     properties="windowVisible=true;showInTabs=true;showFronts=true;"/>
+
+  <!-- Override IDV's def so we can change default layer label -->
+  <control
+     id="frontdrawingcontrol"
+     categories="fronts"
+     class="ucar.unidata.idv.control.FrontDrawingControl"
+     label="Fronts"
+     displaycategory="General"
+     properties="windowVisible=true;showInTabs=true">
+    <property name="displayListTemplate" value="%displayname% %timestamp%"/>
+  </control>
+
   <control
     id="textproductcontrol"
     categories="textproducts"
