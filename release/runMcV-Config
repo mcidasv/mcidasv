@@ -96,7 +96,7 @@ fi
 
 # Look for java
 JAVA_BIN="java"
-if [ -f "./jre/bin/java" ]; then
+if [ -f "$dirname/jre/bin/java" ]; then
   JAVA_HOME="$dirname/jre"
 fi
 
