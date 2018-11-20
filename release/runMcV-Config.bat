@@ -40,8 +40,8 @@ IF EXIST "%MCV_USERPATH%" GOTO hasuserpath
 
 :inituserpath
 IF EXIST "%USERPROFILE%\.mcidasv" (
-	echo Moving files to new user path: %MCV_USERPATH%
-	move "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
+    echo Moving files to new user path: %MCV_USERPATH%
+    move "%USERPROFILE%\.mcidasv" "%MCV_USERPATH%"
 )
 
 :hasuserpath
@@ -52,10 +52,10 @@ set MCV_CLASSPATH=%MCV_JAR%;%USERGUIDE_JAR%
 
 REM Get the amount of system memory
 echo Reading system configuration...
-SET SYS_MEM=0
-FOR /F %%i IN ("%MCV_DIR%\jre\bin\java.exe" -cp %MCV_JAR% edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
+SET /a SYS_MEM=0
+FOR /F %%i IN ('..\jre\bin\java.exe -cp %MCV_JAR% edu.wisc.ssec.mcidasv.util.GetMem 2^>NUL') DO SET SYS_MEM=%%i
 
-"%MCV_DIR%\jre\bin\java" -Dmcv.userpath="%MCV_USERPATH%" -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=%SYS_MEM% -userpath "%MCV_USERPATH%" %MCV_PARAMS%
+"..\jre\bin\java" -Dmcv.userpath="%MCV_USERPATH%" -Dlogback.configurationFile=%LOGBACK_CONFIG% -classpath "%MCV_CLASSPATH%" -da edu.wisc.ssec.mcidasv.startupmanager.StartupManager -Didv.sysmem=%SYS_MEM% -userpath "%MCV_USERPATH%" %MCV_PARAMS%
 :end
 
 CD %CURRENT_DIR%
