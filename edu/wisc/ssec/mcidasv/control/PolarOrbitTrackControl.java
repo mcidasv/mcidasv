@@ -406,61 +406,64 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     					" to: " + tmpLabelInterval);
     			labelInterval = tmpLabelInterval;
     			try {
-    				// remove the current set of labels
-    				int numLabels = timeLabelDsp.displayableCount();
-    				for (int i = 0; i < numLabels; i++) {
-    					timeLabelDsp.removeDisplayable(0);
-    				}
-    				// get the currently loaded data
-    				Data data = getData(getDataInstance());
-					if (data instanceof Tuple) {
-		                Data[] dataArr = ((Tuple) data).getComponents();
-
-		                int npts = dataArr.length;
-		                double distance = 0.0d;
-		                LatLonTuple prvPoint = null;
-
-		                for (int i = 0; i < npts; i++) {
-		                    Tuple t = (Tuple) dataArr[i];
-		                    Data[] tupleComps = t.getComponents();
-
-		                    LatLonTuple llt = (LatLonTuple) tupleComps[1];
-		                    double dlat = llt.getLatitude().getValue();
-		                    double dlon = llt.getLongitude().getValue();
-
-	                        if ((i % labelInterval) == 0) {
-	                        	
-			                    if (prvPoint != null) {
-			                    	distance = Util.distance(prvPoint, llt);
-			                    	if (distance < LABEL_DISTANCE_THRESHOLD) {
-			                    		continue;
-			                    	}
-			                    }
-			                    
-	                            String str = ((Text) tupleComps[0]).getValue();
-	                            int indx = str.indexOf(" ") + 1;
-	                            String subStr = "- " + str.substring(indx, indx+5);
-	                            TextDisplayable time = new TextDisplayable(SWATH_MODS, otTextType);
-	                            time.setJustification(TextControl.Justification.LEFT);
-	                            time.setVerticalJustification(TextControl.Justification.CENTER);
-	                            time.setColor(curSwathColor);
-	                            time.setFont(otFontSelector.getFont());
-	                            time.setTextSize((float) scale * otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
-	                            time.setSphere(inGlobeDisplay());
-	                            
-	                            RealTuple lonLat =
-	                                new RealTuple(RealTupleType.SpatialEarth2DTuple,
-	                                    new double[] { dlon, dlat });
-	                            Tuple tup = new Tuple(makeTupleType(SWATH_MODS),
-	                                new Data[] { lonLat, new Text(otTextType, subStr)});
-	                            time.setData(tup);
-	                            timeLabelDsp.addDisplayable(time);
-	                            
-		                        prvPoint = llt;
-	                        }
-
-		                }
-		            }
+    			    
+    			    if (jcbLabels.isSelected()) {
+        				// remove the current set of labels
+        				int numLabels = timeLabelDsp.displayableCount();
+        				for (int i = 0; i < numLabels; i++) {
+        					timeLabelDsp.removeDisplayable(0);
+        				}
+        				// get the currently loaded data
+        				Data data = getData(getDataInstance());
+    					if (data instanceof Tuple) {
+    		                Data[] dataArr = ((Tuple) data).getComponents();
+    
+    		                int npts = dataArr.length;
+    		                double distance = 0.0d;
+    		                LatLonTuple prvPoint = null;
+    
+    		                for (int i = 0; i < npts; i++) {
+    		                    Tuple t = (Tuple) dataArr[i];
+    		                    Data[] tupleComps = t.getComponents();
+    
+    		                    LatLonTuple llt = (LatLonTuple) tupleComps[1];
+    		                    double dlat = llt.getLatitude().getValue();
+    		                    double dlon = llt.getLongitude().getValue();
+    
+    	                        if ((i % labelInterval) == 0) {
+    	                        	
+    			                    if (prvPoint != null) {
+    			                    	distance = Util.distance(prvPoint, llt);
+    			                    	if (distance < LABEL_DISTANCE_THRESHOLD) {
+    			                    		continue;
+    			                    	}
+    			                    }
+    			                    
+    	                            String str = ((Text) tupleComps[0]).getValue();
+    	                            int indx = str.indexOf(" ") + 1;
+    	                            String subStr = "- " + str.substring(indx, indx+5);
+    	                            TextDisplayable time = new TextDisplayable(SWATH_MODS, otTextType);
+    	                            time.setJustification(TextControl.Justification.LEFT);
+    	                            time.setVerticalJustification(TextControl.Justification.CENTER);
+    	                            time.setColor(curSwathColor);
+    	                            time.setFont(otFontSelector.getFont());
+    	                            time.setTextSize((float) scale * otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
+    	                            time.setSphere(inGlobeDisplay());
+    	                            
+    	                            RealTuple lonLat =
+    	                                new RealTuple(RealTupleType.SpatialEarth2DTuple,
+    	                                    new double[] { dlon, dlat });
+    	                            Tuple tup = new Tuple(makeTupleType(SWATH_MODS),
+    	                                new Data[] { lonLat, new Text(otTextType, subStr)});
+    	                            time.setData(tup);
+    	                            timeLabelDsp.addDisplayable(time);
+    	                            
+    		                        prvPoint = llt;
+    	                        }
+    
+    		                }
+    		            }
+    			    }
 					
 		    		// check swath width field, update if necessary
 		    		if (swathChanged) changeSwathWidth();
@@ -632,7 +635,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             Tuple tup = new Tuple(makeTupleType(SWATH_MODS),
                                 new Data[] { lonLat, new Text(otTextType, subStr)});
                             time.setData(tup);
-                            timeLabelDsp.addDisplayable(time);
+                            if (jcbLabels.isSelected()) timeLabelDsp.addDisplayable(time);
                             
                             prvPoint = llt;
                         }
@@ -714,10 +717,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         fontSizePanel = new JPanel();
         fontSizePanel.setLayout(new BoxLayout(fontSizePanel, BoxLayout.Y_AXIS));
         JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        jcbLabels = new JCheckBox("Labels On/Off");
-        jcbLabels.setSelected(true);
-        jcbLabels.setName(CHECKBOX_LABELS);
-        jcbLabels.addItemListener(this);
         labelPanel.add(jcbLabels);
         
         // same row, add label interval spinner
@@ -1043,6 +1042,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         String [] lineWidths = {"1", "2", "3", "4"};
         jcbGSLineWidth = new JComboBox<String>(lineWidths);
         jcbSCLineWidth = new JComboBox<String>(lineWidths);
+        
+        // create Label checkbox toggle
+        jcbLabels = new JCheckBox("Labels On/Off");
+        jcbLabels.setSelected(true);
+        jcbLabels.setName(CHECKBOX_LABELS);
+        jcbLabels.addItemListener(this);
+        
         // initialize swath center (track line) to width 2
         jcbSCLineWidth.setSelectedIndex(1);
         jcbEdgeLineStyle.setSelectedIndex(1);
