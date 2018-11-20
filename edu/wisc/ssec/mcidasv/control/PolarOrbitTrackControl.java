@@ -155,7 +155,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final int DEFAULT_ANTENNA_ANGLE = 5;
     private static final int MAX_ANTENNA_ANGLE = 90;
     private int curAngle = DEFAULT_ANTENNA_ANGLE;
-    private static final double LABEL_DISTANCE_THRESHOLD = 5.0d;
+    private static final double LABEL_DISTANCE_THRESHOLD = 2.5d;
 
     private DataChoice dataChoice;
 
