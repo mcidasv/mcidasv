@@ -34,11 +34,37 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
   of McIDAS-V.</p>
 <p><strong>Note:</strong> If the formula you select utilizes a Select Input window&nbsp;to enter values to be used by the formula, you can choose if you want to save these values in a bundle if you wish to create one. Each field of the Select Input window has a <strong>Save in Bundle</strong> option&nbsp;(chosen by default). If you keep this option selected, the value(s) you choose will be stored in the bundle, and if all values are saved, the formula will automatically execute when you load in your bundle without any user input. If you do not save the values in your bundle, the values you use will not be saved, and the formula will not automatically execute without requiring the user to enter/change values. Many of the formulas below were provided by Brian Mapes, which are denoted by an asterisk (*) next to the formula's name.</p>
 <ul>
+  <li><a href="#smooth">3D Scalar Field Horizontal Smoothing</a></li>
   <li><a href="#time">Time Steps</a></li>
+  <li><a href="#timeMeanAnomaly">Time Mean and Anomaly</a></li>
+  <li><a href="#basic">Basic Math</a></li>
   <li><a href="#ensemble">Ensemble</a></li>
 </ul>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Defines a grid diagnostic to perform.<table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+<li class="propertylistitem"><strong>Change Unit of a parameter  (grid, unit,multiplyfactor)* - </strong>Changes the unit of the field being displayed and optionally scales the output values.
+  <table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>unit</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The unit to be used when displaying the data.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>multiplyfactor</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>The factor to scale/multiply the data by (default=1.0)</p>
+   </td>
+   </tr>
+</table></li>
+ <li class="propertylistitem"><strong>Define a grid diagnostic  (gddiag) - </strong>Defines a grid diagnostic to perform.<table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
   <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
@@ -52,14 +78,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Find latitude of grid points  (fieldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</li class="propertylistitem">
+<li class="propertylistitem"><strong>Deviation from Lat Lon Area Average  (grid)* - </strong>Computes the deviation from area average values of the grid and returns a grid with deviation from the area averaged value.</li>
+<li class="propertylistitem"><strong>Deviation from Lat Lon Time Average  (grid)* - </strong>Computes the deviation from time and spatial mean at each grid point.</li>
+<li class="propertylistitem"><strong>Find latitude of grid points  (fieldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</li>
 <li class="propertylistitem"><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</li>
 <li class="propertylistitem"><a name="trajectory" id="trajectory"></a><strong>Create 2D Trajectory (parameter, U Component, V Component)</strong> - Uses the Trajectory Colored By Parameter display type to plot 2-dimensional trajectories from data that includes u- and v-wind components and a scalar quantity to color the trajectories by. For information on how to work with this display, see <a href="../controls/GridTrajectory.html">Grid Trajectory Controls</a>.
 <table id="gridformulas2" cellpadding="0" cellspacing="0" border="1">
       <tr>
           <td colspan="1"><strong>Input Parameter</strong></td>
           <td width="630"><strong>Definition
-            </strong></tr>
+      </strong></tr>
       <tr>
           <td width="140" colspan="1" rowspan="1" valign="top">
               <p><em>parameter</em></p>
@@ -365,6 +393,29 @@ levels. Note that you must select a 3D field to use this formula.
    </td>
    </tr>
 </table></li>
+<li class="propertylistitem"><strong>Rebin Grid (grid, newGrid)* - </strong>Rebins or regrids a grid based on coordinates of newGrid using bilinear interpolation.
+  <table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>grid</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The parameter to be displayed.</p>
+   </td>
+   </tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>newGrid</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top">
+   <p>A parameter from a grid whoose resolution and coordinates will be used for displaying the original grid.</p>
+   </td>
+   </tr>
+</table></li>
 <li class="propertylistitem"><strong>Resample grid (grid, gridwithNewDomain) - </strong>Displays gridded data on a new domain.
 <table id="gridformulas4" cellpadding="0" cellspacing="0" border="1">
   <tr>
@@ -472,6 +523,7 @@ levels. Note that you must select a 3D field to use this formula.
    </td>
    </tr>
 </table></li>
+<li class="propertylistitem"><strong>Vertical Average Weighted (grid)* - </strong>Computes a vertical coordinate weighted average of a 3D grid.</li>
 <li class="propertylistitem"><strong>Wind Shear Vectors  (top, bottom) - </strong>Calculates the u and v layer difference and returns a map of vectors.
 <table id="mapformulas8" cellpadding="0" cellspacing="0" border="1">
   <tr>
@@ -496,6 +548,13 @@ levels. Note that you must select a 3D field to use this formula.
    </tr>
 </table></li>
 </ul>
+<div class="pagesubtitle">3D Scalar Field Horizontal Smoothing<a name="smooth" id="smooth"></a></div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>9-point hor. smoothing* -</strong></li>
+<li class="propertylistitem"><strong>Gaussian hor. smoothing* -</strong></li>
+<li class="propertylistitem"><strong>Rectangular hor. smoothing, in grid increments* -</strong></li>
+<li class="propertylistitem"><strong>circular hor. smoothing, in grid increments* -</strong></li>
+	</ul>
 <div class="pagesubtitle">Time Steps<a name="time" id="time"></a></div>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Accumulate from initial timestep -</strong> Plots the specified parameter in the Main Display window. Each frame is a total of the parameter at the time in addition to the total value of the parameter in previous time steps. The formula to compute this is as follows, where T represents the current time step, and numbers 0, 1, etc. represent the previous time steps:
@@ -581,6 +640,27 @@ levels. Note that you must select a 3D field to use this formula.
    </td>
    </tr>
 </table></li>
+</ul>
+<div class="pagesubtitle">Time Mean and Anomaly<a name="timeMeanAnomaly" id="timeMeanAnomaly"></a></div>
+<ul class="propertylist">
+	<li class="propertylistitem"><strong>Anomaly from Time Means* -</strong></li>
+	<li class="propertylistitem"><strong>Compute anomaly from daily means* -</strong></li>
+	<li class="propertylistitem"><strong>Compute anomaly from monthly means* -</strong></li>
+	<li class="propertylistitem"><strong>Compute anomaly from time means at specified time type* -</strong></li>
+	<li class="propertylistitem"><strong>Compute anomaly from yearly means* -</strong></li>
+	<li class="propertylistitem"><strong>Compute daily means* -</strong></li>
+	<li class="propertylistitem"><strong>Compute monthly means* -</strong></li>
+	<li class="propertylistitem"><strong>Compute time derivative with preferred time unit* -</strong></li>
+	<li class="propertylistitem"><strong>Compute time means at specified time type* -</strong></li>
+	<li class="propertylistitem"><strong>Compute yearly means* -</strong></li>
+	<li class="propertylistitem"><strong>Sample a grid at times specified* -</strong></li>
+</ul>
+<div class="pagesubtitle">Basic Math<a name="basic" id="basic"></a></div>
+<ul class="propertylist">
+	<li class="propertylistitem"><strong>Divide Grids* -</strong></li>
+	<li class="propertylistitem"><strong>Modulo with a number* -</strong></li>
+	<li class="propertylistitem"><strong>Multiply Grids* -</strong></li>
+	<li class="propertylistitem"><strong>Vertical Derivative* -</strong></li>
 </ul>
 <div class="pagesubtitle"><a name="ensemble" id="ensemble"></a>Ensemble</div>
 <ul class="propertylist">
