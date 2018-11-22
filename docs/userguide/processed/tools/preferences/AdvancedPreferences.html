@@ -30,10 +30,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <p>The User Preferences window is accessed in the Main Display window through the <strong>Edit-&gt;Preferences</strong> menu.
   The <strong>Advanced</strong> tab allows for changing options that require
   a restart in order for them to take effect. To
-  configure the settings before running McIDAS-V, execute the <em>runMcV-Config</em> command
-  from the directory where McIDAS-V was installed (normally McIDAS-V-System)
+  configure the settings before running McIDAS-V, execute <em>runMcV-Config</em> on Linux/macOS platforms or <em>runMcV.bat</em> on Windows from the directory where McIDAS-V was installed (normally McIDAS-V-System)
   or by selecting <strong>Configure McIDAS-V</strong> in the Windows <strong>Start</strong> menu. The below image represents the default settings for the <strong>Advanced</strong> tab.</p>
-<div class="images"><img src="../images/preferences/Advanced.gif" width="846" height="482" alt="Image 1: Advanced Preferences (Default)"><br>
+<div class="images"><img src="../images/preferences/Advanced.gif" width="758" height="468" alt="Image 1: Advanced Preferences (Default)"/><br>
   <span class="caption">Image 1: Advanced Preferences (Default)</span></div>
 <p></p>
 <div class="pagesubtitle">Startup Options</div>
@@ -41,7 +40,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <li class="propertylistitem"><a name="heapsize" id="heapsize"></a><strong>Memory -</strong> Sets the Java heap size, which is the amount of
   memory allocated by McIDAS-V at startup. Use the first bubble to choose a percentage
   of available memory, or use the second bubble to enter a specific value. The
-  new amount of memory will be saved and used in subsequent sessions. For more
+  new amount of memory will be saved and used in subsequent sessions. Note that the value in the text field is an approximate amount of memory for McIDAS-V to use, meaning the actual value seen in the Main Display may be slightly different. For more
   information, see the <a href="../../Starting.html#memory">Setting Memory Usage</a> section in Downloading
   and Running McIDAS-V.</li>
 <li class="propertylistitem"><a name="defaultbundle" id="defaultbundle"></a><strong>Specify default bundle - </strong> Loads the selected bundle at startup

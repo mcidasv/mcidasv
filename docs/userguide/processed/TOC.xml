@@ -60,6 +60,7 @@
 			<tocitem text="Sounding Controls" target="idv.controls.soundingcontrol"/>
 			<tocitem text="Hovmoller Controls" target="idv.controls.hovmollercontrol"/>
 			<tocitem text="Grid Trajectory Controls" target="idv.controls.gridtrajectory"/>
+            <tocitem text="Theta Surface Controls" target="idv.controls.thetasurfacecontrol"/>
         </tocitem>
         <tocitem text="Satellite and Radar Displays" target="idv.page_satelliteandradardisplays">
             <tocitem text="Image Controls" target="idv.controls.imageplanviewcontrol"/>

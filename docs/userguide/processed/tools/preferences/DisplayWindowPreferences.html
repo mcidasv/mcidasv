@@ -45,8 +45,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 </ul>
 <div class="pagesubtitle">Legends</div>
 <ul class="propertylist">
-<li class="propertylistitem"><a name="showsidelegend" id="showsidelegend"></a><b>Show Side Legend</b> - Lists the loaded layers into the <a href="../../ui/Legend.html">Legend</a> of the Main Display window. Note that you must create a new tab/window for a change to this preference to take effect.</li>
-<li class="propertylistitem"><a name="showbottomlegend" id="showbottomlegend"></a><b>Show Bottom Legend</b> - Lists the loaded layers in a Legend at the bottom of the Main Display window. Note that you must create a new tab/window for a change to this preference to take effect.</li>
+<li class="propertylistitem"><a name="showsidelegend" id="showsidelegend"></a><b>Show Side Legend</b> - Lists the loaded layers into the <a href="../../ui/Legend.html">Legend</a> of the Main Display window. Note that a new tab/window must be created for a change to this preference to take effect.</li>
+<li class="propertylistitem"><a name="showbottomlegend" id="showbottomlegend"></a><b>Show Bottom Legend</b> - Lists the loaded layers in a Legend at the bottom of the Main Display window. Note that a new tab/window must be created for a change to this preference to take effect.</li>
 </ul>
 <div class="pagesubtitle">Panel Configuration</div>
 <ul class="propertylist">
@@ -70,7 +70,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
   <li class="propertylistitem"><b>Globe Background - </b>Sets the color of the globe's background.</li>
   <li class="propertylistitem"><b>Background - </b>Sets the color of the background behind the image being displayed.</li>
   <li class="propertylistitem"><b>Foreground -</b>  Sets the color of the wireframe box in the foreground.</li>
-  <li class="propertylistitem"><b>Selected Panel -</b> Sets the color in the frame around the selected panel/tab. This is the panel/tab that changes will be made to if you have multiple tabs open.</li>
+  <li class="propertylistitem"><b>Selected Panel -</b> Sets the color in the frame around the selected panel/tab. This is the panel/tab that changes will be made to.</li>
   <li class="propertylistitem">Note: The color of the maps is controlled by the individual <a href="../../controls/MapDisplayControl.html">map control</a>. The selected panel color changes the color used to highlight the current panel.</li>
 </ul>
 <div class="pagesubtitle">Layer List Properties</div>
@@ -81,9 +81,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/preferences
 <div class="pagesubtitle">Logo</div>
 <ul class="propertylist">
   <li class="propertylistitem"><b>Show Logo in View - </b>Sets the visibility of the logo in the display panel.</li>
-  <li class="propertylistitem"><strong>File -</strong> Sets the logo file to use. This can be an image file with the form of *.jpg, *.gif, or *.png.</li>
+  <li class="propertylistitem"><strong>File -</strong> Sets the logo file to use. This can be an image file with the form of *.jpg, *.gif, or *.png. The default string in this field is &quot;/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-default-logo.png&quot;.</li>
   <li class="propertylistitem"><strong>Screen Position -</strong> Sets the position of the logo in the display panel. This can be  Lower Left, Upper Left, Upper Right, Lower Right, or Center.</li>
-  <li class="propertylistitem"><b>Offset -</b> Sets the x,y pixel offset value from the <strong>Screen Position</strong> field. For example, to place a logo in the lower left of the display, but with a 10 pixel offset between the logo and the boarder of the window, you can specify a <strong>Screen Position</strong> of Lower Left with an <strong>Offset</strong> of 10,-10.</li>
+  <li class="propertylistitem"><b>Offset -</b> Sets the x,y pixel offset value from the <strong>Screen Position</strong> field. For example, to place a logo in the lower left of the display, but with a 10 pixel offset between the logo and the boarder of the window, specify a <strong>Screen Position</strong> of Lower Left with an <strong>Offset</strong> of 10,-10.</li>
   <li class="propertylistitem"><strong>Scale -</strong> Sets the size of the logo in the display. A <strong>Scale</strong> of 1 would be the actual size of the image, anything less than 1 will scale the image down to make it smaller, and values greater than 1 will scale the image up to make it larger.</li>
 </ul>
 <div class="pagesubtitle">Default Projection</div>

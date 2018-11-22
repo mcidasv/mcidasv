@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Theta Surface Controls</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('controls/GridTrajectory.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="GridTrajectory.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="../page_satelliteandradardisplays.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Theta Surface Controls</div>
+<xxxmeta xxxname="jhid" value="idv.controls.volumerendercontrol">
+<div class="pagesubtitle">Overview</div>
+<p>The Theta Surface display types are capable of working with gridded data containing a theta (potential temperature) component, as well as a scalar and/or vector components for different displays. The display types available are dependent on the derived field selected.&nbsp;The relevant derived fields and their respective display types are:</p>
+<ul>
+	<li>Potential Temperature IsoSurface (from theta) - Creates a display of a potential temperature surface over a user-defined potential temperature value.
+	  <ul>
+	    <li>Constant Theta Surface Height Plan View
+	      <ul>
+	        <li>Contour Plan View</li>
+	        <li>Color-Filled Contour Plan View</li>
+	        <li>Color-Shaded Plan View</li>
+	        <li>Isentropic Topography</li>
+          </ul>
+	    </li>
+      </ul>
+	</li>
+	<li>Potential Temperature IsoSurface Scalar Analysis (from theta) - Creates a display of a user-selected parameter over a user-defined potential temperature value/surface.
+	  <ul>
+	    <li>3D Theta Surface
+	      <ul>
+	        <li>Contours Over Constant Theta Surface</li>
+	        <li>Color-Filled Contours Over Constant Theta Surface</li>
+	        <li>Color-Shaded Image Over Constant Theta Surface</li>
+          </ul>
+	    </li>
+      </ul>
+	</li>
+	<li>Potential Temperature IsoSurface Vector Analysis (from theta) - Creates a display of vectors from user-selected parameters over a user-defined potential temperature value/surface.
+	  <ul>
+	    <li>Constant Theta Surface Flow Displays
+	      <ul>
+	        <li>Vectors Over Theta Surface</li>
+	        <li>Vectors Colored By Speed Over Theta Surface</li>
+          </ul>
+	    </li>
+      </ul>
+	</li>
+	<li>Potential Temperature IsoSurface Advection (from theta) - Creates a display of advection of a user-selected parameter over a user-defined potential temperature value/surface.
+	  <ul>
+	    <li>3D Theta Surface
+	      <ul>
+	        <li>Contours Over Constant Theta Surface</li>
+	        <li>Color-Filled Contours Over Constant Theta Surface</li>
+	        <li>Color-Shaded Image Over Constant Theta Surface</li>
+          </ul>
+	    </li>
+      </ul>
+	</li>
+</ul>
+<p>The Grid 2D Trajectory or Grid 3D Trajectory formulas can be used to access these display types.&nbsp;The formulas will request for all of the fields to pass through it, including the u- and v-wind components, the vertical component, and a color-by component. An alternative to the formulas is utilizing the derived 2D and 3D fields of your data, Grid 2D Trajectory and Grid 3D Trajectory. When using these fields, all you need to specify is the scalar quantity when using the Trajectory Colored by Another Parameter display type, and McIDAS-V will pull out the relevant u-&nbsp;and v-wind components (as well as the vertical component when creating 3D Trajectories).</p>
+<div class="pagesubtitle">Constant Theta Surface Height Plan View</div>
+<p>After selecting the &quot;Potential Temperature IsoSurface (from theta)&quot; derived field, clicking <strong>Create Display</strong>, and specifying the potential temperature value, the <strong>Layer Controls</strong> tab of the Data Explorer will appear, where various properties of the display can be set. Note that different Constant Theta Surface Height Plan View display types may have different controls:</p>
+<div class="images"><img src="images/ConstantThetaPlanView.gif" width="539" height="295" alt="Image 1: Constant Theta Surface Height Plan View Controls"/><br>
+  <span class="caption">Image 1: Constant Theta Surface Height Plan View Controls</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Contour -</strong> Opens the <a href="misc/ContourDialog.html">Contour          Properties Editor</a> to change how the contours appear in the   Main Display window. This is an option for the Contour  Plan View and   Color-Filled Contour Plan View display types.</li>
+  <li class="propertylistitem"><strong>Color Table - </strong>Shows the active color table and the associated high and low data values   in the units of the display. As   the mouse        pointer is moved   over the color bar, the value at a particular   color is        shown.   Right click on the color bar or click on the button that   displays the   name of the Color Table to make modifications to the color   bar. This   allows you to open the <a href="https://www.ssec.wisc.edu/mcidas/doc/mcv_guide/working/tools/ColorTableEditor.html">Color        Table Editor</a>, change the range, select other color tables,   etc.</li>
+  <li class="propertylistitem"><strong>Vertical Position - </strong>Changes the vertical position of the features  with respect to other   variables being displayed in the Main Display window. You can change   this with the slider, or by entering a value in the field and pressing   Enter.</li>
+  <li class="propertylistitem"><strong>Texture Quality - </strong>Sets the quality of the        displayed texture. A higher quality will        take longer to render and user more memory. This is an option for the Color-Shaded Plan View display type.</li>
+  <li class="propertylistitem"><strong>Smoothing -</strong>Smooths the grid. There are seven types of smoothing:        None, 5-point, 9-point, Gaussian Weighted, Cressman Weighted,   Circular Aperture, and Rectangular Aperture. The amount of smoothness        can be set for all except the 5 and 9-point smoothers. The higher   the amount, the smoother    the grid. For the Cressman, Circular and Rectangular aperture     smoothing types, the smoothing factor is the radius in grid spacing     units.</li>
+  <li class="propertylistitem"><strong>Shade Colors -</strong> Colors every pixel  to give a smooth gradation of color. The        alternative is coloring an area of pixels corresponding to a single data        grid cell with one color.  This is an option for the Color-Shaded Plan View and Isentropic Topography display types.</li>
+  <li class="propertylistitem"><strong>Mode -</strong> Sets the way the texture is displayed.        You can select Solid, Mesh, or Points. This is useful for looking at the        structure of the underlying data. This is an option for the Color-Shaded Plan View and Isentropic Topography display types.</li>
+  <li class="propertylistitem"><strong>Point Size -</strong> Sets the size of the points when the Points Mode is selected. This is an option for the Color-Shaded Plan View and Isentropic Topography display types.</li>
+  </ul>
+<div class="pagesubtitle">3D Theta Surface</div>
+<p>After selecting the &quot;Potential Temperature IsoSurface Scalar Analysis (from theta)&quot; or &quot;Potential Temperature IsoSurface Advection (from theta)&quot; derived field, clicking <strong>Create Display</strong>, and specifying the potential temperature value and vector parameter to plot, the <strong>Layer Controls</strong> tab of the Data Explorer will appear, where various properties of the display can be set. Note that different 3D Theta Surface display types may have different controls:</p>
+<div class="images"><img src="images/3dThetaSurface.gif" width="539" height="251" alt="Image 2: 3D Theta Surface Controls"/><br>
+  <span class="caption">Image 2: 3D Theta Surface Controls</span></div>
+  <div class="pagesubtitle">Properties</div>
+  <ul class="propertylist">
+  <li class="propertylistitem"><strong>Color Table - </strong>Shows the active color table and the associated high and low data values   in the units of the display. As   the mouse        pointer is moved   over the color bar, the value at a particular   color is        shown.   Right click on the color bar or click on the button that   displays the   name of the Color Table to make modifications to the color   bar. This   allows you to open the <a href="misc/ContourDialog.html">Color        Table Editor</a>, change the range, select other color tables,   etc.</li>
+  <li class="propertylistitem"><strong>Texture Quality - </strong>Sets the quality of the        displayed texture. A higher quality will        take longer to render and user more memory. This is an option for the Color-Shaded Image Over Constant Theta Surface display type</li>
+  <li class="propertylistitem"><strong>Smoothing -</strong>Smooths the grid. There are seven types of smoothing:        None, 5-point, 9-point, Gaussian Weighted, Cressman Weighted,   Circular Aperture, and Rectangular Aperture. The amount of smoothness        can be set for all except the 5 and 9-point smoothers. The higher   the amount, the smoother    the grid. For the Cressman, Circular and Rectangular aperture     smoothing types, the smoothing factor is the radius in grid spacing     units.</li>
+  <li class="propertylistitem"><strong>Shade Colors -</strong> Colors every pixel  to give a smooth gradation of color. The        alternative is coloring an area of pixels corresponding to a single data        grid cell with one color.  This is an option for the Color-Shaded Image Over Constant Theta Surface display type.</li>
+  <li class="propertylistitem"><strong>Mode -</strong> Sets the way the texture is displayed.        You can select Solid, Mesh, or Points. This is useful for looking at the        structure of the underlying data. This is an option for the Color-Shaded Image Over Constant Theta Surface display type.</li>
+  <li class="propertylistitem"><strong>Point Size -</strong> Sets the size of the points when the Points Mode is selected. This is an option for the Color-Shaded Image Over Constant Theta Surface display type.</li>
+  </ul>
+<div class="pagesubtitle">Constant Theta Surface Flow Displays</div>
+<p>After selecting the &quot;Potential Temperature IsoSurface Vector Analysis (from theta)&quot;, clicking <strong>Create Display</strong>, and specifying the potential temperature value and vector parameter to plot, the <strong>Layer Controls</strong> tab of the Data Explorer will appear, where various properties of the display can be set. Note that different Constant Theta Surface Flow Displays display types may have different controls:</p>
+<div class="images"><img src="images/ConstantThetaFlowDisplays.gif" width="629" height="434" alt="Image 3: Constant Theta Surface Flow Display Controls"/><br>
+  <span class="caption">Image 3: Constant Theta Surface Flow Display Controls</span></div>
+  <div class="pagesubtitle">Properties</div>
+  <ul class="propertylist">
+  <li class="propertylistitem"><strong>Show</strong> - Switches between displaying Vectors,   Streamlines, Trajectories, and Curly Vectors. Note that in order to use   Trajectories or Curly Vectors, at least four timesteps must be   displayed, otherwise, these <strong>Show</strong> modes will be inactive.
+    <ul>
+      <li><strong>Vectors -</strong> Displays vectors in the Main Display window.
+        <ul>
+          <li><strong>Size -</strong> Changes the length of the vectors.        The Size box is an editable box where you can enter a new size and press Enter,        or use the slider (<img src="https://www.ssec.wisc.edu/mcidas/doc/mcv_guide/working/data/choosers/images/Slider.gif" alt="Slider icon to change vector size" width="18" height="12" align="absmiddle">) to      change the value.</li>
+                  <li><strong>Autosize -</strong> Controls   the size of the vectors based on zoom level. If the checkbox is checked,   the size of the vectors will change proportionally as the zoom level   changes. When unchecked, the vectors will remain the same size   regardless of zoom level.</li>
+        </ul>
+      </li>
+      <li><strong>Streamlines -</strong> Displays streamlines in the Main Display window.
+        <ul>
+          <li><strong>Density -</strong> Changes the density of the streamlines on the   display. More streamlines will be displayed as the slider is moved   closer to 'High'.</li>
+        </ul>
+      </li>
+      <li><strong>Trajectories -</strong> Displays trajectories in the Main Display window.
+        <ul>
+          <li><strong>Trajectory Form -</strong> Allows for selecting the type of trajectory used in the display. The options are Line, Cylinder, Ribbon, and Deform Ribbon.</li>
+          <li><strong>Length Offset -</strong> Sets the number of timesteps to include in each trajectory.</li>
+          <li><strong>Arrow -</strong> Adds an arrow head to the trajectories if the Line <strong>Trajectory Form</strong> is selected.</li>
+        </ul>
+      </li>
+      <li><strong>Curly Vectors -</strong> Displays curly vectors in the Main Display window. This option draws vectors that include multiple timesteps.
+        <ul>
+          <li><strong>Vector Length -</strong> Sets the length, or number of timesteps included with each curly vector.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li class="propertylistitem"><strong>Arrow Scale -</strong> Sets the size of the arrows in the Main Display window for all of the <strong>Show</strong> modes. </li>
+  <li class="propertylistitem"><strong>Skip -</strong> Defines the number      of grid points that are skipped to mitigate cluttering in the   display. A skip interval of 0 utilizes all grid points, 1 uses every   other        grid point, 2 uses every third grid point, etc. This value can be   modified by typing a value into the text field and pressing Enter or by   using the slider button.</li>
+  <li class="propertylistitem"><strong>Range -</strong> Lists the current range of data for sizing the vectors. Click on the <strong>Edit</strong> (<img src="images/StreamlineEdit.gif" alt="RangeEdit" width="23" height="17" align="absmiddle">)icon        to change the range.</li>
+  <li class="propertylistitem"><strong>Color Table - </strong>Shows the active color table and the associated high and low data values   in the units of the display. As   the mouse        pointer is moved   over the color bar, the value at a particular   color is        shown.   Right click on the color bar or click on the button that   displays the   name of the Color Table to make modifications to the color   bar. This   allows you to open the <a href="../tools/ColorTableEditor.html">Color Table Editor</a>, change the range, select other color tables, etc. This is available with the &quot;Vectors Colored by Speed over Theta Surface&quot; display type. If using &quot;Vectors Over Theta Surface&quot;, this will be a <strong>Color</strong> dropdown menu where a color can be selected for the vectors.</li>
+  <li class="propertylistitem"><strong>Line Width -</strong> Sets the line width (thickness) in the display. Click on the <img src="../ui/images/Slider16.gif" alt="Slider icon to change line width" align="absmiddle"> or        put in a value and hit enter to change the value.</li>
+  </ul>
+<div class="pagesubtitle">Menus</div>
+<p>Many of the menu items seen utilizing these displays are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are a couple of options unique to these displays.</p>
+<p>The <strong>Edit </strong>menu can have these unique options:</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Change Color Unit -</strong> Sets the unit to color the display by. This control is available for the 3D Theta Surface displays as well as Vectors Colored by Speed over Theta Surface.</li>
+<li class="propertylistitem"><strong>Import Drawing -</strong> Allows for importing a drawing file (*.xgrf) which draws a Trajectory Initial Area. Once the drawing has been imported, <img src="images/CreateTrajectory.gif" width="133" height="26" alt="Create Trajectory Button" align="absmiddle"> can be clicked and trajectories the will be drawn using this shape as the Trajectory Initial Area</li>
+</ul>
+<p>The <strong>View</strong> menu has these unique options for all display types:</p>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Use Grid Projection -</strong> Re-centers the display and resets the zoom level back to the display's     initial settings without changing any other preferences you have     modified.</li>
+<li class="propertylistitem"><strong>Enable Adaptive Resolution (Under Development) - </strong>Turns <a href="../misc/AdaptiveResolution.html">adaptive resolution</a> on or off for the layer. This menu item is only available if adaptive resolution is enabled in the <a href="../tools/preferences/DisplayWindowPreferences.html#enableAdaptiveResolution">User Preferences</a>. Note that adaptive resolution is still under development.</li>
+</ul>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="GridTrajectory.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="../page_satelliteandradardisplays.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>

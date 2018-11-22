@@ -54,14 +54,19 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#placeholder1.8">placeholder</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#localServers1.8">Local Servers</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.8">Display
     Changes</a></div>
 <div class="faq-category">
+  
   <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#abiL21.8">ABI Level 2 Enhancements and Defaults</a></strong></li>
     <li><strong><a class="faq-question-link" href="#profileAlongTrack1.8">ProfileAlongTrack Display</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#dataProbeTimeSeries1.8">Data Probe/Time Series Display</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#isosurface1.8">Isosurface Smoothing</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#thetaSurface1.8">Theta Surface Displays</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.8">Other
@@ -71,6 +76,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#scripting1.8">Scripting</a></strong></li>
     <li><strong><a class="faq-question-link" href="#colorTableEditor1.8">Color Table Editor Transparency Readout</a></strong></li>
     <li><strong><a class="faq-question-link" href="#java3d1.8">Java 3D</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#probing1.8">Improved Probing</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#gridFormulas1.8">Grid Formulas</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#abiRgb1.8">GOES 16/17 ABI True Color RGB Formula</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.8">Under Development</a></div>
@@ -90,17 +98,33 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat2_1.8" id="faq1_cat2_1.8"></a>Data
     Changes</div>
-  <div class="faq-category"><a name="placeholder1.8" id="placeholder1.8"></a>
-    <h4>Placeholder</h4>
-    <div class="faq-answer">Sample text</div>
+  <div class="faq-category"><a name="localServers1.8" id="localServers1.8"></a>
+    <h4>Local Servers</h4>
+    <div class="faq-answer">Updated local ADDE servers on Linux and OS X platforms.</div>
   </div>
 </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat3_1.8" id="faq1_cat3_1.8"></a>Display
     Changes</div>
+  <div class="faq-category"><a name="abiL21.8" id="abiL21.8"></a>
+    <h4>ABI Level 2 Enhancements and Defaults</h4>
+    <div class="faq-answer">Added new color table enhancements for Level 2 ABI products.  Additionally, parameter aliases and defaults were added making these new enhancements the default when ABI Level 2 data is displayed through local or remote ADDE or through the local file chooser.</div>
+  </div>
   <div class="faq-category"><a name="profileAlongTrack1.8" id="profileAlongTrack1.8"></a>
     <h4>ProfileAlongTrack Display</h4>
     <div class="faq-answer">Improved the Track subsetting tab when selecting which portion of the track to show. This includes making the selected portion of the track magenta and new tooltips explaining each of the controls. For more information, see <a href="controls/hydra/ProfileAlongTrackControl.html">ProfileAlongTrack Controls</a>.</div>
+  </div>
+  <div class="faq-category"><a name="dataProbeTimeSeries1.8" id="dataProbeTimeSeries1.8"></a>
+    <h4>Data Probe/Time Series Display</h4>
+    <div class="faq-answer">Restored the ability to create a Data Probe/Time Series display with only one timestep.</div>
+  </div>
+  <div class="faq-category"><a name="isosurface1.8" id="isosurface1.8"></a>
+    <h4>Isosurface Smoothing</h4>
+    <div class="faq-answer">Added the ability to smooth isosurface displays. This can be done with the Smoothing option in the Layer Controls of the display.</div>
+  </div>
+    <div class="faq-category"><a name="thetaSurface1.8" id="thetaSurface1.8"></a>
+    <h4>Theta Surface Displays</h4>
+    <div class="faq-answer">Added new derived fields and displays types for creating various displays over theta surfaces in 2D and 3D. For more information, see <a href="controls/ThetaSurfaceControl.html">Theta Surface Controls</a>.</div>
   </div>
   </div>
 <div class="faq-bottom">
@@ -113,7 +137,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       <ul>
       <li>New functions:</li>
       <ul>
-        <li>setMapLayerVisibility - Sets the visibility of the map layer in the Main Display</li>
+        <li>setMapLayerVisibility - Sets the visibility of the map layer in the Main Display.</li>
       </ul>
     <li>New functionality with existing functions:</li>
       <ul>
@@ -134,8 +158,21 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>Java 3D</h4>
     <div class="faq-answer">
     Updated to the final release of Java 3D version 1.6.0
+	</div></div>
+  <div class="faq-category"><a name="probing1.8" id="probing1.8"></a>
+    <h4>Improved Probing</h4>
+    <div class="faq-answer">
+    Improved probing output for various files where probing would only work on certain parts of the data.  This improvement can be noted in polar-orbiting netCDF data loaded through the local files chooser.
   </div>
 	</div>
+  <div class="faq-category"><a name="gridFormulas1.8" id="gridFormulas1.8"></a>
+    <h4>Grid Formulas</h4>
+    <div class="faq-answer">Added a variety of gridded formulas provided by Brian Mapes. The formulas perform a variety of data analysis including computing the deviation from time average at each grid point and produce a vertical derivative of 3D gridded fields. Documentation of these formulas can be found on the <a href="tools/GridFormulas.html">Description of Formulas - Grids</a> page. The new formulas provided by Brian Mapes are denoted by an asterisk (*) next to the formula's names.</div>
+</div>
+  <div class="faq-category"><a name="abiRgb1.8" id="abiRgb1.8"></a>
+    <h4>GOES 16/17 ABI True Color RGB Formula</h4>
+    <div class="faq-answer">Added a formula to create true color RGB imagery from GOES 16/17 ABI data. This formula creates a simulated green band to make the RGB possible.</div>
+</div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat5_1.8" id="faq1_cat5_1.8"></a>Under Development</div>
   <div class="faq-category"><a name="jpss1.8" id="jpss1.8"></a>

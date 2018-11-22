@@ -412,7 +412,7 @@ levels. Note that you must select a 3D field to use this formula.
    <p><em>newGrid</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
-   <p>A parameter from a grid whoose resolution and coordinates will be used for displaying the original grid.</p>
+   <p>A parameter from a grid whose resolution and coordinates will be used for displaying the original grid.</p>
    </td>
    </tr>
 </table></li>
@@ -550,10 +550,52 @@ levels. Note that you must select a 3D field to use this formula.
 </ul>
 <div class="pagesubtitle">3D Scalar Field Horizontal Smoothing<a name="smooth" id="smooth"></a></div>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>9-point hor. smoothing* -</strong></li>
-<li class="propertylistitem"><strong>Gaussian hor. smoothing* -</strong></li>
-<li class="propertylistitem"><strong>Rectangular hor. smoothing, in grid increments* -</strong></li>
-<li class="propertylistitem"><strong>circular hor. smoothing, in grid increments* -</strong></li>
+<li class="propertylistitem"><strong>9-point hor. smoothing* -</strong> Returns a smoothed field using 9-point smoothing.</li>
+<li class="propertylistitem"><strong>Gaussian hor. smoothing (N)* -</strong> Returns a smoothed field using Gaussian horizontal smoothing at a user-defined factor (N).
+<table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>N</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Smoothing factor (default=6)</p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>Rectangular hor. smoothing, in grid increments (N)* -</strong> Returns a smoothed field using Rectangular horizontal smoothing at a user-defined factor (N).
+  <table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>N</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Smoothing factor (default=2)</p>
+   </td>
+   </tr>
+</table></li>
+<li class="propertylistitem"><strong>circular hor. smoothing, in grid increments (N)* -</strong> Returns a smoothed field using Circular horizontal smoothing at a user-defined factor (N).
+  <table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>N</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Smoothing factor (default=2)</p>
+   </td>
+   </tr>
+</table></li>
 	</ul>
 <div class="pagesubtitle">Time Steps<a name="time" id="time"></a></div>
 <ul class="propertylist">
@@ -643,24 +685,160 @@ levels. Note that you must select a 3D field to use this formula.
 </ul>
 <div class="pagesubtitle">Time Mean and Anomaly<a name="timeMeanAnomaly" id="timeMeanAnomaly"></a></div>
 <ul class="propertylist">
-	<li class="propertylistitem"><strong>Anomaly from Time Means* -</strong></li>
-	<li class="propertylistitem"><strong>Compute anomaly from daily means* -</strong></li>
-	<li class="propertylistitem"><strong>Compute anomaly from monthly means* -</strong></li>
-	<li class="propertylistitem"><strong>Compute anomaly from time means at specified time type* -</strong></li>
-	<li class="propertylistitem"><strong>Compute anomaly from yearly means* -</strong></li>
-	<li class="propertylistitem"><strong>Compute daily means* -</strong></li>
-	<li class="propertylistitem"><strong>Compute monthly means* -</strong></li>
-	<li class="propertylistitem"><strong>Compute time derivative with preferred time unit* -</strong></li>
-	<li class="propertylistitem"><strong>Compute time means at specified time type* -</strong></li>
-	<li class="propertylistitem"><strong>Compute yearly means* -</strong></li>
-	<li class="propertylistitem"><strong>Sample a grid at times specified* -</strong></li>
+	<li class="propertylistitem"><strong>Anomaly from Time Means* -</strong> Computes the deviation from time mean for all selected times at each grid point.</li>
+	<li class="propertylistitem"><strong>Compute anomaly from daily means* -</strong> Computes the deviation from time mean for each day at each grid point.</li>
+	<li class="propertylistitem"><strong>Compute anomaly from monthly means* -</strong> Computes the deviation from time mean for each day at each grid point.</li>
+	<li class="propertylistitem"><strong>Compute anomaly from time means at specified time type (meanType)* -</strong> Computes the deviation from the time mean at the user-defined interval at each grid point.
+	<table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>meanType</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The time mean to use (default=yearly)</p>
+   </td>
+   </tr>
+</table></li>
+	<li class="propertylistitem"><strong>Compute anomaly from yearly means* -</strong> Computes the deviation from time mean for each year at each grid point.</li>
+	<li class="propertylistitem"><strong>Compute daily means* -</strong> Computes a time mean of a grid for all selected times at each grid point.</li>
+	<li class="propertylistitem"><strong>Compute monthly means* -</strong> Computes a time mean of a grid for each day at each grid point.</li>
+	<li class="propertylistitem"><strong>Compute time derivative with preferred time unit (timeUnit)* -</strong> Computes a time derivative at a user-defined interval at each grid point.
+	<table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>timeUnit</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The time unit to use (default=day)</p>
+   </td>
+   </tr>
+</table></li>
+	<li class="propertylistitem"><strong>Compute time means at specified time type (meanType)* -</strong> Computes a time mean of a grid at the user-defined interval at each grid point.
+	<table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>meanType</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The time mean to use (default=yearly)</p>
+   </td>
+   </tr>
+</table></li>
+	<li class="propertylistitem"><strong>Compute yearly means* -</strong> Computes a time mean of a grid for each year at each grid point.</li>
+	<li class="propertylistitem"><strong>Sample a grid at times specified (year, season, day of month, hour of day, minute of hour, seconds, milliseconds)* -</strong> Samples a grid at specified time periods, multiple arguments can be used in complex sampling. For example, using &quot;hour=5&quot; would return all samples corresponding to time 5. Further, specifying &quot;year=2018&quot; would give samples at time 5 in year 2018.
+	  <table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>year</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Year as yyyy (default=None)</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>season</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Season (default=None)</p>
+   Valid values include:
+   <ul>
+   	<li>DJF - December, January, February</li>
+   	<li>JFM - January, February, March</li>
+   	<li>MAM - March, April, May</li>
+   	<li>JJA - June, July, August</li>
+   	<li>SON - September, October, November</li>
+   	<li>OND - October, November, December</li>
+   	<li>JJAS - June, July, August, September</li>
+   </ul>
+   </td>
+   </tr>
+      <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>month</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Month as MM (default=None)</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>day of month</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Day of month as dd (default=None)</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>hour of day</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Hour of day as hh (default=None)</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>minute of hour</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Minute of hour as mm (default=None)</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>seconds</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Seconds as ss (default=None)</p>
+   </td>
+   </tr>
+      <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>milliseconds</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>Milliseconds as ms (default=None)</p>
+   </td>
+   </tr>
+</table></li>
 </ul>
 <div class="pagesubtitle">Basic Math<a name="basic" id="basic"></a></div>
 <ul class="propertylist">
-	<li class="propertylistitem"><strong>Divide Grids* -</strong></li>
-	<li class="propertylistitem"><strong>Modulo with a number* -</strong></li>
-	<li class="propertylistitem"><strong>Multiply Grids* -</strong></li>
-	<li class="propertylistitem"><strong>Vertical Derivative* -</strong></li>
+	<li class="propertylistitem"><strong>Divide Grids* -</strong> Divides two grids.</li>
+	<li class="propertylistitem"><strong>Modulo with a number (number)* -</strong> Returns the modulo at every value of the grid with given number.
+	<table id="gridformulas1" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+   <td width="140" colspan="1" rowspan="1" valign="top">
+   <p><em>number</em></p>
+   </td>
+   <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+   <p>The number to use. There is no default value.</p>
+   </td>
+   </tr>
+</table></li>
+	<li class="propertylistitem"><strong>Multiply Grids* -</strong> Multiplies two grids.</li>
+	<li class="propertylistitem"><strong>Vertical Derivative* -</strong> Computes the vertical derivative of a 3D parameter at user-specified vertical levels.</li>
 </ul>
 <div class="pagesubtitle"><a name="ensemble" id="ensemble"></a>Ensemble</div>
 <ul class="propertylist">

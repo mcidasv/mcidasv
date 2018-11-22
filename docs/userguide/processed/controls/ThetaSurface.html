@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>Grid Trajectory Controls</title>
+<title>Theta Surface Controls</title>
 <!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
@@ -22,23 +22,62 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/GridTraj
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
   <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="HovmollerControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="GridTrajectory.html">Go to Previous</a><!-- InstanceEndEditable -->]
 	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext" --><a href="ThetaSurfaceControl.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="../page_satelliteandradardisplays.html">Go to Next</a><!-- InstanceEndEditable -->] 
 	</span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
-<div class="pagetitle">Grid Trajectory Controls</div>
+<div class="pagetitle">Theta Surface Controls</div>
 <xxxmeta xxxname="jhid" value="idv.controls.volumerendercontrol">
 <div class="pagesubtitle">Overview</div>
-<p>The Grid Trajectory display types are capable of working with gridded data containing u and v-wind components, as well as a scalar quantity to color them by.&nbsp;Both 2D and 3D trajectories can be created dependent on the fields contained in the data.&nbsp;The relevant display types are:</p>
+<p>The Theta Surface display types are capable of working with gridded data containing a theta (potential temperature) component, as well as a scalar and u and v-wind components for different displays. The display types available are dependent on the derived field selected.&nbsp;The relevant derived fields and their respective display types are:</p>
 <ul>
-	<li>2D Grid Trajectory</li>
-	<li>2D Grid Trajectory Colored by Speed</li>
-	<li>3D Grid Trajectory</li>
-	<li>3D Grid Trajectory Colored by Speed</li>
-	<li>Trajectory Colored by Another Parameter</li>
+	<li>Potential Temperature IsoSurface (from theta) - Creates a display of a potential temperature surface over a user-defined potential temperature value.
+	  <ul>
+	    <li>Constant Theta Surface Height Plan View
+	      <ul>
+	        <li>Contour Plan View</li>
+	        <li>Color-Filled Contour Plan View</li>
+	        <li>Color-Shaded Plan View</li>
+	        <li>Isentropic Topography</li>
+          </ul>
+	    </li>
+      </ul>
+	</li>
+	<li>Potential Temperature IsoSurface Scalar Analysis (from theta) - Creates a display of a user-selected parameter over a user-defined potential temperature value/surface.
+	  <ul>
+	    <li>3D Theta Surface
+	      <ul>
+	        <li>Contours Over Constant Theta Surface</li>
+	        <li>Color-Filled Contours Over Constant Theta Surface</li>
+	        <li>Color-Shaded Image Over Constant Theta Surface</li>
+          </ul>
+	    </li>
+      </ul>
+	</li>
+	<li>Potential Temperature IsoSurface Vector Analysis (from theta) - Creates a display of vectors from user-selected parameters over a user-defined potential temperature value/surface.
+	  <ul>
+	    <li>Constant Theta Surface Flow Displays
+	      <ul>
+	        <li>Vectors Over Theta Surface</li>
+	        <li>Vectors Colored By Speed Over Theta Surface</li>
+          </ul>
+	    </li>
+      </ul>
+	</li>
+	<li>Potential Temperature IsoSurface Advection (from theta) - Creates a display of advection of a user-selected parameter over a user-defined potential temperature value/surface.
+	  <ul>
+	    <li>3D Theta Surface
+	      <ul>
+	        <li>Contours Over Constant Theta Surface</li>
+	        <li>Color-Filled Contours Over Constant Theta Surface</li>
+	        <li>Color-Shaded Image Over Constant Theta Surface</li>
+          </ul>
+	    </li>
+      </ul>
+	</li>
 </ul>
 <p>The Grid 2D Trajectory or Grid 3D Trajectory formulas can be used to access these display types.&nbsp;The formulas will request for all of the fields to pass through it, including the u- and v-wind components, the vertical component, and a color-by component. An alternative to the formulas is utilizing the derived 2D and 3D fields of your data, Grid 2D Trajectory and Grid 3D Trajectory. When using these fields, all you need to specify is the scalar quantity when using the Trajectory Colored by Another Parameter display type, and McIDAS-V will pull out the relevant u-&nbsp;and v-wind components (as well as the vertical component when creating 3D Trajectories).</p>
 <p>After clicking <strong>Create Display</strong> and choosing the field(s), the <strong>Layer Controls</strong> tab of the Data Explorer will appear, where various properties of the trajectories can be set:</p>
@@ -78,9 +117,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/GridTraj
 <div class="BottomTitleNav">
   <hr align="center">
   <p class="style2" style="text-align:left; "> 
-  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="HovmollerControl.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="GridTrajectory.html">Go to Previous</a><!-- InstanceEndEditable -->] 
 	<span style="padding-left: 15px; "> 
-	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="ThetaSurfaceControl.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="../page_satelliteandradardisplays.html">Go to Next</a><!-- InstanceEndEditable -->] 
 	</span></p>
 </div>
 </body>
