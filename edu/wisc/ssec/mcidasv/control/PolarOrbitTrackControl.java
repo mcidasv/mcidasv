@@ -808,7 +808,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         double dist = earthRadius * (Math.PI - SAC - Math.asin(sinASC));
         double rat = dist / earthRadius;
 
-        int npts = 360;
+        // 360 degrees +1 points so we connect final segment, last point to first
+        int npts = 361;
         float[][] latlon = new float[2][npts];
         double cosDist = Math.cos(rat);
         double sinDist = Math.sin(rat);
