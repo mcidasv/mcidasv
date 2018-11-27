@@ -87,7 +87,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.8">Under Development</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#jpss1.8">JPSS Chooser</a></strong></li></ul></div>
+    <li><strong><a class="faq-question-link" href="#jpss1.8">JPSS Chooser</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#satTrack1.8">Satellite Orbit Track Chooser</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.8" id="faq1_cat1_1.8"></a>Documentation
@@ -103,7 +104,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</div>
   <div class="faq-category"><a name="localServers1.8" id="localServers1.8"></a>
     <h4>Local Servers</h4>
-    <div class="faq-answer">Updated local ADDE servers on Linux and OS X platforms. The name of the format for working with GOES-16 ABI data has changed from &quot;GOES-16 ABI&quot; to &quot;GOES ABI&quot; since this server will work with all ABI data (GOES-16 through -19).</div>
+    <div class="faq-answer">Updated local ADDE servers on Linux and OS X/macOS platforms. The name of the format for working with GOES-16 ABI data has changed from &quot;GOES-16 ABI&quot; to &quot;GOES ABI&quot; since this server will work with all ABI data (GOES-16 through -19).</div>
   </div>
   <div class="faq-category"><a name="radar1.8" id="radar1.8"></a>
     <h4>International Radars</h4>
@@ -200,6 +201,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       <p>Improved the ordering of fields in the Field Selector tab of the Data Explorer when working with a multi-banded SVM granule from NOAA CLASS. All of the field names are now listed in numerical order based on band number with quality flags grouped with the physical values (i.e. radiance, reflectance, brightness temperature) for each band. The output of the listVIIRSFieldsInFile() function is now returned in order of band number as well, with the calibrated values and quality flags listing together for each band.</p>
       <p>Changed the name of the listVIIRSTimesInField() function to listVIIRSTimeInFile(). The date/time format returned from this function now matches what is seen in the layer label of a displayed VIIRS layer as well as what is in the Time Animation Widget of the Main Display window.</p>
       <p>Added the ability to display CrIS SCRIF full spectral Science SDR data.</p>
+    </div>
+  </div>
+    <div class="faq-category"><a name="satTrack1.8" id="satTrack1.8"></a>
+    <h4>Satellite Orbit Track Chooser</h4>
+    <div class="faq-answer">
+      <p>Implemented several bug fixes to improve performance of the chooser.  When loading data via ADDE, now only the selected satellite will be listed in the Field Selector instead of all of the satellites in the dataset.  A new default projection has been added for the Satellite Orbit Track display type that reduces horizontal lines across the display.  Label interval along the track line can now be set as low as 1 minute.</p>
     </div>
   </div>
 </div>
