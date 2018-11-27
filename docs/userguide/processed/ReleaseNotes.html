@@ -55,6 +55,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#localServers1.8">Local Servers</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#radar1.8">International Radars</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.8">Display
@@ -67,12 +68,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#dataProbeTimeSeries1.8">Data Probe/Time Series Display</a></strong></li>
     <li><strong><a class="faq-question-link" href="#isosurface1.8">Isosurface Smoothing</a></strong></li>
     <li><strong><a class="faq-question-link" href="#thetaSurface1.8">Theta Surface Displays</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#streamlines1.8">3D Volume Streamline Displays</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.8">Other
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#times1.8">Set Day and Time Range Window</a></strong></li>
     <li><strong><a class="faq-question-link" href="#scripting1.8">Scripting</a></strong></li>
     <li><strong><a class="faq-question-link" href="#colorTableEditor1.8">Color Table Editor Transparency Readout</a></strong></li>
     <li><strong><a class="faq-question-link" href="#java3d1.8">Java 3D</a></strong></li>
@@ -100,7 +103,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</div>
   <div class="faq-category"><a name="localServers1.8" id="localServers1.8"></a>
     <h4>Local Servers</h4>
-    <div class="faq-answer">Updated local ADDE servers on Linux and OS X platforms.</div>
+    <div class="faq-answer">Updated local ADDE servers on Linux and OS X platforms. The name of the format for working with GOES-16 ABI data has changed from &quot;GOES-16 ABI&quot; to &quot;GOES ABI&quot; since this server will work with all ABI data (GOES-16 through -19).</div>
+  </div>
+  <div class="faq-category"><a name="radar1.8" id="radar1.8"></a>
+    <h4>International Radars</h4>
+    <div class="faq-answer">Added three international Radar sites to the Station dropdown of the Level II &gt; Local chooser, which allows for the data to be plotted at the correct location. These locations are:
+    <ul>
+    	<li>Camp Humphreys, Korea (KSG)</li>
+    	<li>Kadena, Japan (ODN)</li>
+    	<li>Kunsan, Korea (KJK)</li>
+    </ul></div>
   </div>
 </div>
 <div class="faq-bottom">
@@ -126,10 +138,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>Theta Surface Displays</h4>
     <div class="faq-answer">Added new derived fields and displays types for creating various displays over theta surfaces in 2D and 3D. For more information, see <a href="controls/ThetaSurfaceControl.html">Theta Surface Controls</a>.</div>
   </div>
+      <div class="faq-category"><a name="streamlines1.8" id="streamlines1.8"></a>
+    <h4>3D Volume Streamline Displays</h4>
+    <div class="faq-answer">Added three new 3D Flow displays for 3D Volume Streamline, 3D Volume Streamline Colored by Speed, and 3D Volume Streamline Colored by Another Parameter. For more information, see <a href="controls/3DFlowPlanViewControl.html">3D Flow Display Controls</a>.</div>
+  </div>
   </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat4_1.8" id="faq1_cat4_1.8"></a>Other
     Changes</div>
+    <div class="faq-category"><a name="times1.8" id="times1.8"></a>
+    <h4>Set Day and Time Range Window</h4>
+    <div class="faq-answer">Renamed the &quot;Set Archive Day&quot; window when selecting an Image Type from an archive server to &quot;Set Day and Time Range&quot;. This window is also available through the Absolute times tab of the Satellite &gt; Imagery chooser through the Set Day/Time Range button with archive and realtime servers. Previously, this window contained one field for a single date. Now, along with this field for a singe date, there are text entry fields for beginning and ending times. This allows for a more efficient listing of times by not listing all of the times in the dataset when only a specific time range (e.g. 2 - 5Z) may be needed. If a user does not enter a beginning or ending time, the default is the entire day (00:00:00Z - 23:59:59Z).</div>
+	</div>
   <div class="faq-category"><a name="scripting1.8" id="scripting1.8"></a>
     <h4>Scripting</h4>
     <div class="faq-answer">
@@ -157,8 +177,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category"><a name="java3d1.8" id="java3d1.8"></a>
     <h4>Java 3D</h4>
     <div class="faq-answer">
-    Updated to the final release of Java 3D version 1.6.0
-	</div></div>
+    Updated to the final release of Java 3D version 1.6.0.</div></div>
   <div class="faq-category"><a name="probing1.8" id="probing1.8"></a>
     <h4>Improved Probing</h4>
     <div class="faq-answer">

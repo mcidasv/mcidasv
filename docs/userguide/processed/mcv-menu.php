@@ -99,9 +99,11 @@ RAOB Sounding Data</span><br>
         <span class="link" onClick="setPage('controls/ThreeDSurfaceControl.html');">3D Surface Controls</span><br>
         <span class="link" onClick="setPage('controls/VolumeRenderControl.html');">Volume Rendering Controls</span><br>
 		<span class="link" onClick="setPage('controls/PointVolumeControl.html');">Point Volume Controls</span><br>
-        		<span class="link" onClick="setPage('controls/SoundingControl.html');">Sounding Controls</span><br>
-                <span class="link" onClick="setPage('controls/HovmollerControl.html');">Hovmoller Controls</span><br>
-                                <span class="link" onClick="setPage('controls/GridTrajectory.html');">Grid Trajectory Controls</span><br>
+        <span class="link" onClick="setPage('controls/SoundingControl.html');">Sounding Controls</span><br>
+        <span class="link" onClick="setPage('controls/HovmollerControl.html');">Hovmoller Controls</span><br>
+        <span class="link" onClick="setPage('controls/GridTrajectory.html');">Grid Trajectory Controls</span><br>
+        <span class="link" onClick="setPage('controls/ThetaSurfaceControl.html');">Theta Surface Controls</span><br>
+        <strong></strong>
       </div>
 
       <span class="toggle" onClick="toggleChildren(this,'layercontrols_2_1');">+</span>
