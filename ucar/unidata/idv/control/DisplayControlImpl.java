@@ -981,9 +981,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
     /** Color swatch button in properties window. Value may be {@code null}. */
     private JPanel colorSwatch;
-    
-    public static final String MACRO_RADARSITE = "%radarsite%";
-    
+
     /**
      * Default constructor. This is called when the control is
      * unpersisted through the {@link ucar.unidata.xml.XmlEncoder}
