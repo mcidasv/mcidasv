@@ -272,44 +272,24 @@ class _MappedVIIRSFlatField(_MappedFlatField):
 
     def clone(self):
         return self * 1
-        
+                
         
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
-    def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime, accounting, debug, server, addeSatBands=None):
+    def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime, accounting, debug, server):
         """Make a _MappedAreaImageFlatField from an existing AreaImageFlatField."""
-        
-        # Note that the key "satband-band-label" is not in the following list,
-        # but that it *is* handled in _getDirValue. This is intentional, and 
-        # has been done to effectively do lazy loading for that particular key.
-        # 
-        # The reason you'd want to do this is because we have to perform an
-        # additional ADDE call to get the SATBAND information, and depending 
-        # upon the network and the ADDE server itself, this may take a little
-        # while. If "satband-band-label" is in the list of keys passed to 
-        # _MappedData.__init__, we'll end up calling _handleSatBand while 
-        # creating a new _MappedAreaImageFlatField...and this is no good 
-        # because there's no guarantee that the SATBAND info is needed at all!
-        # 
-        # Adding the "satband-band-label" to the list of keys *after* 
-        # this instance has been created means that _handleSatBand won't be
-        # called (potentially blocking our current thread!) until it's actually
-        # required somewhere else in the code. At that point we've avoided 
-        # doing anything that may result in thread blocking for as long as 
-        # possible...and if the SATBAND request finishes quickly enough we 
-        # avoid blocking entirely.
-        # 
-        # ("satband-band-label" is added by _getADDEImage in mcvadde.py)
+        # self.__mappedObject = AreaImageFlatField.createImmediate(areaDirectory, imageUrl)
         keys = [ 'accounting', 'band-count', 'bandList', 'bandNumber', 'bands',
-                 'calibration-scale-factor', 'calibration-type', 'day', 
-                 'debug', 'directory-block', 'elements', 'lines', 'memo-field',
-                 'nominal-time', 'sensor-id', 'sensor-type', 'server', 
-                 'source-type', 'start-time', 'datetime', 'url' ]
+                 'calibration-scale-factor', 'calibration-type',
+                 'day', 'debug', 'directory-block',
+                 'elements', 'lines', 'memo-field', 'nominal-time',
+                 'sensor-id', 'sensor-type', 'server', 'source-type', 'start-time',
+                 'datetime', 'url','satband-band-label', ]
                  
         _MappedData.__init__(self, keys)
         self.areaFile = areaFile
         self.areaDirectory = areaDirectory
         self.addeDescriptor = addeDescriptor
-        self.addeSatBands = addeSatBands
+        self.addeSatBands = None
         self.accounting = accounting
         self.debug = debug
         self.server = server
@@ -323,7 +303,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         
     # http://stackoverflow.com/questions/141545/overloading-init-in-python
     @classmethod
-    def fromUrl(cls, accounting, debug, server, imageUrl, satbandreq):
+    def fromUrl(cls, accounting, debug, server, imageUrl):
         """Create an AreaImageFlatField from a URL, then make a _MappedAreaImageFlatField."""
         aa = ErrorCodeAreaUtils.createAreaAdapter(imageUrl)
         areaFile = aa.getAreaFile()
@@ -339,11 +319,8 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         aiff = AreaImageFlatField(addeDescriptor, ftype, domainSet,
                 rangeCoordSys, rangeSets, units, samples, "READLABEL")
         areaFile.close()
-        instance = cls(aiff, areaFile, areaDirectory, addeDescriptor,
-                       ff.getStartTime(), accounting, debug, server,
-                       addeSatBands=satbandreq)
-        #print('finished init')
-        return instance
+        return cls(aiff, areaFile, areaDirectory, addeDescriptor,
+                ff.getStartTime(), accounting, debug, server)
 
     def clone(self):
         # i'm so sorry :(
@@ -376,7 +353,6 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     def _handleSatBand(self):
         # grab result if we haven't already done so
         if isinstance(self.addeSatBands, FutureTask):
-            #print('waiting for satband')
             self.addeSatBands = self.addeSatBands.get()
             
         if self.addeSatBands:
@@ -384,10 +360,8 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
                 self.areaDirectory.getSensorID(),
                 self.areaDirectory.getSourceType())
             if bandDescr:
-                result = bandDescr[self._getBand()]
-                self.getMetadataMap().put('longname', result)
-                return result
-                
+                return bandDescr[self._getBand()]
+
         return ''
             
     def _getDirValue(self, key):
@@ -446,19 +420,11 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
 
     def getMacrosDict(self):
         """Return dictionary mapping IDV macro strings to reasonable defaults."""
+        #longname = '%s band %s %s' % (self['sensor-type'], self['bands'][0], self['calibration-type'])
         # use SATBAND string now that we have it:
-        #longname = self['sensor-type']
-        #if not isinstance(self.addeSatBands, FutureTask):
-        #    satband = self['satband-band-label']
-        #    if satband:
-        #        longname = satband
-        #        
-        shortname = '%s_Band%s_%s' % (self['sensor-id'],
-                                      self['bands'][0],
-                                      self['calibration-type'])
-        
-        #macros = {'longname': longname, 'shortname': shortname}
-        macros = {'shortname': shortname}
+        longname = '%s %s' % (self['sensor-type'], self['satband-band-label'])
+        shortname = '%s_Band%s_%s' % (self['sensor-id'], self['bands'][0],  self['calibration-type'])
+        macros = {'longname': longname, 'shortname': shortname}
         return macros
 
     def getDefaultLayerLabel(self):
@@ -1488,8 +1454,6 @@ class _Display(_JavaProxy):
                 shortname = hm.get('shortname')
             if hm.containsKey('defaultlayerlabel'):
                 defaultLabel = hm.get('defaultlayerlabel')
-            if isinstance(firstData, _MappedAreaImageFlatField):
-                longname = firstData['satband-band-label']
         except AttributeError:
             hm = None
             
