@@ -1046,16 +1046,20 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         McIDASV mcv = (McIDASV)getIdv();
         
+        // START MCV INQUIRY 2718 changes
+        // see the comments for the ViewManager.PREF_LOGO_CHANGED field
+        // as well as Inquiry 2718 for more
         boolean logoViz = true;
+        String logoPath = Constants.ICON_MCIDASV_DEFAULT;
         if (getStore().getKeys().contains(ViewManager.PREF_LOGO_CHANGED)) {
             logoViz = mcv.getStateManager().getPreferenceOrProperty(
                 ViewManager.PREF_LOGO_VISIBILITY, true);
+            logoPath = mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO, Constants.ICON_MCIDASV_DEFAULT);
         }
-        final JCheckBox logoVizBox = new JCheckBox(
-            "Show Logo in View", logoViz);
-        final JTextField logoField =
-            new JTextField(mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO,
-                    Constants.ICON_MCIDASV_DEFAULT));
+        // END MCV INQUIRY 2718 changes
+        
+        final JCheckBox logoVizBox = new JCheckBox("Show Logo in View", logoViz);
+        final JTextField logoField = new JTextField(logoPath);
         logoField.setToolTipText("Enter a file or URL");
 
         JButton browseButton = new JButton("Browse..");
@@ -1208,8 +1212,12 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             // applyWidgets called the same way the IDV does it.
             public void applyPreference(XmlObjectStore theStore, Object data) {
                 savePrefsFromWidgets((Hashtable)data, theStore);
-
+    
+                // START MCV INQUIRY 2718 changes
+                // see the comments for the ViewManager.PREF_LOGO_CHANGED field
+                // as well as Inquiry 2718 for more
                 theStore.put(ViewManager.PREF_LOGO_CHANGED, true);
+                // END MCV INQUIRY 2718 changes
                 
                 Object projBoxSelection = projBox.getSelectedItem();
                 if (projBoxSelection instanceof String) {

@@ -2091,8 +2091,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
             for (Enumeration keys = propertiesMap.keys();
                     keys.hasMoreElements(); ) {
                 JCheckBox       cbx = (JCheckBox) keys.nextElement();
+                
                 BooleanProperty bp  = (BooleanProperty) propertiesMap.get(cbx);
-
+                if (Objects.equals(bp.getId(), PREF_LOGO_VISIBILITY)) {
+                    // this is done to avoid flashing the logo inadvertently
+                    continue;
+                }
                 bp.setValue(cbx.isSelected());
             }
 
@@ -7783,14 +7787,21 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @return  the logo file or URL
      */
     protected String getLogoFile() {
+        // START MCV INQUIRY 2718 changes
+        // see the comments for the ViewManager.PREF_LOGO_CHANGED field
+        // as well as Inquiry 2718 for more
         if (logoFile == null) {
-            logoFile =
-                getIdv().getStateManager().getPreferenceOrProperty(
-                    PREF_LOGO,
-                    Constants.ICON_MCIDASV_DEFAULT
-                );
+            if (getStore().getKeys().contains(PREF_LOGO_CHANGED)) {
+                logoFile =
+                    getIdv().getStateManager().getPreferenceOrProperty(
+                        PREF_LOGO,
+                        Constants.ICON_MCIDASV_DEFAULT
+                    );
+            } else {
+                logoFile = Constants.ICON_MCIDASV_DEFAULT;
+            }
         }
-
+        // END MCV INQUIRY 2718 changes
         return logoFile;
     }
 
@@ -7854,6 +7865,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
     }
     
     // START MCV INQUIRY 2718 changes
+    // the "logo changed" logic can be attributed to McV deciding to switch
+    // on the logo by default...but we also wanted this to happen for users
+    // who are upgrading.
+    // 
+    // the PREF_LOGO_CHANGED property is actually set in the "miscManager"
+    // class in McIdasPreferenceManager.
     public static String PREF_LOGO_CHANGED = "idv.viewmanager.logo.somethingchanged";
     
     /**
@@ -7862,17 +7879,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param on  true to show
      */
     public void setLogoVisibility(boolean on) {
+        logger.trace("changing logo viz: {}", on);
         setBp(PREF_LOGO_VISIBILITY, on);
     }
 
     /**
      * Get the logo visibility
      *
-     * @return the logo visibility
+     * @return the logo visibility 
      */
     public boolean getLogoVisibility() {
+        boolean pref = getStore().get(PREF_LOGO_VISIBILITY, true);
         boolean visible = getBp(PREF_LOGO_VISIBILITY, true);
+        logger.info("value from getBp: {}, value from prefs: {}", visible, pref);
         if (getStore().getKeys().contains(PREF_LOGO_CHANGED)) {
+            return visible;
+        } else if (visible != pref) {
             return visible;
         } else {
             return true;
