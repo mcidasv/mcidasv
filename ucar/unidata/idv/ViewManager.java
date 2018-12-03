@@ -2190,8 +2190,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 Point ap = ImageUtils.parsePoint(getLogoPosition(), bounds);
 
                 // System.out.println("screen point = " + ap);
-                int      baseX   = ap.x;
-                int      baseY   = ap.y;
+                int scale = Integer.parseInt(System.getProperty("sun.java2d.uiScale", "1"));
+                int      baseX   = ap.x * scale;
+                int      baseY   = ap.y * scale;
                 float    zval    = getPerspectiveView()
                                    ? 1
                                    : display.getDisplayRenderer().getMode2D()
@@ -7791,15 +7792,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         // see the comments for the ViewManager.PREF_LOGO_CHANGED field
         // as well as Inquiry 2718 for more
         if (logoFile == null) {
-            if (getStore().getKeys().contains(PREF_LOGO_CHANGED)) {
-                logoFile =
-                    getIdv().getStateManager().getPreferenceOrProperty(
-                        PREF_LOGO,
-                        Constants.ICON_MCIDASV_DEFAULT
-                    );
-            } else {
-                logoFile = Constants.ICON_MCIDASV_DEFAULT;
+            String pref = getStore().get(PREF_LOGO, Constants.ICON_MCIDASV_DEFAULT);
+            if (pref.isEmpty()) {
+                pref = Constants.ICON_MCIDASV_DEFAULT;
             }
+            logoFile = pref;
         }
         // END MCV INQUIRY 2718 changes
         return logoFile;
