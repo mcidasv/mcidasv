@@ -581,6 +581,31 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		}
     	}
     }
+
+    // No explicit dimension changes, but for times we need to redraw
+    // everything due to combinations of zooming and visibility toggling
+    private void redrawAll() {
+        logger.debug("redrawAll() in...");
+        try {
+            removeDisplayable(swathEdgeDsp);
+            removeDisplayable(trackDsp);
+            removeDisplayable(timeLabelDsp);
+            removeDisplayable(stationLabelDsp);
+            swathEdgeDsp = null;
+            trackDsp = null;
+            timeLabelDsp = null;
+            stationLabelDsp = null;
+            Data data = getData(getDataInstance());
+            swathEdgeDsp = new CompositeDisplayable();
+            trackDsp = new CompositeDisplayable();
+            timeLabelDsp = new CompositeDisplayable();
+            stationLabelDsp = new CompositeDisplayable();
+            createTrackDisplay(data, true);
+            applyDisplayableLevels();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
     private void createTrackDisplay(Data data, boolean doTrack) {
         
@@ -1143,7 +1168,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     			} else {
     				timeLabelDsp.setVisible(true);
     			}
-				updateDisplayList();
+                redrawAll();
     		}
     		if (source.equals(CHECKBOX_SWATH_EDGES)) {
     			if (ie.getStateChange() == ItemEvent.DESELECTED) {
