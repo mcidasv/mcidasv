@@ -32,16 +32,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-
-import java.net.URL;
 import java.net.URLConnection;
-
 import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.util.IOUtil;
+
 import visad.georef.EarthLocationTuple;
 
 public class GroundStations
@@ -109,11 +107,11 @@ public class GroundStations
         catch (Exception e)
         {
         	e.printStackTrace();
-            logger.error("ERROR: Problem reading ground stations, missing file or invalid file format");
+            logger.error("Problem reading ground stations, missing file or invalid file format");
         }
-    } // constructor
+    }
     
-    public HashMap getGroundStations() {
+    public HashMap<String, EarthLocationTuple> getGroundStations() {
     	return namedLocs;
     }
 

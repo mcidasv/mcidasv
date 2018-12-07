@@ -777,7 +777,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         fontSizePanel.add(botPanel);
 
         colorSwatch = new ColorSwatchComponent(getStore(), curSwathColor, "Color");
-        colorSwatch.setPreferredSize(new Dimension(30, 30));
+        colorSwatch.setPreferredSize(new Dimension(30, 24));
         
         colorPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         colorPanel.add(new JLabel("Color: "));
@@ -1299,7 +1299,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         Color swatchAntColor = getAntColor();
         antColorSwatch = new ColorSwatchComponent(getStore(), swatchAntColor, "Color");
-        antColorSwatch.setPreferredSize(new Dimension(30, 30));
+        antColorSwatch.setPreferredSize(new Dimension(30, 24));
         
         antColorPanel = new JPanel();
         antColorPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
