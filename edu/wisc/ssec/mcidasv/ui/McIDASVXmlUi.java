@@ -40,6 +40,8 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -72,13 +74,21 @@ import edu.wisc.ssec.mcidasv.util.TreePanel;
  */
 @SuppressWarnings("unchecked") 
 public class McIDASVXmlUi extends IdvXmlUi {
-
+    
+    /** Logging object. */
+    private static final Logger logger = 
+        LoggerFactory.getLogger(McIDASVXmlUi.class);
+    
     /** Maps a {@code String} ID to an {@link Element}. */
     private Map<String, Element> idToElement;
-
+    
     /** Avoids unneeded getIdv() calls. */
     private IntegratedDataViewer idv;
-
+    
+    /** See {@link #getElapsedGuiTime()}. */
+    private final Map<String, Long> xmlUiTimes = 
+        new HashMap<>(1024);
+    
     /**
      * Keep around a reference to the window we were built for, useful for
      * associated component groups with the appropriate window.
@@ -223,6 +233,7 @@ public class McIDASVXmlUi extends IdvXmlUi {
      * @see edu.wisc.ssec.mcidasv.ui.McIDASVXmlUi#createViewManager(Element)
      */
     @Override public Component createComponent(Element node, String id) {
+        long start = System.nanoTime();
         Component comp = null;
         String tagName = node.getTagName();
         if (tagName.equals(TAG_HTML)) {
@@ -271,10 +282,37 @@ public class McIDASVXmlUi extends IdvXmlUi {
         } else {
             comp = super.createComponent(node, id);
         }
-
+        long stop = System.nanoTime();
+        
+        // trying to get an idea of which parts of mcv are slow
+        logger.trace("xmlui '{}' component '{}': took {} ms to finish", Integer.toHexString(hashCode()), id, (stop - start) / 1.0e6);
+        
+        if (xmlUiTimes.containsKey(id)) {
+            xmlUiTimes.put(id, xmlUiTimes.get(id) + (stop - start));
+        } else {
+            xmlUiTimes.put(id, stop - start);
+        }
         return comp;
     }
-
+    
+    /**
+     * Return the total amount of time spent in 
+     * {@link #createComponent(Element, String)}.
+     * 
+     * <p>Be aware that each McV {@link IdvWindow window} should have its own 
+     * {@code McIDASXmlUi} instance, so in order to determine the total time, 
+     * iterate over the results from {@link IdvWindow#getWindows()}.</p>
+     * 
+     * @return Nanoseconds spent creating GUI components in this window.
+     */
+    public long getElapsedGuiTime() {
+        long elapsed = 0L;
+        for (Map.Entry<String, Long> entry : xmlUiTimes.entrySet()) {
+            elapsed += entry.getValue();
+        }
+        return elapsed;
+    }
+    
     /**
      * <p>
      * Attempts to build a {@link ucar.unidata.idv.ViewManager} based upon

@@ -77,6 +77,7 @@ import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidas.adde.AddeURLStreamHandler;
 
 import edu.wisc.ssec.mcidasv.collaboration.CollaborationManager;
+import edu.wisc.ssec.mcidasv.ui.McIDASVXmlUi;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.OptionPaneClicker;
 import edu.wisc.ssec.mcidasv.util.SystemState;
@@ -107,6 +108,7 @@ import ucar.unidata.idv.ViewManager;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.collab.CollabManager;
 import ucar.unidata.idv.ui.IdvUIManager;
+import ucar.unidata.idv.ui.IdvWindow;
 import ucar.unidata.ui.colortable.ColorTableManager;
 import ucar.unidata.ui.InteractiveShell.ShellHistoryEntry;
 import ucar.unidata.util.FileManager;
@@ -1865,6 +1867,28 @@ public class McIDASV extends IntegratedDataViewer {
     }
     
     /**
+     * Log (TRACE level) the time spent creating skin components in this 
+     * session.
+     * 
+     * @see McIDASVXmlUi#getElapsedGuiTime()
+     */
+    public static void elapsedSkinTime() {
+        long totalXmlUi = 0L;
+        List<IdvWindow> windows = cast(IdvWindow.getWindows());
+        for (IdvWindow window : windows) {
+            McIDASVXmlUi xmlUi = (McIDASVXmlUi)window.getXmlUI();
+            if (xmlUi != null) {
+                long winElapsed = xmlUi.getElapsedGuiTime();
+                totalXmlUi += winElapsed;
+                logger.trace("title '{}' xmlui '{}' spent {} ms creating components", window.getTitle(), Integer.toHexString(xmlUi.hashCode()), winElapsed / 1.0e6);
+            } else {
+                logger.trace("no xmlui for '{}'", window.getTitle());
+            }
+        }
+        logger.trace("spent at least {} ms creating components with xmlui", totalXmlUi / 1.0e6);
+    }
+    
+    /**
      * Attempts a clean shutdown of McIDAS-V. Currently this entails 
      * suppressing any error dialogs, explicitly killing the 
      * {@link #addeEntries}, removing {@link #SESSION_FILE}, and disabling
@@ -1889,7 +1913,9 @@ public class McIDASV extends IntegratedDataViewer {
         removeSessionFile(SESSION_FILE);
         
         // shut down javafx runtime
-         Platform.exit();
+        Platform.exit();
+        
+        elapsedSkinTime();
         
         logger.info("Exiting McIDAS-V @ {}", new Date());
         
