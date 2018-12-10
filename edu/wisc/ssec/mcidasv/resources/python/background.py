@@ -1516,7 +1516,7 @@ class _Display(_JavaProxy):
         
         ImageUtils.writeImageToFile(image, kmlImagePath, quality)
         
-    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, index=0, bgtransparent=False, createDirectories=False):
+    def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, index=0, bgtransparent=False, createDirectories=False, verbose=True):
         """Save contents of display into the given filename.
         
         Args:
@@ -1606,7 +1606,10 @@ class _Display(_JavaProxy):
             raise ValueError('Underlying display could not be found (display may have been closed).')
         else:
             xml = '%s\n<image file="%s" quality="%s" %s>%s</image>' % (XmlUtil.getHeader(), filename, quality, anim_index, islAsXml)
-        print 'isl2xml=%s' % (xml)
+            
+        if verbose:
+            print 'isl2xml=%s' % (xml)
+            
         islInterpreter.captureImage(islInterpreter.applyMacros(filename), islInterpreter.makeElement(xml))
         
         # not terribly happy about this approach...
