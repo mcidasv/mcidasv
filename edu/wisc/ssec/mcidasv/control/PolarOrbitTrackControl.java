@@ -132,7 +132,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     /** Property name to get the list or URLs */
     public final String PREF_GROUNDSTATIONS = "mcv.groundstations";
 
-    private JComboBox locationComboBox;
+    private JComboBox<String> locationComboBox;
     private JComboBox<String> jcbStationsPlotted;
 
     private JComboBox<String> jcbTrackLineStyle = new JComboBox<String>(Constants.lineStyles);
@@ -475,6 +475,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 				}
     		}
             
+            plotCoverageCircles();
     		updateDisplayList();
     		return;
     	}
@@ -522,6 +523,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             	plotCoverageCircles(); 	
             }
             
+            plotCoverageCircles();
             updateDisplayList();
     		return;
     		
@@ -1227,7 +1229,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbStationLineStyle.setSelectedIndex(1);
         prvStationLineStyle = jcbStationLineStyle.getSelectedIndex();
         
-        locationComboBox = new JComboBox();
+        locationComboBox = new JComboBox<String>();
         jcbStationsPlotted = new JComboBox<String>();
 
         // Ground Stations are now a natural-order map (alphabetical)
