@@ -1104,8 +1104,13 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
         if (dc == null) {
             if (getNavigatedDisplay() != null) {
-                return getNavigatedDisplay().getCenterPoint()
-                    .getLatLonPoint();
+                LatLonPoint llp = getNavigatedDisplay().getCenterPoint().getLatLonPoint();
+                // TJJ Dec 2018 - if unable to navigate, pick same failsafe default used below
+                if (llp.getLatitude().isMissing() || llp.getLongitude().isMissing()) {
+                    return new LatLonTuple(39, -100);
+                } else {
+                    return llp;
+                }
             } else if (stationList != null) {
                 NamedStationImpl station =
                     (NamedStationImpl) stationList.get(stationIdx);
