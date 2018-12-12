@@ -690,41 +690,43 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     addDisplayable(stationLabelDsp, FLAG_COLORTABLE);
                 }
 
-                float[][][] crv = getSwath(latlon);
-                int npt = crv[0][0].length;
-                float[][] leftC = new float[2][npt];
-                float[][] rightC = new float[2][npt];
-                for (int i = 0; i < npt; i++) {
-                    leftC[0][i] = crv[0][0][i];
-                    leftC[1][i] = crv[0][1][i];
-                    rightC[0][i] = crv[1][0][i];
-                    rightC[1][i] = crv[1][1][i];
+                if (jcbSwathEdges.isSelected()) {
+                    float[][][] crv = getSwath(latlon);
+                    int npt = crv[0][0].length;
+                    float[][] leftC = new float[2][npt];
+                    float[][] rightC = new float[2][npt];
+                    for (int i = 0; i < npt; i++) {
+                        leftC[0][i] = crv[0][0][i];
+                        leftC[1][i] = crv[0][1][i];
+                        rightC[0][i] = crv[1][0][i];
+                        rightC[1][i] = crv[1][1][i];
+                    }
+                    Gridded2DSet left = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+                               leftC, npt);
+                    SampledSet[] lSet = new SampledSet[1];
+                    lSet[0] = left;
+                    UnionSet lUSet = new UnionSet(lSet);
+                    CurveDrawer leftLines = new CurveDrawer(lUSet);
+                    leftLines.setLineStyle(jcbEdgeLineStyle.getSelectedIndex());
+                    leftLines.setData(lUSet);
+                    swathEdgeDsp.addDisplayable(leftLines);
+                    leftLines.setDrawingEnabled(false);
+    
+                    Gridded2DSet right = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
+                               rightC, npt);
+                    SampledSet[] rSet = new SampledSet[1];
+                    rSet[0] = right;
+                    UnionSet rUSet = new UnionSet(rSet);
+                    CurveDrawer rightLines = new CurveDrawer(rUSet);
+                    rightLines.setLineStyle(jcbEdgeLineStyle.getSelectedIndex());
+                    rightLines.setData(rUSet);
+                    swathEdgeDsp.addDisplayable(rightLines);
+                    rightLines.setDrawingEnabled(false);
+                    
+                    swathEdgeDsp.setColor(curSwathColor);
+                    swathEdgeDsp.setLineWidth(curSwathEdgeWidth);
+                    addDisplayable(swathEdgeDsp, FLAG_COLORTABLE);
                 }
-                Gridded2DSet left = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
-                           leftC, npt);
-                SampledSet[] lSet = new SampledSet[1];
-                lSet[0] = left;
-                UnionSet lUSet = new UnionSet(lSet);
-                CurveDrawer leftLines = new CurveDrawer(lUSet);
-                leftLines.setLineStyle(jcbEdgeLineStyle.getSelectedIndex());
-                leftLines.setData(lUSet);
-                swathEdgeDsp.addDisplayable(leftLines);
-                leftLines.setDrawingEnabled(false);
-
-                Gridded2DSet right = new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple,
-                           rightC, npt);
-                SampledSet[] rSet = new SampledSet[1];
-                rSet[0] = right;
-                UnionSet rUSet = new UnionSet(rSet);
-                CurveDrawer rightLines = new CurveDrawer(rUSet);
-                rightLines.setLineStyle(jcbEdgeLineStyle.getSelectedIndex());
-                rightLines.setData(rUSet);
-                swathEdgeDsp.addDisplayable(rightLines);
-                rightLines.setDrawingEnabled(false);
-                
-                swathEdgeDsp.setColor(curSwathColor);
-                swathEdgeDsp.setLineWidth(curSwathEdgeWidth);
-                addDisplayable(swathEdgeDsp, FLAG_COLORTABLE);
             }
         } catch (Exception e) {
             e.printStackTrace();
