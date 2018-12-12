@@ -1313,10 +1313,24 @@
     </target>
 
     <!-- Move the source file to install4j directory -->
-    <target name="packsource" depends="source" description="Move the source file to install4j directory">
-        <exec executable="${basedir}/tools/pack_source.sh" dir="${basedir}/tools" />
-        <copy file="${dist.dir}/${source.jarname}" tofile="${media.dir}/${source.file}"
-        failonerror="false" />
+    <!-- Move the source files to various destinations -->
+    <target name="packsource"
+            depends="source"
+            description="Move the source file to install4j directory">
+            
+        <exec executable="${basedir}/tools/pack_source.sh"
+              dir="${basedir}/tools" />
+              
+        <copy file="${dist.dir}/${source.jarname}"
+              tofile="${media.dir}/${source.file}"
+              failonerror="false" />
+              
+        <!-- this step is due entirely to web server permissions; the scripts
+             that sync the nightly javadocs expect mcv_javadoc.jar, and I can't
+             modify 'em! -->
+        <copy file="${dist.dir}/${javadoc.jarname}"
+              tofile="${dist.dir}/mcv_javadoc.jar"
+              failonerror="false" />
     </target>
 
     <!-- Make the installers with install4j -->
