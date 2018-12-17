@@ -346,7 +346,7 @@ public class BadNetCDFWidget implements Constants {
         GuiUtils.setListData(varDD, varNames);
 
         varDD.addActionListener(ae -> {
-            JComboBox<String> cb = (JComboBox<String>)ae.getSource();
+            JComboBox<String> cb = (JComboBox<String>) ae.getSource();
             Variable plotVar = varList.get(cb.getSelectedIndex());
             String varName = (String) cb.getSelectedItem();
 
@@ -357,7 +357,7 @@ public class BadNetCDFWidget implements Constants {
                 Array varArray = plotVar.read();
                 varVals  = (float[])varArray.get1DJavaArray(float.class);
             } catch (IOException IOexe) {
-                logger.error("error while reading from variable '"+plotVar+'\'', IOexe);
+                logger.error("error while reading from variable '" + plotVar + '\'', IOexe);
                 return;
             }
 
@@ -593,13 +593,16 @@ public class BadNetCDFWidget implements Constants {
     
     public class BadNetCDFDialog extends JDialog {
 
+        private static final long serialVersionUID = 1L;
+
         /**
          * Create the dialog.
          */
+        
         public BadNetCDFDialog() {
             setTitle("Non-Compliant NetCDF Tool");
-            setMinimumSize(new Dimension(705, 320));
-            setBounds(100, 100, 705, 320);
+            setMinimumSize(new Dimension(725, 340));
+            setBounds(100, 100, 725, 340);
             Container contentPane = getContentPane();
             
             JLabel headerLabel =
@@ -663,6 +666,9 @@ public class BadNetCDFWidget implements Constants {
             JButton viewButton = new JButton("View Variable");
             viewButton.addActionListener(e -> showVarPicker());
             
+            JButton closeButton = new JButton("Close");
+            closeButton.addActionListener(e -> dispose());
+            
             JLabel noncompliantLabel =
                 new JLabel("I have navigation variables, they just aren't CF-compliant: (FEATURE INCOMPLETE)");
             
@@ -687,6 +693,7 @@ public class BadNetCDFWidget implements Constants {
             contentPane.add(viewButton,         "growx, aligny baseline, wrap");
             contentPane.add(noncompliantLabel,  "alignx left, aligny baseline");
             contentPane.add(noncompliantButton, "growx, aligny baseline, wrap");
+            contentPane.add(closeButton,        "alignx left, aligny baseline");
             
         }
     }
