@@ -29,6 +29,7 @@
 package ucar.unidata.idv.control.chart;
 
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
@@ -856,8 +857,6 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
     */
 
 
-
-
     /**
      * Create the properties contents
      *
@@ -932,7 +931,12 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
                     paramIdx++) {
                 DataChoiceWrapper wrapper =
                     (DataChoiceWrapper) dataChoiceWrappers.get(paramIdx);
-                XmlObjectStore store = getDisplayControl().getControlContext().getIdv().getStore();
+                XmlObjectStore store;
+                if (getDisplayControl() != null) {
+                    store = getDisplayControl().getControlContext().getIdv().getStore();
+                } else {
+                    store = McIDASV.getStaticMcv().getStore();
+                }
                 fieldProperties.add(new FieldProperties(store, wrapper));
             }
             wrapperPanel = new JPanel();

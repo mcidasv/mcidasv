@@ -29,6 +29,7 @@
 package ucar.unidata.idv.control.chart;
 
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.event.*;
@@ -264,7 +265,12 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
             return;
         }
         if (canDoColors()) {
-            XmlObjectStore store = this.displayControl.getStore();
+            XmlObjectStore store;
+            if (this.displayControl != null) {
+                store = this.displayControl.getStore();
+            } else {
+                store = McIDASV.getStaticMcv().getStore();
+            }
             backgroundSwatch =
                 GuiUtils.makeColorSwatchWidget(store, backgroundColor, "")[0];
             dataAreaSwatch = GuiUtils.makeColorSwatchWidget(store, dataAreaColor,

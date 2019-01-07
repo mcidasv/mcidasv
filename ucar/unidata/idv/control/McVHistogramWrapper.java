@@ -465,8 +465,10 @@ public class McVHistogramWrapper extends HistogramWrapper {
             if (o instanceof JMenuItem) {
                 JMenuItem menuItem = (JMenuItem) o;
                 if ("Properties...".equals(menuItem.getText())) {
-                    menuItem.setActionCommand(ChartPanel.PROPERTIES_COMMAND);
-                    menuItem.addActionListener(buildHistoPropsListener());
+                    if (menuItem.getActionListeners().length == 0) {
+                        menuItem.setActionCommand(ChartPanel.PROPERTIES_COMMAND);
+                        menuItem.addActionListener(buildHistoPropsListener());
+                    }
                 }
             }
         }
