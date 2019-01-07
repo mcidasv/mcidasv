@@ -249,9 +249,7 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             datachoice = getDataChoice();
         }
         choices.add(datachoice);
-//        histoWrapper = new McIDASVHistogramWrapper("histo", choices, (DisplayControlImpl)this);
-        histoWrapper = new McVHistogramWrapper("histo", choices,
-            (DisplayControlImpl) this);
+        histoWrapper = new McVHistogramWrapper("Histogram", choices, (DisplayControlImpl) this);
         dataSource = getDataSource();
 
         if (dataSource == null) {
