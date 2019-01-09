@@ -28,6 +28,16 @@
 
 package ucar.unidata.idv.control;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -42,7 +52,6 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.Range;
 import org.jfree.data.statistics.HistogramType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,24 +72,10 @@ import visad.FlatField;
 import visad.Unit;
 import visad.VisADException;
 
-
-
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.rmi.RemoteException;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.swing.*;
-
-
 /**
  * Wraps a JFreeChart histogram to ease working with VisAD data.
  */
+
 public class McVHistogramWrapper extends HistogramWrapper {
 
     /** _more_ */
@@ -221,7 +216,6 @@ public class McVHistogramWrapper extends HistogramWrapper {
         try {
             clearHistogram();
 
-            Hashtable       props  = new Hashtable();
             ErrorEstimate[] errOut = new ErrorEstimate[1];
             for (int paramIdx = 0; paramIdx < dataChoiceWrappers.size();
                     paramIdx++) {
@@ -229,7 +223,6 @@ public class McVHistogramWrapper extends HistogramWrapper {
                     (DataChoiceWrapper) dataChoiceWrappers.get(paramIdx);
 
                 DataChoice dataChoice = wrapper.getDataChoice();
-                props = dataChoice.getProperties();
                 Unit defaultUnit =
                     ucar.visad.Util.getDefaultRangeUnits((FlatField) data)[0];
                 Unit unit =
