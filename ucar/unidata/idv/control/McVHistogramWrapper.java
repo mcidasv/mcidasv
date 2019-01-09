@@ -534,6 +534,19 @@ public class McVHistogramWrapper extends HistogramWrapper {
         }
     }
 
+    @Override public boolean applyProperties() {
+        int currentBins = getBins();
+        boolean result = super.applyProperties();
+        if (currentBins != getBins()) {
+            plotStuff(plot,
+                      getStacked(),
+                      getBins(),
+                      getDataChoiceWrappers(),
+                      this);
+        }
+        return result;
+    }
+    
     /**
      * Apply the properties
      *

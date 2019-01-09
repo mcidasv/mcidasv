@@ -191,73 +191,83 @@ public class HistogramWrapper extends PlotWrapper {
      * @throws RemoteException On badness
      * @throws VisADException On badness
      */
-    public void loadData() throws VisADException, RemoteException {
+    public void loadData() {
         createChart();
-        List dataChoiceWrappers = getDataChoiceWrappers();
+        plotStuff(this);
+    }
+    
+    /**
+     * Convenience method.
+     * 
+     * <p>Classes like {@code McVHistogramWrapper} should call the 
+     * {@literal "real"} method.</p>
+     * 
+     * @param histoWrapper 
+     * 
+     * @see #plotStuff(XYPlot, boolean, int, List, HistogramWrapper)
+     */
+    public static void plotStuff(HistogramWrapper histoWrapper) {
+        XYPlot p = histoWrapper.plot;
+        List<DataChoiceWrapper> dcWrappers = histoWrapper.getDataChoiceWrappers();
+        plotStuff(p, histoWrapper.getStacked(), histoWrapper.getBins(), dcWrappers, histoWrapper);
+    }
+    
+    public static void plotStuff(XYPlot p, 
+                                 boolean stacked, 
+                                 int bins, 
+                                 List<DataChoiceWrapper> dcWrappers, 
+                                 HistogramWrapper histoWrapper) 
+    {
         try {
-            for (int dataSetIdx = 0; dataSetIdx < plot.getDatasetCount();
-                    dataSetIdx++) {
+            for (int dataSetIdx = 0; dataSetIdx < p.getDatasetCount();
+                 dataSetIdx++) {
                 MyHistogramDataset dataset =
-                    (MyHistogramDataset) plot.getDataset(dataSetIdx);
+                    (MyHistogramDataset) p.getDataset(dataSetIdx);
                 dataset.removeAllSeries();
             }
-
-            //            dataset.removeAllSeries();
+            
             Hashtable props = new Hashtable();
             props.put(TrackDataSource.PROP_TRACKTYPE,
-                      TrackDataSource.ID_TIMETRACE);
-
-            for (int paramIdx = 0; paramIdx < dataChoiceWrappers.size();
-                    paramIdx++) {
-                DataChoiceWrapper wrapper =
-                    (DataChoiceWrapper) dataChoiceWrappers.get(paramIdx);
-
+                TrackDataSource.ID_TIMETRACE);
+                
+            for (int paramIdx = 0; paramIdx < dcWrappers.size();
+                 paramIdx++) {
+                DataChoiceWrapper wrapper = dcWrappers.get(paramIdx);
+                
                 DataChoice dataChoice = wrapper.getDataChoice();
                 FlatField data =
-                    getFlatField((FieldImpl) dataChoice.getData(null, props));
+                    histoWrapper.getFlatField((FieldImpl) dataChoice.getData(null, props));
                 Unit unit =
                     ucar.visad.Util.getDefaultRangeUnits((FlatField) data)[0];
                 double[][] samples = data.getValues(false);
-                double[] actualValues = filterData(samples[0],
-                                            getTimeValues(samples, data))[0];
+                double[] actualValues = histoWrapper.filterData(samples[0],
+                    histoWrapper.getTimeValues(samples, data))[0];
                 NumberAxis domainAxis =
                     new NumberAxis(wrapper.getLabel(unit));
-
+        
                 XYItemRenderer renderer;
                 if (stacked) {
                     renderer = new StackedXYBarRenderer();
                 } else {
                     renderer = new XYBarRenderer();
                 }
-                plot.setRenderer(paramIdx, renderer);
+                p.setRenderer(paramIdx, renderer);
                 Color c = wrapper.getColor(paramIdx);
                 domainAxis.setLabelPaint(c);
                 renderer.setSeriesPaint(0, c);
-
-
-
-
-
+                
                 MyHistogramDataset dataset = new MyHistogramDataset();
                 dataset.setType(HistogramType.FREQUENCY);
                 dataset.addSeries(dataChoice.getName() + " [" + unit + "]",
-                                  actualValues, bins);
-                plot.setDomainAxis(paramIdx, domainAxis, false);
-                plot.mapDatasetToDomainAxis(paramIdx, paramIdx);
-                plot.setDataset(paramIdx, dataset);
-                
-
-
-
+                    actualValues, bins);
+                p.setDomainAxis(paramIdx, domainAxis, false);
+                p.mapDatasetToDomainAxis(paramIdx, paramIdx);
+                p.setDataset(paramIdx, dataset);
             }
-
-        } catch (Exception exc) {
-            LogUtil.logException("Error creating data set", exc);
-            return;
+        } catch (VisADException | RemoteException e) {
+            LogUtil.logException("Error creating data set", e);
         }
     }
-
-
 
     /**
      * Add components to properties dialog
@@ -295,7 +305,6 @@ public class HistogramWrapper extends PlotWrapper {
         }
         try {
             bins = new Integer(binFld.getText().trim()).intValue();
-            
         } catch (NumberFormatException nfe) {
             LogUtil.userErrorMessage("Bad value for bins: "
                                      + binFld.getText());
