@@ -149,6 +149,9 @@ public class MultiSpectralControl extends HydraControl {
 
     private float rangeMin;
     private float rangeMax;
+    
+    private float origRangeMin;
+    private float origRangeMax;
 
     // REALLY not thrilled with this...
     private int probesSeen = 0;
@@ -202,6 +205,9 @@ public class MultiSpectralControl extends HydraControl {
         float[] minmax = minmax(rngvals);
         rangeMin = minmax[0];
         rangeMax = minmax[1];
+        
+        origRangeMin = rangeMin;
+        origRangeMax = rangeMax;
 
         imageDisplay.setData(display.getImageData());
         addDisplayable(imageDisplay, DEFAULT_FLAGS);
@@ -765,12 +771,12 @@ public class MultiSpectralControl extends HydraControl {
         minBox.addActionListener(ae -> {
             rangeMin = Float.valueOf(minBox.getText().trim());
             rangeMax = Float.valueOf(maxBox.getText().trim());
-            histoWrapper.modifyRange((int)rangeMin, (int)rangeMax);
+            histoWrapper.modifyRange((int) rangeMin, (int) rangeMax);
         });
         maxBox.addActionListener(ae -> {
             rangeMin = Float.valueOf(minBox.getText().trim());
             rangeMax = Float.valueOf(maxBox.getText().trim());
-            histoWrapper.modifyRange((int)rangeMin, (int)rangeMax);
+            histoWrapper.modifyRange((int) rangeMin, (int) rangeMax);
         });
         JPanel rangePanel =
             GuiUtils.center(GuiUtils.doLayout(rangeComps, 5, GuiUtils.WT_N, GuiUtils.WT_N));
@@ -806,6 +812,10 @@ public class MultiSpectralControl extends HydraControl {
 
     public void resetColorTable() {
         histoWrapper.doReset();
+        histoWrapper.modifyRange((int) origRangeMin, (int) origRangeMax);
+        // TJJ Jan 2019 - make sure and reset the min/max input boxes too
+        minBox.setText(Integer.toString((int) origRangeMin));
+        maxBox.setText(Integer.toString((int) origRangeMax));
     }
 
     protected void contrastStretch(final double low, final double high) {
