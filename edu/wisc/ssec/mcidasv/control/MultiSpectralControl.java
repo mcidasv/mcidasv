@@ -70,8 +70,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.table.AbstractTableModel;
@@ -165,7 +163,6 @@ public class MultiSpectralControl extends HydraControl {
     private boolean blackBackground = true;
     private JRadioButton bgBlack;
     private JRadioButton bgWhite;
-    private JLabel bgColorLabel;
     private ButtonGroup bgColorGroup;
 
     public MultiSpectralControl() {
@@ -181,7 +178,7 @@ public class MultiSpectralControl extends HydraControl {
         PARAM = (String) props.get(MultiSpectralDataSource.paramKey);
 
         List<DataChoice> choices = Collections.singletonList(choice);
-        histoWrapper = new McVHistogramWrapper("histo", choices, this);
+        histoWrapper = new McVHistogramWrapper("Histogram", choices, this);
 
         Float fieldSelectorChannel =
             (Float)getDataSelection().getProperty(Constants.PROP_CHAN);
@@ -195,7 +192,7 @@ public class MultiSpectralControl extends HydraControl {
         displayMaster = getViewManager().getMaster();
 
         // map the data choice to display.
-        ((McIDASV)getIdv()).getMcvDataManager().setHydraDisplay(choice, display);
+        ((McIDASV) getIdv()).getMcvDataManager().setHydraDisplay(choice, display);
 
         // initialize the Displayable with data before adding to DisplayControl
         DisplayableData imageDisplay = display.getImageDisplay();
@@ -274,8 +271,6 @@ public class MultiSpectralControl extends HydraControl {
             master.setForeground(Color.black);
             setBlackBackground(false);
         });
-
-        bgColorLabel = new JLabel("Background Color:");
 
         bgColorGroup = new ButtonGroup();
         bgColorGroup.add(bgBlack);
