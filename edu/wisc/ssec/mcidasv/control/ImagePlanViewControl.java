@@ -33,6 +33,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -151,6 +152,15 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
     private DataSourceImpl dataSource;
 
     private FlatField image;
+    
+    final JTextField minBox = new JTextField(6);
+    final JTextField maxBox = new JTextField(6);
+    
+    private float rangeMin;
+    private float rangeMax;
+    
+    private float origRangeMin;
+    private float origRangeMax;
 
     public ImagePlanViewControl() {
         super();
@@ -233,11 +243,15 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
      */
     private void setInitialHistogramRange() {
         try {
-            Range range = getRange();
-            double lo = range.getMin();
-            double hi = range.getMax();
-            histoWrapper.setHigh(hi);
-            histoWrapper.setLow(lo);
+            org.jfree.data.Range range = histoWrapper.getRange();
+            rangeMin = (float) range.getLowerBound();
+            rangeMax = (float) range.getUpperBound();
+            origRangeMin = rangeMin;
+            origRangeMax = rangeMax;
+            minBox.setText(Integer.toString((int) origRangeMin));
+            maxBox.setText(Integer.toString((int) origRangeMax));
+            histoWrapper.setHigh(rangeMax);
+            histoWrapper.setLow(rangeMin);
         } catch (Exception exc) {
             logException("setInitialHistogramRange", exc);
         }
@@ -302,6 +316,20 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
             }
         }
 
+        JLabel minLabel = new JLabel("Range Min");
+        JLabel maxLabel = new JLabel("Range Max");
+        
+        minBox.addActionListener(ae -> {
+            rangeMin = Float.valueOf(minBox.getText().trim());
+            rangeMax = Float.valueOf(maxBox.getText().trim());
+            histoWrapper.modifyRange((int) rangeMin, (int) rangeMax);
+        });
+        maxBox.addActionListener(ae -> {
+            rangeMin = Float.valueOf(minBox.getText().trim());
+            rangeMax = Float.valueOf(maxBox.getText().trim());
+            histoWrapper.modifyRange((int) rangeMin, (int) rangeMax);
+        });
+        
         JComponent histoComp = histoWrapper.doMakeContents();
         JButton resetButton = new JButton("Reset");
         resetButton.addActionListener(new ActionListener() {
@@ -309,8 +337,12 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
                 resetColorTable();
             }
         });
-        JPanel resetPanel =
-            GuiUtils.center(GuiUtils.inset(GuiUtils.wrap(resetButton), 4));
+        JPanel resetPanel = new JPanel(new FlowLayout());
+        resetPanel.add(minLabel);
+        resetPanel.add(minBox);
+        resetPanel.add(maxLabel);
+        resetPanel.add(maxBox);
+        resetPanel.add(resetButton);
         return GuiUtils.centerBottom(histoComp, resetPanel);
     }
 
@@ -344,7 +376,10 @@ public class ImagePlanViewControl extends ucar.unidata.idv.control.ImagePlanView
         try {
             revertToDefaultColorTable();
             revertToDefaultRange();
-            histoWrapper.resetPlot();
+            histoWrapper.doReset();
+            histoWrapper.modifyRange((int) origRangeMin, (int) origRangeMax);
+            minBox.setText(Integer.toString((int) origRangeMin));
+            maxBox.setText(Integer.toString((int) origRangeMax));
         } catch (Exception e) {
             logger.error("problem resetting color table", e);
         }
