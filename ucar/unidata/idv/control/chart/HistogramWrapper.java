@@ -25,77 +25,38 @@ package ucar.unidata.idv.control.chart;
 
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
-import org.jfree.chart.event.*;
-import org.jfree.chart.labels.*;
 import org.jfree.chart.plot.*;
-import org.jfree.chart.renderer.*;
 import org.jfree.chart.renderer.xy.*;
-import org.jfree.chart.urls.*;
-import org.jfree.data.*;
-import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
-import org.jfree.data.time.*;
-import org.jfree.data.xy.*;
-import org.jfree.ui.*;
-
 
 
 import ucar.unidata.data.DataChoice;
 
 
-import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.data.sounding.TrackDataSource;
 
 
-import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.util.GuiUtils;
 
 
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
-import ucar.unidata.util.ObjectListener;
 
-
-
-
-
-import ucar.visad.GeoUtils;
-import ucar.visad.Util;
-import ucar.visad.display.*;
 
 import visad.*;
 
-import visad.georef.*;
-
-import visad.util.BaseRGBMap;
-
-import visad.util.ColorPreview;
-
 
 import java.awt.*;
-import java.awt.event.*;
 
 
 import java.rmi.RemoteException;
 
 
-
-
-import java.text.SimpleDateFormat;
-
-
-
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-
 
 
 /**
@@ -108,21 +69,21 @@ import javax.swing.table.*;
 public class HistogramWrapper extends PlotWrapper {
 
     /** The plot */
-    private XYPlot plot;
+    protected XYPlot plot;
 
 
     /** How many bins in the histgram */
-    private int bins = 100;
+    protected int bins = 100;
 
     /** Is the histogram stacked bars. Does not work right now */
-    private boolean stacked = false;
+    protected boolean stacked = false;
 
 
     /** for properties dialog */
-    private JTextField binFld;
+    protected JTextField binFld;
 
     /** for properties dialog */
-    private JCheckBox stackedCbx;
+    protected JCheckBox stackedCbx;
 
 
 
@@ -157,7 +118,7 @@ public class HistogramWrapper extends PlotWrapper {
     /**
      * Create the chart
      */
-    private void createChart() {
+    protected void createChart() {
         if (chartPanel != null) {
             return;
         }
@@ -193,31 +154,18 @@ public class HistogramWrapper extends PlotWrapper {
      */
     public void loadData() {
         createChart();
-        plotStuff(this);
+        plotHistogram(this);
     }
     
     /**
-     * Convenience method.
+     * Plot the displayed {@link DataChoice}.
      * 
-     * <p>Classes like {@code McVHistogramWrapper} should call the 
-     * {@literal "real"} method.</p>
-     * 
-     * @param histoWrapper 
-     * 
-     * @see #plotStuff(XYPlot, boolean, int, List, HistogramWrapper)
+     * @param histoWrapper Cannot be {@code null}.
      */
-    public static void plotStuff(HistogramWrapper histoWrapper) {
+    public static void plotHistogram(HistogramWrapper histoWrapper) {
         XYPlot p = histoWrapper.plot;
         List<DataChoiceWrapper> dcWrappers = histoWrapper.getDataChoiceWrappers();
-        plotStuff(p, histoWrapper.getStacked(), histoWrapper.getBins(), dcWrappers, histoWrapper);
-    }
-    
-    public static void plotStuff(XYPlot p, 
-                                 boolean stacked, 
-                                 int bins, 
-                                 List<DataChoiceWrapper> dcWrappers, 
-                                 HistogramWrapper histoWrapper) 
-    {
+        
         try {
             for (int dataSetIdx = 0; dataSetIdx < p.getDatasetCount();
                  dataSetIdx++) {
@@ -246,7 +194,7 @@ public class HistogramWrapper extends PlotWrapper {
                     new NumberAxis(wrapper.getLabel(unit));
         
                 XYItemRenderer renderer;
-                if (stacked) {
+                if (histoWrapper.stacked) {
                     renderer = new StackedXYBarRenderer();
                 } else {
                     renderer = new XYBarRenderer();
@@ -259,7 +207,7 @@ public class HistogramWrapper extends PlotWrapper {
                 MyHistogramDataset dataset = new MyHistogramDataset();
                 dataset.setType(HistogramType.FREQUENCY);
                 dataset.addSeries(dataChoice.getName() + " [" + unit + "]",
-                    actualValues, bins);
+                    actualValues, histoWrapper.bins);
                 p.setDomainAxis(paramIdx, domainAxis, false);
                 p.mapDatasetToDomainAxis(paramIdx, paramIdx);
                 p.setDataset(paramIdx, dataset);
@@ -310,6 +258,7 @@ public class HistogramWrapper extends PlotWrapper {
                                      + binFld.getText());
             return false;
         }
+        plotHistogram(this);
         //        stacked = stackedCbx.isSelected();
         return true;
     }

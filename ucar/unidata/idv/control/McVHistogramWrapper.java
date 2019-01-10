@@ -84,10 +84,7 @@ public class McVHistogramWrapper extends HistogramWrapper {
 
     /** _more_ */
     private DisplayControl imageControl;
-
-    /** The plot */
-    private XYPlot plot;
-
+    
     /** _more_ */
     private double low;
 
@@ -111,35 +108,17 @@ public class McVHistogramWrapper extends HistogramWrapper {
         super(name, dataChoices);
         imageControl = control;
     }
-
+    
     /**
-     * Create the chart.
-     */
-    private void createChart() {
-        if (chartPanel != null) {
-            return;
-        }
-
-        MyHistogramDataset dataset = new MyHistogramDataset();
-        chart = ChartFactory.createHistogram("Histogram", null, null,
-                                             dataset,
-                                             PlotOrientation.VERTICAL, false,
-                                             false, false);
-        chart.getXYPlot().setForegroundAlpha(0.75f);
-        plot = (XYPlot) chart.getPlot();
-        initXYPlot(plot);
-        chartPanel = doMakeChartPanel(chart);
-    }
-
-    /**
-     * _more_
-     *
-     * @return _more_
+     * Create the histogram.
+     * 
+     * @return GUI contents.
      */
     public JComponent doMakeContents() {
+        // made public so that things like MultispectralControl can work
         return super.doMakeContents();
     }
-
+    
     /**
      * Clear the histogram.
      */
@@ -533,44 +512,33 @@ public class McVHistogramWrapper extends HistogramWrapper {
             return false;
         }
     }
-
-    @Override public boolean applyProperties() {
-        boolean result = super.applyProperties();
-        plotStuff(plot,
-                  getStacked(),
-                  getBins(),
-                  getDataChoiceWrappers(),
-                  this);
-        return result;
+    
+    /**
+     * Attempt to apply property changes.
+     * 
+     * @return {@code true} if properties were changed, 
+     *         {@code false} otherwise.
+     */
+    @Override protected boolean doApplyProperties() {
+        if (!applyProperties()) {
+            return false;
+        }
+        try {
+            loadData();
+        } catch (Exception exc) {
+            LogUtil.logException("Error loading data", exc);
+            return false;
+        }
+        if (getDisplayControl() != null) {
+            getDisplayControl().componentChanged();
+        }
+        return true;
     }
     
     /**
-     * Apply the properties
-     *
-     * @return Success
-     */
-    @Override
-    public boolean doApplyProperties() {
-        applyProperties();
-
-        //        try {
-        //            // need to deal with the data being an imageseq
-        //            loadData((FlatField)imageControl.getDataChoice().getData(null));
-        //        } catch (RemoteException e) {
-        //            logger.error("trying to reload data", e);
-        //        } catch (DataCancelException e) {
-        //            logger.error("trying to reload data", e);
-        //        } catch (VisADException e) {
-        //            logger.error("trying to reload data", e);
-        //        }
-
-        return true;
-    }
-
-    /**
      * Been removed, do any cleanup
      */
-    public void doRemove() {
+    @Override public void doRemove() {
         isRemoved = true;
         List displayables = getDisplayables();
         if (hasDisplayControl() && !displayables.isEmpty()) {
@@ -578,5 +546,4 @@ public class McVHistogramWrapper extends HistogramWrapper {
         }
         firePropertyChange(PROP_REMOVED, null, this);
     }
-
 }
