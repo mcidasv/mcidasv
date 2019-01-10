@@ -33,8 +33,6 @@ import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static ucar.unidata.xml.XmlUtil.getAttribute;
 
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Rectangle2D;
 
 import java.io.BufferedReader;
@@ -132,6 +130,7 @@ import uk.org.lidalia.sysoutslf4j.context.LogLevel;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 import edu.wisc.ssec.mcidasv.data.GpmIosp;
+import edu.wisc.ssec.mcidasv.data.TropomiIOSP;
 import edu.wisc.ssec.mcidasv.chooser.McIdasChooserManager;
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.data.McvDataManager;
@@ -1835,6 +1834,11 @@ public class McIDASV extends IntegratedDataViewer {
             
             LogUtil.configure();
             
+            // Register IOSPs here
+            
+            // TJJ Jan 2019 - new IOSP for TropOMI data
+            NetcdfFile.registerIOProvider(TropomiIOSP.class);
+            // Experimental - this was 2016ish for GPM data, should still work
             NetcdfFile.registerIOProvider(GpmIosp.class);
             
             long sysMem = Long.valueOf(SystemState.queryOpSysProps().get("opsys.memory.physical.total"));
