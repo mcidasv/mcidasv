@@ -113,7 +113,6 @@ public class SystemState {
                 case '\u3000': sb.append("\\u3000"); break;
             }
         }
-        logger.trace("incoming={} outgoing={}", sequence.length(), sb.length());
         return sb.toString();
     }
     
@@ -714,7 +713,6 @@ public class SystemState {
         
         if (sysProps.contains("line.separator")) {
             sysProps.put("line.separator", escapeWhitespaceChars((String)sysProps.get("line.separator")));
-            logger.trace("grr='{}'", sysProps.get("line.separator"));
         }
         
         String maxMem = Long.toString(Long.valueOf(machineProps.get("opsys.memory.jvm.max")) / 1048576L);
