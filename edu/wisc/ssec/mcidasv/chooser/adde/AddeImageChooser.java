@@ -248,8 +248,6 @@ public class AddeImageChooser extends AddeChooser implements
 
     /** Archive day selector button. */
     protected JButton archiveDayBtn;
-
-    protected JButton numImagesButton;
     
     protected JTextField imageCountTextField;
 
@@ -411,17 +409,10 @@ public class AddeImageChooser extends AddeChooser implements
         archiveDayBtn = new JButton(DAY_TIME_RANGE_LABEL);
         archiveDayBtn.addActionListener(e -> getArchiveDay());
         archiveDayBtn.setToolTipText("Select a specific day and time range");
-
-        numImagesButton = new JButton("List Images");
-        numImagesButton.addActionListener(e -> readTimes(false));
-        numImagesButton.setToolTipText("<html>By default, up to the 100 most " +
-            "recent times are listed.<br/><br/>For a different image count, " +
-            "provide a positive integer in<br/>the adjacent text box,  " +                
-            "or \"ALL\" for ALL relevant times.<br/><br/>Choosing ALL may be slow for" +
-            " datasets with many times.</html>");
         
         // Initialize the image count to default
         imageCountTextField = new JTextField(AddeImageChooser.DEFAULT_ARCHIVE_IMAGE_COUNT, 4);
+        imageCountTextField.addActionListener(e -> readTimes(false));
         imageCountTextField.setToolTipText("<html>By default, up to the 100 most " +
             "recent times are listed.<br/><br/>You may set this field to any positive " +
             "integer, or the value ALL.<br/>Using ALL may take awhile for" +
@@ -1155,11 +1146,8 @@ public class AddeImageChooser extends AddeChooser implements
             super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(archiveDayBtn);
-        // TJJ stack num images button and associated text field, helps with smaller screens
-        JPanel imgCountPanel = new JPanel(new BorderLayout());
-        imgCountPanel.add(numImagesButton, BorderLayout.NORTH);
-        imgCountPanel.add(imageCountTextField, BorderLayout.SOUTH);
-        buttonPanel.add(imgCountPanel);
+        buttonPanel.add(new JLabel("Num Images: "));
+        buttonPanel.add(imageCountTextField);
         underTimelistPanel.add(BorderLayout.CENTER, buttonPanel);
         return panel;
     }
