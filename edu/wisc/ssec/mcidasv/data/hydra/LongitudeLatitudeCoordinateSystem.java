@@ -28,21 +28,18 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.CoordinateSystem;
-import visad.GridCoordinateSystem;
-import visad.VisADException;
-import visad.RealTupleType;
-import visad.Linear2DSet;
-import visad.Gridded2DSet;
-import visad.Linear1DSet;
-import visad.Unit;
-import visad.Set;
-import visad.georef.MapProjection;
 import java.awt.geom.Rectangle2D;
 
+import visad.CoordinateSystem;
+import visad.Gridded2DSet;
+import visad.Linear2DSet;
+import visad.RealTupleType;
+import visad.Set;
+import visad.VisADException;
 
 public class LongitudeLatitudeCoordinateSystem extends CoordinateSystem {
-//public class LongitudeLatitudeCoordinateSystem extends MapProjection {
+
+   private static final long serialVersionUID = 1L;
 
    Linear2DSet domainSet;
    Linear2DSet subSet;
