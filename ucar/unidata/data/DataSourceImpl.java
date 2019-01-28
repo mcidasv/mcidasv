@@ -261,7 +261,11 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
 
     /** list of params to show */
     private List paramsToShow;
-
+    
+    // MCV INQUIRY 2742
+    private boolean stateChanged;
+    // END
+    
     /**
      *  Bean constructor
      */
@@ -2888,7 +2892,11 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
      * @return success
      */
     public boolean showPropertiesDialog(String initTabName, boolean modal) {
-        if (modal || (propertiesDialog == null)) {
+        // MCV INQUIRY 2742
+        // if the datasource's underlying file was changed, rebuild the dialog
+        // worried about triggering unneeded data loads though
+        if (stateChanged || (modal || (propertiesDialog == null))) {
+            stateChanged = false;
             JTabbedPane propertiesTab = new JTabbedPane();
             addPropertiesTabs(propertiesTab);
             if (initTabName != null) {
@@ -3837,8 +3845,7 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
     public List getRelativePaths() {
         return relativePaths;
     }
-
-
+    
     /**
      * Update the state
      *
@@ -3857,7 +3864,13 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
                 v = getProperty(PROP_NAME, (String) null);
             }
             if (v != null) {
-                this.name = v;
+                // MCV INQUIRY 2742
+                setName(v);
+                if (nameFld != null) {
+                    nameFld.setText(v);
+                    stateChanged = true;
+                }
+                // END
             }
         }
     }
