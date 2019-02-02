@@ -240,7 +240,6 @@
         <mapID target="idv.misc.commandlinearguments.datatype"       url="misc/CommandLineArguments.html#datatype" />
 		<mapID target="idv.misc.console"                             url="misc/Console.html" />
 		<mapID target="idv.misc.datasourcetypes"					 url="misc/DataSourceTypes.html" />
-        <mapID target="idv.misc.imagedefaults"                       url="misc/ImageDefaults.html" />
         <mapID target="idv.misc.performancetuning"                   url="misc/PerformanceTuning.html" />
         <mapID target="idv.misc.performancetuning.cache"             url="misc/PerformanceTuning.html#cache" />
         <mapID target="idv.misc.performancetuning.fastrender"        url="misc/PerformanceTuning.html#fastrender" />

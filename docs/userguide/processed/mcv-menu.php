@@ -292,7 +292,6 @@ RAOB Sounding Data</span><br>
       <span class="link" onClick="setPage('collab/Sharing.html');">Sharing</span><br>
       <span class="link" onClick="setPage('misc/SiteConfiguration.html');">Site Configuration</span><br>
       <span class="link" onClick="setPage('misc/PluginJarFiles.html');">Plugin Jar Files</span><br>
-      <span class="link" onClick="setPage('misc/ImageDefaults.html');">Configuring Image Defaults</span><br>
       <span class="link" onClick="setPage('data/GribTables.html');">Adding in New GRIB Tables</span><br>
       <span class="toggle" onClick="toggleChildren(this,'miscellaneous_4');">+</span>
       <span class="link" onClick="setPage('page_mcvspecialdataformats.html');">McIDAS-V Special Data Formats</span><br>

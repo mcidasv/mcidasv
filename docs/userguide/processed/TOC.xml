@@ -197,7 +197,6 @@
     <tocitem text="Sharing" target="idv.collab.sharing"/>
     <tocitem text="Site Configuration" target="idv.misc.siteconfiguration"/>
 	<tocitem text="Plugin Jar Files" target="idv.misc.pluginjarfiles"/>
-    <tocitem text="Configuring Image Defaults" target="idv.misc.imagedefaults"/>
     <tocitem text="Adding in new GRIB tables" target="idv.data.gribtables"/>
     <tocitem text="McIDAS-V Special Data Formats" target="idv.page_idvspecialdataformats">
         <tocitem text="Text (ASCII) Point Data Format" target="idv.data.textpointdata"/>
