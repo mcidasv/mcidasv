@@ -54,6 +54,11 @@ Things of Interest
     │       └── supportreq              
     └── ucar                            
                                         
+Running McIDAS-V
+----------------
+Assuming you've cloned the repo, and have installed Java 8+:
+
+    ant jar.runlarge
 
 
 Building a new release
