@@ -30,6 +30,7 @@ package edu.wisc.ssec.mcidasv.control;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
+import edu.wisc.ssec.mcidasv.data.GroundStation;
 import edu.wisc.ssec.mcidasv.data.GroundStations;
 import edu.wisc.ssec.mcidasv.data.PolarOrbitTrackDataSource;
 import edu.wisc.ssec.mcidasv.data.TimeRangeSelection;
@@ -44,12 +45,11 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.lang.Math;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -83,7 +83,6 @@ import ucar.visad.UtcDate;
 import ucar.visad.Util;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.TextDisplayable;
-
 import visad.Data;
 import visad.DisplayRealType;
 import visad.Gridded2DSet;
@@ -117,9 +116,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final JLabel kmLabel = new JLabel("km");
     private JTextField swathWidthFld = null;
     private JPanel swathWidthPanel;
-    
-    // Ground Station hashmap
-    private HashMap<String, EarthLocationTuple> stationMap = null;
 
     private double latitude;
     private double longitude;
@@ -132,8 +128,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     /** Property name to get the list or URLs */
     public final String PREF_GROUNDSTATIONS = "mcv.groundstations";
 
-    private JComboBox<String> locationComboBox;
-    private JComboBox<String> jcbStationsPlotted;
+    private JComboBox<GroundStation> locationComboBox;
+    private JComboBox<GroundStation> jcbStationsPlotted;
 
     private JComboBox<String> jcbTrackLineStyle = new JComboBox<String>(Constants.lineStyles);
     private JComboBox<String> jcbEdgeLineStyle = new JComboBox<String>(Constants.lineStyles);
@@ -152,9 +148,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final String SWATH_NA = "N/A";
     // TJJ Feb 2014 - need to determine max of any sensor. VIIRS is over 3000 km
     private static final int SWATH_WIDTH_MAX = 4000;
-    private static final int DEFAULT_ANTENNA_ANGLE = 5;
+
     private static final int MAX_ANTENNA_ANGLE = 90;
-    private int curAngle = DEFAULT_ANTENNA_ANGLE;
+    private int curAngle = GroundStation.DEFAULT_ANTENNA_ANGLE;
     private static final double LABEL_DISTANCE_THRESHOLD = 2.5d;
 
     private DataChoice dataChoice;
@@ -162,7 +158,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JLabel latLabel;
     private JLabel lonLabel;
     private JLabel altLabel;
-    private JTextField antennaAngle = new JTextField("" + DEFAULT_ANTENNA_ANGLE, DEFAULT_ANTENNA_ANGLE);
+    private JTextField antennaAngle = new JTextField("" + 
+            GroundStation.DEFAULT_ANTENNA_ANGLE, GroundStation.DEFAULT_ANTENNA_ANGLE);
     
     // custom ground station UI components
     JTextField customLat = null;
@@ -173,19 +170,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private FontSelector otFontSelector;
     private Font otCurFont = FontSelector.DEFAULT_FONT;
     private FontSelector gsFontSelector;
-    private Font gsCurFont = FontSelector.DEFAULT_FONT;
     
-    // line width combo boxes, GS: Ground Station, SC: Swath Center, SE: Swath Edge
-    private JComboBox<String> jcbGSLineWidth;
+    // line width combo boxes, Station: Ground Station, SC: Swath Center, SE: Swath Edge
+    private JComboBox<String> jcbStationLineWidth;
     private JComboBox<String> jcbSCLineWidth;
     private JComboBox<String> jcbSELineWidth;
     private JSpinner js = null;
 
     private CompositeDisplayable trackDsp;
     private CompositeDisplayable timeLabelDsp;
-    private CompositeDisplayable stationLabelDsp;
     private CompositeDisplayable swathEdgeDsp;
-    private CompositeDisplayable circleDsp;
     
     // time label variables
     private static final int DEFAULT_LABEL_INTERVAL = 5;
@@ -208,12 +202,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private double gsZ = 0.0d;
     private NavigatedDisplay navDsp = null;
     private TextType otTextType = null;
-    private TextType gsTextType = null;
+    private long ttCounter = 0;
     private double curWidth = 0.0d;
     private double prvWidth = 0.0d;
-    // TODO: event handler for ground station controls needs conditional handling checks
-    // e.g., utilize the unused variable below
-    private int prvStationLineStyle = -1;
+
     private int prvTrackLineStyle = -1;
     private int prvEdgeLineStyle = -1;
     private int curTrackLineStyle = -1;
@@ -237,6 +229,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 	private static final String STATION_ADD = "AddStation";
 	private static final String STATION_REM = "RemStation";
 	private static final String CUSTOM_ADD = "AddCustom";
+	private static final String ACTIVE_STATION = "ActiveStation";
 
     private Element root = null;
     
@@ -298,17 +291,17 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		// last check, is this label already used?
     		int numPlotted = jcbStationsPlotted.getItemCount();
     		for (int i = 0; i < numPlotted; i++) {
-    			String s = (String) jcbStationsPlotted.getItemAt(i);
-    			if ((s != null) && s.equals(station)) {
+    			GroundStation gs = (GroundStation) jcbStationsPlotted.getItemAt(i);
+    			if ((gs.getName() != null) && gs.getName().equals(station)) {
                 	JOptionPane.showMessageDialog(null, 
-                		"A station with this label has already been plotted: " + s);
+                		"A station with this label has already been plotted: " + station);
                     return;
     			}
     		}
+    		
     		// if we made it this far, fields are valid, we can create a custom ground station
     		// create new earth location, add it to stations plotted, set index, 
-			jcbStationsPlotted.addItem(labStr);
-			jcbStationsPlotted.setSelectedItem(labStr);
+
 			// make an Earth location
 			double dAlt = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
 			EarthLocationTuple elt = null;
@@ -319,8 +312,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 			} catch (VisADException e) {
 				e.printStackTrace();
 			}
-			stationMap.put(labStr, elt);
-			plotCoverageCircles();
+
+			GroundStation gs = new GroundStation(labStr, elt, gsFontSelector.getFont());
+			try {
+                gs.getTd().setColor(antColorSwatch.getColor());
+                gs.getCd().setColor(antColorSwatch.getColor());
+            } catch (RemoteException | VisADException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+			
+			gs.setAntennaAngle(curAngle);
+			jcbStationsPlotted.addItem(gs);
+			jcbStationsPlotted.setSelectedItem(gs);
+			addGroundStation(gs);
 			updateDisplayList();
     		return;
     	}
@@ -328,12 +333,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	// user trying to add a new ground station to those plotted on display
     	if (STATION_ADD.equals(ae.getActionCommand())) {
     		logger.debug("Add Station...");
-    		String station = (String) locationComboBox.getSelectedItem();
+    		GroundStation station = (GroundStation) locationComboBox.getSelectedItem();
     		boolean alreadyPlotted = false;
     		int numPlotted = jcbStationsPlotted.getItemCount();
     		for (int i = 0; i < numPlotted; i++) {
-    			String s = (String) jcbStationsPlotted.getItemAt(i);
-    			if ((s != null) && s.equals(station)) {
+    			GroundStation gs = (GroundStation) jcbStationsPlotted.getItemAt(i);
+    			if ((gs.getName() != null) && gs.getName().equals(station.getName())) {
     				alreadyPlotted = true;
     				break;
     			}
@@ -341,25 +346,63 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		if (alreadyPlotted) {
             	JOptionPane.showMessageDialog(null, 
     			"Station already plotted on display: " + station);
+            	return;
     		} else {
+                addGroundStation(station);
     			jcbStationsPlotted.addItem(station);
     			jcbStationsPlotted.setSelectedItem(station);
-    			plotCoverageCircles();
+
     		}
     		updateDisplayList();
     		return;
     	}
-    	
+
+        // Active station changed (selection from plotted stations)
+        if (ACTIVE_STATION.equals(ae.getActionCommand())) {
+            logger.debug("Active Station changed...");
+            GroundStation gs = (GroundStation) jcbStationsPlotted.getSelectedItem();
+            if (gs == null) {
+                JOptionPane.showMessageDialog(null, 
+                "No Active Stations");
+            } else {
+                // Update UI with settings for this station
+                gsFontSelector.setFont(gs.getTd().getFont());
+                antColorSwatch.setBackground(gs.getCd().getColor());
+                jcbStationLineStyle.setSelectedIndex(gs.getCd().getLineStyle());
+                jcbStationLineWidth.setSelectedIndex((int) (gs.getCd().getLineWidth() - 1)); 
+                antennaAngle.setText("" + gs.getAntennaAngle());
+                curAngle = gs.getAntennaAngle();
+                latLabel.setText("" + gs.getElt().getLatitude().getValue());
+                lonLabel.setText("" + gs.getElt().getLongitude().getValue());
+                altLabel.setText("" + gs.getElt().getAltitude().getValue());
+            }
+            return;
+        }
+        
     	// user removing a ground station from the display
     	if (STATION_REM.equals(ae.getActionCommand())) {
     		logger.debug("Rem Station...");
-    		String station = (String) jcbStationsPlotted.getSelectedItem();
-    		if (station == null) {
+    		GroundStation gs = (GroundStation) jcbStationsPlotted.getSelectedItem();
+    		if (gs == null) {
             	JOptionPane.showMessageDialog(null, 
     			"Nothing to remove");
     		} else {
-    			jcbStationsPlotted.removeItem(station);
-    			plotCoverageCircles();
+    		    try {
+                    removeDisplayable(gs.getCd());
+                    removeDisplayable(gs.getTd());
+                } catch (RemoteException | VisADException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+    		    
+    			jcbStationsPlotted.removeItem(gs);
+    			// Did we remove the last active station?
+    			if (jcbStationsPlotted.getItemCount() == 0) {
+    		         latLabel.setText(" - ");
+    		         lonLabel.setText(" - ");
+    		         altLabel.setText(" - ");
+    			}
+
     		}
     		updateDisplayList();
     		return;
@@ -453,7 +496,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	                            RealTuple lonLat =
     	                                new RealTuple(RealTupleType.SpatialEarth2DTuple,
     	                                    new double[] { dlon, dlat });
-    	                            Tuple tup = new Tuple(makeTupleType(SWATH_MODS),
+    	                            Tuple tup = new Tuple(makeTupleType(otTextType),
     	                                new Data[] { lonLat, new Text(otTextType, subStr)});
     	                            time.setData(tup);
     	                            timeLabelDsp.addDisplayable(time);
@@ -475,7 +518,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 				}
     		}
             
-            plotCoverageCircles();
     		updateDisplayList();
     		return;
     	}
@@ -483,48 +525,136 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	// Ground station mods
     	if (STATION_MODS.equals(ae.getActionCommand())) {
     		
-    		logger.debug("Apply Station Mods...");
-    		
+            GroundStation gs = (GroundStation) jcbStationsPlotted.getSelectedItem();
+            if (gs == null) {
+                // No stations plotted, nothing to do
+                JOptionPane.showMessageDialog(null, 
+                "No stations plotted, nothing to apply.");
+                return;
+            }
+            
+            logger.debug("Apply Station mods for: " + gs.getName() +
+                    ", cur font: " + gs.getTd().getFont().getFontName() +
+                    ", cur color: " + gs.getTd().getColor());
+            
     		// flag indicates user changed some parameter
-    		boolean somethingChanged = true;
+    		boolean somethingChanged = false;
     		
-    		setAntColor(antColorSwatch.getColor());
+    		// Check each parameter of the ground station selected with UI settings
     		
-    		// update font attributes if necessary
-    		Font f = gsFontSelector.getFont();
-    		if (! f.equals(gsCurFont)) {
-    			gsCurFont = f;
-    			somethingChanged = true;
+    		// Color
+    		if (gs.getTd().getColor() != antColorSwatch.getColor()) {
+    		    logger.debug("GroundStation color change...");
+    		    try {
+                    gs.getCd().setColor(antColorSwatch.getColor());
+                    gs.getTd().setColor(antColorSwatch.getColor());
+                } catch (RemoteException | VisADException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+    		    somethingChanged = true;
     		}
     		
-    		// validate antenna angle text field, redraw if necessary
+    		// Font
+    		if (gs.getTd().getFont() != gsFontSelector.getFont()) {
+    		    logger.debug("GroundStation font change...");
+    		    try {
+                    gs.getTd().setFont(gsFontSelector.getFont());
+                } catch (RemoteException | VisADException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+    		    somethingChanged = true;
+    		}
+    		
+    		// Antenna angle
+    		// If this changes, need to create a new CurveDrawer object
+    		
             String s = antennaAngle.getText();
-            int newAngle = curAngle;
+            curAngle = gs.getAntennaAngle();
             try {
-            	newAngle = Integer.parseInt(s);
+            	int newAngle = Integer.parseInt(s);
             	if (newAngle != curAngle) {
             		// TJJ Jun 2015 range check
-            		if ((newAngle < DEFAULT_ANTENNA_ANGLE) ||
+            		if ((newAngle < GroundStation.DEFAULT_ANTENNA_ANGLE) ||
             		    (newAngle > MAX_ANTENNA_ANGLE)) {
             			throw new NumberFormatException();
             		} else {
-	            		curAngle = newAngle;
+            		    logger.debug("GroundStation antenna angle change...");
+            		    try {
+                            removeDisplayable(gs.getCd());
+                        } catch (RemoteException | VisADException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+	            		gs.setAntennaAngle(newAngle);
+	            		EarthLocationTuple elt = gs.getElt();
+	            		double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
+	                    CurveDrawer cdNew = makeCoverageCircle(
+	                            Math.toRadians(elt.getLatitude().getValue()), 
+	                            Math.toRadians(elt.getLongitude().getValue()),
+	                            altitude, newAngle, antColorSwatch.getColor());
+	                    addDisplayable(cdNew);
+	                    gs.setCd(cdNew);
+	                    curAngle = newAngle;
 	            		somethingChanged = true;
             		}
             	}
             } catch (NumberFormatException nfe) {
             	JOptionPane.showMessageDialog(latLonAltPanel, 
-    			"Antenna angle valid range is " + DEFAULT_ANTENNA_ANGLE + 
+    			"Antenna angle valid range is " + GroundStation.DEFAULT_ANTENNA_ANGLE + 
     			" to " + MAX_ANTENNA_ANGLE + " degrees");
             	return;
             }
             
-            if (somethingChanged) {        	
-            	plotCoverageCircles(); 	
+            // Line style and width
+            
+            CurveDrawer cd = gs.getCd();
+            int curWidth = (int) cd.getLineWidth();
+            int curStyle = cd.getLineStyle();
+            
+            if (curWidth != (jcbStationLineWidth.getSelectedIndex() + 1)) {
+                try {
+                    logger.debug("GroundStation line width change...");
+                    double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
+                    CurveDrawer cdNew = makeCoverageCircle(
+                            Math.toRadians(gs.getElt().getLatitude().getValue()), 
+                            Math.toRadians(gs.getElt().getLongitude().getValue()),
+                            altitude, gs.getAntennaAngle(), antColorSwatch.getColor());
+                    cdNew.setLineWidth(jcbStationLineWidth.getSelectedIndex() + 1);
+                    removeDisplayable(gs.getCd());
+                    addDisplayable(cdNew);
+                    gs.setCd(cdNew);
+                } catch (RemoteException | VisADException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                somethingChanged = true;
             }
             
-            plotCoverageCircles();
-            updateDisplayList();
+            if (curStyle != (jcbStationLineStyle.getSelectedIndex())) {
+                try {
+                    logger.debug("GroundStation line style change...");
+                    double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
+                    CurveDrawer cdNew = makeCoverageCircle(
+                            Math.toRadians(gs.getElt().getLatitude().getValue()), 
+                            Math.toRadians(gs.getElt().getLongitude().getValue()),
+                            altitude, gs.getAntennaAngle(), antColorSwatch.getColor());
+                    cdNew.setLineStyle(jcbStationLineStyle.getSelectedIndex());
+                    removeDisplayable(gs.getCd());
+                    addDisplayable(cdNew);
+                    gs.setCd(cdNew);
+                } catch (RemoteException | VisADException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                somethingChanged = true;
+            }
+            
+            if (somethingChanged) {
+                updateDisplayList();
+            }
+            
     		return;
     		
     	}
@@ -540,7 +670,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             DisplayRealType dispType = navDsp.getDisplayAltitudeType();
             trackDsp.setConstantPosition(trackZ, dispType);
             timeLabelDsp.setConstantPosition(trackZ, dispType);
-            stationLabelDsp.setConstantPosition(gsZ, dispType);
             swathEdgeDsp.setConstantPosition(trackZ, dispType);
         } catch (Exception e) {
             e.printStackTrace();
@@ -566,16 +695,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     			removeDisplayable(swathEdgeDsp);
     			removeDisplayable(trackDsp);
     			removeDisplayable(timeLabelDsp);
-    			removeDisplayable(stationLabelDsp);
     			swathEdgeDsp = null;
     			trackDsp = null;
     			timeLabelDsp = null;
-    			stationLabelDsp = null;
     			Data data = getData(getDataInstance());
     			swathEdgeDsp = new CompositeDisplayable();
     			trackDsp = new CompositeDisplayable();
     			timeLabelDsp = new CompositeDisplayable();
-    			stationLabelDsp = new CompositeDisplayable();
     			createTrackDisplay(data, true);
     			applyDisplayableLevels();
     		} catch (Exception e) {
@@ -592,16 +718,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             removeDisplayable(swathEdgeDsp);
             removeDisplayable(trackDsp);
             removeDisplayable(timeLabelDsp);
-            removeDisplayable(stationLabelDsp);
             swathEdgeDsp = null;
             trackDsp = null;
             timeLabelDsp = null;
-            stationLabelDsp = null;
             Data data = getData(getDataInstance());
             swathEdgeDsp = new CompositeDisplayable();
             trackDsp = new CompositeDisplayable();
             timeLabelDsp = new CompositeDisplayable();
-            stationLabelDsp = new CompositeDisplayable();
             createTrackDisplay(data, true);
             applyDisplayableLevels();
         } catch (Exception e) {
@@ -659,7 +782,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             RealTuple lonLat =
                                 new RealTuple(RealTupleType.SpatialEarth2DTuple,
                                     new double[] { dlon, dlat });
-                            Tuple tup = new Tuple(makeTupleType(SWATH_MODS),
+                            Tuple tup = new Tuple(makeTupleType(otTextType),
                                 new Data[] { lonLat, new Text(otTextType, subStr)});
                             time.setData(tup);
                             if (jcbLabels.isSelected()) timeLabelDsp.addDisplayable(time);
@@ -687,7 +810,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
                     addDisplayable(trackDsp, FLAG_COLORTABLE);
                     addDisplayable(timeLabelDsp, FLAG_COLORTABLE);
-                    addDisplayable(stationLabelDsp, FLAG_COLORTABLE);
                 }
 
                 if (jcbSwathEdges.isSelected()) {
@@ -827,12 +949,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return outerPanel;
     }
 
-    private CurveDrawer makeCoverageCircle(double lat, double lon, double satAlt, Color color) {
+    private CurveDrawer makeCoverageCircle(double lat, double lon, double satAlt, int angle, Color color) {
 
         /* mean Earth radius in km */
         double earthRadius = AstroConst.R_Earth_mean / 1000.0;
         satAlt += earthRadius;
-        double SAC = Math.PI / 2.0 + Math.toRadians(curAngle);
+        double SAC = Math.PI / 2.0 + Math.toRadians(angle);
         double sinASC = earthRadius * Math.sin(SAC) / satAlt;
         double dist = earthRadius * (Math.PI - SAC - Math.asin(sinASC));
         double rat = dist / earthRadius;
@@ -871,9 +993,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             set[0] = circle;
             UnionSet uset = new UnionSet(set);
             coverageCircle = new CurveDrawer(uset);
-            coverageCircle.setLineWidth(jcbGSLineWidth.getSelectedIndex() + 1);
+            coverageCircle.setLineWidth(jcbStationLineWidth.getSelectedIndex() + 1);
             coverageCircle.setLineStyle(jcbStationLineStyle.getSelectedIndex());
-            coverageCircle.setColor(getAntColor());
+            coverageCircle.setColor(color);
             coverageCircle.setData(uset);
             coverageCircle.setDrawingEnabled(false);
             if (! inGlobeDisplay()) 
@@ -1070,7 +1192,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	lonLabel = new JLabel();
     	altLabel = new JLabel();
         String [] lineWidths = {"1", "2", "3", "4"};
-        jcbGSLineWidth = new JComboBox<String>(lineWidths);
+        jcbStationLineWidth = new JComboBox<String>(lineWidths);
         jcbSCLineWidth = new JComboBox<String>(lineWidths);
         
         // create Label checkbox toggle
@@ -1092,7 +1214,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         otFontSelector.setFontSize(9);
         gsFontSelector.setFontSize(9);
         otCurFont = otFontSelector.getFont();
-        gsCurFont = gsFontSelector.getFont();
         
     	this.dataChoice = dataChoice;
         String choiceName = dataChoice.getName();
@@ -1114,9 +1235,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         try {
             trackDsp = new CompositeDisplayable();
             timeLabelDsp = new CompositeDisplayable();
-            stationLabelDsp = new CompositeDisplayable();
             swathEdgeDsp = new CompositeDisplayable();
-            circleDsp = new CompositeDisplayable();
         } catch (Exception e) {
             logger.error("problem creating composite displayable");
             e.printStackTrace();
@@ -1130,11 +1249,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         try {
             String longName = getLongParamName().replaceAll(" ", "");
             otTextType = new TextType(SWATH_MODS + longName);
-            gsTextType = new TextType(STATION_MODS + longName);
         } catch (Exception e) {
         	e.printStackTrace();
             otTextType = TextType.Generic;
-            gsTextType = TextType.Generic;
         }
 
         Data data = getData(getDataInstance());
@@ -1190,32 +1307,37 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     }
 
-    private void labelGroundStation(String station) {
+    private void labelGroundStation(GroundStation station) {
         
+        // Font f = station.getTd().getFont();
+        logger.debug("labelGroundStation() in..." + station.getName());
         scale = getViewManager().getMaster().getDisplayScale();
     	try {
     		String str = "+ " + station;
     		logger.debug("Drawing station: " + str);
 
-    		TextDisplayable groundStationDsp = new TextDisplayable(STATION_MODS, gsTextType);
+    		TextType tt = new TextType(STATION_MODS + ttCounter);
+    		TextDisplayable groundStationDsp = 
+    		   new TextDisplayable(STATION_MODS + jcbStationsPlotted.getItemCount(), tt);
+    		ttCounter++;
     		groundStationDsp.setJustification(TextControl.Justification.LEFT);
     		groundStationDsp.setVerticalJustification(TextControl.Justification.CENTER);
-    		groundStationDsp.setColor(getAntColor());
+    		groundStationDsp.setColor(antColorSwatch.getColor());
     		groundStationDsp.setFont(gsFontSelector.getFont());
-    		groundStationDsp.setTextSize((float) scale * gsFontSelector.getFontSize() / FONT_SCALE_FACTOR);
+    		groundStationDsp.setTextSize((float) scale * gsFontSelector.getFont().getSize() / FONT_SCALE_FACTOR);
     		groundStationDsp.setSphere(inGlobeDisplay());
+            DisplayRealType dispType = navDsp.getDisplayAltitudeType();
+            groundStationDsp.setConstantPosition(gsZ, dispType);
 
-    		double dlat = getLatitude();
-    		double dlon = getLongitude();
+    		double dlat = station.getElt().getValues()[0];
+    		double dlon = station.getElt().getValues()[1];
     		RealTuple lonLat =
     				new RealTuple(RealTupleType.SpatialEarth2DTuple,
     						new double[] { dlon, dlat });
-    		Tuple tup = new Tuple(makeTupleType(STATION_MODS),
-    				new Data[] { lonLat, new Text(gsTextType, str)});
+    		Tuple tup = new Tuple(makeTupleType(tt),
+    				new Data[] { lonLat, new Text(tt, str)});
     		groundStationDsp.setData(tup);
-    		if (! inGlobeDisplay()) 
-    			groundStationDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
-    		stationLabelDsp.addDisplayable(groundStationDsp);
+    		station.setTd(groundStationDsp);
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
@@ -1229,24 +1351,41 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbStationLineStyle = new JComboBox<String>(Constants.lineStyles);
         jcbStationLineStyle.addActionListener(this);
         jcbStationLineStyle.setSelectedIndex(1);
-        prvStationLineStyle = jcbStationLineStyle.getSelectedIndex();
         
-        locationComboBox = new JComboBox<String>();
-        jcbStationsPlotted = new JComboBox<String>();
+        locationComboBox = new JComboBox<GroundStation>();
+        jcbStationsPlotted = new JComboBox<GroundStation>();
+        jcbStationsPlotted.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent arg0) {
+                logger.debug("Active Station changed...");
+                GroundStation gs = (GroundStation) jcbStationsPlotted.getSelectedItem();
+                if (gs == null) {
+                    JOptionPane.showMessageDialog(null, 
+                    "No Active Stations");
+                } else {
+                    // Update UI with settings for this station
+                    gsFontSelector.setFont(gs.getTd().getFont());
+                    antColorSwatch.setBackground(gs.getCd().getColor());
+                    jcbStationLineStyle.setSelectedIndex(gs.getCd().getLineStyle());
+                    jcbStationLineWidth.setSelectedIndex((int) (gs.getCd().getLineWidth() - 1)); 
+                    antennaAngle.setText("" + gs.getAntennaAngle());
+                    curAngle = gs.getAntennaAngle();
+                    latLabel.setText("" + gs.getElt().getLatitude().getValue());
+                    lonLabel.setText("" + gs.getElt().getLongitude().getValue());
+                    altLabel.setText("" + gs.getElt().getAltitude().getValue());
+                }
+                return;
+            }
+        });
 
         // Ground Stations are now a natural-order map (alphabetical)
         GroundStations gs = new GroundStations(null);
-        stationMap = gs.getGroundStations();
-        TreeSet<String> keySet = new TreeSet<String>(stationMap.keySet());
+        GuiUtils.setListData(locationComboBox, gs.getGroundStations());
 
-        GuiUtils.setListData(locationComboBox, keySet.toArray());
-
-        // initialize with first Earth Location in our map
-        if (! stationMap.isEmpty()) {
-        	EarthLocationTuple elt = stationMap.get(locationComboBox.getSelectedItem());
-        	latLabel.setText(elt.getLatitude().toString());
-        	lonLabel.setText(elt.getLongitude().toString());
-        	altLabel.setText(elt.getAltitude().toString());
+        // initialize reasonable output for no stations plotted yet
+        if (locationComboBox.getItemCount() > 0) {
+        	latLabel.setText(" - ");
+        	lonLabel.setText(" - ");
+        	altLabel.setText(" - ");
         }
         
         locationPanel = new JPanel();
@@ -1286,7 +1425,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         latLonAltPanel = new JPanel();
         latLonAltPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         
-        latLonAltPanel.add(new JLabel("Last Station Plotted,  Latitude: "));
+        latLonAltPanel.add(new JLabel("Current Station,  Latitude: "));
         latLonAltPanel.add(latLabel);
         latLonAltPanel.add(Box.createHorizontalStrut(5));
         
@@ -1312,7 +1451,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         antColorPanel.add(Box.createHorizontalStrut(5));
         antColorPanel.add(new JLabel("Line Width: "));
-        antColorPanel.add(jcbGSLineWidth);
+        antColorPanel.add(jcbStationLineWidth);
         
         antColorPanel.add(Box.createHorizontalStrut(5));
         antColorPanel.add(new JLabel("Line Style: "));
@@ -1368,65 +1507,49 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return jp;
     }
 
-    private TupleType makeTupleType(String prefix) {
+    private TupleType makeTupleType(TextType tt) {
         TupleType t = null;
         try {
-        	if (prefix.equals(SWATH_MODS))
-        		t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple,
-                                              otTextType});
-        	if (prefix.equals(STATION_MODS))
-        		t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple,
-                                              gsTextType});
+            t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple, tt});
         } catch (Exception e) {
             e.printStackTrace();
         }
         return t;
     }
 
-    private void plotCoverageCircles() {
+    private void addGroundStation(GroundStation gs) {
+        
+        logger.debug("addGroundStation() in, name: " + gs.getName());
+        
         try {
 
-        	int num = circleDsp.displayableCount();
-            for (int i = 0; i < num; i++) {
-            	// yes, always 0th it's a queue
-                circleDsp.removeDisplayable(0);
-            }
-            removeDisplayable(circleDsp);
-            circleDsp = null;
-    		int numLabels = stationLabelDsp.displayableCount();
-    		for (int i = 0; i < numLabels; i++) {
-    			// yes, always 0th it's a queue
-    			stationLabelDsp.removeDisplayable(0);
-    		}
+            EarthLocationTuple elt = gs.getElt();
+            latLabel.setText(elt.getLatitude().toString());
+            lonLabel.setText(elt.getLongitude().toString());
+            altLabel.setText(elt.getAltitude().toString());
+            
+            // quick and easy way to limit sig digits to something not too crazy
+            if (altLabel.getText().length() > 10) altLabel.setText(altLabel.getText().substring(0, 9));
+            latitude = Double.parseDouble(latLabel.getText());
+            longitude = Double.parseDouble(lonLabel.getText());
+            setSatelliteAltitude(dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0);
+            
+            CurveDrawer cd = makeCoverageCircle(Math.toRadians(latitude), Math.toRadians(longitude),
+                    satelliteAltitude, curAngle, antColorSwatch.getColor());
 
-    		int numPlotted = jcbStationsPlotted.getItemCount();
-            circleDsp = new CompositeDisplayable();
-            if (! inGlobeDisplay()) 
-            	circleDsp.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
-    		for (int i = 0; i < numPlotted; i++) {
-    			String s = (String) jcbStationsPlotted.getItemAt(i);
-                EarthLocationTuple elt = stationMap.get(s);
-                latLabel.setText(elt.getLatitude().toString());
-                lonLabel.setText(elt.getLongitude().toString());
-                altLabel.setText(elt.getAltitude().toString());
-                // quick and easy way to limit sig digits to something not too crazy
-                if (altLabel.getText().length() > 10) altLabel.setText(altLabel.getText().substring(0, 9));
-                latitude = Double.parseDouble(latLabel.getText());
-                longitude = Double.parseDouble(lonLabel.getText());
-                setSatelliteAltitude(dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0);
-                
-                CurveDrawer cd = makeCoverageCircle(Math.toRadians(latitude), Math.toRadians(longitude),
-                        satelliteAltitude, getAntColor());
-                if (cd != null) {
-                	logger.debug("Drawing ground station, station name: " + s);
-                    labelGroundStation(s);
-                    circleDsp.setColor(getAntColor());
-                    cd.setLineWidth(jcbGSLineWidth.getSelectedIndex() + 1);
-                    circleDsp.addDisplayable(cd);
-                }
-    		}
-    		addDisplayable(circleDsp, FLAG_COLORTABLE);
-    		circleDsp.setConstantPosition(trackZ, navDsp.getDisplayAltitudeType());
+            if (cd != null) {
+            	logger.debug("Adding ground station, station name: " + gs.getName());
+                labelGroundStation(gs);
+                cd.setLineWidth(jcbStationLineWidth.getSelectedIndex() + 1);
+                gs.setCd(cd);
+
+            }
+
+            cd.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
+    		addDisplayable(cd, FLAG_COLORTABLE);
+            TextDisplayable td = gs.getTd();
+            td.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
+            addDisplayable(td);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1446,7 +1569,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         if (c == null) c = defaultAntColor;
         try {
             antColor = c;
-            circleDsp.setColor(c);
         } catch (Exception e) {
             logger.error("Exception in PolarOrbitTrackControl.setAntColor e=" + e);
         }

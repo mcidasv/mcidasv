@@ -33,13 +33,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.net.URLConnection;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.ui.FontSelector;
 import ucar.unidata.util.IOUtil;
-
 import visad.georef.EarthLocationTuple;
 
 public class GroundStations
@@ -47,7 +47,7 @@ public class GroundStations
 	private static final Logger logger = LoggerFactory.getLogger(GroundStations.class);
 	private static final String card00 = "KMSN,SSEC,43.1398578,-89.3375136,270.4";
     public static String groundStationDB = "data/groundstations/groundstations_db.csv";
-    private HashMap<String, EarthLocationTuple> namedLocs = new HashMap<String, EarthLocationTuple>();
+    private ArrayList<GroundStation> namedLocs = new ArrayList<GroundStation>();
 
     /**
 	 * No-arg constructor for empty list which gets populated on-the-fly later.
@@ -97,7 +97,7 @@ public class GroundStations
                     Double dAlt = new Double(elements[4]);
                     
                     EarthLocationTuple elt = new EarthLocationTuple(dLat, dLon, dAlt);
-                    namedLocs.put(elements[1], elt);
+                    namedLocs.add(new GroundStation(elements[1], elt, FontSelector.DEFAULT_FONT));
                 }
                 nextLine = gsReader.readLine();
             } // while there are more lines to read
@@ -111,7 +111,7 @@ public class GroundStations
         }
     }
     
-    public HashMap<String, EarthLocationTuple> getGroundStations() {
+    public ArrayList<GroundStation> getGroundStations() {
     	return namedLocs;
     }
 
