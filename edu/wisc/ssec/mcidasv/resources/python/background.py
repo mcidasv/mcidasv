@@ -1544,7 +1544,7 @@ class _Display(_JavaProxy):
         filename = expandpath(filename)
         fileRoot, fileExt = os.path.splitext(filename.lower())
         if fileExt == '.kml':
-            print '*** Warning: KML files will only display properly when all of the captured images are in the same directory as the KML file. Please consider using a KMZ file instead.'
+            print('*** Warning: KML files will only display properly when all of the captured images are in the same directory as the KML file. Please consider using a KMZ file instead.')
             
         isDir = os.path.isdir(filename)
         
@@ -1568,7 +1568,7 @@ class _Display(_JavaProxy):
                 isl += formatter.toIsl()
         else:
             if formatting:
-                print "*** Warning: Please use either the 'Resize' or 'TransparentBackground' formatting objects, rather than the 'height', 'width', or 'bgtransparent' parameters."
+                print("*** Warning: Please use either the 'Resize' or 'TransparentBackground' formatting objects, rather than the 'height', 'width', or 'bgtransparent' parameters.")
             if height != -1 and width != -1:
                 isl += 'resize height=%d width=%d; ' % (height, width)
             if bgtransparent:
@@ -1608,7 +1608,10 @@ class _Display(_JavaProxy):
             xml = '%s\n<image file="%s" quality="%s" %s>%s</image>' % (XmlUtil.getHeader(), filename, quality, anim_index, islAsXml)
             
         if verbose:
-            print 'isl2xml=%s' % (xml)
+            print("writing image file='%s' quality='%s' display='#%s' animation_index='%s'" % (filename,
+                                                                                               quality,
+                                                                                               displayIndex,
+                                                                                               anim_index))
             
         islInterpreter.captureImage(islInterpreter.applyMacros(filename), islInterpreter.makeElement(xml))
         
