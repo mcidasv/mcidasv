@@ -107,7 +107,7 @@
     
     <property name="media.dir" location="${base.dir}/../install4j/media" />
     <property name="source.file" value="McIDAS-V_${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release}_source.jar" />
-
+ 
     <!-- Binary file definitions -->
     <property name="java.bin" location="../java_jdk/bin/java" />
     <property name="jhindexer.bin" location="../jh2.0/javahelp/bin/jhindexer" />
@@ -150,7 +150,7 @@
     <!-- run.log.levels may be one of: TRACE, DEBUG, INFO, WARN, ERROR or OFF -->
     <property name="run.log.level" value="INFO" />
     <property name="run.smallheap" value="1024m" />
-    <property name="run.largeheap" value="6656m" />
+    <property name="run.largeheap" value="6G" />
 
     <property name="logback.default.config" value="${userpath.dir}/logback.xml" />
 
@@ -189,17 +189,17 @@
     
     <!-- Use these properties to make changing the versions of related JARs
         (see SLF4J or Logback) a bit less tedious. -->
-    <property name="slf4j.version" value="1.7.25" />
-    <property name="logback.version" value="1.2.3" />
-    <property name="miglayout.version" value="5.1-SNAPSHOT" />
+    <property name="slf4j.version" value="1.8.0-beta2" />
+    <property name="logback.version" value="1.3.0-alpha4" />
+    <property name="miglayout.version" value="5.2" />
     <property name="jogamp.version" value="2.3.2" />
     <property name="swingx.version" value="1.6.5-1" />
     <property name="eventbus.version" value="1.4" />
     <property name="commons-math.version" value="3.6.1" />
-    <property name="rsyntaxtextarea.version" value="2.6.1" />
+    <property name="rsyntaxtextarea.version" value="3.0.2" />
     <property name="sysout.version" value="1.0.2" />
     <property name="jython.version" value="2.7.1" />
-    <property name="juniversalchardet.version" value="2.1.0" />
+    <property name="juniversalchardet.version" value="2.3.0" />
     <property name="jsattrack.version" value="4.1.11" />
     <property name="commons-httpclient.version" value="3.1" />
     <property name="idv.version" value="5.5u1-SNAPSHOT" />
@@ -864,7 +864,10 @@
       <jvmarg value="--add-opens" />
       <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
       <jvmarg value="-noverify" />
-      <jvmarg value="-XX:+DoEscapeAnalysis" />
+      <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
+      <!--<jvmarg value="-XX:+UnlockExperimentalVMOptions" />-->
+      <!--<jvmarg value="-XX:+UseZGC" />-->
+      <!--<jvmarg value="-Xlog:gc" />-->
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
 
