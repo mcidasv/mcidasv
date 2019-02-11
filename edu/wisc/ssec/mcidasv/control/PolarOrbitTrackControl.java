@@ -1035,6 +1035,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 	 */
 	@Override
 	protected Data getDisplayListData() {
+
 		// get time range that was specified in the Field Selector
 		String startTime = (String) getDataInstance().getDataSelection().getProperties().get(TimeRangeSelection.PROP_BEGTIME);
 		String endTime = (String) getDataInstance().getDataSelection().getProperties().get(TimeRangeSelection.PROP_ENDTIME);
@@ -1582,6 +1583,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         station = val.trim();
     }
     
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.control.DisplayControlImpl#shouldApplyFastRendering()
+     */
+    @Override
+    protected boolean shouldApplyFastRendering() {
+        // TJJ - since tends to cause draw problems at dateline on this display,
+        // don't even make this an option
+        return false;
+    }
+
     private int validateSwathWidthField() {
     	String s = swathWidthFld.getText().trim();
     	int val = -1;
