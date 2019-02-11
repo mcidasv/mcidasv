@@ -139,6 +139,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
       render rectangle into */
   public synchronized BranchGroup doTransform()
          throws VisADException, RemoteException {
+
     branch = new BranchGroup();
     branch.setCapability(BranchGroup.ALLOW_DETACH);
     branch.setCapability(Group.ALLOW_CHILDREN_READ);
@@ -351,8 +352,10 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
 
   /** mouse button released, ending direct manipulation */
   public synchronized void release_direct() {
+
     // set data in ref
     if (!enabled) return;
+    if (last_x == null) return;
     if (group != null) group.detach();
     group = null;
     try {
@@ -399,6 +402,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
 
   public synchronized void drag_direct(VisADRay ray, boolean first,
                                        int mouseModifiers) {
+
     if (ref == null) return;
     if (enabled == false) return;
 
@@ -490,8 +494,11 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
       float other_offset = EPS * (2.0f * EPS / abs);
       if (dot >= 0.0) other_offset = -other_offset;
 
-      last_x =
-        new float[][] {{clast_x[0][0]}, {clast_x[1][0]}, {clast_x[2][0]}};
+      if (!Float.isNaN(clast_x[0][0]) && !Float.isNaN(clast_x[1][0]) && !Float.isNaN(clast_x[2][0])) {
+        last_x = new float[][] {{clast_x[0][0]}, {clast_x[1][0]}, {clast_x[2][0]}};
+      }
+      if (last_x == null) return;
+
       if (Display.DisplaySpatialSphericalTuple.equals(tuple) &&
           otherindex != 1) {
         if (last_x[1][0] < first_x[1][0] && cum_lon > 0.0f) {
@@ -525,13 +532,15 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
       c[2][npoints - 1] = c[2][0];
       if (tuple != null) c = tuplecs.toReference(c);
       float[] coordinates = new float[3 * npoints];
-      last_box = new Gridded3DSet(RealTupleType.SpatialCartesian3DTuple, c, npoints);
+      boolean any_missing = false;
       for (int i=0; i<npoints; i++) {
         int i3 = 3 * i;
         coordinates[i3] = c[0][i];
         coordinates[i3 + 1] = c[1][i];
         coordinates[i3 + 2] = c[2][i];
+        if (Float.isNaN(c[0][i]) || Float.isNaN(c[1][i]) || Float.isNaN(c[2][i])) any_missing = true;
       }
+      if (!any_missing) last_box = new Gridded3DSet(RealTupleType.SpatialCartesian3DTuple, c, npoints);
       VisADLineStripArray array = new VisADLineStripArray();
       array.vertexCount = npoints;
       array.stripVertexCounts = new int[1];
@@ -571,7 +580,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
       Appearance appearance =
         ShadowTypeJ3D.staticMakeAppearance(mode, null, null, geometry, false);
 
-      if (group != null) group.detach();
+      if (group != null && !any_missing) group.detach();
       group = null;
 
       Shape3D shape = new Shape3D(geometry, appearance);
@@ -587,7 +596,14 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
         last_appearance = appearance;
       }
 
-      if (branch != null) branch.addChild(group);
+      if (branch != null && !any_missing) {
+        if (branch.numChildren() > 0) {
+          branch.setChild(group, 0);
+        }
+        else {
+          branch.addChild(group);
+        }
+      }
     } // end try
     catch (VisADException e) {
       // do nothing
