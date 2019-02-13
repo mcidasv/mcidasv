@@ -236,6 +236,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     // initial scale for labeling 
     float scale = 1.0f;
 
+    // we've been initialized (we force TrivialMapProjection at init)
+    private boolean initialized = false;
+
     public PolarOrbitTrackControl() {
         super();
         logger.trace("created new PolarOrbitTrackControl...");
@@ -1079,13 +1082,24 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return longitude;
     }
 
+    /**
+     * Start out with Trivial Map Projection because it doesn't have
+     * the low-level VisAD issue labeling across dateline.  But after
+     * init, the user can reproject to whatever works for them
+     */
+
     @Override public MapProjection getDataProjection() {
         
         MapProjection mp = null;
-        try {
-            mp = new TrivialMapProjection();
-        } catch (Exception e) {
-            logger.error("Error setting default projection", e);
+        if (initialized) {
+            mp = super.getDataProjection();
+            return mp;
+        } else {
+            try {
+                mp = new TrivialMapProjection();
+            } catch (Exception e) {
+                logger.error("Error setting default projection", e);
+            }
         }
 
         return mp;
@@ -1275,6 +1289,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         } catch (Exception e) {
             logger.error("get display center e=" + e);
         }
+
+        initialized = true;
 
         return result;
     }
