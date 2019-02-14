@@ -44,14 +44,14 @@ class Matte(ImageFormatting):
             hSpace: Pixel spacing.
             vSpace: Pixel spacing.
         """
-        self.background = varElse(background, 'background')
-        self.top = varElse(top, 'top')
-        self.bottom = varElse(bottom, 'bottom')
-        self.left = varElse(left, 'left')
-        self.right = varElse(right, 'right')
-        self.space = varElse(space, 'space')
-        self.hSpace = varElse(hSpace, 'hspace')
-        self.vSpace = varElse(vSpace, 'vspace')
+        self.background = var_else(background, 'background')
+        self.top = var_else(top, 'top')
+        self.bottom = var_else(bottom, 'bottom')
+        self.left = var_else(left, 'left')
+        self.right = var_else(right, 'right')
+        self.space = var_else(space, 'space')
+        self.hSpace = var_else(hSpace, 'hspace')
+        self.vSpace = var_else(vSpace, 'vspace')
         
     def islPrefix(self):
         return 'matte'
@@ -84,10 +84,10 @@ class ImageOverlay(ImageFormatting):
             from ucar.unidata.util.GuiUtils import MISSING_IMAGE
             self.image = 'image=%s' % MISSING_IMAGE
             
-        self.place = varElse(place, 'place')
-        self.anchor = varElse(anchor, 'anchor')
-        self.transparency = varElse(transparency, 'transparency')
-        self.scale = varElse(scale, 'scale')
+        self.place = var_else(place, 'place')
+        self.anchor = var_else(anchor, 'anchor')
+        self.transparency = var_else(transparency, 'transparency')
+        self.scale = var_else(scale, 'scale')
         
     def islPrefix(self):
         return 'overlay'
@@ -127,14 +127,14 @@ class TextOverlay(ImageFormatting):
         else:
             raise TypeError("TextOverlay formatter requires the 'text' parameter")
             
-        self.place = varElse(place, 'place')
-        self.anchor = varElse(anchor, 'anchor')
-        self.fontSize = varElse(fontSize, 'fontsize')
-        self.fontFace = varElse(fontFace, 'fontface')
-        self.color = varElse(color, 'color')
-        self.background = varElse(background, 'background')
-        self.transparency = varElse(transparency, 'transparency')
-        self.scale = varElse(scale, 'scale')
+        self.place = var_else(place, 'place')
+        self.anchor = var_else(anchor, 'anchor')
+        self.fontSize = var_else(fontSize, 'fontsize')
+        self.fontFace = var_else(fontFace, 'fontface')
+        self.color = var_else(color, 'color')
+        self.background = var_else(background, 'background')
+        self.transparency = var_else(transparency, 'transparency')
+        self.scale = var_else(scale, 'scale')
         
     def islPrefix(self):
         return 'overlay'
@@ -181,22 +181,22 @@ class Clip(ImageFormatting):
             spaceTop: Padding.
             spaceBottom: Padding.
         """
-        self.north = varElse(north, 'north')
-        self.south = varElse(south, 'south')
-        self.east = varElse(east, 'east')
-        self.west = varElse(west, 'west')
-        self.top = varElse(top, 'top')
-        self.bottom = varElse(bottom, 'bottom')
-        self.left = varElse(left, 'left')
-        self.right = varElse(right, 'right')
-        self.display = varElse(display, 'display')
-        self.space = varElse(space, 'space')
-        self.hSpace = varElse(hSpace, 'hspace')
-        self.vSpace = varElse(vSpace, 'vspace')
-        self.spaceLeft = varElse(spaceLeft, 'space_left')
-        self.spaceRight = varElse(spaceRight, 'space_right')
-        self.spaceTop = varElse(spaceTop, 'space_top')
-        self.spaceBottom = varElse(spaceBottom, 'space_bottom')
+        self.north = var_else(north, 'north')
+        self.south = var_else(south, 'south')
+        self.east = var_else(east, 'east')
+        self.west = var_else(west, 'west')
+        self.top = var_else(top, 'top')
+        self.bottom = var_else(bottom, 'bottom')
+        self.left = var_else(left, 'left')
+        self.right = var_else(right, 'right')
+        self.display = var_else(display, 'display')
+        self.space = var_else(space, 'space')
+        self.hSpace = var_else(hSpace, 'hspace')
+        self.vSpace = var_else(vSpace, 'vspace')
+        self.spaceLeft = var_else(spaceLeft, 'space_left')
+        self.spaceRight = var_else(spaceRight, 'space_right')
+        self.spaceTop = var_else(spaceTop, 'space_top')
+        self.spaceBottom = var_else(spaceBottom, 'space_bottom')
         
     def islPrefix(self):
         return 'clip'
@@ -274,22 +274,22 @@ class Colorbar(ImageFormatting):
             else:
                 self.suffixFrequency = ''
                 
-        self.width = varElse(width, 'width')
-        self.height = varElse(height, 'height')
-        self.orientation = varElse(orientation, 'orientation')
-        self.tickMarks = varElse(tickMarks, 'tickmarks')
-        self.interval = varElse(interval, 'interval')
-        self.values = varElse(values, 'values')
-        self.place = varElse(place, 'place')
-        self.anchor = varElse(anchor, 'anchor')
-        self.showLines = varElse(showLines, 'showlines')
-        self.suffix = varElse(suffix, 'suffix')
-        self.showUnit = varElse(showUnit, 'showunit')
-        self.transparency = varElse(transparency, 'transparency')
-        self.color = varElse(color, 'color')
-        self.lineColor = varElse(lineColor, 'linecolor')
-        self.fontFace = varElse(fontFace, 'fontface')
-        self.fontSize = varElse(fontSize, 'fontsize')
+        self.width = var_else(width, 'width')
+        self.height = var_else(height, 'height')
+        self.orientation = var_else(orientation, 'orientation')
+        self.tickMarks = var_else(tickMarks, 'tickmarks')
+        self.interval = var_else(interval, 'interval')
+        self.values = var_else(values, 'values')
+        self.place = var_else(place, 'place')
+        self.anchor = var_else(anchor, 'anchor')
+        self.showLines = var_else(showLines, 'showlines')
+        self.suffix = var_else(suffix, 'suffix')
+        self.showUnit = var_else(showUnit, 'showunit')
+        self.transparency = var_else(transparency, 'transparency')
+        self.color = var_else(color, 'color')
+        self.lineColor = var_else(lineColor, 'linecolor')
+        self.fontFace = var_else(fontFace, 'fontface')
+        self.fontSize = var_else(fontSize, 'fontsize')
         
     def islPrefix(self):
         return 'colorbar'
@@ -393,7 +393,7 @@ def make_isl_string(name, formatter):
     return result.strip() + '; '
 
 
-def varElse(variable, islattr):
+def var_else(variable, islattr):
     """Return ISL attribute setting string if variable is valid."""
     if variable is not None:
         return '%s=%s' % (islattr, variable)
