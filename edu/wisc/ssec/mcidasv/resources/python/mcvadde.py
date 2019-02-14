@@ -67,12 +67,14 @@ from java.util import Date
 from java.util import GregorianCalendar
 from java.util import TimeZone
 
+
 # credit for enum goes to http://stackoverflow.com/a/1695250
 def enum(*sequential, **named):
     """Create a group of related symbolic names bound to unique, constant values."""
     enums = dict(zip(sequential, range(len(sequential))), **named)
     return type('Enum', (), enums)
-    
+
+
 def _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
     retval = True
     
@@ -84,7 +86,8 @@ def _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
     if (hasCoordSys or hasPlace or hasLocation) and (s == 'ALL' or s == 'SAME'):
         retval = False
     return retval
-    
+
+
 def _areaDirectoryToDictionary(areaDirectory):
     d = dict()
     d['bands'] = areaDirectory.getBands()
@@ -107,7 +110,8 @@ def _areaDirectoryToDictionary(areaDirectory):
     d['source-type'] = areaDirectory.getSourceType()
     d['start-time'] = areaDirectory.getStartTime()
     return d
-    
+
+
 def _normalizeDates(dates):
     # string only ever signifies single day
     # list or set signifies at least one day
@@ -125,7 +129,8 @@ def _normalizeDates(dates):
     else:
         normalized = ['']
     return normalized
-    
+
+
 def _normalizeUnits(units):
     # how to handle units='ALL'?
     normalized = None
@@ -139,12 +144,14 @@ def _normalizeUnits(units):
     elif not units:
         normalized = ['BRIT']
     return normalized
-    
+
+
 def _argHandler(explicit, implicit):
     if not explicit[1]:
         return implicit[1]
     return explicit[1]
-    
+
+
 def _lookupAccounting(server, dataset):
     mcv = getStaticMcv()
     if mcv:
@@ -161,7 +168,8 @@ def _lookupAccounting(server, dataset):
         return accounts[0]
     else:
         return DEFAULT_ACCOUNTING
-        
+
+
 # note: if you are looking to add a new format you may need to make changes to 
 # LocalAddeEntry's ServerName and AddeFormat enums, and the format combo boxes 
 # in LocalEntryEditor and LocalEntryShortcut.
@@ -262,12 +270,14 @@ pool = Executors.newFixedThreadPool(MAX_CONCURRENT)
 
 ecs = ExecutorCompletionService(pool)
 
+
 def _satBandUrl(**kwargs):
     # needs at least server, port, debug, user, and proj
     # follow AddeImageChooser.appendMiscKeyValues in determining which extra keys to add
     satbandUrlFormat = "adde://%(server)s/text?&FILE=SATBAND&COMPRESS=gzip&PORT=%(port)s&DEBUG=%(debug)s&VERSION=1&USER=%(user)s&PROJ=%(proj)s"
     return satbandUrlFormat % kwargs
-    
+
+
 # NOTE: remember that Callable means that the "task" returns some kind of
 # result from CallableObj.get()!
 # RunnableObj.get() just returns null.
@@ -306,7 +316,8 @@ class _SatBandReq(Callable):
         except Exception, ex:
             self.exception = ex
         return self.result
-        
+
+
 class _AreaDirectoryList(object):
     def __init__(self, values=None):
         self.values = values or []
@@ -337,7 +348,8 @@ class _AreaDirectoryList(object):
         
     def __str__(self):
         return str(self.values)
-        
+
+
 class AddeJythonError(Exception, java.lang.Exception):
     
     """Jython ADDE exception base class."""
@@ -380,7 +392,8 @@ class AddeJythonError(Exception, java.lang.Exception):
             return self.addeErrorMessage
         else:
             return 'Error Code: %d' % (self.addeErrorCode)
-            
+
+
 class AddeJythonInvalidAccountingError(AddeJythonError):
     
     """Jython ADDE exception that signals incorrect accounting information."""
@@ -388,7 +401,8 @@ class AddeJythonInvalidAccountingError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Invalid user or project number. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonAccountingRequiredError(AddeJythonError):
     
     """Jython ADDE exception generated when the server requires accounting information."""
@@ -396,7 +410,8 @@ class AddeJythonAccountingRequiredError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Accounting required for the server. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonInvalidDatasetError(AddeJythonError):
     
     """Jython ADDE exception generated when the user requests an invalid dataset."""
@@ -404,7 +419,8 @@ class AddeJythonInvalidDatasetError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid dataset/descriptor. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonInvalidProjectError(AddeJythonError):
     
     """Jython ADDE exception generated when a user provides an incorrect ADDE project number."""
@@ -412,7 +428,8 @@ class AddeJythonInvalidProjectError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid project number. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonInvalidPortError(AddeJythonError):
     
     """Jython ADDE exception generated when the wrong port is used."""
@@ -420,7 +437,8 @@ class AddeJythonInvalidPortError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid port. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonInvalidUserError(AddeJythonError):
     
     """Jython ADDE exception generated when a user provides an incorrect ADDE user."""
@@ -428,7 +446,8 @@ class AddeJythonInvalidUserError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid user. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonUnknownDataError(AddeJythonError):
     
     """Jython ADDE exception generated when the request has no matches."""
@@ -436,7 +455,8 @@ class AddeJythonUnknownDataError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "No images match given parameters. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonBandRequiredError(AddeJythonError):
     
     """Jython ADDE exception generated when requesting from a multi-banded dataset without specifying a band number."""
@@ -444,7 +464,8 @@ class AddeJythonBandRequiredError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Band required for multi-banded dataset. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonInvalidUnitError(AddeJythonError):
     
     """Jython ADDE exception generated when the user requests a unit not found within the given band number."""
@@ -452,7 +473,8 @@ class AddeJythonInvalidUnitError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Unit not found in band. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonNavigationError(AddeJythonError):
     
     """Jython ADDE exception generated when there is an invalid location given."""
@@ -460,7 +482,8 @@ class AddeJythonNavigationError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid location. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonBandNotPresent(AddeJythonError):
     
     """Jython ADDE exception generated when an invalid band number is given."""
@@ -468,8 +491,8 @@ class AddeJythonBandNotPresent(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid band number. (error code: %d)" % (self.addeErrorCode)
-        
-# whew!
+
+
 class AddeJythonBandNotPresentInSpecifiedUnits(AddeJythonError):
     
     """Jython ADDE exception generated when invalid band and/or units have been given."""
@@ -477,7 +500,8 @@ class AddeJythonBandNotPresentInSpecifiedUnits(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid band and/or units. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonErrorInvalidSize(AddeJythonError):
     
     """Jython ADDE exception generated when a user requests an invalid image size."""
@@ -485,7 +509,8 @@ class AddeJythonErrorInvalidSize(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Requested portion of image does not exist. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonBadLocationError(AddeJythonError):
     
     """Jython ADDE exception generated when a user requests a location that does not match any images."""
@@ -493,7 +518,8 @@ class AddeJythonBadLocationError(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Requested location not in area. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonServerNotFound(AddeJythonError):
     
     """Jython ADDE exception generated when McIDAS-V cannot contact the given server."""
@@ -501,7 +527,8 @@ class AddeJythonServerNotFound(AddeJythonError):
     def __str__(self):
         """Return a string containing a human-friendly message and when applicable, the ADDE error code."""
         return "Check for valid server. (error code: %d)" % (self.addeErrorCode)
-        
+
+
 class AddeJythonDayRequiredError(AddeJythonError):
     
     """Jython ADDE exception generated when a user requests data from an 'archive' dataset without providing a date."""
@@ -593,24 +620,29 @@ params_sizeall = dict(
     band=1,
 )
 
+
 def listValidUnits():
     """List the valid ADDE units."""
     print('Accepted ADDE unit strings:')
     for unitname in sorted(_human_units_to_adde.iterkeys()):
         print('\t'+unitname)
-    
+
+
 def enableAddeDebug():
     """Enable ADDE debug messages."""
     EntryStore.setAddeDebugEnabled(True)
-    
+
+
 def disableAddeDebug():
     """Disable ADDE debug messages."""
     EntryStore.setAddeDebugEnabled(False)
-    
+
+
 def isAddeDebugEnabled(defaultValue=False):
     """Determine whether or not ADDE debug messages are enabled."""
     return EntryStore.isAddeDebugEnabled(defaultValue)
-    
+
+
 def getDescriptor(dataset, imageType):
     """Get the descriptor for a local ADDE entry.
     
@@ -633,7 +665,8 @@ def getDescriptor(dataset, imageType):
             return desc
     # no matching descriptor was found so return an error value:
     return -1
-    
+
+
 def getLocalADDEEntry(dataset, imageType):
     """Get the local ADDE entry matching the given dataset and imageType.
     
@@ -652,7 +685,8 @@ def getLocalADDEEntry(dataset, imageType):
             return entry
     # no matching descriptor was found so return an error value:
     return None
-    
+
+
 def getRemoteADDEEntry(server, dataset, datasetType=None):
     # TODO(jon): maybe figure out a way to aggregate the RemoteAddeEntry objects
     #            to simplify things for scripting?
@@ -669,7 +703,8 @@ def getRemoteADDEEntry(server, dataset, datasetType=None):
         if e.getAddress() == server and e.getGroup() == dataset and e.getEntryType() in datasetTypes:
             results.append(e)
     return results
-    
+
+
 def makeRemoteADDEEntry(server, dataset, datasetType, accounting=None, save=False):
 
     # TODO(jon): docs!
@@ -679,7 +714,7 @@ def makeRemoteADDEEntry(server, dataset, datasetType, accounting=None, save=Fals
     # Upper case dataset if it is not already, and alert the user we have done so
     if (not dataset.isupper()):
         dataset = dataset.upper()
-        print '* WARNING: provided dataset has been converted to upper case: ' + dataset + '\n'
+        print('* WARNING: provided dataset has been converted to upper case: %s\n' % dataset)
         
     if len(dataset) > 8 or any(c in dataset for c in "/. []%"):
         raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
@@ -732,7 +767,8 @@ def makeRemoteADDEEntry(server, dataset, datasetType, accounting=None, save=Fals
     if results:
         getStaticMcv().getServerManager().addEntries(results)
     return results
-    
+
+
 def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     """Create a local ADDE entry in the server table.
     
@@ -781,17 +817,17 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     # TJJ - Feb 2018
     # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2590
     # Upper case dataset if it is not already, and alert the user we have done so
-    if (not dataset.isupper()):
+    if not dataset.isupper():
         dataset = dataset.upper()
-        print '* WARNING: provided dataset has been converted to upper case: ' + dataset + '\n'
+        print('* WARNING: provided dataset has been converted to upper case: %s\n' % dataset)
         
     if len(dataset) > 8 or any(c in dataset for c in "/. []%"):
-        raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % (dataset))
+        raise AddeJythonInvalidDatasetError("Dataset '%s' is not valid." % dataset)
         
     convertedFormat = _formats.get(format, AddeFormat.INVALID)
     
     if convertedFormat is AddeFormat.INVALID:
-        raise AddeJythonError("Unknown format '%s' specified." % (format))
+        raise AddeJythonError("Unknown format '%s' specified." % format)
         
     if not imageType:
         imageType = "%s_%s" % (format, dataset)
@@ -799,23 +835,26 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
     localEntry = LocalAddeEntry.Builder(imageType, dataset, mask, convertedFormat).status(EntryStatus.ENABLED).temporary((not save)).build()
     getStaticMcv().getServerManager().addEntry(localEntry)
     return localEntry
-    
+
+
 def listADDEImageTimes(localEntry=None,
-    server=None, dataset=None, descriptor=None,
-    accounting=None,
-    location=None,
-    coordinateSystem=None,
-    place=None,
-    position=None,
-    unit=None,
-    day=None,
-    time=None,
-    debug=False,
-    band=None,
-    mag=None,
-    size=None,
-    showUrls=True,
-    **kwargs):
+                       server=None,
+                       dataset=None,
+                       descriptor=None,
+                       accounting=None,
+                       location=None,
+                       coordinateSystem=None,
+                       place=None,
+                       position=None,
+                       unit=None,
+                       day=None,
+                       time=None,
+                       debug=False,
+                       band=None,
+                       mag=None,
+                       size=None,
+                       showUrls=True,
+                       **kwargs):
     """Create a list of ADDE image times.
     
     Args:
@@ -844,8 +883,6 @@ def listADDEImageTimes(localEntry=None,
     else:
         port = "112"
         
-    # server = '%s:%s' % (server, port)
-    
     if not accounting:
         # this will return DEFAULT_ACCOUNTING if nothing was found
         accounting = _lookupAccounting(server, dataset)
@@ -876,20 +913,7 @@ def listADDEImageTimes(localEntry=None,
     elif place is Places.ULEFT:
         place = '&PLACE=ULEFT'
     else:
-        # raise ValueError()
         place = ''
-        
-    # if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
-    #     coordSys = 'LATLON'
-    # elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
-    #     coordSys = 'LINELE'
-    # else:
-    #     raise ValueError("Invalid coordinateSystem value.")
-        
-    # if location:
-    #     location = '&%s=%s %s' % (coordSys, location[0], location[1])
-    # else:
-    #     location = '&%s=0 0' % (coordSys)
         
     if time:
         if isinstance(time, (str, unicode, String)):
@@ -956,7 +980,7 @@ def listADDEImageTimes(localEntry=None,
         try:
             url = addeUrlFormat % formatValues
             if showUrls:
-                print url
+                print(url)
             adl = ErrorCodeAreaUtils.createAreaDirectoryList(url)
             results = adl.getSortedDirs()
             for imageTimes in results:
@@ -1017,23 +1041,26 @@ def listADDEImageTimes(localEntry=None,
         
     uniques = None
     return sorted(times)
-    
+
+
 def listADDEImages(localEntry=None,
-    server=None, dataset=None, descriptor=None,
-    accounting=None,
-    location=None,
-    coordinateSystem=None,
-    place=None,
-    position=None,
-    unit=None,
-    day=None,
-    time=None,
-    debug=False,
-    band=None,
-    mag=None,
-    size=None,
-    showUrls=True,
-    **kwargs):
+                   server=None,
+                   dataset=None,
+                   descriptor=None,
+                   accounting=None,
+                   location=None,
+                   coordinateSystem=None,
+                   place=None,
+                   position=None,
+                   unit=None,
+                   day=None,
+                   time=None,
+                   debug=False,
+                   band=None,
+                   mag=None,
+                   size=None,
+                   showUrls=True,
+                   **kwargs):
     """Create a list of ADDE images.
     
     Args:
@@ -1062,7 +1089,6 @@ def listADDEImages(localEntry=None,
     else:
         port = "112"
         
-    # server = '%s:%s' % (server, port)
     if not accounting:
         # this will return DEFAULT_ACCOUNTING if nothing was found
         accounting = _lookupAccounting(server, dataset)
@@ -1093,20 +1119,7 @@ def listADDEImages(localEntry=None,
     elif place is Places.ULEFT:
         place = '&PLACE=ULEFT'
     else:
-        # raise ValueError()
         place = ''
-        
-    # if coordinateSystem is CoordinateSystems.LATLON or coordinateSystem is None:
-    #     coordSys = 'LATLON'
-    # elif coordinateSystem is CoordinateSystems.AREA or coordinateSystem is CoordinateSystems.IMAGE:
-    #     coordSys = 'LINELE'
-    # else:
-    #     raise ValueError("Invalid coordinateSystem value.")
-        
-    # if location:
-    #     location = '&%s=%s %s' % (coordSys, location[0], location[1])
-    # else:
-    #     location = '&%s=0 0' % (coordSys)
         
     if time:
         if isinstance(time, (str, unicode, String)):
@@ -1172,7 +1185,7 @@ def listADDEImages(localEntry=None,
         }
         url = addeUrlFormat % formatValues
         if showUrls:
-            print url
+            print(url)
             
         try:
             adl = ErrorCodeAreaUtils.createAreaDirectoryList(url)
@@ -1221,21 +1234,10 @@ def listADDEImages(localEntry=None,
         tempTime = str(timeFormat.format(nominalTime, StringBuffer(), FieldPosition(0)))
         
         bandList = list(d.getBands())
-        # tempUnitList = list(d.getCalInfo()[0])
-        # unitList = tempUnitList[::2]
-        # unitDescList = tempUnitList[1::2]
-        # calInfo = dict(zip(unitList, unitDescList))
         unitList = map(str, list(d.getCalInfo()[0])[::2])
         if origUnit in unitList:
             foundUnit = True
             unitList = [origUnit]
-            
-        # if origUnit not in unitList:
-        #     raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
-        # if unit:
-        #     unitList = [origUnit]
-        # else:
-        #     unitList = map(str, list(d.getCalInfo()[0])[::2])
             
         for band in bandList:
             tempList = []
@@ -1250,7 +1252,6 @@ def listADDEImages(localEntry=None,
                     'accounting': accounting,
                     'day': tempDay,
                     'time': tempTime,
-                    #'datetime': tempDateTime,
                     'datetime': DateTime(d.getStartTime()),
                     'imageSize': (d.getLines(), d.getElements()),
                     'centerLocation': (d.getCenterLatitude(), d.getCenterLongitude()),
@@ -1280,12 +1281,13 @@ def listADDEImages(localEntry=None,
                 }
             # TJJ Aug 2018 - now reordering returned dictionary by key alphabetical order
             temp.append(OrderedDict(sorted(dt.items())))
-                
+            
     if unit and not foundUnit:
         raise AddeJythonInvalidUnitError("no matches for unit '%s'" % (origUnit))
         
     return temp
-    
+
+
 def loadADDEImage(*args, **kwargs):
     """Load data from an ADDE Image server - returns a _MappedAreaImageFlatField object that contains data and metadata.
     
@@ -1325,29 +1327,33 @@ def loadADDEImage(*args, **kwargs):
     """
     metadata, result = _getADDEImage(*args, **kwargs)
     return result
-    
+
+
 def getADDEImage(*args, **kwargs):
     """Deprecated in favor of 'loadADDEImage'."""
     warnings.warn("'metadata, data = getADDEImage(...)' has been deprecated; please use 'metadataAndData = loadADDEImage(...)' instead.")
     return _getADDEImage(*args, **kwargs)
-    
+
+
 def _getADDEImage(localEntry=None,
-    server=None, dataset=None, descriptor=None,
-    accounting=None,
-    location=None,
-    coordinateSystem=None,
-    place=None,
-    mag=(1, 1),
-    position=0,
-    unit=None,
-    day=None,
-    time=None,
-    debug=False,
-    track=False,
-    band=None,
-    size=DEFAULT_SIZE,
-    showUrls=True,
-    **kwargs):
+                  server=None,
+                  dataset=None,
+                  descriptor=None,
+                  accounting=None,
+                  location=None,
+                  coordinateSystem=None,
+                  place=None,
+                  mag=(1, 1),
+                  position=0,
+                  unit=None,
+                  day=None,
+                  time=None,
+                  debug=False,
+                  track=False,
+                  band=None,
+                  size=DEFAULT_SIZE,
+                  showUrls=True,
+                  **kwargs):
     
     if localEntry:
         server = localEntry.getAddress()
@@ -1361,8 +1367,6 @@ def _getADDEImage(localEntry=None,
     else:
         port = "112"
         
-    # server = '%s:%s' % (server, port)
-    
     # still need to handle dates+times
     # todo: don't break!
     
@@ -1375,7 +1379,6 @@ def _getADDEImage(localEntry=None,
     debug = str(debug).lower()
     
     if not mag:
-        # mag = ''
         mag = '&MAG=1 1'
     elif mag and hasattr(mag, '__getitem__') and len(mag) == 2:
         lmag, emag = int(mag[0]), int(mag[1])
@@ -1390,11 +1393,6 @@ def _getADDEImage(localEntry=None,
     hasPlace = place or False
     hasLocation = location or False
     
-    # if hasCoordSys and not hasLocation:
-    #     raise ValueError('Please provide location when specifying coordinate system.')
-    # elif not hasCoordSys and hasLocation:
-    #     raise ValueError('Please provide coordinate system when specifying location.')
-    
     if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
         raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
         
@@ -1403,7 +1401,6 @@ def _getADDEImage(localEntry=None,
     elif place is Places.ULEFT:
         place = '&PLACE=ULEFT'
     else:
-        # raise ValueError("Invalid place value.")
         place = ''
         
     if coordinateSystem is CoordinateSystems.LATLON:
@@ -1415,8 +1412,6 @@ def _getADDEImage(localEntry=None,
     elif coordinateSystem is CoordinateSystems.IMAGE:
         coordSys = 'LINELE'
         coordType = 'I'
-    # else:
-        # raise ValueError("Invalid coordinateSystem value.")
         
     if location and isinstance(location, tuple) and len(location) == 2:
         location = '&%s=%s %s %s' % (coordSys, location[0], location[1], coordType)
@@ -1451,7 +1446,6 @@ def _getADDEImage(localEntry=None,
             raise ValueError("could not understand the given time value: %s" % (time))
     else:
         time = ''
-        
         
     if band or kwargs.get('bandNumber'):
         try:
@@ -1501,7 +1495,7 @@ def _getADDEImage(localEntry=None,
     }
     url = addeUrlFormat % formatValues
     if showUrls:
-        print url
+        print(url)
         
     try:
         mapped = _MappedAreaImageFlatField.fromUrl(accounting, debug, server, url)

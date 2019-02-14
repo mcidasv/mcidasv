@@ -8,6 +8,7 @@ import os
 import java
 from java.lang import Integer, System
 
+
 # This is an ugly hack to deal with Jython's sys.path strangeness: if you
 # want to import a non-compiled python module contained in a JAR, sys.path
 # must contain something like "/path/to/your.jar/path/to/module"
@@ -30,7 +31,6 @@ def _mcvinit_classpath_hack():
     idv_jar = ""
     visad_jar = ""
     
-    #for entry in classpath.split(System.getProperty('path.separator')):
     for entry in SystemState.getMcvJarClasspath():
         entry = str(entry).replace('file:', '')
         jardir, jar = os.path.split(entry)
@@ -42,7 +42,8 @@ def _mcvinit_classpath_hack():
             visad_jar = entry
             
     return {'mcidasv': mcv_jar, 'idv': idv_jar, 'visad': visad_jar}
-    
+
+
 def _mcvinit_jythonpaths():
     """Create list of paths containing required Python source code.
     
@@ -64,14 +65,15 @@ def _mcvinit_jythonpaths():
         jars['idv'],
         jars['idv'] + '/ucar/unidata/idv/resources/python',
     ]
-    
+
+
 for jythonpath in _mcvinit_jythonpaths():
     if not jythonpath in sys.path:
         sys.path.append(jythonpath)
-        
+
 # fix for see module
 sys.ps1 = '>>>'
-        
+
 # this is intentionally the first IDV/McV thing imported
 from edu.wisc.ssec.mcidasv import McIDASV
 _mcv = McIDASV.getStaticMcv()
@@ -116,18 +118,18 @@ from ucar.unidata.data.grid import GridTrajectory
 try:
     import imageFilters
 except ImportError, e:
-    print 'Error attempting to import imageFilters:', e
-    print 'sys.path contents:'
+    print('Error attempting to import imageFilters: %s' % e)
+    print('sys.path contents:')
     for i, path in enumerate(sys.path):
-        print i, path
+        print('%s %s' % (i, path))
         
 try:
     import shell as idvshell
 except ImportError, e:
-    print 'Error attempting to import idvshell:', e
-    print 'sys.path contents:'
+    print('Error attempting to import idvshell: %s' % e)
+    print('sys.path contents:')
     for i, path in enumerate(sys.path):
-        print i, path
+        print('%s %s' % (i, path))
         
 # _isInteractive's value is controlled by code that calls JythonManager's 
 # "initJythonEnvironment" method. McIDAS-V has the value of _isInteractive

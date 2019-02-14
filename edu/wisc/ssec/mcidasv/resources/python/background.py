@@ -69,9 +69,11 @@ from edu.wisc.ssec.mcidasv.servermanager import EntryStore
 from visad.data.mcidas import AreaAdapter
 from edu.wisc.ssec.mcidasv.util import ErrorCodeAreaUtils
 
+
 def pause():
     """Pause McIDAS-V until all displays have finished being created."""
     getStaticMcv().waitUntilDisplaysAreDone()
+
 
 @contextmanager
 def managedDataSource(path, cleanup=True, dataType=None):
@@ -114,7 +116,8 @@ def managedDataSource(path, cleanup=True, dataType=None):
         # the "with" block has relinquished control; time to clean up!
         if cleanup:
             boomstick()
-            
+
+
 class _MappedData(object):
     
     """'Abstract' class for combined VisAD Data / Python dictionary objects.
@@ -230,6 +233,7 @@ class _MappedData(object):
     def update(self, newDict=None, **kwargs):
         raise NotImplementedError()
 
+
 class _MappedFlatField(_MappedData, FlatField):
     def __init__(self, ff, keys):
         """Make a _MappedFlatField from an existing FlatField."""
@@ -241,6 +245,7 @@ class _MappedFlatField(_MappedData, FlatField):
         # which calls the wrong method.  Solution is to use a java Boolean type.
         # Also; we make sure here not to copy the floats array.
         self.packValues(ff.unpackFloats(java.lang.Boolean(False)), False)
+
 
 class _MappedVIIRSFlatField(_MappedFlatField):
     def __init__(self, ff, field):
@@ -272,8 +277,8 @@ class _MappedVIIRSFlatField(_MappedFlatField):
 
     def clone(self):
         return self * 1
-                
-        
+
+
 class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
     def __init__(self, aiff, areaFile, areaDirectory, addeDescriptor, startTime, accounting, debug, server):
         """Make a _MappedAreaImageFlatField from an existing AreaImageFlatField."""
@@ -434,6 +439,7 @@ class _MappedAreaImageFlatField(_MappedData, AreaImageFlatField):
         # use %longname% now that it is getting set w/ SATBAND string:
         defaultLabel = '%longname% %timestamp%'
         return defaultLabel
+
 
 class _MappedGeoGridFlatField(_MappedFlatField):
     """Implements the 'mega-object' class for grids read with loadGrid."""
@@ -602,7 +608,8 @@ class _JavaProxy(object):
             setattr(self.__javaObject, attr, val)
         else:
             self.__dict__[attr] = val
-            
+
+
 @gui_invoke_later
 def _getNewFont(currentFont, fontName, style, size):
     """Helper function for setLayerLabelFont and setColorScaleFont.
@@ -654,14 +661,15 @@ def _getNewFont(currentFont, fontName, style, size):
         if not foundFont:
             # if fontName is STILL None, then user provided an invalid font name
             raise ValueError(
-                    "Could not find the following fontName:", fontName, 
+                    "Could not find the following fontName:", fontName,
                     "call allFontNames for valid options")
     else:
         # leave as-is if fontName is None
         fontName = currentFont.getFontName()
         
     return java.awt.Font(fontName, style, size)
-    
+
+
 class _Window(_JavaProxy):
     def __init__(self, javaObject):
         """Blank for now.
@@ -736,7 +744,8 @@ class _Window(_JavaProxy):
         """Close the window."""
         if not self._JavaProxy__javaObject.doClose():
             raise RuntimeError("could not close the window!")
-            
+
+
 class _Tab(_JavaProxy):
     def __init__(self, javaObject):
         """Blank for now.
@@ -758,6 +767,7 @@ class _Tab(_JavaProxy):
     def getDisplays(self):
         """Return list of the displays contained within this tab."""
         return [_Display(viewManager) for viewManager in self._JavaProxy__javaObject.getViewManagers()]
+
 
 class _Display(_JavaProxy):
     
@@ -1238,7 +1248,7 @@ class _Display(_JavaProxy):
             ValueError: if the position was invalid.
         """
         if not os.path.exists(image):
-            raise IOError("'%s' does not exist." % (image))
+            raise IOError("'%s' does not exist." % image)
             
         try:
             idvPos = self._translateLogoPosition(position, xOffset, yOffset)
@@ -1278,7 +1288,7 @@ class _Display(_JavaProxy):
         # TJJ Feb 2018
         # make sure scale param is positive
         # http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2630
-        if (scale <= 0):
+        if scale <= 0:
             raise ValueError("Logo scale parameter must be a positive number")
             
         vis = self._JavaProxy__javaObject.getLogoVisibility()
@@ -1587,11 +1597,11 @@ class _Display(_JavaProxy):
         anim_index = ''
         if index >= 0:
             stepCount = self._JavaProxy__javaObject.getAnimation().getNumSteps()
-            if index >= 0 and index < stepCount:
-                anim_index = "animation_index=\"%s\"" % (index)
-            elif stepCount == 0 and index != 0:
-                raise ValueError('Invalid index (%s). Note: this display has no time steps, so an index is not needed.' % (index))
-            elif stepCount == 0 and index == 0:
+            if (index >= 0) and (index < stepCount):
+                anim_index = "animation_index=\"%s\"" % index
+            elif (stepCount == 0) and (index != 0):
+                raise ValueError('Invalid index (%s). Note: this display has no time steps, so an index is not needed.' % index)
+            elif (stepCount == 0) and (index == 0):
                 print("*** NOTE: There are no time steps associated with this display, so the 'index' parameter is unnecessary.")
             else:
                 raise ValueError('Invalid index (%s) specified; valid index must conform to 0 <= index < %s' % (index, stepCount)) 
@@ -1623,7 +1633,7 @@ class _Display(_JavaProxy):
                     layer.getJavaInstance().setId(None)
                     layer.usedTemporaryId = False
                     
-    #@gui_invoke_later
+    # @gui_invoke_later
     def annotate(self, text, lat=None, lon=None, line=None, element=None,
         font=None, color='red', size=None, style=None, alignment=None, 
         bgColor=None):
@@ -1804,7 +1814,8 @@ class _Display(_JavaProxy):
     def getAutoDepth(self):
         """Return whether or not this display is using automatic depth offsetting."""
         return self._JavaProxy__javaObject.getAutoDepth()
-        
+
+
 # TODO(jon): still not sure what to offer here.
 class _Layer(_JavaProxy):
     def __init__(self, javaObject):
@@ -2553,7 +2564,8 @@ class _Layer(_JavaProxy):
                 raise ValueError('Could not change unit to "%s"' % unitname)
         shareProp = self._JavaProxy__javaObject.SHARE_DISPLAYUNIT
         self._JavaProxy__javaObject.doShareExternal(shareProp, newUnit)
-            
+
+
 # TODO(jon): this (and its accompanying subclasses) are a productivity rabbit
 # hole!
 class _DataSource(_JavaProxy):
@@ -2601,7 +2613,8 @@ class _DataSource(_JavaProxy):
             if choice.description == dataChoiceName:
                 return _DataChoice(choice)
         raise ValueError("There is no data choice by that name for this data source")
-        
+
+
 class _DataChoice(_JavaProxy):
     def __init__(self, javaObject):
         """Represent a specific field within a data source."""
@@ -2628,13 +2641,15 @@ class _DataChoice(_JavaProxy):
         """
         self._JavaProxy__javaObject.setLevelSelection(level)
         return
-        
+
+
 # TODO(jon): still not sure what people want to see in here
 class _Projection(_JavaProxy):
     def __init__(self, javaObject):
         """Create proxy for ucar.unidata.geoloc.Projection objects."""
         _JavaProxy.__init__(self, javaObject)
-        
+
+
 # TODO(jon): a *LOT* of this functionality isn't currently offered by colortables...
 class _ColorTable(_JavaProxy):
     def __init__(self, javaObject):
@@ -2650,7 +2665,8 @@ class _ColorTable(_JavaProxy):
         minorInterval
         """
         _JavaProxy.__init__(self, javaObject)
-        
+
+
 # TODO(jon): "annotation" is ambiguous...does it refer to the layer description
 # or a drawing control?
 class _Annotation(_JavaProxy):
@@ -2692,7 +2708,8 @@ class _Annotation(_JavaProxy):
     def getCoordinates(self):
         # (x,y) tuple
         pass
-        
+
+
 @gui_invoke_later
 def setViewSize(width, height):
     """Set view size to a given width and height.
@@ -2704,7 +2721,8 @@ def setViewSize(width, height):
         height:
     """
     getStaticMcv().getStateManager().setViewSize(java.awt.Dimension(width, height))
-    
+
+
 @gui_invoke_later
 def getColorTable(name=ColorTableDefaults.NAME_DEFAULT):
     """Return ColorTable associated with the given name.
@@ -2724,17 +2742,20 @@ def getColorTable(name=ColorTableDefaults.NAME_DEFAULT):
         return _ColorTable(colorTable)
     else:
         raise LookupError("Couldn't find a ColorTable named ", name, "; try calling 'colorTableNames()' to get the available ColorTables.")
-        
+
+
 @gui_invoke_later
 def colorTableNames():
     """Return list of the valid color table names."""
     return [colorTable.getName() for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
-    
+
+
 @gui_invoke_later
 def allColorTables():
     """Return list of the available color tables."""
     return [_ColorTable(colorTable) for colorTable in getStaticMcv().getColorTableManager().getColorTables()]
-    
+
+
 @gui_invoke_later
 def importEnhancement(filename, name=None, category=None, overwrite=False):
     """Import color table using the given path.
@@ -2782,12 +2803,14 @@ def importEnhancement(filename, name=None, category=None, overwrite=False):
             if xml:
                 obj = XmlEncoder().toObject(xml)
                 return _ColorTable(ctm.doImport(obj, makeUnique))
-                
+
+
 @gui_invoke_later
 def firstWindow():
     """Return the first window created during the current McIDAS-V session."""
     return _Window(IdvWindow.getMainWindows()[0])
-    
+
+
 @gui_invoke_later
 def findWindow(display):
     """Find the window containing the given display.
@@ -2815,12 +2838,14 @@ def findWindow(display):
         result = _Window(result)
     
     return result
-    
+
+
 @gui_invoke_later
 def allWindows():
     """Return list of all McIDAS-V display windows."""
     return [_Window(window) for window in IdvWindow.getMainWindows()]
-    
+
+
 @gui_invoke_later
 def firstDisplay():
     """Return first display.
@@ -2832,12 +2857,14 @@ def firstDisplay():
         IndexError: If there are no Displays.
     """
     return _Display(getStaticMcv().getVMManager().getViewManagers().get(0))
-    
+
+
 @gui_invoke_later
 def allDisplays():
     """Return list of all McIDAS-V displays (aka ViewManagers)."""
     return [_Display(viewManager) for viewManager in getStaticMcv().getVMManager().getViewManagers()]
-    
+
+
 @gui_invoke_later
 def activeDisplay():
     """Return active McIDAS-V display."""
@@ -2846,6 +2873,7 @@ def activeDisplay():
 # def windowDisplays(window):
 #     """Returns a list of the McIDAS-V displays within the given window."""
 #     pass
+
 
 @gui_invoke_later
 def createDataSource(path, filetype):
@@ -2860,7 +2888,6 @@ def createDataSource(path, filetype):
 
     Raises:
         ValueError:  if filetype is not a valid data source type
-    MIKE
     """
     mcv = getStaticMcv()
     dm = mcv.getMcvDataManager()
@@ -2868,32 +2895,36 @@ def createDataSource(path, filetype):
         if desc.label == filetype:
             return _DataSource(makeDataSource(path, type=desc.id))
     raise ValueError("Couldn't find that data source type")
-    
+
+
 @gui_invoke_later
 def allDataSourceNames():
     """Return list of all possible data source types."""
     # (specifically, the verbose descriptions as they appear in the GUI)
-    # MIKE
     mcv = getStaticMcv()
     dm = mcv.getDataManager()
     # want to return list of labels only, not DataSourceDescriptor's
     return [desc.label for desc in dm.getDescriptors()]
-    
+
+
 @gui_invoke_later
 def allLayerTypes():
     """Return list of the available layer type names."""
     return getStaticMcv().getAllControlDescriptors()
-    
+
+
 @gui_invoke_later
 def allProjections():
     """Return list of the available projections."""
     return [_Projection(projection) for projection in getStaticMcv().getIdvProjectionManager().getProjections()]
-    
+
+
 @gui_invoke_later
 def allFontNames():
     """Return list of strings representing all available font names."""
     return [font.toString() for font in ucar.unidata.util.GuiUtils.getFontList()]
-    
+
+
 @gui_invoke_later
 def listFont(regex=None):
     """
@@ -2909,23 +2940,25 @@ def listFont(regex=None):
         index = [i for i, x in enumerate(fontList) if re.search(regex, x)]
         
         if len(index) == 0:
-            print "There are no matches for "+regex+ " regular expression or string"
+            print("There are no matches for '%s' regular expression or string" % regex)
         elif len(index) == 1:
-            print "There is one match for " + regex
-            print fontList[index[0]]
+            print("There is one match for '%s'" % regex)
+            print(fontList[index[0]])
         else:
-            print "There are " + str(len(index)) + " matches."
+            print("There are %s matches." % len(index))
             for x in index:
-                print fontList[x]
+                print(fontList[x])
     else:
         for font in fontList:
-            print font
-            
+            print(font)
+
+
 @gui_invoke_later
 def projectionNames():
     """Return list of the available projection names."""
     return [projection.getName() for projection in getStaticMcv().getIdvProjectionManager().getProjections()]
-    
+
+
 @gui_invoke_later
 def getProjection(name=''):
     """Return projection associated with the given name.
@@ -2950,23 +2983,28 @@ def getProjection(name=''):
             return _Projection(projection)
     else:
         raise ValueError("Couldn't find a projection named ", name, "; try calling 'projectionNames()' to get the available projection names.")
-        
+
+
 def allLayoutModelNames():
     """Return list of the available layout model names."""
     return [str(stationModel.getName()) for stationModel in getStaticMcv().getStationModelManager().getStationModels()]
-    
+
+
 def allLayoutModels():
     """Return list of the available layout model names."""
     return [stationModel for stationModel in getStaticMcv().getStationModelManager().getStationModels()]
-    
+
+
 def defaultLayoutModelName():
     """Return name of the default layout model."""
     return str(getStaticMcv().getStationModelManager().getDefaultStationModel().getName())
-    
+
+
 def defaultLayoutModel():
     """Return default layout model."""
     return getStaticMcv().getStationModelManager().getDefaultStationModel()
-    
+
+
 def _getLayoutModelByName(name):
     """Find layout models by name.
     
@@ -2991,13 +3029,15 @@ def _getLayoutModelByName(name):
         elif lowered in tempModel.getName().lower():
             partials.append(tempModel)
     return model, partials
-    
+
+
 @gui_invoke_later
 def allActions():
     """Return available McIDAS-V action identifiers."""
     actions = getStaticMcv().getIdvUIManager().getCachedActions().getAllActions()
     return [action.getId() for action in actions]
-    
+
+
 @gui_invoke_later
 def performAction(action):
     """Run the given IDV action.
@@ -3019,7 +3059,7 @@ def performAction(action):
         getStaticMcv().handleAction(prefixedId)
     else:
         raise ValueError("Couldn't find the action ID ", action, "; try calling 'allActions()' to get the available action IDs.")
-        
+
 # def load_enhancement(name=''):
 #     """Nothing yet."""
 #     pass
@@ -3040,25 +3080,30 @@ def performAction(action):
 #     """Nothing yet."""
 #     pass
 
+
 def collect_garbage():
     """Signal to Java that it should free any memory that isn't in use."""
-    print '* WARNING: please use the new name for this function:\n\'collectGarbage()\''
+    print('* WARNING: please use the new name for this function:\n\'collectGarbage()\'')
     collectGarbage()
+
 
 def collectGarbage():
     """Signal to Java that it should free any memory that isn't in use."""
     System.gc()
-    
+
+
 @gui_invoke_later
 def removeAllData():
     """Remove all of the current data sources WITHOUT prompting."""
     getStaticMcv().removeAllData(False)
-    
+
+
 @gui_invoke_later
 def removeAllLayers():
     """Remove all of the current layers WITHOUT prompting."""
     getStaticMcv().removeAllLayers(False)
-    
+
+
 @gui_invoke_later
 def boomstick():
     """Remove all layers and data and then requests garbage collection."""
@@ -3066,18 +3111,21 @@ def boomstick():
     mcv.removeAllLayers(False)
     mcv.removeAllData(False)
     System.gc()
-    
+
+
 def setJythonShellMaxHistoryLength(newHistoryLength):
     """Set the number of commands remembered in the Jython Shell History."""
     from ucar.unidata.idv.ui import JythonShell
     JythonShell.saveMaxHistoryLength(getStaticMcv().getStore(), newHistoryLength)
+
 
 def getJythonShellMaxHistoryLength():
     """Return number of commands remembered in the Jython Shell History."""
     from ucar.unidata.idv.ui import JythonShell
     return JythonShell.loadMaxHistoryLength(
             getStaticMcv().getStore(), JythonShell.DEFAULT_MAX_HISTORY_LENGTH)
-            
+
+
 def getDataExplorer():
     """Return reference to Data Explorer window.
     
@@ -3090,7 +3138,8 @@ def getDataExplorer():
         # note: within the codebase the "data explorer" is referred to as the
         # "dashboard".
         return mcv.getIdvUIManager().dashboard
-        
+
+
 def showDataExplorer(visibility):
     """Control the visibility of the Data Explorer window."""
     # note: within the codebase the "data explorer" is referred to as the
@@ -3098,7 +3147,8 @@ def showDataExplorer(visibility):
     dashboard = getDataExplorer()
     if dashboard:
         dashboard.setVisible(visibility)
-        
+
+
 def _convertStringToNoOp(s):
     noopObj = None
     if isinstance(s, str):
@@ -3113,18 +3163,21 @@ def _convertStringToNoOp(s):
             noopObj = TRANSECT
     return noopObj
 
-class _NoOp(object):
 
+class _NoOp(object):
+    
     def __init__(self, description='anything'):
         self.description = description
-
+        
     def __repr__(self):
         return self.description
+
 
 MAP = _NoOp('MAP')
 MAP2D = _NoOp('MAP2D')
 GLOBE = _NoOp('GLOBE')
 TRANSECT = _NoOp('TRANSECT')
+
 
 def _buildWindow(width=600, height=400, rows=1, cols=1, widgets=True, panelTypes=None):
     """Call _buildWindowInternal (from Jython Shell) or _buildWindowBackground (from background)."""
@@ -3227,9 +3280,10 @@ def _buildWindow(width=600, height=400, rows=1, cols=1, widgets=True, panelTypes
         return _buildWindowBackground(height, width, panelTypes)
     else:
         if len(panelTypes) > 1:
-            print '* WARNING: buildWindow will only build one panel when run from the background'
+            print('* WARNING: buildWindow will only build one panel when run from the background')
         return _buildWindowInternal(width, height, rows, cols, widgets, panelTypes)
-        
+
+
 class buildWindow(object):
     def __init__(self, width=600, height=400, rows=1, cols=1, widgets=True, panelTypes=None):
         self.panels = _buildWindow(width, height, rows, cols, widgets, panelTypes)
@@ -3268,7 +3322,8 @@ class buildWindow(object):
         
     def __str__(self):
         return str(self.panels)
-        
+
+
 class getMcv(object):
     def __init__(self):
         self.mcv = getStaticMcv()
@@ -3280,11 +3335,13 @@ class getMcv(object):
         
     def __exit__(self, exc_type, exc_value, traceback):
         self.mcv = None
-        
+
+
 def makeLogger(name):
     """Create an SLF4J logging object using the given name."""
     return LoggerFactory.getLogger(name)
-    
+
+
 def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=None, mode=None):
     """Open a bundle using the decodeXmlFile from PersistenceManager.
 
@@ -3434,7 +3491,8 @@ def openBundle(bundle, label="", clear=1, height=-1, width=-1, dataDictionary=No
         display.setSize(width, height)
         
     return display  # TODO: return list of all displays instead
-    
+
+
 def writeImageAtIndex(fname, idx, params='', quality=1.0):
     """Capture a particular animation step from the active display.
     
@@ -3458,6 +3516,7 @@ def writeImageAtIndex(fname, idx, params='', quality=1.0):
     elem = islInterpreter.makeElement(xml)
     macros = islInterpreter.applyMacros(fname)
     islInterpreter.captureImage(macros, elem)
+
 
 def loadGrid(filename=None, field=None, level='all',
         time=None, stride=None, xStride=None, yStride=None,
@@ -3513,23 +3572,23 @@ def loadGrid(filename=None, field=None, level='all',
             # xstride and/or ystride
             if (xStride is not None) or (yStride is not None):
                 raise ValueError("stride should not be used in combination with xStride or yStride")
-            if (stride < 1):
+            if stride < 1:
                 raise ValueError("stride must be greater than zero")
             xStride = stride
             yStride = stride
         else:
-            if (xStride is None):
+            if xStride is None:
                 xStride = 1
-            if (yStride is None):
+            if yStride is None:
                 yStride = 1
             if (xStride < 1) or (yStride < 1):
                 raise ValueError("xStride and yStride must be 1 or greater")
-
+                
     dataType = 'Grid files (netCDF/GRIB/OPeNDAP/GEMPAK)'
-
+    
     if not filename:
         raise ValueError('no filename provided')
-
+        
     # hack:  allow through anything that starts with 'http'/'dods' because the file
     # could be located on a thredds server.  The real problem is: I can't
     # catch BadDataException's resulting from createDataSource because they
@@ -3537,17 +3596,17 @@ def loadGrid(filename=None, field=None, level='all',
     if not filename.startswith('http') and not filename.startswith('dods'):
         if not os.path.isfile(filename):
             raise ValueError('filename does not exist or is a directory: ' + filename)
-
+            
     dataSource = createDataSource(filename, dataType)
     gridDataset = GridDataset.open(filename)
-
+    
     if field:
         geogrid = gridDataset.findGridByName(field)
         if not geogrid:
             raise ValueError('Failed to create geogrid.  Make sure the field you specified exists in the file (use listGridFieldsInFile): ' + field)
     else:
         raise ValueError('no field name provided')
-    
+        
     levelReal = None
     if level is not None and level.lower() != 'all':
         # expecting string specifying value and units, e.g. "1000 hPa"
@@ -3566,7 +3625,7 @@ def loadGrid(filename=None, field=None, level='all',
                 geogrid = geogrid.subset(None, Range(i, i), None, None)
                 levelReal = curLevelReal
                 break
-
+                
     if time is not None: 
         if isinstance(time, str):
             foundTime = False
@@ -3594,25 +3653,25 @@ def loadGrid(filename=None, field=None, level='all',
         except ucar.ma2.InvalidRangeException:
             # Subset fails for ABI-DOE files due to odd handling of time dim.
             pass
-
+            
     if xRange is not None or yRange is not None: 
         if xRange is not None:
             xRange = Range(xRange[0], xRange[1])
         if yRange is not None:
             yRange = Range(yRange[0], yRange[1])
         geogrid = geogrid.subset(None, None, yRange, xRange)
-
+        
     if latLonBounds:
         # TODO: type checking
         a = latLonBounds
         left = LatLonPointImpl(a[0], a[1]) # lat, lon
         right = LatLonPointImpl(a[2], a[3]) # lat, lon
         latLonBounds = LatLonRect(left, right)
-
+        
     # TODO: type checking
     # TODO: if inputs == 1, eliminate this call?
     geogrid = geogrid.subset(None, None, latLonBounds, 1, yStride, xStride)
-
+    
     try: 
         # This way the adapter keeps a reference to the netcdf file, which is
         # important to be able to extract times from ABI files later on.
@@ -3620,32 +3679,40 @@ def loadGrid(filename=None, field=None, level='all',
                 gridDataset.getNetcdfFile())
     except:
         adapter = GeoGridAdapter(dataSource.getJavaInstance(), geogrid)
-
+        
     try:
         adapterData = adapter.getData()
     except java.lang.ClassCastException:
         # fix for ABI DOE files
         adapterData = adapter.getFlatField(0, "")
-
+        
     if GridUtil.isTimeSequence(adapterData):
         ff = adapterData.getSample(0)
     else:
         ff = adapterData
-    
+        
     # if FF is 2D, running it through make2D will avoid VisAD "manifold 
     # dimension" errors if it gets used in an IDV formula later on...
     if level is not None and level.lower() != 'all':
         ff = make2D(ff)
-
+        
     # make the 'mega-object'
-    mapped = _MappedGeoGridFlatField(ff, geogrid, adapter, gridDataset,
-            filename, field, levelReal, dataSource.toString())
-
+    mapped = _MappedGeoGridFlatField(ff,
+                                     geogrid,
+                                     adapter,
+                                     gridDataset,
+                                     filename,
+                                     field,
+                                     levelReal,
+                                     dataSource.toString())
+                                     
     return mapped
+
 
 def loadFile(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of loadFile has changed to loadGrid.  You'll need to update your scripts.  Sorry for the hassle!")
+
 
 def _findUnits(mathtype, foundUnits, rangeOnly, withinRange):
     """Please use findUnits instead of this function."""
@@ -3670,6 +3737,7 @@ def _findUnits(mathtype, foundUnits, rangeOnly, withinRange):
             elif not rangeOnly:
                 foundUnits.append(unit)
 
+
 def findUnits(d, rangeOnly=True):
     """Find units associated with a given VisAD Data object.
 
@@ -3689,6 +3757,7 @@ def findUnits(d, rangeOnly=True):
     else:
         _findUnits(d.getType(), units, False, False)
     return units
+
 
 def makeFlatFieldSequence(sequence):
     """Turn list of _MappedGeoGridFlatField's into a FieldImpl with time domain that is suitable for displaying.
@@ -3740,23 +3809,27 @@ def makeFlatFieldSequence(sequence):
         fi.setSample(i, ff)
     return fi
 
+
 def loadGridListFieldsInFile(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of loadGridListFieldsInFile has changed to listGridFieldsInFile!")
+
 
 def listGridFieldsInFile(filename):
     """Print and return a list of all fields in a NetCDF/HDF/grib2 file."""
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     for grid in gridDataset.getGrids():
-        print '%s ; %s' % (grid.getName().encode('utf_8'), grid.getDescription().encode('utf_8'))
+        print('%s ; %s' % (grid.getName().encode('utf_8'), grid.getDescription().encode('utf_8')))
     names = [grid.getName() for grid in gridDataset.getGrids()]
     gridDataset.close()
     return names
 
+
 def loadGridListLevelsInField(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of loadGridListLevelsInField has changed to listGridLevelsInField!")
+
 
 def listGridLevelsInField(filename, field):
     """Print and return a list of all levels in a NetCDF/HDF/grib2 field."""
@@ -3764,16 +3837,18 @@ def listGridLevelsInField(filename, field):
     gridDataset = GridDataset.open(filename)
     geogrid = gridDataset.findGridByName(field)
     for level in geogrid.getLevels():
-        print '%s %s' % (level.getName().encode('utf_8'), level.getDescription().encode('utf_8'))
+        print('%s %s' % (level.getName().encode('utf_8'), level.getDescription().encode('utf_8')))
     levels = [level.getName() for level in geogrid.getLevels()]
     if not levels:
-        print 'No levels found for specified field: %s' % field
+        print('No levels found for specified field: %s' % field)
     gridDataset.close()
     return levels
+
 
 def loadGridListTimesInField(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of loadGridListTimesInField has changed to listGridTimesInField!")
+
 
 def listGridTimesInField(filename, field):
     """Print and return a list of all times in a NetCDF/HDF/grib2 field."""
@@ -3781,13 +3856,15 @@ def listGridTimesInField(filename, field):
     gridDataset = GridDataset.open(filename)
     geogrid = gridDataset.findGridByName(field)
     for time in geogrid.getTimes():
-        print time
+        print(time)
     gridDataset.close()
     return geogrid.getTimes()
+
 
 def getVIIRSImage(*args, **kwargs):
     """Placeholder to redirect user to renamed function."""
     raise NotImplementedError("The name of getVIIRSImage has changed to loadVIIRSImage.  You'll need to update your scripts.  Sorry for the hassle!")
+
 
 def loadJPSSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
     """Load JPSS (VIIRS, ATMS, or CrIS) imagery.
@@ -3874,7 +3951,8 @@ def loadJPSSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs)
     mapped_ff = _MappedVIIRSFlatField(ff, field)
 
     return mapped_ff
-    
+
+
 def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs):
     """Load VIIRS imagery.
 
@@ -3898,7 +3976,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
 
     # Warn users that this function is deprecated
-    print '* WARNING: loadVIIRSImage is deprecated, please update your scripts to use loadJPSSImage instead.'
+    print('* WARNING: loadVIIRSImage is deprecated, please update your scripts to use loadJPSSImage instead.')
     
     # try some quick input validation before doing any real work
     if not file_list:
@@ -3947,7 +4025,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
         if isinstance(thing, MultiDimensionSubset):
             multi_dimension_subset = thing
             break
-    # print 'xStride: ', xStride, 'yStride: ', yStride
+    # print('xStride: %s, yStride: %s' % (xStride, yStride))
     multi_dimension_subset.coords[0][2] = xStride
     multi_dimension_subset.coords[1][2] = yStride
 
@@ -3963,6 +4041,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
     mapped_ff = _MappedVIIRSFlatField(ff, field)
 
     return mapped_ff
+
 
 def listJPSSFieldsInFile(filename):
     """Print and return a list of all fields in a JPSS (VIIRS, ATMS, or CrIS) .h5 file."""
@@ -3980,15 +4059,16 @@ def listJPSSFieldsInFile(filename):
         # NASA data path prefix is 'observation_data'
         names = [v.getFullName().replace('observation_data/', '') for v in variables]
         # TJJ Mar 2018 - sort fields in sensible band/product order
-        sortedList = ArrayList(names);
-        viirsSort = VIIRSSort();
-        Collections.sort(sortedList, viirsSort);
+        sortedList = ArrayList(names)
+        viirsSort = VIIRSSort()
+        Collections.sort(sortedList, viirsSort)
         for name in sortedList:
-            print name
+            print(name)
     finally:
         f.close()
     return names
-    
+
+
 def listVIIRSFieldsInFile(filename):
     """Print and return a list of all fields in a VIIRS .h5 file."""
     from java.util import ArrayList
@@ -3997,7 +4077,7 @@ def listVIIRSFieldsInFile(filename):
     from edu.wisc.ssec.mcidasv.data.hydra import VIIRSSort
     
     # Warn users that this function is deprecated
-    print '* WARNING: listVIIRSFieldsInFile is deprecated, please update your scripts to use listJPSSFieldsInFile instead.'
+    print('* WARNING: listVIIRSFieldsInFile is deprecated, please update your scripts to use listJPSSFieldsInFile instead.')
     
     f = NetcdfFile.open(filename)
     try:
@@ -4009,14 +4089,15 @@ def listVIIRSFieldsInFile(filename):
         # NASA data path prefix is 'observation_data'
         names = [v.getFullName().replace('observation_data/', '') for v in variables]
         # TJJ Mar 2018 - sort fields in sensible band/product order
-        sortedList = ArrayList(names);
-        viirsSort = VIIRSSort();
-        Collections.sort(sortedList, viirsSort);
+        sortedList = ArrayList(names)
+        viirsSort = VIIRSSort()
+        Collections.sort(sortedList, viirsSort)
         for name in sortedList:
-            print name
+            print(name)
     finally:
         f.close()
     return names
+
 
 def listJPSSTimeInFile(filename):
     """Print and return timestamp associated with a JPSS .h5 (NOAA) or .nc (NASA) file.
@@ -4029,7 +4110,7 @@ def listJPSSTimeInFile(filename):
     
     # TJJ Aug 2017 - very hacky way to distinguish data sources, should change this to a regex match
     # NOAA data - HDF5
-    if (filename.endswith(".h5")):
+    if filename.endswith(".h5"):
         try:
             dprods_grps = f.getRootGroup().findGroup('Data_Products').getGroups()
             for g in dprods_grps:
@@ -4044,7 +4125,7 @@ def listJPSSTimeInFile(filename):
             f.close()
 
     # NASA data - NetCDF 4
-    if (filename.endswith(".nc")):
+    if filename.endswith(".nc"):
         try:
             date = f.getRootGroup().findAttribute('time_coverage_start')
             
@@ -4066,7 +4147,8 @@ def listJPSSTimeInFile(filename):
             f.close()
                 
     return datetime
-    
+
+
 def listVIIRSTimesInField(filename, field=None):
     """Print and return timestamp associated with a VIIRS .h5 (NOAA) or .nc (NASA) file.
     
@@ -4077,13 +4159,13 @@ def listVIIRSTimesInField(filename, field=None):
     from datetime import datetime
     
     # Warn users that this function is deprecated
-    print '* WARNING: listVIIRSTimesInField is deprecated, please update your scripts to use listJPSSTimeInFile instead.'
+    print('* WARNING: listVIIRSTimesInField is deprecated, please update your scripts to use listJPSSTimeInFile instead.')
     
     f = NetcdfFile.open(filename)
     
     # TJJ Aug 2017 - very hacky way to distinguish data sources, should change this to a regex match
     # NOAA data - HDF5
-    if (filename.endswith(".h5")):
+    if filename.endswith(".h5"):
         try:
             dprods_grps = f.getRootGroup().findGroup('Data_Products').getGroups()
             for g in dprods_grps:
@@ -4098,7 +4180,7 @@ def listVIIRSTimesInField(filename, field=None):
             f.close()
 
     # NASA data - NetCDF 4
-    if (filename.endswith(".nc")):
+    if filename.endswith(".nc"):
         try:
             date = f.getRootGroup().findAttribute('time_coverage_start')
             
@@ -4120,6 +4202,7 @@ def listVIIRSTimesInField(filename, field=None):
             f.close()
                 
     return datetime
+
 
 def writeMovie(file, globalPalette=True, params='', createDirectories=False,
                framesPerSecond=2, endFramePause=2):
