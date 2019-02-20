@@ -1598,16 +1598,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     public void setStation(String val) {
         station = val.trim();
     }
-    
-    /* (non-Javadoc)
-     * @see ucar.unidata.idv.control.DisplayControlImpl#shouldApplyFastRendering()
-     */
-    @Override
-    protected boolean shouldApplyFastRendering() {
-        // TJJ - since tends to cause draw problems at dateline on this display,
-        // don't even make this an option
-        return false;
-    }
 
     private int validateSwathWidthField() {
     	String s = swathWidthFld.getText().trim();
