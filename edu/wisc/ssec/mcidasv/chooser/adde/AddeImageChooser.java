@@ -413,10 +413,12 @@ public class AddeImageChooser extends AddeChooser implements
         // Initialize the image count to default
         imageCountTextField = new JTextField(AddeImageChooser.DEFAULT_ARCHIVE_IMAGE_COUNT, 4);
         imageCountTextField.addActionListener(e -> readTimes(false));
-        imageCountTextField.setToolTipText("<html>By default, up to the 100 most " +
-            "recent times are listed.<br/><br/>You may set this field to any positive " +
-            "integer, or the value ALL.<br/>Using ALL may take awhile for" +
-            " datasets with many times.</html>");
+        imageCountTextField.setToolTipText(
+            "<html>Enter a numerical value or the word ALL and press Enter<br/><br/>" +
+            "By default, up to the 100 most recent times are listed.<br/><br/>" +
+            "You may set this field to any positive integer, or the value ALL.<br/>" +
+            "Using ALL may take awhile for datasets with many times.</html>"
+        );
 
         this.addeDefaults = getImageDefaults();
     }
