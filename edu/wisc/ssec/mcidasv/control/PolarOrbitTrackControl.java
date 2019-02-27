@@ -674,6 +674,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             trackDsp.setConstantPosition(trackZ, dispType);
             timeLabelDsp.setConstantPosition(trackZ, dispType);
             swathEdgeDsp.setConstantPosition(trackZ, dispType);
+            applyProperties();
         } catch (Exception e) {
             e.printStackTrace();
         }
