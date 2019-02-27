@@ -860,6 +860,15 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return;
     }
 
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.control.DisplayControlImpl#displayableToFront()
+     */
+    @Override
+    public void displayableToFront() {
+        redrawAll();
+        super.displayableToFront();
+    }
+
     /**
      * Called by doMakeWindow in DisplayControlImpl, which then calls its
      * doMakeMainButtonPanel(), which makes more buttons.
