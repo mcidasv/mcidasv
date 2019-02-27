@@ -188,7 +188,7 @@
         <menuitem label="Search Online Resources"
                   mnemonic="E"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/world_go.png"
-                  action="http://www.ssec.wisc.edu/mcidas/software/v/search.html" />
+                  action="https://www.ssec.wisc.edu/mcidas/software/v/" />
         <separator />
         <menuitem label="Check for new version"
                   mnemonic="V"
