@@ -33,34 +33,34 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/TrackCon
 <xxxmeta xxxname="jhid" value="idv.controls.trackcontrol">
 <div class="pagesubtitle">Overview</div>
 <p>The track controls display trajectory data sets, e.g., aircraft track, ship,
-buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories</strong> chooser of the <strong>Data Sources</strong> tab of the Data Explorer, with the Data Type of Track files. You can display your data in the form of a chart, table, track, or as a Point Data Plot drawn in the Main Display window. The items in the <strong>Layer Controls</strong> for a Point Data plot are the same as the controls for displaying regular <a href="PointDataPlotControl.html">Point Data</a>. If you are working with data for a lot of times, or have many parameters included with your data, you may be&nbsp;prompted to subset the point data. This gives you the option of only including the necessary fields to cut down on memory usage and time&nbsp;to display the data.</p>
-<p>To draw a track in the Main Display window, select your field in the <strong>Fields</strong> panel,  the Track Colored By Parameter display type, and hit <strong>Create Display</strong>. These same controls are utilized for the Trajectory Colored By Parameter display type. The track controls consist of two tabs, <strong>Layout</strong> and <strong>Times</strong>.</p>
+buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories</strong> chooser of the <strong>Data Sources</strong> tab of the Data Explorer, with the Data Type of Track files. The data can be displayed in the form of a chart, table, track, or as a Point Data Plot drawn in the Main Display window. The items in the <strong>Layer Controls</strong> for a Point Data plot are the same as the controls for displaying regular <a href="PointDataPlotControl.html">Point Data</a>. If working with data for a lot of times, or have many parameters included with the data, the user may be&nbsp;prompted to subset the point data. This gives the option of only including the necessary fields to cut down on memory usage and time&nbsp;to display the data.</p>
+<p>To draw a track in the Main Display window, select the field in the <strong>Fields</strong> panel,  the Track Colored By Parameter display type, and hit <strong>Create Display</strong>. These same controls are utilized for the Trajectory Colored By Parameter display type. The track controls consist of two tabs, <strong>Layout</strong> and <strong>Times</strong>.</p>
 <p>The <strong>Layout</strong> tab controls the appearance of the display:</p>
 <div class="images"><img src="images/TrackControlGui.gif" width="509" height="231" alt="Image 1: Layout Tab of the Track Controls Dialog"><br>
 <span class="caption">Image 1: Layout Tab of the Track Controls Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows you to open the <a  href="../tools/ColorTableEditor.html">Color
+  <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows for opening the <a  href="../tools/ColorTableEditor.html">Color
       Table Editor</a>, change the range, select other color tables, etc.</li>
   <li class="propertylistitem"><strong>Visible Range -</strong> Determines
       what parts of the data are actually shown. Click the <img src="level2/images/ChangeButton.gif" alt="Change button" width="77" height="26"align=absmiddle> button to set the range of data shown.&nbsp;Once the checkbox is checked, the Visible Range will be applied to the data in the Main Display window. If the Visible Range checkbox is not selected, the default range will be used.</li>
   <li class="propertylistitem"><strong>Marker -</strong> Defines an end point symbol and text as well as its color with
-      these fields when using Nominal Time in the <strong>Times to Use</strong> option of the <strong>Times</strong> tab. If you select Track Times in the <strong>Times to Use</strong> option of the <strong>Times</strong> tab, then this point will represent the current location of the track as you play through the loop of data in the Main Display window. By default, &quot;Location&quot; is selected as the default
+      these fields when using Nominal Time in the <strong>Times to Use</strong> option of the <strong>Times</strong> tab. If the user selects Track Times in the <strong>Times to Use</strong> option of the <strong>Times</strong> tab, then this point will represent the current location of the track as the loop of data is played through in the Main Display window. By default, &quot;Location&quot; is selected as the default
       marker. Click the checkbox to the left of the &quot;Location&quot; box
       to enable the marker. Click on &quot;Location&quot; to choose another marker
       from the list of layouts. Click on the <img src="../data/choosers/images/DownDown.gif" width="9" height="10"> <strong>Edit</strong> icon
       to edit a current layout, or to create a new one. Use the slider or enter
       in a value and hit enter in the <strong>Scale</strong> option to set the
       scale of the marker. </li>
-  <li class="propertylistitem"><strong>Line Width -</strong> Allows you to set the width of the displayed trajectory line. You can change the line width by typing a value into the field and pressing Enter, or by clicking <img src="../ui/images/Slider16.gif" width="16" height="16"align=absmiddle> to use a slider.</li>
+  <li class="propertylistitem"><strong>Line Width -</strong> Allows for setting the width of the displayed trajectory line. The line width can be changed by typing a value into the field and pressing Enter, or by clicking <img src="../ui/images/Slider16.gif" width="16" height="16"align=absmiddle> to use a slider.</li>
 </ul>
 <p>The second tab controls the <strong>Times</strong> used for the display:</p>
 <div class="images"><img src="images/TrackControlGui2.gif" width="509" height="231" alt="Image 2: Times Tab of the Track Controls Dialog"><br>
 <span class="caption">Image 2: Times Tab of the Track Controls Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Times to Use -</strong> Represents if you are using nominal times or the track times from the data.
-      You can also choose to limit the times of data shown by checking <strong>enabled</strong>. There are two<strong> Times to Use</strong> options:</li>
+  <li class="propertylistitem"><strong>Times to Use -</strong> Represents if the user is using nominal times or the track times from the data.
+      The user can also choose to limit the times of data shown by checking <strong>enabled</strong>. There are two<strong> Times to Use</strong> options:</li>
       <ul class="propertylist">
       <li class="propertylistitem"><strong>Nominal Time -</strong> Displays the entire track of data in one time step, regardless of the number of observations along the track.</li>
       <li class="propertylistitem"><strong>Track Times -</strong> Displays the track as a series of time steps, from start to finish.</li>
@@ -71,16 +71,16 @@ buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories
       </p>
       <div class="images"><img src="images/TrackControlTimeSettings.gif" width="430" height="224" alt="Image 3: Time Settings Dialog"><br>
 <span class="caption">Image 3: Time Settings Dialog</span></div>
-    <p>This dialog allows you to define the time range to show of the track.
+    <p>This dialog allows for defining the time range to show of the track.
       The image above defines that the end time is the current animation time, and the start time is relative to the end time less 30 minutes. This means that the track or trajectory drawn in the Main Display window would include the current animation time of the loop, as well as the any data from 30 minutes prior this time.</p>
-    <p> This time setting is different that that used for the <a href="../ui/Animation.html#animationset"><strong>Define Animation Times</strong></a> tab of the Time Animation Widget since it has no influence on the number of time steps in the loop, but rather the amount of data shown at each time step. You can utilize the various options for <strong>Start Time</strong> and<strong> End Time</strong> to determine how much of the track or trajectory will be shown in each time step.</p>
+    <p> This time setting is different that that used for the <a href="../ui/Animation.html#animationset"><strong>Define Animation Times</strong></a> tab of the Time Animation Widget since it has no influence on the number of time steps in the loop, but rather the amount of data shown at each time step. The options for <strong>Start Time</strong> and<strong> End Time</strong> can be utilized to determine how much of the track or trajectory will be shown in each time step.</p>
     <ul class="propertylist">
-  <li class="propertylistitem"><strong>Use First Time from Data -</strong> Begins plotting the track or trajectory of your data from the first time step of the data.</li>
-  <li class="propertylistitem"><strong>From Animation Time -</strong> Begins plotting the track or trajectory of your data from the current timestep of the animation in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Relative to End Time -</strong> Begins plotting the track or trajectory of your data from a time relative to the <strong>End Time</strong> selected for your data. You must use an<strong> Offset</strong> with this to determine how far back (in terms of time) to be from the final time step. The <strong>Offset</strong> here should be a negative value assuming your loop is progressing forwards through time.</li>
-  <li class="propertylistitem"><strong>Fixed (Start Time) -</strong> Begins plotting the track or trajectory of your data from a fixed time that will not change as your loop progresses. This does not affect the<strong> End Time</strong> of your data.</li>
-  <li class="propertylistitem"><strong>Use Last Time from Data -</strong> Sets a time where your path or trajectory will end.</li>
-  <li class="propertylistitem"><strong>Relative to Start Time -</strong> Stops the plotting of the the track or trajectory at a time relative to the <strong>Start Time</strong> selected for your data. You must use an<strong> Offset</strong> with this to determine how far&nbsp;in the future the<strong> End Time</strong> will be from the <strong>Start Time</strong>. The <strong>Offset</strong> here should be a positive value assuming your loop is progressing forwards through time.</li>
+  <li class="propertylistitem"><strong>Use First Time from Data -</strong> Begins plotting the track or trajectory of the data from the first time step of the data.</li>
+  <li class="propertylistitem"><strong>From Animation Time -</strong> Begins plotting the track or trajectory of the data from the current timestep of the animation in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Relative to End Time -</strong> Begins plotting the track or trajectory of the data from a time relative to the <strong>End Time</strong> selected for the data. The user must use an<strong> Offset</strong> with this to determine how far back (in terms of time) to be from the final time step. The <strong>Offset</strong> here should be a negative value assuming the loop is progressing forwards through time.</li>
+  <li class="propertylistitem"><strong>Fixed (Start Time) -</strong> Begins plotting the track or trajectory of the data from a fixed time that will not change as the loop progresses. This does not affect the<strong> End Time</strong> of the data.</li>
+  <li class="propertylistitem"><strong>Use Last Time from Data -</strong> Sets a time where the path or trajectory will end.</li>
+  <li class="propertylistitem"><strong>Relative to Start Time -</strong> Stops the plotting of the the track or trajectory at a time relative to the <strong>Start Time</strong> selected for the data. The user must use an<strong> Offset</strong> with this to determine how far&nbsp;in the future the<strong> End Time</strong> will be from the <strong>Start Time</strong>. The <strong>Offset</strong> here should be a positive value assuming the loop is progressing forwards through time.</li>
   <li class="propertylistitem"><strong>Offset -</strong> Sets the temporal offset (either positive or negative) from the value selected for <strong>Start Time</strong> or <strong>End Time</strong>. This option can be used with any of the provided choices for <strong>Start Time</strong> and <strong>End Time</strong>. The default is&nbsp;0m, which means that the actual starting and ending times are what was selected.</li>
     </ul>
 </ul>
@@ -92,7 +92,7 @@ buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories
 </ul>
 <p>The <strong>View</strong> menu has this unique option:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show Flythrough - </strong>Opens the <a href="../ui/DisplayMenus.html#flythrough">Flythrough feature</a>  which allows you to interactively explore the display.</li>
+  <li class="propertylistitem"><strong>Show Flythrough - </strong>Opens the <a href="../ui/DisplayMenus.html#flythrough">Flythrough feature</a>  which allows for interactively exploring the display.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
