@@ -32,23 +32,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/CrossSec
 <xxxmeta xxxname="jhid" value="idv.controls.crosssectioncontrol">
 -->
 <div class="pagesubtitle">Overview</div>
-<p>The Vertical Cross Section Controls are used to adjust vertical cross section
-  displays. Vertical cross sections can be made in three types of displays: Contour, Color-Filled Contour, and  Color-Shaded. The control window has two tabs: <strong>Display</strong> and <strong>Settings</strong>. The endpoints of the cross section can be moved by clicking and dragging the endpoints in the Main Display window.</p>
+<p>The Vertical Cross Section Controls are used to adjust vertical cross section displays. Vertical cross sections can be made in three types of displays: Contour, Color-Filled Contour, and Color-Shaded. The control window has two tabs: <strong>Display</strong> and <strong>Settings</strong>. The endpoints of the cross section can be moved by clicking and dragging the endpoints in the Main Display window.</p>
 <p>The <strong>Display</strong> tab includes a duplicate of
   the display in the Main Display window:</p>
 <div class="images"><img  src="images/CrossSectionControlGui1.gif"  alt="Image 1: Display Tab of the Layer Controls Tab"><br>
 <span class="caption">Image 1: Display Tab of the Layer Controls Tab</span></div>
-
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><img src="../ui/images/Animation1.gif" alt="Time animation control" width="244" height="31"align=absmiddle> <strong> Time
-      Animation Control</strong> - Controls the looping of displays through time.
-        See more in <a href="../ui/Animation.html">Time
-      Animation Control</a>.</li>
+  <li class="propertylistitem"><img src="../ui/images/Animation1.gif" alt="Time animation control" width="244" height="31"align=absmiddle> <strong> Time Animation Control</strong> - Controls the looping of displays through time. See more in <a href="../ui/Animation.html">Time Animation Control</a>.</li>
   <li class="propertylistitem"><strong>Distance along transect -</strong> Depicts the horizontal distance the cross section covers in the Main Display window. This can be changed by left-clicking and dragging the end points of the cross section in the Main Display.</li>
-  <li class="propertylistitem"><b>Location</b> - Displays the location of the
-    end points of the cross section. The endpoints of the cross
-  section can be changed by entering in new values and hitting Enter.</li>
+  <li class="propertylistitem"><b>Location</b> - Displays the location of the end points of the cross section. The endpoints of the cross section can be changed by entering in new values and hitting Enter.</li>
 </ul>
 <p>The <strong>Settings</strong> tab shows the settings for this display control:</p>
 <div class="images"><img  src="images/CrossSectionControlGui2.gif"  alt="Image 2: Settings Tab of the Layer Controls Tab"><br>
@@ -57,21 +50,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/CrossSec
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Contour -</strong> Sets contour parameters. Click <img src="images/Change.gif" alt="Change button" width="77" height="26"align=absmiddle> next to Contour to open the <a href="misc/ContourDialog.html">Contour
     Properties Editor</a>. This control can be accessed with the Contour Cross Section and Color-Filled Contour Cross Section views.</li>
-  <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse
-      pointer is moved over the color bar, the value at a particular color is
-      shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows you to open the <a  href="../tools/ColorTableEditor.html">Color Table Editor</a>,
-    change the range, select other color tables, etc.</li>
+  <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows for opening the <a  href="../tools/ColorTableEditor.html">Color Table Editor</a>, changing the range, selecting other color tables, etc.</li>
   <li class="propertylistitem"><strong>Visible Range -</strong> Sets the range of data displayed when using the Color-Shaded Cross Section display type.</li>
-  <li class="propertylistitem"><strong>Selector Position -</strong> Sets
-    the position of the selector in the Main Display. This can be changed by using the slider or by typing a value into the field and hitting Enter.</li>
-  <li class="propertylistitem"><strong>Smoothing -</strong> Smooths the grid that can be used to smooth contour lines or flow fields
-    in the display. There are seven types of smoothing: None, 5-point, 9-point, Gaussian, Cressman, Circular, and Rectangular
-    weighted smoothers. The smoothing factor can be adjusted for all except the 5-point and 9-point smoothers. The higher the value, the smoother the grid. For the Cressman, Circular and Rectangular aperture smoothing types, the smoothing factor is the radius in grid spacing units.</li>
+  <li class="propertylistitem"><strong>Selector Position -</strong> Sets the position of the selector in the Main Display. This can be changed by using the slider or by typing a value into the field and hitting Enter.</li>
+  <li class="propertylistitem"><strong>Smoothing -</strong> Smooths the grid that can be used to smooth contour lines or flow fields in the display. There are seven types of smoothing: None, 5-point, 9-point, Gaussian, Cressman, Circular, and Rectangular weighted smoothers. The smoothing factor can be adjusted for all except the 5-point and 9-point smoothers. The higher the value, the smoother the grid. For the Cressman, Circular and Rectangular aperture smoothing types, the smoothing factor is the radius in grid spacing units.</li>
   <li class="propertylistitem"><strong>Vertical Scale -</strong> Changes the vertical axis range of the cross section.</li>
-  <li class="propertylistitem"><strong>Autoscale -</strong> Scales   the Y-Axis automatically to the data range along the selector
-  line in the display.</li>
-  <li class="propertylistitem"><strong>Visible Range -</strong> Determines what parts of the data is   actually        shown. Click the <img src="images/Change.gif" alt="Change button" width="77" height="26"align=absmiddle> button to set the    range of data shown. Once the checkbox is checked, the Visible Range   will be applied to the data in the cross section. This is an   option for the Color-Shaded Cross Section display type.</li>
-  <li class="propertylistitem"><strong>Shade Colors -</strong> Colors every pixel  to give a smooth gradation of color. The        alternative is coloring an area of pixels corresponding to a   single data        grid cell with one color.  This is an option for the Color-Shaded   Cross Section display type.</li>
+  <li class="propertylistitem"><strong>Autoscale -</strong> Scales the Y-Axis automatically to the data range along the selector line in the display.</li>
+  <li class="propertylistitem"><strong>Visible Range -</strong> Determines what parts of the data is   actually        shown. Click the <img src="images/Change.gif" alt="Change button" width="77" height="26"align=absmiddle> button to set the range of data shown. Once the checkbox is checked, the Visible Range will be applied to the data in the cross section. This is an option for the Color-Shaded Cross Section display type.</li>
+  <li class="propertylistitem"><strong>Shade Colors -</strong> Colors every pixel  to give a smooth gradation of color. The alternative is coloring an area of pixels corresponding to a single data grid cell with one color.  This is an option for the Color-Shaded Cross Section display type.</li>
 </ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are some options that are unique to this display.</p>
@@ -82,7 +68,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/CrossSec
 </ul>
 <p>The <strong>View</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Use Data Projection -</strong> Re-centers the display and resets the zoom level back to the display's   initial settings without changing any other preferences you have   modified.</li>
+  <li class="propertylistitem"><strong>Use Data Projection -</strong> Re-centers the display and resets the zoom level back to the display's   initial settings without changing any other preferences that have   been modified.</li>
   <li class="propertylistitem"><strong>Enable Adaptive Resolution (Under Development) -</strong> Turns <a href="../misc/AdaptiveResolution.html">adaptive resolution</a> on or off for the layer. This menu item is only available if adaptive resolution is enabled in the <a href="../tools/preferences/DisplayWindowPreferences.html#enableAdaptiveResolution">User Preferences</a>. Note that adaptive resolution is still under development.</li>
   <li class="propertylistitem"><strong>Cross Section -</strong> Allows for capturing an image or movie of the cross section display. Additional properties of the Cross Section, such as the background color, can also be set.</li>
 </ul>
