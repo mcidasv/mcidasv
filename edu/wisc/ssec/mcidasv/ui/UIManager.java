@@ -1843,17 +1843,15 @@ public class UIManager extends IdvUIManager implements ActionListener {
         super.initDone();
         // not super excited about how this works.
         // showBasicWindow(true);
-    
-        initDone = true;
-        SwingUtilities.invokeLater(() -> {
-            showDashboard();
-        });
         
         if (getStore().get(Constants.PREF_VERSION_CHECK, true)) {
             StateManager stateManager = (StateManager)getStateManager();
             stateManager.checkForNewerVersion(false);
             stateManager.checkForNotice(false);
         }
+        
+        initDone = true;
+        showDashboard();
     }
 
     /**
