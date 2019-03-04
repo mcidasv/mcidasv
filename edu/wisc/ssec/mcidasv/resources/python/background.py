@@ -1598,7 +1598,7 @@ class _Display(_JavaProxy):
         if index >= 0:
             stepCount = self._JavaProxy__javaObject.getAnimation().getNumSteps()
             if (index >= 0) and (index < stepCount):
-                anim_index = "animation_index=\"%s\"" % index
+                anim_index = "animation_index=\'%s\'" % index
             elif (stepCount == 0) and (index != 0):
                 raise ValueError('Invalid index (%s). Note: this display has no time steps, so an index is not needed.' % index)
             elif (stepCount == 0) and (index == 0):
@@ -1618,10 +1618,10 @@ class _Display(_JavaProxy):
             xml = '%s\n<image file="%s" quality="%s" %s>%s</image>' % (XmlUtil.getHeader(), filename, quality, anim_index, islAsXml)
             
         if verbose:
-            print("writing image file='%s' quality='%s' display='#%s' animation_index='%s'" % (filename,
-                                                                                               quality,
-                                                                                               displayIndex,
-                                                                                               anim_index))
+            print("writing image file='%s' quality='%s' display='#%s' %s" % (filename,
+                                                                             quality,
+                                                                             displayIndex,
+                                                                             anim_index))
             
         islInterpreter.captureImage(islInterpreter.applyMacros(filename), islInterpreter.makeElement(xml))
         
