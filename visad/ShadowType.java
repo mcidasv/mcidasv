@@ -1,3 +1,4 @@
+
 //
 // ShadowType.java
 //
@@ -42,6 +43,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.ArrayList;
 
+import javax.swing.SwingUtilities;
 import javax.vecmath.Point3d;
 
 import visad.bom.annotations.ImageJ3D;
@@ -3273,16 +3275,25 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
               int x = screen[0][0];
               int y = screen[1][0];
               try {
-                Color c = new Color(Byte.toUnsignedInt(r),
-                                    Byte.toUnsignedInt(g),
-                                    Byte.toUnsignedInt(b),
-                                    Byte.toUnsignedInt(a));
-
+                Color c;
+                if (color_length == 3) {
+                  c = new Color(Byte.toUnsignedInt(r),
+                                Byte.toUnsignedInt(g),
+                                Byte.toUnsignedInt(b),
+                                255);
+                } else {
+                  c = new Color(Byte.toUnsignedInt(r),
+                                Byte.toUnsignedInt(g),
+                                Byte.toUnsignedInt(b),
+                                Byte.toUnsignedInt(a));
+                }
                 PlotText.centerString(g2, bounds, text_values[i], font, 0, c);
+//                System.err.println("even getting here?? color="+c+" alpha="+c.getAlpha()+" color_len="+color_length);
                 as[k] = PlotText.makeImageShape3D((DisplayImplJ3D) display, listImage, ImageJ3D.CENTER, x, y, bounds.width, bounds.height, 1, 2);
                 skipColorStuff = true;
               } catch (Exception eeee) {
-                eeee.printStackTrace();
+                System.err.println("Something went wrong! "+eeee);
+//                eeee.printStackTrace();
               }
             } else {
               as[k] = PlotText.render_font(text_values[i], font, start, base, up,
@@ -3838,9 +3849,7 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
     mode.setCacheAppearances(cacheAppearances > 0.5f);
     float mergeArrays = default_values[display
         .getDisplayScalarIndex(Display.MergeGeometries)];
-    System.out.println("UUUGGGH: mergeGeom: "+(mergeArrays > 0.5f));
     mode.setMergeGeometries(mergeArrays > 0.5f);
-//    mode.setMergeGeometries(false);
 
     float[][] flow1_values = new float[3][];
     float[][] flow2_values = new float[3][];
