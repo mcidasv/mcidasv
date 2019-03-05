@@ -1133,19 +1133,12 @@ public class PlotText extends Object {
   * characters in this string
   */
   public static VisADTriangleArray render_font(String str, Font font,
-         double[] start, double[] base, double[] up,
-         TextControl.Justification justification,
-         TextControl.Justification verticalJustification,
-         double characRotation, double scale, double[] offsets) {
-    return render_font(null, str, font, start, base, up, justification, verticalJustification, characRotation, scale, offsets);
-  }
-  public static VisADTriangleArray render_font(DisplayImpl display, String str, Font font,
                                                double[] start, double[] base, double[] up,
                                                TextControl.Justification justification,
                                                TextControl.Justification verticalJustification,
                                                double characRotation, double scale, double[] offsets) {
     VisADTriangleArray array = null;
-
+  
     // System.out.println("x, y, z = " + x + " " + y + " " + z);
     // System.out.println("center = " + center);
 
@@ -1163,83 +1156,66 @@ public class PlotText extends Object {
     start_off[0] = start[0] + offsets[0];
     start_off[1] = start[1] + offsets[1];
     start_off[2] = start[2] + offsets[2];
-
+  
     if (scale < 0.0) {
-      scale = 1.0; 
+      scale = 1.0;
     }
-
+  
     float fsize = font.getSize();
     float fsize_inv = (float)(scale / fsize);
     //float fsize_inv = (float)(1.0 / fsize);
   
-    AffineTransform at = null;
-    FontRenderContext frc = null;
-    if (display != null) {
-      Component dispComp = display.getComponent();
-      GraphicsConfiguration gc = dispComp.getGraphicsConfiguration();
-      
-//      Graphics2D g2 = (Graphics2D)dispComp.getGraphics();
-//      g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//      g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-//      frc = g2.getFontRenderContext();
-      System.out.println("g2d approach");
-    } else {
-      boolean isAntiAliased = true;
-      boolean usesFractionalMetrics = true;
-      frc = new FontRenderContext(at, isAntiAliased, usesFractionalMetrics);
-      System.out.println("non-g2d approach");
-    }
     // ??
     // Graphics2D g2 = null;
     // FontRenderContext frc = g2.getFontRenderContext();
     int str_len = str.length();
-//    AffineTransform at = null;
-//    boolean isAntiAliased = false;
-//    boolean usesFractionalMetrics = false;
-//    FontRenderContext frc =
-//      new FontRenderContext(at, isAntiAliased, usesFractionalMetrics);
+    AffineTransform at = null;
+    boolean isAntiAliased = false;
+    boolean usesFractionalMetrics = false;
+    FontRenderContext frc =
+        new FontRenderContext(at, isAntiAliased, usesFractionalMetrics);
     GlyphVector gv = font.createGlyphVector(frc, "M");
     float maxW = (float) (fsize_inv * gv.getGlyphMetrics(0).
-                          getBounds2D().getWidth());
-
+        getBounds2D().getWidth());
+  
     double flatness = 0.05; // ??
-
+  
     Vector big_vector = new Vector();
     int big_len = 1000;
     float[][] big_samples = new float[2][big_len];
     float[] seg = new float[6];
-
-
-
+  
+  
+  
     float x_offset = 0.0f;
     for (int str_index=0; str_index<str_len; str_index++) {
       char[] chars = {str.charAt(str_index)};
       gv = font.createGlyphVector(frc, chars);
-
+    
       int ng = gv.getNumGlyphs();
       if (ng == 0) continue;
       int path_count = 0;
       Vector samples_vector = new Vector();
-
+    
       // abcd - 1 February 2001
       // Get x increment from the fonts 'advance' property
       // float x_plus = (float) (fsize_inv * gv.getGlyphMetrics(0).getAdvance());
       //System.out.println(str_index + " " + chars[0] + " " + x_plus + " " + fsize_inv);
-
+    
       // Compute advance along baseline
       float angle = (float) Math.toRadians(-characRotation);
       float angle2 = (float) (angle + Math.PI/2.0);
       float x = (float) (fsize_inv * gv.getGlyphMetrics(0).getAdvance());
       float y = (float) (fsize_inv *
-                         (gv.getGlyphMetrics(0).getBounds2D().getHeight())
-                         + 0.2);
+          (gv.getGlyphMetrics(0).getBounds2D().getHeight())
+          + 0.2);
       float x_plus = (float) (x * Math.abs(Math.cos(angle)) +
-                              y * Math.abs(Math.cos(angle2)));
-
+          y * Math.abs(Math.cos(angle2)));
+    
       // Compute offset along baseline
       float y1 = (float) (fsize_inv *
-                          (gv.getGlyphMetrics(0).getBounds2D().getY() * -1)
-                          + 0.2);
+          (gv.getGlyphMetrics(0).getBounds2D().getY() * -1)
+          + 0.2);
       float cur_x_off = 0.0f;
       if (Math.cos(angle) < 0) {
         cur_x_off = (float) (x * Math.abs(Math.cos(angle)));
@@ -1252,15 +1228,15 @@ public class PlotText extends Object {
       }
       // Compute offset perpendicular to the baseline
       float w = (float) (fsize_inv * gv.getGlyphMetrics(0).getBounds2D().
-                         getWidth());
+          getWidth());
       float x_start = (float) (fsize_inv * gv.getGlyphMetrics(0).getBounds2D().
-                               getX());
+          getX());
       float space = (float) ((maxW - w)/2.0);
       float cur_y_off = (float) ((space - x_start) * Math.cos(angle2));
       //System.out.println("\n" + str_index + " " + chars[0] + " " + gv.getGlyphMetrics(0).getBounds2D() + " " + gv.getGlyphMetrics(0).getLSB() + " " + gv.getGlyphMetrics(0).getRSB());
       //System.out.println("\n" + str_index + " " + chars[0] + " w=" + w + " x_start=" + x_start + " space=" + space + " maxW=" + maxW);
       //System.out.println("\n" + str_index + " " + chars[0] + " " + "x=" + x + " y=" + y + " y1=" + y1 + " x_plus=" + x_plus + " cur_x_off=" + cur_x_off + " cur_y_off=" + cur_y_off);
-
+    
       for (int ig=0; ig<ng; ig++) {
         Shape sh = null;
         if (characRotation != 0.0) {
@@ -1272,7 +1248,7 @@ public class PlotText extends Object {
         else {
           sh = gv.getGlyphOutline(ig);
         }
-
+      
         // pi only has SEG_MOVETO, SEG_LINETO, and SEG_CLOSE point types
         PathIterator pi = sh.getPathIterator(at, flatness);
         int k = 0;
@@ -1325,9 +1301,9 @@ public class PlotText extends Object {
           k = 0;
           path_count++;
         }
-
+      
       } // end for (int ig=0; ig<ng; ig++)
-
+    
       if (path_count == 1) {
 // System.out.println("  char  " + chars[0]);
         big_vector.addElement(samples_vector.elementAt(0));
@@ -1342,7 +1318,7 @@ public class PlotText extends Object {
         try {
           if (path_count == 2 &&
               (!DelaunayCustom.inside(ss[0], ss[1][0][0], ss[1][1][0]) &&
-               !DelaunayCustom.inside(ss[1], ss[0][0][0], ss[0][1][0]))) {
+                  !DelaunayCustom.inside(ss[1], ss[0][0][0], ss[0][1][0]))) {
             // don't link for disconnected paths link "i"
 // System.out.println("  no link for  " + chars[0] + " " + path_count);
             for (int i=0; i<path_count; i++) {
@@ -1359,16 +1335,16 @@ public class PlotText extends Object {
         }
       }
       samples_vector.removeAllElements();
-
+    
       x_offset += x_plus;
     } // end for (int str_index=0; str_index<str_len; str_index++)
-
+  
     /*
      * abcd 5 February 2001
      * Figure out how far to the 'left' our text should start
      */
     // x_offset = center ? -0.5f * x_offset : 0.0f;
-
+  
     // Set default to LEFT
     if (justification == TextControl.Justification.CENTER) {
       x_offset = -0.5f * x_offset;
@@ -1392,7 +1368,7 @@ public class PlotText extends Object {
     } else { // BOTTOM (or LEFT or RIGHT)
       y_offset = 0.0f;
     }
-
+  
     int n = big_vector.size();
     VisADTriangleArray[] arrays = new VisADTriangleArray[n];
     for (int i=0; i<n; i++) {
@@ -1413,16 +1389,16 @@ public class PlotText extends Object {
         for (int tj=0; tj<3; tj++) {
           int j3 = j9 + 3 * tj;
           coordinates[j3 + 0] = (float)
-            (start_off[0] +  base[0] * (samples[0][tris[j][tj]] + x_offset) +
-             up[0] * (samples[1][tris[j][tj]] + y_offset));
+              (start_off[0] +  base[0] * (samples[0][tris[j][tj]] + x_offset) +
+                  up[0] * (samples[1][tris[j][tj]] + y_offset));
           coordinates[j3 + 1] = (float)
-            (start_off[1] +
-             base[1] * (samples[0][tris[j][tj]] + x_offset) +
-             up[1] * (samples[1][tris[j][tj]] + y_offset));
+              (start_off[1] +
+                  base[1] * (samples[0][tris[j][tj]] + x_offset) +
+                  up[1] * (samples[1][tris[j][tj]] + y_offset));
           coordinates[j3 + 2] = (float)
-            (start_off[2] +
-             base[2] * (samples[0][tris[j][tj]] + x_offset) +
-             up[2] * (samples[1][tris[j][tj]] + y_offset));
+              (start_off[2] +
+                  base[2] * (samples[0][tris[j][tj]] + x_offset) +
+                  up[2] * (samples[1][tris[j][tj]] + y_offset));
         }
       }
       float[] normals = new float[9 * m];
@@ -1438,7 +1414,7 @@ public class PlotText extends Object {
       arrays[i].normals = normals;
       // System.out.println("array[" + i + "] has " + m + " tris");
     } // end for (int i=0; i<n; i++)
-
+  
     array = new VisADTriangleArray();
     try {
       VisADGeometryArray.merge(arrays, array);
