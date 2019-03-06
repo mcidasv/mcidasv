@@ -1168,6 +1168,8 @@ public class DataTree extends DataSourceHolder {
         //Now select any initial nodes we  might
         if (initialSelectedChoices != null) {
             selectChoices(initialSelectedChoices, true);
+        } else if (selectedChoices != null) {
+            selectChoices(selectedChoices, true);
         }
 
         GuiUtils.expandPathsAfterChange(tree, paths, treeRoot);
@@ -1352,5 +1354,11 @@ public class DataTree extends DataSourceHolder {
      */
     public void setShowingDescriptions(boolean value) {
         showingDescriptions = value;
+        if (selectedChoices != null) {
+            selectedChoices.clear();
+            selectedChoices = null;
+        }
+        selectedChoices = getSelectedDataChoices();
     }
+    private List<DataChoice> selectedChoices = null;
 }
