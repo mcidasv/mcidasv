@@ -2260,7 +2260,8 @@ public class AddeImageDataSelection {
             JButton activeViewButton = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
             activeViewButton.addActionListener(new UseActiveDisplayRegion(this, vmManager));
             activeViewButton.setToolTipText("Use region from active display.");
-            JButton resetButton = new JButton("RESET");
+            JButton resetButton = new JButton("Reset");
+            resetButton.setToolTipText("Resets selected region to the default");
             try {
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
                 Rectangle2D r = acs.getDefaultMapArea();
