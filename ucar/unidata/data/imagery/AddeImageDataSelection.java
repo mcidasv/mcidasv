@@ -2317,8 +2317,8 @@ public class AddeImageDataSelection {
 
             JToolBar navToolBar = display.getNavigatedPanel().getNavToolBar();
             navToolBar.add(activeViewButton, 0);
+            navToolBar.add(Box.createHorizontalStrut(3));
             navToolBar.add(resetButton);
-            navToolBar.add(Box.createHorizontalGlue());
 
             // TJJ Mar 2019 - not showing checkbox in region tab any more, this is
             // turned on and off in the Display section of User Preferences
