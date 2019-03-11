@@ -1701,86 +1701,143 @@ public class NavigatedPanel extends JPanel implements MouseListener,
         addMapChange();
         drawG();
     }
+    
+    // a direct copy of BAMutil.setActionProperties,
+    // however this method allows use of icons in auxdata
+    private void setActionMappings(AbstractAction act,
+                                   String iconPath,
+                                   String actionName,
+                                   boolean isToggle,
+                                   int mnemonic,
+                                   int accel) {
+        if (iconPath != null) {
+            act.putValue(
+                Action.SMALL_ICON,
+                GuiUtils.getScaledImageIcon(iconPath, getClass(), true));
 
+        }
+        act.putValue(Action.SHORT_DESCRIPTION, actionName);
+        act.putValue(Action.LONG_DESCRIPTION, actionName);
+        act.putValue(BAMutil.TOGGLE, isToggle);
+        act.putValue(BAMutil.MNEMONIC, mnemonic);
+        act.putValue(BAMutil.ACCEL, accel);
+    }
+    
     /**
      * Make the default actions
      */
     private void makeActions() {
         // add buttons/actions
         zoomIn = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 doZoomIn();
             }
         };
-        BAMutil.setActionProperties(zoomIn, "ZoomIn16", "Zoom In", false,
-                                    'I', KeyEvent.VK_ADD);
+        setActionMappings(zoomIn,
+                          "/auxdata/ui/icons/magnifier_zoom_in.png",
+                          "Zoom In",
+                          false,
+                          'I',
+                          KeyEvent.VK_ADD);
 
         zoomOut = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 doZoomOut();
             }
         };
-        BAMutil.setActionProperties(zoomOut, "ZoomOut16", "Zoom Out", false,
-                                    'O', KeyEvent.VK_SUBTRACT);
+        setActionMappings(zoomOut,
+                          "/auxdata/ui/icons/magnifier_zoom_out.png",
+                          "Zoom Out",
+                          false,
+                          'O',
+                          KeyEvent.VK_SUBTRACT);
 
         zoomBack = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 undoMapChange();
             }
         };
-        BAMutil.setActionProperties(zoomBack, "Undo16", "Previous map area",
-                                    false, 'P', KeyEvent.VK_BACK_SPACE);
+        setActionMappings(zoomBack,
+                          "/auxdata/ui/icons/arrow_undo.png",
+                          "Previous map area",
+                          false,
+                          'P',
+                          KeyEvent.VK_BACK_SPACE);
         // disabled at the outset as there are no changes to undo
         zoomBack.setEnabled(false);
 
         zoomDefault = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 resetZoom();
             }
         };
-        BAMutil.setActionProperties(zoomDefault, "Home16", "Home map area",
-                                    false, 'H', KeyEvent.VK_HOME);
+        setActionMappings(zoomDefault,
+                          "/auxdata/ui/icons/house.png",
+                          "Home map area",
+                          false,
+                          'H',
+                          KeyEvent.VK_HOME);
 
         moveUp = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 doMoveUp(2);
             }
         };
-        BAMutil.setActionProperties(moveUp, "Up16", "Move view up", false,
-                                    'U', KeyEvent.VK_UP);
+        BAMutil.setActionProperties(moveUp,
+                                    "Up16",
+                                    "Move view up",
+                                    false,
+                                    'U',
+                                    KeyEvent.VK_UP);
 
         moveDown = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 doMoveDown(2);
             }
         };
-        BAMutil.setActionProperties(moveDown, "Down16", "Move view down",
-                                    false, 'D', KeyEvent.VK_DOWN);
+        BAMutil.setActionProperties(moveDown,
+                                    "Down16",
+                                    "Move view down",
+                                    false,
+                                    'D',
+                                    KeyEvent.VK_DOWN);
 
         moveLeft = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 doMoveLeft(2);
             }
         };
-        BAMutil.setActionProperties(moveLeft, "Left16", "Move view left",
-                                    false, 'L', KeyEvent.VK_LEFT);
+        BAMutil.setActionProperties(moveLeft,
+                                   "Left16",
+                                   "Move view left",
+                                   false,
+                                   'L',
+                                   KeyEvent.VK_LEFT);
 
         moveRight = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 doMoveRight(2);
             }
         };
-        BAMutil.setActionProperties(moveRight, "Right16", "Move view right",
-                                    false, 'R', KeyEvent.VK_RIGHT);
+        BAMutil.setActionProperties(moveRight,
+                                    "Right16",
+                                    "Move view right",
+                                    false,
+                                    'R',
+                                    KeyEvent.VK_RIGHT);
 
         setReferenceAction = new AbstractAction() {
-            public void actionPerformed(ActionEvent e) {
+            @Override public void actionPerformed(ActionEvent e) {
                 setReferenceMode();
                 drawG();
             }
         };
-        BAMutil.setActionProperties(setReferenceAction, "ReferencePoint",
-                                    "Set reference Point", true, 'P', 0);
+        BAMutil.setActionProperties(setReferenceAction,
+                                    "ReferencePoint",
+                                    "Set reference Point",
+                                    true,
+                                    'P',
+                                    0);
     }
 
 
