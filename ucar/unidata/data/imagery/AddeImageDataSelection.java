@@ -2319,7 +2319,11 @@ public class AddeImageDataSelection {
             navToolBar.add(activeViewButton, 0);
             navToolBar.add(resetButton);
             navToolBar.add(Box.createHorizontalGlue());
-            navToolBar.add(enableAdaptiveRezBox);
+
+            // TJJ Mar 2019 - not showing checkbox in region tab any more, this is
+            // turned on and off in the Display section of User Preferences
+
+            // navToolBar.add(enableAdaptiveRezBox);
 
             MasterPanel = new JPanel(new java.awt.BorderLayout());
             MasterPanel.add(labelsPanel, "North");
