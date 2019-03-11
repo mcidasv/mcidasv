@@ -2253,10 +2253,38 @@ public class AddeImageDataSelection {
 
             this.addeImageDataSelection = addeImageDataSelection;
             this.imagePreview           = createImagePreview(source);
+            AreaFile af = aAdapter.getAreaFile();
+            
             display = new NavigatedMapPanel(null, false, false,
                 imagePreview.getPreviewImage(),
-                aAdapter.getAreaFile());
-            AreaFile af = aAdapter.getAreaFile();
+                aAdapter.getAreaFile()) {
+                
+                protected NavigatedPanel doMakeMapPanel() {
+                    return new NavigatedPanel() {
+                        public void keyPressed(KeyEvent e) {
+                            if (getSelectRegionMode()) {
+                                if (GuiUtils.isDeleteEvent(e)) {
+                                    setSelectedRegion((ProjectionRect) null);
+                                    selectedRegionChanged();
+                                    repaint();
+                                } else if ((e.getKeyCode() == KeyEvent.VK_R) && e.isControlDown()) {
+                                    try {
+                                        AREACoordinateSystem acs = new AREACoordinateSystem(af);
+                                        Rectangle2D r = acs.getDefaultMapArea();
+                                        ProjectionRect rect = new ProjectionRect(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY());
+                                        setSelectedRegion(rect);
+                                        addMapChange();
+                                        drawG();
+                                    } catch (AreaFileException | VisADException ex) {
+                                        logger.error("Something went wrong trying to reset selection", ex);
+                                    }
+                                }
+                            }
+                        }
+                    };
+                }
+            };
+            
             JButton activeViewButton = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
             activeViewButton.addActionListener(new UseActiveDisplayRegion(this, vmManager));
             activeViewButton.setToolTipText("Use region from active display.");
