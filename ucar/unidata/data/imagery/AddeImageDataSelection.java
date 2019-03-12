@@ -2155,7 +2155,95 @@ public class AddeImageDataSelection {
         }
         return box;
     }
-
+    
+    /**
+     * Return the bounds of a given {@link AreaFile} represented as a 
+     * {@link ProjectionRect}.
+     * 
+     * <p>Used to create the {@literal "box"} around the preview image.</p>
+     * 
+     * @param af {@code AreaFile} whose bounds are needed. 
+     *           Cannot be {@code null}.
+     * 
+     * @return Either the bounds of {@code af} or {@code null} if there was a
+     *         problem.
+     */
+    public static ProjectionRect projectionRectFromAreaFile(AreaFile af) {
+        ProjectionRect result = null;
+        try {
+            AREACoordinateSystem acs = new AREACoordinateSystem(af);
+            Rectangle2D r = acs.getDefaultMapArea();
+            result = new ProjectionRect(r.getMinX(),
+                                        r.getMinY(),
+                                        r.getMaxX(),
+                                        r.getMaxY());
+        } catch (AreaFileException | VisADException ex) {
+            logger.error("Problem trying to create projection rectangle", ex);
+        }
+        return result;
+    }
+    
+    /**
+     * Creates an instance of {@link NavigatedMapPanel} that uses an 
+     * {@link InternalNavPanel}.
+     * 
+     * <p>This is done so that McIDAS-V can alter the logic of 
+     * {@link NavigatedPanel#keyPressed(KeyEvent)}.</p>
+     * 
+     * @param prev Preview of ADDE {@literal "image"}. Cannot be {@code null}.
+     * @param aa {@code AreaAdapter} that represents the {@link AreaFile} being
+     *           previewed. Cannot be {@code null}.
+     * 
+     * @return {@code NavigatedMapPanel} whose {@code doMakeMapPanel()} 
+     *         method is overridden to return an instance of 
+     *         {@code InternalNavPanel}.
+     */
+    private static NavigatedMapPanel createMapPanel(AddeImagePreview prev,
+                                                    AreaAdapter aa)
+    {
+        return new NavigatedMapPanel(null,
+                                     false,
+                                     false,
+                                     prev.getPreviewImage(),
+                                     aa.getAreaFile())
+        {
+            @Override protected NavigatedPanel doMakeMapPanel() {
+                return new InternalNavPanel(aa.getAreaFile());
+            }
+        };
+    }
+    
+    /**
+     * The entire purpose of this class is to override 
+     * {@link NavigatedPanel#keyPressed(KeyEvent)}.
+     * 
+     * <p>This is done so that the {@literal "CTRL+R"} keystroke will behave 
+     * the same as the {@literal "reset"} button in the {@code NavigatedPanel}.
+     * </p>
+     */
+    public static class InternalNavPanel extends NavigatedPanel {
+        private final AreaFile areaFile;
+        
+        public InternalNavPanel(AreaFile af) {
+            areaFile = af;
+        }
+        
+        @Override public void keyPressed(KeyEvent e) {
+            if (getSelectRegionMode()) {
+                if (GuiUtils.isDeleteEvent(e)) {
+                    setSelectedRegion((ProjectionRect) null);
+                    selectedRegionChanged();
+                    repaint();
+                } else if ((e.getKeyCode() == KeyEvent.VK_R) && e.isControlDown()) {
+                    ProjectionRect r = projectionRectFromAreaFile(areaFile);
+                    setSelectedRegion(r);
+                    addMapChange();
+                    drawG();
+                }
+            }
+        }
+    }
+    
     /**
      * Class description
      *
@@ -2247,43 +2335,16 @@ public class AddeImageDataSelection {
          * @throws VisADException _more_
          */
         public AddeImagePreviewPanel(
-                AddeImageDataSelection addeImageDataSelection, final VMManager vmManager)
-                throws IOException, ParseException, VisADException {
+            AddeImageDataSelection addeImageDataSelection, final VMManager vmManager)
+                throws IOException, VisADException 
+        {
             super("Region");
-
+            
             this.addeImageDataSelection = addeImageDataSelection;
             this.imagePreview           = createImagePreview(source);
             AreaFile af = aAdapter.getAreaFile();
             
-            display = new NavigatedMapPanel(null, false, false,
-                imagePreview.getPreviewImage(),
-                aAdapter.getAreaFile()) {
-                
-                protected NavigatedPanel doMakeMapPanel() {
-                    return new NavigatedPanel() {
-                        public void keyPressed(KeyEvent e) {
-                            if (getSelectRegionMode()) {
-                                if (GuiUtils.isDeleteEvent(e)) {
-                                    setSelectedRegion((ProjectionRect) null);
-                                    selectedRegionChanged();
-                                    repaint();
-                                } else if ((e.getKeyCode() == KeyEvent.VK_R) && e.isControlDown()) {
-                                    try {
-                                        AREACoordinateSystem acs = new AREACoordinateSystem(af);
-                                        Rectangle2D r = acs.getDefaultMapArea();
-                                        ProjectionRect rect = new ProjectionRect(r.getMinX(), r.getMinY(), r.getMaxX(), r.getMaxY());
-                                        setSelectedRegion(rect);
-                                        addMapChange();
-                                        drawG();
-                                    } catch (AreaFileException | VisADException ex) {
-                                        logger.error("Something went wrong trying to reset selection", ex);
-                                    }
-                                }
-                            }
-                        }
-                    };
-                }
-            };
+            display = createMapPanel(imagePreview, aAdapter);
             
             JButton activeViewButton = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
             activeViewButton.addActionListener(new UseActiveDisplayRegion(this, vmManager));
@@ -2306,13 +2367,13 @@ public class AddeImageDataSelection {
             } catch (AreaFileException e) {
                 logger.error("problem building default region selection", e);
             }
-
+            
             this.eMag  = dataSource.getEMag();
             this.lMag  = dataSource.getLMag();
             this.eMag0  = dataSource.getEMag();
             this.lMag0  = dataSource.getLMag();
             chkUseFull = new JCheckBox(DataSelection.PROP_USEDEFAULTAREA);
-
+            
             chkUseFull.setSelected(true);
             getRegionsList();
             JScrollPane jsp = new JScrollPane();
@@ -2322,7 +2383,7 @@ public class AddeImageDataSelection {
             labelsPanel = new JPanel();
             labelsPanel.setLayout(new BoxLayout(labelsPanel, 2));
 //            labelsPanel.add(getRegionsList());
-
+            
             enableAdaptiveRezBox = new JCheckBox("Adaptive Resolution (Under Development)", getIsProgressiveResolution());
             enableAdaptiveRezBox.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
             enableAdaptiveRezBox.addActionListener(new ActionListener() {
@@ -2372,6 +2433,8 @@ public class AddeImageDataSelection {
 //            logger.trace("default region box value='{}'", getRegionOptions());
         }
 
+
+        
         public boolean getAdaptiveResolution() {
             return enableAdaptiveRezBox.isSelected();
         }
