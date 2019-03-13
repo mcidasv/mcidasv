@@ -160,7 +160,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     private BufferedImage bImage = null;
 
     /** default background color */
-    private Color backColor = Color.white;
+    private Color backColor = Color.BLACK;
 
     /** status label */
     private JLabel statusLabel = null;
@@ -434,10 +434,24 @@ public class NavigatedPanel extends JPanel implements MouseListener,
 
     // accessor methods
 
-
-
-
-
+    /**
+     * Set the background color of the panel.
+     * 
+     * <p>Be aware that this method <i>does not</i> redraw anything. If this
+     * {@code NavigatedPanel} instance is associated with a 
+     * {@link NavigatedMapPanel}, consider {@link NavigatedMapPanel#redraw()}.
+     * </p>
+     * 
+     * @param c New background color. 
+     *          If {@code null}, will default to {@link Color#BLACK}.
+     */
+    public void setBackgroundColor(Color c) {
+        if (c != null) {
+            backColor = c;
+        } else {
+            backColor = Color.BLACK;
+        }
+    }
 
     /**
      * Get the background color of the NavigatedPanel.

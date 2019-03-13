@@ -29,6 +29,8 @@
 package ucar.unidata.data.imagery;
 
 
+import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
+
 import edu.wisc.ssec.mcidas.AREAnav;
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaFile;
@@ -2345,6 +2347,7 @@ public class AddeImageDataSelection {
             AreaFile af = aAdapter.getAreaFile();
             
             display = createMapPanel(imagePreview, aAdapter);
+            display.getNavigatedPanel().setBackgroundColor(getStaticMcv().getStore().get(ViewManager.PREF_BGCOLOR, Color.BLACK));
             
             JButton activeViewButton = new JButton(new ImageIcon(BAMutil.getImage("Airplane16")));
             activeViewButton.addActionListener(new UseActiveDisplayRegion(this, vmManager));
