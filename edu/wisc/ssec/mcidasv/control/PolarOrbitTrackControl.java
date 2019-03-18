@@ -49,6 +49,7 @@ import java.awt.event.ItemListener;
 import java.lang.Math;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -1635,4 +1636,19 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	return val;
     }
     
+    @Override public void showProperties() {
+    	Hashtable oldProps = new Hashtable(getDataInstance().getDataSelection().getProperties());
+//    	logger.trace("existing props: {}", oldProps);
+    	super.showProperties();
+//		logger.trace("new props: {}", getDataSelection().getProperties());
+    	PolarOrbitTrackDataSource ds = getDataSource();
+    	ds.setSelectionProps(getDataSelection().getProperties());
+    	if (!oldProps.equals(getDataSelection().getProperties())) {
+//			logger.trace("properties changed!");
+    		redrawAll();
+		}
+//    	else {
+//    		logger.trace("no properties changed!");
+//		}
+	}
 }

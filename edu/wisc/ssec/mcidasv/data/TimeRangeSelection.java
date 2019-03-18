@@ -35,8 +35,11 @@ import static javax.swing.LayoutStyle.ComponentPlacement.UNRELATED;
 
 import java.awt.Dimension;
 import java.rmi.RemoteException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 
 import javax.swing.GroupLayout;
 import javax.swing.JComponent;
@@ -66,10 +69,15 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
 
       private static final Logger logger = LoggerFactory.getLogger(TimeRangeSelection.class);
 
+      public static final String DEFAULT_BEGIN_TIME = "00:00:00";
+      public static final String DEFAUULT_END_TIME = "23:59:59";
+
       private JTextField beginTimeFld;
       private JTextField endTimeFld;
-      private String defaultBegTime = "00:00:00";
-      private String defaultEndTime = "23:59:59";
+      
+      private String selectedBeginTime = DEFAULT_BEGIN_TIME;
+      private String selectedEndTime = DEFAUULT_END_TIME;
+      
       private Date defaultDay = null;
 
       private JDateChooser begDay = null;
@@ -92,7 +100,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
               throws VisADException, RemoteException {
           super("Time Range");
       }
-
+      
     protected JComponent doMakeContents() {
 
         logger.debug("creating the TimeRangeSelection panel...");
@@ -102,9 +110,9 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         JLabel endTimeLab = new JLabel("      Time:");
         JLabel begDateLab = new JLabel("      Date:");
         JLabel endDateLab = new JLabel("      Date:");
-        beginTimeFld = new JTextField(defaultBegTime, 8);
+        beginTimeFld = new JTextField(selectedBeginTime, 8);
         beginTimeFld.setMaximumSize(new Dimension(80, 40));
-        endTimeFld = new JTextField(defaultEndTime, 8);
+        endTimeFld = new JTextField(selectedEndTime, 8);
         endTimeFld.setMaximumSize(new Dimension(80, 40));
         Calendar cal = Calendar.getInstance();
         defaultDay = cal.getTime();
@@ -380,7 +388,49 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         dataSelection.putProperty(PROP_ENDTIME, eTime.getDateTimeStr());
         dataSelection.putProperty(PROP_BTIME, begTimeStr);
         dataSelection.putProperty(PROP_ETIME, endTimeStr);
+    }
+    
+    /**
+     * Applies {@link DataSelection} properties to this instance.
+     * 
+     * @param props Properties from a {@code DataSelection}.
+     *              Cannot be {@code null}.
+     */
+    public void applyFromDataSelectionProperties(Hashtable props) {
+//        logger.trace("incoming properties: {}", props);
+        if (props.containsKey(PROP_BEGTIME)) {
+            selectedBeginTime = extractTime((String)props.get(PROP_BEGTIME));
+            if (beginTimeFld != null) {
+                beginTimeFld.setText(selectedBeginTime);
+            }
+        }
+        if (props.containsKey(PROP_ENDTIME)) {
+            selectedEndTime = extractTime((String)props.get(PROP_ENDTIME));
+            if (endTimeFld != null) {
+                endTimeFld.setText(selectedEndTime);
+            }
+//            logger.trace("selected: end time: {}", selectedEndTime);
+        }
+    }
+    
+    /**
+     * Extract time of day from a string resembling 
+     * {@literal "2019-03-18 13:59:59 UTC"}.
+     * 
+     * @param dateTime String to extract from. Cannot be {@code null}.
+     * 
+     * @return Time of day (UTC).
+     */
+    private static String extractTime(String dateTime) {
+        DateTimeFormatter parser =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
+    
+        DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("HH:mm:ss");
+    
+        ZonedDateTime zdt = parser.parse(dateTime, ZonedDateTime::from);
         
+        return formatter.format(zdt);
     }
     
 }

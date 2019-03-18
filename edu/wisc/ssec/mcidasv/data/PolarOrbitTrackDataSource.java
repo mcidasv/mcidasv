@@ -647,6 +647,9 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         idv.showWaitCursor();
         try {
             trs = new TimeRangeSelection(this);
+            if (selectionProps != null) {
+                trs.applyFromDataSelectionProperties(selectionProps);
+            }
             components.add(trs);
         } catch (Exception e) {
             logger.error("problem creating TimeRangeSelection e=" + e);
@@ -676,6 +679,10 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
     public boolean showPropertiesDialog(String initTabName, boolean modal) {
         boolean ret = super.showPropertiesDialog(initTabName, modal);
         return ret;
+    }
+    
+    public void setSelectionProps(Hashtable newProperties) {
+        selectionProps.putAll(newProperties);
     }
 
 }
