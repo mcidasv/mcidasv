@@ -72,19 +72,27 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
       public static final String DEFAULT_BEGIN_TIME = "00:00:00";
       public static final String DEFAUULT_END_TIME = "23:59:59";
 
+      private static Calendar cal = Calendar.getInstance();
+
+      public static final Date DEFAULT_BEGIN_DATE = cal.getTime();
+      public static final Date DEFAULT_END_DATE = cal.getTime();
+
       private JTextField beginTimeFld;
       private JTextField endTimeFld;
       
       private String selectedBeginTime = DEFAULT_BEGIN_TIME;
       private String selectedEndTime = DEFAUULT_END_TIME;
       
-      private Date defaultDay = null;
+      private Date selectedBeginDate = DEFAULT_BEGIN_DATE;
+      private Date selectedEndDate = DEFAULT_END_DATE;
 
       private JDateChooser begDay = null;
       private JDateChooser endDay = null;
 
       public static final String PROP_BEGTIME = "BeginTime";
       public static final String PROP_ENDTIME = "EndTime";
+      public static final String PROP_BEGDATE = "BeginDate";
+      public static final String PROP_ENDDATE = "EndDate";
       protected static final String PROP_BTIME = "BTime";
       protected static final String PROP_ETIME = "ETime";
       protected static final String PROP_YEAR = "Year";
@@ -114,11 +122,9 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         beginTimeFld.setMaximumSize(new Dimension(80, 40));
         endTimeFld = new JTextField(selectedEndTime, 8);
         endTimeFld.setMaximumSize(new Dimension(80, 40));
-        Calendar cal = Calendar.getInstance();
-        defaultDay = cal.getTime();
-        begDay = new JDateChooser(defaultDay);
+        begDay = new JDateChooser(selectedBeginDate);
         begDay.setMaximumSize(new Dimension(140, 20));
-        endDay = new JDateChooser(defaultDay);
+        endDay = new JDateChooser(selectedEndDate);
         endDay.setMaximumSize(new Dimension(140, 20));
         
         // make them listen to each other to maintain range validity (beg <= end) and vice versa
@@ -388,6 +394,8 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
         dataSelection.putProperty(PROP_ENDTIME, eTime.getDateTimeStr());
         dataSelection.putProperty(PROP_BTIME, begTimeStr);
         dataSelection.putProperty(PROP_ETIME, endTimeStr);
+        dataSelection.putProperty(PROP_BEGDATE, begDay.getDate());
+        dataSelection.putProperty(PROP_ENDDATE, endDay.getDate());
     }
     
     /**
@@ -396,8 +404,9 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
      * @param props Properties from a {@code DataSelection}.
      *              Cannot be {@code null}.
      */
-    public void applyFromDataSelectionProperties(Hashtable props) {
-//        logger.trace("incoming properties: {}", props);
+
+    public void applyFromDataSelectionProperties(Hashtable<String, Object> props) {
+
         if (props.containsKey(PROP_BEGTIME)) {
             selectedBeginTime = extractTime((String)props.get(PROP_BEGTIME));
             if (beginTimeFld != null) {
@@ -409,8 +418,20 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
             if (endTimeFld != null) {
                 endTimeFld.setText(selectedEndTime);
             }
-//            logger.trace("selected: end time: {}", selectedEndTime);
         }
+        if (props.containsKey(PROP_BEGDATE)) {
+            selectedBeginDate = ((Date) props.get(PROP_BEGDATE));
+            if (begDay != null) {
+                begDay.setDate(selectedBeginDate);
+            }
+        }
+        if (props.containsKey(PROP_ENDDATE)) {
+            selectedEndDate = ((Date) props.get(PROP_ENDDATE));
+            if (endDay != null) {
+                endDay.setDate(selectedEndDate);
+            }
+        }
+
     }
     
     /**
@@ -421,6 +442,7 @@ public class TimeRangeSelection extends DataSelectionComponent implements Consta
      * 
      * @return Time of day (UTC).
      */
+
     private static String extractTime(String dateTime) {
         DateTimeFormatter parser =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
