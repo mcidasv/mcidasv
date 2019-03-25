@@ -73,6 +73,8 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -963,7 +965,34 @@ public class DataTree extends DataSourceHolder {
     public void dataSourceChanged(DataSource source) {
         addDataSource(source);
     }
-
+    
+    /**
+     * Recursively sort the tree nodes associated with {@code root}.
+     * 
+     * @param root Root of the tree to sort. Cannot be {@code null}.
+     * 
+     * @return {@code root}, but sorted!
+     */
+    public static DefaultMutableTreeNode sortTree(DefaultMutableTreeNode root) {
+        for (int i = 0; i < root.getChildCount(); i++) {
+            DefaultMutableTreeNode node =
+                (DefaultMutableTreeNode)root.getChildAt(i);
+            String nt = node.getUserObject().toString();
+            for (int j = 0; j < i; j++) {
+                DefaultMutableTreeNode prevNode =
+                    (DefaultMutableTreeNode)root.getChildAt(j);
+                String np = prevNode.getUserObject().toString();
+                if (nt.compareToIgnoreCase(np) < 0) {
+                    root.insert(node, j);
+                    break;
+                }
+            }
+            if (node.getChildCount() > 0) {
+                node = sortTree(node);
+            }
+        }
+        return root;
+    }
 
     /**
      *  Add the given {@link ucar.unidata.data.DataSource} and
@@ -1018,15 +1047,6 @@ public class DataTree extends DataSourceHolder {
 
         List choices = new ArrayList();
         choices.addAll(dataSource.getDataChoices());
-        if (doSort) {
-            Collections.sort(choices, new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    String s1 = o1.toString().toLowerCase();
-                    String s2 = o2.toString().toLowerCase();
-                    return s1.compareTo(s2);
-                }
-            });
-        }
 
         List         nodesToExpand          = new ArrayList();
         List         initialSelectedChoices = null;
@@ -1137,8 +1157,13 @@ public class DataTree extends DataSourceHolder {
             parent.remove(dataSourceNode);
         }
 
-        GuiUtils.moveSubtreesToTop(parentNode);
-
+        if (doSort) {
+            sortTree(parentNode);
+        } else {
+            GuiUtils.moveSubtreesToTop(parentNode);
+        }
+        treeModel.reload(parentNode);
+        
         //For now rebuild the data object to tree node mapping
         //This is overkill
         rebuildMaps();
