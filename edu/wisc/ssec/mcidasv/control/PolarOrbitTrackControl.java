@@ -43,7 +43,9 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.lang.Math;
@@ -58,14 +60,18 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import name.gano.astro.AstroConst;
+
 import net.miginfocom.swing.MigLayout;
 
 import org.slf4j.Logger;
@@ -79,11 +85,13 @@ import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.Msg;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.visad.UtcDate;
 import ucar.visad.Util;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.TextDisplayable;
+
 import visad.Data;
 import visad.DisplayRealType;
 import visad.Gridded2DSet;
@@ -231,6 +239,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 	private static final String STATION_REM = "RemStation";
 	private static final String CUSTOM_ADD = "AddCustom";
 	private static final String ACTIVE_STATION = "ActiveStation";
+
+	// Used in showProperties override to help decide if we need to redraw
+	Hashtable<String, Object> oldProps = null;
 
     private Element root = null;
     
@@ -1636,19 +1647,49 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	return val;
     }
     
+    /* (non-Javadoc)
+     * @see ucar.unidata.idv.control.DisplayControlImpl#showProperties()
+     * We need this because the TimeSelection widget in preview window
+     * and properties window are two different objects we are trying to
+     * keep in sync, and only redraw the display when necessary.
+     */
+
     @Override public void showProperties() {
-    	Hashtable oldProps = new Hashtable(getDataInstance().getDataSelection().getProperties());
-//    	logger.trace("existing props: {}", oldProps);
-    	super.showProperties();
-//		logger.trace("new props: {}", getDataSelection().getProperties());
-    	PolarOrbitTrackDataSource ds = getDataSource();
-    	ds.setSelectionProps(getDataSelection().getProperties());
-    	if (!oldProps.equals(getDataSelection().getProperties())) {
-//			logger.trace("properties changed!");
-    		redrawAll();
-		}
-//    	else {
-//    		logger.trace("no properties changed!");
-//		}
+        oldProps = new Hashtable(getDataInstance().getDataSelection().getProperties());
+
+        JTabbedPane jtp = new JTabbedPane();
+        addPropertiesComponents(jtp);
+        final JDialog propertiesDialog = GuiUtils.createDialog("Properties -- " + getTitle(), true);
+        ActionListener listener = new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                String cmd = event.getActionCommand();
+                if (cmd.equals(GuiUtils.CMD_OK) || cmd.equals(GuiUtils.CMD_APPLY)) {
+                    if (! applyProperties()) {
+                        return;
+                    }
+                    PolarOrbitTrackDataSource ds = getDataSource();
+                    ds.setSelectionProps(getDataSelection().getProperties());
+                    if (! oldProps.equals(getDataSelection().getProperties())) {
+                        redrawAll();
+                        oldProps = getDataSelection().getProperties();
+                    }
+                }
+                if (cmd.equals(GuiUtils.CMD_OK) || cmd.equals(GuiUtils.CMD_CANCEL)) {
+                    propertiesDialog.dispose();
+                }
+            }
+        };
+        Window f = GuiUtils.getWindow(getContents());
+        JComponent buttons = GuiUtils.makeApplyOkCancelButtons(listener);
+        JComponent propContents = GuiUtils.inset(GuiUtils.centerBottom(jtp, buttons), 5);
+        Msg.translateTree(jtp, true);
+        propertiesDialog.getContentPane().add(propContents);
+        propertiesDialog.pack();
+        if (f != null) {
+            GuiUtils.showDialogNearSrc(f, propertiesDialog);
+        } else {
+            propertiesDialog.setVisible(true);
+        }
 	}
+
 }
