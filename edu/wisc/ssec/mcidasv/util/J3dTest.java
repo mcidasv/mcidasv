@@ -33,7 +33,6 @@ import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.vecmath.Point3d;
@@ -56,17 +55,7 @@ import javax.media.j3d.TransformGroup;
  * so no McIDAS-V stuff should be happening in here.</p>
  */
 public class J3dTest {
-    private final JFrame frame;
-    
     J3dTest() {
-        frame = init();
-    }
-    
-    private void show() {
-        frame.setVisible(true);
-    }
-    
-    private static JFrame init() {
         GraphicsConfiguration config =
             SimpleUniverse.getPreferredConfiguration();
         Canvas3D canvas = new Canvas3D(config);
@@ -93,19 +82,17 @@ public class J3dTest {
         
         univ.addBranchGraph(objRoot);
         
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(canvas, BorderLayout.CENTER);
         JFrame jFrame = new JFrame();
+        jFrame.setLayout(new BorderLayout());
         jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jFrame.setTitle("Java3D Test");
-        jFrame.getContentPane().add(panel, BorderLayout.CENTER);
+        jFrame.getContentPane().add(canvas, BorderLayout.CENTER);
         jFrame.setPreferredSize(new Dimension(250, 250));
         jFrame.pack();
-        return jFrame;
+        jFrame.setVisible(true);
     }
     
     public static void main(String... args) {
-        SwingUtilities.invokeLater(() -> new J3dTest().show());
+        SwingUtilities.invokeLater(J3dTest::new);
     }
 }
