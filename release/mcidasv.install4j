@@ -205,6 +205,8 @@
       </iconImageFiles>
     </launcher>
     <launcher name="windows-mcvexe" id="8610" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
+    <launcher name="j3dtest.bat" id="8851" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Java3D Test" externalFile="j3dtest.bat" />
+    <launcher name="j3dtest" id="8856" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Java3D Test" externalFile="j3dtest" />
   </launchers>
   <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
     <customCode>
