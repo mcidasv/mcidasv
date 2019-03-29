@@ -1956,6 +1956,4 @@ public abstract class ImageDataSource extends DataSourceImpl {
         imageTimes            = null;
         currentDirs           = null;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(ImageDataSource.class);
 }

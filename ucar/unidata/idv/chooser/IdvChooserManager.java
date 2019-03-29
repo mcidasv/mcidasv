@@ -864,7 +864,6 @@ public class IdvChooserManager extends IdvManager {
 
         return chooserContents;
     }
-    private static final Logger logger = LoggerFactory.getLogger(IdvChooserManager.class);
 
     /**
      * Make the chooser menu items
