@@ -44,6 +44,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.DirectDataChoice;
@@ -99,6 +101,9 @@ import edu.wisc.ssec.mcidasv.display.hydra.DragLine;
 import edu.wisc.ssec.mcidasv.display.hydra.MultiSpectralDisplay;
 
 public class ProfileAlongTrackControl extends DisplayControlImpl {
+  
+  private static final Logger logger =
+      LoggerFactory.getLogger(ProfileAlongTrackControl.class);
   
   private DisplayableData imageDisplay;
   private DisplayableData trackDisplay;
@@ -321,7 +326,7 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
         MyDragLine draggable = new MyDragLine(newDomain, domainType, rangeType, 100f, display, 
             "dragLine", MultiSpectralDisplay.makeColorMap(Color.GREEN), new float[] {0, 16});
     } catch (Exception e) {
-      e.printStackTrace();
+      logger.error("Problem creating drag line", e);
     }
 
     return master;
@@ -356,9 +361,8 @@ public class ProfileAlongTrackControl extends DisplayControlImpl {
       if (meshDisplay != null) meshDisplay.setVisible(on);
       if (textDisplay != null) textDisplay.setVisible(on);
       if (trackDisplay != null) trackDisplay.setVisible(on);
-    }
-    catch( Exception e) {
-      e.printStackTrace();
+    } catch( Exception e) {
+      logger.error("Problem changing display visibility", e);
     }
   }
 

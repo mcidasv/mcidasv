@@ -43,6 +43,9 @@ import java.util.regex.*;
 
 import javax.swing.filechooser.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  *  This holds a set of regular expression patterns that are used for file filters in a JFileChooser.
@@ -54,8 +57,10 @@ import javax.swing.filechooser.*;
 
 public class PatternFileFilter extends FileFilter implements java.io
     .FileFilter, java.io.FilenameFilter {
-
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(PatternFileFilter.class);
+    
     /**
      * Used for passing in a null object id
      */
@@ -274,8 +279,8 @@ public class PatternFileFilter extends FileFilter implements java.io
             }
             return false;
         } catch (Exception exc) {
-            //TODO - fix this       System.err.println ("Error matching:" + name);
-            //      exc.printStackTrace ();
+            String msg = String.format("Error matching '%s'", name);
+            logger.error(msg, exc);
             return false;
         }
     }

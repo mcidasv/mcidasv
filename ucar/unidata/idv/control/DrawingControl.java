@@ -32,6 +32,8 @@ package ucar.unidata.idv.control;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import org.python.util.PythonInterpreter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -135,7 +137,9 @@ import javax.swing.table.AbstractTableModel;
  */
 
 public class DrawingControl extends DisplayControlImpl {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(DrawingControl.class);
 
     /** xgrf xml attribute */
     public static final String ATTR_USETIMESINANIMATION =
@@ -524,7 +528,7 @@ public class DrawingControl extends DisplayControlImpl {
             try {
                 root = XmlUtil.getRoot(contents);
             } catch (Exception exc) {
-                exc.printStackTrace();
+                logger.error("Could not get root of XML document", exc);
             }
             if (root != null) {
                 processXml(root, true);

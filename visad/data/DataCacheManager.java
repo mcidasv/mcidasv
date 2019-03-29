@@ -43,6 +43,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This provides a global cache for primitive array data
  * You access it as a singleton via {@code DataCacheManager.getCacheManager()}.
@@ -75,7 +78,10 @@ import java.util.List;
  * least recently used manner until the totalSize less than the max size.
  */
 public class DataCacheManager  implements Runnable {
-
+  
+  private static final Logger logger =
+      LoggerFactory.getLogger(DataCacheManager.class);
+  
   private double memoryPercentage = 0.25;
 
   /** the singleton */
@@ -137,8 +143,7 @@ public class DataCacheManager  implements Runnable {
         checkCache();
       }
     } catch(Exception exc) {
-      System.err.println ("Error in DataCacheManager:");
-      exc.printStackTrace();
+      logger.error("Error in DataCacheManager", exc);
     }
     running =false;
   }

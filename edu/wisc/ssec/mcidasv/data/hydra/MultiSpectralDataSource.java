@@ -193,10 +193,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
         		  reader = new NetCDFFile(filename);
         	  }
           }
-        }
-        catch (Exception e) {
-        	e.printStackTrace();
-        	logger.error("Cannot create NetCDF reader for file: " + filename);
+        } catch (Exception e) {
+            logger.error("Cannot create NetCDF reader for file: " + filename, e);
         }
                                                                                                                                                      
         Hashtable<String, String[]> properties = new Hashtable<>();
@@ -884,9 +882,8 @@ public class MultiSpectralDataSource extends HydraDataSource {
             adapterMap.put(choice.getName(), adapter);
             addDataChoice(choice);
           }
-        }
-        catch(Exception e) {
-          e.printStackTrace();
+        } catch(Exception e) {
+          logger.error("Problem making data choices", e);
         }
     }
 
@@ -981,7 +978,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
       try {
         data = msd.getImage(subset);
       } catch (Exception e) {
-        e.printStackTrace();
+        logger.error("Problem getting data", e);
       }
       return data;
     }
@@ -1078,8 +1075,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
               }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("getData exception e=" + e);
+            logger.error("Problem getting data", e);
         }
         return data;
     }
@@ -1118,7 +1114,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
         try {
           components.add(new ImageChannelSelection(new PreviewSelection(dataChoice, previewImage, null), new ChannelSelection(dataChoice)));
         } catch (Exception e) {
-          e.printStackTrace();
+          logger.error("Problem creating ImageChannelSelection", e);
         }
       }
       else {
@@ -1127,16 +1123,14 @@ public class MultiSpectralDataSource extends HydraDataSource {
             previewSelection = new PreviewSelection(dataChoice, previewImage, null);
             components.add(previewSelection);
           } catch (Exception e) {
-            System.out.println("Can't make PreviewSelection: "+e);
-            e.printStackTrace();
+            logger.error("Can't make PreviewSelection", e);
           }
         }
         if (hasChannelSelect) {
           try {
             components.add(new ChannelSelection(dataChoice));
-          } 
-          catch (Exception e) {
-            e.printStackTrace();
+          } catch (Exception e) {
+            logger.error("Problem creating ChannelSelection", e);
           }
         }
       }
@@ -1164,7 +1158,7 @@ public class MultiSpectralDataSource extends HydraDataSource {
          try {
            mp = new LambertAEA(corners);
          } catch (Exception e) {
-           System.out.println(" getDataProjection"+e);
+           logger.error("Problem creating LambertAEA", e);
          }
          return mp;
       }
@@ -1524,7 +1518,9 @@ public class MultiSpectralDataSource extends HydraDataSource {
 
 
 class ChannelSelection extends DataSelectionComponent {
-
+  
+  private static final Logger logger = LoggerFactory.getLogger(ChannelSelection.class);
+  
   DataChoice dataChoice;
   MultiSpectralDisplay display;
 
@@ -1558,7 +1554,7 @@ class ChannelSelection extends DataSelectionComponent {
         dataSelection.putProperty(Constants.PROP_CHAN, display.getWaveNumber());
         dataSelection.putProperty(SpectrumAdapter.channelIndex_name, display.getChannelIndex());
       } catch (Exception e) {
-        e.printStackTrace();
+        logger.error("Problem applying changes to dataselection", e);
       }
   }
 }

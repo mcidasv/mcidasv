@@ -73,7 +73,8 @@ import java.rmi.RemoteException;
  */
 public class CachedFlatField extends FlatField {
 
-    private static final Logger logger = LoggerFactory.getLogger(CachedFlatField.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(CachedFlatField.class);
 
     /** the id for this instance */
     private Object cacheId;
@@ -323,7 +324,7 @@ public class CachedFlatField extends FlatField {
             ccf.initCache(newValues);
             return ccf;
         } catch(Exception exc) {
-            exc.printStackTrace();
+            logger.error("Error cloning CachedFlatField", exc);
             throw new RuntimeException(exc);
         }
     }

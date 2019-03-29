@@ -32,6 +32,8 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.FlatField;
 import visad.FunctionType;
 import visad.RealTupleType;
@@ -40,6 +42,10 @@ import visad.SetType;
 import visad.VisADException;
 
 public class TrackAdapter extends MultiDimensionAdapter {
+   
+   private static final Logger logger =
+       LoggerFactory.getLogger(TrackAdapter.class);
+   
    RealTupleType domainType;
    ArrayAdapter rngAdapter;
    TrackDomain trackDomain;
@@ -74,7 +80,7 @@ public class TrackAdapter extends MultiDimensionAdapter {
 
          return field;
      } catch (Exception e) {
-       e.printStackTrace();
+       logger.error("Problem getting data", e);
        return null;
      }
    }

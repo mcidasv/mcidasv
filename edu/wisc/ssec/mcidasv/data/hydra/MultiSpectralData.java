@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.CoordinateSystem;
 import visad.FlatField;
 import visad.FunctionType;
@@ -53,7 +55,9 @@ import visad.SetType;
 import visad.VisADException;
 
 public class MultiSpectralData extends MultiDimensionAdapter {
-
+  
+  private static final Logger logger = LoggerFactory.getLogger(MultiSpectralData.class);
+  
   SwathAdapter swathAdapter = null;
   SpectrumAdapter spectrumAdapter = null;
   CoordinateSystem cs = null;
@@ -94,10 +98,8 @@ public class MultiSpectralData extends MultiDimensionAdapter {
       }
       try {
         setInitialWavenumber(getWavenumberFromChannelIndex(0));
-      } 
-      catch (Exception e) {
-        e.printStackTrace();
-        System.out.println("could not initialize initial wavenumber");
+      } catch (Exception e) {
+        logger.error("could not initialize initial wavenumber", e);
       }
     }
 

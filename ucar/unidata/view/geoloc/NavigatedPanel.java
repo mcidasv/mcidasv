@@ -104,7 +104,8 @@ import javax.swing.*;
 public class NavigatedPanel extends JPanel implements MouseListener,
         MouseMotionListener, KeyListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(NavigatedPanel.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(NavigatedPanel.class);
 
     /** _more_ */
     private static Color disabledColor = new Color(230, 230, 230);
@@ -1558,11 +1559,8 @@ public class NavigatedPanel extends JPanel implements MouseListener,
                 } else {
                     e.rejectDrop();
                 }
-            } catch (IOException io) {
-                io.printStackTrace();
-                e.rejectDrop();
-            } catch (UnsupportedFlavorException ufe) {
-                ufe.printStackTrace();
+            } catch (IOException | UnsupportedFlavorException ufe) {
+                logger.error("Error handling drop event", ufe);
                 e.rejectDrop();
             }
         }

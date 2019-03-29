@@ -85,6 +85,8 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4d;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.AxisScale;
 import visad.ColorAlphaControl;
 import visad.ColorControl;
@@ -137,7 +139,10 @@ public abstract class DisplayRendererJ3D
   extends DisplayRenderer
   implements RendererSourceListener
 {
-
+  
+  private static final Logger logger =
+      LoggerFactory.getLogger(DisplayRendererJ3D.class);
+  
   /**
    * Set the name of a <code>SceneGraphObject</code>.
    * If <code>SceneGraphObject</code> does not have a <code>setName</code>
@@ -339,10 +344,8 @@ public abstract class DisplayRendererJ3D
           }
           try {
               proj.setMatrix(matrix);
-          } catch (RemoteException e) { 
-              e.printStackTrace();
-          } catch (VisADException e) { 
-              e.printStackTrace();
+          } catch (VisADException | RemoteException e) {
+            logger.error("Problem changing projection matrix", e);
           }
           //Make sure the notify has not been called. There is the possbility that the above renderOffScreenBuffer call
           //gets completed before we get to this wait, resulting in a starvation lockup here because the canvas already 
@@ -354,11 +357,11 @@ public abstract class DisplayRendererJ3D
               waitingOnImageCapture = false;
           } 
         }
-      } catch(InterruptedException e) {
+      } catch (InterruptedException e) {
         // note notify generates a normal return from wait rather
         // than an Exception - control doesn't normally come here
 //        canvas.setDoubleBufferEnable(true); //- just in case
-        e.printStackTrace();
+        logger.error("Thread interrupted", e);
       }
       if(image==null) {
           image = canvas.captureImage;
@@ -819,12 +822,8 @@ public abstract class DisplayRendererJ3D
       params = new Object[] {new Integer(plane), vect};
       modelClipSetPlane.invoke(modelClip, params);
       modelClipEnables[plane] = enable;
-    }
-    catch (IllegalAccessException e) {
-      e.printStackTrace();
-    }
-    catch (InvocationTargetException e) {
-      e.printStackTrace();
+    } catch (InvocationTargetException | IllegalAccessException e) {
+      logger.error("Problem setting clip", e);
     }
   }
 
@@ -837,12 +836,8 @@ public abstract class DisplayRendererJ3D
           modelClipSetEnable.invoke(modelClip, params);
         }
       }
-    }
-    catch (IllegalAccessException e) {
-      e.printStackTrace();
-    }
-    catch (InvocationTargetException e) {
-      e.printStackTrace();
+    } catch (InvocationTargetException | IllegalAccessException e) {
+      logger.error("Problem disabling clip", e);
     }
   }
 
@@ -855,12 +850,8 @@ public abstract class DisplayRendererJ3D
           modelClipSetEnable.invoke(modelClip, params);
         }
       }
-    }
-    catch (IllegalAccessException e) {
-      e.printStackTrace();
-    }
-    catch (InvocationTargetException e) {
-      e.printStackTrace();
+    } catch (InvocationTargetException | IllegalAccessException e) {
+      logger.error("Problem enabling clip", e);
     }
   }
 

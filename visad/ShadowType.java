@@ -46,6 +46,8 @@ import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 import javax.vecmath.Point3d;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.bom.annotations.ImageJ3D;
 import visad.bom.annotations.ScreenAnnotatorUtils;
 import visad.data.DataCacheManager;
@@ -63,7 +65,10 @@ import com.jogamp.opengl.util.awt.TextRenderer;
  * <P>
  */
 public abstract class ShadowType extends Object implements java.io.Serializable {
-
+  
+  private static final Logger logger =
+      LoggerFactory.getLogger(ShadowType.class);
+  
   /** possible values for LevelOfDifficulty */
   public static final int NOTHING_MAPPED = 6;
   public static final int SIMPLE_TUPLE = 5;
@@ -3292,8 +3297,7 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
                 as[k] = PlotText.makeImageShape3D((DisplayImplJ3D) display, listImage, ImageJ3D.CENTER, x, y, bounds.width, bounds.height, 1, 2);
                 skipColorStuff = true;
               } catch (Exception eeee) {
-                System.err.println("Something went wrong! "+eeee);
-//                eeee.printStackTrace();
+                logger.error("Could not use new font rendering code", eeee);
               }
             } else {
               as[k] = PlotText.render_font(text_values[i], font, start, base, up,

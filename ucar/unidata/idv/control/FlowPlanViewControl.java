@@ -292,10 +292,8 @@ public class FlowPlanViewControl extends PlanViewControl implements FlowDisplayC
             // table unit label gets updated properly also, for inq 1925.
             getColorScaleInfo().setUnit(getColorUnit());
             applyColorScaleInfo();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (VisADException e) {
-			e.printStackTrace();
+		} catch (VisADException | RemoteException e) {
+			logger.error("Problem changing color unit", e);
 		}
 	}
 

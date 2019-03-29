@@ -39,6 +39,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
 
@@ -53,7 +55,10 @@ import ucar.nc2.NetcdfFile;
  */
 
 public abstract class JPSSUtilities {
-   
+	
+	private static final Logger logger =
+		LoggerFactory.getLogger(JPSSUtilities.class);
+	
 	public static final String JPSS_FIELD_SEPARATOR = "_";
 	public static final int NASA_CREATION_DATE_INDEX = 28;
 	public static final int NOAA_CREATION_DATE_INDEX = 35;
@@ -421,7 +426,7 @@ public abstract class JPSSUtilities {
 					}
 					ncfile.close();
 				} catch (IOException ioe) {
-					ioe.printStackTrace();
+            		logger.error("problem reading from attribute", ioe);
 				}
             }
         }

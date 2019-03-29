@@ -184,7 +184,8 @@ import edu.wisc.ssec.mcidasv.util.MemoryMonitor;
 // TODO: investigate moving similar unpersisting code to persistence manager.
 public class UIManager extends IdvUIManager implements ActionListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(UIManager.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(UIManager.class);
     
     /** Id of the "New Display Tab" menu item for the file menu */
     public static final String MENU_NEWDISPLAY_TAB = "file.new.display.tab";
@@ -753,7 +754,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
                 window.setVisible(true);
 
             } catch (Throwable e) {
-                e.printStackTrace();
+                logger.error("Problem making bundled displays", e);
             }
         }
 
@@ -1390,7 +1391,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Handle loading the given {@link ucar.unidata.idv.SavedBundle SavedBundle}.
+     * Handle loading the given {@link SavedBundle SavedBundle}.
      *
      * <p>Overridden in McIDAS-V to allow {@literal "default"} bundles to
      * show the same bundle loading dialog as a {@literal "favorite"} bundle.
@@ -1491,7 +1492,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
         try {
             resources.writeWritable();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem writing resources", e);
         }
     }
 
@@ -1746,10 +1747,9 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * functionality.
      * </p>
      *
-     * @param bundleType One of {@link ucar.unidata.idv.SavedBundle#TYPE_FAVORITE},
-     * {@link ucar.unidata.idv.SavedBundle#TYPE_DISPLAY},
-     * {@link ucar.unidata.idv.SavedBundle#TYPE_DATA} or
-     * {@link ucar.unidata.idv.SavedBundle#TYPE_SYSTEM}.
+     * @param bundleType One of {@link SavedBundle#TYPE_FAVORITE},
+     * {@link SavedBundle#TYPE_DISPLAY}, {@link SavedBundle#TYPE_DATA, or
+     * {@link SavedBundle#TYPE_SYSTEM}.
      * 
      * @return The root BundleTreeNode for the tree containing toolbar bundles.
      */
@@ -2311,7 +2311,7 @@ public class UIManager extends IdvUIManager implements ActionListener {
      * @param newDisplayMenu menu to populate.
      * @param inWindow Is the skinned display to be created in a window?
      * 
-     * @see ucar.unidata.idv.IdvResourceManager#RSC_SKIN
+     * @see IdvResourceManager#RSC_SKIN
      * 
      * @return Menu item populated with display skins
      */
@@ -3607,7 +3607,8 @@ public class UIManager extends IdvUIManager implements ActionListener {
     }
 
     /**
-     * Handle (polymorphically) the {@link ucar.unidata.idv.ui.DataControlDialog}.
+     * Handle (polymorphically) the {@link DataControlDialog}.
+     *
      * This dialog is used to either select a display control to create
      * or is used to set the timers used for a {@link ucar.unidata.data.DataSource}.
      *

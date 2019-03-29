@@ -29,6 +29,8 @@
 package ucar.unidata.idv.control;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.HodographViewManager;
 import ucar.unidata.idv.SoundingViewManager;
@@ -94,7 +96,10 @@ import javax.swing.border.BevelBorder;
  * @author IDV Development Team
  */
 public abstract class AerologicalSoundingControl extends DisplayControlImpl implements AerologicalDisplayConstants {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(AerologicalSoundingControl.class);
+    
     /** The view manager for this control */
     protected SoundingViewManager soundingView;
 
@@ -1715,7 +1720,7 @@ public abstract class AerologicalSoundingControl extends DisplayControlImpl impl
         } catch (Exception e) {
             LogUtil.printMessage("AerologicalDisplay.setWindLevels got "
                                  + e.toString());
-            e.printStackTrace();
+            logger.error("Problem changing wind levels", e);
         }
     }
 

@@ -210,20 +210,16 @@ public class SwathAdapter extends MultiDimensionAdapter {
           if ( !(reader instanceof GranuleAggregation) ) {
             setRangeProcessor(rangeProcessor);
           }
-        } 
-        catch (Exception e) {
-          System.out.println("RangeProcessor failed to create");
-          e.printStackTrace();
+        } catch (Exception e) {
+          logger.error("RangeProcessor failed to create", e);
         }
 
         try {
           navigation = SwathNavigation.createNavigation(this);
           RealTupleType domainTupType = new RealTupleType(domainRealTypes[0], domainRealTypes[1]);
           swathDomain = new Linear2DSet(domainTupType, 0, lengths[0]-1, lengths[0], 0, lengths[1]-1, lengths[1]);
-        }
-        catch (Exception e) {
-          System.out.println("Navigation failed to create");
-          e.printStackTrace();
+        } catch (Exception e) {
+          logger.error("Navigation failed to create", e);
         }
 
 		if (XTrackLen <= 256) {

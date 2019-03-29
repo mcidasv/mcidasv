@@ -30,6 +30,8 @@ package ucar.visad.quantities;
 
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.CommonUnit;
 
 import visad.DerivedUnit;
@@ -52,7 +54,10 @@ import visad.data.units.Parser;
  * @version $Id: CommonUnits.java,v 1.12 2005/05/13 18:35:38 jeffmc Exp $
  */
 public class CommonUnits {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(CommonUnits.class);
+    
     /**
      * The SI unit of pressure.
      */
@@ -163,15 +168,8 @@ public class CommonUnits {
             mile            = foot.scale(5280).clone("mi");
             millimeter      = SI.meter.scale(.001).clone("mm");
             percent         = Parser.parse("%").clone("%");
-
         } catch (Exception e) {
-            String reason = e.getMessage();
-
-            System.err.println("Couldn't initialize CommonUnits class"
-                               + ((reason == null)
-                                  ? ""
-                                  : ": " + reason));
-            e.printStackTrace();
+            logger.error("Couldn't initialize CommonUnits class", e);
         }
 
         PASCAL             = pascal;

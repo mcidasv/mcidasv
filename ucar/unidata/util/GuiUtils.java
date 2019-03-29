@@ -162,7 +162,10 @@ import javax.swing.tree.TreePath;
  * @author IDV development team
  */
 public class GuiUtils extends LayoutUtil {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(GuiUtils.class);
+    
     /** _more_ */
     private static String applicationTitle = "";
 
@@ -1254,7 +1257,6 @@ public class GuiUtils extends LayoutUtil {
             image = (Image) imageCache.get(key);
             if (image != null) {
                 return image;
-            } else {
             }
         }
 
@@ -2331,8 +2333,8 @@ public class GuiUtils extends LayoutUtil {
         }
         return dialog;
     }
-    
-    
+
+
     /**
      * Show a modal Ok/Cancel dialog.
      *
@@ -2404,7 +2406,6 @@ public class GuiUtils extends LayoutUtil {
                     ((JComboBox) o).getEditor().addActionListener(
                         actionListener);
                 }
-
             }
         }
         if (prefSize != null) {
@@ -4754,8 +4755,7 @@ public class GuiUtils extends LayoutUtil {
                 value = v.booleanValue();
             }
         } catch (Exception exc) {
-            System.err.println("Error in makeCeckbox:" + exc);
-            exc.printStackTrace();
+            logger.error("Error in makeCheckbox", exc);
         }
 
 
@@ -4783,8 +4783,7 @@ public class GuiUtils extends LayoutUtil {
                                     arg }));
                     }
                 } catch (Exception exc) {
-                    System.err.println("Error in makeCheckbox:" + exc);
-                    exc.printStackTrace();
+                    logger.error("Error in makeCheckbox", exc);
                 }
             }
         };
@@ -4826,9 +4825,7 @@ public class GuiUtils extends LayoutUtil {
                                              new Object[] {
                                                  new Integer(theIndex) });
                         } catch (Exception exc) {
-                            System.err.println("Error in makeCheckbox:"
-                                    + exc);
-                            exc.printStackTrace();
+                            logger.error("Error in makeCheckbox", exc);
                         }
                     }
                 };
@@ -5178,8 +5175,7 @@ public class GuiUtils extends LayoutUtil {
                     theMethod.invoke(listener,
                                      new Object[] { box.getSelectedItem() });
                 } catch (Exception exc) {
-                    System.err.println("Error invoking method" + exc);
-                    exc.printStackTrace();
+                    logger.error("Error invoking method", exc);
                 }
             }
         });
@@ -5288,8 +5284,7 @@ public class GuiUtils extends LayoutUtil {
                         theMethod.invoke(listener,
                                          new Object[] { new Integer(value) });
                     } catch (Exception exc) {
-                        System.err.println("Error invoking method" + exc);
-                        exc.printStackTrace();
+                        logger.error("Error invoking method", exc);
                     }
                 }
             }
@@ -5965,7 +5960,7 @@ public class GuiUtils extends LayoutUtil {
         });
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(GuiUtils.class);
+
 
 
 

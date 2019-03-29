@@ -925,9 +925,10 @@ public class ImageGenerator extends IdvManager {
                 popProperties();
                 return true;
             } catch (Exception exc) {
-                exc.printStackTrace();
-                return error("Error running jython script:" + islFile + "\n"
-                             + exc);
+                String msg =
+                    String.format("Error running jython script: %s", islFile);
+                logger.error(msg, exc);
+                return error(msg + "\n" + exc);
             }
 
         }
@@ -957,9 +958,10 @@ public class ImageGenerator extends IdvManager {
             }
             root = XmlUtil.getRoot(is);
         } catch (Exception exc) {
-            exc.printStackTrace();
-            return error("Could not load script file:" + islFile + "\n"
-                         + exc);
+            String msg = String.format("Could not load script file: %s",
+                islFile);
+            logger.error(msg, exc);
+            return error(msg + "\n" + exc);
         }
         if (root == null) {
             return error("Could not load script file:" + islFile);
@@ -995,9 +997,9 @@ public class ImageGenerator extends IdvManager {
     private boolean handleError(Throwable exc) {
         if ( !(exc instanceof IllegalStateException)
                 && !(exc instanceof IllegalArgumentException)) {
-            exc.printStackTrace();
+            logger.error("An error occurred", exc);
         } else {
-            exc.printStackTrace();
+            logger.error("An error occurred", exc);
         }
         return error("An error occurred:" + exc);
     }
@@ -1126,8 +1128,7 @@ public class ImageGenerator extends IdvManager {
                 }
                 if (onerror.equals("ignore")) {}
                 else {
-                    System.err.println("Error occured");
-                    thr.printStackTrace();
+                    logger.error("Problem processing child nodes", thr);
                 }
             }
         }
@@ -3381,8 +3382,7 @@ public class ImageGenerator extends IdvManager {
         if ( !getIdv().getArgsManager().getIsOffScreen()) {
             LogUtil.logException(msg, exc);
         } else {
-            exc.printStackTrace();
-            System.err.println(msg);
+            logger.error("An error occurred", exc);
         }
         return false;
     }

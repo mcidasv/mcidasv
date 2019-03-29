@@ -1681,7 +1681,7 @@ public class TabbedAddeManager extends JFrame {
                 TabbedAddeManager frame = new TabbedAddeManager();
                 frame.setVisible(true);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Problem creating TabbedAddeManager", e);
             }
         });
     }

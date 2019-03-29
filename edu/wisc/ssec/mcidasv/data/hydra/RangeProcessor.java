@@ -39,7 +39,8 @@ import visad.util.Util;
 
 public class RangeProcessor {
 
-    private static final Logger logger = LoggerFactory.getLogger(RangeProcessor.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(RangeProcessor.class);
 
     static RangeProcessor createRangeProcessor(MultiDimensionReader reader,
             Map<String, Object> metadata) throws Exception {
@@ -254,7 +255,9 @@ public class RangeProcessor {
         try {
             arrayAttr = reader.getArrayAttribute(arrayName, attrName);
         } catch (Exception e) {
-            e.printStackTrace();
+            String msg = String.format("Problem getting array attribute. " +
+                "arrayName: '%s', attrName: '%s'", arrayName, attrName);
+            logger.error(msg, e);
         }
 
         if (arrayAttr != null) {

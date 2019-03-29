@@ -30,6 +30,8 @@
 package ucar.unidata.data.gis;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.visad.Util;
 
 import ucar.unidata.data.*;
@@ -61,7 +63,10 @@ import javax.swing.*;
  * @version $Revision: 1.14 $
  */
 public class GeotiffDataSource extends FilesDataSource {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(GeotiffDataSource.class);
+    
     /** the adapter */
     private GeotiffAdapter adapter;
 
@@ -150,7 +155,7 @@ public class GeotiffDataSource extends FilesDataSource {
                 adapter = new GeotiffAdapter(getSource());
             }
         } catch (Exception exc) {
-            exc.printStackTrace();
+            logger.error("Problem creating GeotiffAdapter", exc);
             setInError(true,
                        "Failed to open " + getSource() + " "
                        + exc.getMessage());
@@ -197,7 +202,7 @@ public class GeotiffDataSource extends FilesDataSource {
             }
 
         } catch (Exception exc) {
-            exc.printStackTrace();
+            logger.error("Problem making data choices", exc);
             setInError(true,
                        "Failed to make data choices " + getSource() + " "
                        + exc.getMessage());

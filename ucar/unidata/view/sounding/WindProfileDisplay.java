@@ -41,6 +41,8 @@ import java.util.*;
 
 import javax.swing.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.visad.Util;
 import ucar.visad.display.*;
 import ucar.visad.functiontypes.CartesianHorizontalWindOfGeopotentialAltitude;
@@ -60,7 +62,10 @@ import visad.java3d.*;
  * @version $Id: WindProfileDisplay.java,v 1.27 2005/05/13 18:33:41 jeffmc Exp $
  */
 public abstract class WindProfileDisplay extends DisplayMaster {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(WindProfileDisplay.class);
+    
     /**
      * The name of the geopotential altitude property.
      */
@@ -134,9 +139,10 @@ public abstract class WindProfileDisplay extends DisplayMaster {
                 new Real(GeopotentialAltitude.getRealType(), 16000,
                          DefaultUnitsDB.instance().get("gpm"));
         } catch (Exception e) {
-            System.err.print("Couldn't initialize class: ");
-            e.printStackTrace();
-            System.exit(1);
+            logger.error("Couldn't initialize class", e);
+            
+            // what!?
+            //System.exit(1);
         }
     }
 

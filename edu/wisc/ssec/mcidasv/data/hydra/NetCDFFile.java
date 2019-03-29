@@ -50,8 +50,7 @@ import org.jdom2.Element;
 
 
 public class NetCDFFile implements MultiDimensionReader {
-    
-    private static final Logger logger = LoggerFactory.getLogger(NetCDFFile.class);
+   private static final Logger logger = LoggerFactory.getLogger(NetCDFFile.class);
    private final Map<String, Variable> varMap = new HashMap<>();
    private final Map<String, String[]> varDimNames = new HashMap<>();
    private final Map<String, int[]> varDimLengths = new HashMap<>();
@@ -69,7 +68,7 @@ public class NetCDFFile implements MultiDimensionReader {
      try {
        doc = builder.build(url);
      } catch (Exception e) {
-       e.printStackTrace();
+       logger.error("Problem creating SAXBuilder", e);
      }
      Element root = doc.getRootElement();
 

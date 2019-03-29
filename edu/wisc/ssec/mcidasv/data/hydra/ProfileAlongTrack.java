@@ -29,6 +29,9 @@
 package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.rmi.RemoteException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.Set;
 import visad.Gridded1DSet;
 import visad.CoordinateSystem;
@@ -50,7 +53,10 @@ import visad.GriddedSet;
 
 
 public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(ProfileAlongTrack.class);
+    
       private FunctionType mathtype;
 
       int TrackLen;
@@ -189,10 +195,8 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
 
         try {
           rangeProcessor = RangeProcessor.createRangeProcessor(reader, metadata);
-        } 
-        catch (Exception e) {
-          System.out.println("RangeProcessor failed to create");
-          e.printStackTrace();
+        } catch (Exception e) {
+          logger.error("Failed to create RangeProcessor", e);
         }
 
         try {
@@ -204,9 +208,8 @@ public abstract class ProfileAlongTrack extends MultiDimensionAdapter {
           trackTimeType = makeTrackTimeType();
           trackLongitude = getTrackLongitude();
           trackLatitude = getTrackLatitude();
-        } 
-        catch (Exception e) {
-          System.out.println(e);
+        } catch (Exception e) {
+          logger.error("Problem with initializing", e);
         }
         
       }

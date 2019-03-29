@@ -40,6 +40,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.DataCategory;
 import ucar.unidata.data.DataChoice;
@@ -77,7 +79,10 @@ import edu.wisc.ssec.mcidasv.control.McIdasImageSequenceControl;
  * @version $Revision$
  */
 public class McIdasXDataSource extends DataSourceImpl  {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(McIdasXDataSource.class);
+    
     /** list of frames to load */
     private List frameNumbers = new ArrayList();
 
@@ -234,8 +239,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
     		try {
     			components.add(new ImagePreviewSelection(theImage));
     		} catch (Exception e) {
-    			System.out.println("Can't make preview image: "+e);
-    			e.printStackTrace();
+    			logger.error("Can't make preview image", e);
     		}
     	}
     	getDataContext().getIdv().showNormalCursor();
@@ -429,8 +433,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
     }
 
     /**
-     * Initialize the {@link ucar.unidata.data.DataCategory} objects that
-     * this data source uses.
+     * Initialize the {@link DataCategory} objects that this data source uses.
      */
     private void makeCategories() {
         twoDTimeSeriesCategories = DataCategory.parseCategories("MCIDASX;", false);
@@ -438,8 +441,7 @@ public class McIdasXDataSource extends DataSourceImpl  {
     }
 
     /**
-     * Return the list of {@link ucar.unidata.data.DataCategory} used for
-     * single time step data.
+     * Return the list of {@link DataCategory} used for single time step data.
      *
      * @return A list of categories.
      */
@@ -451,8 +453,8 @@ public class McIdasXDataSource extends DataSourceImpl  {
     }
 
     /**
-     * Return the list of {@link ucar.unidata.data.DataCategory} used for
-     * multiple time step data.
+     * Return the list of {@link DataCategory} used for multiple time step
+     * data.
      *
      * @return A list of categories.
      */
@@ -466,11 +468,12 @@ public class McIdasXDataSource extends DataSourceImpl  {
 
 
     /**
-     * Create the set of {@link ucar.unidata.data.DataChoice} that represent
-     * the data held by this data source.  We create one top-level
-     * {@link ucar.unidata.data.CompositeDataChoice} that represents
+     * Create the set of {@link DataChoice} that represent the data held by
+     * this data source.
+     *
+     * <p>We create one top-level {@link CompositeDataChoice} that represents
      * all of the image time steps. We create a set of children
-     * {@link ucar.unidata.data.DirectDataChoice}, one for each time step.
+     * {@link DirectDataChoice}, one for each time step.</p>
      */
     public void doMakeDataChoices() {
         if (this.frameList == null) return;

@@ -822,8 +822,7 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
                                     - fTime.getValue(CommonUnit.secondsSinceTheEpoch);
                     v = ((int) (diff / 60 / 60)) + "";
                 } catch (Exception exc) {
-                    System.err.println("Error:" + exc);
-                    exc.printStackTrace();
+                    logger.error("Problem applying forecast hour macro", exc);
                 }
             }
             return t.replace(MACRO_FHOUR2, v).replace(MACRO_FHOUR, v + "H");

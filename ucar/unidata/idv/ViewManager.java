@@ -2872,10 +2872,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
                 return true;
             }
-        } catch (VisADException ve) {
-            ve.printStackTrace();
-        } catch (RemoteException re) {}
-
+        } catch (VisADException | RemoteException e) {
+            logger.error("Problem setting displayable position", e);
+        }
         return false;
     }
 
@@ -6714,7 +6713,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     // if(!didone)
                     // didone = !GuiUtils.showOkCancelDialog(null,null,lbl,null);
                 } catch (Exception exc) {
-                    exc.printStackTrace();
+                    logger.error("Problem creating label", exc);
                 }
 
                 colorMenu.add(mi);

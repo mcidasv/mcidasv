@@ -30,6 +30,8 @@ package ucar.unidata.idv.control;
 
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.gis.maps.LatLonData;
 import ucar.unidata.gis.maps.LatLonLabelData;
@@ -107,7 +109,9 @@ import javax.swing.ScrollPaneConstants;
  * @version  $Revision: 1.95 $
  */
 public class MapDisplayControl extends DisplayControlImpl {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(MapDisplayControl.class);
 
     /** default map color */
     public static final Color DEFAULT_MAP_COLOR = new Color(0, 204, 0);
@@ -2444,7 +2448,7 @@ public class MapDisplayControl extends DisplayControlImpl {
                 }
             }
         } catch (Exception exc) {
-            exc.printStackTrace();
+            logger.error("Problem handling map state change", exc);
         }
         updatingOtherMapStates = false;
     }

@@ -44,9 +44,14 @@ import java.util.stream.Collectors;
 
 import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import edu.wisc.ssec.mcidasv.startupmanager.Platform;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OptionMaster {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(OptionMaster.class);
+    
     public final static String SET_PREFIX = "SET ";
     public final static String EMPTY_STRING = "";
     public final static String QUOTE_STRING = "\"";
@@ -470,7 +475,7 @@ public class OptionMaster {
             out.write(contents.toString());
             out.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Could not write to McIDAS-V startup prefs file", e);
         }
     }
 }

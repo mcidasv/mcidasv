@@ -29,6 +29,8 @@
 package ucar.unidata.idv;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.Misc;
@@ -67,7 +69,10 @@ import javax.swing.event.HyperlinkListener;
  * this problem and a link to the download page.
  */
 public class OldVersionCheck {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(OldVersionCheck.class);
+    
     /** THE URL containing the currently running version of the IDV */
     private static final String IDV_VERSION_URL =
         "http://www.unidata.ucar.edu/software/idv/docs/javadoc/index.html";
@@ -131,7 +136,7 @@ public class OldVersionCheck {
                         try {
                             desktop.browse(e.getURL().toURI());
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            logger.error("Problem opening URL", ex);
                         }
                     }
                 }

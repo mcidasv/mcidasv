@@ -53,7 +53,9 @@ import edu.wisc.ssec.mcidasv.data.hydra.JPSSUtilities;
 
 public class SuomiNPPFilter extends FileFilter {
 	
-	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPFilter.class);
+	private static final Logger logger =
+		LoggerFactory.getLogger(SuomiNPPFilter.class);
+	
 	private static final String PRODUCT_SEPARATOR = "-";
 	private static String PREV_DIRECTORY = null;
 	private static String DATA_DESCRIPTION = "JPSS Data";
@@ -189,13 +191,12 @@ public class SuomiNPPFilter extends FileFilter {
 	        			}
 	    			}
 	    		} catch (Exception e) {
-	    			logger.error("Exception during open file: " + fileNameAbsolute);
-	    			e.printStackTrace();
+	    			logger.error("Exception during open file: " + fileNameAbsolute, e);
 	    		} finally {
 	    			try {
 	    				if (ncfile != null) ncfile.close();
 	    			} catch (IOException ioe) {
-	    				ioe.printStackTrace();
+	    				logger.error("Problem closing ncfile", ioe);
 	    			}
 	    		}
     		}

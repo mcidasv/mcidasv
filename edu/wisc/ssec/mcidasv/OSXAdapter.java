@@ -86,8 +86,14 @@ package edu.wisc.ssec.mcidasv;
 
 import java.lang.reflect.*;
 
-public class OSXAdapter implements InvocationHandler {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class OSXAdapter implements InvocationHandler {
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(OSXAdapter.class);
+    
     protected Object targetObject;
     protected Method targetMethod;
     protected String proxySignature;
@@ -113,8 +119,7 @@ public class OSXAdapter implements InvocationHandler {
             Method enableAboutMethod = macOSXApplication.getClass().getDeclaredMethod("setEnabledAboutMenu", new Class[] { boolean.class });
             enableAboutMethod.invoke(macOSXApplication, new Object[] { Boolean.valueOf(enableAboutMenu) });
         } catch (Exception ex) {
-            System.err.println("OSXAdapter could not access the About Menu");
-            ex.printStackTrace();
+            logger.error("OSXAdapter could not access the About Menu", ex);
         }
     }
     
@@ -131,8 +136,7 @@ public class OSXAdapter implements InvocationHandler {
             Method enablePrefsMethod = macOSXApplication.getClass().getDeclaredMethod("setEnabledPreferencesMenu", new Class[] { boolean.class });
             enablePrefsMethod.invoke(macOSXApplication, new Object[] { Boolean.valueOf(enablePrefsMenu) });
         } catch (Exception ex) {
-            System.err.println("OSXAdapter could not access the About Menu");
-            ex.printStackTrace();
+            logger.error("OSXAdapter could not access the About Menu", ex);
         }
     }
     
@@ -150,7 +154,7 @@ public class OSXAdapter implements InvocationHandler {
                         String filename = (String) getFilenameMethod.invoke(appleEvent, (Object[])null);
                         this.targetMethod.invoke(this.targetObject, new Object[] { filename });
                     } catch (Exception ex) {
-                        
+                        logger.error("Error setting file handler", ex);
                     }
                 }
                 return true;
@@ -171,10 +175,10 @@ public class OSXAdapter implements InvocationHandler {
             Object osxAdapterProxy = Proxy.newProxyInstance(OSXAdapter.class.getClassLoader(), new Class[] { applicationListenerClass }, adapter);
             addListenerMethod.invoke(macOSXApplication, new Object[] { osxAdapterProxy });
         } catch (ClassNotFoundException cnfe) {
-            System.err.println("This version of Mac OS X does not support the Apple EAWT.  ApplicationEvent handling has been disabled (" + cnfe + ")");
+            logger.error("This version of Mac OS X does not support the " +
+                "Apple EAWT.  ApplicationEvent handling has been disabled", cnfe);
         } catch (Exception ex) {  // Likely a NoSuchMethodException or an IllegalAccessException loading/invoking eawt.Application methods
-            System.err.println("Mac OS X Adapter could not talk to EAWT:");
-            ex.printStackTrace();
+            logger.error("Mac OS X Adapter could not talk to EAWT", ex);
         }
     }
 
@@ -223,8 +227,8 @@ public class OSXAdapter implements InvocationHandler {
                 // If the target method returns a boolean, use that as a hint
                 setHandledMethod.invoke(event, new Object[] { Boolean.valueOf(handled) });
             } catch (Exception ex) {
-                System.err.println("OSXAdapter was unable to handle an ApplicationEvent: " + event);
-                ex.printStackTrace();
+                logger.error("OSXAdapter was unable to handle an " +
+                    "ApplicationEvent: " + event, ex);
             }
         }
     }

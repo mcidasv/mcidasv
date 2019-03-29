@@ -32,6 +32,8 @@
 package ucar.unidata.xml;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import org.w3c.dom.Element;
@@ -64,7 +66,10 @@ import java.util.*;
  */
 
 public class XmlObjectStore implements PersistentStore {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(XmlObjectStore.class);
+    
     /** The encoder we use to encode the store */
     private XmlEncoder encoder;
 
@@ -365,8 +370,7 @@ public class XmlObjectStore implements PersistentStore {
                     }
                 }
             } catch (Exception exc) {
-                System.err.println("Error reading resources" + exc);
-                exc.printStackTrace();
+                logger.error("Error reading resources", exc);
             }
         }
         return cnt;
@@ -788,12 +792,9 @@ public class XmlObjectStore implements PersistentStore {
                              encodedString);
             inNeedOfSaving = false;
         } catch (Exception exc) {
-            System.out.println("XmlObjectStore save failed writing to:"
-                               + resources.getWritable());
-            exc.printStackTrace();
-            return;
+            String msg = String.format("XmlObjectStore save failed writing to: %s", resources.getWritable());
+            logger.error(msg, exc);
         }
-
     }
 
 

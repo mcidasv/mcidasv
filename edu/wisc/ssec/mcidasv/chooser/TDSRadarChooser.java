@@ -404,10 +404,8 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
             doc = builder.build(radarServerURL);
         } catch (JDOMException e) {
             userMessage("Invalid catalog");
-            //e.printStackTrace();
         } catch (IOException e) {
             userMessage("Unable to open catalog");
-            //e.printStackTrace();
         }
 
         org.jdom2.Element rootElem    = doc.getRootElement();

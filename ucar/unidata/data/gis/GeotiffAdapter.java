@@ -957,9 +957,7 @@ public class GeotiffAdapter {
                 //new GeotiffAdapter(args[i]).getData();
 
             } catch (Exception exc) {
-                System.err.println("oops:" + args[i]);
-                exc.printStackTrace();
-                //                return;
+                logger.error("Problem creating GeotiffAdapter", exc);
             }
         }
     }

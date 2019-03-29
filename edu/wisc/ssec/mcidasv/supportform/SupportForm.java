@@ -50,6 +50,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ui.IdvUIManager;
@@ -69,6 +71,9 @@ import java.util.concurrent.Executors;
  * This class handles all the GUI elements of a McIDAS-V support request.
  */
 public class SupportForm extends JFrame {
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(SupportForm.class);
     
     public static final String PROP_SUPPORTREQ_BUNDLE = "mcv.supportreq.bundle";
     
@@ -616,16 +621,14 @@ public class SupportForm extends JFrame {
      * @param args Ignored.
      */
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new SupportForm(
-                        new IntegratedDataViewer().getStore(), 
-                        new SimpleStateCollector()
-                    ).setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        EventQueue.invokeLater(()  -> {
+            try {
+                new SupportForm(
+                    new IntegratedDataViewer().getStore(),
+                    new SimpleStateCollector()
+                ).setVisible(true);
+            } catch (Exception e) {
+                logger.error("Problem creating support form", e);
             }
         });
     }

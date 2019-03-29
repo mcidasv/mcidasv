@@ -51,6 +51,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -84,7 +86,10 @@ import edu.wisc.ssec.mcidasv.PersistenceManager;
  */
 
 public class McvComponentGroup extends IdvComponentGroup {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(McvComponentGroup.class);
+    
     /** Path to the "close tab" icon in the popup menu. */
     protected static final String ICO_CLOSE =
         "/edu/wisc/ssec/mcidasv/resources/icons/tabmenu/stop-loads16.png";
@@ -241,8 +246,6 @@ public class McvComponentGroup extends IdvComponentGroup {
         window.setUndecorated(hideTitleBar);
         super.initWith(node);
     }
-
-//    private static final Logger logger = LoggerFactory.getLogger(McvComponentGroup.class);
 
     /**
      * Create and return the GUI contents. Overridden so that McV can implement
@@ -433,25 +436,23 @@ public class McvComponentGroup extends IdvComponentGroup {
             return;
         }
 
-        Runnable updateGui = new Runnable() {
-            public void run() {
-                int selectedIndex = tabbedPane.getSelectedIndex();
+        Runnable updateGui = () -> {
+            int selectedIndex = tabbedPane.getSelectedIndex();
 
-                tabbedPane.setVisible(false);
-                tabbedPane.removeAll();
+            tabbedPane.setVisible(false);
+            tabbedPane.removeAll();
 
-                knownHolders = new ArrayList<>(currentHolders);
-                for (ComponentHolder holder : knownHolders) {
-                    tabbedPane.addTab(holder.getName(), holder.getContents());
-                }
-
-                if (tabRenamed) {
-                    tabbedPane.setSelectedIndex(selectedIndex);
-                }
-
-                tabbedPane.setVisible(true);
-                tabRenamed = false;
+            knownHolders = new ArrayList<>(currentHolders);
+            for (ComponentHolder holder : knownHolders) {
+                tabbedPane.addTab(holder.getName(), holder.getContents());
             }
+
+            if (tabRenamed) {
+                tabbedPane.setSelectedIndex(selectedIndex);
+            }
+
+            tabbedPane.setVisible(true);
+            tabRenamed = false;
         };
         
         if (SwingUtilities.isEventDispatchThread()) {
@@ -459,12 +460,8 @@ public class McvComponentGroup extends IdvComponentGroup {
         } else {
             try {
                 SwingUtilities.invokeAndWait(updateGui);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (InvocationTargetException | InterruptedException e) {
+                logger.error("Problem updating GUI", e);
             }
         }
     }

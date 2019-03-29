@@ -426,7 +426,7 @@ public class EnviInfo extends HeaderInfo {
             }
             br.close();
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            logger.error("Problem parsing header", ioe);
         }
     }
 }

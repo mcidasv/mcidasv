@@ -29,11 +29,17 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * 
  */
 public class RadianceToBTbyLUT extends RangeProcessor {
+   
+   private static final Logger logger =
+       LoggerFactory.getLogger(RadianceToBTbyLUT.class);
    
    LUTtransform lutCal;
    
@@ -63,9 +69,8 @@ public class RadianceToBTbyLUT extends RangeProcessor {
       
       try {
          brightnessTemps = lutCal.radianceToBrightnessTemp(radiances);
-      }
-      catch (Exception e) {
-         e.printStackTrace();
+      } catch (Exception e) {
+         logger.error("Problem processing range", e);
       }
       
       return brightnessTemps;

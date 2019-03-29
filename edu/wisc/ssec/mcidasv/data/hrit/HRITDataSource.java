@@ -6,22 +6,22 @@
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
  * http://www.ssec.wisc.edu/mcidas
- * 
+ *
  * All Rights Reserved
- * 
+ *
  * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
- * 
+ * some McIDAS-V source code is based on IDV and VisAD source code.
+ *
  * McIDAS-V is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * McIDAS-V is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
@@ -43,6 +43,8 @@ import javax.swing.JPanel;
 
 import edu.wisc.ssec.mcidas.Calibrator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.Data;
 import visad.VisADException;
 import visad.data.hrit.HRITAdapter;
@@ -58,32 +60,35 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.WrapperException;
 
 public class HRITDataSource extends DataSourceImpl  {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(HRITDataSource.class);
+    
     /** List of sources files */
     protected List sources;
-
+    
     public static String request;
-
+    
     /** List of sources files */
     protected List adapters;
     
     private List categories;
-
+    
     /** for unpersistence */
     protected String oldSourceFromBundles;
     
     private static final String DATA_DESCRIPTION = "HRIT Data";
     
     private static int counter = 1;
-
+    
     /** children choices */
     private List myDataChoices = new ArrayList();
-
+    
     /**
      * Default constructor
      */
     public HRITDataSource() {}
-
+    
     /**
      * Construct a new HRIT data source.
      * @param  descriptor  descriptor for this {@code DataSource}
@@ -93,8 +98,8 @@ public class HRITDataSource extends DataSourceImpl  {
      * @throws VisADException problem creating data
      */
     public HRITDataSource(DataSourceDescriptor descriptor,
-                                 String fileName, Hashtable properties)
-            throws VisADException {
+                          String fileName, Hashtable properties)
+        throws VisADException {
         this(descriptor, Misc.newList(fileName), properties);
     }
     
@@ -107,32 +112,32 @@ public class HRITDataSource extends DataSourceImpl  {
      * @throws VisADException problem creating data
      */
     public HRITDataSource(DataSourceDescriptor descriptor,
-                                 List newSources, Hashtable properties)
-            throws VisADException {
-    	
+                          List newSources, Hashtable properties)
+        throws VisADException {
+        
         this(descriptor, newSources, DATA_DESCRIPTION, properties);
         boolean looksOk = false;
         String dataCategoryStr = "HRIT Data";
         if ((newSources != null) && (newSources.size() >= 1)) {
-        	String fileNameFullPath = (String) newSources.get(0);
-        	if ((fileNameFullPath != null) && (fileNameFullPath.length() >= 58)) {
-        		if ((fileNameFullPath.contains("MSG2")) && (fileNameFullPath.endsWith("-__"))) {
-        			String channelStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 13, fileNameFullPath.lastIndexOf("MSG2") + 19);
-        			String timeStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 33, fileNameFullPath.lastIndexOf("MSG2") + 45);
-        			dataCategoryStr = "MSG2 " + channelStr + " " + timeStr;
-        			looksOk = true;
-        		}
-        	}
+            String fileNameFullPath = (String) newSources.get(0);
+            if ((fileNameFullPath != null) && (fileNameFullPath.length() >= 58)) {
+                if ((fileNameFullPath.contains("MSG2")) && (fileNameFullPath.endsWith("-__"))) {
+                    String channelStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 13, fileNameFullPath.lastIndexOf("MSG2") + 19);
+                    String timeStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 33, fileNameFullPath.lastIndexOf("MSG2") + 45);
+                    dataCategoryStr = "MSG2 " + channelStr + " " + timeStr;
+                    looksOk = true;
+                }
+            }
         }
         if (looksOk) {
-        	DataCategory.createCategory(dataCategoryStr);
-        	categories = DataCategory.parseCategories(dataCategoryStr + ";IMAGE");
+            DataCategory.createCategory(dataCategoryStr);
+            categories = DataCategory.parseCategories(dataCategoryStr + ";IMAGE");
         } else {
-        	throw new VisADException("Not a decompressed MSG HRIT file");
+            throw new VisADException("Not a decompressed MSG HRIT file");
         }
-    }    
-
-	/**
+    }
+    
+    /**
      * Create a HRITDataSource
      *
      * @param descriptor The datasource descriptor
@@ -143,15 +148,15 @@ public class HRITDataSource extends DataSourceImpl  {
      * @throws VisADException  couldn't create the data
      */
     public HRITDataSource(DataSourceDescriptor descriptor, List newSources,
-                           String description, Hashtable properties) 
-            throws VisADException {
-
+                          String description, Hashtable properties)
+        throws VisADException {
+        
         super(descriptor, "HRIT" + counter, "HRIT" + counter, properties);
         counter++;
         sources = newSources;
     }
-
-
+    
+    
     /**
      * Can this data source save its data to local disk
      *
@@ -160,11 +165,11 @@ public class HRITDataSource extends DataSourceImpl  {
     public boolean canSaveDataToLocalDisk() {
         return !isFileBased() && (getProperty(PROP_SERVICE_HTTP) != null);
     }
-
-
+    
+    
     /**
      * Are we getting data from a file or from server
-     * 
+     *
      * @return is the data from files
      */
     protected boolean isFileBased() {
@@ -173,7 +178,7 @@ public class HRITDataSource extends DataSourceImpl  {
         }
         return (new File(sources.get(0).toString())).exists();
     }
-
+    
     /**
      * This is called when the CacheManager detects the need ot clear memory.
      * It is intended to be overwritten by derived classes that are holding cached
@@ -188,28 +193,26 @@ public class HRITDataSource extends DataSourceImpl  {
      * Make and insert the {@link DataChoice DataChoices} for this {@code DataSource}.
      */
     public void doMakeDataChoices() {
-    	DataChoice choice = null;
-    	
-    	for (int i = 0; i < sources.size(); i++) {
-    		String fileNameFullPath = (String) sources.get(i);
-        	if (fileNameFullPath.contains("MSG2")) {
-        		String channelStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 13, fileNameFullPath.lastIndexOf("MSG2") + 19);
-        		String timeStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 33, fileNameFullPath.lastIndexOf("MSG2") + 45);
-        		String segStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 27, fileNameFullPath.lastIndexOf("MSG2") + 29);
-        		try {
-        			choice = doMakeDataChoice(0, "MSG2 " + channelStr + " " + timeStr + " SEGMENT " + segStr);
-        		} 
-        		catch (Exception e) {
-        			e.printStackTrace();
-        			System.out.println("doMakeDataChoice failed");
-        		}
-
-        		if (choice != null) {
-        			addDataChoice(choice);
-        		}
-        	}
-    	}
-
+        DataChoice choice = null;
+        
+        for (int i = 0; i < sources.size(); i++) {
+            String fileNameFullPath = (String) sources.get(i);
+            if (fileNameFullPath.contains("MSG2")) {
+                String channelStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 13, fileNameFullPath.lastIndexOf("MSG2") + 19);
+                String timeStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 33, fileNameFullPath.lastIndexOf("MSG2") + 45);
+                String segStr = fileNameFullPath.substring(fileNameFullPath.lastIndexOf("MSG2") + 27, fileNameFullPath.lastIndexOf("MSG2") + 29);
+                try {
+                    choice = doMakeDataChoice(0, "MSG2 " + channelStr + " " + timeStr + " SEGMENT " + segStr);
+                } catch (Exception e) {
+                    logger.error("Problem creating dataChoice", e);
+                }
+                
+                if (choice != null) {
+                    addDataChoice(choice);
+                }
+            }
+        }
+        
     }
     
     private DataChoice doMakeDataChoice(int idx, String var) throws Exception {
@@ -239,7 +242,7 @@ public class HRITDataSource extends DataSourceImpl  {
         }
         return adapters;
     }
-
+    
     /**
      * Make the adapters for the given list of files
      *
@@ -250,8 +253,8 @@ public class HRITDataSource extends DataSourceImpl  {
     private void makeAdapters(List files) throws Exception {
         adapters = new ArrayList();
     }
-
-
+    
+    
     /**
      * Create the list of times associated with this DataSource.
      * @return list of times.
@@ -260,7 +263,7 @@ public class HRITDataSource extends DataSourceImpl  {
         List    times      = new ArrayList();
         return times;
     }
-
+    
     /**
      * Get the data for the given DataChoice and selection criteria.
      * @param dataChoice         DataChoice for selection
@@ -275,30 +278,31 @@ public class HRITDataSource extends DataSourceImpl  {
     protected Data getDataInner(DataChoice dataChoice, DataCategory category,
                                 DataSelection dataparams,
                                 Hashtable requestProperties)
-            throws VisADException, RemoteException {
-
+        throws VisADException, RemoteException {
+        
         // for now, hardcoded array of band center wave numbers, such that'
-    	// the array index is the band number
-    	String[] bandCWN = { 
-    			"N/A", "006", "008", "016", "039", "062", "073",
-    			"087", "097", "108", "120", "134", "___"
-    	};
+        // the array index is the band number
+        String[] bandCWN = {
+            "N/A", "006", "008", "016", "039", "062", "073",
+            "087", "097", "108", "120", "134", "___"
+        };
         
-    	// XXX TJJ need to determine this from data type and wavelength
-    	int bandNum = 1;
-    	// default to BRIT calibration, will check if user picked something else
-    	int calType = Calibrator.CAL_BRIT;
+        // XXX TJJ need to determine this from data type and wavelength
+        int bandNum = 1;
+        // default to BRIT calibration, will check if user picked something else
+        int calType = Calibrator.CAL_BRIT;
         
-    	String newRes = (String) dataparams.getProperty("magnification");
+        String newRes = (String) dataparams.getProperty("magnification");
         int magFactor = 1;
         if (newRes != null) {
-	        try {
-	        	magFactor = Integer.parseInt(newRes);
-	        } catch (NumberFormatException nfe) {
-	        	nfe.printStackTrace();
-	        }
+            try {
+                magFactor = Integer.parseInt(newRes);
+            } catch (NumberFormatException nfe) {
+                String msg = String.format("Could not parse '%s'", newRes);
+                logger.error(msg, nfe);
+            }
         }
-
+        
         // pull out source index 
         String idxStr = dataChoice.getName().substring(dataChoice.getName().length() - 2, dataChoice.getName().length());
         
@@ -308,124 +312,123 @@ public class HRITDataSource extends DataSourceImpl  {
         // initialize central wave number string
         String cwnStr = "006";
         for (int i = 0; i < sources.size(); i++) {
-        	String tmpStr = (String) sources.get(i);
-        	cwnStr = tmpStr.substring(tmpStr.lastIndexOf("MSG2") + 16, tmpStr.lastIndexOf("MSG2") + 19);
-        	String segStr = tmpStr.substring(tmpStr.lastIndexOf("MSG2") + 27, tmpStr.lastIndexOf("MSG2") + 29);
-        	if (segStr.equals(idxStr)) {
-        		files[0] = (String) sources.get(i);
-        	}
+            String tmpStr = (String) sources.get(i);
+            cwnStr = tmpStr.substring(tmpStr.lastIndexOf("MSG2") + 16, tmpStr.lastIndexOf("MSG2") + 19);
+            String segStr = tmpStr.substring(tmpStr.lastIndexOf("MSG2") + 27, tmpStr.lastIndexOf("MSG2") + 29);
+            if (segStr.equals(idxStr)) {
+                files[0] = (String) sources.get(i);
+            }
         }
         
         // match up central wave number with band number index
         for (int i = 0; i < bandCWN.length; i++) {
-        	if (bandCWN[i].equals(cwnStr)) {
-        		bandNum = i;
-        		break;
-        	}
+            if (bandCWN[i].equals(cwnStr)) {
+                bandNum = i;
+                break;
+            }
         }
         
         String newCal = (String) dataparams.getProperty("calibration");
         // do checks to only allow valid calibrations here
         if (newCal != null) {
-        	if ((bandNum >= 4) && (bandNum <= 11)) {
-        		if (newCal.equals("RAD")) {
-        			calType = Calibrator.CAL_RAD;
-        		}
-        		if (newCal.equals("TEMP")) {
-        			calType = Calibrator.CAL_TEMP;
-        		}
-        		if (newCal.equals("BRIT")) {
-        			calType = Calibrator.CAL_BRIT;
-        		}
-        	} else {
-        		if (newCal.equals("RAD")) {
-        			calType = Calibrator.CAL_RAD;
-        		}
-        		if (newCal.equals("ALB")) {
-        			calType = Calibrator.CAL_ALB;
-        		}
-        		if (newCal.equals("BRIT")) {
-        			calType = Calibrator.CAL_BRIT;
-        		}        		
-        	}
+            if ((bandNum >= 4) && (bandNum <= 11)) {
+                if (newCal.equals("RAD")) {
+                    calType = Calibrator.CAL_RAD;
+                }
+                if (newCal.equals("TEMP")) {
+                    calType = Calibrator.CAL_TEMP;
+                }
+                if (newCal.equals("BRIT")) {
+                    calType = Calibrator.CAL_BRIT;
+                }
+            } else {
+                if (newCal.equals("RAD")) {
+                    calType = Calibrator.CAL_RAD;
+                }
+                if (newCal.equals("ALB")) {
+                    calType = Calibrator.CAL_ALB;
+                }
+                if (newCal.equals("BRIT")) {
+                    calType = Calibrator.CAL_BRIT;
+                }
+            }
         }
-
-    	HRITAdapter ha;
-		try {
-			ha = new HRITAdapter(files, magFactor, calType, bandNum);
-			data = ha.getData();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return data;
+        
+        HRITAdapter ha;
+        try {
+            ha = new HRITAdapter(files, magFactor, calType, bandNum);
+            data = ha.getData();
+        } catch (IOException e) {
+            logger.error("Problem getting data", e);
+        }
+        
+        return data;
     }
-
+    
     protected void initDataSelectionComponents(
-    		List<DataSelectionComponent> components,
-    		final DataChoice dataChoice) {
-
-    	try {
-    		components.add(new ResolutionSelection(dataChoice));
-    	} 
-    	catch (Exception e) {
-    		e.printStackTrace();
-    	}
+        List<DataSelectionComponent> components,
+        final DataChoice dataChoice) {
+        
+        try {
+            components.add(new ResolutionSelection(dataChoice));
+        } catch (Exception e) {
+            logger.error("Problem creating new ResolutionSelection", e);
+        }
     }
-
-
+    
+    
     class ResolutionSelection extends DataSelectionComponent {
-
-    	DataChoice dataChoice;
-    	JPanel display;
-    	JComboBox jcbMag = null;
-    	JComboBox jcbCal = null;
-
-    	ResolutionSelection(DataChoice dataChoice) throws Exception {
-    		super("Magnification and Calibration");
-    		this.dataChoice = dataChoice;
-    		List names = dataChoice.getCurrentNames();
-    		display = new JPanel(new FlowLayout());
-    		String[] resStrings = { "1", "2", "4", "8", "16" };
-    		jcbMag = new JComboBox(resStrings);
-    		display.add(jcbMag);
-    		String[] irCalStrings  = { "BRIT", "RAD", "RAW", "TEMP" };
-    		String[] visCalStrings = { "BRIT", "RAD", "RAW", "ALB" };
-    		// XXX TJJ - we need a standard mechanism to make this determination
-    		// this is a temporary cheap hack: grab the last file name added and 
-    		// do a hardcoded string match.
-    		String sampleFileName = names.get(names.size() - 1).toString();
-    		// those below are considered "visible" bands, yes even IR_016!
-    		if ((sampleFileName.contains("VIS")) ||
-    			(sampleFileName.contains("HRV")) ||
-    			(sampleFileName.contains("IR_016"))
-    				) {
-    			jcbCal = new JComboBox(visCalStrings);
-    		} else {
-    			jcbCal = new JComboBox(irCalStrings);
-    		}
-    		display.add(jcbCal);
-    	}
-
-    	protected JComponent doMakeContents() {
-    		try {
-    			JPanel panel = new JPanel(new BorderLayout());
-    			panel.add("Center", display);
-    			return panel;
-    		}
-    		catch (Exception e) {
-    			System.out.println(e);
-    		}
-    		return null;
-    	}
-
-    	public void applyToDataSelection(DataSelection dataSelection) {
-    		try {
-    			dataSelection.putProperty("magnification", jcbMag.getSelectedItem());
-    			dataSelection.putProperty("calibration", jcbCal.getSelectedItem());
-    		} catch (Exception e) {
-    			e.printStackTrace();
-    		}
-    	}
+        
+        DataChoice dataChoice;
+        JPanel display;
+        JComboBox jcbMag = null;
+        JComboBox jcbCal = null;
+        
+        ResolutionSelection(DataChoice dataChoice) throws Exception {
+            super("Magnification and Calibration");
+            this.dataChoice = dataChoice;
+            List names = dataChoice.getCurrentNames();
+            display = new JPanel(new FlowLayout());
+            String[] resStrings = { "1", "2", "4", "8", "16" };
+            jcbMag = new JComboBox(resStrings);
+            display.add(jcbMag);
+            String[] irCalStrings  = { "BRIT", "RAD", "RAW", "TEMP" };
+            String[] visCalStrings = { "BRIT", "RAD", "RAW", "ALB" };
+            // XXX TJJ - we need a standard mechanism to make this determination
+            // this is a temporary cheap hack: grab the last file name added and
+            // do a hardcoded string match.
+            String sampleFileName = names.get(names.size() - 1).toString();
+            // those below are considered "visible" bands, yes even IR_016!
+            if ((sampleFileName.contains("VIS")) ||
+                (sampleFileName.contains("HRV")) ||
+                (sampleFileName.contains("IR_016"))
+            ) {
+                jcbCal = new JComboBox(visCalStrings);
+            } else {
+                jcbCal = new JComboBox(irCalStrings);
+            }
+            display.add(jcbCal);
+        }
+        
+        protected JComponent doMakeContents() {
+            try {
+                JPanel panel = new JPanel(new BorderLayout());
+                panel.add("Center", display);
+                return panel;
+            }
+            catch (Exception e) {
+                System.out.println(e);
+            }
+            return null;
+        }
+        
+        public void applyToDataSelection(DataSelection dataSelection) {
+            try {
+                dataSelection.putProperty("magnification", jcbMag.getSelectedItem());
+                dataSelection.putProperty("calibration", jcbCal.getSelectedItem());
+            } catch (Exception e) {
+                logger.error("Problem applying changes to data selection", e);
+            }
+        }
     }
 }

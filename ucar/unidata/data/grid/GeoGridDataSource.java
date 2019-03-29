@@ -66,6 +66,8 @@ import javax.swing.JTextArea;
 
 import edu.wisc.ssec.mcidasv.data.BadNetCDFWidget;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -141,7 +143,9 @@ import visad.georef.EarthLocationTuple;
  */
 
 public class GeoGridDataSource extends GridDataSource {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(GeoGridDataSource.class);
 
     /** Used to synchronize the geogridadapter */
     protected final Object DOMAIN_SET_MUTEX = new Object();
@@ -953,7 +957,8 @@ public class GeoGridDataSource extends GridDataSource {
         try {
             ncFileWriter = NetcdfFileWriter.createNew(Version.netcdf3, path);
         } catch (IOException e) {
-            e.printStackTrace();
+            String msg = String.format("Problem creating NetcdfFileWriter for '%s'", path);
+            logger.error(msg, e);
         }
 
         //Start the load, showing the dialog

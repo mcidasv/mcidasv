@@ -60,7 +60,8 @@ import edu.wisc.ssec.mcidasv.data.QualityFlag;
 
 public class SuomiNPPProductProfile {
 	
-	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPProductProfile.class);
+	private static final Logger logger =
+		LoggerFactory.getLogger(SuomiNPPProductProfile.class);
 	
 	DocumentBuilder db = null;
 	// if we need to pull product profiles from the McV jar file
@@ -131,11 +132,8 @@ public class SuomiNPPProductProfile {
 				logger.trace("Found profile: " + name);
 				return name;
 			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return null;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Problem finding profile filename. attrName: "+attrName, e);
 			return null;
 		}
 
@@ -156,7 +154,7 @@ public class SuomiNPPProductProfile {
 			mcvJar = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
 		} catch (URISyntaxException urise) {
 			// just log the exception for analysis
-			urise.printStackTrace();
+			logger.error("could not find McIDAS-V JAR file", urise);
 		}
 		return mcvJar;
 	}
