@@ -29,6 +29,8 @@ package edu.wisc.ssec.mcidasv.data;
 
 
 import edu.wisc.ssec.mcidasv.data.hydra.NetCDFFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.Data;
 import visad.Unit;
 import visad.Gridded3DSet;
@@ -67,7 +69,10 @@ import ucar.unidata.data.DataSourceDescriptor;
 
 
 public class NearCastTrajDataSource extends DataSourceImpl {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(NearCastTrajDataSource.class);
+    
     private static final String DATA_DESCRIPTION = "NearCastTrajectory";
 
     public static String parcelDimName = "parcel";
@@ -127,9 +132,9 @@ public class NearCastTrajDataSource extends DataSourceImpl {
 
        try {
          ncFile = new NetCDFFile(fileName);
-       }
-       catch (Exception e) {
-         e.printStackTrace();
+       } catch (Exception e) {
+         String msg = String.format("Problem creating NetCDFFile. fileName: '%s'", fileName);
+         logger.error(msg, e);
        }
          
        paramList = new String[] {"temp", "q", "the", "tp", "MS", "MQ", "MTe", "TP"};
@@ -158,9 +163,8 @@ public class NearCastTrajDataSource extends DataSourceImpl {
             timeSet = new Gridded1DSet(RealType.Time, new float[][] {timeValues}, numTimes, null, new Unit[] {timeUnit}, null);
 
          }
-       } 
-       catch (Exception e) {
-         e.printStackTrace();
+       } catch (Exception e) {
+         logger.error("Problem creating data source", e);
        }
     }
 
@@ -220,9 +224,8 @@ public class NearCastTrajDataSource extends DataSourceImpl {
                     addDataChoice(choice);
                 }
             }
-        }
-        catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception e) {
+            logger.error("Problem creating data choices", e);
         }
     }
 
@@ -267,7 +270,7 @@ public class NearCastTrajDataSource extends DataSourceImpl {
           return trajTimeField;
         }
         catch (Exception e) {
-          e.printStackTrace();
+          logger.trace("Problem getting data", e);
           return null;
         }
     }

@@ -156,7 +156,8 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 public class McIdasPreferenceManager extends IdvPreferenceManager implements ListSelectionListener, Constants {
     
     /** Logger object. */
-    private static final Logger logger = LoggerFactory.getLogger(McIdasPreferenceManager.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(McIdasPreferenceManager.class);
     
     public static final float LOGO_SCALE_MIN = 0.1f;
     public static final float LOGO_SCALE_MAX = 2.0f;
@@ -2115,7 +2116,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem getting chooser data", e);
         }
         return choosers;
     }

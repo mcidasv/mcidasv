@@ -31,6 +31,8 @@ package ucar.unidata.data;
 
 import org.apache.http.auth.InvalidCredentialsException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -92,7 +94,10 @@ import java.util.*;
  * @version $Revision: 1.122 $Date: 2007/08/08 16:24:11 $
  */
 public class DataManager {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(DataManager.class);
+    
     /** try to instantiate the VisAD standard quantities */
     static {
         try {
@@ -389,7 +394,7 @@ public class DataManager {
             try {
                 HTTPSession.setGlobalCredentialsProvider(provider);
             } catch (HTTPException e) {
-                e.printStackTrace();
+                logger.error("Problem setting global credential provider", e);
             }
             // Get the current version
             String version =

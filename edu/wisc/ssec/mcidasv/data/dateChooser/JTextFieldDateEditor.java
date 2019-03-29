@@ -68,7 +68,8 @@ import org.slf4j.LoggerFactory;
 public class JTextFieldDateEditor extends JFormattedTextField implements IDateEditor,
 		CaretListener, FocusListener, ActionListener {
 
-	private static final Logger logger = LoggerFactory.getLogger(JTextFieldDateEditor.class);
+	private static final Logger logger =
+		LoggerFactory.getLogger(JTextFieldDateEditor.class);
 	
 	private static final long serialVersionUID = -8901842591101625304L;
 
@@ -196,7 +197,8 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 			try {
 				setText(formattedDate);
 			} catch (RuntimeException e) {
-				e.printStackTrace();
+				String msg = String.format("Problem setting text to '%s'", formattedDate);
+				logger.error(msg, e);
 			}
 		}
 		if (date != null && dateUtil.checkDate(date)) {
@@ -384,7 +386,7 @@ public class JTextFieldDateEditor extends JFormattedTextField implements IDateEd
 					maskFormatter.setPlaceholderCharacter(this.placeholder);
 					maskFormatter.install(this);
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.trace("Could not parse", e);
 				}
 			}
 		}

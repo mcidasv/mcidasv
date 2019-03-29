@@ -39,6 +39,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataUtil;
 import ucar.unidata.util.DateUtil;
@@ -58,7 +60,10 @@ import visad.georef.EarthLocationLite;
  * change this template use File | Settings | File Templates.
  */
 public class Diamond7StormDataSource extends StormDataSource {
-
+	
+	private static final Logger logger =
+		LoggerFactory.getLogger(Diamond7StormDataSource.class);
+	
 	/**
 	 * _more_
 	 * 
@@ -161,11 +166,8 @@ public class Diamond7StormDataSource extends StormDataSource {
 					"Storm_Direction", CommonUnit.degree));
 			PARAM_MOVESPEED = new StormParam(makeRealType("movespeed",
 					"Storm_Speed", Util.parseUnit("m/s")));
-
 		} catch (Exception exc) {
-			System.err.println("Error creating storm params:" + exc);
-			exc.printStackTrace();
-
+			logger.error("Error creating storm params", exc);
 		}
 	}
 
@@ -846,8 +848,7 @@ public class Diamond7StormDataSource extends StormDataSource {
 		try {
 			s = new STIStormDataSource();
 		} catch (Exception exc) {
-			System.err.println("err:" + exc);
-			exc.printStackTrace();
+			logger.error("Problem creating new STIStormDataSource", exc);
 		}
 		s.initAfter();
 		List sInfoList = s.getStormInfos();

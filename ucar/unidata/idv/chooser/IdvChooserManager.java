@@ -117,8 +117,9 @@ import javax.swing.event.*;
  */
 
 public class IdvChooserManager extends IdvManager {
-
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(IdvChooserManager.class);
 
     /** _more_          */
     public static final String PROP_CHOOSER_TREEVIEW = "idv.chooser.treeview";
@@ -828,7 +829,7 @@ public class IdvChooserManager extends IdvManager {
                 }
             }
         } catch (Exception exc) {
-            exc.printStackTrace();
+            logger.error("Problem creating chooser", exc);
             throw new IllegalArgumentException(
                 "Unable to create chooser class: " + className + " \nError: "
                 + exc);
@@ -863,7 +864,6 @@ public class IdvChooserManager extends IdvManager {
 
         return chooserContents;
     }
-    private static final Logger logger = LoggerFactory.getLogger(IdvChooserManager.class);
 
     /**
      * Make the chooser menu items

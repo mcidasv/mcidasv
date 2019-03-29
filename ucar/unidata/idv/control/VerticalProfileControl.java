@@ -55,6 +55,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.vecmath.Point3d;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.grid.GridDataInstance;
@@ -98,7 +100,10 @@ import visad.georef.LatLonTuple;
  */
 
 public class VerticalProfileControl extends LineProbeControl {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(VerticalProfileControl.class);
+    
     /** Column name property */
     public static final int COL_NAME = 0;
 
@@ -961,7 +966,7 @@ public class VerticalProfileControl extends LineProbeControl {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Problem calculating TimeSet", e);
             }
         }
         //System.out.println("merged time set = " + newSet);

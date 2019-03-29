@@ -4425,8 +4425,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                         - firstTime.getValue(CommonUnit.secondsSinceTheEpoch);
                     v = ((int) (diff / 60 / 60)) + "";
                 } catch (Exception exc) {
-                    System.err.println("Error:" + exc);
-                    exc.printStackTrace();
+                    logger.error("Problem applying forecast hour macro", exc);
                 }
             }
             return t.replace(MACRO_FHOUR2, v).replace(MACRO_FHOUR, v + "H");
@@ -5162,9 +5161,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                         //                            hide();
                     }
                 } catch (Exception exc) {
-                    System.err.println("ERROR:" + hasBeenRemoved);
-                    System.err.println("oops: " + exc);
-                    exc.printStackTrace();
+                    logger.error("Problem initializing window", exc);
                 }
             }
         });
@@ -8805,7 +8802,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             try {
                 currentTime = new DateTime(time);
             } catch (VisADException vade) {
-                vade.printStackTrace();
+                logger.error("Problem creating DateTime", vade);
             }
         } else {
             try {

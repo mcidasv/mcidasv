@@ -72,7 +72,8 @@ import visad.georef.MapProjection;
 
 public class TrackSelection extends DataSelectionComponent {
 
-    private static final Logger logger = LoggerFactory.getLogger(TrackSelection.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(TrackSelection.class);
 
     public static final int DEFAULT_TRACK_STRIDE = 5;
     public static final int DEFAULT_VERTICAL_STRIDE = 2;
@@ -354,7 +355,7 @@ public class TrackSelection extends DataSelectionComponent {
                     (trackStop - trackStart));
             trackSelectDsp.setData(trck);
         } catch (Exception exc) {
-            exc.printStackTrace();
+            logger.trace("Problem creating Gridded2DSet", exc);
         }
     }
 

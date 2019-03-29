@@ -32,6 +32,8 @@ package ucar.visad.data;
 import edu.wisc.ssec.mcidas.*;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
 
@@ -82,8 +84,10 @@ import java.rmi.RemoteException;
  * @version $Revision: 1.7 $ $Date: 2007/08/08 17:14:56 $
  */
 public class AreaImageFlatField extends CachedFlatField implements SingleBandedImage {
-
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(AreaImageFlatField.class);
+    
     /** _more_ */
     private Object READMUTEX = new Object();
 
@@ -378,7 +382,6 @@ public class AreaImageFlatField extends CachedFlatField implements SingleBandedI
                 } catch (UnitException ue) {}
             }
         } catch (Exception e) {
-            //e.printStackTrace();
             calUnit = null;
         }
         String calType = areaDirectory.getCalibrationType();
@@ -652,13 +655,12 @@ public class AreaImageFlatField extends CachedFlatField implements SingleBandedI
                 }
             }
         } catch (ArrayIndexOutOfBoundsException aioe) {
-            System.err.println("error:" + aioe + "\n      band index:"
+            logger.error("error: band index:"
                                + bandIndex + " neles:" + nEles + " nLines:"
                                + nLines + "  flt:" + flt_samples.length
                                + " X " + flt_samples[0].length + " X "
                                + flt_samples[0][0].length + "   i:" + lineIdx
-                               + " elementIdx:" + elementIdx);
-            aioe.printStackTrace();
+                               + " elementIdx:" + elementIdx, aioe);
             throw aioe;
         }
 
@@ -797,8 +799,7 @@ public class AreaImageFlatField extends CachedFlatField implements SingleBandedI
                     throw new IllegalArgumentException(
                         "MyAreaCoordinateSystem.getAreaNav: Should never get to this point");
                 } catch (Exception exc) {
-                    System.err.println("error making making areanav:" + exc);
-                    exc.printStackTrace();
+                    logger.error("Error making making areanav", exc);
                 }
             }
             return super.getAreaNav();

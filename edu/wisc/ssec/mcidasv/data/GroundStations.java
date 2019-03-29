@@ -44,7 +44,9 @@ import visad.georef.EarthLocationTuple;
 
 public class GroundStations
 {
-	private static final Logger logger = LoggerFactory.getLogger(GroundStations.class);
+	private static final Logger logger =
+        LoggerFactory.getLogger(GroundStations.class);
+	
 	private static final String card00 = "KMSN,SSEC,43.1398578,-89.3375136,270.4";
     public static String groundStationDB = "data/groundstations/groundstations_db.csv";
     private ArrayList<GroundStation> namedLocs = new ArrayList<GroundStation>();
@@ -106,8 +108,7 @@ public class GroundStations
         }
         catch (Exception e)
         {
-        	e.printStackTrace();
-            logger.error("Problem reading ground stations, missing file or invalid file format");
+            logger.error("Problem reading ground stations, missing file or invalid file format", e);
         }
     }
     

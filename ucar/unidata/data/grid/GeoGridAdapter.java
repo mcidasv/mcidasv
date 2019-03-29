@@ -29,6 +29,8 @@
 package ucar.unidata.data.grid;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.ma2.Array;
 
 import ucar.nc2.Attribute;
@@ -119,7 +121,10 @@ import java.util.TreeMap;
  * @author Don Murray
  */
 public class GeoGridAdapter {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(GeoGridAdapter.class);
+    
     /** logging category */
     static ucar.unidata.util.LogUtil.LogCategory log_ =
         ucar.unidata.util.LogUtil.getLogInstance(
@@ -1109,7 +1114,7 @@ public class GeoGridAdapter {
         } catch (VisADException ve) {
             throw ve;
         } catch (Exception re) {
-            re.printStackTrace();
+            logger.error("Problem creating domain", re);
             throw new VisADException(re.getMessage());
         }
         return newDSet;

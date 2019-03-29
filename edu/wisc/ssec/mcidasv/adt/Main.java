@@ -31,8 +31,14 @@ package edu.wisc.ssec.mcidasv.adt;
 import java.io.File;
 import java.io.IOException;
 
-public class Main {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class Main {
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(Main.class);
+    
     public static String HistoryFileName;
     public static String ReturnOutputString;
 
@@ -169,8 +175,7 @@ public class Main {
         try {
             TopographyFlag = Topo.ReadTopoFile(TopoFileName, PositionLatitude, PositionLongitude);
         } catch (IOException e) {
-            System.err.printf("ERROR reading topography file\n");
-            e.printStackTrace();
+            logger.error("ERROR reading topography file", e);
             return null;
         }
         /* System.out.printf("after topo read flag=%d\n",TopographyFlag); */

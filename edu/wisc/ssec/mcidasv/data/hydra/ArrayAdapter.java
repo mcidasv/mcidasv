@@ -31,6 +31,8 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.FunctionType;
 import visad.GriddedSet;
 import visad.IntegerNDSet;
@@ -43,7 +45,9 @@ import visad.RealTupleType;
 import visad.RealType;
 
 public class ArrayAdapter extends MultiDimensionAdapter {
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(ArrayAdapter.class);
+    
    RealTupleType domainType;
    FunctionType ftype;
    GriddedSet domain;
@@ -84,9 +88,8 @@ public class ArrayAdapter extends MultiDimensionAdapter {
         setRangeProcessor(rangeProcessor);
      }
 
-     }
-     catch (Exception e) {
-       e.printStackTrace();
+     } catch (Exception e) {
+       logger.error("problem initializing array adapter", e);
      }
    }
 

@@ -112,14 +112,15 @@ import visad.georef.MapProjection;
 import visad.georef.TrivialMapProjection;
 
 /**
- * {@link ucar.unidata.idv.control.DisplayControlImpl} with some McIDAS-V
- * specific extensions. Namely parameter sets and support for inverted 
- * parameter defaults.
+ * {@link DisplayControlImpl} with some McIDAS-V specific extensions.
+ *
+ * <p>Namely parameter sets and support for inverted parameter defaults.</p>
  */
 
 public class PolarOrbitTrackControl extends DisplayControlImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackControl.class);
+    private static final Logger logger =
+		LoggerFactory.getLogger(PolarOrbitTrackControl.class);
 
     private JLabel satelliteName = new JLabel("");
     private static final JLabel kmLabel = new JLabel("km");
@@ -261,8 +262,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             root = XmlUtil.getRoot(xml);
             scale = getViewManager().getMaster().getDisplayScale();
         } catch (Exception e) {
-            logger.error("problem reading swathwidths.xml");
-            e.printStackTrace();
+            logger.error("problem reading swathwidths.xml", e);
         }
     }
 
@@ -322,10 +322,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 			EarthLocationTuple elt = null;
 			try {
 				elt = new EarthLocationTuple(fLat, fLon, dAlt);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			} catch (VisADException e) {
-				e.printStackTrace();
+			} catch (VisADException | RemoteException e) {
+				logger.error("Problem creating EarthLocationTuple", e);
 			}
 
 			GroundStation gs = new GroundStation(labStr, elt, gsFontSelector.getFont());
@@ -333,8 +331,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 gs.getTd().setColor(antColorSwatch.getColor());
                 gs.getCd().setColor(antColorSwatch.getColor());
             } catch (RemoteException | VisADException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.trace("Problem setting color", e);
             }
 			
 			gs.setAntennaAngle(curAngle);
@@ -406,8 +403,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     removeDisplayable(gs.getCd());
                     removeDisplayable(gs.getTd());
                 } catch (RemoteException | VisADException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    logger.error("Problem removing displayables", e);
                 }
     		    
     			jcbStationsPlotted.removeItem(gs);
@@ -526,10 +522,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 		    		// check swath width field, update if necessary
 		    		if (swathChanged) changeSwathWidth();
 		    		
-				} catch (RemoteException re) {
-					re.printStackTrace();
-				} catch (VisADException vade) {
-					vade.printStackTrace();
+				} catch (VisADException | RemoteException visad) {
+					logger.error("Problem changing label interval", visad);
 				}
     		}
             
@@ -564,8 +558,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     gs.getCd().setColor(antColorSwatch.getColor());
                     gs.getTd().setColor(antColorSwatch.getColor());
                 } catch (RemoteException | VisADException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    logger.error("Problem changing ground station color", e);
                 }
     		    somethingChanged = true;
     		}
@@ -576,8 +569,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		    try {
                     gs.getTd().setFont(gsFontSelector.getFont());
                 } catch (RemoteException | VisADException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    logger.error("Problem changing ground station font", e);
                 }
     		    somethingChanged = true;
     		}
@@ -599,8 +591,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             		    try {
                             removeDisplayable(gs.getCd());
                         } catch (RemoteException | VisADException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            logger.error("Problem removing displayable", e);
                         }
 	            		gs.setAntennaAngle(newAngle);
 	            		EarthLocationTuple elt = gs.getElt();
@@ -641,8 +632,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     addDisplayable(cdNew);
                     gs.setCd(cdNew);
                 } catch (RemoteException | VisADException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    logger.error("Problem changing ground station line width", e);
                 }
                 somethingChanged = true;
             }
@@ -660,8 +650,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     addDisplayable(cdNew);
                     gs.setCd(cdNew);
                 } catch (RemoteException | VisADException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    logger.error("Problem chaning ground station line style", e);
                 }
                 somethingChanged = true;
             }
@@ -688,7 +677,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             swathEdgeDsp.setConstantPosition(trackZ, dispType);
             applyProperties();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem applying displayable levels", e);
         }
     }
 
@@ -721,7 +710,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     			createTrackDisplay(data, true);
     			applyDisplayableLevels();
     		} catch (Exception e) {
-    			e.printStackTrace();
+    			logger.error("Problem changing swath width", e);
     		}
     	}
     }
@@ -744,7 +733,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             createTrackDisplay(data, true);
             applyDisplayableLevels();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem redrawing", e);
         }
     }
     
@@ -867,9 +856,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem creating track display", e);
         }
-        return;
     }
 
     /* (non-Javadoc)
@@ -1026,7 +1014,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             if (! inGlobeDisplay()) 
             	coverageCircle.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
         } catch (Exception e) {
-            e.printStackTrace();
+        	logger.error("Problem creating coverage circle", e);
             return null;
         }
         return coverageCircle;
@@ -1080,7 +1068,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 				TextType tt = TextType.getTextType(DISPLAY_LIST_NAME);
 				data  = new Text(tt, data.toString() + startTime + " - " + endTime);
 			} catch (VisADException vade) {
-				vade.printStackTrace();
+				logger.error("Problem creating text", vade);
 			}
 		}
 		
@@ -1179,7 +1167,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 ++indx;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem getting swath", e);
             return null;
         }
         return ret;
@@ -1274,8 +1262,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             timeLabelDsp = new CompositeDisplayable();
             swathEdgeDsp = new CompositeDisplayable();
         } catch (Exception e) {
-            logger.error("problem creating composite displayable");
-            e.printStackTrace();
+            logger.error("Problem creating composite displayable", e);
             return false;
         }
         boolean result = super.init((DataChoice) this.getDataChoices().get(0));
@@ -1287,7 +1274,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             String longName = getLongParamName().replaceAll(" ", "");
             otTextType = new TextType(SWATH_MODS + longName);
         } catch (Exception e) {
-        	e.printStackTrace();
+        	logger.trace("Problem creating texttype", e);
             otTextType = TextType.Generic;
         }
 
@@ -1309,7 +1296,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             	applyDisplayableLevels();
             }
         } catch (Exception e) {
-            logger.error("get display center e=" + e);
+            logger.error("Problem getting display center", e);
         }
 
         initialized = true;
@@ -1338,10 +1325,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     			}
 				updateDisplayList();
     		}
-    	} catch (RemoteException re) {
-    		re.printStackTrace();
-    	} catch (VisADException vade) {
-    		vade.printStackTrace();
+    	} catch (VisADException | RemoteException e) {
+    		logger.error("Problem handing state change", e);
     	}
 
     }
@@ -1378,7 +1363,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		groundStationDsp.setData(tup);
     		station.setTd(groundStationDsp);
     	} catch (Exception e) {
-    		e.printStackTrace();
+    		logger.error("Problem drawing station", e);
     	}
     }
 
@@ -1412,7 +1397,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     lonLabel.setText("" + gs.getElt().getLongitude().getValue());
                     altLabel.setText("" + gs.getElt().getAltitude().getValue());
                 }
-                return;
             }
         });
 
@@ -1551,7 +1535,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         try {
             t = new TupleType(new MathType[] {RealTupleType.SpatialEarth2DTuple, tt});
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem creating TupleType", e);
         }
         return t;
     }
@@ -1589,9 +1573,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             TextDisplayable td = gs.getTd();
             td.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
             addDisplayable(td);
-
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem adding ground station", e);
         }
     }
 
@@ -1609,7 +1592,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         try {
             antColor = c;
         } catch (Exception e) {
-            logger.error("Exception in PolarOrbitTrackControl.setAntColor e=" + e);
+            logger.error("Exception in PolarOrbitTrackControl.setAntColor", e);
         }
     }
         

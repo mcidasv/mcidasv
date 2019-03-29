@@ -43,6 +43,8 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
@@ -66,7 +68,10 @@ import ucar.unidata.util.StringUtil;
  */
 
 public abstract class XmlUtil {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(XmlUtil.class);
+    
     /** The header to use when writing out xml */
     public static final String XML_HEADER =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
@@ -2535,8 +2540,7 @@ public abstract class XmlUtil {
             System.out.println(tagBuff);
             System.out.println(attrBuff);
         } catch (Exception exc) {
-            System.err.println("Error processing:" + f);
-            exc.printStackTrace();
+            logger.error("Error processing:" + f, exc);
         }
     }
 
@@ -2612,8 +2616,7 @@ public abstract class XmlUtil {
             //                                        false);
             IOUtil.writeFile(new java.io.File(f), xmlString);
         } catch (Exception exc) {
-            System.err.println("Error processing:" + f);
-            exc.printStackTrace();
+            logger.error("Error processing:" + f, exc);
         }
     }
 

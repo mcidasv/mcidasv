@@ -29,6 +29,8 @@
 package ucar.unidata.view.geoloc;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.geoloc.*;
 import ucar.unidata.geoloc.projection.*;
 
@@ -87,7 +89,10 @@ import javax.swing.event.*;
  */
 
 public class ProjectionManager implements ActionListener {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(ProjectionManager.class);
+    
     /** property change identifier */
     public static final String PROPERTY_CHANGE = "ProjectionImpl";
 
@@ -481,9 +486,8 @@ public class ProjectionManager implements ActionListener {
                 pi.setName("Default " + pi.getProjectionTypeLabel());
                 defaults.add(pi);
             } catch (Exception ee) {
-                System.err.println("Error creating default projection: "
-                                   + className);
-                ee.printStackTrace();
+                logger.error("Error creating default projection: "
+                                   + className, ee);
             }
         }
         return defaults;

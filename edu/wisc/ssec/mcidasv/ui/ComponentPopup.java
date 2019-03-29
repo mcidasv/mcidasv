@@ -38,8 +38,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -55,6 +53,9 @@ import javax.swing.border.BevelBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A popup window that attaches itself to a parent and can display an 
  * component without preventing user interaction like a {@code JComboBox}.
@@ -63,7 +64,10 @@ import javax.swing.tree.DefaultTreeModel;
  *
  */
 public class ComponentPopup extends JWindow {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(ComponentPopup.class);
+    
     private static final long serialVersionUID = 7394231585407030118L;
 
     /**
@@ -299,11 +303,7 @@ public class ComponentPopup extends JWindow {
         final ComponentPopup cp = new ComponentPopup(button);
         cp.add(tree, BorderLayout.CENTER);
         cp.pack();
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                cp.showPopup();
-            }
-        });
+        button.addActionListener(evt -> cp.showPopup());
 
         JFrame frame = new JFrame("ComponentPopup");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -323,14 +323,9 @@ public class ComponentPopup extends JWindow {
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager
                 .getCrossPlatformLookAndFeelClassName());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem changing LAF", e);
         }
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                createAndShowGui();
-            }
-        });
+        SwingUtilities.invokeLater(ComponentPopup::createAndShowGui);
     }
 
 }

@@ -64,7 +64,8 @@ import ucar.nc2.Variable;
 
 public class GranuleAggregation implements MultiDimensionReader {
  
-	private static final Logger logger = LoggerFactory.getLogger(GranuleAggregation.class);
+	private static final Logger logger =
+		LoggerFactory.getLogger(GranuleAggregation.class);
 	
 	// this structure holds the NcML readers that get passed in 
    List<NetcdfFile> nclist = new ArrayList<>();
@@ -344,7 +345,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 											   + (scanLength - 1) + ", 1");
 									   al.add(new Range(0, scanLength - 1, 1));
 								   } catch (Exception e) {
-									   e.printStackTrace();
+								   	  logger.trace("problem creating range", e);
 								   }
 								   rangeOffset = i;
 							   }

@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.FunctionType;
 import visad.Gridded1DSet;
 import visad.QuickSort;
@@ -43,7 +45,10 @@ import visad.Set;
 import visad.SingletonSet;
 
 public class SpectrumAdapter extends MultiDimensionAdapter {
-
+  
+  private static final Logger logger =
+      LoggerFactory.getLogger(SpectrumAdapter.class);
+  
   public static String channels_name = "Channels";
   public static String channelIndex_name = "channelIndex";
   public static String FOVindex_name = "FOVindex";
@@ -137,8 +142,7 @@ public class SpectrumAdapter extends MultiDimensionAdapter {
       rangeType = makeSpectrumRangeType();
       spectrumType = new FunctionType(channelRealType, spectrumRangeType);
     } catch (Exception e) {
-      e.printStackTrace();
-      System.out.println("cannot create spectrum domain");
+      logger.error("Cannot create spectrum domain", e);
     }
   
   }

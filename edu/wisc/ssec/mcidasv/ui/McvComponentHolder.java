@@ -64,9 +64,7 @@ public class McvComponentHolder extends IdvComponentHolder {
 
     /** Used to distinguish a dynamic skin from other things. */
     public static final String TYPE_DYNAMIC_SKIN = "dynamicskin";
-
-//    private static Logger logger = LoggerFactory.getLogger(McvComponentHolder.class);
-
+    
 //    private Map<String, ViewManager> dynamicViewManagers = new HashMap<String, ViewManager>();
 
     /** Kept around to avoid annoying casting. */
@@ -109,12 +107,6 @@ public class McvComponentHolder extends IdvComponentHolder {
         // TODO: investigate this!
         Element node = doc.createElement(IdvUIManager.COMP_COMPONENT_SKIN);
         node.setAttribute("url", getObject().toString());
-
-        /*
-         * try { System.err.println(XmlUtil.toString((Element)getObject())); }
-         * catch (Exception e) { e.printStackTrace(); }
-         */
-
         return node;
     }
 

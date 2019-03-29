@@ -122,7 +122,8 @@ import edu.wisc.ssec.mcidasv.data.StatsTable;
 
 public class ScatterDisplay extends DisplayControlImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(ScatterDisplay.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(ScatterDisplay.class);
 
     private Container container;
     private FlatField X_field;
@@ -284,9 +285,8 @@ public class ScatterDisplay extends DisplayControlImpl {
           int binSize = ((lens[0]*lens[1]/(256*256))*4)/10;
           if (binSize < 2) binSize = 2;
           histoField = new HistogramField(X_field, Y_field, mask_field, 256, binSize);
-        }
-        catch (Exception e) {
-          e.printStackTrace();
+        } catch (Exception e) {
+          logger.error("Problem creating HistogramField", e);
         }
 
         Range rangeX = getImageRange(X_field);
@@ -581,9 +581,8 @@ public class ScatterDisplay extends DisplayControlImpl {
                     imageYcurve.setVisible(false);
                   }
                 }
-              }
-              catch (Exception exc) {
-                System.out.println(exc);
+              } catch (Exception exc) {
+                logger.error("Problem handling toggle", exc);
               }
            });
 
@@ -625,9 +624,8 @@ public class ScatterDisplay extends DisplayControlImpl {
               imageYcurve.setVisible(false);
            }
          }
-       }
-       catch (Exception e) {
-         e.printStackTrace();
+       } catch (Exception e) {
+         logger.error("Problem initializing", e);
        }
     }
     
@@ -772,7 +770,7 @@ public class ScatterDisplay extends DisplayControlImpl {
        try {
          scatterMaster = new XYDisplay("Scatter", RealType.XAxis, RealType.YAxis);
        } catch (Exception e) {
-         e.printStackTrace();
+         logger.error("Problem creating XYDisplay", e);
        }
        return scatterMaster.getComponent();
     }
@@ -1630,7 +1628,7 @@ public class ScatterDisplay extends DisplayControlImpl {
          try {
            histoField.markMaskFieldByRange(x_coords, y_coords, maskVal);
          } catch (Exception e) {
-           e.printStackTrace();
+           logger.error("Problem changing histogram", e);
          }
        }
 
@@ -1699,7 +1697,7 @@ public class ScatterDisplay extends DisplayControlImpl {
            histoField.clearMaskField(maskVal);
            histoField.markMaskFieldByCurve(crv, maskVal);
          } catch (Exception e) {
-           e.printStackTrace();
+           logger.error("Problem handling displayChange", e);
          }
        }
      }
@@ -1746,9 +1744,8 @@ public class ScatterDisplay extends DisplayControlImpl {
                 } else if (cmd.equals("Curve")) {
                     selectByCurve = true;
                 }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                logger.error("Problem switching curve type", e);
             }
         }
     }

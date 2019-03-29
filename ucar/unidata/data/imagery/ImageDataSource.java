@@ -103,7 +103,10 @@ import java.util.TreeMap;
  * @author IDV development team
  */
 public abstract class ImageDataSource extends DataSourceImpl {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(ImageDataSource.class);
+    
     /** Type of image, radar or satellite. Set by the chooser to disambiguate between types */
     public static final String PROP_IMAGETYPE = "prop.imagetype";
 
@@ -1172,7 +1175,7 @@ public abstract class ImageDataSource extends DataSourceImpl {
                 }
             } catch (Exception exc) {
                 LogUtil.printMessage("error looking up area dir");
-                exc.printStackTrace();
+                logger.error("Problem looking up AREA directory", exc);
                 return null;
             }
 
@@ -1953,6 +1956,4 @@ public abstract class ImageDataSource extends DataSourceImpl {
         imageTimes            = null;
         currentDirs           = null;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(ImageDataSource.class);
 }

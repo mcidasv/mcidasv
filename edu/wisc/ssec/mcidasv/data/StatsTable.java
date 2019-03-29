@@ -103,7 +103,10 @@ import visad.python.JPythonMethods;
 import edu.wisc.ssec.mcidasv.data.hydra.Statistics;
 
 public class StatsTable extends AbstractTableModel {
-
+  
+    private static final Logger logger =
+        LoggerFactory.getLogger(StatsTable.class);
+    
     String [][] data;
     JTable table;
     JFrame statsWindow;
@@ -294,11 +297,9 @@ public class StatsTable extends AbstractTableModel {
 
           if (c+2 > numCols) numCols = c+2;
           fireTableStructureChanged();
-
-        } catch (VisADException exc) {
-          System.out.println(exc.getMessage());
+          
         } catch (Exception exc) {
-          exc.printStackTrace();
+          logger.error("Problem setting fields", exc);
         }
 
         if (isShowing) statsWindow.setVisible(true);
@@ -343,7 +344,7 @@ public class StatsTable extends AbstractTableModel {
           setFields(scattX, scattY, indx);
 
         } catch (Exception esd) {
-          esd.printStackTrace();
+          logger.error("Problem setting points", esd);
         }
       }
 

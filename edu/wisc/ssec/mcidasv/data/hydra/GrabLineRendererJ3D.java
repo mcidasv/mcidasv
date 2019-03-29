@@ -36,6 +36,8 @@ import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.CommonUnit;
 import visad.Data;
 import visad.DataDisplayLink;
@@ -66,7 +68,10 @@ import visad.VisADRay;
  */
 
 public class GrabLineRendererJ3D extends visad.java3d.DirectManipulationRendererJ3D {
-
+  
+  private static final Logger logger =
+      LoggerFactory.getLogger(GrabLineRendererJ3D.class);
+  
   private float[][] spatialValues = null;
 
   private int closeIndex = -1;
@@ -421,16 +426,9 @@ spatialValues[1][i] + " " + spatialValues[2][i] + " d = " + d);
 
       }
 
+   } catch (VisADException | RemoteException e) {
+     logger.error("Problem in drag_direct", e);
    }
-   catch (VisADException e) {
-     System.out.println("drag_direct " + e);
-     e.printStackTrace();
-   }
-   catch (RemoteException e) {
-     System.out.println("drag_direct " + e);
-     e.printStackTrace();
-   }
-
   }
 
   private int getAxisToComponent(int i) {

@@ -44,8 +44,14 @@ import java.util.zip.ZipInputStream;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 
-public class BackgroundUnzipper extends SwingWorker<Long, Long>{
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+public class BackgroundUnzipper extends SwingWorker<Long, Long>{
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(BackgroundUnzipper.class);
+    
     private final String zipFile;
     private CountingInputStream countingStream;
     private ZipInputStream zipStream;
@@ -115,11 +121,8 @@ public class BackgroundUnzipper extends SwingWorker<Long, Long>{
             URL url = f.toURI().toURL();
             URLConnection connection = url.openConnection();
             return new BufferedInputStream(connection.getInputStream());
-        } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Problem creating InputStream", e);
         }
         return null;
     }

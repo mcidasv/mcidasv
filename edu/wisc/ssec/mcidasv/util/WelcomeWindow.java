@@ -52,6 +52,9 @@ import javax.swing.LayoutStyle;
 import javax.swing.WindowConstants;
 import javax.swing.event.HyperlinkEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * {@code WelcomeWindow} is really just intended to <i>try</i> to detect known
  * hardware problems and inform the user about any problems.
@@ -63,7 +66,10 @@ import javax.swing.event.HyperlinkEvent;
 // **DOCUMENT WHAT CHECKS AND/OR DETECTION ARE BEING PERFORMED**
 //public class WelcomeWindow extends JFrame {
 public class WelcomeWindow extends JDialog {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(WelcomeWindow.class);
+    
     /** Path to {@literal "header"} image. */
     private static final String LOGO_PATH = 
         "/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif";
@@ -137,7 +143,7 @@ public class WelcomeWindow extends JDialog {
             textPane.setPage(contents);
         } catch (IOException e) {
             textPane.setText(ERROR_MESSAGE);
-            e.printStackTrace();
+            logger.error("Could not change contents of textPane", e);
         }
         textPane.addHyperlinkListener(this::textPaneHyperlinkUpdate);
         scrollPane.setViewportView(textPane);
@@ -223,7 +229,7 @@ public class WelcomeWindow extends JDialog {
                         sleep(autoQuitDelay);
                     } catch (InterruptedException ex) {
                         // not much else to be done...
-                        ex.printStackTrace();
+                        logger.error("Problem changing visibility", ex);
                     } finally {
                         EventQueue.invokeLater(startButton::doClick);
                     }

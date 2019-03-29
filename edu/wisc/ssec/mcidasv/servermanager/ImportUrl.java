@@ -206,7 +206,7 @@ public class ImportUrl extends JDialog implements ActionListener {
                 tmp.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 tmp.setVisible(true);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Error creating ImportUrl", e);
             }
         });
 

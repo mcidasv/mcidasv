@@ -21,6 +21,8 @@
 package ucar.unidata.data;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -104,7 +106,10 @@ import javax.swing.filechooser.FileFilter;
 
 public class DataSourceImpl extends SharableImpl implements DataSource,
         DataSourceFactory, XmlPersistable {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(DataSourceImpl.class);
+    
     /** logging category */
     static ucar.unidata.util.LogUtil.LogCategory log_ =
         ucar.unidata.util.LogUtil.getLogInstance(
@@ -3241,9 +3246,8 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
                 }
             }
         } catch (Exception exc) {
-            exc.printStackTrace();
+            logger.error("Problem adding reload tab", exc);
         }
-
     }
 
 

@@ -365,7 +365,7 @@ public final class EventDispatchThreadHangMonitor extends EventQueue {
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        logger.trace("Thread interrupted", e);
                     }
                     return super.toString();
                 }

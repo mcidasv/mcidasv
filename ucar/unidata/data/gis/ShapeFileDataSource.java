@@ -90,7 +90,10 @@ import javax.swing.*;
  * @version $Revision: 1.28 $ $Date: 2007/04/16 20:34:52 $
  */
 public class ShapeFileDataSource extends FilesDataSource {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(ShapeFileDataSource.class);
+    
     /** _more_ */
     private static MapFamily mapFamily = new MapFamily("IDV maps");
 
@@ -425,7 +428,8 @@ public class ShapeFileDataSource extends FilesDataSource {
 
                         return shapefileData;
                     } catch (Exception exc) {
-                        exc.printStackTrace();
+                        String msg = String.format("Problem opening '%s' as URL", filename);
+                        logger.error(msg, exc);
                     }
                 }
 

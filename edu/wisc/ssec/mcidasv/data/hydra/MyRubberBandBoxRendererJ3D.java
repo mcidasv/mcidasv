@@ -64,6 +64,8 @@ import javax.media.j3d.GeometryArray;
 import javax.media.j3d.Group;
 import javax.media.j3d.Shape3D;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.BadDirectManipulationException;
 import visad.CoordinateSystem;
 import visad.DataDisplayLink;
@@ -94,7 +96,10 @@ import visad.java3d.ShadowTypeJ3D;
    manipulation of rubber band boxes
 */
 public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
-
+  
+  private static final Logger logger =
+      LoggerFactory.getLogger(MyRubberBandBoxRendererJ3D.class);
+  
   private RealType x = null;
   private RealType y = null;
   private RealTupleType xy = null;
@@ -380,15 +385,8 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
       ref.setData(set);
       link.clearData();
     } // end try
-    catch (VisADException e) {
-      // do nothing
-      System.out.println("release_direct " + e);
-      e.printStackTrace();
-    }
-    catch (RemoteException e) {
-      // do nothing
-      System.out.println("release_direct " + e);
-      e.printStackTrace();
+    catch (VisADException | RemoteException e) {
+      logger.error("problem in release_direct", e);
     }
   }
 
@@ -606,8 +604,7 @@ public class MyRubberBandBoxRendererJ3D extends DirectManipulationRendererJ3D {
       }
     } // end try
     catch (VisADException e) {
-      // do nothing
-      e.printStackTrace();
+      logger.trace("problem in drag_direct", e);
     }
   }
 

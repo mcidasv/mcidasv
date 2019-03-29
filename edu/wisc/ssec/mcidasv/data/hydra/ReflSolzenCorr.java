@@ -27,6 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import visad.FlatField;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +38,9 @@ import java.util.Map;
  * 
  */
 public class ReflSolzenCorr extends RangeProcessor {
+   
+   private static final Logger logger =
+       LoggerFactory.getLogger(ReflSolzenCorr.class);
    
    ArrayAdapter solzenAdapter;
    
@@ -58,10 +63,9 @@ public class ReflSolzenCorr extends RangeProcessor {
       float[] solzen = null;
       
       try {
-         solzen = ((FlatField)solzenAdapter.getData(subset)).getFloats()[0];
-      }
-      catch (Exception e) {
-         e.printStackTrace();
+         solzen = solzenAdapter.getData(subset).getFloats()[0];
+      } catch (Exception e) {
+         logger.error("problem getting data", e);
       }
       for (int k=0; k<refls.length; k++) {
          float refl = refls[k];

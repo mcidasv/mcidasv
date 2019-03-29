@@ -29,6 +29,8 @@
 package ucar.unidata.idv.control;
 
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.DataChoice;
@@ -130,7 +132,10 @@ import javax.vecmath.Point3d;
 
 public class ProbeControl extends DisplayControlImpl implements DisplayableData
     .DragAdapter {
-
+    
+    private static final Logger logger =
+        LoggerFactory.getLogger(ProbeControl.class);
+    
     /** ID for sharing position */
     public static final String SHARE_POSITION = "ProbeControl.SHARE_POSITION";
 
@@ -1008,7 +1013,7 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
             newRowInfo.setDataInstance(oldInfo.getDataInstance());
             resetData(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Problem copying parameter from row "+row, e);
         }
     }
 
@@ -1100,7 +1105,7 @@ public class ProbeControl extends DisplayControlImpl implements DisplayableData
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Problem calculating TimeSet", e);
             }
         }
         //System.out.println("merged time set = " + newSet);

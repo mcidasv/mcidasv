@@ -42,6 +42,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.DataUtil;
@@ -63,7 +65,10 @@ import visad.georef.EarthLocationLite;
  * change this template use File | Settings | File Templates.
  */
 public class STIStormDataSource extends StormDataSource {
-
+	
+	private static final Logger logger =
+		LoggerFactory.getLogger(STIStormDataSource.class);
+	
 	/** _more_ */
 	private static final Way DEFAULT_OBSERVATION_WAY = new Way("babj");
 
@@ -371,9 +376,7 @@ public class STIStormDataSource extends StormDataSource {
 					"meanDistanceError", "Mean_Distance_Error", DataUtil
 							.parseUnit("km")), true, false, false);
 		} catch (Exception exc) {
-			System.err.println("Error creating storm params:" + exc);
-			exc.printStackTrace();
-
+			logger.error("Error creating storm params", exc);
 		}
 	}
 
@@ -1461,7 +1464,7 @@ public class STIStormDataSource extends StormDataSource {
 				}
 			}
 		} catch (Exception exc) {
-			exc.printStackTrace();
+			logger.error("Problem initializing SQL connection", exc);
 			return false;
 		}
 		return true;
@@ -1482,8 +1485,7 @@ public class STIStormDataSource extends StormDataSource {
 		try {
 			s = new STIStormDataSource();
 		} catch (Exception exc) {
-			System.err.println("err:" + exc);
-			exc.printStackTrace();
+			logger.error("Problem creating new STIStormDataSource", exc);
 		}
 		s.initAfter();
 		List sInfoList = s.getStormInfos();

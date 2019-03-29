@@ -82,7 +82,8 @@ import edu.wisc.ssec.mcidasv.data.hydra.SubsetRubberBandBox;
 
 public class PreviewSelection extends DataSelectionComponent {
 	
-	private static final Logger logger = LoggerFactory.getLogger(PreviewSelection.class);
+	private static final Logger logger =
+        LoggerFactory.getLogger(PreviewSelection.class);
 	
       DataChoice dataChoice;
       FlatField image;
@@ -172,8 +173,7 @@ public class PreviewSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            logger.error("Can't open map file " + mapSource);
-            excp.printStackTrace();
+            logger.error("Can't open map file " + mapSource, excp);
         }
 
         mapLines  = new MapLines("maplines");
@@ -188,8 +188,7 @@ public class PreviewSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-        	logger.error("Can't open map file " + mapSource);
-            excp.printStackTrace();
+        	logger.error("Can't open map file " + mapSource, excp);
         }
 
         mapLines  = new MapLines("maplines");
@@ -204,8 +203,7 @@ public class PreviewSelection extends DataSelectionComponent {
             mapLines.setColor(java.awt.Color.cyan);
             mapProjDsp.addDisplayable(mapLines);
         } catch (Exception excp) {
-            logger.error("Can't open map file " + mapSource);
-            excp.printStackTrace();
+            logger.error("Can't open map file " + mapSource, excp);
         }
 
 
@@ -368,7 +366,7 @@ public class PreviewSelection extends DataSelectionComponent {
          try {
            mp = new LambertAEA(rect);
          } catch (Exception e) {
-             e.printStackTrace();
+             logger.error("Problem creating LambertAEA", e);
          }
          return mp;
       }
@@ -398,12 +396,11 @@ public class PreviewSelection extends DataSelectionComponent {
        * 
        * @param b true or false 
        */
-      
       public void enableSubsetting(boolean b) {
     	  try {
     		  rbb.setVisible(b);
     	  } catch (RemoteException | VisADException e) {
-    		  e.printStackTrace();
+    	      logger.trace("Problem changing RBB visibility", e);
     	  }
       }
 	

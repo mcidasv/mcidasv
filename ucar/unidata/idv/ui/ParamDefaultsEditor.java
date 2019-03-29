@@ -601,7 +601,6 @@ public class ParamDefaultsEditor extends IdvManager implements ActionListener {
                 } catch (Exception exc) {
                     errorMsg("An error occurred " + what + "\n "
                              + exc.getMessage());
-                    //              exc.printStackTrace();
                 }
             }
             repaint();

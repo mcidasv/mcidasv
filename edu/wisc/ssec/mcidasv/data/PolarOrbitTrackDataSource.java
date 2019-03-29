@@ -78,7 +78,8 @@ import edu.wisc.ssec.mcidasv.util.XmlUtil;
 
 public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(PolarOrbitTrackDataSource.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(PolarOrbitTrackDataSource.class);
 
     private ArrayList<String> tleCards = new ArrayList<>();
     private ArrayList<String> choices = new ArrayList<>();
@@ -478,9 +479,9 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 					tle.getLine2());
 			prop.setShowGroundTrack(false);
 		} catch (Exception e) {
-			logger.error("Error Creating SGP4 Satellite");
-			e.printStackTrace();
-			System.exit(1);
+			logger.error("Error Creating SGP4 Satellite", e);
+			// WTF
+			//System.exit(1);
 		}
 
         Time time = new Time(
