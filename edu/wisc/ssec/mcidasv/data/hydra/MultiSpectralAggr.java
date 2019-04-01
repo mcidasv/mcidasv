@@ -28,31 +28,19 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
-import visad.FlatField;
-import visad.SampledSet;
-import visad.RealTuple;
-import visad.SetType;
-import visad.RealType;
-import visad.RealTupleType;
-import visad.VisADException;
-import visad.CoordinateSystem;
-import visad.FunctionType;
-import visad.Real;
-import visad.Set;
-import visad.Linear1DSet;
-import visad.Linear2DSet;
-import visad.Gridded1DSet;
-import visad.Gridded2DSet;
-import visad.QuickSort;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import java.util.ArrayList;
-import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.Map;
 
-import visad.georef.MapProjection;
-import visad.CachingCoordinateSystem;
-import ucar.visad.ProjectionCoordinateSystem;
+import visad.FlatField;
+import visad.FunctionType;
+import visad.Gridded1DSet;
+import visad.QuickSort;
+import visad.RealTuple;
+import visad.RealTupleType;
+import visad.SampledSet;
+import visad.VisADException;
 
 public class MultiSpectralAggr extends MultiSpectralData {
 
