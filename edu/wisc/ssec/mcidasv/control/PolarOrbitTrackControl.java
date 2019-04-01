@@ -212,7 +212,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private double gsZ = 0.0d;
     private NavigatedDisplay navDsp = null;
     private TextType otTextType = null;
-    private long ttCounter = 0;
+    private static long ttCounter = 0;
     private double curWidth = 0.0d;
     private double prvWidth = 0.0d;
 
@@ -1333,7 +1333,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     private void labelGroundStation(GroundStation station) {
         
-        // Font f = station.getTd().getFont();
         logger.debug("labelGroundStation() in..." + station.getName());
         scale = getViewManager().getMaster().getDisplayScale();
     	try {
