@@ -953,7 +953,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, Boolean.valueOf(mappy.getWaitMessageVisible()) },
             { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
             { ViewManager.LABEL_AUTO_DEPTH, ViewManager.PREF_AUTO_DEPTH, mappy.getAutoDepth() },
-            { arLabel, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) }
+            { arLabel, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) },
+            { "Use new layer label rendering (Under Development)", "visad.newfontrendering", Boolean.parseBoolean(System.getProperty("visad.newfontrendering", "false")) }
+            
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
         JCheckBox adaptiveRezCheckBox = widgets.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION);
@@ -1248,6 +1250,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 //                theStore.put(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, )
                 ViewManager.setHighlightBorder(border[0].getBackground());
                 EventBus.publish("McvPreference.ProgRez", theStore.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false));
+                
+                Hashtable table = (Hashtable)data;
+                String fontRenderProp = "visad.newfontrendering";
+                if (table.containsKey(fontRenderProp)) {
+                    logger.trace("setting new font rendering: {}", theStore.get(fontRenderProp));
+                    System.setProperty(fontRenderProp, Boolean.toString((boolean)theStore.get(fontRenderProp)));
+                }
             }
         };
         

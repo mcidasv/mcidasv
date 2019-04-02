@@ -3270,7 +3270,9 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
           start = new double[] { spatial_values[0][i], spatial_values[1][i],
               spatial_values[2][i] };
           if (font != null) {
-            if (display != null) {
+            boolean newRendering = Boolean.parseBoolean(System.getProperty("visad.newfontrendering", "false"));
+            if (newRendering && (display != null)) {
+              System.err.println("visad: using new font stuff!");
               Point3d[] p3d = { new Point3d(start[0], start[1], start[2]) };
 
               DisplayRendererJ3D renderer =
@@ -3300,6 +3302,7 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
                 logger.error("Could not use new font rendering code", eeee);
               }
             } else {
+              System.err.println("visad: not using new font stuff");
               as[k] = PlotText.render_font(text_values[i], font, start, base, up,
                   justification, verticalJustification, characterRotation, scale,
                   offset);
