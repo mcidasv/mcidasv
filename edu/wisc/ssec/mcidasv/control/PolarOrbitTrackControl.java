@@ -503,6 +503,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	                            time.setFont(otFontSelector.getFont());
     	                            time.setTextSize((float) scale * otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
     	                            time.setSphere(inGlobeDisplay());
+                                    time.setUseFastRendering(false);
     	                            
     	                            RealTuple lonLat =
     	                                new RealTuple(RealTupleType.SpatialEarth2DTuple,
@@ -783,6 +784,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     		time.setTextSize((float) scale * otFontSelector.getFontSize() / FONT_SCALE_FACTOR);
                     		time.setFont(otFontSelector.getFont());
                     		time.setSphere(inGlobeDisplay());
+                            time.setUseFastRendering(false);
                             
                             RealTuple lonLat =
                                 new RealTuple(RealTupleType.SpatialEarth2DTuple,
