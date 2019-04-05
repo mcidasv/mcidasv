@@ -33,15 +33,49 @@ MA 02111-1307, USA
 
 package visad;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfigTemplate;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.Transparency;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.PixelGrabber;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
+import javax.media.j3d.GeometryArray;
+import javax.media.j3d.GraphicsConfigTemplate3D;
+import javax.media.j3d.PointArray;
+import javax.media.j3d.Shape3D;
+import javax.media.j3d.Transform3D;
+import javax.vecmath.Point3d;
+
+import visad.bom.annotations.ImageJ3D;
+import visad.bom.annotations.ScreenAnnotatorUtils;
 import visad.browser.Convert;
+import visad.java3d.DisplayImplJ3D;
+import visad.java3d.DisplayRendererJ3D;
+import visad.java3d.VisADCanvasJ3D;
 import visad.util.HersheyFont;
 
 /**
@@ -1100,12 +1134,12 @@ public class PlotText extends Object {
   * characters in this string
   */
   public static VisADTriangleArray render_font(String str, Font font,
-         double[] start, double[] base, double[] up,
-         TextControl.Justification justification,
-         TextControl.Justification verticalJustification,
-         double characRotation, double scale, double[] offsets) {
+                                               double[] start, double[] base, double[] up,
+                                               TextControl.Justification justification,
+                                               TextControl.Justification verticalJustification,
+                                               double characRotation, double scale, double[] offsets) {
     VisADTriangleArray array = null;
-
+  
     // System.out.println("x, y, z = " + x + " " + y + " " + z);
     // System.out.println("center = " + center);
 
@@ -1123,15 +1157,15 @@ public class PlotText extends Object {
     start_off[0] = start[0] + offsets[0];
     start_off[1] = start[1] + offsets[1];
     start_off[2] = start[2] + offsets[2];
-
+  
     if (scale < 0.0) {
       scale = 1.0;
     }
-
+  
     float fsize = font.getSize();
     float fsize_inv = (float)(scale / fsize);
     //float fsize_inv = (float)(1.0 / fsize);
-
+  
     // ??
     // Graphics2D g2 = null;
     // FontRenderContext frc = g2.getFontRenderContext();
@@ -1140,49 +1174,49 @@ public class PlotText extends Object {
     boolean isAntiAliased = false;
     boolean usesFractionalMetrics = false;
     FontRenderContext frc =
-      new FontRenderContext(at, isAntiAliased, usesFractionalMetrics);
+        new FontRenderContext(at, isAntiAliased, usesFractionalMetrics);
     GlyphVector gv = font.createGlyphVector(frc, "M");
     float maxW = (float) (fsize_inv * gv.getGlyphMetrics(0).
-                          getBounds2D().getWidth());
-
+        getBounds2D().getWidth());
+  
     double flatness = 0.05; // ??
-
+  
     Vector big_vector = new Vector();
     int big_len = 1000;
     float[][] big_samples = new float[2][big_len];
     float[] seg = new float[6];
-
-
-
+  
+  
+  
     float x_offset = 0.0f;
     for (int str_index=0; str_index<str_len; str_index++) {
       char[] chars = {str.charAt(str_index)};
       gv = font.createGlyphVector(frc, chars);
-
+    
       int ng = gv.getNumGlyphs();
       if (ng == 0) continue;
       int path_count = 0;
       Vector samples_vector = new Vector();
-
+    
       // abcd - 1 February 2001
       // Get x increment from the fonts 'advance' property
       // float x_plus = (float) (fsize_inv * gv.getGlyphMetrics(0).getAdvance());
       //System.out.println(str_index + " " + chars[0] + " " + x_plus + " " + fsize_inv);
-
+    
       // Compute advance along baseline
       float angle = (float) Math.toRadians(-characRotation);
       float angle2 = (float) (angle + Math.PI/2.0);
       float x = (float) (fsize_inv * gv.getGlyphMetrics(0).getAdvance());
       float y = (float) (fsize_inv *
-                         (gv.getGlyphMetrics(0).getBounds2D().getHeight())
-                         + 0.2);
+          (gv.getGlyphMetrics(0).getBounds2D().getHeight())
+          + 0.2);
       float x_plus = (float) (x * Math.abs(Math.cos(angle)) +
-                              y * Math.abs(Math.cos(angle2)));
-
+          y * Math.abs(Math.cos(angle2)));
+    
       // Compute offset along baseline
       float y1 = (float) (fsize_inv *
-                          (gv.getGlyphMetrics(0).getBounds2D().getY() * -1)
-                          + 0.2);
+          (gv.getGlyphMetrics(0).getBounds2D().getY() * -1)
+          + 0.2);
       float cur_x_off = 0.0f;
       if (Math.cos(angle) < 0) {
         cur_x_off = (float) (x * Math.abs(Math.cos(angle)));
@@ -1195,15 +1229,15 @@ public class PlotText extends Object {
       }
       // Compute offset perpendicular to the baseline
       float w = (float) (fsize_inv * gv.getGlyphMetrics(0).getBounds2D().
-                         getWidth());
+          getWidth());
       float x_start = (float) (fsize_inv * gv.getGlyphMetrics(0).getBounds2D().
-                               getX());
+          getX());
       float space = (float) ((maxW - w)/2.0);
       float cur_y_off = (float) ((space - x_start) * Math.cos(angle2));
       //System.out.println("\n" + str_index + " " + chars[0] + " " + gv.getGlyphMetrics(0).getBounds2D() + " " + gv.getGlyphMetrics(0).getLSB() + " " + gv.getGlyphMetrics(0).getRSB());
       //System.out.println("\n" + str_index + " " + chars[0] + " w=" + w + " x_start=" + x_start + " space=" + space + " maxW=" + maxW);
       //System.out.println("\n" + str_index + " " + chars[0] + " " + "x=" + x + " y=" + y + " y1=" + y1 + " x_plus=" + x_plus + " cur_x_off=" + cur_x_off + " cur_y_off=" + cur_y_off);
-
+    
       for (int ig=0; ig<ng; ig++) {
         Shape sh = null;
         if (characRotation != 0.0) {
@@ -1215,7 +1249,7 @@ public class PlotText extends Object {
         else {
           sh = gv.getGlyphOutline(ig);
         }
-
+      
         // pi only has SEG_MOVETO, SEG_LINETO, and SEG_CLOSE point types
         PathIterator pi = sh.getPathIterator(at, flatness);
         int k = 0;
@@ -1268,9 +1302,9 @@ public class PlotText extends Object {
           k = 0;
           path_count++;
         }
-
+      
       } // end for (int ig=0; ig<ng; ig++)
-
+    
       if (path_count == 1) {
 // System.out.println("  char  " + chars[0]);
         big_vector.addElement(samples_vector.elementAt(0));
@@ -1285,7 +1319,7 @@ public class PlotText extends Object {
         try {
           if (path_count == 2 &&
               (!DelaunayCustom.inside(ss[0], ss[1][0][0], ss[1][1][0]) &&
-               !DelaunayCustom.inside(ss[1], ss[0][0][0], ss[0][1][0]))) {
+                  !DelaunayCustom.inside(ss[1], ss[0][0][0], ss[0][1][0]))) {
             // don't link for disconnected paths link "i"
 // System.out.println("  no link for  " + chars[0] + " " + path_count);
             for (int i=0; i<path_count; i++) {
@@ -1302,16 +1336,16 @@ public class PlotText extends Object {
         }
       }
       samples_vector.removeAllElements();
-
+    
       x_offset += x_plus;
     } // end for (int str_index=0; str_index<str_len; str_index++)
-
+  
     /*
      * abcd 5 February 2001
      * Figure out how far to the 'left' our text should start
      */
     // x_offset = center ? -0.5f * x_offset : 0.0f;
-
+  
     // Set default to LEFT
     if (justification == TextControl.Justification.CENTER) {
       x_offset = -0.5f * x_offset;
@@ -1335,7 +1369,7 @@ public class PlotText extends Object {
     } else { // BOTTOM (or LEFT or RIGHT)
       y_offset = 0.0f;
     }
-
+  
     int n = big_vector.size();
     VisADTriangleArray[] arrays = new VisADTriangleArray[n];
     for (int i=0; i<n; i++) {
@@ -1356,16 +1390,16 @@ public class PlotText extends Object {
         for (int tj=0; tj<3; tj++) {
           int j3 = j9 + 3 * tj;
           coordinates[j3 + 0] = (float)
-            (start_off[0] +  base[0] * (samples[0][tris[j][tj]] + x_offset) +
-             up[0] * (samples[1][tris[j][tj]] + y_offset));
+              (start_off[0] +  base[0] * (samples[0][tris[j][tj]] + x_offset) +
+                  up[0] * (samples[1][tris[j][tj]] + y_offset));
           coordinates[j3 + 1] = (float)
-            (start_off[1] +
-             base[1] * (samples[0][tris[j][tj]] + x_offset) +
-             up[1] * (samples[1][tris[j][tj]] + y_offset));
+              (start_off[1] +
+                  base[1] * (samples[0][tris[j][tj]] + x_offset) +
+                  up[1] * (samples[1][tris[j][tj]] + y_offset));
           coordinates[j3 + 2] = (float)
-            (start_off[2] +
-             base[2] * (samples[0][tris[j][tj]] + x_offset) +
-             up[2] * (samples[1][tris[j][tj]] + y_offset));
+              (start_off[2] +
+                  base[2] * (samples[0][tris[j][tj]] + x_offset) +
+                  up[2] * (samples[1][tris[j][tj]] + y_offset));
         }
       }
       float[] normals = new float[9 * m];
@@ -1381,7 +1415,7 @@ public class PlotText extends Object {
       arrays[i].normals = normals;
       // System.out.println("array[" + i + "] has " + m + " tris");
     } // end for (int i=0; i<n; i++)
-
+  
     array = new VisADTriangleArray();
     try {
       VisADGeometryArray.merge(arrays, array);
@@ -1392,5 +1426,154 @@ public class PlotText extends Object {
     if (array.coordinates == null) return null;
     return array;
   }
+  
+  public static void centerString(Graphics g,
+                              Rectangle r,
+                              String s,
+                              Font font,
+                              int row,
+                              Color color)
+  {
+    Graphics2D g2d = (Graphics2D)g;
+    g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+    g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+        RenderingHints.VALUE_FRACTIONALMETRICS_DEFAULT);
+    FontRenderContext frc2 =
+        new FontRenderContext(null, true, true);
+    
+    FontRenderContext frc = g2d.getFontRenderContext();
+    TextLayout layout = new TextLayout(s, font, frc2);
+    Rectangle2D r2D = layout.getBounds();
+//    System.out.println("rect r: "+r+" r2d: "+r2D);
+//    r.setRect(r2D);
+    int rWidth = (int)Math.round(r2D.getWidth());
+    int rHeight = (int)Math.round(r2D.getHeight());
+    int rX = (int)Math.round(r2D.getX());
+    int rY = (int)Math.round(r2D.getY());
+    
+    int a = (r.width / 2) - (rWidth / 2) - rX;
+    int b = 10;
+    if (color == null) {
+      color = Color.WHITE;
+    }
+    g.setColor(color);
+//    ((Graphics2D) g).fill(r);
+    
+//    g.clearRect(0, 0, r.width - 2, r.height - 2);
+    
+    g.setFont(font);
+    int startY = r.height - b;
+    GlyphVector gv = font.createGlyphVector(frc, s);
+    Rectangle2D rr = gv.getLogicalBounds();
+    
+    g.drawString(s, r.x + a, startY-(row * (int)rr.getHeight()));
+  }
+  
+  public static VisADPointArray makeImageShape3D(DisplayImplJ3D display,
+                                         Image image, int position, int x, int y, int width, int height,
+                                         double zValue, double scale)
+      throws VisADException {
+    int index = 0;
+    int ind = 0;
+    int scaledWidth;
+    int scaledHeight;
+  
+    DisplayRendererJ3D renderer =
+        (DisplayRendererJ3D) display.getDisplayRenderer();
+    VisADCanvasJ3D canvas = renderer.getCanvas();
+  
+    // Adjust for scaling factor
+    scaledWidth = Math.round((float) (width * scale));
+    scaledHeight = Math.round((float) (height * scale));
+    double scaleW = (double) scaledWidth / (double) width;
+    double scaleH = (double) scaledHeight / (double) height;
+  
+    // Adjust x, y according to  position
+    // do nothing for TOP_LEFT
+    if (position == ImageJ3D.TOP_RIGHT) { // adjust x
+      x = x - (scaledWidth - 1);
+    } else if (position == ImageJ3D.BOTTOM_RIGHT) { // adjust x & y
+      x = x - (scaledWidth - 1);
+      y = y - (scaledHeight - 1);
+    } else if (position == ImageJ3D.BOTTOM_LEFT) { // adjust y
+      y = y - (scaledHeight - 1);
+    } else if (position == ImageJ3D.CENTER) { // adjust x & y
+      x = x - (scaledWidth - 1) / 2;
+      y = y - (scaledHeight - 1) / 2;
+    }
+  
+    // now calculate the VWorld coordinates for each pixel
+    Transform3D t = new Transform3D();
+    canvas.getImagePlateToVworld(t);
+    index = 0;
+    Point3d[] points = new Point3d[scaledWidth * scaledHeight];
+    for (int i = 0; i < scaledHeight; i++) {
+      for (int j = 0; j < scaledWidth; j++) { // row first
+        points[index] = new Point3d();
+        canvas.getPixelLocationInImagePlate(x + j, y + i, points[index]);
+        t.transform(points[index]);
+        index++;
+      }
+    }
+    
+    ScreenAnnotatorUtils.ditherPoints(canvas, 0.4, points);
+    ScreenAnnotatorUtils.adjustZ(display, canvas, zValue, points);
+  
+    // now get the colours from the image 
+    int[] pixels = new int[width * height];
+    PixelGrabber pixelGrabber = new PixelGrabber(image.getSource(),
+        0, 0, width, height, pixels, 0, width);
+  
+    // get the pixels
+    try {
+      pixelGrabber.grabPixels();
+    } catch (InterruptedException ie) {
+      throw new VisADException(
+          "ScreenAnnotatorUtils.makeImageShape3D():" + " failed to grabPixels()");
+    }
 
+    float[] colours = new float[4 * scaledWidth * scaledHeight];
+    ind = 0;
+    index = 0;
+    ColorModel cm = pixelGrabber.getColorModel();
+    for (int i = 0; i < scaledHeight; i++) { // down column last
+      for (int j = 0; j < scaledWidth; j++) { // row first
+        ind = (int) ((double) j / scaleW) + width * (int) ((double) i / scaleH);
+        colours[4 * index] = (float) cm.getRed(pixels[ind]) / 255;
+        colours[4 * index + 1] = (float) cm.getGreen(pixels[ind]) / 255;
+        colours[4 * index + 2] = (float) cm.getBlue(pixels[ind]) / 255;
+        colours[4 * index + 3] = (float) cm.getAlpha(pixels[ind]) / 255;
+        index++;
+      }
+    }
+    
+    PointArray picture = new PointArray(scaledWidth * scaledHeight,
+        GeometryArray.COORDINATES | GeometryArray.COLOR_4);
+    picture.setCoordinates(0, points);
+    picture.setColors(0, colours);
+    
+//    float[] whoknows = new float[scaledWidth * scaledHeight * 3];
+//  for (int i = 0; i < points.length; i++) {
+//    whoknows[(3 * i) + 0] = (float)points[i].x;
+//    whoknows[(3 * i) + 1] = (float)points[i].y;
+//    whoknows[(3 * i) + 2] = (float)points[i].z;
+//  }
+  
+    float[] whoknows = new float[scaledWidth * scaledHeight * 3];
+    VisADPointArray parr = new VisADPointArray();
+    parr.vertexCount = scaledWidth * scaledHeight;
+    parr.vertexFormat = picture.getVertexFormat();
+    picture.getCoordinates(0, whoknows);
+    
+    parr.coordinates = new float[whoknows.length];
+    System.arraycopy(whoknows, 0, parr.coordinates, 0, whoknows.length);
+    
+    byte[] newcolors = new byte[colours.length];
+    picture.getColors(0, newcolors);
+    parr.colors = new byte[colours.length];
+    System.arraycopy(newcolors, 0, parr.colors, 0, newcolors.length);
+    return parr;
+  }
+  
 }

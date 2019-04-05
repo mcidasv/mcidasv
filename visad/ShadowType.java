@@ -1,3 +1,4 @@
+
 //
 // ShadowType.java
 //
@@ -26,15 +27,37 @@ MA 02111-1307, USA
 
 package visad;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Transparency;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.ArrayList;
+
+import javax.swing.SwingUtilities;
+import javax.vecmath.Point3d;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import visad.bom.annotations.ImageJ3D;
+import visad.bom.annotations.ScreenAnnotatorUtils;
 import visad.data.DataCacheManager;
 
+import visad.java3d.DisplayImplJ3D;
+import visad.java3d.DisplayRendererJ3D;
+import visad.java3d.VisADCanvasJ3D;
 import visad.util.HersheyFont;
+
+import com.jogamp.opengl.util.awt.TextRenderer;
 
 /**
  * The ShadowType hierarchy shadows the MathType hierarchy, within a
@@ -42,7 +65,10 @@ import visad.util.HersheyFont;
  * <P>
  */
 public abstract class ShadowType extends Object implements java.io.Serializable {
-
+  
+  private static final Logger logger =
+      LoggerFactory.getLogger(ShadowType.class);
+  
   /** possible values for LevelOfDifficulty */
   public static final int NOTHING_MAPPED = 6;
   public static final int SIMPLE_TUPLE = 5;
@@ -3154,7 +3180,25 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
     // abcd 2 February 2001
     // This cannot be moved outside the for loop
     rotateVectors(base, up, text_control.getRotation());
-
+    boolean newRendering = Boolean.parseBoolean(System.getProperty("visad.newfontrendering", "false"));
+    Graphics2D g2 = null;
+    BufferedImage listImage = null;
+    Rectangle bounds = null;
+    if (newRendering) {
+        Component dispComp = display.getComponent();
+        
+        GraphicsConfiguration gc = dispComp.getGraphicsConfiguration();
+        bounds = dispComp.getBounds();
+        
+        if (font != null) {
+            bounds.height = font.getSize() * 2;
+        }
+        
+        listImage = new BufferedImage(bounds.width, bounds.height, BufferedImage.TYPE_INT_ARGB);
+        g2 = listImage.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+    }
     int k = 0;
     for (int i = 0; i < n; i++) {
       if (range_select[0] == null || range_select[0].length == 1
@@ -3164,6 +3208,7 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
          * + " spatial_values = " + spatial_values[0][i] + " " +
          * spatial_values[1][i] + " " + spatial_values[2][i]);
          */
+        boolean skipColorStuff = false;
         if (sphere) {
           double size_in_radians = (size * FONT_SCALE) / spatial_sphere[2][i];
           double size_in_degrees = size_in_radians * Data.RADIANS_TO_DEGREES;
@@ -3229,9 +3274,41 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
           start = new double[] { spatial_values[0][i], spatial_values[1][i],
               spatial_values[2][i] };
           if (font != null) {
-            as[k] = PlotText.render_font(text_values[i], font, start, base, up,
-                justification, verticalJustification, characterRotation, scale,
-                offset);
+            if (newRendering && (display != null)) {
+              System.err.println("visad: using new font stuff!");
+              Point3d[] p3d = { new Point3d(start[0], start[1], start[2]) };
+
+              DisplayRendererJ3D renderer =
+                  (DisplayRendererJ3D)display.getDisplayRenderer();
+              VisADCanvasJ3D canvas = renderer.getCanvas();
+              int[][] screen = ScreenAnnotatorUtils.vworldToScreen(p3d, canvas);
+              int x = screen[0][0];
+              int y = screen[1][0];
+              try {
+                Color c;
+                if (color_length == 3) {
+                  c = new Color(Byte.toUnsignedInt(r),
+                                Byte.toUnsignedInt(g),
+                                Byte.toUnsignedInt(b),
+                                255);
+                } else {
+                  c = new Color(Byte.toUnsignedInt(r),
+                                Byte.toUnsignedInt(g),
+                                Byte.toUnsignedInt(b),
+                                Byte.toUnsignedInt(a));
+                }
+                PlotText.centerString(g2, bounds, text_values[i], font, 0, c);
+//                System.err.println("even getting here?? color="+c+" alpha="+c.getAlpha()+" color_len="+color_length);
+                as[k] = PlotText.makeImageShape3D((DisplayImplJ3D) display, listImage, ImageJ3D.CENTER, x, y, bounds.width, bounds.height, 1, 2);
+                skipColorStuff = true;
+              } catch (Exception eeee) {
+                logger.error("Could not use new font rendering code", eeee);
+              }
+            } else {
+              as[k] = PlotText.render_font(text_values[i], font, start, base, up,
+                  justification, verticalJustification, characterRotation, scale,
+                  offset);
+            }
 
           } else if (hfont != null) {
             as[k] = PlotText.render_font(text_values[i], hfont, start, base,
@@ -3247,7 +3324,7 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
 
         int len = (as[k] == null) ? 0 : as[k].coordinates.length;
         int numPts = len / 3;
-        if (len > 0 && color_values != null) {
+        if (!skipColorStuff && len > 0 && color_values != null) {
           byte[] colors = new byte[numPts * color_length];
           if (color_values[0].length > 1) {
             r = color_values[0][k];
