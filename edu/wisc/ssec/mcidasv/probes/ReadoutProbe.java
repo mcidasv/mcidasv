@@ -505,7 +505,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         assert imageData != null : "Cannot provide a null image";
         double[] values = position.getValues();
         
-        // offset slightly so that the value readout isn't directly in top of
+        // offset slightly so that the value readout isn't directly on top of
         // the actual probe
         values[1] += 0.5 * getDisplayScale();
         values[0] += 0.5 * getDisplayScale();
