@@ -34,6 +34,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import ucar.unidata.collab.SharableImpl;
@@ -45,6 +46,8 @@ import ucar.visad.display.SelectorDisplayable;
 import ucar.visad.display.TextDisplayable;
 
 import visad.Data;
+import visad.DisplayEvent;
+import visad.DisplayListener;
 import visad.FlatField;
 import visad.MathType;
 import visad.Real;
@@ -57,6 +60,9 @@ import visad.TupleType;
 import visad.VisADException;
 import visad.georef.EarthLocationTuple;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ReadoutProbe extends SharableImpl implements PropertyChangeListener {
 
     public static final String SHARE_PROFILE = "ReadoutProbeDeux.SHARE_PROFILE";
@@ -66,6 +72,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private static final Color DEFAULT_COLOR = Color.MAGENTA;
 
     private static final TupleType TUPTYPE = makeTupleType();
+    
+    private static final Logger logger = LoggerFactory.getLogger(ReadoutProbe.class);
 
     private final CopyOnWriteArrayList<ProbeListener> listeners = 
         new CopyOnWriteArrayList<>();
@@ -129,6 +137,13 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         probe.setAutoSize(true);
         probe.addPropertyChangeListener(this);
         probe.setPointSize(getDisplayScale());
+        
+        // "snap" the text to the probe when zooming
+        master.addDisplayListener(e -> {
+            if (e.getId() == DisplayEvent.FRAME_DONE) {
+                handleProbeUpdate();
+            }
+        });
 
         numFmt.applyPattern(pattern);
 
@@ -148,6 +163,7 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      */
     public void propertyChange(final PropertyChangeEvent e) {
         requireNonNull(e, "Cannot handle a null property change event");
+        logger.trace("prop name: {}", e.getPropertyName());
         if (e.getPropertyName().equals(SelectorDisplayable.PROPERTY_POSITION)) {
             RealTuple prev = getEarthPosition();
             //handleProbeUpdate();
@@ -487,16 +503,21 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private Tuple valueAtPosition(final RealTuple position, final FlatField imageData) {
         assert position != null : "Cannot provide a null position";
         assert imageData != null : "Cannot provide a null image";
-
         double[] values = position.getValues();
+        
+        // offset slightly so that the value readout isn't directly in top of
+        // the actual probe
+        values[1] += 0.5 * getDisplayScale();
+        values[0] += 0.5 * getDisplayScale();
+        
         if (values[1] < -180) {
             values[1] += 360f;
         }
-
+        
         if (values[0] > 180) {
             values[0] -= 360f;
         }
-
+        
         Tuple positionTuple = null;
         try {
             // TODO(jon): do the positionFormat stuff in here. maybe this'll 
