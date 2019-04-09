@@ -63,23 +63,30 @@ import visad.georef.EarthLocationTuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReadoutProbe extends SharableImpl implements PropertyChangeListener {
+public class ReadoutProbe 
+    extends SharableImpl 
+    implements PropertyChangeListener, DisplayListener 
+{
 
-    public static final String SHARE_PROFILE = "ReadoutProbeDeux.SHARE_PROFILE";
+    public static final String SHARE_PROFILE =
+        "ReadoutProbeDeux.SHARE_PROFILE";
 
-    public static final String SHARE_POSITION = "ReadoutProbeDeux.SHARE_POSITION";
+    public static final String SHARE_POSITION =
+        "ReadoutProbeDeux.SHARE_POSITION";
 
     private static final Color DEFAULT_COLOR = Color.MAGENTA;
 
     private static final TupleType TUPTYPE = makeTupleType();
     
-    private static final Logger logger = LoggerFactory.getLogger(ReadoutProbe.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(ReadoutProbe.class);
 
     private final CopyOnWriteArrayList<ProbeListener> listeners = 
         new CopyOnWriteArrayList<>();
 
     /** Displays the value of the data at the current position. */
-    private final TextDisplayable valueDisplay = createValueDisplay(DEFAULT_COLOR);
+    private final TextDisplayable valueDisplay =
+        createValueDisplay(DEFAULT_COLOR);
 
     private final LineProbe probe = new LineProbe(getInitialLinePosition());
 
@@ -101,8 +108,8 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
     private RealTuple prevPos = null;
 
     /**
-     * Create a {@literal "HYDRA"} probe that allows for displaying things like
-     * value at current position, current color, and location.
+     * Create a {@literal "HYDRA"} probe that allows for displaying things 
+     * like value at current position, current color, and location.
      *
      * <p>Note: <b>none</b> of the parameters permit {@code null} values.</p>
      *
@@ -112,22 +119,28 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
      * @param pattern Format string to use with probe's location values.
      * @param visible Whether or not the probe is visible.
      *
-     * @throws NullPointerException if any of the given parameters are {@code null}.
+     * @throws NullPointerException if any of the given parameters are 
+     *                              {@code null}.
      * @throws VisADException if VisAD had problems.
      * @throws RemoteException if VisAD had problems.
      */
-    public ReadoutProbe(final DisplayMaster master, final FlatField field, final Color color, final String pattern, final boolean visible) throws VisADException, RemoteException {
-        super();
+    public ReadoutProbe(final DisplayMaster master,
+                        final FlatField field,
+                        final Color color,
+                        final String pattern,
+                        final boolean visible) 
+        throws VisADException, RemoteException 
+    {
         requireNonNull(master, "DisplayMaster can't be null");
         requireNonNull(field, "Field can't be null");
         requireNonNull(color, "Color can't be null");
         requireNonNull(pattern, "Pattern can't be null");
-
+        
         this.master = master;
         this.field = field;
-
+        
         initSharable();
-
+        
         probe.setColor(color);
         valueDisplay.setVisible(visible);
         valueDisplay.setColor(color);
@@ -135,33 +148,39 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
         probe.setVisible(visible);
         probe.setPointSize(pointSize);
         probe.setAutoSize(true);
-        probe.addPropertyChangeListener(this);
         probe.setPointSize(getDisplayScale());
         
-        // "snap" the text to the probe when zooming
-        master.addDisplayListener(e -> {
-            if (e.getId() == DisplayEvent.FRAME_DONE) {
-                handleProbeUpdate();
-            }
-        });
-
         numFmt.applyPattern(pattern);
-
+        
         master.addDisplayable(valueDisplay);
         master.addDisplayable(probe);
         setField(field);
+        
+        // done mostly to avoid using "this" while we're still within the 
+        // constructor
+        addListeners();
+    }
+    
+    /**
+     * Add this probe instance to the relevant listeners.
+     */
+    private void addListeners() {
+        probe.addPropertyChangeListener(this);
+        master.getDisplay().addDisplayListener(this);
     }
 
     /**
-     * Called whenever the probe fires off a {@link PropertyChangeEvent}. Only
-     * handles position changes right now, all other events are discarded.
+     * Called whenever the probe fires off a {@link PropertyChangeEvent}. 
+     * 
+     * <p>Only handles position changes right now, all other events are 
+     * discarded.</p>
      *
      * @param e Object that describes the property change.
      * 
      * @throws NullPointerException if passed a {@code null} 
      * {@code PropertyChangeEvent}.
      */
-    public void propertyChange(final PropertyChangeEvent e) {
+    @Override public void propertyChange(final PropertyChangeEvent e) {
         requireNonNull(e, "Cannot handle a null property change event");
         logger.trace("prop name: {}", e.getPropertyName());
         if (e.getPropertyName().equals(SelectorDisplayable.PROPERTY_POSITION)) {
@@ -174,6 +193,23 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
             }
             prevPos = current;
             //fireProbePositionChanged(prev, current);
+        }
+    }
+    
+    /**
+     * Called for events happening in the {@link visad.DisplayImpl} 
+     * associated with {@link DisplayMaster}. 
+     * 
+     * <p>The only event that is actually handled is 
+     * {@link DisplayEvent#FRAME_DONE}, which allows us to snap the text 
+     * value displayable to the actual {@literal "pickable"} probe.</p>
+     * 
+     * @param e Event to handle.
+     */
+    @Override public void displayChanged(DisplayEvent e) {
+        // "snap" the text to the probe when zooming
+        if (e.getId() == DisplayEvent.FRAME_DONE) {
+            handleProbeUpdate();
         }
     }
 
@@ -434,10 +470,14 @@ public class ReadoutProbe extends SharableImpl implements PropertyChangeListener
             LogUtil.logException("Failed to set readout value", e);
         }
     }
-
+    
+    /**
+     * Called when this probe has been removed.
+     */
     public void handleProbeRemoval() {
         listeners.clear();
         try {
+            master.getDisplay().removeDisplayListener(this);
             master.removeDisplayable(valueDisplay);
             master.removeDisplayable(probe);
         } catch (Exception e) {
