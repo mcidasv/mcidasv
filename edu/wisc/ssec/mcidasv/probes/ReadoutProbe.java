@@ -106,6 +106,9 @@ public class ReadoutProbe
     private static final DecimalFormat numFmt = new DecimalFormat();
 
     private RealTuple prevPos = null;
+    
+    /** Used to keep track of the last zoom {@literal "level"}. */
+    private float lastScale = Float.MIN_VALUE;
 
     /**
      * Create a {@literal "HYDRA"} probe that allows for displaying things 
@@ -182,7 +185,6 @@ public class ReadoutProbe
      */
     @Override public void propertyChange(final PropertyChangeEvent e) {
         requireNonNull(e, "Cannot handle a null property change event");
-        logger.trace("prop name: {}", e.getPropertyName());
         if (e.getPropertyName().equals(SelectorDisplayable.PROPERTY_POSITION)) {
             RealTuple prev = getEarthPosition();
             //handleProbeUpdate();
@@ -192,6 +194,7 @@ public class ReadoutProbe
                 handleProbeUpdate();
             }
             prevPos = current;
+            
             //fireProbePositionChanged(prev, current);
         }
     }
@@ -207,9 +210,15 @@ public class ReadoutProbe
      * @param e Event to handle.
      */
     @Override public void displayChanged(DisplayEvent e) {
-        // "snap" the text to the probe when zooming
+        // "snap" the text to the probe when zooming. the test for display
+        // scale values is to ensure we don't attempt to update if the zoom
+        // level didn't change.
         if (e.getId() == DisplayEvent.FRAME_DONE) {
-            handleProbeUpdate();
+            float currentScale = getDisplayScale();
+            if (lastScale != currentScale) {
+                handleProbeUpdate();
+                lastScale = currentScale;
+            }
         }
     }
 
@@ -451,8 +460,7 @@ public class ReadoutProbe
     public String getFormatPattern() {
         return numFmt.toPattern();
     }
-
-
+    
     public void handleProbeUpdate() {
         RealTuple pos = getEarthPosition();
         if (pos == null) {
