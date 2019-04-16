@@ -34,7 +34,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
-import java.util.Objects;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import ucar.unidata.collab.SharableImpl;
@@ -60,9 +60,18 @@ import visad.TupleType;
 import visad.VisADException;
 import visad.georef.EarthLocationTuple;
 
+import edu.wisc.ssec.mcidasv.util.MakeToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * {@code ReadoutProbe} is a probe that combines a {@literal "pickable"} probe
+ * widget with an adjacent text {@literal "readout"} of the data value at the 
+ * probe's current location.
+ * 
+ * <p>Primarily used with 
+ * {@link edu.wisc.ssec.mcidasv.control.MultiSpectralControl}.</p>
+ */
 public class ReadoutProbe 
     extends SharableImpl 
     implements PropertyChangeListener, DisplayListener 
@@ -81,8 +90,7 @@ public class ReadoutProbe
     private static final Logger logger =
         LoggerFactory.getLogger(ReadoutProbe.class);
 
-    private final CopyOnWriteArrayList<ProbeListener> listeners = 
-        new CopyOnWriteArrayList<>();
+    private final List<ProbeListener> listeners = new CopyOnWriteArrayList<>();
 
     /** Displays the value of the data at the current position. */
     private final TextDisplayable valueDisplay =
@@ -92,7 +100,7 @@ public class ReadoutProbe
 
     private final DisplayMaster master;
 
-    private Color currentColor = DEFAULT_COLOR;
+    private Color currentColor;
 
     private String currentValue = "NaN";
 
@@ -104,8 +112,6 @@ public class ReadoutProbe
     private FlatField field;
 
     private static final DecimalFormat numFmt = new DecimalFormat();
-
-    private RealTuple prevPos = null;
     
     /** Used to keep track of the last zoom {@literal "level"}. */
     private float lastScale = Float.MIN_VALUE;
@@ -116,8 +122,8 @@ public class ReadoutProbe
      *
      * <p>Note: <b>none</b> of the parameters permit {@code null} values.</p>
      *
-     * @param master {@code DisplayMaster} containing the probe.
-     * @param field Data to probe.
+     * @param displayMaster {@code DisplayMaster} containing the probe.
+     * @param flatField Data to probe.
      * @param color {@code Color} of the probe.
      * @param pattern Format string to use with probe's location values.
      * @param visible Whether or not the probe is visible.
@@ -127,20 +133,20 @@ public class ReadoutProbe
      * @throws VisADException if VisAD had problems.
      * @throws RemoteException if VisAD had problems.
      */
-    public ReadoutProbe(final DisplayMaster master,
-                        final FlatField field,
+    public ReadoutProbe(final DisplayMaster displayMaster,
+                        final FlatField flatField,
                         final Color color,
                         final String pattern,
-                        final boolean visible) 
-        throws VisADException, RemoteException 
+                        final boolean visible)
+        throws VisADException, RemoteException
     {
-        requireNonNull(master, "DisplayMaster can't be null");
-        requireNonNull(field, "Field can't be null");
+        requireNonNull(displayMaster, "DisplayMaster can't be null");
+        requireNonNull(flatField, "Field can't be null");
         requireNonNull(color, "Color can't be null");
         requireNonNull(pattern, "Pattern can't be null");
         
-        this.master = master;
-        this.field = field;
+        this.master = displayMaster;
+        this.field = flatField;
         
         initSharable();
         
@@ -155,9 +161,9 @@ public class ReadoutProbe
         
         numFmt.applyPattern(pattern);
         
-        master.addDisplayable(valueDisplay);
-        master.addDisplayable(probe);
-        setField(field);
+        displayMaster.addDisplayable(valueDisplay);
+        displayMaster.addDisplayable(probe);
+        setField(flatField);
         
         // done mostly to avoid using "this" while we're still within the 
         // constructor
@@ -187,15 +193,9 @@ public class ReadoutProbe
         requireNonNull(e, "Cannot handle a null property change event");
         if (e.getPropertyName().equals(SelectorDisplayable.PROPERTY_POSITION)) {
             RealTuple prev = getEarthPosition();
-            //handleProbeUpdate();
             RealTuple current = getEarthPosition();
-            if (prevPos != null) {
-                fireProbePositionChanged(prev, current);
-                handleProbeUpdate();
-            }
-            prevPos = current;
-            
-            //fireProbePositionChanged(prev, current);
+            fireProbePositionChanged(prev, current);
+            handleProbeUpdate();
         }
     }
     
@@ -226,13 +226,13 @@ public class ReadoutProbe
      * Sets the {@link FlatField} associated with this probe to the given
      * {@code field}.
      *
-     * @param field New {@code FlatField} for this probe.
+     * @param flatField New {@code FlatField} for this probe.
      *
      * @throws NullPointerException if passed a {@code null} {@code field}.
      */
-    public void setField(final FlatField field) {
-        requireNonNull(field);
-        this.field = field;
+    public void setField(final FlatField flatField) {
+        requireNonNull(flatField);
+        this.field = flatField;
         handleProbeUpdate();
     }
 
@@ -246,7 +246,8 @@ public class ReadoutProbe
      * @throws NullPointerException if {@code listener} is null.
      */
     public void addProbeListener(final ProbeListener listener) {
-        listeners.add(requireNonNull(listener, "Can't add a null listener"));
+        requireNonNull(listener, "Can't add a null listener");
+        listeners.add(listener);
     }
 
     /**
@@ -277,14 +278,17 @@ public class ReadoutProbe
      * Notifies the registered {@link ProbeListener ProbeListeners} that this
      * probe's position has changed.
      * 
-     * @param previous Previous position.
-     * @param current Current position.
+     * @param previous Previous position. Cannot be {@code null}.
+     * @param current Current position. Cannot be {@code null}.
      */
-    protected void fireProbePositionChanged(final RealTuple previous, final RealTuple current) {
+    protected void fireProbePositionChanged(final RealTuple previous,
+                                            final RealTuple current)
+    {
         requireNonNull(previous);
         requireNonNull(current);
 
-        ProbeEvent<RealTuple> event = new ProbeEvent<>(this, previous, current);
+        ProbeEvent<RealTuple> event =
+            new ProbeEvent<>(this, previous, current);
         for (ProbeListener listener : listeners) {
             listener.probePositionChanged(event);
         }
@@ -294,14 +298,17 @@ public class ReadoutProbe
      * Notifies the registered {@link ProbeListener ProbeListeners} that this
      * probe's color has changed.
      * 
-     * @param previous Previous color.
-     * @param current Current color.
+     * @param previous Previous color. Cannot be {@code null}.
+     * @param current Current color. Cannot be {@code null}.
      */
-    protected void fireProbeColorChanged(final Color previous, final Color current) {
+    protected void fireProbeColorChanged(final Color previous,
+                                         final Color current)
+    {
         requireNonNull(previous);
         requireNonNull(current);
 
-        ProbeEvent<Color> event = new ProbeEvent<>(this, previous, current);
+        ProbeEvent<Color> event =
+            new ProbeEvent<>(this, previous, current);
         for (ProbeListener listener : listeners) {
             listener.probeColorChanged(event);
         }
@@ -315,7 +322,8 @@ public class ReadoutProbe
      * @param previous Visibility <b>before</b> change.
      */
     protected void fireProbeVisibilityChanged(final boolean previous) {
-        ProbeEvent<Boolean> event = new ProbeEvent<>(this, previous, !previous);
+        ProbeEvent<Boolean> event =
+            new ProbeEvent<>(this, previous, !previous);
         for (ProbeListener listener : listeners) {
             listener.probeVisibilityChanged(event);
         }
@@ -328,17 +336,20 @@ public class ReadoutProbe
      * @param previous Previous location format pattern.
      * @param current Current location format pattern.
      */
-     protected void fireProbeFormatPatternChanged(final String previous, final String current) {
-         ProbeEvent<String> event = new ProbeEvent<>(this, previous, current);
+     protected void fireProbeFormatPatternChanged(final String previous,
+                                                  final String current)
+     {
+         ProbeEvent<String> event =
+             new ProbeEvent<>(this, previous, current);
          for (ProbeListener listener : listeners) {
              listener.probeFormatPatternChanged(event);
          }
      }
 
     /**
+     * Change the color of this {@code ReadoutProbe} instance.
      *
-     *
-     * @param color
+     * @param color New color. Cannot be {@code null}.
      */
     public void setColor(final Color color) {
         requireNonNull(color, "Cannot set a probe to a null color");
@@ -346,7 +357,8 @@ public class ReadoutProbe
     }
 
     /**
-     *
+     * Change the color of this {@code ReadoutProbe} instance and control 
+     * whether or not listeners should be notified.
      *
      * <p>Note that if {@code color} is the same as {@code currentColor},
      * nothing will happen (the method exits early).</p>
@@ -375,30 +387,50 @@ public class ReadoutProbe
             LogUtil.logException("Couldn't set the color of the probe", e);
         }
     }
-
+    
+    /**
+     * Get the current color of this {@code ReadoutProbe} instance.
+     * 
+     * @return {@code Color} of this {@code ReadoutProbe}.
+     */
     public Color getColor() {
         return currentColor;
     }
-
+    
+    /**
+     * Get the current {@literal "readout value"} of this 
+     * {@code ReadoutProbe} instance. 
+     * 
+     * @return The value of the data at the probe's current location.
+     */
     public String getValue() {
         return currentValue;
     }
-
+    
+    /**
+     * Get the current latitude of this {@code ReadoutProbe} instance.
+     * 
+     * @return Current latitude of the probe.
+     */
     public double getLatitude() {
         return currentLatitude;
     }
-
+    
+    /**
+     * Get the current longitude of this {@code ReadoutProbe} instance.
+     *
+     * @return Current longitude of the probe.
+     */
     public double getLongitude() {
         return currentLongitude;
     }
 
-    public void setLatLon(final Double latitude, final Double longitude) {
-        requireNonNull(latitude, "Null latitude values don't make sense!");
-        requireNonNull(longitude, "Null longitude values don't make sense!");
-
+    public void setLatLon(final double latitude, final double longitude) {
         try {
-            EarthLocationTuple elt = new EarthLocationTuple(latitude, longitude, 0.0);
-            double[] tmp = ((NavigatedDisplay)master).getSpatialCoordinates(elt, null);
+            EarthLocationTuple elt =
+                new EarthLocationTuple(latitude, longitude, 0.0);
+            double[] tmp =
+                ((NavigatedDisplay)master).getSpatialCoordinates(elt, null);
             probe.setPosition(tmp[0], tmp[1]);
         } catch (Exception e) {
             LogUtil.logException("Failed to set the probe's position", e);
@@ -444,7 +476,9 @@ public class ReadoutProbe
      * @param pattern New location format pattern. Cannot be {@code null}.
      * @param quietly Whether or not to fire a format pattern change update.
      */
-    private void setFormatPattern(final String pattern, final boolean quietly) {
+    private void setFormatPattern(final String pattern,
+                                  final boolean quietly)
+    {
         String previous = numFmt.toPattern();
         numFmt.applyPattern(pattern);
         if (!quietly) {
@@ -534,7 +568,15 @@ public class ReadoutProbe
         }
         return position;
     }
-
+    
+    /**
+     * Get the current {@literal "earth location"} of the probe.
+     * 
+     * <p>Note: this method will attempt to change the {@link #currentLatitude} 
+     * and {@link #currentLongitude} fields.</p>
+     * 
+     * @return
+     */
     public EarthLocationTuple getEarthPosition() {
         EarthLocationTuple earthTuple = null;
         try {
@@ -548,7 +590,9 @@ public class ReadoutProbe
         return earthTuple;
     }
 
-    private Tuple valueAtPosition(final RealTuple position, final FlatField imageData) {
+    private Tuple valueAtPosition(final RealTuple position,
+                                  final FlatField imageData)
+    {
         assert position != null : "Cannot provide a null position";
         assert imageData != null : "Cannot provide a null image";
         double[] values = position.getValues();
@@ -635,7 +679,11 @@ public class ReadoutProbe
      * latitude=..., longitude=..., value=...]}
      */
     public String toString() {
-        return String.format("[ReadoutProbe@%x: color=%s, latitude=%s, longitude=%s, value=%f]", 
-            hashCode(), currentColor, currentLatitude, currentLongitude, currentValue);
+        return MakeToString.fromInstance(this)
+                           .add("color", currentColor)
+                           .add("latitude", currentLatitude)
+                           .add("longitude", currentLongitude)
+                           .add("value", currentValue).toString();
+
     }
 }
