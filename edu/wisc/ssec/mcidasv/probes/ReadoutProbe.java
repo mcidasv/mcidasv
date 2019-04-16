@@ -215,7 +215,7 @@ public class ReadoutProbe
         // level didn't change.
         if (e.getId() == DisplayEvent.FRAME_DONE) {
             float currentScale = getDisplayScale();
-            if (lastScale != currentScale) {
+            if (Float.compare(lastScale, currentScale) != 0) {
                 handleProbeUpdate();
                 lastScale = currentScale;
             }
