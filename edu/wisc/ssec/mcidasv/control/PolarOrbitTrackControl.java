@@ -327,17 +327,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 			}
 
 			GroundStation gs = new GroundStation(labStr, elt, gsFontSelector.getFont());
-			try {
-                gs.getTd().setColor(antColorSwatch.getColor());
-                gs.getCd().setColor(antColorSwatch.getColor());
-            } catch (RemoteException | VisADException e) {
-                logger.trace("Problem setting color", e);
-            }
-			
 			gs.setAntennaAngle(curAngle);
-			jcbStationsPlotted.addItem(gs);
-			jcbStationsPlotted.setSelectedItem(gs);
 			addGroundStation(gs);
+            jcbStationsPlotted.addItem(gs);
+            jcbStationsPlotted.setSelectedItem(gs);
 			updateDisplayList();
     		return;
     	}
