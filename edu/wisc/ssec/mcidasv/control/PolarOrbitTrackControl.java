@@ -326,7 +326,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 				logger.error("Problem creating EarthLocationTuple", e);
 			}
 
-			GroundStation gs = new GroundStation(labStr, elt, gsFontSelector.getFont());
+			GroundStation gs = new GroundStation(labStr, elt);
 			gs.setAntennaAngle(curAngle);
 			addGroundStation(gs);
             jcbStationsPlotted.addItem(gs);
@@ -537,7 +537,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             }
             
             logger.debug("Apply Station mods for: " + gs.getName() +
-                    ", cur font: " + gs.getTd().getFont().getFontName() +
+                    ", cur font name: " + gs.getTd().getFont().getFontName() +
+                    ", cur font size: " + gs.getTd().getFont().getSize() +
                     ", cur color: " + gs.getTd().getColor());
             
     		// flag indicates user changed some parameter
@@ -562,6 +563,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		    logger.debug("GroundStation font change...");
     		    try {
                     gs.getTd().setFont(gsFontSelector.getFont());
+                    // Update scale - it could have changed if user scrolled or zoomed
+                    scale = getViewManager().getMaster().getDisplayScale();
+                    gs.getTd().setTextSize((float) scale * gsFontSelector.getFontSize() / FONT_SCALE_FACTOR);
                 } catch (RemoteException | VisADException e) {
                     logger.error("Problem changing ground station font", e);
                 }

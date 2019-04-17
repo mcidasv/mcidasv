@@ -60,7 +60,7 @@ public class GroundStation
 	 * We'll try to get by with only one way to initialize these.
 	 */
     
-	public GroundStation(String name, EarthLocationTuple location, Font font) {
+	public GroundStation(String name, EarthLocationTuple location) {
 	    this.name = name;
 	    this.elt = location;
 	}

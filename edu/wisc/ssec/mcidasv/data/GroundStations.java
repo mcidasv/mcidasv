@@ -99,7 +99,7 @@ public class GroundStations
                     Double dAlt = new Double(elements[4]);
                     
                     EarthLocationTuple elt = new EarthLocationTuple(dLat, dLon, dAlt);
-                    namedLocs.add(new GroundStation(elements[1], elt, FontSelector.DEFAULT_FONT));
+                    namedLocs.add(new GroundStation(elements[1], elt));
                 }
                 nextLine = gsReader.readLine();
             } // while there are more lines to read
