@@ -255,7 +255,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     public PolarOrbitTrackControl() {
         super();
         logger.trace("created new PolarOrbitTrackControl...");
-        setAttributeFlags(FLAG_COLORTABLE);
         try {
             final String xml =
                 IOUtil.readContents(SWATH_WIDTHS, McIdasPreferenceManager.class);
@@ -812,8 +811,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     trackDsp.setColor(curSwathColor);
                     trackDsp.setLineWidth(jcbSCLineWidth.getSelectedIndex() + 1);
 
-                    addDisplayable(trackDsp, FLAG_COLORTABLE);
-                    addDisplayable(timeLabelDsp, FLAG_COLORTABLE);
+                    addDisplayable(trackDsp);
+                    addDisplayable(timeLabelDsp);
                 }
 
                 if (jcbSwathEdges.isSelected()) {
@@ -851,7 +850,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     
                     swathEdgeDsp.setColor(curSwathColor);
                     swathEdgeDsp.setLineWidth(curSwathEdgeWidth);
-                    addDisplayable(swathEdgeDsp, FLAG_COLORTABLE);
+                    addDisplayable(swathEdgeDsp);
                 }
             }
         } catch (Exception e) {
@@ -1567,7 +1566,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             }
 
             cd.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
-    		addDisplayable(cd, FLAG_COLORTABLE);
+            addDisplayable(cd);
             TextDisplayable td = gs.getTd();
             td.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
             addDisplayable(td);
