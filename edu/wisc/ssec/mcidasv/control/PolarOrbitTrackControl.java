@@ -1160,6 +1160,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbLabels.setName(CHECKBOX_LABELS);
         jcbLabels.addItemListener(this);
         
+        // create swath edges toggle
+        jcbSwathEdges = new JCheckBox("Swath Edges On/Off");
+        jcbSwathEdges.setSelected(true);
+        jcbSwathEdges.setName(CHECKBOX_SWATH_EDGES);
+        jcbSwathEdges.addItemListener(this);
+        
         // initialize swath center (track line) to width 2
         jcbSCLineWidth.setSelectedIndex(1);
         jcbEdgeLineStyle.setSelectedIndex(1);
@@ -1445,10 +1451,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         JPanel jp = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
         // first on this panel, check box to turn on/off swath line edges
-        jcbSwathEdges = new JCheckBox("Swath Edges On/Off");
-        jcbSwathEdges.setSelected(true);
-        jcbSwathEdges.setName(CHECKBOX_SWATH_EDGES);
-        jcbSwathEdges.addItemListener(this);
         jp.add(jcbSwathEdges);
         
         jp.add(Box.createHorizontalStrut(5));
