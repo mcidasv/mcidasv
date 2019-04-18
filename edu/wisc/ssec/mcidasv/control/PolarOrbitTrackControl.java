@@ -259,7 +259,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             final String xml =
                 IOUtil.readContents(SWATH_WIDTHS, McIdasPreferenceManager.class);
             root = XmlUtil.getRoot(xml);
-            scale = getViewManager().getMaster().getDisplayScale();
         } catch (Exception e) {
             logger.error("problem reading swathwidths.xml", e);
         }
