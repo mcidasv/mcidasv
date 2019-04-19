@@ -1337,10 +1337,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             public void itemStateChanged(ItemEvent arg0) {
                 logger.debug("Active Station changed...");
                 GroundStation gs = (GroundStation) jcbStationsPlotted.getSelectedItem();
-                if (gs == null) {
-                    JOptionPane.showMessageDialog(null, 
-                    "No Active Stations");
-                } else {
+                if (gs != null) {
                     // Update UI with settings for this station
                     gsFontSelector.setFont(gs.getTd().getFont());
                     antColorSwatch.setBackground(gs.getCd().getColor());
