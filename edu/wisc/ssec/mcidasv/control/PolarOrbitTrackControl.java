@@ -179,6 +179,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     /** the font selectors, Orbit Track (ot) and Ground Station (gs) */
     private FontSelector otFontSelector;
     private Font otCurFont = FontSelector.DEFAULT_FONT;
+    private int otCurFontSize = otCurFont.getSize();
     private FontSelector gsFontSelector;
     
     // line width combo boxes, Station: Ground Station, SC: Swath Center, SE: Swath Edge
@@ -193,13 +194,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     
     // time label variables
     private static final int DEFAULT_LABEL_INTERVAL = 5;
-    private int labelInterval = DEFAULT_LABEL_INTERVAL;
+    private int curLabelInterval = DEFAULT_LABEL_INTERVAL;
+    private int prvLabelInterval = DEFAULT_LABEL_INTERVAL;
 
     private ColorSwatchComponent colorSwatch;
 
     private static final Color DEFAULT_COLOR = Color.GREEN;
     private Color curSwathColor = DEFAULT_COLOR;
-    private Color prvSwathColor = null;
+    private Color prvSwathColor = DEFAULT_COLOR;
     
     private ColorSwatchComponent antColorSwatch;
     private Color antColor;
@@ -214,7 +216,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private TextType otTextType = null;
     private static long ttCounter = 0;
     private double curWidth = 0.0d;
-    private double prvWidth = 0.0d;
+    private double prvWidth = -1.0d;
 
     private int prvTrackLineStyle = -1;
     private int prvEdgeLineStyle = -1;
@@ -414,26 +416,47 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	if (SWATH_MODS.equals(ae.getActionCommand())) {
     		logger.debug("Apply Swath Mods...");
     		
-    		boolean fontChanged = true;
+    		boolean fontChanged = false;
     		boolean swathChanged = false;
     		scale = getViewManager().getMaster().getDisplayScale();
     		curSwathCenterWidth = jcbSCLineWidth.getSelectedIndex() + 1;
     		curSwathEdgeWidth = jcbSELineWidth.getSelectedIndex() + 1;
-    		if (curSwathCenterWidth != prvSwathCenterWidth) swathChanged = true;
-    		if (curSwathEdgeWidth != prvSwathEdgeWidth) swathChanged = true;
+    		if (curSwathCenterWidth != prvSwathCenterWidth) {
+    		    prvSwathCenterWidth = curSwathCenterWidth;
+    		    swathChanged = true;
+    		}
+    		if (curSwathEdgeWidth != prvSwathEdgeWidth) {
+    		    prvSwathEdgeWidth = curSwathEdgeWidth;
+    		    swathChanged = true;
+    		}
     		
     		curTrackLineStyle = jcbTrackLineStyle.getSelectedIndex();
-    		if (curTrackLineStyle != prvTrackLineStyle) swathChanged = true; 
+    		if (curTrackLineStyle != prvTrackLineStyle) {
+    		    prvTrackLineStyle = curTrackLineStyle;
+    		    swathChanged = true; 
+    		}
     		curEdgeLineStyle = jcbEdgeLineStyle.getSelectedIndex();
-    		if (curEdgeLineStyle != prvEdgeLineStyle) swathChanged = true;
+    		if (curEdgeLineStyle != prvEdgeLineStyle) {
+    		    prvEdgeLineStyle = curEdgeLineStyle;
+    		    swathChanged = true;
+    		}
     		
     		curSwathColor = colorSwatch.getColor();
-    		if (! curSwathColor.equals(prvSwathColor)) swathChanged = true;
+    		if (! curSwathColor.equals(prvSwathColor)) {
+    		    prvSwathColor = curSwathColor;
+    		    swathChanged = true;
+    		}
     		
     		int newSwathWidth = validateSwathWidthField();
     		if (newSwathWidth > 0) {
     			curWidth = newSwathWidth;
-    			if (curWidth != prvWidth) swathChanged = true;
+    			if (curWidth != prvWidth) {
+    			    prvWidth = curWidth;
+    			    swathChanged = true;
+    			}
+    		} else {
+    		    // Don't apply anything if there are "errors on the form"
+    		    if (newSwathWidth == -1) return;
     		}
     		
     		// update font attributes if necessary
@@ -442,19 +465,21 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     			otCurFont = f;
     			fontChanged = true;
     		}
+    		if (f.getSize() != otCurFontSize) {
+    		    otCurFontSize = f.getSize();
+    		    fontChanged = true;
+    		}
     		
     		// see if label interval has changed
     		SpinnerNumberModel snm = (SpinnerNumberModel) (js.getModel());
-    		int tmpLabelInterval = ((Integer) snm.getValue()).intValue();
-    		if ((tmpLabelInterval != labelInterval) || fontChanged) {
-    			logger.debug("Label interval change from: " + labelInterval +
-    					" to: " + tmpLabelInterval);
-    			labelInterval = tmpLabelInterval;
+    		prvLabelInterval = ((Integer) snm.getValue()).intValue();
+    		if ((prvLabelInterval != curLabelInterval) || fontChanged) {
+    			curLabelInterval = prvLabelInterval;
     			swathChanged = true;	
     		}
             
             // check swath width field, update if necessary
-            if (swathChanged) changeSwathWidth();
+            if (swathChanged || fontChanged) redrawAll();
     		updateDisplayList();
     		return;
     	}
@@ -613,40 +638,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         }
     }
 
-    private void changeSwathWidth() {
-
-    	logger.debug("changeSwathWidth() in...");
-    	if ((curWidth != prvWidth) || 
-    			(curTrackLineStyle != prvTrackLineStyle) ||
-    			(curEdgeLineStyle != prvEdgeLineStyle) ||
-    			(curSwathCenterWidth != prvSwathCenterWidth) ||
-    			(curSwathEdgeWidth != prvSwathEdgeWidth) ||
-    			(curSwathColor != prvSwathColor)) {
-    		prvWidth = curWidth;
-    		prvSwathCenterWidth = curSwathCenterWidth;
-    		prvSwathEdgeWidth = curSwathEdgeWidth;
-    		prvSwathColor = curSwathColor;
-    		prvTrackLineStyle = curTrackLineStyle;
-    		prvEdgeLineStyle = curEdgeLineStyle;
-    		try {
-    			removeDisplayable(swathEdgeDsp);
-    			removeDisplayable(trackDsp);
-    			removeDisplayable(timeLabelDsp);
-    			swathEdgeDsp = null;
-    			trackDsp = null;
-    			timeLabelDsp = null;
-    			Data data = getData(getDataInstance());
-    			swathEdgeDsp = new CompositeDisplayable();
-    			trackDsp = new CompositeDisplayable();
-    			timeLabelDsp = new CompositeDisplayable();
-    			createTrackDisplay(data, true);
-    			applyDisplayableLevels();
-    		} catch (Exception e) {
-    			logger.error("Problem changing swath width", e);
-    		}
-    	}
-    }
-
     // No explicit dimension changes, but for times we need to redraw
     // everything due to combinations of zooming and visibility toggling
     private void redrawAll() {
@@ -662,6 +653,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             swathEdgeDsp = new CompositeDisplayable();
             trackDsp = new CompositeDisplayable();
             timeLabelDsp = new CompositeDisplayable();
+            // turn visibility off for those elements which have checkboxes for this
+            if (! jcbSwathEdges.isSelected()) swathEdgeDsp.setVisible(false);
+            if (! jcbLabels.isSelected()) timeLabelDsp.setVisible(false);
             createTrackDisplay(data, true);
             applyDisplayableLevels();
         } catch (Exception e) {
@@ -693,7 +687,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     double dlon = llt.getLongitude().getValue();
 
                     if (doTrack) {
-                        if ((i % labelInterval) == 0) {
+                        if ((i % curLabelInterval) == 0) {
 		                    
                         	if (prvPoint != null) {
                         		distance = Util.distance(prvPoint, llt);
@@ -750,7 +744,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     addDisplayable(timeLabelDsp);
                 }
 
-                if (jcbSwathEdges.isSelected()) {
+                // We initialize swath edge objects whenever possible, we just show or
+                // hide them based on checkbox state
+                if (curWidth > 0) {
                     float[][][] crv = getSwath(latlon);
                     int npt = crv[0][0].length;
                     float[][] leftC = new float[2][npt];
@@ -785,6 +781,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     
                     swathEdgeDsp.setColor(curSwathColor);
                     swathEdgeDsp.setLineWidth(curSwathEdgeWidth);
+                    if (! jcbSwathEdges.isSelected()) swathEdgeDsp.setVisible(false);
                     addDisplayable(swathEdgeDsp);
                 }
             }
@@ -835,11 +832,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbTrackLineStyle.addActionListener(this);
         // init to solid
         jcbTrackLineStyle.setSelectedIndex(0);
+        prvTrackLineStyle = jcbTrackLineStyle.getSelectedIndex();
         curTrackLineStyle = jcbTrackLineStyle.getSelectedIndex();
 
         jcbEdgeLineStyle.addActionListener(this);
         // init to dashed
         jcbEdgeLineStyle.setSelectedIndex(1);
+        prvEdgeLineStyle = jcbEdgeLineStyle.getSelectedIndex();
         curEdgeLineStyle = jcbEdgeLineStyle.getSelectedIndex();
         
         fontSizePanel.add(labelPanel);
@@ -1153,15 +1152,15 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbStationLineWidth = new JComboBox<String>(lineWidths);
         jcbSCLineWidth = new JComboBox<String>(lineWidths);
         
-        // create Label checkbox toggle
+        // create time label checkbox toggle, start out enabled
         jcbLabels = new JCheckBox("Labels On/Off");
         jcbLabels.setSelected(true);
         jcbLabels.setName(CHECKBOX_LABELS);
         jcbLabels.addItemListener(this);
         
-        // create swath edges toggle
+        // create swath edges toggle, start out disabled
         jcbSwathEdges = new JCheckBox("Swath Edges On/Off");
-        jcbSwathEdges.setSelected(true);
+        jcbSwathEdges.setSelected(false);
         jcbSwathEdges.setName(CHECKBOX_SWATH_EDGES);
         jcbSwathEdges.addItemListener(this);
         
@@ -1176,6 +1175,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         // Bump default font size down just a bit...
         otFontSelector.setFontSize(9);
+        otCurFontSize = 9;
         gsFontSelector.setFontSize(9);
         otCurFont = otFontSelector.getFont();
         
@@ -1245,24 +1245,41 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     public void itemStateChanged(ItemEvent ie) {
 
-    	// now we got multiple checkboxes, so first see which one applies
+    	// now we have multiple checkboxes, so first see which one applies
     	String source = ((JCheckBox) ie.getSource()).getName();
     	try {
     		if (source.equals(CHECKBOX_LABELS)) {
     			if (ie.getStateChange() == ItemEvent.DESELECTED) {
     				timeLabelDsp.setVisible(false);
     			} else {
-    				timeLabelDsp.setVisible(true);
+                    if (timeLabelDsp.displayableCount() > 0) {
+                        timeLabelDsp.setVisible(true);
+                    } else {
+                        redrawAll();
+                    }
     			}
-                redrawAll();
     		}
     		if (source.equals(CHECKBOX_SWATH_EDGES)) {
-    			if (ie.getStateChange() == ItemEvent.DESELECTED) {
-    				swathEdgeDsp.setVisible(false);
-    			} else {
-    				swathEdgeDsp.setVisible(true);
-    			}
-				updateDisplayList();
+    		    // There must first be a valid swath width before we can draw edges
+    		    // Test the current value in the text input and update if appropriate
+                if (ie.getStateChange() == ItemEvent.DESELECTED) {
+                    swathEdgeDsp.setVisible(false);
+                } else {
+                    int newSwathWidth = validateSwathWidthField();
+                    if (newSwathWidth > 0) {
+                        curWidth = newSwathWidth;
+                        if (curWidth != prvWidth) {
+                            prvWidth = curWidth;
+                            redrawAll();
+                        } else {    
+                            if (swathEdgeDsp.displayableCount() > 0) {
+                                swathEdgeDsp.setVisible(true);
+                            } else {
+                                redrawAll();
+                            }
+                        }
+                    }
+                }
     		}
     	} catch (VisADException | RemoteException e) {
     		logger.error("Problem handing state change", e);
@@ -1546,7 +1563,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	} catch (NumberFormatException nfe) {
     		// TJJ Jun 2015 - if GEO sensor, N/A means return invalid, but no warning msg needed
     		if ((s != null) && (s.equals(SWATH_NA))) {
-    			return -1;
+    			return -2;
     		}
     		// throw up a dialog to tell user the problem
     		JOptionPane.showMessageDialog(latLonAltPanel, 
