@@ -187,7 +187,11 @@ application/x-java-jnlp-file JNLP
         <li>Make sure that your <strong><em>drivers</em></strong> are up to date.
           Please see the <strong>Graphics Cards and Drivers</strong> section of the <a href="Systems.html#video">System
           Requirements</a> page for more information.</li>
-        <li>Try downloading this <a href="http://www.ssec.wisc.edu/mcidas/software/v/java3d/" target="_blank">Java3D example</a> to see if you can view it. Please see the <strong>Java Versions</strong> section of the <a href="Systems.html#java">System Requirements</a> page for more information. If this example does not work, then your system does not support Java3D.<br />
+        <li>Try the j3dtest script to verify that you can view the spinning cube. Please see the <strong>Java Versions</strong> section of the <a href="Systems.html#java">System Requirements</a> page for more information. If this example does not work, then your system does not support Java3D. Instructions for running this test differ between operating systems:<br />
+        <ul>
+        	<li><strong>Linux and macOS -</strong> cd to the directory where McIDAS-V was installed (likely the McIDAS-V-System directory) and run: <strong>./j3dtest</strong></li>
+			<li><strong>Windows -</strong> From the Start menu, </strong>navigate through Programs to find the directory containing the McIDAS-V scripts. This directory is defined during the installation of McIDAS-V. Select the <strong>Java3D Test</strong> script.  Alternatively, through a Command Prompt window, cd to the directory where McIDAS-V was installed (likely the McIDAS-V-System directory) and run: <strong>j3dtest.bat</strong>.</li>
+        </ul>
 Note: If your system does not support Java3D version 1.3.1+ McIDAS-V will not work for you.</li>
         <li> Set a small heap size by setting the <em><strong>Memory</strong></em> option to 512 megabytes in the User Preferences window's <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab. If this resolves the issue, you can start increasing the   memory until the problem appears again. Stay below the memory value   that produces the problem.</li>
         <li>Disable Java Access to Image Data by Reference by unchecking <strong><em>Enable access to image data by reference</em></strong> option in the User Preferences window's <a href="tools/preferences/AdvancedPreferences.html"><strong> Advanced</strong></a> tab.</li>

@@ -35,10 +35,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sc
     shell</a>, or a Jython script can be invoked as a command line argument.</p>
 <p>In Unix, from the McIDAS-V-System directory: </p>
 <pre>	runMcV -script /home/user/example.py </pre>
-In Windows, from the McIDAS-V System directory (if running under a Windows machine,
-it is necessary to use "\\" instead of "\" in scripts when specifying directory
-paths to avoid Windows interpreting it as an escape sequence.):
-<pre>	runMcV.bat -script C:\\home\\user\\example.py </pre>
+In Windows, from the McIDAS-V System directory :
+<pre>	runMcV.bat -script C:/Users/user/example.py </pre>
 <p>When invoked as a command line argument, the user interface will not be shown.
   However, McIDAS-V still needs to be run with an active window system (e.g.,
   X, MS Windows) for it to run. If running under a Linux/Unix machine with no X server running, McIDAS-V must be run under the X virtual

@@ -63,7 +63,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <div class="TwoTabIndent">When widgets=False is passed through buildWindow(), there will be no toolbar buttons, including the top toolbar that allows for closing the window. There are two ways of closing this window within McIDAS-V. To do this, the findWindow() function (defined below) can be used, or a &quot;with statement&quot; can be used. When working in a foreground session, it is possible to build a window that will close itself once it has completed the process assigned to it using Python's &quot;with statement&quot; functionality.  For example, a user can build a window, display a loop of satellite data, write a movie, then have the window close automatically when the movie capture is complete.  Here is an example of how to use this functionality with buildWindow.</div>
 <div class="ThreeTabIndent"><em>with buildWindow(height=1000,width=1200) as panel:</em></div>
 <div class="FourTabIndent"><em>layer = panel[0].createLayer('Image Sequence Display',myLoop)</em></div>
-<div class="FourTabIndent"><em>writeMovie('C:\\Users\\myUser\\myMovie.gif')</em></div>
+<div class="FourTabIndent"><em>writeMovie('C:/Users/myUser/myMovie.gif')</em></div>
 <p><strong><a name="openBundle" id="openBundle"></a>openBundle -</strong> Creates
   a new window and displays contents of a bundle</p>
 <div class="OneTabIndent">Usage: <em>openBundle(keywords)</em></div>
@@ -98,7 +98,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
   </table>
 </div>
 <div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>openBundle('C:\\Users\\myuser\\bundle.mcv',mode='NEWTAB')</em></div>
+<div class="TwoTabIndent"><em>openBundle('C:/Users/myUser/bundle.mcv',mode='NEWTAB')</em></div>
 <p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
   a new data layer in a panel</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer = panel[0].createLayer(keywords)</em></div>
