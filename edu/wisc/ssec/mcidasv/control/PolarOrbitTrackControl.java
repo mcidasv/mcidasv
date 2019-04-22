@@ -547,6 +547,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             		    logger.debug("GroundStation antenna angle change...");
             		    try {
                             removeDisplayable(gs.getCd());
+                            removeDisplayable(gs.getTd());
                         } catch (RemoteException | VisADException e) {
                             logger.error("Problem removing displayable", e);
                         }
@@ -558,6 +559,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 	                            Math.toRadians(elt.getLongitude().getValue()),
 	                            altitude, newAngle, antColorSwatch.getColor());
 	                    addDisplayable(cdNew);
+	                    addDisplayable(gs.getTd());
 	                    gs.setCd(cdNew);
 	                    curAngle = newAngle;
 	            		somethingChanged = true;
@@ -586,7 +588,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             altitude, gs.getAntennaAngle(), antColorSwatch.getColor());
                     cdNew.setLineWidth(jcbStationLineWidth.getSelectedIndex() + 1);
                     removeDisplayable(gs.getCd());
+                    removeDisplayable(gs.getTd());
                     addDisplayable(cdNew);
+                    addDisplayable(gs.getTd());
                     gs.setCd(cdNew);
                 } catch (RemoteException | VisADException e) {
                     logger.error("Problem changing ground station line width", e);
@@ -604,10 +608,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             altitude, gs.getAntennaAngle(), antColorSwatch.getColor());
                     cdNew.setLineStyle(jcbStationLineStyle.getSelectedIndex());
                     removeDisplayable(gs.getCd());
+                    removeDisplayable(gs.getTd());
                     addDisplayable(cdNew);
+                    addDisplayable(gs.getTd());
                     gs.setCd(cdNew);
                 } catch (RemoteException | VisADException e) {
-                    logger.error("Problem chaning ground station line style", e);
+                    logger.error("Problem changing ground station line style", e);
                 }
                 somethingChanged = true;
             }
@@ -1513,7 +1519,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 labelGroundStation(gs);
                 cd.setLineWidth(jcbStationLineWidth.getSelectedIndex() + 1);
                 gs.setCd(cd);
-
             }
 
             cd.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
