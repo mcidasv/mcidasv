@@ -1018,14 +1018,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return latitude;
     }
 
-    /* (non-Javadoc)
-     * @see ucar.unidata.idv.control.DisplayControlImpl#getLegendLabelTemplate()
-     */
-    @Override
-    public String getLegendLabelTemplate() {
-        return DisplayControlImpl.MACRO_DISPLAYNAME;
-    }
-
     public double getLongitude() {
         return longitude;
     }
@@ -1244,6 +1236,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             logger.error("Problem getting display center", e);
         }
 
+        // set the default legend label template
+        setLegendLabelTemplate(DisplayControlImpl.MACRO_DISPLAYNAME);
         initialized = true;
 
         return result;
