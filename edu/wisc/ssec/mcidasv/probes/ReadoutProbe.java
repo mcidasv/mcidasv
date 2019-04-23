@@ -38,14 +38,19 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import ucar.unidata.collab.SharableImpl;
+import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.visad.display.DisplayMaster;
-import ucar.visad.display.LineProbe;
+import ucar.visad.display.PointProbe;
 import ucar.visad.display.SelectorDisplayable;
+import ucar.visad.display.SelectorPoint;
 import ucar.visad.display.TextDisplayable;
 
+import visad.ActionImpl;
+import visad.ConstantMap;
 import visad.Data;
+import visad.Display;
 import visad.DisplayEvent;
 import visad.DisplayListener;
 import visad.FlatField;
@@ -58,6 +63,7 @@ import visad.TextType;
 import visad.Tuple;
 import visad.TupleType;
 import visad.VisADException;
+import visad.VisADGeometryArray;
 import visad.georef.EarthLocationTuple;
 
 import edu.wisc.ssec.mcidasv.util.MakeToString;
@@ -96,7 +102,8 @@ public class ReadoutProbe
     private final TextDisplayable valueDisplay =
         createValueDisplay(DEFAULT_COLOR);
 
-    private final LineProbe probe = new LineProbe(getInitialLinePosition());
+    private final PointSelector pointSelector =
+        new PointSelector(getInitialProbePosition());
 
     private final DisplayMaster master;
 
@@ -122,7 +129,7 @@ public class ReadoutProbe
      *
      * <p>Note: <b>none</b> of the parameters permit {@code null} values.</p>
      *
-     * @param displayMaster {@code DisplayMaster} containing the probe.
+     * @param control {@literal "Layer"} that will be probed.
      * @param flatField Data to probe.
      * @param color {@code Color} of the probe.
      * @param pattern Format string to use with probe's location values.
@@ -133,36 +140,37 @@ public class ReadoutProbe
      * @throws VisADException if VisAD had problems.
      * @throws RemoteException if VisAD had problems.
      */
-    public ReadoutProbe(final DisplayMaster displayMaster,
+    public ReadoutProbe(final DisplayControlImpl control,
                         final FlatField flatField,
                         final Color color,
                         final String pattern,
                         final boolean visible)
         throws VisADException, RemoteException
     {
-        requireNonNull(displayMaster, "DisplayMaster can't be null");
+        requireNonNull(control, "DisplayControlImpl can't be null");
         requireNonNull(flatField, "Field can't be null");
         requireNonNull(color, "Color can't be null");
         requireNonNull(pattern, "Pattern can't be null");
         
-        this.master = displayMaster;
-        this.field = flatField;
+        master = control.getNavigatedDisplay();
+        field = flatField;
         
         initSharable();
         
-        probe.setColor(color);
+        pointSelector.setColor(color);
         valueDisplay.setVisible(visible);
         valueDisplay.setColor(color);
         currentColor = color;
-        probe.setVisible(visible);
-        probe.setPointSize(pointSize);
-        probe.setAutoSize(true);
-        probe.setPointSize(getDisplayScale());
+        pointSelector.setVisible(visible);
+        pointSelector.setPointSize(pointSize);
+        pointSelector.setAutoSize(true);
+        pointSelector.setPointSize(getDisplayScale());
+        pointSelector.setZ(control.getZPosition());
         
         numFmt.applyPattern(pattern);
         
-        displayMaster.addDisplayable(valueDisplay);
-        displayMaster.addDisplayable(probe);
+        master.addDisplayable(valueDisplay);
+        master.addDisplayable(pointSelector);
         setField(flatField);
         
         // done mostly to avoid using "this" while we're still within the 
@@ -174,7 +182,7 @@ public class ReadoutProbe
      * Add this probe instance to the relevant listeners.
      */
     private void addListeners() {
-        probe.addPropertyChangeListener(this);
+        pointSelector.addPropertyChangeListener(this);
         master.getDisplay().addDisplayListener(this);
     }
 
@@ -356,6 +364,14 @@ public class ReadoutProbe
         setColor(color, false);
     }
 
+    public PointSelector getPointSelector() {
+        return pointSelector;
+    }
+    
+    public TextDisplayable getValueDisplay() {
+        return valueDisplay;
+    }
+    
     /**
      * Change the color of this {@code ReadoutProbe} instance and control 
      * whether or not listeners should be notified.
@@ -375,7 +391,7 @@ public class ReadoutProbe
         }
 
         try {
-            probe.setColor(color);
+            pointSelector.setColor(color);
             valueDisplay.setColor(color);
             Color prev = currentColor;
             currentColor = color;
@@ -431,15 +447,15 @@ public class ReadoutProbe
                 new EarthLocationTuple(latitude, longitude, 0.0);
             double[] tmp =
                 ((NavigatedDisplay)master).getSpatialCoordinates(elt, null);
-            probe.setPosition(tmp[0], tmp[1]);
+            pointSelector.setPosition(tmp[0], tmp[1]);
         } catch (Exception e) {
-            LogUtil.logException("Failed to set the probe's position", e);
+            LogUtil.logException("Failed to set the pointSelector's position", e);
         }
     }
 
     public void quietlySetVisible(final boolean visibility) {
         try {
-            probe.setVisible(visibility);
+            pointSelector.setVisible(visibility);
             valueDisplay.setVisible(visibility);
         } catch (Exception e) {
             LogUtil.logException("Couldn't set the probe's internal visibility", e);
@@ -521,7 +537,7 @@ public class ReadoutProbe
         try {
             master.getDisplay().removeDisplayListener(this);
             master.removeDisplayable(valueDisplay);
-            master.removeDisplayable(probe);
+            master.removeDisplayable(pointSelector);
         } catch (Exception e) {
             LogUtil.logException("Problem removing visible portions of readout probe", e);
         }
@@ -537,7 +553,7 @@ public class ReadoutProbe
      * @return ratio of the current matrix scale factor to the
      * saved matrix scale factor.
      */
-    public float getDisplayScale() {
+    public final float getDisplayScale() {
         float scale = 1.0f;
         try {
             scale = master.getDisplayScale();
@@ -553,7 +569,7 @@ public class ReadoutProbe
         }
 
         try {
-            probe.setPosition(position);
+            pointSelector.setPosition(position);
         } catch (Exception e) {
             LogUtil.logException("Had problems setting probe's xy position", e);
         }
@@ -562,7 +578,7 @@ public class ReadoutProbe
     public RealTuple getXYPosition() {
         RealTuple position = null;
         try {
-            position = probe.getPosition();
+            position = pointSelector.getPosition();
         } catch (Exception e) {
             LogUtil.logException("Could not determine the probe's xy location", e);
         }
@@ -580,7 +596,7 @@ public class ReadoutProbe
     public EarthLocationTuple getEarthPosition() {
         EarthLocationTuple earthTuple = null;
         try {
-            double[] values = probe.getPosition().getValues();
+            double[] values = pointSelector.getPosition().getValues();
             earthTuple = (EarthLocationTuple)((NavigatedDisplay)master).getEarthLocation(values[0], values[1], 1.0, true);
             currentLatitude = earthTuple.getLatitude().getValue();
             currentLongitude = earthTuple.getLongitude().getValue();
@@ -598,7 +614,7 @@ public class ReadoutProbe
         double[] values = position.getValues();
         
         // offset slightly so that the value readout isn't directly on top of
-        // the actual probe
+        // the actual pointSelector
         values[1] += 0.5 * getDisplayScale();
         values[0] += 0.5 * getDisplayScale();
         
@@ -625,12 +641,12 @@ public class ReadoutProbe
             }
             positionTuple = new Tuple(TUPTYPE, new Data[] { corrected, new Text(TextType.Generic, currentValue) });
         } catch (Exception e) {
-            LogUtil.logException("Encountered trouble when determining value at probe position", e);
+            LogUtil.logException("Encountered trouble when determining value at pointSelector position", e);
         }
         return positionTuple;
     }
 
-    private static RealTuple getInitialLinePosition() {
+    private static RealTuple getInitialProbePosition() {
         RealTuple position = null;
         try {
             double[] center = { 0.0, 0.0 };
@@ -684,6 +700,202 @@ public class ReadoutProbe
                            .add("latitude", currentLatitude)
                            .add("longitude", currentLongitude)
                            .add("value", currentValue).toString();
-
+    }
+    
+    /**
+     * This class is a reimplementation of {@link PointProbe} that whose 
+     * mouse movement is limited to the x- and y- axes.
+     * 
+     * <p>To change the position of the instance along the z-axis, try something
+     * like the following:
+     * {@code new PointSelector().setZ(zPosition)}.
+     * </p>
+     */
+    public static class PointSelector extends SelectorDisplayable {
+        
+        /** pointSelector */
+        private SelectorPoint point;
+        
+        /** flag for whether we're in the process of setting the position */
+        private volatile boolean settingPosition = false;
+        
+        /**
+         * Construct a point pointSelector.
+         *
+         * @throws VisADException Problem creating VisAD object.
+         * @throws RemoteException Java RMI error.
+         */
+        public PointSelector() throws VisADException, RemoteException {
+            this(0, 0);
+        }
+        
+        /**
+         * Construct a point pointSelector at the location specified.
+         *
+         * @param x X position.
+         * @param y Y position.
+         *
+         * @throws VisADException Problem creating VisAD object.
+         * @throws RemoteException Java RMI error.
+         */
+        public PointSelector(double x, double y) 
+            throws VisADException, RemoteException 
+        {
+            this(new RealTuple(RealTupleType.SpatialCartesian2DTuple,
+                               new double[] { x, y }));
+        }
+    
+        /**
+         * Construct a pointSelector at the position specified.
+         *
+         * @param position Position of the pointSelector.
+         *
+         * @throws VisADException Problem creating VisAD object.
+         * @throws RemoteException Java RMI error.
+         */
+        public PointSelector(RealTuple position)
+            throws VisADException, RemoteException 
+        {
+            point = new SelectorPoint("Probe point", position);
+            
+            addDisplayable(point);
+            setPosition(position);
+            point.addAction(new ActionImpl("point listener") {
+                @Override public void doAction() {
+                    if (settingPosition) {
+                        return;
+                    }
+                    notifyListenersOfMove();
+                }
+            });
+        }
+        
+        /**
+         * Get the selector point
+         *
+         * @return the selector point
+         */
+        public SelectorPoint getSelectorPoint() {
+            return point;
+        }
+    
+        /**
+         * Set if any of the axis movements are fixed
+         *
+         * @param x x fixed
+         * @param y y fixed
+         * @param z z fixed
+         */
+        public void setFixed(boolean x, boolean y, boolean z) {
+            point.setFixed(x, y, z);
+        }
+    
+        public void setZ(double newz) {
+            try {
+                point.addConstantMap(new ConstantMap(newz, Display.ZAxis));
+            } catch (VisADException | RemoteException e) {
+                logger.error("problem setting z", e);
+            }
+        }
+        
+        /**
+         * Get the point scale
+         *
+         * @return the point scale
+         */
+        public float getPointScale() {
+            if (point != null) {
+                return point.getScale();
+            }
+            return 1.0f;
+        }
+        
+        /**
+         * Set the type of marker used for the pointSelector.
+         *
+         * @param marker  marker as a VisADGeometryArray
+         *
+         * @throws RemoteException Java RMI error
+         * @throws VisADException Problem creating VisAD object.
+         */
+        public void setMarker(VisADGeometryArray marker)
+            throws VisADException, RemoteException
+        {
+            point.setMarker(marker);
+        }
+        
+        /**
+         * Set the type of marker used for the pointSelector.
+         *
+         * @param marker {@link ucar.visad.ShapeUtility ShapeUtility} marker.
+         *
+         * @throws VisADException Problem creating VisAD object.
+         * @throws RemoteException Java RMI error.
+         */
+        public void setMarker(String marker)
+            throws VisADException, RemoteException
+        {
+            point.setMarker(marker);
+        }
+        
+        /**
+         * Set whether the marker should automatically resize as the
+         * display is zoomed.
+         *
+         * @param yesorno  true to automatically resize the marker.
+         *
+         * @throws VisADException Problem creating VisAD object.
+         * @throws RemoteException Java RMI error.
+         */
+        public void setAutoSize(boolean yesorno)
+            throws VisADException, RemoteException
+        {
+            point.setAutoSize(yesorno);
+        }
+        
+        /**
+         * Get the position of the pointSelector.
+         * 
+         * @return Current position.
+         */
+        public RealTuple getPosition() {
+            return point.getPoint();
+        }
+        
+        /**
+         * Set the pointSelector's x/y position
+         *
+         * @param x X position.
+         * @param y X position.
+         *
+         * @throws VisADException Problem creating VisAD object.
+         * @throws RemoteException Java RMI error.
+         */
+        public void setPosition(double x, double y)
+            throws VisADException, RemoteException 
+        {
+            setPosition(
+                new RealTuple(RealTupleType.SpatialCartesian2DTuple,
+                              new double[] { x, y }));
+        }
+        
+        /**
+         * Set the pointSelector's position.
+         *
+         * @param position Position of the pointSelector
+         *
+         * @throws VisADException Problem creating VisAD object.
+         * @throws RemoteException Java RMI error.
+         */
+        public void setPosition(RealTuple position)
+            throws VisADException, RemoteException 
+        {
+            settingPosition = true;
+            try {
+                point.setPoint(position);
+            } finally {
+                settingPosition = false;
+            }
+        }
     }
 }

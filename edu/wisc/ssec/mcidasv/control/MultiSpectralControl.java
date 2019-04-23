@@ -81,10 +81,15 @@ import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.idv.control.FlaggedDisplayable;
 import ucar.unidata.idv.control.McVHistogramWrapper;
 import ucar.visad.display.XYDisplay;
+
+import visad.ConstantMap;
 import visad.DataReference;
 import visad.DataReferenceImpl;
+import visad.Display;
+import visad.DisplayRealType;
 import visad.FlatField;
 import visad.RealTuple;
 import visad.Unit;
@@ -368,6 +373,32 @@ public class MultiSpectralControl extends HydraControl {
                 s.getProbe().quietlySetVisible(on);
             }
         }
+    }
+    
+    /**
+     * Overridden so that the probes in the main display window can handle 
+     * changes to z-axis.
+     * 
+     * @throws VisADException Problem creating VisAD object.
+     * @throws RemoteException RemoteException Java RMI error.
+     */
+    @Override public void applyZPosition() 
+        throws VisADException, RemoteException 
+    {
+        deactivateDisplays();
+        double zpos = getVerticalValue(getZPosition());
+        DisplayRealType drt = getNavigatedDisplay().getDisplayAltitudeType();
+        for (int i = 0, n = displayables.size(); i < n; i++) {
+            FlaggedDisplayable fd = (FlaggedDisplayable) displayables.get(i);
+            if (!fd.ok(FLAG_ZPOSITION)) {
+                continue;
+            }
+            fd.displayable.setConstantPosition(zpos, drt);
+        }
+        for (Spectrum s : spectra) {
+            s.getProbe().getPointSelector().setZ(zpos);
+        }
+        activateDisplays();
     }
 
     // this will get called before init() by the IDV's bundle magic.
@@ -892,10 +923,12 @@ public class MultiSpectralControl extends HydraControl {
             this.myId = myId;
             spectrumRef = new DataReferenceImpl(hashCode() + "_spectrumRef");
             display.addRef(spectrumRef, color);
-            String pattern = (String)control.getStore().get(IdvConstants.PREF_LATLON_FORMAT, "##0.0");
-            probe = new ReadoutProbe(control.getNavigatedDisplay(), display.getImageData(), color, pattern, control.getDisplayVisibility());
+            String pattern = control.getStore().get(IdvConstants.PREF_LATLON_FORMAT, "##0.0");
+            probe = new ReadoutProbe(control, display.getImageData(), color, pattern, control.getDisplayVisibility());
             this.updatePosition(probe.getEarthPosition());
             probe.addProbeListener(this);
+    
+            control.addAttributedDisplayable(probe.getValueDisplay(), FLAG_ZPOSITION);
         }
 
         public void probePositionChanged(final ProbeEvent<RealTuple> e) {
