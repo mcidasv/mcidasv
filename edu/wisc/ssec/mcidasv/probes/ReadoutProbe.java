@@ -65,7 +65,9 @@ import visad.TupleType;
 import visad.VisADException;
 import visad.VisADGeometryArray;
 import visad.georef.EarthLocationTuple;
+import visad.georef.MapProjection;
 
+import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.util.MakeToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -605,7 +607,17 @@ public class ReadoutProbe
         }
         return earthTuple;
     }
-
+    
+    /**
+     * Respond to the projection having been changed.
+     * 
+     * @param newProjection New projection. Can be {@code null}.
+     */
+    public void projectionChanged(MapProjection newProjection) {
+        setLatLon(currentLatitude, currentLongitude);
+        handleProbeUpdate();
+    }
+    
     private Tuple valueAtPosition(final RealTuple position,
                                   final FlatField imageData)
     {

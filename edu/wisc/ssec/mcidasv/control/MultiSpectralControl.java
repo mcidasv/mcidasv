@@ -81,6 +81,7 @@ import org.slf4j.LoggerFactory;
 
 import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.IdvConstants;
+import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.control.FlaggedDisplayable;
 import ucar.unidata.idv.control.McVHistogramWrapper;
 import ucar.visad.display.XYDisplay;
@@ -400,7 +401,21 @@ public class MultiSpectralControl extends HydraControl {
         }
         activateDisplays();
     }
-
+    
+    /**
+     * Overridden so that the probes can re-apply their current locations to
+     * their {@link ReadoutProbe.PointSelector PointSelectors}.
+     */
+    @Override public void projectionChanged() {
+        super.projectionChanged();
+        MapProjection projection = 
+            ((MapViewManager)getViewManager()).getMainProjection();
+        for (Spectrum s : spectra) {
+            ReadoutProbe rp = s.getProbe();
+            rp.projectionChanged(projection);
+        }
+    }
+    
     // this will get called before init() by the IDV's bundle magic.
     public void setSpectraProperties(final List<Hashtable<String, Object>> props) {
         spectraProperties.clear();
