@@ -821,7 +821,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *  Holds the collection of all {@link ucar.visad.display.Displayable}s
      *  that have atttributes set by the gui components.
      */
-    List displayables;
+    protected List displayables;
 
 
     /**
