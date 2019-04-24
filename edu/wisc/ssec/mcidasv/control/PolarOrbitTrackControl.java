@@ -109,7 +109,6 @@ import visad.VisADException;
 import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonTuple;
 import visad.georef.MapProjection;
-import visad.georef.TrivialMapProjection;
 
 /**
  * {@link DisplayControlImpl} with some McIDAS-V specific extensions.
@@ -1020,29 +1019,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     public double getLongitude() {
         return longitude;
-    }
-
-    /**
-     * Start out with Trivial Map Projection because it doesn't have
-     * the low-level VisAD issue labeling across dateline.  But after
-     * init, the user can reproject to whatever works for them
-     */
-
-    @Override public MapProjection getDataProjection() {
-        
-        MapProjection mp = null;
-        if (initialized) {
-            mp = super.getDataProjection();
-            return mp;
-        } else {
-            try {
-                mp = new TrivialMapProjection();
-            } catch (Exception e) {
-                logger.error("Error setting default projection", e);
-            }
-        }
-
-        return mp;
     }
     
     public String getStation() {
