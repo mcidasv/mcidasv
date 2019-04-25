@@ -28,6 +28,8 @@
 package edu.wisc.ssec.mcidasv.probes;
 
 import static java.util.Objects.requireNonNull;
+import static visad.RealTupleType.SpatialCartesian2DTuple;
+import static visad.RealTupleType.SpatialEarth2DTuple;
 
 import java.awt.Color;
 import java.beans.PropertyChangeEvent;
@@ -593,7 +595,8 @@ public class ReadoutProbe
      * <p>Note: this method will attempt to change the {@link #currentLatitude} 
      * and {@link #currentLongitude} fields.</p>
      * 
-     * @return
+     * @return Location of {@link #pointSelector}, or {@code null} if the 
+     *         location could not be determined.
      */
     public EarthLocationTuple getEarthPosition() {
         EarthLocationTuple earthTuple = null;
@@ -627,8 +630,7 @@ public class ReadoutProbe
         
         // offset slightly so that the value readout isn't directly on top of
         // the actual pointSelector
-        values[1] += 0.5 * getDisplayScale();
-        values[0] += 0.5 * getDisplayScale();
+        double offset = 0.5 * getDisplayScale();
         
         if (values[1] < -180) {
             values[1] += 360f;
@@ -642,9 +644,15 @@ public class ReadoutProbe
         try {
             // TODO(jon): do the positionFormat stuff in here. maybe this'll 
             // have to be an instance method?
-            RealTuple corrected = new RealTuple(RealTupleType.SpatialEarth2DTuple, new double[] { values[1], values[0] });
-
-            Real realVal = (Real)imageData.evaluate(corrected, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
+            
+            // "corrected" is where the text should be positioned
+            RealTuple corrected = makeEarth2dTuple(values[0] + offset,
+                                                   values[1] + offset);
+            
+            // "probeLoc" is where pointSelector is positioned
+            RealTuple probeLoc = makeEarth2dTuple(values[0], values[1]);
+            
+            Real realVal = (Real)imageData.evaluate(probeLoc, Data.NEAREST_NEIGHBOR, Data.NO_ERRORS);
             float val = (float)realVal.getValue();
             if (Float.isNaN(val)) {
                 currentValue = "NaN";
@@ -657,13 +665,34 @@ public class ReadoutProbe
         }
         return positionTuple;
     }
-
+    
+    /**
+     * Returns a {@link RealTupleType#SpatialEarth2DTuple SpatialEarth2DTuple}
+     * for the given latitude and longitude.
+     * 
+     * <p>Be aware that for whatever reason VisAD wants the longitude first,
+     * then the latitude.</p>
+     * 
+     * @param lat Latitude of the position.
+     * @param lon Longitude of the position.
+     * 
+     * @return {@code SpatialEarth2DTuple} containing {@code lat} and 
+     *         {@code lon}.
+     *
+     * @throws VisADException Problem creating VisAD object.
+     * @throws RemoteException Java RMI error.
+     */
+    private static RealTuple makeEarth2dTuple(double lat, double lon)
+        throws VisADException, RemoteException
+    {
+        return new RealTuple(SpatialEarth2DTuple, new double[] { lon, lat });
+    }
+    
     private static RealTuple getInitialProbePosition() {
         RealTuple position = null;
         try {
-            double[] center = { 0.0, 0.0 };
-            position = new RealTuple(RealTupleType.SpatialCartesian2DTuple, 
-                    new double[] { center[0], center[1] });
+            position = new RealTuple(SpatialCartesian2DTuple,
+                                     new double[] { 0.0, 0.0 });
         } catch (Exception e) {
             LogUtil.logException("Problem with finding an initial probe position", e);
         }
@@ -692,7 +721,7 @@ public class ReadoutProbe
     private static TupleType makeTupleType() {
         TupleType t = null;
         try {
-            t = new TupleType(new MathType[] { RealTupleType.SpatialEarth2DTuple, TextType.Generic });
+            t = new TupleType(new MathType[] { SpatialEarth2DTuple, TextType.Generic });
         } catch (Exception e) {
             LogUtil.logException("Problem creating readout tuple type", e);
         }
@@ -753,7 +782,7 @@ public class ReadoutProbe
         public PointSelector(double x, double y) 
             throws VisADException, RemoteException 
         {
-            this(new RealTuple(RealTupleType.SpatialCartesian2DTuple,
+            this(new RealTuple(SpatialCartesian2DTuple,
                                new double[] { x, y }));
         }
     
@@ -887,7 +916,7 @@ public class ReadoutProbe
             throws VisADException, RemoteException 
         {
             setPosition(
-                new RealTuple(RealTupleType.SpatialCartesian2DTuple,
+                new RealTuple(SpatialCartesian2DTuple,
                               new double[] { x, y }));
         }
         
