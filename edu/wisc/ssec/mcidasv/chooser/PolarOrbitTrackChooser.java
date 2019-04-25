@@ -69,11 +69,12 @@ import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.PreferenceList;
+import ucar.unidata.xml.XmlObjectStore;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
-import ucar.unidata.xml.XmlObjectStore;
 
 /**
  * Polar Orbit Track Chooser
@@ -165,7 +166,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     public static final String TLE_DATA_TYPE = "TEXT";
 
     /**
-     * Construct an Adde image selection widget
+     * Construct an ADDE image selection widget
      *
      * @param mgr The chooser manager
      * @param root The chooser.xml node
@@ -200,7 +201,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         String path = (String)getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId());
         String file = (String)getIdv().getStateManager().getPreference(IdvChooser.PREF_DEFAULTDIR + getId() + ".file");
         tlefc = new TLEFileChooser(this, path, file);
-//        tlefc.setPotc(this);
 
         JButton helpButton = McVGuiUtils.makeImageButton(ICON_HELP, "Show help");
         helpButton.setActionCommand(GuiUtils.CMD_HELP);
@@ -283,23 +283,15 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
         if (localBtn.isSelected()) {
             File tmp = new File(path + File.separatorChar + file);
-//            logger.trace("attempting to select '{}'", tmp.getAbsolutePath());
-//            tlefc.setSelectedFile(tmp);
             try {
                 FileChooserUI fcUi = tlefc.getUI();
                 tlefc.setSelectedFile(tmp);
                 Class<? extends FileChooserUI> fcClass = fcUi.getClass();
-//                logger.trace("classname={}", fcClass.getCanonicalName());
                 Method setFileName = fcClass.getMethod("setFileName", String.class);
                 setFileName.invoke(fcUi, tmp.getName());
-//                final JList list = McVGuiUtils.getDescendantOfType(JList.class, this, "Enabled", true);
-//                list.requestFocus();
             } catch (Exception e) {
                 logger.warn("Could not dynamically invoke setFileName", e);
             }
-//            logger.trace("selected='{}'", tlefc.getSelectedFile());
-
-
         }
         return outerPanel;
     }
@@ -310,6 +302,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      *
      * @return true if Local File Mode radio button is selected
      */
+
     public boolean localMode() {
         if (localBtn.isSelected()) {
             return true;
@@ -380,7 +373,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         // hardcoded component ids are!
         urlBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-//                logger.trace("url button");
                 // disable the file chooser
                 if (tlefc != null) {
                     tlefc.setEnabled(false);
@@ -498,38 +490,10 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         addeList.add(urlLabel);
         addeList.add(box);
 
-//        String lastSource = store.get(PROP_LAST_SOURCE, FILE_SOURCE);
-//        if (FILE_SOURCE.equals(lastSource)) {
-//            localBtn.setSelected(true);
-//            for (ActionListener a: localBtn.getActionListeners()) {
-//                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
-//                    // nothing to do in here
-//                });
-//            }
-//        } else if (ADDE_SOURCE.equals(lastSource)) {
-//            addeBtn.setSelected(true);
-//            for (ActionListener a: addeBtn.getActionListeners()) {
-//                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
-//                    // nothing to do in here
-//                });
-//            }
-//        } else if (URL_SOURCE.equals(lastSource)) {
-//            urlBtn.setSelected(true);
-//            for (ActionListener a: urlBtn.getActionListeners()) {
-//                a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
-//                    // nothing to do in here
-//                });
-//            }
-//        } else {
-//            logger.trace("should not be able to arrive here; defaulting to file. (lastSource={})", lastSource);
-//            localBtn.setSelected(true);
-//        }
-
         return outerPanel;
     }
 
     public void enableLoadFromFile(boolean val) {
-//        logger.trace("val={}", val);
         loadButton.setEnabled(val);
         if (tlefc != null && tlefc.getSelectedFile() != null) {
             setHaveData(val);
@@ -537,7 +501,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     }
 
     public void enableLoadFromAdde(boolean val) {
-//        logger.trace("val={}", val);
         if (val && descriptorComboBox.isEnabled() && getSelectedDescriptor() != null) {
             loadButton.setEnabled(val);
         } else {
@@ -546,7 +509,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     }
 
     public void enableLoadFromUrl(boolean val) {
-//        logger.trace("val={}", val);
         loadButton.setEnabled(val);
         String url = (String)box.getSelectedItem();
         if (val && url != null && !url.isEmpty()) {
@@ -557,12 +519,10 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     }
 
     public void enableFileLoad(boolean val) {
-//        logger.trace("loadButton={}", val);
         loadButton.setEnabled(val);
     }
 
     private void enableDescriptors(boolean val) {
-//        logger.trace("descriptors={}", val);
         if (val) {
             boolean connected;
             if (getState() == STATE_CONNECTED) {
@@ -597,9 +557,6 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      * Update labels, enable widgets, etc.
      */
     @Override protected void updateStatus() {
-//        if (localBtn != null && addeBtn != null && urlBtn != null) {
-//            logger.trace("updating status fromFile={} fromAdde={} fromUrl={}", localBtn.isSelected(), addeBtn.isSelected(), urlBtn.isSelected());
-//        }
         super.updateStatus();
         enableWidgets();
         if ((addeBtn != null) && addeBtn.isSelected()) {
@@ -635,7 +592,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         if (tlefc.getSelectedFile() != null) {
             dsName = tlefc.getSelectedFile().getName();
         }
-        Hashtable ht = new Hashtable();
+        Hashtable<String, Object> ht = new Hashtable<String, Object>();
         getDataSourceProperties(ht);
         if (propsOk) {
             makeDataSource(dsName, TLE_DATA_SOURCE_ID, ht);
