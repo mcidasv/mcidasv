@@ -136,6 +136,9 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     /** Property value that represents the {@literal "URL"} button. */
     public static final String URL_SOURCE = "URL";
 
+    // Provide a default URL
+    private static final String DEFAULT_URL = "https://celestrak.com/NORAD/elements/weather.txt";
+
     /**
      * Property for the tle server name key.
      * @see #getServer()
@@ -415,6 +418,9 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         prefList = getPreferenceList(PREF_URLLIST);
         box = prefList.createComboBox(CMD_LOAD, this);
         boxEditor = (JTextField) box.getEditor().getEditorComponent();
+        if (boxEditor.getText().isEmpty()) {
+            boxEditor.setText(DEFAULT_URL);
+        }
         boxEditor.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {}
             public void keyReleased(KeyEvent e) {}
@@ -510,7 +516,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
 
     public void enableLoadFromUrl(boolean val) {
         loadButton.setEnabled(val);
-        String url = (String)box.getSelectedItem();
+        String url = (String) box.getSelectedItem();
         if (val && url != null && !url.isEmpty()) {
             setHaveData(true);
         } else {
