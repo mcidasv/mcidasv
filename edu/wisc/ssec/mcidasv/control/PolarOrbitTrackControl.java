@@ -1229,7 +1229,15 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     				timeLabelDsp.setVisible(false);
     			} else {
                     if (timeLabelDsp.displayableCount() > 0) {
-                        timeLabelDsp.setVisible(true);
+                        // TJJ Apr 2019 - see if scale changed, if so need to redraw
+                        float currentScale = getViewManager().getMaster().getDisplayScale();
+                        System.err.println("TJJ scale: " + scale + ", new scale: " + currentScale);
+                        if (currentScale != scale) {
+                            scale = currentScale;
+                            redrawAll();
+                        } else {
+                           timeLabelDsp.setVisible(true);
+                        }
                     } else {
                         redrawAll();
                     }
