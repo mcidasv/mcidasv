@@ -174,6 +174,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      * @param mgr The chooser manager
      * @param root The chooser.xml node
      */
+
     public PolarOrbitTrackChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
         serverSelector = getServerSelector();
@@ -185,6 +186,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      *
      * @return {@link #TLE_DATA_SOURCE_ID}
      */
+
     @Override protected String getDataSourceId() {
         return TLE_DATA_SOURCE_ID;
     }
@@ -194,6 +196,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      *
      * @return The gui
      */
+
     @Override public JComponent doMakeContents() {
         logger.debug("doMakeContents() in...");
         JPanel outerPanel = new JPanel();
@@ -420,6 +423,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
         boxEditor = (JTextField) box.getEditor().getEditorComponent();
         if (boxEditor.getText().isEmpty()) {
             boxEditor.setText(DEFAULT_URL);
+            box.setSelectedItem(DEFAULT_URL);
         }
         boxEditor.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {}
@@ -562,6 +566,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     /**
      * Update labels, enable widgets, etc.
      */
+
     @Override protected void updateStatus() {
         super.updateStatus();
         enableWidgets();
@@ -575,6 +580,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      *
      * @return {@link #TLE_DATA_TYPE}
      */
+
     @Override public String getDataType() {
         return TLE_DATA_TYPE;
     }
@@ -584,6 +590,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      *
      * @return {@link #TLE_TYPE}
      */
+
     @Override protected String getGroupType() {
         return TLE_TYPE;
     }
@@ -592,6 +599,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      * User said go, we go. 
      * Create the TLE DataSource
      */
+
     @Override public void doLoadInThread() {
         prefList.saveState(box);
         String dsName = TLE_DATA_SOURCE_ID;
@@ -611,6 +619,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      * 
      * @param ht Hashtable of properties
      */
+
     @Override protected void getDataSourceProperties(Hashtable ht) {
 
         // Local data
@@ -666,6 +675,7 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
     /* (non-Javadoc)
      * @see edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser#showGroups()
      */
+
     @Override
     public void showGroups() {
         super.showGroups();
@@ -688,7 +698,9 @@ public class PolarOrbitTrackChooser extends AddeChooser implements Constants {
      *
      * @return {@link #TLE_DISPLAY_TYPE}
      */
+
     @Override protected String getDefaultDisplayType() {
         return TLE_DISPLAY_TYPE;
     }
+
 }
