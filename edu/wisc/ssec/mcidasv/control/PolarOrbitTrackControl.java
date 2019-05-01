@@ -108,7 +108,6 @@ import visad.UnionSet;
 import visad.VisADException;
 import visad.georef.EarthLocationTuple;
 import visad.georef.LatLonTuple;
-import visad.georef.MapProjection;
 
 /**
  * {@link DisplayControlImpl} with some McIDAS-V specific extensions.
@@ -177,8 +176,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     /** the font selectors, Orbit Track (ot) and Ground Station (gs) */
     private FontSelector otFontSelector;
-    private Font otCurFont = FontSelector.DEFAULT_FONT;
-    private int otCurFontSize = otCurFont.getSize();
+    private Font otCurFont = null;
+    private int otCurFontSize = -1;
     private FontSelector gsFontSelector;
     
     // line width combo boxes, Station: Ground Station, SC: Swath Center, SE: Swath Edge
@@ -199,7 +198,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private ColorSwatchComponent colorSwatch;
 
     private static final Color DEFAULT_COLOR = Color.GREEN;
-    private Color curSwathColor = DEFAULT_COLOR;
+    private Color curSwathColor = null;
     private Color prvSwathColor = DEFAULT_COLOR;
     
     private ColorSwatchComponent antColorSwatch;
@@ -250,9 +249,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     // initial scale for labeling 
     float scale = 1.0f;
 
-    // we've been initialized (we force TrivialMapProjection at init)
-    private boolean initialized = false;
-
     public PolarOrbitTrackControl() {
         super();
         logger.trace("created new PolarOrbitTrackControl...");
@@ -260,6 +256,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             final String xml =
                 IOUtil.readContents(SWATH_WIDTHS, McIdasPreferenceManager.class);
             root = XmlUtil.getRoot(xml);
+            if (otCurFont == null) otCurFont = FontSelector.DEFAULT_FONT;
+            if (curSwathColor == null) curSwathColor = DEFAULT_COLOR;
+            otCurFontSize = otCurFont.getSize();
         } catch (Exception e) {
             logger.error("problem reading swathwidths.xml", e);
         }
@@ -962,6 +961,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return antColor;
     }
 
+    /**
+     * @return the curSwathColor
+     */
+    public Color getCurSwathColor() {
+        return curSwathColor;
+    }
+
+    /**
+     * @param curSwathColor the curSwathColor to set
+     */
+    public void setCurSwathColor(Color curSwathColor) {
+        this.curSwathColor = curSwathColor;
+    }
+
     public PolarOrbitTrackDataSource getDataSource() {
         DataSourceImpl ds = null;
         List dataSources = getDataSources();
@@ -1013,7 +1026,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 		return data;
 	}
 
-	public double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
@@ -1021,6 +1034,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return longitude;
     }
     
+    /**
+     * @return the otCurFont
+     */
+    public Font getOtCurFont() {
+        return otCurFont;
+    }
+
+    /**
+     * @param otCurFont the otCurFont to set
+     */
+    public void setOtCurFont(Font otCurFont) {
+        this.otCurFont = otCurFont;
+    }
+
     public String getStation() {
         return station;
     }
@@ -1086,36 +1113,38 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         PolarOrbitTrackDataSource potdc = getDataSource();
 
-        // validate time range before going ahead with control initialization
-        if (! potdc.getTrs().begTimeOk()) {
-        	JOptionPane.showMessageDialog(null, 
-        			"Invalid start time, must follow format HH:MM:SS", 
-        			"Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
-        	return false;
-        }
-        
-        if (! potdc.getTrs().endTimeOk()) {
-        	JOptionPane.showMessageDialog(null, 
-        			"Invalid end time, must follow format HH:MM:SS", 
-        			"Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
-        	return false;
-        }
-        
-        if (! potdc.getTrs().timeRangeOk()) {
-        	JOptionPane.showMessageDialog(null, 
-        			"Invalid time range selection, please correct", 
-        			"Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
-        	return false;
-        }
-        
-        // allow at most two full days of orbit tracks - more than this will
-        // at best clutter the display and at worst grind McV indefinitely
-        long timeDiff = potdc.getTrs().getTimeRangeInSeconds();
-        if (timeDiff >= (60 * 60 * 24 * 2)) {
-        	JOptionPane.showMessageDialog(null, 
-        			"Time range greater than two full days is not allowed, please correct", 
-        			"Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
-        	return false;        	
+        if (potdc.getTrs() != null) {
+            // validate time range before going ahead with control initialization
+            if (! potdc.getTrs().begTimeOk()) {
+                JOptionPane.showMessageDialog(null, 
+                        "Invalid start time, must follow format HH:MM:SS", 
+                        "Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            if (! potdc.getTrs().endTimeOk()) {
+                JOptionPane.showMessageDialog(null, 
+                        "Invalid end time, must follow format HH:MM:SS", 
+                        "Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            if (! potdc.getTrs().timeRangeOk()) {
+                JOptionPane.showMessageDialog(null, 
+                        "Invalid time range selection, please correct", 
+                        "Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+
+            // allow at most two full days of orbit tracks - more than this will
+            // at best clutter the display and at worst grind McV indefinitely
+            long timeDiff = potdc.getTrs().getTimeRangeInSeconds();
+            if (timeDiff >= (60 * 60 * 24 * 2)) {
+                JOptionPane.showMessageDialog(null, 
+                        "Time range greater than two full days is not allowed, please correct", 
+                        "Time Range Selection Error", JOptionPane.ERROR_MESSAGE);
+                return false;        	
+            }
         }
         
     	// instantiate components we need to exist at initialization
@@ -1214,7 +1243,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
         // set the default legend label template
         setLegendLabelTemplate(DisplayControlImpl.MACRO_DISPLAYNAME);
-        initialized = true;
 
         return result;
     }
@@ -1231,7 +1259,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     if (timeLabelDsp.displayableCount() > 0) {
                         // TJJ Apr 2019 - see if scale changed, if so need to redraw
                         float currentScale = getViewManager().getMaster().getDisplayScale();
-                        System.err.println("TJJ scale: " + scale + ", new scale: " + currentScale);
                         if (currentScale != scale) {
                             scale = currentScale;
                             redrawAll();
