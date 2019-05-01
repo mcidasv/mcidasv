@@ -1226,13 +1226,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         try {
             navDsp = getNavigatedDisplay();
             float defaultZ = getMapViewManager().getDefaultMapPosition();
-            // we're just nudging a bit so tracks (and their labels) get drawn over
+            // we're just nudging a bit so tracks (and their labels) get drawn below
             // ground stations (and their labels), which get drawn over default map level
             // user can change this in map controls if they prefer maps on top
-            gsZ = defaultZ + 0.01f;
-            trackZ = defaultZ + 0.02f;
+            gsZ = defaultZ + 0.02f;
+            trackZ = defaultZ + 0.01f;
             // range on "map level" stuff is -1 to 1, stay within these limits
-            if (trackZ > 1.0f) trackZ = 1.0f;
+            if (trackZ > 1.0f) trackZ = 0.9f;
             if (gsZ > 1.0f) gsZ = 1.0f;
             if (! inGlobeDisplay()) {
             	applyDisplayableLevels();
