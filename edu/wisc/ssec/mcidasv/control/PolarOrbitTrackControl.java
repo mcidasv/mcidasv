@@ -800,7 +800,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     @Override
     public void displayableToFront() {
         redrawAll();
-        super.displayableToFront();
     }
 
     /**
