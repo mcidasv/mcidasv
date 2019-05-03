@@ -81,6 +81,7 @@ import org.w3c.dom.NodeList;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.control.DisplayControlImpl;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.util.GuiUtils;
@@ -1104,7 +1105,30 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         }
         return ret;
     }
-
+    
+    /**
+     * Overridden by McIDAS-V so that we can force the {@code display name} to
+     * {@literal "Satellite Orbit Track"} when loading from a bundle.
+     * 
+     * <p>This is done because {@link #init(DataChoice)} will call 
+     * {@link #setDisplayName(String)} essentially like this: 
+     * {@code setDisplayName(getLongParamName() + " " + getDisplayName()}. 
+     * This results in the display name for a bundled orbit track control
+     * being something like 
+     * {@literal "SUOMI NPP SUOMI NPP Satellite Orbit Track"}.</p>
+     * 
+     * @param vc Context in which this control exists.
+     * @param properties Properties that may hold things.
+     * @param preSelectedDataChoices Set of preselected data choices.
+     */
+    @Override public void initAfterUnPersistence(ControlContext vc,
+                                                 Hashtable properties,
+                                                 List preSelectedDataChoices)
+    {
+        setDisplayName("Satellite Orbit Track");
+        super.initAfterUnPersistence(vc, properties, preSelectedDataChoices);
+    }
+    
     @Override public boolean init(DataChoice dataChoice) 
         throws VisADException, RemoteException 
     {

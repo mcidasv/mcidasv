@@ -630,10 +630,30 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
 
         return retAlt;
     }
-
-    public void initAfterCreation() {
+    
+    @Override public boolean canSaveDataToLocalDisk() {
+        return true;
     }
-
+    
+    @Override protected List saveDataToLocalDisk(String filePrefix,
+                                                 Object loadId,
+                                                 boolean changeLinks)
+        throws Exception
+    {
+        Hashtable props = getProperties();
+        List result;
+        if (props.containsKey(PolarOrbitTrackChooser.URL_NAME_KEY)) {
+            List<String> urls = new ArrayList<>(1);
+            urls.add((String)props.get(PolarOrbitTrackChooser.URL_NAME_KEY));
+            result = IOUtil.writeTo(urls, filePrefix, ".txt", loadId);
+            String newUrl = "file:"+result.get(0);
+            props.put(PolarOrbitTrackChooser.URL_NAME_KEY, newUrl);
+        } else {
+            result = super.saveDataToLocalDisk(filePrefix, loadId, changeLinks);
+        }
+        return result;
+    }
+    
     protected void initDataSelectionComponents(
         List<DataSelectionComponent> components, final DataChoice dataChoice) {
 /*
