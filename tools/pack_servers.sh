@@ -45,6 +45,7 @@ awipadir awipaget
 giniadir giniaget
 mod8adir mod8aget
 mtstadir mtstaget
+scmiadir scmiaget
 
 abinadir abinaget
 
