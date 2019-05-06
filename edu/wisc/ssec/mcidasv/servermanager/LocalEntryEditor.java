@@ -113,6 +113,7 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.MSG_HRIT_HRV,
             AddeFormat.MTSAT_HRIT,
             AddeFormat.NOAA_AVHRR_L1B,
+            AddeFormat.SCMI,
             AddeFormat.SSMI,
             AddeFormat.TRMM           
             // AddeFormat.MCIDAS_MD
@@ -210,6 +211,7 @@ public class LocalEntryEditor extends JDialog {
             formats.removeElement(AddeFormat.HIMAWARI8);
             formats.removeElement(AddeFormat.INSAT3D_IMAGER);
             formats.removeElement(AddeFormat.INSAT3D_SOUNDER);
+            formats.removeElement(AddeFormat.SCMI);
         }
 
         formatComboBox.setModel(formats);
