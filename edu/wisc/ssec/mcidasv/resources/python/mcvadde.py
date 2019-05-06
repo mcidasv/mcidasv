@@ -234,6 +234,7 @@ _formats = {
     "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
     "INSAT3D_SOUNDER":                                         AddeFormat.INSAT3D_SOUNDER,
     "INSAT-3D Sounder":                                        AddeFormat.INSAT3D_SOUNDER,
+    "Sectorized CMI":                                          AddeFormat.SCMI,
 }
 
 _human_units_to_adde = {
