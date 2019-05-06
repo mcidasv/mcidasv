@@ -146,6 +146,7 @@ public class LocalAddeEntry implements AddeEntry {
         MSG_HRIT_HRV(ServerName.MSGT, "MSG HRIT HRV", "MSG HRIT (High Resolution Visible)"),
         MTSAT_HRIT(ServerName.MTST, "MTSAT HRIT"),
         NOAA_AVHRR_L1B(ServerName.LV1B, "NOAA AVHRR L 1b", "NOAA AVHRR Level 1b"),
+        SCMI(ServerName.SCMI, "SCMI", "Sectorized CMI"),
         SSMI(ServerName.SMIN, "SSMI", "Terrascan netCDF (SMIN)"),
         TRMM(ServerName.TMIN, "TRMM", "Terrascan netCDF (TMIN)"),
         INVALID(ServerName.INVALID, "", "", EntryType.INVALID);
