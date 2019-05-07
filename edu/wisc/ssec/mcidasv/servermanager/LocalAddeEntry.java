@@ -94,7 +94,7 @@ public class LocalAddeEntry implements AddeEntry {
         // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
         // in mcvadde.py.
         ABIN, AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4,  
-        MOD8, MODR, MSGT, MTST, SMIN, TMIN, MD, INDS, INDI, WARI, INVALID
+        MOD8, MODR, MSGT, MTST, SCMI, SMIN, TMIN, MD, INDS, INDI, WARI, INVALID
     }
 
     /**
