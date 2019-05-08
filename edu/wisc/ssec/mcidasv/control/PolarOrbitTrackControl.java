@@ -217,9 +217,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private double curWidth = 0.0d;
     private double prvWidth = -1.0d;
 
-    private int prvTrackLineStyle = -1;
+    private int prvTrackLineStyle = 0;
     private int prvEdgeLineStyle = -1;
-    private int curTrackLineStyle = -1;
+    private int curTrackLineStyle = 0;
     private int curEdgeLineStyle = -1;
     private static final float FONT_SCALE_FACTOR = 12.0f;
     
@@ -834,10 +834,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         // line style for drawing swath track and width edges
         jcbTrackLineStyle.addActionListener(this);
-        // init to solid
-        jcbTrackLineStyle.setSelectedIndex(0);
-        prvTrackLineStyle = jcbTrackLineStyle.getSelectedIndex();
-        curTrackLineStyle = jcbTrackLineStyle.getSelectedIndex();
+        // will init to default of solid
+        jcbTrackLineStyle.setSelectedIndex(curTrackLineStyle);
 
         jcbEdgeLineStyle.addActionListener(this);
         // init to dashed
@@ -973,6 +971,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      */
     public void setCurSwathColor(Color curSwathColor) {
         this.curSwathColor = curSwathColor;
+    }
+
+    /**
+     * @return the curTrackLineStyle
+     */
+    public int getCurTrackLineStyle() {
+        return curTrackLineStyle;
+    }
+
+    /**
+     * @param curTrackLineStyle the curTrackLineStyle to set
+     */
+    public void setCurTrackLineStyle(int curTrackLineStyle) {
+        this.curTrackLineStyle = curTrackLineStyle;
     }
 
     public PolarOrbitTrackDataSource getDataSource() {
@@ -1127,6 +1139,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     {
         setDisplayName("Satellite Orbit Track");
         super.initAfterUnPersistence(vc, properties, preSelectedDataChoices);
+        jcbTrackLineStyle.setSelectedIndex(curTrackLineStyle);
     }
     
     @Override public boolean init(DataChoice dataChoice) 
@@ -1193,6 +1206,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         // initialize swath center (track line) to width 2
         jcbSCLineWidth.setSelectedIndex(1);
         jcbEdgeLineStyle.setSelectedIndex(1);
+        jcbTrackLineStyle.setSelectedIndex(curTrackLineStyle);
         jcbSELineWidth = new JComboBox<String>(lineWidths);
         otFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         otFontSelector.setFont(FontSelector.DEFAULT_FONT);
