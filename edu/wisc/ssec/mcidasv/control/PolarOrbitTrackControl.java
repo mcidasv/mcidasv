@@ -145,6 +145,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JComboBox<String> jcbStationLineStyle = new JComboBox<String>(Constants.lineStyles);
     private JCheckBox jcbLabels;
     private JCheckBox jcbSwathEdges;
+    private String [] lineWidths = {"1", "2", "3", "4"};
+    private JComboBox<String> jcbStationLineWidth = new JComboBox<String>(lineWidths);
+    private JComboBox<String> jcbSwathCenterLineWidth = new JComboBox<String>(lineWidths);
     
     // names to distinguish checkbox event sources
     private static final String CHECKBOX_LABELS = "CHECKBOX_LABELS";
@@ -182,8 +185,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private FontSelector gsFontSelector;
     
     // line width combo boxes, Station: Ground Station, SC: Swath Center, SE: Swath Edge
-    private JComboBox<String> jcbStationLineWidth;
-    private JComboBox<String> jcbSCLineWidth;
     private JComboBox<String> jcbSELineWidth;
     private JSpinner js = null;
 
@@ -224,8 +225,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final float FONT_SCALE_FACTOR = 12.0f;
     
     // line width for drawing track center and swath edges
-    private float prvSwathCenterWidth = 2.0f;
-    private float curSwathCenterWidth = 2.0f;
+    private int prvSwathCenterWidth = 2;
+    private int curSwathCenterWidth = 2;
     private float prvSwathEdgeWidth = 1.0f;
     private float curSwathEdgeWidth = 1.0f;
 
@@ -418,7 +419,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		boolean fontChanged = false;
     		boolean swathChanged = false;
     		scale = getViewManager().getMaster().getDisplayScale();
-    		curSwathCenterWidth = jcbSCLineWidth.getSelectedIndex() + 1;
+
+            curSwathCenterWidth = jcbSwathCenterLineWidth.getSelectedIndex() + 1;
     		curSwathEdgeWidth = jcbSELineWidth.getSelectedIndex() + 1;
     		if (curSwathCenterWidth != prvSwathCenterWidth) {
     		    prvSwathCenterWidth = curSwathCenterWidth;
@@ -743,7 +745,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     trackLines.setLineStyle(jcbTrackLineStyle.getSelectedIndex());
                     trackDsp.addDisplayable(trackLines);
                     trackDsp.setColor(curSwathColor);
-                    trackDsp.setLineWidth(jcbSCLineWidth.getSelectedIndex() + 1);
+                    trackDsp.setLineWidth(curSwathCenterWidth);
 
                     addDisplayable(trackDsp);
                     addDisplayable(timeLabelDsp);
@@ -837,6 +839,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         // will init to default of solid
         jcbTrackLineStyle.setSelectedIndex(curTrackLineStyle);
 
+        // Swath center line width
+        jcbSwathCenterLineWidth.addActionListener(this);
+        jcbSwathCenterLineWidth.setSelectedIndex(curSwathCenterWidth - 1);
+
         jcbEdgeLineStyle.addActionListener(this);
         // init to dashed
         jcbEdgeLineStyle.setSelectedIndex(1);
@@ -858,7 +864,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         colorPanel.add(Box.createHorizontalStrut(5));
         colorPanel.add(new JLabel("Track Width: "));
-        colorPanel.add(jcbSCLineWidth);
+        colorPanel.add(jcbSwathCenterLineWidth);
         
         colorPanel.add(Box.createHorizontalStrut(4));
         colorPanel.add(new JLabel("Track Style: "));
@@ -957,6 +963,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     public Color getAntColor() {
         if (antColor == null) antColor = defaultAntColor;
         return antColor;
+    }
+
+    /**
+     * @return the curSwathCenterWidth
+     */
+    public int getCurSwathCenterWidth() {
+        return curSwathCenterWidth;
+    }
+
+    /**
+     * @param curSwathCenterWidth the curSwathCenterWidth to set
+     */
+    public void setCurSwathCenterWidth(int curSwathCenterWidth) {
+        this.curSwathCenterWidth = curSwathCenterWidth;
     }
 
     /**
@@ -1140,6 +1160,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         setDisplayName("Satellite Orbit Track");
         super.initAfterUnPersistence(vc, properties, preSelectedDataChoices);
         jcbTrackLineStyle.setSelectedIndex(curTrackLineStyle);
+        jcbSwathCenterLineWidth.setSelectedIndex(curSwathCenterWidth - 1);
     }
     
     @Override public boolean init(DataChoice dataChoice) 
@@ -1187,9 +1208,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     	latLabel = new JLabel();
     	lonLabel = new JLabel();
     	altLabel = new JLabel();
-        String [] lineWidths = {"1", "2", "3", "4"};
-        jcbStationLineWidth = new JComboBox<String>(lineWidths);
-        jcbSCLineWidth = new JComboBox<String>(lineWidths);
         
         // create time label checkbox toggle, start out enabled
         jcbLabels = new JCheckBox("Labels On/Off");
@@ -1204,7 +1222,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbSwathEdges.addItemListener(this);
         
         // initialize swath center (track line) to width 2
-        jcbSCLineWidth.setSelectedIndex(1);
+        jcbSwathCenterLineWidth.setSelectedIndex(curSwathCenterWidth - 1);
         jcbEdgeLineStyle.setSelectedIndex(1);
         jcbTrackLineStyle.setSelectedIndex(curTrackLineStyle);
         jcbSELineWidth = new JComboBox<String>(lineWidths);
