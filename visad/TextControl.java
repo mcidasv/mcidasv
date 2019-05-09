@@ -60,6 +60,8 @@ import java.text.NumberFormat;
 import visad.util.HersheyFont;
 import visad.util.Util;
 
+import ucar.visad.display.TextDisplayable;
+
 /**
    TextControl is the VisAD class for controlling Text display scalars.<P>
 */
@@ -93,7 +95,9 @@ public class TextControl extends Control {
   // WLH 6 Aug 2001
   private boolean autoSize = false;
   private ProjectionControlListener pcl = null;
-
+  
+  private String textType = null;
+  
   /**
    * A class to represent the different types of justification.
    * Use a class so the user can't just pass in an arbitrary integer
@@ -164,7 +168,15 @@ public class TextControl extends Control {
     catch (RemoteException e) {
     }
   }
-
+  
+  public void setTextType(String type) {
+    textType = type;
+  }
+  
+  public String getTextType() {
+    return textType;
+  }
+  
   public boolean getAutoSize() {
     return autoSize;
   }

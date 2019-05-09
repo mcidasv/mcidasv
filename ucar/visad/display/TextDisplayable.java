@@ -493,18 +493,18 @@ public class TextDisplayable extends LineDrawing {
         ScalarMap oldTextMap = textMap;
 
         textMap = new ScalarMap(textType, Display.Text);
-
+//        final TextDisplayable td = this;
         textMap.addScalarMapListener(new ScalarMapListener() {
 
             public void controlChanged(ScalarMapControlEvent event)
                     throws RemoteException, VisADException {
 
                 int id = event.getId();
-
+//                System.out.println("event: "+event);
                 if ((id == event.CONTROL_ADDED)
                         || (id == event.CONTROL_REPLACED)) {
                     textControl = (TextControl) textMap.getControl();
-
+                    textControl.setTextType(textType.getName());
                     if (textControl != null) {  //set parms for textControl
                         textControl.setJustification(justification);
                         textControl.setVerticalJustification(

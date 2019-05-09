@@ -54,8 +54,11 @@ import visad.data.DataCacheManager;
 
 import visad.java3d.DisplayImplJ3D;
 import visad.java3d.DisplayRendererJ3D;
+import visad.java3d.TwoDDisplayRendererJ3D;
 import visad.java3d.VisADCanvasJ3D;
 import visad.util.HersheyFont;
+
+import ucar.visad.display.TextDisplayable;
 
 import com.jogamp.opengl.util.awt.TextRenderer;
 
@@ -3156,6 +3159,13 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
     // abcd 19 March 2003
     TextControl.Justification verticalJustification = text_control
         .getVerticalJustification();
+    
+    String textType = text_control.getTextType();
+    boolean isDisplayList = false;
+    if ((textType != null) && textType.startsWith("Display_List_Text")) {
+      isDisplayList = true;
+      logger.trace("isDisplayList: {} text={}", isDisplayList, text_values);
+    }
     double size = text_control.getSize();
     Font font = text_control.getFont();
     HersheyFont hfont = text_control.getHersheyFont();
@@ -3184,7 +3194,7 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
     Graphics2D g2 = null;
     BufferedImage listImage = null;
     Rectangle bounds = null;
-    if (newRendering) {
+    if (isDisplayList && newRendering) {
         Component dispComp = display.getComponent();
         
         GraphicsConfiguration gc = dispComp.getGraphicsConfiguration();
@@ -3274,35 +3284,42 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
           start = new double[] { spatial_values[0][i], spatial_values[1][i],
               spatial_values[2][i] };
           if (font != null) {
-            if (newRendering && (display != null)) {
-              System.err.println("visad: using new font stuff!");
+            if (isDisplayList && newRendering && (display != null)) {
+//              System.err.println("visad: using new font stuff!");
               Point3d[] p3d = { new Point3d(start[0], start[1], start[2]) };
 
               DisplayRendererJ3D renderer =
                   (DisplayRendererJ3D)display.getDisplayRenderer();
-              VisADCanvasJ3D canvas = renderer.getCanvas();
-              int[][] screen = ScreenAnnotatorUtils.vworldToScreen(p3d, canvas);
-              int x = screen[0][0];
-              int y = screen[1][0];
-              try {
-                Color c;
-                if (color_length == 3) {
-                  c = new Color(Byte.toUnsignedInt(r),
-                                Byte.toUnsignedInt(g),
-                                Byte.toUnsignedInt(b),
-                                255);
-                } else {
-                  c = new Color(Byte.toUnsignedInt(r),
-                                Byte.toUnsignedInt(g),
-                                Byte.toUnsignedInt(b),
-                                Byte.toUnsignedInt(a));
-                }
-                PlotText.centerString(g2, bounds, text_values[i], font, 0, c);
+              if (renderer instanceof TwoDDisplayRendererJ3D) {
+                as[k] = PlotText.render_font(text_values[i], font, start, base, up,
+                    justification, verticalJustification, characterRotation, scale,
+                    offset);
+              } else {
+//                logger.trace("renderer class: {}", renderer.getClass().getCanonicalName());
+                VisADCanvasJ3D canvas = renderer.getCanvas();
+                int[][] screen = ScreenAnnotatorUtils.vworldToScreen(p3d, canvas);
+                int x = screen[0][0];
+                int y = screen[1][0];
+                try {
+                  Color c;
+                  if (color_length == 3) {
+                    c = new Color(Byte.toUnsignedInt(r),
+                        Byte.toUnsignedInt(g),
+                        Byte.toUnsignedInt(b),
+                        255);
+                  } else {
+                    c = new Color(Byte.toUnsignedInt(r),
+                        Byte.toUnsignedInt(g),
+                        Byte.toUnsignedInt(b),
+                        Byte.toUnsignedInt(a));
+                  }
+                  PlotText.centerString(g2, bounds, text_values[i], font, 0, c);
 //                System.err.println("even getting here?? color="+c+" alpha="+c.getAlpha()+" color_len="+color_length);
-                as[k] = PlotText.makeImageShape3D((DisplayImplJ3D) display, listImage, ImageJ3D.CENTER, x, y, bounds.width, bounds.height, 1, 2);
-                skipColorStuff = true;
-              } catch (Exception eeee) {
-                logger.error("Could not use new font rendering code", eeee);
+                  as[k] = PlotText.makeImageShape3D((DisplayImplJ3D) display, listImage, ImageJ3D.CENTER, x, y, bounds.width, bounds.height, 1, 2);
+                  skipColorStuff = true;
+                } catch (Exception eeee) {
+                  logger.error("Could not use new font rendering code", eeee);
+                }
               }
             } else {
               as[k] = PlotText.render_font(text_values[i], font, start, base, up,
