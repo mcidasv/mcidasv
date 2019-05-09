@@ -504,8 +504,8 @@ public class TextDisplayable extends LineDrawing {
                 if ((id == event.CONTROL_ADDED)
                         || (id == event.CONTROL_REPLACED)) {
                     textControl = (TextControl) textMap.getControl();
-                    textControl.setTextType(textType.getName());
                     if (textControl != null) {  //set parms for textControl
+                        textControl.setTextType(textType.getName());
                         textControl.setJustification(justification);
                         textControl.setVerticalJustification(
                             verticalJustification);
