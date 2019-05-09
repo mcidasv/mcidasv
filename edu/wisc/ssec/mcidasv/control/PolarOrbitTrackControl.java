@@ -966,6 +966,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     /**
+     * @return the curLabelInterval
+     */
+    public int getCurLabelInterval() {
+        return curLabelInterval;
+    }
+
+    /**
+     * @param curLabelInterval the curLabelInterval to set
+     */
+    public void setCurLabelInterval(int curLabelInterval) {
+        this.curLabelInterval = curLabelInterval;
+    }
+
+    /**
      * @return the curSwathCenterWidth
      */
     public int getCurSwathCenterWidth() {
