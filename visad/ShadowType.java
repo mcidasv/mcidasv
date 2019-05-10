@@ -3164,7 +3164,6 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
     boolean isDisplayList = false;
     if ((textType != null) && textType.startsWith("Display_List_Text")) {
       isDisplayList = true;
-      logger.trace("isDisplayList: {} text={}", isDisplayList, text_values);
     }
     double size = text_control.getSize();
     Font font = text_control.getFont();
@@ -3285,7 +3284,6 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
               spatial_values[2][i] };
           if (font != null) {
             if (isDisplayList && newRendering && (display != null)) {
-//              System.err.println("visad: using new font stuff!");
               Point3d[] p3d = { new Point3d(start[0], start[1], start[2]) };
 
               DisplayRendererJ3D renderer =
@@ -3295,7 +3293,6 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
                     justification, verticalJustification, characterRotation, scale,
                     offset);
               } else {
-//                logger.trace("renderer class: {}", renderer.getClass().getCanonicalName());
                 VisADCanvasJ3D canvas = renderer.getCanvas();
                 int[][] screen = ScreenAnnotatorUtils.vworldToScreen(p3d, canvas);
                 int x = screen[0][0];
@@ -3314,7 +3311,6 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
                         Byte.toUnsignedInt(a));
                   }
                   PlotText.centerString(g2, bounds, text_values[i], font, 0, c);
-//                System.err.println("even getting here?? color="+c+" alpha="+c.getAlpha()+" color_len="+color_length);
                   as[k] = PlotText.makeImageShape3D((DisplayImplJ3D) display, listImage, ImageJ3D.CENTER, x, y, bounds.width, bounds.height, 1, 2);
                   skipColorStuff = true;
                 } catch (Exception eeee) {
