@@ -186,7 +186,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private FontSelector gsFontSelector;
     
     // line width combo boxes, Station: Ground Station, SC: Swath Center, SE: Swath Edge
-    private JComboBox<String> jcbSELineWidth;
+    private JComboBox<String> jcbSwathEdgeLineWidth = new JComboBox<String>(lineWidths);;
     private JSpinner js = null;
 
     private CompositeDisplayable trackDsp;
@@ -220,16 +220,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private double prvWidth = 0.0d;
 
     private int prvTrackLineStyle = 0;
-    private int prvEdgeLineStyle = -1;
+    private int prvEdgeLineStyle = 1;
     private int curTrackLineStyle = 0;
-    private int curEdgeLineStyle = -1;
+    private int curEdgeLineStyle = 1;
     private static final float FONT_SCALE_FACTOR = 12.0f;
     
     // line width for drawing track center and swath edges
     private int prvSwathCenterWidth = 2;
     private int curSwathCenterWidth = 2;
-    private float prvSwathEdgeWidth = 1.0f;
-    private float curSwathEdgeWidth = 1.0f;
+    private int prvSwathEdgeWidth = 1;
+    private int curSwathEdgeWidth = 1;
 
     /** Path to the McV swathwidths.xml */
     private static final String SWATH_WIDTHS = "/edu/wisc/ssec/mcidasv/resources/swathwidths.xml";
@@ -422,11 +422,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		scale = getViewManager().getMaster().getDisplayScale();
 
             curSwathCenterWidth = jcbSwathCenterLineWidth.getSelectedIndex() + 1;
-    		curSwathEdgeWidth = jcbSELineWidth.getSelectedIndex() + 1;
     		if (curSwathCenterWidth != prvSwathCenterWidth) {
     		    prvSwathCenterWidth = curSwathCenterWidth;
     		    swathChanged = true;
     		}
+
+            curSwathEdgeWidth = jcbSwathEdgeLineWidth.getSelectedIndex() + 1;
     		if (curSwathEdgeWidth != prvSwathEdgeWidth) {
     		    prvSwathEdgeWidth = curSwathEdgeWidth;
     		    swathChanged = true;
@@ -437,6 +438,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		    prvTrackLineStyle = curTrackLineStyle;
     		    swathChanged = true; 
     		}
+
     		curEdgeLineStyle = jcbEdgeLineStyle.getSelectedIndex();
     		if (curEdgeLineStyle != prvEdgeLineStyle) {
     		    prvEdgeLineStyle = curEdgeLineStyle;
@@ -844,11 +846,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbSwathCenterLineWidth.addActionListener(this);
         jcbSwathCenterLineWidth.setSelectedIndex(curSwathCenterWidth - 1);
 
+        // Swath edge line width
+        jcbSwathEdgeLineWidth.addActionListener(this);
+        jcbSwathEdgeLineWidth.setSelectedIndex(curSwathEdgeWidth - 1);
+
         jcbEdgeLineStyle.addActionListener(this);
-        // init to dashed
-        jcbEdgeLineStyle.setSelectedIndex(1);
-        prvEdgeLineStyle = jcbEdgeLineStyle.getSelectedIndex();
-        curEdgeLineStyle = jcbEdgeLineStyle.getSelectedIndex();
+        // will init to default of dashed
+        jcbEdgeLineStyle.setSelectedIndex(curEdgeLineStyle);
         
         fontSizePanel.add(labelPanel);
         JPanel botPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
@@ -873,7 +877,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         colorPanel.add(Box.createHorizontalStrut(5));
         colorPanel.add(new JLabel("Edge Width: "));
-        colorPanel.add(jcbSELineWidth);
+        colorPanel.add(jcbSwathEdgeLineWidth);
         
         colorPanel.add(Box.createHorizontalStrut(4));
         colorPanel.add(new JLabel("Edge Style: "));
@@ -967,6 +971,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
 
     /**
+     * @return the curEdgeLineStyle
+     */
+    public int getCurEdgeLineStyle() {
+        return curEdgeLineStyle;
+    }
+
+    /**
+     * @param curEdgeLineStyle the curEdgeLineStyle to set
+     */
+    public void setCurEdgeLineStyle(int curEdgeLineStyle) {
+        this.curEdgeLineStyle = curEdgeLineStyle;
+    }
+
+    /**
      * @return the curLabelInterval
      */
     public int getCurLabelInterval() {
@@ -992,6 +1010,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      */
     public void setCurSwathCenterWidth(int curSwathCenterWidth) {
         this.curSwathCenterWidth = curSwathCenterWidth;
+    }
+
+    /**
+     * @return the curSwathEdgeWidth
+     */
+    public int getCurSwathEdgeWidth() {
+        return curSwathEdgeWidth;
+    }
+
+    /**
+     * @param curSwathEdgeWidth the curSwathEdgeWidth to set
+     */
+    public void setCurSwathEdgeWidth(int curSwathEdgeWidth) {
+        this.curSwathEdgeWidth = curSwathEdgeWidth;
     }
 
     /**
@@ -1203,7 +1235,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         setDisplayName("Satellite Orbit Track");
         super.initAfterUnPersistence(vc, properties, preSelectedDataChoices);
         jcbTrackLineStyle.setSelectedIndex(curTrackLineStyle);
+        jcbEdgeLineStyle.setSelectedIndex(curEdgeLineStyle);
         jcbSwathCenterLineWidth.setSelectedIndex(curSwathCenterWidth - 1);
+        jcbSwathEdgeLineWidth.setSelectedIndex(curSwathEdgeWidth - 1);
     }
     
     @Override public boolean init(DataChoice dataChoice) 
@@ -1264,11 +1298,12 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbSwathEdges.setName(CHECKBOX_SWATH_EDGES);
         jcbSwathEdges.addItemListener(this);
         
-        // initialize swath center (track line) to width 2
+        // initialize the various swath and groundstation params
         jcbSwathCenterLineWidth.setSelectedIndex(curSwathCenterWidth - 1);
-        jcbEdgeLineStyle.setSelectedIndex(1);
+        jcbSwathEdgeLineWidth.setSelectedIndex(curSwathEdgeWidth - 1);
+        jcbEdgeLineStyle.setSelectedIndex(curEdgeLineStyle);
         jcbTrackLineStyle.setSelectedIndex(curTrackLineStyle);
-        jcbSELineWidth = new JComboBox<String>(lineWidths);
+
         otFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         otFontSelector.setFont(FontSelector.DEFAULT_FONT);
         gsFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
