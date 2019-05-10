@@ -145,6 +145,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JComboBox<String> jcbStationLineStyle = new JComboBox<String>(Constants.lineStyles);
     private JCheckBox jcbLabels;
     private JCheckBox jcbSwathEdges;
+    private boolean swathEdgesOn = false;
     private String [] lineWidths = {"1", "2", "3", "4"};
     private JComboBox<String> jcbStationLineWidth = new JComboBox<String>(lineWidths);
     private JComboBox<String> jcbSwathCenterLineWidth = new JComboBox<String>(lineWidths);
@@ -216,7 +217,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private TextType otTextType = null;
     private static long ttCounter = 0;
     private double curWidth = 0.0d;
-    private double prvWidth = -1.0d;
+    private double prvWidth = 0.0d;
 
     private int prvTrackLineStyle = 0;
     private int prvEdgeLineStyle = -1;
@@ -576,10 +577,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             // Line style and width
             
             CurveDrawer cd = gs.getCd();
-            int curWidth = (int) cd.getLineWidth();
+            int cdWidth = (int) cd.getLineWidth();
             int curStyle = cd.getLineStyle();
             
-            if (curWidth != (jcbStationLineWidth.getSelectedIndex() + 1)) {
+            if (cdWidth != (jcbStationLineWidth.getSelectedIndex() + 1)) {
                 try {
                     logger.debug("GroundStation line width change...");
                     double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
@@ -1021,6 +1022,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         this.curTrackLineStyle = curTrackLineStyle;
     }
 
+    /**
+     * @return the curWidth
+     */
+    public double getCurWidth() {
+        return curWidth;
+    }
+
+    /**
+     * @param curWidth the curWidth to set
+     */
+    public void setCurWidth(double curWidth) {
+        this.curWidth = curWidth;
+    }
+
     public PolarOrbitTrackDataSource getDataSource() {
         DataSourceImpl ds = null;
         List dataSources = getDataSources();
@@ -1096,6 +1111,20 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
 
     public String getStation() {
         return station;
+    }
+
+    /**
+     * @return the swathEdgesOn
+     */
+    public boolean isSwathEdgesOn() {
+        return swathEdgesOn;
+    }
+
+    /**
+     * @param swathEdgesOn the swathEdgesOn to set
+     */
+    public void setSwathEdgesOn(boolean swathEdgesOn) {
+        this.swathEdgesOn = swathEdgesOn;
     }
 
     private float[][][] getSwath(float[][] track) {
@@ -1231,7 +1260,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         // create swath edges toggle, start out disabled
         jcbSwathEdges = new JCheckBox("Swath Edges On/Off");
-        jcbSwathEdges.setSelected(false);
+        jcbSwathEdges.setSelected(swathEdgesOn);
         jcbSwathEdges.setName(CHECKBOX_SWATH_EDGES);
         jcbSwathEdges.addItemListener(this);
         
@@ -1344,7 +1373,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     		    // Test the current value in the text input and update if appropriate
                 if (ie.getStateChange() == ItemEvent.DESELECTED) {
                     swathEdgeDsp.setVisible(false);
+                    swathEdgesOn = false;
                 } else {
+                    swathEdgesOn = true;
                     int newSwathWidth = validateSwathWidthField();
                     if (newSwathWidth > 0) {
                         curWidth = newSwathWidth;
