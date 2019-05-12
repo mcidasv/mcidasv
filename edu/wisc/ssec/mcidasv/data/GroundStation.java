@@ -28,10 +28,9 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
+import java.awt.Color;
 import java.awt.Font;
 
-import edu.wisc.ssec.mcidasv.data.hydra.CurveDrawer;
-import ucar.visad.display.TextDisplayable;
 import visad.georef.EarthLocationTuple;
 
 /**
@@ -48,23 +47,33 @@ public class GroundStation
 
     public static final int DEFAULT_ANTENNA_ANGLE = 5;
     
-	private String name = null;
-	private EarthLocationTuple elt = null;
-	private int antennaAngle = DEFAULT_ANTENNA_ANGLE;
-	// The station label
-	private TextDisplayable td = null;
-	// The ground station range ring
-	private CurveDrawer cd = null;
-
+	private String name;
+	private EarthLocationTuple elt;
+	private int antennaAngle;
+    private Color color = Color.MAGENTA;
+    private double altitude;
+    private Font font;
+    private int lineWidth;
+    private int lineStyle;
+    private boolean globeDisplay;
+    
+    public GroundStation() {
+        // for bundles
+    }
+    
+    public GroundStation(String name, EarthLocationTuple location) {
+        this(name, location, DEFAULT_ANTENNA_ANGLE);
+    }
+    
     /**
 	 * We'll try to get by with only one way to initialize these.
 	 */
-    
-	public GroundStation(String name, EarthLocationTuple location) {
+	public GroundStation(String name, EarthLocationTuple location, int angle) {
 	    this.name = name;
 	    this.elt = location;
+	    this.antennaAngle = angle;
 	}
-
+	
     /**
      * @return the label
      */
@@ -107,34 +116,54 @@ public class GroundStation
         this.antennaAngle = antennaAngle;
     }
 
-    /**
-     * @return the CurveDrawer
-     */
-    public CurveDrawer getCd() {
-        return cd;
+    public Color getColor() {
+        return color;
     }
 
-    /**
-     * @param cd the CurveDrawer to set
-     */
-    public void setCd(CurveDrawer cd) {
-        this.cd = cd;
+    public void setColor(Color newColor) {
+        color = newColor;
     }
 
-    /**
-     * @return the TextDisplayable
-     */
-    public TextDisplayable getTd() {
-        return td;
+    public double getAltitude() {
+        return altitude;
     }
 
-    /**
-     * @param td the TextDisplayable to set
-     */
-    public void setTd(TextDisplayable td) {
-        this.td = td;
+    public void setAltitude(double newAltitude) {
+        altitude = newAltitude;
     }
 
+    public void setFont(Font newFont) {
+        font = newFont;
+    }
+    
+    public Font getFont() {
+        return font;
+    }
+    
+    public void setGlobeDisplay(boolean newValue) {
+        globeDisplay = newValue;
+    }
+    
+    public boolean getGlobeDisplay() {
+        return globeDisplay;
+    }
+    
+    public void setLineStyle(int newStyle) {
+        lineStyle = newStyle;
+    }
+    
+    public int getLineStyle() {
+        return lineStyle;
+    }
+    
+    public void setLineWidth(int newWidth) {
+        lineWidth = newWidth;
+    }
+    
+    public int getLineWidth() {
+        return lineWidth;
+    }
+    
     /** 
      * Override to only show name since used in combo boxes
      * @see java.lang.Object#toString()
