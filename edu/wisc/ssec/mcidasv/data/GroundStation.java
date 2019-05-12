@@ -44,12 +44,11 @@ import visad.georef.EarthLocationTuple;
 
 public class GroundStation
 {
-
     public static final int DEFAULT_ANTENNA_ANGLE = 5;
     
-	private String name;
-	private EarthLocationTuple elt;
-	private int antennaAngle;
+    private String name;
+    private EarthLocationTuple elt;
+    private int antennaAngle;
     private Color color = Color.MAGENTA;
     private double altitude;
     private Font font;
@@ -66,14 +65,14 @@ public class GroundStation
     }
     
     /**
-	 * We'll try to get by with only one way to initialize these.
-	 */
-	public GroundStation(String name, EarthLocationTuple location, int angle) {
-	    this.name = name;
-	    this.elt = location;
-	    this.antennaAngle = angle;
-	}
-	
+     * We'll try to get by with only one way to initialize these.
+     */
+    public GroundStation(String name, EarthLocationTuple location, int angle) {
+        this.name = name;
+        this.elt = location;
+        this.antennaAngle = angle;
+    }
+    
     /**
      * @return the label
      */
