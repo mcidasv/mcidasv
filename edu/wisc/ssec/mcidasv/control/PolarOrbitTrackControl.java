@@ -1695,10 +1695,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private void replaceCurve(GroundStation station) throws VisADException, RemoteException {
         station.setLineWidth(jcbStationLineWidth.getSelectedIndex() + 1);
         station.setLineStyle(jcbStationLineStyle.getSelectedIndex());
+        CurveDrawer cdOld = stationToCurve.get(station);
         CurveDrawer cdNew = makeCoverageCircle(station);
         TextDisplayable label = stationToText.get(station);
         cdNew.setLineWidth(station.getLineWidth());
-        removeDisplayable(stationToCurve.get(station));
+        removeDisplayable(cdOld);
         removeDisplayable(label);
         addDisplayable(cdNew);
         addDisplayable(label);
