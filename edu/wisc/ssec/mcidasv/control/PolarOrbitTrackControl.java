@@ -297,9 +297,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             final String xml =
                 IOUtil.readContents(SWATH_WIDTHS, McIdasPreferenceManager.class);
             root = XmlUtil.getRoot(xml);
-            if (otCurFont == null) otCurFont = FontSelector.DEFAULT_FONT;
             if (curSwathColor == null) curSwathColor = DEFAULT_COLOR;
-            otCurFontSize = otCurFont.getSize();
         } catch (Exception e) {
             logger.error("problem reading swathwidths.xml", e);
         }
@@ -1287,6 +1285,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         PolarOrbitTrackDataSource potdc = getDataSource();
         
+        // if we're not coming back from a bundle, then we need to handle
+        // otCurFont being null (was previously done in constructor)
+        if (otCurFont == null) {
+            otCurFont = FontSelector.DEFAULT_FONT;
+        }
+        otCurFontSize = otCurFont.getSize();
+        
         if (potdc.getTrs() != null) {
             // validate time range before going ahead with control initialization
             if (! potdc.getTrs().begTimeOk()) {
@@ -1345,15 +1350,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbTrackLineStyle.setSelectedIndex(curTrackLineStyle);
         
         otFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
-        otFontSelector.setFont(FontSelector.DEFAULT_FONT);
+        otFontSelector.setFont(otCurFont);
         gsFontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         gsFontSelector.setFont(FontSelector.DEFAULT_FONT);
         
         // Bump default font size down just a bit...
-        otFontSelector.setFontSize(9);
-        otCurFontSize = 9;
         gsFontSelector.setFontSize(9);
         otCurFont = otFontSelector.getFont();
+        otCurFontSize = otCurFont.getSize();
         
         this.dataChoice = dataChoice;
         String choiceName = dataChoice.getName();
