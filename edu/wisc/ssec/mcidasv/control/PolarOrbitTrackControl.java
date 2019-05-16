@@ -288,6 +288,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     
     private Element root = null;
     
+    private boolean showingLabels;
+    
     // initial scale for labeling 
     float scale = 1.0f;
     
@@ -1282,6 +1284,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         SwingUtilities.invokeLater(() -> {
             js.getModel().setValue(curLabelInterval);
+            jcbLabels.getModel().setSelected(showingLabels);
         });
     }
     
@@ -1787,6 +1790,14 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             stations.add(jcbStationsPlotted.getItemAt(i));
         }
         return stations;
+    }
+    
+    public void setShowingLabels(boolean newValue) {
+        showingLabels = newValue;
+    }
+    
+    public boolean getShowingLabels() {
+        return jcbLabels.isSelected();
     }
     
     /* (non-Javadoc)
