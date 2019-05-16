@@ -1261,6 +1261,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbSwathCenterLineWidth.setSelectedIndex(curSwathCenterWidth - 1);
         jcbSwathEdgeLineWidth.setSelectedIndex(curSwathEdgeWidth - 1);
         
+        // no idea if these invokeLater calls should be grouped into a single
+        // call or not :(
+        
         SwingUtilities.invokeLater(() -> {
             DefaultComboBoxModel<GroundStation> cbm =
                 new DefaultComboBoxModel<>();
@@ -1275,6 +1278,10 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 addDisplayable(td);
             }
             jcbStationsPlotted.setModel(cbm);
+        });
+        
+        SwingUtilities.invokeLater(() -> {
+            js.getModel().setValue(curLabelInterval);
         });
     }
     
