@@ -1271,6 +1271,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 new DefaultComboBoxModel<>();
             
             for (GroundStation s : stations) {
+                logger.trace("adding ground station {}", s);
                 cbm.addElement(s);
                 CurveDrawer cd = makeCoverageCircle(s);
                 TextDisplayable td = labelGroundStation(s);
@@ -1786,6 +1787,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     }
     
     public List<GroundStation> getStations() {
+        // this clear() call is important!
+        // if not done, saving more than one bundle will result in the 
+        // "stations" list containing the contents of "jcbStationsPlotted"
+        // for *every call to getStations()!*
+        stations.clear();
         for (int i = 0; i < jcbStationsPlotted.getItemCount(); i++) {
             stations.add(jcbStationsPlotted.getItemAt(i));
         }
