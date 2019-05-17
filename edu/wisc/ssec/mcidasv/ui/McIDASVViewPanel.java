@@ -164,7 +164,6 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 	}
 
 	public void createUI() {
-		
 		leftPanel = new JPanel(new BorderLayout());
 		leftPanel.setBorder(
 			BorderFactory.createCompoundBorder(
@@ -323,8 +322,14 @@ public class McIDASVViewPanel extends IdvManager implements ViewPanel {
 		JComponent outer = GuiUtils.top(inner);
 		outer.setBorder(BorderFactory.createEmptyBorder(2, 1, 0, 0));
 		
+		// the nested getVMInfo call will actually generate the jpanels that 
+		// get added to viewContainer, so we'll need to signal that 
+		// viewContainer needs to redraw
 		info = new ControlInfo(control, expandBtn, outer, inner,
 			getVMInfo(control.getDefaultViewManager()));
+		
+		// TODO(jon): maybe viewContainer.repack!?
+		viewContainer.revalidate();
 		
 		controlToInfo.put(control, info);
 		
