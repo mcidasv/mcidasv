@@ -31,89 +31,72 @@ package edu.wisc.ssec.mcidasv.data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ucar.unidata.ui.FontSelector;
-import ucar.unidata.util.IOUtil;
+import visad.VisADException;
 import visad.georef.EarthLocationTuple;
 
-public class GroundStations
-{
-	private static final Logger logger =
+public class GroundStations {
+    private static final Logger logger =
         LoggerFactory.getLogger(GroundStations.class);
-	
-	private static final String card00 = "KMSN,SSEC,43.1398578,-89.3375136,270.4";
-    public static String groundStationDB = "data/groundstations/groundstations_db.csv";
-    private ArrayList<GroundStation> namedLocs = new ArrayList<GroundStation>();
+    
+    private static final String card00 = "KMSN,SSEC,43.1398578,-89.3375136,270.4";
+
+    // taken from http://www.gano.name/shawn/JSatTrak/data/groundstations/
+    public static String groundStationDB = "/edu/wisc/ssec/mcidasv/resources/orbittrack_groundstations_db.csv";
+    
+    // shouldn't expose the List implementation to the public, but changing it
+    // to List<...> namedLocs = new ArrayList<>() will break existing bundles :(
+    private ArrayList<GroundStation> namedLocs = new ArrayList<>();
 
     /**
-	 * No-arg constructor for empty list which gets populated on-the-fly later.
-	 */
+     * No-arg constructor for empty list which gets populated on-the-fly later.
+     */
     
-	public GroundStations() {
-	}
-
-	public GroundStations(String topCard)
-    {
+    public GroundStations() {
+    }
+    
+    public GroundStations(String topCard) {
         // read data files for Ground Stations
-        try {
-            BufferedReader gsReader = null; // initialization of reader 
-            
-            //see if local file exists, if not stream from web
-            
-            // read local file
-            if (new File(groundStationDB).exists())
-            {
-                File gsFile = new File(groundStationDB);
-                FileReader gsFileReader = new FileReader(gsFile);
-                gsReader = new BufferedReader(gsFileReader); // from local file
-            }
-            else
-            {
-                // read from web
-                String url = "http://www.gano.name/shawn/JSatTrak/" + groundStationDB;
-                URLConnection c = IOUtil.getUrlConnection(url);
-                InputStreamReader isr = new InputStreamReader(c.getInputStream());
-                gsReader = new BufferedReader(isr); // from the web
-            }
-
+        URL url = GroundStations.class.getResource(groundStationDB);
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
             String nextLine = topCard;
             if (topCard == null) {
-               nextLine = card00;
+                nextLine = card00;
             }
             
-            while (nextLine != null)
-            {
+            while (nextLine != null) {
                 // split line into parts
                 String[] elements = nextLine.split(",");
-                
+        
                 if (elements.length == 5) // if the row is formatted correctly
                 {
-                    Double dLat = new Double(elements[2]);
-                    Double dLon = new Double(elements[3]);
-                    Double dAlt = new Double(elements[4]);
+                    double dLat = Double.parseDouble(elements[2]);
+                    double dLon = Double.parseDouble(elements[3]);
+                    double dAlt = Double.parseDouble(elements[4]);
                     
                     EarthLocationTuple elt = new EarthLocationTuple(dLat, dLon, dAlt);
                     namedLocs.add(new GroundStation(elements[1], elt));
                 }
-                nextLine = gsReader.readLine();
+                nextLine = in.readLine();
             } // while there are more lines to read
-
-            gsReader.close();
-        }
-        catch (Exception e)
-        {
+        } catch (IOException e) {
             logger.error("Problem reading ground stations, missing file or invalid file format", e);
+        } catch (VisADException e) {
+            logger.error("Problem creating earth location", e);
         }
     }
     
     public ArrayList<GroundStation> getGroundStations() {
-    	return namedLocs;
+        return namedLocs;
     }
 
 }
