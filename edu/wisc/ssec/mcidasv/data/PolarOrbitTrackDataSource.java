@@ -31,16 +31,22 @@ package edu.wisc.ssec.mcidasv.data;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLConnection;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import com.google.common.net.InternetDomainName;
 import jsattrak.objects.SatelliteTleSGP4;
 import jsattrak.utilities.TLE;
 import name.gano.astro.propogators.sgp4_cssi.SGP4SatData;
@@ -113,17 +119,17 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
      */
 
     public PolarOrbitTrackDataSource(DataSourceDescriptor descriptor,
-                              String filename, Hashtable properties)
-           throws VisADException {
+                                     String filename,
+                                     Hashtable properties)
+    {
         super(descriptor, filename, null, properties);
-
         tleCards = new ArrayList<>();
         choices = new ArrayList<>();
         
         // we dealing with a local file?
         if (properties.containsKey(PolarOrbitTrackChooser.LOCAL_FILE_KEY)) {
             File f = (File) (properties.get(PolarOrbitTrackChooser.LOCAL_FILE_KEY));
-            logger.debug("Local file: " + f.getName());
+            logger.debug("Local file: {}", f.getName());
             URI uri = f.toURI();
             properties.put(PolarOrbitTrackChooser.URL_NAME_KEY, uri.toString());
         }
@@ -187,12 +193,14 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 key = PolarOrbitTrackChooser.URL_NAME_KEY;
                 String urlStr = (String)(properties.get(key));
                 logger.debug("URL request: {}", urlStr);
+
                 URLConnection urlCon = IOUtil.getUrlConnection(urlStr);
+                setName(makeName(urlStr));
                 InputStreamReader isr = new InputStreamReader(urlCon.getInputStream());
                 BufferedReader tleReader = new BufferedReader(isr);
                 String nextLine = null;
                 while ((nextLine = tleReader.readLine()) != null) {
-                    if (nextLine.length() > 0) {
+                    if (!nextLine.isEmpty()) {
                         tleCards.add(XmlUtil.stripNonValidXMLCharacters(nextLine));
                         if (nextLine.length() < 50) {
                             choices.add(XmlUtil.stripNonValidXMLCharacters(nextLine));
@@ -207,7 +215,70 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
         }
         checkFirstEntry();
     }
-
+    
+    /**
+     * Create a nice looking name for this instance.
+     * 
+     * <p>Given a URL like
+     * {@code http://celestrak.com/NORAD/elements/weather.txt}, this method
+     * will return {@code celestrak: /NORAD/elements/weather.txt}.</p>
+     * 
+     * <p>If the hostname from {@code urlStr} could not be sufficiently reduced,
+     * this method will simply use the entire hostname. A URL like
+     * {@code http://adde.ssec.wisc.edu/weather.txt} will return
+     * {@code adde.ssec.wisc.edu: weather.txt}.</p>
+     * 
+     * <p>If there was a problem parsing {@code urlStr}, the method will try
+     * to return the filename. A URL like 
+     * {@code http://celestrak.com/NORAD/elements/weather.txt} would return 
+     * {@code weather.txt}.</p>
+     * 
+     * <p>If all of the above fails, {@code urlStr} will be returned.</p>
+     * 
+     * @param urlStr URL of the TLE information. Cannot be {@code null}.
+     * 
+     * @return Either the name as described above, or {@code null} if there was
+     *         a problem.
+     */
+    public static String makeName(String urlStr) {
+        Objects.requireNonNull(urlStr, "Cannot use a null URL string");
+        String result = null;
+        try {
+            URL url = new URL(urlStr);
+            String host = url.getHost();
+            String path = url.getPath();
+            
+            // thank you, guava!
+            InternetDomainName domain = InternetDomainName.from(host);
+            
+            // suffix will be something like 'com' or 'co.uk', so suffixStart
+            // needs to start one character earlier to remove the trailing '.'
+            String suffix = domain.publicSuffix().toString();
+            int suffixStart = host.indexOf(suffix) - 1;
+            String trimmed = host.substring(0, suffixStart);
+            
+            // Trying this with 'http://adde.ssec.wisc.edu/weather.txt' will
+            // result in trimmed being 'adde.ssec.wisc', and I imagine there
+            // are more edge cases. With that in mind, we just use the hostname
+            // if it looks like trimmed doesn't look nice
+            if (trimmed.indexOf('.') >  -1) {
+                result = host + ": " + path;
+            } else {
+                result = trimmed + ": " + path;
+            }
+        } catch (MalformedURLException e) {
+            logger.error("Bad URL", e);
+            int lastSlash = urlStr.lastIndexOf('/');
+            if (lastSlash > -1) {
+                // need the "+1" to get rid of the slash
+                result = urlStr.substring(lastSlash + 1);
+            } else {
+                result = urlStr;
+            }
+        }
+        return result;
+    }
+    
     private void checkFirstEntry() {
         if (tleCards.isEmpty()) {
             notTLE();
