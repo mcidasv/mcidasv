@@ -3953,9 +3953,7 @@ def loadJPSSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs)
         raise ValueError("Failed to get data. Please try a different stride value; certain values fail due to a possible bug in the subsetting code.")
     ff = fi.getSample(0)
 
-    times = []
-    for x in file_list:
-        times.append(createDateTime(listJPSSTimeInFile(x, quiet=True)))
+    times = [createDateTime(listJPSSTimeInFile(x, quiet=True)) for x in file_list]
 
     # make a _MappedFlatField.
     mapped_ff = _MappedVIIRSFlatField(ff, field, data_source.getName())
@@ -4049,9 +4047,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
         raise ValueError("Failed to get data. Please try a different stride value; certain values fail due to a possible bug in the subsetting code.")
     ff = fi.getSample(0)
 
-    times = []
-    for x in file_list:
-        times.append(createDateTime(listJPSSTimeInFile(x, quiet=True)))
+    times = [createDateTime(listJPSSTimeInFile(x, quiet=True)) for x in file_list]
 
     # make a _MappedFlatField.
     mapped_ff = _MappedVIIRSFlatField(ff, field, data_source.getName())
