@@ -248,9 +248,10 @@ class _MappedFlatField(_MappedData, FlatField):
 
 
 class _MappedVIIRSFlatField(_MappedFlatField):
-    def __init__(self, ff, field):
+    def __init__(self, ff, field, dataSourceName):
         self.field = field
-        keys = ['field']
+        self.dataSourceName = dataSourceName
+        keys = ['dataSourceName', 'field']
         _MappedFlatField.__init__(self, ff, keys)
         self.initMetadataMap()
 
@@ -259,20 +260,23 @@ class _MappedVIIRSFlatField(_MappedFlatField):
             raise KeyError('unknown key: %s' % key)
         if key == 'field':
             return self.field
+        if key == 'dataSourceName':
+            return self.dataSourceName
         else:
             raise KeyError('should not be capable of reaching here: %s')
 
     def getMacrosDict(self):
         """Return dictionary mapping IDV macro strings to reasonable defaults."""
-        # TODO: add timestamp, datasourcename
-        # This should be enough to get param defaults applied though.
-        macros = {'longname': self['field'], 'shortname': self['field']}
+        macros = {
+            'longname': self['field'],
+            'shortname': self['field'],
+            'datasourcename': self['dataSourceName'],
+        }
         return macros
 
     def getDefaultLayerLabel(self):
         """Return reasonable default layer label for this class."""
-        # TODO: get %timestamp% into defaultLabel
-        defaultLabel = '%longname%'
+        defaultLabel = '%longname% - %timestamp%'
         return defaultLabel
 
     def clone(self):
@@ -521,9 +525,9 @@ class _MappedGeoGridFlatField(_MappedFlatField):
         #TODO: figure out how to actually set this macro (in createLayer)
         datasourcename = basename(self['filename'])
         macros = {
-            'longname': longname, 
+            'longname': longname,
             'shortname': shortname,
-            'datasourcename': datasourcename 
+            'datasourcename': datasourcename
         }
         return macros
 
@@ -1525,7 +1529,7 @@ class _Display(_JavaProxy):
         KmlDataSource.writeToFile(filename, bounds, kmlImagePath)
         
         ImageUtils.writeImageToFile(image, kmlImagePath, quality)
-        
+
     def captureImage(self, filename, quality=1.0, formatting=None, ignoreLogo=False, height=-1, width=-1, index=0, bgtransparent=False, createDirectories=False, verbose=True):
         """Save contents of display into the given filename.
         
@@ -3886,11 +3890,14 @@ def loadJPSSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs)
     """
     from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
+    from visad.DateTime import createDateTime
     
     # try some quick input validation before doing any real work
     if not file_list:
         raise ValueError('File list must contain at least one file.')
-    
+    else:
+        file_list = sorted(file_list)
+
     if xStride < 1 or yStride < 1:
         raise ValueError("xStride and yStride must be greater than zero")
 
@@ -3946,8 +3953,13 @@ def loadJPSSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs)
         raise ValueError("Failed to get data. Please try a different stride value; certain values fail due to a possible bug in the subsetting code.")
     ff = fi.getSample(0)
 
+    times = []
+    for x in file_list:
+        times.append(createDateTime(listJPSSTimeInFile(x, quiet=True)))
+
     # make a _MappedFlatField.
-    mapped_ff = _MappedVIIRSFlatField(ff, field)
+    mapped_ff = _MappedVIIRSFlatField(ff, field, data_source.getName())
+    mapped_ff.getMetadataMap().put('times', times)
 
     return mapped_ff
 
@@ -3973,6 +3985,7 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
     """
     from edu.wisc.ssec.mcidasv.data.hydra import MultiDimensionSubset
     from edu.wisc.ssec.mcidasv.data.hydra import SuomiNPPDataSource
+    from visad.DateTime import createDateTime
 
     # Warn users that this function is deprecated
     print('* WARNING: loadVIIRSImage is deprecated, please update your scripts to use loadJPSSImage instead.')
@@ -4036,8 +4049,13 @@ def loadVIIRSImage(file_list, field, stride=None, xStride=1, yStride=1, **kwargs
         raise ValueError("Failed to get data. Please try a different stride value; certain values fail due to a possible bug in the subsetting code.")
     ff = fi.getSample(0)
 
+    times = []
+    for x in file_list:
+        times.append(createDateTime(listJPSSTimeInFile(x, quiet=True)))
+
     # make a _MappedFlatField.
-    mapped_ff = _MappedVIIRSFlatField(ff, field)
+    mapped_ff = _MappedVIIRSFlatField(ff, field, data_source.getName())
+    mapped_ff.getMetadataMap().put('times', times)
 
     return mapped_ff
 
@@ -4098,7 +4116,7 @@ def listVIIRSFieldsInFile(filename):
     return names
 
 
-def listJPSSTimeInFile(filename):
+def listJPSSTimeInFile(filename, quiet=False):
     """Print and return timestamp associated with a JPSS .h5 (NOAA) or .nc (NASA) file.
        The function works for VIIRS, ATMS, and CrIS data.
        
@@ -4119,7 +4137,9 @@ def listJPSSTimeInFile(filename):
                         time = v.findAttribute('AggregateBeginningTime').getStringValue()
             datetimeobj = datetime.strptime(date + time[0:6], '%Y%m%d%H%M%S')
             # print and tack on the Z suffix
-            print(str(datetimeobj) + str(time[-1]))
+            if not quiet:
+                print(str(datetimeobj) + str(time[-1]))
+            datetimestr = str(datetimeobj)
         finally:
             f.close()
 
@@ -4141,11 +4161,12 @@ def listJPSSTimeInFile(filename):
             datetimeobj = datetime.strptime(datetimestr[0:19], '%Y-%m-%dT%H:%M:%S')
             
             # print and tack on the Z suffix
-            print(str(datetimeobj) + datetimestr[-1])
+            if not quiet:
+                print(str(datetimeobj) + datetimestr[-1])
         finally:
             f.close()
-                
-    return datetime
+            
+    return datetimestr
 
 
 def listVIIRSTimesInField(filename, field=None):
