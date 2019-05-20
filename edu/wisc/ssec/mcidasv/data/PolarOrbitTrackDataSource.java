@@ -35,6 +35,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -44,8 +45,6 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import com.google.common.net.InternetDomainName;
 import jsattrak.objects.SatelliteTleSGP4;
 import jsattrak.utilities.TLE;
@@ -195,7 +194,11 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 logger.debug("URL request: {}", urlStr);
 
                 URLConnection urlCon = IOUtil.getUrlConnection(urlStr);
-                setName(makeName(urlStr));
+                if (urlStr.startsWith("file:")) {
+                    setName(Paths.get(urlStr).getFileName().toString());
+                } else {
+                    setName(makeNameForRemoteSource(urlStr));
+                }
                 InputStreamReader isr = new InputStreamReader(urlCon.getInputStream());
                 BufferedReader tleReader = new BufferedReader(isr);
                 String nextLine = null;
@@ -240,9 +243,9 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
      * @return Either the name as described above, or {@code null} if there was
      *         a problem.
      */
-    public static String makeName(String urlStr) {
+    public static String makeNameForRemoteSource(String urlStr) {
         Objects.requireNonNull(urlStr, "Cannot use a null URL string");
-        String result = null;
+        String result;
         try {
             URL url = new URL(urlStr);
             String host = url.getHost();
@@ -266,6 +269,11 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
             } else {
                 result = trimmed + ": " + path;
             }
+        } catch (IllegalArgumentException e) {
+            // InternetDomainName.from() call likely failed; simply return
+            // original URL string as specified by the javadoc!
+            result = urlStr;
+            logger.warn("Problem with URL '"+urlStr+'\'', e);
         } catch (MalformedURLException e) {
             logger.error("Bad URL", e);
             int lastSlash = urlStr.lastIndexOf('/');
