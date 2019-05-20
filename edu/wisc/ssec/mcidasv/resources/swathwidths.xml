@@ -2,17 +2,34 @@
 <swathwidths>
   <satellite name="ADEOSII" width=""/>
   <satellite name="ALOS (DAICHI)" width="70"/>
+  <satellite name="ALOS-2" width="70"/>
   <satellite name="ALSAT 1" width="600"/>
+  <satellite name="ALSAT 1B" width="660"/>
+  <satellite name="ASNARO" width="10"/>
+  <satellite name="ASNARO 2" width="10"/>
   <satellite name="AQUA" width="2330"/>
+  <satellite name="ARIRANG-1 (KOMPSAT-1)" width="800"/>
   <satellite name="ARIRANG 1 (KOMPSAT-1)" width="800"/>
-  <satellite name="ARIRANG 2 (KOMPSAT-2)" width="15"/>
+  <satellite name="ARIRANG-2 (KOMPSAT-2)" width="15"/>
+  <satellite name="ARIRANG-2 (KOMPSAT-2)" width="15"/>
+  <satellite name="ARIRANG-3 (KOMPSAT-3)" width="16"/>
+  <satellite name="ARIRANG 3 (KOMPSAT-3)" width="16"/>
   <satellite name="AURA" width="3000"/>
   <satellite name="BADR-B" width="194"/>
-  <satellite name="CARTOSAT-2 (IRS-P7)" width="9.6"/>
-  <satellite name="CARTOSAT-2A" width="9.6"/>
+  <satellite name="BIROS" width="211"/>
+  <satellite name="CARBONITE 1 (CBNT-1)" width="5"/>
+  <satellite name="CARBONITE 2" width="5"/>
+  <satellite name="CARTOSAT-2 (IRS-P7)" width="10"/>
+  <satellite name="CARTOSAT-2A" width="10"/>
+  <satellite name="CARTOSAT-2B" width="10"/>
+  <satellite name="CARTOSAT-2C" width="10"/>
+  <satellite name="CARTOSAT-2D" width="10"/>
+  <satellite name="CARTOSAT-2E" width="10"/>
+  <satellite name="CARTOSAT-2F" width="10"/>
   <satellite name="CBERS 1 (ZY 1A)" width="885"/>
   <satellite name="CBERS 2 (ZY 1B)" width="885"/>
   <satellite name="CBERS 2B" width="885"/>
+  <satellite name="CBERS 4" width="120"/>
   <satellite name="COMS 1" width=""/>
   <satellite name="COSMO-SKYMED 1" width="40"/>
   <satellite name="COSMO-SKYMED 2" width="40"/>
@@ -27,6 +44,7 @@
   <satellite name="CYGFM07" width="25"/>
   <satellite name="CYGFM08" width="25"/>
   <satellite name="DEIMOS-1" width="650"/>
+  <satellite name="DEIMOS-2" width="12"/>
   <satellite name="DLR-TUBSAT" width="50"/>
   <satellite name="DMSP 5D-2 F8" width="1394"/>
   <satellite name="DMSP 5D-2 F10" width="1394"/>
@@ -37,6 +55,8 @@
   <satellite name="DMSP 5D-3 F16 (USA 172)" width="1394"/>
   <satellite name="DMSP 5D-3 F17 (USA 191)" width="1394"/>
   <satellite name="DMSP 5D-3 F18 (USA 120)" width="1394"/>
+  <satellite name="DUBAISAT-1" width="20"/>
+  <satellite name="DUBAISAT-2" width="20"/>
   <satellite name="ELEKTRO-L1" width=""/>
   <satellite name="ENVISAT" width="1150"/>
   <satellite name="EO-1" width="7.7"/>
@@ -75,6 +95,9 @@
   <satellite name="FORMOSAT 3D" width=""/>
   <satellite name="FORMOSAT 3E" width=""/>
   <satellite name="FORMOSAT 3F" width=""/>
+  <satellite name="FORMOSAT-5" width="24"/>
+  <satellite name="GAOFEN 1" width="800"/>
+  <satellite name="GAOFEN 2" width="45"/>
   <satellite name="GEOEYE 1" width="15.2"/>
   <satellite name="GEO-KOMPSAT-2A" width=""/>
   <satellite name="GOES10" width=""/>
@@ -98,8 +121,14 @@
   <satellite name="GOES19" width=""/>
   <satellite name="GOES 19" width=""/>
   <satellite name="GOES-S" width=""/>
+  <satellite name="GOKTURK 1A" width="20"/>
+  <satellite name="GOKTURK 2" width="20"/>
+  <satellite name="GOSAT (IBUKI)" width="1000"/>
+  <satellite name="GPM-CORE" width="245"/>
   <satellite name="HAIYANG-1A" width="1400"/>
+  <satellite name="HAIYANG 1A" width="1400"/>
   <satellite name="HAIYANG-1B" width="1400"/>
+  <satellite name="HAIYANG 1B" width="1400"/>
   <satellite name="HIMAWARI-5 (GMS-5)" width=""/>
   <satellite name="HIMAWARI 6 (MTSAT-1R)" width=""/>
   <satellite name="HIMAWARI-7 (MTSAT-2)" width=""/>
@@ -107,6 +136,10 @@
   <satellite name="HIMAWARI-9" width=""/>
   <satellite name="HJ-1A" width=""/>
   <satellite name="HJ-1B" width=""/>
+  <satellite name="HODOYOSHI-1" width="28"/>
+  <satellite name="HODOYOSHI-3" width="28"/>
+  <satellite name="HODOYOSHI-4" width="28"/>
+  <satellite name="HYSIS" width="30"/>
   <satellite name="IKONOS 2" width="11"/>
   <satellite name="IMS-1" width="151"/>
   <satellite name="INSAT-3A" width=""/>
@@ -114,10 +147,18 @@
   <satellite name="IRS-P4 (OCEANSAT 1)" width="1360"/>
   <satellite name="IRS-P5 (CARTOSAT-1)" width="30"/>
   <satellite name="IRS-P6 (RESOURCESAT-1)" width="740"/>
+  <satellite name="JASON-1" width="15"/>
   <satellite name="JASON 1" width="15"/>
-  <satellite name="JASON 2 (OSTM)" width=""/>
+  <satellite name="JASON-2 (OSTM)" width="5"/>
+  <satellite name="JASON 2 (OSTM)" width="5"/>
+  <satellite name="JASON-3" width="5"/>
+  <satellite name="JASON 3" width=5"/>
   <satellite name="JPSS-1" width="3040"/>
   <satellite name="KALPANA-1 (METSAT 1)" width=""/>
+  <satellite name="KANOPUS-V1" width="23"/>
+  <satellite name="KAZEOSAT 1" width="77"/>
+  <satellite name="KAZEOSAT 2" width="10"/>
+  <satellite name="KAZSTAT" width="600"/>
   <satellite name="KITSAT 3" width="50"/>
   <satellite name="LANDSAT 5" width="185"/>
   <satellite name="LANDSAT-5" width="185"/>
@@ -129,8 +170,9 @@
   <satellite name="LANDSAT-8" width="185"/>
   <satellite name="LANDSAT 9" width="185"/>
   <satellite name="LANDSAT-9" width="185"/>
-  <satellite name="LAPAN-TUBSAT" width=""/>
-  <satellite name="MAROC-TUBSAT" width="190"/>
+  <satellite name="LAPAN-TUBSAT" width="4"/>
+  <satellite name="MAROC-TUBSAT" width="4"/>
+  <satellite name="MEGHA-TROPIQUES" width="1700"/>
   <satellite name="METEOR-3M" width="3100"/>
   <satellite name="METEOR-M 1" width="1500"/>
   <satellite name="METEOR-M 2" width="1500"/>
@@ -169,6 +211,7 @@
   <satellite name="NOAA 20" width="3040"/>
   <satellite name="NPP" width="3040"/>
   <satellite name="OCEANSAT" width="1420"/>
+  <satellite name="OCEANSAT-2" width="1420"/>
   <satellite name="OCEANSAT 2" width="1420"/>
   <satellite name="ORBVIEW2 (SEASTAR)" width="2800"/>
   <satellite name="PARASOL" width="2200"/>
@@ -181,18 +224,29 @@
   <satellite name="RAPIDEYE 1" width="77"/>
   <satellite name="RAPIDEYE 3" width="77"/>
   <satellite name="RAPIDEYE 4" width="77"/>
+  <satellite name="RASAT" width="30"/>
   <satellite name="RAZAKSAT" width=""/>
   <satellite name="RESURS-DK 1" width="28.3"/>
   <satellite name="RSS-1 (YAOGAN 1)" width=""/>
   <satellite name="SAC C" width="360"/>
+  <satellite name="SARAL" width="11"/>
   <satellite name="SINAH 1" width="15"/>
-  <satellite name="SMOS" width=""/>
+  <satellite name="SKYSAT-1" width="8"/>
+  <satellite name="SKYSAT 1" width="8"/>
+  <satellite name="SKYSAT-2" width="8"/>
+  <satellite name="SKYSAT 2" width="8"/>
+  <satellite name="SMAP" width="1000"/>
+  <satellite name="SMOS" width="1000"/>
   <satellite name="SPOT 2" width="60"/>
   <satellite name="SPOT 4" width="60"/>
   <satellite name="SPOT 5" width="60"/>
+  <satellite name="SPOT 6" width="60"/>
+  <satellite name="SPOT 7" width="60"/>
   <satellite name="SUOMI NPP" width="3040"/>
+  <satellite name="TANDEM-X" width="10"/>
   <satellite name="TANSUO 1" width="120"/>
   <satellite name="TECHSAT 1B (GO-32)" width="25"/>
+  <satellite name="TELEOS 1" width="12"/>
   <satellite name="TERRA" width="2330"/>
   <satellite name="TERRASAR-X" width="10"/>
   <satellite name="TES" width=""/>
@@ -200,12 +254,24 @@
   <satellite name="TOMS EP" width="2700"/>
   <satellite name="TOPSAT" width="17"/>
   <satellite name="TRMM" width="830"/>
-  <satellite name="WORLDVIEW-1 (WV-1)" width="60"/>
-  <satellite name="WORLDVIEW-2" width="60"/>
+  <satellite name="VNREDSAT 1" width="18"/>
+  <satellite name="WORLDVIEW-1 (WV-1)" width="18"/>
+  <satellite name="WORLDVIEW 1 (WV-1)" width="18"/>
+  <satellite name="WORLDVIEW-2 (WV-2)" width="16"/>
+  <satellite name="WORLDVIEW 2 (WV-2)" width="16"/>
+  <satellite name="WORLDVIEW-3 (WV-3)" width="13"/>
+  <satellite name="WORLDVIEW 3 (WV-3)" width="13"/>
+  <satellite name="WORLDVIEW-4 (WV-4)" width="13"/>
+  <satellite name="WORLDVIEW 4 (WV-4)" width="13"/>
   <satellite name="YAOGAN 3" width=""/>
   <satellite name="YAOGAN 4" width=""/>
   <satellite name="YAOGAN 5" width=""/>
   <satellite name="YAOGAN 6" width=""/>
   <satellite name="YAOGAN 7" width=""/>
   <satellite name="YAOGAN 10" width=""/>
+  <satellite name="ZHUHAI-1 01 (CAS 4A)" width="150"/>
+  <satellite name="ZHUHAI-1 02 (CAS 4B)" width="150"/>
+  <satellite name="ZIYUAN 1-02C (ZY 1-02C" width="60"/>
+  <satellite name="ZIYUAN 3 (ZY 3)" width="51"/>
+  <satellite name="ZIYUAN 3-2 (ZY 3-2)" width="51"/>
 </swathwidths>
