@@ -340,6 +340,25 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     "Longitude is out of valid range: " + fLon);
                 return;
             }
+
+            // Validate the antenna angle too
+            String s = antennaAngle.getText();
+            try {
+                int newAngle = Integer.parseInt(s);
+                if (newAngle != curAngle) {
+                    // Always need to do range check too
+                    if ((newAngle < GroundStation.DEFAULT_ANTENNA_ANGLE) ||
+                        (newAngle > MAX_ANTENNA_ANGLE)) {
+                        throw new NumberFormatException();
+                    }
+                    curAngle = newAngle;
+                }
+            } catch (NumberFormatException nfe) {
+                JOptionPane.showMessageDialog(null,
+                    "Invalid antenna angle: " + s);
+                return;
+            }
+
             // last check, is this label already used?
             int numPlotted = jcbStationsPlotted.getItemCount();
             for (int i = 0; i < numPlotted; i++) {
