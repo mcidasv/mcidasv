@@ -194,8 +194,11 @@ public class PolarOrbitTrackDataSource extends DataSourceImpl {
                 logger.debug("URL request: {}", urlStr);
 
                 URLConnection urlCon = IOUtil.getUrlConnection(urlStr);
-                if (urlStr.startsWith("file:")) {
-                    setName(Paths.get(urlStr).getFileName().toString());
+                if (urlStr.startsWith("file:/")) {
+                    // "file:/" protocol prefix causes windows to barf
+                    // Windows path will look like "file:/C:/temp/weather.txt"
+                    String substr = urlStr.substring(6);
+                    setName(Paths.get(substr).getFileName().toString());
                 } else {
                     setName(makeNameForRemoteSource(urlStr));
                 }
