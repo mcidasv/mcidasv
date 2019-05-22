@@ -242,8 +242,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private Color defaultAntColor = Color.MAGENTA;
     private PolarOrbitTrackDataSource dataSource;
     
-    private double satelliteAltitude = 0.0;
-    
     private double trackZ = 0.0d;
     private double gsZ = 0.0d;
     private NavigatedDisplay navDsp = null;
@@ -1185,7 +1183,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     
     private float[][][] getSwath(float[][] track) {
         double earthRadius = AstroConst.R_Earth_mean / 1000.0;
-        int npt = track[0].length-1;
+        int npt = track[0].length - 1;
         float[][][] ret = new float[2][2][npt - 1];
         try {
             int indx = 0;
@@ -1193,8 +1191,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 double latA = Math.toRadians(track[0][i - 1]);
                 double lonA = Math.toRadians(track[1][i - 1]);
                 
-                double latB = Math.toRadians(track[0][i + 1]);
-                double lonB = Math.toRadians(track[1][i + 1]);
+                double latB = Math.toRadians(track[0][i]);
+                double lonB = Math.toRadians(track[1][i]);
                 
                 double diffLon = lonB - lonA;
                 double bX = cos(latB) * cos(diffLon);
@@ -1252,6 +1250,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      * @param properties Properties that may hold things.
      * @param preSelectedDataChoices Set of preselected data choices.
      */
+
     @Override public void initAfterUnPersistence(ControlContext vc,
                                                  Hashtable properties,
                                                  List preSelectedDataChoices)
@@ -1706,7 +1705,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             latitude = Double.parseDouble(latLabel.getText());
             longitude = Double.parseDouble(lonLabel.getText());
             double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
-            setSatelliteAltitude(altitude);
             gs.setAltitude(altitude);
             gs.setColor(antColorSwatch.getColor());
             gs.setLineWidth(jcbStationLineWidth.getSelectedIndex() + 1);
@@ -1822,10 +1820,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         } catch (Exception e) {
             logger.error("Exception in PolarOrbitTrackControl.setAntColor", e);
         }
-    }
-    
-    private void setSatelliteAltitude(double val) {
-        satelliteAltitude = val;
     }
     
     public void setStation(String val) {
