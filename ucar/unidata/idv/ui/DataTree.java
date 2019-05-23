@@ -29,6 +29,9 @@
 package ucar.unidata.idv.ui;
 
 
+import static java.lang.Double.parseDouble;
+import static java.lang.Math.signum;
+
 import ucar.unidata.data.CompositeDataChoice;
 import ucar.unidata.data.DataAlias;
 import ucar.unidata.data.DataCategory;
@@ -49,14 +52,13 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -74,10 +76,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
 /**
  * This class provides  a JTree interface for a set
  * of {@link ucar.unidata.data.DataChoice}-s and
@@ -88,17 +86,15 @@ import org.slf4j.LoggerFactory;
  * <li> To show all of the data sources  and data choices when the user
  * is selecting  operands for formulas or when they are adding or changing
  * the data choices in a display control
+ * </ul>
  *
  * @author IDV development team
  * @version $Revision: 1.50 $Date: 2007/08/21 12:15:45 $
  */
 public class DataTree extends DataSourceHolder {
     
-    private static final Collator collator;
-    static {
-        collator = Collator.getInstance();
-        collator.setStrength(Collator.PRIMARY);
-    }
+    private static final Pattern NUMBER_PATTERN =
+        Pattern.compile("(\\-?\\d+\\.\\d+)|(\\-?\\.\\d+)|(\\-?\\d+)");
     
     /**
      *  If non-null, contains a set of
@@ -990,8 +986,7 @@ public class DataTree extends DataSourceHolder {
                 DefaultMutableTreeNode prevNode =
                     (DefaultMutableTreeNode)root.getChildAt(j);
                 String np = prevNode.getUserObject().toString();
-                int result = compareNatural(nt, np, false, collator);
-                if (result < 0) {
+                if (wordSorter(nt, np) < 0) {
                     root.insert(node, j);
                     break;
                 }
@@ -1003,170 +998,68 @@ public class DataTree extends DataSourceHolder {
         return root;
     }
     
-    // Credit for this belong to the Universal Media Server project
-    // https://github.com/UniversalMediaServer/UniversalMediaServer/
-    private static int compareNatural(String s,
-                                      String t,
-                                      boolean caseSensitive,
-                                      Collator collator) 
-    {
-        int sIndex = 0;
-        int tIndex = 0;
+    /**
+     * Splits strings into parts sorting each instance of a number as a
+     * number if there is a matching number in the other String.
+     *
+     * <p>For example A1B, A2B, A11B, A11B1, A11B2, A11B11 will be sorted in 
+     * that order instead of alphabetically which will sort A1B and A11B 
+     * together.</p>
+     */
+    private static int wordSorter(String str1, String str2) {
+        if(Objects.equals(str1, str2)) {
+            return 0;
+        } else if (str1 == null) {
+            return 1;
+        } else if (str2 == null) {
+            return -1;
+        }
         
-        int sLength = s.length();
-        int tLength = t.length();
+        List<String> split1 = split(str1);
+        List<String> split2 = split(str2);
+        int diff = 0;
         
-        while (true) {
-            // both character indices are after a subword (or at zero)
+        for (int i = 0; (diff == 0) && (i < split1.size()) && (i < split2.size()); i++) {
+            String token1 = split1.get(i);
+            String token2 = split2.get(i);
             
-            // Check if one string is at end
-            if (sIndex == sLength && tIndex == tLength) {
-                return 0;
-            }
-            if (sIndex == sLength) {
-                return -1;
-            }
-            if (tIndex == tLength) {
-                return 1;
-            }
+            boolean tokMatch1 = NUMBER_PATTERN.matcher(token1).matches();
+            boolean tokMatch2 = NUMBER_PATTERN.matcher(token2).matches();
             
-            // Compare sub word
-            char sChar = s.charAt(sIndex);
-            char tChar = t.charAt(tIndex);
-            
-            boolean sCharIsDigit = Character.isDigit(sChar);
-            boolean tCharIsDigit = Character.isDigit(tChar);
-            
-            if (sCharIsDigit && tCharIsDigit) {
-                // Compare numbers
-                
-                // skip leading 0s
-                int sLeadingZeroCount = 0;
-                while (sChar == '0') {
-                    ++sLeadingZeroCount;
-                    ++sIndex;
-                    if (sIndex == sLength) {
-                        break;
-                    }
-                    sChar = s.charAt(sIndex);
-                }
-                int tLeadingZeroCount = 0;
-                while (tChar == '0') {
-                    ++tLeadingZeroCount;
-                    ++tIndex;
-                    if (tIndex == tLength) {
-                        break;
-                    }
-                    tChar = t.charAt(tIndex);
-                }
-                boolean sAllZero = sIndex == sLength || !Character.isDigit(sChar);
-                boolean tAllZero = tIndex == tLength || !Character.isDigit(tChar);
-                if (sAllZero && tAllZero) {
-                    continue;
-                }
-                if (sAllZero && !tAllZero) {
-                    return -1;
-                }
-                if (tAllZero) {
-                    return 1;
-                }
-                
-                int diff = 0;
-                do {
-                    if (diff == 0) {
-                        diff = sChar - tChar;
-                    }
-                    ++sIndex;
-                    ++tIndex;
-                    if (sIndex == sLength && tIndex == tLength) {
-                        return diff != 0 ? diff : sLeadingZeroCount - tLeadingZeroCount;
-                    }
-                    if (sIndex == sLength) {
-                        if (diff == 0) {
-                            return -1;
-                        }
-                        return Character.isDigit(t.charAt(tIndex)) ? -1 : diff;
-                    }
-                    if (tIndex == tLength) {
-                        if (diff == 0) {
-                            return 1;
-                        }
-                        return Character.isDigit(s.charAt(sIndex)) ? 1 : diff;
-                    }
-                    sChar = s.charAt(sIndex);
-                    tChar = t.charAt(tIndex);
-                    sCharIsDigit = Character.isDigit(sChar);
-                    tCharIsDigit = Character.isDigit(tChar);
-                    if (!sCharIsDigit && !tCharIsDigit) {
-                        // both number sub words have the same length
-                        if (diff != 0) {
-                            return diff;
-                        }
-                        break;
-                    }
-                    if (!sCharIsDigit) {
-                        return -1;
-                    }
-                    if (!tCharIsDigit) {
-                        return 1;
-                    }
-                } while (true);
+            if (tokMatch1 && tokMatch2) {
+                diff = (int) signum(parseDouble(token1) - parseDouble(token2));
             } else {
-                // Compare words
-                if (collator != null) {
-                    // To use the collator the whole subwords have to be compared - character-by-character comparision
-                    // is not possible. So find the two subwords first
-                    int aw = sIndex;
-                    int bw = tIndex;
-                    do {
-                        ++sIndex;
-                    } while (sIndex < sLength && !Character.isDigit(s.charAt(sIndex)));
-                    do {
-                        ++tIndex;
-                    } while (tIndex < tLength && !Character.isDigit(t.charAt(tIndex)));
-                    
-                    String as = s.substring(aw, sIndex);
-                    String bs = t.substring(bw, tIndex);
-                    int subwordResult = collator.compare(as, bs);
-                    if (subwordResult != 0) {
-                        return subwordResult;
-                    }
-                } else {
-                    // No collator specified. All characters should be ascii only. Compare character-by-character.
-                    do {
-                        if (sChar != tChar) {
-                            if (caseSensitive) {
-                                return sChar - tChar;
-                            }
-                            sChar = Character.toUpperCase(sChar);
-                            tChar = Character.toUpperCase(tChar);
-                            if (sChar != tChar) {
-                                sChar = Character.toLowerCase(sChar);
-                                tChar = Character.toLowerCase(tChar);
-                                if (sChar != tChar) {
-                                    return sChar - tChar;
-                                }
-                            }
-                        }
-                        ++sIndex;
-                        ++tIndex;
-                        if (sIndex == sLength && tIndex == tLength) {
-                            return 0;
-                        }
-                        if (sIndex == sLength) {
-                            return -1;
-                        }
-                        if (tIndex == tLength) {
-                            return 1;
-                        }
-                        sChar = s.charAt(sIndex);
-                        tChar = t.charAt(tIndex);
-                        sCharIsDigit = Character.isDigit(sChar);
-                        tCharIsDigit = Character.isDigit(tChar);
-                    } while (!sCharIsDigit && !tCharIsDigit);
-                }
+                diff = token1.compareToIgnoreCase(token2);
             }
         }
+        if (diff != 0) {
+            return diff;
+        } else {
+            return split1.size() - split2.size();
+        }
+    }
+    
+    /**
+     * Splits a string into strings and number tokens.
+     */
+    private static List<String> split(String s) {
+        List<String> list = new ArrayList<>(s.length());
+        try (Scanner scanner = new Scanner(s)) {
+            int index = 0;
+            String num = null;
+            while ((num = scanner.findInLine(NUMBER_PATTERN)) != null) {
+                int indexOfNumber = s.indexOf(num, index);
+                if (indexOfNumber > index) {
+                    list.add(s.substring(index, indexOfNumber));
+                }
+                list.add(num);
+                index = indexOfNumber + num.length();
+            }
+            if (index < s.length()) {
+                list.add(s.substring(index));
+            }
+        }
+        return list;
     }
     
     /**
