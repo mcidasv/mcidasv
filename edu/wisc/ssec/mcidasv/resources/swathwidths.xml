@@ -2,6 +2,7 @@
 <swathwidths>
   <satellite name="ADEOSII" width=""/>
   <satellite name="AEOLUS" width="70"/>
+  <satellite name="ALOS" width="70"/>
   <satellite name="ALOS (DAICHI)" width="70"/>
   <satellite name="ALOS-2" width="70"/>
   <satellite name="ALSAT 1" width="600"/>
@@ -21,18 +22,30 @@
   <satellite name="BADR-B" width="194"/>
   <satellite name="BIROS" width="211"/>
   <satellite name="CALIPSO" width="64"/>
+  <satellite name="CARTOSAT-1" width="30"/>
   <satellite name="CARBONITE 1 (CBNT-1)" width="5"/>
   <satellite name="CARBONITE 2" width="5"/>
   <satellite name="CARTOSAT-2 (IRS-P7)" width="10"/>
   <satellite name="CARTOSAT-2A" width="10"/>
+  <satellite name="CARTOSAT 2A" width="10"/>
   <satellite name="CARTOSAT-2B" width="10"/>
+  <satellite name="CARTOSAT 2B" width="10"/>
   <satellite name="CARTOSAT-2C" width="10"/>
+  <satellite name="CARTOSAT 2C" width="10"/>
   <satellite name="CARTOSAT-2D" width="10"/>
+  <satellite name="CARTOSAT 2D" width="10"/>
   <satellite name="CARTOSAT-2E" width="10"/>
+  <satellite name="CARTOSAT 2E" width="10"/>
   <satellite name="CARTOSAT-2F" width="10"/>
+  <satellite name="CARTOSAT 2F" width="10"/>
+  <satellite name="CBERS-1" width="890"/>
+  <satellite name="CBERS 1" width="890"/>
   <satellite name="CBERS 1 (ZY 1A)" width="885"/>
-  <satellite name="CBERS 2 (ZY 1B)" width="885"/>
-  <satellite name="CBERS 2B" width="885"/>
+  <satellite name="CBERS-2" width="890"/>
+  <satellite name="CBERS 2" width="890"/>
+  <satellite name="CBERS 2 (ZY 1B)" width="890"/>
+  <satellite name="CBERS-2B" width="890"/>
+  <satellite name="CBERS 2B" width="890"/>
   <satellite name="CBERS 4" width="120"/>
   <satellite name="CLOUDSAT" width="2"/>
   <satellite name="COMS 1" width=""/>
@@ -133,6 +146,8 @@
   <satellite name="GOKTURK 2" width="20"/>
   <satellite name="GOSAT (IBUKI)" width="1000"/>
   <satellite name="GPM-CORE" width="245"/>
+  <satellite name="HAIYANG-1" width="1400"/>
+  <satellite name="HAIYANG 1" width="1400"/>
   <satellite name="HAIYANG-1A" width="1400"/>
   <satellite name="HAIYANG 1A" width="1400"/>
   <satellite name="HAIYANG-1B" width="1400"/>
@@ -144,22 +159,45 @@
   <satellite name="HIMAWARI-7 (MTSAT-2)" width=""/>
   <satellite name="HIMAWARI-8" width=""/>
   <satellite name="HIMAWARI-9" width=""/>
-  <satellite name="HJ-1A" width=""/>
-  <satellite name="HJ-1B" width=""/>
+  <satellite name="HJ-1A" width="720"/>
+  <satellite name="HJ 1A" width="720"/>
+  <satellite name="HJ-1B" width="720"/>
+  <satellite name="HJ 1B" width="720"/>
+  <satellite name="HJ-1C" width="720"/>
+  <satellite name="HJ 1C" width="720"/>
   <satellite name="HODOYOSHI-1" width="28"/>
   <satellite name="HODOYOSHI-3" width="28"/>
   <satellite name="HODOYOSHI-4" width="28"/>
   <satellite name="HUANJING 1A (HJ-1A)" width="700"/>
   <satellite name="HUANJING 1B (HJ-1B)" width="700"/>
+  <satellite name="HY-1A" width="1400"/>
+  <satellite name="HY 1A" width="1400"/>
+  <satellite name="HY-1B" width="1400"/>
+  <satellite name="HY 1B" width="1400"/>
   <satellite name="HYSIS" width="30"/>
   <satellite name="IKONOS 2" width="11"/>
   <satellite name="IMS-1" width="151"/>
   <satellite name="INSAT-3A" width=""/>
   <satellite name="IRIS" width="50"/>
+  <satellite name="IRS-1A" width="148"/>
+  <satellite name="IRS 1A" width="148"/>
+  <satellite name="IRS-1B" width="148"/>
+  <satellite name="IRS 1B" width="148"/>
+  <satellite name="IRS-1C" width="142"/>
+  <satellite name="IRS 1C" width="142"/>
   <satellite name="IRS-1D" width="70"/>
-  <satellite name="IRS-P4 (OCEANSAT 1)" width="1360"/>
+  <satellite name="IRS-P2" width="131"/>
+  <satellite name="IRS P2" width="131"/>
+  <satellite name="IRS-P3" width="804"/>
+  <satellite name="IRS P3" width="804"/>
+  <satellite name="IRS-P4" width="1420"/>
+  <satellite name="IRS-P4 (OCEANSAT 1)" width="1420"/>
+  <satellite name="IRS P4" width="1420"/>
+  <satellite name="IRS-P5" width="30"/>
   <satellite name="IRS-P5 (CARTOSAT-1)" width="30"/>
+  <satellite name="IRS P5" width="30"/>
   <satellite name="IRS-P6 (RESOURCESAT-1)" width="740"/>
+  <satellite name="IRS PR (OCEANSAT 1)" width="1420"/>
   <satellite name="JASON-1" width="15"/>
   <satellite name="JASON 1" width="15"/>
   <satellite name="JASON-2 (OSTM)" width="5"/>
@@ -175,6 +213,13 @@
   <satellite name="KAZSTSAT" width="600"/>
   <satellite name="KENT RIDGE 1" width="48"/>
   <satellite name="KITSAT 3" width="50"/>
+  <satellite name="KOMPSAT" width="17"/>
+  <satellite name="KOMPSAT-1" width="17"/>
+  <satellite name="KOMPSAT 1" width="17"/>
+  <satellite name="KOMPSAT-2" width="15"/>
+  <satellite name="KOMPSAT 2" width="15"/>
+  <satellite name="KOMPSAT-3" width="15"/>
+  <satellite name="KOMPSAT 3" width="15"/>
   <satellite name="KOMPSAT-3A" width="12"/>
   <satellite name="LANDSAT 5" width="185"/>
   <satellite name="LANDSAT-5" width="185"/>
@@ -245,6 +290,13 @@
   <satellite name="OCO 2" width="10"/>
   <satellite name="ODIN" width="2900"/>
   <satellite name="ORBVIEW2 (SEASTAR)" width="2800"/>
+  <satellite name="ORBVIEW-2" width="2800"/>
+  <satellite name="ORBVIEW 2" width="2800"/>
+  <satellite name="ORBVIEW 2 (SEASTAR)" width="2800"/>
+  <satellite name="ORBVIEW-3" width="8"/>
+  <satellite name="ORBVIEW 3" width="8"/>
+  <satellite name="ORBVIEW-4" width="8"/>
+  <satellite name="ORBVIEW 4" width="8"/>
   <satellite name="PARASOL" width="2200"/>
   <satellite name="QUICKBIRD 2" width="17"/>
   <satellite name="QUIKSCAT" width="350"/>
@@ -256,11 +308,19 @@
   <satellite name="RAPIDEYE 3" width="77"/>
   <satellite name="RAPIDEYE 4" width="77"/>
   <satellite name="RASAT" width="30"/>
-  <satellite name="RAZAKSAT" width=""/>
+  <satellite name="RAZAKSAT" width="20"/>
   <satellite name="RESURS-DK 1" width="28"/>
   <satellite name="RESURS P2" width="38"/>
+  <satellite name="ROCSAT-1" width="691"/>
+  <satellite name="ROCSAT 1" width="691"/>
+  <satellite name="ROCSAT-2" width="24"/>
+  <satellite name="ROCSAT 2" width="24"/>
   <satellite name="RSS-1 (YAOGAN 1)" width=""/>
+  <satellite name="SAC-C" width="360"/>
   <satellite name="SAC C" width="360"/>
+  <satellite name="SAC-D" width="380"/>
+  <satellite name="SAC-D (Aquarius)" width="380"/>
+  <satellite name="SAC D" width="380"/>
   <satellite name="SARAL" width="11"/>
   <satellite name="SCATSAT 1" width="1840"/>
   <satellite name="SENTINEL-1A" width="400"/>
@@ -288,16 +348,19 @@
   <satellite name="SUOMI NPP [+]" width="3040"/>
   <satellite name="TANDEM-X" width="10"/>
   <satellite name="TANSUO 1" width="120"/>
-  <satellite name="TECHSAT 1B (GO-32)" width="25"/>
+  <satellite name="TECHSAT-1B" width="170"/>
+  <satellite name="TECHSAT 1B" width="170"/>
+  <satellite name="TECHSAT 1B (GO-32)" width="170"/>
   <satellite name="TELEOS 1" width="12"/>
   <satellite name="TERRA" width="2330"/>
   <satellite name="TERRASAR-X" width="10"/>
-  <satellite name="TES" width=""/>
+  <satellite name="TES" width="45"/>
   <satellite name="THEOS" width="90"/>
   <satellite name="TIMED" width="15"/>
   <satellite name="TIROS N" width="3000"/>
   <satellite name="TIROS N [P]" width="3000"/>
   <satellite name="TOMS EP" width="2700"/>
+  <satellite name="TOPEX/POSEIDON" width="5"/>
   <satellite name="TOPSAT" width="17"/>
   <satellite name="TRMM" width="830"/>
   <satellite name="VNREDSAT 1" width="18"/>
