@@ -32,25 +32,107 @@
   <alias
      name="TEMP"
      label="Temperature"
-     aliases="Temperature_isobaric_ens,Temperature_height_above_ground_ens,Temperature_height_above_ground_stdDev,Temperature_height_above_ground_unweightedMean,Temperature_isobaric_stdDev,Temperature_isobaric_unweightedMean"/>
+     aliases="Temperature_isobaric_ens,Temperature_height_above_ground_ens,
+     Temperature_height_above_ground_stdDev,
+     Temperature_height_above_ground_unweightedMean,
+     Temperature_isobaric_stdDev,Temperature_isobaric_unweightedMean,
+     Temperature_pressure_difference_layer,Temperature_maximum_wind,
+     Temperature_sigma,Apparent_temperature_height_above_ground,
+     Maximum_temperature_height_above_ground_Mixed_intervals_Maximum,
+     Minimum_temperature_height_above_ground_Mixed_intervals_Minimum,
+     Temperature_high_cloud_top_Mixed_intervals_Average,
+     Temperature_low_cloud_top_Mixed_intervals_Average,
+     Temperature_middle_cloud_top_Mixed_intervals_Average,
+     Temperature_potential_vorticity_surface,Temperature_altitude_above_msl"/>
   <alias
      name="RH"
      label="Relative humidity"
-     aliases="Relative_humidity_isobaric_ens,Relative_humidity_height_above_ground_ens,Relative_humidity_height_above_ground_stdDev,Relative_humidity_height_above_ground_unweightedMean,Relative_humidity_isobaric_stdDev,Relative_humidity_isobaric_unweightedMean"/>
+     aliases="Relative_humidity_isobaric_ens,
+     Relative_humidity_height_above_ground_ens,
+     Relative_humidity_height_above_ground_stdDev,
+     Relative_humidity_height_above_ground_unweightedMean,
+     Relative_humidity_isobaric_stdDev,
+     Relative_humidity_isobaric_unweightedMean,
+     Relative_humidity_height_above_ground,Relative_humidity_sigma,
+     Relative_humidity_zeroDegC_isotherm,
+     Relative_humidity_pressure_difference_layer,
+     Relative_humidity_highest_tropospheric_freezing,
+     Relative_humidity_entire_atmosphere_single_layer,
+     Relative_humidity_sigma_layer,Specific_humidity_height_above_ground,
+     Specific_humidity_pressure_difference_layer"/>
   <alias
      name="Z"
      label="Z"
-     aliases="Geopotential_height_surface_ens,Geopotential_height_isobaric_ens,Geopotential_height_surface_stdDev,Geopotential_height_surface_unweightedMean,Geopotential_height_isobaric_stdDev,Geopotential_height_isobaric_unweightedMean"/>
+     aliases="Geopotential_height_surface_ens,Geopotential_height_isobaric_ens,
+     Geopotential_height_surface_stdDev,
+     Geopotential_height_surface_unweightedMean,
+     Geopotential_height_isobaric_stdDev,
+     Geopotential_height_isobaric_unweightedMean"/>
   <alias
      name="U"
      label="U component of wind"
-     aliases="u-component_of_wind_height_above_ground_ens,u-component_of_wind_isobaric_ens,u-component_of_wind_height_above_ground_unweightedMean,u-component_of_wind_height_above_ground_stdDev,u-component_of_wind_isobaric_stdDev,u-component_of_wind_isobaric_unweightedMean"/>
+     aliases="u-component_of_wind_height_above_ground_ens,
+     u-component_of_wind_isobaric_ens,
+     u-component_of_wind_height_above_ground_unweightedMean,
+     u-component_of_wind_height_above_ground_stdDev,
+     u-component_of_wind_isobaric_stdDev,
+     u-component_of_wind_isobaric_unweightedMean,
+     Momentum_flux_u-component_surface_Mixed_intervals_Average,
+     u-component_of_wind_pressure_difference_layer,
+     u-component_of_wind_maximum_wind,u-component_of_wind_planetary_boundary,
+     u-component_of_wind_sigma,u-component_of_wind_tropopause,
+     U-Component_Storm_Motion_height_above_ground_layer,
+     u-component_of_wind_altitude_above_msl"/>
   <alias
      name="V"
      label="V component of wind"
-     aliases="v-component_of_wind_isobaric_ens,v-component_of_wind_height_above_ground_ens,v-component_of_wind_height_above_ground_unweightedMean,v-component_of_wind_height_above_ground_stdDev,v-component_of_wind_isobaric_stdDev,v-component_of_wind_isobaric_unweightedMean"/>
+     aliases="v-component_of_wind_isobaric_ens,
+     v-component_of_wind_height_above_ground_ens,
+     v-component_of_wind_height_above_ground_unweightedMean,
+     v-component_of_wind_height_above_ground_stdDev,
+     v-component_of_wind_isobaric_stdDev,
+     v-component_of_wind_isobaric_unweightedMean,
+     Momentum_flux_v-component_surface_Mixed_intervals_Average,
+     v-component_of_wind_pressure_difference_layer,
+     v-component_of_wind_maximum_wind,v-component_of_wind_planetary_boundary,
+     v-component_of_wind_sigma,v-component_of_wind_tropopause,
+     V-Component_Storm_Motion_height_above_ground_layer,
+     v-component_of_wind_altitude_above_msl"/>
   <!-- end inq1759 -->
-
+  <!-- bob inq2791 05/2019 -->
+  <alias
+     name="W"
+     label="W component of wind"
+     aliases="Vertical_velocity_pressure_sigma"/>
+  <alias
+     name="SPEED"
+     label="Wind speed"
+     aliases="Wind_speed_gust_surface"/>
+  <alias
+     name="DEWPOINT"
+     label="Dewpoint"
+     aliases="Dewpoint_temperature_height_above_ground"/>
+  <alias
+     name="THETA"
+     label="Potential Temperature"
+     aliases="Potential_temperature_sigma"/>
+  <alias
+     name="PRESSURE"
+     label="Pressure"
+     aliases="Pressure_high_cloud_bottom_Mixed_intervals_Average,
+     Pressure_high_cloud_top_Mixed_intervals_Average,
+     Pressure_low_cloud_bottom_Mixed_intervals_Average,
+     Pressure_low_cloud_top_Mixed_intervals_Average,
+     Pressure_middle_cloud_bottom_Mixed_intervals_Average,
+     Pressure_middle_cloud_top_Mixed_intervals_Average,
+     Pressure_convective_cloud_bottom,Pressure_convective_cloud_top,
+     Pressure_maximum_wind,Pressure_height_above_ground,Pressure_tropopause,
+     Pressure_of_level_from_which_parcel_was_lifted_pressure_difference_layer"/>
+  <alias
+     name="MIXR"
+     label="Mixing Ratio"
+     aliases="Cloud_mixing_ratio_isobaric"/>
+  <!-- end bob inq2791 05/2019 -->
   <!-- bob inq2679 -->
   <alias aliases="HT, .*_Band3_CTH" label="ABI L2 Cloud Top Height" name="ABI_L2_ACHA"/>
   <alias aliases="AOD, .*_Band22_AOD" label="ABI L2 Aerosol Optical Depth" name="ABI_L2_AOD"/>
