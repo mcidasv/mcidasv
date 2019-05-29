@@ -195,8 +195,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     
     private static final int MAX_ANTENNA_ANGLE = 90;
     private int curAngle = GroundStation.DEFAULT_ANTENNA_ANGLE;
+    private int curElevation = 0;
     private static final double LABEL_DISTANCE_THRESHOLD = 2.5d;
     
+    // Valid range for custom ground station elevation
+    private static final int MIN_ELEVATION = -500;
+    private static final int MAX_ELEVATION = 8850;
+
     private DataChoice dataChoice;
     
     private JLabel latLabel;
@@ -209,6 +214,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     JTextField customLat = null;
     JTextField customLon = null;
     JTextField customLab = null;
+    JTextField customAlt = null;
     
     /** the font selectors, Orbit Track (ot) and Ground Station (gs) */
     private FontSelector otFontSelector;
@@ -341,8 +347,26 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 return;
             }
 
-            // Validate the antenna angle too
-            String s = antennaAngle.getText();
+            // Validate the elevation
+            String s = customAlt.getText();
+            try {
+                int newElevation = Integer.parseInt(s);
+                if (newElevation != curElevation) {
+                    // Always need to do range check too
+                    if ((newElevation < MIN_ELEVATION) ||
+                        (newElevation > MAX_ELEVATION)) {
+                        throw new NumberFormatException();
+                    }
+                    curElevation = newElevation;
+                }
+            } catch (NumberFormatException nfe) {
+                JOptionPane.showMessageDialog(null,
+                    "Invalid antenna elevation: " + s);
+                return;
+            }
+
+            // Validate the antenna angle
+            s = antennaAngle.getText();
             try {
                 int newAngle = Integer.parseInt(s);
                 if (newAngle != curAngle) {
@@ -374,10 +398,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             // create new earth location, add it to stations plotted, set index, 
             
             // make an Earth location
-            double dAlt = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
             EarthLocationTuple elt = null;
             try {
-                elt = new EarthLocationTuple(fLat, fLon, dAlt);
+                elt = new EarthLocationTuple(fLat, fLon, curElevation);
             } catch (VisADException | RemoteException e) {
                 logger.error("Problem creating EarthLocationTuple", e);
             }
@@ -410,6 +433,24 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     "Station already plotted on display: " + addedStation);
                 return;
             } else {
+                // Validate the antenna angle - only piece that can have errors for "stock" stations
+                String s = antennaAngle.getText();
+                try {
+                    int newAngle = Integer.parseInt(s);
+                    if (newAngle != curAngle) {
+                        // Always need to do range check too
+                        if ((newAngle < GroundStation.DEFAULT_ANTENNA_ANGLE) ||
+                            (newAngle > MAX_ANTENNA_ANGLE)) {
+                            throw new NumberFormatException();
+                        }
+                        curAngle = newAngle;
+                        addedStation.setAntennaAngle(curAngle);
+                    }
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(null,
+                        "Invalid antenna angle: " + s);
+                    return;
+                }
                 addGroundStation(addedStation);
                 jcbStationsPlotted.addItem(addedStation);
                 jcbStationsPlotted.setSelectedItem(addedStation);
@@ -992,13 +1033,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             coverageCircle.setColor(gs.getColor());
             coverageCircle.setData(uset);
             coverageCircle.setDrawingEnabled(false);
-            if (!inGlobeDisplay()) {
+            if (! inGlobeDisplay()) {
                 coverageCircle.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
             }
-//			if (gs.getGlobeDisplay()) {
-//				coverageCircle.setConstantPosition(gsZ, navDsp.getDisplayAltitudeType());
-//				
-//			}
         } catch (Exception e) {
             logger.error("Problem creating coverage circle", e);
         }
@@ -1582,15 +1619,18 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         JPanel customPanel = new JPanel();
         customPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        customPanel.add(new JLabel("Custom Ground Station:    Label: "));
+        customPanel.add(new JLabel("Custom Ground Station:   Label:"));
         customLab = new JTextField(6);
         customPanel.add(customLab);
-        customPanel.add(new JLabel("Latitude: "));
+        customPanel.add(new JLabel("Lat:"));
         customLat = new JTextField(6);
         customPanel.add(customLat);
-        customPanel.add(new JLabel("Longitude: "));
+        customPanel.add(new JLabel("Lon:"));
         customLon = new JTextField(6);
         customPanel.add(customLon);
+        customPanel.add(new JLabel("Alt:"));
+        customAlt = new JTextField(6);
+        customPanel.add(customAlt);
         JButton customButton = new JButton("Add Custom");
         customButton.setActionCommand(CUSTOM_ADD);
         customButton.addActionListener(this);
@@ -1791,6 +1831,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jcbStationLineWidth.setSelectedIndex(gs.getLineWidth() - 1);
         antennaAngle.setText(String.valueOf(gs.getAntennaAngle()));
         curAngle = gs.getAntennaAngle();
+        curElevation = (int) gs.getAltitude();
         
         EarthLocation elt = gs.getElt();
         latLabel.setText(String.valueOf(elt.getLatitude().getValue()));
