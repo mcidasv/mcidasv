@@ -43,7 +43,16 @@
      Temperature_high_cloud_top_Mixed_intervals_Average,
      Temperature_low_cloud_top_Mixed_intervals_Average,
      Temperature_middle_cloud_top_Mixed_intervals_Average,
-     Temperature_potential_vorticity_surface,Temperature_altitude_above_msl"/>
+     Temperature_potential_vorticity_surface,Temperature_altitude_above_msl,
+     Temperature_height_above_ground_weightedMean,
+     Temperature_isobaric_weightedMean,
+     Maximum_temperature_height_above_ground_12_Hour_Maximum,
+     Minimum_temperature_height_above_ground_12_Hour_Minimum,
+     Apparent_Temperature_height_above_ground,
+     Maximum_temperature_height_above_ground_12_Minute_Maximum,
+     Minimum_temperature_height_above_ground_12_Minute_Minimum,
+     Temperature_Analysis_height_above_ground,
+     Wet-bulb_temperature_height_above_ground_layer_UnknownStatType-241"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -59,7 +68,8 @@
      Relative_humidity_highest_tropospheric_freezing,
      Relative_humidity_entire_atmosphere_single_layer,
      Relative_humidity_sigma_layer,Specific_humidity_height_above_ground,
-     Specific_humidity_pressure_difference_layer"/>
+     Specific_humidity_pressure_difference_layer,
+     Relative_humidity_UnknownLevelType-204"/>
   <alias
      name="Z"
      label="Z"
@@ -82,7 +92,10 @@
      u-component_of_wind_maximum_wind,u-component_of_wind_planetary_boundary,
      u-component_of_wind_sigma,u-component_of_wind_tropopause,
      U-Component_Storm_Motion_height_above_ground_layer,
-     u-component_of_wind_altitude_above_msl"/>
+     u-component_of_wind_altitude_above_msl,
+     u-component_storm_motion_height_above_ground_layer,
+     u-component_of_wind_height_above_ground_5_Minute_Average,
+     u-component_of_wind_Analysis_height_above_ground"/>
   <alias
      name="V"
      label="V component of wind"
@@ -97,8 +110,16 @@
      v-component_of_wind_maximum_wind,v-component_of_wind_planetary_boundary,
      v-component_of_wind_sigma,v-component_of_wind_tropopause,
      V-Component_Storm_Motion_height_above_ground_layer,
-     v-component_of_wind_altitude_above_msl"/>
+     v-component_of_wind_altitude_above_msl,
+     v-component_storm_motion_height_above_ground_layer,
+     v-component_of_wind_height_above_ground_5_Minute_Average,
+     v-component_of_wind_Analysis_height_above_ground"/>
   <!-- end inq1759 -->
+    <alias
+     name="DIR"
+     label="Wind Direction"
+     aliases="Wind_direction_from_which_blowing_height_above_ground,
+     Wind_direction_from_which_blowing_Analysis_height_above_ground"/>
   <!-- bob inq2791 05/2019 -->
   <alias
      name="W"
@@ -107,15 +128,24 @@
   <alias
      name="SPEED"
      label="Wind speed"
-     aliases="Wind_speed_gust_surface"/>
+     aliases="Wind_speed_gust_surface,
+     Wind_speed_height_above_ground_1_Hour_Maximum,
+     Wind_speed_height_above_ground_Mixed_intervals_Maximum,
+     Wind_speed_gust_height_above_ground,
+     Wind_speed_gust_Analysis_height_above_ground,
+     Wind_speed_Analysis_height_above_ground"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
-     aliases="Dewpoint_temperature_height_above_ground"/>
+     aliases="Dewpoint_temperature_height_above_ground,
+     Dewpoint_temperature_height_above_ground_weightedMean,
+     Dewpoint_temperature_isobaric_weightedMean,
+     Dewpoint_temperature_Analysis_height_above_ground"/>
   <alias
      name="THETA"
      label="Potential Temperature"
-     aliases="Potential_temperature_sigma"/>
+     aliases="Potential_temperature_sigma,
+     Potential_temperature_height_above_ground"/>
   <alias
      name="PRESSURE"
      label="Pressure"
@@ -127,7 +157,8 @@
      Pressure_middle_cloud_top_Mixed_intervals_Average,
      Pressure_convective_cloud_bottom,Pressure_convective_cloud_top,
      Pressure_maximum_wind,Pressure_height_above_ground,Pressure_tropopause,
-     Pressure_of_level_from_which_parcel_was_lifted_pressure_difference_layer"/>
+     Pressure_of_level_from_which_parcel_was_lifted_pressure_difference_layer,
+     Pressure_Analysis_surface"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
