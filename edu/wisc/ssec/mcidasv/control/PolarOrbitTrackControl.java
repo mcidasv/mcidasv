@@ -319,6 +319,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         // user trying to add a custom ground station
         if (CUSTOM_ADD.equals(ae.getActionCommand())) {
+
             logger.debug("Custom Ground Station...");
             String labStr = customLab.getText();
             if ((labStr == null) || (labStr.isEmpty())) {
@@ -396,6 +397,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             
             // if we made it this far, fields are valid, we can create a custom ground station
             // create new earth location, add it to stations plotted, set index, 
+
+            // update scale in case user changed zoom level
+            scale = getViewManager().getMaster().getDisplayScale();
             
             // make an Earth location
             EarthLocationTuple elt = null;
@@ -1705,6 +1709,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
      * @return {@code JPanel} containing our {@literal "Apply"} button, 
      *         suitable for adding to the end of the control's bordered panels.
      */
+
     private JPanel makeBottomRow(String command) {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton applyButton = new JButton("Apply");
