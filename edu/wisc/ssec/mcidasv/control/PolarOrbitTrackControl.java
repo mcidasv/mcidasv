@@ -1357,6 +1357,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 stationToText.put(s, td);
                 addDisplayable(cd);
                 addDisplayable(td);
+                // We don't know how many to expect, so update "current station" labels
+                // with last one processed when restoring bundles.
+                latLabel.setText(s.getElt().getLatitude().toString());
+                lonLabel.setText(s.getElt().getLongitude().toString());
+                altLabel.setText(s.getElt().getAltitude().toString());
             }
             jcbStationsPlotted.setModel(cbm);
         });
