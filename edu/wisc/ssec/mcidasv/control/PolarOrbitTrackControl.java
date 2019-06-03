@@ -36,7 +36,6 @@ import static java.lang.Math.sqrt;
 import static ucar.unidata.util.LayoutUtil.centerBottom;
 import static ucar.unidata.util.LayoutUtil.inset;
 import static visad.RealTupleType.LatitudeLongitudeTuple;
-
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.data.GroundStation;
@@ -82,9 +81,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 
 import name.gano.astro.AstroConst;
-
 import net.miginfocom.swing.MigLayout;
 
 import org.slf4j.Logger;
@@ -106,7 +105,6 @@ import ucar.visad.UtcDate;
 import ucar.visad.Util;
 import ucar.visad.display.CompositeDisplayable;
 import ucar.visad.display.TextDisplayable;
-
 import visad.Data;
 import visad.DisplayRealType;
 import visad.Gridded2DSet;
@@ -281,6 +279,26 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final String CUSTOM_ADD = "AddCustom";
     private static final String ACTIVE_STATION = "ActiveStation";
     
+    // Constants for the various UI tool-tips
+    private static final String TOOLTIP_ADD_CUSTOM =
+       "Station will be plotted with Color, Font, and Line Width/Style options currently selected";
+    private static final String TOOLTIP_ADD_SELECTED =
+       "Station will be plotted with Color, Font, and Line Width/Style options currently selected";
+    private static final String TOOLTIP_ANTENNA_ANGLE =
+       "Antenna elevation angle, valid range 0 to 90 degrees";
+    private static final String TOOLTIP_CUSTOM_ALT =
+       "Antenna elevation valid range: " + MIN_ELEVATION + " m to: " + MAX_ELEVATION + " m";
+    private static final String TOOLTIP_CUSTOM_LABEL =
+       "Choose a label, e.g. \"Mesa, AZ\"";
+    private static final String TOOLTIP_CUSTOM_LAT =
+       "Latitude of your custom groundstation";
+    private static final String TOOLTIP_CUSTOM_LON =
+       "Longitude of your custom groundstation";
+    private static final String TOOLTIP_SWATH_WIDTH =
+       "Valid range: " + SWATH_WIDTH_MIN + " km to: " + SWATH_WIDTH_MAX + " km";
+    private static final String TOOLTIP_LABEL_INTERVAL =
+       "Interval in minutes between orbit track time labels";
+
     private final Map<GroundStation, TextDisplayable> stationToText =
         new HashMap<>();
     
@@ -362,7 +380,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 }
             } catch (NumberFormatException nfe) {
                 JOptionPane.showMessageDialog(null,
-                    "Invalid antenna elevation: " + s);
+                    TOOLTIP_CUSTOM_ALT);
                 return;
             }
 
@@ -912,6 +930,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         JLabel intervalLabel = new JLabel("Label Interval:");
         JLabel intervalUnits = new JLabel("minutes");
         js = new JSpinner(snm);
+        js.setToolTipText(TOOLTIP_LABEL_INTERVAL);
         labelPanel.add(Box.createHorizontalStrut(5));
         labelPanel.add(intervalLabel);
         labelPanel.add(js);
@@ -1355,6 +1374,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         PolarOrbitTrackDataSource potdc = getDataSource();
         
+        // Show tool tips immediately
+        ToolTipManager.sharedInstance().setInitialDelay(0);
+
         // if we're not coming back from a bundle, then we need to handle
         // otCurFont being null (was previously done in constructor)
         if (otCurFont == null) {
@@ -1617,6 +1639,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         locationPanel.add(new JLabel("Ground Stations Available:"));
         locationPanel.add(locationComboBox);
         JButton addButton = new JButton("Add Selected");
+        addButton.setToolTipText(TOOLTIP_ADD_SELECTED);
         addButton.setActionCommand(STATION_ADD);
         addButton.addActionListener(this);
         locationPanel.add(addButton);
@@ -1625,17 +1648,23 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         customPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         customPanel.add(new JLabel("Custom Ground Station:   Label:"));
         customLab = new JTextField(6);
+        customLab.setToolTipText(TOOLTIP_CUSTOM_LABEL);
         customPanel.add(customLab);
         customPanel.add(new JLabel("Lat:"));
         customLat = new JTextField(6);
+        customLat.setToolTipText(TOOLTIP_CUSTOM_LAT);
         customPanel.add(customLat);
         customPanel.add(new JLabel("Lon:"));
         customLon = new JTextField(6);
+        customLon.setToolTipText(TOOLTIP_CUSTOM_LON);
         customPanel.add(customLon);
         customPanel.add(new JLabel("Alt:"));
         customAlt = new JTextField(6);
+        customAlt.setToolTipText(TOOLTIP_CUSTOM_ALT);
         customPanel.add(customAlt);
+        customPanel.add(new JLabel("m"));
         JButton customButton = new JButton("Add Custom");
+        customButton.setToolTipText(TOOLTIP_ADD_CUSTOM);
         customButton.setActionCommand(CUSTOM_ADD);
         customButton.addActionListener(this);
         customPanel.add(customButton);
@@ -1686,6 +1715,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         antColorPanel.add(Box.createHorizontalStrut(5));
         antColorPanel.add(new JLabel("Antenna Angle: "));
+        antennaAngle.setToolTipText(TOOLTIP_ANTENNA_ANGLE);
         antColorPanel.add(antennaAngle);
         
         jp.add(locationPanel, "wrap");
@@ -1736,6 +1766,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         jp.add(satelliteName);
         jp.add(Box.createHorizontalStrut(5));
         jp.add(new JLabel("Swath Width: "));
+        swathWidthFld.setToolTipText(TOOLTIP_SWATH_WIDTH);
         jp.add(swathWidthFld);
         jp.add(kmLabel);
         jp.add(Box.createHorizontalStrut(5));
