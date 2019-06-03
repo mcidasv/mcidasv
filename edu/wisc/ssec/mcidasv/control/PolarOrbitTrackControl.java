@@ -285,9 +285,9 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final String TOOLTIP_ADD_SELECTED =
        "Station will be plotted with Color, Font, and Line Width/Style options currently selected";
     private static final String TOOLTIP_ANTENNA_ANGLE =
-       "Antenna elevation angle, valid range 0 to 90 degrees";
+       "Antenna elevation angle, valid range 5 to 90 degrees";
     private static final String TOOLTIP_CUSTOM_ALT =
-       "Antenna elevation valid range: " + MIN_ELEVATION + " m to: " + MAX_ELEVATION + " m";
+       "Antenna altitude valid range: " + MIN_ELEVATION + " m to: " + MAX_ELEVATION + " m";
     private static final String TOOLTIP_CUSTOM_LABEL =
        "Choose a label, e.g. \"Mesa, AZ\"";
     private static final String TOOLTIP_CUSTOM_LAT =
