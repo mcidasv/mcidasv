@@ -56,6 +56,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#localServers1.9">Local Servers</a></strong></li>
     <li><strong><a class="faq-question-link" href="#remoteServers1.9">Remote Servers/Datasets</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#aliases1.9">Gridded Aliases</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.9">Display
@@ -63,14 +64,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#placeholder1_1.9">Placeholder 1</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#dateline1_1.9">MODIS and JPSS Dateline</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">MultiSpectral Display Probe Placement</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.9">Other
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#placeholder2_1.8">Placeholder 2</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#alphabetical_1.8">Alphabetical Field Listing</a></strong></li>
     <li><strong><a class="faq-question-link" href="#scripting1.8">Scripting</a></strong></li>
   </ul>
 </div>
@@ -92,7 +94,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat2_1.9" id="faq1_cat2_1.9"></a>Data
     Changes</div>
-  <div class="faq-category"><a name="localServers1.8" id="localServers1.9"></a>
+    <div class="faq-category"><a name="localServers1.8" id="localServers1.9"></a>
     <h4>Local Servers</h4>
     <div class="faq-answer">Updated local ADDE servers on Linux and OS X/macOS platforms.</div>
 	</div>
@@ -115,22 +117,29 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       	  </ul>
       </ul>
     </div>
+    <div class="faq-category"><a name="aliases1.8" id="aliases1.9"></a>
+    <h4>Gridded Aliases</h4>
+    <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog.  Adding these variables to the list of aliases in McIDAS-V allows for McIDAS-V to recognize the variables and therefore create derived fields and display the variables using the parameter defaults.</div>
+	</div>
 </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat3_1.9" id="faq1_cat3_1.9"></a>Display
     Changes</div>
-  <div class="faq-category"><a name="placeholder1_1.9" id="placeholder1_1.9"></a>
-    <h4>Placeholder 1</h4>
-    <div class="faq-answer">text here</div>
+  <div class="faq-category"><a name="dateline1_1.9" id="dateline1_1.9"></a>
+    <h4>MODIS and JPSS Dateline</h4>
+    <div class="faq-answer">Improvements were made in the Region tab of the Field Selector to allow for subsetting across the dateline for MODIS data loaded through the HYDRA chooser, as well as VIIRS SDRs loaded through the Under Development JPSS chooser. Additionally, probing in the Main Display now works on both sides of the dateline.</div>
   </div>
-
+  <div class="faq-category"><a name="multispectral_probe1_1.9" id="multispectral_probe1_1.9"></a>
+    <h4>MODIS and JPSS Dateline</h4>
+    <div class="faq-answer">Added a space between the probe (square) and numerical output value of a MultiSpectral Display in the Main Display window. Previously, an overlap between the probe and numerical values could make the value difficult to read.</div>
+  </div>
 </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat4_1.9" id="faq1_cat4_1.9"></a>Other
     Changes</div>
-    <div class="faq-category"><a name="placeholder2_1.8" id="placeholder2_1.8"></a>
-    <h4>Placeholder 2</h4>
-    <div class="faq-answer">text here</div>
+    <div class="faq-category"><a name="alphabetical_1.8" id="alphabetical_1.8"></a>
+    <h4>Alphabetical Field Listing</h4>
+    <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This listing makes the list of variables/fields more organized and easier to navigate through.</div>
 	</div>
   <div class="faq-category"><a name="scripting1.8" id="scripting1.8"></a>
     <h4>Scripting</h4>
@@ -155,7 +164,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div class="faq-category"><a name="jpss1.9" id="jpss1.9"></a>
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
-      <p>Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display.</p>
+      <p>Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.</p>
     </div>
   </div>
     <div class="faq-category"><a name="satTrack1.9" id="satTrack1.9"></a>
