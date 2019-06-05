@@ -317,6 +317,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     
     public PolarOrbitTrackControl() {
         logger.trace("created new PolarOrbitTrackControl...");
+        setHelpUrl("idv.data.choosers.orbittrackchooser");
         try {
             final String xml =
                 IOUtil.readContents(SWATH_WIDTHS, McIdasPreferenceManager.class);
