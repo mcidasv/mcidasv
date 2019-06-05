@@ -299,6 +299,7 @@
         <mapID target="idv.quickstart.hydra.chooser"				 url="quickstart/Hydra.html#chooser" />
         <mapID target="idv.quickstart.hydra.display"				 url="quickstart/Hydra.html#display" />
         <mapID target="idv.quickstart.hydra.multi"					 url="quickstart/Hydra.html#multi" />
+        <mapID target="idv.quickstart.orbittracks"				     url="quickstart/OrbitTracks.html" />
         <mapID target="idv.quickstart.localfiles"					 url="quickstart/LocalFiles.html" />
         <mapID target="idv.quickstart.localfiles.creating"			 url="quickstart/LocalFiles.html#creating" />
         <mapID target="idv.quickstart.localfiles.directory"			 url="quickstart/LocalFiles.html#directory" />

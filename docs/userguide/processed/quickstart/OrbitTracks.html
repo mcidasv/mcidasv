@@ -4,12 +4,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>Displaying Hyperspectral Satellite Imagery Using HYDRA</title>
+<title>Displaying Satellite Orbit Tracks</title>
 <!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
 <!-- InstanceBeginEditable name="CurrentFile" -->
 <script language="javascript" type="text/javascript">
-function setParentPage() { if (parent.setPage) parent.setPage('quickstart/Hydra.html',true); }
+function setParentPage() { if (parent.setPage) parent.setPage('quickstart/OrbitTracks.html',true); }
 </script>
 <!-- InstanceEndEditable -->
 <style type="text/css">
@@ -21,45 +21,42 @@ function setParentPage() { if (parent.setPage) parent.setPage('quickstart/Hydra.
 </head>
 <body onLoad="setParentPage();">
 <div class="TopTitleNav">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Satellite.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="OrbitTracks.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious" --><a href="Hydra.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext" --><a href="RadarLevelII.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span> </p>
   <hr align="center">
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
-<div class="pagetitle">Displaying Hyperspectral Satellite Imagery Using HYDRA</div>
-<p>This section describes how to create multispectral displays using HYDRA. The
+<div class="pagetitle">Displaying Satellite Orbit Tracks</div>
+<p>This section describes how to create a display of satellite orbit tracks. The
 set of steps include:</p>
 <ul class="childlist">
-  <li><a href="#chooser">Creating the Multispectral Display</a></li>
-  <li><a href="#multi">Using the Multispectral Display</a></li>
+  <li><a href="#chooser">Creating the Satellite Orbit Track Display</a></li>
+  <li><a href="#sattrack">Using the Satellite Orbit Track Display</a></li>
   <li><a href="#more">Accessing Additional Tutorials</a></li>
 </ul>
-<div class="pagesubtitle"><a name="chooser" id="chooser"></a>Creating the Multispectral Display</div>
-<p>In the Data Explorer window, select the <strong><a href="../data/choosers/index.html">Data Sources</a></strong> tab. On the left side of this tab, select <strong>Satellite-&gt;HYDRA</strong> from
+<div class="pagesubtitle"><a name="chooser" id="chooser"></a>Creating the Satellite Orbit Track Display</div>
+<p>In the Data Explorer window, select the <strong><a href="../data/choosers/index.html">Data Sources</a></strong> tab. On the left side of this tab, select <strong>Satellite-&gt;Orbit Tracks</strong> from
 the list of available choosers.
-For more information about the HYDRA chooser, see <a href="../data/choosers/HydraChooser.html">Choosing
-Hyperspectral Data</a>.</p>
-<div class="images"><img src="images/HydraChooser.gif" width="1008" height="543" alt="Image 1: Data Sources Tab of the Data Explorer"/><br>
+For more information about the Orbit Tracks chooser, see <a href="../data/choosers/HydraChooser.html">Choosing
+Satellite Orbit Track Data</a>.</p>
+<div class="images"><img src="images/OrbitTrackChooser.gif" width="1008" height="671" alt="Image 1: Data Sources Tab of the Data Explorer"/><br>
 <span class="caption">Image 1: Data Sources Tab of the Data Explorer</span></div>
-<p>The HYDRA chooser is fairly similar to the <a href="../data/choosers/FileChooser.html">File
-Chooser</a>. As a demonstration, download the IASI image from January 15, 2007 located at: <a href="ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/training/data/IASI_xxx_1C_M02_20070115_1140.nc" target="_blank">ftp://ftp.ssec.wisc.edu/pub/mug/mcidas-v/training/data/IASI_xxx_1C_M02_20070115_1140.nc</a>.
-Navigate to the directory the file is in and press <img src="images/AddSource.gif" width="180" height="24" alt="Add Source button"align="absmiddle">.</p> 
-<p>In the <strong>Field Selector</strong> tab of the Data Explorer, select <strong>Imagery-&gt;Multispectral Display</strong>, and click the <strong> <img src="images/CreateDisplay.gif" alt="Create Display button" width="116" height="26"align=absmiddle></strong> button.</p>
-<div class="images"><img src="images/HydraSelector.gif" width="1012" height="549" alt="Image 2: Field Selector Tab of the Data Explorer"><br>
+<p>The Orbit Tracks chooser has three different options for creating a data source:
+<ul>
+	<li><strong>Local File -</strong> Access local TLE (Two Line Elements) files on the machine or mounted drive.</li>
+	<li><strong>Remote ADDE -</strong> Access navigation data from a remote ADDE server.</li>
+	<li><strong>Remote URL -</strong> Access TLE (Two Line Elements) files online via a URL.</li>
+</ul> 
+As a demonstration, create a data source from the default URL (https://celestrak.com/NORAD/elements/weather.txt).
+In the Remote panel of the chooser, select URL and click click <img src="images/AddSource.gif" width="180" height="24" alt="Add Source button"align="absmiddle">.</p> 
+<p>The <strong>Fields</strong> panel of the <strong>Field Selector</strong> tab of the Data Explorer lists all of the satellites included in the data source. Select <strong>SUOMI NPP</strong> and the<strong> Satellite Orbit Track</strong> display type. In the<strong> Time Range</strong> subset tab, the beginning and ending times of the track can be defined by the user. Select a <strong>Begin</strong> and <strong>End</strong> date and time (for example: Begin 17:50:00; End 18:50:00; Jun 4, 2019), and click the <strong> <img src="images/CreateDisplay.gif" alt="Create Display button" width="116" height="26"align=absmiddle></strong> button.</p>
+<div class="images"><img src="images/OrbitTrackSelector.gif" width="1008" height="513" alt="Field Selector Tab of the Data Explorer"/><br>
 <span class="caption">Image 2: Field Selector Tab of the Data Explorer</span></div>
-<p>There are four aspects to the multispectral display. The first is the image
-  in the Main Display window. The image will be over Northern Africa and the
-  Mediterranean Sea. The second aspect is the Spectra. The Spectra is displayed
-  in the <strong>Layer Controls</strong> tab under "MultiSpectral". The spectra
-  displayed by default is the 919.50 cm<sup>-1</sup> spectral region (10.8 &micro;m).
-  The final two aspects are the two spectrum probes. In the Main Display window, there
-  are two colored square boxes that represent the main probe (magenta) and the
-  reference probe (light blue). These two probes are listed under "Readout" under "No
-  Display" in the <strong>Layer Controls</strong> tab of the Data Explorer. Left click and drag either
-  probe to view the spectra measured in various pixels around the image, or use
-  one as a reference spectrum.</p>
-<div class="pagesubtitle"><a name="multi" id="multi"></a>Using the Multispectral Display</div>
+<p>When the display is created, satellite tracks will be drawn in the Main Display window for the satellite and time range selected.</p>
+<div class="images"><img src="images/OrbitTrackDisplay.gif" width="597" height="459" alt="Image 4: Orbit Track Data Displayed in the Main Display Window"/><br>
+<span class="caption">Image 4: Orbit Track Data Displayed in the Main Display Window</span></div>
+<div class="pagesubtitle"><a name="sattrack" id="sattrack"></a>Using the Satellite Orbit Track Display</div>
 <p>Change the wavenumber being displayed to 852.25 cm<sup>-1</sup> by entering
   in the value into the <strong>Wavenumber:</strong> box in the Multispectral
   Display and hitting Enter. Move the magenta and light blue spectra probes to
@@ -92,8 +89,8 @@ to download an example bundle to run in McIDAS-V. <br>-->
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
-  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Satellite.html">Go
-        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="OrbitTracks.html">Go
+  <p class="style2" style="text-align:left; "> [<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="Hydra.html">Go
+        to Previous</a><!-- InstanceEndEditable -->] <span style="padding-left: 15px; "> [<!-- InstanceBeginEditable name="GoToNext2" --><a href="RadarLevelII.html">Go
         to Next</a><!-- InstanceEndEditable -->] </span></p>
 </div>
 </body>

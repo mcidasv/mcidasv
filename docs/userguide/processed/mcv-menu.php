@@ -38,6 +38,7 @@
     <div class="indented" id="gettingstarted">
       <span class="link" onClick="setPage('quickstart/Satellite.html');">Displaying Satellite Imagery</span><br>
             <span class="link" onClick="setPage('quickstart/Hydra.html');">Displaying Hyperspectral Satellite Imagery Using HYDRA</span><br>
+                 <span class="link" onClick="setPage('quickstart/OrbitTracks.html');">Displaying Satellite Orbit Tracks</span><br>
                   <span class="link" onClick="setPage('quickstart/RadarLevelII.html');">Displaying Level II Radar Imagery</span><br>
       <span class="link" onClick="setPage('quickstart/RadarLevelIII.html');">Displaying Level III Radar Imagery</span><br>
       <span class="link" onClick="setPage('quickstart/Point.html');">Displaying

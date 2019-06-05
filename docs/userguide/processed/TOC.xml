@@ -16,6 +16,7 @@
 <tocitem text="Getting Started" target="idv.quickstart">
     <tocitem text="Displaying Satellite Imagery" target="idv.quickstart.satellite"/>
 	<tocitem text="Displaying Hyperspectral Satellite Imagery Using HYDRA" target="idv.quickstart.hydra"/>
+	<tocitem text="Displaying Satellite Orbit Tracks" target="idv.quickstart.orbittracks"/>
 	<tocitem text="Displaying Level II Radar Imagery" target="idv.quickstart.radarlevelii"/>
     <tocitem text="Displaying Level III Radar Imagery" target="idv.quickstart.radarleveliii"/>
 	<tocitem text="Displaying Surface and Upper Air Point Data" target="idv.quickstart.surface"/>
