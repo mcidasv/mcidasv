@@ -18,9 +18,11 @@
 			Select &lt;b&gt;Imagery&lt;/b&gt; to access data via ADDE
 			&lt;li&gt;
 			Select &lt;b&gt;HYDRA&lt;/b&gt; to access HYDRA Multispectral data via a file browser
-			&lt;/ul&gt;
-                        Select &lt;b&gt;TLE&lt;/b&gt; to access TLE text
->                       &lt;/ul&gt;
+			&lt;/li&gt;
+			&lt;li&gt;
+                        Select &lt;b&gt;Orbit Tracks&lt;/b&gt; to access TLE text
+			&lt;/li&gt;
+                        &lt;/ul&gt;
 		" />
 	</panel>
 
@@ -43,7 +45,7 @@
     <panel title="Orbit Tracks" category="Satellite" layout="border"
         tabtooltip="Satellite orbit tracks from TLE data">
         <chooser id="chooser.tle" title="Satellite Orbit Track" menutitle="Satellite Orbit Tracks"
-            showinmenu="true" helppath="idv.data.choosers.tlechooser"
+            showinmenu="true" helppath="idv.data.choosers.orbittrackchooser"
             showpolling="false" filepattern=".*" selectdatasourceid="true"
             datasourceid="TLE" class="edu.wisc.ssec.mcidasv.chooser.PolarOrbitTrackChooser" />
     </panel>
