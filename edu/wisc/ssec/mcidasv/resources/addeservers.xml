@@ -52,7 +52,7 @@ This file overrides IDV addeservers.xml
   </server>
   <server name="lead.unidata.ucar.edu">
     <group
-      names="CIMSS,EAST,GINICOMP,GINIEAST,GINIWEST,NEXRCOMP,RTIMAGES,TOPO"
+      names="CIMSS,EAST,GINICOMP,GINIEAST,GINIWEST,NEXRCOMP,NPGOESR,NPGOESS,RTGOESR,RTGOESS,RTIMAGES,TOPO"
       type="image" />
     <group
       names="RTGRIDS"
