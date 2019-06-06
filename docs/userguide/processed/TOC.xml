@@ -31,6 +31,7 @@
     <tocitem text="Data Sources" target="idv.data.choosers">
 	    <tocitem text="Choosing Satellite Imagery" target="idv.data.choosers.imagechooser"/>
 		<tocitem text="Choosing Hyperspectral Data" target="idv.data.choosers.hydrachooser"/>
+		<tocitem text="Choosing Orbit Tracks Data" target="idv.data.choosers.orbittrackchooser"/>
 		<tocitem text="Choosing NEXRAD Level II Radar Data" target="idv.data.choosers.level2chooser"/>
 		<tocitem text="Choosing NEXRAD Level III Radar Data" target="idv.data.choosers.radarchooser"/>
 		<tocitem text="Choosing Point Data" target="idv.data.choosers.pointchooser"/>
@@ -71,6 +72,7 @@
                 <tocitem text="4 Channel Combination Controls" target="idv.controls.hydra.channelcombinationcontrol"/>
                 <tocitem text="ProfileAlongTrack Controls" target="idv.controls.hydra.profilealongtrackcontrol"/>
             </tocitem>
+            <tocitem text="Satellite Orbit Track Controls" target="idv.controls.orbittrackcontrol"/>
             <tocitem text="WSR-88D Level III Controls" target="idv.controls.leveliiicontrol"/>
             <tocitem text="Level 2 Radar Layer Controls" target="idv.page_level2radardisplaycontrols">
                 <tocitem text="Radar Sweep View Controls" target="idv.controls.level2.radarsweepcontrol"/>

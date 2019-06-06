@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Satellite Orbit Track Controls</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('controls/OrbitTrackControl.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="hydra/ProfileAlongTrackControl.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="LevelIIIControl.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Satellite Orbit Track Controls</div>
+<xxxmeta xxxname="jhid" value="idv.controls.leveliiicontrol">
+<div class="pagesubtitle">Overview</div>
+<p>The controls for the Satellite Orbit Track display are used to adjust image displays of orbit track data:</p>
+<div class="images"><img src="images/OrbitTrackControlGui.gif" width="744" height="647" alt="Image 1: Satellite Orbit Track Controls Window"/><br>
+<span class="caption">Image 1: Satellite Orbit Track Controls Window</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+  <li class="propertylistitem"><strong>Swath Controls -</strong> Controls for the swath line and edges. Once these items are changed, Apply must be clicked for the change to be applied to the display.</li>
+  <ul class="propertylist">
+	<li class="propertylistitem"><strong>Swath Edges On/Off -</strong> Enables or disables the swath edge lines from drawing in the display. By default this is disabled, meaning no swath edge lines are drawn in the display. The width of the swath is set by the <strong>Swath Width</strong> menu item.</li>
+	<li class="propertylistitem"><strong>Satellite -</strong> Lists the satellite whose tracks are currently plotted. This is the satellite that was selected in the<strong> Fields</strong> panel of the <strong>Field Selector</strong></li>
+	<li class="propertylistitem"><strong>Swath Width -</strong> Sets the width of the swath lines (in kilometers) in the display. Many satellites will have a value in this field by default, however it can be added or modified by the user.</li>
+	<li class="propertylistitem"><strong>Labels On/Off -</strong> Enables or disables the time labels on the track line. By default this is enabled, meaning the time labels are drawn.</li>
+	<li class="propertylistitem"><strong>Label Interval -</strong> Sets the interval (in minutes) of the time labels along the track line. By default, this is set to 5 minutes. Decrease this value to show more times, or increase it to show fewer.</li>
+	<li class="propertylistitem"><strong>Font -</strong> Sets the font, style, and size of the time labels along the track line. By default, this is set to &quot;Default / Plain / 12&quot;.</li>
+	<li class="propertylistitem"><strong>Color -</strong> Sets the color of the swath line, edges, and time labels. By default, this is set to light green.</li>
+	<li class="propertylistitem"><strong>Track Width -</strong> Sets the width of the track line. By default this is set to 2.</li>
+	<li class="propertylistitem"><strong>Track Style -</strong> Sets the line style of the track line. By default, this is set to a solid line.</li>
+	<li class="propertylistitem"><strong>Edge Width -</strong> Sets the width of the swath edge lines. By default this, this is set to a dashed line.</li>
+	<li class="propertylistitem"><strong>Edge Style -</strong> Sets the line style of the swath edge lines. By default, this is set to a dashed line.</li>
+	<li class="propertylistitem"><strong><img src="images/Apply.gif" width="65" height="26" alt="Apply Button" align="absmiddle"/> -</strong> Applies any changes to the above menu items to the display.</li>
+  </ul>
+ <li class="propertylistitem"><strong>Ground Station Controls -</strong> Controls for the ground station(s). Once these items are changed, Apply must be clicked for the change to be applied to the display.</li>
+  <ul class="propertylist">
+  	<li class="propertylistitem"><strong>Ground Stations Available -</strong> Lists the ground stations configured with McIDAS-V.  Once the station is selected, click Add Selected <img src="images/AddSelected.gif" width="109" height="26" alt="Add Selected button" align="absmiddle"/> to add the the ground station to the Main Display window.</li>
+  	<li class="propertylistitem"><strong>Custom Ground Station -</strong> Adds a user-defined ground station to the display.</li>
+  	  <ul class="propertylist">
+  	    <li class="propertylistitem"><strong>Label -</strong> Sets the label of the ground station (e.g. Mesa, AZ).</li>
+  	    <li class="propertylistitem"><strong>Lat -</strong> Sets the latitude of the ground station.</li>
+  	    <li class="propertylistitem"><strong>Lon -</strong> Sets the longitude of the ground station.</li>
+  	    <li class="propertylistitem"><strong>Alt  -</strong> Sets the altitude of the ground station in meters. The valid range is -500 to 8850 meters.</li>
+  	    <li class="propertylistitem"><strong> <img src="images/AddCustom.gif" width="103" height="26" alt="Add Custom Button" align="absmiddle"/> -</strong> Adds the custom ground station to the Main Display window.</li>
+  	 </ul>
+  	 <li class="propertylistitem"><strong> Ground Stations Plotted -</strong> Selects the active ground station plotted in the Main Display window.  Any changes to the menu items below this will be applied to the this ground station. To remove a ground station from the display, select it with this menu and click <img src="images/RemoveSelected.gif" width="133" height="26" alt="Remove Selected Button" align="absmiddle"/>.</li>
+  	 <li class="propertylistitem"><strong> Current Station -</strong> Lists the latitude, longitude, and altitude of the station currently selected in the <strong>Ground Stations Plotted</strong> menu.</li>
+  	 <li class="propertylistitem"><strong> Font - </strong>Sets the font, style, and size of the ground station label. By default, this is set to &quot;Default / Plain / 9&quot;.</li>
+  	 <li class="propertylistitem"><strong> Color -</strong> Sets the color of the ground station label and ring. By default, this is set to pink.</li>
+  	 <li class="propertylistitem"><strong> Line Width -</strong> Sets the width of the ground station ring. By default this is set to 1.</li>
+  	 <li class="propertylistitem"><strong> Line Style - </strong>Sets the line style of the ground station ring. By default, this is set to a dashed line.</li>
+  	 <li class="propertylistitem"><strong> Antenna Angle -</strong> Selects the antenna angle of the ground station. By default, this is set to 5 degrees, with a valid range of 5 to 90 degrees allowed. The higher the elevation angle, the smaller (in diameter) the ring around the ground station.</li>
+  	 <li class="propertylistitem"><strong><img src="images/Apply.gif" width="65" height="26" alt="Apply Button" align="absmiddle"/> -</strong> Applies any changes to the above menu items to the display.</li>
+  </ul>
+</ul>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="hydra/ProfileAlongTrackControl.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="LevelIIIControl.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>

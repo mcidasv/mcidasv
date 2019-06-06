@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><!-- InstanceBegin template="/Templates/mcv_guide.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Choosing Orbit Tracks Data</title>
+<!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="/mcidas/doc/mcv_guide/mcidasv.css" charset="ISO-8859-1" type="text/css">
+<!-- InstanceBeginEditable name="CurrentFile" -->
+<script language="javascript" type="text/javascript">
+function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/OrbitTrackChooser.html',true); }
+</script>
+<!-- InstanceEndEditable -->
+<style type="text/css">
+<!--
+.style1 {font-size: large;}
+.style2 {font-size: small;}
+-->
+</style>
+</head>
+<body onLoad="setParentPage();">
+<div class="TopTitleNav">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious" --><a href="HydraChooser.html">Go to Previous</a><!-- InstanceEndEditable -->]
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext" --><a href="Level2Chooser.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span> </p>
+  <hr align="center">
+</div>
+<!-- InstanceBeginEditable name="MainContent" -->
+<div class="pagetitle">Choosing Orbit Tracks Data</div>
+<p>The <strong>Satellite-&gt;Orbit Tracks</strong> chooser provides three different methods of loading data:
+<ul>
+	<li><strong>Local File -</strong> Access local TLE (Two Line Elements) files on the machine or mounted drive.</li>
+	<li><strong>Remote ADDE -</strong> Access navigation data from a remote ADDE server.</li>
+	<li><strong>Remote URL -</strong> Access TLE (Two Line Elements) files online via a URL.</li>
+</ul> 
+For more information on using this chooser, see <a href="../../quickstart/OrbitTracks.html">Getting Started - Displaying Satellite Orbit Tracks</a>.</p>
+<a name="image1" id="image1"></a>
+<div class="images"><img src="../../quickstart/images/OrbitTrackChooser.gif" width="1008" height="671" alt="Image 1: Orbit Tracks Chooser"/><br>
+<span class="caption">Image 1: Orbit Tracks Chooser</span></div>
+<div class="pagesubtitle">Properties</div>
+<ul class="propertylist">
+  <li class="propertylistitem"> <strong>File -</strong> Accesses local TLE (Two Line Elements) files on the machine or mounted drive.</li>
+  <ul class="propertylist">
+    <li class="propertylistitem"><strong>Look In -</strong> Allows you to select folders to search for data files.</li>
+    <li class="propertylistitem"><img src="images/UpOneLevel.gif" alt="Up one level button" width="24" height="24" align=absmiddle> <strong> Up One Level -</strong> Moves you up one folder level in your local file system.</li>
+    <li class="propertylistitem"><img src="images/Desktop.gif" alt="Desktop button" width="24" height="24" align=absmiddle> <strong> Desktop -</strong> Takes you to the Desktop folder of your local file system.</li>
+    <li class="propertylistitem"><img src="images/CreateNewFolder.gif" alt="Create new folder button" width="24" height="24" align=absmiddle> <strong> Create New Folder -</strong> Creates a new folder.</li>
+    <li class="propertylistitem"><img src="images/List.gif" alt="List button" width="24" height="24" align=absmiddle> <strong>List -</strong> Switches the view to a listing of all folders and files in the current path.</li>
+    <li class="propertylistitem"><img src="images/Details.gif" alt="Details button" width="23" height="24" align=absmiddle> <strong>Details -</strong> Switches the view to a detailed list of all folders and files in the current path.</li>
+    <li class="propertylistitem"><strong>File Name -</strong> Represents the full name of the file selected.</li>
+    <li class="propertylistitem"><strong>Files of Type -</strong> Narrows down the files shown in a folder to a specific data type.</li>
+	</ul>
+ <li class="propertylistitem"><strong>Remote - ADDE -</strong> Accesses navigation data from a remote ADDE server.</li>
+ <ul class="propertylist">
+ <li class="propertylistitem"><strong>Server -</strong> Selects the server to be used. Enter in a server name or choose one from the pulldown menu. Right-click in the entry box to manage your ADDE servers and to delete the server from the list.</li>
+<li class="propertylistitem"><img src="images/Manage.gif" alt="Server Manager button" align=absmiddle> <strong>Manage -</strong> Manages the list of servers by opening the <a href="../../tools/preferences/ServerPreferences.html"><strong>ADDE Servers</strong></a> tab of the User Preferences window.</li>
+    <li class="propertylistitem"><strong>Dataset -</strong> Selects the dataset to be used. Enter in a dataset name or choose one from the pulldown menu.</li>
+    <li class="propertylistitem"><img src="images/PublicServers.gif" alt="Public Datasets button" align=absmiddle> <strong>Public Datasets -</strong> Lists the public datasets available on the server. This button looks for any datasets contained in the PUBLIC.SRV file on the server. If this file doesn't exist, or if there are no datasets in this file that can be used by this chooser, then no datasets will be returned.</li>
+<li class="propertylistitem"><img src="../../quickstart/images/Connect.gif" alt="Connect button" width="180" height="24"align=absmiddle> <strong> -</strong> Connects and queries the server for available image types.</li>
+    <li class="propertylistitem"><strong>Descriptor -</strong> Selects the descriptor, which is generally a satellite or instrument.</li>
+ </ul>
+ <li class="propertylistitem"><strong>Remote - URL -</strong> Accesses TLE (Two Line Elements) files online via a URL. The default URL is: https://celestrak.com/NORAD/elements/weather.txt</li>
+<li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align=absmiddle> <strong> Help -</strong> Brings up this help page.</li>
+    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align=absmiddle> <strong> Refresh -</strong> Rescans the current directory and update the file chooser if the files have changed.</li>
+    <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align=absmiddle> <strong> -</strong> Loads the selected file(s).</li>
+</ul>
+<!-- InstanceEndEditable -->
+<div class="BottomTitleNav">
+  <hr align="center">
+  <p class="style2" style="text-align:left; "> 
+  	[<!-- InstanceBeginEditable name="GoToPrevious2" --><a href="HydraChooser.html">Go to Previous</a><!-- InstanceEndEditable -->] 
+	<span style="padding-left: 15px; "> 
+	[<!-- InstanceBeginEditable name="GoToNext2" --><a href="Level2Chooser.html">Go to Next</a><!-- InstanceEndEditable -->] 
+	</span></p>
+</div>
+</body>
+<!-- InstanceEnd --></html>

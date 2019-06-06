@@ -74,6 +74,7 @@
 		<mapID target="idv.controls.objectiveanalysis"				 url="controls/ObjectiveAnalysis.html" />
         <mapID target="idv.controls.obslistcontrol"                  url="controls/ObsListControl.html" />
         <mapID target="idv.controls.omnicontrol"                     url="controls/misc/OmniControl.html" />
+        <mapID target="idv.controls.orbittrackcontrol"               url="controls/OrbitTrackControl.html" />
         <mapID target="idv.controls.planviewcontrol"                 url="controls/PlanViewControl.html" />
         <mapID target="idv.controls.planviewcontrol.image1"          url="controls/PlanViewControl.html#image1" />
         <mapID target="idv.controls.planviewcontrol.image2"          url="controls/PlanViewControl.html#image2" />
@@ -116,6 +117,7 @@
         <mapID target="idv.data.choosers.imagechooser.image1"        url="data/choosers/ImageChooser.html#image1" />
         <mapID target="idv.data.choosers.level2chooser"              url="data/choosers/Level2Chooser.html" />
         <mapID target="idv.data.choosers.level2chooser.image1"       url="data/choosers/Level2Chooser.html#image1" />
+        <mapID target="idv.data.choosers.orbittrackchooser"          url="data/choosers/OrbitTrackChooser.html" />
         <mapID target="idv.data.choosers.pointchooser"               url="data/choosers/PointChooser.html" />
         <mapID target="idv.data.choosers.pointchooser.image1"        url="data/choosers/PointChooser.html#image1" />
         <mapID target="idv.data.choosers.radarchooser"               url="data/choosers/RadarChooser.html" />
