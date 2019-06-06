@@ -184,7 +184,7 @@
         <menuitem label="Visit Online Forums"
                   mnemonic="O"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/report_go.png"
-                  action="http://www.ssec.wisc.edu/mcidas/forums" />
+                  action="https://mcidas.ssec.wisc.edu/forums/" />
         <menuitem label="Search Online Resources"
                   mnemonic="E"
                   icon="/edu/wisc/ssec/mcidasv/resources/icons/buttons/world_go.png"
