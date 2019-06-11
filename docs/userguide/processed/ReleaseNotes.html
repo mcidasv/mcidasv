@@ -54,6 +54,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#orbitTracks1.9">Orbit Tracks Chooser</a></strong></li>
     <li><strong><a class="faq-question-link" href="#localServers1.9">Local Servers</a></strong></li>
     <li><strong><a class="faq-question-link" href="#remoteServers1.9">Remote Servers/Datasets</a></strong></li>
     <li><strong><a class="faq-question-link" href="#aliases1.9">Gridded Aliases</a></strong></li>
@@ -79,8 +80,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.9">Under Development</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#jpss1.9">JPSS Chooser</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#satTrack1.9">Satellite Orbit Track Chooser</a></strong></li></ul></div>
+    <li><strong><a class="faq-question-link" href="#jpss1.9">JPSS Chooser</a></strong></li></ul></div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.9" id="faq1_cat1_1.9"></a>Documentation
@@ -94,11 +94,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat2_1.9" id="faq1_cat2_1.9"></a>Data
     Changes</div>
+    <div class="faq-category"><a name="orbitTracks1.9" id="orbitTracks1.9"></a>
+    <h4>Orbit Tracks Chooser</h4>
+    <div class="faq-answer">Promoted the Under Development > Satellite Orbit Tracks chooser to a supported chooser (Satellite &gt; Orbit Tracks). This chooser can load and display TLE (Two Line Elements) data loaded through a local file, ADDE, or a URL. For more information, see <a href="data/choosers/OrbitTrackChooser.html">Choosing Orbit Tracks Data</a>, <a href="quickstart/OrbitTracks.html">Displaying Satellite Orbit Tracks</a>, and <a href="controls/OrbitTrackControl.html">Satellite Orbit Track Controls</a>.</div>
+	</div>
     <div class="faq-category"><a name="localServers1.9" id="localServers1.9"></a>
     <h4>Local Servers</h4>
     <div class="faq-answer">Updated local ADDE servers on Linux and OS X/macOS platforms.</div>
 	</div>
-    <div class="faq-category"><a name="remoteServers1.9" id="remoteServers1.9"></a>
+  <div class="faq-category"><a name="remoteServers1.9" id="remoteServers1.9"></a>
     <h4>Remote Servers/Datasets</h4>
     <div class="faq-answer">
       <p>Added new imagery datasets for GOES-16 and GOES-17 data. These servers/datasets are:</p>
@@ -166,12 +170,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
       <p>Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.</p>
-    </div>
-  </div>
-    <div class="faq-category"><a name="satTrack1.9" id="satTrack1.9"></a>
-    <h4>Satellite Orbit Track Chooser</h4>
-    <div class="faq-answer">
-      <p>Implemented several bug fixes.</p>
     </div>
   </div>
 </div>
