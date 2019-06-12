@@ -20,10 +20,35 @@
 
 package ucar.visad.display;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.media.j3d.Transform3D;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
-
 import org.w3c.dom.Element;
 
 import ucar.unidata.data.DataAlias;
@@ -47,17 +72,13 @@ import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Range;
-
-
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 import ucar.unidata.util.WrapperException;
 import ucar.unidata.xml.XmlUtil;
-
 import ucar.visad.ShapeUtility;
 import ucar.visad.Util;
 import ucar.visad.WindBarb;
-
 import visad.CommonUnit;
 import visad.Data;
 import visad.DateTime;
@@ -87,46 +108,8 @@ import visad.VisADGeometryArray;
 import visad.VisADLineArray;
 import visad.VisADQuadArray;
 import visad.VisADTriangleArray;
-
 import visad.georef.EarthLocation;
 import visad.georef.EarthLocationLite;
-import visad.georef.NamedLocationTuple;
-
-import visad.meteorology.WeatherSymbols;
-
-
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-
-import java.rmi.RemoteException;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.media.j3d.Transform3D;
-
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
-
 
 
 /**
@@ -177,9 +160,6 @@ public class StationModelDisplayable extends DisplayableData {
 
     /** Work object */
     private Rectangle2D workShapeBounds = new Rectangle2D.Float();
-
-
-
 
 
     /** Work object */
@@ -478,6 +458,24 @@ public class StationModelDisplayable extends DisplayableData {
     public Color getColor() {
         return myColor;
     }
+
+
+    /**
+     * @param font the font to set
+     */
+    public void setFont(Font font) {
+
+        for (Iterator iter = stationModel.iterator(); iter.hasNext(); ) {
+            MetSymbol metSymbol = (MetSymbol) iter.next();
+            if (! metSymbol.getActive()) {
+                continue;
+            }
+            if (metSymbol instanceof TextSymbol) {
+                ((TextSymbol) metSymbol).setFont(font);
+            }
+        }
+    }
+
 
     /**
      * Implement toFront
@@ -1148,7 +1146,7 @@ public class StationModelDisplayable extends DisplayableData {
                     shapes = metSymbol.makeShapes(ob);
                 } else if (metSymbol instanceof TextSymbol) {
                     TextSymbol textSymbol  = (TextSymbol) metSymbol;
-                    Font       font        = textSymbol.getFont();
+                    Font font        = textSymbol.getFont();
                     String     stringValue = null;
                     Scalar     scalar      = (Scalar) workDataArray[0];
                     //Perhaps cache on value,font,number format and display unit

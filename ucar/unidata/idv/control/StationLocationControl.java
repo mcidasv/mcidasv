@@ -29,74 +29,24 @@
 package ucar.unidata.idv.control;
 
 
-import org.w3c.dom.Element;
-
-import ucar.unidata.collab.Sharable;
-
-import ucar.unidata.data.DataChoice;
-import ucar.unidata.data.DataInstance;
-import ucar.unidata.geoloc.Bearing;
-import ucar.unidata.geoloc.Bearing;
-
-import ucar.unidata.geoloc.LatLonPointImpl;
-
-import ucar.unidata.gis.SpatialGrid;
-
-
-import ucar.unidata.idv.*;
-
-
-import ucar.unidata.idv.flythrough.FlythroughPoint;
-
-
-
-import ucar.unidata.metdata.NamedStationImpl;
-import ucar.unidata.metdata.NamedStationTable;
-import ucar.unidata.ui.ImageUtils;
-import ucar.unidata.ui.PropertyFilter;
-import ucar.unidata.ui.TableSorter;
-
-import ucar.unidata.ui.symbol.*;
-import ucar.unidata.util.FileManager;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.IOUtil;
-import ucar.unidata.util.Misc;
-
-import ucar.unidata.util.ObjectListener;
-
-import ucar.unidata.util.PatternFileFilter;
-import ucar.unidata.util.StringUtil;
-import ucar.unidata.util.Trace;
-
-import ucar.unidata.util.TwoFacedObject;
-import ucar.unidata.xml.XmlUtil;
-
-import ucar.visad.display.CompositeDisplayable;
-import ucar.visad.display.LineDrawing;
-import ucar.visad.display.StationLocationDisplayable;
-import ucar.visad.display.StationModelDisplayable;
-
-
-import visad.*;
-
-
-import visad.georef.*;
-import visad.georef.EarthLocation;
-import visad.georef.EarthLocationLite;
-
-import visad.georef.NamedLocation;
-import visad.georef.NamedLocationTuple;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-
-
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
-
 import java.rmi.RemoteException;
-
-
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -104,10 +54,67 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.AbstractTableModel;
+
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataInstance;
+import ucar.unidata.geoloc.Bearing;
+import ucar.unidata.geoloc.LatLonPointImpl;
+import ucar.unidata.gis.SpatialGrid;
+import ucar.unidata.idv.DisplayConventions;
+import ucar.unidata.idv.MapViewManager;
+import ucar.unidata.idv.flythrough.FlythroughPoint;
+import ucar.unidata.metdata.NamedStationImpl;
+import ucar.unidata.metdata.NamedStationTable;
+import ucar.unidata.ui.FontSelector;
+import ucar.unidata.ui.PropertyFilter;
+import ucar.unidata.ui.TableSorter;
+import ucar.unidata.ui.symbol.StationModel;
+import ucar.unidata.util.FileManager;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.IOUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.ObjectListener;
+import ucar.unidata.util.PatternFileFilter;
+import ucar.unidata.util.StringUtil;
+import ucar.unidata.util.Trace;
+import ucar.unidata.util.TwoFacedObject;
+import ucar.visad.display.LineDrawing;
+import ucar.visad.display.StationLocationDisplayable;
+import ucar.visad.display.StationModelDisplayable;
+import visad.CommonUnit;
+import visad.Data;
+import visad.DisplayEvent;
+import visad.Gridded3DSet;
+import visad.LinearLatLonSet;
+import visad.Real;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.SampledSet;
+import visad.SetType;
+import visad.UnionSet;
+import visad.Unit;
+import visad.VisADException;
+import visad.georef.EarthLocation;
+import visad.georef.LatLonPoint;
+import visad.georef.MapProjection;
+import visad.georef.NamedLocation;
 
 
 
@@ -244,7 +251,8 @@ public class StationLocationControl extends StationModelControl {
     /** Shows all of the locations */
     private LocationTableModel allLocationsTableModel;
 
-
+    /** Font selector (added 2019 TJJ) */
+    private FontSelector fontSelector;
 
     /**
      * Default cstr; sets attribute flags
@@ -291,6 +299,10 @@ public class StationLocationControl extends StationModelControl {
      */
     public boolean init(DataChoice dataChoice)
             throws VisADException, RemoteException {
+
+        fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
+        fontSelector.setFont(FontSelector.DEFAULT_FONT);
+
         lastDeclutteredStationList = null;
         if ((stationTableName != null) && (stationTableNames.size() == 0)) {
             stationTableNames.add(stationTableName);
@@ -578,8 +590,6 @@ public class StationLocationControl extends StationModelControl {
             "location displayable", getControlContext().getJythonManager());
         locationDisplayable.setShouldUseAltitude(false);
         addDisplayable(locationDisplayable, FLAG_COLOR | FLAG_ZPOSITION);
-
-
 
         selectedDisplayable = new StationLocationDisplayable(
             "selected displayable", getControlContext().getJythonManager());
@@ -1974,6 +1984,15 @@ public class StationLocationControl extends StationModelControl {
         symbolComps.add(GuiUtils.rLabel("Color:  "));
         symbolComps.add(doMakeColorControl(getColor()));
         symbolComps.add(GuiUtils.filler());
+        fontSelector.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                updateDisplayable();
+            }
+        });
+        symbolComps.add(GuiUtils.rLabel("Font:  "));
+        symbolComps.add(fontSelector.getComponent());
+        symbolComps.add(GuiUtils.filler());
         GuiUtils.tmpInsets = new Insets(4, 0, 0, 0);
         symbolPanel = GuiUtils.doLayout(symbolComps, 3, GuiUtils.WT_NYN,
                                         GuiUtils.WT_N);
@@ -2282,11 +2301,13 @@ public class StationLocationControl extends StationModelControl {
                 if (useStationModel) {
                     locationDisplayable.setStationModel(
                         super.getStationModel());
-                    locationDisplayable.updateDisplayable();
                 } else {
                     locationDisplayable.setDisplayState(symbolType,
                             showSymbol, idType, showId);
                 }
+                // 12 Jun 2019 can now set fonts on station labels
+                locationDisplayable.setFont(fontSelector.getFont());
+                locationDisplayable.updateDisplayable();
             }
         } catch (Exception exc) {
             logException("Updating displayable", exc);
