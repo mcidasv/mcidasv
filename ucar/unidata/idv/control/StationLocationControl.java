@@ -33,6 +33,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -77,6 +78,7 @@ import ucar.unidata.data.DataInstance;
 import ucar.unidata.geoloc.Bearing;
 import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.gis.SpatialGrid;
+import ucar.unidata.idv.ControlContext;
 import ucar.unidata.idv.DisplayConventions;
 import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.flythrough.FlythroughPoint;
@@ -116,9 +118,6 @@ import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.georef.MapProjection;
 import visad.georef.NamedLocation;
-
-
-
 
 /**
  * Class to display a set of locations
@@ -254,7 +253,13 @@ public class StationLocationControl extends StationModelControl {
 
     /** Font selector (added 2019 TJJ) */
     private FontSelector fontSelector;
-
+    
+    /** 
+     * Font picked using {@link #fontSelector}. 
+     * Default value is {@link FontSelector#DEFAULT_FONT}. 
+     */
+    private Font font = FontSelector.DEFAULT_FONT;
+    
     /**
      * Default cstr; sets attribute flags
      */
@@ -268,7 +273,7 @@ public class StationLocationControl extends StationModelControl {
     /**
      * Clear out the station table names
      */
-    public void initAsPrototype() {
+    @Override public void initAsPrototype() {
         super.initAsPrototype();
         stationTableNames = new ArrayList();
     }
@@ -282,8 +287,7 @@ public class StationLocationControl extends StationModelControl {
     @Override protected boolean canDoProgressiveResolution() {
         return false;
     }
-
-
+    
     /**
      * Called to make this kind of Display Control; also calls code to
      * made the Displayable.  This method is called from inside
@@ -302,7 +306,7 @@ public class StationLocationControl extends StationModelControl {
             throws VisADException, RemoteException {
 
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
-        fontSelector.setFont(FontSelector.DEFAULT_FONT);
+        fontSelector.setFont(font);
 
         lastDeclutteredStationList = null;
         if ((stationTableName != null) && (stationTableNames.size() == 0)) {
@@ -1984,7 +1988,10 @@ public class StationLocationControl extends StationModelControl {
         symbolComps.add(GuiUtils.rLabel("Color:  "));
         symbolComps.add(doMakeColorControl(getColor()));
         symbolComps.add(GuiUtils.filler());
-        fontSelector.addPropertyChangeListener(evt -> updateDisplayable());
+        fontSelector.addPropertyChangeListener(evt -> {
+            setFont(fontSelector.getFont());
+            updateDisplayable();
+        });
         symbolComps.add(GuiUtils.rLabel("Font:  "));
         symbolComps.add(fontSelector.getComponent());
         symbolComps.add(GuiUtils.filler());
@@ -2084,9 +2091,28 @@ public class StationLocationControl extends StationModelControl {
         stationJList.setListData(new Vector(stationTableNames));
         return stationScroller;
     }
-
-
-
+    
+    /**
+     * Set the font.
+     * 
+     * <p>Only used for bundle compatibility.</p>
+     * 
+     * @param newFont New {@code Font} to use. Cannot be {@code null}.
+     */
+    public void setFont(Font newFont) {
+        font = newFont;
+    }
+    
+    /**
+     * Return the font.
+     * 
+     * <p>Only used for bundle compatibility.</p>
+     * 
+     * @return Font used for this control.
+     */
+    public Font getFont() {
+        return font;
+    }
 
     /**
      * The id or station button was pressed
