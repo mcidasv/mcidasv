@@ -30,6 +30,7 @@ package ucar.unidata.idv.control;
 
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -2293,13 +2294,13 @@ public class StationLocationControl extends StationModelControl {
         }
         return comps;
     }
-
+    
     /**
      * Only public as a result of this being an ActionListener.
      *
      * @param ae    action event to check
      */
-    public void actionPerformed(ActionEvent ae) {
+    @Override public void actionPerformed(ActionEvent ae) {
         String cmd = ae.getActionCommand();
         if (cmd.startsWith("symbol")) {
             symbolType = new Integer(cmd.substring(6)).intValue();
@@ -2311,7 +2312,36 @@ public class StationLocationControl extends StationModelControl {
             super.actionPerformed(ae);
         }
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override protected void applyColor() throws VisADException, RemoteException {
+        if (displayables == null) {
+            return;
+        }
+        
+        Color color = getColor();
+        
+        deactivateDisplays();
+        for (int i = 0, n = displayables.size(); i < n; i++) {
+            FlaggedDisplayable fd = (FlaggedDisplayable) displayables.get(i);
+            if ( !fd.ok(FLAG_COLOR)) {
+                continue;
+            }
+            
+            if (color == null) {
+                color = getDisplayConventions().getColor();
+            }
+            fd.displayable.setColor(color);
+        }
+        if (displayListUsesColor) {
+            setDisplayListColor(color, false);
+        }
+        
+        updateDisplayable();
+        activateDisplays();
+    }
 
     /**
      * updates the displayable when anything changes.
