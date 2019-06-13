@@ -72,6 +72,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.geoloc.Bearing;
@@ -101,6 +103,7 @@ import ucar.visad.display.StationModelDisplayable;
 import visad.CommonUnit;
 import visad.Data;
 import visad.DisplayEvent;
+import visad.DisplayListener;
 import visad.Gridded3DSet;
 import visad.LinearLatLonSet;
 import visad.Real;
@@ -1904,7 +1907,8 @@ public class StationLocationControl extends StationModelControl {
             return "";
         }
     }
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(StationLocationControl.class);
 
     /**
      * Make the display gui panel
@@ -1987,6 +1991,7 @@ public class StationLocationControl extends StationModelControl {
         fontSelector.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
+                logger.trace("fontselector: evt={}", evt);
                 updateDisplayable();
             }
         });
@@ -2302,15 +2307,39 @@ public class StationLocationControl extends StationModelControl {
                     locationDisplayable.setStationModel(
                         super.getStationModel());
                 } else {
+//                    locationDisplayable.setFontSize(fontSelector.getFontSize());
                     locationDisplayable.setDisplayState(symbolType,
-                            showSymbol, idType, showId);
+                            showSymbol, idType, showId,
+                        fontSelector.getFont(), true);
                 }
                 // 12 Jun 2019 can now set fonts on station labels
-                locationDisplayable.setFont(fontSelector.getFont());
+//                locationDisplayable.setFont(fontSelector.getFont());
                 locationDisplayable.updateDisplayable();
             }
         } catch (Exception exc) {
             logException("Updating displayable", exc);
+        }
+    }
+    
+    private float lastScale = Float.MIN_VALUE;
+    
+    public float getDisplayScale() {
+        float scale = 1.0f;
+        try {
+            scale = getNavigatedDisplay().getDisplayScale();
+        } catch (Exception e) {
+        
+        }
+        return scale;
+    }
+    
+    @Override public void handleDisplayChanged(DisplayEvent e) {
+        if (e.getId() == DisplayEvent.FRAME_DONE) {
+            float currentScale = getDisplayScale();
+            if (Float.compare(lastScale, currentScale) != 0) {
+                updateDisplayable();
+                lastScale = currentScale;
+            }
         }
     }
 

@@ -21,12 +21,16 @@
 package ucar.visad.display;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ucar.unidata.data.point.PointObTuple;
 
 import ucar.unidata.idv.JythonManager;
 import ucar.unidata.metdata.NamedStationImpl;
 
+import ucar.unidata.ui.FontSelector;
 import ucar.unidata.ui.drawing.*;
+import ucar.unidata.ui.symbol.MetSymbol;
 import ucar.unidata.ui.symbol.StationModel;
 import ucar.unidata.ui.symbol.TextSymbol;
 import ucar.unidata.ui.symbol.WeatherSymbol;
@@ -54,6 +58,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -62,8 +67,8 @@ import java.util.List;
  * have a station identifier (e.g., id, name, lat, lon) and/or a location
  * marker (e.g., plus, circle, star).  What gets displayed is determined
  * by the parameters set through the
- * {@link #setDisplayState(int, boolean, int, boolean)} and associated
- * methods.
+ * {@link #setDisplayState(int, boolean, int, boolean, Font, boolean)}
+ * and associated methods.
  *
  * @author IDV development team.
  * @version $Revision: 1.22 $
@@ -158,7 +163,9 @@ public class StationLocationDisplayable extends StationModelDisplayable {
         "Plus"
     };
 
-
+    /** Typical default font size (12). */
+    private static final int DEFAULT_FONT_SIZE = 12;
+    
     /** Color for the station model */
     private Color myColor = null;
 
@@ -179,6 +186,12 @@ public class StationLocationDisplayable extends StationModelDisplayable {
 
     /** boolean for whether the symbol should be visible */
     private boolean showSymbol;
+    
+    /** Font to use for the location name. */
+    private Font font = FontSelector.DEFAULT_FONT;
+    
+    /** Whether or not the location name should be visible. */
+    private boolean showText = true;
 
     /**
      * Constructs an instance with the supplied reference name.  Uses
@@ -300,8 +313,26 @@ public class StationLocationDisplayable extends StationModelDisplayable {
         //        counter.decr();
         //        System.err.println ("StationLocationDisplable.destroy: " + counter);
     }
-
-
+    
+    
+    
+    
+    public Font getFont() {
+        return font;
+    }
+    
+    /**
+     * @param newFont the font to set
+     */
+    public void setFont(Font newFont) {
+        this.font = newFont;
+        try {
+            setDisplayState(symbolType, showSymbol, idType, showId, font, true);
+        } catch (VisADException | RemoteException e) {
+        
+        }
+    }
+    
     /**
      * Sets the parameters used for generating a station model.
      *
@@ -314,13 +345,28 @@ public class StationLocationDisplayable extends StationModelDisplayable {
      * @throws RemoteException couldn't create the remote object
      */
     public void setDisplayState(int symbolType, boolean showSymbol,
-                                int idType, boolean showId)
+                                int idType, boolean showId,
+                                Font font, boolean showText)
             throws VisADException, RemoteException {
         this.symbolType = symbolType;
         this.showSymbol = showSymbol;
         this.showId     = showId;
         this.idType     = idType;
-        setStationModel(makeStationModel());
+        this.font       = font;
+        this.showText   = showText;
+
+        StationModel stationModel = makeStationModel();
+        for (Iterator iter = stationModel.iterator(); iter.hasNext(); ) {
+            MetSymbol metSymbol = (MetSymbol) iter.next();
+            if (! metSymbol.getActive()) {
+                continue;
+            }
+            if (metSymbol instanceof TextSymbol) {
+                ((TextSymbol) metSymbol).setFont(font);
+            }
+        }
+        setStationModel(stationModel);
+        
         updateDisplayable();
     }
 
@@ -361,7 +407,7 @@ public class StationLocationDisplayable extends StationModelDisplayable {
      */
     public void setSymbolType(int value)
             throws VisADException, RemoteException {
-        setDisplayState(value, showSymbol, idType, showId);
+        setDisplayState(value, showSymbol, idType, showId, font, showText);
     }
 
     /**
@@ -382,7 +428,7 @@ public class StationLocationDisplayable extends StationModelDisplayable {
      * @throws RemoteException couldn't create the remote object
      */
     public void setIdType(int value) throws VisADException, RemoteException {
-        setDisplayState(symbolType, showId, value, showId);
+        setDisplayState(symbolType, showId, value, showId, font, showText);
     }
 
     /**
@@ -406,7 +452,7 @@ public class StationLocationDisplayable extends StationModelDisplayable {
      */
     public void setShowId(boolean value)
             throws VisADException, RemoteException {
-        setDisplayState(symbolType, showSymbol, idType, value);
+        setDisplayState(symbolType, showSymbol, idType, value, font, showText);
     }
 
     /**
@@ -430,7 +476,7 @@ public class StationLocationDisplayable extends StationModelDisplayable {
      */
     public void setShowSymbol(boolean value)
             throws VisADException, RemoteException {
-        setDisplayState(symbolType, value, idType, showId);
+        setDisplayState(symbolType, value, idType, showId, font, showText);
     }
 
     /**
@@ -652,8 +698,9 @@ public class StationLocationDisplayable extends StationModelDisplayable {
         Trace.call2("make field");
         return stationField;
     }
-
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(StationLocationDisplayable.class);
+    
     /**
      * Creates a station model from the supplied parameters.
      * @return
@@ -682,8 +729,12 @@ public class StationLocationDisplayable extends StationModelDisplayable {
         if (showSymbol) {
             obView.addSymbol(symbolSymbol);
         }
-        if (showSymbol && showId)  {
-            idSymbol.bou nds = new java.awt.Rectangle(-11, -31, 72, 24);
+        if (showSymbol && showId) {
+            
+            idSymbol.bounds = new java.awt.Rectangle(-11,
+                -21 - (int)((font.getSize() - DEFAULT_FONT_SIZE) * 1.5),
+                72, 24);
+            logger.trace("bounds: {}", idSymbol.bounds);
             idSymbol.setRectPoint(Glyph.PT_LM);
         } else if (showId) {
             idSymbol.bounds = new java.awt.Rectangle(-11, -8, 72, 24);
