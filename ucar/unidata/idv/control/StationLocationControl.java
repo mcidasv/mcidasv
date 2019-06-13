@@ -72,8 +72,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
 import ucar.unidata.geoloc.Bearing;
@@ -1908,8 +1906,6 @@ public class StationLocationControl extends StationModelControl {
         }
     }
     
-    private static final Logger logger = LoggerFactory.getLogger(StationLocationControl.class);
-
     /**
      * Make the display gui panel
      *
@@ -1988,13 +1984,7 @@ public class StationLocationControl extends StationModelControl {
         symbolComps.add(GuiUtils.rLabel("Color:  "));
         symbolComps.add(doMakeColorControl(getColor()));
         symbolComps.add(GuiUtils.filler());
-        fontSelector.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                logger.trace("fontselector: evt={}", evt);
-                updateDisplayable();
-            }
-        });
+        fontSelector.addPropertyChangeListener(evt -> updateDisplayable());
         symbolComps.add(GuiUtils.rLabel("Font:  "));
         symbolComps.add(fontSelector.getComponent());
         symbolComps.add(GuiUtils.filler());
@@ -2304,42 +2294,20 @@ public class StationLocationControl extends StationModelControl {
         try {
             if (locationDisplayable != null) {
                 if (useStationModel) {
-                    locationDisplayable.setStationModel(
-                        super.getStationModel());
+                    locationDisplayable.setStationModel(getStationModel());
                 } else {
-//                    locationDisplayable.setFontSize(fontSelector.getFontSize());
+                    // 12 Jun 2019 can now set fonts on station labels
                     locationDisplayable.setDisplayState(symbolType,
-                            showSymbol, idType, showId,
-                        fontSelector.getFont(), true);
+                                                        showSymbol,
+                                                        idType,
+                                                        showId,
+                                                        fontSelector.getFont(),
+                                                        true);
                 }
-                // 12 Jun 2019 can now set fonts on station labels
-//                locationDisplayable.setFont(fontSelector.getFont());
                 locationDisplayable.updateDisplayable();
             }
         } catch (Exception exc) {
             logException("Updating displayable", exc);
-        }
-    }
-    
-    private float lastScale = Float.MIN_VALUE;
-    
-    public float getDisplayScale() {
-        float scale = 1.0f;
-        try {
-            scale = getNavigatedDisplay().getDisplayScale();
-        } catch (Exception e) {
-        
-        }
-        return scale;
-    }
-    
-    @Override public void handleDisplayChanged(DisplayEvent e) {
-        if (e.getId() == DisplayEvent.FRAME_DONE) {
-            float currentScale = getDisplayScale();
-            if (Float.compare(lastScale, currentScale) != 0) {
-                updateDisplayable();
-                lastScale = currentScale;
-            }
         }
     }
 
