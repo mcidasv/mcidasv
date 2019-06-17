@@ -65,12 +65,24 @@ public class GroundStation
     }
     
     /**
-     * We'll try to get by with only one way to initialize these.
+     * Constructor with additional antenna angle parameter.
      */
+
     public GroundStation(String name, EarthLocationTuple location, int angle) {
         this.name = name;
         this.elt = location;
         this.antennaAngle = angle;
+    }
+
+    /**
+     * Constructor with additional antenna angle and altitude parameters.
+     */
+
+    public GroundStation(String name, EarthLocationTuple location, int angle, double altitude) {
+        this.name = name;
+        this.elt = location;
+        this.antennaAngle = angle;
+        this.altitude = altitude;
     }
     
     /**
