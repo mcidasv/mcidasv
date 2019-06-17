@@ -428,8 +428,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 logger.error("Problem creating EarthLocationTuple", e);
             }
             
-            GroundStation gs = new GroundStation(labStr, elt, curAngle);
-            addGroundStation(gs);
+            GroundStation gs = new GroundStation(labStr, elt, curAngle, curElevation);
+            addGroundStation(gs, true);
             jcbStationsPlotted.addItem(gs);
             jcbStationsPlotted.setSelectedItem(gs);
             updateDisplayList();
@@ -474,7 +474,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                         "Invalid antenna angle: " + s);
                     return;
                 }
-                addGroundStation(addedStation);
+                addGroundStation(addedStation, false);
                 jcbStationsPlotted.addItem(addedStation);
                 jcbStationsPlotted.setSelectedItem(addedStation);
                 
@@ -665,8 +665,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                             logger.error("Problem removing displayable", e);
                         }
                         gs.setAntennaAngle(newAngle);
-                        double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
-                        gs.setAltitude(altitude);
                         gs.setColor(antColorSwatch.getColor());
                         CurveDrawer cdNew = makeCoverageCircle(gs);
                         addDisplayable(cdNew);
@@ -692,8 +690,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             if (cdWidth != (jcbStationLineWidth.getSelectedIndex() + 1)) {
                 try {
                     logger.debug("GroundStation line width change...");
-                    double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
-                    gs.setAltitude(altitude);
                     gs.setColor(antColorSwatch.getColor());
                     replaceCurve(gs);
                 } catch (RemoteException | VisADException e) {
@@ -705,8 +701,6 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             if (curStyle != (jcbStationLineStyle.getSelectedIndex())) {
                 try {
                     logger.debug("GroundStation line style change...");
-                    double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
-                    gs.setAltitude(altitude);
                     gs.setColor(antColorSwatch.getColor());
                     replaceCurve(gs);
                 } catch (RemoteException | VisADException e) {
@@ -1003,13 +997,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private CurveDrawer makeCoverageCircle(GroundStation gs) {
         double lat = Math.toRadians(gs.getElt().getLatitude().getValue());
         double lon = Math.toRadians(gs.getElt().getLongitude().getValue());
-        double satAlt = gs.getAltitude();
+        double stationAlt = gs.getAltitude();
         
         /* mean Earth radius in km */
         double earthRadius = AstroConst.R_Earth_mean / 1000.0;
-        satAlt += earthRadius;
+        stationAlt += earthRadius;
         double SAC = (Math.PI / 2.0) + Math.toRadians(gs.getAntennaAngle());
-        double sinASC = (earthRadius * sin(SAC)) / satAlt;
+        double sinASC = (earthRadius * sin(SAC)) / stationAlt;
         double dist = earthRadius * (Math.PI - SAC - asin(sinASC));
         double rat = dist / earthRadius;
         
@@ -1790,7 +1784,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         return t;
     }
     
-    private void addGroundStation(GroundStation gs) {
+    private void addGroundStation(GroundStation gs, boolean isCustom) {
         
         logger.debug("addGroundStation() in, name: {}", gs.getName());
         
@@ -1805,8 +1799,13 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             if (altLabel.getText().length() > 10) altLabel.setText(altLabel.getText().substring(0, 9));
             latitude = Double.parseDouble(latLabel.getText());
             longitude = Double.parseDouble(lonLabel.getText());
-            double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
-            gs.setAltitude(altitude);
+
+            // For non-custom, "stock" groundstations, compute altitude
+            // For custom, the user will have specified it
+            if (! isCustom) {
+                double altitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
+                gs.setAltitude(altitude);
+            }
             gs.setColor(antColorSwatch.getColor());
             gs.setLineWidth(jcbStationLineWidth.getSelectedIndex() + 1);
             gs.setLineStyle(jcbStationLineStyle.getSelectedIndex());
