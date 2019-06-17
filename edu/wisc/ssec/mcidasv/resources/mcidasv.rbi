@@ -358,6 +358,7 @@
        type="radar"/>
     <resource location="%IDVPATH%/stations/statelocations.xml"/>
     <resource location="%APPPATH%/stations/greatlakes.xml"/>
+    <resource location="%APPPATH%/stations/countries.xml"/>
   </resources>
 
 <!-- The list of help tip xml files   -->
