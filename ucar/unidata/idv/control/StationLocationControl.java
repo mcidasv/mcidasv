@@ -260,6 +260,8 @@ public class StationLocationControl extends StationModelControl {
      * Default value is {@link FontSelector#DEFAULT_FONT}. 
      */
     private Font font = FontSelector.DEFAULT_FONT;
+
+    private static final int DEFAULT_FONT_SIZE = 8;
     
     /**
      * Default cstr; sets attribute flags
@@ -308,6 +310,7 @@ public class StationLocationControl extends StationModelControl {
 
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         fontSelector.setFont(font);
+        fontSelector.setFontSize(DEFAULT_FONT_SIZE);
 
         lastDeclutteredStationList = null;
         if ((stationTableName != null) && (stationTableNames.size() == 0)) {
