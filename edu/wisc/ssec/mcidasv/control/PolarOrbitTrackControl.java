@@ -185,7 +185,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     
     private String station = "";
     
-    private static final int SWATH_WIDTH_MIN = 1;
+    private static final int SWATH_WIDTH_MIN = 0;
     // swath width not applicable, e.g. GEO sensor
     private static final String SWATH_NA = "N/A";
     // TJJ Feb 2014 - need to determine max of any sensor. VIIRS is over 3000 km
@@ -295,7 +295,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private static final String TOOLTIP_CUSTOM_LON =
        "Longitude of your custom groundstation";
     private static final String TOOLTIP_SWATH_WIDTH =
-       "Valid range: " + SWATH_WIDTH_MIN + " km to: " + SWATH_WIDTH_MAX + " km";
+       "Valid range: > " + SWATH_WIDTH_MIN + " km to: " + SWATH_WIDTH_MAX + " km";
     private static final String TOOLTIP_LABEL_INTERVAL =
        "Interval in minutes between orbit track time labels";
 
@@ -563,7 +563,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 swathChanged = true;
             }
             
-            int newSwathWidth = validateSwathWidthField();
+            float newSwathWidth = validateSwathWidthField();
             if (newSwathWidth > 0) {
                 curWidth = newSwathWidth;
                 if (Double.compare(curWidth, prvWidth) != 0) {
@@ -1549,7 +1549,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                     swathEdgesOn = false;
                 } else {
                     swathEdgesOn = true;
-                    int newSwathWidth = validateSwathWidthField();
+                    float newSwathWidth = validateSwathWidthField();
                     if (newSwathWidth > 0) {
                         curWidth = newSwathWidth;
                         if (Double.compare(curWidth, prvWidth) != 0) {
@@ -1927,11 +1927,11 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         station = val.trim();
     }
     
-    private int validateSwathWidthField() {
+    private float validateSwathWidthField() {
         String s = swathWidthFld.getText().trim();
-        int val = -1;
+        float val = -1.0f;
         try {
-            val = Integer.parseInt(s);
+            val = Float.parseFloat(s);
         } catch (NumberFormatException nfe) {
             // TJJ Jun 2015 - if GEO sensor, N/A means return invalid, but no warning msg needed
             if ((s != null) && (s.equals(SWATH_NA))) {
@@ -1939,14 +1939,15 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             }
             // throw up a dialog to tell user the problem
             JOptionPane.showMessageDialog(latLonAltPanel,
-                "Invalid swath width: must be an integer value in km");
+                "Invalid swath width: must be a decimal value in km");
             return -1;
         }
         
-        if ((val < SWATH_WIDTH_MIN) || (val > SWATH_WIDTH_MAX)) {
+        // Need <= on low end because value must be positive
+        if ((val <= SWATH_WIDTH_MIN) || (val > SWATH_WIDTH_MAX)) {
             // throw up a dialog to tell user the problem
             JOptionPane.showMessageDialog(latLonAltPanel,
-                "Swath width valid range is " + SWATH_WIDTH_MIN +
+                "Swath width valid range is > " + SWATH_WIDTH_MIN +
                     " to " + SWATH_WIDTH_MAX + " km");
             return -1;
         }
