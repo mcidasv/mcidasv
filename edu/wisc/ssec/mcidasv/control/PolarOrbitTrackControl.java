@@ -428,7 +428,8 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
                 logger.error("Problem creating EarthLocationTuple", e);
             }
             
-            GroundStation gs = new GroundStation(labStr, elt, curAngle, curElevation);
+            double satelliteAltitude = dataSource.getNearestAltToGroundStation(latitude, longitude) / 1000.0;
+            GroundStation gs = new GroundStation(labStr, elt, curAngle, satelliteAltitude);
             addGroundStation(gs, true);
             jcbStationsPlotted.addItem(gs);
             jcbStationsPlotted.setSelectedItem(gs);
@@ -997,13 +998,16 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private CurveDrawer makeCoverageCircle(GroundStation gs) {
         double lat = Math.toRadians(gs.getElt().getLatitude().getValue());
         double lon = Math.toRadians(gs.getElt().getLongitude().getValue());
-        double stationAlt = gs.getAltitude();
+        double satelliteAltitude = gs.getAltitude();
+        double elevation = gs.getElt().getAltitude().getValue();
         
         /* mean Earth radius in km */
         double earthRadius = AstroConst.R_Earth_mean / 1000.0;
-        stationAlt += earthRadius;
+        // total radius to satellite
+        satelliteAltitude += earthRadius;
         double SAC = (Math.PI / 2.0) + Math.toRadians(gs.getAntennaAngle());
-        double sinASC = (earthRadius * sin(SAC)) / stationAlt;
+        // now accounts for station elevation - don't forget to convert from meters to km
+        double sinASC = (earthRadius * sin(SAC)) / (satelliteAltitude - (elevation / 1000.0d));
         double dist = earthRadius * (Math.PI - SAC - asin(sinASC));
         double rat = dist / earthRadius;
         
