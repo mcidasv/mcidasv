@@ -152,6 +152,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -243,25 +244,70 @@ public class GridUtil {
      *   @deprecated use GridMath.FUNC_DIFFERENCE
      */
     public static final String FUNC_DIFFERENCE = GridMath.FUNC_DIFFERENCE;
-
-
+    
+    public enum Smoother {
+        
+        /** Invalid entry. Should not be allowed to show up in GUIs! */
+        INVALID("INVALID", "INVALID"),
+        
+        /** Represents {@literal "no smoother"}. */
+        NONE("None", "None"),
+        
+        /** Five point smoother. */
+        FIVE_POINT("SM5S", "5 point"),
+        
+        /** Nine point smoother. */
+        NINE_POINT("SM9S", "9 point"),
+        
+        /** Gaussian smoother. */
+        GAUSSIAN("GWFS", "Gaussian Weighted"),
+        
+        /** Cressman smoother. */
+        CRESSMAN("CRES", "Cressman Weighted"),
+        
+        /** Barnes Circular smoother. */
+        CIRCULAR("CIRC", "Circular Aperture"),
+        
+        /** Rectangular smoother. */
+        RECTANGULAR("RECT", "Rectangular Aperture");
+        
+        /** Smoother ID. */
+        final String id;
+        
+        /** Smoother human-friendly label. */
+        final String label;
+        
+        Smoother(String newId, String newLabel) {
+            this.id = newId;
+            this.label = newLabel;
+        }
+        
+        public String getId() {
+            return id;
+        }
+        
+        public String getLabel() {
+            return label;
+        }
+    }
+    
     /** Five point smoother identifier */
-    public static final String SMOOTH_5POINT = "SM5S";
+    public static final String SMOOTH_5POINT = Smoother.FIVE_POINT.getId();
 
     /** Nine point smoother identifier */
-    public static final String SMOOTH_9POINT = "SM9S";
+    public static final String SMOOTH_9POINT = Smoother.NINE_POINT.getId();
 
     /** Gaussian smoother identifier */
-    public static final String SMOOTH_GAUSSIAN = "GWFS";
+    public static final String SMOOTH_GAUSSIAN = Smoother.GAUSSIAN.getId();
 
     /** Cressman smoother identifier */
-    public static final String SMOOTH_CRESSMAN = "CRES";
+    public static final String SMOOTH_CRESSMAN = Smoother.CRESSMAN.getId();
+
+    /** Barnes circular smoother identifier */
+    public static final String SMOOTH_CIRCULAR = Smoother.CIRCULAR.getId();
 
     /** Barnes  circular smoother identifier */
-    public static final String SMOOTH_CIRCULAR = "CIRC";
-
-    /** Barnes  circular smoother identifier */
-    public static final String SMOOTH_RECTANGULAR = "RECT";
+    public static final String SMOOTH_RECTANGULAR = Smoother.RECTANGULAR.getId();
 
     /** ensemble RealType */
     public static final RealType ENSEMBLE_TYPE =
@@ -7207,11 +7253,60 @@ public class GridUtil {
      */
     public static FieldImpl smooth(FieldImpl slice, String type)
             throws VisADException {
-        return smooth(slice, type, (type.equals(SMOOTH_GAUSSIAN)
-                                    ? 6
-                                    : 0));
+        return smooth(slice, type, ((type.equals(Smoother.GAUSSIAN.id) || type.equals(Smoother.GAUSSIAN.label))
+            ? 6
+            : 0));
+    }
+    
+    /**
+     * String containing the valid smoother types.
+     * 
+     * <p>The types are meant to be suitable for passing to 
+     * {@link #normalizeSmoothingType(String)}.</p>
+     * 
+     * @return String containing valid smoother types.
+     */
+    private static String makeValidSmoothingTypes() {
+        StringBuilder result = new StringBuilder(512);
+        for (final Smoother smoother : Smoother.values()) {
+            if (smoother != Smoother.INVALID) {
+                result.append(smoother.getId()).append(", ");
+            }
+        }
+        return result.toString();
     }
 
+    /**
+     * Convert a given {@code String} that represents a type of {@link Smoother}
+     * into the corresponding {@link Smoother#getId()}.
+     * 
+     * @param type Either the ID or label of a type of {@code Smoother}. 
+     *             Cannot be {@code null}.
+     * 
+     * @return ID of the matching {@code Smoother}.
+     * 
+     * @throws IllegalArgumentException if {@code type} does not match one of
+     *                                  the Smoothers, or if it matches the 
+     *                                  {@literal "invalid"} 
+     *                                  {@link Smoother#INVALID} smoother.
+     */
+    public static String normalizeSmoothingType(String type) {
+        String id = Smoother.INVALID.getId();
+        if (type != null) {
+            for (final Smoother smoother : Smoother.values()) {
+                if (Objects.equals(type, smoother.getId()) || Objects.equals(type, smoother.getLabel())) {
+                    id = smoother.getId();
+                    break;
+                }
+            }
+        }
+        if (id.equals(Smoother.INVALID.getId())) {
+            throw new IllegalArgumentException('\''+type+"' is not a valid smoothing type. Please use one of: "+ makeValidSmoothingTypes());
+        } else {
+            return id;
+        }
+    }
+    
     /**
      * Is this a valid smoother type
      *
@@ -7220,14 +7315,23 @@ public class GridUtil {
      * @return true if a valid type
      */
     private static boolean isValidSmoother(String type) {
-        return (type != null)
-               && (type.equals(SMOOTH_5POINT) || type.equals(SMOOTH_9POINT)
-                   || type.equals(SMOOTH_GAUSSIAN)
-                   || type.equals(SMOOTH_CRESSMAN)
-                   || type.equals(SMOOTH_CIRCULAR)
-                   || type.equals(SMOOTH_RECTANGULAR));
+        boolean result = false;
+        if (type != null) {
+            //             result = Arrays.stream(Smoother.values())
+            //                            .anyMatch(smoother -> {
+            //                                return Objects.equals(type, smoother.getId()) 
+            //                                       || Objects.equals(type, smoother.getLabel());
+            //                            });
+            for (final Smoother smoother : Smoother.values()) {
+                if (Objects.equals(type, smoother.getId()) || Objects.equals(type, smoother.getLabel())) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
     }
-
+    
     /**
      * Smooth a 2D field
      *
@@ -7268,13 +7372,13 @@ public class GridUtil {
                         continue;
                     }
                     if ( !isSequence(sample)) {
-                        if (type.equals(SMOOTH_5POINT)) {
+                        if (type.equals(Smoother.FIVE_POINT.id) || type.equals(Smoother.FIVE_POINT.label)) {
                             smoothedFF = smooth5Point((FlatField) sample,
                                     smoothedRangeType);
-                        } else if (type.equals(SMOOTH_9POINT)) {
+                        } else if (type.equals(Smoother.NINE_POINT.id) || type.equals(Smoother.NINE_POINT.label)) {
                             smoothedFF = smooth9Point((FlatField) sample,
                                     smoothedRangeType);
-                        } else if (type.equals(SMOOTH_GAUSSIAN)) {
+                        } else if (type.equals(Smoother.GAUSSIAN.id) || type.equals(Smoother.GAUSSIAN.label)) {
                             smoothedFF = smoothGaussian((FlatField) sample,
                                     filterLevel, smoothedRangeType);
                         } else {
@@ -7298,13 +7402,13 @@ public class GridUtil {
                                 continue;
                             }
                             FlatField innerSmoothedField = null;
-                            if (type.equals(SMOOTH_5POINT)) {
+                            if (type.equals(Smoother.FIVE_POINT.id) || type.equals(Smoother.FIVE_POINT.label)) {
                                 innerSmoothedField = smooth5Point(innerField,
                                         smoothedRangeType);
-                            } else if (type.equals(SMOOTH_9POINT)) {
+                            } else if (type.equals(Smoother.NINE_POINT.id) || type.equals(Smoother.NINE_POINT.label)) {
                                 innerSmoothedField = smooth9Point(innerField,
                                         smoothedRangeType);
-                            } else if (type.equals(SMOOTH_GAUSSIAN)) {
+                            } else if (type.equals(Smoother.GAUSSIAN.id) || type.equals(Smoother.GAUSSIAN.label)) {
                                 innerSmoothedField =
                                     smoothGaussian(innerField, filterLevel,
                                         smoothedRangeType);
@@ -7350,13 +7454,13 @@ public class GridUtil {
                     }
                 }
             } else {
-                if (type.equals(SMOOTH_5POINT)) {
+                if (type.equals(Smoother.FIVE_POINT.id) || type.equals(Smoother.FIVE_POINT.label)) {
                     smoothedFI = (FieldImpl) smooth5Point((FlatField) slice,
                             smoothedRangeType);
-                } else if (type.equals(SMOOTH_9POINT)) {
+                } else if (type.equals(Smoother.NINE_POINT.id) || type.equals(Smoother.NINE_POINT.label)) {
                     smoothedFI = (FieldImpl) smooth9Point((FlatField) slice,
                             smoothedRangeType);
-                } else if (type.equals(SMOOTH_GAUSSIAN)) {
+                } else if (type.equals(Smoother.GAUSSIAN.id) || type.equals(Smoother.GAUSSIAN.label)) {
                     smoothedFI =
                         (FieldImpl) smoothGaussian((FlatField) slice,
                             filterLevel, smoothedRangeType);

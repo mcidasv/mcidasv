@@ -947,15 +947,24 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
     /** labels for smoothing functions */
     private final static String[] smootherLabels = new String[] {
-        LABEL_NONE, "5 point", "9 point", "Gaussian Weighted",
-        "Cressman Weighted", "Circular Aperture", "Rectangular Aperture"
+        GridUtil.Smoother.NONE.getLabel(),
+        GridUtil.Smoother.FIVE_POINT.getLabel(),
+        GridUtil.Smoother.NINE_POINT.getLabel(),
+        GridUtil.Smoother.GAUSSIAN.getLabel(),
+        GridUtil.Smoother.CRESSMAN.getLabel(),
+        GridUtil.Smoother.CIRCULAR.getLabel(),
+        GridUtil.Smoother.RECTANGULAR.getLabel()
     };
 
     /** types of smoothing functions */
     private final static String[] smoothers = new String[] {
-        LABEL_NONE, GridUtil.SMOOTH_5POINT, GridUtil.SMOOTH_9POINT,
-        GridUtil.SMOOTH_GAUSSIAN, GridUtil.SMOOTH_CRESSMAN,
-        GridUtil.SMOOTH_CIRCULAR, GridUtil.SMOOTH_RECTANGULAR
+        GridUtil.Smoother.NONE.getId(),
+        GridUtil.Smoother.FIVE_POINT.getId(),
+        GridUtil.Smoother.NINE_POINT.getId(),
+        GridUtil.Smoother.GAUSSIAN.getId(),
+        GridUtil.Smoother.CRESSMAN.getId(),
+        GridUtil.Smoother.CIRCULAR.getId(),
+        GridUtil.Smoother.RECTANGULAR.getId()
     };
 
     /** smoothing factor for Gaussian smoother */
@@ -12888,14 +12897,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         }
     }
-
+    
     /**
      * Set the smoothing type
      *
      * @param type  the new smoothing type
      */
     public void setSmoothingType(String type) {
-        smoothingType = type;
+        smoothingType = GridUtil.normalizeSmoothingType(type);
+        
         // reload data if done interactively
         if (getHaveInitialized()) {
             try {
