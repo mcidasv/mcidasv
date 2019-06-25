@@ -52,7 +52,22 @@
      Maximum_temperature_height_above_ground_12_Minute_Maximum,
      Minimum_temperature_height_above_ground_12_Minute_Minimum,
      Temperature_Analysis_height_above_ground,
-     Wet-bulb_temperature_height_above_ground_layer_UnknownStatType-241"/>
+     Wet-bulb_temperature_height_above_ground_layer_UnknownStatType-241,
+     Temperature_high_cloud_top_3_Hour_Average,
+     Temperature_low_cloud_top_3_Hour_Average,
+     Temperature_middle_cloud_top_3_Hour_Average,
+     Temperature_high_cloud_top_4_Hour_Average,
+     Temperature_low_cloud_top_4_Hour_Average,
+     Temperature_middle_cloud_top_4_Hour_Average,
+     Temperature_high_cloud_top_6_Hour_Average,
+     Temperature_low_cloud_top_6_Hour_Average,
+     Temperature_middle_cloud_top_6_Hour_Average,
+     Maximum_temperature_height_above_ground_3_Hour_Maximum,
+     Minimum_temperature_height_above_ground_3_Hour_Minimum,
+     Maximum_temperature_height_above_ground_4_Hour_Maximum,
+     Minimum_temperature_height_above_ground_4_Hour_Minimum,
+     Maximum_temperature_height_above_ground_6_Hour_Maximum,
+     Minimum_temperature_height_above_ground_6_Hour_Minimum"/>
   <alias
      name="RH"
      label="Relative humidity"
