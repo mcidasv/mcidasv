@@ -17,7 +17,7 @@
       <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" category="" />
       <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../adde" description="Directory containing the local ADDE server ZIP files." category="" />
       <variable name="MCV_VERSION" value="${compiler:sys.version}-SNAPSHOT" description="" category="" />
-      <variable name="IDV_VERSION" value="5.5u1-SNAPSHOT" description="" category="" />
+      <variable name="IDV_VERSION" value="5.6u1" description="" category="" />
     </variables>
     <mergedProjects />
     <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pvkAndSpc" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
