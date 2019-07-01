@@ -78,7 +78,7 @@
   <satellite name="DUBAISAT-2" width="20"/>
   <satellite name="ELEKTRO-L1" width=""/>
   <satellite name="ENVISAT" width="1150"/>
-  <satellite name="EO-1" width="8"/>
+  <satellite name="EO-1" width="7.7"/>
   <satellite name="EROS A1" width="14"/>
   <satellite name="EROS B" width="7"/>
   <satellite name="ERS-2" width="100"/>
@@ -119,7 +119,7 @@
   <satellite name="GAOFEN 1" width="800"/>
   <satellite name="GAOFEN 2" width="45"/>
   <satellite name="GCOM-W1 (SHIZUKU)" width="1450"/>
-  <satellite name="GEOEYE 1" width="15"/>
+  <satellite name="GEOEYE 1" width="15.2"/>
   <satellite name="GEO-KOMPSAT-2A" width=""/>
   <satellite name="GOES10" width=""/>
   <satellite name="GOES 10" width=""/>
@@ -175,6 +175,8 @@
   <satellite name="HY-1B" width="1400"/>
   <satellite name="HY 1B" width="1400"/>
   <satellite name="HYSIS" width="30"/>
+  <satellite name="ICESAT-2" width="0.017"/>
+  <satellite name="ICESAT 2" width="0.017"/>
   <satellite name="IKONOS 2" width="11"/>
   <satellite name="IMS-1" width="151"/>
   <satellite name="INSAT-3A" width=""/>
@@ -298,7 +300,7 @@
   <satellite name="ORBVIEW-4" width="8"/>
   <satellite name="ORBVIEW 4" width="8"/>
   <satellite name="PARASOL" width="2200"/>
-  <satellite name="QUICKBIRD 2" width="17"/>
+  <satellite name="QUICKBIRD 2" width="16.5"/>
   <satellite name="QUIKSCAT" width="350"/>
   <satellite name="RADARSAT-1" width="510"/>
   <satellite name="RADARSAT-2" width="500"/>
@@ -309,7 +311,7 @@
   <satellite name="RAPIDEYE 4" width="77"/>
   <satellite name="RASAT" width="30"/>
   <satellite name="RAZAKSAT" width="20"/>
-  <satellite name="RESURS-DK 1" width="28"/>
+  <satellite name="RESURS-DK 1" width="28.3"/>
   <satellite name="RESURS P2" width="38"/>
   <satellite name="ROCSAT-1" width="691"/>
   <satellite name="ROCSAT 1" width="691"/>
