@@ -283,6 +283,12 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     /** Animation info */
     private AnimationInfo animationInfo;
 
+    /** Grid smoothing option combo box */
+    JComboBox smootherBox = null;
+
+    /** List of smoothers */
+    List<TwoFacedObject> smootherList = null;
+
     /** The anim widget */
     private AnimationWidget animationWidget;
 
@@ -12830,9 +12836,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         addRemovable(sww);
         GuiUtils.enableTree(swwContents, useSmoothingFactor());
 
-        List<TwoFacedObject> smootherList =
-            TwoFacedObject.createList(smoothers, smootherLabels);
-        JComboBox smootherBox = new JComboBox();
+        smootherList = TwoFacedObject.createList(smoothers, smootherLabels);
+        smootherBox = new JComboBox();
         GuiUtils.setListData(smootherBox, smootherList);
         smootherBox.setSelectedItem(TwoFacedObject.findId(getSmoothingType(),
                 smootherList));
@@ -12905,6 +12910,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public void setSmoothingType(String type) {
         smoothingType = GridUtil.normalizeSmoothingType(type);
+        smootherBox.setSelectedItem(TwoFacedObject.findId(smoothingType, smootherList));
         
         // reload data if done interactively
         if (getHaveInitialized()) {
