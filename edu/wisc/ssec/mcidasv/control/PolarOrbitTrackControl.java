@@ -1756,8 +1756,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
     private JPanel makeSwathWidthPanel() {
         if (dataChoice != null)
             satelliteName = new JLabel(dataChoice.getName());
-        Integer isw = (int) curWidth;
-        swathWidthFld = new JTextField(isw.toString(), 5);
+        swathWidthFld = new JTextField("" + curWidth, 5);
         if (curWidth == 0) swathWidthFld.setText(SWATH_NA);
         
         JPanel jp = new JPanel(new FlowLayout(FlowLayout.LEFT));
