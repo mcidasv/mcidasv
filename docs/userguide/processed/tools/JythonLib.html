@@ -41,7 +41,7 @@ This is the doc for the grid module. For more information, see <a href="GridForm
 <p><a name="averageOverTime" id="averageOverTime"></a><code class="command">averageOverTime(field, makeTimes):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Average the values in each time step If makeTimes is true (1) then we return a field mapping all of the times to the average. Else we just return the average</p>
 <p><a name="combineFields" id="combineFields"></a><code class="command">combineFields():</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">combine several fields together</p>
+<p style="padding:0;margin-left:20;margin-top:0">Combine several fields together</p>
 <p><a name="differenceFromBaseTime" id="differenceFromBaseTime"></a><code class="command">differenceFromBaseTime(field):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)-D(0)</p>
 <p><a name="exportGridToNetcdf" id="exportGridToNetcdf"></a><code class="command">exportGridToNetcdf(grid, filename):</code></p>
@@ -76,11 +76,15 @@ This is the doc for the grid module. For more information, see <a href="GridForm
 <p style="padding:0;margin-left:20;margin-top:0">Flip the longitudes in a grid from -180-180 to 0-360 (or vice-versa).  Only works for cyclic rectilinear grids</p>
 <p><a name="make2D" id="make2D"></a><code class="command">make2D(slice):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Make a 2D slice from a 3D slice at a single level</p>
+<p><a name="make2DFlowTraj" id="make2DFlowTraj"></a><code class="command">make2DFlowTraj(u,v,s,s0):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Get the 2D u, v, and scalar variable s, s0 from a grid.  Return grid trajectory.</p>
 <p><a name="makeFlowField" id="makeFlowField"></a><code class="command">makeFlowField(a, b, c):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Make a vector from 3 components</p>
 <div class="jython">
 <p style="padding:0;margin-left:20;margin-top:0">makeVector(a,b) = [a,b,c]</p>
 </div>
+<p><a name="makeFlowTraj" id="makeFlowTraj"></a><code class="command">makeFlowTraj(u, v, w, s, s0):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Get the u, v, w, and scalar variables, s0 from a grid.  Return grid trajectory.</p>
 <p><a name="makeTimeSequence" id="makeTimeSequence"></a><code class="command">makeTimeSequence(g):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Merge a set of single time grids/images into a time sequence</p>
 <p><a name="makeTopographyFromField" id="makeTopographyFromField"></a><code class="command">makeTopographyFromField(grid):</code></p>
@@ -110,12 +114,18 @@ This is the doc for the grid module. For more information, see <a href="GridForm
 <p style="padding:0;margin-left:20;margin-top:0">Display gridded data on a new domain</p>
 <p><a name="runave" id="runave"></a><code class="command">runave(grid, nave, option):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Generate a running average. nave = number of steps to average over. option = option for unsmoothed end points (0: set to missing; 1: use symmetry; -1: assume cyclic)</p>
+<p><a name="setLevel" id="setLevel"></a><code class="command">setLevel(grid, level, unit):</code></p>
 <p><a name="substitute" id="suubstitute"></a><code class="command">substitute(data, low, high, newValue):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Change values in data between low/high to newValue</p>
 <p><a name="sumFromBaseTime" id="sumFromBaseTime"></a><code class="command">sumFromBaseTime(field):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)+D(0)</p>
 <p><a name="sumOverTime" id="sumOverTime"></a><code class="command">sumOverTime(field, makeTimes):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Take the sum of the values in each time step if makeTimes is true (1) then return a field mapping of all times to the average. Else return the sum</p>
+<p><a name="thetaSurface" id="thetaSurface"></a><code class="command">thetaSurface(grid, theta0):</code></p>
+<p><a name="thetaSurfaceA" id="thetaSurfaceA"></a><code class="command">thetaSurfaceA(grid, grid1, theta0):</code></p>
+<p><a name="thetaSurfaceV" id="thetaSurfaceV"></a><code class="command">thetaSurfaceV(gridt, gridu, gridv, theta0):</code></p>
+<p><a name="thetaSurfaceV2" id="thetaSurfaceV2"></a><code class="command">thetaSurfaceV(gridt, griduv, theta0):</code></p>
+<p><a name="thetaSurfaceADV" id="thetaSurfaceADV"></a><code class="command">thetaSurfaceADV(gridt, griduv, other, theta0):</code></p>
 <p><a name="timeStepDifference" id="timeStepDifference"></a><code class="command">timeStepDifference(field, offset):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Set the value of each time step N: D(N)=D(N)-D(N+offset) where offset should be negative</p>
 <p><a name="timeStepSum" id="timeStepSum"></a><code class="command">timeStepSum(field, offset):</code></p>
@@ -192,11 +202,14 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="dvdy" id="dvdy"></a><code class="command">dvdy(V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Partial x derivative of a vector</p>
 <div class="jython">DVDY ( V ) = [ DDY (u), DDY (v) ]</div>
+<p><a name="EllrodIndex" id="EllrodIndex"></a><code class="command">EllrodIndex(u, v, z, top, bottom, unit):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Calculate the wind shear between two discrete layers</p>
+<div class="jython">EI = VWS X (DEF + DIV)</div>
 <p><a name="frnt" id="frnt"></a><code class="command">frnt(S, V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Frontogenesis function from theta and the wind</p>
 <div class="jython">FRNT ( THTA, V ) = 1/2 * MAG ( GRAD (THTA) ) * ( DEF * COS (2 * BETA) - DIV ) Where: BETA = ASIN ( (-DDX (THTA) * COS (PSI) - DDY (THTA) * SIN (PSI))/ MAG ( GRAD (THTA) ) ) PSI = 1/2 ATAN2 ( SHR / STR )</div>
 <p><a name="geo" id="geo"></a><code class="command">geo(z):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">geostrophic wind from height</p>
+<p style="padding:0;margin-left:20;margin-top:0">Geostrophic wind from height</p>
 <div class="jython">GEO ( S ) = [ - DDY (S) * const / CORL, DDX (S) * const / CORL ]</div>
 <p><a name="grad" id="grad"></a><code class="command">grad(S):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Gradient of a scalar</p>
@@ -222,6 +235,9 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="ldf" id="ldf"></a><code class="command">ldf(S, level1, level2):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Layer Average</p>
 <div class="jython">LDF ( S ) = S (level1) - S (level2)</div>
+<p><a name="LPIndex" id="LPIndex"></a><code class="command">LPIndex(u, v, z, t, top, bottom, unit):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Calculate the wind shear difference between discrete layers</p>
+<div class="jython">LP = 7.268DUDZ + 0.718DTDN + 0.318DUDN - 2.52</div>
 <p><a name="mag" id="mag"></a><code class="command">mag():</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Magnitude of a vector</p>
 <p><a name="mixr" id="mixr"></a><code class="command">mixr(temp, rh):</code></p>
@@ -242,7 +258,7 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <div class="jython">QVEC ( S, V ) = [ - ( DOT ( DVDX (V), GRAD (S) ) ), - ( DOT ( DVDY (V), GRAD (S) ) ) ] where S can be any thermal parameter, usually THTA.</div>
 <p><a name="rects" id="rects"></a><code class="command">rects(S, D):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Apply a rectangular aperature smoothing to the grid points.  The weighting  function is the product of the rectangular aperature diffraction function  in the x and y directions.  D is the radius of influence in grid  increments, increasing D increases the smoothing (default D=2) </p>
-<p><a name="rehl" id="rehl"></a><code class="command">rehl(temp, mixr):</code></p>
+<p><a name="relh" id="relh"></a><code class="command">relh(temp, mixr):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Create relative humidity from temperature and mixing ratio (requires pressure domain)</p>
 <p><a name="savg" id="savg"></a><code class="command">savg(S):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Average over whole grid</p>
@@ -293,10 +309,10 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p style="padding:0;margin-left:20;margin-top:0">Make a vector from two components</p>
 <div class="jython">VECR ( S1, S2 ) = [ S1, S2 ]</div>
 <p><a name="vlav" id="vlav"></a><code class="command">vlav(V, level1, level2):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">calculate the vector layer average</p>
+<p style="padding:0;margin-left:20;margin-top:0">Calculate the vector layer average</p>
 <div class="jython">VLDF(V) = [(u(level1) - u(level2))/2, (v(level1) - v(level2))/2]</div>
 <p><a name="vldf" id="vldf"></a><code class="command">vldf(V, level1, level2):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">calculate the vector layer difference</p>
+<p style="padding:0;margin-left:20;margin-top:0">Calculate the vector layer difference</p>
 <div class="jython">VLDF(V) = [u(level1) - u(level2), v(level1) - v(level2)]</div>
 <p><a name="vmul" id="vmul"></a><code class="command">vmul(V1, V2):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Multiply the components of 2 vectors</p>
@@ -312,7 +328,7 @@ This is the doc for the Grid Diagnostics module. These functions are based on th
 <p><a name="vr" id="vr"></a><code class="command">vr(V):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Grid relative v component</p>
 <p><a name="vsub" id="vsub"></a><code class="command">vsub(V1, V2):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">subtract the components of 2 vectors</p>
+<p style="padding:0;margin-left:20;margin-top:0">Subtract the components of 2 vectors</p>
 <div class="jython">VSUB (V1, V2) = [ u1-u2, v1-v2 ]</div>
 <p><a name="wshr" id="wshr"></a><code class="command">wshr(V, Z, top, bottom):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Magnitude of the vertical wind shear in a layer</p>
@@ -357,8 +373,10 @@ This is the doc for the grid ensemble module.  For more information, see <a href
 <p style="padding:0;margin-left:20;margin-top:0">Ensemble univariate probability calculation</p>
 <h2>Module: image</h2>
 <hr>
+<p><a name="combineABIRGB" id="combineABIRGB"></a><code class="command">combineABIRGB(chP64, chP86, chP47):</code></p>
+<p style="padding:0;margin-left:20;margin-top:0">Combines three GOES 16/17 bands (including a simulated green band) to create an RGB image</p>
 <p><a name="combineRGB" id="combineRGB"></a><code class="command">combineRGB(red, green, blue):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">combine 3 images as an RGB image</p>
+<p style="padding:0;margin-left:20;margin-top:0">Combine 3 images as an RGB image</p>
 <p><a name="makeNavigatedImage" id="makeNavigatedImage"></a><code class="command">makeNavigatedImage(d, ulLat, ulLon, lrLat, lrLon):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">This takes a image data object and a lat/lon bounding box and adds a lat/lon domain to the data. Use it in conjunction with a formula:</p>
 <a name="maps" id="maps"></a>
@@ -383,14 +401,14 @@ A set of utilities to apply to a map field. For more information, see <a href="M
 <p style="padding:0;margin-left:20;margin-top:0">Make a 3d map. map - map line data - topo - topography dataset</p>
 <p><a name="makeFieldFromMapBounds" id="makeFieldFromMapBounds"></a><code class="command">makeFieldFromMapBounds(mapSets, length1, length2, fill, unit):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Make a field whose lat/lon area is the bounds of the given mapSet. It has length1 points in the x and length2 in the y. Fill it with the fill value and the given unit</p>
-<p><a name="mapsAbsoluteValue" id="mapsAbsoluteValue"></a><code class="command">mapsAbasoluteValue(originalValues, newValues, indexArray):</code></p>
+<p><a name="mapsAbsoluteValue" id="mapsAbsoluteValue"></a><code class="command">mapsAbsoluteValue(originalValues, newValues, indexArray):</code></p>
 <p><a name="mapsApplyToField" id="mapsApplyToField"></a><code class="command">mapsApplyToField(function, field, mapSets, inside):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Fills the areas in the field are enclosed  by each polygon with the average value within that area. mapSets defines a set of polygons</p>
 <p><a name="mapsApplyToRange" id="mapsApplyToRange"></a><code class="command">mapsApplyToRange(function, range, timeStep, mapSets, inside):</code></p>
 <p><a name="mapsAverage" id="mapsAverage"></a><code class="command">mapsAverage(originalValues, newValues, indexArray):</code></p>
 <p><a name="mapsMax" id="mapsMax"></a><code class="command">mapsMax(originalValues, newValues, indexArray, value):</code></p>
 <p><a name="mapsMin" id="mapsMin"></a><code class="command">mapsMin(originalValues, newValues, indexArray, value):</code></p>
-<p><a name="mapsSetValue" id="mapsSetValue"></a><code class="command">mapsSet(originalValues, newValues, indexArray, value):</code></p>
+<p><a name="mapsSetValue" id="mapsSetValue"></a><code class="command">mapsSetValue(originalValues, newValues, indexArray, value):</code></p>
 <p><a name="subsetFromMap" id="subsetFromMap"></a><code class="command">subsetFromMap(field, mapSets, fillValue, inverse):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">mapSets defines a set of polygons. This procedure fills the areas in the field that are not enclosed by the polygons with the fill value. If inverse is 1 then it fills the areas that are enclosed</p>
 <p><a name="subsetRangeFromMap" id="subsetRangeFromMap"></a><code class="command">subsetRangeFromMap(range, timeStep, mapSets, fillValue, inverse):</code></p>
@@ -406,7 +424,7 @@ A set of utilities for selecting data and creating displays. For use from the Jy
 <p><a name="clear" id="clear"></a><code class="command">clear():</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Clear the shell</p>
 <p><a name="createDisplay" id="createDisplay"></a><code class="command">createDisplay(displayType, data, dataName):</code></p>
-<p style="padding:0;margin-left:20;margin-top:0">create a display of type displayType. Right click in input field to select particular displayType. The data is can be a data object, a datachoice or a list of data or datachoices The dataName is used to name the data, i.e., its the parameter name</p>
+<p style="padding:0;margin-left:20;margin-top:0">Create a display of type displayType. Right click in input field to select particular displayType. The data is can be a data object, a datachoice or a list of data or datachoices The dataName is used to name the data, i.e., its the parameter name</p>
 <p><a name="findDataSource" id="findDataSource"></a><code class="command">findDataSource(name):</code></p>
 <p style="padding:0;margin-left:20;margin-top:0">Find the data source object with the given name. If no name is given then this will return the first (non-formula) data source</p>
 <p><a name="getData" id="getData"></a><code class="command">getData(dataSourceName, dataChoiceName):</code></p>
