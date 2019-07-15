@@ -31,6 +31,7 @@ package ucar.unidata.ui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import ucar.unidata.ui.drawing.Glyph;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
@@ -64,12 +65,10 @@ import java.awt.image.ImageProducer;
 import java.awt.image.PixelGrabber;
 import java.awt.image.RGBImageFilter;
 import java.awt.image.RenderedImage;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -81,13 +80,13 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
-
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
 
 
@@ -999,10 +998,15 @@ public class ImageUtils {
      *
      * @throws Exception  problem writing file
      */
-    public static void writeImageToFile(Image image, String saveFile,
-                                        float quality)
-            throws Exception {
-        writeImageToFile(image, saveFile, null, quality);
+
+    public static void writeImageToFile(Image image, String saveFile, float quality) throws Exception {
+        try {
+            writeImageToFile(image, saveFile, null, quality);
+        } catch (IllegalStateException ise) {
+            // Catch cases on Windows where a directory is not writable
+            JOptionPane.showMessageDialog(null,
+                "The chosen file path is not writable. Please choose a different directory.");
+        }
     }
 
     /**
