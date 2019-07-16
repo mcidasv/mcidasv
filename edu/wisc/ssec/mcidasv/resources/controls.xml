@@ -171,4 +171,30 @@
     properties="windowVisible=true;disabled=true;">
     <property name="viewManagerClassNames" value="ucar.unidata.idv.MapViewManager"/>
   </control>
+
+  <!-- Inquiry 2811: Don't show IDV's Mapes-Collection display types -->
+  <control id="jythoncontrol_verticalprofile" description="Vertical Profile"
+	class="ucar.unidata.idv.control.JythonControl" label="Vertical Profile"
+	displaycategory="Mapes-Collection" categories=""
+	canstandalone="false"
+	properties="displayName=Vertical Profile;windowVisible=true;probeType=vertical;developerMode=false;
+                jythonCodeURL=/ucar/unidata/idv/resources/python/verticalProfile.py;disabled=true;">
+  </control>
+
+  <control id="jythoncontrol_multi-verticalprofile" description="Multi-Variable Vertical Profile"
+	class="ucar.unidata.idv.control.JythonControl" label="Multi-Variable Vertical Profile"
+	displaycategory="Mapes-Collection" categories=""
+	canstandalone="false"
+	properties="displayName=Multi-Variable Vertical Profile;windowVisible=true;probeType=vertical;developerMode=false;
+                jythonCodeURL=/ucar/unidata/idv/resources/python/multiVariableVerticalProfile.py;disabled=true;">
+  </control>
+
+  <control id="jythoncontrol_verticalcrossection" description="Vertical Crossection"
+	class="ucar.unidata.idv.control.JythonControl" label="Vertical Crossection"
+	displaycategory="Mapes-Collection" categories=""
+	canstandalone="false"
+	properties="displayName=Crossection;windowVisible=true;probeType=transect;developerMode=false;
+                jythonCodeURL=/ucar/unidata/idv/resources/python/verticalCrossSection.py;disabled=true;">
+  </control>
+
 </controls>
