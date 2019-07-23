@@ -1965,7 +1965,7 @@ public class StationLocationControl extends StationModelControl {
 
 
         final JComboBox symbolBox = new JComboBox(symbolItems);
-        symbolBox.setSelectedItem(defaultSymbol);
+        if (defaultSymbol != null) symbolBox.setSelectedItem(defaultSymbol);
         symbolBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 TwoFacedObject tfo =
