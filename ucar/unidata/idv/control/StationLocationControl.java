@@ -1952,16 +1952,20 @@ public class StationLocationControl extends StationModelControl {
 
 
         Vector symbolItems = new Vector();
+        TwoFacedObject defaultSymbol = null;
         for (int i = 0; i < StationLocationDisplayable.SYMBOLS.length; i++) {
-            symbolItems.add(
-                new TwoFacedObject(
+            TwoFacedObject listItem = new TwoFacedObject(
                     StationLocationDisplayable.SYMBOL_NAMES[i],
-                    new Integer(StationLocationDisplayable.SYMBOLS[i])));
-
+                    new Integer(StationLocationDisplayable.SYMBOLS[i]));
+            if (StationLocationDisplayable.SYMBOL_NAMES[i].equals("Circle")) {
+                defaultSymbol = listItem;
+            }
+            symbolItems.add(listItem);
         }
 
 
         final JComboBox symbolBox = new JComboBox(symbolItems);
+        symbolBox.setSelectedItem(defaultSymbol);
         symbolBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 TwoFacedObject tfo =

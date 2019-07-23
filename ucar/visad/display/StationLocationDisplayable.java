@@ -158,8 +158,8 @@ public class StationLocationDisplayable extends StationModelDisplayable {
 
     /** Array of names of station markers */
     public static final String[] SYMBOL_NAMES = {
-        "Square", "Filled square", "Circle", "Filled circle", "Triangle",
-        "Filled Triangle", "Diamond", "Filled diamond", "Star", "Filled star",
+        "Square", "Filled square", "Circle", "Filled Circle", "Triangle",
+        "Filled Triangle", "Diamond", "Filled Diamond", "Star", "Filled Star",
         "Plus"
     };
 
