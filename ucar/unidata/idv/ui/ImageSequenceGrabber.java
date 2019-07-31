@@ -231,6 +231,14 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         "the same color value looking different between different frames" +
         "<br/>in the resulting animated GIF.</html>";
 
+    /** {@literal "Global"} Movie frames per second preference ID. */
+    public static final String PREF_MOVIE_FRAMES_PER_SECOND =
+        "idv.capture.gif.framesPerSecond";
+
+    /** {@literal "Global"} Movie end pause preference ID. */
+    public static final String PREF_MOVIE_END_PAUSE =
+        "idv.capture.gif.endPause";
+
     /** How much we pause between animation captures */
     private static int SLEEP_TIME = 500;
 
@@ -750,8 +758,12 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         IOUtil.makeDir(directory);
         mainDialog     = GuiUtils.createDialog("Movie Capture", false);
         frameLbl       = GuiUtils.cLabel("No frames");
-        displayRateFld = new JTextField("2", 3);
-        endPauseFld    = new JTextField("2", 3);
+        // TJJ Jul 2019 - Initialize movie frame rate and loop pause from user prefs, if available
+        IdvObjectStore store = idv.getStore();
+        double initRate = store.get(PREF_MOVIE_FRAMES_PER_SECOND, 2.0);
+        double initPause = store.get(PREF_MOVIE_END_PAUSE, 2.0);
+        displayRateFld = new JTextField("" + initRate, 3);
+        endPauseFld    = new JTextField("" + initPause, 3);
         endPauseFld.setToolTipText(
             "Number of seconds to pause on last frame of animated GIF");
         captureRateFld = new JTextField("2", 3);
@@ -1538,7 +1550,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
 
             accessoryComps.add(
                 GuiUtils.leftRight(
-                    GuiUtils.rLabel(" Frames per second: "), displayRateFld));
+                    GuiUtils.rLabel(" Frames Per Second: "), displayRateFld));
             accessoryComps.add(
                 GuiUtils.leftRight(
                     GuiUtils.rLabel(" End Frame Pause: "), endPauseFld));
@@ -2155,9 +2167,39 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             size = new Dimension(600, 400);
         }
 
-        double displayRate =
-            (new Double(displayRateFld.getText())).doubleValue();
-        double endPause = (new Double(endPauseFld.getText())).doubleValue();
+        double displayRate = -1.0d;
+        double endPause = -1.0d;
+
+        // Validate the display rate and end pause fields
+        try {
+            displayRate = (new Double(displayRateFld.getText())).doubleValue();
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(mainDialog, "Invalid Display Rate: " + displayRateFld.getText());
+            return;
+        }
+        try {
+            endPause = (new Double(endPauseFld.getText())).doubleValue();
+        } catch (NumberFormatException nfe) {
+            JOptionPane.showMessageDialog(mainDialog, "Invalid End Pause: " + endPauseFld.getText());
+            return;
+        }
+
+        // Also make sure the user entered positive values
+        if (displayRate <= 0.0d) {
+            JOptionPane.showMessageDialog(mainDialog, "Invalid Display Rate: " + displayRateFld.getText());
+            return;
+        }
+
+        // End pause can be zero
+        if (endPause < 0.0d) {
+            JOptionPane.showMessageDialog(mainDialog, "Invalid End Pause: " + endPauseFld.getText());
+            return;
+        }
+
+        IdvObjectStore store = idv.getStore();
+        store.put(PREF_MOVIE_FRAMES_PER_SECOND, displayRate);
+        store.put(PREF_MOVIE_END_PAUSE, endPause);
+        store.save();
 
         if (scriptingNode != null) {
             displayRate = imageGenerator.applyMacros(scriptingNode,
