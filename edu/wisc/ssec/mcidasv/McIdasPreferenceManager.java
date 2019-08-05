@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.GroupLayout.Alignment.TRAILING;
@@ -64,6 +65,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -2128,6 +2130,21 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             logger.error("Problem getting chooser data", e);
         }
         return choosers;
+    }
+    
+    /**
+     * Overridden by McIDAS-V so that we can obey the {@code disabled} property
+     * in {@code controls.xml}.
+     *
+     * @param cd Descriptor to check. Cannot be {@code null}.
+     *
+     * @return {@code true} if {@code cd} should be shown.
+     */
+    @Override public boolean shouldShowControl(ControlDescriptor cd) {
+        Hashtable<String, String> props = cast(cd.getProperties());
+        String v = props.getOrDefault("disabled", "false");
+        return Objects.equals(v, "true") ? false
+                                         : super.shouldShowControl(cd);
     }
     
     /**
