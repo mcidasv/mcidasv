@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +69,33 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
     
     private static final String BASE_GROUP = "PRODUCT";
 
+    private static final String TROPOMI_FIELD_SEPARATOR = "_";
+
+    // This regular expression matches TROPOMI L2 products
+    private static final String TROPOMI_L2_REGEX =
+            // Mission Name (ex: S5P)
+            "\\w\\w\\w" + TROPOMI_FIELD_SEPARATOR +
+            // Type of data: Real-Time, Offline, or Reprocessed
+            "(NRTI|OFFL|RPRO)" + TROPOMI_FIELD_SEPARATOR +
+            // Product Identifier
+            "L2_" + TROPOMI_FIELD_SEPARATOR +
+            // Product (can be up to six characters, separator-padded if less, e.g. CH4___)
+            "\\w\\w\\w\\w\\w\\w" + TROPOMI_FIELD_SEPARATOR +
+            // Start Date and Time (ex: YYYYmmddTHHMMSS)
+            "20[0-3]\\d[0-1]\\d[0-3]\\dT[0-2]\\d[0-5]\\d[0-6]\\d" + TROPOMI_FIELD_SEPARATOR +
+            // End Date and Time (ex: YYYYmmddTHHMMSS)
+            "20[0-3]\\d[0-1]\\d[0-3]\\dT[0-2]\\d[0-5]\\d[0-6]\\d" + TROPOMI_FIELD_SEPARATOR +
+            // Orbit Number
+            "\\d\\d\\d\\d\\d" + TROPOMI_FIELD_SEPARATOR +
+            // Collection Number
+            "\\d\\d" + TROPOMI_FIELD_SEPARATOR +
+            // Processor Version Number : MMmmpp (Major - Minor - Patch)
+            "\\d\\d\\d\\d\\d\\d" + TROPOMI_FIELD_SEPARATOR +
+            // Creation Date and Time (ex: YYYYmmddTHHMMSS)
+            "20[0-3]\\d[0-1]\\d[0-3]\\dT[0-2]\\d[0-5]\\d[0-6]\\d" +
+            // NetCDF suffix
+            ".nc";
+
     private static HashMap<String, String> groupMap = new HashMap<String, String>();
 
     // Dimensions of a product we can work with, init this early
@@ -78,10 +106,11 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
     @Override public boolean isValidFile(RandomAccessFile raf)
         throws IOException
     {
-        // this isn't exactly a suitable test - just proof-of-concept for now
+        // Uses the regex defined near top
         logger.trace("TropOMI IOSP isValidFile()...");
         String location = raf.getLocation();
-        return location.contains("S5P_") && location.endsWith(".nc");
+        String filename = location.substring(location.lastIndexOf(File.separator) + 1);
+        return filename.matches(TROPOMI_L2_REGEX);
     }
 
     @Override public void open(RandomAccessFile raf, NetcdfFile ncfile,
