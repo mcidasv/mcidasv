@@ -29,14 +29,19 @@
 package edu.wisc.ssec.mcidasv;
 
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import java.awt.event.ActionEvent;
@@ -48,6 +53,7 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import ucar.unidata.idv.ControlDescriptor;
 import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.util.FileManager;
@@ -194,6 +200,37 @@ public class StateManager extends ucar.unidata.idv.StateManager
                 } catch (Exception exc) {
                     logException("Writing default rbi", exc);
                 }
+            }
+        }
+    }
+    
+    @Override protected void initState(boolean interactiveMode) {
+        super.initState(interactiveMode);
+        
+        // At this point in the startup process, McV has read and initialized
+        // the resources specified in mcidasv.rbi. filtering out the disabled
+        // controls here allows us to do the work once and have it apply to
+        // the rest of the session.
+        removeDisabledControlDescriptors();
+    }
+    
+    /**
+     * Removes disabled {@link ControlDescriptor ControlDescriptors} from
+     * {@link IntegratedDataViewer IntegratedDataViewer's}
+     * {@code controlDescriptors} and {@code controlDescriptorMap} fields.
+     */
+    private void removeDisabledControlDescriptors() {
+        McIDASV mcv = (McIDASV)getIdv();
+        Map<String, ControlDescriptor> cdMap = mcv.getControlDescriptorMap();
+        List<ControlDescriptor> cds = cast(mcv.getAllControlDescriptors());
+        // copy is soley for iterating over (avoid concurrent modification probs)
+        List<ControlDescriptor> copy = new ArrayList<>(cds);
+        for (ControlDescriptor c : copy) {
+            Hashtable<String, String> props = cast(c.getProperties());
+            String v = props.getOrDefault("disabled", "false");
+            if (Objects.equals(v, "true")) {
+                cdMap.remove(c.getControlId());
+                cds.remove(c);
             }
         }
     }

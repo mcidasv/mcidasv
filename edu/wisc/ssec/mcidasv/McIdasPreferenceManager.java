@@ -794,11 +794,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             new Hashtable<String, CheckboxCategoryPanel>();
             
         for (ControlDescriptor cd : controlDescriptors) {
-            boolean showControl = shouldShowControl(cd, true);
-            if (!showControl) {
-                continue;
-            }
-            
             final String displayCategory = cd.getDisplayCategory();
             
             CheckboxCategoryPanel catPanel =
@@ -812,7 +807,8 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 compList.add(catPanel);
             }
     
-            JCheckBox cbx = new JCheckBox(cd.getLabel(), showControl);
+            JCheckBox cbx = new JCheckBox(cd.getLabel(),
+                                          shouldShowControl(cd, true));
             cbx.setToolTipText(cd.getDescription());
             cbxToCdMap.put(cbx, cd);
             catPanel.addItem(cbx);
@@ -2133,26 +2129,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             logger.error("Problem getting chooser data", e);
         }
         return choosers;
-    }
-    
-    /**
-     * Overridden by McIDAS-V so that we can obey the {@code disabled}
-     * property in {@code controls.xml}.
-     *
-     * @param cd Descriptor to check. Cannot be {@code null}.
-     * @param ignoreAllFlag If {@code true}, the {@literal "show all"} flag is
-     *                      ignored.
-     *
-     * @return {@code true} if {@code cd} should be shown.
-     */
-    @Override public boolean shouldShowControl(ControlDescriptor cd,
-                                               boolean ignoreAllFlag)
-    {
-        Map<String, String> props = cast(cd.getProperties());
-        String v = props.getOrDefault("disabled", "false");
-        return Objects.equals(v, "true")
-               ? false
-               : super.shouldShowControl(cd, ignoreAllFlag);
     }
     
     /**

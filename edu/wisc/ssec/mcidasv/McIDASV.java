@@ -617,13 +617,13 @@ public class McIDASV extends IntegratedDataViewer {
     /**
      * Add a new {@link ControlDescriptor} into the {@code controlDescriptor}
      * list and {@code controlDescriptorMap}.
-     * 
+     *
      * <p>This method differs from the IDV's in that McIDAS-V <b>overwrites</b>
      * existing {@code ControlDescriptor ControlDescriptors} if
      * {@link ControlDescriptor#getControlId()} matches.
-     * 
+     *
      * @param cd The ControlDescriptor to add.
-     * 
+     *
      * @throws NullPointerException if {@code cd} is {@code null}.
      */
     @Override protected void addControlDescriptor(ControlDescriptor cd) {
@@ -642,6 +642,20 @@ public class McIDASV extends IntegratedDataViewer {
                 }
             }
         }
+    }
+    
+    /**
+     * Get the {@code Hashtable} that maps {@link ControlDescriptor} IDs to the
+     * {@code ControlDescriptor} instance.
+     * 
+     * <p>Mostly used as a convenient way to check if a given 
+     * {@code ControlDescriptor} has already been processed.</p>
+     * 
+     * @return {@code Hashtable} that maps {@code String} IDs to the 
+     *         corresponding {@code ControlDescriptor}. 
+     */
+    public Hashtable<String, ControlDescriptor> getControlDescriptorMap() {
+        return controlDescriptorMap;
     }
     
     // pop up an incredibly rudimentary window that controls layer viz animation.
@@ -1705,12 +1719,6 @@ public class McIDASV extends IntegratedDataViewer {
                 // so it will never be "default" in Field Selector
                 l.remove(i);
                 l.add(cd);
-            }
-            
-            Hashtable<String, String> props = cast(cd.getProperties());
-            String v = props.getOrDefault("disabled", "false");
-            if (Objects.equals(v, "true")) {
-                l.remove(i);
             }
         }
         return l;
