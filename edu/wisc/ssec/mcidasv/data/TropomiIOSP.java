@@ -28,13 +28,14 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +97,10 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
             // NetCDF suffix
             ".nc";
 
+    /** Compiled representation of {@link #TROPOMI_L2_REGEX}. */
+    private static final Pattern TROPOMI_MATCHER =
+        Pattern.compile(TROPOMI_L2_REGEX);
+    
     private static HashMap<String, String> groupMap = new HashMap<String, String>();
 
     // Dimensions of a product we can work with, init this early
@@ -108,9 +113,8 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
     {
         // Uses the regex defined near top
         logger.trace("TropOMI IOSP isValidFile()...");
-        String location = raf.getLocation();
-        String filename = location.substring(location.lastIndexOf(File.separator) + 1);
-        return filename.matches(TROPOMI_L2_REGEX);
+        String filename = Paths.get(raf.getLocation()).getFileName().toString();
+        return TROPOMI_MATCHER.matcher(filename).matches();
     }
 
     @Override public void open(RandomAccessFile raf, NetcdfFile ncfile,
