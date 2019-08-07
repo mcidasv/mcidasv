@@ -1058,7 +1058,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         if (getStore().getKeys().contains(ViewManager.PREF_LOGO_CHANGED)) {
             logoViz = mcv.getStateManager().getPreferenceOrProperty(
                 ViewManager.PREF_LOGO_VISIBILITY, true);
-//            logoPath = mcv.getStateManager().getPreferenceOrProperty(ViewManager.PREF_LOGO, Constants.ICON_MCIDASV_DEFAULT);
+            if (logoPath.isEmpty()) {
+                logoPath = Constants.ICON_MCIDASV_DEFAULT;
+            }
         }
         // END MCV INQUIRY 2718 changes
         
