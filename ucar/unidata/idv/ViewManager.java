@@ -7875,7 +7875,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
      * @param on  true to show
      */
     public void setLogoVisibility(boolean on) {
-        logger.trace("changing logo viz: {}", on);
         setBp(PREF_LOGO_VISIBILITY, on);
     }
 
@@ -7887,7 +7886,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public boolean getLogoVisibility() {
         boolean pref = getStore().get(PREF_LOGO_VISIBILITY, true);
         boolean visible = getBp(PREF_LOGO_VISIBILITY, true);
-        logger.info("value from getBp: {}, value from prefs: {}", visible, pref);
         if (getStore().getKeys().contains(PREF_LOGO_CHANGED)) {
             return visible;
         } else if (visible != pref) {
