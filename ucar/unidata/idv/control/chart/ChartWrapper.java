@@ -438,7 +438,10 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
     public List getTimeRanges() {
         return null;
     }
-
+    
+    public List getFieldProperties() {
+        return fieldProperties;
+    }
 
     /**
      * Add the default menu items
@@ -1183,8 +1186,7 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
         if (jythonFld != null) {
             jython = jythonFld.getText();
         }
-
-
+        
         return true;
     }
 

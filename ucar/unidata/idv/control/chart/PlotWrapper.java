@@ -331,11 +331,15 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
                 domainLineState.getStroke());
             ((XYPlot) plot).setRangeGridlineStroke(
                 rangeLineState.getStroke());
+            
+            List fieldProps = getFieldProperties();
+            if (fieldProps.isEmpty()) {
+                ((XYPlot)plot).getDomainAxis().setLabel("");
+            }
         }
         return true;
     }
-
-
+    
     /**
      * Get the menu items
      *
