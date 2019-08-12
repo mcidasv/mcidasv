@@ -317,7 +317,7 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
         dataAreaColor   = dataAreaSwatch.getBackground();
         Plot plot = chart.getPlot();
         plot.setBackgroundPaint(dataAreaColor);
-        //      getContents().setBackground(backgroundColor);
+        chart.setBackgroundPaint(backgroundColor);
 
         if (plot instanceof XYPlot) {
             ((XYPlot) plot).setDomainGridlinesVisible(
