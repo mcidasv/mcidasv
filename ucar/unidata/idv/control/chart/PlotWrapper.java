@@ -134,7 +134,7 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
     protected static final boolean EVENT_DONTPASSON = true;
 
     /** The bg color */
-    private Color backgroundColor = Color.lightGray;
+    private Color backgroundColor = Color.white;
 
     /** The color to use for the data area */
     private Color dataAreaColor = Color.white;
