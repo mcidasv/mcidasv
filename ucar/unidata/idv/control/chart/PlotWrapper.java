@@ -287,9 +287,21 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
             comps.add(rangeLineState.getPropertyContents(store, true));
         }
     }
-
-
-
+    
+    /**
+     * Handles showing the chart's title and should be called at the end of 
+     * {@link #applyProperties()}.
+     * 
+     * @param value Whether or not the label is visible.
+     */
+    private void handleLabelVisibility(boolean value) {
+        String name = getName();
+        if (!value) {
+            name = "";
+        }
+        chart.setTitle(name);
+    }
+    
     /**
      * Apply properties
      *
@@ -300,6 +312,7 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
         if ( !super.applyProperties()) {
             return false;
         }
+        
         if ( !domainLineState.applyProperties()) {
             return false;
         }
@@ -336,6 +349,8 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
                 ((XYPlot)plot).getDomainAxis().setLabel("");
             }
         }
+        
+        handleLabelVisibility(getLabelShown());
         return true;
     }
     
