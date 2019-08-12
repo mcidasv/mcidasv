@@ -1026,7 +1026,7 @@ public abstract class ChartWrapper extends DisplayComponent implements KeyListen
             this.wrapper   = wrapper;
             nameFld        = new JTextField(wrapper.getDescription(), 15);
             displayComp    =
-                this.wrapper.getLineState().getPropertyContents(store);
+                this.wrapper.getLineState().getPropertyContents(store, true);
             this.removeCbx = new JCheckBox(" ", false);
             this.sideCbx = GuiUtils.makeComboBox(DataChoiceWrapper.SIDES,
                     DataChoiceWrapper.SIDELABELS, wrapper.getSide());

@@ -282,10 +282,9 @@ public abstract class PlotWrapper extends ChartWrapper implements KeyListener {
                                            dataAreaSwatch);
             comps.add(GuiUtils.left(GuiUtils.hbox(colorComps, 4)));
             comps.add(GuiUtils.rLabel("Domain Lines: "));
-            comps.add(domainLineState.getPropertyContents(store));
+            comps.add(domainLineState.getPropertyContents(store, true));
             comps.add(GuiUtils.rLabel("Range Lines: "));
-            comps.add(rangeLineState.getPropertyContents(store));
-
+            comps.add(rangeLineState.getPropertyContents(store, true));
         }
     }
 

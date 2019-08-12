@@ -29,6 +29,8 @@
 package ucar.unidata.idv.control.chart;
 
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
+
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
@@ -403,7 +405,11 @@ public class LineState {
         return getPropertyContents(store, false, null, null);
     }
 
-
+    protected JComponent getPropertyContents(XmlObjectStore store,
+                                             boolean disableLabelFields) 
+    {
+        return getPropertyContents(store, false, disableLabelFields, null, null);
+    }
 
 
     /**
@@ -508,42 +514,64 @@ public class LineState {
         this.times  = times;
         this.values = values;
     }
-
-
+    
     /**
-     * Create the properties contents
+     * Create the properties contents without label text fields.
      *
-     * @param full show fill dialog
+     * @param store Session persistence.
+     * @param full Show full dialog
      * @param chartNames chart names
      * @param sampleRanges ranges
      * @return Contents for properties dialog
      */
-    protected JComponent getPropertyContents(XmlObjectStore store, boolean full, List chartNames,
-                                             List sampleRanges) {
+    protected JComponent getPropertyContents(XmlObjectStore store,
+                                             boolean full,
+                                             List chartNames,
+                                             List sampleRanges)
+    {
+        return getPropertyContents(store, full, false, chartNames, sampleRanges);
+    }
 
+    /**
+     * Create the properties contents
+     *
+     * @param store Session persistence.
+     * @param full Show full dialog
+     * @param disableLabelFields Whether or not the label text fields are shown
+     * @param chartNames chart names
+     * @param sampleRanges ranges
+     * @return Contents for properties dialog
+     */
+    protected JComponent getPropertyContents(XmlObjectStore store,
+                                             boolean full,
+                                             boolean disableLabelFields,
+                                             List chartNames,
+                                             List sampleRanges) {
         List comps = new ArrayList();
-        visibleCbx     = new JCheckBox((full
-                                        ? "Full Plot"
-                                        : "Visible"), visible);
+        visibleCbx = new JCheckBox((full
+            ? "Full Plot"
+            : "Visible"), visible);
         axisVisibleCbx = new JCheckBox("Axis", visible);
         if (full) {
             comps.add(GuiUtils.rLabel("Visiblity:"));
             comps.add(GuiUtils.left(GuiUtils.hbox(visibleCbx, axisVisibleCbx,
-                    5)));
-        } else {}
-
-        String nameToShow = name;
-        if ((nameMacro != null) && (nameMacro.length() > 0)) {
-            nameToShow = nameMacro;
+                5)));
+        } else {
         }
-
-        nameField = new JTextField(nameToShow, 30);
-        nameField.setToolTipText("Name of chart entry. Use \""
-                                 + TimeSeriesChart.MACRO_PARAMETER
-                                 + "\" for parameter name");
-        comps.add(GuiUtils.rLabel("Legend Label:"));
-        comps.add(GuiUtils.left(nameField));
-
+    
+        if (!disableLabelFields) {
+            String nameToShow = name;
+            if ((nameMacro != null) && (nameMacro.length() > 0)) {
+                nameToShow = nameMacro;
+            }
+        
+            nameField = new JTextField(nameToShow, 30);
+            nameField.setToolTipText("Name of chart entry. Use \""
+                + TimeSeriesChart.MACRO_PARAMETER
+                + "\" for parameter name");
+            comps.add(GuiUtils.rLabel("Legend Label:"));
+            comps.add(GuiUtils.left(nameField));
+        }
         if (chartNames != null) {
             chartNameBox = new JComboBox(new Vector(chartNames));
             if (chartName != null) {
@@ -553,66 +581,61 @@ public class LineState {
             comps.add(GuiUtils.rLabel("Chart Name:"));
             comps.add(GuiUtils.left(chartNameBox));
         }
-
+    
         this.sideCbx = GuiUtils.makeComboBox(SIDES, SIDELABELS, getSide());
         if (full) {
             comps.add(GuiUtils.rLabel("X Axis Label Location:"));
             comps.add(GuiUtils.left(sideCbx));
         }
-
+    
         if (full) {
             popupRangeBtn = GuiUtils.makeButton("...", this,
-                    "showRangePopup", sampleRanges);
-
+                "showRangePopup", sampleRanges);
+        
             minRangeFld = new JTextField(((range != null)
-                                          ? range.getMin() + ""
-                                          : ""), 5);
+                ? range.getMin() + ""
+                : ""), 5);
             maxRangeFld = new JTextField(((range != null)
-                                          ? range.getMax() + ""
-                                          : ""), 5);
+                ? range.getMax() + ""
+                : ""), 5);
             List rangeComps = Misc.newList(new JLabel("Min:"), minRangeFld,
-                                           new JLabel("Max:"), maxRangeFld);
+                new JLabel("Max:"), maxRangeFld);
             if ((sampleRanges != null) && (sampleRanges.size() > 0)) {
                 rangeComps.add(popupRangeBtn);
             }
-
-
+        
+        
             rangeComps.add(includesZeroCbx = new JCheckBox("Includes Zero",
-                    rangeIncludesZero));
-
+                rangeIncludesZero));
+        
             comps.add(GuiUtils.rLabel("Range:"));
             comps.add(GuiUtils.left(GuiUtils.hbox(rangeComps, 5)));
-
-
+        
+        
             linearRangeBtn = new JRadioButton("Linear", !useLogarithmicRange);
             logRangeBtn = new JRadioButton("Logarithmic",
-                                           useLogarithmicRange);
+                useLogarithmicRange);
             GuiUtils.buttonGroup(linearRangeBtn, logRangeBtn);
             //            comps.add(GuiUtils.rLabel("Range Type:"));
             //            comps.add(GuiUtils.left(GuiUtils.hbox(linearRangeBtn, logRangeBtn)));
-
-
-
-
-
+        
+        
         }
-
-
-
-
+    
+    
         typeCbx = GuiUtils.makeComboBox(LINETYPE_IDS, LINETYPE_LABELS,
-                                        lineType);
+            lineType);
         shapeBox = GuiUtils.makeComboBox(SHAPES, SHAPE_NAMES, shape);
-
+    
         if (full) {
             comps.add(GuiUtils.rLabel("Type:"));
             comps.add(GuiUtils.left(GuiUtils.hbox(typeCbx,
-                    new JLabel("  Shape:"), shapeBox, 5)));
+                new JLabel("  Shape:"), shapeBox, 5)));
         }
-
-
+    
+    
         strokeCbx = GuiUtils.makeComboBox(STROKE_IDS, STROKE_LABELS,
-                                          strokeType);
+            strokeType);
         Font f = Font.decode("monospaced-BOLD");
         if (f != null) {
             strokeCbx.setFont(f);
@@ -620,10 +643,12 @@ public class LineState {
         widthFld = new JTextField("" + width, 3);
         JComponent[] bg = GuiUtils.makeColorSwatchWidget(store, color, "");
         colorSwatch = (ColorSwatchComponent) bg[0];
-
-        comps.add(GuiUtils.rLabel("Line:"));
+    
+        if (!disableLabelFields) {
+            comps.add(GuiUtils.rLabel("Line:"));
+        }
         List lineComps = new ArrayList();
-        if ( !full) {
+        if (!full) {
             lineComps.add(visibleCbx);
         }
         lineComps.add(new JLabel("Stroke:"));
@@ -636,7 +661,12 @@ public class LineState {
 
         lineComps.add(new JLabel("Color:"));
         lineComps.add(colorSwatch);
-        comps.add(GuiUtils.left(GuiUtils.hbox(lineComps, 5)));
+    
+        if (!disableLabelFields) {
+            comps.add(GuiUtils.left(GuiUtils.hbox(lineComps, 5)));
+        } else {
+            comps.add(GuiUtils.left(GuiUtils.hbox(lineComps, 5)));
+        }
 
 
         if (full) {
@@ -655,7 +685,11 @@ public class LineState {
 
 
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
-        return GuiUtils.doLayout(comps, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
+        if (!disableLabelFields) {
+            return GuiUtils.doLayout(comps, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
+        } else {
+            return GuiUtils.left(GuiUtils.doLayout(comps, 1, GuiUtils.WT_NY, GuiUtils.WT_N));
+        }
     }
 
 
@@ -716,7 +750,7 @@ public class LineState {
 
         if (nameMacro != null) {
             nameMacro = nameField.getText().trim();
-        } else {
+        } else if (nameField != null) {
             name = nameField.getText().trim();
         }
 
