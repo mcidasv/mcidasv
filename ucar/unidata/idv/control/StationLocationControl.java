@@ -260,8 +260,6 @@ public class StationLocationControl extends StationModelControl {
      * Default value is {@link FontSelector#DEFAULT_FONT}. 
      */
     private Font font = FontSelector.DEFAULT_FONT;
-
-    private static final int DEFAULT_FONT_SIZE = 8;
     
     /**
      * Default cstr; sets attribute flags
@@ -309,8 +307,11 @@ public class StationLocationControl extends StationModelControl {
             throws VisADException, RemoteException {
 
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
+
+        // TJJ Aug 2019 - check user prefs for initial default font, set if available
+        font = getStore().get(MapViewManager.PREF_DISPLAYLISTFONT, font);
         fontSelector.setFont(font);
-        fontSelector.setFontSize(DEFAULT_FONT_SIZE);
+        fontSelector.setFontSize(font.getSize());
 
         lastDeclutteredStationList = null;
         if ((stationTableName != null) && (stationTableNames.size() == 0)) {
