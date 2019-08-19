@@ -43,7 +43,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,29 +75,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.miginfocom.swing.MigLayout;
-
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.IconPanel;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Prefer;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 import edu.wisc.ssec.mcidasv.util.WebBrowser;
 import edu.wisc.ssec.mcidasv.Constants;
-
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.ncml.NcMLReader;
 import ucar.nc2.dt.grid.GridDataset;
-
 import ucar.unidata.util.FileManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LayoutUtil;
-
 import ucar.unidata.data.DataSourceDescriptor;
 import ucar.unidata.data.grid.GeoGridDataSource;
 import ucar.unidata.idv.IntegratedDataViewer;
-
 import visad.ConstantMap;
 import visad.Display;
 import visad.FlatField;
@@ -607,6 +602,18 @@ public class BadNetCDFWidget implements Constants {
             
             JLabel headerLabel =
                 new JLabel("McIDAS-V is unable to read your file.");
+
+            // TJJ Aug 2019 - TROPOMI L1B files sneak through to here, kinda hacky but
+            // might as well mention as of this date we handle L2 but not L1B
+
+            String filename = Paths.get(ncFile.getLocation()).getFileName().toString();
+            if (TropomiIOSP.TROPOMI_MATCHER.matcher(filename).matches()) {
+                if (filename.contains("_L1B_") || filename.contains("_L2__NP")) {
+                    headerLabel.setText("<html>" + headerLabel.getText() + "<br>" +
+                       "Only TROPOMI Level 2 Products are supported at this time.</html>");
+                }
+            }
+
             headerLabel.setFont(UIManager.getFont("OptionPane.font"));
             headerLabel.setBorder(new EmptyBorder(0, 0, 4, 0));
             

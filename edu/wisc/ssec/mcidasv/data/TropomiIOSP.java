@@ -79,7 +79,7 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
             // Type of data: Real-Time, Offline, or Reprocessed
             "(NRTI|OFFL|RPRO)" + TROPOMI_FIELD_SEPARATOR +
             // Product Identifier
-            "L2_" + TROPOMI_FIELD_SEPARATOR +
+            "(L2_|L1B)" + TROPOMI_FIELD_SEPARATOR +
             // Product (can be up to six characters, separator-padded if less, e.g. CH4___)
             "\\w\\w\\w\\w\\w\\w" + TROPOMI_FIELD_SEPARATOR +
             // Start Date and Time (ex: YYYYmmddTHHMMSS)
@@ -98,7 +98,7 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
             ".nc";
 
     /** Compiled representation of {@link #TROPOMI_L2_REGEX}. */
-    private static final Pattern TROPOMI_MATCHER =
+    public static final Pattern TROPOMI_MATCHER =
         Pattern.compile(TROPOMI_L2_REGEX);
     
     private static HashMap<String, String> groupMap = new HashMap<String, String>();
@@ -107,13 +107,14 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
     private static int[] dimLen = null;
     
     private NetcdfFile hdfFile;
+    private static String filename;
 
     @Override public boolean isValidFile(RandomAccessFile raf)
         throws IOException
     {
         // Uses the regex defined near top
         logger.trace("TropOMI IOSP isValidFile()...");
-        String filename = Paths.get(raf.getLocation()).getFileName().toString();
+        filename = Paths.get(raf.getLocation()).getFileName().toString();
         return TROPOMI_MATCHER.matcher(filename).matches();
     }
 
@@ -121,6 +122,12 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
                      CancelTask cancelTask) throws IOException
     {
         logger.trace("TropOMI IOSP open()...");
+
+        // TJJ - kick out anything not supported (most) L2 right now
+        if (filename.contains("_L1B_") || filename.contains("_L2__NP")) {
+            return;
+        }
+
         try {
             
             hdfFile = NetcdfFile.open(
