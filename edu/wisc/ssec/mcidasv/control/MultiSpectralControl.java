@@ -86,10 +86,8 @@ import ucar.unidata.idv.control.FlaggedDisplayable;
 import ucar.unidata.idv.control.McVHistogramWrapper;
 import ucar.visad.display.XYDisplay;
 
-import visad.ConstantMap;
 import visad.DataReference;
 import visad.DataReferenceImpl;
-import visad.Display;
 import visad.DisplayRealType;
 import visad.FlatField;
 import visad.RealTuple;
@@ -114,7 +112,6 @@ import ucar.visad.display.DisplayableData;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
-import edu.wisc.ssec.mcidasv.data.hydra.HydraRGBDisplayable;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralData;
 import edu.wisc.ssec.mcidasv.data.hydra.MultiSpectralDataSource;
 import edu.wisc.ssec.mcidasv.data.hydra.SpectrumAdapter;
@@ -125,7 +122,8 @@ import edu.wisc.ssec.mcidasv.probes.ReadoutProbe;
 
 public class MultiSpectralControl extends HydraControl {
 
-    private static final Logger logger = LoggerFactory.getLogger(MultiSpectralControl.class);
+    private static final Logger logger =
+        LoggerFactory.getLogger(MultiSpectralControl.class);
 
     private String PARAM = "BrightnessTemp";
 
@@ -133,6 +131,7 @@ public class MultiSpectralControl extends HydraControl {
     // Note hacky leading spaces - needed because GUI builder does not
     // accept a horizontal strut component.
     public static String WAVENUMLABEL = "   Wavelength: ";
+    
     private JLabel wavelengthLabel = new JLabel();
 
     private static final int DEFAULT_FLAGS = 
@@ -639,7 +638,7 @@ public class MultiSpectralControl extends HydraControl {
         }
         return paramRange;
     }
-
+    
     /**
      * Get the initial {@link ColorTable} associated with this control's
      * parameter name.
@@ -733,15 +732,9 @@ public class MultiSpectralControl extends HydraControl {
         if (!display.setWaveNumber(newChan)) {
             return false;
         }
-
+        
         DisplayableData imageDisplay = display.getImageDisplay();
-
-        // mark the color map as needing an auto scale, these calls
-        // are needed because a setRange could have been called which 
-        // locks out auto scaling.
-        ((HydraRGBDisplayable)imageDisplay).getColorMap().resetAutoScale();
-        displayMaster.reScale();
-
+        
         try {
             FlatField image = display.getImageData();
             displayMaster.setDisplayInactive(); //try to consolidate display transforms
@@ -749,6 +742,13 @@ public class MultiSpectralControl extends HydraControl {
             pokeSpectra();
             displayMaster.setDisplayActive();
             updateHistogramTab();
+            
+            // Inquiry 2784 Request 3
+            // NOTE: updateHistogramTab updates the rangeMin/rangeMax fields,
+            // so it *must* be called before the following setRange call.
+            // this ensures the color table/map updates as expected.
+            setRange(new Range(rangeMin, rangeMax));
+            // end Inquiry 2784 Request 3 stuff
         } catch (Exception e) {
             LogUtil.logException("MultiSpectralControl.updateImage", e);
             return false;
