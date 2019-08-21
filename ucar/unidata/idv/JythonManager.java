@@ -93,6 +93,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.JButton;
@@ -198,6 +199,9 @@ public class JythonManager extends IdvManager implements ActionListener,
     protected static final Logger jythonLogger =
         LoggerFactory.getLogger("jython");
     
+    /** Used to provide initial capacities for data structures. */
+    private static final int ESTIMATED_INTERPRETERS = 42;
+    
     /** output stream for interp */
     private OutputStream outputStream;
     
@@ -242,13 +246,18 @@ public class JythonManager extends IdvManager implements ActionListener,
      * the user changes the jython library we can reevaluate the code
      * in each interpreter.
      */
-    private List<PythonInterpreter> interpreters = new ArrayList<>();
+    private List<PythonInterpreter> interpreters =
+        new ArrayList<>(ESTIMATED_INTERPRETERS);
     
     /** The edit menu item */
     private JMenuItem editFileMenuItem;
     
     /** local python dir */
     private String pythonDir;
+    
+    /** Keep track of the nanoseconds spent initializing interpreters. */
+    private final Map<String, Long> interpreterTimes =
+        new ConcurrentHashMap<>(ESTIMATED_INTERPRETERS);
     
     /**
      * Create the manager and call initPython.
@@ -1309,8 +1318,8 @@ public class JythonManager extends IdvManager implements ActionListener,
     protected void initJythonEnvironment(PythonInterpreter interpreter,
                                          boolean isInteractive)
     {
+        long start = System.nanoTime();
         // TODO(jon): has to be a better approach
-
         PySystemState pyState = interpreter.getSystemState();
         pyState.setdefaultencoding("utf-8");
 
@@ -1328,15 +1337,43 @@ public class JythonManager extends IdvManager implements ActionListener,
             interpreter.set("datamanager", getDataManager());
             interpreter.set("installmanager", getInstallManager());
             PyObject locals = interpreter.getLocals();
-            logger.trace("locals class: {}", locals.getClass().getCanonicalName());
             if (locals instanceof LoudPyStringMap) {
                 ((LoudPyStringMap)locals).bake();
             }
         } catch (IOException e) {
             logException("Failed to initialize Jython's sys.path.", e);
+        } finally {
+            // trying to get an *idea* of which parts of mcv are slow
+            // JMH is the correct approach
+            long stop = System.nanoTime();
+            String id = Integer.toHexString(interpreter.hashCode());
+            long duration = stop - start;
+            if (interpreterTimes.containsKey(id)) {
+                interpreterTimes.put(id, interpreterTimes.get(id) + duration);
+            } else {
+                interpreterTimes.put(id, duration);
+            }
+            logger.trace("jython interpreter '{}' initialization took {} ms",
+                         id,
+                         String.format("%.2f", duration / 1.0e6));
         }
     }
-
+    
+    /**
+     * Return the total amount of time spent in 
+     * {@link #initJythonEnvironment(PythonInterpreter, boolean)}.
+     * 
+     * <p><b>The elapsed time is merely a quick estimate.</b> The only way to
+     * obtain accurate timing information with the JVM is using
+     * <a href="https://openjdk.java.net/projects/code-tools/jmh/">JMH</a>.</p>
+     * 
+     * @return Nanoseconds spent initializing 
+     *         {@link PythonInterpreter Jython Interpreters}.
+     */
+    public long getElapsedInterpreterInit() {
+        return interpreterTimes.values().stream().mapToLong(l -> l).sum();
+    }
+    
     /**
      *  Initialize the given interpreter. Add in variables for "idv" and "datamanager"
      *  If initVisadLibs is true then load in the visad libs, etc.

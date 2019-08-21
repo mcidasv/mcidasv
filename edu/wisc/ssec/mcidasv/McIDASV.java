@@ -74,6 +74,7 @@ import javax.swing.ToolTipManager;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidas.adde.AddeURLStreamHandler;
 
+import com.google.common.base.Strings;
 import edu.wisc.ssec.mcidasv.collaboration.CollaborationManager;
 import edu.wisc.ssec.mcidasv.ui.McIDASVXmlUi;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
@@ -1879,12 +1880,23 @@ public class McIDASV extends IntegratedDataViewer {
     }
     
     /**
-     * Log (TRACE level) the time spent creating skin components in this 
-     * session.
+     * Log (TRACE level) the time spent in various discrete parts of
+     * McIDAS-V's startup process.
+     *
+     * <p>Currently tracking time spent:
+     * <ul>
+     *   <li>creating GUI components with {@link McIDASVXmlUi}</li>
+     *   <li>initialing Jython interpreters.</li>
+     * </ul></p>
      * 
+     * <p><b>The elapsed times are merely a quick estimate.</b> The only way
+     * to obtain accurate timing information with the JVM is using 
+     * <a href="https://openjdk.java.net/projects/code-tools/jmh/">JMH</a>.</p>
+     *
      * @see McIDASVXmlUi#getElapsedGuiTime()
+     * @see JythonManager#getElapsedInterpreterInit()
      */
-    public static void elapsedSkinTime() {
+    public static void elapsedStartup() {
         long totalXmlUi = 0L;
         List<IdvWindow> windows = cast(IdvWindow.getWindows());
         for (IdvWindow window : windows) {
@@ -1892,12 +1904,22 @@ public class McIDASV extends IntegratedDataViewer {
             if (xmlUi != null) {
                 long winElapsed = xmlUi.getElapsedGuiTime();
                 totalXmlUi += winElapsed;
-                logger.trace("title '{}' xmlui '{}' spent {} ms creating components", window.getTitle(), Integer.toHexString(xmlUi.hashCode()), winElapsed / 1.0e6);
+                logger.trace("title '{}' xmlui '{}' spent {} ms creating components",
+                             window.getTitle(),
+                             Integer.toHexString(xmlUi.hashCode()),
+                             String.format("%.2f", winElapsed / 1.0e6));
             } else {
                 logger.trace("no xmlui for '{}'", window.getTitle());
             }
         }
-        logger.trace("spent at least {} ms creating components with xmlui", totalXmlUi / 1.0e6);
+        
+        McIDASV m = getStaticMcv();
+        long elapsedJython = m.getJythonManager().getElapsedInterpreterInit();
+        
+        String xmlui = String.format("%6.2f", totalXmlUi / 1.0e6);
+        String jython = String.format("%6.2f", elapsedJython / 1.0e6);
+        logger.trace("estimated time spent creating xmlui GUI components   : {} ms", Strings.padStart(xmlui, 9, ' '));
+        logger.trace("estimated time spent initializing jython interpreters: {} ms", Strings.padStart(jython, 9, ' '));
     }
     
     /**
@@ -1927,7 +1949,9 @@ public class McIDASV extends IntegratedDataViewer {
         // shut down javafx runtime
         Platform.exit();
         
-        elapsedSkinTime();
+        // dump some information about how much time was spent doing certain
+        // things during startup. 
+        elapsedStartup();
         
         logger.info("Exiting McIDAS-V @ {}", new Date());
         

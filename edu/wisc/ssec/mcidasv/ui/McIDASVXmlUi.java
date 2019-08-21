@@ -284,8 +284,12 @@ public class McIDASVXmlUi extends IdvXmlUi {
         }
         long stop = System.nanoTime();
         
-        // trying to get an idea of which parts of mcv are slow
-        logger.trace("xmlui '{}' component '{}': took {} ms to finish", Integer.toHexString(hashCode()), id, (stop - start) / 1.0e6);
+        // trying to get an *idea* of which parts of mcv are slow
+        // JMH is the correct approach
+        logger.trace("xmlui '{}' component '{}': took {} ms to finish",
+                     Integer.toHexString(hashCode()),
+                     id,
+                     String.format("%.2f", (stop - start) / 1.0e6));
         
         if (xmlUiTimes.containsKey(id)) {
             xmlUiTimes.put(id, xmlUiTimes.get(id) + (stop - start));
@@ -302,15 +306,15 @@ public class McIDASVXmlUi extends IdvXmlUi {
      * <p>Be aware that each McV {@link IdvWindow window} should have its own 
      * {@code McIDASXmlUi} instance, so in order to determine the total time, 
      * iterate over the results from {@link IdvWindow#getWindows()}.</p>
+     *
+     * <p><b>The elapsed time is merely a quick estimate.</b> The only way to
+     * obtain accurate timing information with the JVM is using
+     * <a href="https://openjdk.java.net/projects/code-tools/jmh/">JMH</a>.</p>
      * 
      * @return Nanoseconds spent creating GUI components in this window.
      */
     public long getElapsedGuiTime() {
-        long elapsed = 0L;
-        for (Map.Entry<String, Long> entry : xmlUiTimes.entrySet()) {
-            elapsed += entry.getValue();
-        }
-        return elapsed;
+        return xmlUiTimes.values().stream().mapToLong(l -> l).sum();
     }
     
     /**
