@@ -21,6 +21,7 @@
 package ucar.unidata.idv.chooser.adde;
 
 
+import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import org.w3c.dom.Document;
 
 import org.w3c.dom.Element;
@@ -523,7 +524,28 @@ public class AddeServer extends NamedThing {
         AddeServer that = (AddeServer) o;
         return Misc.equals(this.groups, that.groups);
     }
-
+    
+    /**
+     * Returns the name of this {@link NamedThing}.
+     * 
+     * <p>Overridden because McIDAS-V allows for essentially arbitrary ports
+     * for {@literal "local"} ADDE servers, so if {@link #isLocal} is
+     * {@code true} for this {@code AddeServer} instance, this method needs to
+     * call {@link EntryStore#getLocalPort()} to determine the local ADDE port.
+     * </p>
+     * 
+     * @return Address of the current {@code AddeServer} instance. If
+     *         {@link #isLocal} is {@code true}, the result will be something
+     *         like {@code localhost:8112}. Be aware that the port number can
+     *         be different!
+     */
+    @Override public String getName() {
+        String result = super.getName();
+        if (isLocal) {
+            result += ':' + EntryStore.getLocalPort();
+        }
+        return result;
+    }
 
     /**
      * Class Group represents an adde group

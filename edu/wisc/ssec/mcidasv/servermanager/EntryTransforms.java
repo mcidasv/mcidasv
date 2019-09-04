@@ -180,7 +180,7 @@ public class EntryTransforms {
 
             AddeServer addeServ;
             if (e instanceof LocalAddeEntry) {
-                addeServ = new AddeServer("localhost:"+EntryStore.getLocalPort(), "<LOCAL-DATA>");
+                addeServ = new AddeServer("localhost", "<LOCAL-DATA>");
                 addeServ.setIsLocal(true);
             } else {
                 addeServ = new AddeServer(addr);

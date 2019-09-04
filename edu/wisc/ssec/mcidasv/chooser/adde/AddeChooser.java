@@ -1609,14 +1609,31 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      */
     protected void appendMiscKeyValues(StringBuffer buff) {
         appendKeyValue(buff, PROP_COMPRESS, DEFAULT_COMPRESS);
-        appendKeyValue(buff, PROP_PORT, DEFAULT_PORT);
+        appendKeyValue(buff, PROP_PORT, getPort());
         // appendKeyValue(buff, PROP_DEBUG, DEFAULT_DEBUG);
         appendKeyValue(buff, PROP_DEBUG, Boolean.toString(EntryStore.isAddeDebugEnabled(false)));
         appendKeyValue(buff, PROP_VERSION, DEFAULT_VERSION);
         appendKeyValue(buff, PROP_USER, getLastAddedUser());
         appendKeyValue(buff, PROP_PROJ, getLastAddedProj());
     }
-
+    
+    /**
+     * Return the ADDE port to use.
+     * 
+     * <p>Overridden by McIDAS-V because {@literal "local ADDE"} requires us to
+     * use essentially arbitrary port numbers, so for local ADDE connections
+     * we need to use {@link EntryStore#getLocalPort()}.</p>
+     * 
+     * @return ADDE port to use.
+     */
+    @Override protected String getPort() {
+        if (isLocalServer()) {
+            return EntryStore.getLocalPort();
+        } else {
+            return super.getPort();
+        }
+    }
+    
     public String getLastAddedUser() {
         if ((lastServerUser != null) && !lastServerUser.isEmpty()) {
             logger.debug("getLastAddedUser: using non-default {}", lastServerUser);
