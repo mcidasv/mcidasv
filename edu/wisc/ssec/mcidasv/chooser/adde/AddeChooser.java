@@ -28,11 +28,13 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
+import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
 import static edu.wisc.ssec.mcidasv.servermanager.EntryTransforms.strToEntryType;
 import static edu.wisc.ssec.mcidasv.servermanager.AddeEntry.DEFAULT_ACCOUNT;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.McIDASV.isLoopback;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
@@ -65,6 +67,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -86,6 +89,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
+import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry;
 import edu.wisc.ssec.mcidasv.ui.MenuScroller;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
@@ -345,9 +349,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
         //        addServerComp(descriptorComboBox);
 
         descriptorComboBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if ( !ignoreDescriptorChange
-                    && (e.getStateChange() == e.SELECTED)) {
+            @Override public void itemStateChanged(ItemEvent e) {
+                if (!ignoreDescriptorChange
+                    && (e.getStateChange() == ItemEvent.SELECTED)) {
                     descriptorChanged();
                 }
             }
@@ -413,6 +417,40 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     private List<AddeServer> getManagedServers(final String type) {
         EntryStore entryStore = ((McIDASV)getIdv()).getServerManager();
         return arrList(entryStore.getIdvStyleEntries(type));
+    }
+
+    /**
+     * Query the {@link EntryStore server manager} to determine the
+     * {@literal "format"} used by a given descriptor.
+     * 
+     * @param descriptor Local ADDE descriptor to check.
+     *                   Value can be {@code null}.
+     * 
+     * @return Either the format associated with the given {@code descriptor}
+     *         or {@link LocalAddeEntry.AddeFormat#INVALID}.
+     */
+    public LocalAddeEntry.AddeFormat getFormatFromDescriptor(String descriptor) {
+        return ((McIDASV)getIdv()).getServerManager().getLocalEntries().stream()
+                     .filter(entry -> Objects.equals(descriptor,
+                                                     entry.getDescriptor().toUpperCase()))
+                     .findFirst().map(LocalAddeEntry::getFormat)
+                     .orElse(LocalAddeEntry.AddeFormat.INVALID);
+    }
+    
+    /**
+     * Determine whether or not the specified {@code format} requires use of
+     * the absolute times tab.
+     * 
+     * <p>Thus far, only {@link LocalAddeEntry.AddeFormat#SCMI} needs this
+     * treatment.</p>
+     * 
+     * @param format Local ADDE {@literal "format"} to check.
+     * 
+     * @return Whether or not {@code format} should use <b>only</b> the
+     *         absolute times tab.
+     */
+    public boolean formatRequiresAbsolute(LocalAddeEntry.AddeFormat format) {
+        return format == LocalAddeEntry.AddeFormat.SCMI;
     }
 
     public void updateServers() {
@@ -640,6 +678,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             Group addeGroup = new Group(getDataType(), group, group);
             server.addGroup(addeGroup);
         }
+        
         lastServerName = name;
         lastServerGroup = group;
         lastServer = server;
@@ -1401,9 +1440,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 
     public Map<String, String> getAccountingInfo() {
         AddeServer server = getAddeServer();
-        Map<String, String> map = new LinkedHashMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<>(4);
         if (server != null) {
-            List<AddeServer.Group> groups = server.getGroups();
+            List<AddeServer.Group> groups = cast(server.getGroups());
             Map<String, String>acctInfo = getAccounting(server, groups.get(0).toString());
             map.put("user", acctInfo.get("user"));
             map.put("proj", acctInfo.get("proj"));
@@ -1487,8 +1526,10 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             }
             logger.debug("readDesc: names={}", names);
             Arrays.sort(names);
-            setDescriptors(names);
-            setState(STATE_CONNECTED);
+            SwingUtilities.invokeLater(() -> {
+                setDescriptors(names);
+                setState(STATE_CONNECTED);
+            });
         } catch (Exception e) {
             handleConnectionError(e);
         }
@@ -1520,8 +1561,15 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
      * Respond to a change in the descriptor list.
      */
     protected void descriptorChanged() {
-        readTimes();
-        updateStatus();
+        if (haveDescriptorSelected()) {
+            LocalAddeEntry.AddeFormat format =
+                getFormatFromDescriptor(getDescriptor());
+            if (formatRequiresAbsolute(format)) {
+                setDoAbsoluteTimes(true);
+            }
+            readTimes();
+            updateStatus();
+        }
     }
 
     /**
