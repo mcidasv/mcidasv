@@ -29,6 +29,9 @@
 package ucar.unidata.idv.control;
 
 
+import static visad.RealType.Latitude;
+import static visad.RealType.Longitude;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
@@ -36,6 +39,7 @@ import ucar.unidata.data.DataInstance;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.grid.GridDataInstance;
 import ucar.unidata.data.grid.GridUtil;
+import ucar.unidata.geoloc.LatLonPointImpl;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.ContourInfo;
@@ -53,7 +57,9 @@ import visad.Data;
 import visad.DateTime;
 import visad.DisplayRealType;
 import visad.FieldImpl;
+import visad.MathType;
 import visad.Real;
+import visad.RealTupleType;
 import visad.RealType;
 import visad.ScalarMap;
 import visad.Unit;
@@ -61,14 +67,17 @@ import visad.VisADException;
 
 import visad.georef.EarthLocation;
 import visad.georef.MapProjection;
+import visad.georef.TrivialMapProjection;
 
 
 import java.awt.event.ActionEvent;
 
+import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -704,13 +713,17 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
      * @return The native projection of the data
      */
     public MapProjection getDataProjection() {
-
         MapProjection mp = null;
         if (getGridDataInstance() != null) {
             FieldImpl data = getGridDataInstance().getGrid(false);
             if (data != null) {
                 try {
-                    mp = GridUtil.getNavigation((FieldImpl) data);
+                    mp = GridUtil.getNavigation(data);
+                    if (mp instanceof TrivialMapProjection) {
+                        // mp will be unchanged if we didn't need to use
+                        // normalizeRectangle
+                        mp = validateProjection((TrivialMapProjection)mp);
+                    }
                 } catch (Exception e) {
                     mp = null;
                 }
@@ -720,6 +733,50 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
         return (mp != null)
                ? mp
                : super.getDataProjection();
+    }
+    
+    // TODO(jon): javadocs
+    private static MapProjection validateProjection(TrivialMapProjection mp)
+        throws VisADException
+    {
+        RealTupleType tupType = mp.getReference();
+        MathType[] comps = tupType.getComponents();
+        Rectangle2D mapArea = mp.getDefaultMapArea();
+        TrivialMapProjection result = mp;
+        
+        if ((mapArea != null) &&
+            Objects.equals(comps[0], Longitude) &&
+            Objects.equals(comps[1], Latitude))
+        {
+            double x = Math.round(mapArea.getX());
+            if ((x >= 180.0) || (x <= -180.0)) {
+                // our validated projection should do one of the following:
+                //   A) Use the normalized Rectangle2D.
+                //   B) Couldn't normalize our existing Rectangle2D, so use
+                //      TrivialMapProjection's default Rectangle2D instead.
+                Rectangle2D r2d = normalizeRectangle(mapArea);
+                if (r2d != null) {
+                    result = new TrivialMapProjection(tupType, r2d);
+                } else {
+                    result = new TrivialMapProjection(tupType);
+                }
+            }
+        }
+        return result;
+    }
+    
+    // TODO(jon): javadocs
+    public static Rectangle2D normalizeRectangle(final Rectangle2D bb) {
+        Rectangle2D r2d = null;
+        if (bb != null) {
+            float x = (float)bb.getX();
+            float y = (float)bb.getY();
+            float w = (float)bb.getWidth();
+            float h = (float)bb.getHeight();
+            double normalizedMinLon = LatLonPointImpl.lonNormal(x);
+            r2d = new Rectangle2D.Float((float)normalizedMinLon, y, w, h);
+        }
+        return r2d;
     }
 
     /**
