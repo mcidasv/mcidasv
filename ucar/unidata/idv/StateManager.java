@@ -552,7 +552,11 @@ public class StateManager extends IdvManager {
 
         getStore().saveIfNeeded();
         ucar.unidata.view.geoloc.NavigatedMapPanel.DEFAULT_MAPS =
-            Misc.newList("/auxdata/maps/OUTLSUPW", "/auxdata/maps/OUTLSUPU");
+            Misc.newList(
+               "/auxdata/maps/OUTLSUPW",
+               "/auxdata/maps/OUTLSUPU",
+               "/auxdata/maps/OUTLHPOL"
+            );
 
         //Trace.msg("initState-14");
         getStore().setTmpDir(
