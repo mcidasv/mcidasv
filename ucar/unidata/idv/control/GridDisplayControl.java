@@ -29,6 +29,8 @@
 package ucar.unidata.idv.control;
 
 
+import static ucar.unidata.geoloc.LatLonPointImpl.latNormal;
+import static ucar.unidata.geoloc.LatLonPointImpl.lonNormal;
 import static visad.RealType.Latitude;
 import static visad.RealType.Longitude;
 
@@ -807,16 +809,12 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
     public static Rectangle2D normalizeRectangle(final Rectangle2D bb) {
         Rectangle2D r2d = null;
         if (bb != null) {
-            float x = (float)bb.getX();
-            float y = (float)bb.getY();
-            float width = (float)bb.getWidth();
-            float height = (float)bb.getHeight();
-            float normalizedMinLon = (float)LatLonPointImpl.lonNormal(x);
-            float normalizedMinLat = (float)LatLonPointImpl.latNormal(y);
+            float normalizedMinLon = (float)lonNormal((float)bb.getX());
+            float normalizedMinLat = (float)latNormal((float)bb.getY());
             r2d = new Rectangle2D.Float(normalizedMinLon,
                                         normalizedMinLat,
-                                        width,
-                                        height);
+                                        (float)bb.getWidth(),
+                                        (float)bb.getHeight());
         }
         return r2d;
     }
