@@ -735,7 +735,29 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
                : super.getDataProjection();
     }
     
-    // TODO(jon): javadocs
+    /**
+     * Ensure that the given projection has a {@literal "sensible"} bounding
+     * box.
+     * 
+     * <p>For our purposes, {@literal "sensible"} means that the {@code x} and
+     * {@code y} coordinates of the bounding box are valid longitude and
+     * latitude values.</p>
+     * 
+     * <p>If the bounding box associated with {@code mp} could not be
+     * {@link #normalizeRectangle(Rectangle2D) normalized}, this method will
+     * use the default bounding box from
+     * {@link TrivialMapProjection#TrivialMapProjection() VisAD}.</p>
+     * 
+     * @param mp Projection to validate. Cannot be {@code null}.
+     * 
+     * @return If the original bounding box is fine, then {@code mp} will be
+     *         returned. Otherwise a new {@code TrivialMapProjection} with a
+     *         {@link #normalizeRectangle(Rectangle2D) normalized} bounding box
+     *         will be returned.
+     * 
+     * @throws VisADException if there was a problem creating a new
+     *                        {@link TrivialMapProjection}.
+     */
     private static MapProjection validateProjection(TrivialMapProjection mp)
         throws VisADException
     {
@@ -749,7 +771,10 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
             Objects.equals(comps[1], Latitude))
         {
             double x = Math.round(mapArea.getX());
-            if ((x >= 180.0) || (x <= -180.0)) {
+            double y = Math.round(mapArea.getY());
+            boolean badX = (x >= 180.0) || (x <= -180.0);
+            boolean badY = (y >= 90.0) || (y <= -90.0);
+            if (badX || badY) {
                 // our validated projection should do one of the following:
                 //   A) Use the normalized Rectangle2D.
                 //   B) Couldn't normalize our existing Rectangle2D, so use
@@ -765,16 +790,33 @@ public abstract class GridDisplayControl extends DisplayControlImpl {
         return result;
     }
     
-    // TODO(jon): javadocs
+    /**
+     * Ensure the given bounding box's {@code x} and {@code y} coordinates are
+     * valid longitude and latitude values.
+     * 
+     * @param bb Bounding box to normalize. If {@code null}, {@code null} is
+     *           returned.
+     * 
+     * @return If {@code bb} is not {@code null}, return the given bounding
+     *         box with valid latitude and longitude values. Otherwise return
+     *         {@code null}.
+     * 
+     * @see LatLonPointImpl#lonNormal(double)
+     * @see LatLonPointImpl#latNormal(double)
+     */
     public static Rectangle2D normalizeRectangle(final Rectangle2D bb) {
         Rectangle2D r2d = null;
         if (bb != null) {
             float x = (float)bb.getX();
             float y = (float)bb.getY();
-            float w = (float)bb.getWidth();
-            float h = (float)bb.getHeight();
-            double normalizedMinLon = LatLonPointImpl.lonNormal(x);
-            r2d = new Rectangle2D.Float((float)normalizedMinLon, y, w, h);
+            float width = (float)bb.getWidth();
+            float height = (float)bb.getHeight();
+            float normalizedMinLon = (float)LatLonPointImpl.lonNormal(x);
+            float normalizedMinLat = (float)LatLonPointImpl.latNormal(y);
+            r2d = new Rectangle2D.Float(normalizedMinLon,
+                                        normalizedMinLat,
+                                        width,
+                                        height);
         }
         return r2d;
     }
