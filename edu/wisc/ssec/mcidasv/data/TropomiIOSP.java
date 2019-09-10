@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,6 +102,17 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
     public static final Pattern TROPOMI_MATCHER =
         Pattern.compile(TROPOMI_L2_REGEX);
     
+    /**
+     * Sometimes {@link #isValidFile(RandomAccessFile)} will need to check
+     * Windows paths that look something like {@code /Z:/Users/bob/foo.txt}.
+     * 
+     * <p>This regular expression is used by {@code isValidFile(...)} to
+     * identity these sorts of paths and fix them. Otherwise we'll generate
+     * an {@link java.nio.file.InvalidPathException}.</p>
+     */
+    public static final Pattern BAD_WIN_PATH =
+        Pattern.compile("^/[A-Za-z]:/.+$");
+
     private static HashMap<String, String> groupMap = new HashMap<String, String>();
 
     // Dimensions of a product we can work with, init this early
@@ -113,8 +125,12 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
         throws IOException
     {
         // Uses the regex defined near top
-        logger.trace("TropOMI IOSP isValidFile()...");
-        filename = Paths.get(raf.getLocation()).getFileName().toString();
+        String filePath = raf.getLocation();
+        if (McIDASV.isWindows() && BAD_WIN_PATH.matcher(filePath).matches()) {
+            filePath = filePath.substring(1);
+        }
+        logger.trace("original path: '{}', path used: '{}'", raf, filePath);
+        filename = Paths.get(filePath).getFileName().toString();
         return TROPOMI_MATCHER.matcher(filename).matches();
     }
 
