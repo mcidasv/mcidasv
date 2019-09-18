@@ -622,7 +622,11 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     public void addActionsToMenu(JMenu menu) {
         BAMutil.addActionToMenu(menu, zoomIn);
         BAMutil.addActionToMenu(menu, zoomOut);
-        BAMutil.addActionToMenu(menu, zoomBack);
+
+        // TJJ Sep 2019 - since undo has some unexpected behaviors, and the effort to
+        // fix is non-trivial, we have decided to hide it
+        // BAMutil.addActionToMenu(menu, zoomBack);
+
         BAMutil.addActionToMenu(menu, zoomDefault);
 
         menu.addSeparator();
@@ -1770,12 +1774,14 @@ public class NavigatedPanel extends JPanel implements MouseListener,
                 undoMapChange();
             }
         };
-        setActionMappings(zoomBack,
-                          "/auxdata/ui/icons/arrow_undo.png",
-                          "Previous map area",
-                          false,
-                          'P',
-                          KeyEvent.VK_BACK_SPACE);
+
+        // TJJ Sep 2019 - disabling Undo, see Inq #2263
+//        setActionMappings(zoomBack,
+//                          "/auxdata/ui/icons/arrow_undo.png",
+//                          "Previous map area",
+//                          false,
+//                          'P',
+//                          KeyEvent.VK_BACK_SPACE);
         // disabled at the outset as there are no changes to undo
         zoomBack.setEnabled(false);
 
@@ -1883,8 +1889,9 @@ public class NavigatedPanel extends JPanel implements MouseListener,
             b = BAMutil.addActionToContainer(this, zoomOut);
             b.setName("zoomOut");
 
-            b = BAMutil.addActionToContainer(this, zoomBack);
-            b.setName("zoomBack");
+            // TJJ Sep 2019 - disabling Undo, see Inq #2263
+//            b = BAMutil.addActionToContainer(this, zoomBack);
+//            b.setName("zoomBack");
 
             b = BAMutil.addActionToContainer(this, zoomDefault);
             b.setName("zoomHome");
