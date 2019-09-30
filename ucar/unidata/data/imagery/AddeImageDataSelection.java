@@ -69,6 +69,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import java.text.ParseException;
@@ -2203,10 +2204,15 @@ public class AddeImageDataSelection {
     private static NavigatedMapPanel createMapPanel(AddeImagePreview prev,
                                                     AreaAdapter aa)
     {
+        BufferedImage preview = null;
+        if (prev != null) {
+            preview = prev.getPreviewImage();
+        }
+        
         return new NavigatedMapPanel(null,
                                      false,
                                      false,
-                                     prev.getPreviewImage(),
+                                     preview,
                                      aa.getAreaFile())
         {
             @Override protected NavigatedPanel doMakeMapPanel() {
@@ -2651,8 +2657,10 @@ public class AddeImageDataSelection {
             //LastBandNames = SelectedBandNames;
             //LastCalInfo = CalString;
             dataSource.getIdv().showWaitCursor();
-            AddeImagePreview image = new AddeImagePreview(aAdapter,
-                                         descriptor);
+            AddeImagePreview image = null;
+            if (dataSource.getShowPreview()) {
+                image = new AddeImagePreview(aAdapter, descriptor);
+            }
             dataSource.getDataContext().getIdv().showNormalCursor();
             //String bandInfo = "test";
             // lblBandInfo = new JLabel(bandInfo);

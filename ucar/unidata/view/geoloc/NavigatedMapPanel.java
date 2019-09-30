@@ -227,8 +227,14 @@ public class NavigatedMapPanel extends JPanel {
             //ProjectionRect r = np.normalizeRectangle(
             //        this.project.getDefaultMapArea());
             //np.setSelectedRegionBounds(r);
-            data_width  = preview_image.getWidth();
-            data_height = preview_image.getHeight();
+            if (preview_image != null) {
+                data_width = preview_image.getWidth();
+                data_height = preview_image.getHeight();
+            } else {
+                Rectangle2D r2d = project.getDefaultMapArea();
+                data_width = (int)r2d.getWidth();
+                data_height = (int)r2d.getHeight();
+            }
 
             float       samples[][] = (float[][]) null;
             Rectangle2D rect2D      = project.getDefaultMapArea();

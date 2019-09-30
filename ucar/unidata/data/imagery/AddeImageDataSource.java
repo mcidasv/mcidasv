@@ -34,6 +34,7 @@ import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaFile;
 import edu.wisc.ssec.mcidas.adde.AddeImageURL;
 
+import edu.wisc.ssec.mcidasv.chooser.adde.ImageChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.unidata.data.*;
@@ -212,6 +213,12 @@ public class AddeImageDataSource extends ImageDataSource {
         ArrayList oj = (ArrayList) properties.get("bandinfo");
         if (oj != null) {
             this.bandId = (BandInfo) oj.get(0);
+        }
+        
+        if (properties.containsKey(ImageChooser.PREVIEW_KEY)) {
+            this.showPreview = Boolean.parseBoolean(properties.get(ImageChooser.PREVIEW_KEY).toString());
+        } else {
+            this.showPreview = false;
         }
         
         this.imageType = ((String)properties.getOrDefault("prop.imagetype", "unknown")).toLowerCase();
@@ -1677,8 +1684,15 @@ public class AddeImageDataSource extends ImageDataSource {
         }
         getDataContext().getIdv().showNormalCursor();
     }
-
-
+    
+    /**
+     * Whether or not the user decided to show a preview of their image.
+     * 
+     * @return
+     */
+    public boolean getShowPreview() {
+        return showPreview;
+    }
 
     /**
      * _more_
