@@ -35,6 +35,7 @@ import ucar.unidata.xml.XmlUtil;
 
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -541,7 +542,9 @@ public class AddeServer extends NamedThing {
      */
     @Override public String getName() {
         String result = super.getName();
-        if (isLocal) {
+        String lc = result.toLowerCase();
+        boolean local = Arrays.asList("localhost", "127.0.0.1", "::1").contains(lc);
+        if (local) {
             result += ':' + EntryStore.getLocalPort();
         }
         return result;
