@@ -74,3 +74,14 @@ def ABISo2RGB(b9T, b10T, b11T, b13T):
     grn = rescale(b13T-b11T, -4, 5, 0, 255)
     blu = rescale(b13T, 243.05, 302.95, 0, 255)
     return combineRGB(red, grn, blu)
+
+# ABI Day Cloud Phase Distinction RGB
+def ABIDayCloudPhaseRGB(b2A, b5A, b13T):
+    # http://rammb.cira.colostate.edu/training/visit/quick_guides/Day_Cloud_Phase_Distinction.pdf
+    # red = band 13; 280.65K to 219.56K rescaled to 0 to 255
+    # grn = band 2; 0% to 78% rescaled to 0 to 255
+    # blu = band 5; 1% to 59% rescaled to 0 to 255
+    red = rescale(b13T, 280.65, 219.65, 0, 255)
+    grn = rescale(b2A, 0, 78, 0, 255)
+    blu = rescale(b5A, 1, 59, 0, 255)
+    return combineRGB(red, grn, blu)
