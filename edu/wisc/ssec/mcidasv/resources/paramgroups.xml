@@ -12,4 +12,10 @@
     <params p1="190_Band8_TEMP" p2="190_Band10_TEMP" p3="190_Band12_TEMP" p4="190_Band13_TEMP"/>
     <params p1="192_Band8_TEMP" p2="192_Band10_TEMP" p3="192_Band12_TEMP" p4="192_Band13_TEMP"/>
   </paramgroup>
+  <paramgroup description="ABI SO2 RGB" name="ABI_RGB_SO2">
+    <params p1="186_Band9_TEMP" p2="186_Band10_TEMP" p3="186_Band11_TEMP" p4="186_Band13_TEMP"/>
+    <params p1="188_Band9_TEMP" p2="188_Band10_TEMP" p3="188_Band11_TEMP" p4="188_Band13_TEMP"/>
+    <params p1="190_Band9_TEMP" p2="190_Band10_TEMP" p3="190_Band11_TEMP" p4="190_Band13_TEMP"/>
+    <params p1="192_Band9_TEMP" p2="192_Band10_TEMP" p3="192_Band11_TEMP" p4="192_Band13_TEMP"/>
+  </paramgroup>
 </paramgroups>
