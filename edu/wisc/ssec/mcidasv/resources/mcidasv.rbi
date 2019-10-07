@@ -502,6 +502,9 @@
     <resource label="Image Routines" location="%IDVPATH%/python/image.py">
       <property name="category" value="System"/>
     </resource>
+    <resource label="ABI Routines" location="%IDVPATH%/python/ABIFunctions.py">
+      <property name="category" value="System"/>
+    </resource>
     <resource label="Map Routines" location="%IDVPATH%/python/maps.py">
       <property name="category" value="System"/>
     </resource>
