@@ -107,3 +107,14 @@ def ABIDayLandCloudRGB(b2A, b3A, b5A):
     grn = rescale(b3A, 0, 108.6, 0, 255)
     blu = rescale(b2A, 0, 100, 0, 255)
     return combineRGB(red, grn, blu)
+
+# ABI Day Land Cloud Fire RGB
+def ABIDayLandCloudFireRGB(b2A, b3A, b6A):
+    # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_DayLandCloudFireRGB_final.pdf
+    # red = band6; 0% to 100% rescaled to 0 to 255
+    # grn = band3; 0% to 100% rescaled to 0 to 255
+    # blu = band2; 0% to 100% rescaled to 0 to 255
+    red = rescale(b6A, 0, 100, 0, 255)
+    grn = rescale(b3A, 0, 100, 0, 255)
+    blu = rescale(b2A, 0, 100, 0, 255)
+    return combineRGB(red, grn, blu)
