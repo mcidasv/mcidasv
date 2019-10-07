@@ -96,3 +96,14 @@ def ABIAshRGB(b11T, b13T, b14T, b15T):
     grn = rescale(b14T-b11T, -6.0, 6.3, 0, 255)
     blu = rescale(b13T, 246.3, 302.4, 0, 255)
     return combineRGB(red, grn, blu)
+
+# ABI Day Land Cloud RGB
+def ABIDayLandCloudRGB(b2A, b3A, b5A):
+    # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_daylandcloudRGB_final.pdf
+    # red = band5; 0% to 97.5% rescaled to 0 to 255
+    # grn = band3; 0% to 108.6% rescaled to 0 to 255
+    # blu = band2; 0% to 100% rescaled to 0 to 255
+    red = rescale(b5A, 0, 97.5, 0, 255)
+    grn = rescale(b3A, 0, 108.6, 0, 255)
+    blu = rescale(b2A, 0, 100, 0, 255)
+    return combineRGB(red, grn, blu)
