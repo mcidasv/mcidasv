@@ -24,4 +24,10 @@
     <params p1="190_Band2_ALB" p2="190_Band5_ALB" p3="190_Band14_TEMP"/>
     <params p1="192_Band2_ALB" p2="192_Band5_ALB" p3="192_Band14_TEMP"/>
   </paramgroup>
+  <paramgroup description="ABI Ash RGB" name="ABI_RGB_ASH">
+    <params p1="186_Band11_TEMP" p2="186_Band13_TEMP" p3="186_Band14_TEMP" p4="186_Band15_TEMP"/>
+    <params p1="188_Band11_TEMP" p2="188_Band13_TEMP" p3="188_Band14_TEMP" p4="188_Band15_TEMP"/>
+    <params p1="190_Band11_TEMP" p2="190_Band13_TEMP" p3="190_Band14_TEMP" p4="190_Band15_TEMP"/>
+    <params p1="192_Band11_TEMP" p2="192_Band13_TEMP" p3="192_Band14_TEMP" p4="192_Band15_TEMP"/>
+  </paramgroup>
 </paramgroups>
