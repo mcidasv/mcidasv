@@ -259,4 +259,15 @@
         </categories>
         <operands categories=""/>
     </derived>
+    <!-- Adding derived ABI formulas - RMC - INQ 2822 - Oct 2019 -->
+    <derived description="ABI True Color RGB" formula="ABITruColRGB(D1[label='Band 2'], D2[label='Band 3'], D3[label='Band 1'])" id="abitrucol" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
+            <category value="ABI RGBs"/>
+        </categories>
+        <operands categories="">
+          <paramgroup categories="" name="ABI_RGB_TruCol"/>
+        </operands>
+    </derived>
 </derived_parameters>
