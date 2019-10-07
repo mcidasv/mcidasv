@@ -298,4 +298,13 @@
             <paramgroup categories="" name="ABI_RGB_DayCloudPhase"/>
         </operands>
     </derived>
+    <derived description="ABI Ash RGB" formula="ABIAshRGB(D1[label='Band 11T'], D2[label='Band 13T'], D3[label='Band 14T'], D4[label='Band 15T'])" id="abiash" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="ABI_RGB_ASH"/>
+        </operands>
+    </derived>
 </derived_parameters>
