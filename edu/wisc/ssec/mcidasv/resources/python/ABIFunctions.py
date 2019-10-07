@@ -63,3 +63,14 @@ def ABIAirmassRGB(b8T, b10T, b12T, b13T):
     grn = rescale(b12T-b13T, -43.2, 6.7, 0, 255)
     blu = rescale(b8T, 243.9, 208.5, 0, 255)
     return combineRGB(red, grn, blu)
+
+# ABI SO2 RGB
+def ABISo2RGB(b9T, b10T, b11T, b13T):
+    # http://rammb.cira.colostate.edu/training/visit/quick_guides/Quick_Guide_SO2_RGB.pdf
+    # red = band9 - band10; -4C to 2C rescaled to 0 to 255
+    # grn = band13 - band11; -4C to 5C rescaled to 0 to 255
+    # blu = band13; 243.05K to 302.95K rescaled to 0 to 255
+    red = rescale(b9T-b10T, -4, 2, 0, 255)
+    grn = rescale(b13T-b11T, -4, 5, 0, 255)
+    blu = rescale(b13T, 243.05, 302.95, 0, 255)
+    return combineRGB(red, grn, blu)
