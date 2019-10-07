@@ -307,4 +307,13 @@
             <paramgroup categories="" name="ABI_RGB_ASH"/>
         </operands>
     </derived>
+    <derived description="ABI Day Land Cloud RGB" formula="ABIDayLandCloudRGB(D1[label='Band 2A'], D2[label='Band 3A'], D3[label='Band 5A'])" id="abidaylandcloud" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="ABI_RGB_DayLandCloud"/>
+        </operands>
+    </derived>
 </derived_parameters>
