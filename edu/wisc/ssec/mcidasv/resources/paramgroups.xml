@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<paramgroups>
+  <paramgroup description="ABI True Color RGB" name="ABI_RGB_TruCol">
+    <params p1="186_Band2_BRIT" p2="186_Band3_BRIT" p3="186_Band1_BRIT"/>
+    <params p1="188_Band2_BRIT" p2="188_Band3_BRIT" p3="188_Band1_BRIT"/>
+    <params p1="190_Band2_BRIT" p2="190_Band3_BRIT" p3="190_Band1_BRIT"/>
+    <params p1="192_Band2_BRIT" p2="192_Band3_BRIT" p3="192_Band1_BRIT"/>
+  </paramgroup>
+</paramgroups>
