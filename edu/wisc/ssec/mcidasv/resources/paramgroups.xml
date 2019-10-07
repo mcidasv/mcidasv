@@ -36,4 +36,10 @@
     <params p1="190_Band2_ALB" p2="190_Band3_ALB" p3="190_Band5_ALB"/>
     <params p1="192_Band2_ALB" p2="192_Band3_ALB" p3="192_Band5_ALB"/>
   </paramgroup>
+  <paramgroup description="ABI Day Land Cloud Fire RGB" name="ABI_RGB_DayLandCloudFire">
+    <params p1="186_Band2_ALB" p2="186_Band3_ALB" p3="186_Band6_ALB"/>
+    <params p1="188_Band2_ALB" p2="188_Band3_ALB" p3="188_Band6_ALB"/>
+    <params p1="190_Band2_ALB" p2="190_Band3_ALB" p3="190_Band6_ALB"/>
+    <params p1="192_Band2_ALB" p2="192_Band3_ALB" p3="192_Band6_ALB"/>
+  </paramgroup>
 </paramgroups>
