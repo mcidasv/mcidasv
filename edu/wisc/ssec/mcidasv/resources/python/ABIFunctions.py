@@ -85,3 +85,14 @@ def ABIDayCloudPhaseRGB(b2A, b5A, b13T):
     grn = rescale(b2A, 0, 78, 0, 255)
     blu = rescale(b5A, 1, 59, 0, 255)
     return combineRGB(red, grn, blu)
+
+# ABI Ash RGB
+def ABIAshRGB(b11T, b13T, b14T, b15T):
+    # http://rammb.cira.colostate.edu/training/visit/quick_guides/GOES_Ash_RGB.pdf
+    # red = band15 - band13; -6.7C to 2.6C rescaled to 0 to 255
+    # grn = band14 - band11; -6.0C to 6.3C rescaled to 0 to 255
+    # blu = band13; 246.3K to 302.4K rescaled to 0 to 255
+    red = rescale(b15T-b13T, -6.7, 2.6, 0, 255)
+    grn = rescale(b14T-b11T, -6.0, 6.3, 0, 255)
+    blu = rescale(b13T, 246.3, 302.4, 0, 255)
+    return combineRGB(red, grn, blu)
