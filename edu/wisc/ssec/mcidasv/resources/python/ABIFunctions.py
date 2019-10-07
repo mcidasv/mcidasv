@@ -44,3 +44,22 @@ def ABITruColRGB(red, grn, blu):
     # create rgb object
     rgb = combineRGB(final_red, final_grn, final_blu)
     return rgb
+
+# The functions below were created using the Quick Guides
+# linked from CIRA's VISIT Quick Guides page:
+# http://rammb.cira.colostate.edu/training/visit/quick_guides/
+# Information about each RGB/band subtraction below can be
+# found on the above webpage.  Note that these RGBs and band
+# subtractions were submitted by a variety of sources, all of
+# which are referenced on each individual product's page.
+
+# ABI Airmass RGB
+def ABIAirmassRGB(b8T, b10T, b12T, b13T):
+    # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_AirMassRGB_final.pdf
+    # red = band8 - band10; -26.2C to 0.6C rescalled to 0 to 255
+    # grn = band12 - band13; -43.2C to 6.7C rescalled to 0 to 255
+    # blu = band8; 243.9K to 208.5K rescalled to 0 to 255
+    red = rescale(b8T-b10T, -26.2, 0.6, 0, 255)
+    grn = rescale(b12T-b13T, -43.2, 6.7, 0, 255)
+    blu = rescale(b8T, 243.9, 208.5, 0, 255)
+    return combineRGB(red, grn, blu)
