@@ -289,4 +289,13 @@
             <paramgroup categories="" name="ABI_RGB_SO2"/>
         </operands>
     </derived>
+    <derived description="ABI Day Cloud Phase Distinction RGB" formula="ABIDayCloudPhaseRGB(D1[label='Band 2A'], D2[label='Band 5A'], D3[label='Band 13T'])" id="abidaycloudphase" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="ABI_RGB_DayCloudPhase"/>
+        </operands>
+    </derived>
 </derived_parameters>
