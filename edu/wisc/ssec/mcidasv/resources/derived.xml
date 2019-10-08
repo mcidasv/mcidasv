@@ -334,4 +334,13 @@
             <paramgroup categories="" name="ABI_RGB_NightMicrophysics"/>
         </operands>
     </derived>
+    <derived description="ABI Simple Water Vapor RGB" formula="ABISimpleWaterVaporRGB(D1[label='Band 8T'], D2[label='Band 10T'], D3[label='Band 13T'])" id="abisimplewatervapor" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="ABI_RGB_SimpleWaterVapor"/>
+        </operands>
+    </derived>
 </derived_parameters>
