@@ -118,3 +118,14 @@ def ABIDayLandCloudFireRGB(b2A, b3A, b6A):
     grn = rescale(b3A, 0, 100, 0, 255)
     blu = rescale(b2A, 0, 100, 0, 255)
     return combineRGB(red, grn, blu)
+
+# ABI Night-time Microphysics RGB
+def ABINightMicrophysicsRGB(b7T, b13T, b15T):
+    # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_NtMicroRGB_final.pdf
+    # red = band15 - band13; -6.7C to 2.6C rescalled to 0 to 255
+    # grn = band13 - band7; -3.1C to 5.2C rescalled to 0 to 255
+    # blu = band13; 243.55K to 292.65K rescalled to 0 to 255
+    red = rescale(b15T-b13T, -6.7, 2.6, 0, 255)
+    grn = rescale(b13T-b7T, -3.1, 5.2, 0, 255)
+    blu = rescale(b13T, 243.55, 292.65, 0, 255)
+    return combineRGB(red, grn, blu)
