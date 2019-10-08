@@ -343,4 +343,112 @@
             <paramgroup categories="" name="ABI_RGB_SimpleWaterVapor"/>
         </operands>
     </derived>
+    <derived description="ABI Split Ozone Difference" formula="ABIOzoneDifference(D1[label='Band 12T'], D2[label='Band 13T'])" id="abisplitozone" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI Channel Differences"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagesequence"/>
+      </categories>
+      <operands categories="">
+          <params categories="" p1="186_Band12_TEMP" p2="186_Band13_TEMP"/>
+          <params categories="" p1="188_Band12_TEMP" p2="188_Band13_TEMP"/>
+          <params categories="" p1="190_Band12_TEMP" p2="190_Band13_TEMP"/>
+          <params categories="" p1="192_Band12_TEMP" p2="192_Band13_TEMP"/>
+        </operands>
+    </derived>
+    <derived description="ABI Split Water Vapor Difference" formula="ABISplitWaterVaporDifference(D1[label='Band 12T'], D2[label='Band 13T'])" id="abisplitwatervapor" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI Channel Differences"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagesequence"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolor"/>
+      </categories>
+      <operands categories="">
+          <params categories="" p1="186_Band8_TEMP" p2="186_Band10_TEMP"/>
+          <params categories="" p1="188_Band8_TEMP" p2="188_Band10_TEMP"/>
+          <params categories="" p1="190_Band8_TEMP" p2="190_Band10_TEMP"/>
+          <params categories="" p1="192_Band8_TEMP" p2="192_Band10_TEMP"/>
+      </operands>
+    </derived>
+    <derived description="ABI Split Snow Difference" formula="ABISplitSnowDifference(D1[label='Band 5B'], D2[label='Band 2B'])" id="abisplitsnow" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI Channel Differences"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagesequence"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="186_Band5_BRIT" p2="186_Band2_BRIT"/>
+            <params categories="" p1="188_Band5_BRIT" p2="188_Band2_BRIT"/>
+            <params categories="" p1="190_Band5_BRIT" p2="190_Band2_BRIT"/>
+            <params categories="" p1="192_Band5_BRIT" p2="192_Band2_BRIT"/>
+        </operands>
+    </derived>
+    <derived description="ABI Split Cloud Phase Difference" formula="ABISplitCloudPhaseDifference(D1[label='Band 14T'], D2[label='Band 11T'])" id="abisplitcloudphase" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI Channel Differences"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:imagesequence"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+       </categories>
+      <operands categories="">
+          <params categories="" p1="186_Band14_TEMP" p2="186_Band11_TEMP"/>
+          <params categories="" p1="188_Band14_TEMP" p2="188_Band11_TEMP"/>
+          <params categories="" p1="190_Band14_TEMP" p2="190_Band11_TEMP"/>
+          <params categories="" p1="192_Band14_TEMP" p2="192_Band11_TEMP"/>
+      </operands>
+    </derived>
+    <derived description="ABI Split Window Difference" formula="ABISplitWindowDifference(D1[label='Band 15T'], D2[label='Band 13T'])" id="abisplitwindow" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI Channel Differences"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagesequence"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="186_Band15_TEMP" p2="186_Band13_TEMP"/>
+            <params categories="" p1="188_Band15_TEMP" p2="188_Band13_TEMP"/>
+            <params categories="" p1="190_Band15_TEMP" p2="190_Band13_TEMP"/>
+            <params categories="" p1="192_Band15_TEMP" p2="192_Band13_TEMP"/>
+        </operands>
+    </derived>
+    <derived description="ABI Night Fog Difference" formula="ABINightFogDifference(D1[label='Band 13T'], D2[label='Band 7T'])" id="abinightfog" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI Channel Differences"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:imagesequence"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:valuedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="186_Band13_TEMP" p2="186_Band7_TEMP"/>
+            <params categories="" p1="188_Band13_TEMP" p2="188_Band7_TEMP"/>
+            <params categories="" p1="190_Band13_TEMP" p2="190_Band7_TEMP"/>
+            <params categories="" p1="192_Band13_TEMP" p2="192_Band7_TEMP"/>
+        </operands>
+    </derived>
 </derived_parameters>
