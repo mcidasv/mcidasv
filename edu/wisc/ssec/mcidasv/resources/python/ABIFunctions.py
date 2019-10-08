@@ -140,3 +140,39 @@ def ABISimpleWaterVaporRGB(b8T, b10T, b13T):
     grn = rescale(b8T, 242.67, 214.66, 0, 255)
     blu = rescale(b10T, 261.03, 245.12, 0, 255)
     return combineRGB(red, grn, blu)
+
+# Split Ozone Channel Difference
+def ABIOzoneDifference(b12T, b13T):
+    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitOzoneDiff.pdf
+    # band12 temperature - band13 temperature
+    return sub(b12T, b13T)
+
+# Split Water Vapor Channel Difference
+def ABISplitWaterVaporDifference(b8T, b10T):
+    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitWV_BTDiffv2.pdf
+    # band8 temperature - band10 temperature
+    return sub(b8T, b10T)
+
+# Split Snow Channel Difference
+def ABISplitSnowDifference(b5B, b2B):
+    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitSnowv2.pdf
+    # band5 brit - band2 brit
+    return sub(b5B, b2B)
+
+# Split Cloud Phase Channel Difference
+def ABISplitCloudPhaseDifference(b14T, b11T):
+    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_G16_CloudPhaseBTD.pdf
+    # band14 temperature - band11 temperature
+    return sub(b14T, b11T)
+
+# Split Window Channel Difference
+def ABISplitWindowDifference(b15T, b13T):
+    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitWV_BTDiffv2.pdf
+    # band15 temperature - band13 temperature
+    return sub(b15T, b13T)
+
+# Night Fog Difference
+def ABINightFogDifference(b13T, b7T):
+    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_NightFogBTD.pdf
+    # band13 temperature - band7 temperature
+    return sub(b13T, b7T)
