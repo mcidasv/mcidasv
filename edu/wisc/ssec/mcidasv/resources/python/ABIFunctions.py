@@ -129,3 +129,14 @@ def ABINightMicrophysicsRGB(b7T, b13T, b15T):
     grn = rescale(b13T-b7T, -3.1, 5.2, 0, 255)
     blu = rescale(b13T, 243.55, 292.65, 0, 255)
     return combineRGB(red, grn, blu)
+
+# ABI Simple Water Vapor RGB
+def ABISimpleWaterVaporRGB(b8T, b10T, b13T):
+    # http://rammb.cira.colostate.edu/training/visit/quick_guides/Simple_Water_Vapor_RGB.pdf
+    # red = band13; 278.96K to 202.29K rescalled to 0 to 255
+    # grn = band8; 242.67K to 214.66K rescalled to 0 to 255
+    # blu = band10; 261.03K to 245.12K rescalled to 0 to 255
+    red = rescale(b13T, 278.96, 202.29, 0, 255)
+    grn = rescale(b8T, 242.67, 214.66, 0, 255)
+    blu = rescale(b10T, 261.03, 245.12, 0, 255)
+    return combineRGB(red, grn, blu)
