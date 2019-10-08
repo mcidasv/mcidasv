@@ -87,5 +87,15 @@
   <param name="ABI_L2_ADP_Dust" range_max="1.0" range_min="0.0" table="Aerosol Detection - Dust"/>
   <param ci_base="0.0" ci_interval="5.0" ci_max="100.0" ci_min="0.0" ci_width="1" name=".*_Band24_QPE" range_max="99.0" range_min="0.0" table="Rain Rate QPF Estimate" unit="mm h-1"/>
   <!-- end inq2679 -->
+  
+  <!-- bob inq 2836 -->
+  <param ci_base="-30.0" ci_interval="30.0" ci_max="270.0" ci_min="-60.0" ci_width="1" name="abinightfog" range_max="16.0" range_min="-16.0" table="ABI Fog" unit="K"/>
+  <param ci_base="-28.0" ci_interval="4.0" ci_max="8.0" ci_min="-32.0" ci_width="1" name="abisplitwindow" range_max="-11.0" range_min="3.4" table="Enhanced Echo Tops" unit="K"/>
+  <param ci_base="-16.0" ci_interval="4.0" ci_max="16.0" ci_min="-20.0" ci_width="1" name="abisplitcloudphase" range_max="25.0" range_min="-10.0" table="truncated gridded data" unit="K"/>
+  <param name="abisplitsnow" table="truncated gridded data"/>
+  <param ci_base="-28.0" ci_interval="4.0" ci_max="8.0" ci_min="-32.0" ci_width="1" name="abisplitwatervapor" range_max="5.0" range_min="-32.0" table="truncated gridded data" unit="K"/>
+  <param ci_base="-42.0" ci_interval="7.0" ci_max="28.0" ci_min="-49.0" ci_width="1" name="abisplitozone" range_max="5.0" range_min="-45.0" table="truncated gridded data" unit="K"/>
+  <!-- end inq 2836 -->
+  
 </params>
 
