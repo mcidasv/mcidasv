@@ -48,4 +48,10 @@
     <params p1="190_Band7_TEMP" p2="190_Band13_TEMP" p3="190_Band15_TEMP"/>
     <params p1="192_Band7_TEMP" p2="192_Band13_TEMP" p3="192_Band15_TEMP"/>
   </paramgroup>
+  <paramgroup description="ABI Simple Water Vapor RGB" name="ABI_RGB_SimpleWaterVapor">
+    <params p1="186_Band8_TEMP" p2="186_Band10_TEMP" p3="186_Band13_TEMP"/>
+    <params p1="188_Band8_TEMP" p2="188_Band10_TEMP" p3="188_Band13_TEMP"/>
+    <params p1="190_Band8_TEMP" p2="190_Band10_TEMP" p3="190_Band13_TEMP"/>
+    <params p1="192_Band8_TEMP" p2="192_Band10_TEMP" p3="192_Band13_TEMP"/>
+  </paramgroup>
 </paramgroups>
