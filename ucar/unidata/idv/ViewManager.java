@@ -2865,7 +2865,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
 //                xyz = Util.getVWorldCoords(display, x, y, xyz);
                 xyz1 = Util.getVWorldCoords(display, x1, y1, xyz1);
                 double zval = getPerspectiveView()
-                              ? xyz[2]
+                              ? xyz1[2]
                               : 2.0;
 
                 d.addConstantMaps(new ConstantMap[] {
