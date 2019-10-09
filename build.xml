@@ -209,7 +209,7 @@
     <!-- note that the J3D JARs available from http://jogamp.org/deployment/java3d/
          do not (as of 20140915) have the version string in the filenames.
          this must be done manually for now. -->
-    <property name="java3d.version" value="1.6.0" />
+    <property name="java3d.version" value="1.6.2" />
 
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
@@ -743,6 +743,7 @@
 
       <!--
         The following two lines will allow the JVM to dump the heap's
+        contents on an OutOfMemory exception (very helpful!).
         ${heap.dir} defaults to "/tmp/mcidasv-heapdump.hprof" but feel free
         to change it.
       -->
@@ -865,9 +866,9 @@
       <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
       <jvmarg value="-noverify" />
       <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
-      <!--<jvmarg value="-XX:+UnlockExperimentalVMOptions" />-->
-      <!--<jvmarg value="-XX:+UseZGC" />-->
-      <!--<jvmarg value="-Xlog:gc" />-->
+      <jvmarg value="-XX:+UnlockExperimentalVMOptions" />
+      <jvmarg value="-XX:+UseZGC" />
+      <jvmarg value="-Xlog:gc" />
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
 
