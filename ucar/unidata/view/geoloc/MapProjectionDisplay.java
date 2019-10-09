@@ -70,6 +70,7 @@ import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
 import visad.georef.MapProjection;
 import visad.georef.TrivialMapProjection;
+import visad.java3d.DisplayRendererJ3D;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -102,6 +103,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.media.j3d.Canvas3D;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -1747,10 +1749,18 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
                                      + regionType);
         }
 
+        Canvas3D c = ((DisplayRendererJ3D)getDisplay().getDisplayRenderer()).getCanvas();
+        double xscale = c.getXscale();
+        double yscale = c.getYscale();
+
+        Dimension unscaledDimension = getComponent().getSize();
+        int ux = unscaledDimension.width;
+        int uy = unscaledDimension.height;
+
         // System.out.println(xyRegion);
         // Okay, now we have our region, let's get cracking
         // First, let's figure out our component size.
-        Dimension d = getComponent().getSize();
+        Dimension d = new Dimension((int)xscale*ux, (int)yscale*uy);
 
         // if running the isl non interactively, d is not assigned, the component is
         // one layer deeper.
@@ -1761,8 +1771,8 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         }
 
         // System.out.println("Component size = " + d);
-        int componentCenterX = d.width / 2;
-        int componentCenterY = d.height / 2;
+        int componentCenterX = (int)((d.width / 2) * xscale);
+        int componentCenterY = (int)((d.height / 2) * yscale);
 
         /*
          * System.out.println(
@@ -1911,7 +1921,10 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
                 // zoom out if this is a bigger region than the component
                 // System.out.println("zoom factor = " + zoom);
                 translate(transx, -transy);
-                zoom(zoom);
+                // TODO(jon): currently you can have situations where
+                //            xscale != yscale; are there any situations where
+                //            someone would actually want to do this?
+                zoom(zoom * xscale);
             }
         }
 

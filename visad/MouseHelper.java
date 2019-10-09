@@ -31,7 +31,14 @@ import java.awt.event.*;
 import java.rmi.*;
 import java.awt.*;
 
+import javax.media.j3d.Canvas3D;
+
 import visad.browser.Convert;
+import visad.java3d.DisplayRendererJ3D;
+import visad.java3d.MouseBehaviorJ3D;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
    MouseHelper is the VisAD helper class for MouseBehaviorJ3D
@@ -43,7 +50,8 @@ public class MouseHelper
   implements RendererSourceListener
 {
 
-
+  private static final Logger logger =
+    LoggerFactory.getLogger(MouseHelper.class);
 
   MouseBehavior behavior;
 
@@ -185,8 +193,10 @@ public class MouseHelper
 
     if (event instanceof MouseEvent &&
         ((MouseEvent) event).getID() == MouseEvent.MOUSE_PRESSED) {
+
       start_x = 0;
       start_y = 0;
+//      logger.trace("setting start xy to zero!");
       setTranslationFactor(start_x, start_y);
     }
 
@@ -195,11 +205,13 @@ public class MouseHelper
       return;
     }
 
+    Canvas3D c = ((DisplayRendererJ3D)getDisplayRenderer()).getCanvas();
     MouseEvent mouse_event = (MouseEvent) event;
 
     int event_id = event.getID();
 
     if (event_id == MouseEvent.MOUSE_ENTERED) {
+//      logger.trace("MOUSE_ENTER: mouseEntered: {}", mouseEntered);
       mouseEntered = true;
       try {
         DisplayEvent e = new DisplayEvent(getDisplay(),
@@ -213,6 +225,7 @@ public class MouseHelper
       return;
     }
     else if (event_id == MouseEvent.MOUSE_EXITED) {
+//      logger.trace("MOUSE_EXITED: mouseEntered: {}", mouseEntered);
       mouseEntered = false;
       try {
         DisplayEvent e = new DisplayEvent(getDisplay(),
@@ -226,6 +239,7 @@ public class MouseHelper
       return;
     }
     else if (event_id == MouseEvent.MOUSE_MOVED) {
+//      logger.trace("MOUSE_MOVED");
       try {
         DisplayEvent e = new DisplayEvent(getDisplay(),
           DisplayEvent.MOUSE_MOVED, mouse_event, remoteId);
@@ -247,6 +261,7 @@ public class MouseHelper
       int mshift = m & InputEvent.SHIFT_MASK;
 
       if (event_id == MouseEvent.MOUSE_PRESSED) {
+//        logger.trace("MOUSE_PRESSED");
         getDisplay().updateBusyStatus();
         if (m1 != 0) {
           actual_button[LEFT] = true;
@@ -260,6 +275,7 @@ public class MouseHelper
         mouseModifiers = m;
       }
       else { // event_id == MouseEvent.MOUSE_RELEASED
+//        logger.trace("MOUSE_RELEASED");
         getDisplay().updateBusyStatus();
         if (m1 != 0) {
           actual_button[LEFT] = false;
@@ -307,6 +323,19 @@ public class MouseHelper
       boolean cursor_off = enableFunctions((MouseEvent) event);
 
       if (event_id == MouseEvent.MOUSE_PRESSED) {
+        mouse_event =
+          new MouseEvent((Component)mouse_event.getSource(),
+                         mouse_event.getID(),
+                         mouse_event.getWhen(),
+                         mouse_event.getModifiers(),
+                         (int)(mouse_event.getX() * c.getXscale()),
+                         (int)(mouse_event.getY() * c.getYscale()),
+                         mouse_event.getXOnScreen(),
+                         mouse_event.getYOnScreen(),
+                         mouse_event.getClickCount(),
+                         mouse_event.isPopupTrigger(),
+                         mouse_event.getButton());
+//        logger.trace("!! MOUSE_PRESSED: new event: {}", mouse_event);
         try {
           DisplayEvent e = new DisplayEvent(getDisplay(),
             DisplayEvent.MOUSE_PRESSED, mouse_event, remoteId);
@@ -351,6 +380,7 @@ public class MouseHelper
         }
       }
       else { // event_id == MouseEvent.MOUSE_RELEASED
+//        logger.trace("!! MOUSE_RELEASED");
         try {
           DisplayEvent e = new DisplayEvent(getDisplay(),
             DisplayEvent.MOUSE_RELEASED, mouse_event, remoteId);
@@ -412,7 +442,8 @@ public class MouseHelper
   }
 
   protected void handleMouseDragged(MouseEvent event, int remoteId) {
-      MouseBehavior mouseBehavior = getMouseBehavior();
+//    logger.trace("dragging: {}", event);
+    MouseBehavior mouseBehavior = getMouseBehavior();
       boolean cursor = function[CURSOR_TRANSLATE] ||
                        function[CURSOR_ZOOM] ||
                        function[CURSOR_ROTATE];
@@ -427,6 +458,9 @@ public class MouseHelper
         Dimension d = event.getComponent().getSize();
         int current_x = event.getX();
         int current_y = event.getY();
+        Canvas3D c = ((DisplayRendererJ3D)getDisplayRenderer()).getCanvas();
+        int new_x = (int)(current_x * c.getXscale());
+        int new_y = (int)(current_y * c.getYscale());
 
         if (matrix) {
           double[] t1 = null;
@@ -528,6 +562,7 @@ public class MouseHelper
           }
         }
         if(function[CURSOR_TRANSLATE]) {
+//          logger.trace("TRANSLATE: current_xy: {} {}", current_x, current_y);
           // current_x, current_y -> 3-D cursor X and Y
           VisADRay cursor_ray = getMouseBehavior().findRay(current_x, current_y);
           if (cursor_ray != null) {
@@ -537,7 +572,9 @@ public class MouseHelper
 
         if (function[DIRECT]) {
           if (direct_renderer != null) {
-            VisADRay direct_ray = getMouseBehavior().findRay(current_x, current_y);
+            MouseBehaviorJ3D mbj3d = (MouseBehaviorJ3D)getMouseBehavior();
+            VisADRay direct_ray = mbj3d.findRay(new_x, new_y);
+//            logger.trace("DIRECT: current: {} {}; new: {} {} :: direct_ray: {}; new_ray: {}", current_x, current_y, new_x, new_y, direct_ray, new_ray);
             if (direct_ray != null) {
               direct_renderer.setLastMouseModifiers(mouseModifiers);
               direct_renderer.drag_direct(direct_ray, false, mouseModifiers);
@@ -634,10 +671,14 @@ public class MouseHelper
 
     if (function[DIRECT] && !old_function[DIRECT]) {
       if (getDisplayRenderer().anyDirects()) {
-        int current_x = ((MouseEvent) event).getX();
-        int current_y = ((MouseEvent) event).getY();
+        Canvas3D c = ((DisplayRendererJ3D)getDisplayRenderer()).getCanvas();
+        int current_x = event.getX();
+        int current_y = event.getY();
+
+        // FINALLY this actually draws the RBB in the right place!!
         VisADRay direct_ray =
-          getMouseBehavior().findRay(current_x, current_y);
+          getMouseBehavior().findRay((int)(current_x * c.getXscale()),
+                                     (int)(current_y * c.getYscale()));
         if (direct_ray != null) {
           direct_renderer =
             getDisplayRenderer().findDirect(direct_ray, mouseModifiers);
@@ -735,6 +776,7 @@ public class MouseHelper
   }
   
   public void setTranslationFactor(int start_x, int start_y) {
+//      logger.trace("START XY: {},{}", start_x, start_y);
       // WLH 9 Aug 2000
       VisADRay start_ray = getMouseBehavior().findRay(start_x, start_y);
       VisADRay start_ray_x = getMouseBehavior().findRay(start_x + 1, start_y);

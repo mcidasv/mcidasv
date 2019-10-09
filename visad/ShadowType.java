@@ -3190,6 +3190,7 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
     // This cannot be moved outside the for loop
     rotateVectors(base, up, text_control.getRotation());
     boolean newRendering = Boolean.parseBoolean(System.getProperty("visad.newfontrendering", "false"));
+    
     Graphics2D g2 = null;
     BufferedImage listImage = null;
     Rectangle bounds = null;
@@ -3280,8 +3281,9 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
             }
           }
         } else { // !sphere
-          start = new double[] { spatial_values[0][i], spatial_values[1][i],
-              spatial_values[2][i] };
+          start = new double[] {
+            spatial_values[0][i], spatial_values[1][i], spatial_values[2][i]
+          };
           if (font != null) {
             if (isDisplayList && newRendering && (display != null)) {
               Point3d[] p3d = { new Point3d(start[0], start[1], start[2]) };
@@ -3318,11 +3320,11 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
                 }
               }
             } else {
-              as[k] = PlotText.render_font(text_values[i], font, start, base, up,
-                  justification, verticalJustification, characterRotation, scale,
-                  offset);
+//               logger.trace("{} start1 text: {}; xyz: {},{},{}", i, text_values[i], start[0], start[1], start[2]);
+                as[k] = PlotText.render_font(text_values[i], font, start, base, up,
+                    justification, verticalJustification, characterRotation, scale,
+                    offset);
             }
-
           } else if (hfont != null) {
             as[k] = PlotText.render_font(text_values[i], hfont, start, base,
                 up, justification, verticalJustification, characterRotation,

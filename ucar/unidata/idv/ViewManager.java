@@ -175,6 +175,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.media.j3d.BranchGroup;
+import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Group;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -2847,26 +2848,29 @@ public class ViewManager extends SharableImpl implements ActionListener,
             DisplayMaster master  = getMaster();
             DisplayImpl   display = (DisplayImpl) master.getDisplay();
             Rectangle     r       = master.getScreenBounds();
-            double[]      xyz     = new double[3];
+//            double[]      xyz     = new double[3];
 
             if ( !r.isEmpty()) {
-
+                Canvas3D canvas = ((DisplayRendererJ3D)getDisplayRenderer()).getCanvas();
                 // System.out.println("screen bounds = " + r);
                 float scale = getDisplayListFont().getSize() / 12.f;
-                int   x     = r.x + (int) (.5f * r.width);
-                int   y     = r.y
-                        + (int) ((1.f - ((.025 * scale) * number))
-                                 * r.height);
+                int   x     = r.x + (int) (.5f * r.width * canvas.getXscale());
+                int   y     = r.y + (int) ((1.f - ((.025 * scale) * number))
+                                          * r.height * canvas.getYscale());
 
-                xyz = Util.getVWorldCoords(display, x, y, xyz);
+                int x1 = x * (int)canvas.getXscale();
+                int y1 = y * (int)canvas.getYscale();
+                double[] xyz1 = new double[3];
 
+//                xyz = Util.getVWorldCoords(display, x, y, xyz);
+                xyz1 = Util.getVWorldCoords(display, x1, y1, xyz1);
                 double zval = getPerspectiveView()
                               ? xyz[2]
                               : 2.0;
 
                 d.addConstantMaps(new ConstantMap[] {
-                    new ConstantMap(xyz[0], Display.XAxis),
-                    new ConstantMap(xyz[1], Display.YAxis),
+                    new ConstantMap(xyz1[0], Display.XAxis),
+                    new ConstantMap(xyz1[1], Display.YAxis),
                 // new ConstantMap(2.0, Display.ZAxis) });  // set at top of box
                 new ConstantMap(zval, Display.ZAxis) });  // set at top of box
 

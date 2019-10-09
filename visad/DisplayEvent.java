@@ -28,7 +28,15 @@ package visad;
 
 import java.awt.Component;
 import java.awt.event.*;
+
+import javax.media.j3d.Canvas3D;
 import javax.swing.*;
+
+import visad.java3d.DisplayImplJ3D;
+import visad.java3d.DisplayRendererJ3D;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
    DisplayEvent is the VisAD class for Events from Display
@@ -36,6 +44,9 @@ import javax.swing.*;
    received by DisplayListener objects.<P>
 */
 public class DisplayEvent extends VisADEvent {
+
+  private static final Logger logger =
+    LoggerFactory.getLogger(DisplayEvent.class);
 
   // If you add more events, be sure to add them to the Javadoc for
   // DisplayEvent.getId(), DisplayImpl.enableEvent(), and
@@ -433,8 +444,26 @@ public class DisplayEvent extends VisADEvent {
    *          the display component, or -1 if not a mouse event
    */
   public int getX() {
-    return input_event == null || !(input_event instanceof MouseEvent) ?
-      -1 : ((MouseEvent) input_event).getX();
+    int xx = ((input_event == null) || !(input_event instanceof MouseEvent))
+             ? -1
+             : ((MouseEvent) input_event).getX();
+    Canvas3D c =
+      ((DisplayRendererJ3D)((DisplayImpl)display).getDisplayRenderer()).getCanvas();
+    return xx * (int)c.getXscale();
+  }
+
+  private void printcoords() {
+    int xx = ((input_event == null) || !(input_event instanceof MouseEvent))
+             ? -1
+             : ((MouseEvent) input_event).getX();
+    int yy = ((input_event == null) || !(input_event instanceof MouseEvent))
+             ? -1
+             : ((MouseEvent) input_event).getY();
+    Canvas3D c =
+      ((DisplayRendererJ3D)((DisplayImpl)display).getDisplayRenderer()).getCanvas();
+    int new_x = xx * (int)c.getXscale();
+    int new_y = yy * (int)c.getYscale();
+    logger.trace("orig: {} {}; new: {} {}", xx, yy, new_x, new_y);
   }
 
   /**
@@ -445,8 +474,12 @@ public class DisplayEvent extends VisADEvent {
    *          the display component, or -1 if not a mouse event
    */
   public int getY() {
-    return input_event == null || !(input_event instanceof MouseEvent) ?
-      -1 : ((MouseEvent) input_event).getY();
+    int yy = ((input_event == null) || !(input_event instanceof MouseEvent))
+           ? -1
+           : ((MouseEvent) input_event).getY();
+    Canvas3D c =
+      ((DisplayRendererJ3D)((DisplayImpl)display).getDisplayRenderer()).getCanvas();
+    return yy * (int)c.getYscale();
   }
 
   /**
