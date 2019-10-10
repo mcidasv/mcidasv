@@ -54,4 +54,40 @@
     <params p1="190_Band8_TEMP" p2="190_Band10_TEMP" p3="190_Band13_TEMP"/>
     <params p1="192_Band8_TEMP" p2="192_Band10_TEMP" p3="192_Band13_TEMP"/>
   </paramgroup>
+  <paramgroup description="ABI Day Snow Fog RGB" name="ABI_RGB_DaySnowFog">
+    <params p1="186_Band3_ALB" p2="186_Band5_ALB" p3="186_Band7_TEMP" p4="186_Band13_TEMP"/>
+    <params p1="188_Band3_ALB" p2="188_Band5_ALB" p3="188_Band7_TEMP" p4="188_Band13_TEMP"/>
+    <params p1="190_Band3_ALB" p2="190_Band5_ALB" p3="190_Band7_TEMP" p4="190_Band13_TEMP"/>
+    <params p1="192_Band3_ALB" p2="192_Band5_ALB" p3="192_Band7_TEMP" p4="192_Band13_TEMP"/>
+  </paramgroup>
+  <paramgroup description="ABI Day Cloud Convection RGB" name="ABI_RGB_DayCloudConvection">
+    <params p1="186_Band2_ALB" p2="186_Band13_TEMP"/>
+    <params p1="188_Band2_ALB" p2="188_Band13_TEMP"/>
+    <params p1="190_Band2_ALB" p2="190_Band13_TEMP"/>
+    <params p1="192_Band2_ALB" p2="192_Band13_TEMP"/>
+  </paramgroup>
+  <paramgroup description="ABI Fire Temperature RGB" name="ABI_RGB_FireTemperature">
+    <params p1="186_Band5_ALB" p2="186_Band6_ALB" p3="186_Band7_TEMP"/>
+    <params p1="188_Band5_ALB" p2="188_Band6_ALB" p3="188_Band7_TEMP"/>
+    <params p1="190_Band5_ALB" p2="190_Band6_ALB" p3="190_Band7_TEMP"/>
+    <params p1="192_Band5_ALB" p2="192_Band6_ALB" p3="192_Band7_TEMP"/>
+  </paramgroup>
+  <paramgroup description="ABI Dust RGB" name="ABI_RGB_Dust">
+    <params p1="186_Band11_TEMP" p2="186_Band13_TEMP" p3="186_Band14_TEMP" p4="186_Band15_TEMP"/>
+    <params p1="188_Band11_TEMP" p2="188_Band13_TEMP" p3="188_Band14_TEMP" p4="188_Band15_TEMP"/>
+    <params p1="190_Band11_TEMP" p2="190_Band13_TEMP" p3="190_Band14_TEMP" p4="190_Band15_TEMP"/>
+    <params p1="192_Band11_TEMP" p2="192_Band13_TEMP" p3="192_Band14_TEMP" p4="192_Band15_TEMP"/>
+  </paramgroup>
+  <paramgroup description="ABI DIfferential Water Vapor RGB" name="ABI_RGB_DifferentialWaterVapor">
+    <params p1="186_Band8_TEMP" p2="186_Band10_TEMP"/>
+    <params p1="188_Band8_TEMP" p2="188_Band10_TEMP"/>
+    <params p1="190_Band8_TEMP" p2="190_Band10_TEMP"/>
+    <params p1="192_Band8_TEMP" p2="192_Band10_TEMP"/>
+  </paramgroup>
+  <paramgroup description="ABI Day Convection RGB" name="ABI_RGB_DayConvection">
+    <params p1="186_Band2_ALB" p2="186_Band5_ALB" p3="186_Band7_TEMP" p4="186_Band8_TEMP" p5="186_Band10_TEMP" p6="186_Band13_TEMP"/>
+    <params p1="188_Band2_ALB" p2="188_Band5_ALB" p3="188_Band7_TEMP" p4="188_Band8_TEMP" p5="188_Band10_TEMP" p6="188_Band13_TEMP"/>
+    <params p1="190_Band2_ALB" p2="190_Band5_ALB" p3="190_Band7_TEMP" p4="190_Band8_TEMP" p5="190_Band10_TEMP" p6="190_Band13_TEMP"/>
+    <params p1="192_Band2_ALB" p2="192_Band5_ALB" p3="192_Band7_TEMP" p4="192_Band8_TEMP" p5="192_Band10_TEMP" p6="192_Band13_TEMP"/>
+  </paramgroup>
 </paramgroups>
