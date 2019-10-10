@@ -451,4 +451,58 @@
             <params categories="" p1="192_Band13_TEMP" p2="192_Band7_TEMP"/>
         </operands>
     </derived>
+    <derived description="ABI Day Snow Fog RGB" formula="ABIDaySnowFogRGB(D1[label=Band 3A], D2[label=Band 5A], D3[label=Band 7T], D4[label=Band 13T])" id="abidaysnowfog" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands>
+            <paramgroup name="ABI_RGB_DaySnowFog"/>
+        </operands>
+    </derived>
+    <derived description="ABI Day Cloud Convection RGB" formula="ABIDayCloudConvectionRGB(D1[label=Band 2A], D2[label=Band 13T])" id="abidaycloudconvection" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands>
+            <paramgroup name="ABI_RGB_DayCloudConvection"/>
+        </operands>
+    </derived>
+    <derived description="ABI Fire Temperature RGB" formula="ABIFireTemperatureRGB(D1[label=Band 5A], D2[label=Band 6A], D3[label=Band 7T])" id="abifiretemperature" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands>
+            <paramgroup name="ABI_RGB_FireTemperature"/>
+        </operands>
+    </derived>
+    <derived description="ABI Dust RGB" formula="ABIDustRGB(D1[label=Band 11T], D2[label=Band 13T], D3[label=Band 14T], D4[label=Band 15T])" id="abidust" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands>
+            <paramgroup name="ABI_RGB_Dust"/>
+        </operands>
+    </derived>
+    <derived description="ABI Differential Water Vapor RGB" formula="ABIDifferentialWaterVaporRGB(D1[label=Band 8T], D2[label=Band 10T])" id="abidifferentialwatervapor" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands>
+            <paramgroup name="ABI_RGB_DifferentialWaterVapor"/>
+        </operands>
+    </derived>
+    <derived description="ABI Day Convection RGB" formula="ABIDayConvectionRGB(D1[label=Band 2A], D2[label=Band 5A], D3[label=Band 7T], D4[label=Band 8T], D5[label=Band 10T], D6[label=Band 13T])" id="abidayconvection" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="ABI RGBs"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="ABI_RGB_DayConvection"/>
+        </operands>
+    </derived>
 </derived_parameters>
