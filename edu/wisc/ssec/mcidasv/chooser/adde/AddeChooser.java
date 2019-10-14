@@ -580,6 +580,28 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
             groupSelector.setSelectedItem(selected);
         }
     }
+    
+    /**
+     * Return either the user's last selected server and group for a given
+     * ADDE chooser, or check {@code mcidasv.properties} if no selection exists.
+     * 
+     * @return Array of two strings. First value is the server, and the
+     * second is the group. {@code null} signifies that there was no 
+     * {@literal "last"} selection as well as no default selection.
+     */
+    protected String[] getDefaultServerSelection() {
+        String id = getId();
+        String[] serverState =
+            (String[])getIdv().getStore().get(Constants.PREF_SERVERSTATE + '.' + id);
+        if (serverState == null) {
+            String server = (String)getIdv().getStore().get("mcidasv.defaultselection." + id + ".server");
+            String group = (String)getIdv().getStore().get("mcidasv.defaultselection." + id + ".group");
+            if ((server != null) && (group != null)) {
+                serverState = new String[] { server, group };
+            }
+        }
+        return serverState;
+    }
 
     /**
      * Load any saved server state
@@ -590,9 +612,7 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
 //            logger.debug("loadServerState: addeServers == null chooser={}", this.getDataType());
             return;
         }
-        String id = getId();
-        String[] serverState =
-            (String[]) getIdv().getStore().get(Constants.PREF_SERVERSTATE + '.' + id);
+        String[] serverState = getDefaultServerSelection();
         if (serverState == null) {
 //            serverState = Constants.DEFAULT_SERVERSTATE;
 //            logger.debug("loadServerState: serverState == null chooser={}",this.getDataType());
