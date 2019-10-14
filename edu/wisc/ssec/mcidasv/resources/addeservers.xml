@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <servers>
+
 <!--
 Each server tag has a name and an optional description.
 
@@ -16,7 +17,7 @@ they essentially get it from their container type tag.
 This file overrides IDV addeservers.xml
 -->
   
-  <server name="adde.ssec.wisc.edu" active="true">
+  <server name="adde.ssec.wisc.edu">
     <group
             names="RTIMAGES,BLIZZARD,CIMSS,GINIEAST,GINIWEST,GINICOMP,NEXRCOMP,TOPO,GLOBAL, GINIALL, IMAGEALL, NEXRCALL"
             type="image"/>
@@ -33,10 +34,10 @@ This file overrides IDV addeservers.xml
             names="RTWXTEXT"
             type="text"/>
   </server>
-  
+
   <!-- NON-SSEC servers below -->
 
-  <server name="adde.ucar.edu">
+  <server name="adde.ucar.edu" active="true">
     <group
        names="RTIMAGES,BLIZZARD,CIMSS,GINIALL,GINIEAST,GINIWEST,GINICOMP,GLOBAL,IMAGEALL,L2GOESR,L2GOESS,NEXRCALL,NEXRCOMP,NPGOESR,NPGOESS,RTGOESR,RTGOESS,TOPO"
        type="image"/>
@@ -50,6 +51,7 @@ This file overrides IDV addeservers.xml
        names="RTWXTEXT"
        type="text"/>
   </server>
+
   <server name="lead.unidata.ucar.edu">
     <group
       names="CIMSS,EAST,GINICOMP,GINIEAST,GINIWEST,NEXRCOMP,NPGOESR,NPGOESS,RTGOESR,RTGOESS,RTIMAGES,TOPO"
