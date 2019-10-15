@@ -29,6 +29,7 @@
 package ucar.unidata.idv.control;
 
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataTimeRange;
@@ -63,14 +64,12 @@ import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.GlobeDisplay;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
-
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.Util;
 import ucar.visad.display.Animation;
 import ucar.visad.display.DisplayableData;
 import ucar.visad.display.LineDrawing;
 import ucar.visad.display.StationModelDisplayable;
-
 import visad.CommonUnit;
 import visad.Data;
 import visad.DisplayEvent;
@@ -90,10 +89,10 @@ import visad.Tuple;
 import visad.TupleType;
 import visad.Unit;
 import visad.VisADException;
-
 import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.georef.MapProjection;
+
 
 
 import java.awt.BorderLayout;
@@ -110,14 +109,10 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.io.File;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -2676,6 +2671,13 @@ public class StationModelControl extends ObsDisplayControl {
                                         GuiUtils.filler());
         GuiUtils.enableTree(zPositionPanel, !shouldUseAltitude);
 
+        // TJJ Oct 2019 - set default location labels z-pos to same as maps
+        try {
+            setZPosition(Constants.DEFAULT_MAP_Z_LEVEL);
+        } catch (RemoteException | VisADException rve) {
+            // TODO Auto-generated catch block
+            rve.printStackTrace();
+        }
         altitudeButton = new JRadioButton("Altitude (if available)", shouldUseAltitude);
         altitudeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

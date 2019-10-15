@@ -392,6 +392,9 @@ public interface Constants extends IdvConstants {
     /** Name to store the total system memory. */
     String PROP_SYSMEM = "idv.sysmem";
     
+    /** Default map z-level */
+    double DEFAULT_MAP_Z_LEVEL = -0.99d;
+
     /** Maximum amount of memory 32bit JREs can address, in megabytes. */
     int MAX_MEMORY_32BIT = 1536;
     

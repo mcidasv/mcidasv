@@ -3625,7 +3625,7 @@ public class MapViewManager extends NavigatedViewManager {
                 IdvConstants.PROP_MAP_GLOBE_LEVEL, 0.005f);
         } else {
             return (float) getStateManager().getProperty(
-                IdvConstants.PROP_MAP_MAP_LEVEL, -0.99f);
+                IdvConstants.PROP_MAP_MAP_LEVEL, Constants.DEFAULT_MAP_Z_LEVEL);
         }
     }
 
