@@ -101,6 +101,7 @@ import org.w3c.dom.Element;
 import edu.wisc.ssec.mcidas.adde.AddeURLException;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.util.IOUtil;
 import visad.DateTime;
 
@@ -583,19 +584,23 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     
     /**
      * Return either the user's last selected server and group for a given
-     * ADDE chooser, or check {@code mcidasv.properties} if no selection exists.
+     * ADDE chooser, or check {@code mcidasv.properties} if no selection
+     * exists.
      * 
-     * @return Array of two strings. First value is the server, and the
-     * second is the group. {@code null} signifies that there was no 
-     * {@literal "last"} selection as well as no default selection.
+     * @return Array of two strings. First value is the server, and the second
+     *         is the group. {@code null} signifies that there was no
+     *         {@literal "last"} selection as well as no default selection.
      */
     protected String[] getDefaultServerSelection() {
         String id = getId();
+        IdvObjectStore store = getIdv().getStore();
         String[] serverState =
-            (String[])getIdv().getStore().get(Constants.PREF_SERVERSTATE + '.' + id);
+            (String[])store.get(Constants.PREF_SERVERSTATE + '.' + id);
         if (serverState == null) {
-            String server = (String)getIdv().getStore().get("mcidasv.defaultselection." + id + ".server");
-            String group = (String)getIdv().getStore().get("mcidasv.defaultselection." + id + ".group");
+            String serverProp = "mcidasv.defaultselection." + id + ".server";
+            String groupProp = "mcidasv.defaultselection." + id + ".group";
+            String server = (String)store.get(serverProp);
+            String group = (String)store.get(groupProp);
             if ((server != null) && (group != null)) {
                 serverState = new String[] { server, group };
             }
