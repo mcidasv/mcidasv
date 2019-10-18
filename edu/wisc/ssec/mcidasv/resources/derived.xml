@@ -275,6 +275,7 @@
         <categories>
             <category display="true" value="ABI RGBs"/>
             <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="ABI_RGB_Airmass"/>
@@ -284,6 +285,7 @@
         <categories>
             <category display="true" value="ABI RGBs"/>
             <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="ABI_RGB_SO2"/>
@@ -293,6 +295,7 @@
         <categories>
             <category display="true" value="ABI RGBs"/>
             <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="ABI_RGB_DayCloudPhase"/>
@@ -302,6 +305,7 @@
         <categories>
             <category display="true" value="ABI RGBs"/>
             <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="ABI_RGB_ASH"/>
@@ -329,6 +333,7 @@
         <categories>
             <category display="true" value="ABI RGBs"/>
             <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="ABI_RGB_NightMicrophysics"/>
@@ -338,6 +343,7 @@
         <categories>
             <category display="true" value="ABI RGBs"/>
             <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="ABI_RGB_SimpleWaterVapor"/>
@@ -352,7 +358,6 @@
             <category value="display:planviewcontour"/>
             <category value="display:planviewcolor"/>
             <category value="display:valuedisplay"/>
-            <category value="display:imagesequence"/>
       </categories>
       <operands categories="">
           <params categories="" p1="186_Band12_TEMP" p2="186_Band13_TEMP"/>
@@ -365,7 +370,6 @@
         <categories>
             <category display="true" value="ABI Channel Differences"/>
             <category value="display:planviewcontour"/>
-            <category value="display:imagesequence"/>
             <category value="display:imagedisplay"/>
             <category value="display:imagedisplayoverz"/>
             <category value="display:planviewcontourfilled"/>
@@ -386,7 +390,6 @@
             <category value="display:valuedisplay"/>
             <category value="display:planviewcontourfilled"/>
             <category value="display:imagedisplayoverz"/>
-            <category value="display:imagesequence"/>
             <category value="display:imagedisplay"/>
             <category value="display:planviewcolor"/>
         </categories>
@@ -404,7 +407,6 @@
             <category value="display:planviewcontour"/>
             <category value="display:imagedisplayoverz"/>
             <category value="display:imagedisplay"/>
-            <category value="display:imagesequence"/>
             <category value="display:valuedisplay"/>
             <category value="display:planviewcontourfilled"/>
        </categories>
@@ -422,7 +424,6 @@
             <category value="display:planviewcontourfilled"/>
             <category value="display:valuedisplay"/>
             <category value="display:imagedisplayoverz"/>
-            <category value="display:imagesequence"/>
             <category value="display:planviewcolor"/>
             <category value="display:imagedisplay"/>
         </categories>
@@ -437,7 +438,6 @@
         <categories>
             <category display="true" value="ABI Channel Differences"/>
             <category value="display:planviewcolor"/>
-            <category value="display:imagesequence"/>
             <category value="display:planviewcontourfilled"/>
             <category value="display:imagedisplayoverz"/>
             <category value="display:imagedisplay"/>
@@ -454,6 +454,7 @@
     <derived description="ABI Day Snow Fog RGB" formula="ABIDaySnowFogRGB(D1[label=Band 3A], D2[label=Band 5A], D3[label=Band 7T], D4[label=Band 13T])" id="abidaysnowfog" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands>
@@ -463,6 +464,7 @@
     <derived description="ABI Day Cloud Convection RGB" formula="ABIDayCloudConvectionRGB(D1[label=Band 2A], D2[label=Band 13T])" id="abidaycloudconvection" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands>
@@ -481,6 +483,7 @@
     <derived description="ABI Dust RGB" formula="ABIDustRGB(D1[label=Band 11T], D2[label=Band 13T], D3[label=Band 14T], D4[label=Band 15T])" id="abidust" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands>
@@ -490,6 +493,7 @@
     <derived description="ABI Differential Water Vapor RGB" formula="ABIDifferentialWaterVaporRGB(D1[label=Band 8T], D2[label=Band 10T])" id="abidifferentialwatervapor" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands>
@@ -499,6 +503,7 @@
     <derived description="ABI Day Convection RGB" formula="ABIDayConvectionRGB(D1[label=Band 2A], D2[label=Band 5A], D3[label=Band 7T], D4[label=Band 8T], D5[label=Band 10T], D6[label=Band 13T])" id="abidayconvection" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="ABI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
@@ -508,6 +513,7 @@
     <derived description="AHI Natural Color RGB" formula="AHINaturalColorRGB(D1[label=Band 3A], D2[label=Band 4A], D3[label=Band 5A])" id="ahinaturalcolor" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="AHI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands>
@@ -517,6 +523,7 @@
     <derived description="AHI Night Microphysics RGB" formula="AHINightMicrophysicsRGB(D1[label=Band 7T], D2[label=Band 13T], D3[label=Band 15T])" id="ahinightmicrophysics" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="AHI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands>
@@ -526,6 +533,7 @@
     <derived description="AHI Day Convective Storm RGB" formula="AHIDayConvectiveStormRGB(D1[label=Band 3A], D2[label=Band 5A], D3[label=Band 7T], D4[label=Band 8T], D5[label=Band 10T], D6[label=Band 13T])" id="ahidayconvectivestorm" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="AHI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands>
@@ -535,6 +543,7 @@
     <derived description="AHI Airmass RGB" formula="AHIAirmassRGB(D1[label=Band 8T], D2[label=Band 10T], D3[label=Band 12T], D4[label=Band 13T])" id="ahiairmass" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="AHI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands>
@@ -544,6 +553,7 @@
     <derived description="AHI Ash RGB" formula="AHIAshRGB(D1[label=Band 11T], D2[label=Band 13T], D3[label=Band 15T])" id="ahiash" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="AHI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands>
@@ -553,6 +563,7 @@
     <derived description="AHI True Color RGB" formula="AHITrueColorRGB(D1[label=Band 1A], D2[label=Band 2A], D3[label=Band 3A])" id="ahitruecolor" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="AHI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
@@ -562,6 +573,7 @@
     <derived description="AHI Dust RGB" formula="AHIDustRGB(D1[label=Band 11T], D2[label=Band 13T], D3[label=Band 15T])" id="ahidust" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="AHI RGBs"/>
+            <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
