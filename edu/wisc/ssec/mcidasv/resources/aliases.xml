@@ -43,7 +43,6 @@
      Temperature_high_cloud_top_Mixed_intervals_Average,
      Temperature_low_cloud_top_Mixed_intervals_Average,
      Temperature_middle_cloud_top_Mixed_intervals_Average,
-     Temperature_potential_vorticity_surface,Temperature_altitude_above_msl,
      Temperature_height_above_ground_weightedMean,
      Temperature_isobaric_weightedMean,
      Maximum_temperature_height_above_ground_12_Hour_Maximum,
@@ -107,7 +106,6 @@
      u-component_of_wind_maximum_wind,u-component_of_wind_planetary_boundary,
      u-component_of_wind_sigma,u-component_of_wind_tropopause,
      U-Component_Storm_Motion_height_above_ground_layer,
-     u-component_of_wind_altitude_above_msl,
      u-component_storm_motion_height_above_ground_layer,
      u-component_of_wind_height_above_ground_5_Minute_Average,
      u-component_of_wind_Analysis_height_above_ground"/>
@@ -125,7 +123,6 @@
      v-component_of_wind_maximum_wind,v-component_of_wind_planetary_boundary,
      v-component_of_wind_sigma,v-component_of_wind_tropopause,
      V-Component_Storm_Motion_height_above_ground_layer,
-     v-component_of_wind_altitude_above_msl,
      v-component_storm_motion_height_above_ground_layer,
      v-component_of_wind_height_above_ground_5_Minute_Average,
      v-component_of_wind_Analysis_height_above_ground"/>
