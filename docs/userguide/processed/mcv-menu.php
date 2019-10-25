@@ -256,12 +256,15 @@ RAOB Sounding Data</span><br>
         <span class="toggle" onClick="toggleChildren(this,'miscellaneous_2_1');">+</span>
 		<span class="link" onClick="setPage('tools/NativeFormulas.html');">Native Formulas</span><br>
 		<div class="indented" id="miscellaneous_2_1">
-			<span class="link" onClick="setPage('tools/MapFormulas.html');">Description of Formulas - Maps</span><br>
-                        <span class="link" onClick="setPage('tools/GridFormulas.html');">Description of Formulas - Grids</span><br>
-            <span class="link" onClick="setPage('tools/MiscellaneousFormulas.html');">Description of Formulas - Miscellaneous</span><br>
-            <span class="link" onClick="setPage('tools/ImageFilterFormulas.html');">Description of Formulas - Image Filters</span><br>
-            <span class="link" onClick="setPage('tools/ExportFormulas.html');">Description of Formulas - Export</span><br>
+		    <span class="link" onClick="setPage('tools/ABIChannelDifferenceFormulas.html');">Description of Formulas - ABI Channel Differences</span><br>
+		    <span class="link" onClick="setPage('tools/ABIRGBFormulas.html');">Description of Formulas - ABI RGBs</span><br>
+		    <span class="link" onClick="setPage('tools/AHIRGBFormulas.html');">Description of Formulas - AHI RGBs</span><br>
+		    <span class="link" onClick="setPage('tools/ExportFormulas.html');">Description of Formulas - Export</span><br>
+		    <span class="link" onClick="setPage('tools/GridFormulas.html');">Description of Formulas - Grids</span><br>
+		    <span class="link" onClick="setPage('tools/ImageFilterFormulas.html');">Description of Formulas - Image Filters</span><br>
             <span class="link" onClick="setPage('tools/ImageryFormulas.html');">Description of Formulas - Imagery</span><br>
+			<span class="link" onClick="setPage('tools/MapFormulas.html');">Description of Formulas - Maps</span><br>
+            <span class="link" onClick="setPage('tools/MiscellaneousFormulas.html');">Description of Formulas - Miscellaneous</span><br>
 		</div>
         <span class="link" onClick="setPage('tools/Jython.html');">Jython Methods</span><br>
         <span class="link" onClick="setPage('tools/JythonShell.html');">Jython Shell</span><br>

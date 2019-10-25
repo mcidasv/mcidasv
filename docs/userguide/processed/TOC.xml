@@ -167,12 +167,15 @@
         <tocitem text="Formulas" target="idv.tools.formulas"/>
 		<tocitem text="Derived Data" target="idv.tools.deriveddata"/>
         <tocitem text="Native Formulas" target="idv.tools.nativeformulas">
-            <tocitem text="Description of Formulas - Maps" target="idv.tools.mapformulas"/>
-			<tocitem text="Description of Formulas - Grids" target="idv.tools.gridformulas"/>
-            <tocitem text="Description of Formulas - Miscellaneous" target="idv.tools.miscellaneousformulas"/>
-            <tocitem text="Description of Formulas - Image Filters" target="idv.tools.imagefilterformulas"/>
+            <tocitem text="Description of Formulas - ABI Channel Differences" target="idv.tools.abichanneldifferenceformulas"/>
+            <tocitem text="Description of Formulas - ABI RGBs" target="idv.tools.abirgbformulas"/>
+            <tocitem text="Description of Formulas - AHI RGBs" target="idv.tools.ahirgbformulas"/>
             <tocitem text="Description of Formulas - Export" target="idv.tools.exportformulas"/>
+            <tocitem text="Description of Formulas - Grids" target="idv.tools.gridformulas"/>
+            <tocitem text="Description of Formulas - Image Filters" target="idv.tools.imagefilterformulas"/>
             <tocitem text="Description of Formulas - Imagery" target="idv.tools.imageryformulas"/>
+            <tocitem text="Description of Formulas - Maps" target="idv.tools.mapformulas"/>
+            <tocitem text="Description of Formulas - Miscellaneous" target="idv.tools.miscellaneousformulas"/>
         </tocitem>
         <tocitem text="Jython Methods" target="idv.tools.jython"/>
         <tocitem text="Jython Shell" target="idv.tools.jythonshell"/>
