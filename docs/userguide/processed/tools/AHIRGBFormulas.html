@@ -30,34 +30,50 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/AHIRGBFormu
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Description of Formulas - AHI RGBs</div>
-<p>The following describes each formula included in the AHI RGB Formulas section
-  of McIDAS-V.</p>
+<p>The following describes each formula included in the AHI (Advanced Himawari Imager - Himawari-8 and -9) RGB Formulas section
+  of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the ABI RGBs tree.</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>AHI Airmass RGB   (name, unitSpec) - </strong>Sets the name and unit of a field.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+<li class="propertylistitem"><strong>AHI Airmass RGB   (Band 8T, Band 10T, Band 12T, Band 13T) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+<table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
       </strong></tr></td>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>name </em></p>
+        <p><em>Band 8T</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>The name of the new unit.</p>
+        <p>AHI band 8 (6.2um) temperature.</p>
         </td>
       </tr>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>unitSpec </em></p>
+        <p><em>Band 10T</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>The unit that will be used in the display of your parameter.&nbsp; This must be a unit recognized by McIDAS-V, and it must be convertible with the default unit of your data.</p>
+        <p>AHI band 10 (7.3um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 12T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>AHI band 12 (9.6um) temperature.</p>
+        </td>
+    </tr>
+    <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 13T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 13 (10.4um) temperature.</p>
         </td>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Ash RGB   (name, unitSpec) - </strong>Sets the name and unit of a field.
+<li class="propertylistitem"><strong>AHI Ash RGB   (Band 11T, Band 13T, Band 15T) - </strong>Monitors volcanic ash and sulfur dioxide gas.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -65,71 +81,119 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/AHIRGBFormu
       </strong></tr></td>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>name </em></p>
+        <p><em>Band 11T</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>The name of the new unit.</p>
+        <p>AHI band 11 (8.6um) temperature.</p>
         </td>
       </tr>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>unitSpec </em></p>
+        <p><em>Band 13T</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>The unit that will be used in the display of your parameter.&nbsp; This must be a unit recognized by McIDAS-V, and it must be convertible with the default unit of your data.</p>
+        <p>AHI band 13 (10.4um) temperature.</p>
+        </td>
+      </tr>
+       <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 15T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 15 (12.4um) temperature.</p>
         </td>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Day Convective Storm RGB (name, unitSpec) - </strong>Sets the name and unit of a field.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+<li class="propertylistitem"><strong>AHI Day Convective Storm RGB (Band 3A, Band 5A, Band 7T, Band 8T, Band 10T, Band 13T) - </strong>Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
+<table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
       </strong></tr></td>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>name </em></p>
+        <p><em>Band 3A</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>The name of the new unit.</p>
+        <p>AHI band 3 (0.64um) albedo.</p>
         </td>
       </tr>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>unitSpec </em></p>
+        <p><em>Band 5A</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>The unit that will be used in the display of your parameter.&nbsp; This must be a unit recognized by McIDAS-V, and it must be convertible with the default unit of your data.</p>
+        <p>AHI band 5 (1.6um) albedo.</p>
+        </td>
+      </tr>
+          <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 7T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>AHI band 7 (3.9um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 8T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 8 (6.2um) temperature.</p>
+        </td>
+      </tr>
+          <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 10T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>AHI band 10 (7.3um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 13T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 13 (10.4um) temperature.</p>
         </td>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Dust RGB   (name, unitSpec) - </strong>Sets the name and unit of a field.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+<li class="propertylistitem"><strong>AHI Dust RGB   (Band 11T, Band 13T, Band 15T) - </strong>Contrasts between dusts and clouds.
+<table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
       </strong></tr></td>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>name </em></p>
+        <p><em>Band 11T</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>The name of the new unit.</p>
+        <p>AHI band 11 (8.6um) temperature.</p>
         </td>
       </tr>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>unitSpec </em></p>
+        <p><em>Band 13T</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>The unit that will be used in the display of your parameter.&nbsp; This must be a unit recognized by McIDAS-V, and it must be convertible with the default unit of your data.</p>
+        <p>AHI band 13 (10.4um) temperature.</p>
+        </td>
+      </tr>
+          <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 15T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 15 (12.4um) temperature.</p>
         </td>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Natural Color RGB   (name, unitSpec) - </strong>Sets the name and unit of a field.
+<li class="propertylistitem"><strong>AHI Natural Color RGB   (Band 3A, Band 4A, Band 5A) - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -137,23 +201,63 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/AHIRGBFormu
       </strong></tr></td>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>name </em></p>
+        <p><em>Band 3A</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>The name of the new unit.</p>
+        <p>AHI band 3 (0.64um) albedo.</p>
         </td>
       </tr>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>unitSpec </em></p>
+        <p><em>Band 4A</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>The unit that will be used in the display of your parameter.&nbsp; This must be a unit recognized by McIDAS-V, and it must be convertible with the default unit of your data.</p>
+        <p>AHI band 4 (0.86um) albedo.</p>
+        </td>
+      </tr>
+          <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 5A</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 5 (1.6um) albedo.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>AHI Night Microphysics RGB   (Band 7T, Band 13T, Band 15T) - </strong>Distinguishes between low clouds and fog.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr></td>
+    <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 7T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>AHI band 7 (3.9um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 13T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 13 (10.4um) temperature.</p>
+        </td>
+      </tr>
+          <tr>
+      <td width="120" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 15T</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AHI band 15 (12.4um) temperature.</p>
         </td>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Night Microphysics RGB   (name, unitSpec) - </strong>Sets the name and unit of a field.
+<li class="propertylistitem"><strong>AHI True Color RGB   (Band 1A, Band 2A, Band 3A) - </strong>Displays an image of approximately what would be seen from the satellite, with green vegetation, brown inactive vegetation/soil, and blue water.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -161,42 +265,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/AHIRGBFormu
       </strong></tr></td>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>name </em></p>
+        <p><em>Band 1A</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>The name of the new unit.</p>
+        <p>AHI band 1 (0.47um) albedo.</p>
         </td>
       </tr>
     <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>unitSpec </em></p>
+        <p><em>Band 2A</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>The unit that will be used in the display of your parameter.&nbsp; This must be a unit recognized by McIDAS-V, and it must be convertible with the default unit of your data.</p>
+        <p>AHI band 2 (0.51um) albedo.</p>
         </td>
       </tr>
-  </table>
-</li>
-<li class="propertylistitem"><strong>AHI True Color RGB   (name, unitSpec) - </strong>Sets the name and unit of a field.
-  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
-    <tr>
-      <td colspan="1"><strong>Input Parameter</strong></td>
-      <td width="630"><strong>Definition
-      </strong></tr></td>
-    <tr>
+          <tr>
       <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>name </em></p>
-        </td>
-      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>The name of the new unit.</p>
-        </td>
-      </tr>
-    <tr>
-      <td width="120" colspan="1" rowspan="1" valign="top">
-        <p><em>unitSpec </em></p>
+        <p><em>Band 3A</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>The unit that will be used in the display of your parameter.&nbsp; This must be a unit recognized by McIDAS-V, and it must be convertible with the default unit of your data.</p>
+        <p>AHI band 3 (0.64um) albedo.</p>
         </td>
       </tr>
   </table>

@@ -32,26 +32,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
   of McIDAS-V.</p>
 <p><strong>Note:</strong> If the formula you select utilizes a Select Input window&nbsp;to enter values to be used by the formula, you can choose if you want to save these values in a bundle if you wish to create one. Each field of the Select Input window has a <strong>Save in Bundle</strong> option&nbsp;(chosen by default). If you keep this option selected, the value(s) you choose will be stored in the bundle, and if all values are saved, the formula will automatically execute when you load in your bundle without any user input. If you do not save the values in your bundle, the values you use will not be saved, and the formula will not automatically execute without requiring the user to enter/change values.</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>GOES 16/17 Three Color (RGB) Image (Channel0p64, Channel0p86, Channel0p47) -</strong> Creates a true-color ABI RGB image by simulating a green band.  The controls for this display are the same as the <strong>Three Color (RGB) Image</strong> formula described below.
-  <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
-    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>Channel0p64 </em></p></td>
-    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>ABI Band 2 (0.64um).</p></td>
-  </tr>
-  <tr>
-    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>Channel0p86</em></p></td>
-    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>ABI Band 3 (0.86um).</p></td>
-  </tr>
-  <tr>
-    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>Channel0p47</em></p></td>
-    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>ABI Band 1 (0.47um).</p></td>
-  </tr>
-</table>
-</li>
 <li class="propertylistitem"><strong>Geolocate an Image (Upper Left Lat, Upper Left Lon, Lower Right Lat,
     Lower Right Lon) -</strong> Takes an image data object and a lat/lon bounding box and adds
   a lat/lon domain to the data. This formula is commonly used in conjunction
@@ -80,6 +60,26 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
     <td width="120" colspan="1" rowspan="1" valign="top"><p><em>Lower Right Lon </em></p></td>
     <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>Lower right
         longitude value (default=180).</p></td>
+  </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>GOES 16/17 Three Color (RGB) Image (Channel0p64, Channel0p86, Channel0p47) -</strong> Creates a true-color ABI RGB image by simulating a green band.  The controls for this display are the same as the <strong>Three Color (RGB) Image</strong> formula described below.
+  <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
+  <tr>
+    <td colspan="1"><strong>Input Parameter</strong></td>
+   <td width="630"><strong>Definition
+   </strong></tr>
+   <tr>
+    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>Channel0p64 </em></p></td>
+    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>ABI Band 2 (0.64um).</p></td>
+  </tr>
+  <tr>
+    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>Channel0p86</em></p></td>
+    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>ABI Band 3 (0.86um).</p></td>
+  </tr>
+  <tr>
+    <td width="120" colspan="1" rowspan="1" valign="top"><p><em>Channel0p47</em></p></td>
+    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>ABI Band 1 (0.47um).</p></td>
   </tr>
 </table>
 </li>
