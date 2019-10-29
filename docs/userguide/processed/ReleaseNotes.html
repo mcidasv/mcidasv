@@ -58,6 +58,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#localServers1.9">Local Servers</a></strong></li>
     <li><strong><a class="faq-question-link" href="#remoteServers1.9">Remote Servers/Datasets</a></strong></li>
     <li><strong><a class="faq-question-link" href="#aliases1.9">Gridded Aliases</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#tropomi1.9">TROPOMI</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.9">Display
@@ -73,6 +74,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
+    <li><strong><a class="faq-question-link" href="#abiahi_1.9">ABI and AHI Formulas</a></strong></li>
     <li><strong><a class="faq-question-link" href="#alphabetical_1.9">Alphabetical Field Listing</a></strong></li>
     <li><strong><a class="faq-question-link" href="#countries_1.9">Country Location Labels</a></strong></li>
     <li><strong><a class="faq-question-link" href="#scripting1.9">Scripting</a></strong></li>
@@ -81,7 +83,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat5_1.9">Under Development</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#jpss1.9">JPSS Chooser</a></strong></li></ul></div>
+    <li><strong><a class="faq-question-link" href="#jpss1.9">JPSS Chooser</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#glm1.9">GLM Chooser</a></strong></li></ul>
+  </div>
 <hr>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat1_1.9" id="faq1_cat1_1.9"></a>Documentation
@@ -127,6 +131,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>Gridded Aliases</h4>
     <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog.  Adding these variables to the list of aliases in McIDAS-V allows for McIDAS-V to recognize the variables and therefore create derived fields and display the variables using the parameter defaults.</div>
 	</div>
+	<div class="faq-category"><a name="tropomi1.9" id="tropomi1.9"></a>
+    <h4>TROPOMI</h4>
+    <div class="faq-answer">Added support for L2 TROPOMI (TROPOspheric Monitoring Instrument) netCDF files. These files can be loaded through the General -&gt; Files/Directories chooser as a gridded data source.</div>
+	</div>
 </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat3_1.9" id="faq1_cat3_1.9"></a>Display
@@ -143,6 +151,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat4_1.9" id="faq1_cat4_1.9"></a>Other
     Changes</div>
+    <div class="faq-category"><a name="abiahi_1.9" id="abiahi_1.9"></a>
+    <h4>ABI and AHI Formulas</h4>
+    <div class="faq-answer">Added a variety of formulas specific to ABI (Advanced Baseline Imager) and AHI (Advanced Himawari Imager) to create displays of RGB and band subtraction products.  These formulas can be found in the Field Selector under Formulas.  Also, derived fields for these products will be automatically added to the Field Selector when an ABI/AHI data source is loaded that includes the bands required to create the product.  For more information, see:
+    <ul>
+    	<li><a href="tools/ABIChannelDifferenceFormulas.html">Description of Formulas - ABI Channel Differences</a></li>
+    	<li><a href="tools/ABIRGBFormulas.html">Description of Formulas - ABI RGBs</a></li>
+    	<li><a href="tools/AHIRGBFormulas.html">Description of Formulas - AHI RGBs</a></li>
+    </ul></div>
+	</div>
     <div class="faq-category"><a name="alphabetical_1.9" id="alphabetical_1.9"></a>
     <h4>Alphabetical Field Listing</h4>
     <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This listing makes the list of variables/fields more organized and easier to navigate through.</div>
@@ -174,7 +191,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div class="faq-category"><a name="jpss1.9" id="jpss1.9"></a>
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
-      <p>Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.</p>
+      Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.
+    </div>
+  </div>
+  <div class="faq-category"><a name="glm1.9" id="glm1.9"></a>
+    <h4>GLM Chooser</h4>
+    <div class="faq-answer">
+      <p>Added a GLM chooser to the list of Under Development choosers. This chooser is capable of loading GOES-16 and GOES-17 GLM (Group, Event, Flash) data through remote ADDE. From the Increment option in the Data Sources tab, the user can specify the number of minutes of data to bin together into one timestep. This defaults to 5 minutes. To display the data, a gridded display can be created, or point data can be plotted.</p>
     </div>
   </div>
 </div>
