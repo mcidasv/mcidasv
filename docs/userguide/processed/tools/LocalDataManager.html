@@ -65,7 +65,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
         <li>LRIT MTSAT-1R</li>
         <li>McIDAS AREA</li>
         <li>Meteosat OpenMTP</li>
-          <ul>
+        <ul>
             <li>Note: There is a very specific file name convention that must be used for this server. This file name format differs from that of data ordered from EUMETSAT. For example, Meteosat-7 OpenMTP data ordered from EUMETSAT has these file name conventions for IR, VIS, and WV bands:
               <blockquote>
             IR   - OpenMTP_2015-01-15_25_712345_1_1_1.IR<br>
@@ -78,50 +78,72 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
             WV - awxxx_m07_d20150115_s120000_n40_cness.omf</blockquote>
             Note that the time information in the modified file names (s120000 for 12 UTC) is not included in the original file names.
             </li>
-          </ul>
+        </ul>
         <li>Metop AVHRR L 1b</li>
         <ul>
-        <li> Note: This server works with data ordered from NOAA CLASS.  This data must not be geographically subsetted.  The data can be ordered in 10-bit files or 16-bit files (as long as all channels are included).</li>
+            <li> Note: This server works with data ordered from NOAA CLASS.  This data must not be geographically subsetted.  The data can be ordered in 10-bit files or 16-bit files (as long as all channels are included).</li>
         </ul>
         <li>MODIS L1b MOD02 (MODIS Level 1b)</li>
+        <ul>
+            <li>Note: When creating MODIS datasets, the file names must match the standard Goddard DAAC (Distributed Active Archive System) or MODIS direct broadcast naming conventions.  In the DAAC convention, for example, 1 km Terra MODIS Level 1b HDF image files must follow the format <strong>MOD021KM.Ayyyyddd.hhmm.002.yyyyddd.hdf</strong>.  Aqua files must begin with <strong>MYD</strong> instead of <strong>MOD</strong>, and 1/2 km and 1/4 km resolution files are denoted as <strong>HKM</strong> and <strong>QKM</strong> instead of <strong>1KM</strong>. In the MODIS direct broadcast convention, for example, the same 1 km Terra image files must follow the format <strong>t1.yyddd.hhmm.1000m.hdf</strong>.  Aqua files must begin with <strong>a1</strong> instead of <strong>t1</strong>, and 1/2 km and 1/4 km files are denoted as <strong>500m</strong> and <strong>250m</strong> instead of <strong>1000m</strong>. Similarly, these two naming conventions can be applied to the MODIS Level 2 products in HDF format.</li>
+        </ul>
         <li>MODIS L2 MOD04 (MODIS Level 2 Aerosol)</li>
+        <ul>
+            <li>See the note under "MODIS L1b MOD02" for filename conventions.</li>
+        </ul>
         <li>MODIS L2 MOD06 (MODIS Level 2 Cloud Top Properties)</li>
+        <ul>
+            <li>See the note under "MODIS L1b MOD02" for filename conventions.</li>
+        </ul>
         <li>MODIS L2 MOD07 (MODIS Level 2 Atmospheric Profile)</li>
+        <ul>
+            <li>See the note under "MODIS L1b MOD02" for filename conventions.</li>
+        </ul>
         <li>MODIS L2 MOD28 (MODIS Level 2 Sea Surface Temperature)</li>
         <ul>
-        <li>Note: When loading this data, you must use line/element for the Location, and use the raw size of the image, or a magnification with the lock icon unlocked)</li>
+            <li>Note: When loading this data, you must use line/element for the Location, and use the raw size of the image, or a magnification with the lock icon unlocked)</li>
+            <li>Note: See the note under "MODIS L1b MOD02" for filename conventions.</li>
         </ul>
         <li>MODIS L2 MOD35 (MODIS Level 2 Cloud Mask)</li>
+        <ul>
+            <li>Note: See the note under "MODIS L1b MOD02" for filename conventions.</li>
+        </ul>
         <li>MODIS L3 MODR (MODIS Level 2 Corrected Reflectance)</li>
+        <ul>
+            <li>Note: See the note under "MODIS L1b MOD02" for filename conventions.</li>
+        </ul>
         <li>MSG HRIT FD and HRV</li>
         <ul>
-        <li><a name="msg" id="msg"></a>Note:  McIDAS-V reads segmented MSG Level 1.5 files transmitted by EUMETSAT.  The prologue files (*PRO*) must be in the same directory as the segmented data files or the images will not display. Note: To order segmented MSG files from EUMETSAT's Earth Observation (EO) Portal, select 'HRIT data sets in tar file' in the Format Type section of the Shopping Trolley tab.</li>
+            <li><a name="msg" id="msg"></a>Note:  McIDAS-V reads segmented MSG Level 1.5 files transmitted by EUMETSAT.  The prologue files (*PRO*) must be in the same directory as the segmented data files or the images will not display. Note: To order segmented MSG files from EUMETSAT's Earth Observation (EO) Portal, select 'HRIT data sets in tar file' in the Format Type section of the Shopping Trolley tab.</li>
         </ul>
         <li>MTSAT HRIT</li>
+        <ul>
+            <li>The file names must match the JMA segmented image file naming convention described at <a href="http://www.ssec.wisc.edu/mcidas/doc/sdi_man/current/mtsat_hrit-3.html">http://www.ssec.wisc.edu/mcidas/doc/sdi_man/current/mtsat_hrit-3.html</a>.</li>
+        </ul>
         <!--      <li>NEXRAD Level 3 Radar </li>-->
         <li>NOAA AVHRR L 1b</li>
-                <ul>
-        <li> Note: This server works with data ordered from NOAA CLASS.  This data must not be geographically subsetted.  The data can be ordered in 10-bit files or 16-bit files (as long as all channels are included).</li>
+        <ul>
+            <li> Note: This server works with data ordered from NOAA CLASS.  This data must not be geographically subsetted.  The data can be ordered in 10-bit files or 16-bit files (as long as all channels are included).</li>
         </ul>
         <li>SSMI (TeraScan netCDF)</li>
         <li>TRMM (TeraScan netCDF)</li>
         <li>GOES ABI</li>
         <ul>
-        	<li>Note: This server is available on Linux and OS X/macOS platforms.</li>
-        	<li>The files must be mission-standard Level 1b files in netCDF-4 format (like those from NOAA CLASS or    decoded from the GRB data stream using CSPP Geo) or mission-standard Level 2+ products in netCDF-4    format (like those from NOAA CLASS).  The names of files should look similar to <strong>ABI-L1b-RadC-M3C01_G16_s2015229195720.nc</strong> (current CSPP Geo naming convention) or <strong>OR_ABI-L1b-RadC-M4C16_G16_s20151702215532_e20151702220362_c20151702220394.nc</strong> (GOES-R Ground System naming convention).</li>
+            <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
+            <li>The files must be mission-standard Level 1b files in netCDF-4 format (like those from NOAA CLASS or    decoded from the GRB data stream using CSPP Geo) or mission-standard Level 2+ products in netCDF-4    format (like those from NOAA CLASS).  The names of files should look similar to <strong>ABI-L1b-RadC-M3C01_G16_s2015229195720.nc</strong> (current CSPP Geo naming convention) or <strong>OR_ABI-L1b-RadC-M4C16_G16_s20151702215532_e20151702220362_c20151702220394.nc</strong> (GOES-R Ground System naming convention).</li>
         </ul>
         <li>Himawari 8</li>
         <ul>
-        	<li>Note: This server is available on Linux and OS X/macOS platforms.</li>
-        	<li>The file names must match the JMA HSD (Himawari Standard Data) image file naming convention, <strong>HS_aaa_yyyymmdd_hhnn_Bbb_cccc_Rjj_Skkll.DAT</strong>, described in the <a href="http://www.data.jma.go.jp/mscweb/en/himawari89/space_segment/hsd_sample/HS_D_users_guide_en_v12.pdf" target="_blank"><em>Himawari Standard Data User's Guide</em></a>.</li>
+            <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
+            <li>The file names must match the JMA HSD (Himawari Standard Data) image file naming convention, <strong>HS_aaa_yyyymmdd_hhnn_Bbb_cccc_Rjj_Skkll.DAT</strong>, described in the <a href="http://www.data.jma.go.jp/mscweb/en/himawari89/space_segment/hsd_sample/HS_D_users_guide_en_v12.pdf" target="_blank"><em>Himawari Standard Data User's Guide</em></a>.</li>
         </ul>
         <li>INSAT-3D Imager</li>
         <ul>
-        	<li>Note: This server is available on Linux and OS X/macOS platforms.</li>
+            <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
         </ul>
         <li>INSAT-3D Sounder</li>
         <ul>
-        	<li>Note: This server is available on Linux and OS X/macOS platforms.</li>
+            <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
         </ul>
       </ul>
   </li>
