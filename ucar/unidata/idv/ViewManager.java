@@ -48,6 +48,7 @@ import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.gis.KmlDataSource;
 import ucar.unidata.idv.control.DisplayControlImpl;
+import ucar.unidata.idv.control.ZSlider;
 import ucar.unidata.idv.publish.PublishManager;
 import ucar.unidata.idv.ui.BottomLegend;
 import ucar.unidata.idv.ui.IdvComponentGroup;
@@ -118,10 +119,6 @@ import visad.java3d.DisplayImplJ3D;
 import visad.java3d.DisplayRendererJ3D;
 import visad.java3d.GraphicsModeControlJ3D;
 
-
-
-
-
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -157,8 +154,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
 import java.rmi.RemoteException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -210,15 +206,13 @@ import javax.swing.event.ChangeListener;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
-
-//import org.apache.batik.svggen.SVGGraphics2D;
-
 /**
  * A wrapper around a {@link ucar.visad.display.DisplayMaster}.
  * Provides an interface for managing user interactions, gui creation, etc.
  *
  * @author IDV development team
  */
+
 public class ViewManager extends SharableImpl implements ActionListener,
         ItemListener, ControlListener, DisplayListener {
 
@@ -359,6 +353,21 @@ public class ViewManager extends SharableImpl implements ActionListener,
             new TwoFacedObject("Upper Right", "ur"),
             new TwoFacedObject("Lower Right", "lr"),
             new TwoFacedObject("Center", "mm"), };
+    
+    /** Are we using the globe display */
+    protected boolean useGlobeDisplay = false;
+    
+    /** background color for filled globe */
+    protected Color globeBackgroundColor = null;
+    
+    /** z level (really radius) for where to put the globe fill layer */
+    protected double globeBackgroundLevel = -0.01;
+    
+    /** globe fill background stuff */
+    protected ZSlider globeBackgroundLevelSlider;
+    
+    /** globe fill background stuff */
+    protected JComponent globeBackgroundColorComp;
 
     /** xxx */
     static int xxx = 0;
@@ -465,10 +474,6 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     /** Keeps track of the last time this VM was set as the active VM */
     protected long lastTimeActivated = 0;
-
-    /** For logo properties */
-
-    // private boolean logoVisibility = false;
 
     /** For logo properties */
     private String logoPosition = null;
@@ -755,6 +760,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /** logo sizer control */
     private JSlider logoSizer;
 
+    /** For globe background visibility */
+    private JCheckBox globeBackgroundVisibility;
+    
     /** For logo properties */
     private JCheckBox logoVisCbx;
 
@@ -1420,11 +1428,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
             // TJJ May 2017 
             // Leave logo visibility out of UI, since that is now moved to logo panel
             // This block prevents that checkbox from being added to top panel
-            if (! bp.getId().equals(PREF_LOGO_VISIBILITY)) {
+            
+            // TJJ Nov 2019
+            // Now taking same approach with Glove View background visibility
+            
+            if (! ((bp.getId().equals(PREF_LOGO_VISIBILITY) || 
+                   (bp.getId().equals(MapViewManager.PREF_SHOWGLOBEBACKGROUND))))) {
                 propertiesMap.put(cbx, bp);
                 props.add(GuiUtils.left(cbx));
             } else {
                 // we DO want the checkbox added to map of properties monitored, just not the UI
+                if (bp.getId().equals(MapViewManager.PREF_SHOWGLOBEBACKGROUND)) {
+                    globeBackgroundVisibility = cbx;
+                }
                 propertiesMap.put(cbx, bp);
             }
         }
@@ -1449,8 +1465,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         colorProps.add(bgPropertiesSwatch);
         GuiUtils.tmpInsets = new Insets(2, 2, 2, 2);
 
-        JComponent colorPanel = GuiUtils.doLayout(colorProps, 4,
-                                    GuiUtils.WT_N, GuiUtils.WT_N);
+        JPanel colorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        colorPanel.add(new JLabel("Foreground: "));
+        colorPanel.add(fgPropertiesSwatch);
+        colorPanel.add(new JLabel(" Background: "));
+        colorPanel.add(bgPropertiesSwatch);
 
         colorPanel.setBorder(BorderFactory.createTitledBorder("Colors"));
         fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false,
@@ -1461,18 +1480,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                                       "Set Display List Color");
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
 
-        JComponent fontPanel = GuiUtils.doLayout(new Component[] {
-                                   GuiUtils.rLabel("   Font: "),
-                                   GuiUtils
-                                       .left(fontSelector
-                                           .getComponent()), GuiUtils
-                                               .rLabel("  Color: "),
-                                   GuiUtils.left(
-                                       GuiUtils.hbox(
-                                           dlPropertiesSwatch,
-                                           dlPropertiesSwatch.getClearButton(),
-                                           5)) }, 2, GuiUtils.WT_N,
-                                               GuiUtils.WT_N);
+        JPanel fontPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        fontPanel.add(new JLabel("Font: "));
+        fontPanel.add(fontSelector.getComponent());
+        fontPanel.add(new JLabel("Color: "));
+        fontPanel.add(dlPropertiesSwatch);
+        fontPanel.add(dlPropertiesSwatch.getClearButton());
 
         fontPanel.setBorder(BorderFactory.createTitledBorder("Display List"));
         fullScreenWidthFld  = new JTextField(((fullScreenWidth > 0)
@@ -1485,8 +1498,29 @@ public class ViewManager extends SharableImpl implements ActionListener,
         fullScreenHeightFld.setToolTipText(
             "Leave blank or 0 for full screen");
 
+        JPanel globePanel = null;
+
+        if (useGlobeDisplay) {
+          globeBackgroundLevelSlider = new ZSlider(globeBackgroundLevel);
+          JComponent levelComp = globeBackgroundLevelSlider.getContents();
+          JComponent[] bgComps =
+              GuiUtils.makeColorSwatchWidget(getStore(),
+                                             ((MapViewManager) this).getGlobeBackgroundColorToUse(),
+                                             "Globe Background Color");
+  
+          globeBackgroundColorComp = bgComps[0];
+          globePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+          globePanel.add(globeBackgroundVisibility);
+          globePanel.add(new JLabel("Color: "));
+          globePanel.add(bgComps[0]);
+          globePanel.add(new JLabel(" Level: "));
+          globePanel.add(levelComp);
+          globePanel.setBorder(
+                  BorderFactory.createTitledBorder("Globe Display"));
+        }
+                
         JPanel fullScreenPanel =
-            GuiUtils.left(GuiUtils.hbox(new JLabel("Width: "),
+            GuiUtils.left(GuiUtils.hbox(new JLabel(" Width: "),
                                         fullScreenWidthFld,
                                         new JLabel("  Height: "),
                                         fullScreenHeightFld));
@@ -1608,11 +1642,21 @@ public class ViewManager extends SharableImpl implements ActionListener,
         
         logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
         
-        propsComp = GuiUtils.vbox(new Component[] { propsComp,
+        // If we are in a Globe Display include the box with those parameters
+        if (useGlobeDisplay) {
+            propsComp = GuiUtils.vbox(new Component[] { propsComp,
+                    GuiUtils.inset(colorPanel, new Insets(10, 5, 5, 5)),
+                    GuiUtils.inset(globePanel, new Insets(10, 5, 5, 5)),
+                    GuiUtils.inset(fontPanel, new Insets(10, 5, 5, 5)),
+                    GuiUtils.inset(fullScreenPanel, new Insets(10, 5, 5, 5)),
+                    GuiUtils.inset(logoPanel, new Insets(10, 5, 5, 5)) });
+        } else {
+            propsComp = GuiUtils.vbox(new Component[] { propsComp,
                 GuiUtils.inset(colorPanel, new Insets(10, 5, 5, 5)),
                 GuiUtils.inset(fontPanel, new Insets(10, 5, 5, 5)),
                 GuiUtils.inset(fullScreenPanel, new Insets(10, 5, 5, 5)),
                 GuiUtils.inset(logoPanel, new Insets(10, 5, 5, 5)) });
+        }
 
         return GuiUtils.vbox(GuiUtils.left(GuiUtils.label("Name:  ",
                 nameFld)), propsComp);

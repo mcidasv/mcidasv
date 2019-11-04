@@ -28,13 +28,14 @@
 
 package ucar.unidata.idv;
 
-
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventTopicSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.grid.GridUtil;
@@ -43,7 +44,6 @@ import ucar.unidata.geoloc.ProjectionRect;
 import ucar.unidata.gis.maps.MapData;
 import ucar.unidata.gis.maps.MapInfo;
 import ucar.unidata.idv.control.MapDisplayControl;
-import ucar.unidata.idv.control.ZSlider;
 import ucar.unidata.idv.flythrough.Flythrough;
 import ucar.unidata.idv.flythrough.FlythroughPoint;
 import ucar.unidata.idv.ui.ContourInfoDialog;
@@ -97,7 +97,6 @@ import visad.georef.LatLonPoint;
 import visad.georef.MapProjection;
 import visad.georef.TrivialMapProjection;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -141,10 +140,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-
-
-
-
 /**
  * A wrapper around a MapProjectDisplay display master.
  * Provides an interface for managing user interactions, gui creation, etc.
@@ -169,7 +164,6 @@ public class MapViewManager extends NavigatedViewManager {
     /** back map clipping distance */
     public static final String PROP_CLIPDISTANCE_MAP_BACK =
         "idv.clipdistance.map.back";
-
 
     /** flythrough command */
     public static final String CMD_FLY_LEFT = "cmd.fly.left";
@@ -254,9 +248,6 @@ public class MapViewManager extends NavigatedViewManager {
     /** Big blob of xml map state from the map widget */
     private String mapState;
 
-    /** Are we using the globe display */
-    private boolean useGlobeDisplay = false;
-
     /** Are we 2d or 3d */
     private boolean use3D = true;
 
@@ -275,7 +266,6 @@ public class MapViewManager extends NavigatedViewManager {
     /** Holds the pip map */
     private JComponent pipPanelWrapper;
 
-
     /** Do we reproject when we goto address */
     private static JCheckBox addressReprojectCbx;
 
@@ -291,22 +281,8 @@ public class MapViewManager extends NavigatedViewManager {
     /** contour info dialog for preferences */
     ContourInfoDialog cid;
 
-    /** background color for filled globe */
-    private Color globeBackgroundColor = null;
-
-
-    /** z level (really radius) for where to put the globe fill layer */
-    private double globeBackgroundLevel = -0.01;
-
     /** globe fill background stuff */
     private LineDrawing globeBackgroundDisplayable;
-
-    /** globe fill background stuff */
-    private JComponent globeBackgroundColorComp;
-
-    /** globe fill background stuff */
-    private ZSlider globeBackgroundLevelSlider;
-
 
     /** The flythrough */
     private Flythrough flythrough;
@@ -2496,13 +2472,12 @@ public class MapViewManager extends NavigatedViewManager {
         return latLonScaleWidget.doApply();
     }
 
-
-
     /**
      * Add the properties components for this ViewManager
      *
      * @param tabbedPane  the tabbed pane to add to
      */
+
     protected void addPropertiesComponents(JTabbedPane tabbedPane) {
         super.addPropertiesComponents(tabbedPane);
         if ( !useGlobeDisplay) {
@@ -2520,31 +2495,14 @@ public class MapViewManager extends NavigatedViewManager {
         if (globeBackgroundDisplayable == null) {
             return;
         }
-
-
-        globeBackgroundLevelSlider = new ZSlider(globeBackgroundLevel);
-        JComponent levelComp = globeBackgroundLevelSlider.getContents();
-        JComponent[] bgComps =
-            GuiUtils.makeColorSwatchWidget(getStore(),
-                                           getGlobeBackgroundColorToUse(),
-                                           "Globe Background Color");
-
-
-        globeBackgroundColorComp = bgComps[0];
-        JComponent comp = GuiUtils.formLayout(new Component[] {
-                              GuiUtils.rLabel("Color:"),
-                              GuiUtils.left(bgComps[0]),
-                              GuiUtils.rLabel("Level:"),
-                              levelComp });
-        tabbedPane.add("Globe Background", GuiUtils.top(comp));
     }
-
 
     /**
      * Set the globe background
      *
      * @param globe  the globe display
      */
+    
     private void setGlobeBackground(GlobeDisplay globe) {
         try {
             if (globeBackgroundDisplayable == null) {
