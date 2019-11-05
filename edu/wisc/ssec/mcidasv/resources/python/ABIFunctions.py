@@ -41,7 +41,7 @@ def ABITruColRGB(red, grn, blu):
     final_grn = grnScaled1 + grnScaled2
     final_blu = bluScaled1 + bluScaled2
 
-    # create rgb object
+    # create RGB object
     rgb = combineRGB(final_red, final_grn, final_blu)
     return rgb
 
