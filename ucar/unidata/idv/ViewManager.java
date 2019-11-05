@@ -1447,8 +1447,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         GuiUtils.tmpInsets = new Insets(0, 5, 0, 5);
 
-        JComponent propsComp = GuiUtils.doLayout(props, 2, GuiUtils.WT_N,
-                                   GuiUtils.WT_N);
+        JComponent propsComp = GuiUtils.doLayout(props, 2, GuiUtils.WT_N, GuiUtils.WT_N);
+        // Wrap this in a left-justified panel
+        JPanel propsWrapper = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        propsWrapper.add(propsComp);
 
         bgPropertiesSwatch = new ColorSwatchComponent(getStore(),
                                                       getBackground(),
@@ -1643,15 +1645,16 @@ public class ViewManager extends SharableImpl implements ActionListener,
         logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
         
         // If we are in a Globe Display include the box with those parameters
+        JComponent outerWrapper = null;
         if (useGlobeDisplay) {
-            propsComp = GuiUtils.vbox(new Component[] { propsComp,
+            outerWrapper = GuiUtils.vbox(new Component[] { propsWrapper,
                     GuiUtils.inset(colorPanel, new Insets(10, 5, 5, 5)),
                     GuiUtils.inset(globePanel, new Insets(10, 5, 5, 5)),
                     GuiUtils.inset(fontPanel, new Insets(10, 5, 5, 5)),
                     GuiUtils.inset(fullScreenPanel, new Insets(10, 5, 5, 5)),
                     GuiUtils.inset(logoPanel, new Insets(10, 5, 5, 5)) });
         } else {
-            propsComp = GuiUtils.vbox(new Component[] { propsComp,
+            outerWrapper = GuiUtils.vbox(new Component[] { propsWrapper,
                 GuiUtils.inset(colorPanel, new Insets(10, 5, 5, 5)),
                 GuiUtils.inset(fontPanel, new Insets(10, 5, 5, 5)),
                 GuiUtils.inset(fullScreenPanel, new Insets(10, 5, 5, 5)),
@@ -1659,7 +1662,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
 
         return GuiUtils.vbox(GuiUtils.left(GuiUtils.label("Name:  ",
-                nameFld)), propsComp);
+                nameFld)), outerWrapper);
 
     }
 
