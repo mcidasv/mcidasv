@@ -1163,7 +1163,7 @@ public class DisplaySettingsDialog {
             cbx.setText(propertyValue.getLabel() + " (" + svalue + ")");
             cbx.setToolTipText("<html>Select this to apply the value:<br><i>"
                                + value
-                               + "</i><br>Right click to edit.</html>");
+                               + "</i></html>");
 
         }
 
