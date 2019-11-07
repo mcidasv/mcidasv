@@ -28,17 +28,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Properties Dialog</div>
-<p>Accessed through the <strong>View-&gt;Properties</strong> menu item of a <span class="propertylistitem">display panel</span>, this Properties dialog allows for controlling many aesthetic aspects of the display. The Properties dialog window is composed of five tabs: <strong>Main</strong>, <strong>Aspect Ratio</strong>, <strong>Lighting</strong>, <strong>Vertical Scale</strong>, and <strong>Horizontal Scale</strong>. If working with a globe display, there is no <strong>Horizontal Scale</strong> tab, but there is an additional tab for <strong>Globe Background</strong>.</p>
+<p>Accessed through the <strong>View-&gt;Properties</strong> menu item of a <span class="propertylistitem">display panel</span>, this Properties dialog allows for controlling many aesthetic aspects of the display. The Properties dialog window is composed of five tabs: <strong>Main</strong>, <strong>Aspect Ratio</strong>, <strong>Lighting</strong>, <strong>Vertical Scale</strong>, and <strong>Horizontal Scale</strong>. If working with a globe display, there is no <strong>Horizontal Scale</strong> tab, but there is an additional panel in the <strong>Main</strong> tab for <strong>Globe Display</strong>.</p>
 <ul>
 <li><a href="#main">Main</a></li>
 <li><a href="#aspectratio">Aspect Ratio</a></li>
 <li><a href="#lighting">Lighting</a></li>
 <li><a href="#verticalscale">Vertical Scale</a></li>
 <li><a href="#horizontalscale">Horizontal Scale</a></li>
-<li><a href="#globebackground">Globe Background</a></li>
 </ul>
 <p><a name="main" id="main"></a>The <strong>Main</strong> tab of the Properties dialog allows for changing several general settings pertaining to the display. Many of the items in this tab can also be found in the <strong><a href="../tools/preferences/DisplayWindowPreferences.html">Display Window</a></strong> tab of the User Preferences window.
-<div class="images"><img src="images/Main.gif" width="565" height="749" alt="Image 1: Main Tab of the Properties Dialog (Default)"/><br>
+<div class="images"><img src="images/Main.gif" width="596" height="782" alt="Image 1: Main Tab of the Properties Dialog (Default)"/><br>
   <span class="caption">Image 1: Main Tab of the Properties Dialog (Default)</span></div>
 <div class="pagesubtitle">Properties</div>
   <ul class="propertylist">
@@ -59,9 +58,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
   <li class="propertylistitem"><strong>Show Overview Map -</strong> Adds an overview map to the Legend, showing the area currently being viewed in the display panel.</li>
   <li class="propertylistitem"><strong>Enable Adaptive Resolution (Under Development) -</strong> Toggles adaptive resolution to be active or inactive for the view. If active, then any layers capable of utilizing adaptive resolution will use it. If inactive, then no layers will use adaptive resolution. Note that this feature is still under development. For more information, see <a href="../misc/AdaptiveResolution.html">Adaptive Resolution</a>. This menu item is only available if adaptive resolution is enabled in the <a href="../tools/preferences/DisplayWindowPreferences.html#enableAdaptiveResolution">User Preferences</a>.</li>
   <li class="propertylistitem"><strong>Enable Automatic Depth Offsetting - </strong>Displays overlapping layers of differing resolutions in a way that there is no display interference when the display is rotated. </li>
-  <li class="propertylistitem"><strong>Show Globe Background -</strong> Shows/hides the globe background. Turning this option on makes a
-     globe background by filling a solid color on the surface of the globe; off removes the background by making it 100% transparent.
-     This option is present only with Globe Displays.</li>
   <li class="propertylistitem"><strong>Colors -</strong> Sets the background and foreground (e.g. wireframe box) colors of the display (not the map lines).</li>
   <li class="propertylistitem"><strong>Display List -</strong> Controls how the list of the layers listed at the bottom of the display panel will be written. There are options to modify the font, style, size, and color of the text.</li>
   <li class="propertylistitem"><strong>Full Screen Dimensions -</strong></li>
@@ -74,12 +70,22 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
   <li class="propertylistitem"><strong>Show Logo - </strong>Sets the visibility of the logo in the display panel. The text entry box specifies the logo file. This can either be a local file (found via the <img src="images/Browse.gif" width="84" height="26" align="absmiddle" alt="Browse button"> button) or a URL pointing to an image file. The default string in this field is &quot;/edu/wisc/ssec/mcidasv/resources/icons/prefs/mcidasv-default-logo.png&quot;.</li>
   <li class="propertylistitem"><strong>Screen Position -</strong> Sets the location of the logo in the panel. The options are Lower Left, Upper Left, Upper Right, Lower Right, and Center.</li>
   <li class="propertylistitem"><strong>Offset -</strong> Adds an offset of the logo from the screen position selected. This is in the format of (X,Y).</li>
-  <li class="propertylistitem"><strong>Scale -</strong> Scales the size of the logo. Use the slider or text entry field to change this value. A value of 1.0 uses the full size for the image, values below 1.0 make the image smaller, and values greater than 1.0 make the image larger.</li>
+  <li class="propertylistitem"><strong>Scale -</strong> Scales the size of the logo. Use the slider or text entry field to change this value. A value of 1.0 uses the full size for the image, values less than 1.0 make the image smaller, and values greater than 1.0 make the image larger.</li>
   </ul>
+  </ul>
+<p>The <strong>Main</strong> tab of the <strong>Properties</strong> window for a globe panel has an additional panel for <strong>Globe Display</strong>. This panel allows for setting the visibility, color, and the vertical positioning of the globe background.</p>
+  <div class="images"><img src="images/GlobeBackground.gif" width="586" height="95" alt="Image 2: Globe Display panel of the Main Tab (Default)"/><br>
+  <span class="caption">Image 2: Globe Display panel of the Main Tab (Default)</span></div>
+  <div class="pagesubtitle">Properties</div>
+  <ul class="propertylist">
+  <li class="propertylistitem"><strong>Show Globe Background -</strong> Shows/hides the globe background. Turning this option on makes a
+     globe background by filling a solid color on the surface of the globe; off removes the background by making it 100% transparent.</li>
+  <li class="propertylistitem"><strong>Color -</strong> Sets the color of the globe background.</li>
+  <li class="propertylistitem"><strong>Level -</strong> Sets the vertical positioning of the globe background. The default value is -0.01 so it is just below the surface of the earth, making map lines visible. Change this value by using the slider or by entering a value into the field and pressing Enter.</li>
   </ul>
 <p><a name="aspectratio" id="aspectratio"></a>The <strong>Aspect Ratio</strong> tab of the Properties dialog allows for changing the aspect ratio of the display with respect to the X, Y, and Z directions. X, Y, and Z values can be changed by using the slider. Any changes will be made to the display with Apply or OK. The <strong>Display Matrix Settings</strong> panel will actively update as the X, Y, and Z values are changed, and as rotation or zooming is applied to the Main Display window.</p>
-<div class="images"><img src="images/AspectRatio.gif" width="455" height="554" alt="Image 2: Aspect Ratio Tab of the Properties Dialog (Default)"><br>
-<span class="caption">Image 2: Aspect Ratio Tab of the Properties Dialog (Default)</span></div>
+<div class="images"><img src="images/AspectRatio.gif" width="455" height="554" alt="Image 3: Aspect Ratio Tab of the Properties Dialog (Default)"><br>
+<span class="caption">Image 3: Aspect Ratio Tab of the Properties Dialog (Default)</span></div>
 <div class="pagesubtitle">Properties</div>
   <ul class="propertylist">
   <li class="propertylistitem"><img src="images/Reset.gif" width="67" height="26" alt="Reset Button"align="absmiddle"><strong> -</strong> Resets the X, Y, and Z values back to the last values applied to the image. If Apply has not been selected, then the values will return to default.</li>
@@ -89,7 +95,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
   <li class="propertylistitem"><strong>Display Matrix Settings -</strong> Displays information pertaining to the rotation, translation, and scale of the X, Y, and Z axes. This also displays numerical values pertaining to boundaries of the display panel and also the wireframe box. These values will actively update as the X, Y, and Z values are changed, and as rotation or zooming is applied to the display.</li>
   </ul>
   <p><a name="lighting" id="lighting"></a>The <strong>Lighting</strong> tab of the Properties dialog allows for adding the effect of light shining on the display from different angles along the X, Y, and Z axes. The default values are listed in the image below.</p>
-  <div class="images"><img src="images/Lighting.gif" width="455" height="415" alt="Image 3: Lighting Tab of the Properties Window (Default)"><br><span class="caption">Image 3: Lighting Tab of the Properties Dialog (Default)</span></div>
+  <div class="images"><img src="images/Lighting.gif" width="455" height="415" alt="Image 4: Lighting Tab of the Properties Window (Default)"><br><span class="caption">Image 4: Lighting Tab of the Properties Dialog (Default)</span></div>
 <div class="pagesubtitle">Properties</div>
   <ul class="propertylist">
   <li class="propertylistitem"><strong>Left Column -</strong> Denotes the direction that the light will be shining from. Uncheck the checkboxes in order to not add lighting for specific directions.</li>
@@ -98,8 +104,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
   <li class="propertylistitem"><img src="images/Unlink.gif" width="19" height="16" alt="Unlink Button"align="absmiddle"><strong> -</strong> When this is button is seen, all of the components in this tab are controlled individually. This means that a change to one item (ex. Over), will not effect any of the other items in this tab. When this button is clicked, the image will change to <img src="images/Link.gif" width="18" height="13" alt="Link Button">. When this image is seen, the components are linked together. Therefore, any change to the visibility checkboxes or the slider for brightness will be shared between all components of this tab.</li>
   </ul>
   <p><a name="verticalscale" id="verticalscale"></a>The <strong>Vertical Scale</strong> tab of the Properties dialog allows for changing the vertical scale used for the Z-axis of the display panel.</p>
-  <div class="images"><img src="images/VerticalScale.gif" width="454" height="351" alt="Image 4: Vertical Scale Tab of the Properties Dialog (Default)"><br>
-<span class="caption">Image 4: Vertical Scale Tab of the Properties Dialog (Default)</span></div>
+  <div class="images"><img src="images/VerticalScale.gif" width="454" height="351" alt="Image 5: Vertical Scale Tab of the Properties Dialog (Default)"><br>
+<span class="caption">Image 5: Vertical Scale Tab of the Properties Dialog (Default)</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Min Value -</strong> Sets the minimum vertical value to use for the Z-axis in the display panel. The default value for this is 0.</li>
@@ -115,7 +121,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
   <li class="propertylistitem"><strong>Font -</strong> Sets the <strong>Font</strong>, <strong>Style</strong>, and <strong>Size</strong> of the vertical scale labels.</li>  
 </ul>
 <p><a name="horizontalscale" id="horizontalscale"></a>The <strong>Horizontal Scale</strong> tab of the Properties dialog allows for setting the visibility and properties of the latitude/longitude labels along the outside of the wireframe box.</p>
-  <div class="images"><img src="images/HorizontalScale.gif" width="455" height="502" alt="Image 5: Horizontal Scale Tab of the Properties Dialog (Default)"><br><span class="caption">Image 5: Horizontal Scale Tab of the Properties Dialog (Default)</span></div>
+  <div class="images"><img src="images/HorizontalScale.gif" width="455" height="502" alt="Image 6: Horizontal Scale Tab of the Properties Dialog (Default)"><br><span class="caption">Image 6: Horizontal Scale Tab of the Properties Dialog (Default)</span></div>
   <div class="pagesubtitle">Properties</div>
   <ul class="propertylist">
   <li class="propertylistitem"><strong>Label -</strong> Sets the label along the latitude/longitude axes.&nbsp;The default values are &quot;Latitude&quot; and &quot;Longitude&quot;.</li>
@@ -127,18 +133,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ui/PropertiesDial
      the major increment tick marks, a value of 3 will place two small tick marks between the major increment tick marks, etc..</li>
   <li class="propertylistitem"><strong>Visible -</strong> Sets the latitude/longitude labels along the wireframe box as visible.</li>
   <li class="propertylistitem"><strong>Axis label relief -</strong> Sets how the text will be oriented with respect to the x-axis of the display. When this option is turned off, the labels will be parallel to the x-axis and thus display flat. When this option is turned on, the labels will be rotated slightly about the x-axis to make the text more visible when the display is rotated.</li>
-  <li class="propertylistitem"><strong> Format -</strong> Sets the format of the latitude/longitude <strong>Major Increment</strong> labels.
-    You can change the structure of the labeling to show degrees out to various decimal values, latitude/longitude labels in DMS
+  <li class="propertylistitem"><strong> Format -</strong> Sets the format of the latitude/longitude <strong>Major Increment</strong> labels. The format of the labeling can be changed to show degrees out to various decimal values, latitude/longitude labels in DMS
     (Degrees, Minutes, Seconds) format, and include a label for hemisphere (N, S, E, W) by choosing a <strong>Format</strong> value with an <strong>H</strong> at the end</strong>.</li>
   <li class="propertylistitem"><strong>0-360 Longitude -</strong> Uses a 0-360 degree range for the labeling of the Longitude's <strong>Major Increment</strong>. The default is to have this checkbox turned off, which uses a -180-180 degree range.</li>
   <li class="propertylistitem"><strong>Font -</strong> Sets the <strong>Font</strong>, <strong>Style</strong>, and <strong>Size</strong> of both the <strong>Major Increment</strong> labels for latitude and longitude, as well as the <strong>Labels</strong>.</li>
-  </ul>
-<p><a name="globebackground" id="globebackground"></a>The <strong>Globe Background</strong> tab of the Properties dialog allows for setting the color and the vertical positioning of the globe background. Note that you must have the <strong>Show Globe Background</strong> option in the <strong>Main</strong> tab of the Properties dialog selected to use the globe background. This tab is only available if using a Globe Display.</p>
-  <div class="images"><img src="images/GlobeBackground.gif" width="468" height="206" alt="Image 6: Globe Background Tab of the Properties Dialog (Default)"><br><span class="caption">Image 6: Globe Background Tab of the Properties Dialog (Default)</span></div>
-  <div class="pagesubtitle">Properties</div>
-  <ul class="propertylist">
-  <li class="propertylistitem"><strong>Color -</strong> Sets the color of the globe background.</li>
-  <li class="propertylistitem"><strong>Level -</strong> Sets the vertical positioning of the globe background. The default value is -0.01 so it is just below the surface of the earth, making map lines visible. Change this value by using the slider or by entering a value into the field and pressing Enter.</li>
   </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
