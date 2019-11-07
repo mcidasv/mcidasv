@@ -196,5 +196,26 @@
 	properties="displayName=Crossection;windowVisible=true;probeType=transect;developerMode=false;
                 jythonCodeURL=/ucar/unidata/idv/resources/python/verticalCrossSection.py;disabled=true;">
   </control>
-
+	
+  <!-- Inq 1297 - RMC Nov 2019 - Add Hovmoller to valid imagery data displays -->
+  <control id="timelonshade" categories="GRID-3D-TIME-*;GRID-2D-TIME;IMAGE-*-*"
+	  class="ucar.unidata.idv.control.HovmollerControl" doeslevels="true" 
+	  label="Time-Longitude (Color Shaded)" displaycategory="Hovmoller"
+	  properties="windowVisible=true;showAsContours=false;averageDimension=1;">
+  </control>
+  <control id="timeloncontour" categories="GRID-3D-TIME-*;GRID-2D-TIME;IMAGE-*-*"
+	  class="ucar.unidata.idv.control.HovmollerControl" doeslevels="true"
+	  label="Time-Longitude (Contours)" displaycategory="Hovmoller"
+	   properties="windowVisible=true;showAsContours=true;averageDimension=1;">
+  </control>
+  <control id="timelatshade" categories="GRID-3D-TIME-*;GRID-2D-TIME;IMAGE-*-*"
+	  class="ucar.unidata.idv.control.HovmollerControl" doeslevels="true"
+	  label="Time-Latitude (Color Shaded)" displaycategory="Hovmoller"
+	   properties="windowVisible=true;showAsContours=false;averageDimension=0;">
+  </control>
+  <control id="timelatcontour" categories="GRID-3D-TIME-*;GRID-2D-TIME;IMAGE-*-*"
+	  class="ucar.unidata.idv.control.HovmollerControl" doeslevels="true"
+	  label="Time-Latitude (Contours)" displaycategory="Hovmoller"
+	   properties="windowVisible=true;showAsContours=true;averageDimension=0;">
+  </control>
 </controls>
