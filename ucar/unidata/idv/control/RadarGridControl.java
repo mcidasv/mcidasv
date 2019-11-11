@@ -62,7 +62,9 @@ import ucar.unidata.metdata.Station;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
+import ucar.visad.display.Displayable;
 import ucar.visad.display.RadarGrid;
+import ucar.visad.display.TextDisplayable;
 import ucar.visad.quantities.CommonUnits;
 import visad.CommonUnit;
 import visad.DisplayEvent;
@@ -287,7 +289,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         //setAttributeFlags(FLAG_ZPOSITION | FLAG_DISPLAYUNIT);
     }
 
-
     /**
      * Called to make this kind of Display Control;
      * also makes the Displayable.
@@ -341,6 +342,18 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         rangeRings.setLabelLineWidth(lblWidth);
         rangeRings.setRangeRingLineWidth(rrWidth);
         rangeRings.setRadialLineWidth(radWidth);
+        
+        // the RingLabels displayable wasn't having its "useSphere" set to true
+        // McIDAS-V Inquiry 2720
+        if (inGlobeDisplay()) {
+            for (int i = 0; i < rangeRings.displayableCount(); i++) {
+                Displayable d = rangeRings.getDisplayable(i);
+                if (d instanceof TextDisplayable) {
+                    ((TextDisplayable) d).setSphere(true);
+                }
+            }
+        }
+        // end inquiry 2720 change
 
         addDisplayable(rangeRings);
         //addAttributedDisplayable(rangeRings, FLAG_ZPOSITION | FLAG_DISPLAYUNIT);
