@@ -64,17 +64,16 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
 import ucar.visad.display.RadarGrid;
 import ucar.visad.quantities.CommonUnits;
-
 import visad.CommonUnit;
 import visad.DisplayEvent;
 import visad.FieldImpl;
+import visad.Real;
 import visad.Unit;
 import visad.VisADException;
 import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
 import visad.georef.MapProjection;
-
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
 /**
@@ -1050,7 +1049,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
      */
     
     public void handleDisplayChanged(DisplayEvent event) {
-        
+
         if ((positionAtClickCbx == null) || (! positionAtClickCbx.isSelected())) {
             return;
         }
@@ -1069,11 +1068,16 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             int id   = event.getId();
             if (id == DisplayEvent.MOUSE_PRESSED) {
                 if (((mods & InputEvent.BUTTON1_MASK) != 0)) {
-                    double[] boxCoords = screenToBox(event.getX(),
-                                             event.getY(), getZPosition());
-                    EarthLocation el = boxToEarth(boxCoords);
-                    setLatLon(el.getLatitude().getValue(),
-                              el.getLongitude().getValue(), true);
+                    // If Globe Display, get coords from navigated display
+                    if (inGlobeDisplay()) {
+                        Real lat = getNavigatedDisplay().getCursorLatitude();
+                        Real lon = getNavigatedDisplay().getCursorLongitude();
+                        setLatLon(lat.getValue(), lon.getValue(), true);
+                    } else {
+                        double[] boxCoords = screenToBox(event.getX(), event.getY(), getZPosition());
+                        EarthLocation el = boxToEarth(boxCoords);
+                        setLatLon(el.getLatitude().getValue(), el.getLongitude().getValue(), true);
+                    }
                 }
             }
         } catch (Exception exc) {
@@ -1081,9 +1085,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         }
 
     }
-
-
-
 
     /**
      * Find the center point from the DataChoice.  If the choice has a
