@@ -54,7 +54,6 @@ import javax.swing.JToggleButton;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.grid.GridUtil;
-import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.idv.ViewManager;
 import ucar.unidata.metdata.NamedStationImpl;
 import ucar.unidata.metdata.NamedStationTable;
@@ -343,17 +342,8 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         rangeRings.setRangeRingLineWidth(rrWidth);
         rangeRings.setRadialLineWidth(radWidth);
         
-        // the RingLabels displayable wasn't having its "useSphere" set to true
-        // McIDAS-V Inquiry 2720
-        if (inGlobeDisplay()) {
-            for (int i = 0; i < rangeRings.displayableCount(); i++) {
-                Displayable d = rangeRings.getDisplayable(i);
-                if (d instanceof TextDisplayable) {
-                    ((TextDisplayable) d).setSphere(true);
-                }
-            }
-        }
-        // end inquiry 2720 change
+        // need to do the following at init to make sure rangeRings is sensible
+        fixTextDisplayableSphereField();
 
         addDisplayable(rangeRings);
         //addAttributedDisplayable(rangeRings, FLAG_ZPOSITION | FLAG_DISPLAYUNIT);
@@ -1028,7 +1018,14 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         try {
             this.lat = lat;
             this.lon = lon;
+            
+            // the setCenterPoint call destroys the existing displayables
+            // within rangeRings (which is a CompositeDisplayable) and
+            // recreates the labels using RadarGrid's makeLabels method.
+            // so just make sure to call fixTextDisplayableSphereField!
             rangeRings.setCenterPoint(lat, lon);
+            fixTextDisplayableSphereField();
+            
             rescaleLabels();
             if (stationCbx != null) {
                 if (andResetStationMenu) {
@@ -1044,7 +1041,28 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         }
 
     }
-
+    
+    /**
+     * Ensure that {@link TextDisplayable TextDisplayable's} {@code useSphere}
+     * field is set correctly.
+     * 
+     * <p>{@code useSphere} should be set to the results returned from
+     * {@link #inGlobeDisplay()}.</p>
+     * 
+     * @throws VisADException if there was some VisAD issue.
+     * @throws RemoteException if there was an RMI problem.
+     */
+    private void fixTextDisplayableSphereField() throws VisADException, RemoteException {
+        // the RingLabels displayable wasn't having its "useSphere" set to true
+        // McIDAS-V Inquiry 2720
+        for (int i = 0; i < rangeRings.displayableCount(); i++) {
+            Displayable d = rangeRings.getDisplayable(i);
+            if (d instanceof TextDisplayable) {
+                ((TextDisplayable)d).setSphere(inGlobeDisplay());
+            }
+        }
+    }
+    
     /**
      * A hook to allow derived classes to tell us to add this
      * as a control listener
