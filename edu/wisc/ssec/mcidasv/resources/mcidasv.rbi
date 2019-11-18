@@ -508,6 +508,9 @@
     <resource label="AHI Routines" location="%APPPATH%/python/AHIFunctions.py">
       <property name="category" value="System"/>
     </resource>
+    <resource label="JPSS Routines" location="%APPPATH%/python/JPSSFunctions.py">
+      <property name="category" value="System"/>
+    </resource>
     <resource label="Map Routines" location="%IDVPATH%/python/maps.py">
       <property name="category" value="System"/>
     </resource>
