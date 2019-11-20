@@ -12910,8 +12910,9 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public void setSmoothingType(String type) {
         smoothingType = GridUtil.normalizeSmoothingType(type);
-        smootherBox.setSelectedItem(TwoFacedObject.findId(smoothingType, smootherList));
-        
+        if ((smootherList != null) && (smootherBox != null)) {
+            smootherBox.setSelectedItem(TwoFacedObject.findId(smoothingType, smootherList));
+        }
         // reload data if done interactively
         if (getHaveInitialized()) {
             try {
