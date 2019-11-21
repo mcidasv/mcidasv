@@ -409,9 +409,19 @@ public class DataSelector extends DataSourceHolder {
      */
     private void dataSourcesChanged(boolean forceUpdate) {
         List wrappers = getWrappers();
+        // first inclination was to embed the entire for-loop in invokeLater(),
+        // but the EDT hang monitor didn't like that too much. the reason is
+        // because the data choice *GUI* labels for each data source are sorted
+        // in a human-friendly-but-not-efficiency-friendly way that involves
+        // regular expressions looking for word boundaries.
+        // 
+        // to avoid hanging on the EDT with a big thread that does a lot of work,
+        // instead simply queue up each individual dataSourceChanged call.
         for (int i = 0; i < wrappers.size(); i++) {
             DataSourceWrapper wrapper = (DataSourceWrapper) wrappers.get(i);
-            wrapper.dataSourceChanged();
+            SwingUtilities.invokeLater(() -> {
+                wrapper.dataSourceChanged();
+            });
         }
     }
 
@@ -464,6 +474,7 @@ public class DataSelector extends DataSourceHolder {
      * {@link ucar.unidata.data.DataChoice}-s into the gui
      *
      * @param dataSource The data source to add
+     *
      */
     public void addDataSource(DataSource dataSource) {
         addDataSource(dataSource,
@@ -484,11 +495,15 @@ public class DataSelector extends DataSourceHolder {
      */
     private void addDataSource(DataSource dataSource, boolean forceUpdate) {
         super.addDataSource(dataSource);
-        DataSourceWrapper wrapper = findWrapper(dataSource);
-        if (wrapper == null) {
-            wrapper = new DataSourceWrapper(this, dataSource);
-            wrappers.add(wrapper);
-        }
+        // the data source wrappers do a decent amount of GUI stuff, so we need
+        // to ensure that stuff happens on the EDT (see Inquiry 2860)
+        SwingUtilities.invokeLater(() -> {
+            DataSourceWrapper wrapper = findWrapper(dataSource);
+            if (wrapper == null) {
+                wrapper = new DataSourceWrapper(this, dataSource);
+                wrappers.add(wrapper);
+            }
+        });
         dataSourcesChanged(forceUpdate);
     }
 
