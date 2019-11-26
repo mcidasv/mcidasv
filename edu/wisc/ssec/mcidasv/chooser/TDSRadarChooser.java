@@ -1025,6 +1025,14 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         
         // Get the list of catalogs but remove the old catalog.xml entry
         urlListHandler = getPreferenceList(PREF_TDSRADARSERVER);
+
+        ActionListener catListListener = ae -> {
+            if (okToDoUrlListEvents) {
+                setServer((String)urlBox.getSelectedItem());
+            }
+        };
+
+        urlBox = urlListHandler.createComboBox(GuiUtils.CMD_UPDATE, catListListener, true);
         
         // TJJ Nov 2019
         // Since URLs are stored in user prefs, and THREDDS wants HTTPS now for radar catalog,
@@ -1034,14 +1042,6 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         String selectedURL = (String) urlBox.getSelectedItem();
         selectedURL = selectedURL.replace("http:", "https:");
         urlBox.setSelectedItem(selectedURL);
-
-        ActionListener catListListener = ae -> {
-            if (okToDoUrlListEvents) {
-                setServer((String)urlBox.getSelectedItem());
-            }
-        };
-        
-        urlBox = urlListHandler.createComboBox(GuiUtils.CMD_UPDATE, catListListener, true);
 
         McVGuiUtils.setComponentWidth(urlBox, Width.DOUBLEDOUBLE);
         
