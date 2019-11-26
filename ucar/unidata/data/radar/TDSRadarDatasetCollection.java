@@ -143,6 +143,13 @@ public class TDSRadarDatasetCollection extends StationRadarCollectionImpl {
         XMLEntityResolver jaxp = new XMLEntityResolver(true);
         builder = jaxp.getSAXBuilder();
 
+        // TJJ Nov 2019 - hack to keep bundles working with THREDDS
+        // See: https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2857
+
+        if (dsc_location != null) {
+            dsc_location = dsc_location.replace("http:", "https:");
+        }
+
         try {
             doc = builder.build(dsc_location);
         } catch (JDOMException e) {
