@@ -1028,7 +1028,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
         ActionListener catListListener = ae -> {
             if (okToDoUrlListEvents) {
-                setServer((String)urlBox.getSelectedItem());
+                setServer((String) urlBox.getSelectedItem());
             }
         };
 
@@ -1040,8 +1040,13 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         // See: https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2857
 
         String selectedURL = (String) urlBox.getSelectedItem();
-        selectedURL = selectedURL.replace("http:", "https:");
-        urlBox.setSelectedItem(selectedURL);
+        // At first init, URL may be null. If so, set to default
+        if (selectedURL != null) {
+            selectedURL = selectedURL.replace("http:", "https:");
+            urlBox.setSelectedItem(selectedURL);
+        } else {
+            urlBox.setSelectedItem(getProperty(PREF_TDSRADARSERVER, null));
+        }
 
         McVGuiUtils.setComponentWidth(urlBox, Width.DOUBLEDOUBLE);
         
