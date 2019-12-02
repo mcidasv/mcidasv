@@ -339,14 +339,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     /** default display list font */
     private static final Font defaultFont = FontSelector.DEFAULT_FONT;
-    
-    /** default color picker size */
-    Dimension defaultColorPickerSize = new Dimension(24, 20);
 
-    /** border hightlight color */
-
-    // public static Color borderHighlightColor = new Color(255, 255, 204);
-    // public static Color borderHighlightColor = Color.magenta;
+    /** border highlight color */
     public static Color borderHighlightColor = Color.blue;
 
     /** logo positions */
@@ -1458,11 +1452,11 @@ public class ViewManager extends SharableImpl implements ActionListener,
         bgPropertiesSwatch = new ColorSwatchComponent(getStore(),
                                                       getBackground(),
                                                       "Set Background Color");
-        bgPropertiesSwatch.setPreferredSize(defaultColorPickerSize);
+        bgPropertiesSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         fgPropertiesSwatch = new ColorSwatchComponent(getStore(),
                                                       getForeground(),
                                                       "Set Foreground Color");
-        fgPropertiesSwatch.setPreferredSize(defaultColorPickerSize);
+        fgPropertiesSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
 
         List colorProps = new ArrayList();
 
@@ -1485,7 +1479,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         dlPropertiesSwatch = new ColorSwatchComponent(getStore(),
                                                       getDisplayListColor(),
                                                       "Set Display List Color");
-        dlPropertiesSwatch.setPreferredSize(defaultColorPickerSize);
+        dlPropertiesSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         GuiUtils.tmpInsets = GuiUtils.INSETS_5;
 
         JPanel fontPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1516,7 +1510,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                              ((MapViewManager) this).getGlobeBackgroundColorToUse(),
                                              "Globe Background Color");
   
-          bgComps[0].setPreferredSize(defaultColorPickerSize);
+          bgComps[0].setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
           globeBackgroundColorComp = bgComps[0];
           globePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
           globePanel.add(globeBackgroundVisibility);

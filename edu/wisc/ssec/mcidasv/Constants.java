@@ -29,6 +29,7 @@
 package edu.wisc.ssec.mcidasv;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
 import ucar.unidata.idv.IdvConstants;
 import ucar.unidata.util.PatternFileFilter;
@@ -401,6 +402,9 @@ public interface Constants extends IdvConstants {
     /** A particular shade of blue we are using for branding. */
     Color MCV_BLUE = new Color(96, 176, 224);
     Color MCV_BLUE_DARK = new Color(0, 96, 255);
+
+    /** default color picker size */
+    Dimension DEFAULT_COLOR_PICKER_SIZE = new Dimension(24, 20);
 
     /** Identifier for the {@literal "monitor panel"} window component. */
     String COMP_MONITORPANEL = "mcv.monitorpanel";
