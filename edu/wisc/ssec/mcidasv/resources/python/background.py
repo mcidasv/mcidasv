@@ -4242,3 +4242,42 @@ def writeMovie(file, globalPalette=True, params='', createDirectories=False,
                               endFramePause,
                               globalPalette,
                               params)
+
+
+def saveIsosurfaces(path, disp=None):
+    """Dumps isosurfaces in a given display to OBJ and MTL files.
+    
+    Args:
+        path: String that represents the directory where the obj and mtl files
+              should be written. If the path does exist, this function will
+              attempt to create it.
+              
+        disp (optional): Display to use. If not specified, the active display
+                         is used.
+    
+    Returns:
+        Nothing.
+    """
+    from java.io import File
+    import os
+    
+    if not disp:
+        disp = activeDisplay()
+    
+    widget = disp.getAnimationWidget()
+    count = len(widget.getTimes())
+    renderer = disp.getNavigatedDisplay().getDisplay().getDisplayRenderer()
+    
+    if not os.path.exists(path):
+        os.makedirs(path)
+    format_str = "{:0%sd}.obj" % (len(str(count)))
+    
+    for idx in range(count):
+        widget.gotoIndex(idx)
+        pause()
+        frame_path = os.path.join(path, format_str.format(idx))
+        renderer.saveSceneToFile(File(frame_path))
+        print("Wrote frame %d to '%s'" % (idx, frame_path))
+    
+    widget.gotoIndex(0)
+    print("All done!")

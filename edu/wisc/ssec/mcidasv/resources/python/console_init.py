@@ -148,11 +148,12 @@ if _isInteractive:
     from background import (
         activeDisplay, allActions, allColorTables, allDisplays, allFontNames,
         allLayerTypes, allProjections, allWindows, boomstick, collectGarbage,
-        colorTableNames, findWindow, findUnits, firstDisplay, firstWindow, getColorTable,
-        getProjection, listVIIRSFieldsInFile, listVIIRSTimesInField, 
-        managedDataSource, pause, performAction, projectionNames, 
-        removeAllData, removeAllLayers, setViewSize, _MappedAreaImageFlatField, 
-        writeImageAtIndex, loadVIIRSImage, _MappedVIIRSFlatField,
+        colorTableNames, findWindow, findUnits, firstDisplay, firstWindow,
+        getColorTable, getProjection, listVIIRSFieldsInFile,
+        listVIIRSTimesInField, managedDataSource, pause, performAction,
+        projectionNames, removeAllData, removeAllLayers, saveIsosurfaces,
+        setViewSize, _MappedAreaImageFlatField, writeImageAtIndex,
+        loadVIIRSImage, _MappedVIIRSFlatField,
     )
     
     from mcvadde import (
@@ -174,7 +175,8 @@ if _isInteractive:
         TransparentColor, TransparentBackground
     )
     
-    _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(), 'python')
+    _user_python = os.path.join(_mcv.getStore().getUserDirectory().toString(),
+                                'python')
     if os.path.exists(_user_python):
         sys.path.append(_user_python)
         for mod in os.listdir(_user_python):
