@@ -53,9 +53,11 @@ import java.rmi.RemoteException;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 
@@ -170,7 +172,8 @@ public class DerivedDataDescriptor {
     /** The XML attribute for display */
     private static final String ATTR_DISPLAY = "display";
 
-
+    /** XML attribute for disabling a descriptor. */
+    private static final String ATTR_DISABLED = "disabled";
 
     /**
      *  A list of {@link DerivedNeed} objects, that define what
@@ -246,6 +249,13 @@ public class DerivedDataDescriptor {
      */
     private boolean isDefault = false;
 
+    /**
+     * Whether or not this descriptor has been disabled.
+     * 
+     * <p>Can be set via the {@code disabled} XML attribute. Default value is
+     * {@code false}.</p>
+     */
+    private boolean isDisabled = false;
 
     /**
      *  We have this around for when we create a  DerivedDataChoice from this
@@ -300,7 +310,7 @@ public class DerivedDataDescriptor {
      *
      * @param dataContext     The DataContext that this DDD exists in
      *                        (Really, just the idv)
-     * @param derivedNode     The "<derived>" tag xml node
+     * @param derivedNode     The {@code <derived>} tag xml node
      */
     private DerivedDataDescriptor(DataContext dataContext,
                                   Element derivedNode) {
@@ -370,6 +380,9 @@ public class DerivedDataDescriptor {
         //Is default says whether this DDD is used to create default derived quantities
         //for data sources.
         setIsDefault(XmlUtil.getAttribute(derivedNode, ATTR_ISDEFAULT, true));
+
+        // whether or not the descriptor should be accessible to users.
+        setIsDisabled(XmlUtil.getAttribute(derivedNode, ATTR_DISABLED, false));
     }
 
 
@@ -421,6 +434,7 @@ public class DerivedDataDescriptor {
         this.method      = other.method;
         this.formula     = other.formula;
         this.code        = other.code;
+        this.isDisabled  = other.isDisabled;
         this.properties  = (other.properties == null)
                            ? null
                            : (Properties) other.properties.clone();
@@ -914,6 +928,25 @@ public class DerivedDataDescriptor {
     }
 
     /**
+     * Determine whether or not this has been disabled.
+     * 
+     * @return If {@code true}, this descriptor should not be accessible to the
+     *         user. Default value is {@code false}.
+     */
+    public boolean getIsDisabled() {
+        return isDisabled;
+    }
+
+    /**
+     * Set whether or not this descriptor should be disabled.
+     * 
+     * @param value {@code true} to disable, {@code false} otherwise.
+     */
+    public void setIsDisabled(boolean value) {
+        isDisabled = value;
+    }
+
+    /**
      * Set the formula for this derived quantity
      *
      * @param value  formula
@@ -1094,7 +1127,7 @@ public class DerivedDataDescriptor {
      */
     public static List init(DataContext dataContext,
                             XmlResourceCollection xrc) {
-        List descriptors = new ArrayList();
+        List<DerivedDataDescriptor> descriptors = new ArrayList<>(256);
         try {
             for (int i = 0; i < xrc.size(); i++) {
                 Element root = xrc.getRoot(i);
@@ -1110,7 +1143,25 @@ public class DerivedDataDescriptor {
             LogUtil.printException(log_, "Initializing DerivedDataChoices",
                                    exc);
         }
-        return descriptors;
+
+        // determine which IDs are disabled... but keep in mind that duplicate
+        // IDs are allowed! however, if *one* of those descriptors is disabled,
+        // they *all* should be.
+        Set<String> disabled = new HashSet<>(descriptors.size());
+        for (DerivedDataDescriptor d : descriptors) {
+            if (d.getIsDisabled()) {
+                disabled.add(d.getId());
+            }
+        }
+        // iterate again
+        // if current descriptor ID isn't in the disabled set, it's good!
+        List<DerivedDataDescriptor> filtered = new ArrayList<>(descriptors.size());
+        for (DerivedDataDescriptor d : descriptors) {
+            if (!disabled.contains(d.getId())) {
+                filtered.add(d);
+            }
+        }
+        return filtered;
     }
 
 

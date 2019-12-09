@@ -259,4 +259,13 @@
     </categories>
     <operands categories=""/>
   </derived>
+  
+  <!-- added so that we can disable the listing of the IDV's version (Inq 2861) -->
+  <derived description="GOES 16/17 Three Color (RGB) Image" formula="combineABIRGB(Channel0p64, Channel0p86, Channel0p47)" id="goes16/17threeColorImage" isdefault="false" isenduser="true" disabled="true">
+    <categories>
+      <category display="true" value="Imagery"/>
+      <category value="display:imagecontrol"/>
+    </categories>
+    <operands/>
+  </derived>
 </derived_parameters>
