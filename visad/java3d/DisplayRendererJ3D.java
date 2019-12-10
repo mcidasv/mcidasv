@@ -55,6 +55,7 @@ package visad.java3d;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -88,6 +89,7 @@ import javax.vecmath.Vector4d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import visad.AxisScale;
+import visad.CellImpl;
 import visad.ColorAlphaControl;
 import visad.ColorControl;
 import visad.ContourControl;
@@ -113,10 +115,16 @@ import visad.RendererSourceListener;
 import visad.ScalarMap;
 import visad.ShapeControl;
 import visad.TextControl;
+import visad.ThingImpl;
+import visad.ThingReference;
+import visad.ThingReferenceImpl;
 import visad.VisADException;
+import visad.VisADGeometryArray;
 import visad.VisADLineArray;
+import visad.VisADPointArray;
 import visad.VisADRay;
 import visad.VisADTriangleArray;
+import visad.util.OBJWriter;
 import visad.util.Util;
 
 /**
@@ -392,6 +400,46 @@ public abstract class DisplayRendererJ3D
       } else {
       }
       //    }
+  }
+
+  /**
+   * Save scene to Waveform Object formatted file.
+   * @param file
+   * @throws VisADException
+   * @throws RemoteException
+   */
+  public void saveSceneToFile(final File file) throws VisADException, RemoteException {
+// This way doesn't require a change to the api: see getDisplay().queue() below.
+//     CellImpl writeCell = new CellImpl() {
+//        public void doAction() {
+//           try {
+//             write(file);
+//           }
+//           catch (Exception e) {
+//             e.printStackTrace();
+//           }
+//        }
+//     };
+//     ThingReferenceImpl writeThing = new ThingReferenceImpl("obj write");
+//     writeCell.addReference(writeThing);
+     
+     Runnable writeFile = new Runnable() {
+        public void run() {
+           try {
+             write(file);
+           }
+           catch (Exception e) {
+             e.printStackTrace();
+           }
+        }        
+     };
+     getDisplay().queue(writeFile);
+  }
+
+  private void write(File file) throws Exception {
+     OBJWriter writer = new OBJWriter(file);
+     writer.writeNode(non_direct);
+     writer.close();
   }
 
   public BranchGroup getRoot() {
@@ -1128,6 +1176,7 @@ public abstract class DisplayRendererJ3D
       try {
         VisADLineArray array =
           PlotText.render_label("please wait . . .", startl, base, up, false);
+        
         graphics.draw(((DisplayImplJ3D) getDisplay()).makeGeometry(array));
         startl[1] += 1.2 * up[1];
       }
