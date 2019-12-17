@@ -53,9 +53,11 @@ import java.rmi.RemoteException;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -175,6 +177,9 @@ public class DerivedDataDescriptor {
     /** XML attribute for disabling a descriptor. */
     private static final String ATTR_DISABLED = "disabled";
 
+    /** XML attribute for overriding descriptors with same ID as this one. */
+    private static final String ATTR_OVERRIDE_OTHERS = "override";
+
     /**
      *  A list of {@link DerivedNeed} objects, that define what
      *  kinds of parameters are needed for the {@link DerivedDataChoice}
@@ -256,6 +261,15 @@ public class DerivedDataDescriptor {
      * {@code false}.</p>
      */
     private boolean isDisabled = false;
+
+    /**
+     * Whether or not this descriptor should {@literal "override"} other
+     * descriptors with matching {@link #id ids}.
+     * 
+     * <p>Can be set via the {@code override} XML attribute. Default value is
+     * false.</p>
+     */
+    private boolean overrideOthers = false;
 
     /**
      *  We have this around for when we create a  DerivedDataChoice from this
@@ -383,6 +397,10 @@ public class DerivedDataDescriptor {
 
         // whether or not the descriptor should be accessible to users.
         setIsDisabled(XmlUtil.getAttribute(derivedNode, ATTR_DISABLED, false));
+
+        // whether or not this descriptor should override other descriptors
+        // with the same ID.
+        setOverrideOthers(XmlUtil.getAttribute(derivedNode, ATTR_OVERRIDE_OTHERS, false));
     }
 
 
@@ -947,6 +965,29 @@ public class DerivedDataDescriptor {
     }
 
     /**
+     * Return whether or not this descriptor should {@literal "override"}
+     * other descriptors with the <b>same ID</b>.
+     * 
+     * @return {@code true} if the {@code override} XML attribute was set to
+     *         {@code "true"}, {@code false} otherwise.
+     */
+    public boolean getOverrideOthers() {
+        return overrideOthers;
+    }
+
+    /**
+     * Set whether or not this descriptor should {@literal "override"} other
+     * descriptors with the <b>same ID</b>.
+     * 
+     * @param value {@code true} if this descriptor should override,
+     *              {@code false} if other descriptors with the same ID should
+     *              appear.
+     */
+    public void setOverrideOthers(boolean value) {
+        overrideOthers = value;
+    }
+
+    /**
      * Set the formula for this derived quantity
      *
      * @param value  formula
@@ -1128,15 +1169,23 @@ public class DerivedDataDescriptor {
     public static List init(DataContext dataContext,
                             XmlResourceCollection xrc) {
         List<DerivedDataDescriptor> descriptors = new ArrayList<>(256);
+        Set<String> disabledIds = new HashSet<>(descriptors.size());
         try {
             for (int i = 0; i < xrc.size(); i++) {
                 Element root = xrc.getRoot(i);
                 if (root == null) {
                     continue;
                 }
-                descriptors.addAll(
-                    DerivedDataDescriptor.readDescriptors(
-                        dataContext, root, xrc.isWritableResource(i)));
+                List<DerivedDataDescriptor> tmpList =
+                    readDescriptors(dataContext, root, xrc.isWritableResource(i));
+                for (DerivedDataDescriptor d : tmpList) {
+                    // keep track of which IDs are disabled here so that we
+                    // can avoid iterating over the descriptors EVEN MORE
+                    if (d.getIsDisabled()) {
+                        disabledIds.add(d.getId());
+                    }
+                    descriptors.add(d);
+                }
                 classes.addAll(DerivedDataDescriptor.readClasses(root));
             }
         } catch (Exception exc) {
@@ -1144,27 +1193,48 @@ public class DerivedDataDescriptor {
                                    exc);
         }
 
-        // determine which IDs are disabled... but keep in mind that duplicate
-        // IDs are allowed! however, if *one* of those descriptors is disabled,
-        // they *all* should be.
-        Set<String> disabled = new HashSet<>(descriptors.size());
+        // TODO(jon): try write a comment that explains this insanity :(
+        Map<String, List<DerivedDataDescriptor>> idToDescs =
+            new HashMap<>(descriptors.size());
         for (DerivedDataDescriptor d : descriptors) {
-            if (d.getIsDisabled()) {
-                disabled.add(d.getId());
+            String id = d.getId();
+            List<DerivedDataDescriptor> ds =
+                idToDescs.getOrDefault(id, new ArrayList<>());
+
+            // if one of the descriptors for a given ID is disabled, *ALL*
+            // descriptors should also be disabled. in this case, we simply
+            // don't include them in the idToDescs map that's used to build
+            // the list that gets returned by this method.
+            if (!disabledIds.contains(id)) {
+
+                // if 'override="true"' is present in the XML, all other
+                // descriptors with the same ID should be ignored. this is
+                // accomplished by simply clearing out the list of descriptors
+                // matching the current ID and subsequently adding the override
+                // descriptor so that it looks like it's the only one matching
+                // current ID.
+                if (d.getOverrideOthers()) {
+                    ds.clear();
+                }
+
+                // add it to the map so that we can return it!
+                ds.add(d);
             }
+            idToDescs.put(id, ds);
         }
-        // iterate again
-        // if current descriptor ID isn't in the disabled set, it's good!
-        List<DerivedDataDescriptor> filtered = new ArrayList<>(descriptors.size());
-        for (DerivedDataDescriptor d : descriptors) {
-            if (!disabled.contains(d.getId())) {
+
+        // the actual DerivedDataDescriptors in idToDescs should be the ones
+        // that we want to show to the user. all that's left is to iterate
+        // through idToDescs and add each descriptor to the list that we return
+        List<DerivedDataDescriptor> filtered =
+            new ArrayList<>(descriptors.size());
+        for (Map.Entry<String, List<DerivedDataDescriptor>> entry : idToDescs.entrySet()) {
+            for (DerivedDataDescriptor d : entry.getValue()) {
                 filtered.add(d);
             }
         }
         return filtered;
     }
-
-
 
     /**
      *  Add the given data choice into the Hashtable of choicesSoFar.

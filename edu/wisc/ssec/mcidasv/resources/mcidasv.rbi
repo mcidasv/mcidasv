@@ -316,10 +316,12 @@
     <resource location="%USERPATH%/enduserformulas.xml"/>
     <resource location="%SITEPATH%/derived.xml"/>
     <resource location="%SITEPATH%/enduserformulas.xml"/>
-    <resource location="%APPPATH%/derived.xml"/>
-    <resource location="%APPPATH%/enduserformulas.xml"/>
     <resource location="%IDVPATH%/derived.xml"/>
     <resource location="%IDVPATH%/enduserformulas.xml"/>
+    <!-- McV's are last so that we can properly use the override -->
+    <!-- and disabled XML tags that were added in Inq 2861.      -->
+    <resource location="%APPPATH%/derived.xml"/>
+    <resource location="%APPPATH%/enduserformulas.xml"/>
   </resources>
 
 <!-- Where to find the parameter to color table files   -->
