@@ -34,8 +34,8 @@ import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JComponent;
@@ -50,6 +50,7 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceImpl;
+import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.DisplayConventions;
@@ -59,7 +60,6 @@ import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.MapLines;
-
 import visad.BaseColorControl;
 import visad.CellImpl;
 import visad.FlatField;
@@ -71,7 +71,6 @@ import visad.ScalarMap;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
-
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.control.RGBCompositeControl;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
@@ -124,7 +123,14 @@ public class PreviewSelection extends DataSelectionComponent {
 
         this.dataChoice = dataChoice;
         this.dataCategory = (DataCategory) dataChoice.getCategories().get(0);
-        this.dataSource = (DataSourceImpl) ((DirectDataChoice)dataChoice).getDataSource();
+        if (dataChoice instanceof DerivedDataChoice) {
+            // Use the first in the list
+            List<DataChoice> children = ((DerivedDataChoice) dataChoice).getChoices();
+            DataChoice dc = children.get(0);
+            this.dataSource = (DataSourceImpl) ((DirectDataChoice) dc).getDataSource();
+        } else {
+           this.dataSource = (DataSourceImpl) ((DirectDataChoice) dataChoice).getDataSource();
+        }
         this.image = image;
         this.sampleProjection = sample;
         sample = getDataProjection();
