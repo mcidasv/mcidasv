@@ -662,9 +662,10 @@ public class DerivedDataChoice extends ListDataChoice {
             // creating operands named like "D1", "D2", ..., "DN" where N
             // appears to be the number of parameters in the formula definition.
             // Not sure why these operands are being created in situations like
-            // the one presented in the inquiry.
-            //   - Going through the GUI we explicitly associating operands
-            //     with datachoices.
+            // the one presented in the inquiry, because the formula had named
+            // its parameters. Additionally:
+            //   - Going through the GUI we explicitly associate these named
+            //     operands with datachoices.
             //   - Going through bundles we've already had the operands 
             //     associated with datachoices via the GUI.
             // At any rate, these "D" operands don't always seem to get data
