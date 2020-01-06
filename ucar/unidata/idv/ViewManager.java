@@ -6822,22 +6822,35 @@ public class ViewManager extends SharableImpl implements ActionListener,
         final JDialog dialog = new JDialog((JFrame) null,
                                            "Background/Foreground Color",
                                            true);
-        JLabel             bgLbl   = GuiUtils.rLabel("Background:");
-        JLabel             fgLbl   = GuiUtils.rLabel("Foreground:");
+        JLabel bgLbl = GuiUtils.rLabel("Background: ");
+        JLabel fgLbl = GuiUtils.rLabel("Foreground: ");
         final JComponent[] bgComps =
             GuiUtils.makeColorSwatchWidget(getStore(),
                                            getBackground(),
                                            "Set Background Color");
+        bgComps[0].setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         final JComponent[] fgComps =
             GuiUtils.makeColorSwatchWidget(getStore(),
                                            getForeground(),
                                            "Set Foreground Color");
+        fgComps[0].setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
 
         GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
 
-        JPanel         top      = GuiUtils.doLayout(new Component[] {
-            bgLbl, bgComps[0], bgComps[1], fgLbl, fgComps[0], fgComps[1]
-        }, 3, GuiUtils.WT_NYN, GuiUtils.WT_N);
+        JPanel bgPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        bgPanel.add(bgLbl);
+        bgPanel.add(bgComps[0]);
+        bgPanel.add(bgComps[1]);
+
+        JPanel fgPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        fgPanel.add(fgLbl);
+        fgPanel.add(fgComps[0]);
+        fgPanel.add(fgComps[1]);
+
+        JPanel top = new JPanel(new BorderLayout());
+        top.add(bgPanel, BorderLayout.NORTH);
+        top.add(fgPanel, BorderLayout.SOUTH);
+
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
