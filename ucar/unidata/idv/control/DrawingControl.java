@@ -28,10 +28,10 @@
 
 package ucar.unidata.idv.control;
 
-
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
-import org.python.util.PythonInterpreter;
 
+import org.python.util.PythonInterpreter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -63,7 +63,6 @@ import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlUtil;
-
 import ucar.visad.data.CalendarDateTime;
 import ucar.visad.display.Animation;
 import ucar.visad.display.CompositeDisplayable;
@@ -81,9 +80,7 @@ import visad.UnionSet;
 import visad.Unit;
 import visad.VisADException;
 import visad.VisADRay;
-
 import visad.georef.EarthLocation;
-
 
 import java.awt.Color;
 import java.awt.Component;
@@ -102,9 +99,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.rmi.RemoteException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -126,7 +121,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
-
 
 /**
  * A MetApps Display Control for drawing lines on a navigated
@@ -1869,7 +1863,7 @@ public class DrawingControl extends DisplayControlImpl {
             }
         };
         colorSwatch.setMinimumSize(new Dimension(20, 20));
-        colorSwatch.setPreferredSize(new Dimension(20, 20));
+        colorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         Component colorCbx  = colorSwatch;
 
         JComboBox widthComp = doMakeLineWidthBox(lineWidth);
