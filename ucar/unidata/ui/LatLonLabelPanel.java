@@ -45,6 +45,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.gis.maps.LatLonLabelData;
 import ucar.unidata.idv.control.MapDisplayControl;
@@ -195,6 +196,7 @@ public class LatLonLabelPanel extends JPanel {
                 "Set " + (latLonLabelData.getIsLatitude()
                           ? "Latitude"
                           : "Longitude") + " Color");
+        colorButton.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         colorButton.setToolTipText("Set the label color");
         colorButton.addPropertyChangeListener("background",
                 new PropertyChangeListener() {

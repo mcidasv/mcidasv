@@ -28,6 +28,7 @@
 
 package ucar.unidata.ui;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.gis.maps.LatLonData;
 import ucar.unidata.idv.control.MapDisplayControl;
@@ -42,7 +43,6 @@ import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -180,6 +180,7 @@ public class LatLonPanel extends JPanel {
                 "Set " + (latLonData.getIsLatitude()
                           ? "Latitude"
                           : "Longitude") + " Color");
+        colorButton.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         colorButton.setToolTipText("Set the line color");
         colorButton.addPropertyChangeListener("background",
                 new PropertyChangeListener() {
