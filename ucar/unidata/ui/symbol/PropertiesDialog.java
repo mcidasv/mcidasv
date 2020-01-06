@@ -28,52 +28,51 @@
 
 package ucar.unidata.ui.symbol;
 
-
-import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
-import org.w3c.dom.Element;
-
-import ucar.unidata.data.DataAlias;
-import ucar.unidata.data.point.PointOb;
-
-import ucar.unidata.idv.DisplayConventions;
-import ucar.unidata.ui.ParamField;
-import ucar.unidata.ui.colortable.ColorTableCanvas;
-import ucar.unidata.ui.colortable.ColorTableManager;
-
-import ucar.unidata.ui.drawing.*;
-
-import ucar.unidata.util.ColorTable;
-import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LogUtil;
-import ucar.unidata.util.Misc;
-import ucar.unidata.util.ObjectListener;
-import ucar.unidata.util.ObjectPair;
-import ucar.unidata.util.Range;
-import ucar.unidata.util.TwoFacedObject;
-
-import ucar.unidata.xml.XmlObjectStore;
-import visad.Data;
-
-
-import visad.Unit;
-
-import visad.VisADGeometryArray;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-
-
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JViewport;
 
+import ucar.unidata.data.DataAlias;
+import ucar.unidata.idv.DisplayConventions;
+import ucar.unidata.ui.ParamField;
+import ucar.unidata.ui.colortable.ColorTableCanvas;
+import ucar.unidata.ui.colortable.ColorTableManager;
+import ucar.unidata.util.ColorTable;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LogUtil;
+import ucar.unidata.util.Misc;
+import ucar.unidata.util.ObjectListener;
+import ucar.unidata.util.Range;
+import ucar.unidata.util.TwoFacedObject;
+import ucar.unidata.xml.XmlObjectStore;
+
+import visad.Unit;
+
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
 /**
  * Manages the properties dialog for MetSymbol-s
@@ -82,6 +81,7 @@ import javax.swing.event.*;
  * @author IDV Development Team
  * @version $Revision: 1.43 $
  */
+
 public class PropertiesDialog implements ActionListener {
 
     /** Has this dialog been initialized */
@@ -648,6 +648,7 @@ public class PropertiesDialog implements ActionListener {
         JComponent[] fgSwatch =
             GuiUtils.makeColorSwatchWidget(store, symbol.getForeground(), "");
         fgColorSwatch = (ColorSwatchComponent) fgSwatch[0];
+        fgColorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         JPanel fgColorPanel = GuiUtils.hbox(fgSwatch[0], fgSwatch[2]);
         comps.add(GuiUtils.rLabel("Foreground Color:"));
         comps.add(GuiUtils.left(fgColorPanel));
@@ -656,6 +657,7 @@ public class PropertiesDialog implements ActionListener {
         JComponent[] bgSwatch =
             GuiUtils.makeColorSwatchWidget(store, symbol.getBackground(), "");
         bgColorSwatch = (ColorSwatchComponent) bgSwatch[0];
+        bgColorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         JPanel bgColorPanel = GuiUtils.hbox(bgSwatch[0], bgSwatch[2]);
         comps.add(GuiUtils.rLabel("Background Color:"));
         comps.add(GuiUtils.left(bgColorPanel));
