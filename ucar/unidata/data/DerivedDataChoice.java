@@ -658,7 +658,24 @@ public class DerivedDataChoice extends ListDataChoice {
                 data = dataChoice.getData(DataCategory.NULL, dataSelection,
                                           requestProperties);
             }
-            dataChoiceToData.put(dataOperand.getName(), data);
+            // When loading in some bundles (see Inquiry 2861) the IDV is
+            // creating operands named like "D1", "D2", ..., "DN" where N
+            // appears to be the number of parameters in the formula definition.
+            // Not sure why these operands are being created in situations like
+            // the one presented in the inquiry.
+            //   - Going through the GUI we explicitly associating operands
+            //     with datachoices.
+            //   - Going through bundles we've already had the operands 
+            //     associated with datachoices via the GUI.
+            // At any rate, these "D" operands don't always seem to get data
+            // associated with them, hence the NPEs that were reported in the
+            // inquiry...and simply not mapping these to data objects appears
+            // to work.
+            // According to collectOperands (~Line 489) these "D" operands may
+            // actually be aliases?
+            if (data != null) {
+                dataChoiceToData.put(dataOperand.getName(), data);
+            }
         }
         dataOperand.setData(data);
         //        return data;
