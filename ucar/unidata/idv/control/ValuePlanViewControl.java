@@ -298,6 +298,21 @@ public class ValuePlanViewControl extends PlanViewControl {
     }
 
     /**
+     * Controls the declutter {@literal "density"} and ensures the GUI
+     * responds.
+     *
+     * @param value New declutter density value.
+     *
+     * @see #setDeclutterFilter(float)
+     */
+    private void updateDensity(float value) {
+        // note: used in jython, so don't worry about this appearing to be
+        // unused
+        setDeclutterFilter(value);
+        loadDataInThread();
+    }
+
+    /**
      * Add into the given the  widgets  for the different attributes
      *
      * @param controlWidgets List of {@link ControlWidget}s to add into
