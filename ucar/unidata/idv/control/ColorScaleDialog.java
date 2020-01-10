@@ -28,17 +28,16 @@
 
 package ucar.unidata.idv.control;
 
-
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+
+import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.ui.FontSelector;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
-
 import ucar.visad.display.ColorScaleInfo;
 
-
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,7 +47,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-
 
 /**
  * A JFrame widget to get color scale info from the user.
@@ -210,16 +208,21 @@ public class ColorScaleDialog implements ActionListener {
      *
      * @param showDialog  true to show the dialog
      */
+
     private void doMakeContents(boolean showDialog) {
         placementBox = new JComboBox(positions);
-        colorSwatch  = new ColorSwatchComponent(displayControl.getIdv().getStore(), myInfo.getLabelColor(),
+        IdvObjectStore ios = null;
+        if (displayControl != null) {
+            ios = displayControl.getIdv().getStore();
+        }
+        colorSwatch  = new ColorSwatchComponent(ios, myInfo.getLabelColor(),
                 "Color Scale Label Color");
+        colorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         final JComponent colorComp = colorSwatch.getSetPanel();
         visibilityCbx = new JCheckBox("", myInfo.getIsVisible());
         unitCbx       = new JCheckBox("Show Unit", myInfo.isUnitVisible());
         alphaCbx      = new JCheckBox("", myInfo.getUseAlpha());
-        fontSelector  = new FontSelector(FontSelector.COMBOBOX_UI, false,
-                                        false);
+        fontSelector  = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         fontSelector.setFont(myInfo.getLabelFont());
 
         labelVisibilityCbx = new JCheckBox("Visible",
@@ -296,24 +299,6 @@ public class ColorScaleDialog implements ActionListener {
         return myInfo;
     }
 
-    /**
-     * get the display list font
-     *
-     * @return the font or null
-     */
-    private Font getDisplayListFont() {
-        if (displayControl == null) {
-            return null;
-        }
-        Font f    = displayControl.getViewManager().getDisplayListFont();
-        int  size = (f == null)
-                    ? 12
-                    : f.getSize();
-        if ((f != null) && f.getName().equals(FontSelector.DEFAULT_NAME)) {
-            f = null;
-        }
-        return f;
-    }
 
     /**
      * Was ok pressed
