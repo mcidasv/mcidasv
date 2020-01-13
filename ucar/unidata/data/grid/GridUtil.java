@@ -7381,6 +7381,11 @@ public class GridUtil {
                         } else if (type.equals(Smoother.GAUSSIAN.id) || type.equals(Smoother.GAUSSIAN.label)) {
                             smoothedFF = smoothGaussian((FlatField) sample,
                                     filterLevel, smoothedRangeType);
+                        // TJJ Jan 2020
+                        // This handles switching back from valid smoother to no smoothing.
+                        // We don't want the FF to be null and exit loop with a continue;
+                        } else if (type.equals(Smoother.NONE.id)) {
+                            smoothedFF = (FlatField) sample;
                         } else {
                             smoothedFF = smoothWeighted((FlatField) sample,
                                     filterLevel, type, smoothedRangeType);
@@ -7412,6 +7417,11 @@ public class GridUtil {
                                 innerSmoothedField =
                                     smoothGaussian(innerField, filterLevel,
                                         smoothedRangeType);
+                            // TJJ Jan 2020
+                            // This handles switching back from valid smoother to no smoothing.
+                            // We don't want the FF to be null and exit loop with a continue;
+                            } else if (type.equals(Smoother.NONE.id)) {
+                                innerSmoothedField = innerField;
                             } else {
                                 innerSmoothedField =
                                     smoothWeighted(innerField, filterLevel,
