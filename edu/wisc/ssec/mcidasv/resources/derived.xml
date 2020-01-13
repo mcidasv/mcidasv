@@ -641,4 +641,8 @@
         </categories>
         <operands/>
     </derived>
+    <derived description="testfunc" formula="testFunc1000(field)" id="testfunc" isdefault="false" isenduser="true" override="true" disabled="true">
+        <categories/>
+        <operands/>
+    </derived>
 </derived_parameters>
