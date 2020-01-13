@@ -60,8 +60,6 @@ import visad.util.HersheyFont;
 
 import ucar.visad.display.TextDisplayable;
 
-import com.jogamp.opengl.util.awt.TextRenderer;
-
 /**
  * The ShadowType hierarchy shadows the MathType hierarchy, within a
  * DataDisplayLink.

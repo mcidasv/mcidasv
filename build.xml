@@ -192,7 +192,7 @@
     <property name="slf4j.version" value="2.0.0-alpha1" />
     <property name="logback.version" value="1.3.0-alpha5" />
     <property name="miglayout.version" value="5.2" />
-    <property name="jogamp.version" value="2.3.2" />
+    <property name="jogamp.version" value="2.4.0rc1" />
     <property name="swingx.version" value="1.6.5-1" />
     <property name="eventbus.version" value="1.4" />
     <property name="commons-math.version" value="3.6.1" />
@@ -205,7 +205,6 @@
     <property name="idv.version" value="5.6u1" />
     <property name="ncidv.version" value="4.6.13-SNAPSHOT" />
     <property name="visad.version" value="2.0-SNAPSHOT" />
-<!--    <property name="jansi.version" value="1.18" />-->
 
     <!-- note that the J3D JARs available from http://jogamp.org/deployment/java3d/
          do not (as of 20140915) have the version string in the filenames.
@@ -215,14 +214,12 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-<!--    <property name="jar.base.classpath" value="jansi-${jansi.version}.jar ${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-bug1299fix-fat-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />-->
-    <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-bug1299fix-fat-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
+   <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
          modifications to the "jar.base.classpath" property. -->
     <fileset id="mcv.libs" dir="${dist.dir}">
-<!--        <include name="jansi-${jansi.version}.jar" />-->
         <include name="commons-httpclient-${commons-httpclient.version}.jar" />
         <include name="swingx-common-${swingx.version}.jar" />
         <include name="sysout-over-slf4j-${sysout.version}.jar" />
@@ -241,8 +238,7 @@
         <include name="j3dcore-${java3d.version}.jar" />
         <include name="j3dutils-${java3d.version}.jar" />
         <include name="vecmath-${java3d.version}.jar" />
-        <include name="jogamp-bug1299fix-fat-${jogamp.version}.jar" />
-<!--        <include name="jogamp-all-${jogamp.version}.jar" />-->
+        <include name="jogamp-all-${jogamp.version}.jar" />
         <include name="jython-standalone-${jython.version}.jar" />
         <include name="juniversalchardet-${juniversalchardet.version}.jar" />
     </fileset>
@@ -896,6 +892,120 @@
     </java>
   </target>
 
+    <target name="jar.runscript9" depends="jar" description="Build and run McIDAS-V application (large memory)">
+        <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv-${mcv.version}.jar">
+            <classpath refid="app.classpath" />
+            <assertions refid="mcv.assertions"/>
+
+            <!-- required for jython stuff to work without jigsaw-specific changes -->
+            <!--<jvmarg value="&#45;&#45;permit-illegal-access"/>-->
+            <jvmarg value="--illegal-access=warn" />
+            <!-- add-exports allows reading from public types -->
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.base/com.sun.net.ssl.internal.ssl=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.base/jdk.internal.loader=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.desktop/com.sun.java.swing.plaf.gtk=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.desktop/sun.awt=ALL-UNNAMED" />
+            <jvmarg value="--add-exports" />
+            <jvmarg value="java.desktop/sun.swing=ALL-UNNAMED" />
+
+            <!-- add-opens opens up everything -->
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.management/sun.management=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.io=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.net=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.security.auth.x500=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.security=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.security.cert=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.security.spec=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.net=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/javax.net.ssl=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/sun.nio.ch=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio.channels=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.nio.charset=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.text=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.concurrent=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.concurrent.atomic=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/java.util.concurrent.locks=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.base/sun.util.calendar=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.security.jgss/org.ietf.jgss=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/java.awt.geom=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.swing.plaf.basic=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/javax.accessibility=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.desktop/sun.java2d.opengl=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.naming/javax.naming.ldap=ALL-UNNAMED" />
+            <jvmarg value="--add-opens" />
+            <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
+            <jvmarg value="-noverify" />
+            <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
+            <jvmarg value="-XX:+UnlockExperimentalVMOptions" />
+            <jvmarg value="-XX:+UseZGC" />
+            <jvmarg value="-Xlog:gc" />
+            <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
+            <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
+
+            <sysproperty key="sun.java2d.uiScale" value="${uiscale}" />
+            <sysproperty key="loglevel" value="${run.log.level}" />
+            <sysproperty key="mcv.userpath" value="${userpath.dir}" />
+            <sysproperty key="mcv.logpath" value="${userpath.dir}/mcidasv.log" />
+            <sysproperty key="debug.adde.reqs" value="true" />
+            <sysproperty key="idv.usetimedriver" value="true" />
+            <sysproperty key="debug.localadde.rootdir" value="${addeservers.dir}" />
+            <sysproperty key="logback.configurationFile" value="${logback.default.config}" />
+            <sysproperty key="visad.java3d.noerasebackground" value="true" />
+            <sysproperty key="visad.java3d.textureNpot" value="true" />
+            <sysproperty key="visad.java3d.imageByRef" value="true" />
+            <sysproperty key="visad.java3d.geometryByRef" value="true" />
+            <sysproperty key="file.encoding" value="UTF-8" />
+            <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+
+            <arg value="-forceaqua" />
+            <arg value="-userpath" />
+            <arg value="${userpath.dir}" />
+            <arg value="-script" />
+            <arg value="${pyfile}" />
+        </java>
+    </target>
+    
   <target name="debug.runlarge" depends="jar" description="Build and run McIDAS-V application (large memory)">
     <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
       <classpath refid="app.classpath" />
