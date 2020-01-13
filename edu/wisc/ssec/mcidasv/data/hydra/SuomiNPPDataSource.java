@@ -79,6 +79,7 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
@@ -150,6 +151,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
     private List<DataCategory> categories;
     private boolean isCombinedProduct = false;
+    private boolean isDerived = false;
     private boolean nameHasBeenSet = false;
 
     private boolean isNOAA;
@@ -1848,8 +1850,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
         GeoSelection geoSelection = null;
         
         if ((dataSelection != null) && (dataSelection.getGeoSelection() != null)) {
-          geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :
-                                    dataChoice.getDataSelection().getGeoSelection();
+            if (! isDerived) {
+                geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :
+                    dataChoice.getDataSelection().getGeoSelection();
+            } else {
+                if (dataSelection.getGeoSelection().getBoundingBox() != null) {
+                    geoSelection = dataSelection.getGeoSelection();
+                }
+            }
         }
 
         if (geoSelection != null) {
@@ -1961,6 +1969,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
 				  image = (FlatField) thing;
 			  }
 			  if (image != null) {
+			      // Note here if we are a derived data choice
+			      if (dataChoice instanceof DerivedDataChoice) {
+			          isDerived = true;
+			      }
 				  PreviewSelection ps = new PreviewSelection(dataChoice, image, null);
 				  // Region subsetting not yet implemented for CrIS data
 				  if (instrumentName.getStringValue().equals("CrIS")) {
