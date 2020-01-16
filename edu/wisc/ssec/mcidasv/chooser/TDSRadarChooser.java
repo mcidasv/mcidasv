@@ -404,8 +404,10 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
             doc = builder.build(radarServerURL);
         } catch (JDOMException e) {
             userMessage("Invalid catalog");
+            logger.warn("Invalid catalog: "+radarServerURL, e);
         } catch (IOException e) {
             userMessage("Unable to open catalog");
+            logger.warn("Unable to open catalog: "+radarServerURL, e);
         }
 
         org.jdom2.Element rootElem    = doc.getRootElement();
@@ -470,7 +472,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                         errlog);
             } catch (Exception exc) {
                 userMessage("Invalid catalog");
-
+                logger.warn("Invalid catalog: "+url, exc);
                 return;
             }
             List tdsStations = collection.getRadarStations();
@@ -490,6 +492,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
             getStationMap().setStations(stations);
         } catch (Exception exc) {
             userMessage("Unable to load stations");
+            logger.warn("Unable to load stations from URL: "+url, exc);
             return;
         }
         urlListHandler.saveState(urlBox);
@@ -517,6 +520,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                         errlog);
             } catch (Exception exc) {
                 userMessage("Invalid catalog");
+                logger.warn("Invalid catalog: "+url, exc);
                 return;
             }
             products = collection.getRadarProducts();
@@ -551,6 +555,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
             getStationMap().setStations(stations);
         } catch (Exception exc) {
             userMessage("Unable to load stations");
+            logger.warn("Unable to load stations from URL: "+url, exc);
             return;
         }
         urlListHandler.saveState(urlBox);
