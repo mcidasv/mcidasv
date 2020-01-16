@@ -26,6 +26,8 @@
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
 
+package edu.wisc.ssec.mcidasv.collaboration;
+
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.ViewManager;
