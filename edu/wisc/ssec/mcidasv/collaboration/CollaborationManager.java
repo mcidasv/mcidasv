@@ -1,7 +1,7 @@
 /*
  * This file is part of McIDAS-V
  *
- * Copyright 2007-2019
+ * Copyright 2007-2020
  * Space Science and Engineering Center (SSEC)
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
@@ -25,7 +25,6 @@
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
-package edu.wisc.ssec.mcidasv.collaboration;
 
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.idv.IntegratedDataViewer;
