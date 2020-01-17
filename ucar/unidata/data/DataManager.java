@@ -108,26 +108,6 @@ public class DataManager {
                 throw (RuntimeException) e;
             }
         }
-        try {
-            String handlers =
-                System.getProperty("java.protocol.handler.pkgs");
-            String newProperty = null;
-            if (handlers == null) {
-                newProperty = "com.sun.net.ssl.internal.www.protocol";
-            } else if (handlers.indexOf(
-                    "com.sun.net.ssl.internal.www.protocol") < 0) {
-                newProperty = "com.sun.net.ssl.internal.www.protocol | "
-                              + handlers;
-            }
-            if (newProperty != null) {  // was set above
-                System.setProperty("java.protocol.handler.pkgs", newProperty);
-                java.security.Security.addProvider(
-                    new com.sun.net.ssl.internal.ssl.Provider());
-            }
-        } catch (Exception e) {
-            System.out.println(
-                "Unable to set System Property: java.protocol.handler.pkgs");
-        }
     }
 
     /** logging category */
