@@ -132,4 +132,25 @@
     <params p1="287_Band11_TEMP" p2="287_Band13_TEMP" p3="287_Band15_TEMP"/>
     <params p1="288_Band11_TEMP" p2="288_Band13_TEMP" p3="288_Band15_TEMP"/>
   </paramgroup>
+    <paramgroup description="JPSS Day Land Cloud Fire RGB" name="JPSS_RGB_DayLandCloudFire">
+    <params p1="VIIRS-I4-SDR_All/BrightnessTemperature" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance"/>
+  </paramgroup>
+  <paramgroup description="JPSS NDVI" name="JPSS_NDVI">
+    <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance"/>
+  </paramgroup>
+  <paramgroup description="JPSS Dust RGB" name="JPSS_RGB_Dust">
+    <params p1="VIIRS-M14-SDR_All/BrightnessTemperature" p2="VIIRS-M15-SDR_All/BrightnessTemperature" p3="VIIRS-M16-SDR_All/BrightnessTemperature"/>
+  </paramgroup>
+  <paramgroup description="JPSS Fire Temperature RGB" name="JPSS_RGB_FireTemperature">
+    <params p1="VIIRS-M12-SDR_All/BrightnessTemperature" p2="VIIRS-M11-SDR_All/Reflectance" p3="VIIRS-M10-SDR_All/Reflectance"/>
+  </paramgroup>
+  <paramgroup description="JPSS Natural Color RGB" name="JPSS_RGB_NaturalColor">
+    <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M7-SDR_All/Reflectance" p3="VIIRS-M5-SDR_All/Reflectance"/>
+  </paramgroup>
+  <paramgroup description="JPSS Nighttime Microphysics RGB" name="JPSS_RGB_NightMicrophysics">
+    <params p1="VIIRS-M12-SDR_All/BrightnessTemperature" p2="VIIRS-M15-SDR_All/BrightnessTemperature" p3="VIIRS-M16-SDR_All/BrightnessTemperature"/>
+  </paramgroup>
+  <paramgroup description="JPSS True Color RGB" name="JPSS_RGB_TrueColor">
+    <params p1="VIIRS-M5-SDR_All/Radiance" p2="VIIRS-M4-SDR_All/Radiance" p3="VIIRS-M3-SDR_All/Radiance"/>
+  </paramgroup>
 </paramgroups>
