@@ -153,4 +153,64 @@
   <paramgroup description="JPSS True Color RGB" name="JPSS_RGB_TrueColor">
     <params p1="VIIRS-M5-SDR_All/Radiance" p2="VIIRS-M4-SDR_All/Radiance" p3="VIIRS-M3-SDR_All/Radiance"/>
   </paramgroup>
+  <paramgroup description="MSG Airmass RGB" name="MSG_RGB_Airmass">
+    <params p1="51_Band5_TEMP" p2="51_Band6_TEMP" p3="51_Band8_TEMP" p4="51_Band9_TEMP"/>
+    <params p1="52_Band5_TEMP" p2="52_Band6_TEMP" p3="52_Band8_TEMP" p4="52_Band9_TEMP"/>
+    <params p1="53_Band5_TEMP" p2="53_Band6_TEMP" p3="53_Band8_TEMP" p4="53_Band9_TEMP"/>
+    <params p1="354_Band5_TEMP" p2="354_Band6_TEMP" p3="354_Band8_TEMP" p4="354_Band9_TEMP"/>
+  </paramgroup>
+  <paramgroup description="MSG 24 Hour Microphysics RGB" name="MSG_RGB_24HrMicrophysics">
+    <params p1="51_Band9_TEMP" p2="51_Band7_TEMP" p3="51_Band10_TEMP"/>
+    <params p1="52_Band9_TEMP" p2="52_Band7_TEMP" p3="52_Band10_TEMP"/>
+    <params p1="53_Band9_TEMP" p2="53_Band7_TEMP" p3="53_Band10_TEMP"/>
+    <params p1="354_Band9_TEMP" p2="354_Band7_TEMP" p3="354_Band10_TEMP"/>
+  </paramgroup>
+  <paramgroup description="MSG Dust RGB" name="MSG_RGB_Dust">
+    <params p1="51_Band7_TEMP" p2="51_Band9_TEMP" p3="51_Band10_TEMP"/>
+    <params p1="52_Band7_TEMP" p2="52_Band9_TEMP" p3="52_Band10_TEMP"/>
+    <params p1="53_Band7_TEMP" p2="53_Band9_TEMP" p3="53_Band10_TEMP"/>
+    <params p1="354_Band7_TEMP" p2="354_Band9_TEMP" p3="354_Band10_TEMP"/>
+  </paramgroup>
+  <paramgroup description="MSG SO2 RGB" name="MSG_RGB_SO2">
+    <params p1="51_Band7_TEMP" p2="51_Band9_TEMP" p3="51_Band10_TEMP"/>
+    <params p1="52_Band7_TEMP" p2="52_Band9_TEMP" p3="52_Band10_TEMP"/>
+    <params p1="53_Band7_TEMP" p2="53_Band9_TEMP" p3="53_Band10_TEMP"/>
+    <params p1="354_Band7_TEMP" p2="354_Band9_TEMP" p3="354_Band10_TEMP"/>
+  </paramgroup>
+  <paramgroup description="MSG Cloud Microphysics RGB" name="MSG_RGB_CloudMicrophysics">
+    <params p1="51_Band7_TEMP" p2="51_Band9_TEMP" p3="51_Band10_TEMP"/>
+    <params p1="52_Band7_TEMP" p2="52_Band9_TEMP" p3="52_Band10_TEMP"/>
+    <params p1="53_Band7_TEMP" p2="53_Band9_TEMP" p3="53_Band10_TEMP"/>
+    <params p1="354_Band7_TEMP" p2="354_Band9_TEMP" p3="354_Band10_TEMP"/>
+  </paramgroup>
+  <paramgroup description="MSG Natural Color RGB" name="MSG_RGB_NaturalColor">
+    <params p1="51_Band1_REFL" p2="51_Band2_REFL" p3="51_Band3_REFL"/>
+    <params p1="52_Band1_REFL" p2="52_Band2_REFL" p3="52_Band3_REFL"/>
+    <params p1="53_Band1_REFL" p2="53_Band2_REFL" p3="53_Band3_REFL"/>
+    <params p1="354_Band1_REFL" p2="354_Band2_REFL" p3="354_Band3_REFL"/>
+  </paramgroup>
+  <paramgroup description="MSG Generic Natural Color RGB" name="MSG_RGB_GenericNaturalColor">
+    <params p1="51_Band1_REFL" p2="51_Band2_REFL" p3="51_Band3_REFL"/>
+    <params p1="52_Band1_REFL" p2="52_Band2_REFL" p3="52_Band3_REFL"/>
+    <params p1="53_Band1_REFL" p2="53_Band2_REFL" p3="53_Band3_REFL"/>
+    <params p1="354_Band1_REFL" p2="354_Band2_REFL" p3="354_Band3_REFL"/>
+  </paramgroup>
+  <paramgroup description="MSG Severe Convection RGB" name="MSG_RGB_SevereConvection">
+    <params p1="51_Band1_REFL" p2="51_Band3_REFL" p3="51_Band4_TEMP" p4="51_Band5_TEMP" p5="51_Band6_TEMP" p6="51_Band9_TEMP"/>
+    <params p1="52_Band1_REFL" p2="52_Band3_REFL" p3="52_Band4_TEMP" p4="52_Band5_TEMP" p5="52_Band6_TEMP" p6="52_Band9_TEMP"/>
+    <params p1="53_Band1_REFL" p2="53_Band3_REFL" p3="53_Band4_TEMP" p4="53_Band5_TEMP" p5="53_Band6_TEMP" p6="53_Band9_TEMP"/>
+    <params p1="354_Band1_REFL" p2="354_Band3_REFL" p3="354_Band4_TEMP" p4="354_Band5_TEMP" p5="354_Band6_TEMP" p6="354_Band9_TEMP"/>
+  </paramgroup>
+  <paramgroup description="MSG Generic Severe Convection RGB" name="MSG_RGB_GenericSevereConvection">
+    <params p1="51_Band1_REFL" p2="51_Band3_REFL" p3="51_Band4_TEMP" p4="51_Band5_TEMP" p5="51_Band6_TEMP" p6="51_Band9_TEMP"/>
+    <params p1="52_Band1_REFL" p2="52_Band3_REFL" p3="52_Band4_TEMP" p4="52_Band5_TEMP" p5="52_Band6_TEMP" p6="52_Band9_TEMP"/>
+    <params p1="53_Band1_REFL" p2="53_Band3_REFL" p3="53_Band4_TEMP" p4="53_Band5_TEMP" p5="53_Band6_TEMP" p6="53_Band9_TEMP"/>
+    <params p1="354_Band1_REFL" p2="354_Band3_REFL" p3="354_Band4_TEMP" p4="354_Band5_TEMP" p5="354_Band6_TEMP" p6="354_Band9_TEMP"/>
+  </paramgroup>
+  <paramgroup description="MSG Night Microphysics RGB" name="MSG_RGB_NightMicrophysics">
+    <params p1="51_Band4_TEMP" p2="51_Band9_TEMP" p3="51_Band10_TEMP"/>
+    <params p1="52_Band4_TEMP" p2="52_Band9_TEMP" p3="52_Band10_TEMP"/>
+    <params p1="53_Band4_TEMP" p2="53_Band9_TEMP" p3="53_Band10_TEMP"/>
+    <params p1="354_Band4_TEMP" p2="354_Band9_TEMP" p3="354_Band10_TEMP"/>
+  </paramgroup>
 </paramgroups>
