@@ -361,9 +361,6 @@
         <mapID target="idv.systems.video"                            url="Systems.html#video" />
         <mapID target="idv.toc"										 url="toc.html" />
 		<mapID target="idv.xequivalent"								 url="xequivalent.html" />
-        <mapID target="idv.tools.abichanneldifferenceformulas"       url="tools/ABIChannelDifferenceFormulas.html" />
-        <mapID target="idv.tools.abirgbformulas"                     url="tools/ABIRGBFormulas.html" />
-        <mapID target="idv.tools.ahirgbformulas"                     url="tools/AHIRGBFormulas.html" />
         <mapID target="idv.tools.aliaseditor"                        url="tools/AliasEditor.html" />
         <mapID target="idv.tools.colortableeditor"                   url="tools/ColorTableEditor.html" />
         <mapID target="idv.tools.colortableeditor.chooser"           url="tools/ColorTableEditor.html#chooser" />
