@@ -655,6 +655,96 @@
             <paramgroup categories="" name="JPSS_RGB_TrueColor"/>
         </operands>
     </derived>
+    <derived description="MSG Airmass RGB" formula="MSGAirmassRGB(D1[label=Band 5 Temperature], D2[label=Band 6 Temperature], D3[label=Band 8 Temperature], D4[label=Band 9 Temperature])" id="msgairmass" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_Airmass"/>
+        </operands>
+    </derived>
+    <derived description="MSG 24 Hour Microphysics RGB" formula="MSG24HrMicrophysicsRGB(D1[label=Band 9 Temperature], D2[label=Band 7 Temperature], D3[label=Band 10 Temperature])" id="msg24hrmicrophysics" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_24HrMicrophysics"/>
+        </operands>
+    </derived>
+    <derived description="MSG Dust RGB" formula="MSGDustRGB(D1[label=Band 7 Temperature], D2[label=Band 9 Temperature], D3[label=Band 10 Temperature])" id="msgdust" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_Dust"/>
+        </operands>
+    </derived>
+    <derived description="MSG SO2 RGB" formula="MSGSo2RGB(D1[label=Band 7 Temperature], D2[label=Band 9 Temperature], D3[label=Band 10 Temperature])" id="msgso2" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_SO2"/>
+        </operands>
+    </derived>
+    <derived description="MSG Cloud Microphysics RGB" formula="MSGCloudMicrophysicsRGB(D1[label=Band 7 Temperature], D2[label=Band 9 Temperature], D3[label=Band 10 Temperature])" id="msgcloudmicrophysics" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_CloudMicrophysics"/>
+        </operands>
+    </derived>
+    <derived description="MSG Natural Color RGB" formula="MSGNaturalColorRGB(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance], D3[label=Band 2 Reflectance],minrefl[isuser=true,persistent=false],maxrefl[isuser=true,persistent=false])" id="msgnaturalcolor" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_NaturalColor"/>
+        </operands>
+    </derived>
+    <derived description="MSG Generic Natural Color RGB" formula="MSGGenericNaturalColorRGB(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance], D3[label=Band 3 Reflectance])" id="msggenericnaturalcolor" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_GenericNaturalColor"/>
+        </operands>
+    </derived>
+    <derived description="MSG Severe Convection RGB" formula="MSGSevereConvectionRGB(D1[label=Band 1 Reflectance], D2[label=Band 3 Reflectance], D3[label=Band 4 Temperature],D4[label=Band 5 Temperature], D5[label=Band 6 Temperature], D6[label=Band 9 Temperature])" id="msgsevereconvection" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_SevereConvection"/>
+        </operands>
+    </derived>
+    <derived description="MSG Generic Severe Convection RGB" formula="MSGGenericSevereConvectionRGB(D1[label=Band 1 Reflectance], D2[label=Band 3 Reflectance], D3[label=Band 4 Temperature],D4[label=Band 5 Temperature], D5[label=Band 6 Temperature], D6[label=Band 9 Temperature])" id="msggenericsevereconvection" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_GenericSevereConvection"/>
+        </operands>
+    </derived>
+    <derived description="MSG Night Microphysics RGB" formula="MSGNightMicrophysicsRGB(D1[label=Band 4 Temperature], D2[label=Band 9 Temperature], D3[label=Band 10 Temperature])" id="msgnightmicrophysics" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_NightMicrophysics"/>
+        </operands>
+    </derived>
     <derived description="testfunc" formula="testFunc1000(field)" id="testfunc" isdefault="false" isenduser="true" override="true" disabled="true">
         <categories/>
         <operands/>
