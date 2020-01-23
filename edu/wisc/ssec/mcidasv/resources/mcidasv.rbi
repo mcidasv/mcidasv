@@ -514,6 +514,9 @@
     <resource label="JPSS Routines" location="%APPPATH%/python/JPSSFunctions.py">
       <property name="category" value="System"/>
     </resource>
+    <resource label="MSG Routines" location="%APPPATH%/python/MSGFunctions.py">
+      <property name="category" value="System"/>
+    </resource>
     <resource label="Map Routines" location="%IDVPATH%/python/maps.py">
       <property name="category" value="System"/>
     </resource>
