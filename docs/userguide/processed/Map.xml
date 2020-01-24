@@ -388,20 +388,19 @@
         <mapID target="idv.tools.imagecaptures.moviecapture"         url="tools/ImageCaptures.html#moviecapture" />
         <mapID target="idv.tools.imagecaptures.movieplayback"        url="tools/ImageCaptures.html#movieplayback" />
         <mapID target="idv.tools.imagecaptures.printcapture"         url="tools/ImageCaptures.html#printcapture" />
-		<mapID target="idv.tools.imagefilterformulas"				 url="tools/ImageFilterFormulas.html" />
-		<mapID target="idv.tools.imagefilterformulas.clean"			 url="tools/ImageFilterFormulas#clean" />
-		<mapID target="idv.tools.imagefilterformulas.cloud"			 url="tools/ImageFilterFormulas#cloud" />
-		<mapID target="idv.tools.imagefilterformulas.core"			 url="tools/ImageFilterFormulas#cloud" />
-		<mapID target="idv.tools.imagefilterformulas.discriminate"	 url="tools/ImageFilterFormulas#discriminate" />
-		<mapID target="idv.tools.imagefilterformulas.gradient"		 url="tools/ImageFilterFormulas#gradient" />
-		<mapID target="idv.tools.imagefilterformulas.high2d"		 url="tools/ImageFilterFormulas#high2d" />
-		<mapID target="idv.tools.imagefilterformulas.high"			 url="tools/ImageFilterFormulas#high" />
-		<mapID target="idv.tools.imagefilterformulas.hole"			 url="tools/ImageFilterFormulas#hole" />
-		<mapID target="idv.tools.imagefilterformulas.low2d"			 url="tools/ImageFilterFormulas#low2d" />
-		<mapID target="idv.tools.imagefilterformulas.low"			 url="tools/ImageFilterFormulas#low" />
-		<mapID target="idv.tools.imagefilterformulas.merge"			 url="tools/ImageFilterFormulas#merge" />
-		<mapID target="idv.tools.imagefilterformulas.replace"		 url="tools/ImageFilterFormulas#replace" />
-		<mapID target="idv.tools.imagefilterformulas.shot"			 url="tools/ImageFilterFormulas#shot" />
+		<mapID target="idv.tools.imageryformulas.clean"			     url="tools/ImageryFormulas#clean" />
+		<mapID target="idv.tools.imageryformulas.cloud"			     url="tools/ImageryFormulas#cloud" />
+		<mapID target="idv.tools.imageryformulas.core"			     url="tools/ImageryFormulas#cloud" />
+		<mapID target="idv.tools.imageryformulas.discriminate"	     url="tools/ImageryFormulas#discriminate" />
+		<mapID target="idv.tools.imageryformulas.gradient"		     url="tools/ImageryFormulas#gradient" />
+		<mapID target="idv.tools.imageryformulas.high2d"		     url="tools/ImageryFormulas#high2d" />
+		<mapID target="idv.tools.imageryformulas.high"			     url="tools/ImageryFormulas#high" />
+		<mapID target="idv.tools.imageryformulas.hole"			     url="tools/ImageryFormulas#hole" />
+		<mapID target="idv.tools.imageryformulas.low2d"			     url="tools/ImageryFormulas#low2d" />
+		<mapID target="idv.tools.imageryformulas.low"			     url="tools/ImageryFormulas#low" />
+		<mapID target="idv.tools.imageryformulas.merge"			     url="tools/ImageryFormulas#merge" />
+		<mapID target="idv.tools.imageryformulas.replace"		     url="tools/ImageryFormulas#replace" />
+		<mapID target="idv.tools.imageryformulas.shot"			     url="tools/ImageryFormulas#shot" />
 		<mapID target="idv.tools.imageryformulas"					 url="tools/ImageryFormulas.html" />
         <mapID target="idv.tools.jython"                             url="tools/Jython.html" />
         <mapID target="idv.tools.jythonlib"							 url="tools/JythonLib.html" />

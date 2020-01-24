@@ -258,7 +258,6 @@ RAOB Sounding Data</span><br>
 		<div class="indented" id="miscellaneous_2_1">
 		    <span class="link" onClick="setPage('tools/ExportFormulas.html');">Description of Formulas - Export</span><br>
 		    <span class="link" onClick="setPage('tools/GridFormulas.html');">Description of Formulas - Grids</span><br>
-		    <span class="link" onClick="setPage('tools/ImageFilterFormulas.html');">Description of Formulas - Image Filters</span><br>
             <span class="link" onClick="setPage('tools/ImageryFormulas.html');">Description of Formulas - Imagery</span><br>
 			<span class="link" onClick="setPage('tools/MapFormulas.html');">Description of Formulas - Maps</span><br>
             <span class="link" onClick="setPage('tools/MiscellaneousFormulas.html');">Description of Formulas - Miscellaneous</span><br>
