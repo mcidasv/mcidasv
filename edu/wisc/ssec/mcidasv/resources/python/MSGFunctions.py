@@ -22,7 +22,7 @@ def MSGAirmassRGB(b5T, b6T, b8T, b9T):
     return combineRGB(red, grn, blu)
 
 # MSG 24-hour cloud microphysics RGB
-def MSG24HrMicrophysicsRGB(b9T, b7T, b10T):
+def MSG24HrMicrophysicsRGB(b7T, b9T, b10T):
     # red = band10 - band9; -4K to 2K rescalled to 0 to 255
     # grn = band9 - band7; 0K to 6K rescalled to 0 to 255; gamma 1.2
     # blu = band9; 248K to 303K rescalled to 0 to 255
