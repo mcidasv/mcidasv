@@ -62,6 +62,8 @@ import java.awt.Rectangle;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.VirtualUniverse;
 
@@ -117,32 +119,36 @@ public class SystemState {
     }
     
     /**
-     * Attempt to invoke {@code OperatingSystemMXBean.methodName} via 
-     * reflection.
-     * 
-     * @param <T> Either {@code Long} or {@code Double}.
-     * @param methodName The method to invoke. Must belong to 
-     * {@code com.sun.management.OperatingSystemMXBean}.
-     * @param defaultValue Default value to return, must be in 
-     * {@literal "boxed"} form.
-     * 
-     * @return Either the result of the {@code methodName} call or 
-     * {@code defaultValue}.
+     * Query an {@link OperatingSystemMXBean} attribute and return the result.
+     *
+     * @param <T> Type of the expected return value and {@code defaultValue}.
+     * @param attrName Name of the {@code OperatingSystemMXBean} attribute to 
+     *                 query. Cannot be {@code null} or empty.
+     * @param defaultValue Value returned if {@code attrName} could not be 
+     *                     queried.
+     *
+     * @return Either the value corresponding to {@code attrName} or 
+     *         {@code defaultValue}.
      */
-    private static <T> T hackyMethodCall(final String methodName, final T defaultValue) {
-        assert methodName != null : "Cannot invoke a null method name";
-        assert !methodName.isEmpty() : "Cannot invoke an empty method name";
-        OperatingSystemMXBean osBean = 
-            ManagementFactory.getOperatingSystemMXBean();
+    private static <T> T queryPlatformBean(final String attrName,
+                                           final T defaultValue)
+    {
+        assert attrName != null : "Cannot query a null attribute name";
+        assert !attrName.isEmpty() : "Cannot query an empty attribute name";
         T result = defaultValue;
         try {
-            Method m = osBean.getClass().getMethod(methodName);
-            m.setAccessible(true);
-            // don't suppress warnings because we cannot guarantee that this
-            // cast is correct.
-            result = (T)m.invoke(osBean);
+            final ObjectName objName = 
+                new ObjectName("java.lang", "type", "OperatingSystem");
+            final MBeanServer beanServer = 
+                ManagementFactory.getPlatformMBeanServer();
+            final Object attr = beanServer.getAttribute(objName, attrName);
+            if (attr != null) {
+                // don't suppress warnings because we cannot guarantee that 
+                // this cast is correct.
+                result = (T)attr;
+            }
         } catch (Exception e) {
-            logger.error("couldn't call method: " + methodName, e);
+            logger.error("Couldn't query attribute: " + attrName, e);
         }
         return result;
     }
@@ -188,13 +194,13 @@ public class SystemState {
      */
     public static Map<String, String> queryOpSysProps() {
         Map<String, String> properties = newLinkedHashMap(10);
-        long committed = hackyMethodCall("getCommittedVirtualMemorySize", Long.MIN_VALUE);
-        long freeMemory = hackyMethodCall("getFreePhysicalMemorySize", Long.MIN_VALUE);
-        long freeSwap = hackyMethodCall("getFreeSwapSpaceSize", Long.MIN_VALUE);
-        long cpuTime = hackyMethodCall("getProcessCpuTime", Long.MIN_VALUE);
-        long totalMemory = hackyMethodCall("getTotalPhysicalMemorySize", Long.MIN_VALUE);
-        long totalSwap = hackyMethodCall("getTotalSwapSpaceSize", Long.MIN_VALUE);
-        double loadAvg = hackyMethodCall("getSystemLoadAverage", Double.NaN);
+        long committed = queryPlatformBean("CommittedVirtualMemorySize", Long.MIN_VALUE);
+        long freeMemory = queryPlatformBean("FreePhysicalMemorySize", Long.MIN_VALUE);
+        long freeSwap = queryPlatformBean("FreeSwapSpaceSize", Long.MIN_VALUE);
+        long cpuTime = queryPlatformBean("ProcessCpuTime", Long.MIN_VALUE);
+        long totalMemory = queryPlatformBean("TotalPhysicalMemorySize", Long.MIN_VALUE);
+        long totalSwap = queryPlatformBean("TotalSwapSpaceSize", Long.MIN_VALUE);
+        double loadAvg = queryPlatformBean("SystemLoadAverage", Double.NaN);
         
         Runtime rt = Runtime.getRuntime();
         long currentMem = rt.totalMemory() - rt.freeMemory();

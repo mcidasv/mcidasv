@@ -32,6 +32,14 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
+
 /**
  * Wrapper for OperatingSystemMXBean.
  *
@@ -41,34 +49,36 @@ import java.lang.reflect.Method;
 public class GetMem {
 
     /**
-     * Call a method belonging to {@link OperatingSystemMXBean} and return 
-     * the result. 
+     * Query an {@link OperatingSystemMXBean} attribute and return the result.
      * 
-     * @param <T> Type of the expected return and {@code defaultValue}.
-     * @param methodName Name of {@code OperatingSystemMXBean} method to call.
-     *                   Cannot be {@code null} or empty.
-     * @param defaultValue Value returned if {@code methodName} call fails.
+     * @param <T> Type of the expected return value and {@code defaultValue}.
+     * @param attrName Name of the {@code OperatingSystemMXBean} attribute to 
+     *                 query. Cannot be {@code null} or empty.
+     * @param defaultValue Value returned if {@code attrName} could not be 
+     *                     queried.
      * 
-     * @return Either the value returned by the {@code methodName} call, or
-     * {@code defaultValue}.
+     * @return Either the value corresponding to {@code attrName} or 
+     *         {@code defaultValue}.
      */
-    private <T> T callMXBeanMethod(final String methodName,
-                                   final T defaultValue)
+    private static <T> T queryPlatformBean(final String attrName,
+                                           final T defaultValue)
     {
-        assert methodName != null : "Cannot invoke a null method name";
-        assert methodName.length() > 0: "Cannot invoke an empty method name";
-        OperatingSystemMXBean osBean = 
-            ManagementFactory.getOperatingSystemMXBean();
+        assert attrName != null : "Cannot query a null attribute name";
+        assert !attrName.isEmpty() : "Cannot query an empty attribute name";
         T result = defaultValue;
         try {
-            Method m = osBean.getClass().getMethod(methodName);
-            m.setAccessible(true);
-            // don't suppress warnings because we cannot guarantee that this
-            // cast is correct.
-            result = (T)m.invoke(osBean);
+            final ObjectName objName =
+                new ObjectName("java.lang", "type", "OperatingSystem");
+            final MBeanServer beanServer =
+                ManagementFactory.getPlatformMBeanServer();
+            final Object attr = beanServer.getAttribute(objName, attrName);
+            if (attr != null) {
+                // don't suppress warnings because we cannot guarantee that 
+                // this cast is correct.
+                result = (T)attr;
+            }
         } catch (Exception e) {
-            System.err.println("Error invoking OperatingSystemMXBean method: " + methodName);
-            // do nothing else for right now
+            System.err.println("Couldn't query attribute: " + attrName);
         }
         return result;
     }
@@ -82,8 +92,7 @@ public class GetMem {
      */
     public static String getMemory() {
         GetMem nonStaticInstance = new GetMem();
-        Object totalMemoryObject =
-            nonStaticInstance.callMXBeanMethod("getTotalPhysicalMemorySize", 0);
+        Object totalMemoryObject = queryPlatformBean("TotalPhysicalMemorySize", Long.MIN_VALUE);
         long totalMemory = ((Number)totalMemoryObject).longValue();
         boolean is64 = System.getProperty("os.arch").contains("64");
         int megabytes = Math.round(totalMemory / 1024 / 1024);
