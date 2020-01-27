@@ -30,15 +30,9 @@ package edu.wisc.ssec.mcidasv.util;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.lang.reflect.Method;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
 import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
 
 /**
  * Wrapper for OperatingSystemMXBean.

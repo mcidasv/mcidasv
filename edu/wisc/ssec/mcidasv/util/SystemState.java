@@ -38,7 +38,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.lang.reflect.Method;
 
 import java.net.URL;
 import java.nio.file.Path;
