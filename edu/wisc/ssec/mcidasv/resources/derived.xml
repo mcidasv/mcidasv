@@ -581,7 +581,7 @@
         </operands>
     </derived>
     <!-- Adding JPSS formulas - RMC - INQ 2670 - Nov 2019 -->
-    <derived description="Swath To Grid" formula="swathToGrid(field, resolution_in_meters[isuser=true,default=750.0], mode[isuser=true,default=1.0])" id="swathToGrid" isdefault="false" isenduser="true">
+    <derived description="Swath To Grid" formula="swathToGrid(field, resolution_in_meters[isuser=true,default=750.0], mode[isuser=true,default=1.0])" id="swathToGrid" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:imagedisplayoverz"/>
@@ -589,7 +589,7 @@
         </categories>
         <operands categories=""/>
     </derived>
-    <derived description="VIIRS Day Land Cloud Fire RGB" formula="VIIRSDayLandCloudFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3 [label=I1 Reflectance])" id="viirsdaylandcloudfire" isdefault="true" isenduser="true">
+    <derived description="VIIRS Day Land Cloud Fire RGB" formula="VIIRSDayLandCloudFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3 [label=I1 Reflectance])" id="viirsdaylandcloudfire" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
@@ -598,7 +598,7 @@
             <paramgroup categories="" name="JPSS_RGB_DayLandCloudFire"/>
         </operands>
     </derived>
-    <derived description="VIIRS Dust RGB" formula="VIIRSDustRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsDust" isdefault="true" isenduser="true">
+    <derived description="VIIRS Dust RGB" formula="VIIRSDustRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsDust" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
@@ -608,7 +608,7 @@
             <paramgroup categories="" name="JPSS_RGB_Dust"/>
         </operands>
     </derived>
-    <derived description="VIIRS Fire Temperature RGB" formula="VIIRSFireTemperatureRGB(D1[label=M12 Temperature], D2[label=M11 Reflectance],D3[label=M10 Reflectance])" id="viirsfiretemperature" isdefault="true" isenduser="true">
+    <derived description="VIIRS Fire Temperature RGB" formula="VIIRSFireTemperatureRGB(D1[label=M12 Temperature], D2[label=M11 Reflectance],D3[label=M10 Reflectance])" id="viirsfiretemperature" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
@@ -617,7 +617,7 @@
             <paramgroup categories="" name="JPSS_RGB_FireTemperature"/>
         </operands>
     </derived>
-    <derived description="VIIRS Natural Color RGB" formula="VIIRSNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_Natural_Color_RGB" isdefault="true" isenduser="true">
+    <derived description="VIIRS Natural Color RGB" formula="VIIRSNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_Natural_Color_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
@@ -626,7 +626,7 @@
             <paramgroup categories="" name="JPSS_RGB_NaturalColor"/>
         </operands>
     </derived>
-    <derived description="VIIRS NDVI" formula="VIIRSNDVI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS_NDVI" isdefault="true" isenduser="true">
+    <derived description="VIIRS NDVI" formula="VIIRSNDVI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS_NDVI" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:imagedisplay"/>
@@ -635,7 +635,7 @@
             <paramgroup categories="" name="JPSS_NDVI"/>
         </operands>
     </derived>
-    <derived description="VIIRS Nighttime Microphysics RGB" formula="VIIRSNightMicrophysicsRGB(D1[label=M12 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsNighttimeMicrophysics" isdefault="true" isenduser="true">
+    <derived description="VIIRS Nighttime Microphysics RGB" formula="VIIRSNightMicrophysicsRGB(D1[label=M12 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsNighttimeMicrophysics" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
@@ -645,7 +645,7 @@
             <paramgroup categories="" name="JPSS_RGB_NightMicrophysics"/>
         </operands>
     </derived>
-    <derived description="VIIRS True Color RGB" formula="VIIRSTrueColorRGB(D1[label=M5 Radiance], D2[label=M4 Radiance], D3[label=M3 Radiance])" id="VIIRS_M_RGB(M5, M4, M3)" isdefault="true" isenduser="true">
+    <derived description="VIIRS True Color RGB" formula="VIIRSTrueColorRGB(D1[label=M5 Radiance], D2[label=M4 Radiance], D3[label=M3 Radiance])" id="VIIRS_M_RGB(M5, M4, M3)" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
