@@ -235,25 +235,25 @@
         <operands categories=""/>
     </derived>
 
-    <derived description="Gaussian hor. smoothing" formula="smooth3d(S,&quot;gwfs&quot;, N[isuser=true,default=6])" id="Gaussian smoothing of scalar (S, N)" isdefault="false" isenduser="true">
+    <derived description="Gaussian hor. smoothing" formula="smooth3d(S,&quot;gwfs&quot;, N[isuser=true,default=6])" id="Gaussian smoothing of scalar (S, N)" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Grids-3D Scalar Field Horizontal Smoothing"/>
         </categories>
         <operands categories=""/>
     </derived>
-    <derived description="9-point hor. smoothing" formula="smooth3d(S,&quot;sm9s&quot;)" id="9-point smoothing of scalar (S)" isdefault="false" isenduser="true">
+    <derived description="9-point hor. smoothing" formula="smooth3d(S,&quot;sm9s&quot;)" id="9-point smoothing of scalar (S)" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Grids-3D Scalar Field Horizontal Smoothing"/>
         </categories>
         <operands categories=""/>
     </derived>
-    <derived description="circular hor. smoothing, in grid increments" formula="smooth3d(S, &quot;circ&quot;,D[isuser=true,default=2])" id="circular smoother (S, D)" isdefault="false" isenduser="true">
+    <derived description="circular hor. smoothing, in grid increments" formula="smooth3d(S, &quot;circ&quot;,D[isuser=true,default=2])" id="circular smoother (S, D)" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Grids-3D Scalar Field Horizontal Smoothing"/>
         </categories>
         <operands categories=""/>
     </derived>
-    <derived description="Rectagular hor. smoothing, in grid increments" formula="smooth3d(S, &quot;rect&quot;,D[isuser=true,default=2])" id="rectangular smoother (S, D)" isdefault="false" isenduser="true">
+    <derived description="Rectagular hor. smoothing, in grid increments" formula="smooth3d(S, &quot;rect&quot;,D[isuser=true,default=2])" id="rectangular smoother (S, D)" isdefault="false" isenduser="true" override="true">
         <categories>
             <category display="true" value="Grids-3D Scalar Field Horizontal Smoothing"/>
         </categories>
