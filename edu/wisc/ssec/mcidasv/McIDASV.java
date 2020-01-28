@@ -1564,31 +1564,13 @@ public class McIDASV extends IntegratedDataViewer {
      */
     private static void createSessionFile(final String path) {
         assert path != null : "Cannot create a null path";
-        FileOutputStream out = null;
-        PrintStream p = null;
-        
-        File dir = new File(StartupManager.getInstance().getPlatform().getUserDirectory());
-        if (!dir.exists()) {
-            dir.mkdir();
-        }
-        
-        try {
-            out = new FileOutputStream(path);
-            p = new PrintStream(out);
-            p.println(new Date().getTime());
+        try (
+            FileOutputStream out = new FileOutputStream(path);
+            PrintStream p = new PrintStream(out)
+        ) {
+            p.println(System.currentTimeMillis());
         } catch (Exception e) {
             throw new AssertionError("Could not write to "+path+". Error message: "+e.getMessage(), e);
-        } finally {
-            if (p != null) {
-                p.close();
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    throw new AssertionError("Could not close "+path+". Error message: "+e.getMessage(), e);
-                }
-            }
         }
     }
     
@@ -1605,23 +1587,13 @@ public class McIDASV extends IntegratedDataViewer {
     private static Date extractDate(final String path) {
         assert path != null;
         Date savedDate = null;
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(path));
-            String line = reader.readLine();
+        try (BufferedReader r = new BufferedReader(new FileReader(path))) {
+            String line = r.readLine();
             if (line != null) {
                 savedDate = new Date(Long.parseLong(line.trim()));
             }
         } catch (Exception e) {
-            logger.trace("problem extracting the date!", e);
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    logger.trace("problem closing session file!", e);
-                }
-            }
+            logger.warn("Could not extract date from session file", e);
         }
         return savedDate;
     }
