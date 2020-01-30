@@ -205,6 +205,7 @@
     <property name="idv.version" value="5.6u1" />
     <property name="ncidv.version" value="4.6.13-SNAPSHOT" />
     <property name="visad.version" value="2.0-SNAPSHOT" />
+<!--    <property name="jansi.version" value="1.18" />-->
 
     <!-- note that the J3D JARs available from http://jogamp.org/deployment/java3d/
          do not (as of 20140915) have the version string in the filenames.
@@ -214,12 +215,14 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-   <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
+<!--    <property name="jar.base.classpath" value="jansi-${jansi.version}.jar ${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />-->
+    <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
          modifications to the "jar.base.classpath" property. -->
     <fileset id="mcv.libs" dir="${dist.dir}">
+<!--        <include name="jansi-${jansi.version}.jar" />-->
         <include name="commons-httpclient-${commons-httpclient.version}.jar" />
         <include name="swingx-common-${swingx.version}.jar" />
         <include name="sysout-over-slf4j-${sysout.version}.jar" />
@@ -805,10 +808,10 @@
       <jvmarg value="java.base/java.lang=ALL-UNNAMED" />
       <jvmarg value="--add-opens" />
       <jvmarg value="java.base/java.lang.reflect=ALL-UNNAMED" />
-      <jvmarg value="--add-opens" />
-      <jvmarg value="java.management/sun.management=ALL-UNNAMED" />
-      <jvmarg value="--add-opens" />
-      <jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />
+<!--      <jvmarg value="&#45;&#45;add-opens" />-->
+<!--      <jvmarg value="java.management/sun.management=ALL-UNNAMED" />-->
+<!--      <jvmarg value="&#45;&#45;add-opens" />-->
+<!--      <jvmarg value="jdk.management/com.sun.management.internal=ALL-UNNAMED" />-->
       <jvmarg value="--add-opens" />
       <jvmarg value="java.base/java.io=ALL-UNNAMED" />
       <jvmarg value="--add-opens" />
@@ -865,9 +868,9 @@
       <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
       <jvmarg value="-noverify" />
       <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
-      <jvmarg value="-XX:+UnlockExperimentalVMOptions" />
-      <jvmarg value="-XX:+UseZGC" />
-      <jvmarg value="-Xlog:gc" />
+<!--      <jvmarg value="-XX:+UnlockExperimentalVMOptions" />-->
+<!--      <jvmarg value="-XX:+UseZGC" />-->
+<!--      <jvmarg value="-Xlog:gc" />-->
       <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
       <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
 
@@ -977,9 +980,9 @@
             <jvmarg value="java.sql/java.sql=ALL-UNNAMED" />
             <jvmarg value="-noverify" />
             <!--<jvmarg value="-XX:+DoEscapeAnalysis" />-->
-            <jvmarg value="-XX:+UnlockExperimentalVMOptions" />
-            <jvmarg value="-XX:+UseZGC" />
-            <jvmarg value="-Xlog:gc" />
+<!--            <jvmarg value="-XX:+UnlockExperimentalVMOptions" />-->
+<!--            <jvmarg value="-XX:+UseZGC" />-->
+<!--            <jvmarg value="-Xlog:gc" />-->
             <jvmarg value="-XX:+HeapDumpOnOutOfMemoryError" />
             <jvmarg value="-XX:HeapDumpPath=${heap.dir}" />
 
