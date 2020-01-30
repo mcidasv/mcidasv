@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0.4" transformSequenceNumber="8">
-  <directoryPresets config="/home/luser/work/install4j/mcv-jmods/javafx/11.0.2" />
-  <application name="McIDAS-V" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.9beta1" convertDotsToUnderscores="false" macVolumeId="b671f961872a3cd" javaMinVersion="1.8" javaMaxVersion="11" allowBetaVM="true">
+  <directoryPresets config="${compiler:sys.install4jHome}/../mcv-jmods/javafx/11.0.2" />
+  <application name="McIDAS-V" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="https://www.ssec.wisc.edu/mcidas" version="1.9beta1" convertDotsToUnderscores="false" macVolumeId="b671f961872a3cd" javaMinVersion="1.8" javaMaxVersion="11" allowBetaVM="true">
     <variables>
       <variable name="INSTALLDIR" value="${compiler:sys.fullName}-System" description="Default installation directory for McIDAS-V." />
       <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../IDV/lib" description="Directory containing IDV JAR files." />
@@ -10,7 +10,7 @@
       <variable name="MCV_VERSION" value="${compiler:sys.version}-SNAPSHOT" />
       <variable name="IDV_VERSION" value="5.6u1" />
     </variables>
-    <jreBundles jdkProviderId="AdoptOpenJDK" release="openjdk11/jdk-11.0.6+10">
+    <jreBundles>
       <modules />
     </jreBundles>
   </application>
@@ -1492,12 +1492,7 @@ return console.askYesNo(message, true);
         <entry filesetId="7414" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jdkProviderId="AdoptOpenJDK" release="openjdk13/jdk-13.0.1+9" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-amd64-11.0.6.tar.gz" manualJreEntry="true">
-        <modules>
-          <defaultModules set="jre" />
-          <jmodDirectory location="/home/luser/work/install4j/mcv-jmods/javafx/13.0.2/linux-x64" />
-        </modules>
-      </jreBundle>
+      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-amd64-11.0.6.tar.gz" manualJreEntry="true" />
     </unixInstaller>
     <windows name="Windows 64-bit (Java 11)" id="9055" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
       <excludedComponents>
@@ -1524,12 +1519,7 @@ return console.askYesNo(message, true);
         <entry filesetId="7414" />
         <entry filesetId="9156" />
       </exclude>
-      <jreBundle jdkProviderId="AdoptOpenJDK" release="openjdk11/jdk-11.0.6+10" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-11.0.6.tar.gz" manualJreEntry="true">
-        <modules>
-          <defaultModules set="jre" />
-          <jmodDirectory location="/home/luser/work/install4j/mcv-jmods/javafx/11.0.2/windows-x64" />
-        </modules>
-      </jreBundle>
+      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-11.0.6.tar.gz" manualJreEntry="true" />
     </windows>
     <macosFolder name="macOS (Java 11)" id="9060" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
       <excludedComponents>
@@ -1549,12 +1539,7 @@ return console.askYesNo(message, true);
         <entry filesetId="7414" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jdkProviderId="AdoptOpenJDK" release="openjdk11/jdk-11.0.6+10" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/macosx-amd64-11.0.6.tar.gz" manualJreEntry="true">
-        <modules>
-          <defaultModules set="jre" />
-          <jmodDirectory location="/home/luser/work/install4j/mcv-jmods/javafx/11.0.2/macos" />
-        </modules>
-      </jreBundle>
+      <jreBundle jdkProviderId="AdoptOpenJDK" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/macosx-amd64-11.0.6.tar.gz" manualJreEntry="true" />
     </macosFolder>
   </mediaSets>
   <buildIds buildAll="false">
