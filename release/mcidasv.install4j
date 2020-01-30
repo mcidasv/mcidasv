@@ -1,303 +1,277 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install4j version="5.1.15" transformSequenceNumber="4">
-  <directoryPresets config="${compiler:MCVDIR}/release/j3dtest" />
-  <application name="McIDAS-V" distributionSourceDir="" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" compression="6" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.9beta1" allPathsRelative="false" backupOnSave="false" autoSave="false" convertDotsToUnderscores="false" macSignature="????" installerName="" javaMinVersion="1.8" javaMaxVersion="1.9" allowBetaVM="true" jdkMode="runtimeJre" jdkName="">
-    <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
-      <principalLanguage id="en" customLocalizationFile="" />
-      <additionalLanguages />
-    </languages>
-    <searchSequence>
-      <registry />
-      <envVar name="JAVA_HOME" />
-      <envVar name="JDK_HOME" />
-    </searchSequence>
+<install4j version="8.0.4" transformSequenceNumber="8">
+  <directoryPresets config="/home/luser/work/install4j/mcv-jmods/javafx/11.0.2" />
+  <application name="McIDAS-V" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="http://www.ssec.wisc.edu/mcidas" version="1.9beta1" convertDotsToUnderscores="false" macVolumeId="b671f961872a3cd" javaMinVersion="1.8" javaMaxVersion="11" allowBetaVM="true">
     <variables>
-      <variable name="INSTALLDIR" value="${compiler:sys.fullName}-System" description="Default installation directory for McIDAS-V." category="" />
-      <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../IDV/lib" description="Directory containing IDV JAR files." category="" />
-      <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" category="" />
-      <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../adde" description="Directory containing the local ADDE server ZIP files." category="" />
-      <variable name="MCV_VERSION" value="${compiler:sys.version}-SNAPSHOT" description="" category="" />
-      <variable name="IDV_VERSION" value="5.6u1" description="" category="" />
+      <variable name="INSTALLDIR" value="${compiler:sys.fullName}-System" description="Default installation directory for McIDAS-V." />
+      <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../IDV/lib" description="Directory containing IDV JAR files." />
+      <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" />
+      <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../adde" description="Directory containing the local ADDE server ZIP files." />
+      <variable name="MCV_VERSION" value="${compiler:sys.version}-SNAPSHOT" />
+      <variable name="IDV_VERSION" value="5.6u1" />
     </variables>
-    <mergedProjects />
-    <codeSigning macEnabled="false" macPkcs12File="" windowsEnabled="false" windowsKeySource="pvkAndSpc" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="" />
+    <jreBundles jdkProviderId="AdoptOpenJDK" release="openjdk11/jdk-11.0.6+10">
+      <modules />
+    </jreBundles>
   </application>
-  <files keepModificationTimes="false" missingFilesStrategy="warn" globalExcludeSuffixes="" defaultOverwriteMode="4" defaultUninstallMode="0" launcherOverwriteMode="3" defaultFileMode="644" defaultDirMode="755">
+  <files>
     <filesets>
-      <fileset name="UNIX file set" id="7334" customizedId="" />
-      <fileset name="OS X file set" id="7332" customizedId="" />
-      <fileset name="Windows mcvexe file set" id="8603" customizedId="" />
-      <fileset name="Windows javaw file set" id="8605" customizedId="" />
-      <fileset name="Linux ADDE" id="7408" customizedId="" />
-      <fileset name="OS X ADDE" id="7404" customizedId="" />
-      <fileset name="Windows ADDE" id="7406" customizedId="" />
-      <fileset name="Solaris Intel ADDE" id="7410" customizedId="" />
-      <fileset name="Solaris SPARC ADDE" id="7414" customizedId="" />
+      <fileset name="UNIX file set" id="7334" />
+      <fileset name="OS X file set" id="7332" />
+      <fileset name="Windows mcvexe file set" id="8603" />
+      <fileset name="Windows javaw file set" id="8605" />
+      <fileset name="Linux ADDE" id="7408" />
+      <fileset name="OS X ADDE" id="7404" />
+      <fileset name="Windows ADDE" id="7406" />
+      <fileset name="Solaris Intel ADDE" id="7410" />
+      <fileset name="Solaris SPARC ADDE" id="7414" />
+      <fileset name="UNIX file set (Java 9+)" id="9156" />
+      <fileset name="Windows javaw file set (Java 9+)" id="9158" />
     </filesets>
     <roots>
-      <root id="7335" fileset="7334" location="" />
-      <root id="7333" fileset="7332" location="" />
-      <root id="8604" fileset="8603" location="" />
-      <root id="8606" fileset="8605" location="" />
-      <root id="7409" fileset="7408" location="" />
-      <root id="7405" fileset="7404" location="" />
-      <root id="7407" fileset="7406" location="" />
-      <root id="7411" fileset="7410" location="" />
-      <root id="7415" fileset="7414" location="" />
+      <root id="7335" fileset="7334" />
+      <root id="7333" fileset="7332" />
+      <root id="8604" fileset="8603" />
+      <root id="8606" fileset="8605" />
+      <root id="7409" fileset="7408" />
+      <root id="7405" fileset="7404" />
+      <root id="7407" fileset="7406" />
+      <root id="7411" fileset="7410" />
+      <root id="7415" fileset="7414" />
+      <root id="9157" fileset="9156" />
+      <root id="9159" fileset="9158" />
     </roots>
     <mountPoints>
-      <mountPoint id="8741" root="" location="lib" mode="755" />
-      <mountPoint id="1" root="" location="" mode="755" />
-      <mountPoint id="7339" root="7335" location="" mode="755" />
-      <mountPoint id="7338" root="7333" location="" mode="755" />
-      <mountPoint id="8607" root="8604" location="" mode="755" />
-      <mountPoint id="8608" root="8606" location="" mode="755" />
-      <mountPoint id="7416" root="7409" location="" mode="755" />
-      <mountPoint id="7417" root="7405" location="" mode="755" />
-      <mountPoint id="7469" root="7407" location="" mode="755" />
-      <mountPoint id="7467" root="7411" location="" mode="755" />
-      <mountPoint id="7468" root="7415" location="" mode="755" />
+      <mountPoint id="8741" location="lib" />
+      <mountPoint id="1" />
+      <mountPoint id="7339" root="7335" />
+      <mountPoint id="7338" root="7333" />
+      <mountPoint id="8607" root="8604" />
+      <mountPoint id="8608" root="8606" />
+      <mountPoint id="7416" root="7409" />
+      <mountPoint id="7417" root="7405" />
+      <mountPoint id="7469" root="7407" />
+      <mountPoint id="7467" root="7411" />
+      <mountPoint id="7468" root="7415" />
+      <mountPoint id="9160" root="9157" />
+      <mountPoint id="9161" root="9159" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="8741" file="${compiler:MCVDIR}/lib/share/" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="8741" file="${compiler:MCVDIR}/lib/share/" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true">
         <exclude>
-          <entry location="external-5.4u1-SNAPSHOT.jar" fileType="regular" />
+          <entry location="external-5.4u1-SNAPSHOT.jar" />
         </exclude>
       </dirEntry>
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/external-${compiler:IDV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcidasv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/local-idv-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="false" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/startupmanager-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcv_userguide-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcv_javadoc-${compiler:MCV_VERSION}.jar" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/GetMem.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/GetVer.class" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <dirEntry mountPoint="1" file="${compiler:MCVDIR}/release/licenses" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="direct" subDirectory="licenses" excludeSuffixes="" dirMode="755" overrideDirMode="true">
-        <exclude />
-      </dirEntry>
-      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-Config" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV.prefs" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/create-jsa.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/j3dtest" overwriteMode="1" shared="false" fileMode="755" uninstallMode="0" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/mcidasv.icns" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/macos-apps.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-apps-setdir.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-java-check.sh" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/windows-launchers/mcvexe/runMcV.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="0" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/windows-launchers/javaw/runMcV.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" shared="false" fileMode="755" uninstallMode="0" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7416" file="${compiler:ADDEDIR}/adde-linux.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7417" file="${compiler:ADDEDIR}/adde-darwin.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7469" file="${compiler:ADDEDIR}/adde-windows.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7467" file="${compiler:ADDEDIR}/adde-soli86.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7468" file="${compiler:ADDEDIR}/adde-solaris.zip" overwriteMode="1" shared="false" fileMode="644" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/external-${compiler:IDV_VERSION}.jar" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcidasv-${compiler:MCV_VERSION}.jar" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/local-idv-${compiler:MCV_VERSION}.jar" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/startupmanager-${compiler:MCV_VERSION}.jar" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcv_userguide-${compiler:MCV_VERSION}.jar" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/mcv_javadoc-${compiler:MCV_VERSION}.jar" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/GetMem.class" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8741" file="${compiler:MCVDIR}/dist/GetVer.class" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <dirEntry mountPoint="1" file="${compiler:MCVDIR}/release/licenses" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" subDirectory="licenses" overrideDirMode="true" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV-Config" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/runMcV.prefs" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/create-jsa.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7339" file="${compiler:MCVDIR}/release/j3dtest" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/mcidasv.icns" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/icons/macos-apps.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-apps-setdir.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7338" file="${compiler:MCVDIR}/release/macos-java-check.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/windows-launchers/mcvexe/runMcV.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/windows-launchers/javaw/runMcV.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7416" file="${compiler:ADDEDIR}/adde-linux.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7417" file="${compiler:ADDEDIR}/adde-darwin.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7469" file="${compiler:ADDEDIR}/adde-windows.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7467" file="${compiler:ADDEDIR}/adde-soli86.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="7468" file="${compiler:ADDEDIR}/adde-solaris.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/java13-launchers/unixlike/runMcV" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/runMcV-Config" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/runMcV.prefs" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/remove-adde-zip.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/create-jsa.sh" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/j3dtest" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/java13-launchers/windows/runMcV.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/java13-launchers/windows/getmem.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
     </entries>
     <components>
-      <component name="Base components" id="67" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="false" downloadable="false" hidden="false">
-        <description />
-        <include all="false">
-          <entry location=".i4j_fileset_" fileType="regular" />
+      <component name="Base components" id="67" changeable="false">
+        <include>
+          <entry defaultFileset="true" />
         </include>
-        <dependencies />
       </component>
-      <component name="Unix components" id="66" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
-        <description />
-        <include all="false">
-          <entry location=".i4j_fileset_7334" fileType="regular" />
+      <component name="Unix components" id="66">
+        <include>
+          <entry filesetId="7334" />
         </include>
         <dependencies>
           <component id="67" />
         </dependencies>
       </component>
-      <component name="OS X components" id="3653" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
-        <description />
-        <include all="false">
-          <entry location=".i4j_fileset_7332" fileType="regular" />
+      <component name="OS X components" id="3653">
+        <include>
+          <entry filesetId="7332" />
         </include>
         <dependencies>
           <component id="67" />
           <component id="66" />
         </dependencies>
       </component>
-      <component name="Windows components" id="7274" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="false" downloadable="false" hidden="false">
-        <description />
-        <include all="false">
-          <entry location=".i4j_fileset_8603" fileType="regular" />
-          <entry location=".i4j_fileset_8605" fileType="regular" />
+      <component name="Windows components" id="7274" changeable="false">
+        <include>
+          <entry filesetId="8603" />
+          <entry filesetId="8605" />
         </include>
         <dependencies>
           <component id="67" />
         </dependencies>
       </component>
-      <component name="ADDE Servers" id="7433" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
-        <description />
-        <include all="false">
-          <entry location=".i4j_fileset_7408" fileType="regular" />
-          <entry location=".i4j_fileset_7404" fileType="regular" />
-          <entry location=".i4j_fileset_7412" fileType="regular" />
-          <entry location=".i4j_fileset_7406" fileType="regular" />
-          <entry location=".i4j_fileset_7410" fileType="regular" />
-          <entry location=".i4j_fileset_7414" fileType="regular" />
+      <component name="ADDE Servers" id="7433">
+        <include>
+          <entry filesetId="7408" />
+          <entry filesetId="7404" />
+          <entry filesetId="7412" />
+          <entry filesetId="7406" />
+          <entry filesetId="7410" />
+          <entry filesetId="7414" />
         </include>
-        <dependencies />
       </component>
-      <component name="Platform Specific Libraries" id="8084" customizedId="" displayDescription="false" hideHelpButton="false" selected="true" changeable="true" downloadable="false" hidden="false">
-        <description />
-        <include all="false">
-          <entry location=".i4j_fileset_8085" fileType="regular" />
-          <entry location=".i4j_fileset_8087" fileType="regular" />
-          <entry location=".i4j_fileset_8089" fileType="regular" />
-          <entry location=".i4j_fileset_8091" fileType="regular" />
-          <entry location=".i4j_fileset_8093" fileType="regular" />
+      <component name="Platform Specific Libraries" id="8084">
+        <include>
+          <entry filesetId="8085" />
+          <entry filesetId="8087" />
+          <entry filesetId="8089" />
+          <entry filesetId="8091" />
+          <entry filesetId="8093" />
         </include>
-        <dependencies />
+      </component>
+      <component name="Unix components (Java 9+)" id="9166">
+        <include>
+          <entry filesetId="9156" />
+        </include>
+        <dependencies>
+          <component id="67" />
+        </dependencies>
+      </component>
+      <component name="OS X components (Java 9+)" id="9167">
+        <include>
+          <entry filesetId="7332" />
+        </include>
+        <dependencies>
+          <component id="67" />
+          <component id="9166" />
+        </dependencies>
+      </component>
+      <component name="Windows components (Java 9+)" id="9351">
+        <include>
+          <entry filesetId="9158" />
+        </include>
       </component>
     </components>
   </files>
   <launchers>
-    <launcher name="runMcV" id="841" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV" />
-    <launcher name="runMcV-Config" id="1330" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config" />
-    <launcher name="windows-javaw" id="844" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
-    <launcher name="runMcV-Config.bat" id="1335" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config.bat" />
-    <launcher name="mcidasv" id="8420" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="7336" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="">
-      <executable name="mcidasv" type="1" iconSet="true" iconFile="${compiler:MCVDIR}/release/icons/mcidasv.ico" executableDir="" redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="true" globalSingleInstance="false" singleInstanceActivate="true">
-        <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
-      </executable>
-      <splashScreen show="false" autoOff="true" alwaysOnTop="true" width="0" height="0" bitmapFile="" java6SplashScreen="false">
-        <text>
-          <statusLine x="20" y="20" text="" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
-          <versionLine x="20" y="40" text="version ${compiler:sys.version}" font="Arial" fontSize="8" fontColor="0,0,0" fontWeight="500" />
-        </text>
-      </splashScreen>
-      <java mainClass="edu.wisc.ssec.mcidasv.McIDASV" vmParameters="" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+    <launcher name="runMcV" id="841" external="true" menuName="${compiler:sys.fullName}" externalFile="runMcV" />
+    <launcher name="runMcV-Config" id="1330" external="true" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config" />
+    <launcher name="windows-javaw" id="844" external="true" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
+    <launcher name="runMcV-Config.bat" id="1335" external="true" menuName="Configure ${compiler:sys.fullName}" externalFile="runMcV-Config.bat" />
+    <launcher name="mcidasv" id="8420" fileset="7336">
+      <executable name="mcidasv" iconSet="true" iconFile="${compiler:MCVDIR}/release/icons/mcidasv.ico" executableMode="gui" checkConsoleParameter="true" />
+      <java mainClass="edu.wisc.ssec.mcidasv.McIDASV">
         <classPath>
           <archive location="mcv_userguide.jar" failOnError="false" />
           <archive location="mcidasv.jar" failOnError="false" />
         </classPath>
-        <nativeLibraryDirectories />
       </java>
-      <includedFiles />
-      <unextractableFiles />
-      <vmOptionsFile mode="template" overwriteMode="0" fileMode="644">
-        <content />
-      </vmOptionsFile>
-      <customScript mode="1" file="">
-        <content />
-      </customScript>
-      <infoPlist mode="1" file="">
-        <content />
-      </infoPlist>
+      <macStaticAssociationActions mode="selected" />
       <iconImageFiles>
         <file path="${compiler:MCVDIR}/release/icons/mcidasv_16x16.png" />
         <file path="${compiler:MCVDIR}/release/icons/mcidasv_32x32.png" />
         <file path="${compiler:MCVDIR}/release/icons/mcidasv_60x60.png" />
       </iconImageFiles>
     </launcher>
-    <launcher name="windows-mcvexe" id="8610" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
-    <launcher name="j3dtest.bat" id="8851" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Java3D Test" externalFile="j3dtest.bat" />
-    <launcher name="j3dtest" id="8856" customizedId="" external="true" excludeFromMenu="false" unixMode="755" menuName="Java3D Test" externalFile="j3dtest" />
+    <launcher name="windows-mcvexe" id="8610" external="true" menuName="${compiler:sys.fullName}" externalFile="runMcV.bat" />
+    <launcher name="j3dtest.bat" id="8851" external="true" menuName="Java3D Test" externalFile="j3dtest.bat" />
+    <launcher name="j3dtest" id="8856" external="true" menuName="Java3D Test" externalFile="j3dtest" />
   </launchers>
-  <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
+  <installerGui>
     <customCode>
       <file location="${compiler:MCVDIR}/dist/install4j-custom-code/PropertiesPreferences.class" />
       <file location="${compiler:MCVDIR}/dist/install4j-custom-code/PropertiesPreferencesFactory.class" />
     </customCode>
-    <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-      <commentFiles />
-      <customAttributes />
-    </autoUpdate>
     <applications>
-      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="${compiler:MCVDIR}/release/icons/mcidasv_installer.icns" customIcoFile="${compiler:MCVDIR}/release/icons/mcidasv_installer.ico" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+      <application id="installer" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" styleId="8982" customIcnsFile="${compiler:MCVDIR}/release/icons/mcidasv_installer.icns" customIcoFile="${compiler:MCVDIR}/release/icons/mcidasv_installer.ico" launchInNewProcess="false">
         <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.applications.InstallerApplication" id="InstallerApplication0">
-              <void property="customHeaderImage">
-                <object class="com.install4j.api.beans.ExternalFile">
-                  <string>${compiler:MCVDIR}/release/icons/mcidasv_60x60.png</string>
-                </object>
-              </void>
-              <void property="customIconImageFiles">
-                <void method="add">
-                  <object class="com.install4j.api.beans.ExternalFile">
-                    <string>${compiler:MCVDIR}/release/icons/mcidasv_16x16.png</string>
-                  </object>
-                </void>
-                <void method="add">
-                  <object class="com.install4j.api.beans.ExternalFile">
-                    <string>${compiler:MCVDIR}/release/icons/mcidasv_32x32.png</string>
-                  </object>
-                </void>
-              </void>
-              <void property="frameSizeClientArea">
-                <boolean>false</boolean>
-              </void>
-              <void property="useCustomIcon">
-                <boolean>true</boolean>
-              </void>
-              <void property="watermark">
-                <boolean>false</boolean>
-              </void>
-            </object>
-          </java>
+          <property name="customIconImageFiles">
+            <add>
+              <object class="com.install4j.api.beans.ExternalFile">
+                <string>${compiler:MCVDIR}/release/icons/mcidasv_16x16.png</string>
+              </object>
+            </add>
+            <add>
+              <object class="com.install4j.api.beans.ExternalFile">
+                <string>${compiler:MCVDIR}/release/icons/mcidasv_32x32.png</string>
+              </object>
+            </add>
+          </property>
+          <property name="frameSizeClientArea" type="boolean" value="false" />
+          <property name="useCustomIcon" type="boolean" value="true" />
         </serializedBean>
-        <launcherIds />
-        <variables />
+        <styleOverrides>
+          <styleOverride name="Customize title bar" enabled="true">
+            <group id="8996" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup">
+              <serializedBean>
+                <property name="backgroundColor">
+                  <object class="java.awt.Color">
+                    <int>255</int>
+                    <int>255</int>
+                    <int>255</int>
+                    <int>255</int>
+                  </object>
+                </property>
+                <property name="imageAnchor" type="enum" class="com.install4j.api.beans.Anchor" value="NORTHEAST" />
+                <property name="imageFile">
+                  <object class="com.install4j.api.beans.ExternalFile">
+                    <string>${compiler:MCVDIR}/release/icons/mcidasv_60x60.png</string>
+                  </object>
+                </property>
+              </serializedBean>
+            </group>
+          </styleOverride>
+          <styleOverride name="Custom watermark" enabled="true">
+            <formComponent name="Watermark" id="8986" beanClass="com.install4j.runtime.beans.formcomponents.SeparatorComponent" />
+          </styleOverride>
+        </styleOverrides>
         <startup>
-          <screen name="" id="15" customizedId="" beanClass="com.install4j.runtime.beans.screens.StartupScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.StartupScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
+          <screen id="15" beanClass="com.install4j.runtime.beans.screens.StartupScreen" rollbackBarrierExitCode="0">
             <actions>
-              <action name="" id="7947" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction" />
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
-              <action name="" id="8519" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" />
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
+              <action id="7947" beanClass="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction" actionElevationType="none" />
+              <action id="8519" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" />
             </actions>
-            <formComponents />
           </screen>
         </startup>
         <screens>
-          <screen name="Java version warning" id="7945" customizedId="" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="false" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+          <screen name="Java version warning" id="7945" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="false">
             <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.FormScreen">
-                  <void property="subTitle">
-                    <string>Java version warning</string>
-                  </void>
-                  <void property="title">
-                    <string>Java</string>
-                  </void>
-                </object>
-              </java>
+              <property name="subTitle" type="string">Java version warning</property>
+              <property name="title" type="string">Java</property>
             </serializedBean>
             <condition>import java.io.*;
 import java.lang.*;
@@ -317,103 +291,109 @@ try {
 }
 catch (Exception e) {}
 return ver &lt; 1.6;</condition>
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
             <formComponents>
-              <formComponent name="" id="7946" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.MultilineHtmlLabelComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent id="7946" beanClass="com.install4j.runtime.beans.formcomponents.MultilineHtmlLabelComponent">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.MultilineHtmlLabelComponent">
-                      <void property="labelHtml">
-                        <string>&lt;h1&gt;&lt;font color=red&gt;WARNING&lt;/font&gt;&lt;/h1&gt;
+                  <property name="labelHtml" type="string">&lt;h1&gt;&lt;font color=red&gt;WARNING&lt;/font&gt;&lt;/h1&gt;
 &lt;p&gt;
 &lt;b&gt;McIDAS-V requires Java 1.6 or higher&lt;/b&gt;
 &lt;p&gt;
 It appears that your current default Java version does not meet this requirement.
-Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php?f=19&amp;t=209"&gt;this McIDAS-V forum thread&lt;/a&gt; for more information.</string>
-                      </void>
-                    </object>
-                  </java>
+Please visit &lt;a href="http://dcdbs.ssec.wisc.edu/mcidasv/forums/viewtopic.php?f=19&amp;t=209"&gt;this McIDAS-V forum thread&lt;/a&gt; for more information.</property>
                 </serializedBean>
-                <initScript />
-                <visibilityScript />
               </formComponent>
             </formComponents>
           </screen>
-          <screen name="" id="74" customizedId="" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
-                  <void property="bannerImageFile">
-                    <object class="com.install4j.api.beans.ExternalFile">
-                      <string>${compiler:MCVDIR}/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif</string>
-                    </object>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
+          <screen id="74" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" styleId="8988">
+            <styleOverrides>
+              <styleOverride name="Customize banner image" enabled="true">
+                <group id="8989" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup">
+                  <serializedBean>
+                    <property name="imageEdgeBackgroundColor">
+                      <object class="java.awt.Color">
+                        <int>25</int>
+                        <int>143</int>
+                        <int>220</int>
+                        <int>255</int>
+                      </object>
+                    </property>
+                    <property name="imageFile">
+                      <object class="com.install4j.api.beans.ExternalFile">
+                        <string>${compiler:MCVDIR}/edu/wisc/ssec/mcidasv/images/mcidasv_logo.gif</string>
+                      </object>
+                    </property>
+                  </serializedBean>
+                </group>
+              </styleOverride>
+            </styleOverrides>
             <actions>
-              <action name="" id="7948" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" multiExec="true" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" />
-                  </java>
-                </serializedBean>
+              <action id="7948" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" multiExec="true">
                 <condition>context.getBooleanVariable("sys.confirmedUpdateInstallation")</condition>
               </action>
             </actions>
-            <formComponents />
+            <formComponents>
+              <formComponent id="8869" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
+                <serializedBean>
+                  <property name="labelText" type="string">${form:welcomeMessage}</property>
+                </serializedBean>
+                <visibilityScript>!context.isConsole()</visibilityScript>
+              </formComponent>
+              <formComponent id="8870" beanClass="com.install4j.runtime.beans.formcomponents.ConsoleHandlerFormComponent">
+                <serializedBean>
+                  <property name="consoleScript">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string">String message = context.getMessage("ConsoleWelcomeLabel", context.getApplicationName());
+return console.askOkCancel(message, true);
+</property>
+                    </object>
+                  </property>
+                </serializedBean>
+              </formComponent>
+              <formComponent id="8871" beanClass="com.install4j.runtime.beans.formcomponents.UpdateAlertComponent" useExternalParametrization="true" externalParametrizationName="Update Alert" externalParametrizationMode="include">
+                <externalParametrizationPropertyNames>
+                  <propertyName>updateCheck</propertyName>
+                </externalParametrizationPropertyNames>
+              </formComponent>
+              <formComponent id="8872" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" insetTop="20">
+                <serializedBean>
+                  <property name="labelText" type="string">${i18n:ClickNext}</property>
+                </serializedBean>
+              </formComponent>
+            </formComponents>
           </screen>
-          <screen name="" id="75" customizedId="" beanClass="com.install4j.runtime.beans.screens.LicenseScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.LicenseScreen" id="LicenseScreen0">
-                  <void id="LocalizedExternalFile0" property="displayedTextFile">
-                    <void property="languageIdToExternalFile">
-                      <void method="put">
+          <screen id="75" beanClass="com.install4j.runtime.beans.screens.LicenseScreen">
+            <formComponents>
+              <formComponent id="8875" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
+                <serializedBean>
+                  <property name="labelText" type="string">${i18n:LicenseLabel3}</property>
+                </serializedBean>
+              </formComponent>
+              <formComponent id="8876" beanClass="com.install4j.runtime.beans.formcomponents.LicenseComponent" useExternalParametrization="true" externalParametrizationName="License Agreement" externalParametrizationMode="include">
+                <serializedBean>
+                  <property name="displayedTextFile" id="LocalizedExternalFile0">
+                    <property name="languageIdToExternalFile">
+                      <entry>
                         <string>en</string>
                         <object class="com.install4j.api.beans.ExternalFile">
                           <string>${compiler:MCVDIR}/release/README.html</string>
                         </object>
-                      </void>
-                    </void>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
+                      </entry>
+                    </property>
+                  </property>
+                  <property name="fillVertical" type="boolean" value="true" />
+                </serializedBean>
+                <externalParametrizationPropertyNames>
+                  <propertyName>textSource</propertyName>
+                  <propertyName>displayedText</propertyName>
+                  <propertyName>displayedTextFile</propertyName>
+                  <propertyName>variableName</propertyName>
+                  <propertyName>acceptInitiallySelected</propertyName>
+                  <propertyName>readAllRequired</propertyName>
+                </externalParametrizationPropertyNames>
+              </formComponent>
+            </formComponents>
           </screen>
-          <screen name="" id="76" customizedId="" beanClass="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.InstallationDirectoryScreen">
-                  <void property="allowNewFolderCreation">
-                    <boolean>true</boolean>
-                  </void>
-                  <void property="allowSpacesOnUnix">
-                    <boolean>true</boolean>
-                  </void>
-                  <void property="validationScript">
-                    <object class="com.install4j.api.beans.ScriptProperty">
-                      <void property="value">
-                        <string />
-                      </void>
-                    </object>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
+          <screen id="76" beanClass="com.install4j.runtime.beans.screens.InstallationDirectoryScreen">
             <condition>!context.getBooleanVariable("sys.confirmedUpdateInstallation")</condition>
             <validation>String disallowed = (System.getProperty("user.home") + File.separator + context.getCompilerVariable("sys.shortName"));
 if (Util.isMacOS()) {
@@ -452,766 +432,533 @@ else if (disallowed_file.exists()) {
 }
 
 return allowed;</validation>
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
+            <formComponents>
+              <formComponent id="8879" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" insetBottom="25">
+                <serializedBean>
+                  <property name="labelText" type="string">${i18n:SelectDirLabel(${compiler:sys.fullName})}</property>
+                </serializedBean>
+              </formComponent>
+              <formComponent id="8880" beanClass="com.install4j.runtime.beans.formcomponents.InstallationDirectoryChooserComponent" useExternalParametrization="true" externalParametrizationName="Installation Directory Chooser" externalParametrizationMode="include">
+                <serializedBean>
+                  <property name="allowSpacesOnUnix" type="boolean" value="true" />
+                  <property name="requestFocus" type="boolean" value="true" />
+                  <property name="validationScript">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string" />
+                    </object>
+                  </property>
+                </serializedBean>
+                <externalParametrizationPropertyNames>
+                  <propertyName>suggestAppDir</propertyName>
+                  <propertyName>validateApplicationId</propertyName>
+                  <propertyName>existingDirWarning</propertyName>
+                  <propertyName>checkWritable</propertyName>
+                  <propertyName>manualEntryAllowed</propertyName>
+                  <propertyName>checkFreeSpace</propertyName>
+                  <propertyName>showRequiredDiskSpace</propertyName>
+                  <propertyName>showFreeDiskSpace</propertyName>
+                  <propertyName>allowSpacesOnUnix</propertyName>
+                  <propertyName>validationScript</propertyName>
+                  <propertyName>standardValidation</propertyName>
+                </externalParametrizationPropertyNames>
+              </formComponent>
+            </formComponents>
           </screen>
-          <screen name="" id="77" customizedId="" beanClass="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+          <screen id="77" beanClass="com.install4j.runtime.beans.screens.StandardProgramGroupScreen">
             <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.StandardProgramGroupScreen">
-                  <void property="programGroupName">
-                    <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
-                  </void>
-                </object>
-              </java>
+              <property name="programGroupName" type="string">${compiler:sys.fullName} ${compiler:sys.version}</property>
             </serializedBean>
             <condition>!context.getBooleanVariable("sys.confirmedUpdateInstallation")</condition>
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
           </screen>
-          <screen name="" id="866" customizedId="" beanClass="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen" />
-              </java>
-            </serializedBean>
+          <screen id="866" beanClass="com.install4j.runtime.beans.screens.AdditionalConfirmationsScreen">
             <condition>return Util.isWindows();</condition>
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
             <formComponents>
-              <formComponent name="Add a desktop link" id="867" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent id="8884" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" insetBottom="10">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
-                      <void property="checkboxText">
-                        <string>${i18n:CreateDesktopIcon}</string>
-                      </void>
-                      <void property="initiallySelected">
-                        <boolean>true</boolean>
-                      </void>
-                      <void property="variableName">
-                        <string>createDesktopLinkAction</string>
-                      </void>
-                    </object>
-                  </java>
+                  <property name="labelText" type="string">${form:confirmationMessage}</property>
                 </serializedBean>
-                <initScript />
-                <visibilityScript />
+                <visibilityScript>!context.isConsole()</visibilityScript>
+              </formComponent>
+              <formComponent name="Add a desktop link" id="867" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
+                <serializedBean>
+                  <property name="checkboxText" type="string">${i18n:CreateDesktopIcon}</property>
+                  <property name="initiallySelected" type="boolean" value="true" />
+                  <property name="variableName" type="string">createDesktopLinkAction</property>
+                </serializedBean>
               </formComponent>
             </formComponents>
           </screen>
-          <screen name="OS X Options" id="4736" customizedId="" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+          <screen name="OS X Options" id="4736" beanClass="com.install4j.runtime.beans.screens.FormScreen">
             <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.FormScreen">
-                  <void property="subTitle">
-                    <string>Which additional tasks should be performed?</string>
-                  </void>
-                  <void property="title">
-                    <string>Select Additional Tasks</string>
-                  </void>
-                </object>
-              </java>
+              <property name="subTitle" type="string">Which additional tasks should be performed?</property>
+              <property name="title" type="string">Select Additional Tasks</property>
             </serializedBean>
             <condition>return Util.isMacOS();</condition>
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
             <formComponents>
-              <formComponent name="" id="4737" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent id="4737" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
-                      <void property="checkboxText">
-                        <string>Create Launcher and Configuration shortcuts</string>
-                      </void>
-                      <void property="initiallySelected">
-                        <boolean>true</boolean>
-                      </void>
-                      <void property="variableName">
-                        <string>createApplicationsLinkAction</string>
-                      </void>
-                    </object>
-                  </java>
+                  <property name="checkboxText" type="string">Create Launcher and Configuration shortcuts</property>
+                  <property name="initiallySelected" type="boolean" value="true" />
+                  <property name="variableName" type="string">createApplicationsLinkAction</property>
                 </serializedBean>
-                <initScript />
-                <visibilityScript />
               </formComponent>
-              <formComponent name="" id="7356" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="false" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent id="7356" beanClass="com.install4j.runtime.beans.formcomponents.CheckboxComponent" enabled="false">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.CheckboxComponent">
-                      <void property="checkboxText">
-                        <string>Install JOGL for this user</string>
-                      </void>
-                      <void property="initiallySelected">
-                        <boolean>true</boolean>
-                      </void>
-                      <void property="variableName">
-                        <string>installJOGLAction</string>
-                      </void>
-                    </object>
-                  </java>
+                  <property name="checkboxText" type="string">Install JOGL for this user</property>
+                  <property name="initiallySelected" type="boolean" value="true" />
+                  <property name="variableName" type="string">installJOGLAction</property>
                 </serializedBean>
-                <initScript />
-                <visibilityScript />
               </formComponent>
             </formComponents>
           </screen>
-          <screen name="OS X Shortcut Directory" id="7727" customizedId="" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+          <screen name="OS X Shortcut Directory" id="7727" beanClass="com.install4j.runtime.beans.screens.FormScreen">
             <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.FormScreen">
-                  <void property="subTitle">
-                    <string>Where should McIDAS-V create shortcuts to the application?</string>
-                  </void>
-                  <void property="title">
-                    <string>Select Directory for Shortcuts</string>
-                  </void>
-                </object>
-              </java>
+              <property name="subTitle" type="string">Where should McIDAS-V create shortcuts to the application?</property>
+              <property name="title" type="string">Select Directory for Shortcuts</property>
             </serializedBean>
             <condition>return (Util.isMacOS() &amp;&amp; context.getBooleanVariable("createApplicationsLinkAction"));</condition>
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
             <formComponents>
-              <formComponent name="" id="7730" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent id="7730" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
-                      <void property="labelText">
-                        <string>Select the folder where you would like McIDAS-V to create shortcuts, then click Next.</string>
-                      </void>
-                    </object>
-                  </java>
+                  <property name="labelText" type="string">Select the folder where you would like McIDAS-V to create shortcuts, then click Next.</property>
                 </serializedBean>
-                <initScript />
-                <visibilityScript />
               </formComponent>
-              <formComponent name="" id="7786" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.DirectoryChooserComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent id="7786" beanClass="com.install4j.runtime.beans.formcomponents.DirectoryChooserComponent">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.DirectoryChooserComponent">
-                      <void property="initialFile">
-                        <string>/Applications</string>
-                      </void>
-                      <void property="variableName">
-                        <string>macosShortcutDirectory</string>
-                      </void>
-                    </object>
-                  </java>
+                  <property name="initialFile" type="string">/Applications</property>
+                  <property name="variableName" type="string">macosShortcutDirectory</property>
                 </serializedBean>
-                <initScript />
-                <visibilityScript />
               </formComponent>
             </formComponents>
           </screen>
-          <screen name="Linux Options" id="7665" customizedId="" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="false" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+          <screen name="Linux Options" id="7665" beanClass="com.install4j.runtime.beans.screens.FormScreen" enabled="false">
             <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.FormScreen">
-                  <void property="subTitle">
-                    <string>Which version of Java3D should be installed?</string>
-                  </void>
-                  <void property="title">
-                    <string>Select Java3D Version</string>
-                  </void>
-                </object>
-              </java>
+              <property name="subTitle" type="string">Which version of Java3D should be installed?</property>
+              <property name="title" type="string">Select Java3D Version</property>
             </serializedBean>
             <condition>return Util.isLinux() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0 &amp;&amp; context.getMediaName().indexOf("64") &lt; 0;</condition>
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
             <formComponents>
-              <formComponent name="" id="7666" customizedId="" beanClass="com.install4j.runtime.beans.formcomponents.RadiobuttonsComponent" enabled="true" commentSet="false" comment="" insetTop="" insetLeft="" insetBottom="" insetRight="" resetInitOnPrevious="false">
+              <formComponent id="7666" beanClass="com.install4j.runtime.beans.formcomponents.RadiobuttonsComponent">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.formcomponents.RadiobuttonsComponent">
-                      <void property="radioButtonLabels">
-                        <array class="java.lang.String" length="2">
-                          <void index="0">
-                            <string>1.5 (Recommended)</string>
-                          </void>
-                          <void index="1">
-                            <string>1.3 (For compatibility)</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="variableName">
-                        <string>java3DVersion</string>
-                      </void>
-                    </object>
-                  </java>
+                  <property name="radioButtonLabels" type="array" elementType="string" length="2">
+                    <element index="0">1.5 (Recommended)</element>
+                    <element index="1">1.3 (For compatibility)</element>
+                  </property>
+                  <property name="variableName" type="string">java3DVersion</property>
                 </serializedBean>
-                <initScript />
-                <visibilityScript />
               </formComponent>
             </formComponents>
           </screen>
-          <screen name="Display exit suggestion" id="8024" customizedId="" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
-                  <void property="displayedText">
-                    <string>If McIDAS-V is running, please exit the application and ensure that no background processes start during installation.</string>
-                  </void>
-                  <void property="textSource">
-                    <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
+          <screen name="Display exit suggestion" id="8024" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen">
+            <formComponents>
+              <formComponent id="8895" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
+                <serializedBean>
+                  <property name="labelText" type="string">${i18n:InfoBeforeClickLabel}</property>
+                </serializedBean>
+                <visibilityScript>!context.isConsole()</visibilityScript>
+              </formComponent>
+              <formComponent id="8896" beanClass="com.install4j.runtime.beans.formcomponents.HtmlDisplayFormComponent" useExternalParametrization="true" externalParametrizationName="HTML or text display" externalParametrizationMode="include">
+                <serializedBean>
+                  <property name="displayedText" type="string">If McIDAS-V is running, please exit the application and ensure that no background processes start during installation.</property>
+                  <property name="fillVertical" type="boolean" value="true" />
+                  <property name="textSource" type="enum" class="com.install4j.runtime.beans.screens.components.TextSource" value="DIRECT" />
+                </serializedBean>
+                <externalParametrizationPropertyNames>
+                  <propertyName>textSource</propertyName>
+                  <propertyName>displayedText</propertyName>
+                  <propertyName>displayedTextFile</propertyName>
+                  <propertyName>variableName</propertyName>
+                </externalParametrizationPropertyNames>
+              </formComponent>
+              <formComponent id="8897" beanClass="com.install4j.runtime.beans.formcomponents.ConsoleHandlerFormComponent">
+                <serializedBean>
+                  <property name="consoleScript">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string">console.waitForEnter();
+return true;
+</property>
+                    </object>
+                  </property>
+                </serializedBean>
+              </formComponent>
+            </formComponents>
           </screen>
-          <screen name="" id="78" customizedId="" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="true" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.InstallationScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
+          <screen id="78" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" rollbackBarrier="true">
             <actions>
-              <action name="" id="3252" customizedId="" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action id="3252" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" actionElevationType="none" />
+              <action id="79" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" actionElevationType="elevated" failureStrategy="quit" errorMessage="${i18n:FileCorrupted}" />
+              <action name="Auxdata" id="6627" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" actionElevationType="elevated">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.UninstallPreviousAction" />
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
-              <action name="" id="79" customizedId="" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="2" errorMessage="${i18n:FileCorrupted}">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.InstallFilesAction" />
-                  </java>
-                </serializedBean>
-                <condition />
-              </action>
-              <action name="Auxdata" id="6627" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
-                <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
-                      <void property="destinationFile">
-                        <object class="java.io.File">
-                          <string>auxdata.jar</string>
-                        </object>
-                      </void>
-                      <void property="files">
-                        <array class="java.io.File" length="1">
-                          <void index="0">
-                            <object class="java.io.File">
-                              <string>mcv_auxdata.jar</string>
-                            </object>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
+                  <property name="destinationFile">
+                    <object class="java.io.File">
+                      <string>auxdata.jar</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="files" type="array" class="java.io.File" length="1">
+                    <element index="0">
+                      <object class="java.io.File">
+                        <string>mcv_auxdata.jar</string>
+                      </object>
+                    </element>
+                  </property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
                 </serializedBean>
-                <condition />
               </action>
-              <action name="OS X JOGL" id="4127" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install JOGL">
+              <action name="OS X JOGL" id="4127" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install JOGL">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}/javaextdir</string>
-                        </object>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="triggerReboot">
-                        <boolean>false</boolean>
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>macos-java3d_jogl.zip</string>
-                        </object>
-                      </void>
+                  <property name="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}/javaextdir</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="triggerReboot" type="boolean" value="false" />
+                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
+                  <property name="zipFile">
+                    <object class="java.io.File">
+                      <string>macos-java3d_jogl.zip</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>context.getBooleanVariable("installJOGLAction")</condition>
               </action>
-              <action name="Linux Java3D" id="7668" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install Java3D">
+              <action name="Linux Java3D" id="7668" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install Java3D">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}/jre</string>
-                        </object>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="triggerReboot">
-                        <boolean>false</boolean>
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>j3d-132-linux-x86.zip</string>
-                        </object>
-                      </void>
+                  <property name="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}/jre</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="triggerReboot" type="boolean" value="false" />
+                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
+                  <property name="zipFile">
+                    <object class="java.io.File">
+                      <string>j3d-132-linux-x86.zip</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>context.getVariable("java3DVersion") != null &amp;&amp; (Integer)context.getVariable("java3DVersion") == 1</condition>
               </action>
-              <action name="" id="80" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create program group">
+              <action id="80" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" actionElevationType="elevated" errorMessage="Failed to create program group">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
-                      <void property="uninstallerMenuName">
-                        <string>${i18n:UninstallerMenuEntry(${compiler:sys.fullName})}</string>
-                      </void>
-                    </object>
-                  </java>
+                  <property name="addUninstaller" type="boolean" value="true" />
+                  <property name="uninstallerMenuName" type="string">${i18n:UninstallerMenuEntry(${compiler:sys.fullName})}</property>
                 </serializedBean>
                 <condition>!context.getBooleanVariable("sys.programGroupDisabled")</condition>
               </action>
-              <action name="" id="81" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to register Add/Remove item">
+              <action id="81" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" actionElevationType="elevated" errorMessage="Failed to register Add/Remove item">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
-                      <void property="icon">
-                        <object class="com.install4j.api.beans.ExternalFile">
-                          <string>${compiler:MCVDIR}/release/icons/mcidasv.ico</string>
-                        </object>
-                      </void>
-                      <void property="itemName">
-                        <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
-                      </void>
+                  <property name="icon">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>${compiler:MCVDIR}/release/icons/mcidasv.ico</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="iconSource" type="enum" class="com.install4j.runtime.beans.actions.desktop.IconSource" value="CUSTOM" />
+                  <property name="itemName" type="string">${compiler:sys.fullName} ${compiler:sys.version}</property>
                 </serializedBean>
-                <condition />
               </action>
-              <action name="" id="865" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to create a desktop link">
+              <action id="865" beanClass="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction" actionElevationType="elevated" errorMessage="Failed to create a desktop link">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.desktop.CreateDesktopLinkAction">
-                      <void property="arguments">
-                        <string>-guistart</string>
-                      </void>
-                      <void property="description">
-                        <string>Run ${compiler:sys.fullName} ${compiler:sys.version}</string>
-                      </void>
-                      <void property="file">
-                        <object class="java.io.File">
-                          <string>runMcV.bat</string>
-                        </object>
-                      </void>
-                      <void property="name">
-                        <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
-                      </void>
-                      <void property="winIconFile">
-                        <object class="com.install4j.api.beans.ExternalFile">
-                          <string>${compiler:MCVDIR}/release/icons/mcidasv.ico</string>
-                        </object>
-                      </void>
+                  <property name="arguments" type="string">-guistart</property>
+                  <property name="description" type="string">Run ${compiler:sys.fullName} ${compiler:sys.version}</property>
+                  <property name="file">
+                    <object class="java.io.File">
+                      <string>runMcV.bat</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="name" type="string">${compiler:sys.fullName} ${compiler:sys.version}</property>
+                  <property name="winIconFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>${compiler:MCVDIR}/release/icons/mcidasv.ico</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>context.getBooleanVariable("createDesktopLinkAction")</condition>
               </action>
-              <action name="OS X Apps" id="5346" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="3" errorMessage="Failed to create Application shortcuts">
+              <action name="OS X Apps" id="5346" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" failureStrategy="askQuit" errorMessage="Failed to create Application shortcuts">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:macosShortcutDirectory}</string>
-                        </object>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="triggerReboot">
-                        <boolean>false</boolean>
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>macos-apps.zip</string>
-                        </object>
-                      </void>
+                  <property name="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:macosShortcutDirectory}</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="triggerReboot" type="boolean" value="false" />
+                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
+                  <property name="zipFile">
+                    <object class="java.io.File">
+                      <string>macos-apps.zip</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
               </action>
-              <action name="OS X Apps" id="5173" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="3" errorMessage="Failed to create Application shortcuts">
+              <action name="OS X Apps" id="5173" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" failureStrategy="askQuit" errorMessage="Failed to create Application shortcuts">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="arguments">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:sys.installationDir}</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>macos-apps-setdir.sh</string>
-                        </object>
-                      </void>
-                      <void property="workingDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:macosShortcutDirectory}</string>
-                        </object>
-                      </void>
+                  <property name="arguments" type="array" elementType="string" length="1">
+                    <element index="0">${installer:sys.installationDir}</element>
+                  </property>
+                  <property name="executable">
+                    <object class="java.io.File">
+                      <string>macos-apps-setdir.sh</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="workingDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:macosShortcutDirectory}</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>context.getBooleanVariable("createApplicationsLinkAction")</condition>
               </action>
-              <action name="OS X JRE" id="8208" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+              <action name="OS X JRE" id="8208" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>jre</string>
-                        </object>
-                      </void>
-                      <void property="dirMode">
-                        <string>777</string>
-                      </void>
-                      <void property="mode">
-                        <string>777</string>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>osxjre.zip</string>
-                        </object>
-                      </void>
+                  <property name="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>jre</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="dirMode" type="string">777</property>
+                  <property name="mode" type="string">777</property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="zipFile">
+                    <object class="java.io.File">
+                      <string>osxjre.zip</string>
+                    </object>
+                  </property>
                 </serializedBean>
-                <condition />
               </action>
-              <action name="Linux x86 ADDE" id="7535" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="Linux x86 ADDE" id="7535" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
-                      <void property="mode">
-                        <string>755</string>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>adde-linux.zip</string>
-                        </object>
-                      </void>
+                  <property name="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="mode" type="string">755</property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
+                  <property name="zipFile">
+                    <object class="java.io.File">
+                      <string>adde-linux.zip</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>return Util.isLinux() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
               </action>
-              <action name="OS X x86 ADDE" id="7458" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="OS X x86 ADDE" id="7458" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
-                      <void property="mode">
-                        <string>755</string>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>adde-darwin.zip</string>
-                        </object>
-                      </void>
+                  <property name="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="mode" type="string">755</property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
+                  <property name="zipFile">
+                    <object class="java.io.File">
+                      <string>adde-darwin.zip</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
               </action>
-              <action name="Solaris x86 ADDE" id="7536" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="Solaris x86 ADDE" id="7536" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
-                      <void property="mode">
-                        <string>755</string>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>adde-soli86.zip</string>
-                        </object>
-                      </void>
+                  <property name="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="mode" type="string">755</property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
+                  <property name="zipFile">
+                    <object class="java.io.File">
+                      <string>adde-soli86.zip</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
               </action>
-              <action name="Solaris SPARC ADDE" id="7538" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="Solaris SPARC ADDE" id="7538" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
-                      <void property="mode">
-                        <string>755</string>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>adde-solaris.zip</string>
-                        </object>
-                      </void>
+                  <property name="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="mode" type="string">755</property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
+                  <property name="zipFile">
+                    <object class="java.io.File">
+                      <string>adde-solaris.zip</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("sparc") &gt;= 0;</condition>
               </action>
-              <action name="Windows ADDE" id="7534" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to install ADDE">
+              <action name="Windows ADDE" id="7534" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction">
-                      <void property="destinationDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
-                      <void property="mode">
-                        <string>755</string>
-                      </void>
-                      <void property="overwriteMode">
-                        <object class="com.install4j.api.context.OverwriteMode" field="ALWAYS" />
-                      </void>
-                      <void property="uninstallMode">
-                        <object class="com.install4j.api.context.UninstallMode" field="ALWAYS" />
-                      </void>
-                      <void property="zipFile">
-                        <object class="java.io.File">
-                          <string>adde-windows.zip</string>
-                        </object>
-                      </void>
+                  <property name="destinationDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="mode" type="string">755</property>
+                  <property name="overwriteMode" type="enum" class="com.install4j.api.context.OverwriteMode" value="ALWAYS" />
+                  <property name="uninstallMode" type="enum" class="com.install4j.api.context.UninstallMode" value="ALWAYS" />
+                  <property name="zipFile">
+                    <object class="java.io.File">
+                      <string>adde-windows.zip</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>return Util.isWindows();</condition>
               </action>
-              <action name="Remove Unix temp files" id="7628" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to remove temporary files">
+              <action name="Remove Unix temp files" id="7628" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" errorMessage="Failed to remove temporary files">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="arguments">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:sys.installationDir}</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>remove-adde-zip.sh</string>
-                        </object>
-                      </void>
-                      <void property="workingDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
+                  <property name="arguments" type="array" elementType="string" length="1">
+                    <element index="0">${installer:sys.installationDir}</element>
+                  </property>
+                  <property name="executable">
+                    <object class="java.io.File">
+                      <string>remove-adde-zip.sh</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="workingDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>return !Util.isWindows();</condition>
               </action>
-              <action name="Remove Windows temp files" id="7629" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Failed to remove temporary files">
+              <action name="Remove Windows temp files" id="7629" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" errorMessage="Failed to remove temporary files">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="arguments">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:sys.installationDir}</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>remove-adde-zip.bat</string>
-                        </object>
-                      </void>
-                      <void property="workingDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
+                  <property name="arguments" type="array" elementType="string" length="1">
+                    <element index="0">${installer:sys.installationDir}</element>
+                  </property>
+                  <property name="executable">
+                    <object class="java.io.File">
+                      <string>remove-adde-zip.bat</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="workingDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>return Util.isWindows();</condition>
               </action>
-              <action name="Create classes.jsa on Windows" id="8258" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Could not enable class data sharing">
+              <action name="Create classes.jsa on Windows" id="8258" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" errorMessage="Could not enable class data sharing">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="arguments">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:sys.installationDir}</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>create-jsa.bat</string>
-                        </object>
-                      </void>
-                      <void property="workingDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
+                  <property name="arguments" type="array" elementType="string" length="1">
+                    <element index="0">${installer:sys.installationDir}</element>
+                  </property>
+                  <property name="executable">
+                    <object class="java.io.File">
+                      <string>create-jsa.bat</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="workingDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>// os.arch returns the "bitness" of the JRE--not the OS
 String javaArch = System.getProperty("os.arch");
 return Util.isWindows() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64".equals(javaArch);</condition>
               </action>
-              <action name="Create classes.jsa on Unix (but not OS X)" id="8298" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="Could not enable class data sharing">
+              <action name="Create classes.jsa on Unix (but not OS X)" id="8298" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" errorMessage="Could not enable class data sharing">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.misc.RunExecutableAction">
-                      <void property="arguments">
-                        <array class="java.lang.String" length="1">
-                          <void index="0">
-                            <string>${installer:sys.installationDir}</string>
-                          </void>
-                        </array>
-                      </void>
-                      <void property="executable">
-                        <object class="java.io.File">
-                          <string>create-jsa.sh</string>
-                        </object>
-                      </void>
-                      <void property="workingDirectory">
-                        <object class="java.io.File">
-                          <string>${installer:sys.installationDir}</string>
-                        </object>
-                      </void>
+                  <property name="arguments" type="array" elementType="string" length="1">
+                    <element index="0">${installer:sys.installationDir}</element>
+                  </property>
+                  <property name="executable">
+                    <object class="java.io.File">
+                      <string>create-jsa.sh</string>
                     </object>
-                  </java>
+                  </property>
+                  <property name="workingDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
+                    </object>
+                  </property>
                 </serializedBean>
                 <condition>// os.arch returns the "bitness" of the JRE--not the OS
 String javaArch = System.getProperty("os.arch");
 return !Util.isWindows() &amp;&amp; !Util.isMacOS() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64".equals(javaArch);</condition>
               </action>
             </actions>
-            <formComponents />
+            <formComponents>
+              <formComponent id="8920" beanClass="com.install4j.runtime.beans.formcomponents.ProgressComponent">
+                <serializedBean>
+                  <property name="initialStatusMessage" type="string">${i18n:WizardPreparing}</property>
+                </serializedBean>
+              </formComponent>
+            </formComponents>
           </screen>
-          <screen name="Graphics information" id="7844" customizedId="" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen" id="DefaultInfoScreen0">
-                  <void id="LocalizedExternalFile0" property="displayedTextFile">
-                    <void property="languageIdToExternalFile">
-                      <void method="put">
+          <screen name="Graphics information" id="7844" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen">
+            <formComponents>
+              <formComponent id="8923" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
+                <serializedBean>
+                  <property name="labelText" type="string">${i18n:InfoBeforeClickLabel}</property>
+                </serializedBean>
+                <visibilityScript>!context.isConsole()</visibilityScript>
+              </formComponent>
+              <formComponent id="8924" beanClass="com.install4j.runtime.beans.formcomponents.HtmlDisplayFormComponent" useExternalParametrization="true" externalParametrizationName="HTML or text display" externalParametrizationMode="include">
+                <serializedBean>
+                  <property name="displayedTextFile" id="LocalizedExternalFile0">
+                    <property name="languageIdToExternalFile">
+                      <entry>
                         <string>en</string>
                         <object class="com.install4j.api.beans.ExternalFile">
                           <string>${compiler:MCVDIR}/edu/wisc/ssec/mcidasv/resources/welcome.html</string>
                         </object>
-                      </void>
-                    </void>
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
+                      </entry>
+                    </property>
+                  </property>
+                  <property name="fillVertical" type="boolean" value="true" />
+                </serializedBean>
+                <externalParametrizationPropertyNames>
+                  <propertyName>textSource</propertyName>
+                  <propertyName>displayedText</propertyName>
+                  <propertyName>displayedTextFile</propertyName>
+                  <propertyName>variableName</propertyName>
+                </externalParametrizationPropertyNames>
+              </formComponent>
+              <formComponent id="8925" beanClass="com.install4j.runtime.beans.formcomponents.ConsoleHandlerFormComponent">
+                <serializedBean>
+                  <property name="consoleScript">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string">console.waitForEnter();
+return true;
+</property>
+                    </object>
+                  </property>
+                </serializedBean>
+              </formComponent>
+            </formComponents>
           </screen>
-          <screen name="Unix runMcV information" id="4583" customizedId="" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.DefaultInfoScreen">
-                  <void property="displayedText">
-                    <string>${compiler:sys.fullName} was installed in ${installer:sys.installationDir}.
+          <screen name="Unix runMcV information" id="4583" beanClass="com.install4j.runtime.beans.screens.DefaultInfoScreen">
+            <condition>return !(Util.isWindows() || Util.isMacOS());</condition>
+            <formComponents>
+              <formComponent id="8928" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent">
+                <serializedBean>
+                  <property name="labelText" type="string">${i18n:InfoBeforeClickLabel}</property>
+                </serializedBean>
+                <visibilityScript>!context.isConsole()</visibilityScript>
+              </formComponent>
+              <formComponent id="8929" beanClass="com.install4j.runtime.beans.formcomponents.HtmlDisplayFormComponent" useExternalParametrization="true" externalParametrizationName="HTML or text display" externalParametrizationMode="include">
+                <serializedBean>
+                  <property name="displayedText" type="string">${compiler:sys.fullName} was installed in ${installer:sys.installationDir}.
 
 To start ${compiler:sys.fullName}, open a terminal and type:
 
@@ -1219,397 +966,606 @@ To start ${compiler:sys.fullName}, open a terminal and type:
 
 To configure ${compiler:sys.fullName}, open a terminal and type:
 
-	${installer:sys.installationDir}/runMcV-Config</string>
-                  </void>
-                  <void property="textSource">
-                    <object class="com.install4j.runtime.beans.screens.components.TextSource" field="DIRECT" />
-                  </void>
-                </object>
-              </java>
-            </serializedBean>
-            <condition>return !(Util.isWindows() || Util.isMacOS());</condition>
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
+	${installer:sys.installationDir}/runMcV-Config</property>
+                  <property name="fillVertical" type="boolean" value="true" />
+                  <property name="textSource" type="enum" class="com.install4j.runtime.beans.screens.components.TextSource" value="DIRECT" />
+                </serializedBean>
+                <externalParametrizationPropertyNames>
+                  <propertyName>textSource</propertyName>
+                  <propertyName>displayedText</propertyName>
+                  <propertyName>displayedTextFile</propertyName>
+                  <propertyName>variableName</propertyName>
+                </externalParametrizationPropertyNames>
+              </formComponent>
+              <formComponent id="8930" beanClass="com.install4j.runtime.beans.formcomponents.ConsoleHandlerFormComponent">
+                <serializedBean>
+                  <property name="consoleScript">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string">console.waitForEnter();
+return true;
+</property>
+                    </object>
+                  </property>
+                </serializedBean>
+              </formComponent>
+            </formComponents>
           </screen>
-          <screen name="" id="82" customizedId="" beanClass="com.install4j.runtime.beans.screens.FinishedScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="true" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.FinishedScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
+          <screen id="82" beanClass="com.install4j.runtime.beans.screens.FinishedScreen" styleId="8988" finishScreen="true">
+            <formComponents>
+              <formComponent id="8932" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" insetBottom="10">
+                <serializedBean>
+                  <property name="labelText" type="string">${form:finishedMessage}</property>
+                </serializedBean>
+              </formComponent>
+            </formComponents>
           </screen>
         </screens>
       </application>
-      <application name="" id="uninstaller" customizedId="" beanClass="com.install4j.runtime.beans.applications.UninstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="" customIcoFile="" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+      <application id="uninstaller" beanClass="com.install4j.runtime.beans.applications.UninstallerApplication" styleId="8982" launchInNewProcess="false">
         <serializedBean>
-          <java class="java.beans.XMLDecoder">
-            <object class="com.install4j.runtime.beans.applications.UninstallerApplication" id="UninstallerApplication0">
-              <void property="customHeaderImage">
-                <object class="com.install4j.api.beans.ExternalFile">
-                  <string>${compiler:MCVDIR}/release/icons/mcidasv_60x60.png</string>
-                </object>
-              </void>
-              <void property="customIconImageFiles">
-                <void method="add">
-                  <object class="com.install4j.api.beans.ExternalFile">
-                    <string>${compiler:MCVDIR}/release/icons/mcidasv_16x16.png</string>
-                  </object>
-                </void>
-                <void method="add">
-                  <object class="com.install4j.api.beans.ExternalFile">
-                    <string>${compiler:MCVDIR}/release/icons/mcidasv_32x32.png</string>
-                  </object>
-                </void>
-              </void>
-              <void property="frameSizeClientArea">
-                <boolean>false</boolean>
-              </void>
-              <void property="useCustomIcon">
-                <boolean>true</boolean>
-              </void>
-              <void property="watermark">
-                <boolean>false</boolean>
-              </void>
-            </object>
-          </java>
+          <property name="customIconImageFiles">
+            <add>
+              <object class="com.install4j.api.beans.ExternalFile">
+                <string>${compiler:MCVDIR}/release/icons/mcidasv_16x16.png</string>
+              </object>
+            </add>
+            <add>
+              <object class="com.install4j.api.beans.ExternalFile">
+                <string>${compiler:MCVDIR}/release/icons/mcidasv_32x32.png</string>
+              </object>
+            </add>
+          </property>
+          <property name="customMacosExecutableName" type="string">${i18n:UninstallerMenuEntry(${compiler:sys.fullName})}</property>
+          <property name="frameSizeClientArea" type="boolean" value="false" />
+          <property name="useCustomIcon" type="boolean" value="true" />
+          <property name="useCustomMacosExecutableName" type="boolean" value="true" />
         </serializedBean>
-        <launcherIds />
-        <variables />
+        <styleOverrides>
+          <styleOverride name="Customize title bar" enabled="true">
+            <group id="8996" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup">
+              <serializedBean>
+                <property name="backgroundColor">
+                  <object class="java.awt.Color">
+                    <int>255</int>
+                    <int>255</int>
+                    <int>255</int>
+                    <int>255</int>
+                  </object>
+                </property>
+                <property name="imageAnchor" type="enum" class="com.install4j.api.beans.Anchor" value="NORTHEAST" />
+                <property name="imageFile">
+                  <object class="com.install4j.api.beans.ExternalFile">
+                    <string>${compiler:MCVDIR}/release/icons/mcidasv_60x60.png</string>
+                  </object>
+                </property>
+              </serializedBean>
+            </group>
+          </styleOverride>
+          <styleOverride name="Custom watermark" enabled="true">
+            <formComponent name="Watermark" id="8986" beanClass="com.install4j.runtime.beans.formcomponents.SeparatorComponent" />
+          </styleOverride>
+        </styleOverrides>
         <startup>
-          <screen name="" id="16" customizedId="" beanClass="com.install4j.runtime.beans.screens.StartupScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.StartupScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
+          <screen id="16" beanClass="com.install4j.runtime.beans.screens.StartupScreen" rollbackBarrierExitCode="0">
             <actions>
-              <link name="" id="7949" customizedId="" beanClass="" enabled="true" targetId="7947" mergedProjectId="" />
+              <link id="7949" targetId="7947" />
             </actions>
-            <formComponents />
           </screen>
         </startup>
         <screens>
-          <screen name="" id="83" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
-          </screen>
-          <screen name="" id="84" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallationScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.UninstallationScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions>
-              <action name="" id="85" customizedId="" beanClass="com.install4j.runtime.beans.actions.UninstallFilesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+          <screen id="83" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" styleId="8988">
+            <formComponents>
+              <formComponent id="8939" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" insetBottom="10">
                 <serializedBean>
-                  <java class="java.beans.XMLDecoder">
-                    <object class="com.install4j.runtime.beans.actions.UninstallFilesAction" />
-                  </java>
+                  <property name="labelText" type="string">${form:welcomeMessage}</property>
                 </serializedBean>
-                <condition />
-              </action>
+                <visibilityScript>!context.isConsole()</visibilityScript>
+              </formComponent>
+              <formComponent id="8940" beanClass="com.install4j.runtime.beans.formcomponents.ConsoleHandlerFormComponent">
+                <serializedBean>
+                  <property name="consoleScript">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string">String message = context.getMessage("ConfirmUninstall", context.getApplicationName());
+return console.askYesNo(message, true);
+</property>
+                    </object>
+                  </property>
+                </serializedBean>
+              </formComponent>
+            </formComponents>
+          </screen>
+          <screen id="84" beanClass="com.install4j.runtime.beans.screens.UninstallationScreen">
+            <actions>
+              <action id="85" beanClass="com.install4j.runtime.beans.actions.UninstallFilesAction" actionElevationType="elevated" />
             </actions>
-            <formComponents />
+            <formComponents>
+              <formComponent id="8944" beanClass="com.install4j.runtime.beans.formcomponents.ProgressComponent">
+                <serializedBean>
+                  <property name="initialStatusMessage" type="string">${i18n:UninstallerPreparing}</property>
+                </serializedBean>
+              </formComponent>
+            </formComponents>
           </screen>
-          <screen name="" id="86" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallFailureScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="true" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.UninstallFailureScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
-          </screen>
-          <screen name="" id="87" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallSuccessScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="true" wizardIndexChangeType="unchanged" wizardIndexKey="">
-            <serializedBean>
-              <java class="java.beans.XMLDecoder">
-                <object class="com.install4j.runtime.beans.screens.UninstallSuccessScreen" />
-              </java>
-            </serializedBean>
-            <condition />
-            <validation />
-            <preActivation />
-            <postActivation />
-            <actions />
-            <formComponents />
+          <screen id="86" beanClass="com.install4j.runtime.beans.screens.UninstallFailureScreen" finishScreen="true" />
+          <screen id="87" beanClass="com.install4j.runtime.beans.screens.UninstallSuccessScreen" styleId="8988" finishScreen="true">
+            <formComponents>
+              <formComponent id="8947" beanClass="com.install4j.runtime.beans.formcomponents.MultilineLabelComponent" insetBottom="10">
+                <serializedBean>
+                  <property name="labelText" type="string">${form:successMessage}</property>
+                </serializedBean>
+              </formComponent>
+            </formComponents>
           </screen>
         </screens>
       </application>
     </applications>
+    <styles defaultStyleId="8982">
+      <style name="Standard" id="8982" beanClass="com.install4j.runtime.beans.styles.FormStyle">
+        <formComponents>
+          <formComponent name="Header" id="8983" beanClass="com.install4j.runtime.beans.styles.NestedStyleComponent" insetTop="0" insetBottom="0">
+            <serializedBean>
+              <property name="styleId" type="string">8995</property>
+            </serializedBean>
+          </formComponent>
+          <group name="Main" id="8984" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup">
+            <beans>
+              <formComponent id="8985" beanClass="com.install4j.runtime.beans.styles.ContentComponent" insetTop="10" insetLeft="20" insetBottom="10" insetRight="20" />
+              <formComponent name="Watermark" id="8986" beanClass="com.install4j.runtime.beans.formcomponents.SeparatorComponent" insetTop="0" insetLeft="5" insetBottom="0" useExternalParametrization="true" externalParametrizationName="Custom watermark" externalParametrizationMode="include">
+                <serializedBean>
+                  <property name="enabledTitleText" type="boolean" value="false" />
+                  <property name="labelText" type="string">install4j</property>
+                </serializedBean>
+                <externalParametrizationPropertyNames>
+                  <propertyName>labelText</propertyName>
+                </externalParametrizationPropertyNames>
+              </formComponent>
+              <formComponent name="Footer" id="8987" beanClass="com.install4j.runtime.beans.styles.NestedStyleComponent" insetTop="0" insetBottom="0">
+                <serializedBean>
+                  <property name="styleId" type="string">8999</property>
+                </serializedBean>
+              </formComponent>
+            </beans>
+          </group>
+        </formComponents>
+      </style>
+      <style name="Banner" id="8988" beanClass="com.install4j.runtime.beans.styles.FormStyle">
+        <formComponents>
+          <group id="8989" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup" useExternalParametrization="true" externalParametrizationName="Customize banner image" externalParametrizationMode="include">
+            <serializedBean>
+              <property name="backgroundColor">
+                <object class="java.awt.Color">
+                  <int>255</int>
+                  <int>255</int>
+                  <int>255</int>
+                  <int>255</int>
+                </object>
+              </property>
+              <property name="borderSides">
+                <object class="com.install4j.runtime.beans.formcomponents.BorderSides">
+                  <property name="bottom" type="boolean" value="true" />
+                </object>
+              </property>
+              <property name="imageEdgeBackgroundColor">
+                <object class="java.awt.Color">
+                  <int>25</int>
+                  <int>143</int>
+                  <int>220</int>
+                  <int>255</int>
+                </object>
+              </property>
+              <property name="imageEdgeBorder" type="boolean" value="true" />
+              <property name="imageFile">
+                <object class="com.install4j.api.beans.ExternalFile">
+                  <string>${compiler:sys.install4jHome}/resource/styles/wizard.png</string>
+                </object>
+              </property>
+              <property name="insets">
+                <object class="java.awt.Insets">
+                  <int>5</int>
+                  <int>10</int>
+                  <int>10</int>
+                  <int>10</int>
+                </object>
+              </property>
+            </serializedBean>
+            <beans>
+              <formComponent id="8990" beanClass="com.install4j.runtime.beans.styles.ScreenTitleComponent" insetTop="0">
+                <serializedBean>
+                  <property name="labelFontSizePercent" type="int" value="130" />
+                  <property name="labelFontStyle" type="enum" class="com.install4j.runtime.beans.formcomponents.FontStyle" value="BOLD" />
+                  <property name="labelFontType" type="enum" class="com.install4j.runtime.beans.formcomponents.FontType" value="DERIVED" />
+                </serializedBean>
+              </formComponent>
+              <formComponent id="8991" beanClass="com.install4j.runtime.beans.formcomponents.SeparatorComponent" />
+              <formComponent id="8992" beanClass="com.install4j.runtime.beans.styles.ContentComponent" insetTop="10" insetBottom="0" />
+            </beans>
+            <externalParametrizationPropertyNames>
+              <propertyName>imageAnchor</propertyName>
+              <propertyName>imageEdgeBackgroundColor</propertyName>
+              <propertyName>imageFile</propertyName>
+            </externalParametrizationPropertyNames>
+          </group>
+          <formComponent id="8993" beanClass="com.install4j.runtime.beans.styles.NestedStyleComponent" insetBottom="0">
+            <serializedBean>
+              <property name="styleId" type="string">8999</property>
+            </serializedBean>
+          </formComponent>
+        </formComponents>
+      </style>
+      <group name="Style components" id="8994" beanClass="com.install4j.runtime.beans.groups.StyleGroup">
+        <beans>
+          <style name="Standard header" id="8995" beanClass="com.install4j.runtime.beans.styles.FormStyle">
+            <serializedBean>
+              <property name="fillVertical" type="boolean" value="false" />
+              <property name="standalone" type="boolean" value="false" />
+              <property name="verticalAnchor" type="enum" class="com.install4j.api.beans.Anchor" value="NORTH" />
+            </serializedBean>
+            <formComponents>
+              <group id="8996" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup" useExternalParametrization="true" externalParametrizationName="Customize title bar" externalParametrizationMode="include">
+                <serializedBean>
+                  <property name="backgroundColor">
+                    <object class="java.awt.Color">
+                      <int>255</int>
+                      <int>255</int>
+                      <int>255</int>
+                      <int>255</int>
+                    </object>
+                  </property>
+                  <property name="borderSides">
+                    <object class="com.install4j.runtime.beans.formcomponents.BorderSides">
+                      <property name="bottom" type="boolean" value="true" />
+                    </object>
+                  </property>
+                  <property name="imageAnchor" type="enum" class="com.install4j.api.beans.Anchor" value="NORTHEAST" />
+                  <property name="imageEdgeBorderWidth" type="int" value="2" />
+                  <property name="imageFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>icon:${installer:sys.installerApplicationMode}_header.png</string>
+                    </object>
+                  </property>
+                  <property name="imageInsets">
+                    <object class="java.awt.Insets">
+                      <int>0</int>
+                      <int>5</int>
+                      <int>1</int>
+                      <int>1</int>
+                    </object>
+                  </property>
+                  <property name="insets">
+                    <object class="java.awt.Insets">
+                      <int>0</int>
+                      <int>20</int>
+                      <int>0</int>
+                      <int>10</int>
+                    </object>
+                  </property>
+                </serializedBean>
+                <beans>
+                  <formComponent name="Title" id="8997" beanClass="com.install4j.runtime.beans.styles.ScreenTitleComponent">
+                    <serializedBean>
+                      <property name="labelFontStyle" type="enum" class="com.install4j.runtime.beans.formcomponents.FontStyle" value="BOLD" />
+                      <property name="labelFontType" type="enum" class="com.install4j.runtime.beans.formcomponents.FontType" value="DERIVED" />
+                    </serializedBean>
+                  </formComponent>
+                  <formComponent name="Subtitle" id="8998" beanClass="com.install4j.runtime.beans.styles.ScreenTitleComponent" insetLeft="8">
+                    <serializedBean>
+                      <property name="titleType" type="enum" class="com.install4j.runtime.beans.styles.TitleType" value="SUB_TITLE" />
+                    </serializedBean>
+                  </formComponent>
+                </beans>
+                <externalParametrizationPropertyNames>
+                  <propertyName>backgroundColor</propertyName>
+                  <propertyName>foregroundColor</propertyName>
+                  <propertyName>imageAnchor</propertyName>
+                  <propertyName>imageFile</propertyName>
+                  <propertyName>imageOverlap</propertyName>
+                </externalParametrizationPropertyNames>
+              </group>
+            </formComponents>
+          </style>
+          <style name="Standard footer" id="8999" beanClass="com.install4j.runtime.beans.styles.FormStyle">
+            <serializedBean>
+              <property name="fillVertical" type="boolean" value="false" />
+              <property name="standalone" type="boolean" value="false" />
+              <property name="verticalAnchor" type="enum" class="com.install4j.api.beans.Anchor" value="SOUTH" />
+            </serializedBean>
+            <formComponents>
+              <group id="9000" beanClass="com.install4j.runtime.beans.groups.HorizontalFormComponentGroup">
+                <serializedBean>
+                  <property name="alignFirstLabel" type="boolean" value="false" />
+                  <property name="insets">
+                    <object class="java.awt.Insets">
+                      <int>3</int>
+                      <int>5</int>
+                      <int>8</int>
+                      <int>5</int>
+                    </object>
+                  </property>
+                </serializedBean>
+                <beans>
+                  <formComponent id="9001" beanClass="com.install4j.runtime.beans.formcomponents.SpringComponent" />
+                  <formComponent name="Back button" id="9002" beanClass="com.install4j.runtime.beans.styles.StandardControlButtonComponent">
+                    <serializedBean>
+                      <property name="buttonText" type="string">&lt; ${i18n:ButtonBack}</property>
+                      <property name="controlButtonType" type="enum" class="com.install4j.api.context.ControlButtonType" value="PREVIOUS" />
+                    </serializedBean>
+                  </formComponent>
+                  <formComponent name="Next button" id="9003" beanClass="com.install4j.runtime.beans.styles.StandardControlButtonComponent">
+                    <serializedBean>
+                      <property name="buttonText" type="string">${i18n:ButtonNext} &gt;</property>
+                      <property name="controlButtonType" type="enum" class="com.install4j.api.context.ControlButtonType" value="NEXT" />
+                    </serializedBean>
+                  </formComponent>
+                  <formComponent name="Cancel button" id="9004" beanClass="com.install4j.runtime.beans.styles.StandardControlButtonComponent" insetLeft="5">
+                    <serializedBean>
+                      <property name="buttonText" type="string">${i18n:ButtonCancel}</property>
+                      <property name="controlButtonType" type="enum" class="com.install4j.api.context.ControlButtonType" value="CANCEL" />
+                    </serializedBean>
+                  </formComponent>
+                </beans>
+              </group>
+            </formComponents>
+          </style>
+        </beans>
+      </group>
+    </styles>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Linux 32-bit" id="3" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-x86-1.8.0_112.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
-      <excludedLaunchers>
-        <launcher id="844" />
-        <launcher id="1335" />
-      </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude>
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7406" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
-      </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
+    <unixInstaller name="Linux 32-bit" id="3" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
       <excludedComponents>
         <component id="3653" />
         <component id="7274" />
       </excludedComponents>
-      <includedDownloadableComponents />
-      <installerScript mode="3" file="">
-        <content>mkdir -p $HOME/.java/.userPrefs
-mkdir -p $HOME/.java/.systemPrefs
-
-chmod -R 755 $HOME/.java
-
-INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs -Djava.util.prefs.PreferencesFactory=PropertiesPreferencesFactory"</content>
-      </installerScript>
-    </unixInstaller>
-    <unixInstaller name="Linux 64-bit" id="7557" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/linux-amd64-1.8.0_112.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7406" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry filesetId="7332" />
+        <entry filesetId="7404" />
+        <entry filesetId="7406" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
       </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-x86-1.8.0_112.tar.gz" manualJreEntry="true" />
+    </unixInstaller>
+    <unixInstaller name="Linux 64-bit" id="7557" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
       <excludedComponents>
         <component id="3653" />
         <component id="7274" />
       </excludedComponents>
-      <includedDownloadableComponents />
-      <installerScript mode="3" file="">
-        <content>mkdir -p $HOME/.java/.userPrefs
-mkdir -p $HOME/.java/.systemPrefs
-
-chmod -R 755 $HOME/.java
-
-INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs -Djava.util.prefs.PreferencesFactory=PropertiesPreferencesFactory"</content>
-      </installerScript>
-    </unixInstaller>
-    <unixInstaller name="Generic Unix (no JRE)" id="59" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="~" contentFilesType="1" downloadURL="">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7406" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry filesetId="7332" />
+        <entry filesetId="7404" />
+        <entry filesetId="7406" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
       </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
+    </unixInstaller>
+    <unixInstaller name="Generic Unix (no JRE)" id="59" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
       <excludedComponents>
         <component id="3653" />
         <component id="7274" />
         <component id="7433" />
       </excludedComponents>
-      <includedDownloadableComponents />
-      <installerScript mode="3" file="">
-        <content>mkdir -p $HOME/.java/.userPrefs
-mkdir -p $HOME/.java/.systemPrefs
-
-chmod -R 755 $HOME/.java
-
-INSTALL4J_ADD_VM_PARAMS="$INSTALL4J_ADD_VM_PARAMS -Djava.util.prefs.systemRoot=$HOME/.java -Djava.util.prefs.userRoot=$HOME/.java/.userPrefs -Djava.util.prefs.PreferencesFactory=PropertiesPreferencesFactory"</content>
-      </installerScript>
-    </unixInstaller>
-    <macosFolder name="Mac OS X" id="12" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/macosx-amd64-1.8.0_112.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" signLaunchers="false">
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_fileset_7406" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry filesetId="7332" />
+        <entry filesetId="7408" />
+        <entry filesetId="7404" />
+        <entry filesetId="7406" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
       </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
+    </unixInstaller>
+    <macosFolder name="Mac OS X" id="12" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
       <excludedComponents>
         <component id="7274" />
       </excludedComponents>
-      <includedDownloadableComponents />
+      <excludedLaunchers>
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <exclude>
+        <entry filesetId="7408" />
+        <entry filesetId="7406" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
+      </exclude>
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/macosx-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
     </macosFolder>
-    <windows name="Windows 32-bit" id="8" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_112.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
+    <windows name="Windows 32-bit" id="8" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32">
+      <excludedComponents>
+        <component id="66" />
+        <component id="3653" />
+      </excludedComponents>
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
         <launcher id="8420" />
         <launcher id="8610" />
       </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location=".i4j_fileset_7334" fileType="regular" />
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_8603" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry filesetId="7334" />
+        <entry filesetId="7332" />
+        <entry filesetId="8603" />
+        <entry filesetId="7408" />
+        <entry filesetId="7404" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
       </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_112.tar.gz" manualJreEntry="true" />
+    </windows>
+    <windows name="Windows 64-bit" id="7720" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
       <excludedComponents>
         <component id="66" />
         <component id="3653" />
       </excludedComponents>
-      <includedDownloadableComponents />
-    </windows>
-    <windows name="Windows 64-bit" id="7720" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_112.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
         <launcher id="8420" />
         <launcher id="8610" />
       </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location=".i4j_fileset_7334" fileType="regular" />
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_8603" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry filesetId="7334" />
+        <entry filesetId="7332" />
+        <entry filesetId="8603" />
+        <entry filesetId="7408" />
+        <entry filesetId="7404" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
       </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
+    </windows>
+    <windows name="mcidasv.exe Windows 32-bit" id="8509" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer_TEST" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32">
       <excludedComponents>
         <component id="66" />
         <component id="3653" />
       </excludedComponents>
-      <includedDownloadableComponents />
-    </windows>
-    <windows name="mcidasv.exe Windows 32-bit" id="8509" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer_TEST" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_112.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location=".i4j_fileset_7334" fileType="regular" />
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_8605" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry filesetId="7334" />
+        <entry filesetId="7332" />
+        <entry filesetId="8605" />
+        <entry filesetId="7408" />
+        <entry filesetId="7404" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
       </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_112.tar.gz" manualJreEntry="true" />
+    </windows>
+    <windows name="mcidasv.exe Windows 64-bit" id="8430" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer_TEST" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
       <excludedComponents>
         <component id="66" />
         <component id="3653" />
       </excludedComponents>
-      <includedDownloadableComponents />
-    </windows>
-    <windows name="mcidasv.exe Windows 64-bit" id="8430" customizedId="" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer_TEST" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_112.tar.gz" manualJREEntry="true" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" downloadURL="" verifyIntegrity="true">
       <excludedLaunchers>
         <launcher id="841" />
         <launcher id="1330" />
         <launcher id="844" />
         <launcher id="1335" />
       </excludedLaunchers>
-      <excludedBeans />
-      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location=".i4j_fileset_7334" fileType="regular" />
-        <entry location=".i4j_fileset_7332" fileType="regular" />
-        <entry location=".i4j_fileset_8605" fileType="regular" />
-        <entry location=".i4j_fileset_7408" fileType="regular" />
-        <entry location=".i4j_fileset_7404" fileType="regular" />
-        <entry location=".i4j_fileset_7410" fileType="regular" />
-        <entry location=".i4j_fileset_7414" fileType="regular" />
+        <entry filesetId="7334" />
+        <entry filesetId="7332" />
+        <entry filesetId="8605" />
+        <entry filesetId="7408" />
+        <entry filesetId="7404" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
       </exclude>
-      <variables />
-      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
-        <commentFiles />
-        <customAttributes />
-      </autoUpdate>
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
+    </windows>
+    <unixInstaller name="Linux 64-bit (Java 11)" id="9022" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
+      <excludedComponents>
+        <component id="3653" />
+        <component id="7274" />
+      </excludedComponents>
+      <excludedLaunchers>
+        <launcher id="844" />
+        <launcher id="1335" />
+        <launcher id="8610" />
+        <launcher id="8851" />
+      </excludedLaunchers>
+      <exclude>
+        <entry filesetId="7334" />
+        <entry filesetId="7332" />
+        <entry filesetId="8603" />
+        <entry filesetId="8605" />
+        <entry filesetId="7404" />
+        <entry filesetId="7406" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
+        <entry filesetId="9158" />
+      </exclude>
+      <jreBundle jdkProviderId="AdoptOpenJDK" release="openjdk13/jdk-13.0.1+9" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-amd64-11.0.6.tar.gz" manualJreEntry="true">
+        <modules>
+          <defaultModules set="jre" />
+          <jmodDirectory location="/home/luser/work/install4j/mcv-jmods/javafx/13.0.2/linux-x64" />
+        </modules>
+      </jreBundle>
+    </unixInstaller>
+    <windows name="Windows 64-bit (Java 11)" id="9055" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
       <excludedComponents>
         <component id="66" />
         <component id="3653" />
+        <component id="7274" />
+        <component id="9166" />
+        <component id="9167" />
       </excludedComponents>
-      <includedDownloadableComponents />
+      <excludedLaunchers>
+        <launcher id="841" />
+        <launcher id="1330" />
+        <launcher id="8420" />
+        <launcher id="8610" />
+      </excludedLaunchers>
+      <exclude>
+        <entry filesetId="7334" />
+        <entry filesetId="7332" />
+        <entry filesetId="8603" />
+        <entry filesetId="8605" />
+        <entry filesetId="7408" />
+        <entry filesetId="7404" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
+        <entry filesetId="9156" />
+      </exclude>
+      <jreBundle jdkProviderId="AdoptOpenJDK" release="openjdk11/jdk-11.0.6+10" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-11.0.6.tar.gz" manualJreEntry="true">
+        <modules>
+          <defaultModules set="jre" />
+          <jmodDirectory location="/home/luser/work/install4j/mcv-jmods/javafx/11.0.2/windows-x64" />
+        </modules>
+      </jreBundle>
     </windows>
+    <macosFolder name="macOS (Java 11)" id="9060" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
+      <excludedComponents>
+        <component id="7274" />
+      </excludedComponents>
+      <excludedLaunchers>
+        <launcher id="844" />
+        <launcher id="1335" />
+      </excludedLaunchers>
+      <exclude>
+        <entry filesetId="7334" />
+        <entry filesetId="8603" />
+        <entry filesetId="8605" />
+        <entry filesetId="7408" />
+        <entry filesetId="7406" />
+        <entry filesetId="7410" />
+        <entry filesetId="7414" />
+        <entry filesetId="9158" />
+      </exclude>
+      <jreBundle jdkProviderId="AdoptOpenJDK" release="openjdk11/jdk-11.0.6+10" usePack200="false" overrideJdkRelease="true" jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/macosx-amd64-11.0.6.tar.gz" manualJreEntry="true">
+        <modules>
+          <defaultModules set="jre" />
+          <jmodDirectory location="/home/luser/work/install4j/mcv-jmods/javafx/11.0.2/macos" />
+        </modules>
+      </jreBundle>
+    </macosFolder>
   </mediaSets>
-  <buildIds buildAll="true" />
-  <buildOptions verbose="false" faster="false" disableSigning="false" debug="false" />
+  <buildIds buildAll="false">
+    <mediaSet refId="3" />
+    <mediaSet refId="7557" />
+    <mediaSet refId="59" />
+    <mediaSet refId="12" />
+    <mediaSet refId="8" />
+    <mediaSet refId="7720" />
+    <mediaSet refId="9022" />
+    <mediaSet refId="9055" />
+    <mediaSet refId="9060" />
+  </buildIds>
 </install4j>
-
