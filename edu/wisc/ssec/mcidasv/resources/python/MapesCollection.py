@@ -1018,3 +1018,41 @@ def grid_modulo(grid,user_number):
          return ff_modulo(grid,number)
     else:
         raise VisADError('Not a valid 2d or 3d grid')
+
+# New functions used by formulas - RMC 01/31/2020 - Inq 2875
+
+def deviationZ(grid):
+  """ Computes deviation from grid xy average value of a grid
+      and returns a grid with deviation from the averaged value.
+  """
+  return sub(grid,levelsAverage(grid))
+
+def deviationX(grid):
+  """ Computes deviation from grid zonal average value of a grid
+      and returns a grid with deviation from the averaged value.
+  """
+  return sub(grid,zonalAverage(grid))
+
+def deviationY(grid):
+  """ Computes deviation from grid meridional average value of a grid
+      and returns a grid with deviation from the averaged value.
+  """
+  return sub(grid,meridionalAverage(grid))
+
+def levelsAverage(grid):
+  """ Computes layer Average of a grid and returns a grid with the
+      averaged value at all grid points.
+  """
+  return GridMath.applyFunctionToLevels(grid,GridMath.FUNC_AVERAGE)
+
+def zonalAverage(grid):
+  """ Computes Zonal Average of a grid and returns a grid with the
+      averaged value at all grid points.
+  """
+  return GridMath.applyFunctionToAxis(grid,GridMath.FUNC_AVERAGE, GridMath.AXIS_X) 
+
+def meridionalAverage(grid):
+  """ Computes Meridional Average of a grid and returns a grid with the
+      averaged value at all grid points.
+  """
+  return GridMath.applyFunctionToAxis(grid,GridMath.FUNC_AVERAGE, GridMath.AXIS_Y)
