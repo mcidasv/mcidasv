@@ -783,7 +783,7 @@
     </java>
   </target>
 
-  <target name="jar.runlarge9" depends="jar" description="Build and run McIDAS-V application (large memory)">
+  <target name="jar.runlarge.jpms" depends="jar" description="Build and run McIDAS-V application (large memory)">
     <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv-${mcv.version}.jar">
       <classpath refid="app.classpath" />
       <assertions refid="mcv.assertions"/>
@@ -895,7 +895,7 @@
     </java>
   </target>
 
-    <target name="jar.runscript9" depends="jar" description="Build and run McIDAS-V application (large memory)">
+    <target name="jar.runscript.jpms" depends="jar" description="Build and run McIDAS-V application (large memory)">
         <java fork="true" maxmemory="${run.largeheap}" dir="${dist.dir}" jar="${dist.dir}/mcidasv-${mcv.version}.jar">
             <classpath refid="app.classpath" />
             <assertions refid="mcv.assertions"/>
@@ -1050,7 +1050,7 @@
     </java>
   </target>
 
-    <target name="debug.runlarge9" depends="jar" description="Build and run McIDAS-V application (large memory)">
+    <target name="debug.runlarge.jpms" depends="jar" description="Build and run McIDAS-V application (large memory)">
         <java classname="${app.mainclass}" fork="true" maxmemory="${run.largeheap}">
             <classpath refid="app.classpath" />
             <assertions refid="mcv.assertions"/>
