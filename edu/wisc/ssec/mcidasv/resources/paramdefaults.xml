@@ -97,5 +97,8 @@
   <param ci_base="-42.0" ci_interval="7.0" ci_max="28.0" ci_min="-49.0" ci_width="1" name="abisplitozone" range_max="5.0" range_min="-45.0" table="truncated gridded data" unit="K"/>
   <!-- end inq 2836 -->
   
+  <!-- bob inq 2876 - Feb 2020 -->
+  <param name="modis_ndvi" table="NDVI"/>
+  <!-- end inq 2876 -->
 </params>
 
