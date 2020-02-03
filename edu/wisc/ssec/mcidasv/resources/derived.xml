@@ -781,6 +781,15 @@
             <paramgroup name="MODIS_RGB_Airmass"/>
         </operands>
     </derived>
+    <derived description="MODIS NDVI" formula="MODISNDVI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance])" id="modis_ndvi" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-MODIS Functions"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MODIS_NDVI"/>
+        </operands>
+    </derived>
     <derived description="testfunc" formula="testFunc1000(field)" id="testfunc" isdefault="false" isenduser="true" override="true" disabled="true">
         <categories/>
         <operands/>
