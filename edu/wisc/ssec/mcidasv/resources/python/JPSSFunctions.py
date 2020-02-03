@@ -103,7 +103,7 @@ def VIIRSNaturalColorRGB(M10, M7, M5):
 
 def VIIRSNDVI(I1, I2):
     # I1 = 0.64um - visible
-    # I1 = 0.865um - near IR
+    # I2 = 0.865um - near IR
 
     inI1 = I1
     I1 = unpackage(I1)
