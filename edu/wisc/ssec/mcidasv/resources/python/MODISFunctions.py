@@ -27,3 +27,9 @@ def MODISNightMicrophysicsRGB(b22T, b31T, b32T):
     grn = 255*(rescale(b31T-b22T, 0, 10, 0, 1)**0.4)
     blu = rescale(b31T, 243, 293, 0, 255)
     return combineRGB(red, grn, blu)
+
+# MODIS NDVI
+def MODISNDVI(b1R,b2R):
+    # b1R = Band 1 (0.6465um) Reflectance
+    # b2R = Band 2 (0.8567um) Reflectance
+    return (b2R-b1R)/(b2R+b1R)
