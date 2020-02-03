@@ -1,4 +1,4 @@
-/*
+ /*
  * This file is part of McIDAS-V
  *
  * Copyright 2007-2020
@@ -100,6 +100,19 @@ public class MakeToString {
     
     public MakeToString add(String name, double value) {
         return addHolder(name, String.valueOf(value));
+    }
+    
+    public MakeToString add(String name, double... arr) {
+        StringBuilder buf = new StringBuilder(512);
+        buf.append("[ ");
+        for (int i = 0; i < arr.length; i++) {
+            buf.append(arr[i]);
+            if ((i+1) < arr.length) {
+                buf.append(',');
+            }
+        }
+        buf.append(" ]");
+        return addHolder(name, buf.toString());
     }
     
     private ValueHolder addHolder() {
