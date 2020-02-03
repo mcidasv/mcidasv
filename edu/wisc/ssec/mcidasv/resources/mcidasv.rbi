@@ -517,6 +517,9 @@
     <resource label="MSG Routines" location="%APPPATH%/python/MSGFunctions.py">
       <property name="category" value="System"/>
     </resource>
+    <resource label="MODIS Routines" location="%APPPATH%/python/MODISFunctions.py">
+      <property name="category" value="System"/>
+    </resource>
     <resource label="Map Routines" location="%IDVPATH%/python/maps.py">
       <property name="category" value="System"/>
     </resource>
