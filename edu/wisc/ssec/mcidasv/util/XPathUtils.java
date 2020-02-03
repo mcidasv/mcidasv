@@ -28,22 +28,26 @@
 package edu.wisc.ssec.mcidasv.util;
 
 import static java.util.Objects.requireNonNull;
+import static javax.xml.xpath.XPathConstants.NODESET;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,7 +55,6 @@ import org.w3c.dom.NodeList;
 
 import ucar.unidata.idv.IntegratedDataViewer;
 import ucar.unidata.idv.IdvResourceManager.IdvResource;
-import ucar.unidata.idv.IdvResourceManager.XmlIdvResource;
 import ucar.unidata.util.ResourceCollection.Resource;
 import ucar.unidata.xml.XmlResourceCollection;
 
@@ -61,6 +64,10 @@ import ucar.unidata.xml.XmlResourceCollection;
  */
 public final class XPathUtils {
 
+    /** Logging object. */
+    private static final Logger logger =
+        LoggerFactory.getLogger(XPathUtils.class);
+    
     /**
      * Maps (and caches) the XPath {@link String} to its compiled
      * {@link XPathExpression}.
@@ -88,7 +95,9 @@ public final class XPathUtils {
         return expr;
     }
 
-    public static List<Node> eval(final XmlResourceCollection collection, final String xPath) {
+    public static List<Node> eval(final XmlResourceCollection collection,
+                                  final String xPath) 
+    {
         requireNonNull(collection, "Cannot search a null resource collection");
         requireNonNull(xPath, "Cannot search using a null XPath query");
 
@@ -105,16 +114,17 @@ public final class XPathUtils {
                 if (!collection.isValid(i)) {
                     continue;
                 }
-
-                InputStream in = XPathUtils.class.getResourceAsStream(files.get(i).toString());
-                if (in == null) {
-                    continue;
+                String f = files.get(i).toString();
+                try (InputStream in = XPathUtils.class.getResourceAsStream(f)) {
+                    NodeList tmpList = (NodeList)expression.evaluate(loadXml(in), NODESET);
+                    for (int j = 0; j < tmpList.getLength(); j++) {
+                        nodeList.add(tmpList.item(j));
+                    }
+                } catch (IOException e) {
+                    logger.warn("Problem reading from file", e);
                 }
 
-                NodeList tmpList = (NodeList)expression.evaluate(loadXml(in), XPathConstants.NODESET);
-                for (int j = 0; j < tmpList.getLength(); j++) {
-                    nodeList.add(tmpList.item(j));
-                }
+
             }
             return nodeList;
         } catch (XPathExpressionException e) {
@@ -127,7 +137,7 @@ public final class XPathUtils {
         requireNonNull(xPath, "Cannot search using a null XPath query");
 
         try {
-            return (NodeList)expr(xPath).evaluate(loadXml(xmlFile), XPathConstants.NODESET);
+            return (NodeList)expr(xPath).evaluate(loadXml(xmlFile), NODESET);
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Error evaluation xpath", e);
         }
@@ -138,28 +148,36 @@ public final class XPathUtils {
         requireNonNull(xPath, "Cannot search using a null XPath query");
 
         try {
-            return (NodeList)expr(xPath).evaluate(root, XPathConstants.NODESET);
+            return (NodeList)expr(xPath).evaluate(root, NODESET);
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Error evaluation xpath", e);
         }
     }
 
-    public static List<Node> nodes(final IntegratedDataViewer idv, final IdvResource collectionId, final String xPath) {
+    public static List<Node> nodes(final IntegratedDataViewer idv,
+                                   final IdvResource collectionId,
+                                   final String xPath)
+    {
         requireNonNull(idv);
         requireNonNull(collectionId);
         requireNonNull(xPath);
 
-        XmlResourceCollection collection = idv.getResourceManager().getXmlResources(collectionId);
+        XmlResourceCollection collection =
+            idv.getResourceManager().getXmlResources(collectionId);
         return nodes(collection, xPath);
     }
 
-    public static List<Node> nodes(final XmlResourceCollection collection, final String xPath) {
+    public static List<Node> nodes(final XmlResourceCollection collection,
+                                   final String xPath)
+    {
         requireNonNull(collection);
         requireNonNull(xPath);
         return eval(collection, xPath);
     }
 
-    public static NodeListIterator nodes(final String xmlFile, final String xPath) {
+    public static NodeListIterator nodes(final String xmlFile,
+                                         final String xPath)
+    {
         requireNonNull(xmlFile);
         requireNonNull(xPath);
         return new NodeListIterator(eval(xmlFile, xPath));
@@ -176,16 +194,22 @@ public final class XPathUtils {
         return nodes(root, "//*");
     }
 
-    public static List<Element> elements(final IntegratedDataViewer idv, final IdvResource collectionId, final String xPath) {
+    public static List<Element> elements(final IntegratedDataViewer idv,
+                                         final IdvResource collectionId,
+                                         final String xPath)
+    {
         requireNonNull(idv);
         requireNonNull(collectionId);
         requireNonNull(xPath);
 
-        XmlResourceCollection collection = idv.getResourceManager().getXmlResources(collectionId);
+        XmlResourceCollection collection =
+            idv.getResourceManager().getXmlResources(collectionId);
         return elements(collection, xPath);
     }
 
-    public static List<Element> elements(final XmlResourceCollection collection, final String xPath) {
+    public static List<Element> elements(final XmlResourceCollection collection,
+                                         final String xPath)
+    {
         requireNonNull(collection);
         requireNonNull(xPath);
         List<Element> elements = new ArrayList<>();
@@ -195,7 +219,9 @@ public final class XPathUtils {
         return elements;
     }
 
-    public static ElementListIterator elements(final String xmlFile, final String xPath) {
+    public static ElementListIterator elements(final String xmlFile,
+                                               final String xPath)
+    {
         requireNonNull(xmlFile);
         requireNonNull(xPath);
         return new ElementListIterator(eval(xmlFile, xPath));
@@ -206,7 +232,9 @@ public final class XPathUtils {
         return elements(root, "//*");
     }
 
-    public static ElementListIterator elements(final Node root, final String xPath) {
+    public static ElementListIterator elements(final Node root,
+                                               final String xPath)
+    {
         requireNonNull(root);
         requireNonNull(xPath);
         return new ElementListIterator(eval(root, xPath));
@@ -251,7 +279,9 @@ public final class XPathUtils {
         }
     }
 
-    public static class NodeListIterator implements Iterable<Node>, Iterator<Node> {
+    public static class NodeListIterator implements Iterable<Node>,
+                                                    Iterator<Node>
+    {
         private final NodeList nodeList;
         private int index = 0;
 
@@ -264,20 +294,27 @@ public final class XPathUtils {
             return this;
         }
 
-        public boolean hasNext() {
+        @Override public boolean hasNext() {
             return index < nodeList.getLength();
         }
 
-        public Node next() {
-            return nodeList.item(index++);
+        @Override public Node next() {
+            Node result = nodeList.item(index++);
+            if (result != null) {
+                return result;
+            } else {
+                throw new NoSuchElementException("No more nodes to iterate through!");
+            }
         }
 
-        public void remove() {
+        @Override public void remove() {
             throw new UnsupportedOperationException("not implemented");
         }
     }
 
-    public static class ElementListIterator implements Iterable<Element>, Iterator<Element> {
+    public static class ElementListIterator implements Iterable<Element>,
+                                                       Iterator<Element>
+    {
         private final NodeList nodeList;
         private int index = 0;
 
@@ -290,15 +327,20 @@ public final class XPathUtils {
             return this;
         }
 
-        public boolean hasNext() {
+        @Override public boolean hasNext() {
             return index < nodeList.getLength();
         }
 
-        public Element next() {
-            return (Element)nodeList.item(index++);
+        @Override public Element next() {
+            Element result = (Element)nodeList.item(index++);
+            if (result != null) {
+                return result;
+            } else {
+                throw new NoSuchElementException("No more elements to iterate through!");
+            }
         }
 
-        public void remove() {
+        @Override public void remove() {
             throw new UnsupportedOperationException("not implemented");
         }
     }
