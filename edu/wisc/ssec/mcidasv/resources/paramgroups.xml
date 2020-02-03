@@ -225,4 +225,8 @@
     <params p1="101_Band22_TEMP" p2="101_Band31_TEMP" p3="101_Band32_TEMP"/>
     <params p1="111_Band22_TEMP" p2="111_Band31_TEMP" p3="111_Band32_TEMP"/>
   </paramgroup>
+  <paramgroup description="MODIS NDVI" name="MODIS_NDVI">
+    <params p1="101_Band1_REF" p2="101_Band2_REF"/>
+    <params p1="111_Band1_REF" p2="111_Band2_REF"/>
+  </paramgroup>
 </paramgroups>
