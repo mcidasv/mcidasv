@@ -213,4 +213,16 @@
     <params p1="53_Band4_TEMP" p2="53_Band9_TEMP" p3="53_Band10_TEMP"/>
     <params p1="354_Band4_TEMP" p2="354_Band9_TEMP" p3="354_Band10_TEMP"/>
   </paramgroup>
+  <paramgroup description="MODIS Airmass RGB" name="MODIS_RGB_Airmass">
+    <params p1="101_Band27_TEMP" p2="101_Band28_TEMP" p3="101_Band30_TEMP" p4="101_Band31_TEMP"/>
+    <params p1="111_Band27_TEMP" p2="111_Band28_TEMP" p3="111_Band30_TEMP" p4="111_Band31_TEMP"/>
+  </paramgroup>
+  <paramgroup description="MODIS Dust RGB" name="MODIS_RGB_Dust">
+    <params p1="101_Band29_TEMP" p2="101_Band31_TEMP" p3="101_Band32_TEMP"/>
+    <params p1="111_Band29_TEMP" p2="111_Band31_TEMP" p3="111_Band32_TEMP"/>
+  </paramgroup>
+  <paramgroup description="MODIS Night Microphysics RGB" name="MODIS_RGB_NightMicrophysics">
+    <params p1="101_Band22_TEMP" p2="101_Band31_TEMP" p3="101_Band32_TEMP"/>
+    <params p1="111_Band22_TEMP" p2="111_Band31_TEMP" p3="111_Band32_TEMP"/>
+  </paramgroup>
 </paramgroups>
