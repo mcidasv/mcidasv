@@ -1,7 +1,7 @@
 # A collection of functions to create displays of different MSG RGB products
 
 # These are standard SEVIRI RGBs designed to work with data from
-# the MSG series (Meteosat-8 through Meteosat-11) and were provided
+# the MSG series (Meteosat-8 through Meteosat-11) and many were provided
 # by EUMETSAT (HansPeter Roesli).  These functions were last revised
 # by EUMETSAT on 12/15/2011 and were originally available through the
 # Miscellaneous > RGB-Eumetsat plugin.  The function names and structure
@@ -19,6 +19,16 @@ def MSGAirmassRGB(b5T, b6T, b8T, b9T):
     red = rescale(b5T-b6T, -25, 0, 0, 255)
     grn = rescale(b8T-b9T, -40, 5, 0, 255)
     blu = rescale(b5T, 243, 208, 0, 255)
+    return combineRGB(red, grn, blu)
+
+# MSG Tropical Airmass RGB
+def MSGTropicalAirmassRGB(b5T, b6T, b8T, b9T):
+    # red = band5 - band6; -25K to 5K rescalled to 0 to 255
+    # grn = band8 - band9; -30K to 25K rescalled to 0 to 255
+    # blu = band5 inverted; 190K to 243K rescalled to 0 to 255
+    red = rescale(b5T-b6T, -25, 5, 0, 255)
+    grn = rescale(b8T-b9T, -30, 25, 0, 255)
+    blu = rescale(b5T, 243, 190, 0, 255)
     return combineRGB(red, grn, blu)
 
 # MSG 24-hour cloud microphysics RGB
