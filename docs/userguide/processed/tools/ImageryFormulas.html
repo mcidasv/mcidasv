@@ -35,6 +35,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
   <li><a href="#abiFunctions">ABI Functions</a></li>
   <li><a href="#ahiFunctions">AHI Functions</a></li>
   <li><a href="#imageFilters">Image Filters</a></li>
+  <li><a href="#modisFunctions">MODIS Functions</a></li>
+  <li><a href="#msgFunctions">MSG Functions</a></li>
 </ul>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Geolocate an Image (Upper Left Lat, Upper Left Lon, Lower Right Lat,
@@ -65,26 +67,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
     <td width="145" colspan="1" rowspan="1" valign="top"><p><em>Lower Right Lon </em></p></td>
     <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>Lower right
         longitude value (default=180).</p></td>
-  </tr>
-</table>
-</li>
-<li class="propertylistitem"><strong>GOES 16/17 Three Color (RGB) Image (Channel0p64, Channel0p86, Channel0p47) -</strong> Creates a true-color ABI RGB image by simulating a green band.  The controls for this display are the same as the <strong>Three Color (RGB) Image</strong> formula described below.
-  <table id="imageryformulas" cellpadding="0" cellspacing="0" border="1">
-  <tr>
-    <td colspan="1"><strong>Input Parameter</strong></td>
-   <td width="630"><strong>Definition
-   </strong></tr>
-   <tr>
-    <td width="145" colspan="1" rowspan="1" valign="top"><p><em>Channel0p64 </em></p></td>
-    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>ABI Band 2 (0.64um).</p></td>
-  </tr>
-  <tr>
-    <td width="145" colspan="1" rowspan="1" valign="top"><p><em>Channel0p86</em></p></td>
-    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>ABI Band 3 (0.86um).</p></td>
-  </tr>
-  <tr>
-    <td width="145" colspan="1" rowspan="1" valign="top"><p><em>Channel0p47</em></p></td>
-    <td width="510" colspan="2" rowspan="1" valign="top" nowrap><p>ABI Band 1 (0.47um).</p></td>
   </tr>
 </table>
 </li>
@@ -157,15 +139,15 @@ of the latitudes at each point.</li>
 <div class="pagesubtitle">ABI Functions<a name="abiFunctions" id="abiFunctions"></a></div>
 <p>The following describes each formula included in the ABI (Advanced Baseline Imager - GOES-16 through GOES-19) Functions section of McIDAS-V. These formulas create displays of various RGB and channel difference products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> ABI Functions tree. For specifics about the usage of each of these products (except ABI True Color RGB), see the <a href="http://rammb.cira.colostate.edu/training/visit/quick_guides/">CIRA VISIT Quick Guides</a>.</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>ABI Airmass RGB (Band 8T, Band 10T, Band 12T, Band 13T) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+<li class="propertylistitem"><strong>ABI Airmass RGB (Band 8 Temperature, Band 10 Temperature, Band 12 Temperature, Band 13 Temperature) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 8 T</em>emperature</p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 8 (6.2um) temperature.</p>
@@ -173,7 +155,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 10 T</em>emperature</p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 10 (7.3um) temperature.</p>
@@ -181,7 +163,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 12T</em></p>
+        <p><em>Band 12 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 12 (9.6um) temperature.</p>
@@ -189,7 +171,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 T</em>emperature</p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -197,15 +179,15 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Ash RGB (Band 11T, Band13T, Band 14T, Band 15T) - </strong>Monitors volcanic ash and sulfur dioxide gas.
+<li class="propertylistitem"><strong>ABI Ash RGB (Band 11 Temperature, Band 13 Temperature, Band 14 Temperature, Band 15 Temperature) - </strong>Monitors volcanic ash and sulfur dioxide gas.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 11T</em></p>
+        <p><em>Band 11 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 11 (8.4um) temperature.</p>
@@ -213,7 +195,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -221,7 +203,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 14T</em></p>
+        <p><em>Band 14 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 14 (11.2um) temperature.</p>
@@ -229,7 +211,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 15T</em></p>
+        <p><em>Band 15 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 15 (12.3um) temperature.</p>
@@ -237,15 +219,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Cloud Convection RGB (Band 2A, Band 13T) - </strong>Distinguishes between high and low clouds.
+<li class="propertylistitem"><strong>ABI Day Cloud Convection RGB (Band 2 Albedo, Band 13 Temperature) - </strong>Distinguishes between high and low clouds.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 2A</em></p>
+        <p><em>Band 2 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 2 (0.64um) albedo.</p>
@@ -253,7 +235,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -261,7 +243,7 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Cloud Phase Distinction RGB (Band 2A, Band 5A, Band 13T) - </strong>Monitors convection by evaluating the phase of cooling cloud tops.
+<li class="propertylistitem"><strong>ABI Day Cloud Phase Distinction RGB (Band 2 Albedo, Band 5 Albedo, Band 13 Temperature) - </strong>Monitors convection by evaluating the phase of cooling cloud tops.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -269,7 +251,7 @@ of the latitudes at each point.</li>
       </strong></tr></td>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 2A</em></p>
+        <p><em>Band 2 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 2 (0.64um) albedo.</p>
@@ -277,7 +259,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 5A</em></p>
+        <p><em>Band 5 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 5 (1.6um) albedo.</p>
@@ -285,7 +267,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -293,15 +275,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Convection RGB (Band 2A, Band 5A, Band 7T, Band 8T, Band 10T, Band 13T) - </strong>Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
+<li class="propertylistitem"><strong>ABI Day Convection RGB (Band 2 Albedo, Band 5 Albedo, Band 7 Temperature, Band 8 Temperature, Band 10 Temperature, Band 13 Temperature) - </strong>Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 2A</em></p>
+        <p><em>Band 2 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 2 (0.64um) albedo.</p>
@@ -309,7 +291,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 5A</em></p>
+        <p><em>Band 5 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 5 (1.6um) albedo.</p>
@@ -317,7 +299,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 7T</em></p>
+        <p><em>Band 7 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 7 (3.9um) temperature.</p>
@@ -325,7 +307,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 8 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 8 (6.2um) temperature.</p>
@@ -333,7 +315,7 @@ of the latitudes at each point.</li>
       </tr>
             <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 10 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 10 (7.3um) temperature.</p>
@@ -341,7 +323,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -349,15 +331,15 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Land Cloud Fire RGB (Band 2A, Band 3A, Band 5A) - </strong>Highlights fire pixels in red and differentiates between water and ice clouds.
+<li class="propertylistitem"><strong>ABI Day Land Cloud Fire RGB (Band 2 Albedo, Band 3 Albedo, Band 5 Albedo) - </strong>Highlights fire pixels in red and differentiates between water and ice clouds.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 2A</em></p>
+        <p><em>Band 2 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 2 (0.64um) albedo.</p>
@@ -365,7 +347,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 3A</em></p>
+        <p><em>Band 3 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 3 (0.86um) albedo.</p>
@@ -373,7 +355,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 5A</em></p>
+        <p><em>Band 5 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 5 (1.6um) albedo.</p>
@@ -381,7 +363,7 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Land Cloud RGB (Band 2A, Band 3A, Band 5A) - </strong>Distinguishes between water and ice clouds, making it easier to identify high and low clouds.  This RGB also distinguishes between green vegetation and brown inactive vegetation or soil.
+<li class="propertylistitem"><strong>ABI Day Land Cloud RGB (Band 2 Albedo, Band 3 Albedo, Band 5 Albedo) - </strong>Distinguishes between water and ice clouds, making it easier to identify high and low clouds.  This RGB also distinguishes between green vegetation and brown inactive vegetation or soil.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -389,7 +371,7 @@ of the latitudes at each point.</li>
       </strong></tr></td>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 2A</em></p>
+        <p><em>Band 2 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 2 (0.64um) albedo.</p>
@@ -397,7 +379,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 3A</em></p>
+        <p><em>Band 3 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 3 (0.86um) albedo.</p>
@@ -405,7 +387,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 5A </em></p>
+        <p><em>Band 5 Albedo </em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 5 (1.6um) albedo</p>
@@ -413,15 +395,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Day Snow Fog RGB (Band 3A, Band 5A, Band 7T, Band 13T) - </strong>Distinguishes between snow on the ground and clouds.
+<li class="propertylistitem"><strong>ABI Day Snow Fog RGB (Band 3 Albedo, Band 5 Albedo, Band 7 Temperature, Band 13 Temperature) - </strong>Distinguishes between snow on the ground and clouds.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 3A</em></p>
+        <p><em>Band 3 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 3 (0.86um) albedo.</p>
@@ -429,7 +411,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 5A</em></p>
+        <p><em>Band 5 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 5 (1.6um) albedo.</p>
@@ -437,7 +419,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 7T</em></p>
+        <p><em>Band 7 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 7 (3.9um) temperature.</p>
@@ -445,7 +427,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -453,15 +435,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Differential Water Vapor RGB (Band 8T, Band 10T) - </strong>Analyzes the vertical distribution of water vapor in the atmosphere and highlights potential vorticity anomalies.
+<li class="propertylistitem"><strong>ABI Differential Water Vapor RGB (Band 8 Temperature, Band 10 Temperature) - </strong>Analyzes the vertical distribution of water vapor in the atmosphere and highlights potential vorticity anomalies.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 8 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 8 (6.2um) temperature.</p>
@@ -469,7 +451,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 10 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 10 (7.3um) temperature</p>
@@ -477,15 +459,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Dust RGB (Band 11T, Band 13T, Band 14T, Band 15T) - </strong>Contrasts between dusts and clouds.
+<li class="propertylistitem"><strong>ABI Dust RGB (Band 11 Temperature, Band 13 Temperature, Band 14 Temperature, Band 15 Temperature) - </strong>Contrasts between dusts and clouds.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 11T</em></p>
+        <p><em>Band 11 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 11 (8.4um) temperature.</p>
@@ -493,7 +475,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -501,7 +483,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 14T</em></p>
+        <p><em>Band 14 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 14 (11.2um) temperature.</p>
@@ -509,7 +491,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 15T</em></p>
+        <p><em>Band 15 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 15 (12.3um) temperature.</p>
@@ -517,15 +499,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Fire Temperature RGB (Band 5A, Band 6A, Band 7T) - </strong>Highlights intense fires by contrasting them from cooler fires.
+<li class="propertylistitem"><strong>ABI Fire Temperature RGB (Band 5 Albedo, Band 6 Albedo, Band 7 Temperature) - </strong>Highlights intense fires by contrasting them from cooler fires.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 5A</em></p>
+        <p><em>Band 5 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 5 (1.6um) albedo.</p>
@@ -533,7 +515,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 6A</em></p>
+        <p><em>Band 6 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 6 (2.2um) albedo.</p>
@@ -541,7 +523,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 7T</em></p>
+        <p><em>Band 7 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 7 (3.9um) temperature.</p>
@@ -549,12 +531,12 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Night Fog Difference (Band 13T, Band 7T) - </strong>Identifies clouds made up of water droplets at night.
+<li class="propertylistitem"><strong>ABI Night Fog Difference (Band 13 Temperature, Band 7 Temperature) - </strong>Identifies clouds made up of water droplets at night.
     <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
       <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr></td>
+   </strong></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>Band 13T</em></p>
@@ -572,15 +554,15 @@ of the latitudes at each point.</li>
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>ABI Nighttime Microphysics RGB (Band 7T, Band 13T, Band 15T) - </strong>Distinguishes between low clouds and fog.
+<li class="propertylistitem"><strong>ABI Nighttime Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) - </strong>Distinguishes between low clouds and fog.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 7T</em></p>
+        <p><em>Band 7 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 7 (3.9um) temperature.</p>
@@ -588,7 +570,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -596,7 +578,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 15T</em></p>
+        <p><em>Band 15 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 15 (12.3um) temperature.</p>
@@ -604,15 +586,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Simple Water Vapor RGB (Band 8T, Band 10T, Band 13T) - </strong>Analyzes the vertical distribution of water vapor in the atmosphere.
+<li class="propertylistitem"><strong>ABI Simple Water Vapor RGB (Band 8 Temperature, Band 10 Temperature, Band 13 Temperature) - </strong>Analyzes the vertical distribution of water vapor in the atmosphere.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 8 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 8 (6.2um) temperature.</p>
@@ -620,7 +602,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 10 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 10 (7.3um) temperature.</p>
@@ -628,7 +610,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -636,15 +618,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI SO2 RGB (Band 8T, Band 10T, Band 12T, Band 13T) - </strong>Detects and analyzes sulfur dioxide emissions from power plants and volcanoes.
+<li class="propertylistitem"><strong>ABI SO2 RGB (Band 8 Temperature, Band 10 Temperature, Band 12 Temperature, Band 13 Temperature) - </strong>Detects and analyzes sulfur dioxide emissions from power plants and volcanoes.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 8 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 8 (6.2um) temperature.</p>
@@ -652,7 +634,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 10 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 10 (7.3um) temperature.</p>
@@ -660,7 +642,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 12T</em></p>
+        <p><em>Band 12 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 12 (9.6um) temperature.</p>
@@ -668,7 +650,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 13 (10.3um) temperature.</p>
@@ -676,15 +658,15 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Split Cloud Phase Difference (Band 14T, Band11T) - </strong>Differentiates between types of clouds.  For example, thick and thin cirrus, and clouds made of ice and water.
+<li class="propertylistitem"><strong>ABI Split Cloud Phase Difference (Band 14 Temperature, Band 11 Temperature) - </strong>Differentiates between types of clouds.  For example, thick and thin cirrus, and clouds made of ice and water.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr></td>
+   </strong></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 14T</em></p>
+   <p><em>Band 14 Temperature</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
    <p>ABI band 14 (11.2um) temperature.</p>
@@ -692,7 +674,7 @@ of the latitudes at each point.</li>
    </tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 11T</em></p>
+   <p><em>Band 11 Temperature</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>ABI band 11 (8.4um) temperature.</p>
@@ -700,15 +682,15 @@ of the latitudes at each point.</li>
    </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Split Ozone Difference (Band 12T, Band 13T) - </strong>Displays ozone absorption compared to the clean window.
+<li class="propertylistitem"><strong>ABI Split Ozone Difference (Band 12 Temperature, Band 13 Temperature) - </strong>Displays ozone absorption compared to the clean window.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr></td>
+   </strong></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 12T</em></p>
+   <p><em>Band 12 Temperature</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
    <p>ABI band 12 (9.6um) temperature.</p>
@@ -716,7 +698,7 @@ of the latitudes at each point.</li>
    </tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 13T</em></p>
+   <p><em>Band 13 Temperature</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>ABI band 13 (10.3um) temperature.</p>
@@ -724,15 +706,15 @@ of the latitudes at each point.</li>
    </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI Split Snow Difference (Band 5B, Band 2B) - </strong>Emphasizes regions where ice is present, including glaciated clouds and snow/ice.
+<li class="propertylistitem"><strong>ABI Split Snow Difference (Band 5 Brightness, Band 2 Brightness) - </strong>Emphasizes regions where ice is present, including glaciated clouds and snow/ice.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr></td>
+   </strong></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 5B</em></p>
+   <p><em>Band 5 Brightness</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
    <p>ABI band 5 (1.6um) brightness.</p>
@@ -740,19 +722,19 @@ of the latitudes at each point.</li>
    </tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 2B</em></p>
+   <p><em>Band 2 Brightness</em></p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>ABI band 2 (0.64um) brightness.</p>
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>ABI Split Water Vapor Difference (Band 12T, Band 13T) - </strong>Displays water vapor concentration and distribution.
+<li class="propertylistitem"><strong>ABI Split Water Vapor Difference (Band 12 Temperature, Band 13 Temperature) - </strong>Displays water vapor concentration and distribution.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr></td>
+   </strong></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>Band 12T</em></p>
@@ -770,12 +752,12 @@ of the latitudes at each point.</li>
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>ABI Split Window Difference (Band 15T, Band 13T) - </strong>Emphasizes low level moisture and dust.
+<li class="propertylistitem"><strong>ABI Split Window Difference (Band 15 Temperature, Band 13 Temperature) - </strong>Emphasizes low level moisture and dust.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
     <td colspan="1"><strong>Input Parameter</strong></td>
    <td width="630"><strong>Definition
-   </strong></tr></td>
+   </strong></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
    <p><em>Band 15T</em></p>
@@ -793,15 +775,15 @@ of the latitudes at each point.</li>
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>ABI True Color RGB (Band 2, Band 3, Band 1) - </strong>Creates a true color RGB display by simulating a green band. This is based on McIDAS-X's ABITRUCOL function which uses the <a href="http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_CIMSSRGB_v2.pdf">CIMSS Natural True Color method</a>.
+<li class="propertylistitem"><strong>ABI True Color RGB (Band 2 Brightness, Band 3 Brightness, Band 1 Brightness) - </strong>Creates a true color RGB display by simulating a green band. This is based on McIDAS-X's ABITRUCOL function which uses the <a href="http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_CIMSSRGB_v2.pdf">CIMSS Natural True Color method</a>.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 2</em></p>
+        <p><em>Band 2 Brightness</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>ABI band 2 (0.64um) brightness.</p>
@@ -809,7 +791,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 3</em></p>
+        <p><em>Band 3 Brightness</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 3 (0.86um) brightness.</p>
@@ -817,7 +799,7 @@ of the latitudes at each point.</li>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 1</em></p>
+        <p><em>Band 1 Brightness</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>ABI band 1 (0.47um) brightness.</p>
@@ -829,15 +811,15 @@ of the latitudes at each point.</li>
 <div class="pagesubtitle">AHI Functions<a name="ahiFunctions" id="ahiFunctions"></a></div>
 <p>The following describes each formula included in the AHI (Advanced Himawari Imager - Himawari-8 and -9) Functions section of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> ABI Functions tree.</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>AHI Airmass RGB   (Band 8T, Band 10T, Band 12T, Band 13T) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
-<table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+<li class="propertylistitem"><strong>AHI Airmass RGB   (Band 8 Temperature, Band 10 Temperature, Band 12 Temperature, Band 13 Temperature) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 8 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 8 (6.2um) temperature.</p>
@@ -845,7 +827,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 10 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 10 (7.3um) temperature.</p>
@@ -853,7 +835,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 12T</em></p>
+        <p><em>Band 12 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 12 (9.6um) temperature.</p>
@@ -861,7 +843,7 @@ of the latitudes at each point.</li>
     </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 13 (10.4um) temperature.</p>
@@ -869,15 +851,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Ash RGB   (Band 11T, Band 13T, Band 15T) - </strong>Monitors volcanic ash and sulfur dioxide gas.
+<li class="propertylistitem"><strong>AHI Ash RGB   (Band 11 Temperature, Band 13 Temperature, Band 15 Temperature) - </strong>Monitors volcanic ash and sulfur dioxide gas.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 11T</em></p>
+        <p><em>Band 11 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 11 (8.6um) temperature.</p>
@@ -885,7 +867,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 13 (10.4um) temperature.</p>
@@ -893,7 +875,7 @@ of the latitudes at each point.</li>
       </tr>
        <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 15T</em></p>
+        <p><em>Band 15 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 15 (12.4um) temperature.</p>
@@ -901,15 +883,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Day Convective Storm RGB (Band 3A, Band 5A, Band 7T, Band 8T, Band 10T, Band 13T) - </strong>Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
-<table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+<li class="propertylistitem"><strong>AHI Day Convective Storm RGB (Band 3 Albedo, Band 5 Albedo, Band 7 Temperature, Band 8 Temperature, Band 10 Temperature, Band 13 Temperature) - </strong>Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 3A</em></p>
+        <p><em>Band 3 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 3 (0.64um) albedo.</p>
@@ -917,7 +899,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 5A</em></p>
+        <p><em>Band 5 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 5 (1.6um) albedo.</p>
@@ -925,7 +907,7 @@ of the latitudes at each point.</li>
       </tr>
           <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 7T</em></p>
+        <p><em>Band 7 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 7 (3.9um) temperature.</p>
@@ -933,7 +915,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 8 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 8 (6.2um) temperature.</p>
@@ -941,7 +923,7 @@ of the latitudes at each point.</li>
       </tr>
           <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 10 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 10 (7.3um) temperature.</p>
@@ -949,7 +931,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 13 (10.4um) temperature.</p>
@@ -957,15 +939,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Dust RGB   (Band 11T, Band 13T, Band 15T) - </strong>Contrasts between dusts and clouds.
-<table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+<li class="propertylistitem"><strong>AHI Dust RGB   (Band 11 Temperature, Band 13 Temperature, Band 15 Temperature) - </strong>Contrasts between dusts and clouds.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 11T</em></p>
+        <p><em>Band 11 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 11 (8.6um) temperature.</p>
@@ -973,7 +955,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 13 (10.4um) temperature.</p>
@@ -981,7 +963,7 @@ of the latitudes at each point.</li>
       </tr>
           <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 15T</em></p>
+        <p><em>Band 15 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 15 (12.4um) temperature.</p>
@@ -989,15 +971,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI Natural Color RGB   (Band 3A, Band 4A, Band 5A) - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
+<li class="propertylistitem"><strong>AHI Natural Color RGB   (Band 3 Albedo, Band 4 Albedo, Band 5 Albedo) - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 3A</em></p>
+        <p><em>Band 3 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 3 (0.64um) albedo.</p>
@@ -1005,7 +987,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 4A</em></p>
+        <p><em>Band 4 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 4 (0.86um) albedo.</p>
@@ -1013,7 +995,7 @@ of the latitudes at each point.</li>
       </tr>
           <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 5A</em></p>
+        <p><em>Band 5 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 5 (1.6um) albedo.</p>
@@ -1021,15 +1003,15 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>AHI Night Microphysics RGB   (Band 7T, Band 13T, Band 15T) - </strong>Distinguishes between low clouds and fog.
+<li class="propertylistitem"><strong>AHI Night Microphysics RGB   (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) - </strong>Distinguishes between low clouds and fog.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 7T</em></p>
+        <p><em>Band 7 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 7 (3.9um) temperature.</p>
@@ -1037,7 +1019,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 13 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 13 (10.4um) temperature.</p>
@@ -1045,7 +1027,7 @@ of the latitudes at each point.</li>
       </tr>
           <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 15T</em></p>
+        <p><em>Band 15 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 15 (12.4um) temperature.</p>
@@ -1053,15 +1035,15 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>AHI True Color RGB   (Band 1A, Band 2A, Band 3A) - </strong>Displays an image of approximately what would be seen from the satellite, with green vegetation, brown inactive vegetation/soil, and blue water.
+<li class="propertylistitem"><strong>AHI True Color RGB   (Band 1 Albedo, Band 2 Albedo, Band 3 Albedo) - </strong>Displays an image of approximately what would be seen from the satellite, with green vegetation, brown inactive vegetation/soil, and blue water.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
       <td width="630"><strong>Definition
-      </strong></tr></td>
+      </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 1A</em></p>
+        <p><em>Band 1 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
         <p>AHI band 1 (0.47um) albedo.</p>
@@ -1069,7 +1051,7 @@ of the latitudes at each point.</li>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 2A</em></p>
+        <p><em>Band 2 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 2 (0.51um) albedo.</p>
@@ -1077,7 +1059,7 @@ of the latitudes at each point.</li>
       </tr>
           <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 3A</em></p>
+        <p><em>Band 3 Albedo</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AHI band 3 (0.64um) albedo.</p>
@@ -1823,6 +1805,114 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
 </table>
 </li>
 </ul>
+<div class="pagesubtitle">MODIS Functions<a name="modisFunctions" id="modisFunctions"></a></div>
+<p>The following describes each formula included in the MODIS (Moderate Resolution Imaging Spectroradiometer) - Aqua and Terra (Level 1b)) Functions section of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> MODIS Functions tree.
+<ul class="propertylist">
+<li class="propertylistitem"><strong>MODIS Airmass RGB (Band 27 Temperature, Band 28 Temperature, Band 30 Temperature, Band 31 Temperature) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 27 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>MODIS band 27 (6.7654um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 28 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>MODIS band 28 (7.3367um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 30 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>MODIS band 30 (9.7344um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 31 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>MODIS band 31 (11.0186um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>MODIS Dust RGB (Band 29 Temperature, Band 31 Temperature, Band 32 Temperature) - </strong>Contrasts between dusts and clouds.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 29 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>MODIS band 29 (8.5288um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 31 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>MODIS band 31 (11.0186um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 32 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>MODIS band 32 (12.0325um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>MODIS Night Microphysics RGB (Band 22 Temperature, Band 31 Temperature, Band 32 Temperature) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 22 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>MODIS band 22 (3.9719um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 31 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>MODIS band 31 (11.0186um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 32 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>MODIS band 32 (12.0325um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+</ul>
 <div class="pagesubtitle">MSG Functions<a name="msgFunctions" id="msgFunctions"></a></div>
 <p>The following describes each formula included in the MSG (Meteosat Second Generation (SEVIRI instrument) - Meteosat-8 through Meteosat-11) Functions section of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> MSG Functions tree.
 <ul class="propertylist">
@@ -1994,7 +2084,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>MSG Generic Severe Convection RGB (Band 1 Reflectance, Band 3 Reflectance, Band 4 Temperature, Band 5 Temperature, Band 6 Temperature, Band 9 Temperature) -</strong> Allows the user to modify the minimum, maximum, and gamma value of the red, green, and blue components once the display has been created.
+<li class="propertylistitem"><strong>MSG Generic Severe Convection RGB (Band 1 Reflectance, Band 3 Reflectance, Band 4 Temperature, Band 5 Temperature, Band 6 Temperature, Band 9 Temperature) -</strong> Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather. Allows the user to modify the minimum, maximum, and gamma value of the red, green, and blue components once the display has been created.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2098,7 +2188,7 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>MSG Night Microphysics RGB (Band 8T, Band 10T, Band 12T, Band 13T) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+<li class="propertylistitem"><strong>MSG Night Microphysics RGB (Band 4 Temperature, Band 9 Temperature, Band 10 Temperature) - </strong>Distinguishes between low clouds and fog.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2106,39 +2196,31 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 4 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>ABI band 8 (6.2um) temperature.</p>
+        <p>MSG band 4 (3.9um) temperature.</p>
         </td>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 9 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 10 (7.3um) temperature.</p>
+        <p>MSG band 9 (10.8um) temperature.</p>
         </td>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 12T</em></p>
+        <p><em>Band 10 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 12 (9.6um) temperature.</p>
-        </td>
-      </tr>
-      <tr>
-      <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
-        </td>
-      <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 13 (10.3um) temperature.</p>
+        <p>MSG band 10 (12.0um) temperature.</p>
         </td>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>MSG Severe Convection RGB (Band 8T, Band 10T, Band 12T, Band 13T) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+<li class="propertylistitem"><strong>MSG Severe Convection RGB (Band 1 Reflectance, Band 3 Reflectance, Band 4 Temperature, Band 5 Temperature, Band 6 Temperature, Band 9 Temperature) - </strong>Highlights strong updrafts and small ice particles in areas of convection to indicate regions of severe weather.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2146,39 +2228,55 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 1 Reflectance</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>ABI band 8 (6.2um) temperature.</p>
+        <p>MSG band 1 (0.6um) reflectance.</p>
         </td>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 3 Reflectance</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 10 (7.3um) temperature.</p>
+        <p>MSG band 2 (0.8um) reflectance.</p>
         </td>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 12T</em></p>
+        <p><em>Band 4 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 12 (9.6um) temperature.</p>
+        <p>MSG band 4 (3.9um) temperature.</p>
         </td>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
+        <p><em>Band 5 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 13 (10.3um) temperature.</p>
+        <p>MSG band 5 (6.2um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 6 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>MSG band 6 (7.3um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 9 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>MSG band 9 (10.8um) temperature.</p>
         </td>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>ABI SO2 RGB (Band 8T, Band 10T, Band 12T, Band 13T) - </strong>Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
+<li class="propertylistitem"><strong>MSG SO2 RGB (Band 7 Temperature, Band 9 Temperature, Band 10 Temperature) - </strong>Detects and analyzes sulfur dioxide emissions from power plants and volcanoes.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -2186,36 +2284,27 @@ else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element v
       </strong></tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 8T</em></p>
+        <p><em>Band 7 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
-        <p>ABI band 8 (6.2um) temperature.</p>
+        <p>MSG band 7 (8.7um) temperature.</p>
         </td>
       </tr>
     <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 10T</em></p>
+        <p><em>Band 9 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 10 (7.3um) temperature.</p>
+        <p>MSG band 9 (10.8um) temperature.</p>
         </td>
       </tr>
       <tr>
       <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 12T</em></p>
+        <p><em>Band 10 Temperature</em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 12 (9.6um) temperature.</p>
+        <p>MSG band 10 (12.0um) temperature.</p>
         </td>
-      </tr>
-      <tr>
-      <td width="145" colspan="1" rowspan="1" valign="top">
-        <p><em>Band 13T</em></p>
-        </td>
-      <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 13 (10.3um) temperature.</p>
-        </td>
-      </tr>
 </table>
 </li>
 </ul>
