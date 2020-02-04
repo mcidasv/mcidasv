@@ -665,6 +665,17 @@
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_Airmass"/>
+        </operands>
+    </derived>
+    <derived description="MSG Tropical Airmass RGB" formula="MSGTropicalAirmassRGB(D1[label=Band 5 Temperature], D2[label=Band 6 Temperature], D3[label=Band 8 Temperature], D4[label=Band 9 Temperature])" id="msgtropicalairmass" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_Airmass"/>
