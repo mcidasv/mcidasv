@@ -335,7 +335,7 @@
             <params categories="" p1="192_Band5_BRIT" p2="192_Band2_BRIT"/>
         </operands>
     </derived>
-    <derived description="ABI Split Water Vapor Difference" formula="ABISplitWaterVaporDifference(D1[label=Band 12 Temperature], D2[label=Band 13 Temperature])" id="abisplitwatervapor" isdefault="true" isenduser="true" override="true">
+    <derived description="ABI Split Water Vapor Difference" formula="ABISplitWaterVaporDifference(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature])" id="abisplitwatervapor" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:planviewcontour"/>
