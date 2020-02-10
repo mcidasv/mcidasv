@@ -28,33 +28,38 @@
 
 package edu.wisc.ssec.mcidasv.data;
 
-import edu.wisc.ssec.mcidas.AreaDirectory;
-import edu.wisc.ssec.mcidas.AREAnav;
-
-import edu.wisc.ssec.mcidasv.Constants;
-
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.*;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.geom.Rectangle2D;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.accessibility.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
-import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DataSelectionComponent;
+import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
 import ucar.unidata.geoloc.LatLonPoint;
@@ -66,7 +71,12 @@ import ucar.unidata.util.StringUtil;
 
 import visad.VisADException;
 import visad.data.mcidas.AREACoordinateSystem;
-import visad.georef.*;
+import visad.georef.EarthLocationTuple;
+import visad.georef.MapProjection;
+
+import edu.wisc.ssec.mcidas.AREAnav;
+import edu.wisc.ssec.mcidas.AreaDirectory;
+import edu.wisc.ssec.mcidasv.Constants;
 
 
 public class GeoLatLonSelection extends DataSelectionComponent implements Constants {
@@ -175,18 +185,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       JTextField lineMagFld = new JTextField();
       JTextField eleMagFld = new JTextField();
 
-      /** Label used for the line center */
-      private JLabel centerLineLbl = new JLabel();
-
-      /** Label used for the element center */
-      private JLabel centerElementLbl = new JLabel();
-
-      /** Label used for the center latitude */
-      private JLabel centerLatLbl = new JLabel();
-
-      /** Label used for the center longitude */
-      private JLabel centerLonLbl = new JLabel();
-
       /** _more_ */
       private JToggleButton lockBtn;
       private JButton fullResBtn;
@@ -222,9 +220,7 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       String[] coordinateTypes = { TYPE_LATLON, TYPE_IMAGE, TYPE_AREA };
       String[] locations = {"Center", "Upper Left"};
 
-//      static double dNaN = Double.NaN;
-
-/** the place string */
+      /** the place string */
       private String defaultType = TYPE_LATLON;
       private String place;
       private String defaultPlace = PLACE_CENTER;
@@ -239,10 +235,8 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private  boolean resetLatLon = true;
       private int imageLine;
       private int areaLine;
-      private int defaultLine = -1;
       private int imageElement;
       private int areaElement;
-      private int defaultElement = -1;
       private int lineMag;
       private double dLineMag;
       private int defaultLineMag;
@@ -256,10 +250,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       protected double baseERes = 0.0;
 
       private Hashtable properties;
-      private int uLLine;
-      private int uLEle;
-      private int centerLine;
-      private int centerEle;
       protected boolean amUpdating = false;
 
 
@@ -314,19 +304,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
       private double bLRes = 0.0;
       private double bERes = 0.0;
 
-      private List readoutLLWidget = new ArrayList();
-      private List readoutLatFld = new ArrayList();
-      private List readoutLonFld = new ArrayList();
       private JPanel latLonReadoutPanel;
-
-      private List readoutImageLinFld = new ArrayList();
-      private List readoutImageEleFld = new ArrayList();
       private JPanel lineElementImageReadoutPanel;
-
-      private List readoutAreaLinFld = new ArrayList();
-      private List readoutAreaEleFld = new ArrayList();
       private JPanel lineElementAreaReadoutPanel;
-
       private GuiUtils.CardLayoutPanel readoutPanel;
 
       public GeoLatLonSelection(DataSourceImpl dataSource,
@@ -594,20 +574,18 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
                   latFld.addFocusListener(latLonFocusChange);
                   lonFld.addFocusListener(latLonFocusChange);
                   latLonPanel = GuiUtils.hbox(new Component[] {
-                      centerLatLbl = GuiUtils.rLabel(" Lat:" + dfltLblSpacing),
+                      GuiUtils.rLabel(" Lat:" + dfltLblSpacing),
                       latFld,
-                      centerLonLbl = GuiUtils.rLabel(" Lon:" + dfltLblSpacing),
+                      GuiUtils.rLabel(" Lon:" + dfltLblSpacing),
                       lonFld,
                       new JLabel(" "), centerPopup
                   });
 
                   lineElementPanel =
                       GuiUtils.hbox(new Component[] {
-                          centerLineLbl =
-                              GuiUtils.rLabel(" Line:" + dfltLblSpacing),
+                          GuiUtils.rLabel(" Line:" + dfltLblSpacing),
                           centerLineFld,
-                          centerElementLbl = GuiUtils.rLabel(" Element:"
-                              + dfltLblSpacing),
+                          GuiUtils.rLabel(" Element:" + dfltLblSpacing),
                           centerElementFld });
 
                   locationPanel = new GuiUtils.CardLayoutPanel();
@@ -1515,7 +1493,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     public double getLatitude() {
         double val = latLonWidget.getLat();
-//        Double dbl = new Double(val);
         if (Double.isNaN(val)) val = defaultLat;
         if (val < -90.0 || val > 90.0) val = defaultLat;
         setLatitude(val);
@@ -1540,7 +1517,6 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
 
     public double getLongitude() {
         double val = latLonWidget.getLon();
-//        Double dbl = new Double(val);
         if (Double.isNaN(val)) val = defaultLon;
         if (val < -180.0 || val > 180.0) val = defaultLon;
         setLongitude(val);
@@ -1738,16 +1714,9 @@ public class GeoLatLonSelection extends DataSelectionComponent implements Consta
     public boolean getLockOn() {
         return lockBtn.isSelected();
     }
-        
-    protected void setULCoords(double x, double y) {
-        uLLine = (int)y;
-        uLEle = (int)x;
-    }
  
     protected void setCenterCoords(int x, int y) {
-        centerLine = y;
         setLine(y);
-        centerEle = x;
         setElement(x);
     }
 
