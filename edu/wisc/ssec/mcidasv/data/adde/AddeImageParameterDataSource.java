@@ -1099,6 +1099,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                             bandIdx = tmpIdx;
                             logger.debug("Derived field, updated bandIdx to: " + bandIdx);
                             bi = bandInfo;
+                            saveBand = String.valueOf(bi.getBandNumber());
                             logger.debug("Updated bandInfo: " + bi);
                         }
                         tmpIdx++;
@@ -1267,11 +1268,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     /**
      * Return true if the Sensor is Geostationary
      * 
-     * @param McIDAS Sensor Source number. 
+     * @param sensorID McIDAS Sensor Source number.
      *  See https://www.ssec.wisc.edu/mcidas/doc/users_guide/2017.2/app_c-1.html
      * @return true if ID matches a defined GEO sensor
      */
-    
     private boolean sensorIsGEO(int sensorID) {
         boolean isGEO = false;
         
