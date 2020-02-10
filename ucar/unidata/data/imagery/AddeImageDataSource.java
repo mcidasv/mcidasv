@@ -132,7 +132,7 @@ public class AddeImageDataSource extends ImageDataSource {
     BandInfo bandId;
 
     /** _more_ */
-    Hashtable allBandDirs;
+    protected Hashtable allBandDirs;
 
     /**
      *  The parameterless ctor unpersisting.
