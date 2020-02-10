@@ -33,3 +33,17 @@ def MODISNDVI(b1R,b2R):
     # b1R = Band 1 (0.6465um) Reflectance
     # b2R = Band 2 (0.8567um) Reflectance
     return (b2R-b1R)/(b2R+b1R)
+
+# MODIS EVI
+def MODISEVI(b1R,b2R, b3R):
+    # b1R = Band 1 (0.6465um) Reflectance : Red band
+    # b2R = Band 2 (0.8567um) Reflectance : NIR
+    # b3R = Band 3 (0.4656um) Reflectance : Blue band
+    # G = Gain factor (2.5)
+    # L = Canopy background adjustment (1)
+    # C1, C2 = Coefficients of aerosol resistance term (C1=6, C2=7.5)
+    G = 2.5
+    L = 1
+    C1 = 6
+    C2 = 7.5
+    return G * ((b2R - b1R)/(b2R + (C1 * b1R) - (C2 * b3R) + L))
