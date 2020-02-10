@@ -98,6 +98,7 @@ import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.DataSelectionComponent;
 import ucar.unidata.data.DataSourceDescriptor;
+import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.DirectDataChoice;
 import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
@@ -1035,9 +1036,35 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //    }
     
     private boolean makePreviewImage(DataChoice dataChoice) {
-        logger.trace("starting with dataChoice={}", dataChoice);
+        logger.trace("Starting with dataChoice={}", dataChoice);
         getIdv().showWaitCursor();
-
+        
+        // For dealing with derived fields - will need to know which bands are involved
+        // They may be a mix of base resolutions
+        boolean isDerived = false;
+        ArrayList<Integer> derivedBands = new ArrayList<Integer>();
+        
+        // TJJ Inq #2181 Feb 2020
+        // If derived, figure out which bands are involved. Open to better ideas here :-)
+        if (dataChoice instanceof DerivedDataChoice) {
+            isDerived = true;
+            Hashtable ht = ((DerivedDataChoice) dataChoice).getUserSelectedChoices();
+            java.util.Set<String> set = ht.keySet();
+            for (String s : set) {
+                DataChoice dc = (DataChoice) ht.get(s);
+                logger.debug("Data choice String ID " + dc.getStringId());
+                logger.debug("Data choice Name " + dc.getName());
+                String dcName = dc.getName();
+                // Pull out band number, definitely hacky but don't know a better way
+                int idxLo = dcName.indexOf("Band") + 4;
+                int idxHi = dcName.indexOf('_', idxLo);
+                String bandStr = dcName.substring(idxLo, idxHi);
+                logger.debug("Data choice Band " + bandStr);
+                derivedBands.add(Integer.parseInt(bandStr));
+                Hashtable dcProps = dc.getProperties();
+            }
+        }
+        
         boolean msgFlag = false;
         showPreview = saveShowPreview;
         List<BandInfo> bandInfos = (List<BandInfo>)getProperty(PROP_BANDINFO, (Object) null);
@@ -1059,6 +1086,24 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 msgFlag = true;
                 bi = bandInfos.get(bandIdx);
                 this.showPreview = false;
+                // If derived, use band representing best available res
+                if (isDerived) {
+                    this.showPreview = true;
+                    double bestRes = Double.MAX_VALUE;
+                    int tmpIdx = 0;
+                    for (BandInfo bandInfo : bandInfos) {
+                        AreaDirectory ad = (AreaDirectory) allBandDirs.get(bandInfo.getBandNumber());
+                        double lineRes = ad.getCenterLatitudeResolution();
+                        if (lineRes < bestRes && (derivedBands.contains(bandInfo.getBandNumber()))) {
+                            bestRes = lineRes;
+                            bandIdx = tmpIdx;
+                            logger.debug("Derived field, updated bandIdx to: " + bandIdx);
+                            bi = bandInfo;
+                            logger.debug("Updated bandInfo: " + bi);
+                        }
+                        tmpIdx++;
+                    }
+                }
             }
             // pull out the list of cal units, we'll need for type check later...
             calList = bi.getCalibrationUnits();
@@ -1072,12 +1117,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
 
             logger.trace("replacing band: new={} from={}", bi.getBandNumber(), source);
-//            source = replaceKey(source, BAND_KEY, (Object) (bi.getBandNumber()));
             source = replaceKey(source, BAND_KEY, bi.getBandNumber());
-            // if we're replacing the band, replace cal type with preferred  
-            // type for that band
+            // if we're replacing the band, replace cal type with preferred type for that band
             logger.trace("replacing unit: new={} from={}", bi.getPreferredUnit(), source);
-//            source = replaceKey(source, UNIT_KEY, (Object) bi.getPreferredUnit());
             source = replaceKey(source, UNIT_KEY, bi.getPreferredUnit());
         } catch (Exception excp) {
             handlePreviewImageError(1, excp);
