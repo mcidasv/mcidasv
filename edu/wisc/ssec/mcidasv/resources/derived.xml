@@ -282,6 +282,7 @@
             <params categories="" p1="188_Band13_TEMP" p2="188_Band7_TEMP"/>
             <params categories="" p1="190_Band13_TEMP" p2="190_Band7_TEMP"/>
             <params categories="" p1="192_Band13_TEMP" p2="192_Band7_TEMP"/>
+            <params categories="" p1="CMI_C13" p2="CMI_C07"/>
         </operands>
     </derived>
     <derived description="ABI Split Cloud Phase Difference" formula="ABISplitCloudPhaseDifference(D1[label=Band 14 Temperature], D2[label=Band 11 Temperature])" id="abisplitcloudphase" isdefault="true" isenduser="true" override="true">
@@ -299,6 +300,7 @@
             <params categories="" p1="188_Band14_TEMP" p2="188_Band11_TEMP"/>
             <params categories="" p1="190_Band14_TEMP" p2="190_Band11_TEMP"/>
             <params categories="" p1="192_Band14_TEMP" p2="192_Band11_TEMP"/>
+            <params categories="" p1="CMI_C14" p2="CMI_C11"/>
         </operands>
     </derived>
     <derived description="ABI Split Ozone Difference" formula="ABIOzoneDifference(D1[label=Band 12 Temperature], D2[label=Band 13 Temperature])" id="abisplitozone" isdefault="true" isenduser="true" override="true">
@@ -316,6 +318,7 @@
             <params categories="" p1="188_Band12_TEMP" p2="188_Band13_TEMP"/>
             <params categories="" p1="190_Band12_TEMP" p2="190_Band13_TEMP"/>
             <params categories="" p1="192_Band12_TEMP" p2="192_Band13_TEMP"/>
+            <params categories="" p1="CMI_C12" p2="CMI_C13"/>
         </operands>
     </derived>
     <derived description="ABI Split Snow Difference" formula="ABISplitSnowDifference(D1[label=Band 5 Brightness], D2[label=Band 2 Brightness])" id="abisplitsnow" isdefault="true" isenduser="true" override="true">
@@ -350,6 +353,7 @@
             <params categories="" p1="188_Band8_TEMP" p2="188_Band10_TEMP"/>
             <params categories="" p1="190_Band8_TEMP" p2="190_Band10_TEMP"/>
             <params categories="" p1="192_Band8_TEMP" p2="192_Band10_TEMP"/>
+            <params categories="" p1="CMI_C08" p2="CMI_C10"/>
         </operands>
     </derived>
     <derived description="ABI Split Window Difference" formula="ABISplitWindowDifference(D1[label=Band 15 Temperature], D2[label=Band 13 Temperature])" id="abisplitwindow" isdefault="true" isenduser="true" override="true">
@@ -367,6 +371,7 @@
             <params categories="" p1="188_Band15_TEMP" p2="188_Band13_TEMP"/>
             <params categories="" p1="190_Band15_TEMP" p2="190_Band13_TEMP"/>
             <params categories="" p1="192_Band15_TEMP" p2="192_Band13_TEMP"/>
+            <params categories="" p1="CMI_C15" p2="CMI_C13"/>
         </operands>
     </derived>
     <derived description="ABI Airmass RGB" formula="ABIAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="abiairmass" isdefault="true" isenduser="true" override="true">
