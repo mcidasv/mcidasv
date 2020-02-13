@@ -384,7 +384,7 @@ def check_for_integers(values):
            all(int(x) >= 0 or x <= 255 for x in values)
 
 
-def make_isl_string(name, formatter):
+def make_isl_string(formatter):
     result = '%s ' % formatter.islPrefix()
     for a in dir(formatter):
         val = getattr(formatter, a)
