@@ -1369,16 +1369,24 @@ return console.askYesNo(message, true);
     <macosFolder name="Mac OS X" id="12" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
       <excludedComponents>
         <component id="7274" />
+        <component id="9167" />
+        <component id="9351" />
       </excludedComponents>
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
+        <launcher id="8610" />
+        <launcher id="8851" />
       </excludedLaunchers>
       <exclude>
+        <entry filesetId="8603" />
+        <entry filesetId="8605" />
         <entry filesetId="7408" />
         <entry filesetId="7406" />
         <entry filesetId="7410" />
         <entry filesetId="7414" />
+        <entry filesetId="9156" />
+        <entry filesetId="9158" />
       </exclude>
       <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/macosx-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
     </macosFolder>
