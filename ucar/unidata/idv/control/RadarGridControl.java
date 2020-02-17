@@ -190,7 +190,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
     /** list of radial spacings */
     static final Vector radSpacingList = Misc.toVector(new String[] {
-        "5", "10", "15", "30", "45", "60", "90"
+        "5", "10", "15", "30", "45", "60", "90", "120"
     });
 
     /** list of maximum radius */
@@ -740,9 +740,9 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             linkColorAndLineWidthButton
         };
 
-        GuiUtils.tmpInsets = new Insets(2, 0, 2, 0);
+        GuiUtils.tmpInsets = new Insets(5, 5, 5, 5);
         JPanel topInner = GuiUtils.doLayout(comps, 7, stretchy, GuiUtils.WT_N);
-        JPanel topOuter = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel topOuter = new JPanel(new FlowLayout(FlowLayout.LEADING));
         topOuter.add(topInner);
         
         List   bottomComps = new ArrayList();
