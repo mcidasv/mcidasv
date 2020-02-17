@@ -28,19 +28,21 @@
 
 package ucar.visad.display;
 
-
-import ucar.visad.quantities.CommonUnits;
-
-import visad.*;
-
-import visad.bom.Radar2DCoordinateSystem;
-
-import visad.georef.LatLonPoint;
-
 import java.awt.Color;
 import java.awt.Font;
-
 import java.rmi.RemoteException;
+
+import ucar.unidata.idv.control.RadarGridControl;
+import ucar.visad.quantities.CommonUnits;
+
+import visad.CommonUnit;
+import visad.Real;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.Unit;
+import visad.VisADException;
+import visad.bom.Radar2DCoordinateSystem;
+import visad.georef.LatLonPoint;
 
 
 /**
@@ -107,6 +109,9 @@ public class RadarGrid extends CompositeDisplayable {
 
     /** width for range rings */
     private Unit distanceUnit = CommonUnits.KILOMETER;
+
+    /** handle to the control */
+    private RadarGridControl control = null;
 
     /**
      * Construct a RadarGrid centered at llp.
@@ -573,6 +578,10 @@ public class RadarGrid extends CompositeDisplayable {
                               new Real(rangeType, rrMax, distanceUnit));
         labels.setLabelUnit(distanceUnit);
         labels.setTextSize(labelSize);
+
+        // Control is set after init, so need the null check
+        if (control != null) labels.setSphere(control.inGlobeDisplay());
+
         labels.setVisible(oldVisible);
         labels.setLineWidth(labelWidth);
         addDisplayable(labels);
@@ -615,6 +624,10 @@ public class RadarGrid extends CompositeDisplayable {
         distanceUnit = newUnit;
         // redraw
         setCenterPoint(center_lat, center_lon);
+    }
+
+    public void setControl(RadarGridControl radarGridControl) {
+        control = radarGridControl;
     }
 
 }

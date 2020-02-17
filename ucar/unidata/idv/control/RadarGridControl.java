@@ -31,6 +31,7 @@ package ucar.unidata.idv.control;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -75,6 +76,7 @@ import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
 import visad.georef.MapProjection;
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
 /**
@@ -316,6 +318,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
         // create the actual displayable
         rangeRings = new RadarGrid(llp, rrColor, getDisplayUnit());
+        rangeRings.setControl(this);
 
         if (labelFont != null) {
             rangeRings.setFont(labelFont);
@@ -682,8 +685,11 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
                 "If linked, Color and Line Width changes apply to Range Rings, Radials, and Labels.");
             
         rrColorSwatch = (ColorSwatchComponent) makeColorBox(CMD_RR_COLOR, rrColor);
+        rrColorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         radColorSwatch = (ColorSwatchComponent) makeColorBox(CMD_RAD_COLOR, radColor);
+        radColorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         lblColorSwatch = (ColorSwatchComponent) makeColorBox(CMD_LBL_COLOR, lblColor);
+        lblColorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         
         rrComboBox = makeLineWidthBox(CMD_RR_WIDTH, rrWidth);
         radComboBox = makeLineWidthBox(CMD_RAD_WIDTH, radWidth);
@@ -735,7 +741,9 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         };
 
         GuiUtils.tmpInsets = new Insets(2, 0, 2, 0);
-        JPanel top = GuiUtils.doLayout(comps, 7, stretchy, GuiUtils.WT_N);
+        JPanel topInner = GuiUtils.doLayout(comps, 7, stretchy, GuiUtils.WT_N);
+        JPanel topOuter = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        topOuter.add(topInner);
         
         List   bottomComps = new ArrayList();
 
@@ -769,7 +777,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.add("Location", GuiUtils.top(GuiUtils.inset(bottom, 5)));
-        tabbedPane.add("Settings", GuiUtils.top(GuiUtils.inset(top, 5)));
+        tabbedPane.add("Settings", GuiUtils.top(GuiUtils.inset(topOuter, 5)));
         return tabbedPane;
     }
 
