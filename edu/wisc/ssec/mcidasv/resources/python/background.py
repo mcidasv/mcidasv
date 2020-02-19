@@ -35,6 +35,7 @@ from java.util.concurrent import FutureTask
 from edu.wisc.ssec.mcidasv.McIDASV import getStaticMcv
 
 from ucar.unidata.idv import DisplayInfo
+from ucar.unidata.idv import ViewManager
 from ucar.unidata.idv.ui import IdvWindow
 from ucar.unidata.idv.control import StationModelControl
 from ucar.unidata.idv.control import ValuePlanViewControl
@@ -2876,21 +2877,23 @@ def findWindow(display):
     Raises:
         ValueError: if display is not an instance of _Display or ViewManager.
     """
-    from ucar.unidata.idv import ViewManager
     from edu.wisc.ssec.mcidasv.util.McVGuiUtils import getWindowForViewManager
+    if isinstance(display, _Display):
+        display = display.getJavaInstance()
 
-    if getStaticMcv().getArgsManager().getIsOffScreen():
+    if not isinstance(display, ViewManager):
+        raise ValueError("parameter type must be _Display or ViewManager (given: '%s')" % (type(display)))
+
+    # always attempt to locate the appropriate window the "normal" way, as the
+    # user may have *somehow* managed to create one while in background mode.
+    result = getWindowForViewManager(display)
+    if result:
+        result = _Window(result)
+
+    # but if no windows were found and we're in the background, use the new
+    # _BGWindow approach.
+    if not result and getStaticMcv().getArgsManager().getIsOffScreen():
         result = _BGWindow(display)
-    else:
-        if isinstance(display, _Display):
-            display = display.getJavaInstance()
-
-        if not isinstance(display, ViewManager):
-            raise ValueError("parameter type must be _Display or ViewManager (given: '%s')" % (type(display)))
-
-        result = getWindowForViewManager(display)
-        if result:
-            result = _Window(result)
 
     return result
 
