@@ -2814,6 +2814,54 @@ def firstWindow():
     return _Window(IdvWindow.getMainWindows()[0])
 
 
+class _BGWindow:
+
+    """Replica of _Window class for use within findWindow.
+
+    Do NOT create an instance of this unless you absolutely need it.
+    """
+
+    def __init__(self, display):
+        if not getStaticMcv().getArgsManager().getIsOffScreen():
+            raise
+
+        if isinstance(display, _Display):
+            self.viewManager = display.getJavaInstance()
+        elif isinstance(display, ViewManager):
+            self.viewManager = display
+        else:
+            raise
+
+    def createTab(self, skinId):
+        raise
+
+    def getCurrentTab(self):
+        raise
+
+    def getTabAtIndex(self, index):
+        raise
+
+    def getTabCount(self):
+        raise
+
+    def getTabs(self):
+        raise
+
+    @gui_invoke_later
+    def getSize(self):
+        size = getStaticMcv().getStateManager().getViewSize()
+        return size.getWidth(), size.getHeight()
+
+    @gui_invoke_later
+    def getBounds(self):
+        rect = self.viewManager.getDisplayBounds()
+        return rect.x, rect.y, rect.width, rect.height
+
+    @gui_invoke_later
+    def close(self):
+        self.viewManager.destroy()
+
+
 @gui_invoke_later
 def findWindow(display):
     """Find the window containing the given display.
@@ -2830,16 +2878,20 @@ def findWindow(display):
     """
     from ucar.unidata.idv import ViewManager
     from edu.wisc.ssec.mcidasv.util.McVGuiUtils import getWindowForViewManager
-    if isinstance(display, _Display):
-        display = display.getJavaInstance()
-        
-    if not isinstance(display, ViewManager):
-        raise ValueError("parameter type must be _Display or ViewManager (given: '%s')" % (type(display)))
-        
-    result = getWindowForViewManager(display)
-    if result:
-        result = _Window(result)
-    
+
+    if getStaticMcv().getArgsManager().getIsOffScreen():
+        result = _BGWindow(display)
+    else:
+        if isinstance(display, _Display):
+            display = display.getJavaInstance()
+
+        if not isinstance(display, ViewManager):
+            raise ValueError("parameter type must be _Display or ViewManager (given: '%s')" % (type(display)))
+
+        result = getWindowForViewManager(display)
+        if result:
+            result = _Window(result)
+
     return result
 
 
