@@ -101,5 +101,9 @@
   <param name="modis_ndvi" range_max="1.0" range_min="-1.0" table="NDVI"/>
   <param name="modis_evi" range_max="1.0" range_min="-1.0" table="NDVI"/>
   <!-- end inq 2876 -->
+  
+  <!-- bob inq 2670 - Feb 2020 -->
+  <param name="VIIRS_NDVI" range_max="1.0" range_min="-1.0" table="NDVI"/>
+  <!-- end inq 2670 -->
 </params>
 
