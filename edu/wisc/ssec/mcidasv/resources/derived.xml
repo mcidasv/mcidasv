@@ -539,6 +539,7 @@
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_Airmass"/>
@@ -549,6 +550,7 @@
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_Ash"/>
@@ -559,6 +561,7 @@
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_DayConvectiveStorm"/>
@@ -569,6 +572,7 @@
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_Dust"/>
@@ -579,6 +583,7 @@
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_NaturalColor"/>
@@ -589,6 +594,7 @@
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_NightMicrophysics"/>
@@ -599,6 +605,7 @@
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_TrueColor"/>
