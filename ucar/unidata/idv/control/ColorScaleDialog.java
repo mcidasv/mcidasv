@@ -70,11 +70,8 @@ public class ColorScaleDialog implements ActionListener {
     /** Holds the state */
     private ColorScaleInfo myInfo;
 
-    /** combobox for the orientation TODO: implement this */
-    private JComboBox orientationBox;
-
     /** combobox for the placement */
-    private JComboBox placementBox;
+    private JComboBox<String> placementBox;
 
     /** combobox for the label color */
     private ColorSwatchComponent colorSwatch;
@@ -97,11 +94,13 @@ public class ColorScaleDialog implements ActionListener {
     /** The Font selector */
     private FontSelector fontSelector = null;
 
-    /** list of orienations */
+    /** list of orientations */
     private final static String[] positions = new String[] {
-                                                  ColorScaleInfo.TOP,
-            ColorScaleInfo.BOTTOM, ColorScaleInfo.LEFT,
-            ColorScaleInfo.RIGHT };
+        ColorScaleInfo.TOP,
+        ColorScaleInfo.BOTTOM,
+        ColorScaleInfo.LEFT,
+        ColorScaleInfo.RIGHT
+    };
 
     /**
      * Construct the widget.
@@ -133,7 +132,7 @@ public class ColorScaleDialog implements ActionListener {
         if (place != null) {
             placementBox.setSelectedItem(place);
         }
-        //orientationBox.setSelectedItem(myInfo.getOrientation());
+
         visibilityCbx.setSelected(myInfo.getIsVisible());
         unitCbx.setSelected(myInfo.isUnitVisible());
         labelVisibilityCbx.setSelected(myInfo.getLabelVisible());
@@ -172,7 +171,7 @@ public class ColorScaleDialog implements ActionListener {
      * @return Was this successful
      */
     protected boolean doApply() {
-        //myInfo.setOrientation(GuiUtils.getValueFromBox(orientationBox));
+
         String place = (String) placementBox.getSelectedItem();
         if (place != null) {
             myInfo.setPlacement(place);
@@ -210,7 +209,7 @@ public class ColorScaleDialog implements ActionListener {
      */
 
     private void doMakeContents(boolean showDialog) {
-        placementBox = new JComboBox(positions);
+        placementBox = new JComboBox<String>(positions);
         IdvObjectStore ios = null;
         if (displayControl != null) {
             ios = displayControl.getIdv().getStore();
@@ -237,7 +236,6 @@ public class ColorScaleDialog implements ActionListener {
         GuiUtils.tmpInsets = new Insets(4, 4, 4, 4);
         contents           = GuiUtils.doLayout(new Component[] {
             GuiUtils.rLabel("Visible: "), visibilityCbx,
-            //GuiUtils.leftRight(visibilityCbx, GuiUtils.flow( new Component[] {GuiUtils.rLabel("  Show Transparency: "), alphaCbx})),
             GuiUtils.rLabel("Position: "),
             GuiUtils.leftRight(placementBox, GuiUtils.filler()),
             GuiUtils.rLabel("Labels: "),
