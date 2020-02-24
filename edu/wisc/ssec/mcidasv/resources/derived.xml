@@ -614,6 +614,7 @@
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_RGB_Dust"/>
@@ -641,6 +642,7 @@
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayoverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_NDVI"/>
@@ -651,6 +653,7 @@
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_RGB_NightMicrophysics"/>
@@ -661,6 +664,7 @@
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_RGB_TrueColor"/>
