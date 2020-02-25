@@ -663,6 +663,10 @@
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:imagedisplay"/>
             <category value="display:imagedisplayoverz"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_NDVI"/>
