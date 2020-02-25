@@ -103,7 +103,7 @@
   <!-- end inq 2876 -->
   
   <!-- bob inq 2670 - Feb 2020 -->
-  <param name="VIIRS_NDVI" range_max="1.0" range_min="-1.0" table="NDVI"/>
+  <param ci_base="0.0" ci_interval="0.1" ci_max="2.0" ci_min="-2.0" ci_width="1" name="VIIRS_NDVI" range_max="1.0" range_min="-1.0" table="NDVI"/>
   <!-- end inq 2670 -->
 </params>
 
