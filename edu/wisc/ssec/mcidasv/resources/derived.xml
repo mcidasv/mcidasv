@@ -805,6 +805,7 @@
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MODIS_RGB_NightMicrophysics"/>
@@ -815,6 +816,7 @@
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MODIS_RGB_Dust"/>
@@ -825,6 +827,7 @@
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands>
             <paramgroup name="MODIS_RGB_Airmass"/>
@@ -834,6 +837,7 @@
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayoverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MODIS_NDVI"/>
@@ -843,6 +847,7 @@
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagedisplay"/>
+            <category value="display:imagedisplayoverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MODIS_EVI"/>
