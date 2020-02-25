@@ -695,6 +695,7 @@
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_Airmass"/>
@@ -705,6 +706,7 @@
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_Airmass"/>
@@ -714,6 +716,7 @@
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_24HrMicrophysics"/>
@@ -723,6 +726,7 @@
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_Dust"/>
@@ -732,6 +736,7 @@
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_SO2"/>
@@ -741,6 +746,7 @@
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_CloudMicrophysics"/>
@@ -750,6 +756,7 @@
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_NaturalColor"/>
@@ -768,6 +775,7 @@
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_SevereConvection"/>
@@ -786,6 +794,7 @@
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
             <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_NightMicrophysics"/>
