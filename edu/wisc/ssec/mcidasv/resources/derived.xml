@@ -838,6 +838,10 @@
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagedisplay"/>
             <category value="display:imagedisplayoverz"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MODIS_NDVI"/>
@@ -848,6 +852,10 @@
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagedisplay"/>
             <category value="display:imagedisplayoverz"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MODIS_EVI"/>
