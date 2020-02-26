@@ -276,6 +276,14 @@
             <category value="display:imagedisplayoverz"/>
             <category value="display:planviewcontourfilled"/>
             <category value="display:valuedisplay"/>
+            <category value="display:probe"/>
+            <category value="display:dataxs"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:timelatshade"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:timelonshade"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
             <params categories="" p1="186_Band13_TEMP" p2="186_Band7_TEMP"/>
@@ -294,6 +302,14 @@
             <category value="display:planviewcontourfilled"/>
             <category value="display:planviewcontour"/>
             <category value="display:imagedisplayoverz"/>
+            <category value="display:probe"/>
+            <category value="display:dataxs"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:timelatshade"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:timelonshade"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
             <params categories="" p1="186_Band14_TEMP" p2="186_Band11_TEMP"/>
@@ -312,6 +328,14 @@
             <category value="display:valuedisplay"/>
             <category value="display:planviewcontour"/>
             <category value="display:imagedisplay"/>
+            <category value="display:probe"/>
+            <category value="display:dataxs"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:timelatshade"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:timelonshade"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
             <params categories="" p1="186_Band12_TEMP" p2="186_Band13_TEMP"/>
@@ -330,6 +354,14 @@
             <category value="display:planviewcontourfilled"/>
             <category value="display:planviewcontour"/>
             <category value="display:planviewcolor"/>
+            <category value="display:probe"/>
+            <category value="display:dataxs"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:timelatshade"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:timelonshade"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
             <params categories="" p1="186_Band5_BRIT" p2="186_Band2_BRIT"/>
@@ -347,6 +379,14 @@
             <category value="display:planviewcolor"/>
             <category value="display:imagedisplay"/>
             <category value="display:planviewcontourfilled"/>
+            <category value="display:probe"/>
+            <category value="display:dataxs"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:timelatshade"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:timelonshade"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
             <params categories="" p1="186_Band8_TEMP" p2="186_Band10_TEMP"/>
@@ -365,6 +405,14 @@
             <category value="display:valuedisplay"/>
             <category value="display:imagedisplayoverz"/>
             <category value="display:planviewcontourfilled"/>
+            <category value="display:probe"/>
+            <category value="display:dataxs"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:timelatshade"/>
+            <category value="display:timelatcontour"/>
+            <category value="display:timelonshade"/>
+            <category value="display:timeloncontour"/>
+            <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
             <params categories="" p1="186_Band15_TEMP" p2="186_Band13_TEMP"/>
