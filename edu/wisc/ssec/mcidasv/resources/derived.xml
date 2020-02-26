@@ -897,6 +897,9 @@
             <category value="display:planviewcontourfilled"/>
             <category value="display:planviewcolor"/>
             <category value="display:planviewcontour"/>
+            <category value="display:imagecontour"/>
+            <category value="display:dataxs"/>
+            <category value="display:gridtablecontrol"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MODIS_NDVI"/>
@@ -911,6 +914,9 @@
             <category value="display:planviewcontourfilled"/>
             <category value="display:planviewcolor"/>
             <category value="display:planviewcontour"/>
+            <category value="display:imagecontour"/>
+            <category value="display:dataxs"/>
+            <category value="display:gridtablecontrol"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MODIS_EVI"/>
