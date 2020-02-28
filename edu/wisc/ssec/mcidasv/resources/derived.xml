@@ -697,13 +697,23 @@
             <paramgroup categories="" name="JPSS_RGB_FireTemperature"/>
         </operands>
     </derived>
-    <derived description="VIIRS Natural Color RGB" formula="VIIRSNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_Natural_Color_RGB" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS Natural Color SVM RGB" formula="VIIRSNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_Natural_Color_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_RGB_NaturalColor"/>
+        </operands>
+    </derived>
+    <derived_parameters>
+    <derived description="VIIRS Natural Color SVI RGB" formula="VIIRSNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_Natural_Color_SVI_RGB" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_RGB_I_NaturalColor"/>
         </operands>
     </derived>
     <derived description="VIIRS NDVI" formula="VIIRSNDVI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS_NDVI" isdefault="true" isenduser="true" override="true">
@@ -734,12 +744,10 @@
             <paramgroup categories="" name="JPSS_RGB_NightMicrophysics"/>
         </operands>
     </derived>
-    <derived description="VIIRS True Color RGB" formula="VIIRSTrueColorRGB(D1[label=M5 Radiance], D2[label=M4 Radiance], D3[label=M3 Radiance])" id="VIIRS_M_RGB(M5, M4, M3)" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS True Color RGB" formula="VIIRSTrueColorRGB(D1[label=M5 Reflectance], D2[label=M4 Reflectance], D3[label=M3 Reflectance])" id="VIIRS_M_RGB(M5, M4, M3)" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
-            <category value="display:imagecontrol"/>
-            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_RGB_TrueColor"/>
