@@ -706,7 +706,6 @@
             <paramgroup categories="" name="JPSS_RGB_NaturalColor"/>
         </operands>
     </derived>
-    <derived_parameters>
     <derived description="VIIRS Natural Color SVI RGB" formula="VIIRSNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_Natural_Color_SVI_RGB" isdefault="true" isenduser="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
