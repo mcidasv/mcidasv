@@ -207,3 +207,21 @@ def VIIRSFireTemperatureRGB(M12, M11, M10):
 
     rgb = MultiSpectralDataSource.swathToGrid(grd750, [red, grn, blu], 1.0)
     return package(inM12, rgb)
+
+
+def VIIRSNaturalColorIRGB(I3, I2, I1):
+    # red = I3 (1.61um)
+    # grn = I2 (0.86um)
+    # blu = I1 (0.64um)
+
+    inI1 = I1
+    I1 = unpackage(I1)
+    inI2 = I2
+    I2 = unpackage(I2)
+    inI3 = I3
+    I3 = unpackage(I3)
+  
+    grd375 = makeGrid(I1, 375)
+
+    rgb = MultiSpectralDataSource.swathToGrid(grd375, [I3, I2, I1], 1.0)
+    return package(inI1, rgb)
