@@ -75,9 +75,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     Changes</a></div>
 <div class="faq-category">
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#abiahi_1.9">ABI and AHI Formulas</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#rgbs_1.9">RGB and Channel Combination Formulas</a></strong></li>
     <li><strong><a class="faq-question-link" href="#alphabetical_1.9">Alphabetical Field Listing</a></strong></li>
-    <li><strong><a class="faq-question-link" href="#countries_1.9">Country Location Labels</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#labelss_1.9">Location Labels</a></strong></li>
     <li><strong><a class="faq-question-link" href="#scripting1.9">Scripting</a></strong></li>
   </ul>
 </div>
@@ -149,24 +149,34 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-answer">Improvements were made in the Region tab of the Field Selector to allow for subsetting across the dateline for MODIS data loaded through the HYDRA chooser, as well as VIIRS SDRs loaded through the Under Development JPSS chooser. Additionally, probing in the Main Display now works on both sides of the dateline.</div>
   </div>
   <div class="faq-category"><a name="multispectral_probe1_1.9" id="multispectral_probe1_1.9"></a>
-    <h4>MODIS and JPSS Dateline</h4>
+    <h4><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">MultiSpectral Display Probe Placement</a></strong></h4>
     <div class="faq-answer">Added a space between the probe (square) and numerical output value of a MultiSpectral Display in the Main Display window. Previously, an overlap between the probe and numerical values could make the value difficult to read.</div>
   </div>
 </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat4_1.9" id="faq1_cat4_1.9"></a>Other
     Changes</div>
-    <div class="faq-category"><a name="abiahi_1.9" id="abiahi_1.9"></a>
-    <h4>ABI and AHI Formulas</h4>
-    <div class="faq-answer">Added a variety of formulas specific to ABI (Advanced Baseline Imager) and AHI (Advanced Himawari Imager) to create displays of RGB and band subtraction products.  These formulas can be found in the Field Selector under Formulas.  Also, derived fields for these products will be automatically added to the Field Selector when an ABI/AHI data source is loaded that includes the bands required to create the product.  For more information, see <a href="tools/ImageryFormulas.html">Description of Formulas - Imagery</a>.</div>
+    <div class="faq-category"><a name="rgbs_1.9" id="rgbs_1.9"></a>
+    <h4><strong><a class="faq-question-link" href="#rgbs_1.9">RGB and Channel Combination Formulas</a></strong></h4>
+    <div class="faq-answer">
+      Added a variety of formulas specific to:
+        <ul>
+        <li>ABI - Advanced Baseline Imager</li>
+        <li>AHI - Advanced Himawari Imager</li>
+        <li>MSG - Meteosat Second Generation (SEVIRI)</li>
+        <li>MODIS - Moderate Resolution Imaging Spectroradiometer</li>
+        <li>JPSS - Joint Polar Satellite System (VIIRS) - Under Development</li>
+        </ul>
+      These formulas will appear in the Field Selector tab of the Data Explorer when Formulas is selected. To evaluate the formulas, select the formula, the desired display type, and click Create Display. From here, an additional Field Selector window will appear where the user will manually select the bands/calibrations needed. These formulas are also set up to be derived fields. This means that if a data source containing all of the required bands/calibrations is added, they will list in the Field Selector under an Imagery tree. Displaying the output of a formula through a derived field means that the manual band/calibration selection isn't necessary. For more information, see <a href="tools/ImageryFormulas.html">Description of Formulas - Imagery</a>.</p>
+    Note that not all of these RGBs and channel combinations are considered to be operational, and may therefore the functions may change in the future.</div>
 	</div>
     <div class="faq-category"><a name="alphabetical_1.9" id="alphabetical_1.9"></a>
     <h4>Alphabetical Field Listing</h4>
     <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This listing makes the list of variables/fields more organized and easier to navigate through.</div>
 	</div>
-	<div class="faq-category"><a name="countries_1.9" id="countries_1.9"></a>
-    <h4>Country Location Labels</h4>
-    <div class="faq-answer">Added country labels to the Display > Plot Location Labels > Countries menu.</div>
+	<div class="faq-category"><a name="labels_1.9" id="labels_1.9"></a>
+    <h4>Location Labels</h4>
+    <div class="faq-answer">Added location labels for countries and world cities that can be found in the Display &gt; Plot Location Labels &gt; World menu in the Main Display.</div>
 	</div>
   <div class="faq-category"><a name="scripting1.9" id="scripting1.9"></a>
     <h4>Scripting</h4>
@@ -192,7 +202,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
       Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.
-    </div>
+    A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector.</div>
   </div>
   <div class="faq-category"><a name="glm1.9" id="glm1.9"></a>
     <h4>GLM Chooser</h4>
