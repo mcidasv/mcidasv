@@ -84,7 +84,7 @@
     <params p1="192_Band11_TEMP" p2="192_Band13_TEMP" p3="192_Band14_TEMP" p4="192_Band15_TEMP"/>
     <params p1="CMI_C11" p2="CMI_C13" p3="CMI_C14" p4="CMI_C15"/>
   </paramgroup>
-  <paramgroup description="ABI DIfferential Water Vapor RGB" name="ABI_RGB_DifferentialWaterVapor">
+  <paramgroup description="ABI Differential Water Vapor RGB" name="ABI_RGB_DifferentialWaterVapor">
     <params p1="186_Band8_TEMP" p2="186_Band10_TEMP"/>
     <params p1="188_Band8_TEMP" p2="188_Band10_TEMP"/>
     <params p1="190_Band8_TEMP" p2="190_Band10_TEMP"/>
@@ -96,6 +96,12 @@
     <params p1="188_Band2_ALB" p2="188_Band5_ALB" p3="188_Band7_TEMP" p4="188_Band8_TEMP" p5="188_Band10_TEMP" p6="188_Band13_TEMP"/>
     <params p1="190_Band2_ALB" p2="190_Band5_ALB" p3="190_Band7_TEMP" p4="190_Band8_TEMP" p5="190_Band10_TEMP" p6="190_Band13_TEMP"/>
     <params p1="192_Band2_ALB" p2="192_Band5_ALB" p3="192_Band7_TEMP" p4="192_Band8_TEMP" p5="192_Band10_TEMP" p6="192_Band13_TEMP"/>
+  </paramgroup>
+  <paramgroup description="ABI Cloud Type RGB" name="ABI_RGB_CloudType">
+    <params p1="186_Band4_ALB" p2="186_Band2_ALB" p3="186_Band5_ALB"/>
+    <params p1="188_Band4_ALB" p2="188_Band2_ALB" p3="188_Band5_ALB"/>
+    <params p1="190_Band4_ALB" p2="190_Band2_ALB" p3="190_Band5_ALB"/>
+    <params p1="192_Band4_ALB" p2="192_Band2_ALB" p3="192_Band5_ALB"/>
   </paramgroup>
   <paramgroup description="AHI Natural Color RGB" name="AHI_RGB_NaturalColor">
     <params p1="86_Band3_ALB" p2="86_Band4_ALB" p3="86_Band5_ALB"/>
@@ -162,6 +168,12 @@
   </paramgroup>
   <paramgroup description="JPSS True Color RGB" name="JPSS_RGB_TrueColor">
     <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M4-SDR_All/Reflectance" p3="VIIRS-M3-SDR_All/Reflectance"/>
+  </paramgroup>
+  <paramgroup description="JPSS Cloud Phase RGB" name="JPSS_RGB_CloudPhase">
+    <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M11-SDR_All/Reflectance" p3="VIIRS-M1-SDR_All/Reflectance"/>
+  </paramgroup>
+  <paramgroup description="JPSS Cloud Type RGB" name="JPSS_RGB_CloudType">
+    <params p1="VIIRS-M9-SDR_All/Reflectance" p2="VIIRS-M5-SDR_All/Reflectance" p3="VIIRS-M10-SDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="MSG Airmass RGB" name="MSG_RGB_Airmass">
     <params p1="51_Band5_TEMP" p2="51_Band6_TEMP" p3="51_Band8_TEMP" p4="51_Band9_TEMP"/>

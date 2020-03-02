@@ -582,6 +582,17 @@
             <paramgroup categories="" name="ABI_RGB_TruCol"/>
         </operands>
     </derived>
+    <derived description="ABI Cloud Type RGB" formula="ABICloudTypeRGB(D1[label=Band 4 Albedo], D2[label=Band 2 Albedo], D3[label=Band 5 Albedo])" id="abicloudtype" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-ABI Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands>
+            <paramgroup name="ABI_RGB_CloudType"/>
+        </operands>
+    </derived>
     <derived description="AHI Airmass RGB" formula="AHIAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="ahiairmass" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
@@ -750,6 +761,24 @@
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_RGB_TrueColor"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS Cloud Phase RGB" formula="VIIRSCloudPhaseRGB(D1[label=M10 Reflectance], D2[label=M11 Reflectance], D3[label=M1 Reflectance])" id="VIIRS_Cloud_Phase_RGB" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands>
+            <paramgroup name="JPSS_RGB_CloudPhase"/>
+        </operands>
+    </derived>
+    <derived description="VIIRS Cloud Type RGB" formula="VIIRSCloudTypeRGB(D1[label=M9 Reflectance], D2[label=M5 Reflectance], D3[label=M10 Reflectance])" id="VIIRS_Cloud_Type_RGB" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_RGB_CloudType"/>
         </operands>
     </derived>
     <derived description="MSG Airmass RGB" formula="MSGAirmassRGB(D1[label=Band 5 Temperature], D2[label=Band 6 Temperature], D3[label=Band 8 Temperature], D4[label=Band 9 Temperature])" id="msgairmass" isdefault="true" isenduser="true" override="true">

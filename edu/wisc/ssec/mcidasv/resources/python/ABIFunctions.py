@@ -207,6 +207,16 @@ def ABIDayConvectionRGB(b2A, b5A, b7T, b8T, b10T, b13T):
     blu = rescale(b5A-b2A, -0.75, 0.25, 0, 255)
     return combineRGB(red, grn, blu)
 
+# ABI Cloud Type RGB
+def ABICloudTypeRGB(b4A, b2A, b5A):
+    # red = band 4; 0% to 10% rescaled to 0 to 255; gamma 2.5
+    # grn = band 2; 0% to 50% rescaled to 0 to 255; gamma 1.4
+    # blu = band 5; 0% to 50% rescaled to 0 to 255; gamma 1.5
+    red = 255*(rescale(b4A, 0, 10, 0, 1)**0.4)
+    grn = 255*(rescale(b2A, 0, 50, 0, 1)**0.7)
+    blu = 255*(rescale(b5A, 0, 50, 0, 1)**0.7)
+    return combineRGB(red, grn, blu)
+
 # Split Ozone Channel Difference
 def ABIOzoneDifference(b12T, b13T):
     # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitOzoneDiff.pdf
