@@ -225,3 +225,43 @@ def VIIRSNaturalColorIRGB(I3, I2, I1):
 
     rgb = MultiSpectralDataSource.swathToGrid(grd375, [I3, I2, I1], 1.0)
     return package(inI1, rgb)
+
+
+# VIIRS Cloud Phase RGB
+def VIIRSCloudPhaseRGB(M10, M11, M1):
+    # red = M10 (1.61um) Reflectance
+    # grn = M11 (2.25um) Reflectance
+    # blu = M1 (0.412um) Reflectance
+
+    inM10 = M10
+    M10 = unpackage(M10)
+    inM11 = M11
+    M11 = unpackage(M11)
+    inM1 = M1
+    M1 = unpackage(M1)
+  
+    grd750 = makeGrid(M10, 750)
+
+    rgb = MultiSpectralDataSource.swathToGrid(grd750, [M10, M11, M1], 1.0)
+
+    return package(inM10, rgb)
+
+
+# VIIRS Cloud Type RGB
+def VIIRSCloudTypeRGB(M9, M5, M10):
+    # red = M9 (1.378um) Reflectance
+    # grn = M5 (0.672um) Reflectance
+    # blu = M10 (1.612um) Reflectance
+
+    inM9 = M9
+    M9 = unpackage(M9)
+    inM5 = M5
+    M5 = unpackage(M5)
+    inM10 = M10
+    M10 = unpackage(M10)
+  
+    grd750 = makeGrid(M9, 750)
+
+    rgb = MultiSpectralDataSource.swathToGrid(grd750, [M9, M5, M10], 1.0)
+
+    return package(inM9, rgb)
