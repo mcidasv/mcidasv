@@ -2801,11 +2801,13 @@ public class XmlEncoder extends XmlUtil {
         if (object instanceof Map) {
             Map<Object, Object> map      = (Map<Object, Object>) object;
             List                elements = new ArrayList(map.size());
-            for (Map.Entry entry : map.entrySet()) {
-                Element methodElement = createMethodElement(METHOD_PUT);
-                methodElement.appendChild(createElement(entry.getKey()));
-                methodElement.appendChild(createElement(entry.getValue()));
-                elements.add(methodElement);
+            synchronized(object) {
+                for (Map.Entry entry : map.entrySet()) {
+                    Element methodElement = createMethodElement(METHOD_PUT);
+                    methodElement.appendChild(createElement(entry.getKey()));
+                    methodElement.appendChild(createElement(entry.getValue()));
+                    elements.add(methodElement);
+                }
             }
             return elements;
         }
