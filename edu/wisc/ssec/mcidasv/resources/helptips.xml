@@ -79,7 +79,7 @@
 	<helptip title="Default Layout" category="Preferences">
 	<![CDATA[
 	You can save the layout of the main window display as a default that will be used when you start McIDAS-V.
-	Read more about the "default layout" in the <a href="help:idv.bundles">User's Guide</a>. 
+	Read more about the "default layout" in the <a href="help:idv.ui.menus.file">User's Guide</a>. 
 	]]>
 	</helptip>
 
@@ -182,7 +182,7 @@
 	<helptip title="Capture Image" category="Miscellaneous">
 	<![CDATA[
 	You can capture an image or create a movie of the current display by selecting the <b>View-&gt;Capture...</b> menu commands.
-	To read more about capturing an image visit the <a href="help:idv.tools.imagecaptures">User's Guide<a/> section on this topic.
+	To read more about capturing an image visit the <a href="help:idv.display_controls.imagecaptures">User's Guide<a/> section on this topic.
 	]]>
 	</helptip>
 
