@@ -75,6 +75,7 @@ public class OptionMaster {
         { "LOG_LEVEL", "Log Level", "INFO", Type.LOGLEVEL, OptionPlatform.ALL, Visibility.VISIBLE },
         { "JVM_OPTIONS", "Java Virtual Machine Options", "", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
         { "TEXTURE_WIDTH", "Texture Size", "4096", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
+        { "MCV_SCALING", "GUI Scaling", "1", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
     };
     
     /**

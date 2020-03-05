@@ -260,6 +260,12 @@ if [ -n "${TEXTURE_WIDTH}" ]; then
 else
   TEXTURE_SIZE="4096"
 fi
+
+if [ -n "${MCV_SCALING}" ]; then
+  SCALING="${MCV_SCALING}"
+else
+  SCALING="1"
+fi
  
 LOGBACK_CONFIG="${MCV_USERPATH}/logback.xml"
 
@@ -280,7 +286,7 @@ fi
 if [ `uname -s` = "Darwin" ]; then
   JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} -Dsun.java2d.uiScale=1 -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false"
 else
-  JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false"  
+  JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} -Dsun.java2d.uiScale=$SCALING -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false"  
 fi
 
 MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -DtextureWidthMax=${TEXTURE_SIZE}"

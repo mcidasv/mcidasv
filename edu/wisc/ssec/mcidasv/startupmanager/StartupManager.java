@@ -292,6 +292,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         TextOption jvmArgs = optMaster.getTextOption("JVM_OPTIONS");
         LoggerLevelOption logLevel = optMaster.getLoggerLevelOption("LOG_LEVEL");
         TextOption textureWidth = optMaster.getTextOption("TEXTURE_WIDTH");
+        TextOption scaling = optMaster.getTextOption("MCV_SCALING");
         
         JPanel startupPanel = new JPanel();
         startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
@@ -335,10 +336,13 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         JPanel logLevelPanel = McVGuiUtils.makeLabeledComponent(logLevel.getLabel()+':', logLevelComboBox);
         
-        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", useCmsCollectorCheckBox);
+        JPanel scalingPanel = McVGuiUtils.makeLabeledComponent(scaling.getLabel()+':', scaling.getComponent());
+        
+        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.topBottom(useCmsCollectorCheckBox, scalingPanel, McVGuiUtils.Prefer.TOP));
 
         JTextField jvmArgsField = jvmArgs.getComponent();
         JPanel jvmPanel = McVGuiUtils.makeLabeledComponent("Java Flags:", jvmArgsField);
+        
         
         // TJJ Nov 2018 
         // Add note at top of Startup Options alerting user a restart may be needed

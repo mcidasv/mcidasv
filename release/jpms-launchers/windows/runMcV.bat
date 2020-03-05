@@ -187,6 +187,13 @@ SET TEXTURE_SIZE=%TEXTURE_WIDTH%
 SET TEXTURE_SIZE=4096
 )
 
+REM gui scaling
+IF DEFINED MCV_SCALING (
+SET SCALING=%MCV_SCALING%
+) ELSE (
+SET SCALING=1
+)
+
 REM if the user has disabled loading layout.mcv we need to pass -nodefault
 if "%DEFAULT_LAYOUT%"=="0" (
 SET USE_LAYOUT_BUNDLE=-nodefault
@@ -283,21 +290,21 @@ IF EXIST "..\jre\bin\client\classes.jsa" (
 set MCV_EXTPATH=-Djava.ext.dirs="jre\lib\ext"
 set MCV_LIBPATH=-Djava.library.path="jre\lib\ext"
 
-@echo Command line: "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+@echo Command line: "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dsun.java2d.uiScale=%SCALING% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
 
 IF DEFINED MCV_UNWELCOME_WINDOW (
     IF "%WAIT_FOR_EXIT%"=="1" (
-        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dsun.java2d.uiScale=%SCALING% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
         GOTO cleanup
     ) ELSE (
-        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dsun.java2d.uiScale=%SCALING% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
     )
 ) ELSE (
     IF "%WAIT_FOR_EXIT%"=="1" (
-        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        "..\jre\bin\java.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dsun.java2d.uiScale=%SCALING% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
         GOTO cleanup
     ) ELSE (
-        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
+        start /B "McIDAS-V" "..\jre\bin\javaw.exe" "-Xmx%HEAP_SIZE%" %GC_ARGS% %JVM_ARGS% -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false -Dsun.java2d.uiScale=%SCALING% -Dloglevel=%LOGGING_LEVEL% -Dlogback.configurationFile=%LOGBACK_CONFIG% -Dmcv.userpath="%MCV_USERPATH%" -Dmcv.logpath=%MCV_LOGPATH% -jar %MCV_JAR% %MCV_FLAGS% %MCV_PARAMS%
     )
 )
 
