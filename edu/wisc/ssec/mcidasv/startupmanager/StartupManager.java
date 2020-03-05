@@ -501,17 +501,16 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * @throws IOException If there was a problem while attempting to copy.
      */
     public void copy(final File src, final File dst) throws IOException {
-        InputStream in = new FileInputStream(src);
-        OutputStream out = new FileOutputStream(dst);
-        
-        byte[] buf = new byte[1024];
-        int length;
-        
-        while ((length = in.read(buf)) > 0) {
-            out.write(buf, 0, length);
+        try (
+            InputStream in = new FileInputStream(src);
+            OutputStream out = new FileOutputStream(dst)
+        ) {
+            byte[] buf = new byte[1024];
+            int length;
+            while ((length = in.read(buf)) > 0) {
+                out.write(buf, 0, length);
+            }
         }
-        in.close();
-        out.close();
     }
     
     public static class TreeCellRenderer extends DefaultTreeCellRenderer {

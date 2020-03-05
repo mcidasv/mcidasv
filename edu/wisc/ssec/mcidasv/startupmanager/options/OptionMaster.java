@@ -31,6 +31,7 @@ package edu.wisc.ssec.mcidasv.startupmanager.options;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -414,23 +415,16 @@ public class OptionMaster {
             }
         }
     }
-
+    
     public void readStartup() {
-        String line;
-        
-        File script = 
+        File script =
             new File(StartupManager.getInstance().getPlatform().getUserPrefs());
-        System.err.println("reading "+script);
-        if (script.getPath().isEmpty()) {
-            return;
-        }
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(script));
+        try (BufferedReader br = new BufferedReader(new FileReader(script))) {
+            String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#")) {
                     continue;
                 }
-
                 int splitAt = line.indexOf('=');
                 if (splitAt >= 0) {
                     String id = line.substring(0, splitAt).replace(SET_PREFIX, EMPTY_STRING);
@@ -445,7 +439,6 @@ public class OptionMaster {
                     System.err.println("Warning: Bad line format '"+line+'\'');
                 }
             }
-            br.close();
         } catch (IOException e) {
             System.err.println("Non-fatal error reading the user preferences: "+e.getMessage());
         }
@@ -470,11 +463,8 @@ public class OptionMaster {
             }
         }
         
-        try {
-            BufferedWriter out = 
-                new BufferedWriter(new FileWriter(script));
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(script))) {
             out.write(contents.toString());
-            out.close();
         } catch (IOException e) {
             logger.error("Could not write to McIDAS-V startup prefs file", e);
         }
