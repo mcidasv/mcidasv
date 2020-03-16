@@ -195,6 +195,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private String displaySource;
 
+    // keep track of extra info for derived fields, since they may be a mix of bands and resolutions
+    boolean isDerived = false;
+    int tmpBndIdx = 0;
+    ArrayList<Double> derivedBandLineRes = new ArrayList<Double>();
+    ArrayList<Double> derivedBandElemRes = new ArrayList<Double>();
+
     protected List<DataChoice> stashedChoices = null;
     private List iml = new ArrayList();
     private List saveImageList = new ArrayList();
@@ -1041,7 +1047,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         
         // For dealing with derived fields - will need to know which bands are involved
         // They may be a mix of base resolutions
-        boolean isDerived = false;
         ArrayList<Integer> derivedBands = new ArrayList<Integer>();
         
         // TJJ Inq #2181 Feb 2020
@@ -1094,6 +1099,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     for (BandInfo bandInfo : bandInfos) {
                         AreaDirectory ad = (AreaDirectory) allBandDirs.get(bandInfo.getBandNumber());
                         double lineRes = ad.getCenterLatitudeResolution();
+                        double elemRes = ad.getCenterLongitudeResolution();
+                        if (derivedBands.contains(bandInfo.getBandNumber())) derivedBandLineRes.add(lineRes);
+                        if (derivedBands.contains(bandInfo.getBandNumber())) derivedBandElemRes.add(elemRes);
                         if (lineRes < bestRes && (derivedBands.contains(bandInfo.getBandNumber()))) {
                             bestRes = lineRes;
                             bandIdx = tmpIdx;
@@ -1831,6 +1839,40 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         }
                         int lSize = numLines;
                         int eSize = numEles;
+
+                        // TJJ Mar 2020 - For derived fields, see if product bands are mixed-resolution bands
+                        if (isDerived) {
+                            boolean mixedRes = false;
+                            boolean hasResOne = false;
+                            boolean hasLowerRes = false;
+                            int curRes = -1;
+                            logger.debug("Number of derived bands: " + derivedBandLineRes.size());
+                            for (int bandIdx = 0; bandIdx < derivedBandLineRes.size(); bandIdx++) {
+                                curRes = derivedBandLineRes.get(bandIdx).intValue();
+                                if (curRes == 1) hasResOne = true;
+                                if (curRes > 1) hasLowerRes = true;
+                                // Check both line and element res - they can differ
+                                curRes = derivedBandElemRes.get(bandIdx).intValue();
+                                if (curRes == 1) hasResOne = true;
+                                if (curRes > 1) hasLowerRes = true;
+                                // If both conditions are true, set the flag
+                                if (hasResOne && hasLowerRes) {
+                                    logger.debug("Derived field is a mix of band resolutions");
+                                    mixedRes = true;
+                                }
+                            }
+                            if (mixedRes) {
+                                if (tmpBndIdx < derivedBandLineRes.size()) {
+                                    int tmpRes = derivedBandLineRes.get(tmpBndIdx).intValue();
+                                    if (tmpRes > 1) {
+                                        lSize = lSize / tmpRes;
+                                        eSize = eSize / tmpRes;
+                                    }
+                                }
+                            }
+                        }
+
+                        tmpBndIdx++;
                         sizeString = lSize + " " + eSize;
                         src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
                         src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
