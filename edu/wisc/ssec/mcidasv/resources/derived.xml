@@ -962,4 +962,798 @@
         <categories/>
         <operands/>
     </derived>
+    <!-- Adding derived TROPOMI L2 formulas for easy access to different units - RMC - INQ 2881 - Mar 2020 -->
+    <!-- SO2 -->
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for the polluted scenario (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="syst_err_tot_vert_col_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_trueness"/>
+        </operands>
+    </derived>
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for the polluted scenario (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="syst_err_tot_vert_col_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_trueness"/>
+        </operands>
+    </derived>
+    <derived description="background corrected sulfur dioxide slant column density for final selected fitting window (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected"/>
+        </operands>
+    </derived>
+    <derived description="background corrected sulfur dioxide slant column density for final selected fitting window (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected"/>
+        </operands>
+    </derived>
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 1 (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_win1_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win1"/>
+        </operands>
+    </derived>
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 1 (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_win1_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win1"/>
+        </operands>
+    </derived>
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 2 (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_win2_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win2"/>
+        </operands>
+    </derived>
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 2 (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_win2_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win2"/>
+        </operands>
+    </derived>
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 3 (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_win3_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win3"/>
+        </operands>
+    </derived>
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 3 (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_win3_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win3"/>
+        </operands>
+    </derived>
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_1km_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km"/>
+        </operands>
+    </derived>
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_1km_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km"/>
+        </operands>
+    </derived>	
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_1km_precision_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km_precision"/>
+        </operands>
+    </derived>
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_1km_precision_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km_precision"/>
+        </operands>
+    </derived>	
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_1km_trueness_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km_trueness"/>
+        </operands>
+    </derived>
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_1km_trueness_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km_trueness"/>
+        </operands>
+    </derived>
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_7km_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km"/>
+        </operands>
+    </derived>
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_7km_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km"/>
+        </operands>
+    </derived>	
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_7km_precision_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km_precision"/>
+        </operands>
+    </derived>
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_7km_precision_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km_precision"/>
+        </operands>
+    </derived>	
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_7km_trueness_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km_trueness"/>
+        </operands>
+    </derived>
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_7km_trueness_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km_trueness"/>
+        </operands>
+    </derived>
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_15km_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km"/>
+        </operands>
+    </derived>
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_15km_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km"/>
+        </operands>
+    </derived>	
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_15km_precision_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km_precision"/>
+        </operands>
+    </derived>
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_15km_precision_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km_precision"/>
+        </operands>
+    </derived>	
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_15km_trueness_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km_trueness"/>
+        </operands>
+    </derived>
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_15km_trueness_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km_trueness"/>
+        </operands>
+    </derived>
+    <derived description="total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/sulfurdioxide_total_vertical_column"/>
+        </operands>
+    </derived>
+    <derived description="total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/sulfurdioxide_total_vertical_column"/>
+        </operands>
+    </derived>
+    <derived description="precision of the total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_precision_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/sulfurdioxide_total_vertical_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="precision of the total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_precision_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/sulfurdioxide_total_vertical_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="total ozone column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_vert_col_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_vertical_column"/>
+        </operands>
+    </derived>
+    <derived description="total ozone column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_vert_col_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_vertical_column"/>
+        </operands>
+    </derived>
+    <derived description="total ozone column random error (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_vert_col_precision_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_vertical_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="total ozone column random error (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_vert_col_precision_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_vertical_column_precision"/>
+        </operands>
+    </derived>
 </derived_parameters>
