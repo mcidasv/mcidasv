@@ -2861,4 +2861,181 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_strong_twoband_total_column"/>
         </operands>
     </derived>
+    <!-- CH4 -->
+    <derived description="CO total vertical column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_column_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/carbonmonoxide_total_column"/>
+        </operands>
+    </derived>
+    <derived description="CO total vertical column precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_column_precision_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/carbonmonoxide_total_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="H2O total vertical column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H2O_total_vert_column_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_total_column"/>
+        </operands>
+    </derived>
+    <derived description="H2O total vertical column precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H2O_total_vert_column_precision_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_total_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="Vertically integrated CH4 column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CH4_vert_int_weak_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/methane_weak_twoband_total_column"/>
+        </operands>
+    </derived>
+    <derived description="Vertically integrated CH4 column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CH4_vert_int_strong_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/methane_strong_twoband_total_column"/>
+        </operands>
+    </derived>
+    <derived description="Vertically integrated H2O column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H20_vert_int_weak_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/water_weak_twoband_total_column"/>
+        </operands>
+    </derived>
+    <derived description="Vertically integrated H2O column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H20_vert_int_strong_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/water_strong_twoband_total_column"/>
+        </operands>
+    </derived>
 </derived_parameters>
