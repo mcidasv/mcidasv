@@ -2485,4 +2485,137 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_ghost_column"/>
         </operands>
     </derived>
+	<!-- O3 -->
+    <derived description="total ozone column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_total_vertical_column"/>
+        </operands>
+    </derived>
+    <derived description="total ozone column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_total_column_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_total_vertical_column"/>
+        </operands>
+    </derived>
+    <derived description="total ozone column random error (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_precision_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_total_vertical_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="total ozone column random error (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_total_column_precision_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_total_vertical_column_precision"/>
+        </operands>
+    </derived>
+	<derived description="ring corrected slant column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_ring_corr_slant_column_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/ozone_slant_column_ring_corrected"/>
+        </operands>
+    </derived>
+    <derived description="ring corrected slant column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_ring_corr_slant_column_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/ozone_slant_column_ring_corrected"/>
+        </operands>
+    </derived>
 </derived_parameters>
