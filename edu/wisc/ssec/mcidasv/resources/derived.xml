@@ -2021,4 +2021,49 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/formaldehyde_tropospheric_vertical_column_correction"/>
         </operands>
     </derived>
+    <!-- AI -->
+    <derived description="total column amount of ozone from ECMWF model data (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_DU" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_column"/>
+        </operands>
+    </derived>
+    <derived description="total column amount of ozone from ECMWF model data (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_total_column_mol_cm2" isdefault="true" isenduser="false">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_column"/>
+        </operands>
+    </derived>
 </derived_parameters>
