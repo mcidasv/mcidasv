@@ -582,7 +582,7 @@
             <paramgroup categories="" name="ABI_RGB_TruCol"/>
         </operands>
     </derived>
-    <derived description="ABI Cloud Type RGB" formula="ABICloudTypeRGB(D1[label=Band 4 Albedo], D2[label=Band 2 Albedo], D3[label=Band 5 Albedo])" id="abicloudtype" isdefault="true" isenduser="true">
+    <derived description="ABI Cloud Type RGB" formula="ABICloudTypeRGB(D1[label=Band 4 Albedo], D2[label=Band 2 Albedo], D3[label=Band 5 Albedo])" id="abicloudtype" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:imagecontroloverz"/>
@@ -717,7 +717,7 @@
             <paramgroup categories="" name="JPSS_RGB_NaturalColor"/>
         </operands>
     </derived>
-    <derived description="VIIRS Natural Color SVI RGB" formula="VIIRSNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_Natural_Color_SVI_RGB" isdefault="true" isenduser="true">
+    <derived description="VIIRS Natural Color SVI RGB" formula="VIIRSNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_Natural_Color_SVI_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
@@ -763,7 +763,7 @@
             <paramgroup categories="" name="JPSS_RGB_TrueColor"/>
         </operands>
     </derived>
-    <derived description="VIIRS Cloud Phase RGB" formula="VIIRSCloudPhaseRGB(D1[label=M10 Reflectance], D2[label=M11 Reflectance], D3[label=M1 Reflectance])" id="VIIRS_Cloud_Phase_RGB" isdefault="true" isenduser="true">
+    <derived description="VIIRS Cloud Phase RGB" formula="VIIRSCloudPhaseRGB(D1[label=M10 Reflectance], D2[label=M11 Reflectance], D3[label=M1 Reflectance])" id="VIIRS_Cloud_Phase_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
@@ -772,7 +772,7 @@
             <paramgroup name="JPSS_RGB_CloudPhase"/>
         </operands>
     </derived>
-    <derived description="VIIRS Cloud Type RGB" formula="VIIRSCloudTypeRGB(D1[label=M9 Reflectance], D2[label=M5 Reflectance], D3[label=M10 Reflectance])" id="VIIRS_Cloud_Type_RGB" isdefault="true" isenduser="true">
+    <derived description="VIIRS Cloud Type RGB" formula="VIIRSCloudTypeRGB(D1[label=M9 Reflectance], D2[label=M5 Reflectance], D3[label=M10 Reflectance])" id="VIIRS_Cloud_Type_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
@@ -941,7 +941,7 @@
             <paramgroup categories="" name="MODIS_NDVI"/>
         </operands>
     </derived>
-    <derived description="MODIS EVI" formula="MODISEVI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance], D3[label=Band 3 Reflectance])" id="modis_evi" isdefault="true" isenduser="true">
+    <derived description="MODIS EVI" formula="MODISEVI(D1[label=Band 1 Reflectance], D2[label=Band 2 Reflectance], D3[label=Band 3 Reflectance])" id="modis_evi" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:imagedisplay"/>
@@ -964,7 +964,7 @@
     </derived>
     <!-- Adding derived TROPOMI L2 formulas for easy access to different units - RMC - INQ 2881 - Mar 2020 -->
     <!-- SO2 -->
-    <derived description="systematic error of the total vertical column density of sulfur dioxide for the polluted scenario (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="syst_err_tot_vert_col_DU" isdefault="true" isenduser="false">
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for the polluted scenario (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="syst_err_tot_vert_col_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -986,7 +986,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_trueness"/>
         </operands>
     </derived>
-    <derived description="systematic error of the total vertical column density of sulfur dioxide for the polluted scenario (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="syst_err_tot_vert_col_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for the polluted scenario (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="syst_err_tot_vert_col_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1008,7 +1008,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_trueness"/>
         </operands>
     </derived>
-    <derived description="background corrected sulfur dioxide slant column density for final selected fitting window (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_DU" isdefault="true" isenduser="false">
+    <derived description="background corrected sulfur dioxide slant column density for final selected fitting window (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1030,7 +1030,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected"/>
         </operands>
     </derived>
-    <derived description="background corrected sulfur dioxide slant column density for final selected fitting window (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="background corrected sulfur dioxide slant column density for final selected fitting window (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1052,7 +1052,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected"/>
         </operands>
     </derived>
-    <derived description="background corrected sulfur dioxide slant column density for fitting window 1 (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_win1_DU" isdefault="true" isenduser="false">
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 1 (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_win1_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1074,7 +1074,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win1"/>
         </operands>
     </derived>
-    <derived description="background corrected sulfur dioxide slant column density for fitting window 1 (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_win1_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 1 (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_win1_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1096,7 +1096,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win1"/>
         </operands>
     </derived>
-    <derived description="background corrected sulfur dioxide slant column density for fitting window 2 (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_win2_DU" isdefault="true" isenduser="false">
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 2 (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_win2_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1118,7 +1118,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win2"/>
         </operands>
     </derived>
-    <derived description="background corrected sulfur dioxide slant column density for fitting window 2 (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_win2_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 2 (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_win2_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1140,7 +1140,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win2"/>
         </operands>
     </derived>
-    <derived description="background corrected sulfur dioxide slant column density for fitting window 3 (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_win3_DU" isdefault="true" isenduser="false">
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 3 (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="background_corr_so2_slant_col_win3_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1162,7 +1162,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win3"/>
         </operands>
     </derived>
-    <derived description="background corrected sulfur dioxide slant column density for fitting window 3 (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_win3_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="background corrected sulfur dioxide slant column density for fitting window 3 (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="background_corr_so2_slant_col_win3_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1184,7 +1184,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_slant_column_corrected_win3"/>
         </operands>
     </derived>
-    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_1km_DU" isdefault="true" isenduser="false">
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_1km_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1206,7 +1206,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km"/>
         </operands>
     </derived>
-    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_1km_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_1km_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1228,7 +1228,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km"/>
         </operands>
     </derived>	
-    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_1km_precision_DU" isdefault="true" isenduser="false">
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_1km_precision_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1250,7 +1250,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km_precision"/>
         </operands>
     </derived>
-    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_1km_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_1km_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1272,7 +1272,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km_precision"/>
         </operands>
     </derived>	
-    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_1km_trueness_DU" isdefault="true" isenduser="false">
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_1km_trueness_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1294,7 +1294,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km_trueness"/>
         </operands>
     </derived>
-    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_1km_trueness_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 1km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_1km_trueness_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1316,7 +1316,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_1km_trueness"/>
         </operands>
     </derived>
-    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_7km_DU" isdefault="true" isenduser="false">
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_7km_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1338,7 +1338,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km"/>
         </operands>
     </derived>
-    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_7km_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_7km_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1360,7 +1360,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km"/>
         </operands>
     </derived>	
-    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_7km_precision_DU" isdefault="true" isenduser="false">
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_7km_precision_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1382,7 +1382,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km_precision"/>
         </operands>
     </derived>
-    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_7km_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_7km_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1404,7 +1404,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km_precision"/>
         </operands>
     </derived>	
-    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_7km_trueness_DU" isdefault="true" isenduser="false">
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_7km_trueness_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1426,7 +1426,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km_trueness"/>
         </operands>
     </derived>
-    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_7km_trueness_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 7km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_7km_trueness_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1448,7 +1448,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_7km_trueness"/>
         </operands>
     </derived>
-    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_15km_DU" isdefault="true" isenduser="false">
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_15km_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1470,7 +1470,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km"/>
         </operands>
     </derived>
-    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_15km_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_15km_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1492,7 +1492,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km"/>
         </operands>
     </derived>	
-    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_15km_precision_DU" isdefault="true" isenduser="false">
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_15km_precision_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1514,7 +1514,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km_precision"/>
         </operands>
     </derived>
-    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_15km_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="random error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_15km_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1536,7 +1536,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km_precision"/>
         </operands>
     </derived>	
-    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_15km_trueness_DU" isdefault="true" isenduser="false">
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_15km_trueness_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1558,7 +1558,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km_trueness"/>
         </operands>
     </derived>
-    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_15km_trueness_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_15km_trueness_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1580,7 +1580,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/sulfurdioxide_total_vertical_column_15km_trueness"/>
         </operands>
     </derived>
-    <derived description="total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_DU" isdefault="true" isenduser="false">
+    <derived description="total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1602,7 +1602,7 @@
             <params categories="" p1="PRODUCT/sulfurdioxide_total_vertical_column"/>
         </operands>
     </derived>
-    <derived description="total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1624,7 +1624,7 @@
             <params categories="" p1="PRODUCT/sulfurdioxide_total_vertical_column"/>
         </operands>
     </derived>
-    <derived description="precision of the total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_precision_DU" isdefault="true" isenduser="false">
+    <derived description="precision of the total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="tot_vert_so2_precision_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1646,7 +1646,7 @@
             <params categories="" p1="PRODUCT/sulfurdioxide_total_vertical_column_precision"/>
         </operands>
     </derived>
-    <derived description="precision of the total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="precision of the total vertical column of sulfur dioxide for the polluted scenario derived from the total slant column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="tot_vert_so2_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1668,7 +1668,7 @@
             <params categories="" p1="PRODUCT/sulfurdioxide_total_vertical_column_precision"/>
         </operands>
     </derived>
-    <derived description="total ozone column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_vert_col_DU" isdefault="true" isenduser="false">
+    <derived description="total ozone column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_vert_col_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1690,7 +1690,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_vertical_column"/>
         </operands>
     </derived>
-    <derived description="total ozone column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_vert_col_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="total ozone column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_vert_col_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1712,7 +1712,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_vertical_column"/>
         </operands>
     </derived>
-    <derived description="total ozone column random error (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_vert_col_precision_DU" isdefault="true" isenduser="false">
+    <derived description="total ozone column random error (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_vert_col_precision_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1734,7 +1734,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_vertical_column_precision"/>
         </operands>
     </derived>
-    <derived description="total ozone column random error (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_vert_col_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="total ozone column random error (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_vert_col_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1757,7 +1757,7 @@
         </operands>
     </derived>
     <!-- HCHO -->
-    <derived description="vertical column of formaldehyde (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="vert_col_formaldehyde_DU" isdefault="true" isenduser="false">
+    <derived description="vertical column of formaldehyde (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="vert_col_formaldehyde_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1779,7 +1779,7 @@
             <params categories="" p1="PRODUCT/formaldehyde_tropospheric_vertical_column"/>
         </operands>
     </derived>
-    <derived description="vertical column of formaldehyde (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_col_formaldehyde_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="vertical column of formaldehyde (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_col_formaldehyde_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1801,7 +1801,7 @@
             <params categories="" p1="PRODUCT/formaldehyde_tropospheric_vertical_column"/>
         </operands>
     </derived>
-    <derived description="random error of vertical column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="vert_col_formaldehyde_precision_DU" isdefault="true" isenduser="false">
+    <derived description="random error of vertical column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="vert_col_formaldehyde_precision_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1823,7 +1823,7 @@
             <params categories="" p1="PRODUCT/formaldehyde_tropospheric_vertical_column_precision"/>
         </operands>
     </derived>
-    <derived description="random error of vertical column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_col_formaldehyde_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="random error of vertical column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_col_formaldehyde_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1845,7 +1845,7 @@
             <params categories="" p1="PRODUCT/formaldehyde_tropospheric_vertical_column_precision"/>
         </operands>
     </derived>
-    <derived description="Systematic error of vertical column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="syst_error_vert_col_density_DU" isdefault="true" isenduser="false">
+    <derived description="Systematic error of vertical column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="syst_error_vert_col_density_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1867,7 +1867,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/formaldehyde_tropospheric_vertical_column_trueness"/>
         </operands>
     </derived>
-    <derived description="Systematic error of vertical column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="syst_error_vert_col_density_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Systematic error of vertical column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="syst_error_vert_col_density_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1889,7 +1889,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/formaldehyde_tropospheric_vertical_column_trueness"/>
         </operands>
     </derived>
-    <derived description="systematic error of the slant column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="syst_error_vert_slant_col_density_DU" isdefault="true" isenduser="false">
+    <derived description="systematic error of the slant column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="syst_error_vert_slant_col_density_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1911,7 +1911,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/formaldehyde_slant_column_corrected_trueness"/>
         </operands>
     </derived>
-    <derived description="systematic error of the slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="syst_error_vert_slant_col_density_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="systematic error of the slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="syst_error_vert_slant_col_density_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1933,7 +1933,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/formaldehyde_slant_column_corrected_trueness"/>
         </operands>
     </derived>
-    <derived description="corrected slant column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="corr_slant_col_density_DU" isdefault="true" isenduser="false">
+    <derived description="corrected slant column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="corr_slant_col_density_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1955,7 +1955,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/formaldehyde_slant_column_corrected"/>
         </operands>
     </derived>
-    <derived description="corrected slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="corr_slant_col_density_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="corrected slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="corr_slant_col_density_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -1977,7 +1977,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/formaldehyde_slant_column_corrected"/>
         </operands>
     </derived>
-    <derived description="background correction value which is added to the vertical column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="back_corr_vert_col_density_DU" isdefault="true" isenduser="false">
+    <derived description="background correction value which is added to the vertical column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="back_corr_vert_col_density_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -1999,7 +1999,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/formaldehyde_tropospheric_vertical_column_correction"/>
         </operands>
     </derived>
-    <derived description="background correction value which is added to the vertical column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="back_corr_vert_col_density_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="background correction value which is added to the vertical column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="back_corr_vert_col_density_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2022,7 +2022,7 @@
         </operands>
     </derived>
     <!-- AI -->
-    <derived description="total column amount of ozone from ECMWF model data (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_DU" isdefault="true" isenduser="false">
+    <derived description="total column amount of ozone from ECMWF model data (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -2044,7 +2044,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_column"/>
         </operands>
     </derived>
-    <derived description="total column amount of ozone from ECMWF model data (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_total_column_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="total column amount of ozone from ECMWF model data (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_total_column_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2067,7 +2067,7 @@
         </operands>
     </derived>
     <!-- NO2 -->
-    <derived description="Tropospheric vertical column of nitrogen dioxide (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="trop_vert_col_NO2_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Tropospheric vertical column of nitrogen dioxide (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="trop_vert_col_NO2_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2089,7 +2089,7 @@
             <params categories="" p1="PRODUCT/nitrogendioxide_tropospheric_column"/>
         </operands>
     </derived>
-    <derived description="Precision of the tropospheric vertical column of nitrogen dioxide (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="trop_vert_col_NO2_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Precision of the tropospheric vertical column of nitrogen dioxide (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="trop_vert_col_NO2_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2111,7 +2111,7 @@
             <params categories="" p1="PRODUCT/nitrogendioxide_tropospheric_column_precision"/>
         </operands>
     </derived>
-    <derived description="Precision of the tropospheric vertical column of nitrogen dioxide when applying the averaging kernel (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="trop_vert_col_NO2_precision_kernel_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Precision of the tropospheric vertical column of nitrogen dioxide when applying the averaging kernel (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="trop_vert_col_NO2_precision_kernel_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2133,7 +2133,7 @@
             <params categories="" p1="PRODUCT/nitrogendioxide_tropospheric_column_precision_kernel"/>
         </operands>
     </derived>
-    <derived description="Stratospheric vertical column of nitrogen dioxide, derived from the TM5-MP vertical profiles (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="NO2_strat_vert_column_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Stratospheric vertical column of nitrogen dioxide, derived from the TM5-MP vertical profiles (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="NO2_strat_vert_column_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2155,7 +2155,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_stratospheric_column"/>
         </operands>
     </derived>
-    <derived description="Precision of stratospheric vertical column of nitrogen dioxide (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="NO2_strat_vert_column_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Precision of stratospheric vertical column of nitrogen dioxide (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="NO2_strat_vert_column_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2177,7 +2177,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_stratospheric_column_precision"/>
         </operands>
     </derived>
-    <derived description="Total vertical column of nitrogen dioxide derived from the total slant column and TM5 profile in stratosphere and troposphere (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="total_vert_col_NO2_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Total vertical column of nitrogen dioxide derived from the total slant column and TM5 profile in stratosphere and troposphere (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="total_vert_col_NO2_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2199,7 +2199,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_total_column"/>
         </operands>
     </derived>
-    <derived description="Precision of the total vertical column of nitrogen dioxide derived from the total slant column and TM5 profile in stratosphere and troposphere (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="total_vert_col_NO2_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Precision of the total vertical column of nitrogen dioxide derived from the total slant column and TM5 profile in stratosphere and troposphere (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="total_vert_col_NO2_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2221,7 +2221,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_total_column_precision"/>
         </operands>
     </derived>
-    <derived description="Precision of the total vertical column of nitrogen dioxide derived from the total slant column and TM5 profile in stratosphere and troposphere, when the averaging kernel is applied (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="total_vert_col_NO2_precision_kernel_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Precision of the total vertical column of nitrogen dioxide derived from the total slant column and TM5 profile in stratosphere and troposphere, when the averaging kernel is applied (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="total_vert_col_NO2_precision_kernel_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2243,7 +2243,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_total_column_precision_kernel"/>
         </operands>
     </derived>
-    <derived description="Sum of the tropospheric and stratospheric vertical columns (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="sum_trop_strat_NO2_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Sum of the tropospheric and stratospheric vertical columns (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="sum_trop_strat_NO2_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2265,7 +2265,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_summed_total_column"/>
         </operands>
     </derived>
-    <derived description="Precision of the sum of the tropospheric and stratospheric vertical columns (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="sum_trop_strat_NO2_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Precision of the sum of the tropospheric and stratospheric vertical columns (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="sum_trop_strat_NO2_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2287,7 +2287,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_summed_total_column_precision"/>
         </operands>
     </derived>
-    <derived description="NO2 slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="NO2_slant_col_density_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="NO2 slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="NO2_slant_col_density_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2309,7 +2309,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_slant_column_density"/>
         </operands>
     </derived>
-    <derived description="NO2 slant column density precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="NO2_slant_col_density_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="NO2 slant column density precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="NO2_slant_col_density_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2331,7 +2331,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/nitrogendioxide_slant_column_density_precision"/>
         </operands>
     </derived>
-    <derived description="O3 slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_slant_col_density_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="O3 slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_slant_col_density_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2353,7 +2353,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/ozone_slant_column_density"/>
         </operands>
     </derived>
-    <derived description="O3 slant column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_slant_col_density_DU" isdefault="true" isenduser="false">
+    <derived description="O3 slant column density (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_slant_col_density_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2375,7 +2375,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/ozone_slant_column_density"/>
         </operands>
     </derived>
-    <derived description="O3 slant column density precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_slant_col_density_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="O3 slant column density precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_slant_col_density_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2397,7 +2397,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/ozone_slant_column_density_precision"/>
         </operands>
     </derived>
-    <derived description="O3 slant column density precision (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_slant_col_density_precision_DU" isdefault="true" isenduser="false">
+    <derived description="O3 slant column density precision (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_slant_col_density_precision_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2419,7 +2419,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/ozone_slant_column_density_precision"/>
         </operands>
     </derived>
-    <derived description="Water vapor slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="water_vapor_slant_col_density_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Water vapor slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="water_vapor_slant_col_density_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2441,7 +2441,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_slant_column_density"/>
         </operands>
     </derived>
-    <derived description="Precision of water vapor slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="water_vapor_slant_col_density_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Precision of water vapor slant column density (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="water_vapor_slant_col_density_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2463,7 +2463,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_slant_column_density_precision"/>
         </operands>
     </derived>
-    <derived description="Ghost column NO2: modelled NO2 column below the cloud top (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="ghost_col_NO2_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Ghost column NO2: modelled NO2 column below the cloud top (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="ghost_col_NO2_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2486,7 +2486,7 @@
         </operands>
     </derived>
     <!-- O3 -->
-    <derived description="total ozone column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_DU" isdefault="true" isenduser="false">
+    <derived description="total ozone column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -2508,7 +2508,7 @@
             <params categories="" p1="PRODUCT/ozone_total_vertical_column"/>
         </operands>
     </derived>
-    <derived description="total ozone column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_total_column_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="total ozone column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_total_column_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2530,7 +2530,7 @@
             <params categories="" p1="PRODUCT/ozone_total_vertical_column"/>
         </operands>
     </derived>
-    <derived description="total ozone column random error (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_precision_DU" isdefault="true" isenduser="false">
+    <derived description="total ozone column random error (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_precision_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -2552,7 +2552,7 @@
             <params categories="" p1="PRODUCT/ozone_total_vertical_column_precision"/>
         </operands>
     </derived>
-    <derived description="total ozone column random error (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_total_column_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="total ozone column random error (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_total_column_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2574,7 +2574,7 @@
             <params categories="" p1="PRODUCT/ozone_total_vertical_column_precision"/>
         </operands>
     </derived>
-    <derived description="ring corrected slant column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_ring_corr_slant_column_DU" isdefault="true" isenduser="false">
+    <derived description="ring corrected slant column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_ring_corr_slant_column_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -2596,7 +2596,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/ozone_slant_column_ring_corrected"/>
         </operands>
     </derived>
-    <derived description="ring corrected slant column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_ring_corr_slant_column_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="ring corrected slant column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_ring_corr_slant_column_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2619,7 +2619,7 @@
         </operands>
     </derived>
     <!-- O3 RPRO -->
-    <derived description="ghost column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_ghost_column_DU" isdefault="true" isenduser="false">
+    <derived description="ghost column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_ghost_column_DU" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -2641,7 +2641,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/ozone_ghost_column"/>
         </operands>
     </derived>
-    <derived description="ghost column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_ghost_column_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="ghost column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="O3_ghost_column_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2664,7 +2664,7 @@
         </operands>
     </derived>
     <!-- CO -->
-    <derived description="Vertically integrated CO column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_vert_column_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated CO column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_vert_column_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2686,7 +2686,7 @@
             <params categories="" p1="PRODUCT/carbonmonoxide_total_column"/>
         </operands>
     </derived>
-    <derived description="Standard error of the vertically integrated CO column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_vert_column_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Standard error of the vertically integrated CO column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_vert_column_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2708,7 +2708,7 @@
             <params categories="" p1="PRODUCT/carbonmonoxide_total_column_precision"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated H2O column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_H2O_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated H2O column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_H2O_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2730,7 +2730,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_total_column"/>
         </operands>
     </derived>
-    <derived description="Precision of vertically integrated H2O column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_H2O_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Precision of vertically integrated H2O column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_H2O_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2752,7 +2752,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_total_column_precision"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated HDO column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_HDO_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated HDO column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_HDO_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2774,7 +2774,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/semiheavy_water_total_column"/>
         </operands>
     </derived>
-    <derived description="Precision of the vertically integrated HDO column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_HDO_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Precision of the vertically integrated HDO column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_HDO_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2796,7 +2796,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/semiheavy_water_total_column_precision"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated CH4 column from pre-fit (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_CH4_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated CH4 column from pre-fit (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_CH4_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2818,7 +2818,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/methane_total_column_prefit"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated CH4 column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_CH4_weak_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated CH4 column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_CH4_weak_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2840,7 +2840,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/methane_weak_twoband_total_column"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated CH4 column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_CH4_strong_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated CH4 column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_CH4_strong_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2862,7 +2862,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/methane_strong_twoband_total_column"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated H2O column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_H2O_weak_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated H2O column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_H2O_weak_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2884,7 +2884,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_weak_twoband_total_column"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated H2O column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_H2O_strong_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated H2O column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="vert_column_H2O_strong_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2907,7 +2907,7 @@
         </operands>
     </derived>
     <!-- CH4 -->
-    <derived description="CO total vertical column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_column_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="CO total vertical column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_column_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2929,7 +2929,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/carbonmonoxide_total_column"/>
         </operands>
     </derived>
-    <derived description="CO total vertical column precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_column_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="CO total vertical column precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CO_total_column_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2951,7 +2951,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/carbonmonoxide_total_column_precision"/>
         </operands>
     </derived>
-    <derived description="H2O total vertical column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H2O_total_vert_column_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="H2O total vertical column (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H2O_total_vert_column_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2973,7 +2973,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_total_column"/>
         </operands>
     </derived>
-    <derived description="H2O total vertical column precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H2O_total_vert_column_precision_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="H2O total vertical column precision (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H2O_total_vert_column_precision_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
@@ -2995,7 +2995,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/water_total_column_precision"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated CH4 column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CH4_vert_int_weak_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated CH4 column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CH4_vert_int_weak_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:planviewcolor"/>
@@ -3017,7 +3017,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/methane_weak_twoband_total_column"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated CH4 column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CH4_vert_int_strong_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated CH4 column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="CH4_vert_int_strong_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:planviewcolor"/>
@@ -3039,7 +3039,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/methane_strong_twoband_total_column"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated H2O column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H20_vert_int_weak_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated H2O column from weak band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H20_vert_int_weak_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:planviewcolor"/>
@@ -3061,7 +3061,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/water_weak_twoband_total_column"/>
         </operands>
     </derived>
-    <derived description="Vertically integrated H2O column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H20_vert_int_strong_mol_cm2" isdefault="true" isenduser="false">
+    <derived description="Vertically integrated H2O column from strong band (mol/cm2)" formula="newUnit((noUnit(D1* 60221400000000000000)), 'mol/cm2', 'mol/cm2')" id="H20_vert_int_strong_mol_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:planviewcolor"/>
