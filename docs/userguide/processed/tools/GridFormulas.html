@@ -35,7 +35,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
 <p><strong>Note:</strong> If the formula you select utilizes a Select Input window&nbsp;to enter values to be used by the formula, you can choose if you want to save these values in a bundle if you wish to create one. Each field of the Select Input window has a <strong>Save in Bundle</strong> option&nbsp;(chosen by default). If you keep this option selected, the value(s) you choose will be stored in the bundle, and if all values are saved, the formula will automatically execute when you load in your bundle without any user input. If you do not save the values in your bundle, the values you use will not be saved, and the formula will not automatically execute without requiring the user to enter/change values. Many of the formulas below were provided by Brian Mapes, which are denoted by an asterisk (*) next to the formula's name.</p>
 <ul>
   <li><a href="#smooth">3D Scalar Field Horizontal Smoothing</a></li>
+  <li><a href="#avg">Averages</a></li>
   <li><a href="#basic">Basic Math</a></li>
+  <li><a href="#deviation">Deviation</a></li>
   <li><a href="#ensemble">Ensemble</a></li>
   <li><a href="#timeMeanAnomaly">Time Mean and Anomaly</a>
   <li><a href="#time">Time Steps</a></li>
@@ -78,8 +80,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/GridFormula
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Deviation from Lat Lon Area Average  (grid)* - </strong>Computes the deviation from area average values of the grid and returns a grid with deviation from the area averaged value.</li>
-<li class="propertylistitem"><strong>Deviation from Lat Lon Time Average  (grid)* - </strong>Computes the deviation from time and spatial mean at each grid point.</li>
 <li class="propertylistitem"><strong>Find latitude of grid points  (fieldimpl) - </strong>Obtains the latitude coordinate from the grid at each location and plots the latitude at each point on the map.</li>
 <li class="propertylistitem"><strong>Find longitude of grid points (fieldimpl)</strong> - Obtains the longitude coordinate from the grid at each location and plots the longitude at each point on the map.</li>
 <li class="propertylistitem"><a name="trajectory" id="trajectory"></a><strong>Grid 2D Trajectory (from %N1% %N2%) (U Component, V Component)</strong> - Uses the 2D Grid Trajectory display types to plot 2-dimensional trajectories from data that includes u- and v-wind components and a scalar quantity to color the trajectories by. For information on how to work with this display, see <a href="../controls/GridTrajectory.html">Grid Trajectory Controls</a>.
@@ -523,7 +523,7 @@ levels. Note that you must select a 3D field to use this formula.
    </td>
    </tr>
 </table></li>
-<li class="propertylistitem"><strong>Vertical Average Weighted (grid)* - </strong>Computes a vertical coordinate weighted average of a 3D grid.</li>
+<li class="propertylistitem"><strong>Vertical Integral of a 3D grid* - </strong>Calculates a vertical coordinate integral of a 3D grid.</li>
 <li class="propertylistitem"><strong>Wind Shear Vectors  (top, bottom) - </strong>Calculates the u and v layer difference and returns a map of vectors.
 <table id="mapformulas8" cellpadding="0" cellspacing="0" border="1">
   <tr>
@@ -597,6 +597,14 @@ levels. Note that you must select a 3D field to use this formula.
    </tr>
 </table></li>
 	</ul>
+<div class="pagesubtitle">Averages<a name="avg" id="avg"></a></div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Grid2D Area Average* -</strong> Returns an average over the entire displayed domain at the specified level.</li>
+<li class="propertylistitem"><strong>Levels Average* -</strong> Returns an average over the entire displayed domain of the specified levels.</li>
+<li class="propertylistitem"><strong>Meridional Average* -</strong> Returns a meridional (along the x/longitude axis) average at the specified level.</li>
+<li class="propertylistitem"><strong>Vertical Average Weighted* -</strong> Computes a vertical coordinate weighted average of a 3D grid.</li>
+<li class="propertylistitem"><strong>Zonal Average* -</strong> Returns a zonal (along the y/latitude) average at the specified level.</li>
+	</ul>
 <div class="pagesubtitle">Basic Math<a name="basic" id="basic"></a></div>
 <ul class="propertylist">
 	<li class="propertylistitem"><strong>Divide Grids* -</strong> Divides two grids.</li>
@@ -618,6 +626,14 @@ levels. Note that you must select a 3D field to use this formula.
 	<li class="propertylistitem"><strong>Multiply Grids* -</strong> Multiplies two grids.</li>
 	<li class="propertylistitem"><strong>Vertical Derivative* -</strong> Computes the vertical derivative of a 3D parameter at user-specified vertical levels.</li>
 </ul>
+<div class="pagesubtitle">Deviation<a name="deviation" id="deviation"></a></div>
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Deviation from Lat Lon Area Average  (grid)* - </strong>Computes the deviation from area average values of the grid and returns a grid with deviation from the area averaged value.</li>
+<li class="propertylistitem"><strong>Deviation from Lat Lon Time Average  (grid)* - </strong>Computes the deviation from time and spatial mean at each grid point.</li>
+<li class="propertylistitem"><strong>Deviation from level Average Average* -</strong> Returns the difference between each pixel's value and the average over the displayed domain at the specified level.</li>
+<li class="propertylistitem"><strong>Deviation from Meridional Average* -</strong> Returns the difference between each pixel's value and the meridional (along the x/longitude axis) average at the specified level.</li>
+<li class="propertylistitem"><strong>Deviation from Zonal Average* -</strong> Returns the difference between each pixel's value and the zonal (along the y/latitude axis) average at the specified level.</li>
+	</ul>
 <div class="pagesubtitle"><a name="ensemble" id="ensemble"></a>Ensemble</div>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Ensemble average over all grid members -</strong> Averages the chosen ensemble members over each time step and plots the data.</li>
