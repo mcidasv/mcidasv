@@ -48,24 +48,24 @@ numerical weather prediction model output, and from a local file that contains a
 <span class="caption">Image 1: Skew-T of Point Data</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Station</strong> - Selects which station's sounding is being displayed when multiple stations are selected in the Main Display window.</li>
-  <li class="propertylistitem"><strong><img src="images/AnimButtons.gif" width="243" height="32" alt="Time Animation Control"align="absmiddle"> Time Animation Control</strong> - Controls the looping of   displays through time.    See  <a href="../ui/Animation.html">Time   Animation Control</a> for more information.</li>
-  <li class="propertylistitem"><strong>Dry Adiabats </strong> - Displays the dry adiabats on the Skew-T diagram.</li>
-  <li class="propertylistitem"><strong>Saturation Adiabats </strong> - Displays the saturation adiabats on the Skew-T diagram.</li>
-  <li class="propertylistitem"><strong>Mixing Ratio </strong> - Displays the mixing ratio lines on the Skew-T diagram.</li>
-  <li class="propertylistitem"><strong>Parcel Path</strong> - Displays the path of a parcel of air lifted pseudo-adiabatically
+  <li class="propertylistitem"><strong>Station -</strong> Selects which station's sounding is being displayed when multiple stations are selected in the Main Display window.</li>
+  <li class="propertylistitem"><strong><img src="images/AnimButtons.gif" width="243" height="32" alt="Time Animation Control"align="absmiddle"> Time Animation Control -</strong> Controls the looping of   displays through time.  See  <a href="../ui/Animation.html">Time Animation Control</a> for more information.</li>
+  <li class="propertylistitem"><strong>Dry Adiabats -</strong> Displays the dry adiabats on the Skew-T diagram.</li>
+  <li class="propertylistitem"><strong>Saturation Adiabats -</strong> Displays the saturation adiabats on the Skew-T diagram.</li>
+  <li class="propertylistitem"><strong>Mixing Ratio -</strong> Displays the mixing ratio lines on the Skew-T diagram.</li>
+  <li class="propertylistitem"><strong>Parcel Path -</strong> Displays the path of a parcel of air lifted pseudo-adiabatically
       from the initial point to the top of the Skew-T diagram.</li>
-  <li class="propertylistitem"><strong>Virtual Temperature</strong> - Displays the virtual temperatures of the environmental profile and
+  <li class="propertylistitem"><strong>Virtual Temperature -</strong> Displays the virtual temperatures of the environmental profile and
       pseudo-adiabatically lifted air-parcel.</li>
-  <li class="propertylistitem"><strong>Grid Points</strong> - Plots points in the Main Display window spatially separated by the resolution of the data. These grid points&nbsp;represent the actual locations of where the data values in the sounding are retrieved. The data probe may be between one of these grid points, but the display in the sounding will be indicative of the nearest grid point&nbsp;to the location of the probe.</li>
-  <li class="propertylistitem"><strong>Parcel mode</strong> - Specifies how  the initial conditions of the pseudo-adiabatically
+  <li class="propertylistitem"><strong>Grid Points -</strong> Plots points in the Main Display window spatially separated by the resolution of the data. These grid points represent the actual locations of where the data values in the sounding are retrieved. The data probe may be between one of these grid points, but the display in the sounding will be indicative of the nearest grid point to the location of the probe.</li>
+  <li class="propertylistitem"><strong>Parcel mode -</strong> Specifies how  the initial conditions of the pseudo-adiabatically
       lifted air-parcel  are determined from
       the environmental sounding 
       according to the mode indicated. This will affect how the LNB, LFC, LCL, CAPE, and CIN are calculated. The choices are: </li>
 	  <ul class="propertylist">
-	    <li class="propertylistitem"><strong>Bottom of Sounding</strong> - Determines the initial conditions of the
+	    <li class="propertylistitem"><strong>Bottom of Sounding -</strong> Determines the initial conditions of the
 	      parcel from the temperature and dewpoint at the level of highest pressure. The path will  update whenever the profiles change.</li>
-	    <li class="propertylistitem"><strong>Below Cursor</strong> - Determines the initial conditions of the parcel
+	    <li class="propertylistitem"><strong>Below Cursor -</strong> Determines the initial conditions of the parcel
 	       from the temperature and dewpoint profiles by computing
 	      the pressure-weighted mean potential temperature and water vapor mixing-ratio
 	      of the atmosphere that lies below the cursor when the middle mouse
@@ -73,19 +73,19 @@ numerical weather prediction model output, and from a local file that contains a
 	      a sounding that starts at 1000 hPa will effectively mix the lower 50
 	      hPa of the atmosphere and lift the resulting parcel starting at 975
 	      hPa. The path will  update whenever the profiles change and as the cursor is dragged.</li>
-	    <li class="propertylistitem"><strong>At Cursor Pressure</strong> - Determines the initial pressure, in-situ
-	      temperature, and moisture content of the parcel  from the
+	    <li class="propertylistitem"><strong>At Cursor Pressure -</strong> Determines the initial pressure, in-situ
+	      temperature, and moisture content of the parcel from the
 	      temperature and dewpoint profiles at the pressure of the cursor when
 	      the middle mouse button is pressed. The initial moisture content is determined from
 	      the dewpoint profile at the initial pressure. The path will update whenever the profiles change and as the cursor is dragged.</li>
-	    <li class="propertylistitem"><strong>At Cursor (Press, Temp)</strong> - The computed path of a lifted
+	    <li class="propertylistitem"><strong>At Cursor (Press, Temp) -</strong> The computed path of a lifted
 	      parcel is automatically updated when appropriate.  The initial pressure and in-situ temperature of the parcel equal the
 	      pressure and temperature values under the cursor when the middle mouse
 	      button is pressed. The path will update
         whenever the profiles change and as the cursor is dragged.</li>
   </ul>
-  <li class="propertylistitem"><strong>Wind spacing</strong> - Allows the user to control which wind levels are shown in the display.</li>
-  <li class="propertylistitem"><strong>Consecutive Profiles -</strong> Allows for plotting both the current sounding, as well as the sounding of the next time step in one image. The temperature and dewpoint temperature profiles of the current timestep will be dashed, and the profiles of the next timestep will be displayed as solid lines. The current time's winds will be displayed directly to the right of the sounding, and the next timestep's winds will be shown to the right of that. This makes it easy to see how a profile will change through time. This will reduce the number of time steps in the loop&nbsp;by 1.&nbsp;This option will not make any changes to the display if only have one&nbsp;timestep is displayed.</li>
+  <li class="propertylistitem"><strong>Wind spacing -</strong> Allows the user to control which wind levels are shown in the display.</li>
+  <li class="propertylistitem"><strong>Consecutive Profiles -</strong> Allows for plotting both the current sounding, as well as the sounding of the next time step in one image. The temperature and dewpoint temperature profiles of the current timestep will be dashed, and the profiles of the next timestep will be displayed as solid lines. The current time's winds will be displayed directly to the right of the sounding, and the next timestep's winds will be shown to the right of that. This makes it easy to see how a profile will change through time. This will reduce the number of time steps in the loop by 1. This option will not make any changes to the display if only have one timestep is displayed.</li>
 </ul>
 <p>A label above the sounding's chart shows the station number, date, and time of the sounding. When displaying sounding plots made from gridded
   model output, the position of the sounding is shown in the Main Display window
@@ -118,7 +118,7 @@ the right mouse button.</p>
 <span class="caption">Image 3: Table of Point Data</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show U and V</strong> - Breaks the Speed and Direction categories up into the individual U and V components of the wind.</li>
+  <li class="propertylistitem"><strong>Show U and V -</strong> Breaks the Speed and Direction categories up into the individual U and V components of the wind.</li>
 </ul>
 <div class="pagesubtitle">Aerological Parameters</div>
 <p>The table to the left of the sounding diagram contains aerological parameters
@@ -148,17 +148,17 @@ abbreviations are used:</p>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are some options that are unique to this display.</p>
 <p>The <strong>File</strong> menu has this unique option:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Export Sounding Table to File... - </b>Exports the data in the <strong>Table </strong>tab to an Excel file.</li>
+  <li class="propertylistitem"><b>Export Sounding Table to File... -</b> Exports the data in the <strong>Table </strong>tab to an Excel file.</li>
 </ul>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Reset Sounding</b><b> </b>- Reverts the sounding back to its initial configuration after any modifications have been made to it.
+  <li class="propertylistitem"><b>Reset Sounding -</b> Reverts the sounding back to its initial configuration after any modifications have been made to it.
   </li>
-  <li class="propertylistitem"><strong>Selector Color - </strong>Changes the color of the shape representing the location of the sounding in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Selector Color -</strong> Changes the color of the shape representing the location of the sounding in the Main Display window.</li>
 </ul>
 <p>The <strong>View</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Use Data Projection - </strong>Re-centers the display and resets the zoom level back to the display's initial settings without changing any other preferences that have been modified.</li>
+  <li class="propertylistitem"><strong>Use Data Projection -</strong> Re-centers the display and resets the zoom level back to the display's initial settings without changing any other preferences that have been modified.</li>
   <li class="propertylistitem"><strong>Sounding Chart -</strong> Allows for capturing an image or movie of the sounding and change many aesthetic preferences.</li>
   <li class="propertylistitem"><strong>Hodograph -</strong> Allows for capturing an image or movie of the hodograph and change aesthetic preferences related to the Main Display window.</li>
 </ul>

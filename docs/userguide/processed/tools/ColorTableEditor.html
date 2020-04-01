@@ -65,7 +65,7 @@ You can also click on the button that represents the name of the color bar in th
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Color table -</strong> Lists the name of the color table currently being displayed in the Color Table Editor.</li>
 <li class="propertylistitem"><strong>Category -</strong> Lists out the category that the color table currently being displayed in the Color Table Editor&nbsp;is under. The category is utilized to help organize the color bars in the <strong>Color Tables</strong> menu of the Color Table Editor. In the example above, the color table for Temperature can be found under the <strong>Color Tables-&gt;System</strong> menu item. You can enter your own values into this text field to organize your color bars in your desired fashion. If you wish to use multiple levels of menus, you can use the &quot;&gt;&quot; symbol between different menu levels. For example, if you have a variety of color bars to be utilized in different weather conditions, and you are making a color bar for CAPE, you can specify a <strong>Category</strong> of&nbsp;&quot;Weather &gt; Severe&quot;. If you give your color bar a name of CAPE, once your color bar is saved, it can be found under the <strong>Color Tables-&gt;Weather-&gt;Severe Weather-&gt;Cape</strong> menu item of the Color Table Editor.</li>
-<li class="propertylistitem"><img src="images/colortable/History.gif" alt="History icon" width="36" height="17"align=absmiddle><strong>History -</strong> Allows you to step forward and backward through changes you have made. Using Shift+click on these buttons will step forward/back 10 changes.</li>
+<li class="propertylistitem"><img src="images/colortable/History.gif" alt="History icon" width="36" height="17"align=absmiddle><strong> History -</strong> Allows you to step forward and backward through changes you have made. Using Shift+click on these buttons will step forward/back 10 changes.</li>
 <li class="propertylistitem"><a name="range" id="range"></a><img src="images/colortable/Range.gif" alt="Range button" width="73" height="26"align=absmiddle><strong> -</strong> Sets the minimum and maximum data values on the color bar, with&nbsp;minimum being the breakpoint at the left end of the color bar, and maximum being the breakpoint on the right end of the color bar. You can change these values by typing values into the fields and pressing Enter or by clicking <img src="images/colortable/Range.gif" alt="Range button" width="73" height="26"align=absmiddle>.</li>
 <li class="propertylistitem"><strong>Colors -</strong> Shows the number of colors currently in the color bar. This is how many segments your color bar is broken up into. You can decrease or decrease the number of colors by clicking on the <img src="images/colortable/MinusPlus.gif" alt="Plus/Minus icon" width="38" height="14"align=absmiddle> buttons above the left and right ends of the color bar. You can add/remove 10 colors at once by using Shift+click on these buttons. New colors are added or removed at each end of the legend with the same color
   as the end color. The minimum number of colors required in the color bar is five, and there is no upper limit. The more colors you have in your color bar, the smoother the transition of colors between break points will be if interpolating colors.</li>
@@ -78,12 +78,12 @@ You can also click on the button that represents the name of the color bar in th
   and a gray line is drawn to indicate the position of the cursor.</p>
 <p>The type of painting is specified by the Paint Mode buttons.</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Fill</strong> - Fills the color table with the currently selected
+  <li class="propertylistitem"><strong>Fill -</strong> Fills the color table with the currently selected
 color in the color chooser when the mouse is clicked and dragged on the color table. With this Paint Mode, the color you selected will be drawn in solidly over the distance you click and drag on the color table. There will be no interpolation.</li>
-  <li class="propertylistitem"><strong>Interpolate</strong> - Applies  a linear
+  <li class="propertylistitem"><strong>Interpolate -</strong> Applies  a linear
     interpolation with the currently selected color in the color chooser when the mouse is clicked and dragged in the color table. Over the distance you click and drag on the color table, the color will gradually transition from one end to the other.</li>
   <li class="propertylistitem"><strong>Brightness -</strong> Applies the given brightness value (in the pull-down list) when the mouse is clicked and dragged on the color table. A higher value will make the colors appear lighter, and a lower value will make the colors appear darker.</li>
-  <li class="propertylistitem"><strong>Transparency</strong> - Applies the given
+  <li class="propertylistitem"><strong>Transparency -</strong> Applies the given
     transparency value (in the pull-down list) when the mouse is clicked and dragged on the color table. The transparency value is important because it will be utilized in the Main Display when you have a field using this color table. A transparency value of 0 will make it so you cannot see any features through a layer utilizing this color bar. A transparency value of 100 will make it so you do not see the layer utilizing this color bar. Transparency can be used so you can visualize multiple items in one display without worrying about the items overlapping each other. Placing the cursor over the color bar in the Color Table Editor will give a readout of the numerical and transparency values at each point in the color bar.</li>
   <li class="propertylistitem"><strong>Color Space -</strong> Allows you to add select color space that will be applied to the color bar. This helps to determine the color mixing when using the <strong>Interpolate</strong> Paint Mode.</li>
 </ul>
@@ -113,9 +113,9 @@ color in the color chooser when the mouse is clicked and dragged on the color ta
 <span class="caption">Image 4: Add a Breakpoint</span></div>
 <p>The choices are:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Remove Breakpoint</strong> - Removes the active breakpoint.</li>
-  <li class="propertylistitem"><strong>Lock/Unlock Breakpoint</strong> - Locks or unlocks the active breakpoint. When locked, it cannot be moved.</li>
-  <li class="propertylistitem"><strong>Change Breakpoint</strong> - Sets the breakpoint to a new value.</li>
+  <li class="propertylistitem"><strong>Remove Breakpoint -</strong> Removes the active breakpoint.</li>
+  <li class="propertylistitem"><strong>Lock/Unlock Breakpoint -</strong> Locks or unlocks the active breakpoint. When locked, it cannot be moved.</li>
+  <li class="propertylistitem"><strong>Change Breakpoint -</strong> Sets the breakpoint to a new value.</li>
   <li class="propertylistitem"><strong><a name="add" id="add"></a>Add Breakpoint -</strong> Adds a new breakpoint to the color bar.</li>
   <ul class="propertylist">
   <li class="propertylistitem"><strong>Here -</strong> Adds a new breakpoint where you clicked on the color bar.</li>
@@ -130,8 +130,8 @@ color in the color chooser when the mouse is clicked and dragged on the color ta
   <li class="propertylistitem"><strong>Transparency -</strong> Sets the transparency value on both sides, to the left, or to the right of the selected breakpoint up to the next breakpoint. The current transparency value of the breakpoint will be listed next to Transparency. You can also select to interpolate transparency to the left, right, or on both sides of the breakpoint. For example, if your selected breakpoint has a transparency value of 100, and the next breakpoint on the right has a transparency value of 50, interpolating transparency to the right of this breakpoint will cause the transparency values between the two breakpoints to gradually shift from 100 to 50&nbsp;(more to less transparent).</li>
   <li class="propertylistitem"><strong>Brightness -</strong> Sets the brightness value on both sides, to the left, or to the right of the selected breakpoint up to the next breakpoint. The current brightness value of the breakpoint will be listed next to Brightness. You can also select to interpolate brightness to the left, right, or on both sides of the breakpoint. For example, if your selected breakpoint has a brightness value of 100, and the next breakpoint has a brightness value of 50, interpolating brightness to the right of this breakpoint will cause the brightness values between the two breakpoints to gradually shift from 100 to 50 (more to less bright).</li>
   </ul>
-  <li class="propertylistitem"><strong>Replicate Color Table</strong> - Replicates the current color table x number of times over the current color table. The overall range will not change.</li>
-  <li class="propertylistitem"><strong>Invert Color Table</strong> - Reverses the order of the color table. The range will not change, but the colors will be reversed.</li>
+  <li class="propertylistitem"><strong>Replicate Color Table -</strong> Replicates the current color table x number of times over the current color table. The overall range will not change.</li>
+  <li class="propertylistitem"><strong>Invert Color Table -</strong> Reverses the order of the color table. The range will not change, but the colors will be reversed.</li>
 </ul>
 <div class="pagesubtitle"><a name="saveCT" id="saveCT"></a>Saving, Importing, and Exporting</div>
 <p>You can modify an existing color table, or edit an existing color table and save
@@ -218,7 +218,7 @@ can be saved for future use. To save a new or modified color table simply select
     <ul class="propertylist">
       <li class="propertylistitem"><strong>Red -</strong> Sets the amount of red in the color. A value of 255 is the true color of red. As the number gets lower, black gets mixed in, until a value of 0 is solid black.</li>
       <li class="propertylistitem"> <strong>Green -</strong> Sets the amount of green in the color. A value of 255 is the true color of green. As the number gets lower, black gets mixed in, until a value of 0 is solid black.</li>
-      <li class="propertylistitem"><strong>Blue - </strong>Sets the amount of blue in the color. A value of 255 is the true color of blue. As the number gets lower, black gets mixed in, until a value of 0 is solid black.</li>
+      <li class="propertylistitem"><strong>Blue -</strong> Sets the amount of blue in the color. A value of 255 is the true color of blue. As the number gets lower, black gets mixed in, until a value of 0 is solid black.</li>
       <li class="propertylistitem"><strong>Alpha -</strong> Sets the transparency of the color. A value of 255 is opaque, and a value of 0 is 100% transparent.</li>
     </ul>
   <li class="propertylistitem"><strong>CMYK tab -</strong> Sets Cyan, Magenta, Yellow, Black, and Alpha values for the color.</li>
@@ -235,7 +235,7 @@ can be saved for future use. To save a new or modified color table simply select
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are several options  unique to this display.</p>
 <p>The<strong> File </strong>menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>New </b>- Begins a new color table from scratch.</li>
+  <li class="propertylistitem"><strong>New -</strong> Begins a new color table from scratch.</li>
   <li class="propertylistitem"><strong>Save - </strong>Saves changes to a color table. This will overwrite the current color bar that you are editing.</li>
   <li class="propertylistitem"><strong>Save As... -</strong> Saves a color table and allows you to name it. This allows you to save your updated color bar with a new name&nbsp;and keep your original color bar as well.</li>
   <li class="propertylistitem"><strong>Remove -</strong> Removes an existing color table. Note that you cannot remove any system color bars (color bars that are included with McIDAS-V). If you have a system color bar open, this <strong>Remove</strong> option will be grayed out and not usable. You can only remove color bars you have created yourself.</li>
@@ -245,7 +245,7 @@ can be saved for future use. To save a new or modified color table simply select
 </ul>
 <p>The <strong>Color Tables </strong>menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Satellite/AWIPS/Radar/System/Miscellaneous - </strong>Contains pre-existing color tables as well as color tables that you have saved that you can edit.</li>
+  <li class="propertylistitem"><strong>Satellite/AWIPS/Radar/System/Miscellaneous -</strong> Contains pre-existing color tables as well as color tables that you have saved that you can edit.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
