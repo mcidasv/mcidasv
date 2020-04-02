@@ -57,3 +57,13 @@ def MODISTruColRGB(b1B, b4B, b3B):
     grn = b4B
     blu = b3B
     return combineRGB(red, grn, blu)
+
+# MODIS False Color RGB
+def MODISFalseColRGB(b7B, b2B, b1B):
+    # red = band7 BRIT
+    # grn = band2 BRIT
+    # blu = band1 BRIT
+    red = b7B
+    grn = b2B
+    blu = b1B
+    return combineRGB(red, grn, blu)
