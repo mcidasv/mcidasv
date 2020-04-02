@@ -47,3 +47,13 @@ def MODISEVI(b1R,b2R, b3R):
     C1 = 6
     C2 = 7.5
     return G * ((b2R - b1R)/(b2R + (C1 * b1R) - (C2 * b3R) + L))
+
+# MODIS True Color RGB
+def MODISTruColRGB(b1B, b4B, b3B):
+    # red = band1 BRIT
+    # grn = band4 BRIT
+    # blu = band3 BRIT
+    red = b1B
+    grn = b4B
+    blu = b3B
+    return combineRGB(red, grn, blu)
