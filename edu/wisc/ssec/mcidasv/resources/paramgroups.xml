@@ -255,4 +255,8 @@
     <params p1="101_Band1_REF" p2="101_Band2_REF" p3="101_Band3_REF"/>
     <params p1="111_Band1_REF" p2="111_Band2_REF" p3="111_Band3_REF"/>
   </paramgroup>
+  <paramgroup description="MODIS True Color RGB" name="MODIS_RGB_TrueColor">
+    <params p1="101_Band1_BRIT" p2="101_Band4_BRIT" p3="101_Band3_BRIT"/>
+    <params p1="111_Band1_BRIT" p2="111_Band4_BRIT" p3="111_Band3_BRIT"/>
+  </paramgroup>
 </paramgroups>
