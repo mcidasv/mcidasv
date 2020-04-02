@@ -35,13 +35,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Cat
   <span class="caption">Image 1: Catalog Chooser</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Catalog</strong> - Selects the catalog for the data. Enter in a catalog URL (and hit Enter or click <img src="images/Refresh.gif" alt="Refresh button" width="23" height="24"align=absmiddle> <strong> Refresh </strong> ) or select a catalog URL from the pull down menu. Use the <img src="images/SelectFile2.gif" width="180" height="24" alt="Select File button"align="absmiddle"> button to select a catalog on your local disk.</li>
-    <li class="propertylistitem"><strong>History</strong> - Switches back and forth between selected catalogs with  the <img src="images/Cat-Back.gif" alt="Left arrow" width="13" height="15"align=absmiddle> and <img src="images/Cat-Fwd.gif" alt="Right arrow" width="13" height="15"align=absmiddle> buttons.</li>
-    <li class="propertylistitem"><strong>Data Type</strong> - Selects the type of data. If left as &quot;I'm Feeling Lucky&quot;, McIDAS-V will figure out what kind of data is in the file by the URL itself. This can be overridden by selecting the type of data the file contains from the pull down menu. See the <a href="../DataSources.html">data formats and sources</a> available.</li>
-    <li class="propertylistitem"><strong>Tree Structure</strong> - Lists all of the data. Open the tree structure by clicking on the (<img src="../images/TreeTagClosed.gif" alt="Tab icon" width="22" height="21"align=absmiddle>) tab icon. Clicking on a data source will enable the <img src="../../quickstart/images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> button.</li>
-    <li class="propertylistitem"><strong>Show Thumbnail Images</strong> - Shows thumbnails in the THREDDS catalog if available.</li>
-    <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" width="25" height="24" align=absmiddle> <strong> Help</strong> - Brings up this help page.</li>
-    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" width="23" height="24" align=absmiddle> <strong> Refresh</strong> - Updates the catalog chooser with the most recent data.</li>
+    <li class="propertylistitem"><strong>Catalog -</strong> Selects the catalog for the data. Enter in a catalog URL (and hit Enter or click <img src="images/Refresh.gif" alt="Refresh button" width="23" height="24"align=absmiddle> <strong> Refresh </strong> ) or select a catalog URL from the pull down menu. Use the <img src="images/SelectFile2.gif" width="180" height="24" alt="Select File button"align="absmiddle"> button to select a catalog on your local disk.</li>
+    <li class="propertylistitem"><strong>History -</strong> Switches back and forth between selected catalogs with  the <img src="images/Cat-Back.gif" alt="Left arrow" width="13" height="15"align=absmiddle> and <img src="images/Cat-Fwd.gif" alt="Right arrow" width="13" height="15"align=absmiddle> buttons.</li>
+    <li class="propertylistitem"><strong>Data Type -</strong> Selects the type of data. If left as &quot;I'm Feeling Lucky&quot;, McIDAS-V will figure out what kind of data is in the file by the URL itself. This can be overridden by selecting the type of data the file contains from the pull down menu. See the <a href="../DataSources.html">data formats and sources</a> available.</li>
+    <li class="propertylistitem"><strong>Tree Structure -</strong> Lists all of the data. Open the tree structure by clicking on the (<img src="../images/TreeTagClosed.gif" alt="Tab icon" width="22" height="21"align=absmiddle>) tab icon. Clicking on a data source will enable the <img src="../../quickstart/images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> button.</li>
+    <li class="propertylistitem"><strong>Show Thumbnail Images -</strong> Shows thumbnails in the THREDDS catalog if available.</li>
+    <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" width="25" height="24" align=absmiddle> <strong> Help -</strong> Brings up this help page.</li>
+    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" width="23" height="24" align=absmiddle> <strong> Refresh -</strong> Updates the catalog chooser with the most recent data.</li>
     <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> <strong> -</strong> Loads the selected data.</li>
 </ul>
 <p>The following image displays the WMS chooser:</p>
@@ -52,17 +52,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Cat
 <p>Data files that are imported through the WMS Servers must contain gridded data. Also, the NetCDF-Java Common Data Model must be able to identify the coordinate system used.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Merge Layers</strong> - Selects multiple data sources to be loaded and displayed at the same time. When unchecked, multiple data sources will be loaded, but not displayed.</li>
-    <li class="propertylistitem"><strong>Image Bounds</strong> - Provides an overview of the bounding box area of a selected image. Use the following buttons to navigate around the map:</li>
+    <li class="propertylistitem"><strong>Merge Layers -</strong> Selects multiple data sources to be loaded and displayed at the same time. When unchecked, multiple data sources will be loaded, but not displayed.</li>
+    <li class="propertylistitem"><strong>Image Bounds -</strong> Provides an overview of the bounding box area of a selected image. Use the following buttons to navigate around the map:</li>
     <ul class="propertylist">
-      <li class="propertylistitem"><img src="images/ZoomIn.gif" alt="Zoom in button" width="18" height="18" align=absmiddle> <strong> Zoom In</strong> - Zooms in over the current map area.</li>
-      <li class="propertylistitem"><img src="images/ZoomOut.gif" alt="Zoom out button" width="18" height="18" align=absmiddle> <strong> Zoom Out</strong> - Zooms out over the current map area.</li>
-      <li class="propertylistitem"><img src="images/PreviousMapArea.gif" alt="Previous map area button" width="18" height="18" align=absmiddle> <strong> Previous Map Area</strong> - Returns to the previous map area.</li>
-      <li class="propertylistitem"><img src="images/HomeMapArea.gif" alt="Home map area button" width="18" height="18" align=absmiddle> <strong> Home Map Area</strong> - Returns to the default map area.</li>
-      <li class="propertylistitem"><img src="images/ViewUp.gif" alt="Move view up button" width="18" height="18" align=absmiddle> <strong> Move View Up</strong> - Moves the view up (map down).</li>
-      <li class="propertylistitem"><img src="images/ViewDown.gif" alt="Move view down button" width="18" height="18" align=absmiddle> <strong> Move View Down</strong> - Moves the view down (map up).</li>
-      <li class="propertylistitem"><img src="images/ViewLeft.gif" alt="Move view left button" width="18" height="18" align=absmiddle> <strong> Move View Left</strong> - Moves the view left (map right).</li>
-      <li class="propertylistitem"><img src="images/ViewRight.gif" alt="Move view right button" width="18" height="18" align=absmiddle> <strong> Move View Right</strong> - Moves the view right (map left).</li>
+      <li class="propertylistitem"><img src="images/ZoomIn.gif" width="22" height="23" alt="Zoom in button"align=absmiddle> <strong> Zoom In -</strong> Zooms in over the current map area.</li>
+      <li class="propertylistitem"><img src="images/ZoomOut.gif" width="20" height="23" alt="Zoom out button" align=absmiddle> <strong> Zoom Out -</strong> Zooms out over the current map area.</li>
+      <li class="propertylistitem"><img src="images/HomeMapArea.gif" width="22" height="23" alt="Home button" align=absmiddle> <strong> Home Map Area -</strong> Returns to the default map area.</li>
+      <li class="propertylistitem"><img src="images/ViewUp.gif" alt="Move view up button" width="18" height="18" align=absmiddle> <strong> Move View Up -</strong> Moves the view up (map down).</li>
+      <li class="propertylistitem"><img src="images/ViewDown.gif" alt="Move view down button" width="18" height="18" align=absmiddle> <strong> Move View Down -</strong> Moves the view down (map up).</li>
+      <li class="propertylistitem"><img src="images/ViewLeft.gif" alt="Move view left button" width="18" height="18" align=absmiddle> <strong> Move View Left -</strong> Moves the view left (map right).</li>
+      <li class="propertylistitem"><img src="images/ViewRight.gif" alt="Move view right button" width="18" height="18" align=absmiddle> <strong> Move View Right -</strong> Moves the view right (map left).</li>
     </ul>
 </ul>
 <!-- InstanceEndEditable -->

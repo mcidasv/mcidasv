@@ -44,8 +44,8 @@ This brings up the Formula Editor dialog box used to define a formula:</p>
 <span class="caption">Image 1: Settings Tab of the Formula Editor Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Group - </b>Sets the name of the directory in the <strong>Field Selector</strong> that the formula will be under. This is helpful to keep formulas organized.</li>
-  <li class="propertylistitem"><strong>Displays -</strong> Sets which display types will be available to the user when the formula is evaluated.&nbsp;By default, all displays are turned on.&nbsp;Individual display types can be set by selecting <strong>Use selected</strong> and choosing specific display types in the panel at the bottom of the <strong>Settings</strong> tab.</li>
+  <li class="propertylistitem"><strong>Group -</strong> Sets the name of the directory in the <strong>Field Selector</strong> that the formula will be under. This is helpful to keep formulas organized.</li>
+  <li class="propertylistitem"><strong>Displays -</strong> Sets which display types will be available to the user when the formula is evaluated.  By default, all displays are turned on.  Individual display types can be set by selecting <strong>Use selected</strong> and choosing specific display types in the panel at the bottom of the <strong>Settings</strong> tab.</li>
 </ul>
 <p>The <strong>Derived</strong> tab in the Formula
     Editor sets
@@ -54,10 +54,10 @@ the bindings between formula parameters and fields/aliases. </p>
 <span class="caption">Image 2: Derived Tab of the Formula Editor Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>For end user - </b>Includes the formula in the list of formulas in the <strong>Field Selector</strong> tab of the Data Explorer.</li>
-  <li class="propertylistitem"><strong>Create derived quantities -</strong> Adds the formula as a derived field if the data contains fields included in the <strong>Parameter Groups</strong> specified or match the specific <strong>Parameters</strong> defined in this tab.&nbsp;In the case above, any time data with the TEMP, U, and V fields is added, this formula will list in the <strong>Fields</strong> panel of the <strong>Field Selector</strong> along with the data.&nbsp;This keeps the user from having to go through the entire list of formulas.</li>
+  <li class="propertylistitem"><strong>For end user -</strong> Includes the formula in the list of formulas in the <strong>Field Selector</strong> tab of the Data Explorer.</li>
+  <li class="propertylistitem"><strong>Create derived quantities -</strong> Adds the formula as a derived field if the data contains fields included in the <strong>Parameter Groups</strong> specified or match the specific <strong>Parameters</strong> defined in this tab.  In the case above, any time data with the TEMP, U, and V fields is added, this formula will list in the <strong>Fields</strong> panel of the <strong>Field Selector</strong> along with the data.  This keeps the user from having to go through the entire list of formulas.</li>
 </ul>
-<p>The parameters to be bound are denoted by operands D1, D2, D3, etc in the formula itself. Since these D* parameters are defined as TEMP, U, and V, McIDAS-V will automatically pull those fields from the data and evaluate the formula without requiring any user input. If you need user input, you can use other field names and the user will be prompted to supply those fields&nbsp;(e.g. the NDVI formula on the <a href="Formulas.html">Formulas</a> page would require the user to select the fields for NIR and R).</p>
+<p>The parameters to be bound are denoted by operands D1, D2, D3, etc in the formula itself. Since these D* parameters are defined as TEMP, U, and V, McIDAS-V will automatically pull those fields from the data and evaluate the formula without requiring any user input. If you need user input, you can use other field names and the user will be prompted to supply those fields (e.g. the NDVI formula on the <a href="Formulas.html">Formulas</a> page would require the user to select the fields for NIR and R).</p>
 <p>You can define the bindings for the operands using parameter groups or by specifying the parameters to use. Right clicking in the <strong>Parameter</strong> input
   field will pop up a menu that allows you to select system parameter aliases
  from fields loaded into McIDAS-V already.</p>

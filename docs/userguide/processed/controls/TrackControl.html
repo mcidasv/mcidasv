@@ -34,13 +34,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/TrackCon
 <div class="pagesubtitle">Overview</div>
 <p>The track controls display trajectory data sets, e.g., aircraft track, ship,
 buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories</strong> chooser of the <strong>Data Sources</strong> tab of the Data Explorer, with the Data Type of Track files. The data can be displayed in the form of a chart, table, track, or as a Point Data Plot drawn in the Main Display window. The items in the <strong>Layer Controls</strong> for a Point Data plot are the same as the controls for displaying regular <a href="PointDataPlotControl.html">Point Data</a>. If working with data for a lot of times, or have many parameters included with the data, the user may be prompted to subset the point data. This gives the option of only including the necessary fields to cut down on memory usage and time to display the data.</p>
-<p>To draw a track in the Main Display window, select the field in the <strong>Fields</strong> panel,  the Track Colored By Parameter display type, and hit <strong>Create Display</strong>. These same controls are utilized for the Trajectory Colored By Parameter display type. The track controls consist of two tabs, <strong>Layout</strong> and <strong>Times</strong>.</p>
+<p>To draw a track in the Main Display window, select the field in the <strong>Fields</strong> panel, the Track Colored By Parameter display type, and hit <strong>Create Display</strong>. These same controls are utilized for the Trajectory Colored By Parameter display type. The track controls consist of two tabs, <strong>Layout</strong> and <strong>Times</strong>.</p>
 <p>The <strong>Layout</strong> tab controls the appearance of the display:</p>
 <div class="images"><img src="images/TrackControlGui.gif" width="509" height="231" alt="Image 1: Layout Tab of the Track Controls Dialog"><br>
 <span class="caption">Image 1: Layout Tab of the Track Controls Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows for opening the <a  href="../tools/ColorTableEditor.html">Color
+  <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows for opening the <a href="../tools/ColorTableEditor.html">Color
       Table Editor</a>, change the range, select other color tables, etc.</li>
   <li class="propertylistitem"><strong>Visible Range -</strong> Determines
       what parts of the data are actually shown. Click the <img src="level2/images/ChangeButton.gif" alt="Change button" width="77" height="26"align=absmiddle> button to set the range of data shown.&nbsp;Once the checkbox is checked, the Visible Range will be applied to the data in the Main Display window. If the Visible Range checkbox is not selected, the default range will be used.</li>
@@ -59,7 +59,7 @@ buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories
 <span class="caption">Image 2: Times Tab of the Track Controls Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Times to Use -</strong> Represents if the user is using nominal times or the track times from the data.
+  <li class="propertylistitem"><strong>Times to Use -</strong> Determines if the user is using nominal times or the track times from the data.
       The user can also choose to limit the times of data shown by checking <strong>enabled</strong>. There are two<strong> Times to Use</strong> options:</li>
       <ul class="propertylist">
       <li class="propertylistitem"><strong>Nominal Time -</strong> Displays the entire track of data in one time step, regardless of the number of observations along the track.</li>
@@ -92,7 +92,7 @@ buoys, etc. This data can be loaded in the <strong>General-&gt;Files/Directories
 </ul>
 <p>The <strong>View</strong> menu has this unique option:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show Flythrough -</strong> Opens the <a href="../ui/DisplayMenus.html#flythrough">Flythrough feature</a>  which allows for interactively exploring the display.</li>
+  <li class="propertylistitem"><strong>Show Flythrough -</strong> Opens the <a href="../ui/DisplayMenus.html#flythrough">Flythrough feature</a> which allows for interactively exploring the display.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

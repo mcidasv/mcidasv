@@ -30,8 +30,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ProjectionM
 <div class="pagetitle">Projection Manager</div>
 <p>The Projection Manager allows you to choose, edit, and save map projections for
 use in McIDAS-V.</p>
-<p><a name="projection" id="projection"></a>A projection is a way of mapping the surface of the Earth (a curved 2D surface) onto  a flat 2D surface (a plane). A projection transforms a point on the earth (specified by latitude, longitude) to a point on the projection plane.</p>
-<p>In the Projection Manager, both the projection  and the area of the Earth can be specified. For example, you can make a Lambert Conformal map of North America, and a Lambert Conformal map of Sedgwick County, Kansas. Same projection, different areas.</p>
+<p><a name="projection" id="projection"></a>A projection is a way of mapping the surface of the Earth (a curved 2D surface) onto a flat 2D surface (a plane). A projection transforms a point on the earth (specified by latitude, longitude) to a point on the projection plane.</p>
+<p>In the Projection Manager, both the projection and the area of the Earth can be specified. For example, you can make a Lambert Conformal map of North America, and a Lambert Conformal map of Sedgwick County, Kansas. Same projection, different areas.</p>
 <p>McIDAS-V provides several basic types of projections: <strong>Lat/Lon</strong>, <strong>Lambert conformal conic</strong>, <strong>Transverse mercator</strong>, <strong>Stereographic</strong>,<strong> Mercator</strong>, <strong>Albers Equal Area</strong>, <strong>Lambert Azimuth Equal Area</strong>, <strong>Orthographic</strong>, <strong>VerticalPerspectiveView</strong>. Each of these can be parameterized (e.g., tangent point, origin longitude) to create a specific projection area of that type. When you define a projection and area, you specify the type of projection and its parameters.</p>
 <div class="pagesubtitle">Projection Manager Window</div>
 <p>You can bring up the Projection Manager with the <strong>Projections-></strong> <img src="images/NewEditMenuButton.gif" alt="New/Edit Projection button" width="20" height="20"align=absmiddle><strong>New/Edit...</strong> menu item in the Main Display window, or through the <strong>Tools-&gt;Projections-&gt;Edit Map Projections </strong>menu option in the Main Display window. Projections supplied with McIDAS-V are shown in the list. There may be additional projections you have created and named. In the figure, the US-&gt;CONUS projection is highlighted, and displayed on the left.</p>
@@ -39,8 +39,8 @@ use in McIDAS-V.</p>
 <div class="images"><img src="images/ProjectionManager.gif" alt="Image 1: Projection Manager"> <br> <span class="caption">Image 1: Projection Manager</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><img src="images/Edit.gif" alt="Edit button" width="55" height="26"align=absmiddle><strong> - </strong>Opens a Define/Edit Projection window, where you can edit the map boundaries, type, and name of the existing map.</li>
-  <li class="propertylistitem"><img src="images/New.gif" alt="New button" width="59" height="26"align=absmiddle> - Opens a Define/Edit Projection window, where you start from scratch by naming the map, setting the boundaries, and selecting the map type.</li>
+  <li class="propertylistitem"><img src="images/Edit.gif" alt="Edit button" width="55" height="26"align=absmiddle><strong> -</strong> Opens a Define/Edit Projection window, where you can edit the map boundaries, type, and name of the existing map.</li>
+  <li class="propertylistitem"><img src="images/New.gif" alt="New button" width="59" height="26"align=absmiddle><strong> -</strong> Opens a Define/Edit Projection window, where you start from scratch by naming the map, setting the boundaries, and selecting the map type.</li>
   <li class="propertylistitem"><img src="images/Export.gif" alt="Export button" width="71" height="26"align=absmiddle> <strong> -</strong> Allows you to export a map and save it to a file.</li>
   <li class="propertylistitem"><img src="images/Delete.gif" alt="Delete button" width="70" height="26"align=absmiddle> <strong> -</strong> Deletes the selected map and removes it from the list.</li>
   <li class="propertylistitem"><strong>Name -</strong> Lists the names of the user-saved and default maps.</li>
@@ -57,7 +57,7 @@ use in McIDAS-V.</p>
 <p>This allows you to define new projections and to modify existing ones. Remember that a projection not only consists of the mathematical projection, but also the area of the Earth that is seen.</p>
 <p>Here is how to create a new or revised projection:</p>
 <ol>
-  <li>Choose <img src="images/Edit.gif" alt="Edit button" width="55" height="26"align=absmiddle> or <img src="images/New.gif" alt="New button" width="59" height="26"align=absmiddle><strong> </strong>from Projection Manager
+  <li>Choose <img src="images/Edit.gif" alt="Edit button" width="55" height="26"align=absmiddle> or <img src="images/New.gif" alt="New button" width="59" height="26"align=absmiddle> from Projection Manager
     window. You can also double click on an existing projection in the Projection Manager to open the Define/Edit Projection window.</li>
   <li>Enter a new or revised name if necessary. See the Properties section below for more information about naming and creating hierarchies.</li>
   <li>Choose a Projection Type from the pull-down menu.</li>
@@ -71,7 +71,7 @@ use in McIDAS-V.</p>
 <p>Note that some fields in this window may be different depending on the map type you select. There are no Projection Parameters when using a Lat/Lon map type. In the example shown, a Lambert conformal conic projection is being defined with the projection parameters as shown in the figure.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"> <img src="images/Edit.gif" alt="Edit button" width="55" height="26"align=absmiddle> / <img src="images/New.gif" alt="New button" width="59" height="26"align=absmiddle> <strong> Projection</strong> - Edits an existing/Creates a new map area.</li>
+  <li class="propertylistitem"> <img src="images/Edit.gif" alt="Edit button" width="55" height="26"align=absmiddle> / <img src="images/New.gif" alt="New button" width="59" height="26"align=absmiddle> <strong> Projection -</strong> Edits an existing/Creates a new map area.</li>
   <ul class="propertylist">
     <li class="propertylistitem"><img src="images/Maps.gif" alt="Maps icon" width="43" height="21" align=absmiddle> <strong> -</strong> Turns on/off maps in the map area while defining a new projection.</li>
     <li class="propertylistitem"><img src="../data/choosers/images/ZoomIn.gif" alt="Zoom In icon" width="18" height="18" align=absmiddle><strong> Zoom In -</strong> Zooms in over the current map area.</li>
@@ -90,7 +90,7 @@ use in McIDAS-V.</p>
   <li class="propertylistitem"><strong>False easting - </strong>Moves the map boundaries east and west. A negative value in this field moves the boundaries of the map east, and a positive value moves the map's boundaries west.</li>
   <li class="propertylistitem"><strong>False northing -</strong> Moves the map boundaries north and south. A negative value in this field moves the boundaries north, and a positive value moves the map's boundaries south.</li>
   <li class="propertylistitem"><strong>Origin lat -</strong> Represents the center of the map's boundaries with respect to latitude.</li>
-  <li class="propertylistitem"><strong>Origin lon - </strong>Represents the center of the map's boundaries with respect to longitude.</li>
+  <li class="propertylistitem"><strong>Origin lon -</strong> Represents the center of the map's boundaries with respect to longitude.</li>
     <li class="propertylistitem"><strong>Height -</strong> Sets the zoom level of the display in the Define/Edit Projection window. The larger the value, the more zoomed in you will be. This is an option with the Lambert conformal conic map type.</li>
     <li class="propertylistitem"><strong>Scale -</strong> Sets the scale of the map with respect to size. The larger the scale, the larger the map will appear. This is an option with the Transverse mercator map type.</li>
     <li class="propertylistitem"><strong>Tangent lon -</strong> Sets the tangent longitude for the map. This is an option with the Transverse mercator map type.</li>

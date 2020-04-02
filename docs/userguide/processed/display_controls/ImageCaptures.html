@@ -30,7 +30,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Image and Movie Capture Controls</div>
-<p>You can capture the Main Display window as an image, a QuickTime movie or an animated GIF.</p>
+<p>McIDAS-V can capture the Main Display window as an image, a QuickTime movie or an animated GIF.</p>
 <ul class="childlist">
 <li><a href="#jpegcapture">Saving Images</a></li>
 <li><a href="#printcapture">Printing Current View</a></li>
@@ -39,7 +39,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <li><a href="#movieplayback">Playing QuickTime Movies</a></li>
 </ul>
 <div class="pagesubtitle"><a name="jpegcapture" id="jpegcapture"></a>Saving Images</div>
-<p>You can save a display as an image by selecting the <strong>View-&gt;Capture-&gt;Image...</strong> menu
+<p>The user can save a display as an image by selecting the <strong>View-&gt;Capture-&gt;Image...</strong> menu
 item in the Main Display window. A file dialog will open where you can enter a file name for the image
 file. McIDAS-V supports JPEG, PNG, GIF, PDF, PS, and SVG formats. From this File
 Dialog you can also specify the image quality (only used for JPEGs) and what
@@ -55,7 +55,7 @@ to capture. You can also select whether or not the background is transparent.</p
   correct projection is to select the <strong>Projections-&gt;Use Displayed Area</strong> menu
   item in the Main Display window. If you specify a .kml file, McIDAS-V will generate an image with the same
   file prefix and the kml file that refers to the image. If you specify a .kmz
-  file  (which is a zip format) it will contain the image and the kml
+  file (which is a zip format) it will contain the image and the kml
 file.</p>
 <div class="pagesubtitle"><a name="printcapture" id="printcapture"></a>Printing Current View</div>
 <p>You can send any display to a printer. Select the <strong>View-&gt;Capture-&gt;Print...</strong> menu
@@ -68,30 +68,30 @@ item in the Main Display window to open the Movie Capture window:</p>
 <div class="pagesubtitle">Properties</div>
 <p>Note: More information about these controls is found in the <a href="#create">Creating a Movie</a> section below.</p>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Capture</strong> -</li>
+    <li class="propertylistitem"><strong>Capture -</strong></li>
     <ul class="propertylist">
         <li class="propertylistitem"><img src="images/OneImage.gif" alt="One Image button" width="132" height="26"align=absmiddle> <strong> -</strong> Captures one image to create a movie. </li>
 <li class="propertylistitem"><img src="images/TimeAnimation.gif" alt="Time Animation button" width="132" height="26"align=absmiddle> <strong> -</strong> Captures a loop of images at the specified dwell rate through the Time Animation Controls.</li>
 <li class="propertylistitem"><strong>Reset to start time -</strong> Resets the loop to the initial timestep before recording the video.</li>
 <li class="propertylistitem"> <img src="images/Automatically.gif" alt="Automatically button" width="132" height="26"align=absmiddle> <strong> -</strong> Creates a new frame in the movie every given number of seconds.</li>
 </ul>
-<li class="propertylistitem"><strong>What to capture</strong> -</li>
+<li class="propertylistitem"><strong>What to capture -</strong></li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Current View -</strong> Captures only what is in the view screen of the Main Display window.</li>
 <li class="propertylistitem"><strong>All Views -</strong> Captures all of the panels in the Main Display window without including any legends or toolbar buttons.</li>
 <li class="propertylistitem"><strong>Current View &amp; Legend -</strong> Captures both the view and the Legend.</li>
 <li class="propertylistitem"><strong>Full Window -</strong> Captures the entire Main Display window, including the toolbars.</li>
-<li class="propertylistitem"><strong>Full Screen -</strong> Captures everything  visible on the monitor.</li>
+<li class="propertylistitem"><strong>Full Screen -</strong> Captures everything visible on the monitor.</li>
 <li class="propertylistitem"><strong>Beep -</strong> Produces a beeping noise at the beginning of each frame captured in the movie.</li>
 <li class="propertylistitem"><strong>Background Transparent -</strong> Captures the movie with the background image transparent.</li>
 </ul>
-<li class="propertylistitem"><strong>Image Files</strong> -</li>
+<li class="propertylistitem"><strong>Image Files -</strong></li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Image Quality -</strong> Sets the quality of the images. Lower quality images will utilize less memory, but will not look as good.</li>
 <li class="propertylistitem"><strong>Save Files To -</strong> Allows you to individually save each image in your movie. To use this option, click the checkbox for <strong>Save Files To</strong> and specify a directory.</li>
 <li class="propertylistitem"><strong>Filename Template -</strong> Sets the naming structure for the images. This option is only available if you are saving the individual images in your movie with the <strong>Save Files To</strong> option. There are several ways you can customize the output, described in the section <a href="#filename">below</a>.</li>
 </ul>
-<li class="propertylistitem"><strong>Frames</strong> -</li>
+<li class="propertylistitem"><strong>Frames -</strong></li>
 <ul class="propertylist">
     <li class="propertylistitem"><strong># frames -</strong> Displays the number of frames in the movie.</li>
     <li class="propertylistitem"><img src="images/Preview.gif" alt="Preview button" width="80" height="26"align=absmiddle> <strong> -</strong> Opens a Movie Preview window, where you can see individual slides before saving the movie.</li>
@@ -114,9 +114,9 @@ item in the Main Display window to open the Movie Capture window:</p>
 saved in a temporary directory and will be removed. You can use the following templates to customize the name of the output file:</li>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>%count% -</strong> Represents the image counter.</li>
-<li class="propertylistitem"><strong>%count:decimal format% -</strong> Allows you to format the count using the same rules defined in the  lat/lon format section of the User Preferences window's <a href="../tools/preferences/FormatPreferences.html"><strong>Formats &amp; Data</strong></a> tab. You can also specify a <a href="http://download.oracle.com/javase/tutorial/i18n/format/decimalFormat.html" target="_blank">Java DecimalFormat</a>, e.g., %count:000% outputs three-digit counts with leading zeros (001, 002, etc.).</li>
-<li class="propertylistitem"><strong>%time% -</strong> Represents the  animation time in the default format.</li>
-<li class="propertylistitem"><strong>%time:time format% -</strong> Begins with "time:" and contains a time format string using the the same date formatting rules described in the User Preferences window's  <a href="../tools/preferences/FormatPreferences.html"><strong>Formats &amp; Data</strong></a> tab.</li>
+<li class="propertylistitem"><strong>%count:decimal format% -</strong> Allows you to format the count using the same rules defined in the lat/lon format section of the User Preferences window's <a href="../tools/preferences/FormatPreferences.html"><strong>Formats &amp; Data</strong></a> tab. You can also specify a <a href="http://download.oracle.com/javase/tutorial/i18n/format/decimalFormat.html" target="_blank">Java DecimalFormat</a>, e.g., %count:000% outputs three-digit counts with leading zeros (001, 002, etc.).</li>
+<li class="propertylistitem"><strong>%time% -</strong> Represents the animation time in the default format.</li>
+<li class="propertylistitem"><strong>%time:time format% -</strong> Begins with "time:" and contains a time format string using the the same date formatting rules described in the User Preferences window's <a href="../tools/preferences/FormatPreferences.html"><strong>Formats &amp; Data</strong></a> tab.</li>
 </ul>
 <li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> button to specify the name and format of the movie you want to save.</li>
 <li class="propertylistitem">When saving a movie, in the Save dialog, there is an option for '<strong>Use 'global' GIF color palette</strong>'. This option is applicable for animated GIF movies, and it is enabled by default. Animated GIFs are limited to 256 colors, and this option uses the same 256 colors for every frame in the loop when the setting is enabled. Enabling this option allows for certain display settings such as a color scale to remain constant throughout the loop. If this option is disabled, then each frame uses it's own color palette, so one color may represent one value in one frame, and the same color may represent a different value in the next frame. One circumstance where disabling this option may be ideal is if the movie starts with a low-light scene (not many colors) and there is no color scale in the display.</li>

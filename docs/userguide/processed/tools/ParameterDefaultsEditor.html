@@ -45,7 +45,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ParameterDe
     <li class="propertylistitem"><strong>Display Unit -</strong> Lists the unit used to display the parameter.</li>
 </ul>
 <p>This feature allows for presetting conventional color and contouring choices, and allows for overriding system defaults.</p>
-<p>There are three sets of defaults: User defaults, Application defaults, and System defaults. These columns are sorted in alphabetical order by default, and this   order can be reversed by clicking on the name of the columns (e.g. '<strong>Parameter</strong>'). While the items in the <strong>Application defaults</strong> and <strong>System defaults</strong> tabs cannot be modified within the tab, a duplicate of the same parameter can be copied in the <strong>User defaults</strong> tab. This can be done by right-clicking on a row and selecting <strong>Copy Row to Users Defaults</strong>. If the same parameter is defined as a User default and an Application/System default, the User default will be used first. Once this is done, a user default can be edited by right-clicking on a row and selecting <strong>Edit Settings</strong>. This opens a Parameter Defaults window that allows for modifying and defining properties of the default:</p>
+<p>There are three sets of defaults: User defaults, Application defaults, and System defaults. These columns are sorted in alphabetical order by default, and this order can be reversed by clicking on the name of the columns (e.g. '<strong>Parameter</strong>'). While the items in the <strong>Application defaults</strong> and <strong>System defaults</strong> tabs cannot be modified within the tab, a duplicate of the same parameter can be copied in the <strong>User defaults</strong> tab. This can be done by right-clicking on a row and selecting <strong>Copy Row to Users Defaults</strong>. If the same parameter is defined as a User default and an Application/System default, the User default will be used first. Once this is done, a user default can be edited by right-clicking on a row and selecting <strong>Edit Settings</strong>. This opens a Parameter Defaults window that allows for modifying and defining properties of the default:</p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/ParamDefaultsProperties.gif" width="500" height="690" alt="Image 2: Parameter Defaults Properties"><br>
   <span class="caption">Image 2: Parameter Defaults Properties</span></div>
@@ -57,7 +57,7 @@ means "any text here." The ^ means "begin with the following text exactly&quot;.
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Parameter -</strong> Represents the name of the parameter. The double down arrows allow you to change the parameter to one of a loaded data source, or a predefined alias.</li>
-    <li class="propertylistitem"><b>Color Table</b> - Sets the color table to use to display your parameter. You can change this by clicking the <strong>Change</strong> button, and selecting a pre-defined color bar.</li>
+    <li class="propertylistitem"><strong>Color Table -</strong> Sets the color table to use to display your parameter. You can change this by clicking the <strong>Change</strong> button, and selecting a pre-defined color bar.</li>
     <li class="propertylistitem"><strong>Range -</strong> Sets the range that the color bar will cover, from low to high.</li>
     <li class="propertylistitem"><strong>Unit -</strong> Sets the unit used to display the parameter.</li>
     <li class="propertylistitem"><strong>Contour Interval</strong></span><strong> -</strong> Sets the spacing (difference in value) between contours. There are four ways to specify the contour interval.</li>
@@ -71,7 +71,7 @@ means "any text here." The ^ means "begin with the following text exactly&quot;.
     <ul class="propertylist">
       <li class="propertylistitem">cint1/min1/max1;cint2/min2/max2;...;cintn/minn/maxn</li>
       <li class="propertylistitem">For example, with geopotential heights: 30/0/4200;60/4200/8600;120/8600/24000
-    would draw contours at 30gpm between 0 and 4200, 60gpm between  4200 and 8600, and 120gpm between 8600 and 24000</li>
+    would draw contours at 30gpm between 0 and 4200, 60gpm between 4200 and 8600, and 120gpm between 8600 and 24000</li>
     </ul>
     <li class="propertylistitem">4. Specify one individual contour by setting the interval, min, and max as the same value. For example:</li>
     <ul class="propertylist">
@@ -81,20 +81,19 @@ means "any text here." The ^ means "begin with the following text exactly&quot;.
   <li class="propertylistitem"><strong>Base Contour -</strong> Sets the value on which all contours are based. All contours will be integer multiples of the contour interval from the base value. For example, with a base value of 0 and a contour interval of 3 contours would be created at ... -6, -3, 0, 3, 6... A base of 1 with that interval would create contours at ... -5, -2, 1, 4, 7... The base value does not have to be the lowest contour level on a plot, or inside the range of values plotted; it is only a computational reference point. The base contour value is also used for controlling which lines are dashed.</li>
   <li class="propertylistitem"><strong>Minimum Value -</strong> Sets the limit below which no contour lines are shown. The minimum value may be larger than the base value, so that the base value may never appear on a plot.</li>
   <li class="propertylistitem"><strong>Maximum Value -</strong> Sets the upper limit above which no contour lines are shown. The minimum and maximum values do not need to match contour line values; they are only limits.</li>
-  <li class="propertylistitem"><strong>Line Width</strong> - Sets the line width (in pixels) of the contour lines and labels.</li>
+  <li class="propertylistitem"><strong>Line Width -</strong> Sets the line width (in pixels) of the contour lines and labels.</li>
   <li class="propertylistitem"><strong>Dash -</strong> Dashes contour values less than the base value. If the base is set higher than maximum value, then all lines are dashed. Use the pulldown menu to select the dash pattern to use.</li>
   <li class="propertylistitem"><strong>Labels -</strong> Displays contour labels on the image.</li>
   <li class="propertylistitem"><strong>Labels: Font -</strong> Sets the font style of the contour labels.</li>
   <li class="propertylistitem"><strong>Labels: Size -</strong> Sets the font size of the contour labels.</li>
   <li class="propertylistitem"><strong>Labels: Align -</strong> Sets the way contour labels will be written on the contours. <strong>Along Contours</strong> means the labels will be written along contours, and while they will not be written upside down, there is a chance they will be written at an angle depending on the layout of the contours. <strong>Horizontal</strong> means the contour labels will be written on the contour, but it will be written in the horizontal and not on an angle.</li>
-  <li class="propertylistitem"><strong>Frequency -</strong> Sets the frequency of labels along the contour lines. There will be more   labels displayed as the slider is moved from left to right.</li>
+  <li class="propertylistitem"><strong>Frequency -</strong> Sets the frequency of labels along the contour lines. There will be more labels displayed as the slider is moved from left to right.</li>
   <li class="propertylistitem"><strong>Label Every Nth Line -</strong> Determines how many contour lines will be labeled in the display. By default this is set to a value of 2, which means that every other contour line will be labeled. Decrease this value to increase the number of contours with labels, and increase this number to decrease the number of contours with labels.</li>
 </ul>
 <div class="pagesubtitle">Menus</div>
 <p>The <strong>File</strong> menu has these unique items:</p>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>New Row -</strong> Opens a <a href="#image2">Parameter Defaults</a> window, which allows you to select what properties
-  you want to define.</li>
+<li class="propertylistitem"><strong>New Row -</strong> Opens a <a href="#image2">Parameter Defaults</a> window, which allows you to select what properties you want to define.</li>
 <li class="propertylistitem"><strong>Open -</strong> Allows you to open an eXtensible Markup Language (XML) file (*.xml). This will add a new tab to the Parameter Defaults Editor window specifically for the parameter(s) in the file.</li>
 <li class="propertylistitem"><strong>Import -</strong> Allows you to import an eXtensible Markup Language (XML) file (*.xml). This will add a new row to the User Defaults tab for each default in the imported file.</li>
 <li class="propertylistitem"><strong>Export to File - </strong>Allows you to save your Parameter as an eXtensible Markup Language (XML) file (*.xml).</li>

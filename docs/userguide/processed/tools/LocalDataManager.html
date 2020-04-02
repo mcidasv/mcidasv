@@ -42,8 +42,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 <div class="pagesubtitle"><a name="image1" id="image1"></a>Viewing the Existing Local Datasets</div>
 <div class="images"><img src="images/addemanager/Local.gif" width="730" height="460" alt="Image 1: Local ADDE Data Manager"><br>
 <span class="caption">Image 1: Local ADDE Data Manager </span></div>
-<p> The Local ADDE Data Manager lets
-  you add, delete or edit  local image datasets that are available through the <a href="../data/choosers/ImageChooser.html"><strong>Satellite-&gt;Imagery</strong></a> chooser when you select &lt;LOCAL-DATA&gt; in the <strong>Server</strong> field. Other types of data (e.g., grib or point) in local files can be accessed directly through other choosers (e.g., the <a href="../data/choosers/FileChooser.html"><strong>General-&gt;Files/Directories</strong></a> chooser).</p>
+<p> The Local ADDE Data Manager lets you add, delete or edit local image datasets that are available through the <a href="../data/choosers/ImageChooser.html"><strong>Satellite-&gt;Imagery</strong></a> chooser when you select &lt;LOCAL-DATA&gt; in the <strong>Server</strong> field. Other types of data (e.g., grib or point) in local files can be accessed directly through other choosers (e.g., the <a href="../data/choosers/FileChooser.html"><strong>General-&gt;Files/Directories</strong></a> chooser).</p>
 <p><a name="local_data_manager_columns" id="local_data_manager_columns"></a>The columns in the table and buttons are defined below.</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Dataset</strong> - Sets the dataset name for the local server entry. The dataset name is limited to eight characters or less.</li>
@@ -68,12 +67,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
         <ul>
             <li>Note: There is a very specific file name convention that must be used for this server. This file name format differs from that of data ordered from EUMETSAT. For example, Meteosat-7 OpenMTP data ordered from EUMETSAT has these file name conventions for IR, VIS, and WV bands:
               <blockquote>
-            IR   - OpenMTP_2015-01-15_25_712345_1_1_1.IR<br>
+            IR - OpenMTP_2015-01-15_25_712345_1_1_1.IR<br>
             VIS - OpenMTP_2015-01-15_25_712345_1_1_1.VISSN<br>
             WV - OpenMTP_2015-01-15_25_712345_1_1_1.WV</blockquote>
             These file names must be changed to:<br>
             <blockquote>
-            IR   - aixxx_m07_d20150115_s120000_n40_cness.omf<br>
+            IR - aixxx_m07_d20150115_s120000_n40_cness.omf<br>
             VIS - avxxx_m07_d20150115_s120000_n40_cness.omf<br>
             WV - awxxx_m07_d20150115_s120000_n40_cness.omf</blockquote>
             Note that the time information in the modified file names (s120000 for 12 UTC) is not included in the original file names.
@@ -130,7 +129,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
         <li>GOES ABI</li>
         <ul>
             <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
-            <li>The files must be mission-standard Level 1b files in netCDF-4 format (like those from NOAA CLASS or    decoded from the GRB data stream using CSPP Geo) or mission-standard Level 2+ products in netCDF-4    format (like those from NOAA CLASS).  The names of files should look similar to <strong>ABI-L1b-RadC-M3C01_G16_s2015229195720.nc</strong> (current CSPP Geo naming convention) or <strong>OR_ABI-L1b-RadC-M4C16_G16_s20151702215532_e20151702220362_c20151702220394.nc</strong> (GOES-R Ground System naming convention).</li>
+            <li>The files must be mission-standard Level 1b files in netCDF-4 format (like those from NOAA CLASS or decoded from the GRB data stream using CSPP Geo) or mission-standard Level 2+ products in netCDF-4 format (like those from NOAA CLASS).  The names of files should look similar to <strong>ABI-L1b-RadC-M3C01_G16_s2015229195720.nc</strong> (current CSPP Geo naming convention) or <strong>OR_ABI-L1b-RadC-M4C16_G16_s20151702215532_e20151702220362_c20151702220394.nc</strong> (GOES-R Ground System naming convention).</li>
         </ul>
         <li>Himawari 8</li>
         <ul>
@@ -155,7 +154,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
 </ul>
 <p>The rows in this window are listed in the alphabetical order of the datasets by default, and this order can be reversed by clicking on the name of the column ('Dataset'). Each column can be sorted alphabetically by clicking on the name of the column. <a name="status" id="status"></a>At the bottom of this window, there is a status message that lets you know if local servers are running. The Server Manager will attempt to connect to ports 8112 to 8122. When port 8112 cannot be connected to, port 8113 will be attempted, and then 8114 and so on. After these ports have been stopped or cannot be connected to, the status message will say &quot;Local servers have been stopped&quot;. When this status message is showing, you cannot connect to any local servers. To help avoid connection problems, your firewall software must allow connections to port 8112.</p>
 <div class="pagesubtitle"><a name="add_new_entry" id="add_new_entry"></a>Adding a New Local Dataset</div>
-<p>To add  a new local dataset entry, select <strong>File-&gt;New Local Dataset</strong> from the ADDE Data Manager menu, or click <img src="images/addemanager/AddNewDatasetButton.gif" width="131" height="26" alt="Add New Dataset button" align="absmiddle">.</p>
+<p>To add a new local dataset entry, select <strong>File-&gt;New Local Dataset</strong> from the ADDE Data Manager menu, or click <img src="images/addemanager/AddNewDatasetButton.gif" width="131" height="26" alt="Add New Dataset button" align="absmiddle">.</p>
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/addemanager/AddLocal.gif" alt="Image 2: Add Local Dataset Window"><br> 
 <span class="caption">Image 2: Add Local Dataset Window </span></div>
@@ -168,7 +167,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
   <li class="propertylistitem"><img src="images/addemanager/AddDatasetButton.gif" width="195" height="26" alt="Add Dataset button"align="absmiddle"><strong> -</strong> Adds the new entry to the Local ADDE Data Manager containing the information specified in this window.</li>
   <li class="propertylistitem"><img src="images/addemanager/Cancel.gif" width="73" height="26" alt="Cancel button"align="absmiddle"><strong> -</strong> Closes the window and discards any information that was entered.</li>
 </ul><div class="pagesubtitle"><a name="edit_entry" id="edit_entry"></a>Editing an Existing Local Dataset</div>
-<p> To edit an existing entry, double click on the entry, select <strong>Edit-&gt;Edit Entry...</strong>, or click <img src="images/addemanager/EditDatasetButton.gif" width="102" height="26" alt="Edit Dataset button" align="absmiddle"> to bring up  the Edit Local Dataset window. Make the needed changes and click <img src="images/addemanager/SaveChangesButton.gif" width="201" height="26" alt="Save Changes button" align="absmiddle"> (or click <img src="images/addemanager/Cancel.gif" width="73" height="26" alt="Cancel button" align="absmiddle"> to discard any changes and close the window).</p>
+<p> To edit an existing entry, double click on the entry, select <strong>Edit-&gt;Edit Entry...</strong>, or click <img src="images/addemanager/EditDatasetButton.gif" width="102" height="26" alt="Edit Dataset button" align="absmiddle"> to bring up the Edit Local Dataset window. Make the needed changes and click <img src="images/addemanager/SaveChangesButton.gif" width="201" height="26" alt="Save Changes button" align="absmiddle"> (or click <img src="images/addemanager/Cancel.gif" width="73" height="26" alt="Cancel button" align="absmiddle"> to discard any changes and close the window).</p>
 <div class="images"><img src="images/addemanager/EditLocalDataset.gif" width="574" height="189" alt="Image 3: Edit Local Dataset Window"><br><span class="caption">Image 3:Edit Local Dataset Window</span></div>
 <div class="pagesubtitle"><a name="menus" id="menus"></a>Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there

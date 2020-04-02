@@ -36,7 +36,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/TextProduct
 <p>The Weather Text Product Control is used to display weather text products (forecasts, warnings, watches, etc.) produced by the National Weather Service
 and other international meteorological agencies. The Weather Text Product Display is accessed through the Main Display window via<strong> Tools-&gt;Text Data-&gt;Weather Text Products(from server)</strong>. The user interface consists of three tabs, <strong>Products</strong>, <strong>Display</strong>, and <strong>Locations</strong>.</p>
 <p>The <strong>Products</strong> tab selects and displays the text products. When a product is selected, the available stations are plotted in the Main Display window. One or more stations can be selected by clicking on the station in the Main Display window (or Ctrl+click for multiple stations).  When a station is selected, the text product for that station is displayed in the Weather Text Product Display:</p>
-<div class="images"><img  src="images/TextProductControlGui1.gif"  alt="Image 1: Weather Text Product Display in the Text View" ><br>
+<div class="images"><img src="images/TextProductControlGui1.gif" alt="Image 1: Weather Text Product Display in the Text View"><br>
 <span class="caption">Image 1: Weather Text Product Display in the Text View</span></div>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Find -</strong> Searches for the text string.</li>
@@ -46,48 +46,48 @@ and other international meteorological agencies. The Weather Text Product Displa
 <li class="propertylistitem"><strong>Match Case -</strong> Finds only items in the text that match the case of the entry in the <strong>Find</strong> field.</li>
 </ul>
 <p>By default, the text product is displayed as raw text. Click on the <strong>HTML</strong> tab at the bottom of the display window to view the product in HTML.</p>
-<div class="images"><img  src="images/TextProductControlGui1a.gif"  alt="Image 2: Area Forecast Discussion in the HTML View" ><br>
+<div class="images"><img src="images/TextProductControlGui1a.gif" alt="Image 2: Area Forecast Discussion in the HTML View"><br>
 <span class="caption">Image 2: Weather Text Product Display in the HTML View</span></div>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Show Glossary -</strong> Toggles a glossary which will highlight certain terms in the text. When the links are clicked, a dialog will pop up with an explanation of the term.</li>
 </ul>
-<p>By default, the most recent text product is displayed. Previous versions of the products can be displayed by selecting a time range from the  <strong>Time Covered</strong> drop-down list. Use the <a href="../ui/Animation.html">Time Animation Widget</a> to loop through multiple products.  The time animation will be synced with any other data in the Main Display window.</p>
+<p>By default, the most recent text product is displayed. Previous versions of the products can be displayed by selecting a time range from the <strong>Time Covered</strong> drop-down list. Use the <a href="../ui/Animation.html">Time Animation Widget</a> to loop through multiple products.  The time animation will be synced with any other data in the Main Display window.</p>
 <p>The <strong>Display</strong> tab controls the display of the station locations in the Main Display window:</p>
-<div class="images"><img  src="images/TextProductControlGui2.gif"  alt="Image 3: Display Tab of the Weather Text Product Display Window" ><br>
+<div class="images"><img src="images/TextProductControlGui2.gif" alt="Image 3: Display Tab of the Weather Text Product Display Window"><br>
 <span class="caption">Image 3: Display Tab of the Weather Text Product Display Window</span></div>
 <p></p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Declutter</b> - Displays only stations that do not overlap. When unchecked, all of the   stations will be shown.  The <img src="../controls/images/lock.gif" alt="Lock icon" width="20" height="19"align=absmiddle> icon allows for        locking the stations that are currently being displayed and not have   their display changed when navigating.</li>
+  <li class="propertylistitem"><strong>Declutter -</strong> Displays only stations that do not overlap. When unchecked, all of the stations will be shown.  The <img src="../controls/images/lock.gif" alt="Lock icon" width="20" height="19"align=absmiddle> icon allows for locking the stations that are currently being displayed and not have their display changed when navigating.</li>
   <li class="propertylistitem"><strong>Density - </strong>Changes how dense the display of stations is when decluttering. More stations will appear in the Main Display window with a higher <strong>Density</strong> value. This option is only available if the <strong>Declutter</strong> checkbox is selected.</li>
-  <li class="propertylistitem"><b>Display</b> - Displays locations as a fixed specification of a symbol and/or an identifier or as one of the available layout models.</li>
+  <li class="propertylistitem"><strong>Display</strong> - Displays locations as a fixed specification of a symbol and/or an identifier or as one of the available layout models.</li>
   <li class="propertylistitem"> Use the options under the <strong>Predefined</strong> radio button to control what station information is displayed. Use the options in the <strong>Symbol</strong> panel to control what marker symbol is displayed. Clicking an item will immediately change the display. Use the <strong>Visible</strong> checkboxes to trigger the visibility of the ID or Symbol in the Main Display window. <strong>Color</strong> sets the color of the Symbol and ID in the Main Display window.</li>
-    <li class="propertylistitem"> When the <strong>Layout Model</strong> radio button is selected the layout model facility is used to display the location. The <a href="LayoutModelEditor.html">Layout Model Editor</a> can be opened by clicking  the <img src="../controls/images/DownBlueArrows.gif" width="13" height="13" align=absmiddle> <strong>Edit</strong> icon.</li>
-  <li class="propertylistitem"><b>Vertical Position</b> - Displays the locations at their altitude (if there is one) or specifically defines the vertical position for all stations. This can be changed by using the slider or entering a value into the field.</li>
+    <li class="propertylistitem"> When the <strong>Layout Model</strong> radio button is selected the layout model facility is used to display the location. The <a href="LayoutModelEditor.html">Layout Model Editor</a> can be opened by clicking the <img src="../controls/images/DownBlueArrows.gif" width="13" height="13" align=absmiddle> <strong>Edit</strong> icon.</li>
+  <li class="propertylistitem"><strong>Vertical Position -</strong> Displays the locations at their altitude (if there is one) or specifically defines the vertical position for all stations. This can be changed by using the slider or entering a value into the field.</li>
 </ul>
-<p>The<strong> Locations</strong> tab lists information about the selected location and shows lists of all the locations and the locations currently visible in the Main Display window:</p>
-<div class="images"><img  src="images/TextProductControlGui3.gif"  alt="Image 4: Displayed Locations Tab in the Locations Tab of the Weather Text Product Display Window" ><br>
+<p>The <strong>Locations</strong> tab lists information about the selected location and shows lists of all the locations and the locations currently visible in the Main Display window:</p>
+<div class="images"><img src="images/TextProductControlGui3.gif" alt="Image 4: Displayed Locations Tab in the Locations Tab of the Weather Text Product Display Window"><br>
 <span class="caption">Image 4: Displayed Locations Tab in the Locations Tab of the Weather Text Product Display Window</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>All Locations - </strong>Lists all of the locations relevant to the chosen parameter.</li>
-  <li class="propertylistitem"><strong>Displayed Locations - </strong>Lists only the locations that are currently visible in the Main Display window.</li>
-  <li class="propertylistitem"><b>Listen for clicks</b> - Updates the current location information to the station selected in the Main Display window. </li>
-  <li class="propertylistitem"><b>Center on selected</b> - Centers the Main Display window over the  location selected in this tab. This only works if <strong>Listen for clicks</strong> is selected.</li>
+  <li class="propertylistitem"><strong>All Locations -</strong> Lists all of the locations relevant to the chosen parameter.</li>
+  <li class="propertylistitem"><strong>Displayed Locations -</strong> Lists only the locations that are currently visible in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Listen for clicks -</strong> Updates the current location information to the station selected in the Main Display window. </li>
+  <li class="propertylistitem"><strong>Center on selected -</strong> Centers the Main Display window over the location selected in this tab. This only works if <strong>Listen for clicks</strong> is selected.</li>
 </ul>
 <div class="pagesubtitle">Menus</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="../controls/LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there are some options that are unique to this display.</p>
 <p>The <strong>Edit</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><b>Add Locations</b> - Adds the locations of a variety of features, including city labels, states, oceans, earthquakes, etc. to the display.</li>
-  <li class="propertylistitem"><strong>Color - </strong>Changes the color of the location labels in the Main Display window.</li>
+  <li class="propertylistitem"><strong>Add Locations -</strong> Adds the locations of a variety of features, including city labels, states, oceans, earthquakes, etc. to the display.</li>
+  <li class="propertylistitem"><strong>Color -</strong> Changes the color of the location labels in the Main Display window.</li>
 </ul>
 <p>The <strong>View</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Show Flythrough - </strong>Opens the <a href="../ui/DisplayMenus.html#flythrough">Flythrough   feature</a> which allows for interactively exploring the display.</li>
-  <li class="propertylistitem"><strong>Use Projection From Locations -</strong> Re-centers the display and resets the zoom level back   to the display's initial settings without changing any other preferences   that have been modified.</li>
-  <li class="propertylistitem"><strong>Chart -</strong> Allows for displaying a thumbnail of the chart in the Legend, change the <a href="../controls/Chart.html#chartlayout">Grid   Layout</a>, zoom in and out, save the chart, and open the <a href="../controls/Chart.html#plotproperties">Plot   Properties</a> window.</li>
-  <li class="propertylistitem"><strong>Show Raw Data -</strong> Displays the data in its raw format in the chart before any   rounding/formatting is done to the data by McIDAS-V.</li>
+  <li class="propertylistitem"><strong>Show Flythrough -</strong> Opens the <a href="../ui/DisplayMenus.html#flythrough">Flythrough feature</a> which allows for interactively exploring the display.</li>
+  <li class="propertylistitem"><strong>Use Projection From Locations -</strong> Re-centers the display and resets the zoom level back to the display's initial settings without changing any other preferences that have been modified.</li>
+  <li class="propertylistitem"><strong>Chart -</strong> Allows for displaying a thumbnail of the chart in the Legend, change the <a href="../controls/Chart.html#chartlayout">Grid Layout</a>, zoom in and out, save the chart, and open the <a href="../controls/Chart.html#plotproperties">Plot Properties</a> window.</li>
+  <li class="propertylistitem"><strong>Show Raw Data -</strong> Displays the data in its raw format in the chart before any rounding/formatting is done to the data by McIDAS-V.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
