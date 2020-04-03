@@ -28,8 +28,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Modify the Display Object</div>
-<p><strong><a name="annotate" id="annotate"></a>annotate -</strong> Writes text
-  to a panel</p>
+<p><strong><a name="annotate" id="annotate"></a>annotate -</strong> Writes text to a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].annotate(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
@@ -43,7 +42,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
     </tr>
     <tr>
       <td valign="top">line=, element=</td>
-      <td>center text string at specified panel     line and element (must be used together)</td>
+      <td>center text string at specified panel line and element (must be used together)</td>
     </tr>
 </table></div>
 <div class="TwoTabIndent">Keywords - optional:</div>
@@ -54,11 +53,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
     </tr>
     <tr>
       <td valign="top">size=</td>
-      <td>size of font; default = size of font defined    in user preferences</td>
+      <td>size of font; default = size of font defined in user preferences</td>
     </tr>
         <tr>
       <td valign="top">style=</td>
-      <td>style of font; default = style of font defined    in user preferences<br>
+      <td>style of font; default = style of font defined in user preferences<br>
       'BOLD'<br>
       'ITALIC'<br>
       'NONE'</td>
@@ -84,8 +83,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].annotate('EQUATOR',size=20, font='SansSerif.bold', lat=0, lon=-90, color='Green',alignment=(&quot;left&quot;,&quot;top&quot;)</em>)</div>
-<p><strong><a name="setCenter" id="setCenter"></a>setCenter -&nbsp;</strong>
-Centers the display on a specified latitude/longitude and sets a scaling factor</p>
+<p><strong><a name="setCenter" id="setCenter"></a>setCenter -</strong> Centers the display on a specified latitude/longitude and sets a scaling factor</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setCenter(keywords) </em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
@@ -99,7 +97,7 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
       <td>centers the display at the specified longitude (no default, required parameter) </td>
     </tr></table></div>
 <div class="TwoTabIndent">Keywords - optional:</div>
-<div class="ThreeTabIndent2">  <table class="noborder">
+<div class="ThreeTabIndent2"><table class="noborder">
     <tr>
       <td valign="top">scale=</td>
       <td>scale factor for map; default = current scale factor</td>
@@ -109,8 +107,7 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
 <div class="TwoTabIndent">Scale factors between 0 and 1 zoom out centered on the specified latitude/longitude and scale factors greater than 1 zoom in.</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setCenter(45, -75, scale=20</em>)</div>
-<p><strong><a name="setProjection" id="setProjection"></a>setProjection -</strong> Sets
-  the projection of a panel</p>
+<p><strong><a name="setProjection" id="setProjection"></a>setProjection -</strong> Sets the projection of a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setProjection(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
@@ -120,8 +117,7 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
     </tr></table></div>
   <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setProjection(projection='US>States>N-Z>Pennsylvania')</em></div>
-<p><strong><a name="setViewpoint" id="setViewpoint"></a>setViewpoint -</strong> Sets
-  the viewpoint of a panel</p>
+<p><strong><a name="setViewpoint" id="setViewpoint"></a>setViewpoint -</strong> Sets the viewpoint of a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setViewpoint(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
@@ -131,8 +127,7 @@ Centers the display on a specified latitude/longitude and sets a scaling factor<
     </tr></table></div>
   <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setViewpoint(viewpointName='Viewpoint1')</em></div>
-<p><strong><a name="setWireframe" id="setWireframe"></a>setWireframe -</strong> Turns
-wire frame box on or off</p>
+<p><strong><a name="setWireframe" id="setWireframe"></a>setWireframe -</strong> Turns wire frame box on or off</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setWireframe(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
 <div class="ThreeTabIndent2"><table class="noborder">

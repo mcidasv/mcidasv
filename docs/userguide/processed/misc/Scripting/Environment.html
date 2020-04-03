@@ -28,7 +28,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Environment</div>
-<p><a name="getHistoryLength" id="getHistoryLength"></a><strong>getJythonShellMaxHistoryLength( ) -</strong></strong> Returns the current number of commands that are saved.</p>
+<p><a name="getHistoryLength" id="getHistoryLength"></a><strong>getJythonShellMaxHistoryLength( ) -</strong> Returns the current number of commands that are saved.</p>
 <div class="OneTabIndent">Usage: <em>print getJythonShellMaxHistoryLength()</em></div>
 <p><strong><a name="setHistoryLength" id="setHistoryLength2"></a>setJythonShellMaxHistoryLength( ) -</strong> Sets the number of commands that will be saved.</p>
 <div class="OneTabIndent">Usage: <em>setJythonShellMaxHistoryLength(number)</em></div>
@@ -62,7 +62,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
 <div class="TwoTabIndent"><table class="noborder">
 <tr>
       <td valign="top">level-</td>
-      <td>The logging level of the directory path used in the command.&nbsp;If a directory path is not specified, this is the logging level for the session as a whole.</td>
+      <td>The logging level of the directory path used in the command.  If a directory path is not specified, this is the logging level for the session as a whole.</td>
     </tr>
     <tr>
       <td valign="top">effectiveLevel-</td>
@@ -70,25 +70,25 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
     </tr></table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>print getLogLevel( )</em></div>
-<div class="ThreeTabIndent">This returns the logging level&nbsp;for everything as long as a logging level for another directory hasn't already been set.</div>
+<div class="ThreeTabIndent">This returns the logging level for everything as long as a logging level for another directory hasn't already been set.</div>
 <p><strong><a name="setloglevel" id="setloglevel"></a>setLogLevel( ) -</strong> Sets the logging level to be used by McIDAS-V.</p>
 <div class="OneTabIndent">
     Usage: <em>setLogLevel(level,keywords)</em>
 </div>
-<div class="OneTabIndent">level- Logging level to be used.&nbsp;This can be set to <em>TRACE</em>, <em>DEBUG</em>, <em>INFO</em>, <em>WARN</em>, <em>ERROR</em>, or <em>OFF</em>. Information about each of these logging levels can be found in the <a href="../../tools/preferences/AdvancedPreferences.html#loglevel">Advanced Preferences</a> page.</div>
+<div class="OneTabIndent">level- Logging level to be used.  This can be set to <em>TRACE</em>, <em>DEBUG</em>, <em>INFO</em>, <em>WARN</em>, <em>ERROR</em>, or <em>OFF</em>. Information about each of these logging levels can be found in the <a href="../../tools/preferences/AdvancedPreferences.html#loglevel">Advanced Preferences</a> page.</div>
 <div class="OneTabIndent">Keywords:</div>
 <div class="TwoTabIndent"><table class="noborder">
 <tr>
       <td valign="top">temporary=</td>
-      <td>determines if the logging level will be saved from session to session&nbsp;(default = True)</td>
+      <td>determines if the logging level will be saved from session to session (default = True)</td>
     </tr></table></div>
 <div class="OneTabIndent">Remarks:</div>
 <div class="TwoTabIndent">This command can be used to set the logging level for the session as a whole, and it can also be used to set logging levels for specific directories to control what type of logging output goes to mcidasv.log.</div>
 <div class="OneTabIndent">Examples:</div>
 <div class="TwoTabIndent"><em>setLogLevel('TRACE')</em></div>
-<div class="ThreeTabIndent">Sets the logging level&nbsp;for everything to <em>Trace</em> as long as a logging level for another directory hasn't already been set.</div>
+<div class="ThreeTabIndent">Sets the logging level for everything to <em>Trace</em> as long as a logging level for another directory hasn't already been set.</div>
 <div class="TwoTabIndent"><em>print getLogLevel()</em></div>
-<div class="ThreeTabIndent">Returns the global logging level in McIDAS-V.&nbsp; Both <em>level</em> and <em>effectiveLevel</em> are set to <em>TRACE</em>.</div>
+<div class="ThreeTabIndent">Returns the global logging level in McIDAS-V.   Both <em>level</em> and <em>effectiveLevel</em> are set to <em>TRACE</em>.</div>
 <p><strong><a name="importEnhancement" id="importEnhancement"></a>importEnhancement( ) -</strong> Imports a local enhancement file. This enhancement will then be available for use in a script as well as through the Color Table Editor in the current and future McIDAS-V sessions.</p>
 <div class="OneTabIndent">Usage: <em>importEnhancement(filename,keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>

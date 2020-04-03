@@ -54,11 +54,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/PerformanceT
   Selector</strong>)
   or you can set these for individual field using the tabs in the lower right
   corner of the <strong>Field
-Selector</strong>. For more information, see  <a href="../data/DataSource.html">Data Sources</a>.</p>
+Selector</strong>. For more information, see <a href="../data/DataSource.html">Data Sources</a>.</p>
 <a name="heap" id="heap"></a>
 <div class="pagesubtitle">Memory Allocation</div>
 By default, McIDAS-V allocates 512 megabytes of maximum memory for Java. This is usually the optimum amount for a Windows system with 1 gigabyte of physical memory (RAM). Windows takes up half of that anyway and once Windows has to start swapping, performance severely degrades. On a Linux system, you can probably get away with 700m for 1 GB of memory as it does a much better job of swapping. All this also depends on what else you are running on the machine and how much memory those applications use.
-<p>If your system has more than 1 GB of memory, increasing the amount available to McIDAS-V can improve performance for displaying large datasets. You change the amount of memory used by McIDAS-V by editing the <strong>Maximum Heap Size</strong> in the <strong><a href="../tools/preferences/AdvancedPreferences.html">Advanced</a></strong> tab of the User Preferences by selected <strong>Edit-&gt;Preferences</strong> from the Main Display window. The new amount of memory will be saved and used in subsequent sessions. Do not use the maximum amount of memory on your machine as some is needed for the operating system itself. If the system has to use swap memory, performance will degrade as well. For 32 bit operating systems, it is recommended to set this to no more than 1250 MB (<em>i.e. -Xmx1250m</em>). The maximum value for 32 bit operating systems is 1536 MB, while 64 bit operating systems can use all of the RAM available. For more information see  <a href="../Starting.html#run">Running McIDAS-V</a>.</p>
+<p>If your system has more than 1 GB of memory, increasing the amount available to McIDAS-V can improve performance for displaying large datasets. You change the amount of memory used by McIDAS-V by editing the <strong>Maximum Heap Size</strong> in the <strong><a href="../tools/preferences/AdvancedPreferences.html">Advanced</a></strong> tab of the User Preferences by selected <strong>Edit-&gt;Preferences</strong> from the Main Display window. The new amount of memory will be saved and used in subsequent sessions. Do not use the maximum amount of memory on your machine as some is needed for the operating system itself. If the system has to use swap memory, performance will degrade as well. For 32 bit operating systems, it is recommended to set this to no more than 1250 MB (<em>i.e. -Xmx1250m</em>). The maximum value for 32 bit operating systems is 1536 MB, while 64 bit operating systems can use all of the RAM available. For more information see <a href="../Starting.html#run">Running McIDAS-V</a>.</p>
 <a name="cache" id="cache"></a>
 <div class="pagesubtitle">Data Caching</div>
 <p>By default, McIDAS-V caches the data used for a display in memory. If a field is used more than once for several displays, caching the data prevents an additional reading from of the data from disk or a remote server. If you are only displaying/using a field (i.e. not using it for multiple displays or calculations), you can keep McIDAS-V from caching it in memory. You can turn off data caching by unchecking the <strong>Cache
@@ -70,42 +70,26 @@ Data in Memory</strong> checkbox on the <strong><a href="../tools/preferences/Fo
 of the User Preferences window (accessible from the <strong>Edit-&gt;Preferences</strong> menu).</p>
 <a name="fastrender" id="fastrender"></a>
 <div class="pagesubtitle">Fast Rendering</div>
-<p>By default, McIDAS-V will try to adjust the data layer (images, contours,
-  etc.) renderings to account for projection seams. This is computationally intensive
-  in some cases and slows down the display of data. If you change your <a href="../tools/preferences/GeneralPreferences.html">User
-  Preferences</a>  setting to <strong>Use
-  fast rendering</strong>,
-  McIDAS-V will not try to account for the projection seams. If you are displaying
-  a layer of data in its native projection, this will result in faster rendering
-  of the data depiction. However, if you have several layers of data, each
-  from a different data source and on a different projection, you may see anomalies
-  in one or more layers (spurious lines, portions of images). If that occurs,
-  you can turn off fast rendering for the layer(s) by unchecking the <strong>Use
-  Fast Rendering </strong>
-checkbox in  its <a href="../controls/PropertiesDialog.html#properties">Properties
+<p>By default, McIDAS-V will try to adjust the data layer (images, contours, etc.) renderings to account for projection seams. This is computationally intensive in some cases and slows down the display of data. If you change your <a href="../tools/preferences/GeneralPreferences.html">User Preferences</a> setting to <strong>Use fast rendering</strong>, McIDAS-V will not try to account for the projection seams. If you are displaying a layer of data in its native projection, this will result in faster rendering of the data depiction. However, if you have several layers of data, each from a different data source and on a different projection, you may see anomalies in one or more layers (spurious lines, portions of images). If that occurs, you can turn off fast rendering for the layer(s) by unchecking the <strong>Use Fast Rendering </strong>
+checkbox in its <a href="../controls/PropertiesDialog.html#properties">Properties
 dialog</a>, or set your system preference back to not use fast rendering.</p>
 <a name="mapfast" id="mapfast"></a>
-<p>A separate fast rendering option for
-  map layers is  available in the <a href="../controls/MapDisplayControl.html">Map
-  Controls</a>. Some maps display better when fast rendering is turned on, others
-  display better when it's turned off. If a map displays poorly (e.g., has missing
-  line segments), try switching its fast rendering settings to see if it fixes
+<p>A separate fast rendering option for map layers is available in the <a href="../controls/MapDisplayControl.html">Map Controls</a>. Some maps display better when fast rendering is turned on, others display better when it's turned off. If a map displays poorly (e.g., has missing line segments), try switching its fast rendering settings to see if it fixes
 the problem.</p>
 <a name="parallelrender" id="parallelrender"></a>
-<div class="pagesubtitle"> Parallel Rendering and Data
-  Reading</div> 
-If you are running McIDAS-V on  a multi-core machine you can configure it
+<div class="pagesubtitle"> Parallel Rendering and Data Reading</div> 
+If you are running McIDAS-V on a multi-core machine you can configure it
  to render individual time steps in parallel. You can also do remote data reads
  in parallel. This typically results in a 50% reduction in overall data 
 reading and rendering time.
-<p>The number of  Rendering and Reading java threads can be set on the command line when starting McIDAS-V. To set these values, run the following when starting McIDAS-V (substitute in a numerical value in place of <strong>#</strong> in the commands to set the rendering and reading thread values):</p>
+<p>The number of Rendering and Reading java threads can be set on the command line when starting McIDAS-V. To set these values, run the following when starting McIDAS-V (substitute in a numerical value in place of <strong>#</strong> in the commands to set the rendering and reading thread values):</p>
 <ul list='propertylist'>
 <li list='propertylistitem'><strong>Linux and Mac -</strong> ./runMcV -Didv.threads.render.max=# -Didv.threads.render.data=#</li>
 <li list='propertylistitem'><strong>Windows -</strong> runMcV.bat -Didv.threads.render.max=# -Didv.threads.render.data=#</li>
 </ul>
 <ul list='propertylist'>
 <li list='propertylistitem'><strong>Didv.threads.render.max -</strong> Sets the number of Java threads to use for rendering. This number defaults to the number of processors on the machine running McIDAS-V.</li>
-<li list='propertylistitem'><strong>Didv.threads.render.data -</strong> Sets the number of Java threads to use for reading. This number is   dependent on the configuration of the server machine. This defaults to   4. This is used when reading individual time steps of data from remote   ADDE and OpenDAP servers.</li>
+<li list='propertylistitem'><strong>Didv.threads.render.data -</strong> Sets the number of Java threads to use for reading. This number is dependent on the configuration of the server machine. This defaults to 4. This is used when reading individual time steps of data from remote ADDE and OpenDAP servers.</li>
 </ul>
 <p>
 For rendering McIDAS-V will render each time step in parallel.
@@ -113,15 +97,14 @@ Note: Since the rendering processes can allocate temporary memory, it is
 possible to exhaust the available memory if too many threads are running
 concurrently.  Linear speedup with the number of
 cores available for rendering (probably due to memory contention issues)
-is not seen, however a 40%-50% performance improvement is seen for complex rendering
-  tasks (e.g., contouring).<p>
+is not seen, however a 40%-50% performance improvement is seen for complex rendering tasks (e.g., contouring).<p>
 The second preference is used when reading individual time steps of data
 from remote ADDE and OpenDAP servers. This parallelization takes advantage 
 of the multiple cores available on the remote server and somewhat the 
 available bandwidth on the network.
 A linear speed up in accessing remote data based on the 
 number of cores on the remote server (ADDE or OpenDAP) has been seen.
-However,  if you load the server too much your performance 
+However, if you load the server too much your performance 
 is degraded, probably due to file system issues.<!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

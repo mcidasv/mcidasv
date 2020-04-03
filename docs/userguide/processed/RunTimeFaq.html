@@ -182,7 +182,7 @@ application/x-java-jnlp-file JNLP
         <div class="faq-answer">
           <p><strong>A.</strong> To use local servers in McIDAS-V, there is a background server listening process called <em>mcservl</em>. This process run for the duration of the session, and after McIDAS-V is exited, the process take extra time to terminate. If McIDAS-V is closed and started again before the <em>mcservl</em> process terminates, local servers will not be able to start and the 'Local servers cannot write to userpath:' error occurs. Once this error comes up, click OK. If you attempt connecting to a local dataset, a message will pop up directing you to the ADDE Data Manager, where navigating to the <em><strong>Local Servers -&gt; Start Local Servers</strong></em> menu item will start up the local servers correctly so that local servers can be used in the session. To avoid this error, it is recommended that a user waits about 10 seconds after exiting McIDAS-V before starting again.</p>
           <p>Additionally, if running 64bit Debian or Ubuntu operating systems, this message can appear at startup if the ia32-libs package is not installed on the workstation. The ia32-libs are the 32bit libraries that 32bit applications need to execute on a 64bit system.</p>
-        </div>    
+        </div>
 <a name="glx-graphics" id="glx-graphics"></a>
         <div class="faq-question">
         <h4><strong>Q.</strong> What do I do if I get a 'Could not create a graphics configuration' error?</h4>
@@ -192,10 +192,10 @@ application/x-java-jnlp-file JNLP
     <div class="faq-question">
       <h4>Q. What do I do if I get 'JAVA 3D Error: GLX extension is not supported' and 'Could not create a graphics configuration' errors?</h4></div>
     <div class="faq-answer">
-        <p><strong>A. </strong>GLX is an extension that must be supported by the graphics card.&nbsp; This
+        <p><strong>A. </strong>GLX is an extension that must be supported by the graphics card.  This
       error is most likely occurring because the graphics drivers for RHEL are
       not properly configured.
-            <p>Assuming that the latest graphics drivers are installed, they must be
+      <p>Assuming that the latest graphics drivers are installed, they must be
       configured in the window system configuration file. Since RHEL uses Xorg,
       look in the file</p>
             <blockquote>
@@ -203,7 +203,7 @@ application/x-java-jnlp-file JNLP
                 </p>
             </blockquote>
         <p>and see if there are any references to <span class="faq-answer">&quot;</span>GLX<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>glx<span class="faq-answer">&quot;</span> (and
-      possibly <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span>).&nbsp; If
+      possibly <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span>).  If
       there are, try uncommenting them and rebooting.</p></div>
     <a name="dataservers" id="dataservers"></a>
     <div class="faq-question">
@@ -213,16 +213,16 @@ application/x-java-jnlp-file JNLP
       (image, radar, point, and upper air data), error messages such
       as <span class="faq-answer">&quot;</span>Error opening connection ... Operation
       timed out<span class="faq-answer">&quot;</span> or <span class="faq-answer">&quot;</span>No
-      Data Available<span class="faq-answer">&quot;</span> are normal.&nbsp; For
+      Data Available<span class="faq-answer">&quot;</span> are normal.  For
       these servers to send data, your firewall software must allow connections
     on ports 112 (ADDE) and 8080 (THREDDS Data Server).</p></div>
     <a name="multiple-monitor" id="multiple-monitors"></a>
     <div class="faq-question">
       <h4>Q. Why am I having drawing problems on Monitor2 of a two-monitor system?</h4></div>
     <div class="faq-answer">
-        <p><strong>A. </strong> Some graphics card/driver combinations            don't allow McIDAS-V window functions to work correctly in            Monitor2 of two-monitor systems. For example, if your system            has this problem and you move the McIDAS-V windows to            Monitor2, the Image Chooser's Advanced tab in the Field            Selector may not be visible, or adding a new tab in the Main            Display may result in most of the window going blank ("graying out").&nbsp;   You may also receive the            error (or see it in the mcidasv.log file), '<em>...adding a              container to a container on a different GraphicsDevice</em>'.</p>
-        <p>For now, the only working solution for this problem is to            move the McIDAS-V windows to Monitor1. After doing this, the            windows should display correctly and you should be able to            successfully add new tabs and run bundles. </p>
-        <p>If you are running Red Hat with a NVIDIA graphics card using            TwinView and are having problems, go to the preferences, click            on the primary display, and make sure the "Make this the            primary display..." checkbox is checked. </p>
+        <p><strong>A.</strong> Some graphics card/driver combinations don't allow McIDAS-V window functions to work correctly in Monitor2 of two-monitor systems. For example, if your system has this problem and you move the McIDAS-V windows to Monitor2, the Image Chooser's Advanced tab in the Field Selector may not be visible, or adding a new tab in the Main Display may result in most of the window going blank ("graying out").  You may also receive the error (or see it in the mcidasv.log file), '<em>...adding a container to a container on a different GraphicsDevice</em>'.</p>
+        <p>For now, the only working solution for this problem is to move the McIDAS-V windows to Monitor1. After doing this, the windows should display correctly and you should be able to successfully add new tabs and run bundles. </p>
+        <p>If you are running Red Hat with a NVIDIA graphics card using TwinView and are having problems, go to the preferences, click on the primary display, and make sure the "Make this the primary display..." checkbox is checked. </p>
     </div>
     <a name="nomap" id="nomap"></a>
     <div class="faq-question">
@@ -245,7 +245,7 @@ application/x-java-jnlp-file JNLP
     </div>
     <div class="faq-answer">
         <p><strong>A.</strong> The first thing to do is to make sure that your graphics drivers are up to date. If this does not solve the problem, another option is to change the amount of memory allocated to McIDAS-V. From the Main Display window's menu bar, select <strong>Edit-&gt;Preferences</strong>. This opens a User Preferences window, where you want to select the <a href="tools/preferences/AdvancedPreferences.html"><strong>Advanced</strong></a> tab. At the top of the window there are two options for selecting memory. Click the radio button that allows you to specify the numerical value of memory allocated to McIDAS-V. Enter in a value of 512 megabytes and click OK to save the change. Then exit and restart McIDAS-V (changes in the Advanced User Preferences require a restart of McIDAS-V to take effect). If this resolves the issue of white images, you can start increasing the memory until the problem appears again. Stay below the memory value that produces the problem.</p>
-        <p>We have also received reports of this problem (blank images in the      Main Display window) occurring on computers with the Mobile Intel 4      Series Express Family of graphics cards. If you have a computer with      that configuration and are seeing the problem, try setting the      card's "Vertex Processing" configuration setting to "Enable Software      Processing". That setting is recommended because it will likely work      with a typical amount of memory allocated to McIDAS-V (e.g., 80% of      available). If the "Vertex Processing" option is set to a different      value (e.g., "Application Settings" and "Default settings"), you may      have to select a memory value of 800 MB or less in order to avoid      the problem.</p>
+        <p>We have also received reports of this problem (blank images in the Main Display window) occurring on computers with the Mobile Intel 4 Series Express Family of graphics cards. If you have a computer with that configuration and are seeing the problem, try setting the card's "Vertex Processing" configuration setting to "Enable Software Processing". That setting is recommended because it will likely work with a typical amount of memory allocated to McIDAS-V (e.g., 80% of available). If the "Vertex Processing" option is set to a different value (e.g., "Application Settings" and "Default settings"), you may have to select a memory value of 800 MB or less in order to avoid the problem.</p>
     </div>
 <a name="dri" id="dri"></a>
     <div class="faq-question">
@@ -261,6 +261,12 @@ application/x-java-jnlp-file JNLP
       <div style="margin-left: 2em">Load <span class="faq-answer">&quot;</span>dri<span class="faq-answer">&quot;</span></div>
       <p>in your X server configuration file (xorg.conf or XF86Config).</p>
     </div>
+    <div class="faq-question">
+      <h4><span class="faq-answer"><a name="canvas3d" id="canvas3d"></a></span>Q. Why am I am seeing a &quot;Canvas3D: Non-recoverable graphics configuration error&quot; when starting McIDAS-V on my 64-bit Windows machine?</h4></div>
+      <div class="faq-answer">
+        <p><strong>A.</strong> When starting McIDAS-V on a 64-bit Windows machine, you may see this error message as the last line of your mcidasv.log file: &quot;Canvas3D: Non-recoverable graphics configuration error&quot;. If you run into this problem, you should first try updating your drivers and installing McIDAS-V again. If this does not solve the problem, it is possible that there are some graphics cards that do not have 64-bit drivers and thus will not be able to support the 64-bit installers. If this is the case for you, attempt to download McIDAS-V utilizing the 32-bit Windows installer instead of the 64-bit installer.</p>
+        <p>Users can also follow the steps outlined in the <a href="UsingMcVFaq.html#basicchecks">What do I do if McIDAS-V will not work on my computer?</a> question of the Using McIDAS FAQ.  McIDAS User Services received a report that a user was able to resolve this error by uninstalling NVIDIA PhysX package and then reinstalling McIDAS-V.</p>
+      </div>
 </div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

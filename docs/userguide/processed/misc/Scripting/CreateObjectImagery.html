@@ -116,7 +116,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
         <td>&quot;MODX_06&quot;</td>
     </tr>
     <tr>
-        <td>&quot;MODIS MOD 07 - Atmospheric&nbsp;Profiles&quot;</td>
+        <td>&quot;MODIS MOD 07 - Atmospheric Profiles&quot;</td>
         <td>&quot;MODX_07&quot;</td>
     </tr>
     <tr>
@@ -245,7 +245,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
     <tr>
       <td valign="top">coordinateSystem=</td>
-      <td>coordinate system to use for retrieving    data; default=server dependent<br>
+      <td>coordinate system to use for retrieving data; default=server dependent<br>
       AREA = AREA file coordinates - zero based<br>
       LATLON = latitude and longitude coordinates<br>
       IMAGE = image coordinates - one based</td>
@@ -258,12 +258,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
     <tr>
       <td valign="top">place=</td>
-      <td>CENTER places specified location (x,y) at    center of panel (default)<br>
-          ULEFT places specified location (x,y) at upper-left    coordinate of panel</td>
+      <td>CENTER places specified location (x,y) at center of panel (default)<br>
+          ULEFT places specified location (x,y) at upper-left coordinate of panel</td>
     </tr>
     <tr>
       <td valign="top">band=</td>
-      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image</td>
+      <td>McIDAS band number; must be specified if requesting data from multi-banded image; default=band in image</td>
     </tr>
     <tr>
       <td valign="top">unit=</td>
@@ -271,7 +271,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
     <tr>
       <td valign="top">position=</td>
-      <td>time relative (negative values) or absolute    (positive values) position in the dataset; default=0 (most recent   image)</td>
+      <td>time relative (negative values) or absolute (positive values) position in the dataset; default=0 (most recent image)</td>
     </tr>
     <tr>
       <td valign="top">size=</td>
@@ -279,11 +279,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
     <tr>
       <td valign="top">mag=</td>
-      <td>magnification of data (line,element), negative    number used for sampling data; default=(1,1)</td>
+      <td>magnification of data (line,element), negative number used for sampling data; default=(1,1)</td>
     </tr>
     <tr>
       <td valign="top">accounting=</td>
-      <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
+      <td> ('user', 'project number') user and project number required by servers using McIDAS accounting; default = ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
     </tr>
     <tr>
       <td valign="top">debug=</td>
@@ -442,7 +442,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
         <tr>
       <td valign="top">band=</td>
-      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image</td>
+      <td>McIDAS band number; must be specified if requesting data from multi-banded image; default=band in image</td>
     </tr>
         <tr>
       <td valign="top">unit=</td>
@@ -450,11 +450,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
     </tr>
         <tr>
       <td valign="top">position=</td>
-      <td>time relative (negative values) or absolute    (positive values) position in the dataset. Use &quot;ALL&quot; to obtain all positions. Multiple positions are obtained when a negative value is used. For example, if <em>position=-4</em> is used, then the five most recent images will be obtained (positions -4, -3, -2, -1, and 0 (most recent)); default=0 (most recent   image).</td>
+      <td>time relative (negative values) or absolute (positive values) position in the dataset. Use &quot;ALL&quot; to obtain all positions. Multiple positions are obtained when a negative value is used. For example, if <em>position=-4</em> is used, then the five most recent images will be obtained (positions -4, -3, -2, -1, and 0 (most recent)); default=0 (most recent   image).</td>
     </tr>
         <tr>
       <td valign="top">accounting=</td>
-      <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
+      <td> ('user', 'project number') user and project number required by servers using McIDAS accounting; default = ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
     </tr>
         <tr>
       <td valign="top">debug=</td>
@@ -627,7 +627,7 @@ default=True</td>
     </tr>
     </table></div>
 <div class="TwoTabIndent">Keywords - required (remote):</div>
-<div class="ThreeTabIndent2"><table class="noborder">  
+<div class="ThreeTabIndent2"><table class="noborder"
     <tr>
       <td valign="top">server=</td>
       <td>ADDE server</td>
@@ -653,7 +653,7 @@ default=True</td>
     </tr>
         <tr>
       <td valign="top">band=</td>
-      <td>McIDAS band number; must be specified if requesting    data from multi-banded image; default=band in image </td>
+      <td>McIDAS band number; must be specified if requesting data from multi-banded image; default=band in image </td>
     </tr>
         <tr>
       <td valign="top">unit=</td>
@@ -661,11 +661,11 @@ default=True</td>
     </tr>
         <tr>
       <td valign="top">position=</td>
-      <td>time relative (negative values) or absolute    (positive values) position in the dataset. Use &quot;ALL&quot; to obtain all positions. Multiple positions are obtained when a negative value is used. For example, if <em>position=-4</em> is used, then the five most recent images will be obtained (positions -4, -3, -2, -1, and 0 (most recent)); default=0 (most recent   image)</td>
+      <td>time relative (negative values) or absolute (positive values) position in the dataset. Use &quot;ALL&quot; to obtain all positions. Multiple positions are obtained when a negative value is used. For example, if <em>position=-4</em> is used, then the five most recent images will be obtained (positions -4, -3, -2, -1, and 0 (most recent)); default=0 (most recent image)</td>
     </tr>
         <tr>
       <td valign="top">accounting=</td>
-      <td> ('user', 'project number') user and project    number required by servers using McIDAS accounting; default =   ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
+      <td> ('user', 'project number') user and project number required by servers using McIDAS accounting; default ('idv','0'). If no accounting is defined for a server/dataset requiring it, McIDAS-V will first check the ADDE Data Manager to see if any accounting is defined for the server/dataset before erroring</td>
     </tr>
         <tr>
       <td valign="top">debug=</td>

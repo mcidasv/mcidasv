@@ -34,13 +34,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/AdaptiveReso
    it's still under development, adaptive resolution is disabled by default. In order to use adaptive resolution,
    it must be enabled through the Display Window tab of the
    <a href="../tools/preferences/DisplayWindowPreferences.html#enableAdaptiveResolution">User Preferences</a>.***</p>
-   
 <p>Adaptive resolution is a feature designed to load high resolution data efficiently by obtaining and loading only the
    minimum amount of data needed to display all of the observable features in the given display size and geographic domain.
    If the domain is subsequently changed by using either Shift+left-click+drag or the Projections menu, adaptive resolution
    automatically reloads the data at a higher resolution (if available) if the user zoomed in to a more detailed view, or
    reloads the data at a lower resolution (sampled) if the user zoomed out to a wider view. </p>
-   
 <p>If the data is sampled, it is indicated in the Legend of the Main Display, where a line similar to '<em>Data Sampling: every
    3rd pixel</em>' or '<em>Data Sampling: every 4th by 5th grid point</em>' appears below the layer label. If the data is displayed at full
    resolution, then no data sampling text will be written. In the example below, the data is sampled is every 3rd grid point in the x direction by every 2nd grid point in the y direction. The sampling text is controlled by the resolution macro in the Extra Legend Labels field of the <a href="../controls/PropertiesDialog.html">Properties Dialog</a> for the layer.</p>
@@ -49,8 +47,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/AdaptiveReso
 <p> The AR Off/On popup appears when the <strong>Resolution Control</strong> button <img src="images/ResolutionControlButton.gif" width="16" height="15" alt="Resolution Control Button" align="absmiddle"> is clicked. This button has two options:</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>AR Off -</strong> Turns adaptive resolution off for the layer. Once adaptive resolution is turned off, changing the domain by using either Shift+left-click+drag or the Projections menu will not reload the data. Any data sampling that was done before adaptive resolution was turned off will remain displayed at the same resolution. Additionally, the geographical domain of the data will not change.</li>
-  <li class="propertylistitem"><strong>AR On -</strong> Turns adaptive resolution on for the layer. Once adaptive resolution is on, changing the domain by using either Shift+left-click+drag or the Projections menu will automatically reload the data at a higher resolution (if available) if you  zoom in to a more detailed view, or
-  reload the data at a lower resolution  if you zoom out to a wider view.</li>
+  <li class="propertylistitem"><strong>AR On -</strong> Turns adaptive resolution on for the layer. Once adaptive resolution is on, changing the domain by using either Shift+left-click+drag or the Projections menu will automatically reload the data at a higher resolution (if available) if you zoom in to a more detailed view, or
+  reload the data at a lower resolution if you zoom out to a wider view.</li>
   <!--<li class="propertylistitem"><strong>Full Res -</strong> Sets the layer to be full resolution within the domain of the display.</li>--->
 </ul>
 <p>There are four ways of setting adaptive resolution on or off:</p>

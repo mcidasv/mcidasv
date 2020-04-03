@@ -31,59 +31,52 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/CommandLineA
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Command Line Arguments</div>
 <p>There are a number of command line arguments for McIDAS-V. These command line arguments can be applied when <a href="../Starting.html#run">starting McIDAS-V</a> using a terminal or command prompt (e.g., from the McIDAS-V-System directory, type: <strong>runMcV -noplugins</strong>). To view them provide the argument: -help:</p>
-<p><tt><span class="code">mcv -help  
+<p><tt><span class="code">mcv -help
 </span></tt></p>
 <tt><span class="code"><ul style=" list-style-type:none; margin-top:0px;">
-  <li class="command">-help  (prints this message)          </li>
-  <li class="command">-properties &lt;property file&gt;        </li>
-  <li class="command">-installplugin &lt;plugin jar file to install&gt;        </li>
+  <li class="command">-help (prints this message)</li>
+  <li class="command">-properties &lt;property file&gt;</li>
+  <li class="command">-installplugin &lt;plugin jar file to install&gt;</li>
   <li class="command">-plugin &lt;plugin jar file, directory, url for this
-  run&gt;        </li>
-  <li class="command">-noplugins  (do not load any plugins)        </li>
-<!--<li class="command">-cleardefault  (clear the default bundle)        </li>
-  <li class="command">-nodefault  (do not read in the default bundle file)        </li>
-  <li class="command">-default &lt;.xidv file&gt;        </li> -->
-  <li class="command">-bundle &lt;bundle file or url&gt;        </li>
+  run&gt;</li>
+  <li class="command">-noplugins (do not load any plugins)</li>
+<!--<li class="command">-cleardefault (clear the default bundle)</li>
+  <li class="command">-nodefault (do not read in the default bundle file)</li>
+  <li class="command">-default &lt;.xidv file&gt;</li> -->
+  <li class="command">-bundle &lt;bundle file or url&gt;</li>
   <li class="command">-oneinstanceport &lt;port number&gt;<br>
- &nbsp;&nbsp;(check if another
-            version of McIDAS-V is running, and if so, pass command line arguments
-          to it and shut down)  </li>
-<!--<li class="command">-nopref  (do not read in the user preferences)          </li> -->
-  <li class="command">-userpath &lt;user directory to use&gt;        </li>
-  <li class="command">-sitepath &lt;url path to find site resources&gt;        </li>
-  <li class="command">-nogui  (do not show the main window GUI)        </li>
-<li class="command">-data &lt;data source&gt; (load the data source) </li>
+ &nbsp;&nbsp;(check if another version of McIDAS-V is running, and if so, pass command line arguments to it and shut down)</li>
+<!--<li class="command">-nopref (do not read in the user preferences)</li> -->
+  <li class="command">-userpath &lt;user directory to use&gt;</li>
+  <li class="command">-sitepath &lt;url path to find site resources&gt;</li>
+  <li class="command">-nogui (do not show the main window GUI)</li>
+<li class="command">-data &lt;data source&gt; (load the data source)</li>
 <!--<li class="command">-display &lt;parameter&gt; &lt;display&gt;</li>-->
-  <li class="command">-script &lt;Jython script file name&gt; (run the McIDAS-V script
-    in the background) </li>
-  <li class="command">-image &lt;image file name&gt; (create a jpeg image
-  and then exit) </li>
+  <li class="command">-script &lt;Jython script file name&gt; (run the McIDAS-V script in the background)</li>
+  <li class="command">-image &lt;image file name&gt; (create a jpeg image and then exit)</li>
 <!--<li class="command">-movie &lt;movie file name&gt; (create a quicktime
   movie and then exit) </li>-->
-  <li class="command">-Dpropertyname=value  (define the property value)          </li>
+  <li class="command">-Dpropertyname=value (define the property value)</li>
   <li class="command">-catalog &lt;url to a chooser catalog&gt;</li>
-  <li class="command">-chooser  (show the data chooser on start up)        </li>
-  <li class="command">-printjnlp  (print out any embedded bundles from jnlp files)        </li>
-  <li class="command">-setfiles &lt;datasource pattern&gt; &lt;semi-colon delimited
-    list of files&gt; <br>
-    &nbsp;&nbsp;(use
-  the list of files for the bundled datasource) </li>
+  <li class="command">-chooser (show the data chooser on start up)</li>
+  <li class="command">-printjnlp (print out any embedded bundles from jnlp files)</li>
+  <li class="command">-setfiles &lt;datasource pattern&gt; &lt;semi-colon delimited list of files&gt; <br>
+      &nbsp;&nbsp;(use the list of files for the bundled datasource)</li>
   <li class="command">-currenttime &lt;dttm&gt; (override current time
-  for ISL processing) </li>
-  <li class="command">-listresources (list out the resource types) </li>
-  <li class="command">-debug  (turn on debug printing)          </li>
-  <li class="command">-debugmessages  (turn on language pack debug)          </li>
+  for ISL processing)</li>
+  <li class="command">-listresources (list out the resource types)</li>
+  <li class="command">-debug (turn on debug printing)</li>
+  <li class="command">-debugmessages (turn on language pack debug)</li>
   <li class="command">-recordmessages &lt;language pack file to write missing
-  entries&gt;        </li>
-  <li class="command">-trace  (print out trace messages)        </li>
-  <li class="command">-traceonly &lt;trace pattern&gt; (print out trace
-      messages that match the pattern) </li>
+  entries&gt;</li>
+  <li class="command">-trace (print out trace messages)</li>
+  <li class="command">-traceonly &lt;trace pattern&gt; (print out trace messages that match the pattern)</li>
   <li class="command">-logpath &lt;path to log file&gt;</li>
   <li class="command">-tempuserpath (sets up a temporary directory to act as the McIDAS-V directory, allowing for a clean, pristine session)</li>
   <li class="command">-noerrorsingui (don't show error windows when running McIDAS-V in the foreground. Errors still go to mcidasv.log)</li>
   <li class="command">-scriptargs (all arguments after this flag will be considered Jython arguments)</li>
   <li class="command">-doaction &lt;action id&gt; (Run given action automatically after startup. For a list of actions, see <a href="Actions.html">Actions</a>.)</li>
-  <li class="command">-nooneinstanceport (don't do the one instance port)</li>      
+  <li class="command">-nooneinstanceport (don't do the one instance port)</li>
 </ul>
 </span>
 </tt>
