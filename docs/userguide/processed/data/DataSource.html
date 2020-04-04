@@ -28,7 +28,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSource.h
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Data Sources</div>
-<p>The<strong> Data Sources </strong>panel lists the data sources currently loaded into McIDAS-V and provides access to both the <a href="../tools/Formulas.html">user-made</a> and <a href="../tools/NativeFormulas.html">native formulas</a>. The data sources listed are  chosen as described in the <a href="choosers/index.html">Data Sources</a> page. The selected item is the data source that lists out its fields in this tab:</p>
+<p>The<strong> Data Sources </strong>panel lists the data sources currently loaded into McIDAS-V and provides access to both the <a href="../tools/Formulas.html">user-made</a> and <a href="../tools/NativeFormulas.html">native formulas</a>. The data sources listed are chosen as described in the <a href="choosers/index.html">Data Sources</a> page. The selected item is the data source that lists out its fields in this tab:</p>
 <div class="images"><img src="images/SelectorStep1.gif" alt="Image 1: Data Sources Panel"><br>
 <span class="caption">Image 1: Data Sources Panel</span></div>
 <p>To set the defaults for a data source bring up the Properties dialog by right-clicking (or double-clicking) on the data source name in the <strong>Data Sources</strong> panel of the <strong>Field Selector</strong> tab and select <strong>Properties</strong> (note that the items in this menu will differ dependent on the data source type):</p>
@@ -36,7 +36,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSource.h
 <span class="caption">Image 2: Data Sources Panel Properties</span></div>
 <div class="pagesubtitle"><strong>Properties</strong></div>
 <ul class="propertylist">
-<li class="propertylistitem"><strong>Remove This Data Source -</strong> Removes  the data source from the McIDAS-V Session.</li>
+<li class="propertylistitem"><strong>Remove This Data Source -</strong> Removes the data source from the McIDAS-V Session.</li>
 <li class="propertylistitem"><strong>Reload Data -</strong> Reloads the data. This allows for data to be updated to a more recent time without having to go back to the <strong>Data Sources</strong> tab to reload it.</li>
 <li class="propertylistitem"><strong>Change Data -</strong> Opens a 'Change data for:' window. This window looks almost exactly like the Data Explorer and works the same. This selects a new data source to load in and replace the existing one.</li>
 <li class="propertylistitem"><strong>Write Local Grid -</strong> Saves the data as a grid as a netCDF file (*.nc). This opens a window where a user can select what fields in the selected data source will be written to the grid. In the Save dialog, there is an option for 'Change data source'. When this is selected, the data source in the Field Selector will change to only list the fields that were written out to the local grid.</li>
@@ -89,8 +89,8 @@ the data is shown by the blue outline box. To select an area, left click and dra
     <li class="propertylistitem"><strong># Points -</strong> Sets the number of grid points in the x and y direction.</li>
     </ul>
     <li class="propertylistitem"><strong>Grid Size -</strong> Sets the X and Y spacing in spacing units. This is an option if Degrees or # Points is selected for Spacing.</li>
-    <li class="propertylistitem"><strong>Passes -</strong> Sets the number of passes for the Barnes analysis to do. Four passes are recommended for analyzing fields where derivative estimates are important (Ref: Barnes 1994b), three passes  recommended for all other fields (with gain set to 1.0) (Ref: Barnes 1994c "Two pass Barnes Objective Analysis schemes now in use probably should be  replaced by appropriately tuned 3pass or 4pass  schemes"), and two passes are only recommended for "quick look"  type analyses.</li>
-    <li class="propertylistitem"><strong>Search Radius -</strong> Sets the search radius (in grid units) for the weighting of points in  determining the value at a specific grid point. This should be in the range 0.2 to 1.0. Data are fitted more closely with a gain of 0.2 (at the expense of less overall accuracy over the entire grid), larger values smooth more.</li>
+    <li class="propertylistitem"><strong>Passes -</strong> Sets the number of passes for the Barnes analysis to do. Four passes are recommended for analyzing fields where derivative estimates are important (Ref: Barnes 1994b), three passes recommended for all other fields (with gain set to 1.0) (Ref: Barnes 1994c "Two pass Barnes Objective Analysis schemes now in use probably should be replaced by appropriately tuned 3pass or 4pass schemes"), and two passes are only recommended for "quick look" type analyses.</li>
+    <li class="propertylistitem"><strong>Search Radius -</strong> Sets the search radius (in grid units) for the weighting of points in determining the value at a specific grid point. This should be in the range 0.2 to 1.0. Data are fitted more closely with a gain of 0.2 (at the expense of less overall accuracy over the entire grid), larger values smooth more.</li>
     <li class="propertylistitem"><strong>Gain - </strong>Represents the factor by which scaleLength is reduced for the second pass. This should be in the range 0.2 to 1.0. Data are fitted more closely with a gain of 0.2 (at the expense of less overall accuracy over the entire grid), larger values smooth more. Suggested default: 1.0.  Set the gain for each pass after the first.</li>
     </ul>
 <div class="pagesubtitle"><a name="formula" id="formula"></a>Formulas</div>

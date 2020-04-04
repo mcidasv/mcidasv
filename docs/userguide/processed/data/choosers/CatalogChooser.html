@@ -29,14 +29,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Cat
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Choosing Cataloged Data</div>
 <p>The <strong>General-&gt;Catalogs</strong> chooser shows THREDDS catalogs of data holdings on remote data servers (typically TDS or OPeNDAP) and provides access to remote Web Map Server (WMS) image servers. McIDAS-V provides a link to an initial default catalog, idvcatalog.xml, which should appear in the Catalog menu. If not you can directly enter the URL of the catalog: https://www.ssec.wisc.edu/mcidas/software/v/catalog.xml.</p>
-<p>This  URL links to a catalog of real time model data, a collection of county level shapefiles for roads and hydrography features, and a collection of useful Web Map Servers. For more information on using this chooser to display grid data, see <a href="../../quickstart/Grids.html">Getting Started - Displaying Gridded Data</a>.</p>
+<p>This URL links to a catalog of real time model data, a collection of county level shapefiles for roads and hydrography features, and a collection of useful Web Map Servers. For more information on using this chooser to display grid data, see <a href="../../quickstart/Grids.html">Getting Started - Displaying Gridded Data</a>.</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/CatalogChooser.gif" width="1009" height="581" alt=""/><br>
   <span class="caption">Image 1: Catalog Chooser</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Catalog -</strong> Selects the catalog for the data. Enter in a catalog URL (and hit Enter or click <img src="images/Refresh.gif" alt="Refresh button" width="23" height="24"align=absmiddle> <strong> Refresh </strong> ) or select a catalog URL from the pull down menu. Use the <img src="images/SelectFile2.gif" width="180" height="24" alt="Select File button"align="absmiddle"> button to select a catalog on your local disk.</li>
-    <li class="propertylistitem"><strong>History -</strong> Switches back and forth between selected catalogs with  the <img src="images/Cat-Back.gif" alt="Left arrow" width="13" height="15"align=absmiddle> and <img src="images/Cat-Fwd.gif" alt="Right arrow" width="13" height="15"align=absmiddle> buttons.</li>
+    <li class="propertylistitem"><strong>History -</strong> Switches back and forth between selected catalogs with the <img src="images/Cat-Back.gif" alt="Left arrow" width="13" height="15"align=absmiddle> and <img src="images/Cat-Fwd.gif" alt="Right arrow" width="13" height="15"align=absmiddle> buttons.</li>
     <li class="propertylistitem"><strong>Data Type -</strong> Selects the type of data. If left as &quot;I'm Feeling Lucky&quot;, McIDAS-V will figure out what kind of data is in the file by the URL itself. This can be overridden by selecting the type of data the file contains from the pull down menu. See the <a href="../DataSources.html">data formats and sources</a> available.</li>
     <li class="propertylistitem"><strong>Tree Structure -</strong> Lists all of the data. Open the tree structure by clicking on the (<img src="../images/TreeTagClosed.gif" alt="Tab icon" width="22" height="21"align=absmiddle>) tab icon. Clicking on a data source will enable the <img src="../../quickstart/images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> button.</li>
     <li class="propertylistitem"><strong>Show Thumbnail Images -</strong> Shows thumbnails in the THREDDS catalog if available.</li>
@@ -48,7 +48,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Cat
 <a name="image2" id="image2"></a>
 <div class="images"><img src="images/WmsChooser.gif" alt="Image 2: WMS Chooser"> <br>
   <span class="caption">Image 2: WMS Chooser</span></div>
-<p>The tree view on the left shows the different image layers available. You can select one image or use  Ctrl+click to select multiple images. The map on the right plots a red box around the bounding area of the particular item selected.</p>
+<p>The tree view on the left shows the different image layers available. You can select one image or use Ctrl+click to select multiple images. The map on the right plots a red box around the bounding area of the particular item selected.</p>
 <p>Data files that are imported through the WMS Servers must contain gridded data. Also, the NetCDF-Java Common Data Model must be able to identify the coordinate system used.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
