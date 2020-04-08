@@ -8,7 +8,7 @@
       <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" />
       <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../adde" description="Directory containing the local ADDE server ZIP files." />
       <variable name="MCV_VERSION" value="${compiler:sys.version}-SNAPSHOT" />
-      <variable name="IDV_VERSION" value="5.6u1" />
+      <variable name="IDV_VERSION" value="5.7" />
     </variables>
     <jreBundles>
       <modules />

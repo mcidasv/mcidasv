@@ -1456,6 +1456,8 @@
     <!-- Make the installers with install4j -->
     <target name="installers" depends="installer_custom_code" description="Make the installers with install4j">
         <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
+            <arg value="-D" />
+            <arg value="IDV_VERSION=${idv.version}" />
             <arg value="mcidasv.install4j" />
         </exec>
     </target>
