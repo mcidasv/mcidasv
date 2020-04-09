@@ -108,7 +108,7 @@
      U-Component_Storm_Motion_height_above_ground_layer,
      u-component_storm_motion_height_above_ground_layer,
      u-component_of_wind_height_above_ground_5_Minute_Average,
-     u-component_of_wind_Analysis_height_above_ground
+     u-component_of_wind_Analysis_height_above_ground,
      PRODUCT_SUPPORT_DATA_INPUT_DATA/eastward_wind"/>
   <alias
      name="V"
@@ -126,7 +126,7 @@
      V-Component_Storm_Motion_height_above_ground_layer,
      v-component_storm_motion_height_above_ground_layer,
      v-component_of_wind_height_above_ground_5_Minute_Average,
-     v-component_of_wind_Analysis_height_above_ground
+     v-component_of_wind_Analysis_height_above_ground,
      PRODUCT_SUPPORT_DATA_INPUT_DATA/northward_wind"/>
   <!-- end inq1759 -->
     <alias
