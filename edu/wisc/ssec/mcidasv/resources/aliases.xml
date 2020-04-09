@@ -109,7 +109,8 @@
      u-component_storm_motion_height_above_ground_layer,
      u-component_of_wind_height_above_ground_5_Minute_Average,
      u-component_of_wind_Analysis_height_above_ground,
-     PRODUCT_SUPPORT_DATA_INPUT_DATA/eastward_wind"/>
+     PRODUCT_SUPPORT_DATA_INPUT_DATA/eastward_wind,
+     u-component_of_wind_eta"/>
   <alias
      name="V"
      label="V component of wind"
@@ -127,13 +128,17 @@
      v-component_storm_motion_height_above_ground_layer,
      v-component_of_wind_height_above_ground_5_Minute_Average,
      v-component_of_wind_Analysis_height_above_ground,
-     PRODUCT_SUPPORT_DATA_INPUT_DATA/northward_wind"/>
+     PRODUCT_SUPPORT_DATA_INPUT_DATA/northward_wind,
+     v-component_of_wind_eta"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
      label="Wind Direction"
      aliases="Wind_direction_from_which_blowing_height_above_ground,
-     Wind_direction_from_which_blowing_Analysis_height_above_ground"/>
+     Wind_direction_from_which_blowing_Analysis_height_above_ground,
+     Wind_direction_from_which_blowing_eta,
+     Wind_direction_from_which_blowing_isobaric,
+     Wind_direction_from_which_blowing_height_above_ground"/>
   <!-- bob inq2791 05/2019 -->
   <alias
      name="W"
@@ -147,7 +152,8 @@
      Wind_speed_height_above_ground_Mixed_intervals_Maximum,
      Wind_speed_gust_height_above_ground,
      Wind_speed_gust_Analysis_height_above_ground,
-     Wind_speed_Analysis_height_above_ground"/>
+     Wind_speed_Analysis_height_above_ground,
+     Wind_speed_eta"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
@@ -178,6 +184,10 @@
      label="Mixing Ratio"
      aliases="Cloud_mixing_ratio_isobaric"/>
   <!-- end bob inq2791 05/2019 -->
+  <alias
+     name="SST"
+     label="Sea Surface Temperature"
+     aliases="Water_temperature_surface"/>
   <!-- bob inq2679 -->
   <alias aliases="HT, .*_Band3_CTH" label="ABI L2 Cloud Top Height" name="ABI_L2_ACHA"/>
   <alias aliases="AOD, .*_Band22_AOD" label="ABI L2 Aerosol Optical Depth" name="ABI_L2_AOD"/>
