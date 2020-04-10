@@ -71,7 +71,10 @@
      Temperature_isobaric_UnknownProbType193,
      Temperature_hybrid,
      Temperature_low_cloud_top,
-     Temperature_altitude_above_msl"/>
+     Temperature_altitude_above_msl,
+     Temperature_high_cloud_top,
+     Maximum_temperature_height_above_ground,
+     Minimum_temperature_height_above_ground"/>
   <alias
      name="RH"
      label="Relative humidity"
