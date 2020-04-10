@@ -3,7 +3,6 @@
   <alias aliases="Optical_Depth_Land_And_Ocean" label="AerosolOpticalDepth_MOD04" name="AOD_MOD04"/>
   <alias aliases="Cloud_Optical_Thickness" label="CloudOpticalThickness_MOD06" name="COT_MOD06"/>
   <alias aliases="radiances.*" label="Radiance" name="Radiance"/>
-  <alias aliases="EV_1KM_Emissive.*" label="Radiance" name="BrightnessTemp"/>
   <alias aliases=".*ABI_rad_b01.*" label="RadianceVIZ" name="RadianceVIZ"/>
   <alias aliases=".*ABI_rad_b02.*" label="RadianceVIZ" name="RadianceVIZ"/>
   <alias aliases=".*ABI_rad_b03.*" label="RadianceVIZ" name="RadianceVIZ"/>
@@ -24,7 +23,16 @@
   <alias aliases=".*_Band.*_TEMP" label="BrightnessTemp" name="BrightnessTemp"/>
   <alias aliases="Total_Attenuated_Backscatter_532" label="TotalAttenuatedBackscatter_532" name="TAB_532"/>
   <alias aliases="7_Band16_.*" label="HydrometeorClassification" name="HydrometeorClassification"/>
-
+  
+  <alias
+     name="BrightnessTemp"
+     label="Radiance"
+     aliases="EV_1KM_Emissive.*,
+     Simulated_Brightness_Temperature_for_GOES_11_Channel_3_atmosphere_top,
+     Simulated_Brightness_Temperature_for_GOES_11_Channel_4_atmosphere_top,
+     Simulated_Brightness_Temperature_for_GOES_12_Channel_3_atmosphere_top,
+     Simulated_Brightness_Temperature_for_GOES_12_Channel_4_atmosphere_top"/>
+  
   <!-- temp fix for inq 1129.  remove once Geopotential_isobaric alias is in IDV's aliases.xml -->
   <alias aliases="Geopotential,Geopotential_isobaric" label="Geopotential" name="GP"/>
 
@@ -93,7 +101,8 @@
      Specific_humidity_pressure_difference_layer,
      Relative_humidity_UnknownLevelType-204,
      Relative_humidity_height_above_ground_UnknownProbType193,
-     Relative_humidity_hybrid"/>
+     Relative_humidity_hybrid,
+     Relative_Humidity_with_Respect_to_Precipitable_Water_entire_atmosphere"/>
   <alias
      name="Z"
      label="Z"
@@ -227,7 +236,9 @@
   <alias
      name="SST"
      label="Sea Surface Temperature"
-     aliases="Water_temperature_surface"/>
+     aliases="Water_temperature_surface,
+     Water_temperature_depth_below_sea,
+     water_temp"/>
   <!-- bob inq2679 -->
   <alias aliases="HT, .*_Band3_CTH" label="ABI L2 Cloud Top Height" name="ABI_L2_ACHA"/>
   <alias aliases="AOD, .*_Band22_AOD" label="ABI L2 Aerosol Optical Depth" name="ABI_L2_AOD"/>
