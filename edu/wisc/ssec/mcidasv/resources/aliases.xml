@@ -228,7 +228,8 @@
      Pressure_low_cloud_top,
      Pressure_middle_cloud_bottom,
      Pressure_middle_cloud_top,
-     Pair"/>
+     Pair,
+     Pressure_reduced_to_MSL_msl_weightedMean"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
