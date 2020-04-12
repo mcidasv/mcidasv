@@ -204,7 +204,8 @@
      name="THETA"
      label="Potential Temperature"
      aliases="Potential_temperature_sigma,
-     Potential_temperature_height_above_ground"/>
+     Potential_temperature_height_above_ground,
+     Pseudo-adiabatic_potential_temperature_or_equivalent_potential_temperature_surface"/>
   <alias
      name="PRESSURE"
      label="Pressure"
