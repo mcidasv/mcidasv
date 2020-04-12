@@ -82,7 +82,11 @@
      Temperature_altitude_above_msl,
      Temperature_high_cloud_top,
      Maximum_temperature_height_above_ground,
-     Minimum_temperature_height_above_ground"/>
+     Minimum_temperature_height_above_ground,
+     Minimum_temperature_height_above_ground_6_Hour_Minimum_unweightedMean,
+     Maximum_temperature_height_above_ground_6_Hour_Maximum_unweightedMean,
+     Maximum_temperature_height_above_ground_6_Hour_Maximum_ens,
+     Minimum_temperature_height_above_ground_6_Hour_Minimum_ens"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -229,7 +233,9 @@
      Pressure_middle_cloud_bottom,
      Pressure_middle_cloud_top,
      Pair,
-     Pressure_reduced_to_MSL_msl_weightedMean"/>
+     Pressure_reduced_to_MSL_msl_weightedMean,
+     Pressure_surface_unweightedMean,
+     Pressure_reduced_to_MSL_msl_unweightedMean"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
