@@ -33,6 +33,12 @@
      Simulated_Brightness_Temperature_for_GOES_12_Channel_3_atmosphere_top,
      Simulated_Brightness_Temperature_for_GOES_12_Channel_4_atmosphere_top"/>
   
+<alias
+     name="ABSVOR"
+     label="Absolute Vorticity"
+     aliases="Absolute_vorticity_isobaric_6_Hour_AverageNforecasts,
+     Absolute_vorticity_isobaric_6_Hour_AverageNanalysis"/>
+  
   <!-- temp fix for inq 1129.  remove once Geopotential_isobaric alias is in IDV's aliases.xml -->
   <alias aliases="Geopotential,Geopotential_isobaric" label="Geopotential" name="GP"/>
 
@@ -86,7 +92,37 @@
      Minimum_temperature_height_above_ground_6_Hour_Minimum_unweightedMean,
      Maximum_temperature_height_above_ground_6_Hour_Maximum_unweightedMean,
      Maximum_temperature_height_above_ground_6_Hour_Maximum_ens,
-     Minimum_temperature_height_above_ground_6_Hour_Minimum_ens"/>
+     Minimum_temperature_height_above_ground_6_Hour_Minimum_ens,
+     Temperature_high_cloud_top_6_Hour_AverageAvg-24hourIntv,
+     Temperature_low_cloud_top_6_Hour_AverageAvg-24hourIntv,
+     Temperature_middle_cloud_top_6_Hour_AverageAvg-24hourIntv,
+     Temperature_surface_6_Hour_AverageNforecasts,
+     Temperature_hybrid_6_Hour_AverageNforecasts,
+     Temperature_pressure_difference_layer_6_Hour_AverageNforecasts,
+     Temperature_maximum_wind_6_Hour_AverageNforecasts,
+     Temperature_sigma_6_Hour_AverageNforecasts,
+     Temperature_height_above_ground_6_Hour_AverageNforecasts,
+     Temperature_tropopause_6_Hour_AverageNforecasts,
+     Temperature_depth_below_surface_layer_6_Hour_AverageNforecasts,
+     Temperature_isobaric_6_Hour_AverageNforecasts,
+     Temperature_potential_vorticity_surface_6_Hour_AverageNforecasts,
+     Temperature_altitude_above_msl_6_Hour_AverageNforecasts,
+     Temperature_surface_6_Hour_AverageNanalysis,
+     Temperature_hybrid_6_Hour_AverageNanalysis,
+     Temperature_pressure_difference_layer_6_Hour_AverageNanalysis,
+     Temperature_maximum_wind_6_Hour_AverageNanalysis,
+     Temperature_sigma_6_Hour_AverageNanalysis,
+     Temperature_height_above_ground_6_Hour_AverageNanalysis,
+     Temperature_tropopause_6_Hour_AverageNanalysis,
+     Temperature_depth_below_surface_layer_6_Hour_AverageNanalysis,
+     Temperature_isobaric_6_Hour_AverageNanalysis,
+     Temperature_potential_vorticity_surface_6_Hour_AverageNanalysis,
+     Temperature_altitude_above_msl_6_Hour_AverageNanalysis,
+     Temperature_surface_*.*_Hour_AverageAvg-*.*hourIntv,
+     Temperature_isentrope_*.*_Hour_AverageNforecasts,
+     TREFMXAV,
+     TREFMNAV,
+     TS"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -106,7 +142,24 @@
      Relative_humidity_UnknownLevelType-204,
      Relative_humidity_height_above_ground_UnknownProbType193,
      Relative_humidity_hybrid,
-     Relative_Humidity_with_Respect_to_Precipitable_Water_entire_atmosphere"/>
+     Relative_Humidity_with_Respect_to_Precipitable_Water_entire_atmosphere,
+     Relative_humidity_height_above_ground_6_Hour_AverageNforecasts,
+     Relative_humidity_sigma_6_Hour_AverageNforecasts,
+     Relative_humidity_zeroDegC_isotherm_6_Hour_AverageNforecasts,
+     Relative_humidity_pressure_difference_layer_6_Hour_AverageNforecasts,
+     Relative_humidity_highest_tropospheric_freezing_6_Hour_AverageNforecasts,
+     Relative_humidity_entire_atmosphere_single_layer_6_Hour_AverageNforecasts,
+     Relative_humidity_isobaric_6_Hour_AverageNforecasts,
+     Relative_humidity_sigma_layer_6_Hour_AverageNforecasts,
+     Relative_humidity_entire_atmosphere_single_layer_6_Hour_AverageNanalysis,
+     Relative_humidity_highest_tropospheric_freezing_6_Hour_AverageNanalysis,
+     Relative_humidity_pressure_difference_layer_6_Hour_AverageNanalysis,
+     Relative_humidity_zeroDegC_isotherm_6_Hour_AverageNanalysis,
+     Relative_humidity_sigma_6_Hour_AverageNanalysis,
+     Relative_humidity_height_above_ground_6_Hour_AverageNanalysis,
+     Relative_humidity_isobaric_6_Hour_AverageNanalysis,
+     Relative_humidity_sigma_layer_6_Hour_AverageNanalysis,
+     Relative_humidity_isentrope_*.*_Hour_AverageNforecasts"/>
   <alias
      name="Z"
      label="Z"
@@ -141,7 +194,29 @@
      u-component_of_current_depth_below_sea,
      Uwind,
      u_sur,
-     water_u"/>
+     water_u,
+     U3D,
+     u-component_of_wind_hybrid_6_Hour_AverageNforecasts,
+     u-component_of_wind_pressure_difference_layer_6_Hour_AverageNforecasts,
+     u-component_of_wind_maximum_wind_6_Hour_AverageNforecasts,
+     u-component_of_wind_sigma_6_Hour_AverageNforecasts,
+     u-component_of_wind_height_above_ground_6_Hour_AverageNforecasts,
+     u-component_of_wind_tropopause_6_Hour_AverageNforecasts,
+     U-Component_Storm_Motion_height_above_ground_layer_6_Hour_AverageNforecasts,
+     u-component_of_wind_isobaric_6_Hour_AverageNforecasts,
+     u-component_of_wind_potential_vorticity_surface_6_Hour_AverageNforecasts,
+     u-component_of_wind_altitude_above_msl_6_Hour_AverageNforecasts,
+     u-component_of_wind_hybrid_6_Hour_AverageNanalysis,
+     u-component_of_wind_pressure_difference_layer_6_Hour_AverageNanalysis,
+     u-component_of_wind_maximum_wind_6_Hour_AverageNanalysis,
+     u-component_of_wind_sigma_6_Hour_AverageNanalysis,
+     u-component_of_wind_height_above_ground_6_Hour_AverageNanalysis,
+     u-component_of_wind_tropopause_6_Hour_AverageNanalysis,
+     U-Component_Storm_Motion_height_above_ground_layer_6_Hour_AverageNanalysis,
+     u-component_of_wind_isobaric_6_Hour_AverageNanalysis,
+     u-component_of_wind_potential_vorticity_surface_6_Hour_AverageNanalysis,
+     u-component_of_wind_altitude_above_msl_6_Hour_AverageNanalysis,
+     u-component_of_wind_isentrope_*.*_Hour_AverageNforecasts"/>
   <alias
      name="V"
      label="V component of wind"
@@ -168,7 +243,29 @@
      v-component_of_current_depth_below_sea,
      Vwind,
      v_sur,
-     water_v"/>
+     water_v,
+     V3D,
+     v-component_of_wind_hybrid_6_Hour_AverageNforecasts,
+     v-component_of_wind_pressure_difference_layer_6_Hour_AverageNforecasts,
+     v-component_of_wind_maximum_wind_6_Hour_AverageNforecasts,
+     v-component_of_wind_sigma_6_Hour_AverageNforecasts,
+     v-component_of_wind_height_above_ground_6_Hour_AverageNforecasts,
+     v-component_of_wind_tropopause_6_Hour_AverageNforecasts,
+     V-Component_Storm_Motion_height_above_ground_layer_6_Hour_AverageNforecasts,
+     v-component_of_wind_isobaric_6_Hour_AverageNforecasts,
+     v-component_of_wind_potential_vorticity_surface_6_Hour_AverageNforecasts,
+     v-component_of_wind_altitude_above_msl_6_Hour_AverageNforecasts,
+     v-component_of_wind_hybrid_6_Hour_AverageNanalysis,
+     v-component_of_wind_pressure_difference_layer_6_Hour_AverageNanalysis,
+     v-component_of_wind_maximum_wind_6_Hour_AverageNanalysis,
+     v-component_of_wind_sigma_6_Hour_AverageNanalysis,
+     v-component_of_wind_height_above_ground_6_Hour_AverageNanalysis,
+     v-component_of_wind_tropopause_6_Hour_AverageNanalysis,
+     V-Component_Storm_Motion_height_above_ground_layer_6_Hour_AverageNanalysis,
+     v-component_of_wind_isobaric_6_Hour_AverageNanalysis,
+     v-component_of_wind_potential_vorticity_surface_6_Hour_AverageNanalysis,
+     v-component_of_wind_altitude_above_msl_6_Hour_AverageNanalysis,
+     v-component_of_wind_isentrope_*.*_Hour_AverageNforecasts"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -209,7 +306,8 @@
      label="Potential Temperature"
      aliases="Potential_temperature_sigma,
      Potential_temperature_height_above_ground,
-     Pseudo-adiabatic_potential_temperature_or_equivalent_potential_temperature_surface"/>
+     Pseudo-adiabatic_potential_temperature_or_equivalent_potential_temperature_surface,
+     Potential_temperature_depth_below_sea_*.*_Hour_AverageAvg-*.*hourIntv"/>
   <alias
      name="PRESSURE"
      label="Pressure"
@@ -235,7 +333,13 @@
      Pair,
      Pressure_reduced_to_MSL_msl_weightedMean,
      Pressure_surface_unweightedMean,
-     Pressure_reduced_to_MSL_msl_unweightedMean"/>
+     Pressure_reduced_to_MSL_msl_unweightedMean,
+     Pressure_msl_6_Hour_AverageNforecasts,
+     Pressure_surface_6_Hour_AverageNforecasts,
+     Pressure_reduced_to_MSL_msl_6_Hour_AverageNforecasts,
+     Pressure_surface_6_Hour_AverageNanalysis,
+     Pressure_reduced_to_MSL_msl_6_Hour_AverageNanalysis,
+     Pressure_msl_6_Hour_AverageNanalysis"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
@@ -246,7 +350,10 @@
      label="Sea Surface Temperature"
      aliases="Water_temperature_surface,
      Water_temperature_depth_below_sea,
-     water_temp"/>
+     water_temp,
+     SST_avg,
+     SST_avg_filled,
+     SST_avg_comp"/>
   <!-- bob inq2679 -->
   <alias aliases="HT, .*_Band3_CTH" label="ABI L2 Cloud Top Height" name="ABI_L2_ACHA"/>
   <alias aliases="AOD, .*_Band22_AOD" label="ABI L2 Aerosol Optical Depth" name="ABI_L2_AOD"/>
