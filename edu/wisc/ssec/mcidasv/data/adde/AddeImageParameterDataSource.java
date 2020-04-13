@@ -39,6 +39,7 @@ import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -197,9 +198,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     // keep track of extra info for derived fields, since they may be a mix of bands and resolutions
     boolean isDerived = false;
-    int tmpBndIdx = 0;
-    ArrayList<Double> derivedBandLineRes = new ArrayList<Double>();
-    ArrayList<Double> derivedBandElemRes = new ArrayList<Double>();
+    HashMap<Integer, Double> derivedBandLineRes = new HashMap<Integer, Double>();
+    HashMap<Integer, Double> derivedBandElemRes = new HashMap<Integer, Double>();
+    HashMap<Integer, Integer> derivedBandMagFactor = new HashMap<Integer, Integer>();
 
     protected List<DataChoice> stashedChoices = null;
     private List iml = new ArrayList();
@@ -1052,6 +1053,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         // TJJ Inq #2181 Feb 2020
         // If derived, figure out which bands are involved. Open to better ideas here :-)
         if (dataChoice instanceof DerivedDataChoice) {
+            derivedBandLineRes.clear();
+            derivedBandElemRes.clear();
+            derivedBandMagFactor.clear();
             isDerived = true;
             Hashtable ht = ((DerivedDataChoice) dataChoice).getUserSelectedChoices();
             java.util.Set<String> set = ht.keySet();
@@ -1100,8 +1104,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         AreaDirectory ad = (AreaDirectory) allBandDirs.get(bandInfo.getBandNumber());
                         double lineRes = ad.getCenterLatitudeResolution();
                         double elemRes = ad.getCenterLongitudeResolution();
-                        if (derivedBands.contains(bandInfo.getBandNumber())) derivedBandLineRes.add(lineRes);
-                        if (derivedBands.contains(bandInfo.getBandNumber())) derivedBandElemRes.add(elemRes);
+                        if (derivedBands.contains(bandInfo.getBandNumber())) {
+                            int tmpBand = bandInfo.getBandNumber();
+                            derivedBandLineRes.put(tmpBand, lineRes);
+                            derivedBandElemRes.put(tmpBand, elemRes);
+                        }
                         if (lineRes < bestRes && (derivedBands.contains(bandInfo.getBandNumber()))) {
                             bestRes = lineRes;
                             bandIdx = tmpIdx;
@@ -1112,6 +1119,70 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         }
                         tmpIdx++;
                     }
+                    // Now that we've got all the derived bands and resolutions,
+                    // set multipliers for line/elem ranges based on mixtures of resolutions
+                    boolean allThree = false;
+                    boolean twoLower = false;
+                    boolean twoHigher = false;
+                    boolean allSame = true;
+                    Collection<Double> resVals = (Collection<Double>) derivedBandLineRes.values();
+                    if (resVals.contains(0.5)) {
+                        if (resVals.contains(1.0)) {
+                            if (resVals.contains(2.0)) {
+                                allThree = true;
+                                allSame = false;
+                            } else {
+                                twoLower = true;
+                                allSame = false;
+                            }
+                        }
+                    } else {
+                        if (resVals.contains(1.0)) {
+                            if (resVals.contains(2.0)) {
+                                twoHigher = true;
+                                allSame = false;
+                            }
+                        }
+                    }
+
+                    for (Integer bandNum : derivedBandLineRes.keySet()) {
+
+                        Double bandRes = derivedBandLineRes.get(bandNum);
+                        if (allSame) {
+                            derivedBandMagFactor.put(bandNum, 1);
+                        }
+                        if (twoLower) {
+                            if (bandRes < 1) {
+                                derivedBandMagFactor.put(bandNum, 1);
+                            } else {
+                                derivedBandMagFactor.put(bandNum, 2);
+                            }
+                        }
+                        if (twoHigher) {
+                            if (bandRes > 1) {
+                                derivedBandMagFactor.put(bandNum, 2);
+                            } else {
+                                derivedBandMagFactor.put(bandNum, 1);
+                            }
+                        }
+                        if (allThree) {
+                            if (bandRes > 1) {
+                                derivedBandMagFactor.put(bandNum, 4);
+                            } else {
+                                if (bandRes < 1) {
+                                    derivedBandMagFactor.put(bandNum, 1);
+                                } else {
+                                    derivedBandMagFactor.put(bandNum, 2);
+                                }
+                            }
+                        }
+                    }
+
+                    // Print all mags for verification
+                    derivedBandMagFactor.entrySet().forEach(entry -> {
+                        logger.debug("Derived Mag Band : " + entry.getKey() + " Mag Value : " + entry.getValue());
+                    });
+
                 }
             }
             // pull out the list of cal units, we'll need for type check later...
@@ -1840,43 +1911,19 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         int lSize = numLines;
                         int eSize = numEles;
 
+                        int magFactor = 1;
+
                         // TJJ Mar 2020 - For derived fields, see if product bands are mixed-resolution bands
                         if (isDerived) {
-                            boolean mixedRes = false;
-                            boolean hasResOne = false;
-                            boolean hasLowerRes = false;
-                            int curRes = -1;
-                            logger.debug("Number of derived bands: " + derivedBandLineRes.size());
-                            for (int bandIdx = 0; bandIdx < derivedBandLineRes.size(); bandIdx++) {
-                                curRes = derivedBandLineRes.get(bandIdx).intValue();
-                                if (curRes == 1) hasResOne = true;
-                                if (curRes > 1) hasLowerRes = true;
-                                // Check both line and element res - they can differ
-                                curRes = derivedBandElemRes.get(bandIdx).intValue();
-                                if (curRes == 1) hasResOne = true;
-                                if (curRes > 1) hasLowerRes = true;
-                                // If both conditions are true, set the flag
-                                if (hasResOne && hasLowerRes) {
-                                    logger.debug("Derived field is a mix of band resolutions");
-                                    mixedRes = true;
-                                }
-                            }
-                            if (mixedRes) {
-                                if (tmpBndIdx < derivedBandLineRes.size()) {
-                                    int tmpRes = derivedBandLineRes.get(tmpBndIdx).intValue();
-                                    if (tmpRes > 1) {
-                                        lSize = lSize / tmpRes;
-                                        eSize = eSize / tmpRes;
-                                    }
-                                }
-                            }
+                            int derivedBandNum = Integer.parseInt(getKey(src, BAND_KEY));
+                            magFactor = derivedBandMagFactor.get(derivedBandNum);
                         }
 
-                        tmpBndIdx++;
-                        sizeString = lSize + " " + eSize;
+                        sizeString = lSize / magFactor + " " + eSize / magFactor;
                         src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
                         src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
                         aid.setSource(src);
+                        logger.debug("makeImageSequence src: " + src);
                     } catch (Exception exc) {
                         logger.error("error trying to adjust AddeImageDescriptor: {}", exc);
                         super.makeImageSequence(dataChoice, subset);
