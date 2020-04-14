@@ -429,11 +429,11 @@
        label="Site aliases"
        location="%SITEPATH%/aliases.xml"/>
     <resource
-       label="Application aliases"
-       location="%APPPATH%/aliases.xml"/>
-    <resource
        label="System aliases"
        location="%IDVPATH%/aliases.xml"/>
+    <resource
+       label="Application aliases"
+       location="%APPPATH%/aliases.xml"/>
   </resources>
 
 <!-- Where do we find the default bundle(s) that is(are) used at start up   -->
