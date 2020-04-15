@@ -107,7 +107,8 @@
      Temperature_altitude_above_msl_*.*_Average,
      Temperature_depth_below_surface_layer_*.*_AverageNforecasts,
      Temperature_height_above_ground_*.*_AverageNforecasts,
-     Temperature_*.*_cloud_*.*_AverageAvg-*.*hourIntv"/>
+     Temperature_*.*_cloud_*.*_AverageAvg-*.*hourIntv,
+     Temperature_depth_below_surface_layer_unweightedMean"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -305,7 +306,11 @@
      Wind_speed_Analysis_height_above_ground,
      Wind_speed_eta,
      Wind_speed_height_above_ground_UnknownProbType193,
-     Wind_speed_surface_unweightedMean"/>
+     Wind_speed_surface_unweightedMean,
+     Wind_speed_height_above_ground_stdDev,
+     Wind_speed_height_above_ground_unweightedMean,
+     Wind_speed_isobaric_unweightedMean,
+     Wind_speed_isobaric_stdDev"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
