@@ -31,11 +31,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/SourceBuild.
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Building McIDAS-V from Source</div>
 <div class="overview">Developers can download the source files for McIDAS-V and build it from scratch.</div>
-<p>Before building McIDAS-V you need to first install Java and Java 3D on your
+<p>Before building McIDAS-V you need to first install Java on your
   system. You need to use the Java SDK, because the Java RunTime Environment
   (JRE) does not contain the Java compiler (javac). You need to use a version
 of Java 1.6 or above. You can use either the Java 3D SDK or JRE, version 1.3.x.</p>
-<p>You will also need to install <strong>Ant</strong> 1.7 <a href="http://ant.apache.org/" target="_blank">(http://ant.apache.org/)</a> on
+<p>You will also need to install the latest version of <strong>Ant</strong> <a href="http://ant.apache.org/" target="_blank">http://ant.apache.org/)</a> on
   your machine. Ant is similar to make - instead of a <code class="filename">Makefile</code>,
   Ant uses a <code class="filename">build.xml</code> file. Be sure to follow
   the instructions for installing Ant, especially those for setting up environment
@@ -51,19 +51,18 @@ Build steps:
   files.<br>
 <p>The resulting directory structure will be:</p>
 <pre>
-		mc-v/
-		mc-v/build.xml
-		mc-v/...		<-- McIDAS-V source directories
+		mcidasv/
+		mcidasv/build.xml
+		mcidasv/...		<-- McIDAS-V source directories
 
 		idv/
 		idv/lib			<-- Unidata IDV .jar files
 </pre>
-<p>The Ant build script &quot;mc-v/build.xml&quot; is be used to build and run McIDAS-V.</p>
+<p>The Ant build script &quot;mcidasv/build.xml&quot; is be used to build and run McIDAS-V.</p>
 </li>
-<li>Change to the <strong>mc-v</strong> directory and run:
-<ul class="step">
-<li>&quot;ant jar&quot; to create the McIDAS-V .jar files in <strong>mc-v/dist</strong>.</li>
-<li>&quot;ant run&quot; to run McIDAS-V with a small java heap size for testing.</li>
+<li>Change to the <strong>mcidasv</strong> directory and run:
+  <ul class="step">
+<li>&quot;ant jar.runlarge&quot; to create the McIDAS-V .jar files in <strong>mcidasv/dist</strong> and run McIDAS-V.</li>
 </ul>
 </li>
 </ol>
