@@ -809,6 +809,12 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
             "SSMI"                                                     "SMIN"
             "TRMM"                                                     "TMIN"
             "GINI"                                                     "GINI"
+            The following servers are not supported on Windows
+            "Himawari-8"                                               "Himawari-8"
+            "INSAT-3D Imager"                                          "INSAT3D_IMAGER"
+            "INSAT-3D Sounder"                                         "INSAT3D_SOUNDER"
+            "GOES ABI"                                                 "GOES ABI"
+            "Sectorized CMI"                                           "Sectorized CMI"
             =========================================================  ============
                     
     Returns:
