@@ -337,6 +337,28 @@
   <satellite name="SKYSAT 1" width="8"/>
   <satellite name="SKYSAT-2" width="8"/>
   <satellite name="SKYSAT 2" width="8"/>
+  <satellite name="SKYSAT-C1" width="6.6"/>
+  <satellite name="SKYSAT C1" width="6.6"/>
+  <satellite name="SKYSAT-C2" width="6.6"/>
+  <satellite name="SKYSAT C2" width="6.6"/>
+  <satellite name="SKYSAT-C3" width="6.6"/>
+  <satellite name="SKYSAT C3" width="6.6"/>
+  <satellite name="SKYSAT-C4" width="6.6"/>
+  <satellite name="SKYSAT C4" width="6.6"/>
+  <satellite name="SKYSAT-C5" width="6.6"/>
+  <satellite name="SKYSAT C5" width="6.6"/>
+  <satellite name="SKYSAT-C6" width="6.6"/>
+  <satellite name="SKYSAT C6" width="6.6"/>
+  <satellite name="SKYSAT-C7" width="6.6"/>
+  <satellite name="SKYSAT C7" width="6.6"/>
+  <satellite name="SKYSAT-C8" width="6.6"/>
+  <satellite name="SKYSAT C8" width="6.6"/>
+  <satellite name="SKYSAT-C9" width="6.6"/>
+  <satellite name="SKYSAT C9" width="6.6"/>
+  <satellite name="SKYSAT-C10" width="6.6"/>
+  <satellite name="SKYSAT C10" width="6.6"/>
+  <satellite name="SKYSAT-C11" width="6.6"/>
+  <satellite name="SKYSAT C11" width="6.6"/>
   <satellite name="SMAP" width="1000"/>
   <satellite name="SMOS" width="1000"/>
   <satellite name="SPOT 2" width="60"/>
