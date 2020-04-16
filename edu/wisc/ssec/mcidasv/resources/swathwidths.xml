@@ -73,7 +73,7 @@
   <satellite name="DMSP 5D-3 F15 (USA 147)" width="1394"/>
   <satellite name="DMSP 5D-3 F16 (USA 172)" width="1394"/>
   <satellite name="DMSP 5D-3 F17 (USA 191)" width="1394"/>
-  <satellite name="DMSP 5D-3 F18 (USA 120)" width="1394"/>
+  <satellite name="DMSP 5D-3 F18 (USA 210)" width="1394"/>
   <satellite name="DUBAISAT-1" width="20"/>
   <satellite name="DUBAISAT-2" width="20"/>
   <satellite name="ELEKTRO-L1" width=""/>
