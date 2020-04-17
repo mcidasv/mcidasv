@@ -1424,10 +1424,10 @@
             <include name="build.xml" />
             <include name="edu/**" />
             <exclude name="edu/**/*.class" />
-            <exclude name="edu/**/CVS/**" />
             <include name="ucar/**" />
             <exclude name="ucar/**/*.class" />
-            <exclude name="ucar/**/CVS/**" />
+            <include name="visad/**" />
+            <exclude name="visad/**/*.class" />
             <include name="release/licenses/**" />
         </jar>
     </target>

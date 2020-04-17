@@ -1,18 +1,9 @@
 #!/bin/bash
 
-#
-# $Id$
-#
-
 # This script will create the source .zip file that ultimately gets put on the
 # web server for download
-
 ################################################################################
 
-# IDV_DIR=/home/mcidasv/idv
-# MCV_DIR=/home/mcidasv/mc-v
-# MEDIA_DIR=/home/mcidasv/install4j/media
-IDV_DIR="/home/mcidasv/IDV"
 MCV_DIR="/home/mcidasv/mcidasv"
 MEDIA_DIR="/home/mcidasv/install4j/media"
 CUR_DIR="${PWD}"
@@ -35,16 +26,11 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
-# Get IDV .jar files
-echo "Copying IDV .jar files..."
-mkdir ./idv
-cp -R ${IDV_DIR}/lib ./IDV
-
 # Get McIDAS-V source
 echo "Copying McIDAS-V source..."
 mkdir ./mcidasv
 cp ${MCV_DIR}/build.xml ./mcidasv/
-for SUBDIR in docs edu lib mcidas release lib ucar; do
+for SUBDIR in docs edu lib mcidas release lib ucar visad; do
 	echo "  ${SUBDIR}" && cp -R ${MCV_DIR}/${SUBDIR} ./mcidasv/
 done
 
