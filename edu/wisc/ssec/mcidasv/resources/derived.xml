@@ -577,6 +577,7 @@
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="ABI_RGB_TruCol"/>
