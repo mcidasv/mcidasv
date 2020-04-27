@@ -1582,6 +1582,18 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	setProperties(tmpHt);
     }
 
+    /* (non-Javadoc)
+     * @see ucar.unidata.data.DataSourceImpl#initDataChoice(ucar.unidata.data.DataChoice)
+     */
+    @Override
+    public void initDataChoice(DataChoice dataChoice) {
+        super.initDataChoice(dataChoice);
+        // Note here if we are a derived data choice
+        if (dataChoice instanceof DerivedDataChoice) {
+            isDerived = true;
+        }
+    }
+
     public void initAfterUnpersistence() {
     	try {
             String zidvPath = 
@@ -1851,17 +1863,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
         
         if ((dataSelection != null) && (dataSelection.getGeoSelection() != null)) {
             if (! isDerived) {
-                geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ? dataSelection.getGeoSelection() :
+                geoSelection = (dataSelection.getGeoSelection().getBoundingBox() != null) ?
+                    dataSelection.getGeoSelection() :
                     dataChoice.getDataSelection().getGeoSelection();
             } else {
-                if (dataSelection.getGeoSelection().getBoundingBox() != null) {
-                    geoSelection = dataSelection.getGeoSelection();
-                }
+                geoSelection = dataSelection.getGeoSelection();
             }
         }
 
         if (geoSelection != null) {
-          ginfo = geoSelection.getBoundingBox();
+           ginfo = geoSelection.getBoundingBox();
         }
 
         Data data = null;
@@ -1969,11 +1980,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
 				  image = (FlatField) thing;
 			  }
 			  if (image != null) {
-			      // Note here if we are a derived data choice
+			      // For derived data choices, pull out 1st in list for preview
+			      PreviewSelection ps = null;
 			      if (dataChoice instanceof DerivedDataChoice) {
 			          isDerived = true;
+			          List<DataChoice> children = ((DerivedDataChoice) dataChoice).getChoices();
+			          DataChoice dc = children.get(0);
+			          ps = new PreviewSelection(dc, image, null);
+			      } else {
+			          ps = new PreviewSelection(dataChoice, image, null);
 			      }
-				  PreviewSelection ps = new PreviewSelection(dataChoice, image, null);
 				  // Region subsetting not yet implemented for CrIS data
 				  if (instrumentName.getStringValue().equals("CrIS")) {
 					  ps.enableSubsetting(false);
