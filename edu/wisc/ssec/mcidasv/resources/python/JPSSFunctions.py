@@ -63,6 +63,7 @@ def makeGrid(fltField, res):
     return grid
 
 
+# VIIRS True Color RGB
 def VIIRSTrueColorRGB(M5, M4, M3):
     # red = M5 (0.672um)
     # grn = M4 (0.555um)
@@ -82,6 +83,7 @@ def VIIRSTrueColorRGB(M5, M4, M3):
     return package(inM5, rgb)
 
 
+# VIIRS Natural Color RGB (M-band)
 def VIIRSNaturalColorRGB(M10, M7, M5):
     # red = M10 (1.61um)
     # grn = M7 (0.865um)
@@ -101,6 +103,7 @@ def VIIRSNaturalColorRGB(M10, M7, M5):
     return package(inM10, rgb)
     
 
+# VIIRS NDVI
 def VIIRSNDVI(I1, I2):
     # I1 = 0.64um - visible
     # I2 = 0.865um - near IR
@@ -119,6 +122,7 @@ def VIIRSNDVI(I1, I2):
     return package(inI1, ndvi)
 
 
+#VIIRS Dust RGB
 def VIIRSDustRGB(M14, M15, M16):
     # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescalled to 0 to 255; gamma 1.0
     # grn = M15 - M14 (10.763um - 3.7um); 0C to 15C rescalled to 0 to 255; gamma 2.5
@@ -141,6 +145,7 @@ def VIIRSDustRGB(M14, M15, M16):
     return package(inM15, rgb)
 
 
+# VIIRS Night Microphysics RGB
 def VIIRSNightMicrophysicsRGB(M12, M15, M16):
     # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescalled to 0 to 255
     # grn = M15 - M12 (10.763um - 3.7um); 0C to 10C rescalled to 0 to 255
@@ -163,6 +168,7 @@ def VIIRSNightMicrophysicsRGB(M12, M15, M16):
     return package(inM12, rgb)
   
 
+# VIIRS Day Land Cloud Fire RGB
 def VIIRSDayLandCloudFireRGB(I4, I2, I1):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Day_Land_Cloud_Fire_RGB_Quick_Guide_10182018.pdf
     # red = I4 (3.7um) - 0C to 60C rescalled to 0 to 255; gamma 0.4
@@ -186,6 +192,7 @@ def VIIRSDayLandCloudFireRGB(I4, I2, I1):
     return package(inI4, rgb)
 
 
+# VIIRS Fire Temperature RGB
 def VIIRSFireTemperatureRGB(M12, M11, M10):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Fire_Temperature_RGB_Quick_Guide_10182018.pdf
     # red = M12 (3.7um) - 0C to 60C rescalled to 0 to 255; gamma 0.4
@@ -209,6 +216,7 @@ def VIIRSFireTemperatureRGB(M12, M11, M10):
     return package(inM12, rgb)
 
 
+# VIIRS Natural Color RGB (I-band)
 def VIIRSNaturalColorIRGB(I3, I2, I1):
     # red = I3 (1.61um)
     # grn = I2 (0.86um)
