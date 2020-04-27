@@ -468,13 +468,14 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         try {
             StringBuffer errlog = new StringBuffer();
             try {
-                collection = TDSRadarDatasetCollection.factory("test", url,
-                        errlog);
+                logger.debug("Initializing collection from URL: " + url);
+                collection = TDSRadarDatasetCollection.factory("test", url, errlog);
             } catch (Exception exc) {
                 userMessage("Invalid catalog");
                 logger.warn("Invalid catalog: "+url, exc);
                 return;
             }
+            logger.debug("Iterating over collection...");
             List tdsStations = collection.getRadarStations();
             for (int i = 0; i < tdsStations.size(); i++) {
                 StationImpl stn = (StationImpl) tdsStations.get(i);

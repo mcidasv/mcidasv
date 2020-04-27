@@ -130,31 +130,34 @@ public class TDSRadarDatasetCollection extends StationRadarCollectionImpl {
     static public TDSRadarDatasetCollection factory(String desc,
             String dsc_location, StringBuffer errlog)
             throws IOException {
-        // super();
-        SAXBuilder        builder;
-        Document          doc  = null;
+
+        SAXBuilder builder = null;
+        Document doc  = null;
+        Element qcElem = null;
+        Namespace ns = null;
         XMLEntityResolver jaxp = new XMLEntityResolver(true);
         builder = jaxp.getSAXBuilder();
 
-        // TJJ Nov 2019 - hack to keep bundles working with THREDDS
-        // See: https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2857
+        synchronized (builder) {
 
-        if (dsc_location != null) {
-            dsc_location = dsc_location.replace("http:", "https:");
+            // TJJ Nov 2019 - hack to keep bundles working with THREDDS
+            // See: https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2857
+
+            if (dsc_location != null) {
+                dsc_location = dsc_location.replace("http:", "https:");
+            }
+
+            try {
+                doc = builder.build(dsc_location);
+            } catch (JDOMException e) {
+                errlog.append(e.toString());
+            }
+
+            qcElem = doc.getRootElement();
+            ns = qcElem.getNamespace();
         }
 
-        try {
-            doc = builder.build(dsc_location);
-        } catch (JDOMException e) {
-            errlog.append(e.toString());
-        }
-
-        Element   qcElem = doc.getRootElement();
-        Namespace ns     = qcElem.getNamespace();
-
-
-        return new TDSRadarDatasetCollection(desc, dsc_location, qcElem, ns,
-                                             errlog);
+        return new TDSRadarDatasetCollection(desc, dsc_location, qcElem, ns, errlog);
     }
 
     /**
@@ -233,24 +236,26 @@ public class TDSRadarDatasetCollection extends StationRadarCollectionImpl {
      */
     public HashMap<String,Station> readRadarStations(String stsXML_location)
             throws IOException {
-        SAXBuilder        builder;
-        Document          doc  = null;
+        SAXBuilder builder = null;
+        Document doc  = null;
         XMLEntityResolver jaxp = new XMLEntityResolver(true);
         builder = jaxp.getSAXBuilder();
         HashMap<String,Station> stations = new HashMap<String,Station>();
 
-        try {
-            doc = builder.build(stsXML_location);
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        }
+        synchronized (builder) {
+            try {
+                doc = builder.build(stsXML_location);
+            } catch (JDOMException e) {
+                e.printStackTrace();
+            }
 
-        Element       rootElem = doc.getRootElement();
-        List<Element> children = rootElem.getChildren();
-        for (Element child : children) {
-            Station s;
-            if (null != (s = readStation(child))) {
-                stations.put(s.getName(), s);
+            Element rootElem = doc.getRootElement();
+            List<Element> children = rootElem.getChildren();
+            for (Element child : children) {
+                Station s;
+                if (null != (s = readStation(child))) {
+                    stations.put(s.getName(), s);
+                }
             }
         }
 
