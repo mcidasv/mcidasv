@@ -434,15 +434,25 @@ public class ScatterDisplay extends DisplayControlImpl {
                                    Component from, boolean multiples,
                                    List categories) {
 
-        List<DataChoice> choices = selectDataChoices(dialogMessage, from,
+        List choices = selectDataChoices(dialogMessage, from,
                                        multiples, categories);
         if ((choices == null) || (choices.size() == 0)) {
             logger.debug("popupDataDialog, no data choice, user canceled");
         	cancel = true;
             return;
         }
+        List<DataChoice> tempList = new ArrayList<>(1);
+        // TODO(jon): why is choices.get(0) now an arraylist!?
+        DataChoice firstChoice;
+        if (choices.get(0) instanceof List) {
+            List tmp = (List)choices.get(0);
+            firstChoice = (DataChoice)tmp.get(0);
+        } else {
+            firstChoice = (DataChoice)choices.get(0);
+        }
+        tempList.add(firstChoice);
         final List clonedList =
-            DataChoice.cloneDataChoices((List)choices.get(0));
+            DataChoice.cloneDataChoices(tempList);
         dataSelection = ((DataChoice) clonedList.get(0)).getDataSelection();
         //- don't do this in a separate thread like the IDV does.
         //- We want the dataChoice list updated before return.

@@ -164,6 +164,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     public static final float LOGO_SCALE_MIN = 0.1f;
     public static final float LOGO_SCALE_MAX = 2.0f;
     
+    public static final String PROP_NEW_FONT_RENDERING = "visad.newfontrendering";
+    
+    public static final String PROP_IS_OFFSCREEN = "visad.offscreen";
+    
     /** 
      * <p>Controls how the preference panel list is displayed. Want to modify 
      * the preferences UI in some way? PREF_PANELS is your friend. Think of 
@@ -955,7 +959,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
             { ViewManager.LABEL_AUTO_DEPTH, ViewManager.PREF_AUTO_DEPTH, mappy.getAutoDepth() },
             { arLabel, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) },
-            { "Use new layer label rendering (Under Development)", "visad.newfontrendering", Boolean.parseBoolean(System.getProperty("visad.newfontrendering", "false")) }
+            { "Use new layer label rendering (Under Development)", PROP_NEW_FONT_RENDERING, Boolean.parseBoolean(System.getProperty(PROP_NEW_FONT_RENDERING, "false")) }
             
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());

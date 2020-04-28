@@ -59,6 +59,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
@@ -73,6 +74,7 @@ import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 import javax.vecmath.Point3d;
 
+import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import visad.bom.annotations.ImageJ3D;
@@ -3148,6 +3150,17 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
     System.arraycopy(newUp, 0, up, 0, 3);
   }
 
+  public static boolean useNewFontRendering() {
+    String useNewFontRendering = 
+        System.getProperty(McIdasPreferenceManager.PROP_NEW_FONT_RENDERING, "false");
+    String isOffScreen = 
+        System.getProperty(McIdasPreferenceManager.PROP_IS_OFFSCREEN, "false");
+    boolean isHeadless = GraphicsEnvironment.isHeadless();
+    return Boolean.parseBoolean(useNewFontRendering)
+           && !Boolean.parseBoolean(isOffScreen)
+           && !isHeadless;
+  }
+  
   public VisADGeometryArray makeText(String[] text_values,
       TextControl text_control, float[][] spatial_values,
       byte[][] color_values, boolean[][] range_select) throws VisADException {
@@ -3214,7 +3227,7 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
     // abcd 2 February 2001
     // This cannot be moved outside the for loop
     rotateVectors(base, up, text_control.getRotation());
-    boolean newRendering = Boolean.parseBoolean(System.getProperty("visad.newfontrendering", "false"));
+    boolean newRendering = useNewFontRendering();
     
     Graphics2D g2 = null;
     BufferedImage listImage = null;

@@ -147,6 +147,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.print.PrinterJob;
 import java.beans.PropertyChangeEvent;
@@ -2213,9 +2215,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 if (comp == null) {
                     return;
                 }
-
+                
+                int scale = Integer.parseInt(System.getProperty("sun.java2d.uiScale", "1"));
                 Rectangle bounds = comp.getBounds();
-
+                bounds.width = bounds.width * scale;
+                bounds.height = bounds.height * scale;
+                
                 // System.out.println("window bounds: " + bounds);
                 if ((bounds.width == 0) || (bounds.height == 0)
                         || (logoFile == null) || logoFile.isEmpty()
@@ -2239,7 +2244,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 Point ap = ImageUtils.parsePoint(getLogoPosition(), bounds);
 
                 // System.out.println("screen point = " + ap);
-                int scale = Integer.parseInt(System.getProperty("sun.java2d.uiScale", "1"));
+                
                 int      baseX   = ap.x * scale;
                 int      baseY   = ap.y * scale;
                 float    zval    = getPerspectiveView()
@@ -2249,7 +2254,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                      : 2;
                 ImageJ3D logoJ3D = new ImageJ3D(logo,
                                        getImageAnchor(getLogoPosition()),
-                                       baseX, baseY, zval, getLogoScale());
+                                       baseX, baseY, zval, getLogoScale() * scale);
 
                 annotator.add(logoJ3D);
                 annotator.draw();
@@ -6520,14 +6525,36 @@ public class ViewManager extends SharableImpl implements ActionListener,
         try {
             image = robot.createScreenCapture(new Rectangle(loc.x, loc.y,
                     dim.width, dim.height));
+            int scale = Integer.parseInt(System.getProperty("sun.java2d.uiScale", "1"));
+            if (scale > 1) {
+                // scale the image only if required
+                image = scaleImg(image, scale);
+            }
         } catch (Exception exc) {
             logException("Error capturing image for component:"
                          + whichComponent + " location:" + loc.x + "x"
                          + loc.y + " dimension:" + dim.width + "x"
                          + dim.height, exc);
         }
-
+        
         return image;
+    }
+    
+    // definitely not fast...
+    private static BufferedImage scaleImg(final BufferedImage before,
+                                          final double scale) 
+    {
+        int w = before.getWidth();
+        int h = before.getHeight();
+        int w2 = (int) (w * scale);
+        int h2 = (int) (h * scale);
+        BufferedImage after = new BufferedImage(w2, h2, before.getType());
+        AffineTransform scaleInstance = 
+            AffineTransform.getScaleInstance(scale, scale);
+        AffineTransformOp scaleOp = 
+            new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BICUBIC);
+        scaleOp.filter(before, after);
+        return after;
     }
 
     /**

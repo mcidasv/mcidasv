@@ -45,6 +45,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import com.sun.j3d.utils.universe.SimpleUniverse;
+
 import java.util.Iterator;
 
 
@@ -276,8 +277,9 @@ public class VisADCanvasJ3D extends Canvas3D {
     display = (DisplayImplJ3D)renderer.getDisplay();
     component = null;
     offscreen = true;
-    width = w;
-    height = h;
+    int scale = Integer.parseInt(System.getProperty("sun.java2d.uiScale", "1"));
+    width = w * scale;
+    height = h * scale;
     BufferedImage image = new BufferedImage(width, height,
                                             BufferedImage.TYPE_INT_RGB);
     ImageComponent2D image2d =
@@ -329,14 +331,23 @@ public class VisADCanvasJ3D extends Canvas3D {
       // WLH 18 March 99 - SRP suggests that in some implementations
       // this may need to be in postRender (invoked before buffer swap)
       captureFlag = false;
-
-      int width = getSize().width;
-      int height = getSize().height;
+  
+      int scale = Integer.parseInt(System.getProperty("sun.java2d.uiScale", "1"));
+      int width;
+      int height;
+      if (!offscreen) {
+        width = getSize().width * scale;
+        height = getSize().height * scale;
+      } else {
+        width = getSize().width;
+        height = getSize().height;
+      }
       GraphicsContext3D ctx = getGraphicsContext3D();
       Raster ras = new Raster();
       ras.setType(Raster.RASTER_COLOR);
       ras.setSize(width, height);
       ras.setOffset(0, 0);
+      
       BufferedImage image = new BufferedImage(width, height,
                               BufferedImage.TYPE_INT_RGB);
       ImageComponent2D image2d =
@@ -350,7 +361,6 @@ public class VisADCanvasJ3D extends Canvas3D {
       if (captureImage != null) captureImage.flush();
       captureImage = img_src.getImage();
       displayRenderer.notifyCapture();
-
       // CTR 21 Sep 99 - send BufferedImage to any attached slaved displays
       if (display.hasSlaves()) display.updateSlaves(captureImage);
     }
