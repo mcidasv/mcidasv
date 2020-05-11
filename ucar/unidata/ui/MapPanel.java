@@ -31,6 +31,7 @@ package ucar.unidata.ui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -45,9 +46,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
+import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.gis.maps.MapData;
-import ucar.unidata.idv.IdvObjectStore;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlObjectStore;
@@ -192,6 +193,7 @@ public class MapPanel extends JPanel {
         colorButton = new ColorSwatchComponent(store, mapData.getColor(),
                 "Set Map Line Color");
         colorButton.setToolTipText("Set the line color");
+        colorButton.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         colorButton.addPropertyChangeListener("background",
                 new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
@@ -201,10 +203,8 @@ public class MapPanel extends JPanel {
                 }
             }
         });
-        p.add(colorButton);
 
-        fastRenderingCbx = new JCheckBox("Fast rendering",
-                                         mapData.getFastRendering());
+        fastRenderingCbx = new JCheckBox("Fast rendering", mapData.getFastRendering());
         fastRenderingCbx.setToolTipText("Toggle fast rendering");
         fastRenderingCbx.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent event) {
@@ -248,11 +248,13 @@ public class MapPanel extends JPanel {
      * @return a list of the components
      */
     public java.util.List getGuiComponents() {
+        JPanel colorPanel = new JPanel(new FlowLayout());
+        colorPanel.add(colorButton);
         java.util.List comps = new ArrayList();
         comps.add(shownCbx);
         comps.add(widthBox);
         comps.add(styleBox);
-        comps.add(colorButton);
+        comps.add(colorPanel);
         comps.add(fastRenderingCbx);
         return comps;
     }
