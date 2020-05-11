@@ -30,6 +30,7 @@ package ucar.unidata.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.Insets;
@@ -47,6 +48,7 @@ import javax.swing.JTextField;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+
 import ucar.unidata.gis.maps.LatLonLabelData;
 import ucar.unidata.idv.control.MapDisplayControl;
 import ucar.unidata.ui.drawing.Glyph;
@@ -378,6 +380,12 @@ public class LatLonLabelPanel extends JPanel {
      */
     public static JPanel layoutPanels(LatLonLabelPanel latPanel,
                                       LatLonLabelPanel lonPanel) {
+
+        JPanel latWrapper = new JPanel(new FlowLayout());
+        latWrapper.add(latPanel.colorButton);
+        JPanel lonWrapper = new JPanel(new FlowLayout());
+        lonWrapper.add(lonPanel.colorButton);
+
         Component[] comps = {
             GuiUtils.lLabel("<html><b>Labels</b></html>"), GuiUtils.filler(),
             GuiUtils.cLabel("Interval"), GuiUtils.cLabel("Relative to"),
@@ -385,11 +393,11 @@ public class LatLonLabelPanel extends JPanel {
             GuiUtils.cLabel("Alignment"), latPanel.onOffCbx,
             GuiUtils.rLabel("Latitude:"), latPanel.spacingField,
             latPanel.baseField, GuiUtils.rLabel("At Longitudes:"),
-            latPanel.labelLinesField, latPanel.colorButton,
+            latPanel.labelLinesField, latWrapper,
             latPanel.alignSelector, lonPanel.onOffCbx,
             GuiUtils.rLabel("Longitude:"), lonPanel.spacingField,
             lonPanel.baseField, GuiUtils.rLabel("At Latitudes:"),
-            lonPanel.labelLinesField, lonPanel.colorButton,
+            lonPanel.labelLinesField, lonWrapper,
             lonPanel.alignSelector,
         };
         GuiUtils.tmpInsets = new Insets(2, 4, 2, 4);

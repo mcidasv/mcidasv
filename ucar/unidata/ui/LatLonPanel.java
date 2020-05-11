@@ -30,6 +30,7 @@ package ucar.unidata.ui;
 
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+
 import ucar.unidata.gis.maps.LatLonData;
 import ucar.unidata.idv.control.MapDisplayControl;
 import ucar.unidata.util.GuiUtils;
@@ -38,6 +39,7 @@ import ucar.unidata.xml.XmlObjectStore;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.Insets;
@@ -240,6 +242,12 @@ public class LatLonPanel extends JPanel {
      */
     public static JPanel layoutPanels(LatLonPanel latPanel,
                                       LatLonPanel lonPanel) {
+
+        JPanel latWrapper = new JPanel(new FlowLayout());
+        latWrapper.add(latPanel.colorButton);
+        JPanel lonWrapper = new JPanel(new FlowLayout());
+        lonWrapper.add(lonPanel.colorButton);
+
         Component[] comps = {
             GuiUtils.lLabel("<html><b>Lines</b></html"), GuiUtils.filler(),
             GuiUtils.cLabel("Interval"), GuiUtils.cLabel("Relative to"),
@@ -247,10 +255,10 @@ public class LatLonPanel extends JPanel {
             GuiUtils.cLabel("Color"), GuiUtils.cLabel("Fast Render"),
             latPanel.onOffCbx, GuiUtils.rLabel("Latitude:"),
             latPanel.spacingField, latPanel.baseField, latPanel.widthBox,
-            latPanel.styleBox, latPanel.colorButton, latPanel.fastRenderCbx,
+            latPanel.styleBox, latWrapper, latPanel.fastRenderCbx,
             lonPanel.onOffCbx, GuiUtils.rLabel("Longitude:"),
             lonPanel.spacingField, lonPanel.baseField, lonPanel.widthBox,
-            lonPanel.styleBox, lonPanel.colorButton, lonPanel.fastRenderCbx
+            lonPanel.styleBox, lonWrapper, lonPanel.fastRenderCbx
         };
         GuiUtils.tmpInsets = new Insets(2, 4, 2, 4);
         return GuiUtils.doLayout(comps, 8, GuiUtils.WT_N, GuiUtils.WT_N);
