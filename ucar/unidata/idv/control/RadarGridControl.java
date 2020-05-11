@@ -66,6 +66,7 @@ import ucar.visad.display.Displayable;
 import ucar.visad.display.RadarGrid;
 import ucar.visad.display.TextDisplayable;
 import ucar.visad.quantities.CommonUnits;
+
 import visad.CommonUnit;
 import visad.DisplayEvent;
 import visad.FieldImpl;
@@ -76,6 +77,7 @@ import visad.georef.EarthLocation;
 import visad.georef.LatLonPoint;
 import visad.georef.LatLonTuple;
 import visad.georef.MapProjection;
+
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
@@ -134,18 +136,6 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
     /** command property for center latitude */
     static final String CMD_CENTER_LAT = "center_lat";
-
-    /** command property for setting radial unit */
-    private static final String CMD_RAD_UNIT = "rad_unit";
-
-    /** command property for setting radial unit */
-    private static final String CMD_LBL_UNIT = "label_unit";
-
-    /** command property for setting radial unit */
-    private static final String CMD_RR_UNIT = "rr_unit";
-
-    /** command property for setting radial unit */
-    private static final String CMD_RRMAX_UNIT = "rrmax_unit";
 
     /** The font for the labels */
     private Font labelFont;
@@ -325,10 +315,8 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
 
         }
 
-
         // make visible and add it to display
         rangeRings.setVisible(getDisplayVisibility());
-        //addDisplayable (rangeRings);
 
         rangeRings.setAzimuthLineColor(radColor);
         rangeRings.setRangeRingColor(rrColor);
@@ -349,10 +337,9 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
         fixTextDisplayableSphereField();
 
         addDisplayable(rangeRings);
-        //addAttributedDisplayable(rangeRings, FLAG_ZPOSITION | FLAG_DISPLAYUNIT);
         addAttributedDisplayable(rangeRings, FLAG_ZPOSITION);
 
-        //Now, apply our local visiblity flags to each of the subcomponents
+        // Now, apply our local visiblity flags to each of the subcomponents
         applyVisibilityFlags();
 
 
@@ -686,10 +673,18 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             
         rrColorSwatch = (ColorSwatchComponent) makeColorBox(CMD_RR_COLOR, rrColor);
         rrColorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        JPanel rrColPanel = new JPanel(new FlowLayout());
+        rrColPanel.add(rrColorSwatch);
+
         radColorSwatch = (ColorSwatchComponent) makeColorBox(CMD_RAD_COLOR, radColor);
         radColorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        JPanel radColPanel = new JPanel(new FlowLayout());
+        radColPanel.add(radColorSwatch);
+
         lblColorSwatch = (ColorSwatchComponent) makeColorBox(CMD_LBL_COLOR, lblColor);
         lblColorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        JPanel lblColPanel = new JPanel(new FlowLayout());
+        lblColPanel.add(lblColorSwatch);
         
         rrComboBox = makeLineWidthBox(CMD_RR_WIDTH, rrWidth);
         radComboBox = makeLineWidthBox(CMD_RAD_WIDTH, radWidth);
@@ -712,7 +707,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             makeCbx("", CMD_RR_VIS, rrVisible)),
             makeSpacingBox(rrSpacingList, CMD_RR_SPACING, rrSpacing),
             distanceUnitLabels.get(0), 
-            rrColorSwatch,
+            rrColPanel,
             GuiUtils.filler(), rrComboBox,
             
             // Row 2
@@ -721,7 +716,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             makeCbx("", CMD_RAD_VIS, radVisible)),
             makeSpacingBox(radSpacingList, CMD_RAD_SPACING, radSpacing),
             new JLabel(" (deg) "), 
-            radColorSwatch,
+            radColPanel,
             GuiUtils.filler(), radComboBox,
             
             // Row 3
@@ -730,7 +725,7 @@ public class RadarGridControl extends DisplayControlImpl implements ActionListen
             makeCbx("", CMD_LBL_VIS, lblVisible)),
             makeSpacingBox(lblSpacingList, CMD_LBL_SPACING, lblSpacing),
             distanceUnitLabels.get(1), 
-            lblColorSwatch,
+            lblColPanel,
             GuiUtils.filler(), lblComboBox,
             
             // Final row
