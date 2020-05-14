@@ -38,6 +38,7 @@ import ucar.unidata.util.LogUtil;
 import ucar.visad.display.ColorScaleInfo;
 
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,6 +47,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -234,7 +236,16 @@ public class ColorScaleDialog implements ActionListener {
             }
         });
         GuiUtils.tmpInsets = new Insets(4, 4, 4, 4);
-        contents           = GuiUtils.doLayout(new Component[] {
+
+        JPanel fontPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        fontPanel.add(new JLabel("Font: "));
+        fontPanel.add(fontSelector.getComponent());
+
+        JPanel colorPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        colorPanel.add(new JLabel("Color: "));
+        colorPanel.add(colorSwatch);
+
+        contents = GuiUtils.doLayout(new Component[] {
             GuiUtils.rLabel("Visible: "), visibilityCbx,
             GuiUtils.rLabel("Position: "),
             GuiUtils.leftRight(placementBox, GuiUtils.filler()),
@@ -243,12 +254,10 @@ public class ColorScaleDialog implements ActionListener {
             GuiUtils.filler(),
             GuiUtils.leftRight(unitCbx,GuiUtils.filler()),
             GuiUtils.filler(),
-            GuiUtils.leftRight(GuiUtils.rLabel("Font: "),
-                               fontSelector.getComponent()),
+            GuiUtils.left(fontPanel),
             GuiUtils.filler(),
-            GuiUtils.leftRight(GuiUtils.rLabel("Color: "),
-                               GuiUtils.leftRight(colorComp,
-                                   GuiUtils.filler())),
+            GuiUtils.left(colorPanel),
+            GuiUtils.filler(),
         }, 2, GuiUtils.WT_NY, GuiUtils.WT_N);
         contents = GuiUtils.leftRight(contents, GuiUtils.filler());
         if (showDialog) {
