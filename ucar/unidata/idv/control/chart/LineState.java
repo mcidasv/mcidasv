@@ -28,36 +28,44 @@
 
 package ucar.unidata.idv.control.chart;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.geom.GeneralPath;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 
-import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.Range;
-
 import ucar.unidata.xml.XmlObjectStore;
+
 import visad.DateTime;
 import visad.Real;
-
 import visad.Unit;
 
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.*;
-import javax.swing.event.*;
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
 
 
 /**
@@ -643,6 +651,9 @@ public class LineState {
         widthFld = new JTextField("" + width, 3);
         JComponent[] bg = GuiUtils.makeColorSwatchWidget(store, color, "");
         colorSwatch = (ColorSwatchComponent) bg[0];
+        colorSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        JPanel colorPanel = new JPanel(new FlowLayout());
+        colorPanel.add(colorSwatch);
     
         if (!disableLabelFields) {
             comps.add(GuiUtils.rLabel("Line:"));
@@ -660,7 +671,7 @@ public class LineState {
         lineComps.add(new JLabel("  "));
 
         lineComps.add(new JLabel("Color:"));
-        lineComps.add(colorSwatch);
+        lineComps.add(colorPanel);
     
         if (!disableLabelFields) {
             comps.add(GuiUtils.left(GuiUtils.hbox(lineComps, 5)));
