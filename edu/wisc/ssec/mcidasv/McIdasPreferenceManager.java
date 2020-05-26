@@ -65,7 +65,6 @@ import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -969,38 +968,54 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         panelPanel.setBorder(BorderFactory.createTitledBorder("Panel Configuration"));
 
         XmlObjectStore store = getStore();
+
         Color globeColor = mappy.getGlobeBackgroundColor();
-        Color bgColor = store.get(ViewManager.PREF_BGCOLOR, mappy.getBackground());
-        Color fgColor = store.get(ViewManager.PREF_FGCOLOR, mappy.getForeground());
-        Color borderColor = store.get(ViewManager.PREF_BORDERCOLOR, Constants.MCV_BLUE_DARK);
         ColorSwatchComponent globeSwatch = new ColorSwatchComponent(store, globeColor, "Set Globe Background Color");
-        ColorSwatchComponent bgSwatch = new ColorSwatchComponent(store, bgColor, "Set Background Color");
-        ColorSwatchComponent fgSwatch = new ColorSwatchComponent(store, fgColor, "Set Foreground Color");
-        ColorSwatchComponent borderSwatch = new ColorSwatchComponent(store, borderColor, "Set Selected Panel Border Color");
+        globeSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        JPanel globePanel = new JPanel(new FlowLayout());
+        globePanel.add(globeSwatch);
         final JComponent[] globeBg = { globeSwatch, globeSwatch.getSetButton(), globeSwatch.getClearButton() };
+
+        Color bgColor = store.get(ViewManager.PREF_BGCOLOR, mappy.getBackground());
+        ColorSwatchComponent bgSwatch = new ColorSwatchComponent(store, bgColor, "Set Background Color");
+        bgSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        JPanel bgPanel = new JPanel(new FlowLayout());
+        bgPanel.add(bgSwatch);
         final JComponent[] bgComps = { bgSwatch, bgSwatch.getSetButton(), bgSwatch.getClearButton() };
+
+        Color fgColor = store.get(ViewManager.PREF_FGCOLOR, mappy.getForeground());
+        ColorSwatchComponent fgSwatch = new ColorSwatchComponent(store, fgColor, "Set Foreground Color");
+        fgSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        JPanel fgPanel = new JPanel(new FlowLayout());
+        fgPanel.add(fgSwatch);
         final JComponent[] fgComps = { fgSwatch, fgSwatch.getSetButton(), fgSwatch.getClearButton() };
+
+        Color borderColor = store.get(ViewManager.PREF_BORDERCOLOR, Constants.MCV_BLUE_DARK);
+        ColorSwatchComponent borderSwatch = new ColorSwatchComponent(store, borderColor, "Set Selected Panel Border Color");
+        borderSwatch.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        JPanel borderPanel = new JPanel(new FlowLayout());
+        borderPanel.add(borderSwatch);
         final JComponent[] border = { borderSwatch, borderSwatch.getSetButton(), borderSwatch.getClearButton() };
 
         JPanel colorPanel = GuiUtils.vbox(
                 GuiUtils.hbox(
                         McVGuiUtils.makeLabelRight("Globe Background:", Width.ONEHALF),
-                        GuiUtils.left(globeBg[0]),
+                        GuiUtils.left(globePanel),
                         GAP_RELATED
                 ),
                 GuiUtils.hbox(
                         McVGuiUtils.makeLabelRight("Background:", Width.ONEHALF),
-                        GuiUtils.left(bgComps[0]),
+                        GuiUtils.left(bgPanel),
                         GAP_RELATED
                 ),
                 GuiUtils.hbox(
                         McVGuiUtils.makeLabelRight("Foreground:", Width.ONEHALF),
-                        GuiUtils.left(fgComps[0]),
+                        GuiUtils.left(fgPanel),
                         GAP_RELATED
                 ),
                 GuiUtils.hbox(
                         McVGuiUtils.makeLabelRight("Selected Panel:", Width.ONEHALF),
-                        GuiUtils.left(border[0]),
+                        GuiUtils.left(borderPanel),
                         GAP_RELATED
                 )
         );
@@ -1012,6 +1027,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         fontSelector.setFont(f);
         Color dlColor = store.get(MapViewManager.PREF_DISPLAYLISTCOLOR, mappy.getDisplayListColor());
         final ColorSwatchComponent dlColorWidget = new ColorSwatchComponent(store, dlColor, "Set Display List Color");
+        dlColorWidget.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        JPanel dlColPanel = new JPanel(new FlowLayout());
+        dlColPanel.add(dlColorWidget);
                 
         JPanel fontPanel = GuiUtils.vbox(
             GuiUtils.hbox(
@@ -1021,7 +1039,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             ),
             GuiUtils.hbox(
                 McVGuiUtils.makeLabelRight("Color:", Width.ONEHALF),
-                GuiUtils.left(GuiUtils.hbox(dlColorWidget, dlColorWidget.getClearButton(), GAP_RELATED)),
+                GuiUtils.left(GuiUtils.hbox(dlColPanel, dlColorWidget.getClearButton(), GAP_RELATED)),
                 GAP_RELATED
             )
         );
