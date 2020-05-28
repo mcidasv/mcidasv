@@ -30,7 +30,6 @@ package edu.wisc.ssec.mcidasv.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -66,7 +65,10 @@ import edu.wisc.ssec.mcidasv.Constants;
  * This is largely the same as {@link GuiUtils.ColorSwatch}, but it remembers
  * the user's recently selected colors.
  */
+
 public class ColorSwatchComponent extends JPanel implements PropertyChangeListener {
+
+    private static final long serialVersionUID = 1L;
 
     /** Logging object. */
     private static final Logger logger =
@@ -114,8 +116,8 @@ public class ColorSwatchComponent extends JPanel implements PropertyChangeListen
         this.color   = c;
         this.label   = dialogLabel;
         this.store   = store;
-        setMinimumSize(new Dimension(40, 10));
-        setPreferredSize(new Dimension(40, 10));
+        setMinimumSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+        setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         setToolTipText("Click to change color");
         setBackground(color);
         setBorder(BorderFactory.createLoweredBevelBorder());
