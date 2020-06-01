@@ -235,17 +235,41 @@ public class PreviewSelection extends DataSelectionComponent {
 
         rbb = new SubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         rbb.setColor(Color.green);
+        System.err.println("TJJ RBB create...");
         rbb.addAction(new CellImpl() {
           boolean init = false;
           
           public void doAction()
              throws VisADException, RemoteException
            {
-        	  
-             if (!init) {
-               init = true;
-               return;
+
+             // TJJ Jun 2020 - feels like this should fix Inq #1446
+             // set bounds to preview max on init is what I'm trying to do
+             if (! init) {
+
+                 init = true;
+                 x_coords[0] = 0;
+                 x_coords[1] = rbb.getLineMax();
+                 y_coords[0] = 0;
+                 y_coords[1] = rbb.getElemMax();
+                 if (hasSubset) {
+                     MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
+                     Map<String, double[]> map = select.getSubset();
+
+                     double[] coords0 = map.get("Track");
+                     coords0[0] = y_coords[0];
+                     coords0[1] = y_coords[1];
+                     coords0[2] = 1;
+                     double[] coords1 = map.get("XTrack");
+                     coords1[0] = x_coords[0];
+                     coords1[1] = x_coords[1];
+                     coords1[2] = 1;
+
+                     hydraContext.setMultiDimensionSubset(new MultiDimensionSubset(map));
+                 }
+                 return;
              }
+
              Gridded2DSet set = rbb.getBounds();
 
              float[] low = set.getLow();
