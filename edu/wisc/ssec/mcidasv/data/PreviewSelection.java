@@ -235,7 +235,6 @@ public class PreviewSelection extends DataSelectionComponent {
 
         rbb = new SubsetRubberBandBox(isLL, image, ((MapProjectionDisplay)mapProjDsp).getDisplayCoordinateSystem(), 1);
         rbb.setColor(Color.green);
-        System.err.println("TJJ RBB create...");
         rbb.addAction(new CellImpl() {
           boolean init = false;
           
