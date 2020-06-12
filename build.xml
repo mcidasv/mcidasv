@@ -192,7 +192,7 @@
     <property name="slf4j.version" value="2.0.0-alpha1" />
     <property name="logback.version" value="1.3.0-alpha5" />
     <property name="miglayout.version" value="5.2" />
-    <property name="jogamp.version" value="2.4.0rc1" />
+    <property name="jogamp.version" value="2.4.0rc2-inq2551" />
     <property name="swingx.version" value="1.6.5-1" />
     <property name="eventbus.version" value="1.4" />
     <property name="commons-math.version" value="3.6.1" />
@@ -241,7 +241,7 @@
         <include name="j3dcore-${java3d.version}.jar" />
         <include name="j3dutils-${java3d.version}.jar" />
         <include name="vecmath-${java3d.version}.jar" />
-        <include name="jogamp-all-${jogamp.version}.jar" />
+<!--        <include name="jogamp-all-${jogamp.version}.jar" />-->
         <include name="jython-standalone-${jython.version}.jar" />
         <include name="juniversalchardet-${juniversalchardet.version}.jar" />
     </fileset>
@@ -264,6 +264,28 @@
     
     <!-- Shared classpath -->
     <path id="app.classpath">
+        <pathelement location="${dist.dir}/${app.jarname}" />
+        <pathelement location="${dist.dir}/${local-idv.jarname}" />
+        <pathelement location="${dist.dir}/${userguide.jarname}" />
+        <pathelement location="${dist.dir}/jogamp-all-${jogamp.version}.jar" />
+        <fileset refid="mcv.libs" />
+        <fileset refid="netcdf.libs" />
+        <fileset refid="idv.libs" />
+    </path>
+
+    <!--
+    The difference between build.classpath and app.classpath is that
+    app.classpath includes the Jogamp JAR file. This is required because the
+    JAR uses annotations meant for Java 11 during the compile process...meaning
+    that we would not be able to compile on Java 8 and Java 11 if jogamp-all
+    was on the classpath. It runs without any problems though!
+    
+    An easy way to think about this is to use the example of Java IDEs
+    allowing you to categorize a JAR as either a "runtime dependency" or a
+    "build dependency". Consider app.classpath to be the set of runtime JARs,
+    and build.classpath to be the set of JARs needed to compile.
+    -->
+    <path id="build.classpath">
         <pathelement location="${dist.dir}/${app.jarname}" />
         <pathelement location="${dist.dir}/${local-idv.jarname}" />
         <pathelement location="${dist.dir}/${userguide.jarname}" />
@@ -497,7 +519,7 @@
         <javac fork="true" srcdir="${base.dir}" destdir="${build.dir}" source="${source.ver}" target="${target.ver}"
             debug="${debug.flag}" deprecation="${deprecation.flag}" includeantruntime="false">
             <compilerarg value="-Xlint:${xlint}" />
-            <classpath refid="app.classpath" />
+            <classpath refid="build.classpath" />
         </javac>
         <condition property="isLinux.x86">
             <os family="unix" arch="x86" />
@@ -1323,7 +1345,7 @@
             version="true"
             windowtitle="McIDAS-V ${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release} Developer Documentation">
 
-            <classpath refid="app.classpath" />
+            <classpath refid="build.classpath" />
             <link href="http://docs.oracle.com/javase/8/docs/api/" />
             <link href="http://www.ssec.wisc.edu/visad-docs/javadoc/" />
             <link href="http://www.unidata.ucar.edu/software/idv/docs/javadoc/" />
