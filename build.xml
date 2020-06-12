@@ -1573,7 +1573,7 @@
     <target name="appbundle.build" depends="jar" description="Generate McIDAS-V.app.">
         <mkdir dir="${dist.dir}" />
         <taskdef name="bundleapp"
-                 classpath="lib/build/appbundler-1.0ea.jar"
+                 classpath="lib/build/mcvappbundler-1.0rc1.jar"
                  classname="com.oracle.appbundler.AppBundlerTask" />
 
         <!-- get SHA512 checksum of edu/wisc/ssec/mcidasv/resources/version.properties -->
@@ -1598,12 +1598,12 @@
                    name="${bundle.name}"
                    displayname="McIDAS-V"
                    executableName="mcidasv"
-                   identifier="edu.wisc.ssec.mcidasv.16b1"
+                   identifier="edu.wisc.ssec.mcidasv.19b1"
                    shortversion="${version.public}"
                    version="${version.internal}"
                    icon="${bundle.icon}"
                    mainclassname="edu.wisc.ssec.mcidasv.McIDASV"
-                   copyright="2016"
+                   copyright="2020"
                    debug="true"
                    applicationCategory="public.app-category.weather">
 
