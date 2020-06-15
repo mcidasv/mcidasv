@@ -1072,6 +1072,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 derivedBands.add(Integer.parseInt(bandStr));
                 Hashtable dcProps = dc.getProperties();
             }
+        } else {
+            isDerived = false;
         }
         
         boolean msgFlag = false;
