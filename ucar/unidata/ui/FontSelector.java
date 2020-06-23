@@ -28,6 +28,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -39,6 +40,9 @@ import java.awt.event.WindowEvent;
 
 import java.beans.PropertyChangeListener;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -51,6 +55,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -110,6 +117,25 @@ public class FontSelector implements ItemListener, ListSelectionListener {
     /** the component for selecting the font size */
     private JComponent sizeSelector;
 
+    private static final String[] MCV_DEFAULT_FONTS = {
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-BlackIt.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Black.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-BoldIt.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Bold.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-ExtraLightIt.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-ExtraLight.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-It.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-LightIt.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Light.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-MediumIt.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Medium.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Regular.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-SemiboldIt.ttf",
+        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Semibold.ttf",
+    };
+
+    private static final Logger logger = LoggerFactory.getLogger(FontSelector.class);
+
     /**
      * Create a Font selector using the defaults.
      */
@@ -132,6 +158,23 @@ public class FontSelector implements ItemListener, ListSelectionListener {
 
         GraphicsEnvironment gEnv =
             GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+        ClassLoader sysLoader = ClassLoader.getSystemClassLoader();
+        try {
+            for (String fontPath : MCV_DEFAULT_FONTS) {
+                InputStream fontStream = sysLoader.getResourceAsStream(fontPath);
+                if (fontStream != null) {
+                    Font f = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+                    gEnv.registerFont(f);
+                    logger.trace("f: {}; attrs: {}", f, f.getAvailableAttributes());
+                } else {
+                    logger.error("Problem reading '{}'", fontPath);
+                }
+            }
+        } catch (FontFormatException | IOException e) {
+            logger.error("Problem loading McV default fonts", e);
+        }
+
         String envfonts[] = gEnv.getAvailableFontFamilyNames();
         Vector fonts      = new Vector();
         for (int i = 1; i < envfonts.length; i++) {
