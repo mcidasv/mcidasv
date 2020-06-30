@@ -339,8 +339,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
     private static final Border lineBorder =
         BorderFactory.createLineBorder(Color.gray);
 
-    /** default display list font */
-    private static final Font defaultFont = FontSelector.DEFAULT_FONT;
+//    /** default display list font */
+//    private static final Font defaultFont = FontSelector.DEFAULT_FONT;
 
     /** border highlight color */
     public static Color borderHighlightColor = Color.blue;
@@ -3376,7 +3376,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         checkToolBarVisibility();
         setColors(getStore().get(PREF_FGCOLOR, Color.white),
                   getStore().get(PREF_BGCOLOR, Color.black));
-        setDisplayListFont(getStore().get(PREF_DISPLAYLISTFONT, defaultFont));
+        setDisplayListFont(getStore().get(PREF_DISPLAYLISTFONT, FontSelector.getDefaultFont()));
         setDisplayListColor(getStore().get(PREF_DISPLAYLISTCOLOR,
                                            (Color) null));
 
@@ -7678,9 +7678,10 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public Font getDisplayListFont() {
         if (displayListFont == null) {
             displayListFont = getStore().get(PREF_DISPLAYLISTFONT,
-                                             defaultFont);
+                                             FontSelector.getDefaultFont());
+        } else if (Objects.equals(displayListFont.getName(), "Default")) {
+            displayListFont = FontSelector.getDefaultFont();
         }
-
         return displayListFont;
     }
 

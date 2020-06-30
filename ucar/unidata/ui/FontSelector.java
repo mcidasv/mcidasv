@@ -44,8 +44,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -133,16 +137,73 @@ public class FontSelector implements ItemListener, ListSelectionListener {
         "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-SemiboldIt.ttf",
         "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Semibold.ttf",
     };
+    
+    private static final String DEFAULT_FONT_FAMILY = "Source Code Pro";
+    
+    private static volatile boolean addedFonts = false;
 
+    private static GraphicsEnvironment graphicsEnv = null;
+    
+    private static Font defaultFont = null;
+    
+    private static final Object registerLock = new Object();
+    
     private static final Logger logger = LoggerFactory.getLogger(FontSelector.class);
-
+    
+    public static final Comparator<String> FontNameComparator = new Comparator<String>() {
+        @Override public int compare(String o1, String o2) {
+            boolean s1Prefixed = o1.startsWith(DEFAULT_FONT_FAMILY);
+            boolean s2Prefixed = o2.startsWith(DEFAULT_FONT_FAMILY);
+            if (s1Prefixed && !s2Prefixed) {
+                return -1;
+            } else if (!s1Prefixed && s2Prefixed) {
+                return 1;
+            } else {
+                return o1.compareTo(o2);
+            }
+        }
+    };
+    
+    private static GraphicsEnvironment registerFonts() {
+        if (!addedFonts) {
+            synchronized (registerLock) {
+                GraphicsEnvironment gEnv =
+                    GraphicsEnvironment.getLocalGraphicsEnvironment();
+                ClassLoader sysLoader = ClassLoader.getSystemClassLoader();
+                try {
+                    for (String fontPath : MCV_DEFAULT_FONTS) {
+                        InputStream fontStream = sysLoader.getResourceAsStream(fontPath);
+                        if (fontStream != null) {
+                            Font f = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+                            gEnv.registerFont(f);
+                            if (f.getFontName().equals("Source Code Pro")) {
+                                defaultFont = f;
+                            }
+                        }
+                    }
+                } catch (FontFormatException | IOException e) {
+                    logger.error("Problem loading McV default fonts", e);
+                }
+                graphicsEnv = gEnv;
+                addedFonts = true;
+            }
+        }
+        return graphicsEnv;
+    }
+    
+    public static Font getDefaultFont() {
+        // just in case...
+        GraphicsEnvironment gEnv = registerFonts();
+        return defaultFont.deriveFont(12f);
+    }
+    
     /**
      * Create a Font selector using the defaults.
      */
     public FontSelector() {
         this(COMBOBOX_UI, true, false);
     }
-
+    
     /**
      * Create a font selector
      *
@@ -155,33 +216,20 @@ public class FontSelector implements ItemListener, ListSelectionListener {
         this.uiType     = uiType;
         this.showLabels = showLabels;
         this.showSample = showSample;
-
-        GraphicsEnvironment gEnv =
-            GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-        ClassLoader sysLoader = ClassLoader.getSystemClassLoader();
-        try {
-            for (String fontPath : MCV_DEFAULT_FONTS) {
-                InputStream fontStream = sysLoader.getResourceAsStream(fontPath);
-                if (fontStream != null) {
-                    Font f = Font.createFont(Font.TRUETYPE_FONT, fontStream);
-                    gEnv.registerFont(f);
-                    logger.trace("f: {}; attrs: {}", f, f.getAvailableAttributes());
-                } else {
-                    logger.error("Problem reading '{}'", fontPath);
-                }
-            }
-        } catch (FontFormatException | IOException e) {
-            logger.error("Problem loading McV default fonts", e);
-        }
-
+        
+        GraphicsEnvironment gEnv = registerFonts();
         String envfonts[] = gEnv.getAvailableFontFamilyNames();
-        Vector fonts      = new Vector();
-        for (int i = 1; i < envfonts.length; i++) {
+        Arrays.sort(envfonts, FontNameComparator);
+        
+        int longest = -1;
+        String longstr = "";
+        Vector<String> fonts = new Vector<>(envfonts.length);
+        for (int i = 0; i < envfonts.length; i++) {
+            if (envfonts[i].length() > longest) {
+                longest = envfonts[i].length();
+                longstr = envfonts[i];
+            }
             fonts.addElement(envfonts[i]);
-        }
-        if ( !fonts.contains(DEFAULT_NAME)) {
-            fonts.insertElementAt(DEFAULT_NAME, 0);
         }
         JComboBox box;
         JList     list;
@@ -191,7 +239,8 @@ public class FontSelector implements ItemListener, ListSelectionListener {
             box.setMaximumRowCount(9);
             Dimension d     = box.getPreferredSize();
             int       width = 6 * d.height;
-            GuiUtils.setPreferredWidth(box, Math.min(d.width, width));
+//            GuiUtils.setPreferredWidth(box, Math.min(d.width, width));
+            box.setPrototypeDisplayValue(longstr);
             box.addItemListener(this);
             fontSelector = box;
         } else {
@@ -357,7 +406,7 @@ public class FontSelector implements ItemListener, ListSelectionListener {
      */
     public void setFont(Font f) {
         if (f == null) {
-            f = DEFAULT_FONT;
+            f = getDefaultFont();
         }
         String name = f.getName();
         if ( !name.equals(DEFAULT_NAME)) {
@@ -461,7 +510,7 @@ public class FontSelector implements ItemListener, ListSelectionListener {
     class FontPanel extends JPanel {
 
         /** my font */
-        Font thisFont = DEFAULT_FONT;
+        Font thisFont = getDefaultFont();
 
         /**
          * Create a new FontPanel

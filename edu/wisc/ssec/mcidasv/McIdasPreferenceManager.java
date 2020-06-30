@@ -65,6 +65,7 @@ import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeSet;
@@ -458,9 +459,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     // new font size didn't change after starting the prefs panel. 
     private void fixDisplayListFont() {
         IdvObjectStore s = getStore();
-        Font f = s.get(ViewManager.PREF_DISPLAYLISTFONT, FontSelector.DEFAULT_FONT);
+        Font f = s.get(ViewManager.PREF_DISPLAYLISTFONT, FontSelector.getDefaultFont());
         if (f.getSize() == 0) {
-            f = f.deriveFont(8f);
+            f = f.deriveFont(12f);
             s.put(ViewManager.PREF_DISPLAYLISTFONT, f);
         }
     }
@@ -1024,6 +1025,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         
         final FontSelector fontSelector = new FontSelector(FontSelector.COMBOBOX_UI, false, false);
         Font f = getStore().get(MapViewManager.PREF_DISPLAYLISTFONT, mappy.getDisplayListFont());
+        if (Objects.equals(f.getName(), "Default")) {
+            f = FontSelector.getDefaultFont();
+            store.put(MapViewManager.PREF_DISPLAYLISTFONT, f);
+        }
         fontSelector.setFont(f);
         Color dlColor = store.get(MapViewManager.PREF_DISPLAYLISTCOLOR, mappy.getDisplayListColor());
         final ColorSwatchComponent dlColorWidget = new ColorSwatchComponent(store, dlColor, "Set Display List Color");

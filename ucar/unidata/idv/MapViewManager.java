@@ -1355,7 +1355,7 @@ public class MapViewManager extends NavigatedViewManager {
 
         final FontSelector fontSelector =
             new FontSelector(FontSelector.COMBOBOX_UI, false, false);
-        Font f = getStore().get(PREF_DISPLAYLISTFONT, getDisplayListFont());
+        Font f = getStore().get(PREF_DISPLAYLISTFONT, FontSelector.getDefaultFont());
         fontSelector.setFont(f);
 
         final ColorSwatchComponent dlColorWidget =
