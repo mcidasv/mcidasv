@@ -63,9 +63,9 @@ def ABITruColRGB(red, grn, blu):
 # ABI Airmass RGB
 def ABIAirmassRGB(b8T, b10T, b12T, b13T):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_AirMassRGB_final.pdf
-    # red = band8 - band10; -26.2C to 0.6C rescalled to 0 to 255
-    # grn = band12 - band13; -43.2C to 6.7C rescalled to 0 to 255
-    # blu = band8; 243.9K to 208.5K rescalled to 0 to 255
+    # red = band8 - band10; -26.2C to 0.6C rescaled to 0 to 255
+    # grn = band12 - band13; -43.2C to 6.7C rescaled to 0 to 255
+    # blu = band8; 243.9K to 208.5K rescaled to 0 to 255
     red = rescale(b8T-b10T, -26.2, 0.6, 0, 255)
     grn = rescale(b12T-b13T, -43.2, 6.7, 0, 255)
     blu = rescale(b8T, 243.9, 208.5, 0, 255)
@@ -132,9 +132,9 @@ def ABIDayLandCloudFireRGB(b2A, b3A, b6A):
 # ABI Night-time Microphysics RGB
 def ABINightMicrophysicsRGB(b7T, b13T, b15T):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_NtMicroRGB_final.pdf
-    # red = band15 - band13; -6.7C to 2.6C rescalled to 0 to 255
-    # grn = band13 - band7; -3.1C to 5.2C rescalled to 0 to 255
-    # blu = band13; 243.55K to 292.65K rescalled to 0 to 255
+    # red = band15 - band13; -6.7C to 2.6C rescaled to 0 to 255
+    # grn = band13 - band7; -3.1C to 5.2C rescaled to 0 to 255
+    # blu = band13; 243.55K to 292.65K rescaled to 0 to 255
     red = rescale(b15T-b13T, -6.7, 2.6, 0, 255)
     grn = rescale(b13T-b7T, -3.1, 5.2, 0, 255)
     blu = rescale(b13T, 243.55, 292.65, 0, 255)
@@ -143,9 +143,9 @@ def ABINightMicrophysicsRGB(b7T, b13T, b15T):
 # ABI Simple Water Vapor RGB
 def ABISimpleWaterVaporRGB(b8T, b10T, b13T):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/Simple_Water_Vapor_RGB.pdf
-    # red = band13; 278.96K to 202.29K rescalled to 0 to 255
-    # grn = band8; 242.67K to 214.66K rescalled to 0 to 255
-    # blu = band10; 261.03K to 245.12K rescalled to 0 to 255
+    # red = band13; 278.96K to 202.29K rescaled to 0 to 255
+    # grn = band8; 242.67K to 214.66K rescaled to 0 to 255
+    # blu = band10; 261.03K to 245.12K rescaled to 0 to 255
     red = rescale(b13T, 278.96, 202.29, 0, 255)
     grn = rescale(b8T, 242.67, 214.66, 0, 255)
     blu = rescale(b10T, 261.03, 245.12, 0, 255)
@@ -154,9 +154,9 @@ def ABISimpleWaterVaporRGB(b8T, b10T, b13T):
 # ABI Day Snow Fog RGB
 def ABIDaySnowFogRGB(b3A, b5A, b7T, b13T):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_DaySnowFog.pdf
-    # red = band3; 0% to 100% rescalled to 0 to 255; gamma 1.7
-    # grn = band5; 0% to 70% rescalled to 0 to 255; gamma 1.7
-    # blu = band7 - band13; 0C to 30C rescalled to 0 to 255; gamma 1.7
+    # red = band3; 0% to 100% rescaled to 0 to 255; gamma 1.7
+    # grn = band5; 0% to 70% rescaled to 0 to 255; gamma 1.7
+    # blu = band7 - band13; 0C to 30C rescaled to 0 to 255; gamma 1.7
     red = 255*(rescale(b3A, 0, 100, 0, 1)**0.5882)
     grn = 255*(rescale(b5A, 0, 70, 0, 1)**0.5882)
     blu = 255*(rescale(b7T-b13T, 0, 30, 0, 1)**0.5882)
@@ -165,9 +165,9 @@ def ABIDaySnowFogRGB(b3A, b5A, b7T, b13T):
 # ABI Day Cloud Convection RGB
 def ABIDayCloudConvectionRGB(b2A, b13T):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_DayCloudConvectionRGB_final.pdf
-    # red = band2; 0% to 100% rescalled to 0 to 255; gamma 1.7
-    # grn = band2; 0% to 100% rescalled to 0 to 255; gamma 1.7
-    # blu = band13; 323K to 203K rescalled to 0 to 255; gamma 1.0
+    # red = band2; 0% to 100% rescaled to 0 to 255; gamma 1.7
+    # grn = band2; 0% to 100% rescaled to 0 to 255; gamma 1.7
+    # blu = band13; 323K to 203K rescaled to 0 to 255; gamma 1.0
     red = 255*(rescale(b2A, 0, 100, 0, 1)**0.5882)
     grn = 255*(rescale(b2A, 0, 100, 0, 1)**0.5882)
     blu = rescale(b13T, 323, 203, 0, 255)
@@ -176,9 +176,9 @@ def ABIDayCloudConvectionRGB(b2A, b13T):
 # ABI Fire Temperature RGB
 def ABIFireTemperatureRGB(b5A, b6A, b7T):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/Fire_Temperature_RGB.pdf
-    # red = band7; 0C to 60C rescalled to 0 to 255; gamma 0.4
-    # grn = band6; 0% to 100% rescalled to 0 to 255; gamma 1.0
-    # blu = band5; 0% to 75% rescalled to 0 to 255; gamma 1.0
+    # red = band7; 0C to 60C rescaled to 0 to 255; gamma 0.4
+    # grn = band6; 0% to 100% rescaled to 0 to 255; gamma 1.0
+    # blu = band5; 0% to 75% rescaled to 0 to 255; gamma 1.0
     hr_b7T = resampleGrid(b7T, b5A)
     red = 255*(rescale(hr_b7T, 273.15, 333.15, 0, 1)**2.5)
     grn = rescale(b6A, 0, 100, 0, 255)
@@ -188,9 +188,9 @@ def ABIFireTemperatureRGB(b5A, b6A, b7T):
 # ABI Dust RGB
 def ABIDustRGB(b11T, b13T, b14T, b15T):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/Dust_RGB_Quick_Guide.pdf
-    # red = band15 - band13; -6.7C to 2.6C rescalled to 0 to 255; gamma 1.0
-    # grn = band14 - band11; -0.5C to 20.0C rescalled to 0 to 255; gamma 2.5
-    # blu = band13; -11.95C to 15.55C rescalled to 0 to 255; gamma 1.0
+    # red = band15 - band13; -6.7C to 2.6C rescaled to 0 to 255; gamma 1.0
+    # grn = band14 - band11; -0.5C to 20.0C rescaled to 0 to 255; gamma 2.5
+    # blu = band13; -11.95C to 15.55C rescaled to 0 to 255; gamma 1.0
     red = rescale(b15T-b13T, -6.7, 2.5, 0, 255)
     grn = 255*(rescale(b14T-b11T, -0.5, 20, 0, 1)**0.4)
     blu = rescale(b13T, 261.2, 288.7, 0, 255)
@@ -199,9 +199,9 @@ def ABIDustRGB(b11T, b13T, b14T, b15T):
 # ABI Differential Water Vapor RGB
 def ABIDifferentialWaterVaporRGB(b8T, b10T):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_DifferentialWaterVaporRGB_final.pdf
-    # red = band10 - band8; 30C to -3C rescalled to 0 to 255; gamma 0.2587
-    # grn = band10; 5C to -60C rescalled to 0 to 255; gamma 0.4
-    # blu = band8; -29.25C to -64.65C rescalled to 0 to 255; gamma 0.4
+    # red = band10 - band8; 30C to -3C rescaled to 0 to 255; gamma 0.2587
+    # grn = band10; 5C to -60C rescaled to 0 to 255; gamma 0.4
+    # blu = band8; -29.25C to -64.65C rescaled to 0 to 255; gamma 0.4
     red = 255*(rescale(b10T-b8T, 30, -3, 0, 1)**3.8655)
     grn = 255*(rescale(b10T, 278.15, 213.15, 0, 1)**2.5)
     blu = 255*(rescale(b8T, 243.9, 208.5, 0, 1)**2.5)
@@ -210,9 +210,9 @@ def ABIDifferentialWaterVaporRGB(b8T, b10T):
 # ABI Day Convection RGB
 def ABIDayConvectionRGB(b2A, b5A, b7T, b8T, b10T, b13T):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_DayConvectionRGB_final.pdf
-    # red = band8 - band10; -35C to 5C rescalled to 0 to 255; gamma 1.0
-    # grn = band7 - band13; -5C to 60C rescalled to 0 to 255; gamma 1.0
-    # blu = band5 - band2; -0.75% to 0.25% rescalled to 0 to 255; gamma 1.0
+    # red = band8 - band10; -35C to 5C rescaled to 0 to 255; gamma 1.0
+    # grn = band7 - band13; -5C to 60C rescaled to 0 to 255; gamma 1.0
+    # blu = band5 - band2; -0.75% to 0.25% rescaled to 0 to 255; gamma 1.0
     hr_b8T = resampleGrid(b8T, b2A)
     hr_b10T = resampleGrid(b10T, b2A)
     red = rescale(hr_b8T-hr_b10T, -35, 5, 0, 255)
