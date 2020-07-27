@@ -34,14 +34,7 @@
 
     <!--
       This section attempts to set the path to the local ADDE servers in
-      a platform independent way. In order to take advantage of this, you
-      MUST install McIDAS-V into the directory suggested by the installer.
-
-      The installer will suggest the following (depending on platform):
-
-        Windows: C:\Program Files\McIDAS-V-System
-        Linux  : /home/YOUR_USER/McIDAS-V-System
-        OS X   : /Applications/McIDAS-V-System
+      a platform independent way. 
 
       If you need to use a specific path, you must run Ant like so:
         ant -Daddeservers.dir="<McIDAS-V INSTALL PATH>/adde" <TARGET>
@@ -50,10 +43,10 @@
         ant -Daddeservers.dir="/Applications/mcidasv/nightly/adde" jar.runlarge
         ant -Daddeservers.dir="C:\\mcidasv\\nightly\\adde" jar.runlarge
     -->
-    <condition property="addeservers.dir" value="C:\\Program Files\\McIDAS-V-System\\adde">
+    <condition property="addeservers.dir" value="${base.dir}\\lib\\build\\adde\\windows">
         <os family="windows" />
     </condition>
-    <condition property="addeservers.dir" value="/home/${user.name}/McIDAS-V-System/adde">
+    <condition property="addeservers.dir" value="${base.dir}/lib/build/adde/linux">
         <and>
             <os family="unix"/>
             <not>
@@ -61,7 +54,7 @@
             </not>
         </and>
     </condition>
-    <condition property="addeservers.dir" value="/Applications/McIDAS-V-System/adde">
+    <condition property="addeservers.dir" value="${base.dir}/lib/build/adde/macos-intel">
         <os family="mac" />
     </condition>
     <!-- end of local server path stuff -->
