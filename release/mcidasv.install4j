@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0.4" transformSequenceNumber="8">
-  <directoryPresets config="${compiler:MCVDIR}/release/java13-launchers/unixlike/runMcV" />
+  <directoryPresets config="${compiler:ADDEDIR}/linux" />
   <application name="McIDAS-V" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="https://www.ssec.wisc.edu/mcidas" version="1.9beta1" convertDotsToUnderscores="false" macVolumeId="b671f961872a3cd" javaMinVersion="1.8" javaMaxVersion="11" allowBetaVM="true">
     <variables>
       <variable name="INSTALLDIR" value="${compiler:sys.fullName}-System" description="Default installation directory for McIDAS-V." />
       <variable name="SRCDIR" value="${compiler:sys.install4jHome}/../IDV/lib" description="Directory containing IDV JAR files." />
       <variable name="MCVDIR" value="${compiler:sys.install4jHome}/../mcidasv" description="Directory containing a clone of https://github.com/mcidasv/mcidasv.git" />
-      <variable name="ADDEDIR" value="${compiler:sys.install4jHome}/../adde" description="Directory containing the local ADDE server ZIP files." />
+      <variable name="ADDEDIR" value="${compiler:MCVDIR}/lib/build/adde" description="Directory containing the local ADDE server ZIP files." />
       <variable name="MCV_VERSION" value="${compiler:sys.version}-SNAPSHOT" />
       <variable name="IDV_VERSION" value="5.7" />
     </variables>
@@ -93,9 +93,9 @@
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7416" file="${compiler:ADDEDIR}/adde-linux.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7417" file="${compiler:ADDEDIR}/adde-darwin.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
-      <fileEntry mountPoint="7469" file="${compiler:ADDEDIR}/adde-windows.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <dirEntry mountPoint="7416" file="${compiler:ADDEDIR}/linux" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
+      <dirEntry mountPoint="7417" file="${compiler:ADDEDIR}/macos-intel" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
+      <dirEntry mountPoint="7469" file="${compiler:ADDEDIR}/windows" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
       <fileEntry mountPoint="7467" file="${compiler:ADDEDIR}/adde-soli86.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="7468" file="${compiler:ADDEDIR}/adde-solaris.zip" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="9160" file="${compiler:MCVDIR}/release/jpms-launchers/unixlike/runMcV" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -623,7 +623,7 @@ return true;
                 </serializedBean>
                 <condition>context.getBooleanVariable("installJOGLAction")</condition>
               </action>
-              <action name="Linux Java3D" id="7668" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install Java3D">
+              <action name="Linux Java3D" id="7668" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install Java3D">
                 <serializedBean>
                   <property name="destinationDirectory">
                     <object class="java.io.File">
@@ -730,7 +730,7 @@ return true;
                   </property>
                 </serializedBean>
               </action>
-              <action name="Linux x86 ADDE" id="7535" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
+              <action name="Linux x86 ADDE" id="7535" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <property name="destinationDirectory">
                     <object class="java.io.File">
@@ -748,7 +748,7 @@ return true;
                 </serializedBean>
                 <condition>return Util.isLinux() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
               </action>
-              <action name="OS X x86 ADDE" id="7458" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
+              <action name="OS X x86 ADDE" id="7458" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <property name="destinationDirectory">
                     <object class="java.io.File">
@@ -766,7 +766,7 @@ return true;
                 </serializedBean>
                 <condition>return Util.isMacOS() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
               </action>
-              <action name="Solaris x86 ADDE" id="7536" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
+              <action name="Solaris x86 ADDE" id="7536" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <property name="destinationDirectory">
                     <object class="java.io.File">
@@ -784,7 +784,7 @@ return true;
                 </serializedBean>
                 <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("x86") &gt;= 0;</condition>
               </action>
-              <action name="Solaris SPARC ADDE" id="7538" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
+              <action name="Solaris SPARC ADDE" id="7538" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <property name="destinationDirectory">
                     <object class="java.io.File">
@@ -802,7 +802,7 @@ return true;
                 </serializedBean>
                 <condition>return Util.isSolaris() &amp;&amp; context.getMediaName().indexOf("sparc") &gt;= 0;</condition>
               </action>
-              <action name="Windows ADDE" id="7534" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" actionElevationType="elevated" errorMessage="Failed to install ADDE">
+              <action name="Windows ADDE" id="7534" beanClass="com.install4j.runtime.beans.actions.files.InstallExternalZipFileAction" enabled="false" actionElevationType="elevated" errorMessage="Failed to install ADDE">
                 <serializedBean>
                   <property name="destinationDirectory">
                     <object class="java.io.File">
