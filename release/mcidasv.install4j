@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0.4" transformSequenceNumber="8">
-  <directoryPresets config="${compiler:ADDEDIR}/linux" />
+  <directoryPresets config="${compiler:MCVDIR}/release/poshwrapper.bat" />
   <application name="McIDAS-V" applicationId="5578-9815-1459-1032" mediaDir="${compiler:sys.install4jHome}/media" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.version}_${compiler:sys.platform}_installer" shrinkRuntime="false" shortName="McIDAS-V" publisher="UW SSEC" publisherWeb="https://www.ssec.wisc.edu/mcidas" version="1.9beta1" convertDotsToUnderscores="false" macVolumeId="b671f961872a3cd" javaMinVersion="1.8" javaMaxVersion="11" allowBetaVM="true">
     <variables>
       <variable name="INSTALLDIR" value="${compiler:sys.fullName}-System" description="Default installation directory for McIDAS-V." />
@@ -86,6 +86,8 @@
       <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/runMcV-Prefs.bat" overwriteMode="1" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/posh-wrapper.bat" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/local-adde.ps1" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8607" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/windows-launchers/javaw/runMcV.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/runMcV-Config.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
@@ -93,6 +95,8 @@
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/local-adde.ps1" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="8608" file="${compiler:MCVDIR}/release/posh-wrapper.bat" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <dirEntry mountPoint="7416" file="${compiler:ADDEDIR}/linux" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
       <dirEntry mountPoint="7417" file="${compiler:ADDEDIR}/macos-intel" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
       <dirEntry mountPoint="7469" file="${compiler:ADDEDIR}/windows" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" entryMode="subdir" subDirectory="adde" overrideDirMode="true" />
@@ -111,6 +115,8 @@
       <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/remove-adde-zip.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/create-jsa.bat" overwriteMode="1" fileMode="755" uninstallMode="2" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
       <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/j3dtest.bat" overwriteMode="1" fileMode="755" overrideFileMode="true" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/local-adde.ps1" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
+      <fileEntry mountPoint="9161" file="${compiler:MCVDIR}/release/posh-wrapper.bat" overwriteMode="1" uninstallMode="2" overrideOverwriteMode="true" overrideUninstallMode="true" />
     </entries>
     <components>
       <component name="Base components" id="67" changeable="false">
@@ -895,6 +901,24 @@ return Util.isWindows() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64
                 <condition>// os.arch returns the "bitness" of the JRE--not the OS
 String javaArch = System.getProperty("os.arch");
 return !Util.isWindows() &amp;&amp; !Util.isMacOS() &amp;&amp; !"x86_64".equals(javaArch) &amp;&amp; !"amd64".equals(javaArch);</condition>
+              </action>
+              <action name="Add Windows Firewall Rule for mcservl" id="9511" beanClass="com.install4j.runtime.beans.actions.misc.RunExecutableAction" actionElevationType="elevated" rollbackBarrierExitCode="0">
+                <serializedBean>
+                  <property name="arguments" type="array" elementType="string" length="1">
+                    <element index="0">${installer:sys.installationDir}</element>
+                  </property>
+                  <property name="executable">
+                    <object class="java.io.File">
+                      <string>posh-wrapper.bat</string>
+                    </object>
+                  </property>
+                  <property name="workingDirectory">
+                    <object class="java.io.File">
+                      <string>${installer:sys.installationDir}</string>
+                    </object>
+                  </property>
+                </serializedBean>
+                <condition>return Util.isWindows();</condition>
               </action>
             </actions>
             <formComponents>
