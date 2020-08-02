@@ -189,11 +189,11 @@
     <property name="swingx.version" value="1.6.5-1" />
     <property name="eventbus.version" value="1.4" />
     <property name="commons-math.version" value="3.6.1" />
-    <property name="rsyntaxtextarea.version" value="3.0.4" />
+    <property name="rsyntaxtextarea.version" value="3.1.1" />
     <property name="sysout.version" value="1.0.2" />
-    <property name="jython.version" value="2.7.2b2" />
+    <property name="jython.version" value="2.7.2" />
     <property name="juniversalchardet.version" value="2.3.0" />
-    <property name="jsattrack.version" value="4.1.11" />
+    <property name="jsattrack.version" value="4.2.2" />
     <property name="commons-httpclient.version" value="3.1" />
     <property name="idv.version" value="5.7" />
     <property name="ncidv.version" value="4.6.15-SNAPSHOT" />
