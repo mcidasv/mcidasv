@@ -34,10 +34,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -211,6 +213,25 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
 
             for (Variable v : e.getValue()) {
                 logger.trace("Adding Variable: " + v.getFullNameEscaped());
+
+                // TJJ Aug 2020
+                // Operational change described in
+                // https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2918
+                // This caused invalid units of "milliseconds since ..." in delta_time attribute
+                // to prevent variables from Product group to load
+                if (v.getShortName().equals("delta_time")) {
+                    ListIterator<Attribute> listIterator = v.getAttributes().listIterator();
+                    while (listIterator.hasNext()) {
+                        Attribute attribute = listIterator.next();
+                        if (attribute.getShortName().equals("units")) {
+                            if (attribute.getStringValue().startsWith("milliseconds since")) {
+                                logger.warn("Altering invalid units attribute value");
+                                v.addAttribute(new Attribute("units", "milliseconds"));
+                            }
+                        }
+                    }
+                }
+
                 addVar(ncOut, g, v);
             }
 
