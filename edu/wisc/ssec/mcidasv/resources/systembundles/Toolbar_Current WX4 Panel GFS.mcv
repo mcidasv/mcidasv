@@ -5574,7 +5574,7 @@
                                         <object idref="id11"/>
                                     </property>
                                     <property name="Name">
-                                        <string><![CDATA[Total_precipitation_surface_6_Hour_Accumulation]]></string>
+                                        <string><![CDATA[Total_precipitation_surface_Mixed_intervals_Accumulation]]></string>
                                     </property>
                                     <property name="Properties">
                                         <object class="java.util.Hashtable">
@@ -5642,10 +5642,10 @@
                                         </object>
                                     </property>
                                     <property name="Id">
-                                        <string><![CDATA[Total_precipitation_surface_6_Hour_Accumulation]]></string>
+                                        <string><![CDATA[Total_precipitation_surface_Mixed_intervals_Accumulation]]></string>
                                     </property>
                                     <property name="Description">
-                                        <string><![CDATA[Total precipitation (6_Hour Accumulation) @ Ground or water surface]]></string>
+                                        <string><![CDATA[Total precipitation (Mixed_intervals Accumulation) @ Ground or water surface]]></string>
                                     </property>
                                     <property name="Categories">
                                         <object class="java.util.ArrayList" id="id482">
@@ -5662,7 +5662,7 @@
                                             <method name="add">
                                                 <object class="ucar.unidata.data.DataCategory">
                                                     <property name="Name">
-                                                        <string><![CDATA[param:Total_precipitation_surface_6_Hour_Accumulation]]></string>
+                                                        <string><![CDATA[param:Total_precipitation_surface_Mixed_intervals_Accumulation]]></string>
                                                     </property>
                                                     <property name="ForDisplay">
                                                         <boolean>false</boolean>
@@ -5917,7 +5917,7 @@
                     <property name="ColorScaleInfo">
                         <object class="ucar.visad.display.ColorScaleInfo">
                             <property name="Name">
-                                <string><![CDATA[Total_precipitation_surface_6_Hour_Accumulation]]></string>
+                                <string><![CDATA[Total_precipitation_surface_Mixed_intervals_Accumulation]]></string>
                             </property>
                             <property name="X">
                                 <float>0.01</float>
