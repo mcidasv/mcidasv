@@ -74,6 +74,7 @@ import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidasv.data.GeoLatLonSelection;
 import edu.wisc.ssec.mcidasv.data.GeoPreviewSelection;
+
 import visad.CommonUnit;
 import visad.Data;
 import visad.DateTime;
@@ -90,6 +91,7 @@ import visad.georef.MapProjection;
 import visad.meteorology.ImageSequence;
 import visad.meteorology.ImageSequenceImpl;
 import visad.meteorology.SingleBandedImage;
+
 import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.CompositeDataChoice;
@@ -2790,19 +2792,25 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
                         // TJJ Aug 2020
                         // Look for GEO-based domain shifts (e.g. MESO sector moves mid-loop)
+                        // The first image checked will initialize domain center lat
                         if (domainCenterLat == -1.0f) {
                             domainCenterLat = (float) areaDirectory.getCenterLatitude();
                         } else {
-                            domainCenterLat = (float) areaDirectory.getCenterLatitude();
-                            logger.info("Domain shift, set LAT to: " + domainCenterLat);
-                            domainShiftDetected = true;
+                            if ((float) areaDirectory.getCenterLatitude() != domainCenterLat) {
+                                domainCenterLat = (float) areaDirectory.getCenterLatitude();
+                                logger.info("Domain shift, set LAT to: " + domainCenterLat);
+                                domainShiftDetected = true;
+                            }
                         }
+                        // The first image checked will initialize domain center lon
                         if (domainCenterLon == -1.0f) {
                             domainCenterLon = (float) areaDirectory.getCenterLongitude();
                         } else {
-                            domainCenterLon = (float) areaDirectory.getCenterLongitude();
-                            logger.info("Domain shift, set LON to: " + domainCenterLon);
-                            domainShiftDetected = true;
+                            if ((float) areaDirectory.getCenterLongitude() != domainCenterLon) {
+                                domainCenterLon = (float) areaDirectory.getCenterLongitude();
+                                logger.info("Domain shift, set LON to: " + domainCenterLon);
+                                domainShiftDetected = true;
+                            }
                         }
 
                         if (domainShiftDetected) {
