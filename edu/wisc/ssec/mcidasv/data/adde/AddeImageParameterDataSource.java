@@ -56,6 +56,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -73,7 +74,6 @@ import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidasv.data.GeoLatLonSelection;
 import edu.wisc.ssec.mcidasv.data.GeoPreviewSelection;
-
 import visad.CommonUnit;
 import visad.Data;
 import visad.DateTime;
@@ -90,7 +90,6 @@ import visad.georef.MapProjection;
 import visad.meteorology.ImageSequence;
 import visad.meteorology.ImageSequenceImpl;
 import visad.meteorology.SingleBandedImage;
-
 import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.CompositeDataChoice;
@@ -220,6 +219,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private Map<String, AreaDirectory> requestIdToDirectory = new HashMap<String, AreaDirectory>();
     
+    // TJJ Aug 2020
+    // Detect domain shift - for ex ABI MESOs can abruptly move
+    // If we detect one, load the later, shifted image(s) earth-centered relative to the earlier
+    boolean domainShiftDetected = false;
+    float domainCenterLat = -1.0f;
+    float domainCenterLon = -1.0f;
+    AreaDirectory domainShiftDir = null;
+
     public AddeImageParameterDataSource() {} 
 
     /**
@@ -1922,8 +1929,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         }
 
                         sizeString = lSize / magFactor + " " + eSize / magFactor;
-                        src = replaceKey(src, SIZE_KEY, (Object)(sizeString));
-                        src = replaceKey(src, MAG_KEY, (Object)(this.lineMag + " " + this.elementMag));
+                        src = replaceKey(src, SIZE_KEY, (Object) (sizeString));
+                        src = replaceKey(src, MAG_KEY, (Object) (this.lineMag + " " + this.elementMag));
                         aid.setSource(src);
                         logger.debug("makeImageSequence src: " + src);
                     } catch (Exception exc) {
@@ -2038,7 +2045,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             areaDirectoryKey = aid.getImageTime().toString();
 //            areaDirectoryKey = getKey(src, "TIME");
         }
-        AreaDirectory hacked = requestIdToDirectory.get(areaDirectoryKey);
+
+        if (domainShiftDir == null) {
+            domainShiftDir = requestIdToDirectory.get(areaDirectoryKey);
+        }
 
         // it only makes sense to set the following properties for things
         // coming from an ADDE server
@@ -2057,8 +2067,17 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = replaceKey(src, "MAG", props.get("MAG"));
             }
         }
-        if (hacked != null) {
-            logger.trace("adjusted src={} areaDirectoryKey='{}' hacked lat={} lon={}", new Object[] { src, areaDirectoryKey, hacked.getCenterLatitude(), hacked.getCenterLongitude() });
+
+        if (domainShiftDir != null) {
+            logger.info("GEO domain shift detected, forcing Earth-based requests");
+            if (domainShiftDetected) {
+               src = replaceKey(src, "PLACE", "CENTER");
+               src = replaceKey(src, "LINELE", "LATLON",
+                       "" + domainShiftDir.getCenterLatitude() + " " + domainShiftDir.getCenterLongitude());
+            }
+            logger.trace("adjusted src={} areaDirectoryKey='{}' hacked lat={} lon={}",
+               new Object[] { src, areaDirectoryKey,
+                    domainShiftDir.getCenterLatitude(), domainShiftDir.getCenterLongitude() });
         }
         aid.setSource(src);
 
@@ -2768,6 +2787,36 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                             }
                         }
                         requestIdToDirectory.put(key, areaDirectory);
+
+                        // TJJ Aug 2020
+                        // Look for GEO-based domain shifts (e.g. MESO sector moves mid-loop)
+                        if (domainCenterLat == -1.0f) {
+                            domainCenterLat = (float) areaDirectory.getCenterLatitude();
+                        } else {
+                            domainCenterLat = (float) areaDirectory.getCenterLatitude();
+                            logger.info("Domain shift, set LAT to: " + domainCenterLat);
+                            domainShiftDetected = true;
+                        }
+                        if (domainCenterLon == -1.0f) {
+                            domainCenterLon = (float) areaDirectory.getCenterLongitude();
+                        } else {
+                            domainCenterLon = (float) areaDirectory.getCenterLongitude();
+                            logger.info("Domain shift, set LON to: " + domainCenterLon);
+                            domainShiftDetected = true;
+                        }
+
+                        if (domainShiftDetected) {
+                            boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
+                            if (! offScreen) {
+                                String msg = "A domain shift occurs in the selected GEO image loop.\n" +
+                                        "This usually happens when an ABI MESO sector moves.\n";
+                                Object[] params = { msg };
+                                JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
+                            } else {
+                                logger.warn("Note: A domain shift occurs in the selected GEO image loop");
+                            }
+                        }
+
                         if (imageSize < currentDimensions) {
 
                             imageSize = currentDimensions;
