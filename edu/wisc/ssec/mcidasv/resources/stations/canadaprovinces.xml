@@ -6,13 +6,13 @@
         <station name="British Columbia" lat="54.5" lon="-124.8" elev="0"/>
         <station name="Alberta" lat="55.3" lon="-114.9" elev="0"/>
         <station name="Manitoba" lat="55.3" lon="-98.4" elev="0"/>
-		<station name="Saskatchewan" lat="53.1" lon="-106" elev="0"/>
-		<station name="Nova Scotia" lat="45.2" lon="-62.8" elev="0"/>
-		<station name="New Brunswick" lat="46.7" lon="-66.5" elev="0"/>
-		<station name="Newfoundland and Labrador" lat="53" lon="-61.8" elev="0"/>
-		<station name="Prince Edward Island" lat="46.3" lon="-63.3" elev="0"/>
-		<station name="Northwest Territories" lat="64.1" lon="-119.5" elev="0"/>
-		<station name="Yukon" lat="64" lon="-137.1" elev="0"/>
-		<station name="Nunavut" lat="65.2" lon="-103" elev="0"/>
+	<station name="Saskatchewan" lat="53.1" lon="-106" elev="0"/>
+	<station name="Nova Scotia" lat="45.2" lon="-62.8" elev="0"/>
+	<station name="New Brunswick" lat="46.7" lon="-66.5" elev="0"/>
+	<station name="Newfoundland and Labrador" lat="53" lon="-61.8" elev="0"/>
+	<station name="Prince Edward Island" lat="46.3" lon="-63.3" elev="0"/>
+	<station name="Northwest Territories" lat="64.1" lon="-119.5" elev="0"/>
+	<station name="Yukon" lat="64" lon="-137.1" elev="0"/>
+	<station name="Nunavut" lat="65.2" lon="-103" elev="0"/>
     </stationtable>
 </stationtables>
