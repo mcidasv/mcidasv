@@ -362,6 +362,7 @@
     <resource location="%APPPATH%/stations/greatlakes.xml"/>
     <resource location="%APPPATH%/stations/countries.xml"/>
     <resource location="%APPPATH%/stations/worldcities.xml"/>
+    <resource location="%APPPATH%/stations/canadaprovinces.xml"/>
   </resources>
 
 <!-- The list of help tip xml files   -->
