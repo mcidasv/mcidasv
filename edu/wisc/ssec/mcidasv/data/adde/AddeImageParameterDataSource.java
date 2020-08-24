@@ -2813,7 +2813,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                             }
                         }
 
-                        if (domainShiftDetected) {
+                        if (domainShiftDetected && isDerived) {
                             boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
                             if (! offScreen) {
                                 String msg = "A domain shift occurs in the selected GEO image loop.\n" +
