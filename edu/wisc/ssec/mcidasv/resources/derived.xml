@@ -660,6 +660,17 @@
             <paramgroup categories="" name="AHI_RGB_NightMicrophysics"/>
         </operands>
     </derived>
+    <derived description="AHI Tropical Airmass RGB" formula="AHITropicalAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="ahitropicalairmass" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AHI_RGB_Airmass"/>
+        </operands>
+    </derived>
     <derived description="AHI True Color RGB" formula="AHITrueColorRGB(D1[label=Band 1 Albedo], D2[label=Band 2 Albedo], D3[label=Band 3 Albedo])" id="ahitruecolor" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
