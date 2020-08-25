@@ -54,6 +54,16 @@ def AHIAirmassRGB(b8T, b10T, b12T, b13T):
     blu = rescale(b8T, 243, 208, 0, 255)
     return combineRGB(red, grn, blu)
 
+# AHI Tropical Airmass RGB
+def AHITropicalAirmassRGB(b8T, b10T, b12T, b13T):
+    # red = band8 - band10; -25K to 0K rescaled to 0 to 255
+    # grn = band12 - band13; -25K to 25K rescaled to 0 to 255
+    # blu = band8; 243K to 208K rescaled to 0 to 255
+    red = rescale(b8T-b10T, -25, 0, 0, 255)
+    grn = rescale(b12T-b13T, -25, 25, 0, 255)
+    blu = rescale(b8T, 243, 208, 0, 255)
+    return combineRGB(red, grn, blu)
+
 # AHI Ash RGB
 def AHIAshRGB(b11T, b13T, b15T):
     # red = band15 - band13; -4K to 2K rescaled to 0 to 255
