@@ -225,8 +225,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     // Detect domain shift - for ex ABI MESOs can abruptly move
     // If we detect one, load the later, shifted image(s) earth-centered relative to the earlier
     boolean domainShiftDetected = false;
-    float domainCenterLat = -1.0f;
-    float domainCenterLon = -1.0f;
     AreaDirectory domainShiftDir = null;
 
     public AddeImageParameterDataSource() {} 
@@ -2637,6 +2635,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //    }
 
     private AddeImageDescriptor getPreviewDirectory(AddeImageDescriptor aid) {
+
+        // Used to detect domain shifts for sectors like ABI MESO
+        float domainCenterLat = -1.0f;
+        float domainCenterLon = -1.0f;
+
         AreaDirectory directory = aid.getDirectory();
         AddeImageDescriptor descriptor = null;
         int times = imageTimes.size();
@@ -2732,6 +2735,50 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             logger.trace("preparing to examine previewUrls={}", previewUrls);
         }
         
+        // TJJ Aug 2020
+        // Look for GEO-based domain shifts (e.g. MESO sector moves mid-loop)
+        // The first image checked will initialize domain center lat.  After
+        // that, anything different is a domain shift
+
+        for (String urlStr : previewUrls) {
+
+            AddeImageDescriptor tmpAID = new AddeImageDescriptor(urlStr);
+            AreaDirectory tmpAD = tmpAID.getDirectory();
+
+            if (domainCenterLat == -1.0f) {
+                domainCenterLat = (float) tmpAD.getCenterLatitude();
+            } else {
+                if ((float) tmpAD.getCenterLatitude() != domainCenterLat) {
+                    domainCenterLat = (float) tmpAD.getCenterLatitude();
+                    logger.info("Domain shift, set LAT to: " + domainCenterLat);
+                    domainShiftDetected = true;
+                }
+            }
+            // The first image checked will initialize domain center lon
+            if (domainCenterLon == -1.0f) {
+                domainCenterLon = (float) tmpAD.getCenterLongitude();
+            } else {
+                if ((float) tmpAD.getCenterLongitude() != domainCenterLon) {
+                    domainCenterLon = (float) tmpAD.getCenterLongitude();
+                    logger.info("Domain shift, set LON to: " + domainCenterLon);
+                    domainShiftDetected = true;
+                }
+            }
+
+            if (domainShiftDetected && isDerived) {
+                boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
+                if (! offScreen) {
+                    String msg = "A domain shift occurs in the selected GEO image loop.\n" +
+                            "This usually happens when an ABI MESO sector moves.\n";
+                    Object[] params = { msg };
+                    JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
+                } else {
+                    logger.warn("Note: A domain shift occurs in the selected GEO image loop");
+                }
+            }
+
+        }
+
         try {
             
             // TJJ Nov 2017
@@ -2789,41 +2836,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                             }
                         }
                         requestIdToDirectory.put(key, areaDirectory);
-
-                        // TJJ Aug 2020
-                        // Look for GEO-based domain shifts (e.g. MESO sector moves mid-loop)
-                        // The first image checked will initialize domain center lat
-                        if (domainCenterLat == -1.0f) {
-                            domainCenterLat = (float) areaDirectory.getCenterLatitude();
-                        } else {
-                            if ((float) areaDirectory.getCenterLatitude() != domainCenterLat) {
-                                domainCenterLat = (float) areaDirectory.getCenterLatitude();
-                                logger.info("Domain shift, set LAT to: " + domainCenterLat);
-                                domainShiftDetected = true;
-                            }
-                        }
-                        // The first image checked will initialize domain center lon
-                        if (domainCenterLon == -1.0f) {
-                            domainCenterLon = (float) areaDirectory.getCenterLongitude();
-                        } else {
-                            if ((float) areaDirectory.getCenterLongitude() != domainCenterLon) {
-                                domainCenterLon = (float) areaDirectory.getCenterLongitude();
-                                logger.info("Domain shift, set LON to: " + domainCenterLon);
-                                domainShiftDetected = true;
-                            }
-                        }
-
-                        if (domainShiftDetected && isDerived) {
-                            boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
-                            if (! offScreen) {
-                                String msg = "A domain shift occurs in the selected GEO image loop.\n" +
-                                        "This usually happens when an ABI MESO sector moves.\n";
-                                Object[] params = { msg };
-                                JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
-                            } else {
-                                logger.warn("Note: A domain shift occurs in the selected GEO image loop");
-                            }
-                        }
 
                         if (imageSize < currentDimensions) {
 
