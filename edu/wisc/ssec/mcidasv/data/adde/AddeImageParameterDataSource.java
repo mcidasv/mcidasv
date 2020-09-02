@@ -211,7 +211,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     private int previewEleRes = 1;
     
     // Do binary search on preview bounds for GEO sensors to speed up overall response time
-    boolean doGeoSpeedup = false;
+    boolean isGeoSensor = false;
 
     /** Whether or not this DataSource was loaded from a bundle. */
     private boolean fromBundle = false;
@@ -1202,7 +1202,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             // Do our GEO speedup code for known GEO sensor IDs
             int sensorID = bi.getSensor();
             if (sensorIsGEO(sensorID)) {
-                doGeoSpeedup = true;
+                isGeoSensor = true;
             }
 
             logger.trace("replacing band: new={} from={}", bi.getBandNumber(), source);
@@ -2740,41 +2740,45 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         // The first image checked will initialize domain center lat.  After
         // that, anything different is a domain shift
 
-        for (String urlStr : previewUrls) {
+        if (isGeoSensor) {
 
-            AddeImageDescriptor tmpAID = new AddeImageDescriptor(urlStr);
-            AreaDirectory tmpAD = tmpAID.getDirectory();
+            for (String urlStr : previewUrls) {
 
-            if (domainCenterLat == -1.0f) {
-                domainCenterLat = (float) tmpAD.getCenterLatitude();
-            } else {
-                if ((float) tmpAD.getCenterLatitude() != domainCenterLat) {
+                AddeImageDescriptor tmpAID = new AddeImageDescriptor(urlStr);
+                AreaDirectory tmpAD = tmpAID.getDirectory();
+
+                if (domainCenterLat == -1.0f) {
                     domainCenterLat = (float) tmpAD.getCenterLatitude();
-                    logger.info("Domain shift, set LAT to: " + domainCenterLat);
-                    domainShiftDetected = true;
-                }
-            }
-            // The first image checked will initialize domain center lon
-            if (domainCenterLon == -1.0f) {
-                domainCenterLon = (float) tmpAD.getCenterLongitude();
-            } else {
-                if ((float) tmpAD.getCenterLongitude() != domainCenterLon) {
-                    domainCenterLon = (float) tmpAD.getCenterLongitude();
-                    logger.info("Domain shift, set LON to: " + domainCenterLon);
-                    domainShiftDetected = true;
-                }
-            }
-
-            if (domainShiftDetected && isDerived) {
-                boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
-                if (! offScreen) {
-                    String msg = "A domain shift occurs in the selected GEO image loop.\n" +
-                            "This usually happens when an ABI MESO sector moves.\n";
-                    Object[] params = { msg };
-                    JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
                 } else {
-                    logger.warn("Note: A domain shift occurs in the selected GEO image loop");
+                    if ((float) tmpAD.getCenterLatitude() != domainCenterLat) {
+                        domainCenterLat = (float) tmpAD.getCenterLatitude();
+                        logger.info("Domain shift, set LAT to: " + domainCenterLat);
+                        domainShiftDetected = true;
+                    }
                 }
+                // The first image checked will initialize domain center lon
+                if (domainCenterLon == -1.0f) {
+                    domainCenterLon = (float) tmpAD.getCenterLongitude();
+                } else {
+                    if ((float) tmpAD.getCenterLongitude() != domainCenterLon) {
+                        domainCenterLon = (float) tmpAD.getCenterLongitude();
+                        logger.info("Domain shift, set LON to: " + domainCenterLon);
+                        domainShiftDetected = true;
+                    }
+                }
+
+                if (domainShiftDetected && isDerived) {
+                    boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
+                    if (! offScreen) {
+                        String msg = "A domain shift occurs in the selected GEO image loop.\n" +
+                                "This usually happens when an ABI MESO sector moves.\n";
+                        Object[] params = { msg };
+                        JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
+                    } else {
+                        logger.warn("Note: A domain shift occurs in the selected GEO image loop");
+                    }
+                }
+
             }
 
         }
@@ -2786,7 +2790,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             // intstead of iterating through every single URL to make large loop times 
             // (e.g. 50 GOES-16 MESO images) more tolerable.
             
-            if (doGeoSpeedup) {
+            if (isGeoSensor) {
 
                 int loIdx = 0;
                 int hiIdx = previewUrls.size() - 1;
