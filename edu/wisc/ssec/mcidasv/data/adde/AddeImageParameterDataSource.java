@@ -213,6 +213,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     // Do binary search on preview bounds for GEO sensors to speed up overall response time
     boolean isGeoSensor = false;
 
+    // Also need to know when dealing with a sensor where sectors shift around spatially
+    boolean isABISensor = false;
+
     /** Whether or not this DataSource was loaded from a bundle. */
     private boolean fromBundle = false;
     
@@ -1204,6 +1207,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             if (sensorIsGEO(sensorID)) {
                 isGeoSensor = true;
             }
+            if (sensorIsABI(sensorID)) {
+                isABISensor = true;
+            }
 
             logger.trace("replacing band: new={} from={}", bi.getBandNumber(), source);
             source = replaceKey(source, BAND_KEY, bi.getBandNumber());
@@ -1354,12 +1360,38 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     }
 
     /**
+     * Return true if the Sensor is ABI variant (ABI, AHI, AMI)
+     * These sensors have MESO sectors which move around geospatially
+     *
+     * @param sensorID McIDAS Sensor Source number.
+     *  See https://www.ssec.wisc.edu/mcidas/doc/users_guide/2017.2/app_c-1.html
+     * @return true if ID matches a defined ABI sensor
+     */
+
+    private boolean sensorIsABI(int sensorID) {
+
+        boolean isABI = false;
+
+        // GOES 16 - 19
+        if (sensorID == 186) isABI = true;
+        if (sensorID == 188) isABI = true;
+        if (sensorID == 190) isABI = true;
+        if (sensorID == 192) isABI = true;
+
+        // Himawari-9... and up?
+        if (sensorID >= 287) isABI = true;
+
+        return isABI;
+    }
+
+    /**
      * Return true if the Sensor is Geostationary
      * 
      * @param sensorID McIDAS Sensor Source number.
      *  See https://www.ssec.wisc.edu/mcidas/doc/users_guide/2017.2/app_c-1.html
      * @return true if ID matches a defined GEO sensor
      */
+
     private boolean sensorIsGEO(int sensorID) {
         boolean isGEO = false;
         
@@ -1381,9 +1413,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if ((sensorID >= 95) && (sensorID <= 97)) isGEO = true;
         if ((sensorID >= 275) && (sensorID <= 277)) isGEO = true;
 
-        // GOES 13 - 17
-        // NOTE: Assumes GOES-17 will take the 188 to 190 slots
-        if ((sensorID >= 180) && (sensorID <= 190)) isGEO = true;
+        // GOES 13 - 19
+        // NOTE: through all four GOES-R series satellites
+        if ((sensorID >= 180) && (sensorID <= 193)) isGEO = true;
 
         // Kalpana and INSAT
         if ((sensorID >= 230) && (sensorID <= 232)) isGEO = true;
@@ -2740,7 +2772,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         // The first image checked will initialize domain center lat.  After
         // that, anything different is a domain shift
 
-        if (isGeoSensor) {
+        if (isABISensor) {
 
             for (String urlStr : previewUrls) {
 
