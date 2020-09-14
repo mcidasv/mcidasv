@@ -1378,8 +1378,12 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (sensorID == 190) isABI = true;
         if (sensorID == 192) isABI = true;
 
-        // Himawari-9... and up?
-        if (sensorID >= 287) isABI = true;
+        // Himawari-8 and Himawari-9
+        if (sensorID == 86) isABI = true;
+        if (sensorID == 286) isABI = true;
+        if (sensorID == 287) isABI = true;
+        if (sensorID == 288) isABI = true;
+        if (sensorID == 289) isABI = true;
 
         return isABI;
     }
