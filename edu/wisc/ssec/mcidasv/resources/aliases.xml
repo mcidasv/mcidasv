@@ -289,7 +289,9 @@
      Wind_direction_from_which_blowing_eta,
      Wind_direction_from_which_blowing_isobaric,
      Wind_direction_from_which_blowing_height_above_ground,
-     Wind_direction_from_which_blowing_surface_unweightedMean"/>
+     Wind_direction_from_which_blowing_surface_unweightedMean,
+     wind_dir,
+     model_dir"/>
   <!-- bob inq2791 05/2019 -->
   <alias
      name="W"
@@ -310,7 +312,8 @@
      Wind_speed_height_above_ground_stdDev,
      Wind_speed_height_above_ground_unweightedMean,
      Wind_speed_isobaric_unweightedMean,
-     Wind_speed_isobaric_stdDev"/>
+     Wind_speed_isobaric_stdDev,
+     model_speed"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
