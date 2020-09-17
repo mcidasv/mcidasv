@@ -263,4 +263,8 @@
     <params p1="101_Band7_BRIT" p2="101_Band2_BRIT" p3="101_Band1_BRIT"/>
     <params p1="111_Band7_BRIT" p2="111_Band2_BRIT" p3="111_Band1_BRIT"/>
   </paramgroup>
+  <paramgroup description="" name="speed_and_dir">
+    <params p1="wind_speed" p2="wind_dir"/>
+    <params p1="model_speed" p2="model_dir"/>
+  </paramgroup>
 </paramgroups>
