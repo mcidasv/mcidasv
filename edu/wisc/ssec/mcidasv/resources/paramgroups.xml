@@ -267,4 +267,25 @@
     <params p1="wind_speed" p2="wind_dir"/>
     <params p1="model_speed" p2="model_dir"/>
   </paramgroup>
+  <!-- RMC Sep 2020 Inq 2926 -->
+  <paramgroup description="" name="u_v">
+    <params p1="u-component_of_wind_altitude_above_msl_ens" p2="v-component_of_wind_altitude_above_msl_ens"/>
+    <params p1="u-component_of_wind_height_above_ground_ens" p2="v-component_of_wind_height_above_ground_ens"/>
+    <params p1="u-component_of_wind_isentrope_ens" p2="v-component_of_wind_isentrope_ens"/>
+    <params p1="u-component_of_wind_maximum_wind_ens" p2="v-component_of_wind_maximum_wind_ens"/>
+    <params p1="u-component_of_wind_potential_vorticity_surface_ens" p2="v-component_of_wind_potential_vorticity_surface_ens"/>
+    <params p1="u-component_of_wind_pressure_difference_layer_ens" p2="v-component_of_wind_pressure_difference_layer_ens"/>
+    <params p1="u-component_of_wind_sigma_ens" p2="v-component_of_wind_sigma_ens"/>
+    <params p1="u-component_of_wind_tropopause_ens" p2="v-component_of_wind_tropopause_ens"/>
+  </paramgroup>
+  <paramgroup description="" name="u_and_v">
+    <params p1="u-component_of_wind_altitude_above_msl_ens" p2="v-component_of_wind_altitude_above_msl_ens"/>
+    <params p1="u-component_of_wind_height_above_ground_ens" p2="v-component_of_wind_height_above_ground_ens"/>
+    <params p1="u-component_of_wind_isentrope_ens" p2="v-component_of_wind_isentrope_ens"/>
+    <params p1="u-component_of_wind_maximum_wind_ens" p2="v-component_of_wind_maximum_wind_ens"/>
+    <params p1="u-component_of_wind_potential_vorticity_surface_ens" p2="v-component_of_wind_potential_vorticity_surface_ens"/>
+    <params p1="u-component_of_wind_pressure_difference_layer_ens" p2="v-component_of_wind_pressure_difference_layer_ens"/>
+    <params p1="u-component_of_wind_sigma_ens" p2="v-component_of_wind_sigma_ens"/>
+    <params p1="u-component_of_wind_tropopause_ens" p2="v-component_of_wind_tropopause_ens"/>
+  </paramgroup>
 </paramgroups>
