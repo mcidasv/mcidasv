@@ -229,6 +229,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     // If we detect one, load the later, shifted image(s) earth-centered relative to the earlier
     boolean domainShiftDetected = false;
     AreaDirectory domainShiftDir = null;
+    boolean domainShiftNoticeShown = false;
 
     public AddeImageParameterDataSource() {} 
 
@@ -2805,13 +2806,17 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
                 if (domainShiftDetected && isDerived) {
                     boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
-                    if (! offScreen) {
-                        String msg = "A domain shift occurs in the selected GEO image loop.\n" +
-                                "This usually happens when an ABI MESO sector moves.\n";
-                        Object[] params = { msg };
-                        JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
-                    } else {
-                        logger.warn("Note: A domain shift occurs in the selected GEO image loop");
+                    // For derived fields this path can be executed multiple times, don't keep showing the notice!
+                    if (! domainShiftNoticeShown) {
+                        if (! offScreen) {
+                            String msg = "A domain shift occurs in the selected GEO image loop.\n" +
+                                    "This usually happens when an ABI MESO sector moves.\n";
+                            Object[] params = { msg };
+                            JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
+                            domainShiftNoticeShown = true;
+                        } else {
+                            logger.warn("Note: A domain shift occurs in the selected GEO image loop");
+                        }
                     }
                 }
 
