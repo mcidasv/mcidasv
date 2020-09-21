@@ -461,7 +461,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         IdvObjectStore s = getStore();
         Font f = s.get(ViewManager.PREF_DISPLAYLISTFONT, FontSelector.getDefaultFont());
         if (f.getSize() == 0) {
-            f = f.deriveFont(12f);
+            f = f.deriveFont(14f);
             s.put(ViewManager.PREF_DISPLAYLISTFONT, f);
         }
     }

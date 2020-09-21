@@ -122,19 +122,12 @@ public class FontSelector implements ItemListener, ListSelectionListener {
     private JComponent sizeSelector;
 
     private static final String[] MCV_DEFAULT_FONTS = {
-        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-BlackIt.ttf",
         "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Black.ttf",
-        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-BoldIt.ttf",
         "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Bold.ttf",
-        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-ExtraLightIt.ttf",
         "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-ExtraLight.ttf",
-        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-It.ttf",
-        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-LightIt.ttf",
         "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Light.ttf",
-        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-MediumIt.ttf",
         "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Medium.ttf",
         "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Regular.ttf",
-        "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-SemiboldIt.ttf",
         "edu/wisc/ssec/mcidasv/resources/defaultfont/SourceCodePro-Semibold.ttf",
     };
     
@@ -176,7 +169,7 @@ public class FontSelector implements ItemListener, ListSelectionListener {
                         if (fontStream != null) {
                             Font f = Font.createFont(Font.TRUETYPE_FONT, fontStream);
                             gEnv.registerFont(f);
-                            if (f.getFontName().equals("Source Code Pro Medium")) {
+                            if (f.getFontName().equals("Source Code Pro")) {
                                 defaultFont = f;
                             }
                         }
@@ -194,7 +187,7 @@ public class FontSelector implements ItemListener, ListSelectionListener {
     public static Font getDefaultFont() {
         // just in case...
         GraphicsEnvironment gEnv = registerFonts();
-        return defaultFont.deriveFont(12f);
+        return defaultFont.deriveFont(14f);
     }
     
     /**
