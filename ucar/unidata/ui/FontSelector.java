@@ -169,7 +169,7 @@ public class FontSelector implements ItemListener, ListSelectionListener {
                         if (fontStream != null) {
                             Font f = Font.createFont(Font.TRUETYPE_FONT, fontStream);
                             gEnv.registerFont(f);
-                            if (f.getFontName().equals("Source Code Pro")) {
+                            if (f.getFontName().equals("Source Code Pro Medium")) {
                                 defaultFont = f;
                             }
                         }
