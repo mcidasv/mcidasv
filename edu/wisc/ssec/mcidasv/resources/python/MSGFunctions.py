@@ -118,7 +118,7 @@ def MSGGenericSevereConvectionRGB(b1R, b3R, b4T, b5T, b6T, b9T):
     blu = b3R-b1R
     return mycombineRGB(red, grn, blu)
 
-# MSG Night Cloud Microphysics
+# MSG Night Cloud Microphysics RGB
 def MSGNightMicrophysicsRGB(b4T, b9T, b10T):
     # red = band10 - band9; -4K to 2K rescalled to 0 to 255
     # grn = band9 - band4; 0K to 10K rescalled to 0 to 255
@@ -126,4 +126,25 @@ def MSGNightMicrophysicsRGB(b4T, b9T, b10T):
     red = rescale(b10T-b9T, -4, 2, 0, 255)
     grn = rescale(b9T-b4T, 0, 10, 0, 255)
     blu = rescale(b9T, 243, 293, 0, 255)
+    return combineRGB(red, grn, blu)
+
+# MSG HRV Cloud RGB
+def MSGHrvCloudRGB(hrv, b9T):
+    # red = hrv; 0% to 100% rescalled to 0 to 255
+    # grn = hrv; 0% to 100% rescalled to 0 to 255
+    # blu = fd band9; 323K to 203K rescalled to 0 to 255
+    red = rescale(hrv, 0, 100, 0, 255)
+    grn = rescale(hrv, 0, 100, 0, 255)
+    blu = rescale(b9T, 323, 203, 0, 255)
+    return combineRGB(red, grn, blu)
+
+# MSG HRV Fog RGB
+def MSGHrvFogRGB(hrv, b3R):
+    # red = fd band3; 0% to 70% rescalled to 0 to 255
+    # grn = hrv; 0% to 100% rescalled to 0 to 255
+    # blu = hrv; 0% to 100% rescalled to 0 to 255
+    hr_b3R = resampleGrid(b3R, hrv)
+    red = rescale(hr_b3R, 0, 70, 0, 255)
+    grn = rescale(hrv, 0, 100, 0, 255)
+    blu = rescale(hrv, 0, 100, 0, 255)
     return combineRGB(red, grn, blu)
