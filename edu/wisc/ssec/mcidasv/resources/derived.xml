@@ -908,7 +908,25 @@
             <paramgroup categories="" name="MSG_RGB_NightMicrophysics"/>
         </operands>
     </derived>
-    <derived description="MODIS Night Microphysics RGB" formula="MODISNightMicrophysicsRGB(D1[label= Band 22 Temperature], D2[label=Band 31 Temperature], D3[label=Band 32 Temperature])" id="modisnightmicrophysicsrgb" isdefault="true" isenduser="true" override="true">
+    <derived description="MSG HRV Cloud RGB" formula="MSGHrvCloudRGB(hrv[label=HRV Reflectivity], b9T[label=FD Band 9 Temperature])" id="msghrvcloud" isdefault="false" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories=""/>
+    </derived>
+    <derived description="MSG HRV Fog RGB" formula="MSGHrvFogRGB(hrv[label=HRV Reflectivity], b9T[label=FD Band 3 Reflectivity])" id="msghrvfog" isdefault="false" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories=""/>
+    </derived>
+    <derived description="MODIS Night Microphysics RGB" formula="MODISNightMicrophysicsRGB(D1[label=Band 22 Temperature], D2[label=Band 31 Temperature], D3[label=Band 32 Temperature])" id="modisnightmicrophysicsrgb" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MODIS Functions"/>
             <category value="display:rgbcomposite"/>
