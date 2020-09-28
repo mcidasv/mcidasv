@@ -230,6 +230,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     boolean domainShiftDetected = false;
     AreaDirectory domainShiftDir = null;
     boolean domainShiftNoticeShown = false;
+    boolean domainShiftLogged = false;
 
     public AddeImageParameterDataSource() {} 
 
@@ -2106,10 +2107,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         }
 
         if (domainShiftDir != null) {
-            logger.info("GEO domain shift detected, forcing Earth-based requests");
             if (domainShiftDetected) {
-               src = replaceKey(src, "PLACE", "CENTER");
-               src = replaceKey(src, "LINELE", "LATLON",
+                // Like the popup dialog notice, make sure we only log domain shift detection once
+                if (! domainShiftLogged) {
+                   logger.info("GEO domain shift detected, forcing Earth-based requests");
+                   domainShiftLogged = true;
+                }
+                src = replaceKey(src, "PLACE", "CENTER");
+                src = replaceKey(src, "LINELE", "LATLON",
                        "" + domainShiftDir.getCenterLatitude() + " " + domainShiftDir.getCenterLongitude());
             }
             logger.trace("adjusted src={} areaDirectoryKey='{}' hacked lat={} lon={}",
