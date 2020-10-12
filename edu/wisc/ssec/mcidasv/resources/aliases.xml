@@ -108,7 +108,8 @@
      Temperature_depth_below_surface_layer_*.*_AverageNforecasts,
      Temperature_height_above_ground_*.*_AverageNforecasts,
      Temperature_*.*_cloud_*.*_AverageAvg-*.*hourIntv,
-     Temperature_depth_below_surface_layer_unweightedMean"/>
+     Temperature_depth_below_surface_layer_unweightedMean,
+     Temperature_layer_between_two_depths_below_surface_layer"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -155,7 +156,8 @@
      Relative_humidity_sigma_*.*_Average,
      Relative_humidity_height_above_ground_*.*_Average,
      Relative_humidity_isobaric_*.*_Average,
-     Relative_humidity_sigma_layer_*.*_Average"/>
+     Relative_humidity_sigma_layer_*.*_Average,
+     Relative_humidity_wrt_water_isobaric"/>
   <alias
      name="Z"
      label="Z"
@@ -221,7 +223,11 @@
      U-Component_Storm_Motion_height_above_ground_layer_*.*_Average,
      u-component_of_wind_isobaric_*.*_Average,
      u-component_of_wind_potential_vorticity_surface_*.*_Average,
-     u-component_of_wind_altitude_above_msl_*.*_Average"/>
+     u-component_of_wind_altitude_above_msl_*.*_Average,
+     U-component_of_horizontal_wind_altitude_above_msl,
+     U-component_of_horizontal_wind_isobaric,
+     U-component_of_horizontal_wind_height_above_ground,
+     U_Component_of_Hourly_Maximum_10m_Wind_Speed_height_above_ground_.*._Hour_Maximum"/>
   <alias
      name="V"
      label="V component of wind"
@@ -279,7 +285,11 @@
      V-Component_Storm_Motion_height_above_ground_layer_*.*_Average,
      v-component_of_wind_isobaric_*.*_Average,
      v-component_of_wind_potential_vorticity_surface_*.*_Average,
-     v-component_of_wind_altitude_above_msl_*.*_Average"/>
+     v-component_of_wind_altitude_above_msl_*.*_Average,
+     V-component_of_horizontal_wind_altitude_above_msl,
+     V-component_of_horizontal_wind_isobaric,
+     V-component_of_horizontal_wind_height_above_ground,
+     V_Component_of_Hourly_Maximum_10m_Wind_Speed_height_above_ground_.*._Hour_Maximum"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -313,7 +323,8 @@
      Wind_speed_height_above_ground_unweightedMean,
      Wind_speed_isobaric_unweightedMean,
      Wind_speed_isobaric_stdDev,
-     model_speed"/>
+     model_speed,
+     HDFEOS/SWATHS/AMSR2_Level2_Ocean_Suite/Data_Fields/WindSpeed"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
@@ -367,7 +378,8 @@
      water_temp,
      SST_avg,
      SST_avg_filled,
-     SST_avg_comp"/>
+     SST_avg_comp,
+     HDFEOS/SWATHS/AMSR2_Level2_Ocean_Suite/Data_Fields/ReynoldsSST"/>
   <!-- bob inq2679 -->
   <alias aliases="HT, .*_Band3_CTH" label="ABI L2 Cloud Top Height" name="ABI_L2_ACHA"/>
   <alias aliases="AOD, .*_Band22_AOD" label="ABI L2 Aerosol Optical Depth" name="ABI_L2_AOD"/>
