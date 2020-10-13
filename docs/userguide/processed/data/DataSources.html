@@ -77,8 +77,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
     <td>- local files, TDS servers</td>
   </tr>
   <tr>
-    <td rowspan="28">Satellite Imagery</td>
-    <td rowspan="28">Geostationary and polar orbiter satellite imagery, derived
+    <td rowspan="29">Satellite Imagery</td>
+    <td rowspan="29">Geostationary and polar orbiter satellite imagery, derived
       satellite products</td>
     <td>- <a href="#adde">ADDE</a></td>
     <td>- <a href="choosers/ImageChooser.html">ADDE servers</a></td>
@@ -186,6 +186,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/DataSources.
   <tr class="gridded_data_row">
     <td>- GOES ABI *</td>
     <td>- local ADDE </td>
+  </tr>
+  <tr class="gridded_data_row">
+    <td>- GOES GLM</td>
+    <td>- local files </td>
   </tr>
   <tr class="gridded_data_row">
     <td>- TROPOMI (netCDF)</td>
@@ -351,6 +355,7 @@ more information.</p>
     is complete and self-describing, and can be used by others. We
     recommend you use CF, COARDS, or NUWG conventions for netCDF data files for
     McIDAS-V, and be sure to follow the best practices noted above.</p>
+    <p>McIDAS-V can read GOES-R Series GLM (Geostationary Lightning Mapper) data through the <strong>General-&gt;Files/Directories</strong> chooser using the GLM_EVENTS Data files, GLM_FLASHES Data files, or GLM_GROUPS Data files Data Type. Multiple files can be selected at once and they will be aggregated into one data source when Add Source is clicked. Note that each data point in the data source is its own timestep, and therefore <a href="DataSource.html#basicproperties">Time Binning</a> settings should be modified in order to create a usable loop in the Main Display window. The <a href="../controls/PointDataPlotControl.html">Point Data Plot</a> display can be used to display the data, as well as the gridded fields.</p>
 <div class="pagesubtitle"><a name="csv" id="csv"></a>ASCII Text Point Data</div>
 <p>McIDAS-V can read point data and trajectories (aircraft tracks) from comma-separated
 value (CSV) text files. See the documentation on the <a href="TextPointData.html">Text
