@@ -1264,7 +1264,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
         }
 //        previewDir = getPreviewDirectory(aid);
-        AddeImageDescriptor previewDescriptor = getPreviewDirectory(aid);
+        AddeImageDescriptor previewDescriptor = getPreviewDirectory(aid, dataChoice);
         previewDir = previewDescriptor.getDirectory();
         logger.trace("using previewDir={}", previewDir);
 //        try {
@@ -2070,6 +2070,23 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             return null;
         }
 
+        if (domainShiftDetected && isDerived) {
+            boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
+            // For derived fields this path can be executed multiple times, don't keep showing the notice!
+            if (! domainShiftNoticeShown) {
+                if (! offScreen) {
+                    String msg = "A domain shift occurs in the selected GEO image loop.\n" +
+                            "This usually happens when a targeted sector (e.g. ABI MESO) moves.\n" +
+                            "Only the pre-shift data will be loaded and displayed.\n";
+                    Object[] params = { msg };
+                    JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
+                    domainShiftNoticeShown = true;
+                } else {
+                    logger.warn("Note: A domain shift occurs in the selected GEO image loop");
+                }
+            }
+        }
+
         logger.trace("incoming src={} DateTime={} readLabel={}", new Object[] { aid.getSource(), aid.getImageTime(), readLabel });
         String src = aid.getSource();
 
@@ -2676,7 +2693,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //        return directory;
 //    }
 
-    private AddeImageDescriptor getPreviewDirectory(AddeImageDescriptor aid) {
+    private AddeImageDescriptor getPreviewDirectory(AddeImageDescriptor aid, DataChoice dataChoice) {
 
         // Used to detect domain shifts for sectors like ABI MESO
         float domainCenterLat = -1.0f;
@@ -2711,6 +2728,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         int prevSize = 0;
         src = src.replace("imagedata", "imagedir");
         boolean isRelative = aid.getIsRelative();
+
+        // Note the index if we detect a domain shift, we will cut the loop off there
+        int domainShiftIndex = 0;
 
         List<String> previewUrls = new ArrayList<String>(times);
 
@@ -2784,6 +2804,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         if (isABISensor) {
 
+            int urlIdx = 0;
             for (String urlStr : previewUrls) {
 
                 AddeImageDescriptor tmpAID = new AddeImageDescriptor(urlStr);
@@ -2796,6 +2817,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         domainCenterLat = (float) tmpAD.getCenterLatitude();
                         logger.info("Domain shift, set LAT to: " + domainCenterLat);
                         domainShiftDetected = true;
+                        domainShiftIndex = urlIdx;
                     }
                 }
                 // The first image checked will initialize domain center lon
@@ -2806,24 +2828,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         domainCenterLon = (float) tmpAD.getCenterLongitude();
                         logger.info("Domain shift, set LON to: " + domainCenterLon);
                         domainShiftDetected = true;
+                        domainShiftIndex = urlIdx;
                     }
                 }
 
-                if (domainShiftDetected && isDerived) {
-                    boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
-                    // For derived fields this path can be executed multiple times, don't keep showing the notice!
-                    if (! domainShiftNoticeShown) {
-                        if (! offScreen) {
-                            String msg = "A domain shift occurs in the selected GEO image loop.\n" +
-                                    "This usually happens when an ABI MESO sector moves.\n";
-                            Object[] params = { msg };
-                            JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
-                            domainShiftNoticeShown = true;
-                        } else {
-                            logger.warn("Note: A domain shift occurs in the selected GEO image loop");
-                        }
-                    }
-                }
+                urlIdx++;
 
             }
 
@@ -3018,6 +3027,25 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //            }
 //        }
 //        
+
+        // If domain shift was detected, keep only the pre-shift times for derived data
+        logger.info("domainShiftIndex: " + domainShiftIndex);
+        if (isDerived && (domainShiftIndex > 0)) {
+            // This is how many time steps we remove
+            int stepsToRemove = imageTimes.size() - (domainShiftIndex + 1);
+            List<TwoFacedObject> datesAndTimes = dataChoice.getAllDateTimes();
+            List<AddeImageDescriptor> descriptorList = getImageList();
+            logger.info("AllDatesTimes size before domain shift adjustment: " + datesAndTimes.size());
+            logger.info("descriptorList size before domain shift adjustment: " + descriptorList.size());
+
+            for (int cutCount = 0; cutCount <= stepsToRemove; cutCount++) {
+                imageTimes.remove(imageTimes.size() - 1);
+                descriptorList.remove(descriptorList.size() - 1);
+            }
+            dataChoice.setTimeSelection(imageTimes);
+            setImageList(descriptorList);
+            logger.info("AllDatesTimes size after domain shift adjustment: " + datesAndTimes.size());
+        }
 
         logger.trace("returning AreaDirectory: {}", directory);
 //        logger.trace("could return AddeImageDescriptor:\nisRelative={}\nrelativeIndex={}\ntime={}\ndirectory={}\n", new Object[] { descriptor.getIsRelative(), descriptor.getRelativeIndex(), descriptor.getImageTime(), descriptor.getDirectory()});
