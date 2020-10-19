@@ -228,9 +228,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     // Detect domain shift - for ex ABI MESOs can abruptly move
     // If we detect one, load the later, shifted image(s) earth-centered relative to the earlier
     boolean domainShiftDetected = false;
-    AreaDirectory domainShiftDir = null;
     boolean domainShiftNoticeShown = false;
-    boolean domainShiftLogged = false;
 
     public AddeImageParameterDataSource() {} 
 
@@ -2101,10 +2099,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //            areaDirectoryKey = getKey(src, "TIME");
         }
 
-        if (domainShiftDir == null) {
-            domainShiftDir = requestIdToDirectory.get(areaDirectoryKey);
-        }
-
         // it only makes sense to set the following properties for things
         // coming from an ADDE server
         if (!isFromFile(aid)) {
@@ -2123,21 +2117,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             }
         }
 
-        if (domainShiftDir != null) {
-            if (domainShiftDetected) {
-                // Like the popup dialog notice, make sure we only log domain shift detection once
-                if (! domainShiftLogged) {
-                   logger.info("GEO domain shift detected, forcing Earth-based requests");
-                   domainShiftLogged = true;
-                }
-                src = replaceKey(src, "PLACE", "CENTER");
-                src = replaceKey(src, "LINELE", "LATLON",
-                       "" + domainShiftDir.getCenterLatitude() + " " + domainShiftDir.getCenterLongitude());
-            }
-            logger.trace("adjusted src={} areaDirectoryKey='{}' hacked lat={} lon={}",
-               new Object[] { src, areaDirectoryKey,
-                    domainShiftDir.getCenterLatitude(), domainShiftDir.getCenterLongitude() });
-        }
         aid.setSource(src);
 
         SingleBandedImage result;
