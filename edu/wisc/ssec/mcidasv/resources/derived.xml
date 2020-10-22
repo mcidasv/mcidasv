@@ -687,6 +687,7 @@
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:imagedisplayoverz"/>
+            <category value="display:dataxs"/>
             <category value="display:imagedisplay"/>
         </categories>
         <operands categories=""/>
