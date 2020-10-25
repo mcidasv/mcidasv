@@ -221,9 +221,6 @@ public class AddeImageChooser extends AddeChooser implements
 
     /** Xml attr name for the defaults */
     protected static final String ATTR_PATTERN = "pattern";
-    
-    /** Button label for day and optional time range selection */
-    protected final static String DAY_TIME_RANGE_LABEL = "Set Day/Time Range";
 
     /** flag for setting properties */
     private boolean amSettingProperties = false;

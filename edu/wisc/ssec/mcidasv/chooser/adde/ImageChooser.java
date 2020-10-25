@@ -34,12 +34,10 @@ import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
-import java.util.Hashtable;
-import java.util.List;
-
-import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
@@ -48,13 +46,10 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.w3c.dom.Element;
-
-import edu.wisc.ssec.mcidas.AreaDirectory;
 
 import ucar.unidata.data.DataSelection;
 import ucar.unidata.data.imagery.AddeImageDescriptor;
@@ -66,6 +61,7 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlObjectStore;
 
+import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 
@@ -76,6 +72,8 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
  * available for a particular ADDE group on the remote server.</p>
  */
 public class ImageChooser extends AddeImageChooser implements Constants {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Public keys for server, group, dataset, user, project.

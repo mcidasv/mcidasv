@@ -28,13 +28,12 @@
 
 package edu.wisc.ssec.mcidasv.chooser.adde;
 
-import static edu.wisc.ssec.mcidasv.McIDASV.getStaticMcv;
-import static edu.wisc.ssec.mcidasv.servermanager.EntryTransforms.strToEntryType;
-import static edu.wisc.ssec.mcidasv.servermanager.AddeEntry.DEFAULT_ACCOUNT;
-import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.McIDASV.isLoopback;
-
+import static edu.wisc.ssec.mcidasv.servermanager.AddeEntry.DEFAULT_ACCOUNT;
+import static edu.wisc.ssec.mcidasv.servermanager.EntryTransforms.strToEntryType;
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.arrList;
 import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.cast;
+
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
@@ -67,7 +66,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -89,21 +87,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
-import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry;
-import edu.wisc.ssec.mcidasv.ui.MenuScroller;
-import edu.wisc.ssec.mcidasv.util.McVTextField;
 import org.bushe.swing.event.annotation.AnnotationProcessor;
 import org.bushe.swing.event.annotation.EventSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
-
-import edu.wisc.ssec.mcidas.adde.AddeURLException;
-import edu.wisc.ssec.mcidas.adde.DataSetInfo;
-
-import ucar.unidata.idv.IdvObjectStore;
-import ucar.unidata.util.IOUtil;
-import visad.DateTime;
 
 import ucar.unidata.idv.chooser.IdvChooser;
 import ucar.unidata.idv.chooser.IdvChooserManager;
@@ -111,12 +99,17 @@ import ucar.unidata.idv.chooser.adde.AddeServer;
 import ucar.unidata.idv.chooser.adde.AddeServer.Group;
 import ucar.unidata.util.DatedThing;
 import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.PreferenceList;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.xml.XmlObjectStore;
 
+import visad.DateTime;
+
+import edu.wisc.ssec.mcidas.adde.AddeURLException;
+import edu.wisc.ssec.mcidas.adde.DataSetInfo;
 import edu.wisc.ssec.mcidasv.Constants;
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.ParameterSet;
@@ -129,10 +122,12 @@ import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryType;
 import edu.wisc.ssec.mcidasv.servermanager.AddeEntry.EntryValidity;
 import edu.wisc.ssec.mcidasv.servermanager.EntryStore;
 import edu.wisc.ssec.mcidasv.servermanager.EntryTransforms;
+import edu.wisc.ssec.mcidasv.servermanager.LocalAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.LocalEntryEditor;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteAddeEntry;
 import edu.wisc.ssec.mcidasv.servermanager.RemoteEntryEditor;
 import edu.wisc.ssec.mcidasv.servermanager.TabbedAddeManager;
+import edu.wisc.ssec.mcidasv.ui.MenuScroller;
 import edu.wisc.ssec.mcidasv.ui.ParameterTree;
 import edu.wisc.ssec.mcidasv.ui.UIManager;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
@@ -140,13 +135,17 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Position;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.TextColor;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
+import edu.wisc.ssec.mcidasv.util.McVTextField;
 
 /**
  *
  * @version $Revision$
  */
+
 public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser implements Constants {
     
+    private static final long serialVersionUID = 1L;
+
     private static final Logger logger = LoggerFactory.getLogger(AddeChooser.class);
     
     /** Label to use with the relative times {@link JTextField}. */
@@ -173,6 +172,9 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     
     /** Property for the descriptor table */
     public static final String DESCRIPTOR_TABLE = "DESCRIPTOR_TABLE";
+
+    /** Button label for day and optional time range selection */
+    protected final static String DAY_TIME_RANGE_LABEL = "Set Day/Time Range";
 
     /** Connect button--we need to be able to disable this */
     JButton connectButton = McVGuiUtils.makeImageTextButton(ICON_CONNECT_SMALL, "Connect");
@@ -239,9 +241,6 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     private List<AddeServer> addeServers;
 
     /** Used for parameter set restore */
-    private static final String TAG_FOLDER = "folder";
-    private static final String TAG_DEFAULT = "default";
-    private static final String ATTR_NAME = "name";
     private static final String ATTR_SERVER = "server";
     private static final String ATTR_GROUP = "GROUP";
     private static final String ATTR_DESCRIPTOR = "DESCRIPTOR";
