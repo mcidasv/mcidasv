@@ -100,9 +100,9 @@ import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 import ucar.visad.UtcDate;
 
+import visad.VisADException;
 import visad.DateTime;
 import visad.Gridded1DSet;
-import visad.VisADException;
 
 import edu.wisc.ssec.mcidas.AreaDirectory;
 import edu.wisc.ssec.mcidas.AreaDirectoryList;
@@ -227,24 +227,12 @@ public class AddeImageChooser extends AddeChooser implements
 
     /** Are we currently reading times */
     private Object readTimesTask;
-
-    /** archive date */
-    protected String archiveDay = null;
-    
-    /** archive date */
-    protected String archiveBegTime = null;
-    
-    /** archive date */
-    protected String archiveEndTime = null;
     
     /** number of image times to list */
     protected String numTimes = "all";
 
     /** Holds the properties */
     private JPanel propPanel;
-
-    /** Archive day selector button. */
-    protected JButton archiveDayBtn;
     
     protected JTextField imageCountTextField;
 

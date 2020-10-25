@@ -34,6 +34,8 @@ import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -65,11 +67,9 @@ import org.w3c.dom.Element;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
-
 import ucar.unidata.data.DataSelection;
 import visad.DateTime;
 import visad.VisADException;
-
 import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.point.AddePointDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
@@ -81,7 +81,6 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.visad.UtcDate;
-
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
@@ -90,7 +89,10 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * 
  * @version $Revision$ $Date$
  */
+
 public class AddePointDataChooser extends AddeChooser {
+
+    private static final long serialVersionUID = 1L;
 
     /** Logging object. Use it! */
     private static final Logger logger = LoggerFactory.getLogger(AddePointDataChooser.class);
@@ -113,6 +115,9 @@ public class AddePointDataChooser extends AddeChooser {
 
     /** the relative time increment */
     private float relativeTimeIncrement = 1.0f;
+
+    /** Date will default to current */
+    DateTime dt = null;
     
     /** archive date */
     protected String archiveDay = null;
@@ -163,12 +168,18 @@ public class AddePointDataChooser extends AddeChooser {
         
         descriptorsAllowPrefix = "";
         
-        archiveDayBtn = GuiUtils.makeImageButton(
-            "/auxdata/ui/icons/calendar_edit.png", this, "getArchiveDay", null,
-            true);
-        archiveDayBtn.setToolTipText("Select a day for archive datasets");
+        try {
+            dt = new DateTime();
+        } catch (VisADException vade) {
+            vade.printStackTrace();
+        }
+
+        archiveDayBtn = new JButton("Set Day");
+        archiveDayBtn.addActionListener(e -> getArchiveDay());
+        archiveDayBtn.setToolTipText("Select a specific day");
+
         archiveDayLabel = new JLabel("Select day:");
-        archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
+        archiveDayFormatter = new SimpleDateFormat(UtcDate.IYD_FORMAT);
     }
     
     /**
@@ -266,9 +277,6 @@ public class AddePointDataChooser extends AddeChooser {
         final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
         final DateTimePicker dtp = new DateTimePicker((Date) null, false);
         if (archiveDay != null) {
-            if (archiveDayFormatter == null) {
-                archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
-            }
             Date d = null;
             try {
                 d = archiveDayFormatter.parse(archiveDay);
@@ -288,15 +296,13 @@ public class AddePointDataChooser extends AddeChooser {
                     descriptorChanged();
                 } else if (cmd.equals(GuiUtils.CMD_OK)) {
                     try {
-                        DateTime dt = new DateTime(dtp.getDate());
-                        String myDay = UtcDate.getYMD(dt);
-                        // archiveDayLabel.setText(UtcDate.formatUtcDate(dt,
-                        // "MMM dd, yyyy"));
-                        archiveDayLabel.setText(myDay);
+                        dt = new DateTime(dtp.getDate());
+                        archiveDay = UtcDate.formatUtcDate(dt, "yyyyDDD");
+                        archiveDayLabel.setText(UtcDate.getYMD(dt));
                     } catch (Exception e) {
                         logger.error("problem while setting archive day label", e);
                     }
-                    // System.out.println("archiveDay = " + archiveDay);
+                    logger.info("archiveDay = " + archiveDay);
                     setDoAbsoluteTimes(true);
                     descriptorChanged();
                 }
@@ -350,6 +356,9 @@ public class AddePointDataChooser extends AddeChooser {
         GuiUtils.enableTree(extra1, false);
         JComponent extra2 = getExtraTimeComponentAbsolute();
         JPanel timesPanel = super.makeTimesPanel(extra1, extra2);
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(archiveDayBtn);
+        underTimelistPanel.add(BorderLayout.CENTER, buttonPanel);
         return timesPanel;
     }
     
@@ -585,10 +594,10 @@ public class AddePointDataChooser extends AddeChooser {
         if (!isUpperAir() && !tryWithoutSampling) {
 //            appendKeyValue(buf, PROP_POS, "0");
             appendKeyValue(buf, PROP_POS, "ALL");
-            appendKeyValue(buf, PROP_SELECT, "'DAY "+getJulianDay()+";LAT 38 42;LON 70 75'");
+            appendKeyValue(buf, PROP_SELECT, "'DAY " + getJulianDay() + ";LAT 38 42;LON 70 75'");
         }
         else {
-            appendKeyValue(buf, PROP_SELECT, "'DAY "+getJulianDay()+"'");
+            appendKeyValue(buf, PROP_SELECT, "'DAY " + getJulianDay() + "'");
             appendKeyValue(buf, PROP_POS, "ALL");
         }
         if (getDoAbsoluteTimes()) {
@@ -599,20 +608,13 @@ public class AddePointDataChooser extends AddeChooser {
     }
     
     /**
-     * Get the current  Julian day as a String
+     * Get the current, or archive, if selected, Julian day as a String
      *
-     * @return the current day as a string (yyyyDDD)
+     * @return the julian day as a string (yyyyDDD)
      */
-    // TODO: This should really be more accessible
+
     private String getJulianDay() {
-        String retString = "";
-        try {
-            DateTime dt = new DateTime();
-            retString = UtcDate.formatUtcDate(dt, "yyyyDDD");
-        } catch (VisADException ve) {
-            logger.error("error building julian date", ve);
-        }
-        return retString;
+        return UtcDate.formatUtcDate(dt, "yyyyDDD");
     }
 
     /**
@@ -782,11 +784,11 @@ public class AddePointDataChooser extends AddeChooser {
                 return "";
             }
 
-            if (archiveDay!=null) {
+            if (archiveDay != null) {
                 logger.trace("archiveDay: {}", archiveDay);
                 try {
                     Date d = archiveDayFormatter.parse(archiveDay);
-                    DateTime dt = new DateTime(d);
+                    dt = new DateTime(d);
                     logger.trace("parsed to: {}", dt.toString());
                     buf.append("day ").append(UtcDate.getIYD(dt)).append(';');
                 } catch (Exception e) {

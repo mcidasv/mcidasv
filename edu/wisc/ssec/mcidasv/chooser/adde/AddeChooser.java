@@ -173,6 +173,18 @@ public class AddeChooser extends ucar.unidata.idv.chooser.adde.AddeChooser imple
     /** Property for the descriptor table */
     public static final String DESCRIPTOR_TABLE = "DESCRIPTOR_TABLE";
 
+    /** Archive day selector button. */
+    protected JButton archiveDayBtn;
+
+    /** archive date */
+    protected String archiveDay = null;
+
+    /** archive date */
+    protected String archiveBegTime = null;
+
+    /** archive date */
+    protected String archiveEndTime = null;
+
     /** Button label for day and optional time range selection */
     protected final static String DAY_TIME_RANGE_LABEL = "Set Day/Time Range";
 
