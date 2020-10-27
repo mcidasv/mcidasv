@@ -60,6 +60,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -67,9 +68,10 @@ import org.w3c.dom.Element;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
+
 import ucar.unidata.data.DataSelection;
-import visad.DateTime;
-import visad.VisADException;
 import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.point.AddePointDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
@@ -81,8 +83,9 @@ import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.visad.UtcDate;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
-import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
+
+import visad.DateTime;
+import visad.VisADException;
 
 /**
  * Selection widget for ADDE point data
@@ -141,6 +144,9 @@ public class AddePointDataChooser extends AddeChooser {
     /** Possibly ask for times a second time if the first sampling doesn't get any */
     private boolean gotObs = false;
     protected boolean tryWithoutSampling = false;
+
+    /** Julian Date formatter */
+    private static SimpleDateFormat jdFormat = new SimpleDateFormat("yyyyD");
         
     /**
      * Create a chooser for Adde POINT data
@@ -748,8 +754,18 @@ public class AddePointDataChooser extends AddeChooser {
      *
      * @param e The exception
      */
+
     @Override protected void handleConnectionError(Exception e) {
-        retry = false;
+        if (retry) {
+            // initialize Archive Date to PREVIOUS DAY (archive server)
+            LocalDate ld = LocalDate.now();
+            ld = ld.minusDays(1);
+            archiveDay = jdFormat.format(ld.toDate());
+            logger.info("setting archiveDay to: " + archiveDay);
+            getArchiveDay();
+            retry = false;
+            return;
+        }
         super.handleConnectionError(e);
     }
 
