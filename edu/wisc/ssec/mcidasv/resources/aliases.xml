@@ -109,7 +109,10 @@
      Temperature_height_above_ground_*.*_AverageNforecasts,
      Temperature_*.*_cloud_*.*_AverageAvg-*.*hourIntv,
      Temperature_depth_below_surface_layer_unweightedMean,
-     Temperature_layer_between_two_depths_below_surface_layer"/>
+     Temperature_layer_between_two_depths_below_surface_layer,
+     tmax,
+     tas,
+     ta"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -157,7 +160,8 @@
      Relative_humidity_height_above_ground_*.*_Average,
      Relative_humidity_isobaric_*.*_Average,
      Relative_humidity_sigma_layer_*.*_Average,
-     Relative_humidity_wrt_water_isobaric"/>
+     Relative_humidity_wrt_water_isobaric,
+     hur"/>
   <alias
      name="Z"
      label="Z"
@@ -227,7 +231,12 @@
      U-component_of_horizontal_wind_altitude_above_msl,
      U-component_of_horizontal_wind_isobaric,
      U-component_of_horizontal_wind_height_above_ground,
-     U_Component_of_Hourly_Maximum_10m_Wind_Speed_height_above_ground_.*._Hour_Maximum"/>
+     U_Component_of_Hourly_Maximum_10m_Wind_Speed_height_above_ground_.*._Hour_Maximum,
+     ux,
+     uwnd,
+     ua,
+     uas,
+     ULML"/>
   <alias
      name="V"
      label="V component of wind"
@@ -289,7 +298,13 @@
      V-component_of_horizontal_wind_altitude_above_msl,
      V-component_of_horizontal_wind_isobaric,
      V-component_of_horizontal_wind_height_above_ground,
-     V_Component_of_Hourly_Maximum_10m_Wind_Speed_height_above_ground_.*._Hour_Maximum"/>
+     V_Component_of_Hourly_Maximum_10m_Wind_Speed_height_above_ground_.*._Hour_Maximum,
+     vy,
+     vwnd,
+     va,
+     va,
+     vas,
+     VLML"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -379,7 +394,9 @@
      SST_avg,
      SST_avg_filled,
      SST_avg_comp,
-     HDFEOS/SWATHS/AMSR2_Level2_Ocean_Suite/Data_Fields/ReynoldsSST"/>
+     HDFEOS/SWATHS/AMSR2_Level2_Ocean_Suite/Data_Fields/ReynoldsSST,
+     analysed_sst,
+     CRW_SST"/>
   <!-- bob inq2679 -->
   <alias aliases="HT, .*_Band3_CTH" label="ABI L2 Cloud Top Height" name="ABI_L2_ACHA"/>
   <alias aliases="AOD, .*_Band22_AOD" label="ABI L2 Aerosol Optical Depth" name="ABI_L2_AOD"/>
