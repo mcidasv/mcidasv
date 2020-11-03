@@ -243,6 +243,11 @@ public class AddePointDataSource extends PointDataSource {
             return source;
         }
         source = temp.getSelectClause();
+
+        // TJJ Nov 2020 - Don't alter source URL (SELECT clause) for point data
+        String urlStr = temp.getURLString();
+        if (urlStr.toLowerCase().indexOf("select=") > 0) sampleIt = false;
+
         if (sampleIt) {
             if (source.indexOf(AddeUtil.LEVEL) >= 0) {
                 String level = makeLevelString(subset);

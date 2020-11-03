@@ -32,14 +32,18 @@ import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.KeyStroke.getKeyStroke;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +61,9 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 
 import org.joda.time.LocalDate;
@@ -68,6 +74,9 @@ import org.w3c.dom.Element;
 import edu.wisc.ssec.mcidas.McIDASUtil;
 import edu.wisc.ssec.mcidas.adde.AddePointDataReader;
 import edu.wisc.ssec.mcidas.adde.DataSetInfo;
+import edu.wisc.ssec.mcidasv.ui.JCalendarDateEditor;
+import edu.wisc.ssec.mcidasv.ui.JCalendarPicker;
+import edu.wisc.ssec.mcidasv.ui.JTimeRangePicker;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
 
@@ -76,7 +85,6 @@ import ucar.unidata.data.AddeUtil;
 import ucar.unidata.data.point.AddePointDataSource;
 import ucar.unidata.idv.chooser.IdvChooserManager;
 import ucar.unidata.idv.chooser.adde.AddeServer;
-import ucar.unidata.ui.DateTimePicker;
 import ucar.unidata.ui.symbol.StationModel;
 import ucar.unidata.ui.symbol.StationModelManager;
 import ucar.unidata.util.GuiUtils;
@@ -184,6 +192,10 @@ public class AddePointDataChooser extends AddeChooser {
         archiveDayBtn.addActionListener(e -> getArchiveDay());
         archiveDayBtn.setToolTipText("Select a specific day");
 
+        // Initialize time range to full day
+        archiveBegTime = "00:00:00";
+        archiveEndTime = "23:59:59";
+
         archiveDayLabel = new JLabel("Select day:");
         archiveDayFormatter = new SimpleDateFormat(UtcDate.IYD_FORMAT);
     }
@@ -280,13 +292,19 @@ public class AddePointDataChooser extends AddeChooser {
      * public by reason of implementation (or insanity).
      */
     public void getArchiveDay() {
-        final JDialog dialog = GuiUtils.createDialog("Set Archive Day", true);
-        final DateTimePicker dtp = new DateTimePicker((Date) null, false);
+
+        final JDialog dialog = GuiUtils.createDialog("Set Day and Time Range", true);
+        final JCalendarPicker picker = new JCalendarPicker(false);
+        final JTimeRangePicker trp = new JTimeRangePicker();
+
         if (archiveDay != null) {
+            if (archiveDayFormatter == null) {
+                archiveDayFormatter = new SimpleDateFormat(UtcDate.YMD_FORMAT);
+            }
             Date d = null;
             try {
                 d = archiveDayFormatter.parse(archiveDay);
-                dtp.setDate(d);
+                picker.setDate(d);
             } catch (Exception e) {
                 logException("parsing archive day " + archiveDay, e);
             }
@@ -295,39 +313,81 @@ public class AddePointDataChooser extends AddeChooser {
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String cmd = ae.getActionCommand();
-                if (cmd.equals(GuiUtils.CMD_REMOVE)) {
-                    archiveDay = null;
-                    archiveDayLabel.setText("Select day:");
-                    setDoAbsoluteTimes(true);
-                    descriptorChanged();
-                } else if (cmd.equals(GuiUtils.CMD_OK)) {
-                    try {
-                        dt = new DateTime(dtp.getDate());
-                        archiveDay = UtcDate.formatUtcDate(dt, "yyyyDDD");
-                        archiveDayLabel.setText(UtcDate.getYMD(dt));
-                    } catch (Exception e) {
-                        logger.error("problem while setting archive day label", e);
+                if (cmd.equals(GuiUtils.CMD_OK)) {
+
+                    // bad time range, throw up error window
+                    if (! trp.timeRangeOk()) {
+                        String msg = "Time range is invalid.\n" +
+                                     "Please provide valid hours, minutes and\n" +
+                                     "seconds, with End Time > Start Time.";
+                        Object[] params = { msg };
+                        JOptionPane.showMessageDialog(null, params, "Invalid Time Range", JOptionPane.OK_OPTION);
+                        return;
+                    } else {
+                        archiveBegTime = trp.getBegTimeStr();
+                        archiveEndTime = trp.getEndTimeStr();
                     }
-                    logger.info("archiveDay = " + archiveDay);
+                    try {
+                        String pickerDate = picker.getUserSelectedDay();
+                        LocalDate ld = LocalDate.parse(pickerDate);
+                        dt = new DateTime(ld.toDate());
+                        archiveDay = jdFormat.format(ld.toDate());
+                        archiveDayBtn.setText(pickerDate);
+                    } catch (Exception e) {
+                    }
+
                     setDoAbsoluteTimes(true);
+                    clearTimesList();
                     descriptorChanged();
                 }
                 dialog.dispose();
             }
         };
 
+        final JCalendarDateEditor dateEditor =
+            (JCalendarDateEditor)picker.getDateChooser().getDateEditor();
+        dateEditor.getUiComponent().addKeyListener(new KeyListener() {
+            @Override public void keyTyped(KeyEvent e) { }
+
+            @Override public void keyPressed(KeyEvent e) { }
+
+            @Override public void keyReleased(KeyEvent e) {
+                if (!Color.RED.equals(dateEditor.getForeground())) {
+                    KeyStroke stroke =
+                        getKeyStroke(e.getKeyCode(), e.getModifiers());
+                    if (stroke.getKeyCode() == KeyEvent.VK_ENTER) {
+                        try {
+                            String pickerDate = picker.getUserSelectedDay();
+                            LocalDate ld = LocalDate.parse(pickerDate);
+                            dt = new DateTime(ld.toDate());
+                            archiveDay = jdFormat.format(ld.toDate());
+                            archiveDayBtn.setText(pickerDate);
+                        } catch (Exception ex) {
+                            // nothing to do
+                        }
+                        setDoAbsoluteTimes(true);
+                        descriptorChanged();
+                        dialog.dispose();
+                    }
+                }
+            }
+        });
+
         JPanel buttons = GuiUtils.makeButtons(listener, new String[] {
-                GuiUtils.CMD_OK, GuiUtils.CMD_REMOVE, GuiUtils.CMD_CANCEL });
+                GuiUtils.CMD_OK, GuiUtils.CMD_CANCEL });
+
+        JPanel dateTimePanel = new JPanel(new FlowLayout());
+        dateTimePanel.add(picker);
+        dateTimePanel.add(trp);
 
         JComponent contents = GuiUtils.topCenterBottom(GuiUtils.inset(GuiUtils
-                .lLabel("Please select a day for this dataset:"), 10), GuiUtils
-                .inset(dtp, 10), buttons);
+                .lLabel("Please select a day and optional time range for this dataset:"), 10), GuiUtils
+                .inset(dateTimePanel, 10), buttons);
         Point p = new Point(200, 200);
         if (archiveDayBtn != null) {
             try {
                 p = archiveDayBtn.getLocationOnScreen();
             } catch (IllegalComponentStateException ice) {
-                logger.error("archive day button in illegal state", ice);
             }
         }
         dialog.setLocation(p);
@@ -455,6 +515,7 @@ public class AddePointDataChooser extends AddeChooser {
         appendRequestSelectClause(request);
         appendKeyValue(request, PROP_NUM, "ALL");
         appendKeyValue(request, PROP_POS, getDoRelativeTimes() ? "ALL" : "0");
+        logger.info("Request URL: " + request.toString());
         return request.toString();
     }
         
@@ -468,9 +529,9 @@ public class AddePointDataChooser extends AddeChooser {
         StringBuilder selectValue = new StringBuilder(1024);
         selectValue.append('\'');
         selectValue.append(getDayTimeSelectString());
-        //TODO: why is SFCHOURLY explicit here?  better way to do it?
+        // TODO: why is SFCHOURLY explicit here?  better way to do it?
         if ("SFCHOURLY".equalsIgnoreCase(getDescriptor())) {
-            selectValue.append(";type 0");
+            selectValue.append(";TYPE 0");
         }
         selectValue.append(';');
 
@@ -478,7 +539,8 @@ public class AddePointDataChooser extends AddeChooser {
             selectValue.append(AddeUtil.LEVEL);
             selectValue.append(';');
         }
-        selectValue.append(AddeUtil.LATLON_BOX);
+        // TJJ - do NOT add this if no bounds defined, causes errors downstream
+        // selectValue.append(AddeUtil.LATLON_BOX);
         selectValue.append('\'');
         appendKeyValue(buf, PROP_SELECT, selectValue.toString());
     }
@@ -597,18 +659,24 @@ public class AddePointDataChooser extends AddeChooser {
         appendKeyValue(buf, PROP_USER, getLastAddedUser());
         appendKeyValue(buf, PROP_PROJ, getLastAddedProj());
         appendKeyValue(buf, PROP_DESCR, getDescriptor());
-        if (!isUpperAir() && !tryWithoutSampling) {
-//            appendKeyValue(buf, PROP_POS, "0");
+        // TJJ - I don't know what is up with these hardcoded CONUS-like
+        // bounds, but finding it's best if I just leave them in
+        if (! isUpperAir() && ! tryWithoutSampling) {
             appendKeyValue(buf, PROP_POS, "ALL");
-            appendKeyValue(buf, PROP_SELECT, "'DAY " + getJulianDay() + ";LAT 38 42;LON 70 75'");
+            appendKeyValue(buf, PROP_SELECT, "'DAY " + getJulianDay() +
+                    ";TIME " + archiveBegTime + " " + archiveEndTime +
+                    ";LAT 38 42;LON 70 75'");
         }
         else {
-            appendKeyValue(buf, PROP_SELECT, "'DAY " + getJulianDay() + "'");
+            appendKeyValue(buf, PROP_SELECT, "'DAY " + getJulianDay() +
+                    ";TIME " + archiveBegTime + " " + archiveEndTime +
+                    ";LAT 38 42;LON 70 75'");
             appendKeyValue(buf, PROP_POS, "ALL");
         }
         if (getDoAbsoluteTimes()) {
             appendKeyValue(buf, PROP_NUM, "ALL");
         }
+
         appendKeyValue(buf, PROP_PARAM, "DAY TIME");
         return buf.toString();
     }
@@ -803,10 +871,7 @@ public class AddePointDataChooser extends AddeChooser {
             if (archiveDay != null) {
                 logger.trace("archiveDay: {}", archiveDay);
                 try {
-                    Date d = archiveDayFormatter.parse(archiveDay);
-                    dt = new DateTime(d);
-                    logger.trace("parsed to: {}", dt.toString());
-                    buf.append("day ").append(UtcDate.getIYD(dt)).append(';');
+                    buf.append("DAY ").append(archiveDay).append(';');
                 } catch (Exception e) {
                     logger.error("archiveDay parse error", e);
                 }
@@ -815,7 +880,7 @@ public class AddePointDataChooser extends AddeChooser {
                 logger.trace("archiveDay is null!");
             }
 
-            buf.append("time ");
+            buf.append("TIME ");
             for (int i = 0; i < times.size(); i++) {
                 DateTime dt = (DateTime) times.get(i);
                 buf.append(UtcDate.getHMS(dt));
