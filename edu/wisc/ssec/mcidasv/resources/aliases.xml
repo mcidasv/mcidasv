@@ -161,6 +161,7 @@
      Relative_humidity_isobaric_*.*_Average,
      Relative_humidity_sigma_layer_*.*_Average,
      Relative_humidity_wrt_water_isobaric,
+     Relative_humidity_wrt_water_height_above_ground,
      hur"/>
   <alias
      name="Z"
