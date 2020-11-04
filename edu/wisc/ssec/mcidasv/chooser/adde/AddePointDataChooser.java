@@ -149,6 +149,9 @@ public class AddePointDataChooser extends AddeChooser {
     protected boolean firstTime = true;
     protected boolean retry = true;
     
+    /** we reset the retry flag any time remote server changes */
+    protected String previousServer = "";
+
     /** Possibly ask for times a second time if the first sampling doesn't get any */
     private boolean gotObs = false;
     protected boolean tryWithoutSampling = false;
@@ -216,6 +219,17 @@ public class AddePointDataChooser extends AddeChooser {
      */
     @Override protected void readDescriptors() {
         try {
+
+            String currentServer = this.getServer();
+            logger.info("Current server: " + currentServer);
+            logger.info("Previous server: " + previousServer);
+            if (! currentServer.equals("previousServer")) {
+                // Reset retry flag to force archive servers to throw up date picker
+                logger.info("Resetting RETRY flag");
+                retry = true;
+            }
+            previousServer = currentServer;
+
             StringBuffer buff = getGroupUrl(REQ_DATASETINFO, getGroup());
             buff.append("&type=").append(getDataType());
             DataSetInfo dsinfo = new DataSetInfo(buff.toString());
@@ -805,7 +819,7 @@ public class AddePointDataChooser extends AddeChooser {
             stopTask(task);
             readTimesTask = null;
             handleConnectionError(excp);
-            if (!retry) {
+            if (! retry) {
                 return;
             }
             try {
