@@ -157,14 +157,15 @@ public class AddePointDataChooser extends AddeChooser {
     protected boolean tryWithoutSampling = false;
 
     /** Julian Date formatter */
-    private static SimpleDateFormat jdFormat = new SimpleDateFormat("yyyyD");
+    private static SimpleDateFormat jdFormat = new SimpleDateFormat("yyyyDDD");
         
     /**
-     * Create a chooser for Adde POINT data
+     * Create a chooser for ADDE POINT data
      *
      * @param mgr The chooser manager
      * @param root The chooser.xml node
      */
+
     public AddePointDataChooser(IdvChooserManager mgr, Element root) {
         super(mgr, root);
                                 
