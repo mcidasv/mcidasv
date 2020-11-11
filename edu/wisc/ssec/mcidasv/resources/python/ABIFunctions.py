@@ -247,12 +247,14 @@ def ABISplitWaterVaporDifference(b8T, b10T):
 def ABISplitSnowDifference(b5B, b2B):
     # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitSnowv2.pdf
     # band5 brit - band2 brit
-    return sub(b5B, b2B)
+    hr_b5B = resampleGrid(b5B, b2B)
+    return sub(hr_b5B, b2B)
 
 # Split Cloud Phase Channel Difference
 def ABISplitCloudPhaseDifference(b14T, b11T):
     # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_G16_CloudPhaseBTD.pdf
     # band14 temperature - band11 temperature
+    
     return sub(b14T, b11T)
 
 # Split Window Channel Difference
