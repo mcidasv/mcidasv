@@ -345,7 +345,7 @@
             <params categories="" p1="CMI_C12" p2="CMI_C13"/>
         </operands>
     </derived>
-    <derived description="ABI Split Snow Difference" formula="ABISplitSnowDifference(D1[label=Band 5 Brightness], D2[label=Band 2 Brightness])" id="abisplitsnow" isdefault="true" isenduser="true" override="true">
+    <derived description="ABI Split Snow Difference" formula="ABISplitSnowDifference(D1[label=Band 5 Reflectance], D2[label=Band 2 Reflectance])" id="abisplitsnow" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:imagedisplayoverz"/>
@@ -364,10 +364,7 @@
             <category value="display:imagecontour"/>
         </categories>
         <operands categories="">
-            <params categories="" p1="186_Band5_BRIT" p2="186_Band2_BRIT"/>
-            <params categories="" p1="188_Band5_BRIT" p2="188_Band2_BRIT"/>
-            <params categories="" p1="190_Band5_BRIT" p2="190_Band2_BRIT"/>
-            <params categories="" p1="192_Band5_BRIT" p2="192_Band2_BRIT"/>
+            <params categories="" p1="CMI_C05" p2="CMI_C02"/>
         </operands>
     </derived>
     <derived description="ABI Split Water Vapor Difference" formula="ABISplitWaterVaporDifference(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature])" id="abisplitwatervapor" isdefault="true" isenduser="true" override="true">
