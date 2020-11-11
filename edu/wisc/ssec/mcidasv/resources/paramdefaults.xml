@@ -92,7 +92,7 @@
   <param ci_base="0.0" ci_interval="4.0" ci_max="20.0" ci_min="-20.0" ci_width="1" name="abinightfog" range_max="16.0" range_min="-16.0" table="ABI Fog" unit="K"/>
   <param ci_base="-28.0" ci_interval="4.0" ci_max="8.0" ci_min="-32.0" ci_width="1" name="abisplitwindow" range_max="-11.0" range_min="3.4" table="Enhanced Echo Tops" unit="K"/>
   <param ci_base="-16.0" ci_interval="4.0" ci_max="30.0" ci_min="-20.0" ci_width="1" name="abisplitcloudphase" range_max="25.0" range_min="-10.0" table="truncated gridded data" unit="K"/>
-  <param ci_base="0.0" ci_interval="20.0" ci_max="40.0" ci_min="-100.0" ci_width="1" name="abisplitsnow" range_max="20.0" range_min="-80.0" table="truncated gridded data"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="40.0" ci_min="-100.0" ci_width="1" name="abisplitsnow" range_max="30.0" range_min="-80.0" table="truncated gridded data"/>
   <param ci_base="-28.0" ci_interval="4.0" ci_max="8.0" ci_min="-32.0" ci_width="1" name="abisplitwatervapor" range_max="5.0" range_min="-32.0" table="truncated gridded data" unit="K"/>
   <param ci_base="-42.0" ci_interval="7.0" ci_max="28.0" ci_min="-49.0" ci_width="1" name="abisplitozone" range_max="5.0" range_min="-45.0" table="truncated gridded data" unit="K"/>
   <!-- end inq 2836 -->
