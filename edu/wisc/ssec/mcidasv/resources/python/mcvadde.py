@@ -229,12 +229,15 @@ _formats = {
     "GINI":                                                    AddeFormat.GINI,
     # The following servers are not supported on Windows
     "GOES ABI":                                                AddeFormat.GOES16_ABI,
+    "ABIN":                                                    AddeFormat.GOES16_ABI,
     "Himawari-8":                                              AddeFormat.HIMAWARI8,
+    "WARI":                                                    AddeFormat.HIMAWARI8,
     "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
     "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
     "INSAT3D_SOUNDER":                                         AddeFormat.INSAT3D_SOUNDER,
     "INSAT-3D Sounder":                                        AddeFormat.INSAT3D_SOUNDER,
     "Sectorized CMI":                                          AddeFormat.SCMI,
+    "SCMI":                                                    AddeFormat.SCMI,
 }
 
 _human_units_to_adde = {
