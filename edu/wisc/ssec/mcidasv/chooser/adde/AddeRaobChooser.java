@@ -103,8 +103,11 @@ import edu.wisc.ssec.mcidasv.util.McVGuiUtils.Width;
  * @author IDV development team
  * @version $Revision$Date: 2011/03/24 16:06:32 $
  */
+
 public class AddeRaobChooser extends AddePointDataChooser {
-    
+
+    private static final long serialVersionUID = 1L;
+
     /** Property for the data type. */
     public static String DATA_TYPE = "RAOB";
     
@@ -168,7 +171,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
         descriptorComboBox2.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if ( !ignoreDescriptorChange
-                        && (e.getStateChange() == e.SELECTED)) {
+                        && (e.getStateChange() == ItemEvent.SELECTED)) {
                     descriptorChanged(false);
                 }
             }
@@ -187,7 +190,7 @@ public class AddeRaobChooser extends AddePointDataChooser {
         satelliteTimeComboBox.setEditable(true);
         satelliteTimeComboBox.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange()==e.DESELECTED) return;
+                if (e.getStateChange() == ItemEvent.DESELECTED) return;
                 satelliteTime = satelliteTimeComboBox.getSelectedItem().toString();
                 Misc.run(new Runnable() {
                     public void run() {
@@ -1274,10 +1277,6 @@ public class AddeRaobChooser extends AddePointDataChooser {
                 .addPreferredGap(RELATED))
         );
 
-        
-        
-        
-        
         setInnerPanel(myPanel);
         return super.doMakeContents(true);
     }
