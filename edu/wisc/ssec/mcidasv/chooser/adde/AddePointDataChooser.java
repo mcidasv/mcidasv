@@ -535,11 +535,12 @@ public class AddePointDataChooser extends AddeChooser {
     }
         
     /**
-     * Get the select clause for the adde request specific to this
+     * Get the select clause for the ADDE request specific to this
      * type of data.
      *
      * @param buf The buffer to append to
      */
+
     protected void appendRequestSelectClause(StringBuffer buf) {
         StringBuilder selectValue = new StringBuilder(1024);
         selectValue.append('\'');
@@ -554,8 +555,8 @@ public class AddePointDataChooser extends AddeChooser {
             selectValue.append(AddeUtil.LEVEL);
             selectValue.append(';');
         }
-        // TJJ - do NOT add this if no bounds defined, causes errors downstream
-        // selectValue.append(AddeUtil.LATLON_BOX);
+        // TJJ - This must be a placeholder macro for the URL
+        selectValue.append(AddeUtil.LATLON_BOX);
         selectValue.append('\'');
         appendKeyValue(buf, PROP_SELECT, selectValue.toString());
     }
@@ -958,14 +959,14 @@ public class AddePointDataChooser extends AddeChooser {
     /**
      * Get the descriptor widget label.
      *
-     * @return  label for the descriptor  widget
+     * @return  label for the descriptor widget
      */
     @Override public String getDescriptorLabel() {
         return "Point Type"; 
     }
     
     /**
-     * get the adde server grup type to use
+     * get the ADDE server group type to use
      *
      * @return group type
      */
