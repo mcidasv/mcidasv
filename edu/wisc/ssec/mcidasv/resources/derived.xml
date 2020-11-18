@@ -265,6 +265,51 @@
         </categories>
         <operands categories=""/>
     </derived>
+    <!-- Adding derived AVHRR RGB formulas - RMC - INQ 2940 - NOV 2020 -->
+    <derived description="AVHRR Night Microphysics RGB" formula="AVHRRNightMicrophysicsRGB(D1[label=Band 3 Temperature],D2[label=Band 4 Temperature],D3[label=Band 5 Temperature])" id="avhrrnightmicrophysics" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AVHRR Functions"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AVHRR_RGB_NightMicrophysics"/>
+        </operands>
+    </derived>
+    <derived description="AVHRR Day Microphysics RGB" formula="AVHRRDayMicrophysicsRGB(D1[label=Band 2 Reflectance],D2[label=Band 4 Temperature],D3[label=Band 6 Reflectance])" id="avhrrdaymicrophysics" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AVHRR Functions"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AVHRR_RGB_DayMicrophysics"/>
+        </operands>
+    </derived>
+    <derived description="AVHRR Natural Color RGB" formula="AVHRRNaturalColorRGB(D1[label=Band 1 Reflectance],D2[label=Band 2 Reflectance],D3[label=Band 6 Reflectance])" id="ahvrrnaturalcolor" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AVHRR Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AVHRR_RGB_NaturalColor"/>
+        </operands>
+    </derived>
+    <derived description="AVHRR Cloud RGB" formula="AVHRRCloudRGB(D1[label=Band 1 Reflectance],D2[label=Band 2 Reflectance],D3[label=Band 4 Temperature])" id="avhrrcloud" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AVHRR Functions"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AVHRR_RGB_Cloud"/>
+        </operands>
+    </derived>
     <!-- Adding derived ABI RGB and band subtraction formulas - RMC - INQ 2836 - Oct 2019 -->
     <!-- Reorganized formulas to be under Imagery - RMC - INQ 2872 - Jan 2020 -->
     <derived description="ABI Night Fog Difference" formula="ABINightFogDifference(D1[label=Band 13 Temperature], D2[label=Band 7 Temperature])" id="abinightfog" isdefault="true" isenduser="true" override="true">
