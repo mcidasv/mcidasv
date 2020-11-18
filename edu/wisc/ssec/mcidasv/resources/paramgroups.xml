@@ -294,4 +294,85 @@
     <params p1="U-component_of_horizontal_wind_isobaric" p2="V-component_of_horizontal_wind_isobaric"/>
     <params p1="U-component_of_horizontal_wind_height_above_ground" p2="V-component_of_horizontal_wind_height_above_ground"/>
   </paramgroup>
+  <!-- RMC Nov 2020 Inq 2940 -->
+  <paramgroup description="AVHRR Night Microphysics RGB" name="AVHRR_RGB_NightMicrophysics">
+    <params p1="41_Band3_TEMP" p2="41_Band4_TEMP" p3="41_Band5_TEMP"/>
+    <params p1="42_Band3_TEMP" p2="42_Band4_TEMP" p3="42_Band5_TEMP"/>
+    <params p1="43_Band3_TEMP" p2="43_Band4_TEMP" p3="43_Band5_TEMP"/>
+    <params p1="44_Band3_TEMP" p2="44_Band4_TEMP" p3="44_Band5_TEMP"/>
+    <params p1="45_Band3_TEMP" p2="45_Band4_TEMP" p3="45_Band5_TEMP"/>
+    <params p1="60_Band3_TEMP" p2="60_Band4_TEMP" p3="60_Band5_TEMP"/>
+    <params p1="61_Band3_TEMP" p2="61_Band4_TEMP" p3="61_Band5_TEMP"/>
+    <params p1="62_Band3_TEMP" p2="62_Band4_TEMP" p3="62_Band5_TEMP"/>
+    <params p1="63_Band3_TEMP" p2="63_Band4_TEMP" p3="63_Band5_TEMP"/>
+    <params p1="64_Band3_TEMP" p2="64_Band4_TEMP" p3="64_Band5_TEMP"/>
+    <params p1="65_Band3_TEMP" p2="65_Band4_TEMP" p3="65_Band5_TEMP"/>
+    <params p1="66_Band3_TEMP" p2="66_Band4_TEMP" p3="66_Band5_TEMP"/>
+    <params p1="67_Band3_TEMP" p2="67_Band4_TEMP" p3="67_Band5_TEMP"/>
+    <params p1="68_Band3_TEMP" p2="68_Band4_TEMP" p3="68_Band5_TEMP"/>
+    <params p1="69_Band3_TEMP" p2="69_Band4_TEMP" p3="69_Band5_TEMP"/>
+    <params p1="240_Band3_TEMP" p2="240_Band4_TEMP" p3="240_Band5_TEMP"/>
+    <params p1="241_Band3_TEMP" p2="241_Band4_TEMP" p3="241_Band5_TEMP"/>
+    <params p1="242_Band3_TEMP" p2="242_Band4_TEMP" p3="242_Band5_TEMP"/>
+  </paramgroup>
+  <paramgroup description="AVHRR Day Microphysics RGB" name="AVHRR_RGB_DayMicrophysics">
+    <params p1="41_Band2_REFL" p2="41_Band4_TEMP" p3="41_Band6_REFL"/>
+    <params p1="42_Band2_REFL" p2="42_Band4_TEMP" p3="42_Band6_REFL"/>
+    <params p1="43_Band2_REFL" p2="43_Band4_TEMP" p3="43_Band6_REFL"/>
+    <params p1="44_Band2_REFL" p2="44_Band4_TEMP" p3="44_Band6_REFL"/>
+    <params p1="45_Band2_REFL" p2="45_Band4_TEMP" p3="45_Band6_REFL"/>
+    <params p1="60_Band2_REFL" p2="60_Band4_TEMP" p3="60_Band6_REFL"/>
+    <params p1="61_Band2_REFL" p2="61_Band4_TEMP" p3="61_Band6_REFL"/>
+    <params p1="62_Band2_REFL" p2="62_Band4_TEMP" p3="62_Band6_REFL"/>
+    <params p1="63_Band2_REFL" p2="63_Band4_TEMP" p3="63_Band6_REFL"/>
+    <params p1="64_Band2_REFL" p2="64_Band4_TEMP" p3="64_Band6_REFL"/>
+    <params p1="65_Band2_REFL" p2="65_Band4_TEMP" p3="65_Band6_REFL"/>
+    <params p1="66_Band2_REFL" p2="66_Band4_TEMP" p3="66_Band6_REFL"/>
+    <params p1="67_Band2_REFL" p2="67_Band4_TEMP" p3="67_Band6_REFL"/>
+    <params p1="68_Band2_REFL" p2="68_Band4_TEMP" p3="68_Band6_REFL"/>
+    <params p1="69_Band2_REFL" p2="69_Band4_TEMP" p3="69_Band6_REFL"/>
+    <params p1="240_Band2_REFL" p2="240_Band4_TEMP" p3="240_Band6_REFL"/>
+    <params p1="241_Band2_REFL" p2="241_Band4_TEMP" p3="241_Band6_REFL"/>
+    <params p1="242_Band2_REFL" p2="242_Band4_TEMP" p3="242_Band6_REFL"/>
+  </paramgroup>
+  <paramgroup description="AVHRR Natural Color RGB" name="AVHRR_RGB_NaturalColor">
+    <params p1="41_Band1_REFL" p2="41_Band2_REFL" p3="41_Band6_REFL"/>
+    <params p1="42_Band1_REFL" p2="42_Band2_REFL" p3="42_Band6_REFL"/>
+    <params p1="43_Band1_REFL" p2="43_Band2_REFL" p3="43_Band6_REFL"/>
+    <params p1="44_Band1_REFL" p2="44_Band2_REFL" p3="44_Band6_REFL"/>
+    <params p1="45_Band1_REFL" p2="45_Band2_REFL" p3="45_Band6_REFL"/>
+    <params p1="60_Band1_REFL" p2="60_Band2_REFL" p3="60_Band6_REFL"/>
+    <params p1="61_Band1_REFL" p2="61_Band2_REFL" p3="61_Band6_REFL"/>
+    <params p1="62_Band1_REFL" p2="62_Band2_REFL" p3="62_Band6_REFL"/>
+    <params p1="63_Band1_REFL" p2="63_Band2_REFL" p3="63_Band6_REFL"/>
+    <params p1="64_Band1_REFL" p2="64_Band2_REFL" p3="64_Band6_REFL"/>
+    <params p1="65_Band1_REFL" p2="65_Band2_REFL" p3="65_Band6_REFL"/>
+    <params p1="66_Band1_REFL" p2="66_Band2_REFL" p3="66_Band6_REFL"/>
+    <params p1="67_Band1_REFL" p2="67_Band2_REFL" p3="67_Band6_REFL"/>
+    <params p1="68_Band1_REFL" p2="68_Band2_REFL" p3="68_Band6_REFL"/>
+    <params p1="69_Band1_REFL" p2="69_Band2_REFL" p3="69_Band6_REFL"/>
+    <params p1="240_Band1_REFL" p2="240_Band2_REFL" p3="240_Band6_REFL"/>
+    <params p1="241_Band1_REFL" p2="241_Band2_REFL" p3="241_Band6_REFL"/>
+    <params p1="242_Band1_REFL" p2="242_Band2_REFL" p3="242_Band6_REFL"/>
+  </paramgroup>
+  <paramgroup description="AVHRR Cloud RGB" name="AVHRR_RGB_Cloud">
+    <params p1="41_Band1_REFL" p2="41_Band2_REFL" p3="41_Band4_TEMP"/>
+    <params p1="42_Band1_REFL" p2="42_Band2_REFL" p3="42_Band4_TEMP"/>
+    <params p1="43_Band1_REFL" p2="43_Band2_REFL" p3="43_Band4_TEMP"/>
+    <params p1="44_Band1_REFL" p2="44_Band2_REFL" p3="44_Band4_TEMP"/>
+    <params p1="45_Band1_REFL" p2="45_Band2_REFL" p3="45_Band4_TEMP"/>
+    <params p1="60_Band1_REFL" p2="60_Band2_REFL" p3="60_Band4_TEMP"/>
+    <params p1="61_Band1_REFL" p2="61_Band2_REFL" p3="61_Band4_TEMP"/>
+    <params p1="62_Band1_REFL" p2="62_Band2_REFL" p3="62_Band4_TEMP"/>
+    <params p1="63_Band1_REFL" p2="63_Band2_REFL" p3="63_Band4_TEMP"/>
+    <params p1="64_Band1_REFL" p2="64_Band2_REFL" p3="64_Band4_TEMP"/>
+    <params p1="65_Band1_REFL" p2="65_Band2_REFL" p3="65_Band4_TEMP"/>
+    <params p1="66_Band1_REFL" p2="66_Band2_REFL" p3="66_Band4_TEMP"/>
+    <params p1="67_Band1_REFL" p2="67_Band2_REFL" p3="67_Band4_TEMP"/>
+    <params p1="68_Band1_REFL" p2="68_Band2_REFL" p3="68_Band4_TEMP"/>
+    <params p1="69_Band1_REFL" p2="69_Band2_REFL" p3="69_Band4_TEMP"/>
+    <params p1="240_Band1_REFL" p2="240_Band2_REFL" p3="240_Band4_TEMP"/>
+    <params p1="241_Band1_REFL" p2="241_Band2_REFL" p3="241_Band4_TEMP"/>
+    <params p1="242_Band1_REFL" p2="242_Band2_REFL" p3="242_Band4_TEMP"/>
+  </paramgroup>
 </paramgroups>
