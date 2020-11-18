@@ -507,6 +507,9 @@
     <resource label="Image Routines" location="%IDVPATH%/python/image.py">
       <property name="category" value="System"/>
     </resource>
+    <resource label="AVHRR Routines" location="%APPPATH%/python/AVHRRFunctions.py">
+      <property name="category" value="System"/>
+    </resource>
     <resource label="ABI Routines" location="%APPPATH%/python/ABIFunctions.py">
       <property name="category" value="System"/>
     </resource>
