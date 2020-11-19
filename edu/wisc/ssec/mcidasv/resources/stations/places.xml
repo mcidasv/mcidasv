@@ -82,10 +82,11 @@
      name="Snotel Sites"
      category="Earth"
      href="http://www.unidata.ucar.edu/georesources/locations/earth/snotel.xml"/>
+  <!-- Commenting out in favor of volcanos.xml RMC Inq 2939 Nov 2020
   <stationtable
      name="Volcanos"
      category="Earth"
-     href="http://www.unidata.ucar.edu/georesources/locations/earth/volcanos.kmz"/>
+     href="http://www.unidata.ucar.edu/georesources/locations/earth/volcanos.kmz"/> -->
 
 
   <stationtable
