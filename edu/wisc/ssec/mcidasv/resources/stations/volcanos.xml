@@ -1,0 +1,1465 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<stationtables>
+    <stationtable name="Volcanos" category="Earth">
+        <station name="Abu" lat="34.5" lon="131.6" elev="571"/>
+        <station name="Acamarachi" lat="-23.3" lon="-67.62" elev="6046"/>
+        <station name="Acatenango" lat="14.501" lon="-90.876" elev="3976"/>
+        <station name="Acigol-Nevsehir" lat="38.57" lon="34.52" elev="1689"/>
+        <station name="Adams" lat="46.206" lon="-121.49" elev="3742"/>
+        <station name="Adatara" lat="37.62" lon="140.28" elev="1718"/>
+        <station name="Adwa" lat="10.07" lon="40.84" elev="1733"/>
+        <station name="Afdera" lat="13.08" lon="40.85" elev="1295"/>
+        <station name="Agmagan-Karadag" lat="40.275" lon="44.75" elev="3560"/>
+        <station name="Agrigan" lat="18.77" lon="145.67" elev="965"/>
+        <station name="Agua" lat="14.465" lon="-90.743" elev="3760"/>
+        <station name="Agua de Pau" lat="37.77" lon="-25.47" elev="947"/>
+        <station name="Aguilera" lat="-50.17" lon="-73.83" elev="0"/>
+        <station name="Agung" lat="-8.342" lon="115.508" elev="3142"/>
+        <station name="Ahyi" lat="20.42" lon="145.03" elev="-137"/>
+        <station name="Akademia Nauk" lat="53.983" lon="159.45" elev="1180"/>
+        <station name="Akagi" lat="36.53" lon="139.18" elev="1828"/>
+        <station name="Akan" lat="43.38" lon="144.02" elev="1499"/>
+        <station name="Akhtang" lat="55.43" lon="158.65" elev="1956"/>
+        <station name="Akita-Komaga-take" lat="39.75" lon="140.8" elev="1637"/>
+        <station name="Akita-Yake-yama" lat="39.97" lon="140.77" elev="1366"/>
+        <station name="Akuseki-jima" lat="29.45" lon="129.6" elev="586"/>
+        <station name="Akutan" lat="54.13" lon="-165.97" elev="1303"/>
+        <station name="Alaid" lat="50.858" lon="155.55" elev="2339"/>
+        <station name="Alamagan" lat="17.6" lon="145.83" elev="744"/>
+        <station name="Alayta" lat="12.88" lon="40.57" elev="1501"/>
+        <station name="Albano, Monte" lat="41.73" lon="12.7" elev="949"/>
+        <station name="Alcedo, Volcan" lat="-0.43" lon="-91.12" elev="1130"/>
+        <station name="Ale Bagu" lat="13.52" lon="40.63" elev="1031"/>
+        <station name="Alid" lat="14.88" lon="39.92" elev="904"/>
+        <station name="Alligator Lake" lat="60.42" lon="-135.42" elev="2217"/>
+        <station name="Almolonga" lat="14.82" lon="-91.48" elev="3197"/>
+        <station name="Alney-Chashakondzha" lat="56.7" lon="159.65" elev="2598"/>
+        <station name="Alngey" lat="57.7" lon="160.4" elev="1853"/>
+        <station name="Alu" lat="13.82" lon="40.55" elev="429"/>
+        <station name="Alutu" lat="7.77" lon="38.78" elev="2335"/>
+        <station name="Amak" lat="55.42" lon="-163.15" elev="513"/>
+        <station name="Amasing" lat="-0.55" lon="127.5" elev="1030"/>
+        <station name="Ambalatungan Group" lat="17.32" lon="121.1" elev="2329"/>
+        <station name="Ambang" lat="0.75" lon="124.42" elev="1795"/>
+        <station name="Ambitle" lat="-4.08" lon="153.65" elev="450"/>
+        <station name="Amboy" lat="34.55" lon="-115.78" elev="288"/>
+        <station name="Ambre-Bobaomby" lat="-12.48" lon="49.1" elev="1475"/>
+        <station name="Ambrym" lat="-16.25" lon="168.12" elev="1334"/>
+        <station name="Amorong" lat="15.828" lon="120.805" elev="376"/>
+        <station name="Amsterdam Island" lat="-37.83" lon="77.52" elev="881"/>
+        <station name="Amukta" lat="52.5" lon="-171.25" elev="1066"/>
+        <station name="Anatahan" lat="16.35" lon="145.67" elev="788"/>
+        <station name="Anaun" lat="56.32" lon="158.83" elev="1828"/>
+        <station name="Andahua Valley" lat="-15.42" lon="-72.33" elev="4713"/>
+        <station name="Andrus" lat="-75.8" lon="-132.33" elev="2978"/>
+        <station name="Aneityum" lat="-20.2" lon="169.83" elev="852"/>
+        <station name="Aniakchak" lat="56.88" lon="-158.17" elev="1341"/>
+        <station name="Ankaizina Field" lat="-14.3" lon="48.67" elev="2878"/>
+        <station name="Ankaratra Field" lat="-19.4" lon="47.2" elev="2644"/>
+        <station name="Antillanca Group" lat="-40.771" lon="-72.153" elev="1990"/>
+        <station name="Antipodes Island" lat="-49.683" lon="178.767" elev="402"/>
+        <station name="Antisana" lat="-0.481" lon="-78.141" elev="5753"/>
+        <station name="Antofagasta de la Sierra" lat="-26.08" lon="-67.5" elev="4000"/>
+        <station name="Antofagasta de la Sierra" lat="-26.083" lon="-67.5" elev="4000"/>
+        <station name="Antofalla" lat="-25.53" lon="-68" elev="6100"/>
+        <station name="Antuco" lat="-37.406" lon="-71.349" elev="2979"/>
+        <station name="Aoba" lat="-15.4" lon="167.83" elev="1496"/>
+        <station name="Aoga-shima" lat="32.45" lon="139.77" elev="423"/>
+        <station name="Apaneca Range" lat="13.891" lon="-89.786" elev="2036"/>
+        <station name="Apastepeque Field" lat="13.72" lon="-88.77" elev="700"/>
+        <station name="Apo" lat="6.987" lon="125.273" elev="2954"/>
+        <station name="Apoyeque" lat="12.242" lon="-86.342" elev="518"/>
+        <station name="Aracar" lat="-24.27" lon="-67.77" elev="6082"/>
+        <station name="Aragats" lat="40.55" lon="44.12" elev="4090"/>
+        <station name="Aramuaca, Laguna" lat="13.428" lon="-88.105" elev="180"/>
+        <station name="Ararat" lat="39.7" lon="44.28" elev="5165"/>
+        <station name="Arayat" lat="15.2" lon="120.742" elev="1026"/>
+        <station name="Ardoukoba" lat="11.58" lon="42.47" elev="298"/>
+        <station name="Arenal" lat="10.463" lon="-84.703" elev="1657"/>
+        <station name="Arenales" lat="-47.2" lon="-73.483" elev="3437"/>
+        <station name="Arhab, Harra of" lat="15.63" lon="44.08" elev="3100"/>
+        <station name="Arjuno-Welirang" lat="-7.725" lon="112.58" elev="3339"/>
+        <station name="Arshan" lat="47.5" lon="120.7" elev=""/>
+        <station name="Asama" lat="36.4" lon="138.53" elev="2560"/>
+        <station name="Asavyo" lat="13.07" lon="41.6" elev="1200"/>
+        <station name="Ascension" lat="-7.95" lon="-14.37" elev="858"/>
+        <station name="Askja" lat="65.03" lon="-16.75" elev="1516"/>
+        <station name="Aso" lat="32.88" lon="131.1" elev="1592"/>
+        <station name="Assab Volc Field" lat="12.95" lon="42.43" elev="987"/>
+        <station name="Asuncion" lat="19.67" lon="145.4" elev="857"/>
+        <station name="Atacazo" lat="-0.353" lon="-78.617" elev="4463"/>
+        <station name="Atakor Volc Field" lat="23.333" lon="5.833" elev="2918"/>
+        <station name="Atitlan" lat="14.583" lon="-91.186" elev="3535"/>
+        <station name="Atka" lat="52.38" lon="-174.15" elev="1533"/>
+        <station name="Atlasova" lat="57.97" lon="160.65" elev="1764"/>
+        <station name="Atlixcos, Cerro Los" lat="19.809" lon="-96.526" elev="800"/>
+        <station name="Atsonupuri" lat="44.804" lon="147.13" elev="1205"/>
+        <station name="Atuel, Caldera del" lat="-34.65" lon="-70.05" elev="5189"/>
+        <station name="Auckland Field" lat="-36.9" lon="174.87" elev="260"/>
+        <station name="Augustine" lat="59.37" lon="-153.42" elev="1252"/>
+        <station name="Avachinsky" lat="53.255" lon="158.83" elev="2741"/>
+        <station name="Awu" lat="3.67" lon="125.5" elev="1320"/>
+        <station name="Axial Seamount" lat="45.95" lon="-130" elev="-1500"/>
+        <station name="Ayelu" lat="10.082" lon="40.702" elev="2145"/>
+        <station name="Azufral, Volcan" lat="1.08" lon="-77.68" elev="4070"/>
+        <station name="Azul, Cerro" lat="-0.9" lon="-91.42" elev="1690"/>
+        <station name="Azul, Cerro [Quizapu]" lat="-35.653" lon="-70.761" elev="3788"/>
+        <station name="Azul, Volcan" lat="12.53" lon="-83.87" elev="201"/>
+        <station name="Azuma" lat="37.73" lon="140.25" elev="2024"/>
+        <station name="Babuyan Claro" lat="19.523" lon="121.94" elev="1180"/>
+        <station name="Bachelor" lat="43.979" lon="-121.688" elev="2763"/>
+        <station name="Bagana" lat="-6.14" lon="155.195" elev="1750"/>
+        <station name="Bakenin" lat="53.905" lon="158.07" elev="2278"/>
+        <station name="Baker" lat="48.786" lon="-121.82" elev="3285"/>
+        <station name="Bal Haf, Harra of" lat="14.05" lon="48.33" elev="233"/>
+        <station name="Balatocan" lat="8.8" lon="124.92" elev="2450"/>
+        <station name="Balbi" lat="-5.83" lon="154.98" elev="2715"/>
+        <station name="Bald Knoll" lat="37.328" lon="-112.408" elev="2135"/>
+        <station name="Baluan" lat="-2.57" lon="147.28" elev="254"/>
+        <station name="Baluran" lat="-7.85" lon="114.37" elev="1247"/>
+        <station name="Balut" lat="5.4" lon="125.375" elev="852"/>
+        <station name="Bam" lat="-3.6" lon="144.85" elev="685"/>
+        <station name="Bamus" lat="-5.2" lon="151.23" elev="2248"/>
+        <station name="Banahao" lat="14.07" lon="121.48" elev="2158"/>
+        <station name="Banda Api" lat="-4.525" lon="129.871" elev="640"/>
+        <station name="Bandai" lat="37.6" lon="140.08" elev="1819"/>
+        <station name="Banua Wuhu" lat="3.138" lon="125.491" elev="-5"/>
+        <station name="Baransky" lat="45.1" lon="148.02" elev="1132"/>
+        <station name="Barcena" lat="19.3" lon="-110.82" elev="332"/>
+        <station name="Bardarbunga" lat="64.63" lon="-17.53" elev="2000"/>
+        <station name="Barkhatnaya Sopka" lat="52.823" lon="158.27" elev="870"/>
+        <station name="Barren Island" lat="12.292" lon="93.875" elev="354"/>
+        <station name="Barrier, The" lat="2.32" lon="36.57" elev="1032"/>
+        <station name="Baru" lat="8.8" lon="-82.558" elev="3477"/>
+        <station name="Barva" lat="10.135" lon="-84.1" elev="2906"/>
+        <station name="Bas Dong Nai" lat="10.8" lon="107.2" elev="392"/>
+        <station name="Batur" lat="-8.242" lon="115.375" elev="1717"/>
+        <station name="Bayo, Cerro" lat="-25.42" lon="-68.58" elev="5401"/>
+        <station name="Bayonnaise Rocks" lat="31.92" lon="139.92" elev="10"/>
+        <station name="Bayuda Volc Field" lat="18.33" lon="32.75" elev="0"/>
+        <station name="Bazman" lat="28.07" lon="60" elev="3490"/>
+        <station name="Behm Canal-Rudyerd Bay" lat="55.32" lon="-131.05" elev="500"/>
+        <station name="Belenkaya" lat="51.75" lon="157.27" elev="892"/>
+        <station name="Belirang-Beriti" lat="-2.82" lon="102.18" elev="1958"/>
+        <station name="Belknap" lat="44.285" lon="-121.841" elev="2095"/>
+        <station name="Bely" lat="57.88" lon="160.53" elev="2080"/>
+        <station name="Berlin" lat="-76.05" lon="-136" elev="3478"/>
+        <station name="Beru" lat="8.95" lon="39.75" elev="1100"/>
+        <station name="Berutarube" lat="44.47" lon="146.93" elev="1220"/>
+        <station name="Besar" lat="-4.43" lon="103.67" elev="1899"/>
+        <station name="Bezymianny" lat="55.978" lon="160.587" elev="2882"/>
+        <station name="Bibinoi" lat="-0.78" lon="127.72" elev="900"/>
+        <station name="Big Cave" lat="40.955" lon="-121.365" elev="1259"/>
+        <station name="Bilate River Field" lat="7.07" lon="38.1" elev="1700"/>
+        <station name="Biliran" lat="11.523" lon="124.534" elev="1187"/>
+        <station name="Billy Mitchell" lat="-6.092" lon="155.225" elev="1544"/>
+        <station name="Bir Borhut" lat="15.55" lon="50.63" elev="0"/>
+        <station name="Birk, Harrat al" lat="18.367" lon="41.633" elev="381"/>
+        <station name="Bishoftu Volc Field" lat="8.78" lon="38.98" elev="1850"/>
+        <station name="Biu Plateau" lat="10.75" lon="12" elev="0"/>
+        <station name="Black Peak" lat="56.53" lon="-158.8" elev="1032"/>
+        <station name="Black Rock Desert" lat="38.97" lon="-112.5" elev="1800"/>
+        <station name="Blanca, Loma" lat="-36.286" lon="-71.009" elev="2268"/>
+        <station name="Bliznets" lat="56.97" lon="159.78" elev="1244"/>
+        <station name="Bliznetsy" lat="57.35" lon="161.367" elev="265"/>
+        <station name="Blue Lake Crater" lat="44.42" lon="-121.77" elev="1230"/>
+        <station name="Blup Blup" lat="-3.508" lon="144.62" elev="402"/>
+        <station name="Bobrof" lat="51.9" lon="-177.43" elev="738"/>
+        <station name="Bogatyr Ridge" lat="44.83" lon="147.37" elev="1634"/>
+        <station name="Bogoslof" lat="53.93" lon="-168.03" elev="101"/>
+        <station name="Boisa" lat="-3.994" lon="144.963" elev="240"/>
+        <station name="Bola" lat="-5.15" lon="150.03" elev="1155"/>
+        <station name="Bolshe-Bannaya" lat="52.9" lon="157.78" elev="1200"/>
+        <station name="Bolshoi Payalpan" lat="55.88" lon="157.78" elev="1906"/>
+        <station name="Bolshoi Semiachik" lat="54.32" lon="160.02" elev="1720"/>
+        <station name="Bolshoi-Kekuknaysky" lat="56.47" lon="157.8" elev="1401"/>
+        <station name="Bombalai" lat="4.4" lon="117.88" elev="531"/>
+        <station name="Bona-Churchill" lat="61.38" lon="-141.75" elev="5005"/>
+        <station name="Boomerang Seamount" lat="-37.721" lon="77.825" elev="-650"/>
+        <station name="Bora-Bericcio Complex" lat="8.27" lon="39.03" elev="2285"/>
+        <station name="Borale Ale" lat="13.725" lon="40.6" elev="668"/>
+        <station name="Borawli" lat="13.3" lon="40.98" elev="812"/>
+        <station name="Borawli Complex" lat="11.63" lon="41.45" elev="875"/>
+        <station name="Boset-Bericha" lat="8.558" lon="39.475" elev="2447"/>
+        <station name="Bouvet" lat="-54.42" lon="3.35" elev="780"/>
+        <station name="Bratan" lat="-8.28" lon="115.13" elev="2276"/>
+        <station name="Brava" lat="14.85" lon="-24.72" elev="900"/>
+        <station name="Bravo, Cerro" lat="5.092" lon="-75.3" elev="4000"/>
+        <station name="Brennisteinsfjoll" lat="63.92" lon="-21.83" elev="626"/>
+        <station name="Bridge River Cones" lat="50.8" lon="-123.4" elev="2500"/>
+        <station name="Bridgeman Island" lat="-62.05" lon="-56.75" elev="240"/>
+        <station name="Brimstone Island" lat="-30.23" lon="-178.92" elev="-2000"/>
+        <station name="Bristol Island" lat="-59.03" lon="-26.58" elev="1100"/>
+        <station name="Brothers" lat="-34.875" lon="179.075" elev="-1350"/>
+        <station name="Brushy Butte" lat="41.178" lon="-121.443" elev="1174"/>
+        <station name="Buckle Island" lat="-66.8" lon="163.25" elev="1239"/>
+        <station name="Bud Dajo" lat="5.95" lon="121.07" elev="440"/>
+        <station name="Bufumbira" lat="-1.23" lon="29.72" elev="2440"/>
+        <station name="Buldir" lat="52.37" lon="175.98" elev="656"/>
+        <station name="Bulusan" lat="12.77" lon="124.05" elev="1565"/>
+        <station name="Bunyaruguru Field" lat="-0.2" lon="30.08" elev="1554"/>
+        <station name="Burney, Monte" lat="-52.33" lon="-73.4" elev="1758"/>
+        <station name="Bus-Obo" lat="47.12" lon="109.08" elev="1162"/>
+        <station name="Butajiri-Silti Field" lat="8.05" lon="38.35" elev="2281"/>
+        <station name="Buzzard Creek" lat="64.07" lon="-148.42" elev="830"/>
+        <station name="Cabalian" lat="10.287" lon="125.22" elev="945"/>
+        <station name="Caburga" lat="-39.2" lon="-71.83" elev="995"/>
+        <station name="Cagua" lat="18.222" lon="122.123" elev="1133"/>
+        <station name="Calabozos" lat="-35.558" lon="-70.496" elev="3508"/>
+        <station name="Calatrava Volc Field" lat="38.867" lon="-4.017" elev="1117"/>
+        <station name="Calayo" lat="7.877" lon="125.068" elev="646"/>
+        <station name="Calbuco" lat="-41.326" lon="-72.614" elev="2003"/>
+        <station name="Callaqui" lat="-37.92" lon="-71.45" elev="3164"/>
+        <station name="Cameroon, Mt." lat="4.203" lon="9.17" elev="4095"/>
+        <station name="Camiguin" lat="9.203" lon="124.673" elev="1332"/>
+        <station name="Camiguin de Babuyanes" lat="18.83" lon="121.86" elev="712"/>
+        <station name="Campi Flegrei" lat="40.827" lon="14.139" elev="458"/>
+        <station name="Campi Flegrei Mar Sicilia" lat="37.1" lon="12.7" elev="-8"/>
+        <station name="Candlemas Island" lat="-57.08" lon="-26.67" elev="550"/>
+        <station name="Carlisle" lat="52.9" lon="-170.05" elev="1620"/>
+        <station name="Carran-Los Venados" lat="-40.35" lon="-72.07" elev="1114"/>
+        <station name="Carrizozo" lat="33.78" lon="-105.93" elev="1731"/>
+        <station name="Casiri, Nevados" lat="-17.47" lon="-69.82" elev="5650"/>
+        <station name="Cayambe" lat="0.029" lon="-77.986" elev="5790"/>
+        <station name="Cayute-La Vigueria" lat="-41.25" lon="-72.27" elev="506"/>
+        <station name="Ceboruco" lat="21.125" lon="-104.508" elev="2280"/>
+        <station name="Cendres, Ile des" lat="10.158" lon="109.014" elev="-20"/>
+        <station name="Central Island" lat="3.5" lon="36.042" elev="550"/>
+        <station name="Cereme" lat="-6.892" lon="108.4" elev="3078"/>
+        <station name="Ch'uga-ryong" lat="38.33" lon="127.33" elev="452"/>
+        <station name="Chacana" lat="-0.375" lon="-78.25" elev="4643"/>
+        <station name="Chachani, Nevado" lat="-16.191" lon="-71.53" elev="6057"/>
+        <station name="Chagulak" lat="52.57" lon="-171.13" elev="1142"/>
+        <station name="Chaine des Puys" lat="45.775" lon="2.967" elev="1464"/>
+        <station name="Chaiten" lat="-42.833" lon="-72.646" elev="962"/>
+        <station name="Changbaishan" lat="41.98" lon="128.08" elev="2744"/>
+        <station name="Chapulul, Cerro" lat="-38.37" lon="-71.08" elev="2143"/>
+        <station name="Cherny" lat="56.82" lon="159.67" elev="1778"/>
+        <station name="Cherpuk Group" lat="55.55" lon="157.467" elev="1868"/>
+        <station name="Chichinautzin" lat="19.08" lon="-99.13" elev="3930"/>
+        <station name="Chichon, El" lat="17.36" lon="-93.228" elev="1150"/>
+        <station name="Chiginagak" lat="57.13" lon="-157" elev="2075"/>
+        <station name="Chikurachki" lat="50.325" lon="155.458" elev="1816"/>
+        <station name="Chiliques" lat="-23.58" lon="-67.7" elev="5778"/>
+        <station name="Chillan, Nevados de" lat="-36.863" lon="-71.377" elev="3212"/>
+        <station name="Chimborazo" lat="-1.464" lon="-78.815" elev="6310"/>
+        <station name="Chinameca" lat="13.475" lon="-88.32" elev="1228"/>
+        <station name="Chingo Volc Field" lat="14.12" lon="-89.73" elev="1775"/>
+        <station name="Chiquimula Volc Field" lat="14.83" lon="-89.55" elev="1192"/>
+        <station name="Chiracha" lat="6.65" lon="38.12" elev="1650"/>
+        <station name="Chirinkotan" lat="48.98" lon="153.48" elev="724"/>
+        <station name="Chirip" lat="45.38" lon="147.92" elev="1589"/>
+        <station name="Chirpoi" lat="46.525" lon="150.875" elev="742"/>
+        <station name="Chokai" lat="39.08" lon="140.03" elev="2237"/>
+        <station name="Chyulu Hills" lat="-2.68" lon="37.88" elev="2188"/>
+        <station name="Ciguatepe, Cerro El" lat="12.53" lon="-86.142" elev="603"/>
+        <station name="Cinnamon Butte" lat="43.241" lon="-122.108" elev="1956"/>
+        <station name="Cinotepec, Cerro" lat="14.02" lon="-89.25" elev="665"/>
+        <station name="Clark" lat="-36.446" lon="177.839" elev="-860"/>
+        <station name="Clear Lake" lat="38.97" lon="-122.77" elev="1439"/>
+        <station name="Cleft Segment" lat="44.83" lon="-130.3" elev="-2140"/>
+        <station name="Cleveland" lat="52.82" lon="-169.95" elev="1730"/>
+        <station name="Coatepeque Caldera" lat="13.87" lon="-89.55" elev="746"/>
+        <station name="Cochons, Ile Aux" lat="-46.1" lon="50.23" elev="775"/>
+        <station name="Cofre de Perote" lat="19.492" lon="-97.15" elev="4282"/>
+        <station name="Colachi" lat="-23.23" lon="-67.65" elev="5631"/>
+        <station name="Coleman Seamount" lat="-8.83" lon="157.17" elev="0"/>
+        <station name="Colima" lat="19.514" lon="-103.62" elev="3850"/>
+        <station name="Colluma, Cerro" lat="-18.5" lon="-68.07" elev="3876"/>
+        <station name="Colo [Una Una]" lat="-0.17" lon="121.608" elev="507"/>
+        <station name="Comondu-La Purisima" lat="26" lon="-111.92" elev="780"/>
+        <station name="Concepcion" lat="11.538" lon="-85.622" elev="1700"/>
+        <station name="Conchagua" lat="13.277" lon="-87.853" elev="1250"/>
+        <station name="Conchaguita" lat="13.22" lon="-87.765" elev="550"/>
+        <station name="Cook, Isla" lat="-54.95" lon="-70.27" elev="150"/>
+        <station name="Copahue" lat="-37.85" lon="-71.17" elev="2965"/>
+        <station name="Copiapo" lat="-27.3" lon="-69.13" elev="6052"/>
+        <station name="Corbetti Caldera" lat="7.18" lon="38.43" elev="2320"/>
+        <station name="Corcovado" lat="-43.18" lon="-72.8" elev="2300"/>
+        <station name="Cordon Chalviri" lat="-23.85" lon="-67.62" elev="5623"/>
+        <station name="Cordon de Puntas Negras" lat="-23.75" lon="-67.53" elev="5852"/>
+        <station name="Cordon del Azufre" lat="-25.33" lon="-68.52" elev="5463"/>
+        <station name="Coronado" lat="29.08" lon="-113.513" elev="440"/>
+        <station name="Coropuna" lat="-15.52" lon="-72.65" elev="6377"/>
+        <station name="Corvo" lat="39.67" lon="-31.07" elev="715"/>
+        <station name="Cosiguina" lat="12.98" lon="-87.57" elev="872"/>
+        <station name="Coso Volc Field" lat="36.03" lon="-117.82" elev="2400"/>
+        <station name="Cotopaxi" lat="-0.677" lon="-78.436" elev="5911"/>
+        <station name="Crater Basalt Volc Field" lat="-42.017" lon="-70.183" elev="1359"/>
+        <station name="Crater Lake" lat="42.93" lon="-122.12" elev="2487"/>
+        <station name="Crater Mountain" lat="-6.58" lon="145.08" elev="3233"/>
+        <station name="Craters of the Moon" lat="43.42" lon="-113.5" elev="2005"/>
+        <station name="Crow Lagoon" lat="54.7" lon="-130.23" elev="335"/>
+        <station name="Cu-Lao Re Group" lat="15.38" lon="109.12" elev="181"/>
+        <station name="Cuicocha" lat="0.308" lon="-78.364" elev="3246"/>
+        <station name="Cuilapa-Barbarena" lat="14.333" lon="-90.4" elev="1454"/>
+        <station name="Cumbal" lat="0.98" lon="-77.88" elev="4764"/>
+        <station name="Cumbres, Las" lat="19.15" lon="-97.27" elev="3940"/>
+        <station name="Curacoa" lat="-15.62" lon="-173.67" elev="-33"/>
+        <station name="Curtis Island" lat="-30.542" lon="-178.561" elev="137"/>
+        <station name="Condor, Cerro el" lat="-26.617" lon="-68.35" elev="6532"/>
+        <station name="Dabbahu" lat="12.6" lon="40.48" elev="1442"/>
+        <station name="Dabbayra" lat="12.38" lon="40.07" elev="1302"/>
+        <station name="Dacht-I-Navar Group" lat="33.95" lon="67.92" elev="3800"/>
+        <station name="Daikoku" lat="21.324" lon="144.194" elev="-323"/>
+        <station name="Daisetsu" lat="43.68" lon="142.88" elev="2290"/>
+        <station name="Dakataua" lat="-5.056" lon="150.108" elev="400"/>
+        <station name="Dalaffilla" lat="13.792" lon="40.55" elev="613"/>
+        <station name="Dallol" lat="14.242" lon="40.3" elev="-48"/>
+        <station name="Dama Ali" lat="11.28" lon="41.63" elev="1068"/>
+        <station name="Damavand" lat="35.951" lon="52.109" elev="5670"/>
+        <station name="Dana" lat="55.62" lon="-161.22" elev="1354"/>
+        <station name="Danau Complex" lat="-6.2" lon="105.97" elev="1778"/>
+        <station name="Dar-Alages" lat="39.7" lon="45.542" elev="3329"/>
+        <station name="Dariganga Volc Field" lat="45.33" lon="114" elev="1778"/>
+        <station name="Darwin, Volcan" lat="-0.18" lon="-91.28" elev="1330"/>
+        <station name="Daun, Bukit" lat="-3.38" lon="102.37" elev="2467"/>
+        <station name="Davidof" lat="51.97" lon="178.33" elev="328"/>
+        <station name="Davis Lake" lat="43.57" lon="-121.82" elev="2163"/>
+        <station name="Dawson Strait Group" lat="-9.62" lon="150.88" elev="500"/>
+        <station name="Deception Island" lat="-62.97" lon="-60.65" elev="576"/>
+        <station name="Demon" lat="45.5" lon="148.85" elev="1205"/>
+        <station name="Dempo" lat="-4.03" lon="103.13" elev="3173"/>
+        <station name="Denison" lat="58.42" lon="-154.45" elev="2318"/>
+        <station name="Descabezado Grande" lat="-35.58" lon="-70.75" elev="3953"/>
+        <station name="Devils Garden" lat="43.512" lon="-120.861" elev="1698"/>
+        <station name="Dgida Basin" lat="50.52" lon="103.25" elev="1500"/>
+        <station name="Dhamar, Harras of" lat="14.57" lon="44.67" elev="3500"/>
+        <station name="Diable, Morne Au" lat="15.62" lon="-61.45" elev="861"/>
+        <station name="Diablotins, Morne" lat="15.5" lon="-61.42" elev="1430"/>
+        <station name="Diamond Craters" lat="43.1" lon="-118.75" elev="1435"/>
+        <station name="Didicas" lat="19.077" lon="122.202" elev="244"/>
+        <station name="Dieng Volc Complex" lat="-7.2" lon="109.92" elev="2565"/>
+        <station name="Diky Greben" lat="51.43" lon="157" elev="1070"/>
+        <station name="Dofen" lat="9.35" lon="40.13" elev="1151"/>
+        <station name="Doma Peaks" lat="-5.9" lon="143.15" elev="3568"/>
+        <station name="Domuyo" lat="-36.63" lon="-70.42" elev="4709"/>
+        <station name="Don Joao de Castro Bank" lat="38.23" lon="-26.63" elev="-14"/>
+        <station name="Dona Juana" lat="1.47" lon="-76.92" elev="4150"/>
+        <station name="Dotsero" lat="39.65" lon="-107.03" elev="2230"/>
+        <station name="Douglas" lat="58.87" lon="-153.55" elev="2140"/>
+        <station name="Doyo Seamount" lat="27.683" lon="140.8" elev="-860"/>
+        <station name="Dubbi" lat="13.58" lon="41.808" elev="1625"/>
+        <station name="Dukono" lat="1.68" lon="127.88" elev="1185"/>
+        <station name="Duncan Canal" lat="56.5" lon="-133.1" elev="15"/>
+        <station name="Durango Volc Field" lat="24.15" lon="-104.45" elev="2075"/>
+        <station name="Dutton" lat="55.18" lon="-162.27" elev="1506"/>
+        <station name="Dzenzursky" lat="53.637" lon="158.922" elev="2155"/>
+        <station name="E-san" lat="41.8" lon="141.17" elev="618"/>
+        <station name="Eagle Lake Field" lat="40.63" lon="-120.83" elev="1652"/>
+        <station name="Easter Island" lat="-27.15" lon="-109.383" elev="511"/>
+        <station name="Eastern Gemini Seamount" lat="-20.98" lon="170.28" elev="-80"/>
+        <station name="Ebeko" lat="50.68" lon="156.02" elev="1156"/>
+        <station name="Ebulobo" lat="-8.808" lon="121.18" elev="2124"/>
+        <station name="Eburru, Ol Doinyo" lat="-0.63" lon="36.23" elev="2856"/>
+        <station name="Ecuador, Volcan" lat="-0.02" lon="-91.546" elev="790"/>
+        <station name="Edgecumbe" lat="57.05" lon="-135.75" elev="976"/>
+        <station name="Edziza" lat="57.72" lon="-130.63" elev="2786"/>
+        <station name="Eggella" lat="56.57" lon="158.52" elev="1046"/>
+        <station name="Egmont" lat="-39.3" lon="174.07" elev="2518"/>
+        <station name="Egon" lat="-8.67" lon="122.45" elev="1703"/>
+        <station name="Ekarma" lat="48.958" lon="153.93" elev="1170"/>
+        <station name="Elbrus" lat="43.33" lon="42.45" elev="5633"/>
+        <station name="Elmenteita Badlands" lat="-0.52" lon="36.27" elev="2126"/>
+        <station name="Elovsky" lat="57.53" lon="160.53" elev="1381"/>
+        <station name="Emmons Lake" lat="55.33" lon="-162.07" elev="1465"/>
+        <station name="Emperor of China" lat="-6.62" lon="124.22" elev="-2850"/>
+        <station name="Emuruangogolak" lat="1.5" lon="36.33" elev="1328"/>
+        <station name="Endeavour Ridge" lat="47.95" lon="-129.1" elev="-2400"/>
+        <station name="Epi" lat="-16.68" lon="168.37" elev="833"/>
+        <station name="Erciyes Dagi" lat="38.52" lon="35.48" elev="3916"/>
+        <station name="Erebus" lat="-77.53" lon="167.17" elev="3794"/>
+        <station name="Erta Ale" lat="13.6" lon="40.67" elev="613"/>
+        <station name="Es Safa" lat="33.08" lon="37.15" elev="979"/>
+        <station name="Escanaba Segment" lat="40.983" lon="-127.5" elev="-1700"/>
+        <station name="Escorial, Cerro" lat="-25.08" lon="-68.37" elev="5447"/>
+        <station name="Esjufjoll" lat="64.27" lon="-16.65" elev="1760"/>
+        <station name="Esmeralda Bank" lat="15" lon="145.25" elev="-43"/>
+        <station name="Espenberg" lat="66.35" lon="-164.33" elev="243"/>
+        <station name="Est, Ile de l'" lat="-46.43" lon="52.2" elev="1090"/>
+        <station name="Esteli" lat="13.17" lon="-86.4" elev="899"/>
+        <station name="Etna" lat="37.734" lon="15.004" elev="3350"/>
+        <station name="Eyjafjallajokull" lat="63.63" lon="-19.62" elev="1666"/>
+        <station name="Falcon Island" lat="-20.32" lon="-175.42" elev="-17"/>
+        <station name="Farallon de Pajaros" lat="20.53" lon="144.9" elev="360"/>
+        <station name="Fayal" lat="38.6" lon="-28.73" elev="1043"/>
+        <station name="Fedotych" lat="57.13" lon="160.4" elev="965"/>
+        <station name="Fentale" lat="8.975" lon="39.93" elev="2007"/>
+        <station name="Fernandina" lat="-0.37" lon="-91.55" elev="1495"/>
+        <station name="Firura, Nevados" lat="-15.23" lon="-72.63" elev="5498"/>
+        <station name="Fisher" lat="54.67" lon="-164.35" elev="1094"/>
+        <station name="Flores" lat="39.4" lon="-31.17" elev="915"/>
+        <station name="Flores" lat="14.3" lon="-90" elev="1600"/>
+        <station name="Fogo" lat="14.95" lon="-24.35" elev="2829"/>
+        <station name="Fonualei" lat="-18.02" lon="-174.325" elev="200"/>
+        <station name="Forecast Seamount" lat="13.4" lon="143.917" elev=""/>
+        <station name="Fort Portal Field" lat="0.7" lon="30.25" elev="1524"/>
+        <station name="Fort Selkirk" lat="62.93" lon="-137.38" elev="1239"/>
+        <station name="Four Craters Lava Field" lat="43.361" lon="-120.669" elev="1501"/>
+        <station name="Fournaise, Piton de la" lat="-21.229" lon="55.713" elev="2631"/>
+        <station name="Fourpeaked" lat="58.77" lon="-153.68" elev="2104"/>
+        <station name="Fremrinamur" lat="65.43" lon="-16.65" elev="939"/>
+        <station name="Frosty" lat="55.07" lon="-162.82" elev="1920"/>
+        <station name="Fuego" lat="14.473" lon="-90.88" elev="3763"/>
+        <station name="Fuerteventura" lat="28.358" lon="-14.02" elev="529"/>
+        <station name="Fuji" lat="35.35" lon="138.73" elev="3776"/>
+        <station name="Fukue-jima" lat="32.653" lon="128.851" elev="317"/>
+        <station name="Fukujin" lat="21.925" lon="143.442" elev="-217"/>
+        <station name="Fukutoku-okanoba" lat="24.28" lon="141.52" elev="-14"/>
+        <station name="Furnas" lat="37.77" lon="-25.32" elev="805"/>
+        <station name="Fuss Peak" lat="50.27" lon="155.25" elev="1772"/>
+        <station name="Gabillema" lat="11.08" lon="41.27" elev="1459"/>
+        <station name="Gada Ale" lat="13.975" lon="40.408" elev="287"/>
+        <station name="Galapagos Rift" lat="0.792" lon="-86.15" elev="-2430"/>
+        <station name="Galeras" lat="1.22" lon="-77.37" elev="4276"/>
+        <station name="Gallego" lat="-9.35" lon="159.73" elev="1000"/>
+        <station name="Galunggung" lat="-7.25" lon="108.05" elev="2168"/>
+        <station name="Gamalama" lat="0.8" lon="127.325" elev="1715"/>
+        <station name="Gamchen" lat="54.973" lon="160.702" elev="2576"/>
+        <station name="Gamkonora" lat="1.375" lon="127.52" elev="1635"/>
+        <station name="Garbuna Group" lat="-5.45" lon="150.03" elev="564"/>
+        <station name="Gareloi" lat="51.78" lon="-178.8" elev="1573"/>
+        <station name="Garibaldi Lake" lat="49.92" lon="-123.03" elev="2316"/>
+        <station name="Garibaldi, Mt." lat="49.85" lon="-123" elev="2678"/>
+        <station name="Garove" lat="-4.692" lon="149.5" elev="368"/>
+        <station name="Garua Harbour" lat="-5.269" lon="150.088" elev="565"/>
+        <station name="Gaua" lat="-14.27" lon="167.5" elev="797"/>
+        <station name="Gedamsa Caldera" lat="8.35" lon="39.18" elev="1984"/>
+        <station name="Gede" lat="-6.78" lon="106.98" elev="2958"/>
+        <station name="Genovesa" lat="0.32" lon="-89.958" elev="64"/>
+        <station name="Geodesistoy" lat="56.33" lon="158.67" elev="1170"/>
+        <station name="Giggenbach" lat="-30.036" lon="-178.713" elev="-65"/>
+        <station name="Girekol" lat="39.17" lon="43.33" elev="0"/>
+        <station name="Glacier Peak" lat="48.112" lon="-121.113" elev="3213"/>
+        <station name="Gloria, La" lat="19.33" lon="-97.25" elev="3500"/>
+        <station name="Golden Trout Creek" lat="36.358" lon="-118.32" elev="2886"/>
+        <station name="Golets-Tornyi Group" lat="45.25" lon="148.35" elev="442"/>
+        <station name="Gollu Dag" lat="38.25" lon="34.57" elev="2143"/>
+        <station name="Golovnin" lat="43.85" lon="145.53" elev="541"/>
+        <station name="Goodenough" lat="-9.48" lon="150.35" elev="220"/>
+        <station name="Gordon" lat="62.13" lon="-143.08" elev="2755"/>
+        <station name="Gorely" lat="52.558" lon="158.03" elev="1829"/>
+        <station name="Goriaschaia Sopka" lat="46.83" lon="151.75" elev="891"/>
+        <station name="Gorny Institute" lat="57.33" lon="160.2" elev="2125"/>
+        <station name="Graciosa" lat="39.02" lon="-27.97" elev="402"/>
+        <station name="Gran Canaria" lat="28" lon="-15.58" elev="1950"/>
+        <station name="Great Sitkin" lat="52.08" lon="-176.13" elev="1740"/>
+        <station name="Griggs" lat="58.35" lon="-155.1" elev="2317"/>
+        <station name="Grille, La" lat="-11.47" lon="43.33" elev="1087"/>
+        <station name="Grimsnes" lat="64.03" lon="-20.87" elev="214"/>
+        <station name="Grimsvotn" lat="64.42" lon="-17.33" elev="1725"/>
+        <station name="Groppo" lat="11.73" lon="40.25" elev="930"/>
+        <station name="Grozny Group" lat="45.02" lon="147.87" elev="1211"/>
+        <station name="Guadalupe" lat="29.07" lon="-118.28" elev="1100"/>
+        <station name="Guagua Pichincha" lat="-0.171" lon="-78.598" elev="4784"/>
+        <station name="Guallatiri" lat="-18.42" lon="-69.17" elev="6071"/>
+        <station name="Guayaques" lat="-22.88" lon="-67.58" elev="5598"/>
+        <station name="Guazapa" lat="13.9" lon="-89.12" elev="1438"/>
+        <station name="Gufa" lat="12.55" lon="42.53" elev="600"/>
+        <station name="Guguan" lat="17.32" lon="145.85" elev="287"/>
+        <station name="Guntur" lat="-7.13" lon="107.83" elev="2249"/>
+        <station name="Gunungapi Wetar" lat="-6.642" lon="126.65" elev="282"/>
+        <station name="Hachijo-jima" lat="33.13" lon="139.77" elev="854"/>
+        <station name="Hachimantai" lat="39.95" lon="140.85" elev="1614"/>
+        <station name="Hainan Dao" lat="19.7" lon="110.1" elev=""/>
+        <station name="Hakkoda Group" lat="40.65" lon="140.88" elev="1585"/>
+        <station name="Hakone" lat="35.22" lon="139.02" elev="1438"/>
+        <station name="Haku-san" lat="36.15" lon="136.78" elev="2702"/>
+        <station name="Haleakala" lat="20.708" lon="-156.25" elev="3055"/>
+        <station name="Halla" lat="33.37" lon="126.53" elev="1950"/>
+        <station name="Hanish" lat="13.72" lon="42.73" elev="422"/>
+        <station name="Hargy" lat="-5.33" lon="151.1" elev="1148"/>
+        <station name="Harrah, Al" lat="31.083" lon="38.417" elev="1100"/>
+        <station name="Haruj" lat="27.25" lon="17.5" elev="1200"/>
+        <station name="Haruna" lat="36.47" lon="138.88" elev="1449"/>
+        <station name="Hasan Dagi" lat="38.13" lon="34.17" elev="3253"/>
+        <station name="Haut Dong Nai" lat="11.6" lon="108.2" elev="1000"/>
+        <station name="Hayes" lat="61.62" lon="-152.48" elev="2788"/>
+        <station name="Haylan, Jabal" lat="15.43" lon="44.78" elev="1550"/>
+        <station name="Hayli Gubbi" lat="13.5" lon="40.72" elev="521"/>
+        <station name="Healy" lat="-35.004" lon="178.973" elev="980"/>
+        <station name="Heard" lat="-53.106" lon="73.513" elev="2745"/>
+        <station name="Heart Peaks" lat="58.6" lon="-131.97" elev="2012"/>
+        <station name="Hekla" lat="63.98" lon="-19.7" elev="1491"/>
+        <station name="Hell's Half Acre" lat="43.5" lon="-112.45" elev="1631"/>
+        <station name="Hengill" lat="64.18" lon="-21.33" elev="803"/>
+        <station name="Herbert" lat="52.75" lon="-170.12" elev="1290"/>
+        <station name="Hertali" lat="9.78" lon="40.33" elev="900"/>
+        <station name="Hierro" lat="27.73" lon="-18.03" elev="1500"/>
+        <station name="Hijiori" lat="38.6" lon="140.18" elev="516"/>
+        <station name="Hiri" lat="0.88" lon="127.32" elev="630"/>
+        <station name="Hiuchi" lat="36.95" lon="139.28" elev="2346"/>
+        <station name="Hobicha Caldera" lat="6.78" lon="37.83" elev="1800"/>
+        <station name="Hodson" lat="-56.7" lon="-27.15" elev="1005"/>
+        <station name="Hofsjokull" lat="64.78" lon="-18.92" elev="1782"/>
+        <station name="Homa Mountain" lat="-0.38" lon="34.5" elev="1751"/>
+        <station name="Home Reef" lat="-18.992" lon="-174.775" elev="-2"/>
+        <station name="Honggeertu" lat="41.47" lon="113" elev="1700"/>
+        <station name="Hood" lat="45.374" lon="-121.694" elev="3426"/>
+        <station name="Hoodoo Mountain" lat="56.78" lon="-131.28" elev="1820"/>
+        <station name="Hornopiren" lat="-41.874" lon="-72.431" elev="1572"/>
+        <station name="Hromundartindur" lat="64.073" lon="-21.202" elev="540"/>
+        <station name="Hualalai" lat="19.692" lon="-155.87" elev="2523"/>
+        <station name="Huanquihue Group" lat="-39.87" lon="-71.55" elev="1300"/>
+        <station name="Huaynaputina" lat="-16.608" lon="-70.85" elev="4850"/>
+        <station name="Hudson Mountains" lat="-74.33" lon="-99.42" elev="749"/>
+        <station name="Hudson, Cerro" lat="-45.9" lon="-72.97" elev="1905"/>
+        <station name="Huequi" lat="-42.377" lon="-72.578" elev="1318"/>
+        <station name="Huila" lat="2.92" lon="-76.05" elev="5365"/>
+        <station name="Hulubelu" lat="-5.35" lon="104.6" elev="1040"/>
+        <station name="Humeros, Los" lat="19.68" lon="-97.45" elev="3150"/>
+        <station name="Hunga Tonga-Hunga Ha'apai" lat="-20.57" lon="-175.38" elev="0"/>
+        <station name="Hunter Island" lat="-22.4" lon="172.05" elev="297"/>
+        <station name="Hutapanjang" lat="-2.333" lon="101.6" elev="2021"/>
+        <station name="Hydrographers Range" lat="-9" lon="148.37" elev="1915"/>
+        <station name="Iamalele" lat="-9.52" lon="150.53" elev="200"/>
+        <station name="Ibu" lat="1.475" lon="127.642" elev="1325"/>
+        <station name="Ibusuki Volc Field" lat="31.22" lon="130.57" elev="922"/>
+        <station name="Ichinsky" lat="55.68" lon="157.73" elev="3621"/>
+        <station name="Iettunup" lat="58.4" lon="161.08" elev="1340"/>
+        <station name="Igwisi Hills" lat="-4.87" lon="31.92" elev="0"/>
+        <station name="Ijen" lat="-8.058" lon="114.242" elev="2799"/>
+        <station name="Iktunup" lat="58.08" lon="160.77" elev="2300"/>
+        <station name="Iliamna" lat="60.03" lon="-153.08" elev="3053"/>
+        <station name="Iliboleng" lat="-8.342" lon="123.258" elev="1659"/>
+        <station name="Ililabalekan" lat="-8.53" lon="123.42" elev="1018"/>
+        <station name="Ilimuda" lat="-8.478" lon="122.671" elev="1100"/>
+        <station name="Iliwerung" lat="-8.54" lon="123.59" elev="1018"/>
+        <station name="Illiniza" lat="-0.659" lon="-78.714" elev="5248"/>
+        <station name="Ilopango" lat="13.672" lon="-89.053" elev="450"/>
+        <station name="Ilyinsky" lat="51.49" lon="157.2" elev="1578"/>
+        <station name="Imun" lat="2.15" lon="98.93" elev="1505"/>
+        <station name="Imuruk Lake" lat="65.6" lon="-163.92" elev="610"/>
+        <station name="In Ezzane Volc Field" lat="23" lon="10.833" elev=""/>
+        <station name="Indian Heaven" lat="45.93" lon="-121.82" elev="1513"/>
+        <station name="Ingakslugwat Hills" lat="61.43" lon="-164.47" elev="190"/>
+        <station name="Inielika" lat="-8.73" lon="120.98" elev="1559"/>
+        <station name="Inierie" lat="-8.875" lon="120.95" elev="2245"/>
+        <station name="Inyo Craters" lat="37.692" lon="-119.02" elev="2629"/>
+        <station name="Ipala Volc Field" lat="14.55" lon="-89.63" elev="1650"/>
+        <station name="Iraya" lat="20.469" lon="122.01" elev="1009"/>
+        <station name="Irazu" lat="9.979" lon="-83.852" elev="3432"/>
+        <station name="Iriga" lat="13.457" lon="123.457" elev="1196"/>
+        <station name="Iriomote-jima" lat="24.558" lon="124" elev="-200"/>
+        <station name="Irruputuncu" lat="-20.73" lon="-68.55" elev="5163"/>
+        <station name="Isanotski" lat="54.75" lon="-163.73" elev="2446"/>
+        <station name="Isarog" lat="13.658" lon="123.37" elev="1966"/>
+        <station name="Ischia" lat="40.73" lon="13.897" elev="789"/>
+        <station name="Iskut-Unuk River Cones" lat="56.58" lon="-130.55" elev="1880"/>
+        <station name="Isluga" lat="-19.15" lon="-68.83" elev="5050"/>
+        <station name="Itasy Volc Field" lat="-19" lon="46.77" elev="1800"/>
+        <station name="Ithnayn, Harrat" lat="26.58" lon="40.2" elev="1625"/>
+        <station name="Ivao Group" lat="45.77" lon="149.68" elev="1426"/>
+        <station name="Iwaki" lat="40.65" lon="140.3" elev="1625"/>
+        <station name="Iwate" lat="39.85" lon="141" elev="2041"/>
+        <station name="Iwo-Tori-shima" lat="27.85" lon="128.25" elev="217"/>
+        <station name="Iwo-jima" lat="24.75" lon="141.33" elev="161"/>
+        <station name="Ixtepeque" lat="14.42" lon="-89.68" elev="1292"/>
+        <station name="Iya" lat="-8.88" lon="121.63" elev="637"/>
+        <station name="Iyang-Argapura" lat="-7.97" lon="113.57" elev="3088"/>
+        <station name="Izalco" lat="13.813" lon="-89.633" elev="1950"/>
+        <station name="Iztaccihuatl" lat="19.179" lon="-98.642" elev="5230"/>
+        <station name="Izu-Tobu" lat="34.92" lon="139.12" elev="1406"/>
+        <station name="Izumbwe-Mpoli" lat="-8.93" lon="33.4" elev="1568"/>
+        <station name="Jailolo" lat="1.08" lon="127.42" elev="1130"/>
+        <station name="Jalajala" lat="14.35" lon="121.33" elev="743"/>
+        <station name="Jalua" lat="15.042" lon="39.82" elev="713"/>
+        <station name="Jan Mayen" lat="71.08" lon="-8.17" elev="2277"/>
+        <station name="Jaraguay Volc Field" lat="29.33" lon="-114.5" elev="960"/>
+        <station name="Jayu Khota, Laguna" lat="-19.45" lon="-67.417" elev="3650"/>
+        <station name="Jefferson" lat="44.692" lon="-121.8" elev="3199"/>
+        <station name="Jingpohu" lat="44.08" lon="128.83" elev="500"/>
+        <station name="Jocotitlan" lat="19.724" lon="-99.757" elev="3900"/>
+        <station name="Jordan Craters" lat="43.03" lon="-117.42" elev="1473"/>
+        <station name="Joya, La" lat="11.92" lon="-85.98" elev="300"/>
+        <station name="Kaba" lat="-3.52" lon="102.62" elev="1952"/>
+        <station name="Kabargin Oth Group" lat="42.55" lon="44" elev="3650"/>
+        <station name="Kadovar" lat="-3.62" lon="144.62" elev="365"/>
+        <station name="Kagamil" lat="52.97" lon="-169.72" elev="893"/>
+        <station name="Kaguyak" lat="58.62" lon="-154.05" elev="901"/>
+        <station name="Kaikata Seamount" lat="26.667" lon="141" elev="-162"/>
+        <station name="Kaikohe-Bay of Islands" lat="-35.3" lon="173.9" elev="388"/>
+        <station name="Kaileney" lat="57.8" lon="160.67" elev="1582"/>
+        <station name="Kaitoku Seamount" lat="26.122" lon="141.102" elev="-10"/>
+        <station name="Kalatungan" lat="7.95" lon="124.8" elev="2824"/>
+        <station name="Kambalny" lat="51.3" lon="156.87" elev="2156"/>
+        <station name="Kamen" lat="56.02" lon="160.593" elev="4585"/>
+        <station name="Kana Keoki" lat="-8.75" lon="157.03" elev="-700"/>
+        <station name="Kanaga" lat="51.92" lon="-177.17" elev="1307"/>
+        <station name="Kanlaon" lat="10.412" lon="123.132" elev="2435"/>
+        <station name="Kao" lat="-19.667" lon="-175.033" elev="1030"/>
+        <station name="Karacalidag" lat="37.67" lon="39.83" elev="1957"/>
+        <station name="Karaha, Kawah" lat="-7.12" lon="108.08" elev="1155"/>
+        <station name="Karang" lat="-6.27" lon="106.042" elev="1778"/>
+        <station name="Karangetang [Api Siau]" lat="2.78" lon="125.48" elev="1784"/>
+        <station name="Karapinar Field" lat="37.67" lon="33.65" elev="1302"/>
+        <station name="Karisimbi" lat="-1.5" lon="29.45" elev="4507"/>
+        <station name="Karkar" lat="-4.649" lon="145.964" elev="1839"/>
+        <station name="Karpinsky Group" lat="50.13" lon="155.37" elev="1345"/>
+        <station name="Kars Plateau" lat="40.75" lon="42.9" elev="3000"/>
+        <station name="Karthala" lat="-11.75" lon="43.38" elev="2361"/>
+        <station name="Karymsky" lat="54.05" lon="159.43" elev="1536"/>
+        <station name="Kasatochi" lat="52.18" lon="-175.5" elev="314"/>
+        <station name="Kasbek" lat="42.7" lon="44.5" elev="5050"/>
+        <station name="Kasuga" lat="21.77" lon="143.72" elev="-558"/>
+        <station name="Katla" lat="63.63" lon="-19.05" elev="1512"/>
+        <station name="Katmai" lat="58.27" lon="-154.98" elev="2047"/>
+        <station name="Katunga" lat="-0.47" lon="30.18" elev="1707"/>
+        <station name="Katwe-Kikorongo Field" lat="-0.08" lon="29.92" elev="1067"/>
+        <station name="Kavachi" lat="-9.02" lon="157.95" elev="-20"/>
+        <station name="Kawi-Butak" lat="-7.92" lon="112.45" elev="2651"/>
+        <station name="Kebeney" lat="57.1" lon="159.93" elev="1527"/>
+        <station name="Kekurny" lat="56.4" lon="158.85" elev="1377"/>
+        <station name="Kelimutu" lat="-8.758" lon="121.83" elev="1640"/>
+        <station name="Kell" lat="51.65" lon="157.35" elev="900"/>
+        <station name="Keluo Group" lat="49.37" lon="125.92" elev="670"/>
+        <station name="Kelut" lat="-7.93" lon="112.308" elev="1731"/>
+        <station name="Kendang" lat="-7.23" lon="107.72" elev="2608"/>
+        <station name="Kerguelen Islands" lat="-49.58" lon="69.5" elev="1840"/>
+        <station name="Kerinci" lat="-1.814" lon="101.264" elev="3800"/>
+        <station name="Ketoi" lat="47.35" lon="152.475" elev="1172"/>
+        <station name="Khangar" lat="54.75" lon="157.38" elev="2000"/>
+        <station name="Khanuy Gol" lat="48.67" lon="102.75" elev="1886"/>
+        <station name="Kharimkotan" lat="49.12" lon="154.508" elev="1145"/>
+        <station name="Khaybar, Harrat" lat="25" lon="39.92" elev="2093"/>
+        <station name="Khodutka" lat="52.063" lon="157.703" elev="2090"/>
+        <station name="Kialagvik" lat="57.38" lon="-156.75" elev="1575"/>
+        <station name="Kiaraberes-Gagak" lat="-6.73" lon="106.65" elev="1511"/>
+        <station name="Kick-'em-Jenny" lat="12.3" lon="-61.63" elev="-177"/>
+        <station name="Kieyo" lat="-9.23" lon="33.78" elev="2175"/>
+        <station name="Kikai" lat="30.78" lon="130.28" elev="717"/>
+        <station name="Kikhpinych" lat="54.487" lon="160.253" elev="1552"/>
+        <station name="Kilauea" lat="19.425" lon="-155.292" elev="1222"/>
+        <station name="Kilimanjaro" lat="-3.07" lon="37.35" elev="5895"/>
+        <station name="Kinenin" lat="57.35" lon="160.967" elev="583"/>
+        <station name="Kirishima" lat="31.93" lon="130.87" elev="1700"/>
+        <station name="Kishb, Harrat" lat="22.8" lon="41.38" elev="1475"/>
+        <station name="Kiska" lat="52.1" lon="177.6" elev="1220"/>
+        <station name="Kita-Fukutokutai" lat="24.414" lon="141.419" elev="-73"/>
+        <station name="Kita-Iwo-jima" lat="25.43" lon="141.23" elev="792"/>
+        <station name="Kizimen" lat="55.13" lon="160.32" elev="2485"/>
+        <station name="Klabat" lat="1.47" lon="125.03" elev="1995"/>
+        <station name="Kliuchevskoi" lat="56.057" lon="160.638" elev="4835"/>
+        <station name="Kolbeinsey Ridge" lat="66.67" lon="-18.5" elev="0"/>
+        <station name="Kolkhozhny" lat="55.07" lon="160.77" elev="2161"/>
+        <station name="Kolokol Group" lat="46.042" lon="150.05" elev="1328"/>
+        <station name="Komaga-take" lat="42.07" lon="140.68" elev="1140"/>
+        <station name="Komarov" lat="55.032" lon="160.72" elev="2070"/>
+        <station name="Kone" lat="8.8" lon="39.692" elev="1619"/>
+        <station name="Koniuji" lat="52.22" lon="-175.13" elev="272"/>
+        <station name="Kookooligit Mountains" lat="63.6" lon="-170.43" elev="673"/>
+        <station name="Koranga" lat="-7.33" lon="146.708" elev="0"/>
+        <station name="Korath Range" lat="5.1" lon="35.88" elev="912"/>
+        <station name="Koro" lat="-17.32" lon="179.4" elev="522"/>
+        <station name="Korosi" lat="0.77" lon="36.12" elev="1446"/>
+        <station name="Koryaksky" lat="53.32" lon="158.688" elev="3456"/>
+        <station name="Koshelev" lat="51.357" lon="156.75" elev="1812"/>
+        <station name="Koussi, Emi" lat="19.8" lon="18.53" elev="3415"/>
+        <station name="Kozu-shima" lat="34.22" lon="139.15" elev="574"/>
+        <station name="Kozyrevsky" lat="55.58" lon="158.38" elev="2016"/>
+        <station name="Krafla" lat="65.73" lon="-16.78" elev="650"/>
+        <station name="Krainy" lat="56.37" lon="159.03" elev="1554"/>
+        <station name="Krakagiger" lat="63.98" lon="-19.7" elev="1491"/>
+        <station name="Krakatau" lat="-6.102" lon="105.423" elev="813"/>
+        <station name="Krasheninnikov" lat="54.593" lon="160.273" elev="1856"/>
+        <station name="Kristnitokugigar" lat="63.98" lon="-21.42" elev="301"/>
+        <station name="Krisuvik" lat="63.93" lon="-22.1" elev="379"/>
+        <station name="Kronotsky" lat="54.753" lon="160.527" elev="3528"/>
+        <station name="Ksudach" lat="51.8" lon="157.53" elev="1079"/>
+        <station name="Kuchino-shima" lat="29.97" lon="129.93" elev="627"/>
+        <station name="Kuchinoerabu-jima" lat="30.43" lon="130.22" elev="649"/>
+        <station name="Kuei-Shan-Tao" lat="24.85" lon="121.92" elev="401"/>
+        <station name="Kuju Group" lat="33.08" lon="131.25" elev="1788"/>
+        <station name="Kukak" lat="58.47" lon="-154.35" elev="2040"/>
+        <station name="Kula" lat="38.58" lon="28.52" elev="750"/>
+        <station name="Kulkev" lat="56.37" lon="158.37" elev="915"/>
+        <station name="Kunlun Volc Group" lat="35.52" lon="80.2" elev="5808"/>
+        <station name="Kupreanof" lat="56.02" lon="-159.8" elev="1895"/>
+        <station name="Kurikoma" lat="38.95" lon="140.78" elev="1628"/>
+        <station name="Kurile Lake" lat="51.45" lon="157.12" elev="104"/>
+        <station name="Kurose Hole" lat="33.4" lon="139.68" elev="-107"/>
+        <station name="Kurub" lat="11.88" lon="41.208" elev="625"/>
+        <station name="Kusatsu-Shirane" lat="36.62" lon="138.55" elev="2176"/>
+        <station name="Kutcharo" lat="43.55" lon="144.43" elev="1000"/>
+        <station name="Kuttara" lat="42.5" lon="141.18" elev="581"/>
+        <station name="Kutum Volc Field" lat="14.5" lon="25.8" elev="0"/>
+        <station name="Kuwae" lat="-16.829" lon="168.536" elev="-2"/>
+        <station name="Kverkfjoll" lat="64.65" lon="-16.72" elev="1920"/>
+        <station name="Kyatwa Volc Field" lat="0.45" lon="30.25" elev="1430"/>
+        <station name="La Palma" lat="28.58" lon="-17.83" elev="2426"/>
+        <station name="Lajas, Las" lat="12.3" lon="-85.73" elev="926"/>
+        <station name="Lakagigar" lat="64.42" lon="17.33" elev="1725"/>
+        <station name="Lambafit" lat="64.08" lon="-19.4" elev="550"/>
+        <station name="Lamington" lat="-8.95" lon="148.15" elev="1680"/>
+        <station name="Lamongan" lat="-8" lon="113.342" elev="1651"/>
+        <station name="Langila" lat="-5.525" lon="148.42" elev="1330"/>
+        <station name="Langjokull" lat="64.75" lon="-19.98" elev="1360"/>
+        <station name="Lanin" lat="-39.633" lon="-71.5" elev="3747"/>
+        <station name="Lanzarote" lat="29.03" lon="-13.63" elev="670"/>
+        <station name="Larderello" lat="43.25" lon="10.87" elev="500"/>
+        <station name="Lascar" lat="-23.37" lon="-67.73" elev="5592"/>
+        <station name="Lassen Volc Center" lat="40.492" lon="-121.508" elev="3187"/>
+        <station name="Lastarria" lat="-25.17" lon="-68.5" elev="5697"/>
+        <station name="Late" lat="-18.806" lon="-174.65" elev="518"/>
+        <station name="Latukan" lat="7.65" lon="124.47" elev="2158"/>
+        <station name="Lautaro" lat="-49.02" lon="-73.55" elev="3380"/>
+        <station name="Lavic Lake" lat="34.75" lon="-116.625" elev="1495"/>
+        <station name="Lawu" lat="-7.625" lon="111.192" elev="3265"/>
+        <station name="Leizhou Bandao" lat="20.83" lon="109.78" elev="259"/>
+        <station name="Lengai, Ol Doinyo" lat="-2.751" lon="35.902" elev="2890"/>
+        <station name="Leonard Range" lat="7.393" lon="126.397" elev="1190"/>
+        <station name="Leroboleng" lat="-8.358" lon="122.842" elev="1117"/>
+        <station name="Leskov Island" lat="-56.67" lon="-28.13" elev="190"/>
+        <station name="Leutongey" lat="57.3" lon="159.83" elev="1333"/>
+        <station name="Level Mountain" lat="58.42" lon="-131.35" elev="2190"/>
+        <station name="Lewotobi" lat="-8.53" lon="122.775" elev="1703"/>
+        <station name="Lewotobi Perempuan" lat="-8.575" lon="122.78" elev="1703"/>
+        <station name="Lewotolo" lat="-8.272" lon="123.505" elev="1423"/>
+        <station name="Lexone" lat="-17.87" lon="-69.48" elev="5340"/>
+        <station name="Liado Hayk Field" lat="9.57" lon="40.28" elev="878"/>
+        <station name="Liamuiga" lat="17.37" lon="-62.8" elev="1156"/>
+        <station name="Licancabur" lat="-22.83" lon="-67.88" elev="5916"/>
+        <station name="Lihir" lat="-3.125" lon="152.642" elev="700"/>
+        <station name="Lindenberg Island" lat="-65.03" lon="-60.05" elev="368"/>
+        <station name="Lipari" lat="38.48" lon="14.95" elev="602"/>
+        <station name="Lipari" lat="38.483" lon="14.95" elev="602"/>
+        <station name="Little Sitkin" lat="51.95" lon="178.53" elev="1188"/>
+        <station name="Ljosufjoll" lat="64.87" lon="-22.23" elev="988"/>
+        <station name="Llaima" lat="-38.692" lon="-71.729" elev="3125"/>
+        <station name="Llullaillaco" lat="-24.72" lon="-68.53" elev="6739"/>
+        <station name="Loihi" lat="18.92" lon="-155.27" elev="-975"/>
+        <station name="Lokon-Empung" lat="1.358" lon="124.792" elev="1580"/>
+        <station name="Lolo" lat="-5.47" lon="150.5" elev="805"/>
+        <station name="Lolobau" lat="-4.92" lon="151.158" elev="858"/>
+        <station name="Loloru" lat="-6.52" lon="155.62" elev="1887"/>
+        <station name="Lomonosov Group" lat="50.25" lon="155.43" elev="1681"/>
+        <station name="Long Island" lat="-5.358" lon="147.12" elev="1280"/>
+        <station name="Longavi, Nevado de" lat="-36.193" lon="-71.161" elev="3242"/>
+        <station name="Longgang Group" lat="42.33" lon="126.5" elev="1000"/>
+        <station name="Longonot" lat="-0.92" lon="36.45" elev="2776"/>
+        <station name="Lonquimay" lat="-38.377" lon="-71.58" elev="2865"/>
+        <station name="Lopevi" lat="-16.507" lon="168.346" elev="1413"/>
+        <station name="Lower Chindwin" lat="22.28" lon="95.1" elev="385"/>
+        <station name="Lubukraya" lat="1.478" lon="99.209" elev="1862"/>
+        <station name="Lumut Balai, Bukit" lat="-4.22" lon="103.62" elev="2055"/>
+        <station name="Lunayyir, Harrat" lat="25.17" lon="37.75" elev="1370"/>
+        <station name="Lurus" lat="-7.7" lon="113.58" elev="539"/>
+        <station name="Lvinaya Past" lat="44.62" lon="147" elev="528"/>
+        <station name="Lysuholl" lat="64.87" lon="-23.25" elev="540"/>
+        <station name="Ma Alalta" lat="13.02" lon="40.2" elev="1815"/>
+        <station name="Maca" lat="-45.1" lon="-73.2" elev="2960"/>
+        <station name="Macauley Island" lat="-30.2" lon="-178.47" elev="238"/>
+        <station name="Macdonald" lat="-28.98" lon="-140.25" elev="-50"/>
+        <station name="Machin, Cerro" lat="4.48" lon="-75.4" elev="2650"/>
+        <station name="Madeira" lat="32.733" lon="-16.967" elev="1862"/>
+        <station name="Maderas" lat="11.446" lon="-85.515" elev="1394"/>
+        <station name="Madilogo" lat="-9.2" lon="147.57" elev="850"/>
+        <station name="Magaso" lat="9.258" lon="123.175" elev="1904"/>
+        <station name="Mageik" lat="58.2" lon="-155.25" elev="2165"/>
+        <station name="Mahagnoa" lat="10.872" lon="124.853" elev="800"/>
+        <station name="Mahawu" lat="1.358" lon="124.858" elev="1324"/>
+        <station name="Maipo" lat="-34.161" lon="-69.833" elev="5264"/>
+        <station name="Makaturing" lat="7.647" lon="124.32" elev="1940"/>
+        <station name="Makian" lat="0.32" lon="127.4" elev="1357"/>
+        <station name="Makushin" lat="53.9" lon="-166.93" elev="2036"/>
+        <station name="Malabar" lat="-7.13" lon="107.65" elev="2343"/>
+        <station name="Malang Plain" lat="-8.02" lon="112.68" elev="680"/>
+        <station name="Malinao" lat="13.422" lon="123.597" elev="1548"/>
+        <station name="Malinche, La" lat="19.23" lon="-98.03" elev="4503"/>
+        <station name="Malindang" lat="8.22" lon="123.63" elev="2435"/>
+        <station name="Malindig" lat="13.24" lon="122.018" elev="1157"/>
+        <station name="Malintang" lat="0.467" lon="99.667" elev="1983"/>
+        <station name="Mallahle" lat="13.27" lon="41.65" elev="1875"/>
+        <station name="Maly Payalpan" lat="55.82" lon="157.98" elev="1802"/>
+        <station name="Maly Semiachik" lat="54.13" lon="159.67" elev="1560"/>
+        <station name="Managlase Plateau" lat="-9.08" lon="148.33" elev="1342"/>
+        <station name="Manam" lat="-4.1" lon="145.061" elev="1807"/>
+        <station name="Manareyjar" lat="66.3" lon="-17.1" elev="0"/>
+        <station name="Manda Gargori" lat="11.75" lon="41.483" elev=""/>
+        <station name="Manda Hararo" lat="12.17" lon="40.82" elev="600"/>
+        <station name="Manda-Inakir" lat="12.38" lon="42.2" elev="600"/>
+        <station name="Mandalagan" lat="10.615" lon="123.22" elev="1879"/>
+        <station name="Manengouba" lat="5.03" lon="9.83" elev="2411"/>
+        <station name="Manuk" lat="-5.53" lon="130.292" elev="282"/>
+        <station name="Manzaz Volc Field" lat="23.917" lon="5.833" elev="1672"/>
+        <station name="Maquiling" lat="14.13" lon="121.2" elev="1090"/>
+        <station name="Marapi" lat="-0.381" lon="100.473" elev="2891"/>
+        <station name="Marchena" lat="0.33" lon="-90.47" elev="343"/>
+        <station name="Mare" lat="0.57" lon="127.4" elev="308"/>
+        <station name="Marha, Jabal el-" lat="15.28" lon="44.22" elev="2650"/>
+        <station name="Marion Island" lat="-46.9" lon="37.75" elev="1230"/>
+        <station name="Mariveles" lat="14.5" lon="120.5" elev="1420"/>
+        <station name="Markagunt Plateau" lat="37.58" lon="-112.67" elev="2840"/>
+        <station name="Maroa" lat="-38.42" lon="176.08" elev="1156"/>
+        <station name="Marra, Jebel" lat="12.95" lon="24.27" elev="3042"/>
+        <station name="Marsabit" lat="2.32" lon="37.97" elev="1707"/>
+        <station name="Martin" lat="58.17" lon="-155.35" elev="1860"/>
+        <station name="Masaraga" lat="13.32" lon="123.6" elev="1328"/>
+        <station name="Masaya" lat="11.984" lon="-86.161" elev="635"/>
+        <station name="Mascota Volc Field" lat="20.62" lon="-104.83" elev="2540"/>
+        <station name="Mashkovtsev" lat="51.1" lon="156.72" elev="503"/>
+        <station name="Mashu" lat="43.57" lon="144.57" elev="855"/>
+        <station name="Mat Ala" lat="13.1" lon="41.15" elev="523"/>
+        <station name="Matthew Island" lat="-22.33" lon="171.32" elev="177"/>
+        <station name="Matutum" lat="6.37" lon="125.108" elev="2293"/>
+        <station name="Maug Islands" lat="20.017" lon="145.217" elev="227"/>
+        <station name="Maule, Laguna del" lat="-36.02" lon="-70.58" elev="3092"/>
+        <station name="Mauna Kea" lat="19.82" lon="-155.47" elev="4206"/>
+        <station name="Mauna Loa" lat="19.475" lon="-155.608" elev="4170"/>
+        <station name="May-ya-moto" lat="-0.93" lon="29.33" elev="950"/>
+        <station name="Mayon" lat="13.257" lon="123.685" elev="2462"/>
+        <station name="Mayor Island" lat="-37.28" lon="176.25" elev="355"/>
+        <station name="McDonald Islands" lat="-53.03" lon="72.6" elev="186"/>
+        <station name="Meager" lat="50.63" lon="-123.5" elev="2680"/>
+        <station name="Medicine Lake" lat="41.58" lon="-121.57" elev="2412"/>
+        <station name="Medvezhia" lat="45.38" lon="148.83" elev="1124"/>
+        <station name="Mega Basalt Field" lat="4.08" lon="37.42" elev="1067"/>
+        <station name="Megata" lat="39.95" lon="139.73" elev="291"/>
+        <station name="Mehetia" lat="-17.87" lon="-148.07" elev="435"/>
+        <station name="Meidob Volc Field" lat="15.32" lon="26.47" elev="2000"/>
+        <station name="Melbourne" lat="-74.35" lon="164.7" elev="2732"/>
+        <station name="Melimoyu" lat="-44.08" lon="-72.88" elev="2400"/>
+        <station name="Mendeleev" lat="43.98" lon="145.7" elev="887"/>
+        <station name="Menengai" lat="-0.2" lon="36.07" elev="2278"/>
+        <station name="Mentolat" lat="-44.67" lon="-73.08" elev="1660"/>
+        <station name="Merapi" lat="-7.542" lon="110.442" elev="2947"/>
+        <station name="Merbabu" lat="-7.45" lon="110.43" elev="3145"/>
+        <station name="Mere Lava" lat="-14.45" lon="168.05" elev="1028"/>
+        <station name="Meru" lat="-3.25" lon="36.75" elev="4565"/>
+        <station name="Methana" lat="37.615" lon="23.336" elev="760"/>
+        <station name="Metis Shoal" lat="-19.18" lon="-174.87" elev="43"/>
+        <station name="Mezhdusopochny" lat="57.47" lon="160.25" elev="1641"/>
+        <station name="Michael" lat="-57.78" lon="-26.45" elev="990"/>
+        <station name="Michoacan-Guanajuato" lat="19.48" lon="-102.25" elev="3860"/>
+        <station name="Micotrin" lat="15.33" lon="-61.33" elev="1387"/>
+        <station name="Middle Gobi" lat="45.28" lon="106.7" elev="1120"/>
+        <station name="Milbanke Sound Group" lat="52.5" lon="-128.73" elev="335"/>
+        <station name="Milne" lat="46.82" lon="151.78" elev="1540"/>
+        <station name="Milos" lat="36.699" lon="24.439" elev="751"/>
+        <station name="Minami-Hiyoshi" lat="23.507" lon="141.905" elev="-30"/>
+        <station name="Minchinmavida" lat="-42.78" lon="-72.43" elev="2404"/>
+        <station name="Miravalles" lat="10.748" lon="-85.153" elev="2028"/>
+        <station name="Misti, El" lat="-16.294" lon="-71.409" elev="5822"/>
+        <station name="Miyake-jima" lat="34.08" lon="139.53" elev="815"/>
+        <station name="Mocho-Choshuenco" lat="-39.927" lon="-72.027" elev="2422"/>
+        <station name="Moffett" lat="51.93" lon="-176.75" elev="1196"/>
+        <station name="Mojanda" lat="0.13" lon="-78.27" elev="4263"/>
+        <station name="Mokuyo Seamount" lat="28.317" lon="140.567" elev="-920"/>
+        <station name="Mombacho" lat="11.826" lon="-85.968" elev="1344"/>
+        <station name="Momotombo" lat="12.422" lon="-86.54" elev="1297"/>
+        <station name="Monaco Bank" lat="37.6" lon="-25.88" elev="-197"/>
+        <station name="Mondaca" lat="-35.464" lon="-70.8" elev="2048"/>
+        <station name="Mono Craters" lat="37.88" lon="-119" elev="2796"/>
+        <station name="Mono Lake Volc Field" lat="38" lon="-119.03" elev="2121"/>
+        <station name="Monowai Seamount" lat="-25.887" lon="-177.188" elev="-100"/>
+        <station name="Montagu Island" lat="-58.417" lon="-26.333" elev="1370"/>
+        <station name="Morning, Mt." lat="-78.5" lon="163.533" elev="2723"/>
+        <station name="Moti" lat="0.45" lon="127.4" elev="950"/>
+        <station name="Motlav" lat="-13.67" lon="167.67" elev="411"/>
+        <station name="Moua Pihaa" lat="-18.32" lon="-148.67" elev="-180"/>
+        <station name="Mousa Alli" lat="12.47" lon="42.4" elev="2028"/>
+        <station name="Moyuta" lat="14.03" lon="-90.1" elev="1662"/>
+        <station name="Muhavura" lat="-1.38" lon="29.67" elev="4127"/>
+        <station name="Mundafell" lat="63.98" lon="-19.7" elev="1491"/>
+        <station name="Mundua" lat="-4.63" lon="149.35" elev="179"/>
+        <station name="Muria" lat="-6.617" lon="110.883" elev="1625"/>
+        <station name="Musa River" lat="-9.308" lon="148.13" elev="808"/>
+        <station name="Mutnovsky" lat="52.453" lon="158.195" elev="2322"/>
+        <station name="Myojun Knoll" lat="32.1" lon="139.85" elev="360"/>
+        <station name="Myoko" lat="36.88" lon="138.12" elev="2446"/>
+        <station name="NW Rota-1" lat="14.601" lon="144.775" elev="-517"/>
+        <station name="Nabro" lat="13.37" lon="41.7" elev="2218"/>
+        <station name="Nabukelevu" lat="-19.117" lon="177.983" elev="805"/>
+        <station name="Nakano-shima" lat="29.85" lon="129.87" elev="979"/>
+        <station name="Namarunu" lat="1.9" lon="36.27" elev="817"/>
+        <station name="Nantai" lat="36.77" lon="139.5" elev="2484"/>
+        <station name="Naolinco Volc Field" lat="19.67" lon="-96.75" elev="2000"/>
+        <station name="Narcondum" lat="13.43" lon="94.25" elev="710"/>
+        <station name="Narugo" lat="38.73" lon="140.73" elev="462"/>
+        <station name="Nasu" lat="37.12" lon="139.97" elev="1917"/>
+        <station name="Natib" lat="14.705" lon="120.4" elev="1287"/>
+        <station name="Nazko" lat="52.9" lon="-123.73" elev="1230"/>
+        <station name="Ndete Napu" lat="-8.72" lon="121.78" elev="750"/>
+        <station name="Negra, Sierra" lat="-0.83" lon="-91.17" elev="1490"/>
+        <station name="Negrillar, El" lat="-24.18" lon="-68.25" elev="3500"/>
+        <station name="Negrillar, La" lat="-24.28" lon="-68.6" elev="4109"/>
+        <station name="Negro de Mayasquer, Cerro" lat="0.828" lon="-77.964" elev="4445"/>
+        <station name="Negro, Cerro" lat="12.506" lon="-86.702" elev="728"/>
+        <station name="Nejapa-Miraflores" lat="12.12" lon="-86.32" elev="360"/>
+        <station name="Nemo Peak" lat="49.57" lon="154.808" elev="1018"/>
+        <station name="Nemrut Dagi" lat="38.65" lon="42.02" elev="3050"/>
+        <station name="Nevada, Sierra" lat="-26.48" lon="-68.58" elev="6127"/>
+        <station name="Nevis Peak" lat="17.15" lon="-62.58" elev="985"/>
+        <station name="Newberry Volcano" lat="43.722" lon="-121.229" elev="2434"/>
+        <station name="Newer Volcanics Prov" lat="-37.77" lon="142.5" elev="1011"/>
+        <station name="Ngaoundere Plateau" lat="7.25" lon="13.67" elev="0"/>
+        <station name="Ngauruhoe" lat="-39.158" lon="175.63" elev="2291"/>
+        <station name="Ngozi" lat="-8.97" lon="33.57" elev="2622"/>
+        <station name="Nicholson, Cerro" lat="-16.258" lon="-71.753" elev="2520"/>
+        <station name="Nieuwerkerk" lat="-6.6" lon="124.675" elev="-2285"/>
+        <station name="Nightingale Island" lat="-37.417" lon="-12.483" elev="365"/>
+        <station name="Nii-jima" lat="34.37" lon="139.27" elev="432"/>
+        <station name="Niigata-Yake-yama" lat="36.92" lon="138.03" elev="2400"/>
+        <station name="Nikko" lat="23.075" lon="142.308" elev="-391"/>
+        <station name="Nikko-Shirane" lat="36.8" lon="139.38" elev="2578"/>
+        <station name="Nila" lat="-6.73" lon="129.5" elev="781"/>
+        <station name="Nipesotsu-Upepesanke" lat="43.45" lon="143.03" elev="2013"/>
+        <station name="Niseko" lat="42.88" lon="140.63" elev="1154"/>
+        <station name="Nishino-shima" lat="27.274" lon="140.882" elev="38"/>
+        <station name="Nisyros" lat="36.58" lon="27.18" elev="698"/>
+        <station name="Niuafo'ou" lat="-15.6" lon="-175.63" elev="260"/>
+        <station name="Norikura" lat="36.12" lon="137.55" elev="3026"/>
+        <station name="North Gorda Ridge" lat="42.667" lon="-126.783" elev="-3000"/>
+        <station name="North Island" lat="4.07" lon="36.05" elev="520"/>
+        <station name="North Sister Field" lat="44.17" lon="-121.77" elev="3074"/>
+        <station name="North Vate" lat="-17.45" lon="168.33" elev="594"/>
+        <station name="Northern EPR-Segment RO3" lat="15.833" lon="-105.433" elev="-2300"/>
+        <station name="Nosy-Be" lat="-13.32" lon="48.48" elev="214"/>
+        <station name="Novarupta" lat="58.27" lon="-155.16" elev="841"/>
+        <station name="Nuevo Mundo" lat="-19.783" lon="-66.483" elev="5438"/>
+        <station name="Numazawa" lat="37.43" lon="139.58" elev="1100"/>
+        <station name="Nunivak Island" lat="60.02" lon="-166.33" elev="511"/>
+        <station name="Nyambeni Hills" lat="0.23" lon="37.87" elev="750"/>
+        <station name="Nyamuragira" lat="-1.408" lon="29.2" elev="3058"/>
+        <station name="Nyiragongo" lat="-1.52" lon="29.25" elev="3470"/>
+        <station name="Ofu-Olosega" lat="-14.175" lon="-169.618" elev="639"/>
+        <station name="Ojos del Salado, Nevados" lat="-27.12" lon="-68.53" elev="6887"/>
+        <station name="Oka Volc Field" lat="52.7" lon="98.98" elev="2077"/>
+        <station name="Okataina" lat="-38.12" lon="176.5" elev="1111"/>
+        <station name="Oki-Dogo" lat="36.17" lon="133.33" elev="151"/>
+        <station name="Okmok" lat="53.42" lon="-168.13" elev="1073"/>
+        <station name="Oku Volc Field" lat="6.25" lon="10.5" elev="3011"/>
+        <station name="Ol Kokwe" lat="0.63" lon="36.08" elev="1130"/>
+        <station name="Olca-Paruma" lat="-20.93" lon="-68.48" elev="5407"/>
+        <station name="Olkaria" lat="-0.904" lon="36.292" elev="2434"/>
+        <station name="Olkoviy" lat="52.077" lon="157.477" elev="636"/>
+        <station name="Ollague" lat="-21.3" lon="-68.18" elev="5868"/>
+        <station name="Olot Volc Field" lat="42.17" lon="2.53" elev="893"/>
+        <station name="Omachi Seamount" lat="29.22" lon="140.8" elev="-1700"/>
+        <station name="Omanago Group" lat="36.78" lon="139.5" elev="2367"/>
+        <station name="On-take" lat="35.9" lon="137.48" elev="3063"/>
+        <station name="Opala" lat="52.543" lon="157.335" elev="2475"/>
+        <station name="Oraefajokull" lat="64" lon="-16.65" elev="2119"/>
+        <station name="Orizaba, Pico de" lat="19.03" lon="-97.268" elev="5675"/>
+        <station name="Ormus Islands" lat="26" lon="57" elev="0"/>
+        <station name="Orosi" lat="10.98" lon="-85.473" elev="1659"/>
+        <station name="Oshima" lat="34.73" lon="139.38" elev="758"/>
+        <station name="Oshima-Oshima" lat="41.5" lon="139.37" elev="737"/>
+        <station name="Osore-yama" lat="41.32" lon="141.08" elev="879"/>
+        <station name="Osorno" lat="-41.1" lon="-72.493" elev="2652"/>
+        <station name="Ostanets" lat="52.146" lon="157.322" elev="719"/>
+        <station name="Ostry" lat="58.18" lon="160.82" elev="2552"/>
+        <station name="Otdelniy" lat="52.22" lon="157.428" elev="791"/>
+        <station name="Overo, Cerro" lat="-23.35" lon="-67.67" elev="4555"/>
+        <station name="Ozernoy" lat="51.88" lon="157.38" elev="562"/>
+        <station name="Pacaya" lat="14.381" lon="-90.601" elev="2552"/>
+        <station name="Paco" lat="9.593" lon="125.52" elev="524"/>
+        <station name="Pagan" lat="18.13" lon="145.8" elev="570"/>
+        <station name="Pago" lat="-5.58" lon="150.52" elev="742"/>
+        <station name="Paka" lat="0.92" lon="36.18" elev="1697"/>
+        <station name="Palei-Aike Volc Field" lat="-52" lon="-70" elev="250"/>
+        <station name="Palena Volc Group" lat="-43.68" lon="-72.5" elev="0"/>
+        <station name="Palinuro" lat="39.483" lon="14.833" elev="-70"/>
+        <station name="Palomo" lat="-34.608" lon="-70.295" elev="4860"/>
+        <station name="Paluweh" lat="-8.32" lon="121.708" elev="875"/>
+        <station name="Pampa Luxsar" lat="-20.85" lon="-68.2" elev="5543"/>
+        <station name="Pantelleria" lat="36.77" lon="12.02" elev="836"/>
+        <station name="Pantoja, Cerro" lat="-40.77" lon="-71.95" elev="2112"/>
+        <station name="Papandayan" lat="-7.32" lon="107.73" elev="2665"/>
+        <station name="Papayo" lat="19.308" lon="-98.7" elev="3600"/>
+        <station name="Paricutin Volcanic Field" lat="19.48" lon="-102.25" elev="3860"/>
+        <station name="Parker" lat="6.12" lon="124.892" elev="1824"/>
+        <station name="Patah" lat="-4.27" lon="103.3" elev="2817"/>
+        <station name="Patates, Morne" lat="15.22" lon="-61.37" elev="960"/>
+        <station name="Patilla Pata" lat="-18.05" lon="-69.03" elev="5300"/>
+        <station name="Patoc" lat="17.147" lon="120.98" elev="1865"/>
+        <station name="Patuha" lat="-7.15" lon="107.37" elev="2434"/>
+        <station name="Paulet" lat="-63.58" lon="-55.77" elev="353"/>
+        <station name="Pavlof" lat="55.42" lon="-161.9" elev="2519"/>
+        <station name="Pavlof Sister" lat="55.45" lon="-161.87" elev="2142"/>
+        <station name="Payun Matru, Cerro" lat="-36.42" lon="-69.2" elev="3691"/>
+        <station name="Peinado" lat="-26.617" lon="-68.15" elev="5740"/>
+        <station name="Pelee" lat="14.82" lon="-61.17" elev="1397"/>
+        <station name="Penanggungan" lat="-7.62" lon="112.63" elev="1653"/>
+        <station name="Pendan" lat="-2.82" lon="102.02" elev="0"/>
+        <station name="Penguin Island" lat="-62.1" lon="-57.93" elev="180"/>
+        <station name="Perbakti" lat="-6.75" lon="106.68" elev="1699"/>
+        <station name="Petacas" lat="1.57" lon="-76.78" elev="4054"/>
+        <station name="Peter I Island" lat="-68.85" lon="-90.58" elev="1640"/>
+        <station name="Peuet Sague" lat="4.914" lon="96.329" elev="2801"/>
+        <station name="Pico" lat="38.47" lon="-28.4" elev="2351"/>
+        <station name="Piip" lat="55.42" lon="167.33" elev="-300"/>
+        <station name="Pilas, Las" lat="12.495" lon="-86.688" elev="1088"/>
+        <station name="Pina, Cerro" lat="-19.492" lon="-68.65" elev="4037"/>
+        <station name="Pinacate" lat="31.772" lon="-113.498" elev="1200"/>
+        <station name="Pinatubo" lat="15.13" lon="120.35" elev="1486"/>
+        <station name="Pinta" lat="0.58" lon="-90.75" elev="780"/>
+        <station name="Piparo" lat="10" lon="-61" elev="140"/>
+        <station name="Piratkovsky" lat="52.113" lon="157.849" elev="1322"/>
+        <station name="Planchon-Peteroa" lat="-35.24" lon="-70.57" elev="4107"/>
+        <station name="Platanar" lat="10.3" lon="-84.366" elev="2267"/>
+        <station name="Pleiades, The" lat="-72.67" lon="165.5" elev="3040"/>
+        <station name="Plosky" lat="57.83" lon="160.25" elev="1255"/>
+        <station name="Plosky" lat="55.2" lon="158.47" elev="1236"/>
+        <station name="Plosky Volc Group" lat="52.02" lon="157.53" elev="681"/>
+        <station name="Poas" lat="10.2" lon="-84.233" elev="2708"/>
+        <station name="Pocdol Mountains" lat="13.05" lon="123.958" elev="1102"/>
+        <station name="Poco Leok" lat="-8.68" lon="120.48" elev="1675"/>
+        <station name="Pogranychny" lat="56.85" lon="159.8" elev="1427"/>
+        <station name="Popa" lat="20.87" lon="95.23" elev="1518"/>
+        <station name="Popocatepetl" lat="19.023" lon="-98.622" elev="5426"/>
+        <station name="Porak" lat="40.017" lon="45.783" elev="2800"/>
+        <station name="Possession, Ile de la" lat="-46.42" lon="51.63" elev="934"/>
+        <station name="Prestahnukur" lat="64.6" lon="-20.58" elev="1390"/>
+        <station name="Prevo Peak" lat="47.02" lon="152.12" elev="1360"/>
+        <station name="Prieto, Cerro" lat="32.418" lon="-115.305" elev="223"/>
+        <station name="Prince Edward Island" lat="-46.63" lon="37.95" elev="672"/>
+        <station name="Protector Shoal" lat="-55.92" lon="-28.08" elev="-27"/>
+        <station name="Puesto Cortaderas" lat="-37.55" lon="-69.62" elev="970"/>
+        <station name="Puesto Cortaderas" lat="-37.567" lon="-69.617" elev="970"/>
+        <station name="Pular" lat="-24.18" lon="-68.05" elev="6233"/>
+        <station name="Pululagua" lat="0.038" lon="-78.463" elev="3356"/>
+        <station name="Puntiagudo-Cordon Cenizo" lat="-40.969" lon="-72.264" elev="2493"/>
+        <station name="Purace" lat="2.32" lon="-76.4" elev="4650"/>
+        <station name="Purico Complex" lat="-23" lon="-67.75" elev="5703"/>
+        <station name="Putana" lat="-22.57" lon="-67.87" elev="5890"/>
+        <station name="Puyehue" lat="-40.59" lon="-72.117" elev="2236"/>
+        <station name="Puyuhuapi" lat="-44.3" lon="-72.53" elev="255"/>
+        <station name="Qal'eh Hasan Ali" lat="29.4" lon="57.57" elev="0"/>
+        <station name="Qualibou" lat="13.83" lon="-61.05" elev="777"/>
+        <station name="Quetrupillan" lat="-39.5" lon="-71.7" elev="2360"/>
+        <station name="Quezaltepeque" lat="14.65" lon="-89.35" elev="1200"/>
+        <station name="Quill, The" lat="17.48" lon="-62.95" elev="601"/>
+        <station name="Quilotoa" lat="-0.85" lon="-78.9" elev="3914"/>
+        <station name="Quimsachata" lat="-14.37" lon="-71.17" elev="3923"/>
+        <station name="Rabaul" lat="-4.271" lon="152.203" elev="688"/>
+        <station name="Ragang" lat="7.67" lon="124.5" elev="2815"/>
+        <station name="Rahah, Harrat ar" lat="27.8" lon="36.17" elev="1660"/>
+        <station name="Rahat, Harrat" lat="23.08" lon="39.78" elev="1744"/>
+        <station name="Raikoke" lat="48.292" lon="153.25" elev="551"/>
+        <station name="Rainier" lat="46.87" lon="-121.758" elev="4392"/>
+        <station name="Rajabasa" lat="-5.78" lon="105.625" elev="1281"/>
+        <station name="Ranakah" lat="-8.62" lon="120.52" elev="2100"/>
+        <station name="Ranau" lat="-4.83" lon="103.92" elev="1881"/>
+        <station name="Raoul Island" lat="-29.27" lon="-177.92" elev="516"/>
+        <station name="Rasshua" lat="47.77" lon="153.02" elev="956"/>
+        <station name="Raung" lat="-8.125" lon="114.042" elev="3332"/>
+        <station name="Rausu" lat="44.073" lon="145.125" elev="1660"/>
+        <station name="Recheschnoi" lat="53.15" lon="-168.55" elev="1984"/>
+        <station name="Reclus" lat="-50.98" lon="-73.7" elev="0"/>
+        <station name="Red Cones" lat="37.58" lon="-119.05" elev="2748"/>
+        <station name="Redoubt" lat="60.48" lon="-152.75" elev="3108"/>
+        <station name="Reporoa" lat="-38.42" lon="176.33" elev="592"/>
+        <station name="Resago, Volcan" lat="-36.45" lon="-70.92" elev="1550"/>
+        <station name="Reventador" lat="-0.078" lon="-77.656" elev="3562"/>
+        <station name="Reykjanes" lat="63.88" lon="-22.5" elev="230"/>
+        <station name="Reykjaneshryggur" lat="63.67" lon="-23.33" elev="80"/>
+        <station name="Rincon de la Vieja" lat="10.83" lon="-85.324" elev="1916"/>
+        <station name="Rinjani" lat="-8.42" lon="116.47" elev="3726"/>
+        <station name="Risco Plateado" lat="-34.933" lon="-70" elev="4999"/>
+        <station name="Rishiri" lat="45.18" lon="141.25" elev="1719"/>
+        <station name="Ritter Island" lat="-5.52" lon="148.121" elev="140"/>
+        <station name="Robinson Crusoe" lat="-33.658" lon="-78.85" elev="922"/>
+        <station name="Robledo" lat="-26.767" lon="-67.717" elev="4400"/>
+        <station name="Rocard" lat="-17.642" lon="-148.6" elev="-2100"/>
+        <station name="Romanovka" lat="55.65" lon="158.8" elev="1442"/>
+        <station name="Rota" lat="12.55" lon="-86.75" elev="832"/>
+        <station name="Roundtop" lat="54.8" lon="-163.6" elev="1871"/>
+        <station name="Royal Society Range" lat="-78.25" lon="163.6" elev="3000"/>
+        <station name="Ruang" lat="2.28" lon="125.425" elev="725"/>
+        <station name="Ruapehu" lat="-39.28" lon="175.57" elev="2797"/>
+        <station name="Ruby" lat="15.617" lon="145.567" elev="-230"/>
+        <station name="Ruby Mountain" lat="59.68" lon="-133.32" elev="1523"/>
+        <station name="Rudakov" lat="45.88" lon="149.83" elev="542"/>
+        <station name="Ruiz" lat="4.895" lon="-75.322" elev="5321"/>
+        <station name="Rumble II West" lat="-35.353" lon="178.527" elev="1200"/>
+        <station name="Rumble III" lat="-35.745" lon="178.478" elev="-140"/>
+        <station name="Rumble IV" lat="-36.13" lon="178.05" elev="-450"/>
+        <station name="Rumble V" lat="-36.139" lon="178.197" elev="-700"/>
+        <station name="Rungwe" lat="-9.13" lon="33.67" elev="2961"/>
+        <station name="Rio Murta" lat="-46.167" lon="-72.667" elev=""/>
+        <station name="SW Usangu Basin" lat="-8.75" lon="33.8" elev="2179"/>
+        <station name="Saba" lat="17.63" lon="-63.23" elev="887"/>
+        <station name="Sabalan" lat="38.25" lon="47.917" elev="4811"/>
+        <station name="Sabancaya" lat="-15.783" lon="-71.85" elev="5967"/>
+        <station name="Sahand" lat="37.75" lon="46.433" elev="3707"/>
+        <station name="Sairecabur" lat="-22.73" lon="-67.88" elev="5971"/>
+        <station name="Sakar" lat="-5.414" lon="148.094" elev="992"/>
+        <station name="Sakura-jima" lat="31.58" lon="130.67" elev="1117"/>
+        <station name="Salak" lat="-6.72" lon="106.73" elev="2211"/>
+        <station name="San Borja Volc Field" lat="28.5" lon="-113.75" elev="1360"/>
+        <station name="San Carlos" lat="3.35" lon="8.52" elev="2260"/>
+        <station name="San Cristobal" lat="-0.88" lon="-89.5" elev="759"/>
+        <station name="San Cristobal" lat="12.702" lon="-87.004" elev="1745"/>
+        <station name="San Diego" lat="14.27" lon="-89.48" elev="781"/>
+        <station name="San Felix" lat="-26.27" lon="-80.12" elev="183"/>
+        <station name="San Joaquin" lat="3.35" lon="8.63" elev="2009"/>
+        <station name="San Jorge" lat="38.65" lon="-28.08" elev="1053"/>
+        <station name="San Jose" lat="-33.782" lon="-69.897" elev="5856"/>
+        <station name="San Luis, Isla" lat="29.814" lon="-114.384" elev="180"/>
+        <station name="San Marcelino" lat="13.853" lon="-89.63" elev="2381"/>
+        <station name="San Martin" lat="18.572" lon="-95.169" elev="1650"/>
+        <station name="San Miguel" lat="13.431" lon="-88.272" elev="2130"/>
+        <station name="San Pedro" lat="-21.88" lon="-68.4" elev="6145"/>
+        <station name="San Pedro-Pellado" lat="-35.989" lon="-70.849" elev="3621"/>
+        <station name="San Quintin Volc Field" lat="30.468" lon="-115.996" elev="260"/>
+        <station name="San Salvador" lat="13.736" lon="-89.286" elev="1893"/>
+        <station name="San Vicente" lat="13.623" lon="-88.852" elev="2182"/>
+        <station name="Sanbe" lat="35.13" lon="132.62" elev="1126"/>
+        <station name="Sand Mountain Field" lat="44.38" lon="-121.93" elev="1664"/>
+        <station name="Sanford" lat="62.22" lon="-144.13" elev="4949"/>
+        <station name="Sanganguey" lat="21.45" lon="-104.73" elev="2340"/>
+        <station name="Sangay" lat="-2.03" lon="-78.33" elev="5230"/>
+        <station name="Sangeang Api" lat="-8.18" lon="119.058" elev="1949"/>
+        <station name="Sano, Wai" lat="-8.68" lon="120.025" elev="903"/>
+        <station name="Santa Ana" lat="13.853" lon="-89.63" elev="2365"/>
+        <station name="Santa Clara" lat="37.257" lon="-113.625" elev="1465"/>
+        <station name="Santa Cruz" lat="-0.62" lon="-90.33" elev="864"/>
+        <station name="Santa Isabel" lat="3.58" lon="8.75" elev="2972"/>
+        <station name="Santa Isabel" lat="4.82" lon="-75.37" elev="4950"/>
+        <station name="Santa Maria" lat="14.756" lon="-91.552" elev="3772"/>
+        <station name="Santiago" lat="-0.22" lon="-90.77" elev="920"/>
+        <station name="Santiago, Cerro" lat="14.33" lon="-89.87" elev="1192"/>
+        <station name="Santo Antao" lat="17.07" lon="-25.17" elev="1979"/>
+        <station name="Santo Tomas" lat="16.33" lon="120.55" elev="2260"/>
+        <station name="Santorini" lat="36.404" lon="25.396" elev="329"/>
+        <station name="Sao Tome" lat="0.32" lon="6.72" elev="2024"/>
+        <station name="Sarigan" lat="16.708" lon="145.783" elev="538"/>
+        <station name="Sarigan" lat="16.708" lon="145.78" elev="538"/>
+        <station name="Sarik-Gajah" lat="0.08" lon="100.2" elev="0"/>
+        <station name="Sarychev Peak" lat="48.092" lon="153.2" elev="1496"/>
+        <station name="Satah Mountain" lat="52.47" lon="-124.7" elev="1921"/>
+        <station name="Savai'i" lat="-13.612" lon="-172.525" elev="1858"/>
+        <station name="Savo" lat="-9.13" lon="159.82" elev="510"/>
+        <station name="Sawad, Harra Es-" lat="13.58" lon="46.12" elev="1737"/>
+        <station name="Schmidt" lat="54.917" lon="160.633" elev="2020"/>
+        <station name="Seal Nunataks Group" lat="-65.03" lon="-60.05" elev="368"/>
+        <station name="Seamount X" lat="13.25" lon="144.017" elev="-1230"/>
+        <station name="Sedankinsky" lat="57.23" lon="160.08" elev="1241"/>
+        <station name="Segererua Plateau" lat="1.57" lon="37.9" elev="699"/>
+        <station name="Seguam" lat="52.32" lon="-172.52" elev="1054"/>
+        <station name="Segula" lat="52.02" lon="178.13" elev="1153"/>
+        <station name="Sekincau Belirang" lat="-5.12" lon="104.32" elev="1719"/>
+        <station name="Semeru" lat="-8.108" lon="112.92" elev="3676"/>
+        <station name="Semisopochnoi" lat="51.95" lon="179.62" elev="1221"/>
+        <station name="Sempu" lat="1.142" lon="124.73" elev="1549"/>
+        <station name="Serdan-Oriental" lat="19.27" lon="-97.47" elev="3485"/>
+        <station name="Sergief" lat="52.03" lon="-174.93" elev="560"/>
+        <station name="Serua" lat="-6.3" lon="130" elev="641"/>
+        <station name="Sessagara" lat="-9.48" lon="149.13" elev="370"/>
+        <station name="Sete Cidades" lat="37.87" lon="-25.78" elev="856"/>
+        <station name="Seulawah Agam" lat="5.448" lon="95.658" elev="1810"/>
+        <station name="Severny" lat="58.28" lon="160.87" elev="1936"/>
+        <station name="Shala" lat="7.47" lon="38.55" elev="2075"/>
+        <station name="Sharat Kovakab" lat="36.53" lon="40.85" elev="534"/>
+        <station name="Shasta" lat="41.42" lon="-122.2" elev="4317"/>
+        <station name="Shiga" lat="36.7" lon="138.52" elev="2036"/>
+        <station name="Shikaribetsu Group" lat="43.28" lon="143.08" elev="1430"/>
+        <station name="Shikotsu" lat="42.7" lon="141.33" elev="1320"/>
+        <station name="Shiretoko-Iwo-zan" lat="44.13" lon="145.17" elev="1563"/>
+        <station name="Shirinki" lat="50.2" lon="154.98" elev="761"/>
+        <station name="Shishaldin" lat="54.75" lon="-163.97" elev="2857"/>
+        <station name="Shisheika" lat="57.15" lon="161.083" elev="379"/>
+        <station name="Shishel" lat="57.45" lon="160.37" elev="2525"/>
+        <station name="Shiveluch" lat="56.653" lon="161.36" elev="3283"/>
+        <station name="Shoshone Lava Field" lat="43.07" lon="-114.43" elev="1525"/>
+        <station name="Sibayak" lat="3.2" lon="98.52" elev="2212"/>
+        <station name="Sibualbuali" lat="1.556" lon="99.255" elev="1819"/>
+        <station name="Silali" lat="1.15" lon="36.23" elev="1528"/>
+        <station name="Silay" lat="10.77" lon="123.23" elev="1535"/>
+        <station name="Silverthrone" lat="51.43" lon="-126.3" elev="3160"/>
+        <station name="Simbo" lat="-8.292" lon="156.52" elev="335"/>
+        <station name="Sinabung" lat="3.17" lon="98.392" elev="2460"/>
+        <station name="Sinarka" lat="48.875" lon="154.175" elev="934"/>
+        <station name="Singu Plateau" lat="22.7" lon="95.98" elev="507"/>
+        <station name="Singuil, Cerro" lat="14.03" lon="-89.7" elev="957"/>
+        <station name="Siple" lat="-73.43" lon="-126.67" elev="3110"/>
+        <station name="Sirung" lat="-8.51" lon="124.148" elev="862"/>
+        <station name="Slamet" lat="-7.242" lon="109.208" elev="3432"/>
+        <station name="Smirnov" lat="44.43" lon="146.13" elev="1189"/>
+        <station name="Smith Rock" lat="31.32" lon="140.05" elev="136"/>
+        <station name="Smith Volcano" lat="19.523" lon="121.94" elev="2090"/>
+        <station name="Snaefellsjokull" lat="64.8" lon="-23.78" elev="1448"/>
+        <station name="Snegovoy" lat="58.2" lon="160.97" elev="2169"/>
+        <station name="Snezhniy" lat="58.02" lon="160.75" elev="2169"/>
+        <station name="Snowy" lat="58.33" lon="-154.68" elev="2161"/>
+        <station name="Soche" lat="0.552" lon="-77.58" elev="3955"/>
+        <station name="Socompa" lat="-24.4" lon="-68.25" elev="6051"/>
+        <station name="Socorro" lat="18.78" lon="-110.95" elev="1050"/>
+        <station name="Sodore" lat="8.43" lon="39.35" elev="1765"/>
+        <station name="Sollipulli" lat="-38.97" lon="-71.52" elev="2282"/>
+        <station name="Soputan" lat="1.108" lon="124.725" elev="1784"/>
+        <station name="Sorikmarapi" lat="0.686" lon="99.539" elev="2145"/>
+        <station name="Sorkale" lat="13.18" lon="41.725" elev="1611"/>
+        <station name="Sotara" lat="2.12" lon="-76.58" elev="4400"/>
+        <station name="Soufriere Guadeloupe" lat="16.05" lon="-61.67" elev="1467"/>
+        <station name="Soufriere Hills" lat="16.72" lon="-62.18" elev="915"/>
+        <station name="Soufriere St. Vincent" lat="13.33" lon="-61.18" elev="1220"/>
+        <station name="South Island" lat="2.63" lon="36.6" elev="700"/>
+        <station name="South Sister" lat="44.1" lon="-121.77" elev="3157"/>
+        <station name="Southern EPR-Segment I" lat="-18.533" lon="-113.417" elev="-2600"/>
+        <station name="Southern EPR-Segment J" lat="-18.175" lon="-113.35" elev="-2650"/>
+        <station name="Southern EPR-Segment K" lat="-17.436" lon="-113.206" elev="-2566"/>
+        <station name="Southern Sikhote-Alin" lat="44.5" lon="135.5" elev="0"/>
+        <station name="Spectrum Range" lat="57.43" lon="-130.68" elev="2430"/>
+        <station name="Spokoiny" lat="58.133" lon="160.817" elev="2171"/>
+        <station name="Spurr" lat="61.3" lon="-152.25" elev="3374"/>
+        <station name="Squaw Ridge Field" lat="43.472" lon="-120.754" elev="1711"/>
+        <station name="Srednii" lat="47.6" lon="152.92" elev="36"/>
+        <station name="St. Andrew Strait" lat="-2.38" lon="147.35" elev="270"/>
+        <station name="St. Catherine" lat="12.15" lon="-61.67" elev="840"/>
+        <station name="St. Helens" lat="46.2" lon="-122.18" elev="2549"/>
+        <station name="St. Michael" lat="63.45" lon="-162.12" elev="715"/>
+        <station name="St. Paul" lat="-38.72" lon="77.53" elev="268"/>
+        <station name="Steamboat Springs" lat="39.375" lon="-119.72" elev="1415"/>
+        <station name="Steller" lat="58.43" lon="-154.4" elev="2272"/>
+        <station name="Stepovak Bay 3" lat="55.929" lon="-160.002" elev="1555"/>
+        <station name="Stepovak Bay 4" lat="55.954" lon="-159.954" elev="1557"/>
+        <station name="Stromboli" lat="38.789" lon="15.213" elev="926"/>
+        <station name="Sturge Island" lat="-67.4" lon="164.83" elev="1167"/>
+        <station name="Suchitan Volc Field" lat="14.4" lon="-89.78" elev="2042"/>
+        <station name="Sukaria Caldera" lat="-8.792" lon="121.77" elev="1500"/>
+        <station name="Sumaco" lat="-0.538" lon="-77.626" elev="3990"/>
+        <station name="Sumbing" lat="-2.414" lon="101.728" elev="2507"/>
+        <station name="Sumbing" lat="-7.38" lon="110.058" elev="3371"/>
+        <station name="Sumiyoshi-ike" lat="31.768" lon="130.594" elev="100"/>
+        <station name="Sundoro" lat="-7.3" lon="109.992" elev="3136"/>
+        <station name="Sunset Crater" lat="35.37" lon="-111.5" elev="2447"/>
+        <station name="Suoh" lat="-5.25" lon="104.27" elev="1000"/>
+        <station name="Suphan Dagi" lat="38.92" lon="42.82" elev="4434"/>
+        <station name="Supply Reef" lat="20.13" lon="145.1" elev="-8"/>
+        <station name="Suretamatai" lat="-13.8" lon="167.47" elev="921"/>
+        <station name="Suswa" lat="-1.175" lon="36.35" elev="2356"/>
+        <station name="Suwanose-jima" lat="29.53" lon="129.72" elev="799"/>
+        <station name="Ta'u" lat="-14.23" lon="-169.454" elev="931"/>
+        <station name="Taal" lat="14.002" lon="120.993" elev="400"/>
+        <station name="Taburete" lat="13.435" lon="-88.532" elev="1172"/>
+        <station name="Tacana" lat="15.13" lon="-92.112" elev="4110"/>
+        <station name="Tacora" lat="-17.72" lon="-69.77" elev="5980"/>
+        <station name="Taftan" lat="28.6" lon="61.6" elev="4050"/>
+        <station name="Tafu-Maka" lat="-15.367" lon="-174.233" elev="-1400"/>
+        <station name="Tahalra Volc Field" lat="22.667" lon="5" elev="1467"/>
+        <station name="Tahual" lat="14.433" lon="-89.9" elev="1716"/>
+        <station name="Tair, Jebel at" lat="15.7" lon="41.742" elev="244"/>
+        <station name="Tajumulco" lat="15.034" lon="-91.903" elev="4220"/>
+        <station name="Takahara" lat="36.9" lon="139.78" elev="1795"/>
+        <station name="Takahe" lat="-76.28" lon="-112.08" elev="3460"/>
+        <station name="Takawangha" lat="51.87" lon="-178.02" elev="1449"/>
+        <station name="Takuan Group" lat="-6.442" lon="155.608" elev="2210"/>
+        <station name="Talagabodas" lat="-7.208" lon="108.07" elev="2201"/>
+        <station name="Talakmau" lat="0.079" lon="99.98" elev="2919"/>
+        <station name="Talang" lat="-0.978" lon="100.679" elev="2597"/>
+        <station name="Tambora" lat="-8.25" lon="118" elev="2850"/>
+        <station name="Tampomas" lat="-6.77" lon="107.95" elev="1684"/>
+        <station name="Tana" lat="52.833" lon="-169.767" elev="1170"/>
+        <station name="Tanaga" lat="51.88" lon="-178.13" elev="1806"/>
+        <station name="Tandikat" lat="-0.433" lon="100.317" elev="2438"/>
+        <station name="Tangaroa" lat="-36.321" lon="178.028" elev="600"/>
+        <station name="Tangkubanparahu" lat="-6.77" lon="107.6" elev="2084"/>
+        <station name="Tao-Rusyr Caldera" lat="49.35" lon="154.7" elev="1325"/>
+        <station name="Tara, Batu" lat="-7.792" lon="123.579" elev="748"/>
+        <station name="Tarakan" lat="1.78" lon="127.792" elev="318"/>
+        <station name="Taryatu-Chulutu" lat="48.17" lon="99.7" elev="2400"/>
+        <station name="Tat Ali" lat="13.28" lon="41.07" elev="700"/>
+        <station name="Tate-yama" lat="36.57" lon="137.6" elev="2621"/>
+        <station name="Tateshina" lat="36.1" lon="138.3" elev="2530"/>
+        <station name="Tatun Group" lat="25.17" lon="121.52" elev="1120"/>
+        <station name="Taunshits" lat="54.53" lon="159.8" elev="2353"/>
+        <station name="Taupo" lat="-38.82" lon="176" elev="760"/>
+        <station name="Taveuni" lat="-16.82" lon="-179.97" elev="1241"/>
+        <station name="Tavui" lat="-4.117" lon="152.2" elev="200"/>
+        <station name="Teahitia" lat="-17.57" lon="-148.85" elev="-1600"/>
+        <station name="Tecapa" lat="13.494" lon="-88.502" elev="1593"/>
+        <station name="Tecuamburro" lat="14.156" lon="-90.407" elev="1845"/>
+        <station name="Telica" lat="12.602" lon="-86.845" elev="1061"/>
+        <station name="Telomoyo" lat="-7.37" lon="110.4" elev="1894"/>
+        <station name="Telong, Bur Ni" lat="4.77" lon="96.808" elev="2624"/>
+        <station name="Tenduruk Dagi" lat="39.33" lon="43.83" elev="3584"/>
+        <station name="Tenerife" lat="28.271" lon="-16.641" elev="3715"/>
+        <station name="Tengchong" lat="25.32" lon="98.47" elev="2865"/>
+        <station name="Tengger Caldera" lat="-7.942" lon="112.95" elev="2329"/>
+        <station name="Tenorio" lat="10.673" lon="-85.015" elev="1916"/>
+        <station name="Teon" lat="-6.92" lon="129.125" elev="655"/>
+        <station name="Tepi" lat="7.42" lon="35.43" elev="2728"/>
+        <station name="Terceira" lat="38.73" lon="-27.32" elev="1023"/>
+        <station name="Terpuk" lat="57.2" lon="159.833" elev="765"/>
+        <station name="Theistareykjarbunga" lat="65.88" lon="-16.83" elev="564"/>
+        <station name="Thompson Island" lat="-53.93" lon="5.5" elev="0"/>
+        <station name="Thordarhyrna" lat="62.27" lon="-17.6" elev="1659"/>
+        <station name="Thule Islands" lat="-59.45" lon="-27.37" elev="1075"/>
+        <station name="Tianshan Volc Group" lat="42.5" lon="82.5" elev="0"/>
+        <station name="Tiatia" lat="44.358" lon="146.27" elev="1819"/>
+        <station name="Ticsani" lat="-16.755" lon="-70.595" elev="5408"/>
+        <station name="Tidore" lat="0.65" lon="127.4" elev="1730"/>
+        <station name="Tigalalu" lat="0.07" lon="127.42" elev="422"/>
+        <station name="Tigre, El" lat="13.467" lon="-88.433" elev="1640"/>
+        <station name="Tigre, Isla El" lat="13.27" lon="-87.63" elev="760"/>
+        <station name="Tin Zaouatene Volc Field" lat="19.833" lon="2.833" elev=""/>
+        <station name="Tinakula" lat="-10.38" lon="165.8" elev="851"/>
+        <station name="Tindfjallajokull" lat="63.78" lon="-19.57" elev="1463"/>
+        <station name="Tinguiririca" lat="-34.814" lon="-70.352" elev="4280"/>
+        <station name="Tipas" lat="-27.2" lon="-68.55" elev="6660"/>
+        <station name="Titila" lat="57.4" lon="160.1" elev="1559"/>
+        <station name="Tjornes Fracture Zone" lat="66.3" lon="-17.1" elev="0"/>
+        <station name="Tlevak Strait-Suemez Is." lat="55.25" lon="-133.3" elev="50"/>
+        <station name="To-shima" lat="34.52" lon="139.28" elev="508"/>
+        <station name="Toba" lat="2.58" lon="98.83" elev="2157"/>
+        <station name="Tobaru" lat="1.625" lon="127.675" elev="1035"/>
+        <station name="Todoko-Ranu" lat="1.22" lon="127.43" elev="979"/>
+        <station name="Todra Volc Field" lat="17.683" lon="8.5" elev="2000"/>
+        <station name="Tofua" lat="-19.75" lon="-175.07" elev="512"/>
+        <station name="Toh, Tarso" lat="21.333" lon="16.333" elev="2000"/>
+        <station name="Tokachi" lat="43.42" lon="142.68" elev="2077"/>
+        <station name="Tolbachik" lat="55.83" lon="160.33" elev="3682"/>
+        <station name="Tolguaca" lat="-38.31" lon="-71.645" elev="2806"/>
+        <station name="Tolima" lat="4.67" lon="-75.33" elev="5200"/>
+        <station name="Toliman" lat="14.612" lon="-91.189" elev="3158"/>
+        <station name="Tolmachev Dol" lat="52.63" lon="157.58" elev="1021"/>
+        <station name="Toluca, Nevado de" lat="19.108" lon="-99.758" elev="4690"/>
+        <station name="Tombel Graben" lat="4.75" lon="9.667" elev="500"/>
+        <station name="Tondano Caldera" lat="1.23" lon="124.83" elev="1202"/>
+        <station name="Toney Mountain" lat="-75.8" lon="-115.83" elev="3595"/>
+        <station name="Tongariro" lat="-39.13" lon="175.642" elev="1978"/>
+        <station name="Tongkoko" lat="1.52" lon="125.2" elev="1149"/>
+        <station name="Tore" lat="-5.83" lon="154.93" elev="2200"/>
+        <station name="Torfajokull" lat="63.92" lon="-19.17" elev="1259"/>
+        <station name="Tori-shima" lat="30.48" lon="140.32" elev="403"/>
+        <station name="Toroeng Prong" lat="14.93" lon="108" elev="800"/>
+        <station name="Tortuga, Isla" lat="27.392" lon="-111.858" elev="210"/>
+        <station name="Tosa Sucha" lat="5.92" lon="37.57" elev="1650"/>
+        <station name="Tousside, Tarso" lat="21.03" lon="16.45" elev="3265"/>
+        <station name="Towada" lat="40.47" lon="140.92" elev="1159"/>
+        <station name="Traitor's Head" lat="-18.75" lon="169.23" elev="837"/>
+        <station name="Tres Virgenes" lat="27.47" lon="-112.591" elev="1940"/>
+        <station name="Tri Sestry" lat="45.93" lon="149.92" elev="998"/>
+        <station name="Trident" lat="58.23" lon="-155.08" elev="1864"/>
+        <station name="Trindade" lat="-20.514" lon="-29.331" elev="600"/>
+        <station name="Tristan da Cunha" lat="-37.092" lon="-12.28" elev="2060"/>
+        <station name="Trocon" lat="-37.733" lon="-70.9" elev="2500"/>
+        <station name="Trollagigar" lat="64.43" lon="-18.13" elev="1000"/>
+        <station name="Tromen" lat="-37.142" lon="-70.03" elev="3978"/>
+        <station name="Tronador" lat="-41.157" lon="-71.885" elev="3491"/>
+        <station name="Tseax River Cone" lat="55.12" lon="-128.9" elev="609"/>
+        <station name="Tshibinda" lat="-2.32" lon="28.75" elev="1460"/>
+        <station name="Tskhouk-Karckar" lat="39.733" lon="46.017" elev="3000"/>
+        <station name="Tsurumi" lat="33.28" lon="131.43" elev="1584"/>
+        <station name="Tujle, Cerro" lat="-23.83" lon="-67.95" elev="3550"/>
+        <station name="Tulabug" lat="-1.78" lon="-78.613" elev="3336"/>
+        <station name="Tullu Moje" lat="8.158" lon="39.13" elev="2349"/>
+        <station name="Tumble Buttes" lat="40.68" lon="-121.55" elev="2191"/>
+        <station name="Tundroviy" lat="52.25" lon="157.6" elev="739"/>
+        <station name="Tungnafellsjokull" lat="64.73" lon="-17.92" elev="1535"/>
+        <station name="Tungurahua" lat="-1.467" lon="-78.442" elev="5023"/>
+        <station name="Tunkin Depression" lat="51.5" lon="102.5" elev="1200"/>
+        <station name="Tupungatito" lat="-33.4" lon="-69.8" elev="6000"/>
+        <station name="Turfan" lat="42.9" lon="89.25" elev="0"/>
+        <station name="Turrialba" lat="10.03" lon="-83.77" elev="3340"/>
+        <station name="Tutuila" lat="-14.295" lon="-170.7" elev="653"/>
+        <station name="Tutupaca" lat="-17.025" lon="-70.358" elev="5815"/>
+        <station name="Tuya Volc Field" lat="59.367" lon="-130.583" elev="2123"/>
+        <station name="Tuzgle, Cerro" lat="-24.05" lon="-66.483" elev="5500"/>
+        <station name="Tuzovsky" lat="57.32" lon="159.97" elev="1533"/>
+        <station name="Twin Buttes" lat="40.78" lon="-121.6" elev="1631"/>
+        <station name="Ubehebe Craters" lat="37.02" lon="-117.45" elev="752"/>
+        <station name="Ubinas" lat="-16.355" lon="-70.903" elev="5672"/>
+        <station name="Udina" lat="55.755" lon="160.527" elev="2923"/>
+        <station name="Udokan Volc Field" lat="56.18" lon="117.47" elev="1980"/>
+        <station name="Ugashik-Peulik" lat="57.75" lon="-156.37" elev="1474"/>
+        <station name="Uinkaret Field" lat="36.38" lon="-113.13" elev="1555"/>
+        <station name="Uka" lat="57.7" lon="160.58" elev="1643"/>
+        <station name="Ukinrek Maars" lat="57.83" lon="-156.52" elev="91"/>
+        <station name="Uksichan" lat="56.08" lon="158.38" elev="1692"/>
+        <station name="Ulawun" lat="-5.05" lon="151.33" elev="2334"/>
+        <station name="Uliaga" lat="53.07" lon="-169.77" elev="888"/>
+        <station name="Ulreung" lat="37.5" lon="130.87" elev="984"/>
+        <station name="Ulug-Arginsky" lat="52.33" lon="98" elev="1800"/>
+        <station name="Umboi" lat="-5.589" lon="147.875" elev="1548"/>
+        <station name="Umm Arafieb, Jebel" lat="18.17" lon="33.83" elev="0"/>
+        <station name="Unzen" lat="32.75" lon="130.3" elev="1500"/>
+        <station name="Upolu" lat="-13.935" lon="-171.72" elev="1100"/>
+        <station name="Urataman" lat="47.12" lon="152.23" elev="678"/>
+        <station name="Ushishur" lat="47.52" lon="152.8" elev="401"/>
+        <station name="Ushkovsky" lat="56.105" lon="160.47" elev="3943"/>
+        <station name="Usu" lat="42.53" lon="140.83" elev="731"/>
+        <station name="Usulutan" lat="13.419" lon="-88.471" elev="1449"/>
+        <station name="Utila Island" lat="16.1" lon="-86.9" elev="90"/>
+        <station name="Uwayrid, Harrat" lat="27.08" lon="37.25" elev="1900"/>
+        <station name="Uzon" lat="54.5" lon="159.97" elev="1617"/>
+        <station name="Vakak Group" lat="34.25" lon="67.97" elev="3190"/>
+        <station name="Valle, El" lat="8.583" lon="-80.167" elev="1185"/>
+        <station name="Veniaminof" lat="56.17" lon="-159.38" elev="2507"/>
+        <station name="Verkhovoy" lat="56.52" lon="159.53" elev="1400"/>
+        <station name="Vernadskii Ridge" lat="50.55" lon="155.97" elev="1183"/>
+        <station name="Vestmannaeyjar" lat="63.43" lon="-20.28" elev="279"/>
+        <station name="Vesuvius" lat="40.821" lon="14.426" elev="1281"/>
+        <station name="Veteran" lat="9.83" lon="109.05" elev="0"/>
+        <station name="Victory" lat="-9.2" lon="149.07" elev="1925"/>
+        <station name="Viedma, Volcan" lat="-49.358" lon="-73.28" elev="1300"/>
+        <station name="Villarrica" lat="-39.42" lon="-71.93" elev="2847"/>
+        <station name="Vilyuchik" lat="52.68" lon="158.3" elev="2173"/>
+        <station name="Visoke" lat="-1.47" lon="29.492" elev="3711"/>
+        <station name="Volcanico, Cerro" lat="-42.07" lon="-71.65" elev="0"/>
+        <station name="Volcano W" lat="-31.85" lon="-179.183" elev="-900"/>
+        <station name="Voon, Tarso" lat="20.92" lon="17.28" elev="3100"/>
+        <station name="Voyampolsky" lat="58.37" lon="160.62" elev="1225"/>
+        <station name="Vsevidof" lat="53.13" lon="-168.68" elev="2149"/>
+        <station name="Vulcano" lat="38.404" lon="14.962" elev="500"/>
+        <station name="Vulsini" lat="42.6" lon="11.93" elev="800"/>
+        <station name="Waesche" lat="-77.17" lon="-126.88" elev="3292"/>
+        <station name="Waiowa" lat="-9.57" lon="149.075" elev="640"/>
+        <station name="Wallis Islands" lat="-13.3" lon="-176.17" elev="143"/>
+        <station name="Walo" lat="-5.53" lon="150.9" elev="15"/>
+        <station name="Wapi Lava Field" lat="42.88" lon="-113.22" elev="1604"/>
+        <station name="Washiba-Kumonotaira" lat="36.4" lon="137.5" elev="2924"/>
+        <station name="Watt, Morne" lat="15.307" lon="-61.305" elev="1224"/>
+        <station name="Wau-en-Namus" lat="25.05" lon="17.55" elev="547"/>
+        <station name="Wayang-Windu" lat="-7.208" lon="107.63" elev="2182"/>
+        <station name="Wells Gray-Clearwater" lat="52.33" lon="-120.57" elev="2015"/>
+        <station name="West Crater" lat="45.88" lon="-122.08" elev="1329"/>
+        <station name="West Eifel Volc Field" lat="50.17" lon="6.85" elev="600"/>
+        <station name="West Mata" lat="-15.1" lon="-173.75" elev="-1174"/>
+        <station name="Westdahl" lat="54.52" lon="-164.65" elev="1654"/>
+        <station name="Whangarei" lat="-35.75" lon="174.27" elev="397"/>
+        <station name="White Island" lat="-37.52" lon="177.18" elev="321"/>
+        <station name="Wilis" lat="-7.808" lon="111.758" elev="2563"/>
+        <station name="Wolf, Volcan" lat="0.02" lon="-91.35" elev="1710"/>
+        <station name="Wrangell" lat="62" lon="-144.02" elev="4317"/>
+        <station name="Wudalianchi" lat="48.72" lon="126.12" elev="597"/>
+        <station name="Wurlali" lat="-7.125" lon="128.675" elev="868"/>
+        <station name="Xianjindao" lat="41.33" lon="128" elev="0"/>
+        <station name="Yake-dake" lat="36.22" lon="137.58" elev="2455"/>
+        <station name="Yali" lat="36.63" lon="27.1" elev="176"/>
+        <station name="Yangudi" lat="10.58" lon="41.042" elev="1383"/>
+        <station name="Yantarni" lat="57.02" lon="-157.18" elev="1336"/>
+        <station name="Yanteles" lat="-43.5" lon="-72.8" elev="2042"/>
+        <station name="Yanteles, Cerro" lat="-43.42" lon="-72.83" elev="2050"/>
+        <station name="Yar, Jabal" lat="17.05" lon="42.83" elev="305"/>
+        <station name="Yasur" lat="-19.52" lon="169.425" elev="361"/>
+        <station name="Yate" lat="-41.755" lon="-72.396" elev="2187"/>
+        <station name="Yelia" lat="-7.05" lon="145.858" elev="3384"/>
+        <station name="Yellowstone" lat="44.43" lon="-110.67" elev="2805"/>
+        <station name="Yersey" lat="-7.53" lon="123.95" elev="-3800"/>
+        <station name="Yojoa, Lake" lat="14.98" lon="-87.98" elev="1090"/>
+        <station name="Yomba" lat="-4.92" lon="146.75" elev="0"/>
+        <station name="Yotei" lat="42.83" lon="140.82" elev="1893"/>
+        <station name="Young Island" lat="-66.42" lon="162.45" elev="1340"/>
+        <station name="Yucamane" lat="-17.18" lon="-70.2" elev="5550"/>
+        <station name="Yumia, Cerro" lat="-21.5" lon="-67.5" elev="4050"/>
+        <station name="Yunaska" lat="52.63" lon="-170.63" elev="550"/>
+        <station name="Zacate Grande, Isla" lat="13.33" lon="-87.63" elev="600"/>
+        <station name="Zao" lat="38.15" lon="140.45" elev="1841"/>
+        <station name="Zaozerny" lat="56.88" lon="159.95" elev="1349"/>
+        <station name="Zapatera" lat="11.73" lon="-85.82" elev="629"/>
+        <station name="Zavaritsky" lat="53.905" lon="158.385" elev="1567"/>
+        <station name="Zavaritsky" lat="53.905" lon="158.385" elev="1567"/>
+        <station name="Zavaritzki Caldera" lat="46.925" lon="151.95" elev="624"/>
+        <station name="Zavodovski" lat="-56.3" lon="-27.57" elev="551"/>
+        <station name="Zengyu" lat="26.18" lon="122.458" elev="-418"/>
+        <station name="Zheltovsky" lat="51.57" lon="157.323" elev="1953"/>
+        <station name="Zhupanovsky" lat="53.59" lon="159.147" elev="2958"/>
+        <station name="Zimina" lat="55.862" lon="160.603" elev="3081"/>
+        <station name="Zubair, Jebel" lat="15.05" lon="42.18" elev="191"/>
+        <station name="Zukur" lat="14.02" lon="42.75" elev="624"/>
+        <station name="Zuni-Bandera" lat="34.8" lon="-108" elev="2550"/>
+    </stationtable>
+</stationtables>
