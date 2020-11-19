@@ -364,6 +364,7 @@
     <resource location="%APPPATH%/stations/worldcities.xml"/>
     <resource location="%APPPATH%/stations/canadaprovinces.xml"/>
     <resource location="%APPPATH%/stations/counties.xml"/>
+    <resource location="%APPPATH%/stations/volcanos.xml"/>
   </resources>
 
 <!-- The list of help tip xml files   -->
