@@ -112,7 +112,12 @@
      Temperature_layer_between_two_depths_below_surface_layer,
      tmax,
      tas,
-     ta"/>
+     ta,
+     Temperature_2m,
+     Temperature_300mb,
+     Temperature_500mb,
+     Temperature_700mb,
+     Temperature_850mb"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -162,7 +167,8 @@
      Relative_humidity_sigma_layer_*.*_Average,
      Relative_humidity_wrt_water_isobaric,
      Relative_humidity_wrt_water_height_above_ground,
-     hur"/>
+     hur,
+     RelHum_*.*"/>
   <alias
      name="Z"
      label="Z"
