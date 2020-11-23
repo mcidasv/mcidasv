@@ -403,7 +403,8 @@
      SST_avg_comp,
      HDFEOS/SWATHS/AMSR2_Level2_Ocean_Suite/Data_Fields/ReynoldsSST,
      analysed_sst,
-     CRW_SST"/>
+     CRW_SST,
+     sea_surface_temperature"/>
   <!-- bob inq2679 -->
   <alias aliases="HT, .*_Band3_CTH" label="ABI L2 Cloud Top Height" name="ABI_L2_ACHA"/>
   <alias aliases="AOD, .*_Band22_AOD" label="ABI L2 Aerosol Optical Depth" name="ABI_L2_AOD"/>
