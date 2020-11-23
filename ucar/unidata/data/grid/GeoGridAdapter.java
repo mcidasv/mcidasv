@@ -1870,6 +1870,24 @@ public class GeoGridAdapter {
                 }
             }
 
+            // RMC Inq 2944 Nov 2020 - get time for NUCAPS SPoRT EDRs
+			if (timeVar == null) {
+                Attribute timeAttr = ncFile.findGlobalAttribute("start_time");
+                if (timeAttr != null && timeAttr.isString()) {
+                    String timeStr = timeAttr.getStringValue();
+                    try {
+                        return new CalendarDateTime(
+                                DateTime.createDateTime(timeStr,
+                                        "yyyy/MM/dd' 'HH:mm")
+                        );
+                    } catch (VisADException e) {
+                        System.err.println(
+                                "start_time attribute exists, but DateTime parsing failed");
+                        System.err.println("timeStr: " + timeStr);
+                    }
+                }
+            }
+			// End Inq 2944
             if (timeVar != null) {  // found it
                 try {
                     time = new CalendarDateTime(
