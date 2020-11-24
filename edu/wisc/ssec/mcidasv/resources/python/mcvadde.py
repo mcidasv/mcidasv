@@ -75,7 +75,7 @@ def enum(*sequential, **named):
     return type('Enum', (), enums)
 
 
-def _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
+def _checkADDEParameters(hasPlace, hasLocation, size):
     retval = True
     
     if isinstance(size, str):
@@ -83,7 +83,7 @@ def _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
     else:
         s = size
         
-    if (hasCoordSys or hasPlace or hasLocation) and (s == 'ALL' or s == 'SAME'):
+    if (hasPlace or hasLocation) and (s == 'ALL' or s == 'SAME'):
         retval = False
     return retval
 
@@ -906,8 +906,8 @@ def listADDEImageTimes(localEntry=None,
     hasLocation = location or False
     
     size = ''
-    if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
-        raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
+    if not _checkADDEParameters(hasPlace, hasLocation, size):
+        raise ValueError("Cannot specify place or location while also providing a size of '%s'." % (size))
         
     mag = ''
     
@@ -1112,8 +1112,8 @@ def listADDEImages(localEntry=None,
     hasLocation = location or False
     
     size = ''
-    if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
-        raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
+    if not _checkADDEParameters(hasPlace, hasLocation, size):
+        raise ValueError("Cannot specify place or location while also providing a size of '%s'." % (size))
         
     mag = ''
     
@@ -1403,8 +1403,8 @@ def _getADDEImage(localEntry=None,
     hasPlace = place or False
     hasLocation = location or False
     
-    if not _checkADDEParameters(hasCoordSys, hasPlace, hasLocation, size):
-        raise ValueError("Cannot specify coordinate system, place, or location while also providing a size of '%s'." % (size))
+    if not _checkADDEParameters(hasPlace, hasLocation, size):
+        raise ValueError("Cannot specify place or location while also providing a size of '%s'." % (size))
         
     if place is Places.CENTER:
         place = '&PLACE=CENTER'
