@@ -20,6 +20,8 @@
 
 package ucar.unidata.xml;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,26 +32,22 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -66,6 +64,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class XmlEncoder extends XmlUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(XmlObjectStore.class);
 
     /**
      * MethodKey class for cache keys.
@@ -2598,7 +2597,7 @@ public class XmlEncoder extends XmlUtil {
         if ( !ctorOk) {
             if (object instanceof Serializable) {
                 try {
-                    System.err.println("Serializing: " + theClass.getName());
+                    logger.debug("Serializing: " + theClass.getName());
                     ByteArrayOutputStream ostream =
                         new ByteArrayOutputStream();
                     ObjectOutputStream p = new ObjectOutputStream(ostream);
