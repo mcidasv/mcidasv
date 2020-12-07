@@ -129,9 +129,6 @@ public class AddePointDataChooser extends AddeChooser {
 
     /** Date will default to current */
     DateTime dt = null;
-    
-    /** archive date */
-    protected String archiveDay = null;
 
     /** archive day button and label */
     protected JLabel archiveDayLabel;
@@ -208,7 +205,6 @@ public class AddePointDataChooser extends AddeChooser {
      * Do server connection stuff... override this with type-specific methods
      */
     @Override protected void readFromServer() {
-        archiveDay = null;
         if (archiveDayLabel != null) {
             archiveDayLabel.setText("Select day:");
         }
@@ -893,7 +889,22 @@ public class AddePointDataChooser extends AddeChooser {
                 }
             }
             else {
+                // TJJ - I don't think this will happen any more, but if I'm wrong,
+                // set the value to current day and pass that in the SELECT clause
                 logger.trace("archiveDay is null!");
+                LocalDate ld = LocalDate.now();
+                try {
+                    dt = new DateTime(ld.toDate());
+                } catch (VisADException e) {
+                    e.printStackTrace();
+                }
+                archiveDay = jdFormat.format(ld.toDate());
+                logger.trace("Setting archiveDay to: " + archiveDay);
+                try {
+                    buf.append("DAY ").append(archiveDay).append(';');
+                } catch (Exception e) {
+                    logger.error("archiveDay parse error", e);
+                }
             }
 
             buf.append("TIME ");
