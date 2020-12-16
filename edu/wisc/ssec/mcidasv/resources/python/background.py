@@ -3878,7 +3878,10 @@ def listGridFieldsInFile(filename):
     from ucar.nc2.dt.grid import GridDataset
     gridDataset = GridDataset.open(filename)
     for grid in gridDataset.getGrids():
-        print('%s ; %s' % (grid.getName().encode('utf_8'), grid.getDescription().encode('utf_8')))
+        if grid.getDescription():
+            print('%s ; %s' % (grid.getName().encode('utf_8'), grid.getDescription().encode('utf_8')))
+        else:
+            print('%s ; %s' % (grid.getName().encode('utf_8'), grid.getDescription()))
     names = [grid.getName() for grid in gridDataset.getGrids()]
     gridDataset.close()
     return names
