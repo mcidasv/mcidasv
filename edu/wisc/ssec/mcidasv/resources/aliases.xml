@@ -37,7 +37,8 @@
      name="ABSVOR"
      label="Absolute Vorticity"
      aliases="Absolute_vorticity_isobaric_*.*_AverageNforecasts,
-     Absolute_vorticity_isobaric_*.*_AverageNanalysis"/>
+     Absolute_vorticity_isobaric_*.*_AverageNanalysis,
+     abs_vort_isobaric"/>
   
   <!-- temp fix for inq 1129.  remove once Geopotential_isobaric alias is in IDV's aliases.xml -->
   <alias aliases="Geopotential,Geopotential_isobaric" label="Geopotential" name="GP"/>
@@ -117,7 +118,8 @@
      Temperature_300mb,
      Temperature_500mb,
      Temperature_700mb,
-     Temperature_850mb"/>
+     Temperature_850mb,
+     air_temp_isobaric"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -243,7 +245,9 @@
      uwnd,
      ua,
      uas,
-     ULML"/>
+     ULML,
+     wnd_ucmp_height_above_ground,
+     wnd_ucmp_isobaric"/>
   <alias
      name="V"
      label="V component of wind"
@@ -311,7 +315,9 @@
      va,
      va,
      vas,
-     VLML"/>
+     VLML,
+     wnd_vcmp_height_above_ground,
+     wnd_vcmp_isobaric"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -386,7 +392,8 @@
      Pressure_reduced_to_MSL_msl_*.*_AverageNanalysis,
      Pressure_msl_*.*_AverageNanalysis,
      Pressure_msl_*.*_Average,
-     Pressure_reduced_to_MSL_msl_*.*_Average"/>
+     Pressure_reduced_to_MSL_msl_*.*_Average,
+     pres_reduced_msl"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
@@ -404,7 +411,9 @@
      HDFEOS/SWATHS/AMSR2_Level2_Ocean_Suite/Data_Fields/ReynoldsSST,
      analysed_sst,
      CRW_SST,
-     sea_surface_temperature"/>
+     sea_surface_temperature,
+     grnd_sea_temp_surface,
+     sea_temp_surface"/>
   <!-- bob inq2679 -->
   <alias aliases="HT, .*_Band3_CTH" label="ABI L2 Cloud Top Height" name="ABI_L2_ACHA"/>
   <alias aliases="AOD, .*_Band22_AOD" label="ABI L2 Aerosol Optical Depth" name="ABI_L2_AOD"/>
