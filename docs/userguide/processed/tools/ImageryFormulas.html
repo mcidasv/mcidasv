@@ -34,6 +34,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
 <ul>
   <li><a href="#abiFunctions">ABI Functions</a></li>
   <li><a href="#ahiFunctions">AHI Functions</a></li>
+  <li><a href="#avhrrFunctions">AVHRR Functions</a></li>
   <li><a href="#imageFilters">Image Filters</a></li>
   <li><a href="#modisFunctions">MODIS Functions</a></li>
   <li><a href="#msgFunctions">MSG Functions</a></li>
@@ -1126,6 +1127,137 @@ of the latitudes at each point.</li>
         </td>
       </tr>
   </table>
+</li>
+</ul>
+<div class="pagesubtitle">AVHRR Functions<a name="avhrrFunctions" id="msgFunctions"></a></div>
+<p>The following describes each formula included in the AVHRR (Advanced Very High Resolution Radiometer - METOP/NOAA) Functions section of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> AVHRR Functions tree.
+<ul class="propertylist">
+<li class="propertylistitem"><strong>AVHRR Cloud RGB (Band 1 Reflectance, Band 2 Reflectance, Band 4 Temperature) -</strong> Distinguishes between different types of clouds and cloud-free areas.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 1 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>AVHRR band 1 (0.63um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 2 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AVHRR band 2 (0.86um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 4 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AVHRR band 4 (10.8um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>AVHRR Day Microphysics RGB (Band 2 Reflectance, Band 4 Temperature, Band 6 Reflectance) -</strong> Contrasts between different types of clouds and the cloud-free areas.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 2 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>AVHRR band 2 (0.86um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 4 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AVHRR band 4 (10.8um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 6 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AVHRR band 6 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>AVHRR Natural Color RGB (Band 1 Reflectance, Band 2 Reflectance, Band 6 Reflectance) -</strong> Provides information on cloud optical thickness and cloud top phase and distinguishes water from ice clouds. Green vegetation can also be detected.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 1 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>AVHRR band 1 (0.63um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band </em>2 Reflectance</p></td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AVHRR band 2 (0.86um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 6 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AVHRR band 6 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>AVHRR Night Microphysics RGB (Band 3 Temperature, Band 4 Temperature, Band 5 Temperature) -</strong> Distinguishes between fog and low clouds, as well as providing general information such as cloud top temperature, optical thickness, and phase.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 3 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>AVHRR band 3 (3.74um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 4 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AVHRR band 4 (10.8um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 5 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>AVHRR band 5 (12.0um) temperature.</p>
+        </td>
+      </tr>
+</table>
 </li>
 </ul>
 <div class="pagesubtitle">Image Filters<a name="imageFilters" id="imageFilters"></a></div>
