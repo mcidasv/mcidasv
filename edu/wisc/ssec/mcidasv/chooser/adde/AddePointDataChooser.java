@@ -525,7 +525,11 @@ public class AddePointDataChooser extends AddeChooser {
         appendKeyValue(request, PROP_DESCR, getDescriptor());
         appendRequestSelectClause(request);
         appendKeyValue(request, PROP_NUM, "ALL");
-        appendKeyValue(request, PROP_POS, getDoRelativeTimes() ? "ALL" : "0");
+        // TJJ Dec 2020 - looks like POS = 0 limits requests to current day, so
+        // we should always use ALL, and let the rel/abs filters dictate what is
+        // delivered?
+        // appendKeyValue(request, PROP_POS, getDoRelativeTimes() ? "ALL" : "0");
+        appendKeyValue(request, PROP_POS, "ALL");
         logger.info("Request URL: " + request.toString());
         return request.toString();
     }
