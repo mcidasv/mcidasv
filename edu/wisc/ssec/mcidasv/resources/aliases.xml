@@ -31,7 +31,8 @@
      Simulated_Brightness_Temperature_for_GOES_11_Channel_3_atmosphere_top,
      Simulated_Brightness_Temperature_for_GOES_11_Channel_4_atmosphere_top,
      Simulated_Brightness_Temperature_for_GOES_12_Channel_3_atmosphere_top,
-     Simulated_Brightness_Temperature_for_GOES_12_Channel_4_atmosphere_top"/>
+     Simulated_Brightness_Temperature_for_GOES_12_Channel_4_atmosphere_top,
+     himawari_8_ahi_channel_.*._brightness_temperature"/>
   
 <alias
      name="ABSVOR"
