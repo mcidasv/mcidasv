@@ -265,6 +265,25 @@
         </categories>
         <operands categories=""/>
     </derived>
+    <!-- Adding formula for vertical sum - RMC - INQ 1818 - Jan 2021 -->
+    <derived description="Vertical Sum" formula="zsum(grid)" id="vertSum" isdefault="false" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Grids"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagecontour"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:imagesequence"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplayastopo"/>
+            <category value="display:imagedisplayoverz"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories=""/>
+    </derived>
+    <!-- End of Inq 1818 -->
     <!-- Adding derived AVHRR RGB formulas - RMC - INQ 2940 - NOV 2020 -->
     <derived description="AVHRR Night Microphysics RGB" formula="AVHRRNightMicrophysicsRGB(D1[label=Band 3 Temperature],D2[label=Band 4 Temperature],D3[label=Band 5 Temperature])" id="avhrrnightmicrophysics" isdefault="true" isenduser="true" override="true">
         <categories>
