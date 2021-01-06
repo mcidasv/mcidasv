@@ -1888,6 +1888,26 @@ public class GeoGridAdapter {
                 }
             }
 			// End Inq 2944
+
+            // RMC Inq 2562 Jan 2021 - get time for Himawari-8 netCDF GEOCAT files
+            if (timeVar == null) {
+                Attribute timeAttr = ncFile.findGlobalAttribute("Image_Date_Time");
+                if (timeAttr != null && timeAttr.isString()) {
+                    String timeStr = timeAttr.getStringValue();
+                    try {
+                        return new CalendarDateTime(
+                                DateTime.createDateTime(timeStr,
+                                        "yyyy-MM-dd'T'HH:mm:ss'Z'")
+                        );
+                    } catch (VisADException e) {
+                        System.err.println(
+                                "start_time attribute exists, but DateTime parsing failed");
+                        System.err.println("timeStr: " + timeStr);
+                    }
+                }
+            }
+            // End Inq 2562
+		
             if (timeVar != null) {  // found it
                 try {
                     time = new CalendarDateTime(
