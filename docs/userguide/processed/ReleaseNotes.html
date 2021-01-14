@@ -78,6 +78,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#rgbs_1.9">RGB and Channel Combination Formulas</a></strong></li>
     <li><strong><a class="faq-question-link" href="#alphabetical_1.9">Alphabetical Field Listing</a></strong></li>
     <li><strong><a class="faq-question-link" href="#labels_1.9">Location Labels</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#sum_1.9">Vertical Sum Formula</a></strong></li>
     <li><strong><a class="faq-question-link" href="#scripting1.9">Scripting</a></strong></li>
   </ul>
 </div>
@@ -130,7 +131,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     </div>
     <div class="faq-category"><a name="aliases1.9" id="aliases1.9"></a>
     <h4>Gridded Aliases</h4>
-    <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog.  Adding these variables to the list of aliases in McIDAS-V allows for McIDAS-V to recognize the variables and therefore create derived fields and display the variables using the parameter defaults.</div>
+    <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), <span id="value_summary_text">FNMOC COAMPS (Fleet Numerical Meteorology and Oceanography Center </span>Coupled Ocean/Atmosphere Mesoscale Prediction System), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog.  Adding these variables to the list of aliases in McIDAS-V allows for McIDAS-V to recognize the variables and therefore create derived fields and display the variables using the parameter defaults.</div>
 	</div>
 	<div class="faq-category"><a name="tropomi1.9" id="tropomi1.9"></a>
     <h4>TROPOMI</h4>
@@ -179,6 +180,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>Location Labels</h4>
     <div class="faq-answer">Added location labels for countries, world cities, and Canada provinces that can be found in the Display &gt; Plot Location Labels &gt; World menu in the Main Display. Added location labels for counties that can be found in the Display &gt; Plot Location Labels &gt; US menu in the Main Display. Updated the Volcanos location labels under Earth &gt; Volcanos so the labels only contain ASCII characters, which makes many labels more readable.</div>
 	</div>
+    	<div class="faq-category"><a name="sum_1.9" id="sum_1.9"></a>
+    <h4>Vertical Sum Formula</h4>
+    <div class="faq-answer">Added a vertical sum formula that can be found under &quot;Formulas &gt; Grids &gt; Vertical Sum&quot; that calculates the vertical sum of a 3D grid at the levels defined by the user. This formula uses the zsum() function that can also be used in foreground and background scripts.</div>
+	</div>
   <div class="faq-category"><a name="scripting1.9" id="scripting1.9"></a>
     <h4>Scripting</h4>
     <div class="faq-answer">
@@ -192,12 +197,16 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       <ul>
       <li>Added a new keyword to captureImage(), verbose, which allows the user to silence the a line printed to the Jython Shell letting the user know the image is being written.</li>
       <li>Added the ability for listGridFieldsInFile() to work when the variables in the file don't include long_name attributes.</li>
+      <li>Added shorter server descriptions for ABI (ABIN), Sectorized CMI (SCMI), and Himawari (WARI) that can be specified in the format keyword of makeLocalADDEEntry().</li>
+      <li>Added the ability to specify coordinateSystem= and size='ALL' in loadADDEImage(), which is necessary to get the full domain and and resolution of each image in a LEO loop where the sector moves between timesteps.</li>
       </ul>
     <li>Miscellaneous scripting-related changes:</li>
       <ul>
         <li>placeholder</li>
       </ul>
-		</ul></div></div>
+</ul></div>
+    </div>
+    
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat5_1.9" id="faq1_cat5_1.9"></a>Under Development</div>
   <div class="faq-category"><a name="jpss1.9" id="jpss1.9"></a>
