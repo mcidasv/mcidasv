@@ -383,18 +383,34 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
      * @throws Exception On badness
      */
     public String convertSourceFile(String source) throws Exception {
+        List list = getDataPaths();
+        // Get absolute path to data
+        String dataPath = (String) list.get(0);
+        int endIdx = dataPath.lastIndexOf(File.separator);
+        dataPath = dataPath.substring(0, endIdx + 1);
+
         if ((descriptor != null) && (descriptor.getNcmlTemplate() != null)) {
-            String ncml = IOUtil.readContents(descriptor.getNcmlTemplate(),
-                              getClass());
-            String file = getDataContext().getObjectStore().getUniqueTmpFile(
-                              "ncmltemplate", ".ncml");
-            ncml = ncml.replace("%location%",
-                                "" + IOUtil.getURL(source, getClass()));
-            //            System.err.println ("ncml" + ncml);
+            String ncml = IOUtil.readContents(descriptor.getNcmlTemplate(), getClass());
+            String file = getDataContext().getObjectStore().getUniqueTmpFile("ncmltemplate", ".ncml");
+            ncml = ncml.replace("%location%", "" + IOUtil.getURL(source, getClass()));
+            // TJJ Jan 2021 - NcML with scan locations need to pass through path to data sources
+            if (ncml.contains("scan location")) {
+                int locIdx = ncml.indexOf("scan location");
+                if (locIdx > 0) {
+                    // Pull out existing scan location element and value
+                    String locStr = ncml.substring(ncml.indexOf("scan location"));
+                    int firstQuote = locStr.indexOf('"');
+                    int lastQuote = locStr.indexOf('"', firstQuote + 1);
+                    String locPath = ncml.substring(locIdx, locIdx + lastQuote + 1);
+                    String newPath = "scan location = " + '"' + dataPath + '"';
+                    // Swap the (likely empty) path with the data source path
+                    ncml = ncml.replace(locPath, newPath);
+                }
+            }
             IOUtil.writeFile(file, ncml);
             return file;
         }
-        //Convert the -1 port number on urls to blank
+        // Convert the -1 port number on urls to blank
         source = source.replace(":-1/", "/");
         return source;
     }
