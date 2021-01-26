@@ -1972,7 +1972,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
       
 		  try {
 			  // inq1429: need to handle FieldImpl here
-			  FieldImpl thing = (FieldImpl) dataChoice.getData(null);
+              FieldImpl thing = null;
+              if (dataChoice instanceof DerivedDataChoice) {
+                  List<DataChoice> children = ((DerivedDataChoice) dataChoice).getChoices();
+                  DataChoice dc = children.get(0);
+                  thing = (FieldImpl) dc.getData(null);
+              } else {
+                  thing = (FieldImpl) dataChoice.getData(null);
+              }
 			  FlatField image;
 			  if (GridUtil.isTimeSequence(thing)) {
 				  image = (FlatField) thing.getSample(0);
