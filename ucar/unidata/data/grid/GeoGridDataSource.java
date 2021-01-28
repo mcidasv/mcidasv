@@ -2442,11 +2442,11 @@ public class GeoGridDataSource extends GridDataSource {
             if ((sizeZ == 0) || (sizeZ == 1)) {
                 //if (sizeZ == 0) {
                 int xLength               =
-//                    (int)xaxis.getSize();
-                cfield.getXDimension().getLength();
+                    (int)xaxis.getSize();
+//                cfield.getXDimension().getLength();
                 int yLength               =
-//                    (int)yaxis.getSize();
-                        cfield.getYDimension().getLength();
+                    (int)yaxis.getSize();
+//                        cfield.getYDimension().getLength();
                 ucar.nc2.Dimension ensDim = cfield.getEnsembleDimension();
                 if (twoDDimensionsLabel == null) {
                     twoDDimensionsLabel = "Total grid size:  x: " + xLength
