@@ -244,6 +244,10 @@
       <category value="display:imagedisplay"/>
       <category value="display:imagecontour"/>
       <category value="display:imagedisplayoverz"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands categories=""/>
   </derived>
@@ -256,6 +260,10 @@
       <category value="display:imagedisplay"/>
       <category value="display:imagecontour"/>
       <category value="display:imagedisplayoverz"/>
+      <category value="display:planviewcontour"/>
+      <category value="display:planviewcolor"/>
+      <category value="display:planviewcontourfilled"/>
+      <category value="display:valuedisplay"/>
     </categories>
     <operands categories=""/>
   </derived>
