@@ -379,4 +379,11 @@
     <params p1="241_Band1_REFL" p2="241_Band2_REFL" p3="241_Band4_TEMP"/>
     <params p1="242_Band1_REFL" p2="242_Band2_REFL" p3="242_Band4_TEMP"/>
   </paramgroup>
+  <paramgroup description="NUCAPS T RH" name="NUCAPS_T_RH">
+    <params p1="Temperature_2m" p2="RelHum_2m"/>
+    <params p1="Temperature_300mb" p2="RelHum_300mb"/>
+    <params p1="Temperature_500mb" p2="RelHum_500mb"/>
+    <params p1="Temperature_700mb" p2="RelHum_700mb"/>
+    <params p1="Temperature_850mb" p2="RelHum_850mb"/>
+  </paramgroup>
 </paramgroups>
