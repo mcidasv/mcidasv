@@ -115,11 +115,6 @@
      tmax,
      tas,
      ta,
-     Temperature_2m,
-     Temperature_300mb,
-     Temperature_500mb,
-     Temperature_700mb,
-     Temperature_850mb,
      air_temp_isobaric"/>
   <alias
      name="RH"
@@ -170,8 +165,7 @@
      Relative_humidity_sigma_layer_*.*_Average,
      Relative_humidity_wrt_water_isobaric,
      Relative_humidity_wrt_water_height_above_ground,
-     hur,
-     RelHum_*.*"/>
+     hur"/>
   <alias
      name="Z"
      label="Z"
