@@ -3202,4 +3202,14 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/water_strong_twoband_total_column"/>
         </operands>
     </derived>
+    <derived description="Dewpoint (from %N1% &amp; %N2%)" formula="DerivedGridFactory.createDewpoint (D1, D2)" id="dewpoint" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category append="Derived" childidx="0" value="inherit"/>
+        </categories>
+        <operands categories="">
+            <params categories="GRID-2D-*;" p1="TEMP" p2="RH"/>
+            <params categories="GRID-3D-*;" p1="TEMP" p2="RH"/>
+            <paramgroup categories="GRID-2D-*;" name="NUCAPS_T_RH"/>
+        </operands>
+    </derived>
 </derived_parameters>
