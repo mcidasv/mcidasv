@@ -105,5 +105,28 @@
   <!-- bob inq 2670 - Feb 2020 -->
   <param ci_base="0.0" ci_interval="0.1" ci_max="2.0" ci_min="-2.0" ci_width="1" name="VIIRS_NDVI" range_max="1.0" range_min="-1.0" table="NDVI"/>
   <!-- end inq 2670 -->
+  
+  <!-- bob inq 2955 (NUCAPS grids) - Feb 2021 -->
+  <param ci_base="200.0" ci_interval="50.0" ci_max="711.0" ci_min="150.0" ci_width="1" name="Tropopause_Height" range_max="600.0" range_min="100.0" table="Tropopause Height" unit="mb"/>
+  <param ci_base="0.0" ci_interval="5.0" ci_max="45.0" ci_min="-90.0" ci_width="1" name="Temperature_850mb" range_max="40.0" range_min="-40.0" table="Temp 850mb" unit="°C"/>
+  <param ci_base="0.0" ci_interval="5.0" ci_max="45.0" ci_min="-90.0" ci_width="1" name="Temperature_700mb" range_max="40.0" range_min="-40.0" table="Temp 700mb" unit="°C"/>
+  <param ci_base="0.0" ci_interval="5.0" ci_max="45.0" ci_min="-90.0" ci_width="1" name="Temperature_500mb" range_max="40.0" range_min="-40.0" table="Temp 500mb" unit="°C"/>
+  <param ci_base="0.0" ci_interval="5.0" ci_max="45.0" ci_min="-90.0" ci_width="1" name="Temperature_300mb" range_max="20.0" range_min="-60.0" table="Temp 300mb" unit="°C"/>
+  <param ci_base="0.0" ci_interval="5.0" ci_max="45.0" ci_min="-90.0" ci_width="1" name="Temperature_2m" range_max="50.0" range_min="-10.0" table="Temp 2m" unit="°C"/>
+  <param ci_base="0.0" ci_interval="0.4" ci_max="4.4" ci_min="-0.4" ci_width="1" name="SO2_Total" range_max="1.0" range_min="0.0" table="Sulfur Dioxide" unit="DU"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="100.0" ci_min="0.0" ci_width="1" name="RelHum_*.*mb" range_max="100.0" range_min="0.0" table="Rel Humidity" unit="%"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="100.0" ci_min="0.0" ci_width="1" name="RelHum_2m" range_max="100.0" range_min="0.0" table="Rel Humidity" unit="%"/>
+  <param ci_base="0.0" ci_interval="0.3" ci_max="2.3" ci_min="-0.3" ci_width="1" name="Quality_Flag" range_max="2.0" range_min="0.0" table="Quality Flag" unit="1"/>
+  <param ci_base="0.0" ci_interval="2.5" ci_max="60.0" ci_min="0.25" ci_width="1" name="PrecipWater_Total" range_max="50.0" range_min="0.0" table="Precip Water" unit="mm"/>
+  <param ci_base="0.0" ci_interval="2.5" ci_max="60.0" ci_min="0.25" ci_width="1" name="PrecipWater_*.*_*.*mb" range_max="50.0" range_min="0.0" table="Precip Water" unit="mm"/>
+  <param ci_base="176.0" ci_interval="40.0" ci_max="563.0" ci_min="136.0" ci_width="1" name="O3_Total" range_max="600.0" range_min="100.0" table="Total Ozone" unit="DU"/>
+  <param ci_base="60.0" ci_interval="20.0" ci_max="220.0" ci_min="40.0" ci_width="1" name="O3_Anom" range_max="200.0" range_min="0.0" table="Ozone Anomaly" unit="percent"/>
+  <param ci_base="0.0" ci_interval="2.0" ci_max="16.0" ci_min="-2.0" ci_width="1" name="LapseRate_*.*_*.*mb" range_max="10.0" range_min="-2.0" table="Lapse Rate" unit="K/km"/>
+  <param ci_base="0.0" ci_interval="0.5" ci_max="4.5" ci_min="-0.5" ci_width="1" name="HainesIndex_.*._*.*mb" range_max="7.0" range_min="0.0" table="Haines Index" unit="1"/>
+  <param ci_base="0.0" ci_interval="8.0" ci_max="80.0" ci_min="-8.0" ci_width="1" name="CO_Total" range_max="30.0" range_min="5.0" table="Carbon Monoxide"/>
+  <param ci_base="150.0" ci_interval="80.0" ci_max="940.0" ci_min="70.0" ci_width="1" name="CloudTopPressure" range_max="1000.0" range_min="0.0" table="Cloud Top Press" unit="mb"/>
+  <param ci_base="0.0" ci_interval="0.2" ci_max="1.2" ci_min="-0.2" ci_width="1" name="CloudTopFraction" range_max="1.0" range_min="0.0" table="Cloud Top Fraction" unit="1"/>
+  <param ci_base="0.0" ci_interval="7.0" ci_max="70.0" ci_min="-7.0" ci_width="1" name="CH4_Total" range_max="45.0" range_min="25.0" table="Methane"/>
+  <!-- end inq 2955 -->
 </params>
 
