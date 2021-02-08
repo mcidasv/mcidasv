@@ -183,6 +183,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
     // MJH keep track of date to add time dim to FieldImpl
     Date theDate;
 
+    // TJJ set different subset with full res stride for derived products
+    private Map<String, double[]> derivedSubset = null;
+    private boolean derivedInit = false;
+
     /**
      * Zero-argument constructor for construction via unpersistence.
      */
@@ -1934,8 +1938,26 @@ public class SuomiNPPDataSource extends HydraDataSource {
             }
 
             if (subset != null) {
-              data = adapter.getData(subset);
-              data = applyProperties(data, requestProperties, subset, aIdx);
+                // TJJ Feb 2021 - For derived products, we want to alter the subset to
+                // sample at full resolution. We set the stride for this derived subset
+                // upon the first adapter (band) processed.
+                if (isDerived) {
+                    // Only need to set this once
+                    if (! derivedInit) {
+                        derivedSubset = subset;
+                        derivedInit = true;
+                        Set<String> set = derivedSubset.keySet();
+                        for (String s : set) {
+                            double[] coords = (double[]) derivedSubset.get(s);
+                            logger.info("Setting Derived Product default stride to: " + coords[2]);
+                            coords[2] = 1;
+                        }
+                    }
+                    data = adapter.getData(derivedSubset);
+                } else {
+                    data = adapter.getData(subset);
+                }
+                data = applyProperties(data, requestProperties, subset, aIdx);
             }
         } catch (Exception e) {
             logger.error("getData Exception: ", e);
