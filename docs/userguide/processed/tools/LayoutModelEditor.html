@@ -46,7 +46,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LayoutModel
 <div class="images"><img src="images/StationLayoutEditor.png" alt="Image 1: Layout Model Editor"> <br>
   <span class="caption">Image 1: Layout Model Editor</span></div>
 <div class="pagesubtitle">Creating a Layout Model<a name="create" id="create"></a></div>
-<p>Layout models can be created from scratch by utilizing the <strong>File-&gt;New</strong> menu option, or an existing layout model can be edited with the <strong>Layout Models</strong> menu. The display includes a horizontal and vertical line, which acts as a reference point for the location of the layout model with respect to the physical location of the observation (at the origin). The different shapes and features that can be added to the layout model are in the left panel. The shapes and features can be added to the layout model by left-clicking the item and then left-clicking at the desired location in the panel. Once in the Layout Model, individual components can be moved by left-clicking and dragging them. When an item is placed into the layout model, the <a href="#image2">Properties dialog</a> for the component will open. This Properties dialog can also be invoked by double-clicking on a shape.</p>
+<p>Layout models can be created from scratch by utilizing the <strong>File-&gt;New</strong> menu option, or an existing layout model can be edited from the <strong>Layout Models</strong> menu. The display includes a horizontal and vertical line, which acts as a reference point for the location of the layout model with respect to the physical location of the observation (at the origin). The different shapes and features that can be added to the layout model are in the left panel. The shapes and features can be added to the layout model by left-clicking the item and then left-clicking at the desired location in the panel. Once in the Layout Model, individual components can be moved by left-clicking and dragging them. When an item is placed into the layout model, the <a href="#image2">Properties dialog</a> for the component will open. This Properties dialog can also be invoked by double-clicking on a shape.</p>
 <p>Each component of the layout model can be resized by dragging the black squares along the outside of the item. Multiple items can be aligned at once by holding down Shift and left-clicking on the items to move. Clicking on an item makes it active, and active items have black squares around them. Each item in the layout model also includes a red &quot;Alignment Point', which acts to locate the individual components of the model with respect to the center point of the observation. The location of the Alignment Point to the item can be changed via the Alignment Point option in the menu when an item is right-clicked on<a href="#popup"></a>.</p>
 <p>When the mouse is held over a component of the layout model, the name of the item will be listed in the bottom bar of the Layout Model Editor. This can be useful if multiple <strong>Value</strong> fields are included in the layout model (temperature, dew point, etc.).</p>
 <p>To save a layout model, use the <strong>File-&gt;Save</strong> or <strong>File-&gt;Save As...</strong> menu items. When the layout model is saved, any point data displays or gridded value plot displays that are using it will be updated. To remove a model, use the <strong>File-&gt;Remove</strong> menu item. Layout models supplied with McIDAS-V cannot be removed, but user-created local models can be removed.</p>
@@ -55,12 +55,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LayoutModel
 <div class="images"><img src="images/StationModelMenu.gif" alt="Image 2: Editing a Layout Model Menu" width="163" height="189"><br>
 <span class="caption">Image 2: Editing a Layout Model Menu</span></div>
 <ul class=propertylist>
-<li class=propertylistitem><strong>Set Color -</strong> Sets the color of the selected item.</li>
+<li class=propertylistitem><strong>Set Color -</strong> Sets the color of the selected item to a solid color (e.g. green, blue, red).</li>
 <li class=propertylistitem><strong>To Front -</strong> Moves the selected item in front of others that may overlap it.</li>
 <li class=propertylistitem><strong>To Back -</strong> Moves the selected item behind others that may overlap it.</li>
 <li class=propertylistitem><strong>Delete -</strong> Removes the selected item from the layout model display. The Delete key will also remove the item.</li>
 <li class=propertylistitem><strong>Hide -</strong> Grays out the component in the layout model, still leaving the object in the model, but not displaying it in the Main Display window.</li>
-<li class=propertylistitem><strong>Alignment Point -</strong> Sets the location of the Alignment Point with respect to the item. For example, NW would place the Alignment Point to the northwest (upper left) of the item. This is not an option when working with windbarbs or vectors</li>
+<li class=propertylistitem><strong>Alignment Point -</strong> Sets the location of the Alignment Point with respect to the item. For example, NW would place the Alignment Point to the northwest (upper left) of the item. This is not an option when working with windbarbs or vectors.</li>
 <li class=propertylistitem><strong>Center -</strong> Centers the display in both the horizontal and vertical, just in the horizontal, or just in the vertical.</li>
 <li class=propertylistitem><strong>Properties... -</strong> Opens the Properties Dialog described below. The Properties Dialog can also be invoked by double-clicking on a component of the layout model.</li>
 </ul>
@@ -71,7 +71,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LayoutModel
 <span class="caption">Image 3: Display Tab of the Properties Dialog</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class=propertylist>
-<li class=propertylistitem><strong>Parameter -</strong> Represents what parameter the layout model item is displaying. This can be a single parameter, such as pressure, or it can be an equation. This is possible because the parameter identifiers in the layout model can hold embedded Jython code, and any parameter that begins with &quot;=&quot; is treated as a Jython expression. For example, &quot;=T-Td&quot; can be entered for dew point depression. This can also be formatted this as &quot;='Td:'+str(T-Td)&quot;. To format the result of the calculation using the format specifier from the properties dialog, then enter &quot;='Td:'+format(T-Td).</li>
+<li class=propertylistitem><strong>Parameter -</strong> Represents what parameter the layout model item is displaying. This can be an alias, a single parameter from a loaded data source, such as pressure, or it can be an equation. This is possible because the parameter identifiers in the layout model can hold embedded Jython code, and any parameter that begins with &quot;=&quot; is treated as a Jython expression. For example, &quot;=T-Td&quot; can be entered for dew point depression. This can also be formatted this as &quot;='Td:'+str(T-Td)&quot;. To format the result of the calculation using the format specifier from the properties dialog, then enter &quot;='Td:'+format(T-Td).</li>
 <li class=propertylistitem><strong>Unit -</strong> Determines the unit that the parameter will use in its display.</li>
 <li class=propertylistitem><strong>Format -</strong> Represents how the numerical value will be displayed. This can affect rounding. An example of how each format will appear is written in the 'ex:' next to the Format field<strong>.</strong> The <strong>0</strong> value will plot the actual numerical value of the data at that place in the number if it exists, and if not a 0 will be plotted at that place. The <strong>#</strong> value will plot the actual numerical value of the data at that place in the number if it exists, and if not it will leave it empty. For example, with a value of 998.5, different <strong>Formats</strong> would plot the value as:</li>
 <ul class="propertylist">
@@ -80,8 +80,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LayoutModel
 </ul>
 <li class=propertylistitem><strong>Font -</strong> Sets the font of the item's text when displayed in the Main Display window.</li>
 <li class=propertylistitem><strong>Size -</strong> Sets the size of the item's text when displayed in the Main Display window.</li>
-<li class=propertylistitem><strong>Shown -</strong> Determines if the item will be shown as part of the layout model.</li>
-<li class=propertylistitem><strong>Foreground Color -</strong> Represents the color of the text/symbol.</li>
+<li class=propertylistitem><strong>Shown -</strong> Determines if the item will be shown in the Main Display as part of the layout model.</li>
+<li class=propertylistitem><strong>Foreground Color -</strong> Sets the color of the text/symbol.</li>
 <li class=propertylistitem><strong>Background Color -</strong> Sets a background color for the text/symbol if desired. A <img src="images/Transparent.gif" alt="x" width="37" height="22"align=absmiddle> through this field is representative of a transparent background.</li>
 <li class=propertylistitem><strong>Scale Size By -</strong> Scales the size of the item with respect to other items in the layout model. The default value for this field is 1, meaning that all parameters in the layout model are scaled the same.</li>
 </ul>
@@ -145,8 +145,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LayoutModel
 <li class=propertylistitem><strong><img src="images/snapToGrid.gif" width="23" height="22" alt="Snap To Grid" align=absmiddle> -</strong> Snaps the items to the grid.</li>
 </ul>
 <div class="pagesubtitle">Properties Dialog - Shapes<a name="shapes" id="shapes"></a></div>
-<p> Two items that can be added to the layout model whose Properties windows are significantly different than described above are <strong>Shape</strong> and <strong>Mapped Shape</strong>. These allow you to define numerical values of a parameter as a variety of different shapes.</p>
-<p>The Properties window of the <strong>Mapped Shape Symbol</strong> is shown below. The only tab that differs between the Properties of <strong>Mapped Shape Symbol</strong> and <strong>Shape</strong> and the Properties above is the<strong> Display</strong> tab. The <strong>Shape</strong> item does not include the <strong>Shape Mappings</strong> panel in the window below, so using <strong>Shape</strong>, all numerical values will be plotted with the same shape regardless of their value.</p>
+<p> Two items that can be added to the layout model whose Properties windows are significantly different than described above are <strong>Shape</strong> and <strong>Mapped Shape</strong>. These allow for defining numerical values of a parameter as a variety of different shapes.</p>
+<p>The Properties window of the <strong>Mapped Shape Symbol</strong> is shown below. The only tab that differs between the Properties of <strong>Mapped Shape Symbol</strong>, and <strong>Shape</strong>, and the Properties above is the<strong> Display</strong> tab. The <strong>Shape</strong> item does not include the <strong>Shape Mappings</strong> panel in the window below, so using <strong>Shape</strong>, all numerical values will be plotted with the same shape regardless of their value.</p>
 <div class="images"><img src="images/MappedShape.gif" width="590" height="548" alt="Image 9: Mapped Shape Properties"><br> 
 <span class="caption">Image 9: Mapped Shape Properties</span></div>
 <div class="pagesubtitle">Properties</div>
@@ -195,11 +195,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LayoutModel
   <li class="propertylistitem"><strong>Zoom rest -</strong> Reverts back to original zoom level.</li>
   <li class="propertylistitem"><strong>Grid -</strong> Adds horizontal/vertical grids to the layout model. Increase makes the grid size larger (fewer grids), and Decrease makes the grid size smaller (more grids).</li>
   <li class="propertylistitem"><strong>Black background -</strong> Makes the background in the Layout Model Editor black, with white grids and gray axes lines.</li>
-  <li class="propertylistitem"><strong>White Background -</strong> Makes the background in the Layout Model Editor white, with gray grids and black axes lines. This is the default for the Layout Model Editor</li>
+  <li class="propertylistitem"><strong>White Background -</strong> Makes the background in the Layout Model Editor white, with gray grids and black axes lines. This is the default for the Layout Model Editor.</li>
 </ul>
 <p>The <strong>Layout Models</strong> menu has these unique options:</p>
 <ul class="propertylist">
-  <li class="propertylistitem">This menu lists out all of the layout models included in McIDAS-V. Layout models that have been created by a user will include <strong>&lt;local&gt;</strong> after the name. When a layout model is selected, it will be brought into the Layout Model Editor where a user can modify the layout model.</li></ul>
+  <li class="propertylistitem">This menu lists all of the layout models included in McIDAS-V. Layout models that have been created by a user will include <strong>&lt;local&gt;</strong> after the name. When a layout model is selected, it will be brought into the Layout Model Editor where a user can modify the layout model.</li></ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

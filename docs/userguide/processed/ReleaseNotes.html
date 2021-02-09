@@ -69,6 +69,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#dateline1_1.9">MODIS and JPSS Dateline</a></strong></li>
     <li><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">MultiSpectral Display Probe Placement</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#nucaps_1.9">NUCAPS Color Tables</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.9">Other
@@ -135,7 +136,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 	</div>
 	<div class="faq-category"><a name="tropomi1.9" id="tropomi1.9"></a>
     <h4>TROPOMI</h4>
-    <div class="faq-answer">Added support for L2 TROPOMI (TROPOspheric Monitoring Instrument) netCDF files. These files can be loaded through the General -&gt; Files/Directories chooser as a gridded data source. A variety of derived fields for the L2 products are also available, allowing easy access to different units available for many variables.</div>
+    <div class="faq-answer">Added support for L2 TROPOMI (TROPOspheric Monitoring Instrument) netCDF files downloaded from the Sentinel-5P Pre-Operations Data Hub or NASA Earthdata. These files can be loaded through the General -&gt; Files/Directories chooser as a gridded data source (Grid files (netCDF/GRIB/OPeNDAP/GEMPAK). A variety of derived fields for the L2 products are also available, allowing easy access to different units available for many variables.</div>
 	</div>
 	<div class="faq-category"><a name="warning1.9" id="warning1.9"></a>
     <h4>NWS Warnings</h4>
@@ -153,6 +154,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">MultiSpectral Display Probe Placement</a></strong></h4>
     <div class="faq-answer">Added a space between the probe (square) and numerical output value of a MultiSpectral Display in the Main Display window. Previously, an overlap between the probe and numerical values could make the value difficult to read. Additionally, probes now remain at the same latitude/longitude location after a projection change in the display. The probe and numerical output also work in sync when changing the vertical positioning of the probe.</div>
   </div>
+    <div class="faq-category"><a name="nucaps_1.9" id="nucaps_1.9"></a>
+    <h4><strong><a class="faq-question-link" href="#nucaps_1.9">NUCAPS Color Tables</a></strong></h4>
+    <div class="faq-answer">Added several new color tables used to display gridded NUCAPS data from NASA SPoRT. These enhancements can be found under the &quot;Satellite &gt; NUCAPS&quot; menu of enhancements. The color tables in this category are the defaults for any variable displayed from NASA SPoRT gridded NUCAPS files, though they can be applied to any displayed layer that uses an enhancement.</div>
 </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat4_1.9" id="faq1_cat4_1.9"></a>Other
