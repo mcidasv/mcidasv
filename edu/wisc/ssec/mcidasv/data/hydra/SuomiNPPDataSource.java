@@ -184,6 +184,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     Date theDate;
 
     // TJJ set different subset with full res stride for derived products
+    Map<String, double[]> subset = null;
     private Map<String, double[]> derivedSubset = null;
     private boolean derivedInit = false;
 
@@ -1753,8 +1754,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
             description = name;
         }
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
-        Hashtable subset = new Hashtable();
-        subset.put(new MultiDimensionSubset(), dataSel);
+        Hashtable dcSubset = new Hashtable();
+        dcSubset.put(new MultiDimensionSubset(), dataSel);
         // TJJ Hack check for uber-odd case of data type varies for same variable
         // If it's M12 - M16, it's a BrightnessTemperature, otherwise Reflectance
         if (name.endsWith("BrightnessTemperatureOrReflectance")) {
@@ -1765,16 +1766,16 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		name = name + "Reflectance";
         	}
         }
-        DirectDataChoice ddc = new DirectDataChoice(this, idx, name, description, categories, subset);
+        DirectDataChoice ddc = new DirectDataChoice(this, idx, name, description, categories, dcSubset);
         return ddc;
     }
     
     private DataChoice doMakeDataChoice(int idx, MultiSpectralData adapter) throws Exception {
         String name = adapter.getName();
         DataSelection dataSel = new MultiDimensionSubset(defaultSubset);
-        Hashtable subset = new Hashtable();
-        subset.put(MultiDimensionSubset.key, dataSel);
-        subset.put(MultiSpectralDataSource.paramKey, adapter.getParameter());
+        Hashtable dcSubset = new Hashtable();
+        dcSubset.put(MultiDimensionSubset.key, dataSel);
+        dcSubset.put(MultiSpectralDataSource.paramKey, adapter.getParameter());
         // TJJ Hack check for uber-odd case of data type varies for same variable
         // If it's M12 - M16, it's a BrightnessTemperature, otherwise Reflectance
         if (name.endsWith("BrightnessTemperatureOrReflectance")) {
@@ -1785,8 +1786,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		name = name + "Reflectance";
         	}
         }
-        DirectDataChoice ddc = new DirectDataChoice(this, new Integer(idx), name, name, categories, subset);
-        ddc.setProperties(subset);
+        DirectDataChoice ddc = new DirectDataChoice(this, new Integer(idx), name, name, categories, dcSubset);
+        ddc.setProperties(dcSubset);
         return ddc;
     }
 
@@ -1899,7 +1900,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         adapter = adapters[aIdx];
 
         try {
-            Map<String, double[]> subset = null;
+
             if (ginfo != null) {
             	subset = adapter.getSubsetFromLonLatRect(ginfo.getMinLat(), ginfo.getMaxLat(),
             			ginfo.getMinLon(), ginfo.getMaxLon(),
@@ -1910,17 +1911,38 @@ public class SuomiNPPDataSource extends HydraDataSource {
             else {
 
               MultiDimensionSubset select = null;
-              Hashtable table = dataChoice.getProperties();
+              Hashtable table = null;
+              if (dataChoice instanceof DerivedDataChoice) {
+                  List<DataChoice> children = ((DerivedDataChoice) dataChoice).getChoices();
+                  DataChoice dc = children.get(0);
+                  table = dc.getProperties();
+              } else {
+                  table = dataChoice.getProperties();
+              }
               Enumeration keys = table.keys();
               while (keys.hasMoreElements()) {
                 Object key = keys.nextElement();
-                logger.debug("Key: " + key.toString());
+                // TJJ - need a better way here to determine when a new, non-derived product has been selected
+                if (key.toString().equals("Use_Display_Driver_Times")) {
+                    isDerived = false;
+                    derivedInit = false;
+                }
                 if (key instanceof MultiDimensionSubset) {
                   select = (MultiDimensionSubset) table.get(key);
                 }
               }  
               subset = select.getSubset();
-              logger.debug("Subset size: " + subset.size());
+              if ((dataSelection != null) && (dataSelection.getGeoSelection() != null)) {
+                 if (isDerived) {
+                    // Only need to set this once
+                    if (! derivedInit) {
+                       derivedSubset = subset;
+                       derivedInit = true;
+                    } else {
+                       subset = derivedSubset;
+                    }
+                 }
+              }
 
               if (dataSelection != null) {
                 Hashtable props = dataSelection.getProperties();
@@ -1938,25 +1960,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
             }
 
             if (subset != null) {
-                // TJJ Feb 2021 - For derived products, we want to alter the subset to
-                // sample at full resolution. We set the stride for this derived subset
-                // upon the first adapter (band) processed.
-                if (isDerived) {
-                    // Only need to set this once
-                    if (! derivedInit) {
-                        derivedSubset = subset;
-                        derivedInit = true;
-                        Set<String> set = derivedSubset.keySet();
-                        for (String s : set) {
-                            double[] coords = (double[]) derivedSubset.get(s);
-                            logger.info("Setting Derived Product default stride to: " + coords[2]);
-                            coords[2] = 1;
-                        }
-                    }
-                    data = adapter.getData(derivedSubset);
-                } else {
-                    data = adapter.getData(subset);
-                }
+                // TJJ Feb 2021 - For derived products, we want to use the same subset for all
+                // contributing bands
+                data = adapter.getData(subset);
                 data = applyProperties(data, requestProperties, subset, aIdx);
             }
         } catch (Exception e) {
