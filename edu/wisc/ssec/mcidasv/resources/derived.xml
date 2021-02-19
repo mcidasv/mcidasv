@@ -753,7 +753,7 @@
         </categories>
         <operands categories=""/>
     </derived>
-    <derived description="VIIRS Day Land Cloud Fire RGB" formula="VIIRSDayLandCloudFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3 [label=I1 Reflectance])" id="viirsdaylandcloudfire" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS Day Land Cloud Fire RGB" formula="VIIRSDayLandCloudFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="viirsdaylandcloudfire" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
@@ -773,7 +773,7 @@
             <paramgroup categories="" name="JPSS_RGB_Dust"/>
         </operands>
     </derived>
-    <derived description="VIIRS Fire Temperature RGB" formula="VIIRSFireTemperatureRGB(D1[label=M12 Temperature], D2[label=M11 Reflectance],D3[label=M10 Reflectance])" id="viirsfiretemperature" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS Fire Temperature RGB" formula="VIIRSFireTemperatureRGB(D1[label=M12 Temperature], D2[label=M11 Reflectance], D3[label=M10 Reflectance])" id="viirsfiretemperature" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
             <category value="display:rgbcomposite"/>
