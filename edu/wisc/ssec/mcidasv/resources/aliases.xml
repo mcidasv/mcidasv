@@ -243,7 +243,8 @@
      uas,
      ULML,
      wnd_ucmp_height_above_ground,
-     wnd_ucmp_isobaric"/>
+     wnd_ucmp_isobaric,
+     WindU"/>
   <alias
      name="V"
      label="V component of wind"
@@ -313,7 +314,8 @@
      vas,
      VLML,
      wnd_vcmp_height_above_ground,
-     wnd_vcmp_isobaric"/>
+     wnd_vcmp_isobaric,
+     WindV"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -327,7 +329,8 @@
      wind_dir,
      model_dir,
      wind_direction,
-     Wind_Dir"/>
+     Wind_Dir,
+     retrieved_wind_direction"/>
   <!-- bob inq2791 05/2019 -->
   <alias
      name="W"
@@ -351,7 +354,12 @@
      Wind_speed_isobaric_stdDev,
      model_speed,
      HDFEOS/SWATHS/AMSR2_Level2_Ocean_Suite/Data_Fields/WindSpeed,
-     Wind_Speed"/>
+     Wind_Speed,
+     retrieved_wind_speed,
+     wind_speed_aw,
+     wind_speed_lf,
+     wind_speed_mf,
+     WindSp"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
