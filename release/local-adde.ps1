@@ -62,7 +62,7 @@ if ($is_admin) {
             -Protocol TCP `
             -LocalPort 8788 `
             -RemoteAddress 127.0.0.1 `
-            -Program "$mcvpath\jre\bin\java.exe"
+            -Program "$mcvpath\jre\bin\javaw.exe"
     }
 }
 
