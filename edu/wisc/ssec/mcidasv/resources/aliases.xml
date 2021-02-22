@@ -32,7 +32,8 @@
      Simulated_Brightness_Temperature_for_GOES_11_Channel_4_atmosphere_top,
      Simulated_Brightness_Temperature_for_GOES_12_Channel_3_atmosphere_top,
      Simulated_Brightness_Temperature_for_GOES_12_Channel_4_atmosphere_top,
-     himawari_8_ahi_channel_.*._brightness_temperature"/>
+     himawari_8_ahi_channel_.*._brightness_temperature,
+     MedianBT"/>
   
 <alias
      name="ABSVOR"
@@ -325,7 +326,8 @@
      Wind_direction_from_which_blowing_surface_unweightedMean,
      wind_dir,
      model_dir,
-     wind_direction"/>
+     wind_direction,
+     Wind_Dir"/>
   <!-- bob inq2791 05/2019 -->
   <alias
      name="W"
@@ -348,7 +350,8 @@
      Wind_speed_isobaric_unweightedMean,
      Wind_speed_isobaric_stdDev,
      model_speed,
-     HDFEOS/SWATHS/AMSR2_Level2_Ocean_Suite/Data_Fields/WindSpeed"/>
+     HDFEOS/SWATHS/AMSR2_Level2_Ocean_Suite/Data_Fields/WindSpeed,
+     Wind_Speed"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
