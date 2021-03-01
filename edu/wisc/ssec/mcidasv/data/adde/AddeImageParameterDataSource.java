@@ -3010,10 +3010,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         // If domain shift was detected, keep only the pre-shift times for derived data
         logger.info("domainShiftIndex: " + domainShiftIndex);
         if (isDerived && (domainShiftIndex > 0)) {
+            // Ascending time order not guaranteed, need to sort list before modifying
+            Collections.sort(imageTimes);
             // This is how many time steps we remove
             int stepsToRemove = imageTimes.size() - (domainShiftIndex + 1);
             List<TwoFacedObject> datesAndTimes = dataChoice.getAllDateTimes();
             List<AddeImageDescriptor> descriptorList = getImageList();
+            // Ascending time order not guaranteed, need to sort list before modifying
+            Collections.sort(descriptorList);
             logger.info("AllDatesTimes size before domain shift adjustment: " + datesAndTimes.size());
             logger.info("descriptorList size before domain shift adjustment: " + descriptorList.size());
 
