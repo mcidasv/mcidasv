@@ -129,7 +129,8 @@
      .*.Temperature_layer_between_two_pressure_difference_from_ground_layer,
      .*.Temperature_height_above_ground,
      .*.Temperature_maximum_wind,
-     .*.Temperature_tropopause"/>
+     .*.Temperature_tropopause,
+     T2D"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -268,7 +269,8 @@
      .*.u-component_of_wind_layer_between_two_pressure_difference_from_ground_layer,
      .*.u-component_of_wind_height_above_ground,
      .*.u-component_of_wind_tropopause,
-     .*.u-component_of_wind_maximum_wind"/>
+     .*.u-component_of_wind_maximum_wind,
+     U2D"/>
   <alias
      name="V"
      label="V component of wind"
@@ -347,7 +349,8 @@
      .*.v-component_of_wind_layer_between_two_pressure_difference_from_ground_layer,
      .*.v-component_of_wind_height_above_ground,
      .*.v-component_of_wind_tropopause,
-     .*.v-component_of_wind_maximum_wind"/>
+     .*.v-component_of_wind_maximum_wind,
+     V2D"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
