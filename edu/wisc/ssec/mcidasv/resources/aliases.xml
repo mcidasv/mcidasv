@@ -33,14 +33,16 @@
      Simulated_Brightness_Temperature_for_GOES_12_Channel_3_atmosphere_top,
      Simulated_Brightness_Temperature_for_GOES_12_Channel_4_atmosphere_top,
      himawari_8_ahi_channel_.*._brightness_temperature,
-     MedianBT"/>
+     MedianBT,
+     VAR3-*.*_FROM_7-0--1_atmosphere_top"/>
   
 <alias
      name="ABSVOR"
      label="Absolute Vorticity"
      aliases="Absolute_vorticity_isobaric_*.*_AverageNforecasts,
      Absolute_vorticity_isobaric_*.*_AverageNanalysis,
-     abs_vort_isobaric"/>
+     abs_vort_isobaric,
+     .*.Absolute_vorticity_isobaric"/>
   
   <!-- temp fix for inq 1129.  remove once Geopotential_isobaric alias is in IDV's aliases.xml -->
   <alias aliases="Geopotential,Geopotential_isobaric" label="Geopotential" name="GP"/>
@@ -116,7 +118,18 @@
      tmax,
      tas,
      ta,
-     air_temp_isobaric"/>
+     air_temp_isobaric,
+     tmp2m,
+     tmp_hyblev.*.,
+     tmax_max2m,
+     tmin_min2m,
+     tmpsfc,
+     tisfc,
+     .*.Temperature_isobaric,
+     .*.Temperature_layer_between_two_pressure_difference_from_ground_layer,
+     .*.Temperature_height_above_ground,
+     .*.Temperature_maximum_wind,
+     .*.Temperature_tropopause"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -166,7 +179,10 @@
      Relative_humidity_sigma_layer_*.*_Average,
      Relative_humidity_wrt_water_isobaric,
      Relative_humidity_wrt_water_height_above_ground,
-     hur"/>
+     hur,
+     .*.Relative_humidity_layer_between_two_pressure_difference_from_ground_layer,
+     .*.Relative_humidity_height_above_ground,
+     .*.Relative_humidity_isobaric"/>
   <alias
      name="Z"
      label="Z"
@@ -244,7 +260,15 @@
      ULML,
      wnd_ucmp_height_above_ground,
      wnd_ucmp_isobaric,
-     WindU"/>
+     WindU,
+     ugrdsfc,
+     ugrd10m,
+     ugrd_hyblev.*.,
+     .*.u-component_of_wind_isobaric,
+     .*.u-component_of_wind_layer_between_two_pressure_difference_from_ground_layer,
+     .*.u-component_of_wind_height_above_ground,
+     .*.u-component_of_wind_tropopause,
+     .*.u-component_of_wind_maximum_wind"/>
   <alias
      name="V"
      label="V component of wind"
@@ -315,7 +339,15 @@
      VLML,
      wnd_vcmp_height_above_ground,
      wnd_vcmp_isobaric,
-     WindV"/>
+     WindV,
+     vgrdsfc,
+     vgrd10m,
+     vgrd_hyble.*.,
+     .*.v-component_of_wind_isobaric,
+     .*.v-component_of_wind_layer_between_two_pressure_difference_from_ground_layer,
+     .*.v-component_of_wind_height_above_ground,
+     .*.v-component_of_wind_tropopause,
+     .*.v-component_of_wind_maximum_wind"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -330,7 +362,9 @@
      model_dir,
      wind_direction,
      Wind_Dir,
-     retrieved_wind_direction"/>
+     retrieved_wind_direction,
+     wdirsfc,
+     Wind_direction_from_which_blowing_surface"/>
   <!-- bob inq2791 05/2019 -->
   <alias
      name="W"
@@ -359,7 +393,9 @@
      wind_speed_aw,
      wind_speed_lf,
      wind_speed_mf,
-     WindSp"/>
+     WindSp,
+     windsfc,
+     f10m"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
@@ -400,7 +436,8 @@
      Pressure_msl_*.*_AverageNanalysis,
      Pressure_msl_*.*_Average,
      Pressure_reduced_to_MSL_msl_*.*_Average,
-     pres_reduced_msl"/>
+     pres_reduced_msl,
+     .*.Pressure_reduced_to_MSL_msl"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
