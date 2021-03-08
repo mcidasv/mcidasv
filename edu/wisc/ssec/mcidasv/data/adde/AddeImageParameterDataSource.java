@@ -3024,9 +3024,11 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             for (int cutCount = 0; cutCount <= stepsToRemove; cutCount++) {
                 imageTimes.remove(imageTimes.size() - 1);
                 descriptorList.remove(descriptorList.size() - 1);
+                datesAndTimes.remove(datesAndTimes.size() - 1);
             }
             dataChoice.setTimeSelection(imageTimes);
             setImageList(descriptorList);
+            getDataContext().dataSourceChanged(this);
             logger.info("AllDatesTimes size after domain shift adjustment: " + datesAndTimes.size());
         }
 
