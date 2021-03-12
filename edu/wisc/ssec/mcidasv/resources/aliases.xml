@@ -51,7 +51,9 @@
      temp_13_3um_nom,
      temp_13_6um_nom,
      temp_13_9um_nom,
-     temp_14_2um_nom"/>
+     temp_14_2um_nom,
+     temp_3_75um_nom_clear_sky,
+     temp_6_7um_nom_clear_sky"/>
   
 <alias
      name="ABSVOR"
@@ -149,7 +151,8 @@
      .*.Temperature_tropopause,
      T2D,
      surface_air_temperature_nwp,
-     surface_temperature_retrieved"/>
+     surface_temperature_retrieved,
+     surface_temperature_background"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -388,7 +391,8 @@
      retrieved_wind_direction,
      wdirsfc,
      Wind_direction_from_which_blowing_surface,
-     wind_direction_cloud_top_nwp"/>
+     wind_direction_cloud_top_nwp,
+     wind_direction_10m_nwp"/>
   <!-- bob inq2791 05/2019 -->
   <alias
      name="W"
@@ -420,7 +424,8 @@
      WindSp,
      windsfc,
      f10m,
-     wind_speed_cloud_top_nwp"/>
+     wind_speed_cloud_top_nwp,
+     wind_speed_10m_nwp"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
