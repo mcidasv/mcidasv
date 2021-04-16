@@ -15485,9 +15485,6 @@
             </property>
         </object>
     </method>
-</object>
-<?xml version="1.0" encoding="UTF-8"?>
-<object class="java.util.ArrayList">
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
