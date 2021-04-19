@@ -74,7 +74,6 @@ import edu.wisc.ssec.mcidas.adde.AddeTextReader;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidasv.data.GeoLatLonSelection;
 import edu.wisc.ssec.mcidasv.data.GeoPreviewSelection;
-
 import visad.CommonUnit;
 import visad.Data;
 import visad.DateTime;
@@ -91,7 +90,6 @@ import visad.georef.MapProjection;
 import visad.meteorology.ImageSequence;
 import visad.meteorology.ImageSequenceImpl;
 import visad.meteorology.SingleBandedImage;
-
 import ucar.nc2.iosp.mcidas.McIDASAreaProjection;
 import ucar.unidata.data.BadDataException;
 import ucar.unidata.data.CompositeDataChoice;
@@ -112,6 +110,7 @@ import ucar.unidata.data.imagery.ImageDataset;
 import ucar.unidata.geoloc.LatLonPoint;
 import ucar.unidata.geoloc.ProjectionImpl;
 import ucar.unidata.idv.DisplayControl;
+import ucar.unidata.idv.MapViewManager;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.IOUtil;
 import ucar.unidata.util.LogUtil;
@@ -228,7 +227,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     // Detect domain shift - for ex ABI MESOs can abruptly move
     // If we detect one, load the later, shifted image(s) earth-centered relative to the earlier
     boolean domainShiftDetected = false;
-    boolean domainShiftNoticeShown = false;
+    boolean domainShiftNoticeDerivedShown = false;
+    boolean domainShiftNoticeTargetShown = false;
 
     public AddeImageParameterDataSource() {} 
 
@@ -1094,6 +1094,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         String saveBand = getKey(source, BAND_KEY);
 
         int bandIdx = 0;
+        int sensorID = -1;
 
         logger.trace("band index stuff: saveBand={}, bandIdx={}, source={}", new Object[] { saveBand, bandIdx, source });
         List<TwoFacedObject> calList = null;
@@ -1203,7 +1204,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             // TJJ Dec 2017
             // Kinda hacky (but then again so is this entire class) :-/
             // Do our GEO speedup code for known GEO sensor IDs
-            int sensorID = bi.getSensor();
+            sensorID = bi.getSensor();
             if (sensorIsGEO(sensorID)) {
                 isGeoSensor = true;
             }
@@ -1264,6 +1265,35 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 //        previewDir = getPreviewDirectory(aid);
         AddeImageDescriptor previewDescriptor = getPreviewDirectory(aid, dataChoice);
         previewDir = previewDescriptor.getDirectory();
+
+        // On the off chance user is working with ABI MESO or AHI TARGET sectors,
+        // *and* they have polling on, we need to turn auto-set projection off
+        // since the domain can shift around
+
+        if (isABISensor) {
+            String memo = previewDir.getMemoField().toLowerCase();
+            boolean isMesoOrTarget = false;
+            if ((memo.contains("meso")) || (memo.contains("targ"))) isMesoOrTarget = true;
+            logger.info("Preview Directory memo field: " + memo);
+            if (isPolling() && isMesoOrTarget) {
+                MapViewManager mvm = (MapViewManager) getIdv().getViewManager();
+                mvm.setUseProjectionFromData(false);
+                boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
+                if (! domainShiftNoticeTargetShown) {
+                    if (! offScreen) {
+                        String msg = "You currently have polling active, and are working with\n" +
+                                "a targeted sector (e.g. ABI MESO). Since these domains can\n" +
+                                "shift geographically, auto-set projection has been turned off.\n";
+                        Object[] params = { msg };
+                        JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
+                        domainShiftNoticeTargetShown = true;
+                    } else {
+                        logger.warn("Note: A domain shift occurs in the selected GEO image loop");
+                    }
+                }
+            }
+        }
+
         logger.trace("using previewDir={}", previewDir);
 //        try {
 //            logger.trace("preview areadir: stlines={} stelements={} lines={} elements={}", new Object[] { previewDir.getValue(AreaFile.AD_STLINE), previewDir.getValue(AreaFile.AD_STELEM), previewDir.getLines(), previewDir.getElements() });
@@ -2071,14 +2101,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
         if (domainShiftDetected && isDerived) {
             boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
             // For derived fields this path can be executed multiple times, don't keep showing the notice!
-            if (! domainShiftNoticeShown) {
+            if (! domainShiftNoticeDerivedShown) {
                 if (! offScreen) {
                     String msg = "A domain shift occurs in the selected GEO image loop.\n" +
                             "This usually happens when a targeted sector (e.g. ABI MESO) moves.\n" +
                             "Only the pre-shift data will be loaded and displayed.\n";
                     Object[] params = { msg };
                     JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
-                    domainShiftNoticeShown = true;
+                    domainShiftNoticeDerivedShown = true;
                 } else {
                     logger.warn("Note: A domain shift occurs in the selected GEO image loop");
                 }
