@@ -39,6 +39,7 @@ import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.model.ColorSpace;
 import org.jcodec.common.model.Picture;
 import org.jcodec.common.model.Rational;
+import org.jcodec.common.model.Size;
 import org.jcodec.javase.scale.AWTUtil;
 import org.jcodec.scale.ColorUtil;
 import org.jcodec.scale.Transform;
@@ -72,17 +73,7 @@ import ucar.visad.display.AnimationWidget;
 import visad.DateTime;
 import visad.Real;
 
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -112,6 +103,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -2392,6 +2384,10 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     File output = new File(movieFile);
                     // TODO(jon): jcodec has a strange way of specifying FPS...30 FPS would be "30/1", 29.97 FPS would be "30000/1001".
                     //SequenceEncoder enc = SequenceEncoder.createWithFps(NIOUtils.writableChannel(output), new Rational(displayRate, 1));
+                    //for (ImageWrapper img : images) {
+                    //    logger.trace("IMG WRAPPER: path: {}", img.getPath());
+                    //}
+
                     SequenceEncoder enc = SequenceEncoder.createSequenceEncoder(output, (int)displayRate);
                     List<String> imageList = ImageWrapper.makeFileList(images);
                     for (String image : imageList) {
@@ -2436,12 +2432,13 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageSequenceGrabber.class);
 
-    public static Picture decodeJPG(File f, ColorSpace tgtColor) throws IOException {
+    public Picture decodeJPG(File f, ColorSpace tgtColor) throws IOException {
         Picture picture = decodeJPG0(f);
         return convertColorSpace(picture, tgtColor);
     }
 
-    public static Picture decodeJPG0(File f) throws IOException {
+    public Picture decodeJPG0(File f) throws IOException {
+        padImage(f, "jpg");
         JpegDecoder jpgDec = new JpegDecoder();
         ByteBuffer buf = NIOUtils.fetchFromFile(f);
         VideoCodecMeta codecMeta = jpgDec.getCodecMeta(buf);
@@ -2450,13 +2447,14 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         return jpgDec.decodeFrame(buf, pic.getData());
     }
 
-    public static Picture decodePNG(File f, ColorSpace tgtColor) throws IOException {
+    public Picture decodePNG(File f, ColorSpace tgtColor) throws IOException {
         Picture picture = decodePNG0(f);
         Preconditions.checkNotNull(picture, "cant decode " + f.getPath());
         return convertColorSpace(picture, tgtColor);
     }
 
-    public static Picture decodePNG0(File f) throws IOException {
+    public Picture decodePNG0(File f) throws IOException {
+        padImage(f, "png");
         PNGDecoder pngDec = new PNGDecoder();
         ByteBuffer buf = NIOUtils.fetchFromFile(f);
         VideoCodecMeta codecMeta = pngDec.getCodecMeta(buf);
@@ -2470,6 +2468,43 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         Picture res = Picture.create(pic.getWidth(), pic.getHeight(), tgtColor);
         tr.transform(pic, res);
         return res;
+    }
+
+    /**
+     * Given an existing image file, check to see if either the width or height
+     * of the image is not divisible by two, and simply rewrite the given image
+     * with both a width and height that are divisible by two.
+     *
+     * <p>This oddity is due to an apparent limitation with YUV420.</p>
+     *
+     * @param f Image file. Cannot be {@code null}.
+     * @param type For now one of {@literal "png"} or {@code "jpg"}.
+     *
+     * @throws IOException if there was a problem reading or writing the image.
+     */
+    private void padImage(File f, String type) throws IOException {
+        BufferedImage orig = ImageIO.read(f);
+        int newWidth = orig.getWidth();
+        int newHeight = orig.getHeight();
+        if ((orig.getWidth() % 2) != 0) {
+            newWidth++;
+        }
+        if ((orig.getHeight() % 2) != 0) {
+            newHeight++;
+        }
+        if ((newWidth != orig.getWidth()) || (newHeight != orig.getHeight())) {
+            BufferedImage newImg = new BufferedImage(newWidth, newHeight, orig.getType());
+            Graphics g = newImg.getGraphics();
+            Color bgColor = Color.BLACK;
+            if (viewManager != null) {
+                bgColor = viewManager.getBackground();
+            }
+            g.setColor(bgColor);
+            g.fillRect(0, 0, newWidth, newHeight);
+            g.drawImage(orig, 0, 0, null);
+            g.dispose();
+            ImageIO.write(newImg, type, f);
+        }
     }
 
     /**
