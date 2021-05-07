@@ -152,7 +152,8 @@
      T2D,
      surface_air_temperature_nwp,
      surface_temperature_retrieved,
-     surface_temperature_background"/>
+     surface_temperature_background,
+     Temperature_surface_weightedMean"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -206,7 +207,10 @@
      .*.Relative_humidity_layer_between_two_pressure_difference_from_ground_layer,
      .*.Relative_humidity_height_above_ground,
      .*.Relative_humidity_isobaric,
-     surface_relative_humidity_nwp"/>
+     surface_relative_humidity_nwp,
+     Maximum_relative_humidity_height_above_ground_*.*_Hour_Maximum,
+     Minimum_Relative_Humidity_height_above_ground_*.*_Hour_Minimum,
+     Relative_humidity_isobaric_weightedMean"/>
   <alias
      name="Z"
      label="Z"
@@ -467,7 +471,8 @@
      Pressure_msl_*.*_Average,
      Pressure_reduced_to_MSL_msl_*.*_Average,
      pres_reduced_msl,
-     .*.Pressure_reduced_to_MSL_msl"/>
+     .*.Pressure_reduced_to_MSL_msl,
+     MSLP_Eta_model_reduction_msl_weightedMean"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
