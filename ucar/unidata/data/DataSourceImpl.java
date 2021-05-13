@@ -402,7 +402,19 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
                     int firstQuote = locStr.indexOf('"');
                     int lastQuote = locStr.indexOf('"', firstQuote + 1);
                     String locPath = ncml.substring(locIdx, locIdx + lastQuote + 1);
+                    // In addition (this is pretty hacky, I take full responsibility), on Windows
+                    // there may be multiple data paths, and we only want the last one
+                    String osStr = System.getProperty("os.name");
+                    if (osStr.toLowerCase().contains("windows")) {
+                        logger.debug("Windows data path bef: " + dataPath);
+                        int idx = dataPath.lastIndexOf(':');
+                        if (idx > 0) {
+                            dataPath = dataPath.substring(idx - 1);
+                        }
+                        logger.debug("Windows data path aft: " + dataPath);
+                    }
                     String newPath = "scan location = " + '"' + dataPath + '"';
+                    logger.debug("Final scan location: " + newPath);
                     // Swap the (likely empty) path with the data source path
                     ncml = ncml.replace(locPath, newPath);
                 }

@@ -34,7 +34,26 @@
      Simulated_Brightness_Temperature_for_GOES_12_Channel_4_atmosphere_top,
      himawari_8_ahi_channel_.*._brightness_temperature,
      MedianBT,
-     VAR3-*.*_FROM_7-0--1_atmosphere_top"/>
+     VAR3-*.*_FROM_7-0--1_atmosphere_top,
+     temp_3_9um_nom,
+     temp_3_75um_nom,
+     temp_6_2um_nom,
+     temp_6_7um_nom,
+     temp_7_3um_nom,
+     temp_8_5um_nom,
+     temp_9_7um_nom,
+     temp_10_4um_nom,
+     temp_11_0um_nom,
+     temp_11_0um_nom_max_3x3,
+     temp_11_0um_nom_min_3x3,
+     temp_11_0um_nom_clear_sky,
+     temp_12_0um_nom,
+     temp_13_3um_nom,
+     temp_13_6um_nom,
+     temp_13_9um_nom,
+     temp_14_2um_nom,
+     temp_3_75um_nom_clear_sky,
+     temp_6_7um_nom_clear_sky"/>
   
 <alias
      name="ABSVOR"
@@ -130,7 +149,11 @@
      .*.Temperature_height_above_ground,
      .*.Temperature_maximum_wind,
      .*.Temperature_tropopause,
-     T2D"/>
+     T2D,
+     surface_air_temperature_nwp,
+     surface_temperature_retrieved,
+     surface_temperature_background,
+     Temperature_surface_weightedMean"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -183,7 +206,11 @@
      hur,
      .*.Relative_humidity_layer_between_two_pressure_difference_from_ground_layer,
      .*.Relative_humidity_height_above_ground,
-     .*.Relative_humidity_isobaric"/>
+     .*.Relative_humidity_isobaric,
+     surface_relative_humidity_nwp,
+     Maximum_relative_humidity_height_above_ground_*.*_Hour_Maximum,
+     Minimum_Relative_Humidity_height_above_ground_*.*_Hour_Minimum,
+     Relative_humidity_isobaric_weightedMean"/>
   <alias
      name="Z"
      label="Z"
@@ -367,7 +394,9 @@
      Wind_Dir,
      retrieved_wind_direction,
      wdirsfc,
-     Wind_direction_from_which_blowing_surface"/>
+     Wind_direction_from_which_blowing_surface,
+     wind_direction_cloud_top_nwp,
+     wind_direction_10m_nwp"/>
   <!-- bob inq2791 05/2019 -->
   <alias
      name="W"
@@ -398,7 +427,9 @@
      wind_speed_mf,
      WindSp,
      windsfc,
-     f10m"/>
+     f10m,
+     wind_speed_cloud_top_nwp,
+     wind_speed_10m_nwp"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
@@ -440,7 +471,8 @@
      Pressure_msl_*.*_Average,
      Pressure_reduced_to_MSL_msl_*.*_Average,
      pres_reduced_msl,
-     .*.Pressure_reduced_to_MSL_msl"/>
+     .*.Pressure_reduced_to_MSL_msl,
+     MSLP_Eta_model_reduction_msl_weightedMean"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
@@ -460,7 +492,8 @@
      CRW_SST,
      sea_surface_temperature,
      grnd_sea_temp_surface,
-     sea_temp_surface"/>
+     sea_temp_surface,
+     sea_surface_temperature_retrieved"/>
   <!-- bob inq2679 -->
   <alias aliases="HT, .*_Band3_CTH" label="ABI L2 Cloud Top Height" name="ABI_L2_ACHA"/>
   <alias aliases="AOD, .*_Band22_AOD" label="ABI L2 Aerosol Optical Depth" name="ABI_L2_AOD"/>

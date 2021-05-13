@@ -29,6 +29,7 @@
 package ucar.unidata.idv.ui;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
+import edu.wisc.ssec.mcidasv.McIdasPreferenceManager;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -4353,17 +4354,22 @@ public class ImageGenerator extends IdvManager {
                     }
                 }
                 String loopFilename = applyMacrosFilename(fname);
+                String useNewFontRendering =
+                        System.getProperty(McIdasPreferenceManager.PROP_NEW_FONT_RENDERING, "false");
+                boolean newFonts = Boolean.parseBoolean(useNewFontRendering);
+                boolean headless = getIdv().getArgsManager().getIsOffScreen();
+
                 if (scriptingNode == null) {
                     File imageFile = null;
                     if (loopFilename != null) {
                         imageFile = new File(getImageFileName(loopFilename));
                     }
                     viewManager.writeImage(imageFile, true, false);
-                } else if ((loopFilename != null)
-                           && ViewManager.isVectorGraphicsFile(
-                               loopFilename)) {
+                } else if ((newFonts && headless)
+                           || ((loopFilename != null) && ViewManager.isVectorGraphicsFile(loopFilename)))
+                {
                     VectorGraphicsRenderer vectorRenderer =
-                        new VectorGraphicsRenderer(viewManager);
+                            new VectorGraphicsRenderer(viewManager);
                     vectorRenderer.renderTo(loopFilename);
                 } else {
                     logger.trace("waiting until displays are 'done'...");

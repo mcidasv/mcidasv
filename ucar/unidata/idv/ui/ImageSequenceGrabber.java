@@ -30,6 +30,19 @@ package ucar.unidata.idv.ui;
 
 import ij.ImagePlus;
 
+import org.jcodec.api.SequenceEncoder;
+import org.jcodec.codecs.mjpeg.JpegDecoder;
+import org.jcodec.codecs.png.PNGDecoder;
+import org.jcodec.common.Preconditions;
+import org.jcodec.common.VideoCodecMeta;
+import org.jcodec.common.io.NIOUtils;
+import org.jcodec.common.model.ColorSpace;
+import org.jcodec.common.model.Picture;
+import org.jcodec.common.model.Rational;
+import org.jcodec.common.model.Size;
+import org.jcodec.javase.scale.AWTUtil;
+import org.jcodec.scale.ColorUtil;
+import org.jcodec.scale.Transform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -60,17 +73,7 @@ import ucar.visad.display.AnimationWidget;
 import visad.DateTime;
 import visad.Real;
 
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -82,6 +85,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.nio.ByteBuffer;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -99,6 +103,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -117,6 +122,7 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import static edu.wisc.ssec.mcidasv.util.CollectionHelpers.list;
 
 /**
  * Class ImageSequenceGrabber. Manages the movie capture dialog,
@@ -1569,11 +1575,14 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                 GuiUtils.topCenter(GuiUtils.vbox(accessoryComps),
                                    GuiUtils.filler());
 
-            filename =
-                FileManager.getWriteFile(Misc.newList(FileManager.FILTER_MOV,
-                    FileManager.FILTER_AVI, FileManager.FILTER_ANIMATEDGIF,
-                    FileManager.FILTER_ZIP, FileManager.FILTER_KMZ,
-                    FILTER_ANIS), FileManager.SUFFIX_MOV, extra);
+            List<PatternFileFilter> filters =  list(FileManager.FILTER_MP4,
+                                                    FileManager.FILTER_MOV,
+                                                    FileManager.FILTER_AVI,
+                                                    FileManager.FILTER_ANIMATEDGIF,
+                                                    FileManager.FILTER_ZIP,
+                                                    FileManager.FILTER_KMZ,
+                                                    FILTER_ANIS);
+            filename = FileManager.getWriteFile(filters, FileManager.SUFFIX_MP4, extra);
 //            writePositions = writePositionsCbx.isSelected();
         } else {
             filename = movieFileName;
@@ -1686,7 +1695,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             return FileManager.SUFFIX_PNG;
         }
 
-        String defSuffix = FileManager.SUFFIX_JPG;
+//        String defSuffix = FileManager.SUFFIX_JPG;
+        String  defSuffix = FileManager.SUFFIX_PNG;
 
         if ((scriptingNode != null) && (movieFileName != null)) {
             final String suffix = IOUtil.getFileExtension(movieFileName);
@@ -1698,7 +1708,10 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     defSuffix = FileManager.SUFFIX_PNG;
                 } else if (suffix.equalsIgnoreCase(FileManager.SUFFIX_MOV)) {
                     defSuffix = FileManager.SUFFIX_JPG;
-                }  // TODO: GIF, AVI?
+                } else if (suffix.equalsIgnoreCase(FileManager.SUFFIX_MP4)) {
+                    defSuffix = FileManager.SUFFIX_PNG;
+                }
+                // TODO: GIF, AVI?
             }
 
             defSuffix = imageGenerator.applyMacros(scriptingNode,
@@ -2367,6 +2380,24 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                         FileManager.SUFFIX_AVI)) {
                     ImageUtils.writeAvi(ImageWrapper.makeFileList(images),
                                         displayRate, new File(movieFile));
+                } else if (movieFile.toLowerCase().endsWith(FileManager.SUFFIX_MP4)) {
+                    File output = new File(movieFile);
+                    // TODO(jon): jcodec has a strange way of specifying FPS...30 FPS would be "30/1", 29.97 FPS would be "30000/1001".
+                    //SequenceEncoder enc = SequenceEncoder.createWithFps(NIOUtils.writableChannel(output), new Rational(displayRate, 1));
+                    //for (ImageWrapper img : images) {
+                    //    logger.trace("IMG WRAPPER: path: {}", img.getPath());
+                    //}
+
+                    SequenceEncoder enc = SequenceEncoder.createSequenceEncoder(output, (int)displayRate);
+                    List<String> imageList = ImageWrapper.makeFileList(images);
+                    for (String image : imageList) {
+                        if (image.endsWith(".jpg")) {
+                            enc.encodeNativeFrame(decodeJPG(new File(image), ColorSpace.RGB));
+                        } else if (image.endsWith(".png")) {
+                            enc.encodeNativeFrame(decodePNG(new File(image), ColorSpace.RGB));
+                        }
+                    }
+                    enc.finish();
                 } else {
 
                     // System.err.println("mov:" + movieFile);
@@ -2397,6 +2428,83 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     publishCbx);
         }
 
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(ImageSequenceGrabber.class);
+
+    public Picture decodeJPG(File f, ColorSpace tgtColor) throws IOException {
+        Picture picture = decodeJPG0(f);
+        return convertColorSpace(picture, tgtColor);
+    }
+
+    public Picture decodeJPG0(File f) throws IOException {
+        padImage(f, "jpg");
+        JpegDecoder jpgDec = new JpegDecoder();
+        ByteBuffer buf = NIOUtils.fetchFromFile(f);
+        VideoCodecMeta codecMeta = jpgDec.getCodecMeta(buf);
+        Picture pic = Picture.create(codecMeta.getSize().getWidth(), codecMeta.getSize().getHeight(),
+                ColorSpace.RGB);
+        return jpgDec.decodeFrame(buf, pic.getData());
+    }
+
+    public Picture decodePNG(File f, ColorSpace tgtColor) throws IOException {
+        Picture picture = decodePNG0(f);
+        Preconditions.checkNotNull(picture, "cant decode " + f.getPath());
+        return convertColorSpace(picture, tgtColor);
+    }
+
+    public Picture decodePNG0(File f) throws IOException {
+        padImage(f, "png");
+        PNGDecoder pngDec = new PNGDecoder();
+        ByteBuffer buf = NIOUtils.fetchFromFile(f);
+        VideoCodecMeta codecMeta = pngDec.getCodecMeta(buf);
+        Picture pic = Picture.create(codecMeta.getSize().getWidth(), codecMeta.getSize().getHeight(),
+                ColorSpace.RGB);
+        return pngDec.decodeFrame(buf, pic.getData());
+    }
+
+    public static Picture convertColorSpace(Picture pic, ColorSpace tgtColor) {
+        Transform tr = ColorUtil.getTransform(pic.getColor(), tgtColor);
+        Picture res = Picture.create(pic.getWidth(), pic.getHeight(), tgtColor);
+        tr.transform(pic, res);
+        return res;
+    }
+
+    /**
+     * Given an existing image file, check to see if either the width or height
+     * of the image is not divisible by two, and simply rewrite the given image
+     * with both a width and height that are divisible by two.
+     *
+     * <p>This oddity is due to an apparent limitation with YUV420.</p>
+     *
+     * @param f Image file. Cannot be {@code null}.
+     * @param type For now one of {@literal "png"} or {@code "jpg"}.
+     *
+     * @throws IOException if there was a problem reading or writing the image.
+     */
+    private void padImage(File f, String type) throws IOException {
+        BufferedImage orig = ImageIO.read(f);
+        int newWidth = orig.getWidth();
+        int newHeight = orig.getHeight();
+        if ((orig.getWidth() % 2) != 0) {
+            newWidth++;
+        }
+        if ((orig.getHeight() % 2) != 0) {
+            newHeight++;
+        }
+        if ((newWidth != orig.getWidth()) || (newHeight != orig.getHeight())) {
+            BufferedImage newImg = new BufferedImage(newWidth, newHeight, orig.getType());
+            Graphics g = newImg.getGraphics();
+            Color bgColor = Color.BLACK;
+            if (viewManager != null) {
+                bgColor = viewManager.getBackground();
+            }
+            g.setColor(bgColor);
+            g.fillRect(0, 0, newWidth, newHeight);
+            g.drawImage(orig, 0, 0, null);
+            g.dispose();
+            ImageIO.write(newImg, type, f);
+        }
     }
 
     /**
