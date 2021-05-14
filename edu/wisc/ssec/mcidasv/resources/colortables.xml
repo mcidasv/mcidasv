@@ -230,12 +230,12 @@
             <property name="Name">
                 <string><![CDATA[Clavrx Cloud Top Height]]></string>
             </property>
-			<property name="Id">
-                <string><![CDATA[Clavrx Cloud Top Height]]></string>
+            <property name="Id">
+                 <string><![CDATA[Clavrx Cloud Top Height]]></string>
             </property>
             <property name="Table">
                 <array class="[F" length="4">
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAiAAAAAD7+/v8/FpaXP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP1zc3T9c3N0/XNzdP1zc3QAAAAAAAAAAAAAAAAAAAAA+lpaXPpaWlz6Wlpc+lpaXPsjIyT7IyMk+4ODhPuDg4T7w8PE+8PDxPxaWlz8Wlpc/NLS1PzS0tT+AAAA/gAAAP4AAAA==</parray>
+                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAiAAAAAD7+/v8/FpaXP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP1zc3T9c3N0/XNzdP1zc3QAAAAAAAAAAAAAAAAAAAAA+lpaXPpaWlz6Wlpc+lpaXPsjIyT7IyMk+4ODhPuDg4T7w8PE+8PDxPxaWlz8Wlpc/NLS1PzS0tT9h4eI/YeHiP4AAAA==</parray>
                     <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAiAAAAAAAAAAA+lpaXPwyMjT8MjI0/V9fYP1fX2D+AAAA/gAAAP1zc3T9c3N0/XNzdP1zc3T9IyMk/SMjJP0jIyT9IyMk/L6+wPy+vsD8vr7A/L6+wP0jIyT9IyMk/W9vcP1vb3D7w8PE+8PDxPxaWlz8Wlpc/NLS1PzS0tT+AAAA/gAAAP4AAAA==</parray>
                     <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAiAAAAAD7+/v89oKChAAAAAAAAAAAAAAAAAAAAAD5IyMk+SMjJPiCgoT4goKE+IKChPiCgoT7IyMk+yMjJPsjIyT7IyMkAAAAAAAAAAAAAAAAAAAAAPwKCgz8CgoM/E5OUPxOTlD9w8PE/cPDxP3X19j919fY/evr7P3r6+z+AAAA/gAAAP4AAAA==</parray>
                     <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAiP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAA==</parray>
@@ -244,16 +244,13 @@
             <property name="Category">
                 <string><![CDATA[Satellite>CLAVR-x]]></string>
             </property>
-            <property name="ScaleFactor">
-                <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAiP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAA==</parray>
-            </property>
             <property name="Range">
                 <object class="ucar.unidata.util.Range">
-                    <property name="Max">
-                        <double>16500.0</double>
-                    </property>
                     <property name="Min">
                         <double>-500.0</double>
+                    </property>
+                    <property name="Max">
+                        <double>16500.0</double>
                     </property>
                 </object>
             </property>
@@ -269,7 +266,31 @@
                             </property>
                         </object>
                     </method>
+                    <method name="add">
+                        <object class="ucar.unidata.util.ColorTable$Breakpoint">
+                            <property name="Value">
+                                <double>0.9117647058823529</double>
+                            </property>
+                        </object>
+                    </method>
+                    <method name="add">
+                        <object class="ucar.unidata.util.ColorTable$Breakpoint">
+                            <property name="Value">
+                                <double>0.8529411764705882</double>
+                            </property>
+                        </object>
+                    </method>
+                    <method name="add">
+                        <object class="ucar.unidata.util.ColorTable$Breakpoint">
+                            <property name="Value">
+                                <double>0.9705882352941176</double>
+                            </property>
+                        </object>
+                    </method>
                 </object>
+            </property>
+            <property name="ScaleFactor">
+                <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAiP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAA==</parray>
             </property>
         </object>
     </method>
