@@ -886,6 +886,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     getSaveComponents();
                 }
             } catch (Exception e) {
+                logger.error("Preview image Exception: " + e.getMessage());
                 JLabel label = new JLabel("Can't make preview image");
                 JPanel contents = GuiUtils.top(GuiUtils.inset(label, label.getText().length() + 12));
                 GuiUtils.showOkDialog(null, "No Preview Image", contents, null);
@@ -2855,7 +2856,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             // intstead of iterating through every single URL to make large loop times 
             // (e.g. 50 GOES-16 MESO images) more tolerable.
             
-            if (isGeoSensor) {
+            if (isGeoSensor && (previewUrls.size() > 1)) {
 
                 int loIdx = 0;
                 int hiIdx = previewUrls.size() - 1;
