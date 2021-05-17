@@ -1288,7 +1288,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                         JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
                         domainShiftNoticeTargetShown = true;
                     } else {
-                        logger.warn("Note: A domain shift occurs in the selected GEO image loop");
+                        logger.warn("Note: Polling with shifting sector - auto-set projection turned off");
                     }
                 }
             }
@@ -2105,7 +2105,8 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 if (! offScreen) {
                     String msg = "A domain shift occurs in the selected GEO image loop.\n" +
                             "This usually happens when a targeted sector (e.g. ABI MESO) moves.\n" +
-                            "Only the pre-shift data will be loaded and displayed.\n";
+                            "Only the pre-shift data will be loaded and displayed, and \n" +
+                            "only those image times will be available for this data source.";
                     Object[] params = { msg };
                     JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
                     domainShiftNoticeDerivedShown = true;
