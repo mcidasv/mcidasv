@@ -402,9 +402,46 @@
   </paramgroup>
   <paramgroup description="NUCAPS T RH" name="NUCAPS_T_RH">
     <params p1="Temperature_2m" p2="RelHum_2m"/>
+    <params p1="Temperature_100mb" p2="RelHum_100mb"/>
+    <params p1="Temperature_125mb" p2="RelHum_125mb"/>
+    <params p1="Temperature_150mb" p2="RelHum_150mb"/>
+    <params p1="Temperature_175mb" p2="RelHum_175mb"/>
+    <params p1="Temperature_200mb" p2="RelHum_200mb"/>
+    <params p1="Temperature_225mb" p2="RelHum_225mb"/>
+    <params p1="Temperature_250mb" p2="RelHum_250mb"/>
+    <params p1="Temperature_275mb" p2="RelHum_275mb"/>
     <params p1="Temperature_300mb" p2="RelHum_300mb"/>
+    <params p1="Temperature_325mb" p2="RelHum_325mb"/>
+    <params p1="Temperature_350mb" p2="RelHum_350mb"/>
+    <params p1="Temperature_375mb" p2="RelHum_375mb"/>
+    <params p1="Temperature_400mb" p2="RelHum_400mb"/>
+    <params p1="Temperature_425mb" p2="RelHum_425mb"/>
+    <params p1="Temperature_450mb" p2="RelHum_450mb"/>
+    <params p1="Temperature_475mb" p2="RelHum_475mb"/>
     <params p1="Temperature_500mb" p2="RelHum_500mb"/>
+    <params p1="Temperature_525mb" p2="RelHum_525mb"/>
+    <params p1="Temperature_550mb" p2="RelHum_550mb"/>
+    <params p1="Temperature_575mb" p2="RelHum_575mb"/>
+    <params p1="Temperature_600mb" p2="RelHum_600mb"/>
+    <params p1="Temperature_625mb" p2="RelHum_625mb"/>
+    <params p1="Temperature_650mb" p2="RelHum_650mb"/>
+    <params p1="Temperature_675mb" p2="RelHum_675mb"/>
     <params p1="Temperature_700mb" p2="RelHum_700mb"/>
+    <params p1="Temperature_725mb" p2="RelHum_725mb"/>
+    <params p1="Temperature_750mb" p2="RelHum_750mb"/>
+    <params p1="Temperature_775mb" p2="RelHum_775mb"/>
+    <params p1="Temperature_800mb" p2="RelHum_800mb"/>
+    <params p1="Temperature_825mb" p2="RelHum_825mb"/>
     <params p1="Temperature_850mb" p2="RelHum_850mb"/>
+    <params p1="Temperature_875mb" p2="RelHum_875mb"/>
+    <params p1="Temperature_900mb" p2="RelHum_900mb"/>
+    <params p1="Temperature_925mb" p2="RelHum_925mb"/>
+    <params p1="Temperature_950mb" p2="RelHum_950mb"/>
+    <params p1="Temperature_975mb" p2="RelHum_975mb"/>
+    <params p1="Temperature_1000mb" p2="RelHum_1000mb"/>
+    <params p1="Temperature_1025mb" p2="RelHum_1025mb"/>
+    <params p1="Temperature_1050mb" p2="RelHum_1050mb"/>
+    <params p1="Temperature_1075mb" p2="RelHum_1075mb"/>
+    <params p1="Temperature_1100mb" p2="RelHum_1100mb"/>
   </paramgroup>
 </paramgroups>
