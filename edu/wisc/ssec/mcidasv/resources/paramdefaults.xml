@@ -244,5 +244,46 @@
   <param ci_base="0.0" ci_interval="10.0" ci_max="30.0" ci_min="-90.0" ci_width="1" name="Temperature_44298ft" range_max="20.0" range_min="-80.0" table="Temp mb" unit="°C"/>
   <param ci_base="0.0" ci_interval="10.0" ci_max="30.0" ci_min="-90.0" ci_width="1" name="Temperature_47744ft" range_max="20.0" range_min="-80.0" table="Temp mb" unit="°C"/>
   <param ci_base="0.0" ci_interval="10.0" ci_max="30.0" ci_min="-90.0" ci_width="1" name="Temperature_51802ft" range_max="20.0" range_min="-80.0" table="Temp mb" unit="°C"/>
+  <param ci_base="12000.0" ci_interval="200.0" ci_max="18200.0" ci_min="11800.0" ci_width="1" name="Geopotential_Heights_100mb" range_max="18000.0" range_min="12000.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="12000.0" ci_interval="200.0" ci_max="18200.0" ci_min="11800.0" ci_width="1" name="Geopotential_Heights_125mb" range_max="18000.0" range_min="12000.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="12000.0" ci_interval="200.0" ci_max="18200.0" ci_min="11800.0" ci_width="1" name="Geopotential_Heights_150mb" range_max="18000.0" range_min="12000.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="10000.0" ci_interval="200.0" ci_max="15200.0" ci_min="9800.0" ci_width="1" name="Geopotential_Heights_175mb" range_max="15000.0" range_min="10000.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="10000.0" ci_interval="200.0" ci_max="15200.0" ci_min="9800.0" ci_width="1" name="Geopotential_Heights_200mb" range_max="15000.0" range_min="10000.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="10000.0" ci_interval="200.0" ci_max="15200.0" ci_min="9800.0" ci_width="1" name="Geopotential_Heights_225mb" range_max="15000.0" range_min="10000.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="7800.0" ci_interval="200.0" ci_max="15200.0" ci_min="7600.0" ci_width="1" name="Geopotential_Heights_250mb" range_max="10000.0" range_min="7800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="7800.0" ci_interval="200.0" ci_max="10200.0" ci_min="7600.0" ci_width="1" name="Geopotential_Heights_275mb" range_max="10000.0" range_min="7800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="7800.0" ci_interval="200.0" ci_max="10200.0" ci_min="7600.0" ci_width="1" name="Geopotential_Heights_300mb" range_max="10000.0" range_min="7800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="7800.0" ci_interval="200.0" ci_max="10200.0" ci_min="7600.0" ci_width="1" name="Geopotential_Heights_325mb" range_max="10000.0" range_min="7800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="7800.0" ci_interval="200.0" ci_max="10200.0" ci_min="7600.0" ci_width="1" name="Geopotential_Heights_350mb" range_max="10000.0" range_min="7800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="7000.0" ci_interval="200.0" ci_max="8000.0" ci_min="4600.0" ci_width="1" name="Geopotential_Heights_375mb" range_max="7800.0" range_min="5200.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="5200.0" ci_interval="200.0" ci_max="8000.0" ci_min="4600.0" ci_width="1" name="Geopotential_Heights_400mb" range_max="7800.0" range_min="5200.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="5200.0" ci_interval="200.0" ci_max="8000.0" ci_min="5000.0" ci_width="1" name="Geopotential_Heights_425mb" range_max="7800.0" range_min="5200.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="4800.0" ci_interval="200.0" ci_max="6400.0" ci_min="4600.0" ci_width="1" name="Geopotential_Heights_450mb" range_max="6200.0" range_min="4800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="4800.0" ci_interval="200.0" ci_max="6400.0" ci_min="4600.0" ci_width="1" name="Geopotential_Heights_475mb" range_max="6200.0" range_min="4800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="4800.0" ci_interval="200.0" ci_max="6400.0" ci_min="4600.0" ci_width="1" name="Geopotential_Heights_500mb" range_max="6200.0" range_min="4800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="4800.0" ci_interval="200.0" ci_max="6400.0" ci_min="4600.0" ci_width="1" name="Geopotential_Heights_525mb" range_max="6200.0" range_min="4800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="2800.0" ci_interval="200.0" ci_max="5200.0" ci_min="2600.0" ci_width="1" name="Geopotential_Heights_550mb" range_max="5000.0" range_min="2800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="2800.0" ci_interval="200.0" ci_max="5200.0" ci_min="2600.0" ci_width="1" name="Geopotential_Heights_575mb" range_max="5000.0" range_min="2800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="2800.0" ci_interval="200.0" ci_max="5200.0" ci_min="2600.0" ci_width="1" name="Geopotential_Heights_600mb" range_max="5000.0" range_min="2800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="2800.0" ci_interval="200.0" ci_max="5200.0" ci_min="2600.0" ci_width="1" name="Geopotential_Heights_625mb" range_max="5000.0" range_min="2800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="2200.0" ci_interval="200.0" ci_max="3600.0" ci_min="2000.0" ci_width="1" name="Geopotential_Heights_650mb" range_max="3400.0" range_min="2200.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="2200.0" ci_interval="200.0" ci_max="3600.0" ci_min="2000.0" ci_width="1" name="Geopotential_Heights_675mb" range_max="3400.0" range_min="2200.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="2200.0" ci_interval="200.0" ci_max="3600.0" ci_min="2000.0" ci_width="1" name="Geopotential_Heights_700mb" range_max="3400.0" range_min="2200.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="1200.0" ci_interval="200.0" ci_max="3000.0" ci_min="1000.0" ci_width="1" name="Geopotential_Heights_725mb" range_max="2800.0" range_min="1200.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="1200.0" ci_interval="200.0" ci_max="3000.0" ci_min="1000.0" ci_width="1" name="Geopotential_Heights_750mb" range_max="2800.0" range_min="1200.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="1200.0" ci_interval="200.0" ci_max="2400.0" ci_min="1000.0" ci_width="1" name="Geopotential_Heights_775mb" range_max="2200.0" range_min="1200.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="800.0" ci_interval="200.0" ci_max="2400.0" ci_min="600.0" ci_width="1" name="Geopotential_Heights_800mb" range_max="2200.0" range_min="800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="800.0" ci_interval="200.0" ci_max="2000.0" ci_min="600.0" ci_width="1" name="Geopotential_Heights_825mb" range_max="1800.0" range_min="800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="800.0" ci_interval="200.0" ci_max="2000.0" ci_min="600.0" ci_width="1" name="Geopotential_Heights_850mb" range_max="1800.0" range_min="800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="800.0" ci_interval="200.0" ci_max="2000.0" ci_min="600.0" ci_width="1" name="Geopotential_Heights_875mb" range_max="1800.0" range_min="800.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_900mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_925mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_950mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_975mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_1000mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_1025mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_1050mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_1075mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
+  <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_1100mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
   <!-- end inq 2955 -->
 </params>
