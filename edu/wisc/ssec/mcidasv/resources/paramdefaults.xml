@@ -286,4 +286,38 @@
   <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_1075mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
   <param ci_base="0.0" ci_interval="200.0" ci_max="2000.0" ci_min="-200.0" ci_width="1" name="Geopotential_Heights_1100mb" range_max="1800.0" range_min="0.0" table="Geopotential Height mb" unit="m"/>
   <!-- end inq 2955 -->
+  
+  <!-- bob inq 2924 (VIIRS EDRs) - May 2021 -->
+  <param ci_base="0.0" ci_interval="5.0" ci_max="75.0" ci_min="-5.0" ci_width="1" name="AshMassLoading" range_max="70.0" range_min="0.0" unit="tons/km^2"/>
+  <param ci_base="0.0" ci_interval="5.0" ci_max="105.0" ci_min="-5.0" ci_width="1" name="AshOD_IR" range_max="100.0" range_min="1.0" unit="1"/>
+  <param ci_base="0.0" ci_interval="5.0" ci_max="105.0" ci_min="-5.0" ci_width="1" name="AshOD_VIS" range_max="100.0" range_min="1.0" unit="1"/>
+  <param ci_base="0.0" ci_interval="2.0" ci_max="22.0" ci_min="-2.0" ci_width="1" name="AshEffRad" range_max="20.0" range_min="0.0" unit="microns"/>
+  <param ci_base="0.0" ci_interval="1000.0" ci_max="31000.0" ci_min="-1000.0" ci_width="1" name="AshTopHeight" range_max="30000.0" range_min="0.0" unit="m"/>
+  <param ci_base="0.0" ci_interval="100.0" ci_max="1200.0" ci_min="-100.0" ci_width="1" name="AshTopPress" range_max="1100.0" range_min="0.0" unit="hPa"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="360.0" ci_min="160.0" ci_width="1" name="AshTopTemp" range_max="340.0" range_min="180.0" unit="K"/>
+  <param ci_base="90.0" ci_interval="10.0" ci_max="410.0" ci_min="400.0" ci_width="1" name="IceSrfTemp" range_max="390.0" range_min="100.0" unit="K"/>
+  <param ci_base="0.0" ci_interval="1000.0" ci_max="10000.0" ci_min="-1000.0" ci_width="1" name="IceThickness" range_max="9999.0" range_min="0.0" unit="m"/>
+  <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="-0.1" ci_width="1" name="Conv_Cld_Prob" range_max="1.0" range_min="0.0" unit="%"/>
+  <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="-0.1" ci_width="1" name="SC_Cld_Prob" range_max="1.0" range_min="0.0" unit="%"/>
+  <param ci_base="0.0" ci_interval="50.0" ci_max="1050.0" ci_min="-50.0" ci_width="1" name="Cost" range_max="1000.0" range_min="0.0" unit="1"/>
+  <param ci_base="0.0" ci_interval="1000.0" ci_max="11000.0" ci_min="-1000.0" ci_width="1" name="ZcError" range_max="10000.0" range_min="0.0" unit="m"/>
+  <param ci_base="0.0" ci_interval="100.0" ci_max="1100.0" ci_min="-100.0" ci_width="1" name="PcError" range_max="1000.0" range_min="0.0" unit="hPa"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="110.0" ci_min="-10.0" ci_width="1" name="TcError" range_max="100.0" range_min="0.0" unit="K"/>
+  <param ci_base="0.0" ci_interval="1000.0" ci_max="21000.0" ci_min="-1000.0" ci_width="1" name="CldTopHght" range_max="20000.0" range_min="-300.0" unit="m"/>
+  <param ci_base="0.0" ci_interval="100.0" ci_max="1200.0" ci_min="-100.0" ci_width="1" name="CldTopPres" range_max="1100.0" range_min="0.0" unit="hPa"/>
+  <param ci_base="180.0" ci_interval="20.0" ci_max="360.0" ci_min="160.0" ci_width="1" name="CldTopTemp" range_max="340.0" range_min="180.0" unit="K"/>
+  <param ci_base="0.0" ci_interval="500.0" ci_max="5500.0" ci_min="-500.0" ci_width="1" name="CloudMicroIWP" range_max="5000.0" range_min="0.0" unit="g/m2"/>
+  <param ci_base="0.0" ci_interval="500.0" ci_max="5500.0" ci_min="-500.0" ci_width="1" name="CloudMicroLWP" range_max="5000.0" range_min="0.0" unit="g/m2"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="160.0" ci_min="-10.0" ci_width="1" name="CloudMicroEffRad" range_max="150.0" range_min="0.0" unit="Micron"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="110.0" ci_min="-10.0" ci_width="1" name="CloudMicroEffRadMD6" range_max="100.0" range_min="0.0" unit="Micron"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="110.0" ci_min="-10.0" ci_width="1" name="CloudMicroVisODMD6" range_max="100.0" range_min="0.0" unit="1"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="170.0" ci_min="-10.0" ci_width="1" name="CloudMicroVisOD" range_max="160.0" range_min="0.0" unit="1"/>
+  <param ci_base="0.0" ci_interval="1000.0" ci_max="21000.0" ci_min="-1000.0" ci_width="1" name="CldBaseHght" range_max="20000.0" range_min="-300.0" unit="m"/>
+  <param ci_base="0.0" ci_interval="1000.0" ci_max="12000.0" ci_min="-1000.0" ci_width="1" name="CldBasePres" range_max="1100.0" range_min="0.0" unit="hPa"/>
+  <param ci_base="0.0" ci_interval="1000.0" ci_max="21000.0" ci_min="-1000.0" ci_width="1" name="CldTopHght_Adj" range_max="20000.0" range_min="-300.0" unit="m"/>
+  <param ci_base="0.0" ci_interval="100.0" ci_max="1200.0" ci_min="-100.0" ci_width="1" name="CldTopPres_Adj" range_max="1100.0" range_min="0.0" unit="hPa"/>
+  <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="-0.1" ci_width="1" name="SpaStddev" range_max="1.0" range_min="0.0" unit="1"/>
+  <param ci_base="0.0" ci_interval="0.2" ci_max="3.2" ci_min="-1.2" ci_width="1" name="AngsExp2" range_max="3.0" range_min="-1.0" unit="1"/>
+  <param ci_base="0.0" ci_interval="0.2" ci_max="3.2" ci_min="-1.2" ci_width="1" name="AngsExp1" range_max="3.0" range_min="-1.0" unit="1"/>
+  <!-- end inq 2924 -->
 </params>
