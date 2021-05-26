@@ -296,6 +296,7 @@
   <param ci_base="0.0" ci_interval="100.0" ci_max="1200.0" ci_min="-100.0" ci_width="1" name="AshTopPress" range_max="1100.0" range_min="0.0" unit="hPa"/>
   <param ci_base="0.0" ci_interval="10.0" ci_max="360.0" ci_min="160.0" ci_width="1" name="AshTopTemp" range_max="340.0" range_min="180.0" unit="K"/>
   <param ci_base="90.0" ci_interval="10.0" ci_max="410.0" ci_min="400.0" ci_width="1" name="IceSrfTemp" range_max="390.0" range_min="100.0" unit="K"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="110.0" ci_min="-10.0" ci_width="1" name="IceConc" range_max="100.0" range_min="0.0" unit="%"/>
   <param ci_base="0.0" ci_interval="1000.0" ci_max="10000.0" ci_min="-1000.0" ci_width="1" name="IceThickness" range_max="9999.0" range_min="0.0" unit="m"/>
   <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="-0.1" ci_width="1" name="Conv_Cld_Prob" range_max="1.0" range_min="0.0" unit="%"/>
   <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="-0.1" ci_width="1" name="SC_Cld_Prob" range_max="1.0" range_min="0.0" unit="%"/>
