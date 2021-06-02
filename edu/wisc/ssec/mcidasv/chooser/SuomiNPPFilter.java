@@ -131,9 +131,14 @@ public class SuomiNPPFilter extends FileFilter {
         	} else if (fileNameRelative.matches(JPSSUtilities.SUOMI_NPP_REGEX_NASA)) {
         		isSuomiNPP_NASA = true;
         		logger.debug(fileNameRelative + " matches Suomi NPP NASA regex");
+            // else see if relative filename matches the JPSS Enterprise EDR regex
+            } else if (fileNameRelative.matches(JPSSUtilities.JPSS_REGEX_ENTERPRISE_EDR)) {
+                logger.debug(fileNameRelative + " matches JPSS Enterprise EDR regex");
+                // no further checks needed for this flavor - geolocation is always bundled with data
+                return true;
         	} else {
         		// don't go any further if file does not match Suomi NPP data product regex
-        		logger.debug(fileNameRelative + " does not match any Suomi regex");
+                logger.debug(fileNameRelative + " does not match any JPSS regex");
         		return isSuomiNPP;
         	}
         	
