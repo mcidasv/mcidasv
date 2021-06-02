@@ -94,7 +94,24 @@ public abstract class JPSSUtilities {
     		"\\w\\w\\w" + 
     		// HDF5 suffix
     		".h5";
-	
+
+	// This regular expression matches a VIIRS Enterprise EDR
+        public static final String JPSS_REGEX_ENTERPRISE_EDR =
+            // Product Id, Single (ex: JRR-CloudPhase)
+            "JRR-(\\w)*" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+            // Version (e.g v2r3)
+            "v\\dr\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+            // Origin (ex: npp)
+            "\\w\\w\\w" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+            // Data Start Date/Time (ex: sYYYYMMDDHHMMSSS)
+            "s20[1-3]\\d[0-1]\\d[0-3]\\d\\d\\d\\d\\d\\d\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+            // Data End Date/Time (ex: eYYYYMMDDHHMMSSS)
+            "e20[1-3]\\d[0-1]\\d[0-3]\\d\\d\\d\\d\\d\\d\\d\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+            // Creation Date/Time (ex: cYYYYMMDDHHMMSSS)
+            "c20[1-3]\\d[0-1]\\d[0-3]\\d\\d\\d\\d\\d\\d\\d\\d" +
+            // NetCDF 4 suffix
+            ".nc";
+
 	// This regular expression matches a Suomi NPP Data Product as defined by the 
 	// NASA spec in TBD (XXX TJJ - find out where is this documented?)
 	public static final String SUOMI_NPP_REGEX_NASA =
