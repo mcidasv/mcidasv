@@ -213,6 +213,7 @@ public class SuomiNPPChooser extends FileChooser {
 	                }
 	            }
 	        }
+
 	    // consecutive granule check for NOAA data
     	} else {
 			// compare start time of current granule with end time of previous
@@ -224,6 +225,16 @@ public class SuomiNPPChooser extends FileChooser {
             int firstUnderscore = -1;
             String prodStr = "";
             String prevPrd = "";
+            String dateIdx = "_d2";
+            String startTimeIdx = "_t";
+            String endTimeIdx = "_e";
+            int timeFieldStart = 2;
+            if (f.getName().matches(JPSSUtilities.JPSS_REGEX_ENTERPRISE_EDR)) {
+                dateIdx = "_s";
+                startTimeIdx = "_s";
+                endTimeIdx = "_e";
+                timeFieldStart = 8;
+            }
 	        for (int i = 0; i < files.length; i++) {
 	            if ((files[i] != null) && !files[i].isDirectory()) {
 	                if (files[i].exists()) {
@@ -233,9 +244,9 @@ public class SuomiNPPChooser extends FileChooser {
                         prodStr = fileName.substring(lastSeparator + 1, firstUnderscore);
                         // reset check if product changes
                         if (! prodStr.equals(prevPrd)) prvTime = -1;
-	                	int dateIndex = fileName.lastIndexOf("_d2") + 2;
-	                	int timeIndexStart = fileName.lastIndexOf("_t") + 2;
-	                	int timeIndexEnd = fileName.lastIndexOf("_e") + 2;
+                        int dateIndex = fileName.lastIndexOf(dateIdx) + 2;
+                        int timeIndexStart = fileName.lastIndexOf(startTimeIdx) + timeFieldStart;
+                        int timeIndexEnd = fileName.lastIndexOf(endTimeIdx) + timeFieldStart;
 	                	String dateStr = fileName.substring(dateIndex, dateIndex + 8);
 	                	String timeStrStart = fileName.substring(timeIndexStart, timeIndexStart + 7);
 	                	String timeStrEnd = fileName.substring(timeIndexEnd, timeIndexEnd + 7);
