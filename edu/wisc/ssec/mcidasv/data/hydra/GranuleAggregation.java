@@ -469,6 +469,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   } else {
 			       granCutScans.put(new Integer(ncIdx), new Integer(0));
 			   }
+
 			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] - cutScans;
 			   
 			   // XXX TJJ - can below block go away?  Think so...
@@ -525,6 +526,8 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   if (v == null) return index;
 	   
 	   // lat/lon vars have different dimension names
+       // Set a default that will work for Enterprise EDRs
+       inTrackName = inTrackGeoDimensionName;
 	   if ((v.getFullName().endsWith("Latitude")) || 
 			   (v.getFullName().endsWith("Latitude_TC")) ||
 			   (v.getFullName().endsWith("Longitude")) ||
@@ -540,6 +543,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   } else {
 		   inTrackName = inTrackDimensionName;
 	   }
+
 	   // pull out the dimensions
 	   List<Dimension> dList = v.getDimensions();
 	   

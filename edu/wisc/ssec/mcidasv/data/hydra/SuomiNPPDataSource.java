@@ -86,7 +86,6 @@ import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.IdvPersistenceManager;
 import ucar.unidata.util.Misc;
-
 import visad.Data;
 import visad.DateTime;
 import visad.DerivedUnit;
@@ -155,12 +154,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
     private boolean nameHasBeenSet = false;
 
     private boolean isNOAA;
+    private boolean isEnterprise;
 
     // need our own separator char since it's always Unix-style in the Suomi NPP files
     private static final String SEPARATOR_CHAR = "/";
     
     // date formatter for NASA L1B data, ex 2016-02-07T00:06:00.000Z
     SimpleDateFormat sdfNASA = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    SimpleDateFormat sdfEnterprise = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     
     // LUTs for NASA L1B data
     float[] m12LUT = null;
@@ -174,6 +175,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     // Map to match NASA variables to units (XML Product Profiles used for NOAA)
     Map<String, String> unitsNASA = new HashMap<String, String>();
     
+    // Map to match Enterprise EDR variables to units
+    Map<String, String> unitsEnterprise = new HashMap<String, String>();
+
     // date formatter for converting Suomi NPP day/time to something we can use
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
     
@@ -238,6 +242,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         // NASA data is UTC, pre-set time zone
         SimpleTimeZone stz = new SimpleTimeZone(0, "UTC");
         sdfNASA.setTimeZone(stz);
+        sdfEnterprise.setTimeZone(stz);
         
         // build the filename map - matches each product to set of files for that product
         filenameMap = new HashMap<>();
@@ -295,8 +300,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
 
 	public void setup() throws VisADException {
 
-		// which format, NASA or NOAA?
+		// which format, NASA, NOAA, or NOAA Enterprise?
 		isNOAA = false;
+		isEnterprise = false;
+		nameHasBeenSet = false;
 		
     	// store filenames for possible bundle unpersistence
     	for (Object o : sources) {
@@ -323,7 +330,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	int firstUnderscore = filename.indexOf("_", lastSeparator + 1);
     	String prodStr = filename.substring(lastSeparator + 1, firstUnderscore);
     	// only do this check for NOAA data
-    	if (filename.endsWith(".h5")) {
+        if (filename.endsWith(".h5")) {
     		isNOAA = true;
 	        StringTokenizer st = new StringTokenizer(prodStr, "-");
 	        logger.debug("SNPPDS check for embedded GEO, tokenizing: " + prodStr);
@@ -339,6 +346,12 @@ public class SuomiNPPDataSource extends HydraDataSource {
 	        }
     	}
     	
+        lastSeparator = filename.lastIndexOf(File.separatorChar);
+        String enterpriseTest = filename.substring(lastSeparator + 1);
+        if (enterpriseTest.matches(JPSSUtilities.JPSS_REGEX_ENTERPRISE_EDR)) {
+           isEnterprise = true;
+        }
+
     	// various metatdata we'll need to gather on a per-product basis
         Map<String, String> unsignedFlags = new LinkedHashMap<>();
         Map<String, String> unpackFlags = new LinkedHashMap<>();
@@ -388,6 +401,23 @@ public class SuomiNPPDataSource extends HydraDataSource {
     						}
     					}
     					Group rg = ncfile.getRootGroup();
+
+                        // Since no sub-groups for Enterprise EDRs, need to set date and instrument here
+                        if (isEnterprise) {
+                            if (! nameHasBeenSet) {
+                                Attribute coverageStartTime = ncfile.findGlobalAttribute("time_coverage_start");
+                                Date d = new Date();
+                                if (coverageStartTime != null) {
+                                    d = sdfEnterprise.parse(coverageStartTime.getStringValue());
+                                } else {
+                                    logger.error("Warning: unable to retrieve granule start time");
+                                }
+                                theDate = d;
+                                instrumentName = ncfile.findGlobalAttribute("instrument_name");
+                                setName(instrumentName.getStringValue() + " " + sdfOut.format(theDate));
+                            }
+                            nameHasBeenSet = true;
+                        }
 
     					List<Group> gl = rg.getGroups();
     					if (gl != null) {
@@ -492,7 +522,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 													"No date time found in Suomi NPP granule");
 										}
 									} 
-								} else {
+                                } else {
 									// NASA data - date/time from global attribute
 									// set time for display to day/time of 1st granule examined
 									Attribute timeStartNASA = ncfile.findGlobalAttribute("time_coverage_start");
@@ -638,7 +668,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 								}
 							}
 						} 
-					} else {
+					} else if (! isEnterprise) {
 						// NASA format
 						geoFilename = JPSSUtilities.replaceLast(s, "L1B", "GEO");
 						// get list of files in current directory
@@ -669,11 +699,13 @@ public class SuomiNPPDataSource extends HydraDataSource {
 							}
 						}
 					}
-					logger.debug("Determined GEO file name should be: " + geoFilename);
-	    			fGeo.setAttribute("location", geoFilename);
-	    			// add this to list used if we create a zipped bundle
-	    			geoSources.add(geoFilename);
-	    			agg.addContent(fGeo);
+                    if (! isEnterprise) {
+                        logger.debug("Determined GEO file name should be: " + geoFilename);
+                        fGeo.setAttribute("location", geoFilename);
+                        // add this to list used if we create a zipped bundle
+                        geoSources.add(geoFilename);
+                        agg.addContent(fGeo);
+                    }
     			}
 
     			root.addContent(agg);    
@@ -691,6 +723,53 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    	
     	    	// this is a list filled with pseudo Brightness Temp variables converted from Radiance
     	    	ArrayList<VariableDS> btProds = new ArrayList<VariableDS>();
+
+                // Enterprise EDRs - no groups, just scan root level
+                if (isEnterprise) {
+                    List<Variable> vl = rg.getVariables();
+                    int xDimEnt = -1;
+                    int yDimEnt = -1;
+                    for (Variable v : vl) {
+                        if (v.getShortName().equals("Latitude")) {
+                            pathToLat = v.getFullName();
+                            pathToProducts.add(v.getFullName());
+                            prodToDesc.put(v.getFullName(), v.getDescription());
+                            xDimEnt = v.getDimension(0).getLength();
+                            yDimEnt = v.getDimension(1).getLength();
+                        }
+                        if (v.getShortName().equals("Longitude")) {
+                            pathToLon = v.getFullName();
+                            pathToProducts.add(v.getFullName());
+                            prodToDesc.put(v.getFullName(), v.getDescription());
+                        }
+                        // store units in a map for later
+                        Attribute unitAtt = v.findAttribute("units");
+                        if (unitAtt != null) {
+                            unitsEnterprise.put(v.getShortName(), unitAtt.getStringValue());
+                        } else {
+                            unitsEnterprise.put(v.getShortName(), "Unknown");
+                        }
+                    }
+
+                    for (Variable v : vl) {
+                        if (v.getShortName().equals("Latitude")) continue;
+                        if (v.getShortName().equals("Longitude")) continue;
+                        // keep any data which matches geolocation dimensions
+                        if (v.getRank() != 2) continue;
+                        if (v.getDimension(0).getLength() == xDimEnt &&
+                            v.getDimension(1).getLength() == yDimEnt) {
+                            pathToProducts.add(v.getFullName());
+                            prodToDesc.put(v.getFullName(), v.getDescription());
+                        }
+                        // store units in a map for later
+                        Attribute unitAtt = v.findAttribute("units");
+                        if (unitAtt != null) {
+                            unitsEnterprise.put(v.getShortName(), unitAtt.getStringValue());
+                        } else {
+                            unitsEnterprise.put(v.getShortName(), "Unknown");
+                        }
+                    }
+                }
 
     	    	List<Group> gl = rg.getGroups();
     	    	if (gl != null) {
@@ -1334,6 +1413,9 @@ public class SuomiNPPDataSource extends HydraDataSource {
     		if (isNOAA) {
     		    nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Track", "XTrack", isVIIRS);
     		    ((GranuleAggregation) nppAggReader).setQfMap(qfMap);
+            } else if (isEnterprise) {
+                nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "Rows", "Columns", isVIIRS);
+                ((GranuleAggregation) nppAggReader).setQfMap(qfMap);
     		} else {
     			nppAggReader = new GranuleAggregation(ncdfal, pathToProducts, "number_of_lines", "number_of_pixels", isVIIRS);
     		    ((GranuleAggregation) nppAggReader).setLUTMap(lutMap);
@@ -1539,16 +1621,21 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		String varShortName = pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1);
         		String units = nppPP.getUnits(varShortName);
 
-        		// setting NASA-format units
+                // setting NASA-format and Enterprise EDR units
         		if (! isNOAA) {
-        			units = unitsNASA.get(varShortName);
-        			// Need to set _BT variables manually, since they are created on the fly
-        			if (varShortName.endsWith("_BT")) units = "Kelvin";
+                    if (isEnterprise) {
+                        units = unitsEnterprise.get(varShortName);
+                    } else {
+                        units = unitsNASA.get(varShortName);
+                        // Need to set _BT variables manually, since they are created on the fly
+                        if (varShortName.endsWith("_BT")) units = "Kelvin";
+                    }
         		}
         		if (units == null) units = "Unknown";
         		Unit u = null;
         		try {
 					u = Parser.parse(units);
+                    logger.debug("Found units: " + units);
 				} catch (NoSuchUnitException e) {
 					u = new DerivedUnit(units);
 					logger.debug("Unknown units: " + units);
