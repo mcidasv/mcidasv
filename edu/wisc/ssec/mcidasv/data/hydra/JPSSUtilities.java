@@ -95,10 +95,10 @@ public abstract class JPSSUtilities {
     		// HDF5 suffix
     		".h5";
 
-	// This regular expression matches a VIIRS Enterprise EDR
+	    // This regular expression matches a VIIRS Enterprise EDR
         public static final String JPSS_REGEX_ENTERPRISE_EDR =
             // Product Id, Single (ex: JRR-CloudPhase)
-            "JRR-(\\w)*" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
+            "(\\w)*" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
             // Version (e.g v2r3)
             "v\\dr\\d" + JPSSUtilities.JPSS_FIELD_SEPARATOR +
             // Origin (ex: npp)
