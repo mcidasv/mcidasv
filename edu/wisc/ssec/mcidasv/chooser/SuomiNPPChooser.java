@@ -233,7 +233,7 @@ public class SuomiNPPChooser extends FileChooser {
                 dateIdx = "_s";
                 startTimeIdx = "_s";
                 endTimeIdx = "_e";
-                timeFieldStart = 8;
+                timeFieldStart = 10;
             }
 	        for (int i = 0; i < files.length; i++) {
 	            if ((files[i] != null) && !files[i].isDirectory()) {
