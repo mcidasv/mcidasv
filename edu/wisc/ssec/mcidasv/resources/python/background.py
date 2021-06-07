@@ -4211,8 +4211,11 @@ def listJPSSTimeInFile(filename, quiet=False):
             # convert NetCDF Attribute to string
             datetimestr = date.getStringValue()
 
+            # createDateTime doesn't accept T in format:
+            datetimestr = datetimestr.replace('T', ' ')
+
             # make datetime object with just the slice we care about
-            datetimeobj = datetime.strptime(datetimestr[0:19], '%Y-%m-%dT%H:%M:%S')
+            datetimeobj = datetime.strptime(datetimestr[0:19], '%Y-%m-%d %H:%M:%S')
             
             # print and tack on the Z suffix
             if not quiet:
