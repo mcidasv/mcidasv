@@ -3218,4 +3218,27 @@
             <paramgroup categories="GRID-2D-*;" name="NUCAPS_T_RH"/>
         </operands>
     </derived>
+    <!-- Adding vertical min/max formulas - RMC - INQ 2973 - Jun 2021 -->
+    <derived description="Max over grid levels" formula="zmax(grid)" id="levels max" isdefault="false" isenduser="true">
+        <categories>
+            <category display="true" value="Grids"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontour"/>
+        </categories>
+        <operands/>
+    </derived>
+    <derived description="Min over grid levels" formula="zmin(grid)" id="levels min" isdefault="false" isenduser="true">
+        <categories>
+            <category display="true" value="Grids"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:valuedisplay"/>
+        </categories>
+        <operands/>
+    </derived>
 </derived_parameters>
