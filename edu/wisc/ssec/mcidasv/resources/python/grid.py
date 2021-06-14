@@ -463,3 +463,15 @@ def thetaSurfaceV(gridt, griduv, theta0):
 
 def thetaSurfaceADV(gridt, griduv, other, theta0):
   return DerivedGridFactory.extractGridADVOverThetaTopoSurface(gridt, griduv, other,float(theta0))
+
+# RMC Inq 2973 - Jun 21
+def zmax(grid):
+    # Max across the vertical levels of a grid at all x/y points
+    # Nearest neighbor sampling mode is used
+    return GridMath.applyFunctionOverLevels(grid, GridMath.FUNC_MAX)
+
+def zmin(grid):
+    # Min across the vertical levels of a grid at all x/y points
+    # Nearest neighbor sampling mode is used
+    return GridMath.applyFunctionOverLevels(grid, GridMath.FUNC_MIN)
+# End Inq 2973
