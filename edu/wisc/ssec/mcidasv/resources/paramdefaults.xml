@@ -321,4 +321,8 @@
   <param ci_base="0.0" ci_interval="0.2" ci_max="3.2" ci_min="-1.2" ci_width="1" name="AngsExp2" range_max="3.0" range_min="-1.0" unit="1"/>
   <param ci_base="0.0" ci_interval="0.2" ci_max="3.2" ci_min="-1.2" ci_width="1" name="AngsExp1" range_max="3.0" range_min="-1.0" unit="1"/>
   <!-- end inq 2924 -->
+  
+  <!-- bob inq 2969 (HiRes RH) - June 2021 -->
+  <param ci_base="0.0" ci_interval="10.0" ci_max="110.0" ci_min="-10.0" ci_width="1" name="rh" range_max="100.0" range_min="0.0" table="Relative Humidity" unit="%"/>
+  <!-- end inq 2969 -->
 </params>
