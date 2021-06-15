@@ -5317,54 +5317,6 @@
     <method name="add">
         <object class="ucar.unidata.util.ColorTable">
             <property name="Name">
-                <string><![CDATA[Relative Humidity]]></string>
-            </property>
-            <property name="Id">
-                <string><![CDATA[Relative Humidity]]></string>
-            </property>
-            <property name="Category">
-                <string><![CDATA[System]]></string>
-            </property>
-            <property name="Table">
-                <array class="[F" length="4">
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAUP4AAAD9lDXk/ShryPy8obD8UNeU+8oa8PryhsD6GvKI+Ia8oPVeUMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</parray>
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAUP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD95Q14/a8obP15Q2D9Q15Q/Q15RPzXlDT8oa8o/GvKHPw15Qz8AAAA=</parray>
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD1XlEA+Ia8oPoa8oD68obA+8oa8PxQ15j8vKGw/ShryP2UNej+AAAA=</parray>
-                    <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAUP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA=</parray>
-                </array>
-            </property>
-            <property name="Range">
-                <object class="ucar.unidata.util.Range">
-                    <property name="Max">
-                        <double>0.0</double>
-                    </property>
-                    <field name="min">
-                        <java.lang.Double>0.0</java.lang.Double>
-                    </field>
-                </object>
-            </property>
-            <property name="Breakpoints">
-                <object class="java.util.ArrayList">
-                    <method name="add">
-                        <object class="ucar.unidata.util.ColorTable$Breakpoint"/>
-                    </method>
-                    <method name="add">
-                        <object class="ucar.unidata.util.ColorTable$Breakpoint">
-                            <property name="Value">
-                                <double>1.0</double>
-                            </property>
-                        </object>
-                    </method>
-                </object>
-            </property>
-            <property name="ScaleFactor">
-                <parray class="float">rO0ABXVyAAJbRgucgYki4AxCAgAAeHAAAAAUP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA/gAAAP4AAAD+AAAA=</parray>
-            </property>
-        </object>
-    </method>
-    <method name="add">
-        <object class="ucar.unidata.util.ColorTable">
-            <property name="Name">
                 <string><![CDATA[Gray Scale]]></string>
             </property>
 			<property name="Id">
