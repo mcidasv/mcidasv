@@ -1346,6 +1346,9 @@ return console.askYesNo(message, true);
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
+        <launcher id="8420" />
+        <launcher id="8610" />
+        <launcher id="8851" />
       </excludedLaunchers>
       <exclude>
         <entry filesetId="7332" />
@@ -1371,6 +1374,9 @@ return console.askYesNo(message, true);
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
+        <launcher id="8420" />
+        <launcher id="8610" />
+        <launcher id="8851" />
       </excludedLaunchers>
       <exclude>
         <entry filesetId="7332" />
@@ -1420,6 +1426,7 @@ return console.askYesNo(message, true);
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
+        <launcher id="8420" />
         <launcher id="8610" />
         <launcher id="8851" />
       </excludedLaunchers>
@@ -1551,6 +1558,7 @@ return console.askYesNo(message, true);
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
+        <launcher id="8420" />
         <launcher id="8610" />
         <launcher id="8851" />
       </excludedLaunchers>
@@ -1601,6 +1609,9 @@ return console.askYesNo(message, true);
       <excludedLaunchers>
         <launcher id="844" />
         <launcher id="1335" />
+        <launcher id="8420" />
+        <launcher id="8610" />
+        <launcher id="8851" />
       </excludedLaunchers>
       <exclude>
         <entry filesetId="7334" />
