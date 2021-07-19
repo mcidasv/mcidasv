@@ -160,11 +160,13 @@
     <params p1="himawari_8_ahi_channel_11_brightness_temperature" p2="himawari_8_ahi_channel_13_brightness_temperature" p3="himawari_8_ahi_channel_15_brightness_temperature"/>
     <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_12_0um_nom"/>
   </paramgroup>
-    <paramgroup description="JPSS Day Land Cloud Fire RGB" name="JPSS_RGB_DayLandCloudFire">
+  <paramgroup description="JPSS Day Land Cloud Fire RGB" name="JPSS_RGB_DayLandCloudFire">
     <params p1="VIIRS-I4-SDR_All/BrightnessTemperature" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance"/>
+    <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS NDVI" name="JPSS_NDVI">
     <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance"/>
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS Dust RGB" name="JPSS_RGB_Dust">
     <params p1="VIIRS-M14-SDR_All/BrightnessTemperature" p2="VIIRS-M15-SDR_All/BrightnessTemperature" p3="VIIRS-M16-SDR_All/BrightnessTemperature"/>
@@ -177,6 +179,7 @@
   </paramgroup>
   <paramgroup description="JPSS Natural Color SVI RGB" name="JPSS_RGB_I_NaturalColor">
     <params p1="VIIRS-I3-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance"/>
+    <params p1="VIIRS-I3-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS Nighttime Microphysics RGB" name="JPSS_RGB_NightMicrophysics">
     <params p1="VIIRS-M12-SDR_All/BrightnessTemperature" p2="VIIRS-M15-SDR_All/BrightnessTemperature" p3="VIIRS-M16-SDR_All/BrightnessTemperature"/>
