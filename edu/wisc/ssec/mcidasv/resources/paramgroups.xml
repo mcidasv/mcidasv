@@ -200,6 +200,13 @@
     <params p1="354_Band5_TEMP" p2="354_Band6_TEMP" p3="354_Band8_TEMP" p4="354_Band9_TEMP"/>
     <params p1="temp_6_2um_nom" p2="temp_7_3um_nom" p3="temp_9_7um_nom" p4="temp_11_0um_nom"/>
   </paramgroup>
+  <paramgroup description="MSG Airmass RGB Tropics" name="MSG_RGB_Airmass_Tropics">
+    <params p1="51_Band5_TEMP" p2="51_Band8_TEMP" p3="51_Band9_TEMP"/>
+    <params p1="52_Band5_TEMP" p2="52_Band8_TEMP" p3="52_Band9_TEMP"/>
+    <params p1="53_Band5_TEMP" p2="53_Band8_TEMP" p3="53_Band9_TEMP"/>
+    <params p1="354_Band5_TEMP" p2="354_Band8_TEMP" p3="354_Band9_TEMP"/>
+    <params p1="temp_6_2um_nom" p2="temp_9_7um_nom" p3="temp_11_0um_nom"/>
+  </paramgroup>
   <paramgroup description="MSG 24 Hour Microphysics RGB" name="MSG_RGB_24HrMicrophysics">
     <params p1="51_Band7_TEMP" p2="51_Band9_TEMP" p3="51_Band10_TEMP"/>
     <params p1="52_Band7_TEMP" p2="52_Band9_TEMP" p3="52_Band10_TEMP"/>
