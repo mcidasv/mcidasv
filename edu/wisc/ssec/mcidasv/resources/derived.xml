@@ -872,6 +872,17 @@
             <paramgroup categories="" name="MSG_RGB_Airmass"/>
         </operands>
     </derived>
+    <derived description="MSG Airmass Tropics RGB" formula="MSGAirmassTropicsRGB(D1[label=Band 5 Temperature], D2[label=Band 8 Temperature], D3[label=Band 9 Temperature])" id="msgairmasstropics" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_Airmass_Tropics"/>
+        </operands>
+    </derived>
     <derived description="MSG Tropical Airmass RGB" formula="MSGTropicalAirmassRGB(D1[label=Band 5 Temperature], D2[label=Band 6 Temperature], D3[label=Band 8 Temperature], D4[label=Band 9 Temperature])" id="msgtropicalairmass" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
@@ -956,6 +967,17 @@
             <paramgroup categories="" name="MSG_RGB_SevereConvection"/>
         </operands>
     </derived>
+    <derived description="MSG Severe Convection Tropics RGB" formula="MSGSevereConvectionTropicsRGB(D1[label=Band 1 Reflectance], D2[label=Band 3 Reflectance], D3[label=Band 4 Temperature],D4[label=Band 5 Temperature], D5[label=Band 6 Temperature], D6[label=Band 9 Temperature])" id="msgsevereconvectiontropics" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_SevereConvection"/>
+        </operands>
+    </derived>
     <derived description="MSG Generic Severe Convection RGB" formula="MSGGenericSevereConvectionRGB(D1[label=Band 1 Reflectance], D2[label=Band 3 Reflectance], D3[label=Band 4 Temperature],D4[label=Band 5 Temperature], D5[label=Band 6 Temperature], D6[label=Band 9 Temperature])" id="msggenericsevereconvection" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
@@ -971,6 +993,17 @@
             <category value="display:imagecontrol"/>
             <category value="display:rgbcomposite"/>
             <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="MSG_RGB_NightMicrophysics"/>
+        </operands>
+    </derived>
+    <derived description="MSG Night Microphysics Tropics RGB" formula="MSGNightMicrophysicsTropicsRGB(D1[label=Band 4 Temperature], D2[label=Band 9 Temperature], D3[label=Band 10 Temperature])" id="msgnightmicrophysicstropics" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-MSG Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="MSG_RGB_NightMicrophysics"/>
