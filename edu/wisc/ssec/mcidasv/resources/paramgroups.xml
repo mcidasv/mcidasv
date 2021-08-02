@@ -160,6 +160,42 @@
     <params p1="himawari_8_ahi_channel_11_brightness_temperature" p2="himawari_8_ahi_channel_13_brightness_temperature" p3="himawari_8_ahi_channel_15_brightness_temperature"/>
     <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_12_0um_nom"/>
   </paramgroup>
+    <paramgroup description="AHI Diff Water Vapor RGB" name="AHI_RGB_DiffWaterVapor">
+    <params p1="86_Band8_TEMP" p2="86_Band10_TEMP"/>
+    <params p1="286_Band8_TEMP" p2="286_Band10_TEMP"/>
+    <params p1="287_Band8_TEMP" p2="287_Band10_TEMP"/>
+    <params p1="288_Band8_TEMP" p2="288_Band10_TEMP"/>
+  </paramgroup>
+  <paramgroup description="AHI Simple Water Vapor RGB" name="AHI_RGB_SimpleWaterVapor">
+    <params p1="86_Band8_TEMP" p2="86_Band10_TEMP" p3="86_Band13_TEMP"/>
+    <params p1="286_Band8_TEMP" p2="286_Band10_TEMP" p3="286_Band13_TEMP"/>
+    <params p1="287_Band8_TEMP" p2="287_Band10_TEMP" p3="287_Band13_TEMP"/>
+    <params p1="288_Band8_TEMP" p2="288_Band10_TEMP" p3="288_Band13_TEMP"/>
+  </paramgroup>
+  <paramgroup description="AHI Day Deep Clouds RGB" name="AHI_RGB_DayDeepClouds">
+    <params p1="86_Band3_ALB" p2="86_Band8_TEMP" p3="86_Band13_TEMP"/>
+    <params p1="286_Band3_ALB" p2="286_Band8_TEMP" p3="286_Band13_TEMP"/>
+    <params p1="287_Band3_ALB" p2="287_Band8_TEMP" p3="287_Band13_TEMP"/>
+    <params p1="288_Band3_ALB" p2="288_Band8_TEMP" p3="288_Band13_TEMP"/>
+  </paramgroup>
+  <paramgroup description="AHI Natural Color Fire RGB" name="AHI_RGB_NaturalColorFire">
+    <params p1="86_Band3_ALB" p2="86_Band4_ALB" p3="86_Band6_ALB"/>
+    <params p1="286_Band3_ALB" p2="286_Band4_ALB" p3="286_Band6_ALB"/>
+    <params p1="287_Band3_ALB" p2="287_Band4_ALB" p3="287_Band6_ALB"/>
+    <params p1="288_Band3_ALB" p2="288_Band4_ALB" p3="288_Band6_ALB"/>
+  </paramgroup>
+  <paramgroup description="AHI Fire Temperature RGB" name="AHI_RGB_FireTemp">
+    <params p1="86_Band5_ALB" p2="86_Band6_ALB" p3="86_Band7_TEMP"/>
+    <params p1="286_Band5_ALB" p2="286_Band6_ALB" p3="286_Band7_TEMP"/>
+    <params p1="287_Band5_ALB" p2="287_Band6_ALB" p3="287_Band7_TEMP"/>
+    <params p1="288_Band5_ALB" p2="288_Band6_ALB" p3="288_Band7_TEMP"/>
+  </paramgroup>
+  <paramgroup description="AHI Day Cloud Phase RGB" name="AHI_RGB_DayCloudPhase">
+    <params p1="86_Band1_ALB" p2="86_Band5_ALB" p3="86_Band6_ALB"/>
+    <params p1="286_Band1_ALB" p2="286_Band5_ALB" p3="286_Band6_ALB"/>
+    <params p1="287_Band1_ALB" p2="287_Band5_ALB" p3="287_Band6_ALB"/>
+    <params p1="288_Band1_ALB" p2="288_Band5_ALB" p3="288_Band6_ALB"/>
+  </paramgroup>
   <paramgroup description="JPSS Day Land Cloud Fire RGB" name="JPSS_RGB_DayLandCloudFire">
     <params p1="VIIRS-I4-SDR_All/BrightnessTemperature" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance"/>
     <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
