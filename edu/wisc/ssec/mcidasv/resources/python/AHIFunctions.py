@@ -215,7 +215,7 @@ def AHIDayDeepCloudsRGB(b3A, b8T, b13T):
 
 # AHI Natural Fire Color RGB
 def AHINaturalColorFireRGB(b3A, b4A, b6A):
-    # red = band5; 0% to 100% rescaled to 0 to 255
+    # red = band6; 0% to 100% rescaled to 0 to 255
     # grn = band4; 0% to 100% rescaled to 0 to 255
     # blu = band3; 0% to 100% rescaled to 0 to 255
     hr_b4A = resampleGrid(b4A, b3A)
