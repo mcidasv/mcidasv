@@ -683,6 +683,17 @@
             <paramgroup categories="" name="AHI_RGB_Ash"/>
         </operands>
     </derived>
+    <derived description="AHI Cloud Phase Distinction RGB" formula="AHICloudPhaseDistinctionRGB(D1[label=Band 3 Albedo], D2[label=Band 5 Albedo], D3[label=Band 13 Temperature])" id="ahicloudphasedistinction" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AHI_RGB_CloudPhaseDistinction"/>
+        </operands>
+    </derived>
     <derived description="AHI Day Cloud Phase RGB" formula="AHIDayCloudPhaseRGB(D1[label=Band 1 Albedo], D2[label=Band 5 Albedo], D3[label=Band 6 Albedo])" id="ahidaycloudphase" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
