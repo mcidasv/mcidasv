@@ -683,6 +683,17 @@
             <paramgroup categories="" name="AHI_RGB_Ash"/>
         </operands>
     </derived>
+    <derived description="AHI Day Cloud Phase RGB" formula="AHIDayCloudPhaseRGB(D1[label=Band 1 Albedo], D2[label=Band 5 Albedo], D3[label=Band 6 Albedo])" id="ahidaycloudphase" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AHI_RGB_DayCloudPhase"/>
+        </operands>
+    </derived>
     <derived description="AHI Day Convective Storm RGB" formula="AHIDayConvectiveStormRGB(D1[label=Band 3 Albedo], D2[label=Band 5 Albedo], D3[label=Band 7 Temperature], D4[label=Band 8 Temperature], D5[label=Band 10 Temperature], D6[label=Band 13 Temperature])" id="ahidayconvectivestorm" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
@@ -692,6 +703,28 @@
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_DayConvectiveStorm"/>
+        </operands>
+    </derived>
+    <derived description="AHI Day Deep Clouds RGB" formula="AHIDayDeepCloudsRGB(D1[label=Band 3 Albedo], D2[label=Band 8 Temperature], D3[label=Band 13 Temperature])" id="ahidaydeepclouds" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands>
+            <paramgroup name="AHI_RGB_DayDeepClouds"/>
+        </operands>
+    </derived>
+    <derived description="AHI Differential Water Vapor RGB" formula="AHIDiffWaterVaporRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature])" id="ahidiffwatervapor" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands>
+            <paramgroup name="AHI_RGB_DiffWaterVapor"/>
         </operands>
     </derived>
     <derived description="AHI Dust RGB" formula="AHIDustRGB(D1[label=Band 11 Temperature], D2[label=Band 13 Temperature], D3[label=Band 15 Temperature])" id="ahidust" isdefault="true" isenduser="true" override="true">
@@ -705,6 +738,17 @@
             <paramgroup categories="" name="AHI_RGB_Dust"/>
         </operands>
     </derived>
+    <derived description="AHI Fire Temperature RGB" formula="AHIFireTempRGB(D1[label=Band 5 Albedo], D2[label=Band 6 Albedo], D3[label=Band 7 Temperature])" id="ahifiretemperature" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands>
+            <paramgroup name="AHI_RGB_FireTemp"/>
+        </operands>
+    </derived>
     <derived description="AHI Natural Color RGB" formula="AHINaturalColorRGB(D1[label=Band 3 Albedo], D2[label=Band 4 Albedo], D3[label=Band 5 Albedo])" id="ahinaturalcolor" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
@@ -716,6 +760,17 @@
             <paramgroup categories="" name="AHI_RGB_NaturalColor"/>
         </operands>
     </derived>
+    <derived description="AHI Natural Color Fire RGB" formula="AHINaturalColorFireRGB(D1[label=Band 3 Albedo], D2[label=Band 4 Albedo], D3[label=Band 6 Albedo])" id="ahinaturalcolorfire" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+      </categories>
+      <operands>
+          <paramgroup name="AHI_RGB_NaturalColorFire"/>
+      </operands>
+  </derived>
     <derived description="AHI Night Microphysics RGB" formula="AHINightMicrophysicsRGB(D1[label=Band 7 Temperature], D2[label=Band 13 Temperature], D3[label=Band 15 Temperature])" id="ahinightmicrophysics" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
@@ -725,6 +780,17 @@
         </categories>
         <operands categories="">
             <paramgroup categories="" name="AHI_RGB_NightMicrophysics"/>
+        </operands>
+    </derived>
+    <derived description="AHI Simple Water Vapor RGB" formula="AHISimpleWaterVaporRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 13 Temperature])" id="ahisimplewatervapor2" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands>
+            <paramgroup name="AHI_RGB_SimpleWaterVapor"/>
         </operands>
     </derived>
     <derived description="AHI Tropical Airmass RGB" formula="AHITropicalAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="ahitropicalairmass" isdefault="true" isenduser="true">
