@@ -250,3 +250,18 @@ def AHIDayCloudPhaseRGB(b1A, b5A, b6A):
     grn = rescale(hr_b6A, 0, 50, 0, 255)
     blu = rescale(b1A, 0, 100, 0, 255)
     return combineRGB(red, grn, blu)
+
+# AHI Cloud Phase Distinction RGB
+def AHICloudPhaseDistinctionRGB(b3A, b5A, b13T):
+    # red = band13; 280.7K to 219.6K rescaled to 0 to 255
+    # grn = band3; 0% to 85% rescaled to 0 to 255
+    # blu = band5; 1% to 50% rescaled to 0 to 255
+    m13 = b13T.getMetadataMap()
+    b13TM = mask(b13T, '>', 0, 1) * b13T
+    b13TM.setMetadataMap(m13)
+    hr_b5A = resampleGrid(b5A, b3A)
+    hr_b13T = resampleGrid(b13TM, b3A)
+    red = rescale(hr_b13T, 280.7, 219.6, 0, 255)
+    grn = rescale(b3A, 0, 85, 0, 255)
+    blu = rescale(hr_b5A, 1, 50, 0, 255)
+    return combineRGB(red, grn, blu)
