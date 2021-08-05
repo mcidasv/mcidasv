@@ -84,8 +84,8 @@ def ABISo2RGB(b9T, b10T, b11T, b13T):
 
 # ABI Day Cloud Phase Distinction RGB
 def ABIDayCloudPhaseRGB(b2A, b5A, b13T):
-    # http://rammb.cira.colostate.edu/training/visit/quick_guides/Day_Cloud_Phase_Distinction.pdf
-    # red = band 13; 280.65K to 219.56K rescaled to 0 to 255
+    # https://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_DayCloudPhaseDistinction_final_v2.pdf
+    # red = band 13; 280.65K to 219.65K rescaled to 0 to 255
     # grn = band 2; 0% to 78% rescaled to 0 to 255
     # blu = band 5; 1% to 59% rescaled to 0 to 255
     hr_b13T = resampleGrid(b13T, b2A)
@@ -131,7 +131,7 @@ def ABIDayLandCloudFireRGB(b2A, b3A, b6A):
 
 # ABI Night-time Microphysics RGB
 def ABINightMicrophysicsRGB(b7T, b13T, b15T):
-    # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_NtMicroRGB_final.pdf
+    # https://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_GOESR_NtMicroRGB_Final_20191206.pdf
     # red = band15 - band13; -6.7C to 2.6C rescaled to 0 to 255
     # grn = band13 - band7; -3.1C to 5.2C rescaled to 0 to 255
     # blu = band13; 243.55K to 292.65K rescaled to 0 to 255
@@ -153,7 +153,7 @@ def ABISimpleWaterVaporRGB(b8T, b10T, b13T):
 
 # ABI Day Snow Fog RGB
 def ABIDaySnowFogRGB(b3A, b5A, b7T, b13T):
-    # http://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_DaySnowFog.pdf
+    # https://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_DaySnowFogRGB_final_v2.pdf
     # red = band3; 0% to 100% rescaled to 0 to 255; gamma 1.7
     # grn = band5; 0% to 70% rescaled to 0 to 255; gamma 1.7
     # blu = band7 - band13; 0C to 30C rescaled to 0 to 255; gamma 1.7
