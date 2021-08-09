@@ -11,8 +11,8 @@ def MODISAirmassRGB(b27T, b28T, b30T, b31T):
 # MODIS Dust RGB
 def MODISDustRGB(b29T, b31T, b32T):
     # red = band32 - band31; -4 to 2K rescalled to 0 to 255
-    # grn = band31 - band29; 0 to 15K rescalled to 0 to 255; gamma 2.5
-    # blu = band31
+    # grn = band31 - band29; 0K to 15K rescalled to 0 to 255; gamma 2.5
+    # blu = band31; 261K to 289K rescalled to 0 to 255
     red = rescale(b32T-b31T, -4, 2, 0, 255)
     grn = 255*(rescale(b31T-b29T, 0, 15, 0, 1)**0.4)
     blu = rescale(b31T, 261, 289, 0, 255)
