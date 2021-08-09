@@ -24,7 +24,7 @@ def MODISNightMicrophysicsRGB(b22T, b31T, b32T):
     # grn = band31 - band21; 0K to 10K rescalled to 0 to 255; gamma 0.4
     # blu = band31; 243K to 293K rescalled to 0 to 255
     red = rescale(b32T-b31T, -4, 2, 0, 255)
-    grn = 255*(rescale(b31T-b22T, 0, 10, 0, 1)**0.4)
+    grn = 255*(rescale(b31T-b22T, 0, 10, 0, 1)**2.5)
     blu = rescale(b31T, 243, 293, 0, 255)
     return combineRGB(red, grn, blu)
 
