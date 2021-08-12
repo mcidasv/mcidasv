@@ -938,6 +938,15 @@
             <paramgroup categories="" name="JPSS_RGB_CloudType"/>
         </operands>
     </derived>
+    <derived description="VIIRS Snowmelt RGB" formula="VIIRSSnowmeltRGB(D1[label=M10 Reflectance], D2[label=M8 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_Snowmelt_RGB" isdefault="true" isenduser="true" override="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_RGB_Snowmelt"/>
+        </operands>
+    </derived>
     <derived description="MSG Airmass RGB" formula="MSGAirmassRGB(D1[label=Band 5 Temperature], D2[label=Band 6 Temperature], D3[label=Band 8 Temperature], D4[label=Band 9 Temperature])" id="msgairmass" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
