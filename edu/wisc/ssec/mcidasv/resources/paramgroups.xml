@@ -235,6 +235,9 @@
   <paramgroup description="JPSS Cloud Type RGB" name="JPSS_RGB_CloudType">
     <params p1="VIIRS-M9-SDR_All/Reflectance" p2="VIIRS-M5-SDR_All/Reflectance" p3="VIIRS-M10-SDR_All/Reflectance"/>
   </paramgroup>
+  <paramgroup description="JPSS Snowmelt RGB" name="JPSS_RGB_Snowmelt">
+    <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M8-SDR_All/Reflectance" p3="VIIRS-M5-SDR_All/Reflectance"/>
+  </paramgroup>
   <paramgroup description="MSG Airmass RGB" name="MSG_RGB_Airmass">
     <params p1="51_Band5_TEMP" p2="51_Band6_TEMP" p3="51_Band8_TEMP" p4="51_Band9_TEMP"/>
     <params p1="52_Band5_TEMP" p2="52_Band6_TEMP" p3="52_Band8_TEMP" p4="52_Band9_TEMP"/>
