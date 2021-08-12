@@ -65,9 +65,9 @@ def makeGrid(fltField, res):
 
 # VIIRS True Color RGB
 def VIIRSTrueColorRGB(M5, M4, M3):
-    # red = M5 (0.672um)
-    # grn = M4 (0.555um)
-    # blu = M3 (0.488um)
+    # red = M5 (0.672um) Reflectance
+    # grn = M4 (0.555um) Reflectance
+    # blu = M3 (0.488um) Reflectance
 
     inM5 = M5
     M5 = unpackage(M5)
@@ -85,9 +85,9 @@ def VIIRSTrueColorRGB(M5, M4, M3):
 
 # VIIRS Natural Color RGB (M-band)
 def VIIRSNaturalColorRGB(M10, M7, M5):
-    # red = M10 (1.61um)
-    # grn = M7 (0.865um)
-    # blu = M5 (0.672um)
+    # red = M10 (1.61um) Reflectance
+    # grn = M7 (0.865um) Reflectance
+    # blu = M5 (0.672um) Reflectance
 
     inM10 = M10
     M10 = unpackage(M10)
@@ -105,8 +105,8 @@ def VIIRSNaturalColorRGB(M10, M7, M5):
 
 # VIIRS NDVI
 def VIIRSNDVI(I1, I2):
-    # I1 = 0.64um - visible
-    # I2 = 0.865um - near IR
+    # I1 = 0.64um - visible Reflectance
+    # I2 = 0.865um - near IR Reflectance
 
     inI1 = I1
     I1 = unpackage(I1)
@@ -124,9 +124,9 @@ def VIIRSNDVI(I1, I2):
 
 #VIIRS Dust RGB
 def VIIRSDustRGB(M14, M15, M16):
-    # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescalled to 0 to 255; gamma 1.0
-    # grn = M15 - M14 (10.763um - 3.7um); 0C to 15C rescalled to 0 to 255; gamma 2.5
-    # blu = M15 (10.763um); 261K to 289K rescalled to 0 to 255; gamma 1.0
+    # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescaled to 0 to 255; gamma 1.0
+    # grn = M15 - M14 (10.763um - 3.7um); 0C to 15C rescaled to 0 to 255; gamma 2.5
+    # blu = M15 (10.763um); 261K to 289K rescaled to 0 to 255; gamma 1.0
 
     inM14 = M14
     M14 = unpackage(M14)
@@ -147,9 +147,9 @@ def VIIRSDustRGB(M14, M15, M16):
 
 # VIIRS Night Microphysics RGB
 def VIIRSNightMicrophysicsRGB(M12, M15, M16):
-    # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescalled to 0 to 255
-    # grn = M15 - M12 (10.763um - 3.7um); 0C to 10C rescalled to 0 to 255
-    # blu = M15 (10.763um); 243K to 293K rescalled to 0 to 255
+    # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescaled to 0 to 255
+    # grn = M15 - M12 (10.763um - 3.7um); 0C to 10C rescaled to 0 to 255
+    # blu = M15 (10.763um); 243K to 293K rescaled to 0 to 255
 
     inM12 = M12
     M12 = unpackage(M12)
@@ -171,9 +171,9 @@ def VIIRSNightMicrophysicsRGB(M12, M15, M16):
 # VIIRS Day Land Cloud Fire RGB
 def VIIRSDayLandCloudFireRGB(I4, I2, I1):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Day_Land_Cloud_Fire_RGB_Quick_Guide_10182018.pdf
-    # red = I4 (3.7um) - 0C to 60C rescalled to 0 to 255; gamma 0.4
-    # grn = I2 (0.86um) - 0% to 100% reflectance rescalled to 0 to 255; gamma 1.0
-    # blu = I1 (0.64um) - 0% to 100% reflectance rescalled to 0 to 255; gamma 1.0
+    # red = I4 (3.7um) - 0C to 60C rescaled to 0 to 255; gamma 0.4
+    # grn = I2 (0.86um) - 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
+    # blu = I1 (0.64um) - 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
 
     inI4 = I4
     I4 = unpackage(I4)
@@ -195,9 +195,9 @@ def VIIRSDayLandCloudFireRGB(I4, I2, I1):
 # VIIRS Fire Temperature RGB
 def VIIRSFireTemperatureRGB(M12, M11, M10):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Fire_Temperature_RGB_Quick_Guide_10182018.pdf
-    # red = M12 (3.7um) - 0C to 60C rescalled to 0 to 255; gamma 0.4
-    # grn = M11 (0.86um) - 0% to 100% reflectance rescalled to 0 to 255; gamma 1.0
-    # blu = M10 (0.64um) - 0% to 100% reflectance rescalled to 0 to 255; gamma 1.0
+    # red = M12 (3.7um) - 0C to 60C rescaled to 0 to 255; gamma 0.4
+    # grn = M11 (0.86um) - 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
+    # blu = M10 (0.64um) - 0% to 75% reflectance rescaled to 0 to 255; gamma 1.0
 
     inM12 = M12
     M12 = unpackage(M12)
@@ -218,9 +218,9 @@ def VIIRSFireTemperatureRGB(M12, M11, M10):
 
 # VIIRS Natural Color RGB (I-band)
 def VIIRSNaturalColorIRGB(I3, I2, I1):
-    # red = I3 (1.61um)
-    # grn = I2 (0.86um)
-    # blu = I1 (0.64um)
+    # red = I3 (1.61um) Reflectance
+    # grn = I2 (0.86um) Reflectance
+    # blu = I1 (0.64um) Reflectance
 
     inI1 = I1
     I1 = unpackage(I1)
@@ -237,9 +237,9 @@ def VIIRSNaturalColorIRGB(I3, I2, I1):
 
 # VIIRS Cloud Phase RGB
 def VIIRSCloudPhaseRGB(M10, M11, M1):
-    # red = M10 (1.61um) Reflectance
-    # grn = M11 (2.25um) Reflectance
-    # blu = M1 (0.412um) Reflectance
+    # red = M10 (1.61um) 0 - 50 reflectance rescaled to 0 to 255; gamma 1.0
+    # grn = M11 (2.25um) 0 - 50 reflectance rescaled to 0 to 255; gamma 1.0
+    # blu = M1 (0.412um) 0 - 100 reflectance rescaled to 0 to 255; gamma 1.0
 
     inM10 = M10
     M10 = unpackage(M10)
@@ -249,17 +249,21 @@ def VIIRSCloudPhaseRGB(M10, M11, M1):
     M1 = unpackage(M1)
   
     grd750 = makeGrid(M10, 750)
+    
+    red = rescale(M10, 0, 50, 0, 255)
+    grn = rescale(M11, 0, 50, 0, 255)
+    blu = rescale(M1, 0, 100, 0, 255)
 
-    rgb = MultiSpectralDataSource.swathToGrid(grd750, [M10, M11, M1], 1.0)
+    rgb = MultiSpectralDataSource.swathToGrid(grd750, [red, grn, blu], 1.0)
 
     return package(inM10, rgb)
 
 
 # VIIRS Cloud Type RGB
 def VIIRSCloudTypeRGB(M9, M5, M10):
-    # red = M9 (1.378um) Reflectance
-    # grn = M5 (0.672um) Reflectance
-    # blu = M10 (1.612um) Reflectance
+    # red = M9 (1.378um) 0 - 10 reflectance rescaled to 0 to 255; gamma 1.5
+    # grn = M5 (0.672um) 0 - 80 reflectance rescaled to 0 to 80; gamma 0.75
+    # blu = M10 (1.612um) 0 - 80 reflectance rescaled to 0 to 80; gamma 1.0
 
     inM9 = M9
     M9 = unpackage(M9)
@@ -269,7 +273,11 @@ def VIIRSCloudTypeRGB(M9, M5, M10):
     M10 = unpackage(M10)
   
     grd750 = makeGrid(M9, 750)
+    
+    red = 255*(rescale(M9, 0, 10, 0, 1)**0.66666)
+    grn = 255*(rescale(M5, 0, 80, 0, 1)**1.33333)
+    blu = rescale(M10, 0, 80, 0, 255)
 
-    rgb = MultiSpectralDataSource.swathToGrid(grd750, [M9, M5, M10], 1.0)
+    rgb = MultiSpectralDataSource.swathToGrid(grd750, [red, grn, blu], 1.0)
 
     return package(inM9, rgb)
