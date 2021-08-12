@@ -281,3 +281,27 @@ def VIIRSCloudTypeRGB(M9, M5, M10):
     rgb = MultiSpectralDataSource.swathToGrid(grd750, [red, grn, blu], 1.0)
 
     return package(inM9, rgb)
+
+# VIIRS Snowmelt RGB
+def VIIRSSnowmeltRGB(M10, M8, M5):
+    # https://rammb2.cira.colostate.edu/wp-content/uploads/2021/03/VIIRS_Snowmelt_RGB_Quick_Guide_v3.pdf
+    # red = M10 (1.61um)  0 to 100 reflectance rescaled to 0 to 255; gamma 1.0
+    # grn = M8 (1.24um)  0 to 100 reflectance rescaled to 0 to 255; gamma 1.0
+    # blu = M5 (0.67um)  0 to 100 reflectance rescaled to 0 to 255; gamma 1.0
+
+    inM10 = M10
+    M10 = unpackage(M10)
+    inM8 = M8
+    M8 = unpackage(M8)
+    inM5 = M5
+    M5 = unpackage(M5)
+  
+    grd750 = makeGrid(M5, 750)
+
+    red = rescale(M10, 0, 100, 0, 255)
+    grn = rescale(M8, 0, 100, 0, 255)
+    blu = rescale(M5, 0, 100, 0, 255)
+
+    rgb = MultiSpectralDataSource.swathToGrid(grd750, [red, grn, blu], 1.0)
+
+    return package(inM5, rgb)
