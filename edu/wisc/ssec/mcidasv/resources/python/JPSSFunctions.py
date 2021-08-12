@@ -262,8 +262,8 @@ def VIIRSCloudPhaseRGB(M10, M11, M1):
 # VIIRS Cloud Type RGB
 def VIIRSCloudTypeRGB(M9, M5, M10):
     # red = M9 (1.378um) 0 - 10 reflectance rescaled to 0 to 255; gamma 1.5
-    # grn = M5 (0.672um) 0 - 80 reflectance rescaled to 0 to 80; gamma 0.75
-    # blu = M10 (1.612um) 0 - 80 reflectance rescaled to 0 to 80; gamma 1.0
+    # grn = M5 (0.672um) 0 - 80 reflectance rescaled to 0 to 255; gamma 0.75
+    # blu = M10 (1.612um) 0 - 80 reflectance rescaled to 0 to 255; gamma 1.0
 
     inM9 = M9
     M9 = unpackage(M9)
