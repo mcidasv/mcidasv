@@ -826,6 +826,28 @@
             <paramgroup categories="" name="AHI_RGB_TrueColor"/>
         </operands>
     </derived>
+    <derived description="AHI SO2 RGB" formula="AHISO2RGB(D1[label=Band 9 Temperature], D2[label=Band 10 Temperature], D3[label=Band 11 Temperature], D4[label=Band 13 Temperature], D5[label=Band 14 Temperature])" id="ahiso2" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AHI_RGB_SO2"/>
+        </operands>
+    </derived>
+    <derived description="AHI 24 Hour Microphysics RGB" formula="AHI24HrMicroRGB(D1[label=Band 11 Temperature], D2[label=Band 13 Temperature], D3[label=Band 14 Temperature], D4[label=Band 15 Temperature])" id="ahi24hrmicro" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-AHI Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="AHI_RGB_24HR"/>
+        </operands>
+    </derived>
     <!-- Adding JPSS formulas - RMC - INQ 2670 - Nov 2019 -->
     <derived description="Swath To Grid" formula="swathToGrid(field, resolution_in_meters[isuser=true,default=750.0], mode[isuser=true,default=1.0])" id="swathToGrid" isdefault="false" isenduser="true" override="true">
         <categories>
