@@ -113,22 +113,25 @@ def AHITropicalAirmassRGB(b8T, b10T, b12T, b13T):
     return combineRGB(red, grn, blu)
 
 # AHI Ash RGB
-def AHIAshRGB(b11T, b13T, b15T):
-    # red = band15 - band13; -4K to 2K rescaled to 0 to 255
-    # grn = band13 - band11; -4K to 5K rescaled to 0 to 255
-    # blu = band13; 243K to 208K rescaled to 0 to 255
+def AHIAshRGB(b11T, b13T, b14T, b15T):
+    # red = band13 - band15; 7.5K to -3K rescaled to 0 to 255
+    # grn = band14 - band11; -5.9K to 5.1K rescaled to 0 to 255; gamma 0.85
+    # blu = band13; 243.6K to 303.2K rescaled to 0 to 255
     m11 = b11T.getMetadataMap()
     m13 = b13T.getMetadataMap()
+    m14 = b14T.getMetadataMap()
     m15 = b15T.getMetadataMap()
     b11TM = mask(b11T, '>', 0, 1) * b11T
     b13TM = mask(b13T, '>', 0, 1) * b13T
+    b14TM = mask(b14T, '>', 0, 1) * b14T
     b15TM = mask(b15T, '>', 0, 1) * b15T
     b11TM.setMetadataMap(m11)
     b13TM.setMetadataMap(m13)
+    b14TM.setMetadataMap(m14)
     b15TM.setMetadataMap(m15)
-    red = rescale(b15TM-b13TM, -4, 2, 0, 255)
-    grn = rescale(b13TM-b11TM, -4, 5, 0, 255)
-    blu = rescale(b13TM, 243, 208, 0, 255)
+    red = rescale(b13TM-b15TM, 7.5, -3, 0, 255)
+    grn = 255*(rescale(b14TM-b11TM, -5.9, 5.1, 0, 1)**1.1764706)
+    blu = rescale(b13TM, 243.6, 303.2, 0, 255)
     return combineRGB(red, grn, blu)
 
 # AHI True Color RGB
@@ -142,22 +145,25 @@ def AHITrueColorRGB(b1A, b2A, b3A):
     return combineRGB(red, grn, blu)
 
 # AHI Dust RGB
-def AHIDustRGB(b11T, b13T, b15T):
-    # red = band15 - band13; -4K to 2K rescaled to 0 to 255
-    # grn = band13 - band11; 0K to 15K rescaled to 0 to 255; gamma 2.5
-    # blu = band13; 261K to 289K rescaled to 0 to 255
+def AHIDustRGB(b11T, b13T, b14T, b15T):
+    # red = band13 - band15; 7.5K to -3K rescaled to 0 to 255
+    # grn = band13 - band11; 0.9K to 12.5K rescaled to 0 to 255; gamma 2.5
+    # blu = band13; 261.5K to 289.2K rescaled to 0 to 255
     m11 = b11T.getMetadataMap()
     m13 = b13T.getMetadataMap()
+    m14 = b14T.getMetadataMap()
     m15 = b15T.getMetadataMap()
     b11TM = mask(b11T, '>', 0, 1) * b11T
     b13TM = mask(b13T, '>', 0, 1) * b13T
+    b14TM = mask(b14T, '>', 0, 1) * b14T
     b15TM = mask(b15T, '>', 0, 1) * b15T
     b11TM.setMetadataMap(m11)
     b13TM.setMetadataMap(m13)
+    b14TM.setMetadataMap(m14)
     b15TM.setMetadataMap(m15)
-    red = rescale(b15TM-b13TM, -4, 2, 0, 255)
-    grn = 255*(rescale(b13TM-b11TM, 0, 15, 0, 1)**0.4)
-    blu = rescale(b13TM, 261, 289, 0, 255)
+    red = rescale(b13TM-b15TM, 7.5, -3, 0, 255)
+    grn = 255*(rescale(b13TM-b11TM, 0.9, 12.5, 0, 1) **0.4)
+    blu = rescale(b13TM, 261.5, 289.2, 0, 255)
     return combineRGB(red, grn, blu)
 
 # AHI Differential Water Vapor RGB
@@ -264,4 +270,51 @@ def AHICloudPhaseDistinctionRGB(b3A, b5A, b13T):
     red = rescale(hr_b13T, 280.7, 219.6, 0, 255)
     grn = rescale(b3A, 0, 85, 0, 255)
     blu = rescale(hr_b5A, 1, 50, 0, 255)
+    return combineRGB(red, grn, blu)
+
+# AHI SO2 RGB
+def AHISO2RGB(b9T, b10T, b11T, b13T, b14T):
+    # red = band10 - band9; 5K to -6K rescaled to 0 to 255
+    # grn = band11 - band14; 5.1K to -5.9K rescaled to 0 to 255; gamma 0.85
+    # blu = band13; 243.6K to 303.2K rescaled to 0 to 255
+    m9 = b9T.getMetadataMap()
+    m10 = b10T.getMetadataMap()
+    m11 = b11T.getMetadataMap()
+    m13 = b13T.getMetadataMap()
+    m14 = b14T.getMetadataMap()
+    b9TM = mask(b9T, '>', 0, 1) * b9T
+    b10TM = mask(b10T, '>', 0, 1) * b10T
+    b11TM = mask(b11T, '>', 0, 1) * b11T
+    b13TM = mask(b13T, '>', 0, 1) * b13T
+    b14TM = mask(b14T, '>', 0, 1) * b14T
+    b9TM.setMetadataMap(m9)
+    b10TM.setMetadataMap(m10)
+    b11TM.setMetadataMap(m11)
+    b13TM.setMetadataMap(m13)
+    b14TM.setMetadataMap(m14)
+    red = rescale(b10TM-b9TM, 5, -6, 0, 255)
+    grn = 255*(rescale(b11TM-b14TM, 5.1, -5.9, 0, 1)**1.17647)
+    blu = rescale(b13TM, 243.6, 303.2, 0, 255)
+    return combineRGB(red, grn, blu)
+
+# AHI 24-Hour Microphysics RGB
+def AHI24HrMicroRGB(b11T, b13T, b14T, b15T):
+    # red = band13 - band15; 7.5K to -3K rescaled to 0 to 255
+    # grn = band14 - band11; -0.4 to 6.1K rescaled to 0 to 255; gamma 1.1
+    # blu = band13; 248.6K to 303.2K rescaled to 0 to 255
+    m11 = b11T.getMetadataMap()
+    m13 = b13T.getMetadataMap()
+    m14 = b14T.getMetadataMap()
+    m15 = b15T.getMetadataMap()
+    b11TM = mask(b11T, '>', 0, 1) * b11T
+    b13TM = mask(b13T, '>', 0, 1) * b13T
+    b14TM = mask(b14T, '>', 0, 1) * b14T
+    b15TM = mask(b15T, '>', 0, 1) * b15T
+    b11TM.setMetadataMap(m11)
+    b13TM.setMetadataMap(m13)
+    b14TM.setMetadataMap(m14)
+    b15TM.setMetadataMap(m15)
+    red = rescale(b13TM-b15TM, 7.5, -3, 0, 255)
+    grn = 255*(rescale(b14TM-b11TM, -0.4, 6.1, 0, 1)**0.9090909)
+    blu = rescale(b13TM, 248.6, 303.2, 0, 255)
     return combineRGB(red, grn, blu)
