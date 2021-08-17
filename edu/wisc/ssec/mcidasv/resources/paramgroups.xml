@@ -202,6 +202,22 @@
     <params p1="287_Band3_ALB" p2="287_Band5_ALB" p3="287_Band13_TEMP"/>
     <params p1="288_Band3_ALB" p2="288_Band5_ALB" p3="288_Band13_TEMP"/>
   </paramgroup>
+  <paramgroup description="AHI SO2 RGB" name="AHI_RGB_SO2">
+    <params p1="86_Band9_TEMP" p2="86_Band10_TEMP" p3="86_Band11_TEMP" p4="86_Band13_TEMP" p5="86_Band14_TEMP"/>
+    <params p1="286_Band9_TEMP" p2="286_Band10_TEMP" p3="286_Band11_TEMP" p4="286_Band13_TEMP" p5="286_Band14_TEMP"/>
+    <params p1="287_Band9_TEMP" p2="287_Band10_TEMP" p3="287_Band11_TEMP" p4="287_Band13_TEMP" p5="287_Band14_TEMP"/>
+    <params p1="288_Band9_TEMP" p2="288_Band10_TEMP" p3="288_Band11_TEMP" p4="288_Band13_TEMP" p5="288_Band14_TEMP"/>
+    <params p1="himawari_8_ahi_channel_9_brightness_temperature" p2="himawari_8_ahi_channel_10_brightness_temperature" p3="himawari_8_ahi_channel_11_brightness_temperature" p4="himawari_8_ahi_channel_13_brightness_temperature" p5="himawari_8_ahi_channel_14_brightness_temperature"/>
+    <params p1="temp_6_7um_nom" p2="temp_7_3um_nom" p3="temp_8_5um_nom" p4="temp_10_4um_nom" p5="temp_11_0um_nom"/>
+  </paramgroup>
+  <paramgroup description="AHI 24Hr Micro RGB" name="AHI_RGB_24HR">
+    <params p1="86_Band11_TEMP" p2="86_Band13_TEMP" p3="86_Band14_TEMP" p4="86_Band15_TEMP"/>
+    <params p1="286_Band11_TEMP" p2="286_Band13_TEMP" p3="286_Band14_TEMP" p4="286_Band15_TEMP"/>
+    <params p1="287_Band11_TEMP" p2="287_Band13_TEMP" p3="287_Band14_TEMP" p4="287_Band15_TEMP"/>
+    <params p1="288_Band11_TEMP" p2="288_Band13_TEMP" p3="288_Band14_TEMP" p4="288_Band15_TEMP"/>
+    <params p1="himawari_8_ahi_channel_11_brightness_temperature" p2="himawari_8_ahi_channel_13_brightness_temperature" p3="himawari_8_ahi_channel_14_brightness_temperature" p4="himawari_8_ahi_channel_15_brightness_temperature"/>
+    <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_11_0um_nom" p4="temp_12_0um_nom"/>
+  </paramgroup>
   <paramgroup description="JPSS Day Land Cloud Fire RGB" name="JPSS_RGB_DayLandCloudFire">
     <params p1="VIIRS-I4-SDR_All/BrightnessTemperature" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance"/>
     <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
