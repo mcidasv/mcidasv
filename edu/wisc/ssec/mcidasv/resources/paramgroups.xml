@@ -139,12 +139,12 @@
     <params p1="temp_6_2um_nom" p2="temp_7_3um_nom" p3="temp_9_7um_nom" p4="temp_10_4um_nom"/>
   </paramgroup>
   <paramgroup description="AHI Ash RGB" name="AHI_RGB_Ash">
-    <params p1="86_Band11_TEMP" p2="86_Band13_TEMP" p3="86_Band15_TEMP"/>
-    <params p1="286_Band11_TEMP" p2="286_Band13_TEMP" p3="286_Band15_TEMP"/>
-    <params p1="287_Band11_TEMP" p2="287_Band13_TEMP" p3="287_Band15_TEMP"/>
-    <params p1="288_Band11_TEMP" p2="288_Band13_TEMP" p3="288_Band15_TEMP"/>
-    <params p1="himawari_8_ahi_channel_11_brightness_temperature" p2="himawari_8_ahi_channel_13_brightness_temperature" p3="himawari_8_ahi_channel_15_brightness_temperature"/>
-    <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_12_0um_nom"/>
+    <params p1="86_Band11_TEMP" p2="86_Band13_TEMP" p3="86_Band14_TEMP" p4="86_Band15_TEMP"/>
+    <params p1="286_Band11_TEMP" p2="286_Band13_TEMP" p3="286_Band14_TEMP" p4="286_Band15_TEMP"/>
+    <params p1="287_Band11_TEMP" p2="287_Band13_TEMP" p3="287_Band14_TEMP" p4="287_Band15_TEMP"/>
+    <params p1="288_Band11_TEMP" p2="288_Band13_TEMP" p3="288_Band14_TEMP" p4="288_Band15_TEMP"/>
+    <params p1="himawari_8_ahi_channel_11_brightness_temperature" p2="himawari_8_ahi_channel_13_brightness_temperature" p3="himawari_8_ahi_channel_14_brightness_temperature" p4="himawari_8_ahi_channel_15_brightness_temperature"/>
+    <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_11_0um_nom" p4="temp_12_0um_nom"/>
   </paramgroup>
   <paramgroup description="AHI True Color RGB" name="AHI_RGB_TrueColor">
     <params p1="86_Band1_ALB" p2="86_Band2_ALB" p3="86_Band3_ALB"/>
@@ -153,12 +153,12 @@
     <params p1="288_Band1_ALB" p2="288_Band2_ALB" p3="288_Band3_ALB"/>
   </paramgroup>
   <paramgroup description="AHI Dust RGB" name="AHI_RGB_Dust">
-    <params p1="86_Band11_TEMP" p2="86_Band13_TEMP" p3="86_Band15_TEMP"/>
-    <params p1="286_Band11_TEMP" p2="286_Band13_TEMP" p3="286_Band15_TEMP"/>
-    <params p1="287_Band11_TEMP" p2="287_Band13_TEMP" p3="287_Band15_TEMP"/>
-    <params p1="288_Band11_TEMP" p2="288_Band13_TEMP" p3="288_Band15_TEMP"/>
-    <params p1="himawari_8_ahi_channel_11_brightness_temperature" p2="himawari_8_ahi_channel_13_brightness_temperature" p3="himawari_8_ahi_channel_15_brightness_temperature"/>
-    <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_12_0um_nom"/>
+    <params p1="86_Band11_TEMP" p2="86_Band13_TEMP" p3="86_Band14_TEMP" p4="86_Band15_TEMP"/>
+    <params p1="286_Band11_TEMP" p2="286_Band13_TEMP" p3="286_Band14_TEMP" p4="286_Band15_TEMP"/>
+    <params p1="287_Band11_TEMP" p2="287_Band13_TEMP" p3="287_Band14_TEMP" p4="287_Band15_TEMP"/>
+    <params p1="288_Band11_TEMP" p2="288_Band13_TEMP" p4="288_Band14_TEMP" p4="288_Band15_TEMP"/>
+    <params p1="himawari_8_ahi_channel_11_brightness_temperature" p2="himawari_8_ahi_channel_13_brightness_temperature" p3="himawari_8_ahi_channel_14_brightness_temperature" p4="himawari_8_ahi_channel_15_brightness_temperature"/>
+    <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_11_0um_nom" p4="temp_12_0um_nom"/>
   </paramgroup>
     <paramgroup description="AHI Diff Water Vapor RGB" name="AHI_RGB_DiffWaterVapor">
     <params p1="86_Band8_TEMP" p2="86_Band10_TEMP"/>
