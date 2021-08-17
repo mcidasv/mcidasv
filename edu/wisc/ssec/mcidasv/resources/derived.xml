@@ -672,7 +672,7 @@
             <paramgroup categories="" name="AHI_RGB_Airmass"/>
         </operands>
     </derived>
-    <derived description="AHI Ash RGB" formula="AHIAshRGB(D1[label=Band 11 Temperature], D2[label=Band 13 Temperature], D3[label=Band 15 Temperature])" id="ahiash" isdefault="true" isenduser="true" override="true">
+    <derived description="AHI Ash RGB" formula="AHIAshRGB(D1[label=Band 11 Temperature], D2[label=Band 13 Temperature], D3[label=Band 14 Temperature], D4[label=Band 15 Temperature])" id="ahiash" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:rgbcomposite"/>
@@ -738,7 +738,7 @@
             <paramgroup name="AHI_RGB_DiffWaterVapor"/>
         </operands>
     </derived>
-    <derived description="AHI Dust RGB" formula="AHIDustRGB(D1[label=Band 11 Temperature], D2[label=Band 13 Temperature], D3[label=Band 15 Temperature])" id="ahidust" isdefault="true" isenduser="true" override="true">
+    <derived description="AHI Dust RGB" formula="AHIDustRGB(D1[label=Band 11 Temperature], D2[label=Band 13 Temperature], D3[label=Band 14 Temperature], D4[label=Band 15 Temperature])" id="ahidust" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
             <category value="display:imagecontrol"/>
