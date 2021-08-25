@@ -122,6 +122,25 @@ def VIIRSNDVI(I1, I2):
     return package(inI1, ndvi)
 
 
+# VIIRS NDSI
+def VIIRSNDSI(I1, I3):
+    # I1 = 0.64um - visible Reflectance
+    # I3 = 1.61um - shortwave IR Reflectance
+
+    inI1 = I1
+    I1 = unpackage(I1)
+    inI3 = I3
+    I3 = unpackage(I3)
+    grd375 = makeGrid(I1, 375)
+
+    VISG = MultiSpectralDataSource.swathToGrid(grd375, I1, 1.0)
+    SIRG = MultiSpectralDataSource.swathToGrid(grd375, I3, 1.0)
+
+    ndsi = (VISG - SIRG).divide(VISG + SIRG)
+
+    return package(inI1, ndsi)
+
+
 #VIIRS Dust RGB
 def VIIRSDustRGB(M14, M15, M16):
     # red = M16 - M15 (12.013um - 10.763um); -4C to 2C rescaled to 0 to 255; gamma 1.0
