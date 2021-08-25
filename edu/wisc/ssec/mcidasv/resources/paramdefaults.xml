@@ -104,6 +104,7 @@
   
   <!-- bob inq 2670 - Feb 2020 -->
   <param ci_base="0.0" ci_interval="0.1" ci_max="2.0" ci_min="-2.0" ci_width="1" name="VIIRS_NDVI" range_max="1.0" range_min="-1.0" table="NDVI"/>
+  <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="0.0" ci_width="1" name="VIIRS_NDSI" range_max="1.0" range_min="0.0" table="NDSI"/>
   <!-- end inq 2670 -->
   
   <!-- bob inq 2955 (NUCAPS grids) - Feb/May 2021 -->
