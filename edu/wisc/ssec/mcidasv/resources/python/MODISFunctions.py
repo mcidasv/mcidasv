@@ -29,13 +29,19 @@ def MODISNightMicrophysicsRGB(b22T, b31T, b32T):
     return combineRGB(red, grn, blu)
 
 # MODIS NDVI
-def MODISNDVI(b1R,b2R):
+def MODISNDVI(b1R, b2R):
     # b1R = Band 1 (0.6465um) Reflectance
     # b2R = Band 2 (0.8567um) Reflectance
     return (b2R-b1R)/(b2R+b1R)
 
+# MODIS NDSI
+def MODISNDSI(b4R, b6R):
+    # b4R = Band 4 (0.55375um) Reflectance
+    # b6R = Band 6 (1.6291um) Reflectance
+    return (b4R-b6R)/(b4R+b6R)
+
 # MODIS EVI
-def MODISEVI(b1R,b2R, b3R):
+def MODISEVI(b1R, b2R, b3R):
     # b1R = Band 1 (0.6465um) Reflectance : Red band
     # b2R = Band 2 (0.8567um) Reflectance : NIR
     # b3R = Band 3 (0.4656um) Reflectance : Blue band
