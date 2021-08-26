@@ -40,6 +40,12 @@ def MODISNDSI(b4R, b6R):
     # b6R = Band 6 (1.6291um) Reflectance
     return (b4R-b6R)/(b4R+b6R)
 
+# MODIS NDWI
+def MODISNDWI(b2R, b4R):
+    # b2R = Band 2 (0.8567um) Reflectance
+    # b4R = Band 4 (0.55375um) Reflectance
+    return (b2R-b4R)/(b2R+b4R)
+
 # MODIS EVI
 def MODISEVI(b1R, b2R, b3R):
     # b1R = Band 1 (0.6465um) Reflectance : Red band
