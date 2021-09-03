@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+
+<NPOESSDataProduct>
+	<ProductName>VIIRS M10 Band Imagery</ProductName>
+	<CollectionShortName>VIIRS-M10-MOD-EDR</CollectionShortName>
+	<DataProductID>VM10O</DataProductID>
+	<ProductData>
+		<DataName>VIIRS M10 Band Imagery Product Profile</DataName>
+		<Field>
+			<Name>Radiance</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>771</MinIndex>
+				<MaxIndex>771</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4121</MinIndex>
+				<MaxIndex>4121</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Top of Atmosphere radiances for the M-Band selected</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+				<ScaleFactorName>RadianceFactors</ScaleFactorName>
+				<MeasurementUnits>W/(m2 sr um)</MeasurementUnits>
+				<RangeMin>Varies</RangeMin>
+				<RangeMax>Varies</RangeMax>
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>BrightnessTemperatureOrReflectance</Name>
+			<Dimension>
+				<Name>AlongTrack</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>771</MinIndex>
+				<MaxIndex>771</MaxIndex>
+			</Dimension>
+			<Dimension>
+				<Name>CrossTrack</Name>
+				<GranuleBoundary>0</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>4121</MinIndex>
+				<MaxIndex>4121</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>2</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Brightness Temperatures (for an emissive M-Band) or Top of Atmosphere Reflectances (for a reflective M-Band) for the selected M-Band</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>1</Scaled>
+				<ScaleFactorName>BrightnessTemperatureOrReflectanceFactors</ScaleFactorName>
+				<MeasurementUnits>kelvin (for BrightnessTemp) or unitless (for Reflectance)</MeasurementUnits>
+				<RangeMin>Varies (for BrightnessTemp) or 0.00 (for Reflectance)</RangeMin>
+				<RangeMax>Varies (for BrightnessTemp) or 1.60 (for Reflectance)</RangeMax>
+				<DataType>unsigned 16-bit integer</DataType>
+				<FillValue>
+					<Name>NA_UINT16_FILL</Name>
+					<Value>65535</Value>
+				</FillValue>
+				<FillValue>
+					<Name>MISS_UINT16_FILL</Name>
+					<Value>65534</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ERR_UINT16_FILL</Name>
+					<Value>65531</Value>
+				</FillValue>
+				<FillValue>
+					<Name>ELINT_UINT16_FILL</Name>
+					<Value>65530</Value>
+				</FillValue>
+				<FillValue>
+					<Name>VDNE_UINT16_FILL</Name>
+					<Value>65529</Value>
+				</FillValue>
+				<FillValue>
+					<Name>SOUB_UINT16_FILL</Name>
+					<Value>65528</Value>
+				</FillValue>
+			</Datum>
+		</Field>
+	</ProductData>
+	<ProductData>
+		<DataName>VIIRS M-Band Imagery Product Profile - Factors</DataName>
+		<Field>
+			<Name>RadianceFactors</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Scale = first array element; Offset = second array element</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>Scale = unitless; Offset = W/(m2 sr um)</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+			</Datum>
+		</Field>
+		<Field>
+			<Name>ReflectanceFactors</Name>
+			<Dimension>
+				<Name>Granule</Name>
+				<GranuleBoundary>1</GranuleBoundary>
+				<Dynamic>0</Dynamic>
+				<MinIndex>2</MinIndex>
+				<MaxIndex>2</MaxIndex>
+			</Dimension>
+
+			<DataSize>
+				<Count>4</Count>
+				<Type>byte(s)</Type>
+			</DataSize>
+			<Datum>
+				<Description>Scale = first array element; Offset = second array element</Description>
+				<DatumOffset>0</DatumOffset>
+				<Scaled>0</Scaled>
+				<MeasurementUnits>Scale = unitless; Offset = kelvin (for BrightnessTemp) or unitless (for Reflectance)</MeasurementUnits>
+				<RangeMin/>
+				<RangeMax/>
+				<DataType>32-bit floating point</DataType>
+			</Datum>
+		</Field>
+	</ProductData>
+</NPOESSDataProduct>
