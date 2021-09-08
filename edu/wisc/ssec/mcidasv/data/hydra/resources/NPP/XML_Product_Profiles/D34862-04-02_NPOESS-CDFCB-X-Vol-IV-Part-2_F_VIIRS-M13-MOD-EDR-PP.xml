@@ -63,7 +63,7 @@
 			</Datum>
 		</Field>
 		<Field>
-			<Name>BrightnessTemperatureOrReflectance</Name>
+			<Name>BrightnessTemperature</Name>
 			<Dimension>
 				<Name>AlongTrack</Name>
 				<GranuleBoundary>1</GranuleBoundary>
@@ -87,8 +87,8 @@
 				<Description>Brightness Temperatures (for an emissive M-Band) or Top of Atmosphere Reflectances (for a reflective M-Band) for the selected M-Band</Description>
 				<DatumOffset>0</DatumOffset>
 				<Scaled>1</Scaled>
-				<ScaleFactorName>BrightnessTemperatureOrReflectanceFactors</ScaleFactorName>
-				<MeasurementUnits>kelvin (for BrightnessTemp) or unitless (for Reflectance)</MeasurementUnits>
+				<ScaleFactorName>BrightnessFactors</ScaleFactorName>
+				<MeasurementUnits>K</MeasurementUnits>
 				<RangeMin>Varies (for BrightnessTemp) or 0.00 (for Reflectance)</RangeMin>
 				<RangeMax>Varies (for BrightnessTemp) or 1.60 (for Reflectance)</RangeMax>
 				<DataType>unsigned 16-bit integer</DataType>
