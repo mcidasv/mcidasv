@@ -268,6 +268,7 @@
   </paramgroup>
   <paramgroup description="Norm Diff Snow Index" name="NDSI">
     <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance"/>
+    <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I3-IMG-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="MSG Airmass RGB" name="MSG_RGB_Airmass">
     <params p1="51_Band5_TEMP" p2="51_Band6_TEMP" p3="51_Band8_TEMP" p4="51_Band9_TEMP"/>
