@@ -232,12 +232,15 @@
   </paramgroup>
   <paramgroup description="JPSS Dust RGB" name="JPSS_RGB_Dust">
     <params p1="VIIRS-M14-SDR_All/BrightnessTemperature" p2="VIIRS-M15-SDR_All/BrightnessTemperature" p3="VIIRS-M16-SDR_All/BrightnessTemperature"/>
+    <params p1="VIIRS-M14-MOD-EDR_All/BrightnessTemperature" p2="VIIRS-M15-MOD-EDR_All/BrightnessTemperature" p3="VIIRS-M16-MOD-EDR_All/BrightnessTemperature"/>
   </paramgroup>
   <paramgroup description="JPSS Fire Temperature RGB" name="JPSS_RGB_FireTemperature">
     <params p1="VIIRS-M12-SDR_All/BrightnessTemperature" p2="VIIRS-M11-SDR_All/Reflectance" p3="VIIRS-M10-SDR_All/Reflectance"/>
+    <params p1="VIIRS-M12-MOD-EDR_All/BrightnessTemperature" p2="VIIRS-M11-MOD-EDR_All/Reflectance" p3="VIIRS-M10-MOD-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS Natural Color RGB" name="JPSS_RGB_NaturalColor">
     <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M7-SDR_All/Reflectance" p3="VIIRS-M5-SDR_All/Reflectance"/>
+    <params p1="VIIRS-M10-MOD-EDR_All/Reflectance" p2="VIIRS-M7-MOD-EDR_All/Reflectance" p3="VIIRS-M5-MOD-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS Natural Color SVI RGB" name="JPSS_RGB_I_NaturalColor">
     <params p1="VIIRS-I3-SDR_All/Reflectance" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance"/>
@@ -245,18 +248,23 @@
   </paramgroup>
   <paramgroup description="JPSS Nighttime Microphysics RGB" name="JPSS_RGB_NightMicrophysics">
     <params p1="VIIRS-M12-SDR_All/BrightnessTemperature" p2="VIIRS-M15-SDR_All/BrightnessTemperature" p3="VIIRS-M16-SDR_All/BrightnessTemperature"/>
+    <params p1="VIIRS-M12-MOD-EDR_All/BrightnessTemperature" p2="VIIRS-M15-MOD-EDR_All/BrightnessTemperature" p3="VIIRS-M16-MOD-EDR_All/BrightnessTemperature"/>
   </paramgroup>
   <paramgroup description="JPSS True Color RGB" name="JPSS_RGB_TrueColor">
     <params p1="VIIRS-M5-SDR_All/Reflectance" p2="VIIRS-M4-SDR_All/Reflectance" p3="VIIRS-M3-SDR_All/Reflectance"/>
+    <params p1="VIIRS-M5-MOD-EDR_All/Reflectance" p2="VIIRS-M4-MOD-EDR_All/Reflectance" p3="VIIRS-M3-MOD-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS Cloud Phase RGB" name="JPSS_RGB_CloudPhase">
     <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M11-SDR_All/Reflectance" p3="VIIRS-M1-SDR_All/Reflectance"/>
+    <params p1="VIIRS-M10-MOD-EDR_All/Reflectance" p2="VIIRS-M11-MOD-EDR_All/Reflectance" p3="VIIRS-M1-MOD-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS Cloud Type RGB" name="JPSS_RGB_CloudType">
     <params p1="VIIRS-M9-SDR_All/Reflectance" p2="VIIRS-M5-SDR_All/Reflectance" p3="VIIRS-M10-SDR_All/Reflectance"/>
+    <params p1="VIIRS-M9-MOD-EDR_All/Reflectance" p2="VIIRS-M5-MOD-EDR_All/Reflectance" p3="VIIRS-M10-MOD-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS Snowmelt RGB" name="JPSS_RGB_Snowmelt">
     <params p1="VIIRS-M10-SDR_All/Reflectance" p2="VIIRS-M8-SDR_All/Reflectance" p3="VIIRS-M5-SDR_All/Reflectance"/>
+    <params p1="VIIRS-M10-MOD-EDR_All/Reflectance" p2="VIIRS-M8-MOD-EDR_All/Reflectance" p3="VIIRS-M5-MOD-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="Norm Diff Snow Index" name="NDSI">
     <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance"/>
