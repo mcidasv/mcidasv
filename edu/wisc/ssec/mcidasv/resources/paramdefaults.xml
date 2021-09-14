@@ -113,8 +113,8 @@
   <param ci_base="0.0" ci_interval="0.3" ci_max="2.3" ci_min="-0.3" ci_width="1" name="Quality_Flag" range_max="2.0" range_min="0.0" table="Quality Flag" unit="1"/>
   <param ci_base="0.0" ci_interval="2.5" ci_max="60.0" ci_min="0.25" ci_width="1" name="PrecipWater_Total" range_max="50.0" range_min="0.0" table="Precip Water" unit="mm"/>
   <param ci_base="0.0" ci_interval="20.0" ci_max="120.0" ci_min="-20.0" ci_width="1" name="RelHum_2m" range_max="100.0" range_min="0.0" table="Rel Humidity" unit="percent"/>
-  <param ci_base="0.0" ci_interval="100.0" ci_max="1100.0" ci_min="-100.0" ci_width="1" name="CloudTopPressure" range_max="1000.0" range_min="0.0" table="Cloud Top Press" unit="mb"/>
-  <param ci_base="0.0" ci_interval="0.2" ci_max="1.2" ci_min="-0.2" ci_width="1" name="CloudTopFraction" range_max="1.0" range_min="0.0" table="Cloud Top Fraction" unit="1"/>
+  <param ci_base="0.0" ci_interval="100.0" ci_max="1100.0" ci_min="-100.0" ci_width="1" name="CloudTopPressure*.*" range_max="1000.0" range_min="0.0" table="Cloud Top Press" unit="mb"/>
+  <param ci_base="0.0" ci_interval="0.2" ci_max="1.2" ci_min="-0.2" ci_width="1" name="CloudTopFraction*.*" range_max="1.0" range_min="0.0" table="Cloud Top Fraction" unit="1"/>
   <param ci_base="100.0" ci_interval="50.0" ci_max="650.0" ci_min="50.0" ci_width="1" name="Tropopause_Height" range_max="600.0" range_min="100.0" table="Tropopause Height" unit="mb"/>
   <param ci_base="0.0" ci_interval="25.0" ci_max="225.0" ci_min="-25.0" ci_width="1" name="O3_Anom" range_max="200.0" range_min="0.0" table="Ozone Anomaly" unit="percent"/>
   <param ci_base="100.0" ci_interval="50.0" ci_max="650.0" ci_min="50.0" ci_width="1" name="O3_Total" range_max="600.0" range_min="100.0" table="Ozone Total" unit="DU"/>
