@@ -2337,7 +2337,7 @@
         </operands>
     </derived>
     <!-- AI -->
-    <derived description="total column amount of ozone from ECMWF model data (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_DU" isdefault="true" isenduser="false" override="true">
+    <derived description="total column amount of ozone from ECMWF model data (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_total_column_DU_ai" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:gridtablecontrol"/>
@@ -2359,7 +2359,7 @@
             <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_column"/>
         </operands>
     </derived>
-    <derived description="total column amount of ozone from ECMWF model data (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="O3_total_column_molecules_cm2" isdefault="true" isenduser="false" override="true">
+    <derived description="total column amount of ozone from ECMWF model data (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="O3_total_column_molecules_cm2_ai" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
             <category value="display:planviewcolor"/>
