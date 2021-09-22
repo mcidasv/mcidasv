@@ -53,7 +53,19 @@
      temp_13_9um_nom,
      temp_14_2um_nom,
      temp_3_75um_nom_clear_sky,
-     temp_6_7um_nom_clear_sky"/>
+     temp_6_7um_nom_clear_sky,
+     CMI_C07,
+     CMI_C08,
+     CMI_C09,
+     CMI_C10,
+     CMI_C11,
+     CMI_C12,
+     CMI_C13,
+     CMI_C14,
+     CMI_C15,
+     CMI_C16"/>
+  
+  <alias aliases="CMI_C01,CMI_C02,CMI_C03,CMI_C04,CMI_C05,CMI_C06" label="Reflectance" name="Refl"/>
   
 <alias
      name="ABSVOR"
