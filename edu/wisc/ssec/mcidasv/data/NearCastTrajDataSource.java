@@ -31,6 +31,7 @@ package edu.wisc.ssec.mcidasv.data;
 import edu.wisc.ssec.mcidasv.data.hydra.NetCDFFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ucar.ma2.DataType;
 import visad.Data;
 import visad.Unit;
 import visad.Gridded3DSet;
@@ -152,13 +153,13 @@ public class NearCastTrajDataSource extends DataSourceImpl {
        numParcels = ncFile.getDimensionLength(parcelDimName);
 
        try {
-         Class type = ncFile.getArrayType(timeName);
-         if (type == Double.TYPE) {
+         DataType type = ncFile.getArrayType(timeName);
+         if (type == DataType.DOUBLE) {
             double[] timeValues = ncFile.getDoubleArray(timeName, new int[] {0}, new int[] {numTimes}, new int[] {1});
             timeSet = new Gridded1DDoubleSet(
                        RealType.Time, new double[][] {timeValues}, numTimes, null, new Unit[] {timeUnit}, null);
          }
-         else if (type == Float.TYPE) {
+         else if (type == DataType.FLOAT) {
             float[] timeValues = ncFile.getFloatArray(timeName, new int[] {0}, new int[] {numTimes}, new int[] {1});
             timeSet = new Gridded1DSet(RealType.Time, new float[][] {timeValues}, numTimes, null, new Unit[] {timeUnit}, null);
 

@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import ucar.ma2.DataType;
 import visad.CoordinateSystem;
 import visad.Gridded2DDoubleSet;
 import visad.Gridded2DSet;
@@ -89,7 +90,7 @@ public class SwathNavigation implements Navigation  {
 
   int numDims = 2;
 
-  Class type;
+  DataType type;
 
   public SwathNavigation(SwathAdapter swathAdapter) throws Exception {
 
@@ -280,7 +281,7 @@ public class SwathNavigation implements Navigation  {
 
   Gridded2DSet createInterpSet() throws Exception {
     Gridded2DSet gset = null;
-    if (type == Float.TYPE) {
+    if (type == DataType.FLOAT) {
       float[] lonValues = reader.getFloatArray(lon_array_name, geo_start, geo_count, geo_stride);
       float[] latValues = reader.getFloatArray(lat_array_name, geo_start, geo_count, geo_stride);
                                                                                                                                              
@@ -289,7 +290,7 @@ public class SwathNavigation implements Navigation  {
                          geo_count[idx_order[0]], geo_count[idx_order[1]],
                             null, null, null, false, false);
     }
-    else if (type == Double.TYPE) {
+    else if (type == DataType.DOUBLE) {
       double[] lonValues = reader.getDoubleArray(lon_array_name, geo_start, geo_count, geo_stride);
       double[] latValues = reader.getDoubleArray(lat_array_name, geo_start, geo_count, geo_stride);
                                                                                                                                              
@@ -298,7 +299,7 @@ public class SwathNavigation implements Navigation  {
                        geo_count[idx_order[0]], geo_count[idx_order[1]],
                            null, null, null, false);
     }
-    else if (type == Short.TYPE) {
+    else if (type == DataType.SHORT) {
       short[] values = reader.getShortArray(lon_array_name, geo_start, geo_count, geo_stride);
       Map<String, Object> metadata = new HashMap<>();
       metadata.put(SwathAdapter.array_name, lon_array_name);

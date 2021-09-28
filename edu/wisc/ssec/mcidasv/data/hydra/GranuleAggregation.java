@@ -76,7 +76,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    // need an ArrayList for each variable hashmap structure
    List<Map<String, Variable>> varMapList = new ArrayList<>();
    List<Map<String, String[]>> varDimNamesList = new ArrayList<>();
-   List<Map<String, Class>> varDataTypeList = new ArrayList<>();
+   List<Map<String, DataType>> varDataTypeList = new ArrayList<>();
 
    // map of granule index and granule in-track length for each variable
    Map<String, Map<Integer, Integer>> varGranInTrackLengths = new HashMap<>();
@@ -136,7 +136,7 @@ public class GranuleAggregation implements MultiDimensionReader {
         this(ncdfal, products, inTrackDimensionName, inTrackDimensionName, crossTrackDimensionName, isEDR);
    }
 
-   public Class getArrayType(String array_name) {
+   public DataType getArrayType(String array_name) {
 	   array_name = mapNameIfQualityFlag(array_name);
 	   array_name = mapNameIfLUTVar(array_name);
 	   return varDataTypeList.get(0).get(array_name);
@@ -389,7 +389,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 		   
 		   Map<String, Variable> varMap = new HashMap<>();
 		   Map<String, String[]> varDimNames = new HashMap<>();
-		   Map<String, Class> varDataType = new HashMap<>();
+		   Map<String, DataType> varDataType = new HashMap<>();
 		   
 		   Iterator<Variable> varIter = ncfile.getVariables().iterator();
 		   int varInTrackIndex = -1;
@@ -483,7 +483,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   }
 			   
 			   varDimNames.put(varName, dimNames);
-			   varDataType.put(varName, var.getDataType().getPrimitiveClassType());
+			   varDataType.put(varName, var.getDataType());
 
 			   if (varInTrackIndex < 0) {
 				   logger.debug("Skipping variable with unknown dimension: " + var.getFullName());
@@ -494,7 +494,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   granIdxToInTrackLen.put(ncIdx, new Integer(dimLengths[varInTrackIndex]));
 			   
 			   dimLengths[varInTrackIndex] = dimLengths[varInTrackIndex] * granuleCount;
-			   varDataType.put(varName, var.getDataType().getPrimitiveClassType());
+			   varDataType.put(varName, var.getDataType());
 		   }
 		   
 		   // add the new hashmaps to our enclosing lists
@@ -823,7 +823,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 	   
 	   // last, concatenate the individual NetCDF arrays pulled out 
 
-	   Class arrayType = getArrayType(array_name);
+	   DataType arrayType = getArrayType(array_name);
 	   RangeProcessor rngProcessor = varToRangeProcessor.get(array_name);
 
 	   logger.debug("Creating aggregated array, totalLength: " + totalLength);
@@ -893,7 +893,7 @@ public class GranuleAggregation implements MultiDimensionReader {
    }
 
    /* pass individual granule pieces just read from dataset through the RangeProcessor */
-   private Object processArray(String mapName, String array_name, Class arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start, int[] count) {
+   private Object processArray(String mapName, String array_name, DataType arrayType, int granIdx, Object values, RangeProcessor rngProcessor, int[] start, int[] count) {
 
 	   if (rngProcessor == null) {
 		   return values;
@@ -903,7 +903,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 
 		   Object outArray = null;
 
-		   if (arrayType == Short.TYPE) {
+		   if (arrayType == DataType.SHORT) {
 			   // if variable is a LUT var, apply LUT
 			   if ((lutMap != null) && (lutMap.containsKey(mapName))) {
 				   float lut[] = lutMap.get(mapName);
@@ -911,7 +911,7 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   } else {
 				   outArray = rngProcessor.processRange((short[]) values, null);
 			   }
-		   } else if (arrayType == Byte.TYPE) {
+		   } else if (arrayType == DataType.BYTE) {
 			   // if variable is a bit-field quality flag, apply mask
 			   if ((qfMap != null) && (qfMap.containsKey(origName))) {
 				   QualityFlag qf = qfMap.get(origName);
@@ -919,9 +919,9 @@ public class GranuleAggregation implements MultiDimensionReader {
 			   } else {
 				   outArray = rngProcessor.processRange((byte[]) values, null);
 			   }
-		   } else if (arrayType == Float.TYPE) {
+		   } else if (arrayType == DataType.FLOAT) {
 			   outArray = rngProcessor.processRange((float[]) values, null);
-		   } else if (arrayType == Double.TYPE) {
+		   } else if (arrayType == DataType.DOUBLE) {
 			   outArray = rngProcessor.processRange((double[]) values, null);
 		   }
 

@@ -54,7 +54,8 @@ public class NetCDFFile implements MultiDimensionReader {
    private final Map<String, Variable> varMap = new HashMap<>();
    private final Map<String, String[]> varDimNames = new HashMap<>();
    private final Map<String, int[]> varDimLengths = new HashMap<>();
-   private final Map<String, Class> varDataType = new HashMap<>();
+//   private final Map<String, Class> varDataType = new HashMap<>();
+   private final Map<String, DataType> varDataType = new HashMap<>();
    private final Map<String, String> varUnits = new HashMap<>();
 
    NetcdfFile ncfile = null;
@@ -137,7 +138,8 @@ public class NetCDFFile implements MultiDimensionReader {
        }
        varDimNames.put(varName, dimNames);
        varDimLengths.put(varName, dimLengths);
-       varDataType.put(varName, var.getDataType().getPrimitiveClassType());
+//       varDataType.put(varName, var.getDataType().getPrimitiveClassType());
+       varDataType.put(varName, var.getDataType());
        
        Attribute attr = var.findAttribute("units");
        if (attr != null) {
@@ -170,12 +172,17 @@ public class NetCDFFile implements MultiDimensionReader {
 
 	   StructureMembers sMembers = sData.getStructureMembers();
 	   Object obj = sData.getScalarObject(sMembers.getMember(0));
-	   varDataType.put(varName, obj.getClass());
+
+//	   varDataType.put(varName, obj.getClass());
+       varDataType.put(varName, var.getDataType());
    }
 
-   public Class getArrayType(String array_name) {
-	   return varDataType.get(array_name);
-   }
+//   public Class getArrayType(String array_name) {
+//	   return varDataType.get(array_name);
+//   }
+    public DataType getArrayType(String array_name) {
+       return varDataType.get(array_name);
+    }
 
    public String[] getDimensionNames(String array_name) {
      return varDimNames.get(array_name);

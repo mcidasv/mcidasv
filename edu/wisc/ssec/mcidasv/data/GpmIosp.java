@@ -64,7 +64,7 @@ public class GpmIosp extends AbstractIOServiceProvider {
 
     private static int[] getDimensionLengths(NetcdfFile hdf, String groupName) throws IOException {
         Group group = hdf.findGroup(groupName);
-        Variable tc = group.findVariable("Tc");
+        Variable tc = group.findVariableLocal("Tc");
         
         return new int[] {
             tc.getDimension(0).getLength(),

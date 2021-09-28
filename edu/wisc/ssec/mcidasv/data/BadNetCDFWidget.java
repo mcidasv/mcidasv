@@ -195,7 +195,7 @@ public class BadNetCDFWidget implements Constants {
         // toolsUI used
         ByteArrayOutputStream bos = new ByteArrayOutputStream(10000);
         try {
-            ncFile.writeNcML(bos, null);
+            ncFile.writeNcml(bos, null);
             NcMLeditor.setText(bos.toString());
             NcMLeditor.setCaretPosition(0);
         } catch (IOException ioe) {

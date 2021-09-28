@@ -28,6 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import ucar.ma2.DataType;
+
 import java.lang.Class;
 
 public interface MultiDimensionReader {
@@ -40,7 +42,8 @@ public interface MultiDimensionReader {
 
   public Object getArray(String name, int[] start, int[] count, int[] stride) throws Exception;
 
-  public Class getArrayType(String name);
+//  public Class getArrayType(String name);
+  public DataType getArrayType(String name);
 
   public String[] getDimensionNames(String arrayName);
 

@@ -234,7 +234,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
     private LatLonPointImpl workL = new LatLonPointImpl();
 
     /** working bearing */
-    private Bearing workB = new Bearing();
+    //private Bearing workB = new Bearing();
 
     /** working bounds rectangle */
     private Rectangle myBounds = new Rectangle();
@@ -1115,7 +1115,7 @@ public class NavigatedPanel extends JPanel implements MouseListener,
             sbuff.append(" " + workW);
         }
         if (hasReference) {
-            Bearing.calculateBearing(refLatLon, workL, workB);
+            Bearing workB = Bearing.calculateBearing(refLatLon, workL);
             sbuff.append("  (");
             sbuff.append(Format.dfrac(workB.getAngle(), 0));
             sbuff.append(" deg ");

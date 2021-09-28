@@ -507,21 +507,22 @@ public class SystemState {
                     .getResources("META-INF/MANIFEST.MF");
                     
             while (resources.hasMoreElements()) {
+                URL resource = resources.nextElement();
+                if (!resource.toString().contains("ncIdv")) {
+                    // skip over all of the JARs in the classpath except for ncIdv.
+                    continue;
+                }
                 Manifest manifest =
-                    new Manifest(resources.nextElement().openStream());
+                    new Manifest(resource.openStream());
                 Attributes attrs = manifest.getMainAttributes();
                 if (attrs != null) {
-                    String implTitle = 
-                        attrs.getValue("Implementation-Title");
-                    if ((implTitle != null) && implTitle.contains("ncIdv")) {
-                        buildInfo.put(
-                            "version",
-                            attrs.getValue("Implementation-Version"));
-                        String strDate = attrs.getValue("Built-On");
-                        Date date = formatIn.parse(strDate);
-                        buildInfo.put("buildDate", formatOut.format(date));
-                        break;
-                    }
+                    buildInfo.put(
+                        "version",
+                        attrs.getValue("Implementation-Version"));
+                    String strDate = attrs.getValue("Built-On");
+                    Date date = formatIn.parse(strDate);
+                    buildInfo.put("buildDate", formatOut.format(date));
+                    break;
                 }
             }
         } catch (IOException e) {

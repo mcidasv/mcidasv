@@ -28,6 +28,7 @@
 
 package edu.wisc.ssec.mcidasv.data.hydra;
 
+import ucar.ma2.DataType;
 import visad.FlatField;
 import visad.VisADException;
 import visad.RealType;
@@ -47,7 +48,8 @@ public abstract class MultiDimensionAdapter {
    String[] array_dim_names = null;
    int[] array_dim_lengths  = null;
    int array_rank;
-   Class arrayType;
+//   Class arrayType;
+    DataType arrayType;
 
    Map<String, String> dimNameMap = new HashMap<>();
 

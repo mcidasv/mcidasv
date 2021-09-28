@@ -150,7 +150,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
     public final static String SPACING_NON_BRIT = "4";
 
     /** The first projection we find */
-    protected ProjectionImpl sampleProjection;
+//    protected ProjectionImpl sampleProjection;
     public MapProjection sampleMapProjection;
 
     /* ADDE request string */
@@ -1857,10 +1857,10 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 throw new BadDataException("Opening area file: " + eOpen.getMessage(), eOpen);
             }
             try {
-                McIDASAreaProjection map = new McIDASAreaProjection(af);
+//                McIDASAreaProjection map = new McIDASAreaProjection(af);
                 AREACoordinateSystem acs = new AREACoordinateSystem(af);
                 sampleMapProjection = (MapProjection)acs;
-                sampleProjection = map;
+//                sampleProjection = map;
             } catch (Exception e) {
                 logger.error("making area projection: {}", e);
                 setInError(true);

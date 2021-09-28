@@ -81,17 +81,13 @@ import ucar.nc2.Group;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.NetcdfFileWriter.Version;
 import ucar.nc2.Variable;
-import ucar.nc2.dataset.CoordinateAxis;
-import ucar.nc2.dataset.CoordinateAxis1D;
-import ucar.nc2.dataset.CoordinateAxis1DTime;
-import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.dataset.VariableEnhanced;
+import ucar.nc2.dataset.*;
 import ucar.nc2.dods.DODSNetcdfFile;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.grid.CFGridWriter2;
 import ucar.nc2.dt.grid.GeoGrid;
 import ucar.nc2.dt.grid.GridDataset;
-import ucar.nc2.grib.GribVariableRenamer;
+import ucar.unidata.data.grid.GribVariableRenamer;
 import ucar.nc2.time.CalendarDate;
 import ucar.nc2.time.CalendarDateRange;
 import ucar.nc2.util.NamedAnything;
@@ -1220,6 +1216,13 @@ public class GeoGridDataSource extends GridDataSource {
             Trace.msg("GeoGridDataSource: opening file " + file);
             if (file.startsWith("http") && file.endsWith("entry.das")) {  // opendap from ramadda
                 file = DODSNetcdfFile.canonicalURL(file);
+            } else if(file.startsWith("http") && file.contains("/dods/")){
+                file = DODSNetcdfFile.canonicalURL(file);
+            } else if(file.startsWith("dods:") && file.endsWith("ncml")){
+                file = file.replace("dods:","https:");
+            }
+            if (file.contains(":443")) {
+                file = file.replace(":443","");
             }
             GridDataset gds = GridDataset.open(file);
             return gds;
@@ -2152,7 +2155,13 @@ public class GeoGridDataSource extends GridDataSource {
         if(dd != null && dt != null) {
             for(int i= 0; i < timeIndices.length; i++){
                 if (timeIndices[i] != -1) {
-                    CalendarDate cd = dd.getCalendarDate(timeIndices[i]);
+                    CalendarDate cd   = null;
+                    int dsize = dd.getCalendarDates().size();
+                    if(dsize == 1)
+                        cd  = dd.getCalendarDate(0);
+                    else
+                        cd  = dd.getCalendarDate(timeIndices[i]);
+
                     CalendarDate ct = dt.getCalendarDate(timeIndices[i]);
                     long diff = ct.getDifferenceInMsecs(cd);
                     float fh = diff / (1000.0f * 3600.0f);
@@ -2588,7 +2597,7 @@ public class GeoGridDataSource extends GridDataSource {
 
             // see if we have any categorization
             Group            group    = null;
-            VariableEnhanced variable = cfield.getVariable();
+            VariableDS variable = cfield.getVariable();
             if (variable != null) {
                 group = variable.getParentGroup();
                 if ((group != null) && !group.equals("")) {

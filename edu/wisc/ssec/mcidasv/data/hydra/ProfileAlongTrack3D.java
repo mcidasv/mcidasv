@@ -30,6 +30,7 @@ package edu.wisc.ssec.mcidasv.data.hydra;
 import java.util.HashMap;
 import java.util.Map;
 
+import ucar.ma2.DataType;
 import visad.Set;
 import visad.RealTupleType;
 import visad.RealType;
@@ -113,14 +114,14 @@ public class ProfileAlongTrack3D extends MultiDimensionAdapter {
 
     GriddedSet domainSet = null;
 
-    if (reader.getArrayType(lonArrayName) == Float.TYPE ) {
+    if (reader.getArrayType(lonArrayName) == DataType.FLOAT ) {
       float[] lonValues = reader.getFloatArray(lonArrayName, start, count, stride);
       float[] latValues = reader.getFloatArray(latArrayName, start, count, stride);
       float[][] alt_lon_lat = new float[3][vert_len*track_len];
       oneD_threeDfill(lonValues, latValues, track_len, altitudes, vert_len, alt_lon_lat);
       domainSet = new Gridded3DSet(domain3D, alt_lon_lat, vert_len, track_len);
     }
-    else if (reader.getArrayType(lonArrayName) == Double.TYPE) {
+    else if (reader.getArrayType(lonArrayName) == DataType.DOUBLE) {
       double[] lonValues = reader.getDoubleArray(lonArrayName, start, count, stride);
       double[] latValues = reader.getDoubleArray(latArrayName, start, count, stride);
       double[][] alt_lon_lat = new double[3][vert_len*track_len];
