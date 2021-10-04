@@ -80,6 +80,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#alphabetical_1.9">Alphabetical Field Listing</a></strong></li>
     <li><strong><a class="faq-question-link" href="#labels_1.9">Location Labels</a></strong></li>
     <li><strong><a class="faq-question-link" href="#sum_1.9">Vertical Sum Formula</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#minmax_1.9">Vertical Min and Max Formulas</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#rh_1.9">Improved Relative Humidity Enhancement</a></strong></li>
     <li><strong><a class="faq-question-link" href="#scripting1.9">Scripting</a></strong></li>
   </ul>
 </div>
@@ -132,7 +134,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     </div>
     <div class="faq-category"><a name="aliases1.9" id="aliases1.9"></a>
     <h4>Gridded Aliases</h4>
-    <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), <span id="value_summary_text">FNMOC COAMPS (Fleet Numerical Meteorology and Oceanography Center </span>Coupled Ocean/Atmosphere Mesoscale Prediction System), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog.  Adding these variables to the list of aliases in McIDAS-V allows for McIDAS-V to recognize the variables and therefore create derived fields and display the variables using the parameter defaults.</div>
+    <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), <span id="value_summary_text">FNMOC COAMPS (Fleet Numerical Meteorology and Oceanography Center </span>Coupled Ocean/Atmosphere Mesoscale Prediction System), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog.  Adding these variables to the list of aliases allows for McIDAS-V to recognize them and therefore create derived fields and display the variables using the parameter defaults.</div>
 	</div>
 	<div class="faq-category"><a name="tropomi1.9" id="tropomi1.9"></a>
     <h4>TROPOMI</h4>
@@ -186,7 +188,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 	</div>
     	<div class="faq-category"><a name="sum_1.9" id="sum_1.9"></a>
     <h4>Vertical Sum Formula</h4>
-    <div class="faq-answer">Added a vertical sum formula that can be found under &quot;Formulas &gt; Grids &gt; Vertical Sum&quot; that calculates the vertical sum of a 3D grid at the levels defined by the user. This formula uses the zsum() function that can also be used in foreground and background scripts.</div>
+    <div class="faq-answer">Added a vertical sum formula that can be found under &quot;Formulas &gt; Grids &gt; Vertical Sum&quot; that calculates the vertical sum of a 3D grid at the levels defined by the user. This formula uses the zsum() function that can be used in foreground and background scripts.</div>
+	</div>
+	<div class="faq-category"><a name="minmax_1.9" id="minmax_1.9"></a>
+    <h4>Vertical Min and Max Formulas</h4>
+    <div class="faq-answer">Added Max over grid levels and Min over grid levels formulas that can be found under &quot;Formulas &gt; Grids&quot;.  These formulas calculate the vertical minimum and maximum value of a 3D grid at each x/y pixel across the vertical levels defined by the user.</div>
+	</div>
+    <div class="faq-category"><a name="rh_1.9" id="rh_1.9"></a>
+    <h4>Improved Relative Humidity Enhancement</h4>
+    <div class="faq-answer">Improved the System &gt; Relative Humidity enhancement. Prior to McIDAS-V 1.9, the Relative Humidity enhancement had 20 color bins. The enhancement in version 1.9 now has 100 bins. The increase in the number of bins allows for a smoother transition of color between values and the ability to see more variation in displays.</div>
 	</div>
   <div class="faq-category"><a name="scripting1.9" id="scripting1.9"></a>
     <h4>Scripting</h4>
