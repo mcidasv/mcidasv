@@ -143,7 +143,7 @@ public class SuomiNPPChooser extends FileChooser {
         } else {
         	// throw up a dialog to tell user the problem
             JOptionPane.showMessageDialog(this,
-                "When selecting multiple granules, they must be consecutive.");
+                "When selecting multiple granules, they must be consecutive and from the same satellite.");
         }
         return false;
     }
@@ -228,6 +228,9 @@ public class SuomiNPPChooser extends FileChooser {
             String dateIdx = "_d2";
             String startTimeIdx = "_t";
             String endTimeIdx = "_e";
+            String curPlatformStr = null;
+            String prvPlatformStr = null;
+            int firstSeparator = -1;
             int timeFieldStart = 2;
             if (f.getName().matches(JPSSUtilities.JPSS_REGEX_ENTERPRISE_EDR)) {
                 dateIdx = "_s";
@@ -238,7 +241,20 @@ public class SuomiNPPChooser extends FileChooser {
 	        for (int i = 0; i < files.length; i++) {
 	            if ((files[i] != null) && !files[i].isDirectory()) {
 	                if (files[i].exists()) {
-	                	String fileName = files[i].getName(); 
+                        String fileName = files[i].getName();
+
+                        // get platform - 3 chars after first separator char
+                        firstSeparator = fileName.indexOf(JPSSUtilities.JPSS_FIELD_SEPARATOR);
+                        curPlatformStr = fileName.substring(firstSeparator + 1, firstSeparator + 4);
+                        logger.debug("platform: " + curPlatformStr);
+                        if ((prvPlatformStr != null) && (! curPlatformStr.equals(prvPlatformStr))) {
+                            logger.warn("Mixed platforms in filelist: " +
+                                curPlatformStr + ", and: " + prvPlatformStr);
+                            testResult = -1;
+                            break;
+                        }
+                        prvPlatformStr = curPlatformStr;
+
                         lastSeparator = fileName.lastIndexOf(File.separatorChar);
                         firstUnderscore = fileName.indexOf("_", lastSeparator + 1);
                         prodStr = fileName.substring(lastSeparator + 1, firstUnderscore);
