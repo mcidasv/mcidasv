@@ -53,11 +53,12 @@ public class SuomiNPPChooser extends FileChooser {
 	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPChooser.class);
-	private static final long CONSECUTIVE_GRANULE_MAX_GAP_MS = 60000;
+	// Doc says ~85 second granules, so we'll allow a bit of slop
+	private static final long CONSECUTIVE_GRANULE_MAX_GAP_MS = 86000;
 	private static final long CONSECUTIVE_GRANULE_MAX_GAP_MS_NASA = 360000;
 	
 	// date formatters for converting Suomi NPP day/time from file name for consecutive granule check
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmSSS");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     private static final SimpleDateFormat sdfNASA = new SimpleDateFormat("yyyyMMddHHmm");
 
     /**
@@ -263,9 +264,11 @@ public class SuomiNPPChooser extends FileChooser {
                         int dateIndex = fileName.lastIndexOf(dateIdx) + 2;
                         int timeIndexStart = fileName.lastIndexOf(startTimeIdx) + timeFieldStart;
                         int timeIndexEnd = fileName.lastIndexOf(endTimeIdx) + timeFieldStart;
-	                	String dateStr = fileName.substring(dateIndex, dateIndex + 8);
-	                	String timeStrStart = fileName.substring(timeIndexStart, timeIndexStart + 7);
-	                	String timeStrEnd = fileName.substring(timeIndexEnd, timeIndexEnd + 7);
+                        String dateStr = fileName.substring(dateIndex, dateIndex + 8);
+                        String timeStrStart = fileName.substring(timeIndexStart, timeIndexStart + 6);
+                        String timeStrEnd = fileName.substring(timeIndexEnd, timeIndexEnd + 6);
+                        String startSecondFraction = fileName.substring(timeIndexStart + 6, timeIndexStart + 7);
+                        String endSecondFraction = fileName.substring(timeIndexEnd + 6, timeIndexEnd + 7);
 	                	// sanity check on file name lengths
 	                	int fnLen = fileName.length();
 	                	if ((dateIndex > fnLen) || (timeIndexStart > fnLen) || (timeIndexEnd > fnLen)) {
@@ -297,12 +300,15 @@ public class SuomiNPPChooser extends FileChooser {
 							testResult = -1;
 							break;
 						}
-						long curTime = dS.getTime();
-						long endTime = dE.getTime();
+						long curTime = dS.getTime() + Integer.parseInt(startSecondFraction) * 100;
+						long endTime = dE.getTime() + Integer.parseInt(endSecondFraction) * 100;
+						logger.debug("dS: " + sdf.format(dS) + ", dE: " +  sdf.format(dE));
 						// only check current with previous
 						if (prvTime > 0) {
 							// make sure time diff does not exceed allowed threshold
 							// consecutive granules should be less than 1 minute apart
+							logger.debug("curTime: " + curTime + ", prvTime: " + prvTime);
+							logger.debug("diff: " + (curTime - prvTime));
 							if ((curTime - prvTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
 								testResult = -1;
 								break;
@@ -315,7 +321,7 @@ public class SuomiNPPChooser extends FileChooser {
 							    break;
 							}
 						}
-						prvTime = endTime;
+						prvTime = curTime;
 						prvStartTime = curTime;
 	                }
 	                prevPrd = prodStr;
