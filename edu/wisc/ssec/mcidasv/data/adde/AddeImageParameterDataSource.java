@@ -2706,6 +2706,9 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private AddeImageDescriptor getPreviewDirectory(AddeImageDescriptor aid, DataChoice dataChoice) {
 
+        // Ascending time order not guaranteed, need to always sort list to make certain
+        Collections.sort(imageTimes);
+
         // Used to detect domain shifts for sectors like ABI MESO
         float domainCenterLat = -1.0f;
         float domainCenterLon = -1.0f;
@@ -3041,14 +3044,13 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         // If domain shift was detected, keep only the pre-shift times for derived data
         logger.info("domainShiftIndex: " + domainShiftIndex);
+
         if (isDerived && (domainShiftIndex > 0)) {
-            // Ascending time order not guaranteed, need to sort list before modifying
-            Collections.sort(imageTimes);
             // This is how many time steps we remove
             int stepsToRemove = imageTimes.size() - (domainShiftIndex + 1);
             List<TwoFacedObject> datesAndTimes = dataChoice.getAllDateTimes();
             List<AddeImageDescriptor> descriptorList = getImageList();
-            // Ascending time order not guaranteed, need to sort list before modifying
+            // Ascending time order not guaranteed, need to sort the descriptor list
             Collections.sort(descriptorList);
             logger.info("AllDatesTimes size before domain shift adjustment: " + datesAndTimes.size());
             logger.info("descriptorList size before domain shift adjustment: " + descriptorList.size());
@@ -3061,6 +3063,7 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             dataChoice.setTimeSelection(imageTimes);
             setImageList(descriptorList);
             getDataContext().dataSourceChanged(this);
+
             logger.info("AllDatesTimes size after domain shift adjustment: " + datesAndTimes.size());
         }
 
