@@ -486,6 +486,7 @@ public class DataSelectionWidget {
 
         if (timesList.getModel().getSize() > 0) {
             selectionTab.add(timesComponent, "Times", 0);
+            selectionTab.revalidate();
         }
 
         if (dataSource == null) {
@@ -797,6 +798,7 @@ public class DataSelectionWidget {
             }
         }
 
+        selectionTab.revalidate();
         return newDataSource;
     }
     
