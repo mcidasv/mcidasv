@@ -60,6 +60,7 @@ import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.MapProjectionDisplayJ3D;
 import ucar.visad.display.DisplayMaster;
 import ucar.visad.display.MapLines;
+
 import visad.BaseColorControl;
 import visad.CellImpl;
 import visad.FlatField;
@@ -71,6 +72,7 @@ import visad.ScalarMap;
 import visad.VisADException;
 import visad.data.mcidas.BaseMapAdapter;
 import visad.georef.MapProjection;
+
 import edu.wisc.ssec.mcidasv.control.LambertAEA;
 import edu.wisc.ssec.mcidasv.control.RGBCompositeControl;
 import edu.wisc.ssec.mcidasv.data.hydra.HydraContext;
@@ -247,10 +249,17 @@ public class PreviewSelection extends DataSelectionComponent {
              if (! init) {
 
                  init = true;
+
+                 // Skip subset adjustment for CrIS since we don't support rubber-band box subsetting
+                 // for that sensor (not a big drawback given the low spatial resolution).
+                 String dataChoiceName = dataChoice.getName().toUpperCase();
+                 if (dataChoiceName.startsWith("CRIS")) return;
+
                  x_coords[0] = 0;
                  x_coords[1] = rbb.getLineMax();
                  y_coords[0] = 0;
                  y_coords[1] = rbb.getElemMax();
+
                  if (hasSubset) {
                      MultiDimensionSubset select = hydraContext.getMultiDimensionSubset();
                      Map<String, double[]> map = select.getSubset();
