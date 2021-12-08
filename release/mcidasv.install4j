@@ -592,6 +592,58 @@ return true;
           <screen id="78" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" rollbackBarrier="true">
             <actions>
               <action id="3252" beanClass="com.install4j.runtime.beans.actions.UninstallPreviousAction" actionElevationType="none" />
+              <action name="Explicitly remove old exe4j launchers" id="9606" beanClass="com.install4j.runtime.beans.actions.files.DeleteFileAction" actionElevationType="elevated" rollbackBarrierExitCode="0">
+                <serializedBean>
+                  <property name="directoryFilter">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string">// this is a function that is called for each directory in the list of files/directories.
+// (remember macOS .app bundles are actually directories!)
+//
+// if this function returns true, the directory is ok to remove.
+// if this function returns false, the directory shouldn't be removed.
+// 
+// we'll just use this spot as a way to remove any installed directories that don't get 
+// automatically removed otherwise.
+return directory.exists();</property>
+                    </object>
+                  </property>
+                  <property name="fileFilter">
+                    <object class="com.install4j.api.beans.ScriptProperty">
+                      <property name="value" type="string">// this is a function that is called for each file in the list of files
+//
+// if this function returns true, the file is ok to remove.
+// if this function returns false, the file shouldn't be removed.
+// 
+// we'll just use this spot as a way to remove any installed files that
+// don't get automatically removed otherwise.
+return file.exists();</property>
+                    </object>
+                  </property>
+                  <property name="files" type="array" class="java.io.File" length="4">
+                    <element index="0">
+                      <object class="java.io.File">
+                        <string>mcidasv.app</string>
+                      </object>
+                    </element>
+                    <element index="1">
+                      <object class="java.io.File">
+                        <string>mcidasv.exe</string>
+                      </object>
+                    </element>
+                    <element index="2">
+                      <object class="java.io.File">
+                        <string>mcidasv</string>
+                      </object>
+                    </element>
+                    <element index="3">
+                      <object class="java.io.File">
+                        <string>mcidasv.vmoptions</string>
+                      </object>
+                    </element>
+                  </property>
+                  <property name="recursive" type="boolean" value="true" />
+                </serializedBean>
+              </action>
               <action id="79" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" actionElevationType="elevated" failureStrategy="quit" errorMessage="${i18n:FileCorrupted}" />
               <action name="Auxdata" id="6627" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" actionElevationType="elevated">
                 <serializedBean>
@@ -1630,8 +1682,5 @@ return console.askYesNo(message, true);
     <mediaSet refId="7557" />
     <mediaSet refId="12" />
     <mediaSet refId="7720" />
-    <mediaSet refId="9022" />
-    <mediaSet refId="9055" />
-    <mediaSet refId="9060" />
   </buildIds>
 </install4j>
