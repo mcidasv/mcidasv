@@ -1548,60 +1548,6 @@ return console.askYesNo(message, true);
       </exclude>
       <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
     </windows>
-    <windows name="mcidasv.exe Windows 32-bit" id="8509" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer_TEST" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32">
-      <excludedComponents>
-        <component id="66" />
-        <component id="3653" />
-        <component id="9166" />
-        <component id="9167" />
-        <component id="9351" />
-      </excludedComponents>
-      <excludedLaunchers>
-        <launcher id="841" />
-        <launcher id="1330" />
-        <launcher id="844" />
-        <launcher id="1335" />
-      </excludedLaunchers>
-      <exclude>
-        <entry filesetId="7334" />
-        <entry filesetId="7332" />
-        <entry filesetId="8605" />
-        <entry filesetId="7408" />
-        <entry filesetId="7404" />
-        <entry filesetId="7410" />
-        <entry filesetId="7414" />
-        <entry filesetId="9156" />
-        <entry filesetId="9158" />
-      </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_112.tar.gz" manualJreEntry="true" />
-    </windows>
-    <windows name="mcidasv.exe Windows 64-bit" id="8430" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer_TEST" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
-      <excludedComponents>
-        <component id="66" />
-        <component id="3653" />
-        <component id="9166" />
-        <component id="9167" />
-        <component id="9351" />
-      </excludedComponents>
-      <excludedLaunchers>
-        <launcher id="841" />
-        <launcher id="1330" />
-        <launcher id="844" />
-        <launcher id="1335" />
-      </excludedLaunchers>
-      <exclude>
-        <entry filesetId="7334" />
-        <entry filesetId="7332" />
-        <entry filesetId="8605" />
-        <entry filesetId="7408" />
-        <entry filesetId="7404" />
-        <entry filesetId="7410" />
-        <entry filesetId="7414" />
-        <entry filesetId="9156" />
-        <entry filesetId="9158" />
-      </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
-    </windows>
     <unixInstaller name="Linux 64-bit (Java 11)" id="9022" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
       <excludedComponents>
         <component id="3653" />
