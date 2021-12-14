@@ -1413,7 +1413,7 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-x86-1.8.0_112.tar.gz" manualJreEntry="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-x86-1.8.0_312.tar.gz" manualJreEntry="true" />
     </unixInstaller>
     <unixInstaller name="Linux 64-bit" id="7557" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
       <excludedComponents>
@@ -1441,7 +1441,7 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/linux-amd64-1.8.0_312.tar.gz" manualJreEntry="true" />
     </unixInstaller>
     <unixInstaller name="Generic Unix (no JRE)" id="59" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_unix_nojava_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
       <excludedComponents>
@@ -1492,7 +1492,7 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/macosx-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/macosx-amd64-1.8.0_312.tar.gz" manualJreEntry="true" />
     </macosFolder>
     <windows name="Windows 32-bit" id="8" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" jreBitType="32">
       <excludedComponents>
@@ -1519,7 +1519,7 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_112.tar.gz" manualJreEntry="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-x86-1.8.0_312.tar.gz" manualJreEntry="true" />
     </windows>
     <windows name="Windows 64-bit" id="7720" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_windows64_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
       <excludedComponents>
@@ -1546,7 +1546,7 @@ return console.askYesNo(message, true);
         <entry filesetId="9156" />
         <entry filesetId="9158" />
       </exclude>
-      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_112.tar.gz" manualJreEntry="true" />
+      <jreBundle jreBundleSource="preCreated" includedJre="${compiler:sys.install4jHome}/jres/windows-amd64-1.8.0_312.tar.gz" manualJreEntry="true" />
     </windows>
     <unixInstaller name="Linux 64-bit (Java 11)" id="9022" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_linux_x86-64_java11_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" customInstallBaseDir="~">
       <excludedComponents>
