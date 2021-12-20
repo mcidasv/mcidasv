@@ -44,7 +44,6 @@ BRes 1.0 1.0
  7 DESC='Parallax distance (km*10)'
  8 DESC='Parallax direction (deg)'
 EndSat
-EndSat
 Sat 7
 Cal NEXR
 BRes 1.0 1.0
@@ -1393,7 +1392,7 @@ BRes 1.0 1.0
 22 DESC='UL Cloud-Base Height (km)'
 23 DESC='LL Cloud-Base Height (km)'
 EndSat
-Sat 180
+Sat 174 180
 Cal GVAR
 BRes 1.0 1.0
  1 DESC='0.63 um VIS Cloud and Surface Features' WL=0.63 um WN=15942 cm-1
@@ -1572,7 +1571,7 @@ BRes 1.0 1.0
 25 DESC='NSS: Cloud Sensor Zenith Angle'
 26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
-Sat 182 184
+Sat 176 178 182 184
 Cal GVAR
 BRes 1.0 1.0
  1 DESC='0.62 um VIS Cloud and Surface Features' WL=0.62 um WN=16007 cm-1
@@ -1751,7 +1750,7 @@ BRes 1.0 1.0
 25 DESC='NSS: Cloud Sensor Zenith Angle'
 26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
-Sat 71 73 75 77 79 181 183 185
+Sat 71 73 75 77 79 175 177 179 181 183 185
 Cal GVAR
 BRes 1.0 1.0
  1 DESC='14.7 um Stratosphere Temperature' WL=14.7 um WN=680.27 cm-1
@@ -5166,12 +5165,16 @@ BRes 0.5 0.5
 27 DESC='L2: VAA  - Volcanic Ash Mass Loading'
 28 DESC='L2: GLM  - Flash Extent Density'
 29 DESC='L2: GLM  - Flash Centroid Density'
-30 DESC='L2: GLM  - Event Density'
-31 DESC='L2: GLM  - Average Flash Density'
+30 DESC='L2: GLM  - Minimum Flash Area'
+31 DESC='L2: GLM  - Average Flash Area'
 32 DESC='L2: GLM  - Total Energy'
 33 DESC='L2: GLM  - Group Extent Density'
 34 DESC='L2: GLM  - Group Centroid Density'
 35 DESC='L2: GLM  - Average Group Area'
+36 DESC='L2: GFLS - Fog Depth'
+37 DESC='L2: GFLS - IFR Fog Probability'
+38 DESC='L2: GFLS - LIFR Fog Probability'
+39 DESC='L2: GFLS - MIFR Fog Probability'
 Cal NSSX
 BRes 1.0 1.0
 1 DESC='NSS: Cloud Type'
@@ -5213,55 +5216,55 @@ EndSat
 Sat 300 301 302 303 304 320 321 322 323 324 325 326 327 328 329
 Cal VIIR
 BRes 0.4 0.4
-1 DESC=' 0.640 um Imagery'
-2 DESC=' 0.865 um NDVI'
-3 DESC=' 1.610 um Binary Snow Map'
-4 DESC=' 3.740 um Imagery Clouds'
-5 DESC='11.450 um Cloud Imagery'
-6 DESC=' 0.412 um Ocean Color,Aerosols'
-7 DESC=' 0.445 um Ocean Color,Aerosols'
-8 DESC=' 0.488 um Ocean Color,Aerosols'
-9 DESC=' 0.555 um Ocean Color,Aerosols'
-10 DESC=' 0.672 um Ocean Color,Aerosols'
-11 DESC=' 0.746 um Atmospheric Correction'
-12 DESC=' 0.865 um Ocean Color,Aerosols'
-13 DESC=' 1.240 um Cloud Particle Size'
-14 DESC=' 1.378 um Cirrus/Cloud Cover'
-15 DESC=' 1.610 um Binary Snow Map'
-16 DESC=' 2.250 um Clouds'
-17 DESC=' 3.700 um SST'
-18 DESC=' 4.050 um SST,Fires'
-19 DESC=' 8.550 um Cloud Top Properties'
-20 DESC='10.763 um SST'
-21 DESC='12.013 um SST'
-22 DESC=' 0.700 um Imagery'
+1 DESC=' 0.640 um Imagery' WL=0.640 um WN=15625 cm-1
+2 DESC=' 0.865 um NDVI' WL=0.865 um WN=11560 cm-1
+3 DESC=' 1.610 um Binary Snow Map' WL=1.610 um WN=6211.18 cm-1
+4 DESC=' 3.740 um Imagery Clouds' WL=3.740 um WN=2673.80 cm-1
+5 DESC='11.450 um Cloud Imagery' WL=11.450 um WN=873.36 cm-1
+6 DESC=' 0.412 um Ocean Color,Aerosols' WL=0.412 um WN=24272 cm-1
+7 DESC=' 0.445 um Ocean Color,Aerosols' WL=0.445 um WN=22472 cm-1
+8 DESC=' 0.488 um Ocean Color,Aerosols' WL=0.488 um WN=20492 cm-1
+9 DESC=' 0.555 um Ocean Color,Aerosols' WL=0.555 um WN=18018 cm-1
+10 DESC=' 0.672 um Ocean Color,Aerosols' WL=0.672 um WN=14881 cm-1
+11 DESC=' 0.746 um Atmospheric Correction' WL=0.746 um WN=13405 cm-1
+12 DESC=' 0.865 um Ocean Color,Aerosols' WL=0.865 um WN=11561 cm-1
+13 DESC=' 1.240 um Cloud Particle Size' WL=1.240 um WN=8065 cm-1
+14 DESC=' 1.378 um Cirrus/Cloud Cover' WL=1.378 um WN=7256.90 cm-1
+15 DESC=' 1.610 um Binary Snow Map' WL=1.610 um WN=6211.18 cm-1
+16 DESC=' 2.250 um Clouds' WL=2.250 um WN=4444.44 cm-1
+17 DESC=' 3.700 um SST' WL=3.700 um WN=2702.70 cm-1
+18 DESC=' 4.050 um SST,Fires' WL=4.050 um WN=2469.14 cm-1
+19 DESC=' 8.550 um Cloud Top Properties' WL=8.550 um WN=1169.59 cm-1
+20 DESC='10.763 um SST' WL=10.763 um WN=929.11 cm-1
+21 DESC='12.013 um SST' WL=12.013 um WN=832.43 cm-1
+22 DESC=' 0.700 um Imagery' WL=0.700 um WN=14286 cm-1
 Cal VIRN
 BRes 0.4 0.4
-1 DESC=' 0.640 um Imagery'
-2 DESC=' 0.865 um NDVI'
-3 DESC=' 1.610 um Binary Snow Map'
-4 DESC=' 3.740 um Imagery Clouds'
-5 DESC='11.450 um Cloud Imagery'
-6 DESC=' 0.412 um Ocean Color,Aerosols'
-7 DESC=' 0.445 um Ocean Color,Aerosols'
-8 DESC=' 0.488 um Ocean Color,Aerosols'
-9 DESC=' 0.555 um Ocean Color,Aerosols'
-10 DESC=' 0.672 um Ocean Color,Aerosols'
-11 DESC=' 0.746 um Atmospheric Correction'
-12 DESC=' 0.865 um Ocean Color,Aerosols'
-13 DESC=' 1.240 um Cloud Particle Size'
-14 DESC=' 1.378 um Cirrus/Cloud Cover'
-15 DESC=' 1.610 um Binary Snow Map'
-16 DESC=' 2.250 um Clouds'
-17 DESC=' 3.700 um SST'
-18 DESC=' 4.050 um SST,Fires'
-19 DESC=' 8.550 um Cloud Top Properties'
-20 DESC='10.763 um SST'
-21 DESC='12.013 um SST'
-22 DESC=' 0.700 um Imagery'
+1 DESC=' 0.640 um Imagery' WL=0.640 um WN=15625 cm-1
+2 DESC=' 0.865 um NDVI' WL=0.865 um WN=11560 cm-1
+3 DESC=' 1.610 um Binary Snow Map' WL=1.610 um WN=6211.18 cm-1
+4 DESC=' 3.740 um Imagery Clouds' WL=3.740 um WN=2673.80 cm-1
+5 DESC='11.450 um Cloud Imagery' WL=11.450 um WN=873.36 cm-1
+6 DESC=' 0.412 um Ocean Color,Aerosols' WL=0.412 um WN=24272 cm-1
+7 DESC=' 0.445 um Ocean Color,Aerosols' WL=0.445 um WN=22472 cm-1
+8 DESC=' 0.488 um Ocean Color,Aerosols' WL=0.488 um WN=20492 cm-1
+9 DESC=' 0.555 um Ocean Color,Aerosols' WL=0.555 um WN=18018 cm-1
+10 DESC=' 0.672 um Ocean Color,Aerosols' WL=0.672 um WN=14881 cm-1
+11 DESC=' 0.746 um Atmospheric Correction' WL=0.746 um WN=13405 cm-1
+12 DESC=' 0.865 um Ocean Color,Aerosols' WL=0.865 um WN=11561 cm-1
+13 DESC=' 1.240 um Cloud Particle Size' WL=1.240 um WN=8065 cm-1
+14 DESC=' 1.378 um Cirrus/Cloud Cover' WL=1.378 um WN=7256.90 cm-1
+15 DESC=' 1.610 um Binary Snow Map' WL=1.610 um WN=6211.18 cm-1
+16 DESC=' 2.250 um Clouds' WL=2.250 um WN=4444.44 cm-1
+17 DESC=' 3.700 um SST' WL=3.700 um WN=2702.70 cm-1
+18 DESC=' 4.050 um SST,Fires' WL=4.050 um WN=2469.14 cm-1
+19 DESC=' 8.550 um Cloud Top Properties' WL=8.550 um WN=1169.59 cm-1
+20 DESC='10.763 um SST' WL=10.763 um WN=929.11 cm-1
+21 DESC='12.013 um SST' WL=12.013 um WN=832.43 cm-1
+22 DESC=' 0.700 um Imagery' WL=0.700 um WN=14286 cm-1
 Cal VIDN
 BRes 0.6 0.6
-22 DESC=' 0.700 um Imagery'
+22 DESC=' 0.700 um Imagery' WL=0.700 um WN=14286 cm-1
 Cal NSSX
 BRes 1.0 1.0
 1 DESC='NSS: Cloud Type'

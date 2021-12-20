@@ -44,7 +44,6 @@ BRes 1.0 1.0
  7 DESC='Parallax distance (km*10)'
  8 DESC='Parallax direction (deg)'
 EndSat
-EndSat
 Sat 7
 Cal NEXR
 BRes 1.0 1.0
@@ -236,7 +235,7 @@ BRes 0.5 0.5
 15 DESC='12.4 um Total Water and Ash and SST' WL=12.4 um WN=813 cm-1
 16 DESC='13.3 um Cloud height and amounts' WL=13.3 um WN=752 cm-1
 EndSat
-Sat 286 288
+Sat 286 288 289
 Cal WARC
 BRes 1.0 1.0
  1 DESC='0.47 um Blue band - aerosol,coastl water' WL=0.47 um WN=21276 cm-1
@@ -376,32 +375,32 @@ BRes 1.0 1.0
  6 DESC='CLAVRX: OBS Ch5 Temperature'
 Cal NSSX
 BRes 1.0 1.0
- 1 DESC='NSS: CLD Type'
- 2 DESC='NSS: CLD Temperature'
- 3 DESC='NSS: CLD Height'
- 4 DESC='NSS: CLD Pressure'
- 5 DESC='NSS: CLD Optical Depth'
- 6 DESC='NSS: CLD Effective Radius'
- 7 DESC='NSS: SST Temperature (No Mask)'
- 8 DESC='NSS: SST Temperature(Land/Cloud Mask)'
- 9 DESC='NSS: OBS 0.65um Reflectance'
-10 DESC='NSS: OBS 0.85um Reflectance'
-11 DESC='NSS: OBS 1.60um Reflectance'
-12 DESC='NSS: OBS 3.75um Reflectance'
-13 DESC='NSS: OBS 3.75um Temperature'
-14 DESC='NSS: OBS 11.0um Temperature'
-15 DESC='NSS: OBS 12.0um Temperature'
-16 DESC='NSS: CLD Emissivity'
-17 DESC='NSS: CLD Probability'
-18 DESC='NSS: CLD Fraction'
-19 DESC='NSS: CLD Mask'
-20 DESC='NSS: CLD Top Altitude'
-21 DESC='NSS: DCP Visible Transmission'
-22 DESC='NSS: CLD Base Altitude'
-23 DESC='NSS: CLD Cloud Cover Layer'
-24 DESC='NSS: CLD Cloud Convective Probability'
-25 DESC='NSS: CLD Sensor Zenith Angle'
-26 DESC='NSS: CLD VIIRS DNB Reflectivity'
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
 Sat 61 64
 Cal TIRO
@@ -494,32 +493,32 @@ BRes 1.0 1.0
  6 DESC='CLAVRX: OBS Ch5 Temperature'
 Cal NSSX
 BRes 1.0 1.0
- 1 DESC='NSS: CLD Type'
- 2 DESC='NSS: CLD Temperature'
- 3 DESC='NSS: CLD Height'
- 4 DESC='NSS: CLD Pressure'
- 5 DESC='NSS: CLD Optical Depth'
- 6 DESC='NSS: CLD Effective Radius'
- 7 DESC='NSS: SST Temperature (No Mask)'
- 8 DESC='NSS: SST Temperature(Land/Cloud Mask)'
- 9 DESC='NSS: OBS 0.65um Reflectance'
-10 DESC='NSS: OBS 0.85um Reflectance'
-11 DESC='NSS: OBS 1.60um Reflectance'
-12 DESC='NSS: OBS 3.75um Reflectance'
-13 DESC='NSS: OBS 3.75um Temperature'
-14 DESC='NSS: OBS 11.0um Temperature'
-15 DESC='NSS: OBS 12.0um Temperature'
-16 DESC='NSS: CLD Emissivity'
-17 DESC='NSS: CLD Probability'
-18 DESC='NSS: CLD Fraction'
-19 DESC='NSS: CLD Mask'
-20 DESC='NSS: CLD Top Altitude'
-21 DESC='NSS: DCP Visible Transmission'
-22 DESC='NSS: CLD Base Altitude'
-23 DESC='NSS: CLD Cloud Cover Layer'
-24 DESC='NSS: CLD Cloud Convective Probability'
-25 DESC='NSS: CLD Sensor Zenith Angle'
-26 DESC='NSS: CLD VIIRS DNB Reflectivity'
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
 Sat 65 66 67 68 69
 Cal AVHR
@@ -777,34 +776,34 @@ BRes 1.0 1.0
  6 DESC='CLAVRX: OBS Ch5 Temperature'
 Cal NSSX
 BRes 1.0 1.0
- 1 DESC='NSS: CLD Type'
- 2 DESC='NSS: CLD Temperature'
- 3 DESC='NSS: CLD Height'
- 4 DESC='NSS: CLD Pressure'
- 5 DESC='NSS: CLD Optical Depth'
- 6 DESC='NSS: CLD Effective Radius'
- 7 DESC='NSS: SST Temperature (No Mask)'
- 8 DESC='NSS: SST Temperature(Land/Cloud Mask)'
- 9 DESC='NSS: OBS 0.65um Reflectance'
-10 DESC='NSS: OBS 0.85um Reflectance'
-11 DESC='NSS: OBS 1.60um Reflectance'
-12 DESC='NSS: OBS 3.75um Reflectance'
-13 DESC='NSS: OBS 3.75um Temperature'
-14 DESC='NSS: OBS 11.0um Temperature'
-15 DESC='NSS: OBS 12.0um Temperature'
-16 DESC='NSS: CLD Emissivity'
-17 DESC='NSS: CLD Probability'
-18 DESC='NSS: CLD Fraction'
-19 DESC='NSS: CLD Mask'
-20 DESC='NSS: CLD Top Altitude'
-21 DESC='NSS: DCP Visible Transmission'
-22 DESC='NSS: CLD Base Altitude'
-23 DESC='NSS: CLD Cloud Cover Layer'
-24 DESC='NSS: CLD Cloud Convective Probability'
-25 DESC='NSS: CLD Sensor Zenith Angle'
-26 DESC='NSS: CLD VIIRS DNB Reflectivity'
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
-Sat 12 13
+Sat 12 13 221 222 223
 Cal GMS
 BRes 1.25 1.25
  1 DESC='0.63 um VIS Cloud and Surface Features' WL=0.63 um WN=15873 cm-1
@@ -1240,32 +1239,32 @@ BRes 1.0 1.0
  5 DESC='GSIP: GOES DIFFUSE SFC INSOLATION'
 Cal NSSX
 BRes 1.0 1.0
- 1 DESC='NSS: CLD Type'
- 2 DESC='NSS: CLD Temperature'
- 3 DESC='NSS: CLD Height'
- 4 DESC='NSS: CLD Pressure'
- 5 DESC='NSS: CLD Optical Depth'
- 6 DESC='NSS: CLD Effective Radius'
- 7 DESC='NSS: SST Temperature (No Mask)'
- 8 DESC='NSS: SST Temperature(Land/Cloud Mask)'
- 9 DESC='NSS: OBS 0.65um Reflectance'
-10 DESC='NSS: OBS 0.85um Reflectance'
-11 DESC='NSS: OBS 1.60um Reflectance'
-12 DESC='NSS: OBS 3.75um Reflectance'
-13 DESC='NSS: OBS 3.75um Temperature'
-14 DESC='NSS: OBS 11.0um Temperature'
-15 DESC='NSS: OBS 12.0um Temperature'
-16 DESC='NSS: CLD Emissivity'
-17 DESC='NSS: CLD Probability'
-18 DESC='NSS: CLD Fraction'
-19 DESC='NSS: CLD Mask'
-20 DESC='NSS: CLD Top Altitude'
-21 DESC='NSS: DCP Visible Transmission'
-22 DESC='NSS: CLD Base Altitude'
-23 DESC='NSS: CLD Cloud Cover Layer'
-24 DESC='NSS: CLD Cloud Convective Probability'
-25 DESC='NSS: CLD Sensor Zenith Angle'
-26 DESC='NSS: CLD VIIRS DNB Reflectivity'
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
 Sat 78
 Cal GVAR
@@ -1393,7 +1392,7 @@ BRes 1.0 1.0
 22 DESC='UL Cloud-Base Height (km)'
 23 DESC='LL Cloud-Base Height (km)'
 EndSat
-Sat 180
+Sat 174 180
 Cal GVAR
 BRes 1.0 1.0
  1 DESC='0.63 um VIS Cloud and Surface Features' WL=0.63 um WN=15942 cm-1
@@ -1545,34 +1544,34 @@ BRes 1.0 1.0
  5 DESC='GSIP: GOES DIFFUSE SFC INSOLATION'
 Cal NSSX
 BRes 1.0 1.0
- 1 DESC='NSS: CLD Type'
- 2 DESC='NSS: CLD Temperature'
- 3 DESC='NSS: CLD Height'
- 4 DESC='NSS: CLD Pressure'
- 5 DESC='NSS: CLD Optical Depth'
- 6 DESC='NSS: CLD Effective Radius'
- 7 DESC='NSS: SST Temperature (No Mask)'
- 8 DESC='NSS: SST Temperature(Land/Cloud Mask)'
- 9 DESC='NSS: OBS 0.65um Reflectance'
-10 DESC='NSS: OBS 0.85um Reflectance'
-11 DESC='NSS: OBS 1.60um Reflectance'
-12 DESC='NSS: OBS 3.75um Reflectance'
-13 DESC='NSS: OBS 3.75um Temperature'
-14 DESC='NSS: OBS 11.0um Temperature'
-15 DESC='NSS: OBS 12.0um Temperature'
-16 DESC='NSS: CLD Emissivity'
-17 DESC='NSS: CLD Probability'
-18 DESC='NSS: CLD Fraction'
-19 DESC='NSS: CLD Mask'
-20 DESC='NSS: CLD Top Altitude'
-21 DESC='NSS: DCP Visible Transmission'
-22 DESC='NSS: CLD Base Altitude'
-23 DESC='NSS: CLD Cloud Cover Layer'
-24 DESC='NSS: CLD Cloud Convective Probability'
-25 DESC='NSS: CLD Sensor Zenith Angle'
-26 DESC='NSS: CLD VIIRS DNB Reflectivity'
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
-Sat 182 184
+Sat 176 178 182 184
 Cal GVAR
 BRes 1.0 1.0
  1 DESC='0.62 um VIS Cloud and Surface Features' WL=0.62 um WN=16007 cm-1
@@ -1724,34 +1723,34 @@ BRes 1.0 1.0
  5 DESC='GSIP: GOES DIFFUSE SFC INSOLATION'
 Cal NSSX
 BRes 1.0 1.0
- 1 DESC='NSS: CLD Type'
- 2 DESC='NSS: CLD Temperature'
- 3 DESC='NSS: CLD Height'
- 4 DESC='NSS: CLD Pressure'
- 5 DESC='NSS: CLD Optical Depth'
- 6 DESC='NSS: CLD Effective Radius'
- 7 DESC='NSS: SST Temperature (No Mask)'
- 8 DESC='NSS: SST Temperature(Land/Cloud Mask)'
- 9 DESC='NSS: OBS 0.65um Reflectance'
-10 DESC='NSS: OBS 0.85um Reflectance'
-11 DESC='NSS: OBS 1.60um Reflectance'
-12 DESC='NSS: OBS 3.75um Reflectance'
-13 DESC='NSS: OBS 3.75um Temperature'
-14 DESC='NSS: OBS 11.0um Temperature'
-15 DESC='NSS: OBS 12.0um Temperature'
-16 DESC='NSS: CLD Emissivity'
-17 DESC='NSS: CLD Probability'
-18 DESC='NSS: CLD Fraction'
-19 DESC='NSS: CLD Mask'
-20 DESC='NSS: CLD Top Altitude'
-21 DESC='NSS: DCP Visible Transmission'
-22 DESC='NSS: CLD Base Altitude'
-23 DESC='NSS: CLD Cloud Cover Layer'
-24 DESC='NSS: CLD Cloud Convective Probability'
-25 DESC='NSS: CLD Sensor Zenith Angle'
-26 DESC='NSS: CLD VIIRS DNB Reflectivity'
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
-Sat 71 73 75 77 79 181 183 185
+Sat 71 73 75 77 79 175 177 179 181 183 185
 Cal GVAR
 BRes 1.0 1.0
  1 DESC='14.7 um Stratosphere Temperature' WL=14.7 um WN=680.27 cm-1
@@ -1801,32 +1800,32 @@ BRes 1.0 1.0
  5 DESC='GSIP: GOES DIFFUSE SFC INSOLATION'
 Cal NSSX
 BRes 1.0 1.0
- 1 DESC='NSS: CLD Type'
- 2 DESC='NSS: CLD Temperature'
- 3 DESC='NSS: CLD Height'
- 4 DESC='NSS: CLD Pressure'
- 5 DESC='NSS: CLD Optical Depth'
- 6 DESC='NSS: CLD Effective Radius'
- 7 DESC='NSS: SST Temperature (No Mask)'
- 8 DESC='NSS: SST Temperature(Land/Cloud Mask)'
- 9 DESC='NSS: OBS 0.65um Reflectance'
-10 DESC='NSS: OBS 0.85um Reflectance'
-11 DESC='NSS: OBS 1.60um Reflectance'
-12 DESC='NSS: OBS 3.75um Reflectance'
-13 DESC='NSS: OBS 3.75um Temperature'
-14 DESC='NSS: OBS 11.0um Temperature'
-15 DESC='NSS: OBS 12.0um Temperature'
-16 DESC='NSS: CLD Emissivity'
-17 DESC='NSS: CLD Probability'
-18 DESC='NSS: CLD Fraction'
-19 DESC='NSS: CLD Mask'
-20 DESC='NSS: CLD Top Altitude'
-21 DESC='NSS: DCP Visible Transmission'
-22 DESC='NSS: CLD Base Altitude'
-23 DESC='NSS: CLD Cloud Cover Layer'
-24 DESC='NSS: CLD Cloud Convective Probability'
-25 DESC='NSS: CLD Sensor Zenith Angle'
-26 DESC='NSS: CLD VIIRS DNB Reflectivity'
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
 Sat 100
 Cal MAS
@@ -5023,32 +5022,32 @@ BRes 1.0 1.0
  6 DESC='CLAVRX: OBS Ch5 Temperature'
 Cal NSSX
 BRes 1.0 1.0
- 1 DESC='NSS: CLD Type'
- 2 DESC='NSS: CLD Temperature'
- 3 DESC='NSS: CLD Height'
- 4 DESC='NSS: CLD Pressure'
- 5 DESC='NSS: CLD Optical Depth'
- 6 DESC='NSS: CLD Effective Radius'
- 7 DESC='NSS: SST Temperature (No Mask)'
- 8 DESC='NSS: SST Temperature(Land/Cloud Mask)'
- 9 DESC='NSS: OBS 0.65um Reflectance'
-10 DESC='NSS: OBS 0.85um Reflectance'
-11 DESC='NSS: OBS 1.60um Reflectance'
-12 DESC='NSS: OBS 3.75um Reflectance'
-13 DESC='NSS: OBS 3.75um Temperature'
-14 DESC='NSS: OBS 11.0um Temperature'
-15 DESC='NSS: OBS 12.0um Temperature'
-16 DESC='NSS: CLD Emissivity'
-17 DESC='NSS: CLD Probability'
-18 DESC='NSS: CLD Fraction'
-19 DESC='NSS: CLD Mask'
-20 DESC='NSS: CLD Top Altitude'
-21 DESC='NSS: DCP Visible Transmission'
-22 DESC='NSS: CLD Base Altitude'
-23 DESC='NSS: CLD Cloud Cover Layer'
-24 DESC='NSS: CLD Cloud Convective Probability'
-25 DESC='NSS: CLD Sensor Zenith Angle'
-26 DESC='NSS: CLD VIIRS DNB Reflectivity'
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
 Sat 186 188 190 192
 Cal ABIN 
@@ -5087,6 +5086,52 @@ BRes 1.0 1.0
 14 DESC='11.2 um IR Imagery,SST,clouds,rainfall' WN=893 cm-1 WL=11.2 um
 15 DESC='12.3 um IR Total water, ash, and SST' WN=813 cm-1 WL=12.3 um
 16 DESC='13.3 um IR Air temp, cloud hgt and amt' WN=752 cm-1 WL=13.3 um
+Cal SCMI
+BRes 0.5 0.5
+1 DESC='0.47 um VIS aerosol-over-land' WN=21266 cm-1 WL=0.47 um
+2 DESC='0.64 um VIS clouds fog, insol, winds' WN=15712 cm-1 WL=0.64 um
+3 DESC='0.86 um Near IR veg/burn scar,aerosol, wind' WN=11575 cm-1 WL=0.86 um
+4 DESC='1.37 um Near IR cirrus cloud' WN=7282 cm-1 WL=1.37 um
+5 DESC='1.6 um Near IR cloud phase, snow' WN=6215 cm-1 WL=1.6 um
+6 DESC='2.2 um Near IR land/cloud, vege, snow' WN=4459 cm-1 WL=2.2 um
+7 DESC='3.9 um IR Sfc, cloud, fog, fire, winds' WN=2570 cm-1 WL=3.9 um
+8 DESC='6.2 um IR High-level WV, winds, rainfall' WN=1621 cm-1 WL=6.2 um
+9 DESC='6.9 um IR Mid-level WV, winds, rainfall' WN=1444 cm-1 WL=6.9 um
+10 DESC='7.3 um IR Lower-level WV, winds & SO2' WN=1363 cm-1 WL=7.3 um
+11 DESC='8.4 um IR Total WV cloud phase, dust' WN=1184 cm-1 WL=8.4 um
+12 DESC='9.6 um IR Total ozone,turbulence,wind' WN=1041 cm-1 WL=9.6 um
+13 DESC='10.3 um IR Surface & cloud' WN=968 cm-1 WL=10.3 um
+14 DESC='11.2 um IR Imagery,SST,clouds,rainfall' WN=894 cm-1 WL=11.2 um
+15 DESC='12.3 um IR Total water, ash, and SST' WN=815 cm-1 WL=12.3 um
+16 DESC='13.3 um IR Air temp, cloud hgt and amt' WN=754 cm-1 WL=13.3 um
+Cal NSSX
+BRes 1.0 1.0
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
 Sat 187 189 191 193
 Cal ABIN 
@@ -5118,6 +5163,46 @@ BRes 0.5 0.5
 25 DESC='L2: SST  - Sea Surface Temperature'
 26 DESC='L2: VAA  - Volcanic Ash Height'
 27 DESC='L2: VAA  - Volcanic Ash Mass Loading'
+28 DESC='L2: GLM  - Flash Extent Density'
+29 DESC='L2: GLM  - Flash Centroid Density'
+30 DESC='L2: GLM  - Minimum Flash Area'
+31 DESC='L2: GLM  - Average Flash Area'
+32 DESC='L2: GLM  - Total Energy'
+33 DESC='L2: GLM  - Group Extent Density'
+34 DESC='L2: GLM  - Group Centroid Density'
+35 DESC='L2: GLM  - Average Group Area'
+36 DESC='L2: GFLS - Fog Depth'
+37 DESC='L2: GFLS - IFR Fog Probability'
+38 DESC='L2: GFLS - LIFR Fog Probability'
+39 DESC='L2: GFLS - MIFR Fog Probability'
+Cal NSSX
+BRes 1.0 1.0
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
 EndSat
 Sat 250
 Cal COMS
@@ -5128,86 +5213,122 @@ BRes 1.0 1.0
  4 DESC='10.80 um IR Surface/Cloud-top Temp' WL=10.8 um WN=925.92 cm-1
  5 DESC='12.00 um IR SFC/Cloud Temp, Low-level WV' WL=12.0 um WN=833.33 cm-1
 EndSat
-Sat 300 301 302 303 304
+Sat 300 301 302 303 304 320 321 322 323 324 325 326 327 328 329
 Cal VIIR
 BRes 0.4 0.4
-1 DESC=' 0.640 um Imagery'
-2 DESC=' 0.865 um NDVI'
-3 DESC=' 1.610 um Binary Snow Map'
-4 DESC=' 3.740 um Imagery Clouds'
-5 DESC='11.450 um Cloud Imagery'
-6 DESC=' 0.412 um Ocean Color,Aerosols'
-7 DESC=' 0.445 um Ocean Color,Aerosols'
-8 DESC=' 0.488 um Ocean Color,Aerosols'
-9 DESC=' 0.555 um Ocean Color,Aerosols'
-10 DESC=' 0.672 um Ocean Color,Aerosols'
-11 DESC=' 0.746 um Atmospheric Correction'
-12 DESC=' 0.865 um Ocean Color,Aerosols'
-13 DESC=' 1.240 um Cloud Particle Size'
-14 DESC=' 1.378 um Cirrus/Cloud Cover'
-15 DESC=' 1.610 um Binary Snow Map'
-16 DESC=' 2.250 um Clouds'
-17 DESC=' 3.700 um SST'
-18 DESC=' 4.050 um SST,Fires'
-19 DESC=' 8.550 um Cloud Top Properties'
-20 DESC='10.763 um SST'
-21 DESC='12.013 um SST'
-22 DESC=' 0.700 um Imagery'
+1 DESC=' 0.640 um Imagery' WL=0.640 um WN=15625 cm-1
+2 DESC=' 0.865 um NDVI' WL=0.865 um WN=11560 cm-1
+3 DESC=' 1.610 um Binary Snow Map' WL=1.610 um WN=6211.18 cm-1
+4 DESC=' 3.740 um Imagery Clouds' WL=3.740 um WN=2673.80 cm-1
+5 DESC='11.450 um Cloud Imagery' WL=11.450 um WN=873.36 cm-1
+6 DESC=' 0.412 um Ocean Color,Aerosols' WL=0.412 um WN=24272 cm-1
+7 DESC=' 0.445 um Ocean Color,Aerosols' WL=0.445 um WN=22472 cm-1
+8 DESC=' 0.488 um Ocean Color,Aerosols' WL=0.488 um WN=20492 cm-1
+9 DESC=' 0.555 um Ocean Color,Aerosols' WL=0.555 um WN=18018 cm-1
+10 DESC=' 0.672 um Ocean Color,Aerosols' WL=0.672 um WN=14881 cm-1
+11 DESC=' 0.746 um Atmospheric Correction' WL=0.746 um WN=13405 cm-1
+12 DESC=' 0.865 um Ocean Color,Aerosols' WL=0.865 um WN=11561 cm-1
+13 DESC=' 1.240 um Cloud Particle Size' WL=1.240 um WN=8065 cm-1
+14 DESC=' 1.378 um Cirrus/Cloud Cover' WL=1.378 um WN=7256.90 cm-1
+15 DESC=' 1.610 um Binary Snow Map' WL=1.610 um WN=6211.18 cm-1
+16 DESC=' 2.250 um Clouds' WL=2.250 um WN=4444.44 cm-1
+17 DESC=' 3.700 um SST' WL=3.700 um WN=2702.70 cm-1
+18 DESC=' 4.050 um SST,Fires' WL=4.050 um WN=2469.14 cm-1
+19 DESC=' 8.550 um Cloud Top Properties' WL=8.550 um WN=1169.59 cm-1
+20 DESC='10.763 um SST' WL=10.763 um WN=929.11 cm-1
+21 DESC='12.013 um SST' WL=12.013 um WN=832.43 cm-1
+22 DESC=' 0.700 um Imagery' WL=0.700 um WN=14286 cm-1
 Cal VIRN
 BRes 0.4 0.4
-1 DESC=' 0.640 um Imagery'
-2 DESC=' 0.865 um NDVI'
-3 DESC=' 1.610 um Binary Snow Map'
-4 DESC=' 3.740 um Imagery Clouds'
-5 DESC='11.450 um Cloud Imagery'
-6 DESC=' 0.412 um Ocean Color,Aerosols'
-7 DESC=' 0.445 um Ocean Color,Aerosols'
-8 DESC=' 0.488 um Ocean Color,Aerosols'
-9 DESC=' 0.555 um Ocean Color,Aerosols'
-10 DESC=' 0.672 um Ocean Color,Aerosols'
-11 DESC=' 0.746 um Atmospheric Correction'
-12 DESC=' 0.865 um Ocean Color,Aerosols'
-13 DESC=' 1.240 um Cloud Particle Size'
-14 DESC=' 1.378 um Cirrus/Cloud Cover'
-15 DESC=' 1.610 um Binary Snow Map'
-16 DESC=' 2.250 um Clouds'
-17 DESC=' 3.700 um SST'
-18 DESC=' 4.050 um SST,Fires'
-19 DESC=' 8.550 um Cloud Top Properties'
-20 DESC='10.763 um SST'
-21 DESC='12.013 um SST'
-22 DESC=' 0.700 um Imagery'
+1 DESC=' 0.640 um Imagery' WL=0.640 um WN=15625 cm-1
+2 DESC=' 0.865 um NDVI' WL=0.865 um WN=11560 cm-1
+3 DESC=' 1.610 um Binary Snow Map' WL=1.610 um WN=6211.18 cm-1
+4 DESC=' 3.740 um Imagery Clouds' WL=3.740 um WN=2673.80 cm-1
+5 DESC='11.450 um Cloud Imagery' WL=11.450 um WN=873.36 cm-1
+6 DESC=' 0.412 um Ocean Color,Aerosols' WL=0.412 um WN=24272 cm-1
+7 DESC=' 0.445 um Ocean Color,Aerosols' WL=0.445 um WN=22472 cm-1
+8 DESC=' 0.488 um Ocean Color,Aerosols' WL=0.488 um WN=20492 cm-1
+9 DESC=' 0.555 um Ocean Color,Aerosols' WL=0.555 um WN=18018 cm-1
+10 DESC=' 0.672 um Ocean Color,Aerosols' WL=0.672 um WN=14881 cm-1
+11 DESC=' 0.746 um Atmospheric Correction' WL=0.746 um WN=13405 cm-1
+12 DESC=' 0.865 um Ocean Color,Aerosols' WL=0.865 um WN=11561 cm-1
+13 DESC=' 1.240 um Cloud Particle Size' WL=1.240 um WN=8065 cm-1
+14 DESC=' 1.378 um Cirrus/Cloud Cover' WL=1.378 um WN=7256.90 cm-1
+15 DESC=' 1.610 um Binary Snow Map' WL=1.610 um WN=6211.18 cm-1
+16 DESC=' 2.250 um Clouds' WL=2.250 um WN=4444.44 cm-1
+17 DESC=' 3.700 um SST' WL=3.700 um WN=2702.70 cm-1
+18 DESC=' 4.050 um SST,Fires' WL=4.050 um WN=2469.14 cm-1
+19 DESC=' 8.550 um Cloud Top Properties' WL=8.550 um WN=1169.59 cm-1
+20 DESC='10.763 um SST' WL=10.763 um WN=929.11 cm-1
+21 DESC='12.013 um SST' WL=12.013 um WN=832.43 cm-1
+22 DESC=' 0.700 um Imagery' WL=0.700 um WN=14286 cm-1
 Cal VIDN
 BRes 0.6 0.6
-22 DESC=' 0.700 um Imagery'
+22 DESC=' 0.700 um Imagery' WL=0.700 um WN=14286 cm-1
 Cal NSSX
 BRes 1.0 1.0
- 1 DESC='NSS: CLD Type'
- 2 DESC='NSS: CLD Temperature'
- 3 DESC='NSS: CLD Height'
- 4 DESC='NSS: CLD Pressure'
- 5 DESC='NSS: CLD Optical Depth'
- 6 DESC='NSS: CLD Effective Radius'
- 7 DESC='NSS: SST Temperature (No Mask)'
- 8 DESC='NSS: SST Temperature(Land/Cloud Mask)'
- 9 DESC='NSS: OBS 0.65um Reflectance'
-10 DESC='NSS: OBS 0.85um Reflectance'
-11 DESC='NSS: OBS 1.60um Reflectance'
-12 DESC='NSS: OBS 3.75um Reflectance'
-13 DESC='NSS: OBS 3.75um Temperature'
-14 DESC='NSS: OBS 11.0um Temperature'
-15 DESC='NSS: OBS 12.0um Temperature'
-16 DESC='NSS: CLD Emissivity'
-17 DESC='NSS: CLD Probability'
-18 DESC='NSS: CLD Fraction'
-19 DESC='NSS: CLD Mask'
-20 DESC='NSS: CLD Top Altitude'
-21 DESC='NSS: DCP Visible Transmission'
-22 DESC='NSS: CLD Base Altitude'
-23 DESC='NSS: CLD Cloud Cover Layer'
-24 DESC='NSS: CLD Cloud Convective Probability'
-25 DESC='NSS: CLD Sensor Zenith Angle'
-26 DESC='NSS: CLD VIIRS DNB Reflectivity'
+1 DESC='NSS: Cloud Type'
+2 DESC='NSS: Cloud Top Temperature'
+3 DESC='NSS: Cloud Top Height'
+4 DESC='NSS: Cloud Top Pressure'
+5 DESC='NSS: Visible Cloud Optical Depth'
+6 DESC='NSS: Visible Cloud Effective Radius'
+7 DESC='NSS: SST Temperature - no mask'
+8 DESC='NSS: SST Temperature - land/cloud mask'
+9 DESC='NSS: 0.65 um Reflectance'
+10 DESC='NSS: 0.86 um Reflectance'
+11 DESC='NSS: 1.60 um Reflectance'
+12 DESC='NSS: 3.75 um Reflectance'
+13 DESC='NSS: 3.75 um Brightness Temperature'
+14 DESC='NSS: 11.0 um Brightness Temperature'
+15 DESC='NSS: 12.0 um Brightness Temperature'
+16 DESC='NSS: Cloud Emissivity'
+17 DESC='NSS: Cloud Probability'
+18 DESC='NSS: Cloud Fraction'
+19 DESC='NSS: Cloud Mask'
+20 DESC='NSS: Cloud Top Altitude - pressure adjusted'
+21 DESC='NSS: Transmission at 0.65 um'
+22 DESC='NSS: Cloud Base Altitude - pressure adjusted'
+23 DESC='NSS: Cloud Layer'
+24 DESC='NSS: Convective Cloud Probability'
+25 DESC='NSS: Cloud Sensor Zenith Angle'
+26 DESC='NSS: Cloud VIIRS DNB Reflectivity'
+EndSat
+Sat 309 310 311 312 313 314
+Cal MVCM
+BRes 1.0 1.0
+ 1 DESC='Integer Cloud Mask'
+ 2 DESC='Clear Sky Confidence'
+ 3 DESC='Cloud Mask: Unobstrcuted FOV'
+ 4 DESC='Cloud Mask: Day/Night'
+ 5 DESC='Cloud Mask: Sun Glint'
+ 6 DESC='Cloud Mask: Snow/Ice'
+ 7 DESC='Cloud Mask: Land/Water'
+ 8 DESC='Cloud Mask: spare'
+ 9 DESC='Cloud Mask: Thin Cirrus'
+10 DESC='Cloud Mask: Snow Cover'
+11 DESC='Cloud Mask: Thin Cirrus IR'
+12 DESC='Cloud Mask: Cloud Adjacent'
+13 DESC='Cloud Mask: Cloud Flag Ocean'
+14 DESC='Cloud Mask: spare'
+15 DESC='Cloud Mask: spare'
+16 DESC='Cloud Mask: High Cloud Test 1.38um'
+17 DESC='Cloud Mask: High Cloud Test 3.9-11um'
+18 DESC='Cloud Mask: Cloud Flag IR'
+19 DESC='Cloud Mask: Cloud Flag 3.9-11um'
+20 DESC='Cloud Mask: Cloud Flag Vis'
+21 DESC='Cloud Mask: Cloud Flag Vis Ratio'
+22 DESC='Cloud Mask: Clear Sky Restoral Coastal'
+23 DESC='Cloud Mask: Cloud Flag Water 1.6um'
+24 DESC='Cloud Mask: Cloud Flag Water 8.6um'
+25 DESC='Cloud Mask: Clear Sky Restoral Ocean'
+26 DESC='Cloud Mask: Clear Sky Restoral Tests'
+27 DESC='Cloud Mask: Cloud Flag Surface T'
+28 DESC='Cloud Mask: spare'
+29 DESC='Cloud Mask: spare'
+30 DESC='Cloud Mask: Night Ocean 11um'
+31 DESC='Cloud Mask: Night Ocean 3.9-11um'
+32 DESC='Cloud Mask: 250m'
 EndSat
 Sat 354
 Cal MSG
