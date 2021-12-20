@@ -53,8 +53,10 @@ public class SuomiNPPChooser extends FileChooser {
 	
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory.getLogger(SuomiNPPChooser.class);
-	// Doc says ~85 second granules, so we'll allow a bit of slop
-	private static final long CONSECUTIVE_GRANULE_MAX_GAP_MS = 60000;
+	// Our consecutive granule "slop"
+	// No granule of any type should be shorter than this
+	// And therefore no gap between consecutive granules could ever be greater. 5 seconds feels safe
+	private static final long CONSECUTIVE_GRANULE_MAX_GAP_MS = 5000;
 	private static final long CONSECUTIVE_GRANULE_MAX_GAP_MS_NASA = 360000;
 	
 	// date formatters for converting Suomi NPP day/time from file name for consecutive granule check
@@ -171,6 +173,7 @@ public class SuomiNPPChooser extends FileChooser {
     	
     	// TJJ Jan 2016 - different checks for NASA data, 6 minutes per granule
     	File f = files[0];
+
     	if (f.getName().matches(JPSSUtilities.SUOMI_NPP_REGEX_NASA)) {
 			// compare start time of current granule with end time of previous
 	    	// difference should be very small - under a second
@@ -280,6 +283,7 @@ public class SuomiNPPChooser extends FileChooser {
 	                    // pull start and end time out of file name
 	                    Date dS = null;
 	                    Date dE = null;
+
 	                    try {
 							dS = sdf.parse(dateStr + timeStrStart);
 							// due to nature of Suomi NPP file name encoding, we need a special
@@ -303,13 +307,17 @@ public class SuomiNPPChooser extends FileChooser {
 						}
 						long curTime = dS.getTime();
 						long endTime = dE.getTime();
-						curDuration = endTime - curTime;
+						curDuration = Math.abs(endTime - curTime);
 						// only check current with previous
 						if (prvTime > 0) {
 
-							// make sure time diff does not exceed allowed threshold
-							// consecutive granules should be less than 1 minute apart
-							if ((curTime - prvTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
+							// Make sure time diff does not exceed allowed threshold for the sensor
+							// Whatever the granule size, the time gap cannot exceed our defined "slop"
+							logger.debug("curTime (ms): " + curTime);
+							logger.debug("prvTime (ms): " + prvTime);
+							logger.debug("curDuration (ms): " + curDuration);
+							logger.debug("curTime - prvTime (ms): " + Math.abs(curTime - prvTime));
+							if (Math.abs(curTime - prvTime) > (curDuration + CONSECUTIVE_GRANULE_MAX_GAP_MS)) {
 								testResult = -1;
 								break;
 							}
@@ -320,11 +328,14 @@ public class SuomiNPPChooser extends FileChooser {
 							// The time duration gap should all be *very* similar, if not zero
 							// TODO: What is the true slop? Not all granules of the same type have
 							// exactly the same scan count, but must be within a maybe a second?
-							logger.debug("cur duration in seconds: " + (curDuration / 1000));
-							logger.debug("prv duration in seconds: " + (prvDuration / 1000));
+							// As long as our value is shorter than the shortest possible granule,
+							// we should be good
+
+							logger.debug("cur duration (s): " + (curDuration / 1000));
+							logger.debug("prv duration (s): " + (prvDuration / 1000));
 							durationDiff = Math.abs(curDuration - prvDuration) / 1000;
-							logger.debug("granule duration difference in seconds: " + durationDiff);
-							if (durationDiff > 30) {
+							logger.debug("granule duration difference (s): " + durationDiff);
+							if (durationDiff > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
 								testResult = -1;
 								break;
 							}
@@ -338,7 +349,7 @@ public class SuomiNPPChooser extends FileChooser {
 							}
 
 						}
-						prvTime = endTime;
+						prvTime = curTime;
 						prvStartTime = curTime;
 						prvDuration = curDuration;
 	                }
