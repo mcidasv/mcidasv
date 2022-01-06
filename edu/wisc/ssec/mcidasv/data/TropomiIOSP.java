@@ -112,10 +112,8 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
      * identity these sorts of paths and fix them. Otherwise we'll generate
      * an {@link java.nio.file.InvalidPathException}.</p>
      */
-    private static final Pattern BAD_WIN_PATH_DRIVE =
+    private static final Pattern BAD_WIN_PATH =
         Pattern.compile("^/[A-Za-z]:/.+$");
-    private static final Pattern BAD_WIN_PATH_URL =
-        Pattern.compile("^/https:/.+$");
 
     private static HashMap<String, String> groupMap = new HashMap<String, String>();
 
@@ -131,10 +129,10 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
         // Uses the regex defined near top
         String filePath = raf.getLocation();
         // TJJ 2022 - For URLs, just fail the match
-        if (McIDASV.isWindows() && BAD_WIN_PATH_URL.matcher(filePath).matches()) {
+        if (filePath.startsWith("https:")) {
             return false;
         }
-        if (McIDASV.isWindows() && BAD_WIN_PATH_DRIVE.matcher(filePath).matches()) {
+        if (McIDASV.isWindows() && BAD_WIN_PATH.matcher(filePath).matches()) {
             filePath = filePath.substring(1);
         }
         logger.trace("original path: '{}', path used: '{}'", raf, filePath);
