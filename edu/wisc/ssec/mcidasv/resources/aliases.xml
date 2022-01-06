@@ -165,7 +165,9 @@
      surface_air_temperature_nwp,
      surface_temperature_retrieved,
      surface_temperature_background,
-     Temperature_surface_weightedMean"/>
+     Temperature_surface_weightedMean,
+     DailyMaxAirTemp,
+     DailyMinAirTemp"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -222,7 +224,8 @@
      surface_relative_humidity_nwp,
      Maximum_relative_humidity_height_above_ground_*.*_Hour_Maximum,
      Minimum_Relative_Humidity_height_above_ground_*.*_Hour_Minimum,
-     Relative_humidity_isobaric_weightedMean"/>
+     Relative_humidity_isobaric_weightedMean,
+     rh2m"/>
   <alias
      name="Z"
      label="Z"
@@ -309,7 +312,8 @@
      .*.u-component_of_wind_height_above_ground,
      .*.u-component_of_wind_tropopause,
      .*.u-component_of_wind_maximum_wind,
-     U2D"/>
+     U2D,
+     eastward_wind"/>
   <alias
      name="V"
      label="V component of wind"
@@ -389,7 +393,8 @@
      .*.v-component_of_wind_height_above_ground,
      .*.v-component_of_wind_tropopause,
      .*.v-component_of_wind_maximum_wind,
-     V2D"/>
+     V2D,
+     northward_wind"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -484,7 +489,8 @@
      Pressure_reduced_to_MSL_msl_*.*_Average,
      pres_reduced_msl,
      .*.Pressure_reduced_to_MSL_msl,
-     MSLP_Eta_model_reduction_msl_weightedMean"/>
+     MSLP_Eta_model_reduction_msl_weightedMean,
+     prmslmsl"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
