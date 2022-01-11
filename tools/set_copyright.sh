@@ -5,7 +5,7 @@
 COPYRIGHT="../release/licenses/COPYRIGHT"
 HEADER="/tmp/copyright.header"
 
-DIRS="edu ucar visad"
+DIRS="edu ucar visad release/install4j-custom-code"
 MAX_CLIP=30
 
 TEMP="/tmp/copyright.temp"
