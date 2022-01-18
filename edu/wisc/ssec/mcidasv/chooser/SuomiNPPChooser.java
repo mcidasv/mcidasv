@@ -224,9 +224,7 @@ public class SuomiNPPChooser extends FileChooser {
 	    	// difference should be very small - under a second
 	    	long prvTime = -1;
             long prvStartTime = -1;
-            long prvDuration = -1;
-            long curDuration = -1;
-            long durationDiff = -1;
+            long prvEndTime = -1;
 	    	testResult = 0;
             int lastSeparator = -1;
             int firstUnderscore = -1;
@@ -307,7 +305,7 @@ public class SuomiNPPChooser extends FileChooser {
 						}
 						long curTime = dS.getTime();
 						long endTime = dE.getTime();
-						curDuration = Math.abs(endTime - curTime);
+
 						// only check current with previous
 						if (prvTime > 0) {
 
@@ -315,29 +313,13 @@ public class SuomiNPPChooser extends FileChooser {
 							// Whatever the granule size, the time gap cannot exceed our defined "slop"
 							logger.debug("curTime (ms): " + curTime);
 							logger.debug("prvTime (ms): " + prvTime);
-							logger.debug("curDuration (ms): " + curDuration);
-							logger.debug("curTime - prvTime (ms): " + Math.abs(curTime - prvTime));
-							if (Math.abs(curTime - prvTime) > (curDuration + CONSECUTIVE_GRANULE_MAX_GAP_MS)) {
-								testResult = -1;
-								break;
-							}
-
-							// TJJ Dec 2021 - Inq #2982
-							// Based on granule duration, make sure we are not trying to work with
-							// a mix of aggregation types (e.g. 4 granules per file versus 1-per)
-							// The time duration gap should all be *very* similar, if not zero
-							// TODO: What is the true slop? Not all granules of the same type have
-							// exactly the same scan count, but must be within a maybe a second?
-							// As long as our value is shorter than the shortest possible granule,
-							// we should be good
-
-							logger.debug("cur duration (s): " + (curDuration / 1000));
-							logger.debug("prv duration (s): " + (prvDuration / 1000));
-							durationDiff = Math.abs(curDuration - prvDuration) / 1000;
-							logger.debug("granule duration difference (s): " + durationDiff);
-							if (durationDiff > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
-								testResult = -1;
-								break;
+							logger.debug("curTime - prvEndTime (ms): " + Math.abs(curTime - prvEndTime));
+							if (Math.abs(curTime - prvEndTime) > CONSECUTIVE_GRANULE_MAX_GAP_MS) {
+								// Make sure there really is a gap, and not granule overlap
+								if (prvEndTime < curTime) {
+									testResult = -1;
+									break;
+								}
 							}
 
                             // TJJ Inq #2265, #2370. Granules need to be increasing time order 
@@ -351,9 +333,9 @@ public class SuomiNPPChooser extends FileChooser {
 						}
 						prvTime = curTime;
 						prvStartTime = curTime;
-						prvDuration = curDuration;
+						prvEndTime = endTime;
+						prevPrd = prodStr;
 	                }
-	                prevPrd = prodStr;
 	            }
 	        }
     	}
