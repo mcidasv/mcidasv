@@ -18,9 +18,9 @@
   <param ci_base="0.0" 
      name="Precipitation_rate.*"
      ci_interval="1" 
-     ci_max="50.0" 
+     ci_max="200.0" 
      ci_min="0.0" 
-     range_max="50.0" 
+     range_max="70.0" 
      range_min="0.0" 
      table="Precipitation - Transparent" 
      unit="mm/hr"/>
@@ -33,6 +33,8 @@
      range_max="45.0"
      ci_interval="5"
      ci_base="0"
+     ci_max="100.0"
+     ci_min="-180.0"
      unit="°C"/>
 
   <param
@@ -82,9 +84,9 @@
   <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="0.0" ci_width="1" name="ABI_L2_FSC" range_max="1.0" range_min="0.0" table="Fractional Snow Cover"/>
   <param ci_base="0.0" ci_interval="20.0" ci_max="340.0" ci_min="0.0" ci_width="1" name="ABI_L2_VAA_Mass" range_max="50.0" range_min="0.0" table="Volcanic Ash Mass Loading" unit="t km-2"/>
   <param ci_base="0.0" ci_interval="35.0" ci_max="280.0" ci_min="0.0" ci_width="1" name="ABI_L2_FDC_Mask" range_max="245.0" range_min="0.0" table="Fire Mask"/>
-  <param name="ABI_L2_ADP_Aerosol" range_max="1.0" range_min="0.0" table="Aerosol Detection - Aerosol"/>
-  <param name="ABI_L2_ADP_Smoke" range_max="1.0" range_min="0.0" table="Aerosol Detection - Smoke"/>
-  <param name="ABI_L2_ADP_Dust" range_max="1.0" range_min="0.0" table="Aerosol Detection - Dust"/>
+  <param ci_base="0.0" ci_interval="1.0" ci_label="false" ci_max="2.0" ci_min="-1.0" ci_width="1" name="ABI_L2_ADP_Aerosol" range_max="1.1" range_min="0.0" table="Aerosol Detection - Aerosol" unit="1"/>
+  <param ci_base="0.0" ci_interval="1.0" ci_label="false" ci_max="2.0" ci_min="-1.0" ci_width="1" name="ABI_L2_ADP_Dust" range_max="1.1" range_min="0.0" table="Aerosol Detection - Dust" unit="1"/>
+  <param ci_base="0.0" ci_interval="1.0" ci_label="false" ci_max="2.0" ci_min="-1.0" ci_width="1" name="ABI_L2_ADP_Smoke" range_max="1.1" range_min="0.0" table="Aerosol Detection - Smoke" unit="1"/>
   <param ci_base="0.0" ci_interval="5.0" ci_max="100.0" ci_min="0.0" ci_width="1" name=".*_Band24_QPE" range_max="99.0" range_min="0.0" table="Rain Rate QPF Estimate" unit="mm h-1"/>
   <!-- end inq2679 -->
   
@@ -336,4 +338,14 @@
   <!-- bob inq 2994 -->
   <param ci_base="0.0" ci_interval="0.2" ci_max="1.2" ci_min="-0.2" ci_width="1" name="Refl" range_max="1.0" range_min="0.0" table="Gray Scale" unit="1"/>
   <!-- end inq 2994 -->
+  
+  <!-- bob inq 3004 -->
+  <param ci_base="0.0" ci_interval="1.0" ci_max="200.0" ci_min="0.0" ci_width="1" name="^.*_precipitation" range_max="70.0" range_min="0.0" table="Precipitation - Transparent" unit="mm"/>
+  <param ci_base="0.0" ci_interval="1.0" ci_max="200.0" ci_min="0.0" ci_width="1" name="^precip.*" range_max="70.0" range_min="0.0" table="Precipitation - Transparent" unit="mm"/>
+  <param ci_base="1000.0" ci_interval="4.0" ci_max="2000.0" ci_min="900.0" ci_width="1" name="pressure" range_max="1052.0" range_min="952.0" table="PressureMSL" unit="hPa"/>
+  <param ci_base="0.0" ci_interval="2.0" ci_max="200.0" ci_min="-200.0" ci_width="1" name="u" range_max="50.0" range_min="-50.0" table="Wind comps" unit="m/s"/>
+  <param ci_base="0.0" ci_interval="2.0" ci_max="200.0" ci_min="-200.0" ci_width="1" name="v" range_max="50.0" range_min="-50.0" table="Wind comps" unit="m/s"/>
+  <param ci_base="0.0" ci_interval="1.0" ci_label="false" ci_max="4.0" ci_min="-1.0" ci_width="1" name="ACM" range_max="3.0" range_min="0.0" table="default"/>
+  <param ci_base="0.0" ci_interval="10.0" ci_max="200.0" ci_min="0.0" ci_width="1" name="speed" range_max="80.0" range_min="0.0" table="Windspeed" unit="m/s"/>
+  <!-- end inq 3004 -->
 </params>
