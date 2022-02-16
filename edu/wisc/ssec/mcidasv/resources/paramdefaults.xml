@@ -347,5 +347,9 @@
   <param ci_base="0.0" ci_interval="2.0" ci_max="200.0" ci_min="-200.0" ci_width="1" name="v" range_max="50.0" range_min="-50.0" table="Wind comps" unit="m/s"/>
   <param ci_base="0.0" ci_interval="1.0" ci_label="false" ci_max="4.0" ci_min="-1.0" ci_width="1" name="ACM" range_max="3.0" range_min="0.0" table="default"/>
   <param ci_base="0.0" ci_interval="10.0" ci_max="200.0" ci_min="0.0" ci_width="1" name="speed" range_max="80.0" range_min="0.0" table="Windspeed" unit="m/s"/>
+  <param ci_base="0.0" ci_interval="0.5" ci_max="100.0" ci_min="-50.0" ci_width="1" name="reflect.*" range_max="94.5" range_min="-32.0" table="Base Reflectivity - Transparent" unit="dBZ"/>
+  <param ci_base="0.0" ci_interval="0.5" ci_max="100.0" ci_min="-50.0" ci_width="1" name=".*base.*" range_max="94.5" range_min="-32.0" table="Base Reflectivity - Transparent" unit="dBZ"/>
+  <param ci_base="0.0" ci_interval="0.5" ci_max="100.0" ci_min="-50.0" ci_width="1" name=".*rcm.*" range_max="94.5" range_min="-32.0" table="Base Reflectivity - Transparent" unit="dBZ"/>
+  <param ci_base="0.0" ci_interval="0.5" ci_max="100.0" ci_min="-50.0" ci_width="1" name="7.*echo.*" range_max="94.5" range_min="-32.0" table="Base Reflectivity - Transparent" unit="dBZ"/>
   <!-- end inq 3004 -->
 </params>
