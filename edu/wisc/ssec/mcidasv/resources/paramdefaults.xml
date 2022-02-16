@@ -351,5 +351,6 @@
   <param ci_base="0.0" ci_interval="0.5" ci_max="100.0" ci_min="-50.0" ci_width="1" name=".*base.*" range_max="94.5" range_min="-32.0" table="Base Reflectivity - Transparent" unit="dBZ"/>
   <param ci_base="0.0" ci_interval="0.5" ci_max="100.0" ci_min="-50.0" ci_width="1" name=".*rcm.*" range_max="94.5" range_min="-32.0" table="Base Reflectivity - Transparent" unit="dBZ"/>
   <param ci_base="0.0" ci_interval="0.5" ci_max="100.0" ci_min="-50.0" ci_width="1" name="7.*echo.*" range_max="94.5" range_min="-32.0" table="Base Reflectivity - Transparent" unit="dBZ"/>
+  <param ci_base="0.0" ci_interval="0.1" ci_max="2.0" ci_min="-2.0" ci_width="1" name="NDVI_average" range_max="1.0" range_min="-1.0" table="NDVI"/>
   <!-- end inq 3004 -->
 </params>
