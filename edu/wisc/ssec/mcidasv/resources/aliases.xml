@@ -167,7 +167,8 @@
      surface_temperature_background,
      Temperature_surface_weightedMean,
      DailyMaxAirTemp,
-     DailyMinAirTemp"/>
+     DailyMinAirTemp,
+     T2M1"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -314,7 +315,8 @@
      .*.u-component_of_wind_tropopause,
      .*.u-component_of_wind_maximum_wind,
      U2D,
-     eastward_wind"/>
+     eastward_wind,
+     U10M"/>
   <alias
      name="V"
      label="V component of wind"
@@ -395,7 +397,8 @@
      .*.v-component_of_wind_tropopause,
      .*.v-component_of_wind_maximum_wind,
      V2D,
-     northward_wind"/>
+     northward_wind,
+     V10M"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
