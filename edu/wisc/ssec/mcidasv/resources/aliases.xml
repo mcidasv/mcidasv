@@ -225,7 +225,8 @@
      Maximum_relative_humidity_height_above_ground_*.*_Hour_Maximum,
      Minimum_Relative_Humidity_height_above_ground_*.*_Hour_Minimum,
      Relative_humidity_isobaric_weightedMean,
-     rh2m"/>
+     rh2m,
+     Relative_humidity_layer_between_two_sigmas_layer"/>
   <alias
      name="Z"
      label="Z"
