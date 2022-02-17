@@ -22,7 +22,7 @@
   <alias aliases=".*BrightnessTemp.*" label="BrightnessTemp" name="BrightnessTemp"/>
   <alias aliases=".*_Band.*_TEMP" label="BrightnessTemp" name="BrightnessTemp"/>
   <alias aliases="Total_Attenuated_Backscatter_532" label="TotalAttenuatedBackscatter_532" name="TAB_532"/>
-  <alias aliases="7_Band16_.*" label="HydrometeorClassification" name="HydrometeorClassification"/>
+  <alias aliases="7_Band16_.*,7_Band25_.*" label="HydrometeorClassification" name="HydrometeorClassification"/>
   
   <alias
      name="BrightnessTemp"
