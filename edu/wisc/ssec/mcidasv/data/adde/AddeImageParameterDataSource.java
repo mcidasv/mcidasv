@@ -2099,15 +2099,14 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             return null;
         }
 
-        if (domainShiftDetected && isDerived) {
+        if (domainShiftDetected) {
             boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
             // For derived fields this path can be executed multiple times, don't keep showing the notice!
             if (! domainShiftNoticeDerivedShown) {
                 if (! offScreen) {
                     String msg = "A domain shift occurs in the selected GEO image loop.\n" +
                             "This usually happens when a targeted sector (e.g. ABI MESO) moves.\n" +
-                            "Only the pre-shift data will be loaded and displayed, and \n" +
-                            "only those image times will be available for this data source.";
+                            "Both the pre-shift and post-shift data will be loaded and displayed.";
                     Object[] params = { msg };
                     JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
                     domainShiftNoticeDerivedShown = true;
@@ -2226,20 +2225,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                     saveEleMag = this.laLoSel.getElementMag();
                 } catch (Exception e) {
                     logger.error("error reading from laLoSel", e);
-//                    savePlace = getSavePlace();
-//                    this.laLoSel.setPlace(savePlace);
-//                    saveLat = getSaveLat();
-//                    this.laLoSel.setLatitude(saveLat);
-//                    saveLon = getSaveLon();
-//                    this.laLoSel.setLongitude(saveLon);
-//                    saveNumLine = getSaveNumLine();
-//                    this.laLoSel.setNumLines(saveNumLine);
-//                    saveNumEle = getSaveNumEle();
-//                    this.laLoSel.setNumEles(saveNumEle);
-//                    saveLineMag = getSaveLineMag();
-//                    this.laLoSel.setLineMag(saveLineMag);
-//                    saveEleMag = getSaveEleMag();
-//                    this.laLoSel.setElementMag(saveEleMag);
                     this.laLoSel.setPlace(savePlace);
                     this.laLoSel.setLatitude(saveLat);
                     this.laLoSel.setLongitude(saveLon);
@@ -2265,24 +2250,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
                 src = replaceKey(src, SIZE_KEY, saveNumLine + ' ' + saveNumEle);
                 src = replaceKey(src, MAG_KEY, saveLineMag + ' ' + saveEleMag);
             }
-
-//            try {
-//                AreaAdapter aa = new AreaAdapter(src, false);
-//                logger.trace("Getting a new aa={} for src=: {}", aa, src);
-//                areaDir = previewDir;
-//                result = aa.getImage();
-//            } catch (VisADException e) {
-//                logger.error("attempting to swallow non-fatal visad exception: ", e);
-//            } catch (java.io.IOException e) {
-//                logger.error("attempting to swallow non-fatal I/O exception: ", e);
-//            } finally {
-//                putCache(src, result);
-//                aid.setSource(src);
-//                iml.add(aid);
-//                setImageList(iml);
-//                setDisplaySource(src, props);
-//                return result;
-//            }
 
             AreaAdapter aa = new AreaAdapter(src, false);
             logger.trace("Getting a new aa={} for src=: {}", aa, src);
@@ -3044,28 +3011,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
         // If domain shift was detected, keep only the pre-shift times for derived data
         logger.info("domainShiftIndex: " + domainShiftIndex);
-
-        if (isDerived && (domainShiftIndex > 0)) {
-            // This is how many time steps we remove
-            int stepsToRemove = imageTimes.size() - (domainShiftIndex + 1);
-            List<TwoFacedObject> datesAndTimes = dataChoice.getAllDateTimes();
-            List<AddeImageDescriptor> descriptorList = getImageList();
-            // Ascending time order not guaranteed, need to sort the descriptor list
-            Collections.sort(descriptorList);
-            logger.info("AllDatesTimes size before domain shift adjustment: " + datesAndTimes.size());
-            logger.info("descriptorList size before domain shift adjustment: " + descriptorList.size());
-
-            for (int cutCount = 0; cutCount <= stepsToRemove; cutCount++) {
-                imageTimes.remove(imageTimes.size() - 1);
-                descriptorList.remove(descriptorList.size() - 1);
-                datesAndTimes.remove(datesAndTimes.size() - 1);
-            }
-            dataChoice.setTimeSelection(imageTimes);
-            setImageList(descriptorList);
-            getDataContext().dataSourceChanged(this);
-
-            logger.info("AllDatesTimes size after domain shift adjustment: " + datesAndTimes.size());
-        }
 
         logger.trace("returning AreaDirectory: {}", directory);
 //        logger.trace("could return AddeImageDescriptor:\nisRelative={}\nrelativeIndex={}\ntime={}\ndirectory={}\n", new Object[] { descriptor.getIsRelative(), descriptor.getRelativeIndex(), descriptor.getImageTime(), descriptor.getDirectory()});
