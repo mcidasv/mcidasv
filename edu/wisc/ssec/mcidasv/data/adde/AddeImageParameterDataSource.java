@@ -2673,9 +2673,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
 
     private AddeImageDescriptor getPreviewDirectory(AddeImageDescriptor aid, DataChoice dataChoice) {
 
-        // Ascending time order not guaranteed, need to always sort list to make certain
-        Collections.sort(imageTimes);
-
         // Used to detect domain shifts for sectors like ABI MESO
         float domainCenterLat = -1.0f;
         float domainCenterLon = -1.0f;
