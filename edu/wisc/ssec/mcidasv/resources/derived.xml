@@ -3431,4 +3431,17 @@
         </categories>
         <operands/>
     </derived>
+    <derived description="Sat Equiv Potential Temperature (from %N1%)" formula="DerivedGridFactory.createSatEquivalentPotentialTemperature (D1)" id="thetaesat" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category append="Derived" childidx="0" value="inherit"/>
+			<category value="display:planviewcolor"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:valuedisplay"/>
+        </categories>
+        <operands categories="GRID-3D-*;">
+            <params categories="" p1="TEMP"/>
+        </operands>
+    </derived>
 </derived_parameters>
