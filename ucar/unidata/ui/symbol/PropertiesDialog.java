@@ -270,7 +270,7 @@ public class PropertiesDialog implements ActionListener {
             }
             canvas.repaint();
         }
-        if (cmd.equals(GuiUtils.CMD_APPLY)) {
+        if (cmd.equals(GuiUtils.CMD_APPLY) || cmd.equals(GuiUtils.CMD_OK)) {
             canvas.doSave();
         }
         if (cmd.equals(GuiUtils.CMD_CANCEL) || cmd.equals(GuiUtils.CMD_OK)) {
@@ -851,8 +851,8 @@ public class PropertiesDialog implements ActionListener {
                              new String[] { GuiUtils.CMD_APPLY,
                                             GuiUtils.CMD_OK,
                                             GuiUtils.CMD_CANCEL }, new String[] {
-                                                "Apply the changes and save the station model",
-                "Apply the changes and close the window",
+                                                "Apply changes to display and save Layout Model",
+                "Apply changes to display, save Layout Model, and close window",
                 "Close the window" }, null);
 
         JPanel contents = GuiUtils.centerBottom(tabbedPane, buttons);
