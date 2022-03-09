@@ -2099,23 +2099,6 @@ public class AddeImageParameterDataSource extends AddeImageDataSource {
             return null;
         }
 
-        if (domainShiftDetected) {
-            boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
-            // For derived fields this path can be executed multiple times, don't keep showing the notice!
-            if (! domainShiftNoticeDerivedShown) {
-                if (! offScreen) {
-                    String msg = "A domain shift occurs in the selected GEO image loop.\n" +
-                            "This usually happens when a targeted sector (e.g. ABI MESO) moves.\n" +
-                            "Both the pre-shift and post-shift data will be loaded and displayed.";
-                    Object[] params = { msg };
-                    JOptionPane.showMessageDialog(null, params, "Notice", JOptionPane.OK_OPTION);
-                    domainShiftNoticeDerivedShown = true;
-                } else {
-                    logger.warn("Note: A domain shift occurs in the selected GEO image loop");
-                }
-            }
-        }
-
         logger.trace("incoming src={} DateTime={} readLabel={}", new Object[] { aid.getSource(), aid.getImageTime(), readLabel });
         String src = aid.getSource();
 
