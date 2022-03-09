@@ -88,8 +88,10 @@ def ABIDayCloudPhaseRGB(b2A, b5A, b13T):
     # red = band 13; 280.65K to 219.65K rescaled to 0 to 255
     # grn = band 2; 0% to 78% rescaled to 0 to 255
     # blu = band 5; 1% to 59% rescaled to 0 to 255
-    hr_b13T = resampleGrid(b13T, b2A)
-    red = rescale(hr_b13T, 280.65, 219.65, 0, 255)
+    time_steps = b13T.getLength()
+    for i in range(time_steps):
+       b13T.setSample(i, resampleGrid(b13T[i], b2A[i]))
+    red = rescale(b13T, 280.65, 219.65, 0, 255)
     grn = rescale(b2A, 0, 78, 0, 255)
     blu = rescale(b5A, 1, 59, 0, 255)
     return combineRGB(red, grn, blu)
@@ -111,8 +113,10 @@ def ABIDayLandCloudRGB(b2A, b3A, b5A):
     # red = band5; 0% to 97.5% rescaled to 0 to 255
     # grn = band3; 0% to 108.6% rescaled to 0 to 255
     # blu = band2; 0% to 100% rescaled to 0 to 255
-    hr_b5A = resampleGrid(b5A, b2A)
-    red = rescale(hr_b5A, 0, 97.5, 0, 255)
+    time_steps = b5A.getLength()
+    for i in range(time_steps):
+       b5A.setSample(i, resampleGrid(b5A[i], b2A[i]))
+    red = rescale(b5A, 0, 97.5, 0, 255)
     grn = rescale(b3A, 0, 108.6, 0, 255)
     blu = rescale(b2A, 0, 100, 0, 255)
     return combineRGB(red, grn, blu)
@@ -123,8 +127,10 @@ def ABIDayLandCloudFireRGB(b2A, b3A, b6A):
     # red = band6; 0% to 100% rescaled to 0 to 255
     # grn = band3; 0% to 100% rescaled to 0 to 255
     # blu = band2; 0% to 100% rescaled to 0 to 255
-    hr_b6A = resampleGrid(b6A, b2A)
-    red = rescale(hr_b6A, 0, 100, 0, 255)
+    time_steps = b6A.getLength()
+    for i in range(time_steps):
+       b6A.setSample(i, resampleGrid(b6A[i], b2A[i]))
+    red = rescale(b6A, 0, 100, 0, 255)
     grn = rescale(b3A, 0, 100, 0, 255)
     blu = rescale(b2A, 0, 100, 0, 255)
     return combineRGB(red, grn, blu)
@@ -179,8 +185,10 @@ def ABIFireTemperatureRGB(b5A, b6A, b7T):
     # red = band7; 0C to 60C rescaled to 0 to 255; gamma 0.4
     # grn = band6; 0% to 100% rescaled to 0 to 255; gamma 1.0
     # blu = band5; 0% to 75% rescaled to 0 to 255; gamma 1.0
-    hr_b7T = resampleGrid(b7T, b5A)
-    red = 255*(rescale(hr_b7T, 273.15, 333.15, 0, 1)**2.5)
+    time_steps = b7T.getLength()
+    for i in range(time_steps):
+       b7T.setSample(i, resampleGrid(b7T[i], b5A[i]))
+    red = 255*(rescale(b7T, 273.15, 333.15, 0, 1)**2.5)
     grn = rescale(b6A, 0, 100, 0, 255)
     blu = rescale(b5A, 0, 75, 0, 255)
     return combineRGB(red, grn, blu)
@@ -213,9 +221,12 @@ def ABIDayConvectionRGB(b2A, b5A, b7T, b8T, b10T, b13T):
     # red = band8 - band10; -35C to 5C rescaled to 0 to 255; gamma 1.0
     # grn = band7 - band13; -5C to 60C rescaled to 0 to 255; gamma 1.0
     # blu = band5 - band2; -0.75% to 0.25% rescaled to 0 to 255; gamma 1.0
-    hr_b8T = resampleGrid(b8T, b2A)
-    hr_b10T = resampleGrid(b10T, b2A)
-    red = rescale(hr_b8T-hr_b10T, -35, 5, 0, 255)
+    time_steps = b8T.getLength()
+    for i in range(time_steps):
+       b8T.setSample(i, resampleGrid(b8T[i], b2A[i]))
+    for i in range(time_steps):
+       b10T.setSample(i, resampleGrid(b10T[i], b2A[i]))
+    red = rescale(b8T-b10T, -35, 5, 0, 255)
     grn = rescale(b7T-b13T, -5, 60, 0, 255)
     blu = rescale(b5A-b2A, -0.75, 0.25, 0, 255)
     return combineRGB(red, grn, blu)
@@ -225,8 +236,10 @@ def ABICloudTypeRGB(b4A, b2A, b5A):
     # red = band 4; 0% to 10% rescaled to 0 to 255; gamma 2.5
     # grn = band 2; 0% to 50% rescaled to 0 to 255; gamma 1.4
     # blu = band 5; 0% to 50% rescaled to 0 to 255; gamma 1.5
-    hr_b4A = resampleGrid(b4A, b2A)
-    red = 255*(rescale(hr_b4A, 0, 10, 0, 1)**0.4)
+    time_steps = b4A.getLength()
+    for i in range(time_steps):
+       b4A.setSample(i, resampleGrid(b4A[i], b2A[i]))
+    red = 255*(rescale(b4A, 0, 10, 0, 1)**0.4)
     grn = 255*(rescale(b2A, 0, 50, 0, 1)**0.7)
     blu = 255*(rescale(b5A, 0, 50, 0, 1)**0.7)
     return combineRGB(red, grn, blu)
@@ -254,7 +267,6 @@ def ABISplitSnowDifference(b5R, b2R):
 def ABISplitCloudPhaseDifference(b14T, b11T):
     # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_G16_CloudPhaseBTD.pdf
     # band14 temperature - band11 temperature
-    
     return sub(b14T, b11T)
 
 # Split Window Channel Difference
