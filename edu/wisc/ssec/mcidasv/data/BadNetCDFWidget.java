@@ -627,7 +627,7 @@ public class BadNetCDFWidget implements Constants {
             messageTextPane.setText("<html>\n<body "+
                 fontCss + 
                 ">To verify if your file is CF-compliant, you can run your file through an online compliance checker " + 
-                "(<a href=\"http://cfconventions.org/compliance-checker.html\">example CF-compliance utility</a>). " + 
+                "(<a href=\"https://pumatest.nerc.ac.uk/cgi-bin/cf-checker.pl\">example CF-compliance utility</a>). " + 
                 "<br/><br/> \n\nIf the checker indicates that your file is not compliant you can attempt to fix it using " + 
                 "the NcML Editor provided in this window.<br/><br/>\n\nIn a future release of McIDAS-V, this interface will " +  
                 "present you with choices for the variables necessary for McIDAS-V to display your data.<br/></font></body></html>");
