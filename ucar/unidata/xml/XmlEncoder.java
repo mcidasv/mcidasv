@@ -72,6 +72,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class XmlEncoder extends XmlUtil {
 
+    private final static Object lock = new Object();
+
     private static final Logger logger = LoggerFactory.getLogger(XmlObjectStore.class);
 
     /**
@@ -2792,53 +2794,51 @@ public class XmlEncoder extends XmlUtil {
      *  @return A list of xml Elements or null if the object is not special.
      */
     public List getSpecialCaseElements(Object object) {
+
         if (object instanceof List) {
             List v        = (List) object;
-            List elements = new ArrayList(v.size());
-            for (int i = 0; i < v.size(); i++) {
-                Element argumentElement = createElement(v.get(i));
-                if (argumentElement != null) {
-                    elements.add(createMethodElement(METHOD_ADD,
-                            argumentElement));
-                }
+            List elements = null;
+            synchronized (lock) {
+               elements = new ArrayList(v.size());
+               for (int i = 0; i < v.size(); i++) {
+                  Element argumentElement = createElement(v.get(i));
+                  if (argumentElement != null) {
+                     elements.add(createMethodElement(METHOD_ADD, argumentElement));
+                  }
+               }
             }
             return elements;
         }
 
         if (object instanceof Map) {
-            Map<Object, Object> map      = (Map<Object, Object>) object;
-            List                elements = new ArrayList(map.size());
-            for (Map.Entry entry : map.entrySet()) {
-                Element methodElement = createMethodElement(METHOD_PUT);
-                methodElement.appendChild(createElement(entry.getKey()));
-                methodElement.appendChild(createElement(entry.getValue()));
-                elements.add(methodElement);
+           List elements = null;
+           synchronized (lock) {
+              Map<Object, Object> map      = (Map<Object, Object>) object;
+              elements = new ArrayList(map.size());
+              for (Map.Entry entry : map.entrySet()) {
+                 Element methodElement = createMethodElement(METHOD_PUT);
+                 methodElement.appendChild(createElement(entry.getKey()));
+                 methodElement.appendChild(createElement(entry.getValue()));
+                 elements.add(methodElement);
+              }
             }
             return elements;
         }
 
         if (object instanceof Set) {
             Set  s        = (Set) object;
-            List elements = new ArrayList(s.size());
-            for (Object o : s) {
-                Element methodElement = createMethodElement(METHOD_ADD);
-                methodElement.appendChild(createElement(o));
-                elements.add(methodElement);
+            List elements = null;
+            synchronized (lock) {
+               elements = new ArrayList(s.size());
+               for (Object o : s) {
+                  Element methodElement = createMethodElement(METHOD_ADD);
+                  methodElement.appendChild(createElement(o));
+                  elements.add(methodElement);
+               }
             }
             return elements;
         }
-        /*
-        if (object instanceof HashSet) {
-            List      elements = new ArrayList();
-            HashSet ht       = (HashSet) object;
-            for (Enumeration keys = ht.keys(); keys.hasMoreElements(); ) {
-                Object  key           = keys.nextElement();
-                Element methodElement = createMethodElement(METHOD_ADD);
-                methodElement.appendChild(createElement(key));
-                elements.add(methodElement);
-            }
-            return elements;
-            }*/
+
         return null;
     }
 
