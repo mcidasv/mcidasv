@@ -30,35 +30,35 @@
 			<Datum>
 				<Description>Top of Atmosphere radiances for the M-Band selected</Description>
 				<DatumOffset>0</DatumOffset>
-				<Scaled>1</Scaled>
+				<Scaled>0</Scaled>
 				<ScaleFactorName>RadianceFactors</ScaleFactorName>
 				<MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
 				<RangeMin>Varies</RangeMin>
 				<RangeMax>Varies</RangeMax>
-				<DataType>unsigned 16-bit integer</DataType>
+				<DataType>32-bit floating point</DataType>
 				<FillValue>
-					<Name>NA_UINT16_FILL</Name>
-					<Value>65535</Value>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
 				</FillValue>
 				<FillValue>
-					<Name>MISS_UINT16_FILL</Name>
-					<Value>65534</Value>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
 				</FillValue>
 				<FillValue>
-					<Name>ERR_UINT16_FILL</Name>
-					<Value>65531</Value>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
 				</FillValue>
 				<FillValue>
-					<Name>ELINT_UINT16_FILL</Name>
-					<Value>65530</Value>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
 				</FillValue>
 				<FillValue>
-					<Name>VDNE_UINT16_FILL</Name>
-					<Value>65529</Value>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
 				</FillValue>
 				<FillValue>
-					<Name>SOUB_UINT16_FILL</Name>
-					<Value>65528</Value>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
 				</FillValue>
 			</Datum>
 		</Field>
@@ -86,35 +86,35 @@
 			<Datum>
 				<Description>Brightness Temperatures (for an emissive M-Band) or Top of Atmosphere Reflectances (for a reflective M-Band) for the selected M-Band</Description>
 				<DatumOffset>0</DatumOffset>
-				<Scaled>1</Scaled>
+				<Scaled>0</Scaled>
 				<ScaleFactorName>BrightnessFactors</ScaleFactorName>
 				<MeasurementUnits>K</MeasurementUnits>
 				<RangeMin>Varies (for BrightnessTemp) or 0.00 (for Reflectance)</RangeMin>
 				<RangeMax>Varies (for BrightnessTemp) or 1.60 (for Reflectance)</RangeMax>
-				<DataType>unsigned 16-bit integer</DataType>
+				<DataType>32-bit floating point</DataType>
 				<FillValue>
-					<Name>NA_UINT16_FILL</Name>
-					<Value>65535</Value>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.9</Value>
 				</FillValue>
 				<FillValue>
-					<Name>MISS_UINT16_FILL</Name>
-					<Value>65534</Value>
+					<Name>NA_FLOAT32_FILL</Name>
+					<Value>-999.8</Value>
 				</FillValue>
 				<FillValue>
-					<Name>ERR_UINT16_FILL</Name>
-					<Value>65531</Value>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.7</Value>
 				</FillValue>
 				<FillValue>
-					<Name>ELINT_UINT16_FILL</Name>
-					<Value>65530</Value>
+					<Name>ONBOARD_PT_FLOAT32_FILL</Name>
+					<Value>-999.6</Value>
 				</FillValue>
 				<FillValue>
-					<Name>VDNE_UINT16_FILL</Name>
-					<Value>65529</Value>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.5</Value>
 				</FillValue>
 				<FillValue>
-					<Name>SOUB_UINT16_FILL</Name>
-					<Value>65528</Value>
+					<Name>ERR_FLOAT32_FILL</Name>
+					<Value>-999.3</Value>
 				</FillValue>
 			</Datum>
 		</Field>
