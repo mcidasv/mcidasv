@@ -39,7 +39,7 @@
 				<DatumOffset>0</DatumOffset>
 				<Scaled>1</Scaled>
 				<ScaleFactorName>RadianceFactors</ScaleFactorName>
-				<MeasurementUnits>W/(m2 sr um)</MeasurementUnits>
+				<MeasurementUnits>W/(m^2 μm sr)</MeasurementUnits>
 				<RangeMin>-0.08</RangeMin>
 				<RangeMax>18.49</RangeMax>
 				<DataType>unsigned 16-bit integer</DataType>
