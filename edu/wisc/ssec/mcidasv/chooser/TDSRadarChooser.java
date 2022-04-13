@@ -462,7 +462,7 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
      *
      * @param url   URL for the collection
      */
-    public void initializeCollection(String url) {
+    public synchronized void initializeCollection(String url) {
 
         List<NamedStationImpl> stations = new ArrayList<NamedStationImpl>();
         try {
