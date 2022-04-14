@@ -934,7 +934,7 @@
             <category value="display:planviewcontour"/>
         </categories>
         <operands categories="">
-            <paramgroup categories="" name="NDSI"/>
+            <paramgroup categories="" name="JPSS_NDSI"/>
         </operands>
     </derived>
     <derived description="VIIRS SDR Nighttime Microphysics RGB" formula="VIIRSNightMicrophysicsRGB(D1[label=M12 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsNighttimeMicrophysics" isdefault="true" isenduser="true" override="true">
