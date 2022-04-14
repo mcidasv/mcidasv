@@ -272,31 +272,10 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	filenameMap.put(prodStr, l);
         }
         
-        versionCheck();
         setup();
         initQfTranslations();
     }
     
-    // alert user about possible VIIRS plugin compatibility issues
-    private void versionCheck() {
-    	boolean pluginDialog = getIdv().getStore().get(Constants.PREF_VIIRS_PLUGIN, false);
-    	// don't create a dialog though if we are running in background/offscreen mode
-    	boolean offScreen = getIdv().getArgsManager().getIsOffScreen();
-    	if (! offScreen) {
-	    	if (! pluginDialog) {
-	    		String msg = "There has been an update to the VIIRS Formulas plugin.\n" +
-	    				"If you use the plugin, you will need to uninstall the currently installed\n" +
-	    				"version of the plugin, and install the plugin called \"VIIRS Formulas\".";
-	    		JCheckBox jcbPlugin = new JCheckBox("Do not show this message again");
-	    		Object[] params = { msg, jcbPlugin };
-	    		JOptionPane.showMessageDialog(null, params, "Plugin Compatibility Notice", JOptionPane.OK_OPTION);
-	    		boolean dontShow = jcbPlugin.isSelected();
-	    		getIdv().getStore().put(Constants.PREF_VIIRS_PLUGIN, dontShow);
-	    	}	
-    	} else {
-    		logger.warn("Make sure your VIIRS plugin is current, there was an update with McV 1.5");
-    	}
-	}
 
 	public void setup() throws VisADException {
 
