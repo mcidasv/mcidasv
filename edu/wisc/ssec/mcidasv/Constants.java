@@ -237,16 +237,6 @@ public interface Constants extends IdvConstants {
     /** Preference for saving image preview default. */
     String PREF_IMAGE_PREVIEW = "mcidasv.chooser.adde.preview";
     
-    /** 
-     * Whether to show user VIIRS plugin compatibility check popup.
-     * Increment the counter below with each update of the plugin.
-     */
-    int VIIRS_PLUGIN_VERSION_NUMBER = 2;
-
-    /** Alert user VIIRS plugin needs updating */
-    String PREF_VIIRS_PLUGIN =
-        "mcidasv.viirs.pluginversion" + VIIRS_PLUGIN_VERSION_NUMBER;
-    
     /** Used to alert user they are modifying default color table */
     String PREF_MODIFY_DEFAULT_COLOR_TABLE = "mcidasv.default.colortable.modify";
 
