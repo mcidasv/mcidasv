@@ -111,6 +111,11 @@
   <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="0.0" ci_width="1" name="VIIRS_NDSI" range_max="1.0" range_min="0.0" table="NDSI"/>
   <!-- end inq 2670 -->
   
+  <!-- bob inq 2982 - Apr 2022 -->
+  <param ci_base="0.0" ci_interval="0.1" ci_max="2.0" ci_min="-2.0" ci_width="1" name="VIIRS_EDR_NDVI" range_max="1.0" range_min="-1.0" table="NDVI"/>
+  <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="0.0" ci_width="1" name="VIIRS_EDR_NDSI" range_max="1.0" range_min="0.0" table="NDSI"/>
+  <!-- end inq 2982 -->
+  
   <!-- bob inq 2881 - Sep 2021 -->
   <param ci_base="0.0" ci_interval="0.1" ci_max="1.1" ci_min="-0.1" ci_width="1" name="PRODUCT_SUPPORT_DATA_DETAILED_RESULTS/cloud_fraction_intensity_weighted_precision" range_max="1.0" range_min="0.0" table="default" unit="1"/>
   <!-- end inq 2881 -->
