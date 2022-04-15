@@ -2002,7 +2002,7 @@
         </operands>
     </derived>
     <derived description="systematic error of the total vertical column density of sulfur dioxide for a sulfur dioxide plume at 15km altitude w.r.t. the topography (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="tot_vert_so2_15km_trueness_molecules_cm2" isdefault="true" isenduser="false" override="true">
-        <categories>molecules
+        <categories>
             <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_DETAILED_RESULTS-Derived"/>
             <category value="display:planviewcolor"/>
             <category value="display:valuedisplay"/>
@@ -3536,6 +3536,228 @@
             <paramgroup categories="GRID-2D-*;" name="NUCAPS_T_RH"/>
         </operands>
     </derived>
+    <!-- bob inq 3012 - Apr 2022 - TROPOMI O3 full profile data -->
+    <derived description="ozone_total_column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_profile_vert_col_DU" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_total_column"/>
+        </operands>
+    </derived>
+    <derived description="ozone_total_column (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="O3_profile_vert_col_molecules_cm2" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_total_column"/>
+        </operands>
+    </derived>
+    <derived description="ozone_total_column_precision (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_profile_total_precision_DU" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_total_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="ozone_total_column_precision (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="O3_profile_total_precision_molecules_cm2" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_total_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="ozone_tropospheric_column (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_profile_trop_DU" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_tropospheric_column"/>
+        </operands>
+    </derived>
+    <derived description="ozone_tropospheric_column (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="O3_profile_trop_molecules_cm2" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_tropospheric_column"/>
+        </operands>
+    </derived>
+    <derived description="ozone_tropospheric_column_precision (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_profile_trop_precision_DU" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_tropospheric_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="ozone_tropospheric_column_precision (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="O3_profile_trop_precision_molecules_cm2" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/ozone_tropospheric_column_precision"/>
+        </operands>
+    </derived>
+    <derived description="ozone_total_column_apriori (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="O3_profile_total_apriori_DU" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:imagedisplay"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_column_apriori"/>
+        </operands>
+    </derived>
+    <derived description="ozone_total_column_apriori (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="O3_profile_total_apriori_molecules_cm2" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT_SUPPORT_DATA_INPUT_DATA-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT_SUPPORT_DATA_INPUT_DATA/ozone_total_column_apriori"/>
+        </operands>
+    </derived>
+    <!-- end inq 3012 -->
     <!-- Adding vertical min/max formulas - RMC - INQ 2973 - Jun 2021 -->
     <derived description="Max over grid levels" formula="zmax(grid)" id="levels max" isdefault="false" isenduser="true">
         <categories>
