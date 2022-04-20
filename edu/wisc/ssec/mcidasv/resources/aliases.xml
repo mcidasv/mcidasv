@@ -63,9 +63,32 @@
      CMI_C13,
      CMI_C14,
      CMI_C15,
-     CMI_C16"/>
+     CMI_C16,
+     BT_CH5,
+     BT_CH4,
+     BT_CH3,
+     irwvp,
+     irwvp_2,
+     irwin_2,
+     irwvp,
+     irwvp_2,
+     irwin_2,
+     fcdr_brightness_temperature_*.*"/>
   
-  <alias aliases="CMI_C01,CMI_C02,CMI_C03,CMI_C04,CMI_C05,CMI_C06" label="Reflectance" name="Refl"/>
+  <alias 
+     name="Refl"
+     label="Reflectance"
+     aliases="CMI_C01,
+     CMI_C02,
+     CMI_C03,
+     CMI_C04,
+     CMI_C05,
+     CMI_C06,
+     SREFL_CH3,
+     SREFL_CH2,
+     SREFL_CH1,
+     vschn,
+     vschn_2"/>
   
 <alias
      name="ABSVOR"
