@@ -73,6 +73,7 @@
      irwvp,
      irwvp_2,
      irwin_2,
+     irwin_cdr,
      fcdr_brightness_temperature_*.*"/>
   
   <alias 
