@@ -424,6 +424,9 @@
     <params p1="U-component_of_horizontal_wind_altitude_above_msl" p2="V-component_of_horizontal_wind_altitude_above_msl"/>
     <params p1="U-component_of_horizontal_wind_isobaric" p2="V-component_of_horizontal_wind_isobaric"/>
     <params p1="U-component_of_horizontal_wind_height_above_ground" p2="V-component_of_horizontal_wind_height_above_ground"/>
+    <params p1="u-component_of_storm_motion_layer_between_two_heights_above_ground_layer" p2="v-component_of_storm_motion_layer_between_two_heights_above_ground_layer"/>
+    <params p1="u-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average" p2="v-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average"/>
+    <params p1="u-component_of_wind_height_above_ground_*.*_Hour_Average" p2="v-component_of_wind_height_above_ground_*.*_Hour_Average"/>
   </paramgroup>
   <paramgroup description="" name="u_and_v">
     <params p1="u-component_of_wind_altitude_above_msl_ens" p2="v-component_of_wind_altitude_above_msl_ens"/>
@@ -437,6 +440,9 @@
     <params p1="U-component_of_horizontal_wind_altitude_above_msl" p2="V-component_of_horizontal_wind_altitude_above_msl"/>
     <params p1="U-component_of_horizontal_wind_isobaric" p2="V-component_of_horizontal_wind_isobaric"/>
     <params p1="U-component_of_horizontal_wind_height_above_ground" p2="V-component_of_horizontal_wind_height_above_ground"/>
+    <params p1="u-component_of_storm_motion_layer_between_two_heights_above_ground_layer" p2="v-component_of_storm_motion_layer_between_two_heights_above_ground_layer"/>
+    <params p1="u-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average" p2="v-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average"/>
+    <params p1="u-component_of_wind_height_above_ground_*.*_Hour_Average" p2="v-component_of_wind_height_above_ground_*.*_Hour_Average"/>
   </paramgroup>
   <!-- RMC Nov 2020 Inq 2940 -->
   <paramgroup description="AVHRR Night Microphysics RGB" name="AVHRR_RGB_NightMicrophysics">
@@ -458,6 +464,9 @@
     <params p1="240_Band3_TEMP" p2="240_Band4_TEMP" p3="240_Band5_TEMP"/>
     <params p1="241_Band3_TEMP" p2="241_Band4_TEMP" p3="241_Band5_TEMP"/>
     <params p1="242_Band3_TEMP" p2="242_Band4_TEMP" p3="242_Band5_TEMP"/>
+    <params p1="BT_CH3" p2="BT_CH4" p3="BT_CH5"/>
+    <params p1="fcdr_brightness_temperature_ch3" p2="fcdr_brightness_temperature_ch4" p3="fcdr_brightness_temperature_ch5"/>
+    <params p1="temp_3_75um_nom" p2="temp_11_0um_nom" p3="temp_12_0um_nom"/>
   </paramgroup>
   <paramgroup description="AVHRR Day Microphysics RGB" name="AVHRR_RGB_DayMicrophysics">
     <params p1="41_Band2_REFL" p2="41_Band4_TEMP" p3="41_Band6_REFL"/>
@@ -518,6 +527,9 @@
     <params p1="240_Band1_REFL" p2="240_Band2_REFL" p3="240_Band4_TEMP"/>
     <params p1="241_Band1_REFL" p2="241_Band2_REFL" p3="241_Band4_TEMP"/>
     <params p1="242_Band1_REFL" p2="242_Band2_REFL" p3="242_Band4_TEMP"/>
+    <params p1="SREFL_CH1" p2="SREFL_CH2" p3="BT_CH4"/>
+    <params p1="fcdr_reflectance_ch1" p2="fcdr_reflectance_ch2" p3="fcdr_brightness_temperature_ch4"/>
+    <params p1="refl_0_65um_nom" p2="refl_0_86um_nom" p3="temp_11_0um_nom"/>
   </paramgroup>
   <paramgroup description="NUCAPS T RH" name="NUCAPS_T_RH">
     <params p1="Temperature_2m" p2="RelHum_2m"/>
