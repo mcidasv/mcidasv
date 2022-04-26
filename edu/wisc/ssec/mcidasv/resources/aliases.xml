@@ -74,7 +74,10 @@
      irwvp_2,
      irwin_2,
      irwin_cdr,
-     fcdr_brightness_temperature_*.*"/>
+     fcdr_brightness_temperature_*.*,
+     BT_ch*.*_IMICA_*.*_mean,
+     BT_ch*.*_IMICA_*.*_minvza,
+     BT_ch*.*_IMICA_*.*_nadir"/>
   
   <alias 
      name="Refl"
@@ -192,7 +195,13 @@
      Temperature_surface_weightedMean,
      DailyMaxAirTemp,
      DailyMinAirTemp,
-     T2M1"/>
+     T2M1,
+     Temperature_hybrid_*.*_Hour_Average,
+     Temperature_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average,
+     Temperature_height_above_ground_*.*_Hour_Average,
+     tasmax,
+     tasmin,
+     tavg"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -340,7 +349,11 @@
      .*.u-component_of_wind_maximum_wind,
      U2D,
      eastward_wind,
-     U10M"/>
+     U10M,
+     u-component_of_storm_motion_layer_between_two_heights_above_ground_layer,
+     u-component_of_wind_hybrid_*.*_Hour_Average,
+     u-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average,
+     u-component_of_wind_height_above_ground_*.*_Hour_Average"/>
   <alias
      name="V"
      label="V component of wind"
@@ -422,7 +435,11 @@
      .*.v-component_of_wind_maximum_wind,
      V2D,
      northward_wind,
-     V10M"/>
+     V10M,
+     component_of_storm_motion_layer_between_two_heights_above_ground_layer,
+     v-component_of_wind_hybrid_*.*_Hour_Average,
+     v-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average,
+     v-component_of_wind_height_above_ground_*.*_Hour_Average"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -446,7 +463,9 @@
   <alias
      name="W"
      label="W component of wind"
-     aliases="Vertical_velocity_pressure_sigma"/>
+     aliases="Vertical_velocity_pressure_sigma,
+     Pressure_Vertical_velocity_isobaric_*.*_Hour_Average,
+     Pressure_Vertical_velocity_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average"/>
   <alias
      name="SPEED"
      label="Wind speed"
@@ -518,7 +537,8 @@
      pres_reduced_msl,
      .*.Pressure_reduced_to_MSL_msl,
      MSLP_Eta_model_reduction_msl_weightedMean,
-     prmslmsl"/>
+     prmslmsl,
+     Mean_sea_level_pressure_ETA_model_msl"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
