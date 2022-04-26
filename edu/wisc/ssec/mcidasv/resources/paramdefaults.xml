@@ -26,6 +26,17 @@
      unit="mm/hr"/>
    <!-- end inquiry 1675 -->
 
+  <param ci_base="0.0"
+     name="DailyTotalPrecipitation"
+     ci_interval="1.0"
+     ci_max="500.0"
+     ci_min="0.0"
+     ci_width="1"
+     range_max="70.0"
+     range_min="0.0"
+     table="Precipitation - Transparent"
+     unit="mm"/>
+  
   <param
      name="temp"
      table="Temperature"
