@@ -59,6 +59,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#remoteServers1.9">Remote Servers/Datasets</a></strong></li>
     <li><strong><a class="faq-question-link" href="#aliases1.9">Gridded Aliases</a></strong></li>
     <li><strong><a class="faq-question-link" href="#tropomi1.9">TROPOMI</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#nucaps1.9">Gridded NUCAPS</a></strong></li>
     <li><strong><a class="faq-question-link" href="#warning1.9">NWS Warnings</a></strong></li>
   </ul>
 </div>
@@ -140,6 +141,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>TROPOMI</h4>
     <div class="faq-answer">Added support for L2 TROPOMI (TROPOspheric Monitoring Instrument) netCDF files downloaded from the Sentinel-5P Pre-Operations Data Hub or NASA Earthdata. These files can be loaded through the General -&gt; Files/Directories chooser as a gridded data source (Grid files (netCDF/GRIB/OPeNDAP/GEMPAK). A variety of derived fields for the L2 products are also available, allowing easy access to different units available for many variables.</div>
 	</div>
+    <div class="faq-category"><a name="nucaps1.9" id="nucaps1.9"></a>
+    <h4>Gridded NUCAPS</h4>
+    <div class="faq-answer">Added support for NUCAPS (NOAA Unique Combined Atmospheric Processing System) gridded data files, which can be loaded through the General -&gt; Files/Directories chooser or General -&gt; Catalogs chooser as a gridded data source (Grid files (netCDF/GRIB/OPeNDAP/GEMPAK). </div>
+	</div>
 	<div class="faq-category"><a name="warning1.9" id="warning1.9"></a>
     <h4>NWS Warnings</h4>
     <div class="faq-answer">Added a new menu item to the Main Display window (Display &gt; Text Data &gt; NWS Hazard Warning (from server)) that allows for plotting currently active severe weather warning (e.g. Severe Thunderstorm Warning, Tornado Warning) polygons in the Main Display window. This menu item adds a data source for the warnings to the Field Selector, and Create Display must be clicked in order for the polygons to be drawn in the Main Display.</div>
@@ -203,20 +208,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-answer">
     Added a variety of functionality related to scripting since the release of 1.8. Below is a list of significant changes: 
       <ul>
-      <li>New functions:</li>
-      <ul>
-        <li>placeholder</li>
-      </ul>
     <li>New functionality with existing functions:</li>
       <ul>
       <li>Added a new keyword to captureImage(), verbose, which allows the user to silence the a line printed to the Jython Shell letting the user know the image is being written.</li>
       <li>Added the ability for listGridFieldsInFile() to work when the variables in the file don't include long_name attributes.</li>
       <li>Added shorter server descriptions for ABI (ABIN), Sectorized CMI (SCMI), and Himawari (WARI) that can be specified in the format keyword of makeLocalADDEEntry().</li>
       <li>Added the ability to specify coordinateSystem= and size='ALL' in loadADDEImage(), which is necessary to get the full domain and and resolution of each image in a LEO loop where the sector moves between timesteps.</li>
-      </ul>
-    <li>Miscellaneous scripting-related changes:</li>
-      <ul>
-        <li>placeholder</li>
       </ul>
 </ul></div>
     </div>
@@ -227,7 +224,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
       Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.
-    A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector.</div>
+    Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported. A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well.</div>
   </div>
   <div class="faq-category"><a name="glm1.9" id="glm1.9"></a>
     <h4>GLM Chooser</h4>
