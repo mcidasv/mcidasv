@@ -78,6 +78,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   <ul class="noindent">
     <li><strong><a class="faq-question-link" href="#rgbs_1.9">RGB and Channel Combination Formulas</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#mpeg4_1.9">MPEG-4 Movie Capture</a></strong></li>
     <li><strong><a class="faq-question-link" href="#alphabetical_1.9">Alphabetical Field Listing</a></strong></li>
     <li><strong><a class="faq-question-link" href="#labels_1.9">Location Labels</a></strong></li>
     <li><strong><a class="faq-question-link" href="#sum_1.9">Vertical Sum Formula</a></strong></li>
@@ -183,6 +184,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       These formulas will appear in the Field Selector tab of the Data Explorer when Formulas is selected. To evaluate the formulas, select the formula, the desired display type, and click Create Display. From here, an additional Field Selector window will appear where the user will manually select the bands/calibrations needed. Many of these formulas are also set up to be derived fields. This means that if a data source containing all of the required bands/calibrations is added, they will list in the Field Selector under an Imagery tree. Displaying the output of a formula through a derived field means that the manual band/calibration selection isn't necessary. For more information, see <a href="tools/ImageryFormulas.html">Description of Formulas - Imagery</a>.</p>
     Note that not all of the RGBs and channel combination functions are considered to be operational, and therefore the functions may change in the future.</div>
 	</div>
+    <div class="faq-category"><a name="mpeg4_1.9" id="mpeg4_1.9"></a>
+    <h4>MPEG-4 Movie Capture</h4>
+    <div class="faq-answer">Added the ability to save movies in MPEG-4 (*.mp4) format, which is now available under the Files of Type dropdown menu when saving a movie.</div>
+	</div>
     <div class="faq-category"><a name="alphabetical_1.9" id="alphabetical_1.9"></a>
     <h4>Alphabetical Field Listing</h4>
     <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This listing makes the list of variables/fields more organized and easier to navigate through.</div>
@@ -224,7 +229,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
       Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.
-    Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported. A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well.</div>
+    Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported. A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well. Added support for many JPSS VIIRS Products (Granule) available from NOAA CLASS.</div>
   </div>
   <div class="faq-category"><a name="glm1.9" id="glm1.9"></a>
     <h4>GLM Chooser</h4>
