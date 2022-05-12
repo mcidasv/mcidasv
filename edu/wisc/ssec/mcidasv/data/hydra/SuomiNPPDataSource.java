@@ -55,9 +55,6 @@ import java.util.Set;
 import java.util.SimpleTimeZone;
 import java.util.StringTokenizer;
 
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
