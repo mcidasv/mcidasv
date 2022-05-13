@@ -123,9 +123,7 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
     private NetcdfFile hdfFile;
     private static String filename;
 
-    @Override public boolean isValidFile(RandomAccessFile raf)
-        throws IOException
-    {
+    @Override public boolean isValidFile(RandomAccessFile raf) {
         // Uses the regex defined near top
         String filePath = raf.getLocation();
         // TJJ 2022 - For URLs, just fail the match
