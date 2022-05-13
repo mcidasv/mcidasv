@@ -224,9 +224,7 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
                 // This caused invalid units of "milliseconds since ..." in delta_time attribute
                 // to prevent variables from Product group to load
                 if (v.getShortName().equals("delta_time")) {
-                    ListIterator<Attribute> listIterator = v.getAttributes().listIterator();
-                    while (listIterator.hasNext()) {
-                        Attribute attribute = listIterator.next();
+                    for (Attribute attribute : v.getAttributes()) {
                         if (attribute.getShortName().equals("units")) {
                             if (attribute.getStringValue().startsWith("milliseconds since")) {
                                 logger.warn("Altering invalid units attribute value");
