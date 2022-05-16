@@ -28,26 +28,19 @@
 
 package edu.wisc.ssec.mcidasv.chooser;
 
-
-import ucar.unidata.idv.*;
-
 import ucar.unidata.ui.ChooserList;
 import ucar.unidata.ui.ChooserPanel;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import java.util.Vector;
-
-import java.beans.*;
-
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
-import ucar.unidata.util.PreferenceList;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.Vector;
 
 /**
  *
