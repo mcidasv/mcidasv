@@ -33,12 +33,15 @@ import ucar.unidata.ui.ChooserPanel;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.*;
+
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.Vector;
 
