@@ -52,22 +52,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.TimeZone;
 
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.adt.Data;
@@ -1031,6 +1016,17 @@ public class ADTControl extends DisplayControlImpl {
         logger.debug("Number of history records: {}", History.HistoryNumberOfRecords());
         if (History.HistoryNumberOfRecords() == 0) seemsOk = false;
         return seemsOk;
+    }
+
+    @Override
+    protected void getHelpMenuItems(List items, boolean forMenuBar) {
+        items.add(GuiUtils.makeMenuItem("Details", this, "showDetails"));
+        JMenuItem jmi = new JMenuItem("User's Guide");
+        GuiUtils.setIcon(jmi, "/auxdata/ui/icons/help.png");
+        jmi.addActionListener(e -> {
+            WebBrowser.browse("https://www.ssec.wisc.edu/mcidas/software/v/resources/adt/McV_ADT_1p7.pdf");
+        });
+        items.add(jmi);
     }
 
     private void runADTmain() {
