@@ -64,6 +64,40 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <div class="ThreeTabIndent"><em>with buildWindow(height=1000,width=1200) as panel:</em></div>
 <div class="FourTabIndent"><em>layer = panel[0].createLayer('Image Sequence Display',myLoop)</em></div>
 <div class="FourTabIndent"><em>writeMovie('C:/Users/myUser/myMovie.gif')</em></div>
+<p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
+  a new data layer in a panel</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer = panel[0].createLayer(keywords)</em></div>
+    <div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">display type=</td>
+      <td>display type for layer; valid options
+  shown in Field Selector (e.g. 'Image Display', 'Image Sequence Display')</td>
+    </tr>
+    <tr>
+      <td valign="top">myData=</td>
+      <td>data object to display (from loadADDEImage)</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer=panel[0].createLayer('Image Display', data)</em></div>
+<p><strong><a name="findWindow" id="findWindow"></a>findWindow -</strong> Finds and creates a reference to the window containing a display</p>
+<div class="OneTabIndent">Usage: <em>window = findWindow(display=panel[0])</em></div>
+    <div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">display=</td>
+      <td>display name defined from buildWindow</td>
+</table></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">The buildWindow function returns a reference to a specific panel in a window, and therefore any functions run on this panel will only impact that one panel, not the window as a whole.  This findWindow function returns a reference to the actual window containing the buildWindow panel.  This allows for performing actions on the window itself, such as adding new tabs and closing the window.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent">
+  <em>panel = buildWindow()</em><br>
+  <em>window = findWindow(display=panel[0])</em><br>
+  <em>see(window) # return which functions/methods can be applied to 'window'</em><br>
+  <em>window.createTab()</em><br>
+<em>window.close()</em></div>
 <p><strong><a name="openBundle" id="openBundle"></a>openBundle -</strong> Creates
   a new window and displays contents of a bundle</p>
 <div class="OneTabIndent">Usage: <em>openBundle(keywords)</em></div>
@@ -99,40 +133,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 </div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>openBundle('C:/Users/myUser/bundle.mcv',mode='NEWTAB')</em></div>
-<p><strong><a name="createLayer" id="createLayer"></a>createLayer -</strong> Creates
-  a new data layer in a panel</p>
-<div class="OneTabIndent">Usage: <em>myDataLayer = panel[0].createLayer(keywords)</em></div>
-    <div class="TwoTabIndent">Keywords - required:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">display type=</td>
-      <td>display type for layer; valid options
-  shown in Field Selector (e.g. 'Image Display', 'Image Sequence Display')</td>
-    </tr>
-    <tr>
-      <td valign="top">myData=</td>
-      <td>data object to display (from loadADDEImage)</td>
-    </tr>
-</table></div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>layer=panel[0].createLayer('Image Display', data)</em></div>
-<p><strong><a name="findWindow" id="findWindow"></a>findWindow -</strong> Finds and creates a reference to the window containing a display</p>
-<div class="OneTabIndent">Usage: <em>window = findWindow(display=panel[0])</em></div>
-    <div class="TwoTabIndent">Keywords - required:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">display=</td>
-      <td>display name defined from buildWindow</td>
-</table></div>
-<div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">The buildWindow function returns a reference to a specific panel in a window, and therefore any functions run on this panel will only impact that one panel, not the window as a whole.  This findWindow function returns a reference to the actual window containing the buildWindow panel.  This allows for performing actions on the window itself, such as adding new tabs and closing the window.</div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent">
-  <em>panel = buildWindow()</em><br>
-  <em>window = findWindow(display=panel[0])</em><br>
-  <em>see(window) # return which functions/methods can be applied to 'window'</em><br>
-  <em>window.createTab()</em><br>
-<em>window.close()</em></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

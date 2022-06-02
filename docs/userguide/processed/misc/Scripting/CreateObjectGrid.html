@@ -28,6 +28,47 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Create an Object - Grids</div>
+<p><strong><a name="listGridFields" id="listGridFields"></a>listGridFieldsInFile -</strong> Lists the fields in a file brought in with <strong>loadGrid</strong>. The output is <em>shortname ; longname</em></p>
+<div class="OneTabIndent">Usage: <em>myData = listGridFieldsInFile(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">filename=</td>
+      <td>directory path to local gridded file</td>
+    </tr>
+    </table></div>
+    <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>listGridFieldsInFile(filename='C:/Users/myUser/gfs.grb')</em></div>
+<p><strong><a name="listFieldLevels" id="listFieldLevels"></a>listGridLevelsInField -</strong> Lists the vertical levels included in a field of a <strong>loadGrid</strong> file</p>
+<div class="OneTabIndent">Usage: <em>myData = listGridLevelsInField(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">filename=</td>
+      <td>directory path to local gridded file</td>
+    </tr>
+        <tr>
+      <td valign="top">field=</td>
+      <td>the short name of the field to list levels of. A listing of field short names included in a file can be printed using <strong>listGridFieldsInFile</strong></td>
+    </tr>
+    </table></div>
+    <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>listGridLevelsInField(filename='C:/Users/myUser/gfs.grb',field='Temperature_Isobaric')</em></div>
+<p><strong><a name="listFieldTimes" id="listFieldTimes"></a>listGridTimesInField -</strong> Lists the times included in a field of a <strong>loadGrid</strong> file</p>
+<div class="OneTabIndent">Usage: <em>myData = listGridTimesInField(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">filename=</td>
+      <td>directory path to local gridded file</td>
+    </tr>
+        <tr>
+      <td valign="top">field=</td>
+      <td>the short name of the field to list times of. A listing of field short names included in a file can be printed using <strong>listGridFieldsInFile</strong></td>
+    </tr>
+    </table></div>
+    <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>listGridTimesInField(filename='C:/Users/myUser/gfs.grb',field='Temperature_Isobaric')</em></div>
 <p><strong><a name="loadGrid" id="loadGrid"></a>loadGrid -</strong> Loads local netCDF, hdf, and grib files.</p>
 <div class="OneTabIndent">Usage: <em>myData = loadGrid(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
@@ -153,47 +194,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Cr
 <div class="ThreeTabIndent"><em>t850['globalAttributes']['file_format']</em></div>
 <div class="TwoTabIndent">A practical use for these key:value parings would be to apply it to a layer label.  This example adds the description key to the layer label along with the %timestamp% macro:</div>
 <div class="ThreeTabIndent"><em>layer.setLayerLabel(t850['description']+' %timestamp%')</em></div>
-<p><strong><a name="listGridFields" id="listGridFields"></a>listGridFieldsInFile -</strong> Lists the fields in a file brought in with <strong>loadGrid</strong>. The output is <em>shortname ; longname</em></p>
-<div class="OneTabIndent">Usage: <em>myData = listGridFieldsInFile(keywords)</em></div>
-<div class="TwoTabIndent">Keywords - required:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">filename=</td>
-      <td>directory path to local gridded file</td>
-    </tr>
-    </table></div>
-    <div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>listGridFieldsInFile(filename='C:/Users/myUser/gfs.grb')</em></div>
-<p><strong><a name="listFieldLevels" id="listFieldLevels"></a>listGridLevelsInField -</strong> Lists the vertical levels included in a field of a <strong>loadGrid</strong> file</p>
-<div class="OneTabIndent">Usage: <em>myData = listGridLevelsInField(keywords)</em></div>
-<div class="TwoTabIndent">Keywords - required:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">filename=</td>
-      <td>directory path to local gridded file</td>
-    </tr>
-        <tr>
-      <td valign="top">field=</td>
-      <td>the short name of the field to list levels of. A listing of field short names included in a file can be printed using <strong>listGridFieldsInFile</strong></td>
-    </tr>
-    </table></div>
-    <div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>listGridLevelsInField(filename='C:/Users/myUser/gfs.grb',field='Temperature_Isobaric')</em></div>
-<p><strong><a name="listFieldTimes" id="listFieldTimes"></a>listGridTimesInField -</strong> Lists the times included in a field of a <strong>loadGrid</strong> file</p>
-<div class="OneTabIndent">Usage: <em>myData = listGridTimesInField(keywords)</em></div>
-<div class="TwoTabIndent">Keywords - required:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">filename=</td>
-      <td>directory path to local gridded file</td>
-    </tr>
-        <tr>
-      <td valign="top">field=</td>
-      <td>the short name of the field to list times of. A listing of field short names included in a file can be printed using <strong>listGridFieldsInFile</strong></td>
-    </tr>
-    </table></div>
-    <div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>listGridTimesInField(filename='C:/Users/myUser/gfs.grb',field='Temperature_Isobaric')</em></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

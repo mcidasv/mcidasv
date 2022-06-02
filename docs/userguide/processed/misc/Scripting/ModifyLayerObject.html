@@ -28,6 +28,28 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Modify the Layer Object</div>
+<p><strong><a name="doRemove" id="doRemove"></a>doRemove -</strong> Removes a displayed layer</p>
+<div class="OneTabIndent">Usage: <em>layer.doRemove()</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.doRemove()</em></div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">This function removes a displayed layer. The user can specify the name of the layer used at createLayer() or by specifying a layer index from the array returned by getLayers().</div>
+<p><strong><a name="getData" id="getData"></a>getData -</strong> Returns a data object associated with the layer</p>
+<div class="OneTabIndent">Usage: <em>myDataLayer.getData()</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layerData = layer.getData()</em></div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">The data object returned from the getData function (<em>layerData</em> from the above example) can now be passed through various formulas</div>
+<p><strong><a name="getLayer" id="getLayer"></a>getLayer -</strong> Returns a reference to a displayed layer</p>
+<div class="OneTabIndent">Usage: <em>layer = panel[0].getLayer(index)</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>satLayer = panel[0].getLayer[1]</em></div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">This function returns a reference to a displayed error, which allows for passing this layer through other functions such as <em>setLayerVisible()</em>, <em>setEnhancement()</em>, and<em> setLayerLabel()</em>. The numerical value in the square brackets after <em>getLayer</em> in the example is the layer's index in the display. The index of displays in the displays begins with 0, which is the first layer displayed in the panel (normally the map layer). The second layer displayed would be index 1, the third layer display would be index 2, and so on.</div>
+<p><strong><a name="getDisplayUnit" id="getDisplayUnit"></a>getDisplayUnit -</strong> Returns the unit of a displayed layer</p>
+  <div class="OneTabIndent">Usage: <em>myDataLayer.getDisplayUnit()</em></div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>layer.getDisplayUnit()</em></div>
 <p><strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong> Displays color scale on a panel and specifies its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setColorScale(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - optional:</div>
@@ -73,6 +95,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="ThreeTabIndent"></div>
 <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setColorScale(placement='Left',font='SansSerif',size=18.0,color='green',showUnit=True</em>)</div>
+<p><strong><a name="setDisplayUnit" id="setDisplayUnit"></a>setDisplayUnit -</strong> Sets the unit of a displayed layer</p>
+  <div class="OneTabIndent">Usage: <em>myDataLayer.getDisplayUnit()</em></div>
+  <div class="TwoTabIndent">Keywords - required:</div>
+  <div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">unitname=</td>
+      <td>Sets the unit to be applied to the displayed layer.</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setDisplayUnit('hPa')</em></div>
 <p><strong><a name="setEnhancement" id="setEnhancement"></a>setEnhancement -</strong> Applies a color table and defines data range of data in a layer</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setEnhancement(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
@@ -94,6 +127,17 @@ Deep Convection'</td></tr></table></div>
 </table></div>
   <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>layer.setEnhancement('Longwave Infrared Deep Convection',range=(20,250),transparency=20)</em></div>
+<p><strong><a name="setExtraLegendLabel" id="setExtraLegendLabel"></a>setExtraLegendLabel -</strong> Sets the Extra Legend Label of the displayed layer. The Extra Legend Label is the text that lists below the blue Legend Label in the Legend of the Main Display window</p>
+    <div class="OneTabIndent">Usage: <em>myDataLayer.setExtraLegendLabel(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">text=</td>
+      <td>extra legend label string. This can include the macros included in the Remarks of setLayerLabel. Multiple lines can be created by using the HTML new line character: \n</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setExtraLegendLabel(text='%level%\n%shortname%')</em></div>
 <p><strong><a name="setLayerLabel" id="setLayerLabel"></a>setLayerLabel -</strong> Toggles a layer label on/off and defines its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerLabel(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
@@ -172,29 +216,6 @@ Deep Convection'</td></tr></table></div>
       <td>Lists the vertical level of the parameter being displayed</td>
     </tr>
 </table></div>
-<p><strong><a name="setLegendLabel" id="setLegendLabel"></a>setLegendLabel
-    -</strong> Sets the Legend Label of the displayed layer. The Legend Label is the blue text of the layer seen in the Legend of the Main Display window</p>
-    <div class="OneTabIndent">Usage: <em>myDataLayer.setLegendLabel(keywords)</em></div>
-<div class="TwoTabIndent">Keywords - required:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">text=</td>
-      <td>legend label string. This can include the macros included in the Remarks of setLayerLabel</td>
-    </tr>
-</table></div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>layer.setLayerLabel(text='Layer 1')</em></div>
-<p><strong><a name="setExtraLegendLabel" id="setExtraLegendLabel"></a>setExtraLegendLabel -</strong> Sets the Extra Legend Label of the displayed layer. The Extra Legend Label is the text that lists below the blue Legend Label in the Legend of the Main Display window</p>
-    <div class="OneTabIndent">Usage: <em>myDataLayer.setExtraLegendLabel(keywords)</em></div>
-<div class="TwoTabIndent">Keywords - required:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">text=</td>
-      <td>extra legend label string. This can include the macros included in the Remarks of setLayerLabel. Multiple lines can be created by using the HTML new line character: \n</td>
-    </tr>
-</table></div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>layer.setExtraLegendLabel(text='%level%\n%shortname%')</em></div>
 <p><strong><a name="setLayerVisible" id="setLayerVisible"></a>setLayerVisible-</strong> Toggles layer visibility on/off, this includes any color scale or layer labels for the layer</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
@@ -208,7 +229,19 @@ Deep Convection'</td></tr></table></div>
 </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>layer.setLayerVisible(visible=False)</em></div>
-<p><strong><a name="setVerticalPosition" id="setVerticalPosition"></a>setVerticalPosition-</strong> Sets the vertical positioning of the layer in the Main Display. The acceptable values range from -1 (bottom) to 1 (top)</p>
+<p><strong><a name="setLegendLabel" id="setLegendLabel"></a>setLegendLabel
+    -</strong> Sets the Legend Label of the displayed layer. The Legend Label is the blue text of the layer seen in the Legend of the Main Display window</p>
+    <div class="OneTabIndent">Usage: <em>myDataLayer.setLegendLabel(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">text=</td>
+      <td>legend label string. This can include the macros included in the Remarks of setLayerLabel</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layer.setLayerLabel(text='Layer 1')</em></div>
+<p><strong><a name="setVerticalPosition" id="setVerticalPosition"></a>setVerticalPosition -</strong> Sets the vertical positioning of the layer in the Main Display. The acceptable values range from -1 (bottom) to 1 (top)</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setLayerVisible(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
 <div class="ThreeTabIndent2"><table class="noborder">
@@ -219,33 +252,6 @@ Deep Convection'</td></tr></table></div>
 </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>layer.setVerticalPosition(1)</em></div>
-<p><strong><a name="getData" id="getData"></a>getData -</strong> Returns a data object associated with the layer</p>
-<div class="OneTabIndent">Usage: <em>myDataLayer.getData()</em></div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>layerData = layer.getData()</em></div>
-  <div class="OneTabIndent">Remarks:</div>
-  <div class="TwoTabIndent">The data object returned from the getData function (<em>layerData</em> from the above example) can now be passed through various formulas</div>
-<p><strong><a name="getLayer" id="getLayer"></a>getLayer -</strong> Returns a reference to a displayed layer</p>
-<div class="OneTabIndent">Usage: <em>layer = panel[0].getLayer(index)</em></div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>satLayer = panel[0].getLayer[1]</em></div>
-  <div class="OneTabIndent">Remarks:</div>
-  <div class="TwoTabIndent">This function returns a reference to a displayed error, which allows for passing this layer through other functions such as <em>setLayerVisible()</em>, <em>setEnhancement()</em>, and<em> setLayerLabel()</em>. The numerical value in the square brackets after <em>getLayer</em> in the example is the layer's index in the display. The index of displays in the displays begins with 0, which is the first layer displayed in the panel (normally the map layer). The second layer displayed would be index 1, the third layer display would be index 2, and so on.</div>
-<p><strong><a name="getDisplayUnit" id="getDisplayUnit"></a>getDisplayUnit -</strong> Returns the unit of a displayed layer</p>
-  <div class="OneTabIndent">Usage: <em>myDataLayer.getDisplayUnit()</em></div>
-  <div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>layer.getDisplayUnit()</em></div>
-<p><strong><a name="setDisplayUnit" id="setDisplayUnit"></a>setDisplayUnit -</strong> Sets the unit of a displayed layer</p>
-  <div class="OneTabIndent">Usage: <em>myDataLayer.getDisplayUnit()</em></div>
-  <div class="TwoTabIndent">Keywords - required:</div>
-  <div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">unitname=</td>
-      <td>Sets the unit to be applied to the displayed layer.</td>
-    </tr>
-</table></div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>layer.setDisplayUnit('hPa')</em></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

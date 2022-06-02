@@ -28,26 +28,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Environment</div>
-<p><a name="getHistoryLength" id="getHistoryLength"></a><strong>getJythonShellMaxHistoryLength( ) -</strong> Returns the current number of commands that are saved.</p>
-<div class="OneTabIndent">Usage: <em>print getJythonShellMaxHistoryLength()</em></div>
-<p><strong><a name="setHistoryLength" id="setHistoryLength2"></a>setJythonShellMaxHistoryLength( ) -</strong> Sets the number of commands that will be saved.</p>
-<div class="OneTabIndent">Usage: <em>setJythonShellMaxHistoryLength(number)</em></div>
-<div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">This is the number of commands that will be listed out with the <strong>File>List Saved History</strong> menu item in the Jython Shell, as well as the number that will be added to the Local Jython Library from the <strong>File>Save Commands to Jython Library</strong> menu item. The default number of commands saved to the history is 100.</div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>setJythonShellMaxHistoryLength(25)</em></div>
 <p><strong><a name="collectGarbage" id="collectGarbage"></a>collectGarbage( ) -</strong> Performs a garbage collection to free up memory.</p>
 <div class="OneTabIndent">Usage: <em>collectGarbage()</em></div>
-<p><strong><a name="removeAllData" id="removeAllData"></a>removeAllData( ) -</strong> Removes all data sources added during the current session, without removing any displays.</p>
-<div class="OneTabIndent">Usage: <em>removeAllData()</em></div>
-<p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been displayed.</p>
-<div class="OneTabIndent">Usage: <em>removeAllLayers()</em></div>
-<p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Expands the path entered.</p>
-<div class="OneTabIndent">Usage: <em>expandpath(path)</em></div>
-<div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.</div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>print expandpath('$HOMEPATH')</em></div>
 <p><strong><a name="editfile" id="editfile"></a>editFile( ) -</strong> Pastes the content of a text file into the text input field of the Jython Shell.</p>
 <div class="OneTabIndent">Usage: <em>editFile(path)</em></div>
 <div class="OneTabIndent">path - Directory path to the file to be added to the Jython Shell.</div>
@@ -55,6 +37,15 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
 <div class="TwoTabIndent">Pastes the text of an existing file into the text input field of the Jython Shell.  This makes it easy to evaluate and edit scripts.</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>editFile('C:/Users/myUser/myscript.py')</em></div>
+<p><strong><a name="expandpath" id="expandpath"></a>expandpath( ) -</strong> Expands the path entered.</p>
+<div class="OneTabIndent">Usage: <em>expandpath(path)</em></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">Understands environmental variables such as &quot;~&quot; and &quot;..&quot;.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>print expandpath('$HOMEPATH')</em></div>
+<p><a name="getHistoryLength" id="getHistoryLength"></a><strong>getJythonShellMaxHistoryLength( ) -</strong> Returns the current number of commands that are saved.</p>
+    
+<div class="OneTabIndent">Usage: <em>print getJythonShellMaxHistoryLength()</em></div>
 <p><strong><a name="getloglevel" id="getloglevel"></a>getLogLevel( ) -</strong> Sets the logging level to be used by McIDAS-V.</p>
 <div class="OneTabIndent">Usage: <em>print getLogLevel()</em></div>
 <div class="OneTabIndent">Remarks:</div>
@@ -71,24 +62,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>print getLogLevel( )</em></div>
 <div class="ThreeTabIndent">This returns the logging level for everything as long as a logging level for another directory hasn't already been set.</div>
-<p><strong><a name="setloglevel" id="setloglevel"></a>setLogLevel( ) -</strong> Sets the logging level to be used by McIDAS-V.</p>
-<div class="OneTabIndent">
-    Usage: <em>setLogLevel(level,keywords)</em>
-</div>
-<div class="OneTabIndent">level- Logging level to be used.  This can be set to <em>TRACE</em>, <em>DEBUG</em>, <em>INFO</em>, <em>WARN</em>, <em>ERROR</em>, or <em>OFF</em>. Information about each of these logging levels can be found in the <a href="../../tools/preferences/AdvancedPreferences.html#loglevel">Advanced Preferences</a> page.</div>
-<div class="OneTabIndent">Keywords:</div>
-<div class="TwoTabIndent"><table class="noborder">
-<tr>
-      <td valign="top">temporary=</td>
-      <td>determines if the logging level will be saved from session to session (default = True)</td>
-    </tr></table></div>
-<div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">This command can be used to set the logging level for the session as a whole, and it can also be used to set logging levels for specific directories to control what type of logging output goes to mcidasv.log.</div>
-<div class="OneTabIndent">Examples:</div>
-<div class="TwoTabIndent"><em>setLogLevel('TRACE')</em></div>
-<div class="ThreeTabIndent">Sets the logging level for everything to <em>Trace</em> as long as a logging level for another directory hasn't already been set.</div>
-<div class="TwoTabIndent"><em>print getLogLevel()</em></div>
-<div class="ThreeTabIndent">Returns the global logging level in McIDAS-V.   Both <em>level</em> and <em>effectiveLevel</em> are set to <em>TRACE</em>.</div>
 <p><strong><a name="importEnhancement" id="importEnhancement"></a>importEnhancement( ) -</strong> Imports a local enhancement file. This enhancement will then be available for use in a script as well as through the Color Table Editor in the current and future McIDAS-V sessions.</p>
 <div class="OneTabIndent">Usage: <em>importEnhancement(filename,keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
@@ -126,6 +99,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/En
 If the enhancement specified in the filename keyword of importEnhancement() was originally exported from McIDAS-V, then the name and category keywords will be set from the values that already exist in the enhancement file.</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>importEnhancement(filename='C:/Users/myUser/cape.xml', name='CAPE', category='Severe')</em></div>
+<p><strong><a name="removeAllData" id="removeAllData"></a>removeAllData( ) -</strong> Removes all data sources added during the current session, without removing any displays.</p>
+<div class="OneTabIndent">Usage: <em>removeAllData()</em></div>
+<p><strong><a name="removeAllLayers" id="removeAllLayers"></a>removeAllLayers( ) -</strong> Removes all layers that have been displayed.</p>
+<div class="OneTabIndent">Usage: <em>removeAllLayers()</em></div>
 <p><strong><a name="see" id="see"></a>see( ) -</strong> Inspects an object passed through the function and prints out a list of different functions that can be used on the object.</p>
 <div class="OneTabIndent">
     Usage: <em>setLogLevel(keywords)</em>
@@ -145,6 +122,30 @@ If the enhancement specified in the filename keyword of importEnhancement() was 
 <div class="OneTabIndent">Examples:</div>
 <div class="TwoTabIndent"><em>see(obj=data,pattern='.get*')</em></div>
 <div class="ThreeTabIndent">Returns a list of functions beginning with &quot;.get&quot; that can be applied on the data object.</div>
+<p><strong><a name="setHistoryLength" id="setHistoryLength2"></a>setJythonShellMaxHistoryLength( ) -</strong> Sets the number of commands that will be saved.</p>
+<div class="OneTabIndent">Usage: <em>setJythonShellMaxHistoryLength(number)</em></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">This is the number of commands that will be listed out with the <strong>File>List Saved History</strong> menu item in the Jython Shell, as well as the number that will be added to the Local Jython Library from the <strong>File>Save Commands to Jython Library</strong> menu item. The default number of commands saved to the history is 100.</div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>setJythonShellMaxHistoryLength(25)</em></div>
+<p><strong><a name="setloglevel" id="setloglevel"></a>setLogLevel( ) -</strong> Sets the logging level to be used by McIDAS-V.</p>
+<div class="OneTabIndent">
+    Usage: <em>setLogLevel(level,keywords)</em>
+</div>
+<div class="OneTabIndent">level- Logging level to be used.  This can be set to <em>TRACE</em>, <em>DEBUG</em>, <em>INFO</em>, <em>WARN</em>, <em>ERROR</em>, or <em>OFF</em>. Information about each of these logging levels can be found in the <a href="../../tools/preferences/AdvancedPreferences.html#loglevel">Advanced Preferences</a> page.</div>
+<div class="OneTabIndent">Keywords:</div>
+<div class="TwoTabIndent"><table class="noborder">
+<tr>
+      <td valign="top">temporary=</td>
+      <td>determines if the logging level will be saved from session to session (default = True)</td>
+    </tr></table></div>
+<div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">This command can be used to set the logging level for the session as a whole, and it can also be used to set logging levels for specific directories to control what type of logging output goes to mcidasv.log.</div>
+<div class="OneTabIndent">Examples:</div>
+<div class="TwoTabIndent"><em>setLogLevel('TRACE')</em></div>
+<div class="ThreeTabIndent">Sets the logging level for everything to <em>Trace</em> as long as a logging level for another directory hasn't already been set.</div>
+<div class="TwoTabIndent"><em>print getLogLevel()</em></div>
+<div class="ThreeTabIndent">Returns the global logging level in McIDAS-V.   Both <em>level</em> and <em>effectiveLevel</em> are set to <em>TRACE</em>.</div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

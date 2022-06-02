@@ -57,12 +57,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Da
   <p>Multiple data objects can be passed through describe() at once, separated by commas (example: <em>describe(imageryIR,imageryVIS)</em>).</p>
   <p>Users may select to output only certain statistical parameters for their data. When doing this, the first parameter(s) passed through describe() should be the data objects, and the last parameters should be the statistical parameters to output. These statistical parameters are included in the list above, and they should be entered as strings and quoted (see example 2 above).</p>
 </div>
-<p><strong><a name="sparkline" id="sparkline"></a>sparkline -</strong> Returns a histogram of data values in a data object returned from loadADDEImage and loadGrid</p>
-<div class="OneTabIndent">Usage: <em>sparkline(myData)</em></div>
-  <div class="OneTabIndent">Example:</div>
-  <div class="TwoTabIndent"><em>sparkline(imageryData)</em></div>
-    <div class="OneTabIndent">Remarks:</div>
-<div class="TwoTabIndent">Multiple data objects can be passed through sparkline() at once, separated by commas (example: <em>sparkline(imageryIR,imageryVIS)</em>).</div>
 <p><strong><a name="findUnits" id="findUnits"></a>findUnits -</strong> Returns the units of a data object</p>
 <div class="OneTabIndent">Usage: <em>findUnits(myData)</em></div>
 <div class="TwoTabIndent">Keywords - optional:</div>
@@ -75,6 +69,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Da
 </table></div>
   <div class="OneTabIndent">Example:</div>
   <div class="TwoTabIndent"><em>findUnits(imageryData)</em></div>
+<p><strong><a name="sparkline" id="sparkline"></a>sparkline -</strong> Returns a histogram of data values in a data object returned from loadADDEImage and loadGrid</p>
+<div class="OneTabIndent">Usage: <em>sparkline(myData)</em></div>
+  <div class="OneTabIndent">Example:</div>
+  <div class="TwoTabIndent"><em>sparkline(imageryData)</em></div>
+    <div class="OneTabIndent">Remarks:</div>
+<div class="TwoTabIndent">Multiple data objects can be passed through sparkline() at once, separated by commas (example: <em>sparkline(imageryIR,imageryVIS)</em>).</div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">
