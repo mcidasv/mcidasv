@@ -34,7 +34,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Mu
 <xxxmeta xxxname="jhid" value="idv.controls.crosssectioncontrol"></xxxmeta>
 <div class="pagesubtitle">Overview</div>
 <p>HYDRA MultiSpectral Display controls are used to create a multispectral display within McIDAS-V. There are two sets of controls, the MultiSpectral Display and the MultiSpectral Probes. The Multispectral Display consists of three tabs: <strong>Display</strong>, <strong>Settings</strong>, and <strong>Histogram</strong>.</p>
-<p> The <strong>Display</strong> tab shows the spectra. This may differ if you are looking at Hyperspectral data or Multispectral data due to the number of bands included with the data. Hyperspectral data will have a spectra drawn as a line, while multispectral data will show a variety of points:</p>
+<p> The <strong>Display</strong> tab shows the spectra. This may differ if the data source is Hyperspectral data or Multispectral data due to the number of bands included with the data. Hyperspectral data will have a spectra drawn as a line, while multispectral data will show a variety of points:</p>
 <div class="images"><img src="images/Multispectral-full.gif" alt="Image 1: Display Tab of the MultiSpectral Display Controls Window for Hyperspectral Data"><br>
 <span class="caption">Image 1: Display Tab of the MultiSpectral Display Controls Window for Hyperspectral Data</span></div>
 <div class="images"><img src="images/Multispectral-full2.gif" width="642" height="402" alt="Image 2: Display Tab of the MultiSpectral Display Controls Window for Multispectral Data"><br><span class="caption">Image 2: Display Tab of the MultiSpectral Display Controls Window for Multispectral Data</span></div>
@@ -42,20 +42,20 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Mu
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Wavenumber -</strong> Changes the wavelength/wavenumber displayed in the image by entering in a new value and hitting Enter.</li>
     <li class="propertylistitem"><strong>Band -</strong> Changes the band number the green spectral line will be at, as well as the band that is used to display the data in the Main Display window.</li>
-    <li class="propertylistitem"><strong>Wavelength -</strong> Lists out the wavelength associated with your chosen <strong>Band</strong>.</li>
+    <li class="propertylistitem"><strong>Wavelength -</strong> Lists out the wavelength associated with the chosen <strong>Band</strong>.</li>
 </ul>
-<p> Use the Shift+left click+drag combination to create a box of a region to zoom in on. To return to the full spectra, use Ctrl+left click. Middle-clicking on a point in the spectra will change the wavelength/wavenumber of the image displayed. Right click+drag will translate the spectra left or right. Left click+drag on the green wavelength/wavenumber selector bar will allow you to change the wavelength displayed in the image. As you are dragging the selector bar, the wavelength/wavenumber will be displayed in the upper left corner of the spectra window for the current location of the the bar. </p>
+<p> Use the Shift+left click+drag combination to create a box of a region to zoom in on. To return to the full spectra, use Ctrl+left click. Middle-clicking on a point in the spectra will change the wavelength/wavenumber of the image displayed. Right click+drag will translate the spectra left or right. Left click+drag on the green wavelength/wavenumber selector bar will allow for changing the wavelength displayed in the image. When dragging the selector bar, the wavelength/wavenumber will be displayed in the upper left corner of the spectra window for the current location of the the bar. </p>
 <p>The<strong> Settings </strong>tab shows the settings for this display control and the readout probes:</p>
 <div class="images"><img src="images/MultispectralControlGui2.gif" width="697" height="327" alt="Image 3: Settings Tab of the MultiSpectral Display Controls Window"><br>
 <span class="caption">Image 3: Settings Tab of the MultiSpectral Display Controls Window</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows you to open the <a href="/mcidas/doc/mcv_guide/working/tools/ColorTableEditor.html">Color Table Editor</a>, change the range, select other color tables, etc.</li>
+    <li class="propertylistitem"><strong>Color Table -</strong> Shows the active color table and the associated high and low data values in the units of the display. As the mouse pointer is moved over the color bar, the value at a particular color is shown. Right click on the color bar or click on the button that displays the name of the Color Table to make modifications to the color bar. This allows for opening the <a href="/mcidas/doc/mcv_guide/working/tools/ColorTableEditor.html">Color Table Editor</a>, changing the range, selecting other color tables, etc.</li>
     <li class="propertylistitem"><strong>Vertical Position -</strong> Sets the vertical position of the range rings with respect to other data being displayed. This can be changed by dragging the slider or typing a value into the field and pressing Enter.</li>
     <li class="propertylistitem"><strong>Background Color -</strong> Sets the background color of the display in the <strong>Display</strong> tab of the Layer Controls. When this is set to Black, the background color will be black and the axes and labels will be white. When this is set to White, the background color will be white and the axes and labels will be black.</li>
-    <li class="propertylistitem"><strong>Readout Probes -</strong> Lists information on the probes located in the Main Display window. This section allows you to modify the probe visibility and color.</li>
-    <li class="propertylistitem"><img src="images/AddProbe.gif" alt="Add Probe button" width="93" height="26"align=absmiddle> <strong> -</strong> Allows you to add a new probe to the MultiSpectral Display.</li>
-    <li class="propertylistitem"> <img src="images/RemoveProbe.gif" alt="Remove Probe button" width="117" height="26"align=absmiddle> <strong> -</strong> Allows you to remove the selected probe from the Readout Probes list as well as from the Main Display window.</li>
+    <li class="propertylistitem"><strong>Readout Probes -</strong> Lists information on the probes located in the Main Display window. This section allows for modifying the probe visibility and color.</li>
+    <li class="propertylistitem"><img src="images/AddProbe.gif" alt="Add Probe button" width="93" height="26" align="absmiddle"> <strong> -</strong> Allows for adding a new probe to the MultiSpectral Display.</li>
+    <li class="propertylistitem"> <img src="images/RemoveProbe.gif" alt="Remove Probe button" width="117" height="26" align="absmiddle"> <strong> -</strong> Allows for removing the selected probe from the Readout Probes list as well as from the Main Display window.</li>
     <li class="propertylistitem"><strong>0-360 Longitude Format -</strong> Sets the longitude format in the chart. When this option is checked on, longitudes will list out in the 0-360 degree format. When this option is not checked on, longitudes will list out in the -180-180 degree format.</li>
 </ul>
 <p>The <strong>Histogram</strong> tab shows the histogram of the data for the image:</p>
@@ -64,7 +64,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/hydra/Mu
 <p>Zoom in by left-clicking and dragging on the histogram, or enter in a set of minimum and maximum values.</p>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-    <li class="propertylistitem"><strong>Range -</strong> Allows you change the minimum and maximum values shown in the image in the Main Display window. </li>
+    <li class="propertylistitem"><strong>Range -</strong> Allows for changing the minimum and maximum values shown in the image in the Main Display window. </li>
     <li class="propertylistitem"><strong>Reset -</strong> Resets histogram back to the default range.</li>
 </ul>
 <div class="pagesubtitle">Menus</div>

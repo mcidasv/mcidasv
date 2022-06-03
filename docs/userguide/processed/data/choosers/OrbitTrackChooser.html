@@ -32,7 +32,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Orb
 <div class="pagetitle">Choosing Orbit Tracks Data</div>
 <p>The <strong>Satellite-&gt;Orbit Tracks</strong> chooser provides three different methods of loading data:
 <ul>
-	<li><strong>Local File -</strong> Access local TLE (Two Line Elements) files on the machine or mounted drive.</li>
+	<li><strong>Local File -</strong> Access local TLE (Two Line Elements) files on the machine or a mounted drive.</li>
 	<li><strong>Remote ADDE -</strong> Access navigation data from a remote ADDE server.</li>
 	<li><strong>Remote URL -</strong> Access TLE (Two Line Elements) files online via a URL.</li>
 </ul> 
@@ -44,28 +44,28 @@ For more information on using this chooser, see <a href="../../quickstart/OrbitT
 <ul class="propertylist">
   <li class="propertylistitem"><strong>File -</strong> Accesses local TLE (Two Line Elements) files on the machine or mounted drive.</li>
   <ul class="propertylist">
-    <li class="propertylistitem"><strong>Look In -</strong> Allows you to select folders to search for data files.</li>
-    <li class="propertylistitem"><img src="images/UpOneLevel.gif" alt="Up one level button" width="24" height="24" align=absmiddle> <strong> Up One Level -</strong> Moves you up one folder level in your local file system.</li>
-    <li class="propertylistitem"><img src="images/Desktop.gif" alt="Desktop button" width="24" height="24" align=absmiddle> <strong> Desktop -</strong> Takes you to the Desktop folder of your local file system.</li>
-    <li class="propertylistitem"><img src="images/CreateNewFolder.gif" alt="Create new folder button" width="24" height="24" align=absmiddle> <strong> Create New Folder -</strong> Creates a new folder.</li>
-    <li class="propertylistitem"><img src="images/List.gif" alt="List button" width="24" height="24" align=absmiddle> <strong>List -</strong> Switches the view to a listing of all folders and files in the current path.</li>
-    <li class="propertylistitem"><img src="images/Details.gif" alt="Details button" width="23" height="24" align=absmiddle> <strong>Details -</strong> Switches the view to a detailed list of all folders and files in the current path.</li>
-    <li class="propertylistitem"><strong>File Name -</strong> Represents the full name of the file selected.</li>
+    <li class="propertylistitem"><strong>Look In -</strong> Allows for selecting folders to search for data files.</li>
+    <li class="propertylistitem"><img src="images/UpOneLevel.gif" alt="Up one level button" width="24" height="24" align="absmiddle"> <strong> Up One Level -</strong> Moves up one folder level in the local file system.</li>
+    <li class="propertylistitem"><img src="images/Desktop.gif" alt="Desktop button" width="24" height="24" align="absmiddle"> <strong> Desktop -</strong> Opens the Desktop folder of the local file system.</li>
+    <li class="propertylistitem"><img src="images/CreateNewFolder.gif" alt="Create new folder button" width="24" height="24" align="absmiddle"> <strong> Create New Folder -</strong> Creates a new folder.</li>
+    <li class="propertylistitem"><img src="images/List.gif" alt="List button" width="24" height="24" align="absmiddle"> <strong>List -</strong> Switches the view to a listing of all folders and files in the current path.</li>
+    <li class="propertylistitem"><img src="images/Details.gif" alt="Details button" width="23" height="24" align="absmiddle"> <strong>Details -</strong> Switches the view to a detailed list of all folders and files in the current path.</li>
+    <li class="propertylistitem"><strong>File Name -</strong> Lists the full name of the file selected.</li>
     <li class="propertylistitem"><strong>Files of Type -</strong> Narrows down the files shown in a folder to a specific data type.</li>
 	</ul>
  <li class="propertylistitem"><strong>Remote - ADDE -</strong> Accesses navigation data from a remote ADDE server.</li>
  <ul class="propertylist">
- <li class="propertylistitem"><strong>Server -</strong> Selects the server to be used. Enter in a server name or choose one from the pulldown menu. Right-click in the entry box to manage your ADDE servers and to delete the server from the list.</li>
-<li class="propertylistitem"><img src="images/Manage.gif" alt="Server Manager button" align=absmiddle> <strong>Manage -</strong> Manages the list of servers by opening the <a href="../../tools/preferences/ServerPreferences.html"><strong>ADDE Servers</strong></a> tab of the User Preferences window.</li>
+ <li class="propertylistitem"><strong>Server -</strong> Selects the server to be used. Enter in a server name or choose one from the pulldown menu. Right-click in the entry box to manage the ADDE servers and to delete the server from the list.</li>
+<li class="propertylistitem"><img src="images/Manage.gif" alt="Server Manager button" align="absmiddle"> <strong>Manage -</strong> Manages the list of servers by opening the <a href="../../tools/preferences/ServerPreferences.html"><strong>ADDE Servers</strong></a> tab of the User Preferences window.</li>
     <li class="propertylistitem"><strong>Dataset -</strong> Selects the dataset to be used. Enter in a dataset name or choose one from the pulldown menu.</li>
-    <li class="propertylistitem"><img src="images/PublicServers.gif" alt="Public Datasets button" align=absmiddle> <strong>Public Datasets -</strong> Lists the public datasets available on the server. This button looks for any datasets contained in the PUBLIC.SRV file on the server. If this file doesn't exist, or if there are no datasets in this file that can be used by this chooser, then no datasets will be returned.</li>
-<li class="propertylistitem"><img src="../../quickstart/images/Connect.gif" alt="Connect button" width="180" height="24"align=absmiddle> <strong> -</strong> Connects and queries the server for available image types.</li>
+    <li class="propertylistitem"><img src="images/PublicServers.gif" alt="Public Datasets button" align="absmiddle"> <strong>Public Datasets -</strong> Lists the public datasets available on the server. This button looks for any datasets contained in the PUBLIC.SRV file on the server. If this file doesn't exist, or if there are no datasets in this file that can be used by this chooser, then no datasets will be returned.</li>
+<li class="propertylistitem"><img src="../../quickstart/images/Connect.gif" alt="Connect button" width="180" height="24" align="absmiddle"> <strong> -</strong> Connects and queries the server for available image types.</li>
     <li class="propertylistitem"><strong>Descriptor -</strong> Selects the descriptor, which is generally a satellite or instrument.</li>
  </ul>
  <li class="propertylistitem"><strong>Remote - URL -</strong> Accesses TLE (Two Line Elements) files online via a URL. The default URL is: https://celestrak.com/NORAD/elements/weather.txt</li>
-<li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align=absmiddle> <strong> Help -</strong> Brings up this help page.</li>
-    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align=absmiddle> <strong> Refresh -</strong> Rescans the current directory and update the file chooser if the files have changed.</li>
-    <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align=absmiddle> <strong> -</strong> Loads the selected file(s).</li>
+<li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align="absmiddle"> <strong> Help -</strong> Opens this help page.</li>
+    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align="absmiddle"> <strong> Refresh -</strong> Rescans the current directory and update the file chooser if the files have changed.</li>
+    <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align="absmiddle"> <strong> -</strong> Loads the selected file(s).</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

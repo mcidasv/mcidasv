@@ -28,29 +28,29 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Lev
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Choosing NEXRAD Level II Radar Data</div>
-<p>The <strong>Radar-&gt;Level II-&gt;Remote</strong> chooser allows you to choose Level II radar data from a remote THREDDS server. For more information on how to use this chooser, see <a href="../../quickstart/RadarLevelII.html">Getting Started - Displaying Level II Radar Imagery</a>.</p>
+<p>The <strong>Radar-&gt;Level II-&gt;Remote</strong> chooser allows for choosing Level II radar data from a remote THREDDS server. For more information on how to use this chooser, see <a href="../../quickstart/RadarLevelII.html">Getting Started - Displaying Level II Radar Imagery</a>.</p>
 <div class="pagesubtitle"><a name="localradar" id="localradar"></a>Local Level II Radar Chooser</div>
-<p>The <strong>Radar-&gt;Level II-&gt;Local</strong> chooser allows you to choose Level II radar data from your file system. The Level II data is supplied as volume-scan files, each file having all data from one WSR-88D radar for all sweeps for one "time". Archived Level II radar files can be displayed through the <strong>Radar-&gt;Level II-&gt;Local</strong> file chooser. The files should be stored on your file system with each station's files in a directory (folder) whose directory name is the station 4-character ID (e.g., KTLX for Oklahoma City). In some cases, the data files do not have any location information in them, and McIDAS-V uses the directory name as a first guess at the station location. Archived Level II data is available from the <a href="https://www.ncdc.noaa.gov/data-access/radar-data" target="_blank">National Centers for Environmental Information (NCEI)</a>.</p>
+<p>The <strong>Radar-&gt;Level II-&gt;Local</strong> chooser allows for choosing Level II radar data from the local file system or a mounted drive. The Level II data is supplied as volume-scan files, each file having all data from one WSR-88D radar for all sweeps for one "time". Archived Level II radar files can be displayed through the <strong>Radar-&gt;Level II-&gt;Local</strong> file chooser. The files should be stored on the file system with each station's files in a directory (folder) whose directory name is the station 4-character ID (e.g., KTLX for Oklahoma City). In some cases, the data files do not have any location information in them, and McIDAS-V uses the directory name as a first guess at the station location. Archived Level II data is available from the <a href="https://www.ncdc.noaa.gov/data-access/radar-data" target="_blank">National Centers for Environmental Information (NCEI)</a>.</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="images/LevelIILocalChooser.gif" width="1012" height="577" alt="Image 1: Level II Local Radar Chooser"><br>
   <span class="caption">Image 1: Level II Local Radar Chooser</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Station -</strong> Selects the radar station for the data. By default, McIDAS-V will use the folder name to determine the radar location.</li>
-    <li class="propertylistitem"><strong>Look In -</strong> Allows you to select folders to search for data files.</li>
-    <li class="propertylistitem"><img src="images/UpOneLevel.gif" alt="Up one level button" width="24" height="24" align=absmiddle> <strong> Up One Level -</strong> Moves you up one folder level in your local file system.</li>
-    <li class="propertylistitem"><img src="images/Desktop.gif" alt="Desktop button" width="24" height="24" align=absmiddle> <strong> Desktop -</strong> Takes you to the Desktop folder of your local file system.</li>
-    <li class="propertylistitem"><img src="images/CreateNewFolder.gif" alt="Create new folder button" width="24" height="24" align=absmiddle> <strong> Create New Folder -</strong> Creates a new folder.</li>
-    <li class="propertylistitem"><img src="images/List.gif" alt="List button" width="24" height="24" align=absmiddle> <strong> List -</strong> Switches the view to a listing of all folders and files in the current path.</li>
-    <li class="propertylistitem"><img src="images/Details.gif" alt="Details button" width="23" height="24" align=absmiddle> <strong> Details -</strong> Switches the view to a detailed list of all folders and files in the current path.</li>
-    <li class="propertylistitem"><img src="images/ShowHistoryMenu.gif" alt="Show history menu button" width="24" height="24" align=absmiddle> <strong> Show History Menu -</strong> Shows a list of the last 15 folders that data was loaded from.</li>
+    <li class="propertylistitem"><strong>Look In -</strong> Allows for selecting folders to search for data files.</li>
+    <li class="propertylistitem"><img src="images/UpOneLevel.gif" alt="Up one level button" width="24" height="24" align="absmiddle"> <strong> Up One Level -</strong> Moves up one folder level in the local file system.</li>
+    <li class="propertylistitem"><img src="images/Desktop.gif" alt="Desktop button" width="24" height="24" align="absmiddle"> <strong> Desktop -</strong> Opens the Desktop folder of the local file system.</li>
+    <li class="propertylistitem"><img src="images/CreateNewFolder.gif" alt="Create new folder button" width="24" height="24" align="absmiddle"> <strong> Create New Folder -</strong> Creates a new folder.</li>
+    <li class="propertylistitem"><img src="images/List.gif" alt="List button" width="24" height="24" align="absmiddle"> <strong> List -</strong> Switches the view to a listing of all folders and files in the current path.</li>
+    <li class="propertylistitem"><img src="images/Details.gif" alt="Details button" width="23" height="24" align="absmiddle"> <strong> Details -</strong> Switches the view to a detailed list of all folders and files in the current path.</li>
+    <li class="propertylistitem"><img src="images/ShowHistoryMenu.gif" alt="Show history menu button" width="24" height="24" align="absmiddle"> <strong> Show History Menu -</strong> Shows a list of the last 15 folders that data was loaded from.</li>
     <li class="propertylistitem"><strong>File Name -</strong> Represents the file name. Select a file to populate the entry box to show the full name of the file selected.</li>
     <li class="propertylistitem"><strong>Files of Type -</strong> Represents the file type. This narrows down the files shown in a folder to a specific data type.</li>
-    <li class="propertylistitem"><strong>Times -</strong> Represents the times of the radar displays. These times can be individually set, or you can use a File Pattern to display the images in specific intervals.</li>
+    <li class="propertylistitem"><strong>Times -</strong> Represents the times of the radar displays. These times can be individually set, or File Pattern can be used to display the images in specific intervals.</li>
     <li class="propertylistitem"><strong>File Pattern -</strong> Specifies the pattern for files to look for if <strong>Times</strong> is set to "Use most recent N files&quot;.</li>
-    <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align=absmiddle> <strong> Help -</strong> Brings up this help page.</li>
-    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align=absmiddle> <strong> Refresh -</strong> Updates the Level II radar chooser with the most recent data.</li>
-    <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align=absmiddle> <strong> -</strong> Loads the selected radar data.</li>
+    <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align="absmiddle"> <strong> Help -</strong> Brings up this help page.</li>
+    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align="absmiddle"> <strong> Refresh -</strong> Updates the Level II radar chooser with the most recent data.</li>
+    <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align="absmiddle"> <strong> -</strong> Loads the selected radar data.</li>
 </ul>
 <div class="pagesubtitle"><a name="remoteradar" id="remoteradar"></a>Remote Level II Radar Chooser</div>
 <a name="image2" id="image2"></a>
@@ -60,25 +60,25 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Lev
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
     <li class="propertylistitem"><strong>Catalog -</strong> Selects the catalog used to access the Level II radar data.</li>
-    <li class="propertylistitem"><img src="../../quickstart/images/Connect.gif" alt="Connect button" width="180" height="24"align=absmiddle> <strong> -</strong> Connects to and queries the server for available radar types and stations.</li>
+    <li class="propertylistitem"><img src="../../quickstart/images/Connect.gif" alt="Connect button" width="180" height="24" align="absmiddle"> <strong> -</strong> Connects to and queries the server for available radar types and stations.</li>
     <li class="propertylistitem"><strong>Collections -</strong> Selects the collection to use.</li>
-    <li class="propertylistitem"><strong>Station -</strong> Displays the stations related to the selected catalog and selection. Select a station by clicking on the station displayed on the map. The <strong>Declutter</strong> checkbox allows you to show all stations (not checked), or only a limited number of stations that do not overlap each other (checked). You will need to zoom in to see all the stations without overlaps. Use the Zooming and Panning options to locate a station, or the following buttons:</li>
+    <li class="propertylistitem"><strong>Station -</strong> Displays the stations related to the selected catalog and selection. Select a station by clicking on the station displayed on the map. The <strong>Declutter</strong> checkbox allows for showing all stations (not checked), or only a limited number of stations that do not overlap each other (checked). Zooming in will be necessary in to see all the stations without overlaps. Use the Zooming and Panning options to locate a station, or the following buttons:</li>
     <ul class="propertylist">
-      <li class="propertylistitem"><img src="images/ZoomIn.gif" width="22" height="23" alt="Zoom in button" align=absmiddle> <strong> Zoom In -</strong> Zooms in over the current map area.</li>
+      <li class="propertylistitem"><img src="images/ZoomIn.gif" width="22" height="23" alt="Zoom in button" align="absmiddle"> <strong> Zoom In -</strong> Zooms in over the current map area.</li>
       <li class="propertylistitem"><img src="images/ZoomOut.gif" width="20" height="23" alt="Zoom out button" align="absmiddle"> <strong> Zoom Out -</strong> Zooms out over the current map area.</li>
       <li class="propertylistitem"><img src="images/HomeMapArea.gif" width="22" height="23" alt="Home button" align="absmiddle"> <strong> Home Map Area -</strong> Returns to the default map area.</li>
-      <li class="propertylistitem"><img src="images/ViewUp.gif" alt="Move view up button" width="18" height="18" align=absmiddle> <strong> Move View Up -</strong> Moves the view up (map down).</li>
-      <li class="propertylistitem"><img src="images/ViewDown.gif" alt="Move view down button" width="18" height="18" align=absmiddle> <strong> Move View Down -</strong> Moves the view down (map up).</li>
-      <li class="propertylistitem"><img src="images/ViewLeft.gif" alt="Move view left button" width="18" height="18" align=absmiddle> <strong> Move View Left -</strong> Click to move the view left (map right).</li>
-      <li class="propertylistitem"><img src="images/ViewRight.gif" alt="Move view right button" width="18" height="18" align=absmiddle> <strong> Move View Right -</strong> Click to move the view right (map left).</li>
+      <li class="propertylistitem"><img src="images/ViewUp.gif" alt="Move view up button" width="18" height="18" align="absmiddle"> <strong> Move View Up -</strong> Moves the view up (map down).</li>
+      <li class="propertylistitem"><img src="images/ViewDown.gif" alt="Move view down button" width="18" height="18" align="absmiddle"> <strong> Move View Down -</strong> Moves the view down (map up).</li>
+      <li class="propertylistitem"><img src="images/ViewLeft.gif" alt="Move view left button" width="18" height="18" align="absmiddle"> <strong> Move View Left -</strong> Click to move the view left (map right).</li>
+      <li class="propertylistitem"><img src="images/ViewRight.gif" alt="Move view right button" width="18" height="18" align="absmiddle"> <strong> Move View Right -</strong> Click to move the view right (map left).</li>
     </ul>
-    <li class="propertylistitem"><strong>Times: Relative -</strong> Allows you to select a group of up to the last 100 times.</li>
-    <li class="propertylistitem"><strong>Times: Absolute -</strong> Allows you to choose one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Ctrl+click or Shift+click. See the <a href="../../display_controls/Timeline.html">Timeline Controls</a> section for details on its use. Click on the <img src="images/SelectDay1.gif" alt="Select archive day button" width="16" height="16"align=absmiddle> <strong>Select Day</strong> button to narrow down a large dataset to one day.</li>
+    <li class="propertylistitem"><strong>Times: Relative -</strong> Allows for adding any number of relative (most recent) times.</li>
+    <li class="propertylistitem"><strong>Times: Absolute -</strong> Allows for choosing one or more absolute times. When choosing absolute times for the first time McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Ctrl+click or Shift+click. See the <a href="../../display_controls/Timeline.html">Timeline Controls</a> section for details on its use. Click on the <img src="images/SelectDay1.gif" alt="Select archive day button" width="16" height="16" align="absmiddle"> <strong>Select Day</strong> button to narrow down a large dataset to one day.</li>
     <li class="propertylistitem"><strong>Match Time Driver -</strong> Selects times that match the time driver, assuming one has been set. For more on this feature, see <a href="../../misc/TimeMatching.html">Time Matching</a>. This option is only available if a time driver has been set in the session.</li>
-    <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align=absmiddle> <strong> Help - </strong> Brings up this help page.</li>
-    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align=absmiddle> <strong> Refresh -</strong> Updates the Level II radar chooser with the most recent data.</li>
-    <li class="propertylistitem"><img src="images/Cancel.gif" alt="Cancel button" width="24" height="24" align=absmiddle> <strong> Cancel -</strong> Cancels the query of data and stations. The chooser will reset back to default.</li>
-    <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align=absmiddle> <strong> -</strong> Loads the selected radar data.</li>
+    <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align="absmiddle"> <strong> Help - </strong> Brings up this help page.</li>
+    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align="absmiddle"> <strong> Refresh -</strong> Updates the Level II radar chooser with the most recent data.</li>
+    <li class="propertylistitem"><img src="images/Cancel.gif" alt="Cancel button" width="24" height="24" align="absmiddle"> <strong> Cancel -</strong> Cancels the query of data and stations. The chooser will reset back to default.</li>
+    <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align="absmiddle"> <strong> -</strong> Loads the selected radar data.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
