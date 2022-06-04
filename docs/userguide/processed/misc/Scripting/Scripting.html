@@ -30,23 +30,30 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sc
 <div class="pagetitle">Scripting</div>
 <p>McIDAS-V can be scripted to create and manipulate images and movies. The scripting
   is accomplished using Jython. Jython is an implementation of the Python language
-  in Java and follows Python syntax. </p>
+  in Java and follows Python syntax.</p>
 <p>McIDAS-V scripting can be done from the <a href="../../tools/JythonShell.html">Jython
     shell</a>, or a Jython script can be invoked as a command line argument.</p>
-<p>In Unix, from the McIDAS-V-System directory: </p>
-<pre>	runMcV -script /home/user/example.py </pre>
+<p>In Unix, from the McIDAS-V-System directory:</p>
+<pre>   runMcV -script /home/user/example.py </pre>
 In Windows, from the McIDAS-V System directory:
-<pre>	runMcV.bat -script C:/Users/user/example.py </pre>
+<pre>   runMcV.bat -script C:/Users/user/example.py </pre>
+<p>Users can pass arguments through scripts at runtime with the scriptargs flag, which uses uses standard 
+Python optparse/argparse syntax within the script to specify the arguments.  Anything 
+after the scriptargs flag will be considered a scripting argument, so scriptargs should be 
+specified last.  For example, if a script is set up to allow a user to pass through a band 
+number with "--bands", the script can be run in the following way to request band 8 (Unix and Windows examples):</p>
+<pre>   runMcV -script /home/user/example.py -scriptargs --band 8
+</pre>
+<pre>   runMcV.bat -script C:/Users/user/example.py -scriptargs --band 8</pre>
 <p>When invoked as a command line argument, the user interface will not be shown.
   However, McIDAS-V still needs to be run with an active window system (e.g.,
   X, MS Windows) for it to run. If running under a Linux/Unix machine with no X server running, McIDAS-V must be run under the X virtual
-  frame buffer, xvfb. </p>
+  frame buffer, xvfb.</p>
 <hr>
 <p>McIDAS-V supports a number of functions and methods to load and display data,
   manipulate the display, and to save images. Download the example script
   to see how to use each one (<a href="../example18.py" target="_blank">example18.py</a>).
-  This page contains a list of functions that are supported in McIDAS-V. You can find more information about each function, including parameters, keywords, and example commands, by clicking on a function or a function category.
-<p>
+  This page contains a list of functions that are supported in McIDAS-V. You can find more information about each function, including parameters, keywords, and example commands, by clicking on a function or a function category.<p>
 <p><strong><a href="CreateObject.html">Create an Object:</a></strong><ul>
   <li><a href="CreateObject.html#buildWindow">buildWindow</a></li>
   <li><a href="CreateObject.html#createLayer">createLayer</a></li>
