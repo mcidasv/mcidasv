@@ -153,6 +153,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
     </tr></table></div>
   <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setProjection(projection='US>States>N-Z>Pennsylvania')</em></div>
+    <p><strong><a name="setProjectionFromData" id="setProjectionFromData"></a>setProjectionFromData -</strong> Enables or disables auto-set projection of a panel</p>
+<div class="OneTabIndent">Usage: <em>panel[0].setProjectionFromData(False)</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel[0].setProjectionFromData(False)</em><em></em></div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">By default, when a layer is displayed in a panel, the projection will be remapped to the native projection of the data. The user can disable this by passing &quot;False&quot; through setProjectionFromData. When this is done, the projection will not update when data is displayed. This is the same as disabling <strong>Projections -&gt; Auto-set Projection</strong> in the Main Display window. The default for this command is &quot;True&quot;.</div>
 <p><strong><a name="setViewpoint" id="setViewpoint"></a>setViewpoint -</strong> Sets the viewpoint of a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setViewpoint(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>

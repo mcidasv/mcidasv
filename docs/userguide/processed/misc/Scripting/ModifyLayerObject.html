@@ -50,6 +50,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="TwoTabIndent"><em>satLayer = panel[0].getLayer[1]</em></div>
   <div class="OneTabIndent">Remarks:</div>
   <div class="TwoTabIndent">This function returns a reference to a displayed error, which allows for passing this layer through other functions such as <em>setLayerVisible()</em>, <em>setEnhancement()</em>, and<em> setLayerLabel()</em>. The numerical value in the square brackets after <em>getLayer</em> in the example is the layer's index in the display. The index of displays in the displays begins with 0, which is the first layer displayed in the panel (normally the map layer). The second layer displayed would be index 1, the third layer display would be index 2, and so on.</div>
+<p><strong><a name="getLayers" id="getLayers"></a>getLayers -</strong> Returns a list of layer objects in the referenced display panel</p>
+<div class="OneTabIndent">Usage: <em>layers = panel[0].getLayers()</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>layers = panel[0].getLayers()</em><br><em>satLayer = layers[1]</em></div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">This function returns list of layers in the display panel. The first layer in the list, index 0 (zero) will be the first layer displayed, generally the map layer. Using this function in the above example, the satLayer object can then be passed through other functions such as <em>setLayerVisible()</em>, <em>setEnhancement()</em>, and<em> setLayerLabel()</em>. The numerical value in the square brackets after <em>getLayer</em> in the example is the layer's index in the display. The index of displays in the displays begins with 0, which is the first layer displayed in the panel (normally the map layer). The second layer displayed would be index 1, the third layer display would be index 2, and so on.</div>
 <p><strong><a name="setColorScale" id="setColorScale"></a>setColorScale -</strong> Displays color scale on a panel and specifies its attributes</p>
 <div class="OneTabIndent">Usage: <em>myDataLayer.setColorScale(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - optional:</div>
