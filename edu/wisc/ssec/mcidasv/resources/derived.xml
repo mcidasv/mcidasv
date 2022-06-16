@@ -3107,6 +3107,28 @@
         </operands>
     </derived>
     <!-- CO -->
+    <derived description="Vertically integrated CO column corrected (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="CO_total_vert_column_corrected_molecules_cm2" isdefault="true" isenduser="false" override="true">
+        <categories>
+            <category display="true" value="2D grid-PRODUCT-Derived"/>
+            <category value="display:planviewcolor"/>
+            <category value="display:valuedisplay"/>
+            <category value="display:planviewcolorastopo"/>
+            <category value="display:planviewcontourfilled"/>
+            <category value="display:planviewcontourfilledastopo"/>
+            <category value="display:planviewcontour"/>
+            <category value="display:planviewcontourfilledoverz"/>
+            <category value="display:scatter"/>
+            <category value="display:planviewcontouroverz"/>
+            <category value="display:gridtablecontrol"/>
+            <category value="display:planviewcoloroverz"/>
+            <category value="display:omni"/>
+            <category value="display:planviewcontourastopo"/>
+            <category value="display:imagedisplay"/>
+        </categories>
+        <operands categories="">
+            <params categories="" p1="PRODUCT/carbonmonoxide_total_column_corrected"/>
+        </operands>
+    </derived>
     <derived description="Vertically integrated CO column (molecules/cm2)" formula="createNewUnit((noUnit(D1* 60221400000000000000)), 'molecules/cm2',1)" id="CO_total_vert_column_molecules_cm2" isdefault="true" isenduser="false" override="true">
         <categories>
             <category display="true" value="2D grid-PRODUCT-Derived"/>
