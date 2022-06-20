@@ -37,19 +37,19 @@ It also shows a tabular readout of the value at the current animation time step.
 In the image below we have a Probe Control showing three parameters: T, RH and
 windspeed. Their values at the current animation time step are shown in the table
 and their time series are shown. Note, the T and RH fields are shown in one chart
-and the windspeed is shown in another chart. You can have any number of fields
-and any number of charts. You can configure the layout of the charts, the chart
+and the windspeed is shown in another chart. There can be any number of fields
+and any number of charts. The user can configure the layout of the charts, the chart
 properties and the line properties for each parameter. See the <a href="Chart.html">Charts</a> page for
 more information.</p>
 <div class="images"><img src="images/ProbeControlGui.gif" alt="Image 1: Probe Control Window" ><br>
 <span class="caption">Image 1: Probe Control Window</span></div>
-<p>A small colored square selector point in the Main Display window shows the location of the data probe. You can drag the data probe over the map in the Main Display window by using left-click and drag.
-When displaying a 3D field, you can change the data probe vertically as well. As the selector point is moved, the data in the charts will change to represent the data at the location of the probe.</p>
+<p>A small colored square selector point in the Main Display window shows the location of the data probe. The data probe over the map in the Main Display window can be moved by using left-clicking and dragging.
+When displaying a 3D field, the data probe can be moved vertically as well. As the selector point is moved, the data in the charts will change to represent the data at the location of the probe.</p>
 <p>The table shows the parameters with their values, the level at which the value
   is sampled, and the type of sampling. At the bottom of the window, the location of the probe is shown in
   latitude, longitude, and altitude. When surface data is probed the height of
-  the probe point does not matter. You can move the probe by clicking and dragging it in the Main Display window, or by entering new values into the Lat, Lon, and Alt fields and pressing Enter.</p>
-<p>You can add new parameters a number of ways:</p>
+  the probe point does not matter. The probe can be moved by clicking and dragging it in the Main Display window, or by entering new values into the Lat, Lon, and Alt fields and pressing Enter.</p>
+<p>New parameters can be added in a number of ways:</p>
 <ul class="propertylist">
   <li> Right-click on the table and select <strong>Add Parameter...</strong></li>
   <li> Through the <strong>Edit-&gt;Add Parameter...</strong> menu item.</li>
@@ -59,9 +59,9 @@ When displaying a 3D field, you can change the data probe vertically as well. As
 <p>These parameter actions can be accessed by right-clicking on the parameter row
 in the table or through the <strong>View-&gt;Parameters</strong> menu.</p>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Copy -</strong> Copies the selected parameter. This allows you view the same parameter value
+  <li class="propertylistitem"><strong>Copy -</strong> Copies the selected parameter. This allows for viewing the same parameter value
     at different locations or with different sampling methods.</li>
-  <li class="propertylistitem"><strong>Chart Properties -</strong> Allows you to change how the parameter is displayed in the chart. See the <a href="Chart.html#chartproperties">Chart Properties</a> section of the Charts page for more information.</li>
+  <li class="propertylistitem"><strong>Chart Properties -</strong> Allows for changing how the parameter is displayed in the chart. See the <a href="Chart.html#chartproperties">Chart Properties</a> section of the Charts page for more information.</li>
   <li class="propertylistitem"><strong>Change Unit... -</strong> Changes the display unit for the selected parameter.</li>
   <li class="propertylistitem"><strong>Set Sound... -</strong> Defines a sound type and range for the parameter. As the probe
       is moved around or the time animation is run a sound is applied based on
@@ -75,11 +75,11 @@ in the table or through the <strong>View-&gt;Parameters</strong> menu.</p>
 <li class="propertylistitem"><strong>Location -</strong> Sets the location of the probe. Enter a latitude, longitude or altitude in the location fields on the
       bottom right side of the <strong>Layer Controls </strong>and press Enter.</li>
 <li class="propertylistitem"><strong>Levels -</strong> Shows the
-      height of the sample point. Click in the level value box, and you can reset
+      height of the sample point. Click in the level value box, and the user can reset
       the level for that parameter to other altitude values (in the native data
       set) with a selector list of levels that pops up. The level &quot;Probe's&quot; is
       whatever level the probe happens to be at, which may not be a native level
-      of the data. Note that once you set the level to a level not at the probe
+      of the data. Note that once the user has set the level to a level not at the probe
       point, the probe point no longer shows where the sample is from. The probe
       does have the same latitude and longitude as the data shown, but not the
       altitude.</li>
@@ -88,7 +88,7 @@ in the table or through the <strong>View-&gt;Parameters</strong> menu.</p>
       a data point. &quot;Weighed average&quot; uses interpolation
       of nearby data points; &quot;Nearest neighbor&quot; gives the exact value
       of the datum in the grid cell where the probe is located. Click in the
-      sampling column box, and you can set the sampling method for that parameter.</li>
+      sampling column box to set the sampling method for that parameter.</li>
 </ul>
 <div class="pagesubtitle"><a name="menuoptions"></a>Menu Options</div>
 <p>Many of the menu items seen utilizing this display are standard options that can be found in the <a href="LayerControls.html#menus">Menus section</a> of the Layer Controls page. However, there
@@ -102,27 +102,27 @@ are several menu options that are unique to the Data Probe/Time Series display. 
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Change Display Format -</strong> Changes how the data is displayed in the table. This template is HTML with macros that get replaced with the display value, unit, raw value and raw data unit.</li>
   <li class="propertylistitem"><strong>Probe Color -</strong> Changes the color of the probe in the Main Display window.</li>
-  <li class="propertylistitem"><strong>Add Parameter -</strong> Opens a Field Selector window with the option to add another parameter to the display from one of your loaded Data Sources.</li></ul>
+  <li class="propertylistitem"><strong>Add Parameter -</strong> Opens a Field Selector window with the option to add another parameter to the display from one of the loaded Data Sources.</li></ul>
 <p>The <strong>View Menu</strong> has these unique options -</p>
 <ul class="propertylist">
   <li class="propertylistitem"><strong>Parameters</strong></li>
       <ul class="propertylist">
     <li class="propertylistitem"><strong>Show Parameter Table -</strong> Displays the parameter table below the chart.</li>
     <li class="propertylistitem"><strong>Show Readout in Legend -</strong> Displays the readout of the chart in the Legend in the Main Display window.</li>
-    <li class="propertylistitem"><strong>Add Parameter -</strong> Opens a Field Selector window with the option to add another parameter to the display from one of your loaded Data Sources.</li>
-    <li class="propertylistitem"><strong>Parameter -</strong> Allows you to copy the chart, open the Chart Properties dialog window, change the unit of the selected parameter, set a sound, or remove the parameter.</li>
+    <li class="propertylistitem"><strong>Add Parameter -</strong> Opens a Field Selector window with the option to add another parameter to the display from one of the loaded Data Sources.</li>
+    <li class="propertylistitem"><strong>Parameter -</strong> Allows for copying the chart, opening the Chart Properties dialog window, changing the unit of the selected parameter, setting a sound, or removing the parameter.</li>
   </ul>
   <li class="propertylistitem"><strong>Chart</strong></li>
   <ul class="propertylist">
         <li class="propertylistitem"><strong>Show Thumbnail in Legend -</strong> Displays a thumbnail version of the image in the Legend in the Main Display window.
 </li>
         <li class="propertylistitem"><strong>Show Sunrise/Sunset Times -</strong> Displays sunrise/sunset times in the chart if applicable.</li>
-        <li class="propertylistitem"><strong>Layout -</strong> Gives you the option to open the Edit Chart Layout window as well as the option to format the chart in several ways.</li>
+        <li class="propertylistitem"><strong>Layout -</strong> Gives the option to open the Edit Chart Layout window as well as the option to format the chart in several ways.</li>
         <li class="propertylistitem"><strong>Chart -</strong> Allows for zooming, saving the chart, and the option to open the Data Probe Properties window.</li>
     </ul> 
   <li class="propertylistitem"><strong>Probe</strong> <a name="Probe"></a></li>
       <ul class="propertylist">
-            <li class="propertylistitem"><strong>Position -</strong> Controls how you can reposition the probe by preventing movement in the direction of certain axes. There is also an option to reset the probe back to its initial position.</li>
+            <li class="propertylistitem"><strong>Position -</strong> Controls how the user can reposition the probe by preventing movement in the direction of certain axes. There is also an option to reset the probe back to its initial position.</li>
             <li class="propertylistitem"><strong>Color -</strong> Changes the color of the probe in the Main Display window.</li>
             <li class="propertylistitem"><strong>Size -</strong> Increases or decreases the size of the probe in the Main Display window.</li>
             <li class="propertylistitem"><strong>Probe Shape -</strong> Changes the shape of the probe displayed in the Main Display window.</li>

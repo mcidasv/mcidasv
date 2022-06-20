@@ -63,6 +63,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.chooser.adde.AddeChooser;
 import edu.wisc.ssec.mcidasv.util.McVTextField;
 import org.jdom2.Document;
@@ -403,10 +404,14 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
         try {
             doc = builder.build(radarServerURL);
         } catch (JDOMException e) {
-            userMessage("Invalid catalog");
+            if (canShowErrorWindows()) {
+                userMessage("Invalid catalog");
+            }
             logger.warn("Invalid catalog: "+radarServerURL, e);
         } catch (IOException e) {
-            userMessage("Unable to open catalog");
+            if (canShowErrorWindows()) {
+                userMessage("Unable to open catalog");
+            }
             logger.warn("Unable to open catalog: "+radarServerURL, e);
         }
 
@@ -471,7 +476,9 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                 logger.debug("Initializing collection from URL: " + url);
                 collection = TDSRadarDatasetCollection.factory("test", url, errlog);
             } catch (Exception exc) {
-                userMessage("Invalid catalog");
+                if (canShowErrorWindows()) {
+                    userMessage("Invalid catalog");
+                }
                 logger.warn("Invalid catalog: "+url, exc);
                 return;
             }
@@ -492,11 +499,29 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
 
             getStationMap().setStations(stations);
         } catch (Exception exc) {
-            userMessage("Unable to load stations");
+            if (canShowErrorWindows()) {
+                userMessage("Unable to load stations");
+            }
             logger.warn("Unable to load stations from URL: "+url, exc);
             return;
         }
         urlListHandler.saveState(urlBox);
+    }
+
+    /**
+     * Utility method to check to see if McIDAS-V is ready to show error dialogs.
+     *
+     * @return {@code true} if McIDAS-V has finished starting and not in background mode.
+     * {@code false} otherwise.
+     */
+    private static boolean canShowErrorWindows() {
+        // TODO(jon): maybe this should be integrated into the userMessage method instead?
+        McIDASV mcv = McIDASV.getStaticMcv();
+        boolean result = false;
+        if (mcv != null) {
+            result = mcv.getHaveInitialized() && mcv.okToShowWindows();
+        }
+        return result;
     }
 
     /**
@@ -520,7 +545,9 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                 collection = TDSRadarDatasetCollection.factory("test", url,
                         errlog);
             } catch (Exception exc) {
-                userMessage("Invalid catalog");
+                if (canShowErrorWindows()) {
+                    userMessage("Invalid catalog");
+                }
                 logger.warn("Invalid catalog: "+url, exc);
                 return;
             }
@@ -555,7 +582,9 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
             // GuiUtils.setListData(dataTypeComboBox, dataTypes);
             getStationMap().setStations(stations);
         } catch (Exception exc) {
-            userMessage("Unable to load stations");
+            if (canShowErrorWindows()) {
+                userMessage("Unable to load stations");
+            }
             logger.warn("Unable to load stations from URL: "+url, exc);
             return;
         }
@@ -615,8 +644,10 @@ public class TDSRadarChooser extends TimesChooser implements Constants {
                 //                LogUtil.message("");
                 showNormalCursor();
             } catch (Exception exc) {
-                userMessage("Error reading times for station: "
+                if (canShowErrorWindows()) {
+                    userMessage("Error reading times for station: "
                             + selectedStation);
+                }
                 //logException("Getting times for station: " + selectedStation,
                 //             exc);
                 setStatus("Select a different collection", "collections");

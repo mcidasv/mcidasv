@@ -83,6 +83,11 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 </table></div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].annotate('EQUATOR',size=20, font='SansSerif.bold', lat=0, lon=-90, color='Green',alignment=(&quot;left&quot;,&quot;top&quot;)</em>)</div>
+<p><strong><a name="getMapLayer" id="getMapLayer"></a>getMapLayer -</strong> Obtains a reference to the map layer in the display</p>
+<div class="OneTabIndent">Usage: <em>panel[0].getMapLayer()</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>mapLayer = panel[0].getMapLayer()</em></div>
+<div class="TwoTabIndent"><em>mapLayer.setVerticalPosition(1)</em></div>
 <p><strong><a name="setCenter" id="setCenter"></a>setCenter -</strong> Centers the display on a specified latitude/longitude and sets a scaling factor</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setCenter(keywords) </em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
@@ -107,6 +112,37 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="TwoTabIndent">Scale factors between 0 and 1 zoom out centered on the specified latitude/longitude and scale factors greater than 1 zoom in.</div>
 <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setCenter(45, -75, scale=20</em>)</div>
+<p><strong><a name="setMapLayerVisibility" id="setMapLayerVisibility"></a>setMapLayerVisibility -</strong> Sets the visibility of the entire map layer in the display</p>
+<div class="OneTabIndent">Usage: <em>panel[0].setMapLayerVisibility(keyword)</em></div>
+<div class="TwoTabIndent">Keyword - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">visibility=</td>
+      <td>sets the visibility of the map layer in the display<br>
+      True - displays the map<br>
+      False - does not display the map</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel[0].setMapLayerVisibility(visibility=True)</em></div>
+<p><strong><a name="setMapVisibilityByDescription" id="setMapVisibilityByDescription"></a>setMapVisibilityByDescription -</strong> Sets the visibility of individual maps in the display</p>
+<div class="OneTabIndent">Usage: <em>panel[0].setMapVisibilityByDescription(keywords)</em></div>
+<div class="TwoTabIndent">Keywords - required:</div>
+<div class="ThreeTabIndent2"><table class="noborder">
+    <tr>
+      <td valign="top">description=</td>
+      <td>the map to be added or removed from the display. The description matches the names of the maps in the Layer Controls.</td>
+    </tr>
+    <tr>
+      <td valign="top">visibility=</td>
+      <td>sets the visibility of the map defined in the description keyword<br>
+      True - displays the map<br>
+      False - does not display the map</td>
+    </tr>
+</table></div>
+<div class="OneTabIndent">Examples:</div>
+<div class="TwoTabIndent"><em>panel[0].setMapVisibilityByDescription(description='World Coastlines', visibility=False)</em></div>
+<div class="TwoTabIndent"><em>panel[0].setMapVisibilityByDescription(description='U.S. County Outlines', visibility=True)</em></div>
 <p><strong><a name="setProjection" id="setProjection"></a>setProjection -</strong> Sets the projection of a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setProjection(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
@@ -117,6 +153,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
     </tr></table></div>
   <div class="OneTabIndent">Example:</div>
 <div class="TwoTabIndent"><em>panel[0].setProjection(projection='US>States>N-Z>Pennsylvania')</em></div>
+    <p><strong><a name="setProjectionFromData" id="setProjectionFromData"></a>setProjectionFromData -</strong> Enables or disables auto-set projection of a panel</p>
+<div class="OneTabIndent">Usage: <em>panel[0].setProjectionFromData(False)</em></div>
+<div class="OneTabIndent">Example:</div>
+<div class="TwoTabIndent"><em>panel[0].setProjectionFromData(False)</em><em></em></div>
+  <div class="OneTabIndent">Remarks:</div>
+  <div class="TwoTabIndent">By default, when a layer is displayed in a panel, the projection will be remapped to the native projection of the data. The user can disable this by passing &quot;False&quot; through setProjectionFromData. When this is done, the projection will not update when data is displayed. This is the same as disabling <strong>Projections -&gt; Auto-set Projection</strong> in the Main Display window. The default for this command is &quot;True&quot;.</div>
 <p><strong><a name="setViewpoint" id="setViewpoint"></a>setViewpoint -</strong> Sets the viewpoint of a panel</p>
 <div class="OneTabIndent">Usage: <em>panel[0].setViewpoint(keywords)</em></div>
 <div class="TwoTabIndent">Keywords - required:</div>
@@ -141,42 +183,6 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Mo
 <div class="OneTabIndent">Examples:</div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(False)</em></div>
 <div class="TwoTabIndent"><em>panel[0].setWireframe(True)</em></div>
-<p><strong><a name="setMapVisibilityByDescription" id="setMapVisibilityByDescription"></a>setMapVisibilityByDescription -</strong> Sets the visibility of individual maps in the display</p>
-<div class="OneTabIndent">Usage: <em>panel[0].setMapVisibilityByDescription(keywords)</em></div>
-<div class="TwoTabIndent">Keywords - required:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">description=</td>
-      <td>the map to be added or removed from the display. The description matches the names of the maps in the Layer Controls.</td>
-    </tr>
-    <tr>
-      <td valign="top">visibility=</td>
-      <td>sets the visibility of the map defined in the description keyword<br>
-      True - displays the map<br>
-      False - does not display the map</td>
-    </tr>
-</table></div>
-<div class="OneTabIndent">Examples:</div>
-<div class="TwoTabIndent"><em>panel[0].setMapVisibilityByDescription(description='World Coastlines', visibility=False)</em></div>
-<div class="TwoTabIndent"><em>panel[0].setMapVisibilityByDescription(description='U.S. County Outlines', visibility=True)</em></div>
-<p><strong><a name="setMapLayerVisibility" id="setMapLayerVisibility"></a>setMapLayerVisibility -</strong> Sets the visibility of the entire map layer in the display</p>
-<div class="OneTabIndent">Usage: <em>panel[0].setMapLayerVisibility(keyword)</em></div>
-<div class="TwoTabIndent">Keyword - required:</div>
-<div class="ThreeTabIndent2"><table class="noborder">
-    <tr>
-      <td valign="top">visibility=</td>
-      <td>sets the visibility of the map layer in the display<br>
-      True - displays the map<br>
-      False - does not display the map</td>
-    </tr>
-</table></div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>panel[0].setMapLayerVisibility(visibility=True)</em></div>
-<p><strong><a name="getMapLayer" id="getMapLayer"></a>getMapLayer -</strong> Obtains a reference to the map layer in the display</p>
-<div class="OneTabIndent">Usage: <em>panel[0].getMapLayer()</em></div>
-<div class="OneTabIndent">Example:</div>
-<div class="TwoTabIndent"><em>mapLayer = panel[0].getMapLayer()</em></div>
-<div class="TwoTabIndent"><em>mapLayer.setVerticalPosition(1)</em></div>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">
   <hr align="center">

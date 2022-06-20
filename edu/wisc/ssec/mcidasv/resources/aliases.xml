@@ -77,7 +77,11 @@
      fcdr_brightness_temperature_*.*,
      BT_ch*.*_IMICA_*.*_mean,
      BT_ch*.*_IMICA_*.*_minvza,
-     BT_ch*.*_IMICA_*.*_nadir"/>
+     BT_ch*.*_IMICA_*.*_nadir,
+     ta.*_env.*,
+     ta.*_ch.*_las,
+     ta.*rc_ch.*_uas,
+     ta.*_img.*"/>
   
   <alias 
      name="Refl"
@@ -493,7 +497,8 @@
      windsfc,
      f10m,
      wind_speed_cloud_top_nwp,
-     wind_speed_10m_nwp"/>
+     wind_speed_10m_nwp,
+     sar_wind"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"

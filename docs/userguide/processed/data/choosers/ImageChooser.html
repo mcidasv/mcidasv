@@ -30,17 +30,17 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
 </div>
 <!-- InstanceBeginEditable name="MainContent" -->
 <div class="pagetitle">Choosing Satellite Imagery</div>
-<p>The <strong>Satellite-&gt;Imagery</strong> chooser allows you to access satellite imagery on local or remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/Satellite.html">Getting Started - Displaying Satellite Imagery</a>.</p>
+<p>The <strong>Satellite-&gt;Imagery</strong> chooser allows for accessing satellite imagery on local or remote ADDE servers. For more information on how to use this chooser, see <a href="../../quickstart/Satellite.html">Getting Started - Displaying Satellite Imagery</a>.</p>
 <a name="image1" id="image1"></a>
 <div class="images"><img src="../../quickstart/images/ImageChooser.gif" width="994" height="474" alt="Image 1: Satellite Imagery Chooser"/><br>
 <span class="caption">Image 1: Satellite Imagery Chooser</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-     <li class="propertylistitem"><strong>Server -</strong> Selects the server to be used. Enter in a server name or choose one from the pulldown menu. Right-click in the entry box to manage your ADDE servers and to delete the server from the list.</li>
-    <li class="propertylistitem"><img src="images/Manage.gif" alt="Server Manager button" align=absmiddle> <strong> Manage -</strong> Manages the list of servers by opening the <a href="../../tools/preferences/ServerPreferences.html"><strong>ADDE Servers</strong></a> tab of the User Preferences window.</li>
+     <li class="propertylistitem"><strong>Server -</strong> Selects the server to be used. Enter in a server name or choose one from the pulldown menu. Right-click in the entry box to manage the ADDE servers and to delete the server from the list.</li>
+    <li class="propertylistitem"><img src="images/Manage.gif" alt="Server Manager button" align="absmiddle"> <strong> Manage -</strong> Manages the list of servers by opening the <a href="../../tools/preferences/ServerPreferences.html"><strong>ADDE Servers</strong></a> tab of the User Preferences window.</li>
     <li class="propertylistitem"><strong>Dataset -</strong> Selects the dataset to be used. Enter in a dataset name or choose one from the pulldown menu.</li>
-    <li class="propertylistitem"><img src="images/PublicServers.gif" alt="Public Datasets button" align=absmiddle> <strong> Public Datasets -</strong> Lists the public datasets available on the server. This button looks for any datasets contained in the PUBLIC.SRV file on the server. If this file doesn't exist, or if there are no datasets in this file that can be used by this chooser, then no datasets will be returned.</li>
-<li class="propertylistitem"><img src="../../quickstart/images/Connect.gif" alt="Connect button" width="180" height="24"align=absmiddle> <strong> -</strong> Connects and queries the server for available image types.</li>
+    <li class="propertylistitem"><img src="images/PublicServers.gif" alt="Public Datasets button" align="absmiddle"> <strong> Public Datasets -</strong> Lists the public datasets available on the server. This button looks for any datasets contained in the PUBLIC.SRV file on the server. If this file doesn't exist, or if there are no datasets in this file that can be used by this chooser, then no datasets will be returned.</li>
+<li class="propertylistitem"><img src="../../quickstart/images/Connect.gif" alt="Connect button" width="180" height="24" align="absmiddle"> <strong> -</strong> Connects and queries the server for available image types.</li>
     <li class="propertylistitem"><strong>Image Type -</strong> Selects the image type.</li>
     <li class="propertylistitem"><strong>Times: Relative -</strong> Allows for adding any number of relative (most recent) images.</li>
     <li class="propertylistitem"><strong>Times: Absolute -</strong> Allows for selecting one or more absolute times. When choosing absolute times for the first time, McIDAS-V needs to query the ADDE server for the times. This may take some time. To select more than one time use Ctrl+click or Shift+click. See the <a href="../../display_controls/Timeline.html">Timeline Controls</a> section for details on its use. There are a couple of buttons in this tab that allow for controlling which times are available:</li>
@@ -51,10 +51,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Ima
     <li class="propertylistitem"><strong>Match Time Driver -</strong> Selects times that match the time driver, assuming one has been set. For more on this feature, see <a href="../../misc/TimeMatching.html">Time Matching</a>. This option is only available if a time driver has been set in the session.</li>
     <li class="propertylistitem"><strong>Navigation -</strong> Selects one of the available navigation types. Use Default for most images, and Lat/Lon if LALO navigation should be used. Level 1b servers and POES servers often require Lat/Lon navigation to be used. </li>
     <li class="propertylistitem"><strong>Preview -</strong> Displays a preview of the image in the <strong>Region</strong> tab of the <strong>Field Selector</strong>. If this box is unchecked, then only a map of the image coverage area will be shown without any data. </li>
-    <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align=absmiddle> <strong> Help -</strong> Brings up this help page.</li>
-    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align=absmiddle> <strong> Refresh -</strong> Updates the Imagery chooser with the most recent data.</li>
-    <li class="propertylistitem"><img src="images/Cancel.gif" alt="Cancel button" width="24" height="24" align=absmiddle> <strong> Cancel -</strong> Cancels the query of data. The chooser will reset back to default.</li>
-    <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align=absmiddle> <strong> -</strong> Loads the selected data.</li>
+    <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align="absmiddle"> <strong> Help -</strong> Brings up this help page.</li>
+    <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align="absmiddle"> <strong> Refresh -</strong> Updates the Imagery chooser with the most recent data.</li>
+    <li class="propertylistitem"><img src="images/Cancel.gif" alt="Cancel button" width="24" height="24" align="absmiddle"> <strong> Cancel -</strong> Cancels the query of data. The chooser will reset back to default.</li>
+    <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align="absmiddle"> <strong> -</strong> Loads the selected data.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

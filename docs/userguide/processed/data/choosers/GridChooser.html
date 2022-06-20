@@ -37,14 +37,14 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Gri
 <span class="caption">Image 1: Remote Grid Chooser</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
-  <li class="propertylistitem"><strong>Catalog -</strong> Represents the catalog you are getting your data from. Enter in a catalog URL (and hit Enter or click <img src="images/Refresh.gif" alt="Refresh button" width="23" height="24"align=absmiddle> <strong> Refresh </strong>) or select a catalog URL from the pull down menu. Use the <img src="images/SelectFile2.gif" alt="Select File button" width="180" height="24"align=absmiddle> button to select a catalog on your local disk.</li>
-  <li class="propertylistitem"><strong>History -</strong> Switches back and forth between selected catalogs by using the <img src="images/Cat-Back.gif" alt="Left arrow button" width="13" height="15"align=absmiddle> and <img src="images/Cat-Fwd.gif" alt="Right arrow button" width="13" height="15"align=absmiddle> buttons.</li>
+  <li class="propertylistitem"><strong>Catalog -</strong> Lists the catalog that the data being pulled from. Enter in a catalog URL (and hit Enter or click <img src="images/Refresh.gif" alt="Refresh button" width="23" height="24" align="absmiddle"> <strong> Refresh </strong>) or select a catalog URL from the pull down menu. Use the <img src="images/SelectFile2.gif" alt="Select File button" width="180" height="24" align="absmiddle"> button to select a catalog on the local disk or a mounted drive.</li>
+  <li class="propertylistitem"><strong>History -</strong> Switches back and forth between selected catalogs by using the <img src="images/Cat-Back.gif" alt="Left arrow button" width="13" height="15" align="absmiddle"> and <img src="images/Cat-Fwd.gif" alt="Right arrow button" width="13" height="15" align="absmiddle"> buttons.</li>
   <li class="propertylistitem"><strong>Data Source Type -</strong> Represents the type of file. If left as &quot;I'm Feeling Lucky&quot;, McIDAS-V will figure out what kind of data is in the file by the URL itself. This can be overridden by selecting the type of data the file contains from the pull down menu. For more information, see the list of <a href="../DataSources.html">data formats and sources</a> that are available.</li>
-  <li class="propertylistitem"><strong>Tree Structure -</strong> Contains individual model runs for each of the parent models. Open the tree structure by clicking on the (<img src="../images/TreeTagClosed.gif" alt="Tab icon" width="22" height="21"align=absmiddle>) tab icon. Clicking on a data source will enable the <img src="../../quickstart/images/AddSource.gif" width="180" height="24" alt="Add Source button"align="absmiddle"> button.</li>
+  <li class="propertylistitem"><strong>Tree Structure -</strong> Contains individual model runs for each of the parent models. Open the tree structure by clicking on the (<img src="../images/TreeTagClosed.gif" alt="Tab icon" width="22" height="21" align="absmiddle">) tab icon. Clicking on a data source will enable the <img src="../../quickstart/images/AddSource.gif" width="180" height="24" alt="Add Source button" align="absmiddle"> button.</li>
   <li class="propertylistitem"><strong>Show Thumbnail Images -</strong> Shows thumbnails in the THREDDS catalog if available.</li>
-  <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" width="25" height="24" align=absmiddle> <strong> Help -</strong> Brings up this help page.</li>
-  <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" width="23" height="24" align=absmiddle> <strong> Refresh -</strong> Updates the catalog chooser with the most recent data.</li>
-  <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" width="180" height="24"align=absmiddle> <strong> -</strong> Loads the selected data.</li>
+  <li class="propertylistitem"><img src="images/Help.gif" alt="Help button" width="25" height="24" align="absmiddle"> <strong> Help -</strong> Brings up this help page.</li>
+  <li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" width="23" height="24" align="absmiddle"> <strong> Refresh -</strong> Updates the catalog chooser with the most recent data.</li>
+  <li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" width="180" height="24" align="absmiddle"> <strong> -</strong> Loads the selected data.</li>
 </ul>
 <p><a name="localgrid" id="localgrid"></a>The following image displays the <strong>Gridded Data-&gt;Local </strong>chooser:</p>
 <a name="image2" id="image2"></a>
@@ -54,22 +54,22 @@ function setParentPage() { if (parent.setPage) parent.setPage('data/choosers/Gri
 <ul class="propertylist">
 <li class="propertylistitem"><strong>Data Type -</strong> Selects the data type of the data. If left as "I'm Feeling Lucky", McIDAS-V will figure out what kind of data is in the file by the filename itself. This can be overridden by selecting the type of data the file contains from the pull down menu. For more information, see the list of <a href="../DataSources.html">available data source types</a>.</li>
 <li class="propertylistitem"><strong>Look In -</strong> Selects folders to search for data files via the pulldown menu, or you can double-click on folder names.</li>
-<li class="propertylistitem"><img src="images/UpOneLevel.gif" alt="Up one level button" width="24" height="24" align=absmiddle> <strong> Up One Level -</strong> Moves you up one folder level in your local file system.</li>
-<li class="propertylistitem"><img src="images/Desktop.gif" alt="Desktop button" width="24" height="24" align=absmiddle> <strong> Desktop -</strong> Takes you to the Desktop folder of your local file system.</li>
-<li class="propertylistitem"><img src="images/CreateNewFolder.gif" alt="Create new folder button" width="24" height="24" align=absmiddle> <strong> Create New Folder -</strong> Creates a new folder.</li>
-<li class="propertylistitem"><img src="images/List.gif" alt="List button" width="24" height="24" align=absmiddle> <strong> List -</strong> Switches the view to a listing of all folders and files in the current path.</li>
-<li class="propertylistitem"><img src="images/Details.gif" alt="Details button" width="23" height="24" align=absmiddle> <strong> Details -</strong> Switches the view to a detailed list of all folders and files in the current path.</li>
-<li class="propertylistitem"><img src="images/ShowHistoryMenu.gif" alt="Show history menu button" width="24" height="24" align=absmiddle> <strong> Show History Menu -</strong> Shows a list of the last 15 folders that data was loaded from.</li>
+<li class="propertylistitem"><img src="images/UpOneLevel.gif" alt="Up one level button" width="24" height="24" align="absmiddle"> <strong> Up One Level -</strong> Moves up one folder level in the local file system.</li>
+<li class="propertylistitem"><img src="images/Desktop.gif" alt="Desktop button" width="24" height="24" align="absmiddle"> <strong> Desktop -</strong> Opens the Desktop folder of your local file system.</li>
+<li class="propertylistitem"><img src="images/CreateNewFolder.gif" alt="Create new folder button" width="24" height="24" align="absmiddle"> <strong> Create New Folder -</strong> Creates a new folder.</li>
+<li class="propertylistitem"><img src="images/List.gif" alt="List button" width="24" height="24" align="absmiddle"> <strong> List -</strong> Switches the view to a listing of all folders and files in the current path.</li>
+<li class="propertylistitem"><img src="images/Details.gif" alt="Details button" width="23" height="24" align="absmiddle"> <strong> Details -</strong> Switches the view to a detailed list of all folders and files in the current path.</li>
+<li class="propertylistitem"><img src="images/ShowHistoryMenu.gif" alt="Show history menu button" width="24" height="24" align="absmiddle"> <strong> Show History Menu -</strong> Shows a list of the last 15 folders that data was loaded from.</li>
 <li class="propertylistitem"><strong>File Name -</strong> Represents the name of the file. Select a file to populate the entry box to show the full name of the file selected.</li>
 <li class="propertylistitem"><strong>Files of Type -</strong> Narrows down the files shown in a folder to a specific data type.</li>
-<li class="propertylistitem"><strong>Recent Files -</strong> Lists up to the twenty most recent files. Choose the number of files you want to search for by an absolute number, or by the files that have been updated in a certain number of minutes.</li>
+<li class="propertylistitem"><strong>Recent Files -</strong> Lists up to the twenty most recent files. Choose the number of files to search for by an absolute number, or by the files that have been updated in a certain number of minutes.</li>
 <li class="propertylistitem"><strong>Refresh -</strong> Updates automatically the files and their associated displays. Change the number of minutes to control the update frequency.</li>
-<li class="propertylistitem"><strong>File Pattern -</strong> Selects the file pattern for the files you want to poll on.</li>
+<li class="propertylistitem"><strong>File Pattern -</strong> Selects the file pattern for the files to poll on.</li>
 <li class="propertylistitem"><strong>Verify -</strong> Verifies the files that will be scanned.</li>
 <li class="propertylistitem"><strong>Include Hidden Files -</strong> Includes hidden files in the polling.</li>
-<li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align=absmiddle> <strong> Help -</strong> Brings up this help page.</li>
-<li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align=absmiddle> <strong> Refresh -</strong> Rescans the current directory and update the file chooser if the files have changed.</li>
-<li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align=absmiddle> <strong> -</strong> Loads the file(s) selected. The data file(s) will appear in the <a href="../FieldSelector.html"><strong>Field Selector</strong></a> tab.</li>
+<li class="propertylistitem"><img src="images/Help.gif" alt="Help button" align="absmiddle"> <strong> Help -</strong> Brings up this help page.</li>
+<li class="propertylistitem"><img src="images/Refresh.gif" alt="Refresh button" align="absmiddle"> <strong> Refresh -</strong> Rescans the current directory and update the file chooser if the files have changed.</li>
+<li class="propertylistitem"><img src="../../quickstart/images/AddSource.gif" alt="Add Source button" align="absmiddle"> <strong> -</strong> Loads the file(s) selected. The data file(s) will appear in the <a href="../FieldSelector.html"><strong>Field Selector</strong></a> tab.</li>
 </ul>
 <!-- InstanceEndEditable -->
 <div class="BottomTitleNav">

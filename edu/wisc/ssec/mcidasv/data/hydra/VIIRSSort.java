@@ -62,19 +62,51 @@ public class VIIRSSort implements Comparator<String> {
             
             // Assume caller is testing on NOAA-format VIIRS data,
             // but do some basic checks just in case.  If true,
-            // apply a further filter based on Band token
-            
+            // apply a further filter based on Band/Product token
+
             if ((v1.contains("VIIRS")) && (v2.contains("VIIRS"))) {
                 
                 // pull band out of 1st variable name
                 index1 = v1.indexOf('-');
                 index2 = v1.indexOf('-', index1 + 1);
-                band1 = v1.substring(index1 + 1, index2);
+
+                // band or product is there if both indices are non-negative
+                if ((index1 >= 0) && (index2 >= 0)) {
+                    band1 = v1.substring(index1 + 1, index2);
+                }
 
                 // pull band out of 2nd variable name
                 index1 = v2.indexOf('-');
                 index2 = v2.indexOf('-', index1 + 1);
-                band2 = v2.substring(index1 + 1, index2);
+
+                // band or product is there if both indices are non-negative
+                if ((index1 >= 0) && (index2 >= 0)) {
+                    band2 = v2.substring(index1 + 1, index2);
+                }
+
+                // if band variables are still null, we can try one more thing -
+                // an underscore instead of dash for delimiter in variable name
+                if ((band1 == null) && (band2 == null)) {
+
+                    // pull band out of 1st variable name
+                    index1 = v1.indexOf('_');
+                    index2 = v1.indexOf('_', index1 + 1);
+
+                    // band or product is there if both indices are non-negative
+                    if ((index1 >= 0) && (index2 >= 0)) {
+                        band1 = v1.substring(index1 + 1, index2);
+                    }
+
+                    // pull band out of 2nd variable name
+                    index1 = v2.indexOf('_');
+                    index2 = v2.indexOf('_', index1 + 1);
+
+                    // band or product is there if both indices are non-negative
+                    if ((index1 >= 0) && (index2 >= 0)) {
+                        band2 = v2.substring(index1 + 1, index2);
+                    }
+
+                }
                 
                 if ((band1 != null) && (band2 != null)) {
                     // zero pad if needed
@@ -84,10 +116,8 @@ public class VIIRSSort implements Comparator<String> {
                     if (band2.length() == 2) {
                         band2 = String.join("0", band2.substring(0, 1), band2.substring(1));
                     }
+                    result = band1.compareTo(band2);
                 }
-                
-                result = band1.compareTo(band2);
-                
             }
         }
         

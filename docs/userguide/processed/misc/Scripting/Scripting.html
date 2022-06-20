@@ -30,81 +30,91 @@ function setParentPage() { if (parent.setPage) parent.setPage('misc/Scripting/Sc
 <div class="pagetitle">Scripting</div>
 <p>McIDAS-V can be scripted to create and manipulate images and movies. The scripting
   is accomplished using Jython. Jython is an implementation of the Python language
-  in Java and follows Python syntax. </p>
+  in Java and follows Python syntax.</p>
 <p>McIDAS-V scripting can be done from the <a href="../../tools/JythonShell.html">Jython
     shell</a>, or a Jython script can be invoked as a command line argument.</p>
-<p>In Unix, from the McIDAS-V-System directory: </p>
-<pre>	runMcV -script /home/user/example.py </pre>
-In Windows, from the McIDAS-V System directory :
-<pre>	runMcV.bat -script C:/Users/user/example.py </pre>
+<p>In Unix, from the McIDAS-V-System directory:</p>
+<pre>   runMcV -script /home/user/example.py </pre>
+In Windows, from the McIDAS-V System directory:
+<pre>   runMcV.bat -script C:/Users/user/example.py </pre>
+<p>Users can pass arguments through scripts at runtime with the scriptargs flag, which uses uses standard 
+Python optparse/argparse syntax within the script to specify the arguments.  Anything 
+after the scriptargs flag will be considered a scripting argument, so scriptargs should be 
+specified last.  For example, if a script is set up to allow a user to pass through a band 
+number with "--bands", the script can be run in the following way to request band 8 (Unix and Windows examples):</p>
+<pre>   runMcV -script /home/user/example.py -scriptargs --band 8
+</pre>
+<pre>   runMcV.bat -script C:/Users/user/example.py -scriptargs --band 8</pre>
 <p>When invoked as a command line argument, the user interface will not be shown.
   However, McIDAS-V still needs to be run with an active window system (e.g.,
   X, MS Windows) for it to run. If running under a Linux/Unix machine with no X server running, McIDAS-V must be run under the X virtual
-  frame buffer, xvfb. </p>
+  frame buffer, xvfb.</p>
 <hr>
 <p>McIDAS-V supports a number of functions and methods to load and display data,
   manipulate the display, and to save images. Download the example script
   to see how to use each one (<a href="../example18.py" target="_blank">example18.py</a>).
-  This page contains a list of functions that are supported in McIDAS-V. You can find more information about each function, including parameters, keywords, and example commands, by clicking on a function or a function category.
-<p>
+  This page contains a list of functions that are supported in McIDAS-V. You can find more information about each function, including parameters, keywords, and example commands, by clicking on a function or a function category.<p>
 <p><strong><a href="CreateObject.html">Create an Object:</a></strong><ul>
   <li><a href="CreateObject.html#buildWindow">buildWindow</a></li>
-  <li><a href="CreateObject.html#openBundle">openBundle</a></li>
   <li><a href="CreateObject.html#createLayer">createLayer</a></li>
   <li><a href="CreateObject.html#findWindow">findWindow</a></li>
+  <li><a href="CreateObject.html#openBundle">openBundle</a></li>
   </ul>
 <p><strong><a href="CreateObjectImagery.html">Create an Object - Imagery:</a></strong>
 <ul>
-  <li><a href="CreateObjectImagery.html#makeLocalADDE">makeLocalADDEEntry</a></li>
   <li><a href="CreateObjectImagery.html#getLocalADDE">getLocalADDEEntry</a></li>
-  <li><a href="CreateObjectImagery.html#loadADDEImage">loadADDEImage</a></li>
   <li><a href="CreateObjectImagery.html#listADDEImages">listADDEImages</a></li>
   <li><a href="CreateObjectImagery.html#listADDEImageTimes">listADDEImageTimes</a></li>
+  <li><a href="CreateObjectImagery.html#loadADDEImage">loadADDEImage</a></li>
+  <li><a href="CreateObjectImagery.html#makeLocalADDE">makeLocalADDEEntry</a></li>
 </ul>
 <p><strong><a href="CreateObjectGrid.html">Create an Object - Grids:</a></strong>
 <ul>
-  <li><a href="CreateObjectGrid.html#loadGrid">loadGrid</a></li>
   <li><a href="CreateObjectGrid.html#listGridFields">listGridFieldsInFile</a></li>
   <li><a href="CreateObjectGrid.html#listFieldLevels">listGridLevelsInField</a></li>
   <li><a href="CreateObjectGrid.html#listFieldTimes">listGridTimesInField</a></li>
+  <li><a href="CreateObjectGrid.html#loadGrid">loadGrid</a></li>
 </ul>
   <strong><a href="ModifyDisplayObject.html">Modify the Display Object:</a></strong>
 <ul>
   <li><a href="ModifyDisplayObject.html#annotate">annotate</a></li>
+  <li><a href="ModifyDisplayObject.html#getMapLayer">getMapLayer</a></li>
   <li><a href="ModifyDisplayObject.html#setCenter">setCenter</a></li>
+  <li><a href="ModifyDisplayObject.html#setMapLayerVisibility">setMapLayerVisibility</a></li>
+  <li><a href="ModifyDisplayObject.html#setMapVisibilityByDescription">setMapVisibilityByDescription</a></li>
   <li><a href="ModifyDisplayObject.html#setProjection">setProjection</a></li>
+  <li><a href="ModifyDisplayObject.html#setProjectionFromData">setProjectionFromData</a></li>
   <li><a href="ModifyDisplayObject.html#setViewpoint">setViewpoint</a></li>
   <li><a href="ModifyDisplayObject.html#setWireframe">setWireframe</a></li>
-  <li><a href="ModifyDisplayObject.html#setMapVisibilityByDescription">setMapVisibilityByDescription</a></li>
-  <li><a href="ModifyDisplayObject.html#setMapLayerVisibility">setMapLayerVisibility</a></li>
-  <li><a href="ModifyDisplayObject.html#getMapLayer">getMapLayer</a></li>
 </ul>
   <strong><a href="ModifyLayerObject.html">Modify the Layer Object:</a></strong>
   <ul>
-  <li><a href="ModifyLayerObject.html#setColorScale">setColorScale</a></li>
-  <li><a href="ModifyLayerObject.html#setEnhancement">setEnhancement</a></li>
-  <li><a href="ModifyLayerObject.html#setLayerLabel">setLayerLabel</a></li>
-  <li><a href="ModifyLayerObject.html#setLegendLabel">setLegendLabel</a></li>
-  <li><a href="ModifyLayerObject.html#setExtraLegendLabel">setExtraLegendLabel</a></li>
-  <li><a href="ModifyLayerObject.html#setLayerVisible">setLayerVisible</a></li>
-  <li><a href="ModifyLayerObject.html#setVerticalPosition">setVerticalPosition</a></li>
+  <li><a href="ModifyLayerObject.html#doRemove">doRemove</a></li>
   <li><a href="ModifyLayerObject.html#getData">getData</a></li>
-  <li><a href="ModifyLayerObject.html#getLayer">getLayer</a></li>
   <li><a href="ModifyLayerObject.html#getDisplayUnit">getDisplayUnit</a></li>
+  <li><a href="ModifyLayerObject.html#getLayer">getLayer</a></li>
+  <li><a href="ModifyLayerObject.html#getLayers">getLayers</a></li>
+  <li><a href="ModifyLayerObject.html#setColorScale">setColorScale</a></li>
   <li><a href="ModifyLayerObject.html#setDisplayUnit">setDisplayUnit</a></li>
+  <li><a href="ModifyLayerObject.html#setEnhancement">setEnhancement</a></li>
+  <li><a href="ModifyLayerObject.html#setExtraLegendLabel">setExtraLegendLabel</a></li>
+  <li><a href="ModifyLayerObject.html#setLayerLabel">setLayerLabel</a></li>
+  <li><a href="ModifyLayerObject.html#setLayerVisible">setLayerVisible</a></li>
+  <li><a href="ModifyLayerObject.html#setLegendLabel">setLegendLabel</a></li>
+  <li><a href="ModifyLayerObject.html#setVerticalPosition">setVerticalPosition</a></li>
   </ul>
   <strong><a href="ModifyPointLayerObject.html">Modify the Layer Object - Point:</a></strong>
 <ul>
-  <li><a href="ModifyPointLayerObject.html#setLayoutModel">setLayoutModel</a></li>
   <li><a href="ModifyPointLayerObject.html#setDeclutter">setDeclutter</a></li>
   <li><a href="ModifyPointLayerObject.html#setDeclutterFilter">setDeclutterFilter</a></li>
+  <li><a href="ModifyPointLayerObject.html#setLayoutModel">setLayoutModel</a></li>
   <li><a href="ModifyPointLayerObject.html#setUseAltitudeForVerticalPosition">setUseAltitudeForVerticalPosition</a></li>
 </ul>
 <strong><a href="DataAnalysis.html">Data Analysis:</a></strong>
   <ul>
   <li><a href="DataAnalysis.html#describe">describe</a></li>
-  <li><a href="DataAnalysis.html#sparkline">sparkline</a></li>
   <li><a href="DataAnalysis.html#findUnits">findUnits</a></li>
+  <li><a href="DataAnalysis.html#sparkline">sparkline</a></li>
 </ul>
 <strong><a href="SaveDisplay.html">Save the Display:</a></strong>
   <ul>
@@ -113,17 +123,17 @@ In Windows, from the McIDAS-V System directory :
 </ul>
 <strong><a href="Environment.html">Environment:</a></strong>
   <ul>
-  <li><a href="Environment.html#getHistoryLength">getJythonShellMaxHistoryLength</a></li>
-  <li><a href="Environment.html#setHistoryLength">setJythonShellMaxHistoryLength</a></li>
   <li><a href="Environment.html#collectGarbage">collectGarbage</a></li>
-  <li><a href="Environment.html#removeAllLayers">removeAllLayers</a></li>
-  <li><a href="Environment.html#removeAllData">removeAllData</a></li>
-  <li><a href="Environment.html#expandpath">expandpath</a></li>
   <li><a href="Environment.html#editfile">editFile</a></li>
+  <li><a href="Environment.html#expandpath">expandpath</a></li>
+  <li><a href="Environment.html#getHistoryLength">getJythonShellMaxHistoryLength</a></li>
   <li><a href="Environment.html#getloglevel">getLogLevel</a></li>
-  <li><a href="Environment.html#setloglevel">setLogLevel</a></li>
   <li><a href="Environment.html#importEnhancement">importEnhancement</a></li>
+  <li><a href="Environment.html#removeAllData">removeAllData</a></li>
+  <li><a href="Environment.html#removeAllLayers">removeAllLayers</a></li>
   <li><a href="Environment.html#see">see</a></li>
+  <li><a href="Environment.html#setHistoryLength">setJythonShellMaxHistoryLength</a></li>
+  <li><a href="Environment.html#setloglevel">setLogLevel</a></li>
 </ul>
 <hr>
 <p>For users looking for more functionality from McIDAS-V scripting, additional
