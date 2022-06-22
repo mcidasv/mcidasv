@@ -295,6 +295,13 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     /** component holder */
     private IdvComponentHolder componentHolder;
 
+    /** defalut values for slider component */
+    protected static final int SLIDER_DEFAULT_SKIP = 1;
+    protected static final int SLIDER_DEFAULT_MIN = 0;
+    protected  static final int SLIDER_DEFAULT_MAX = 10;
+    protected  static final int SLIDER_DEFAULT_MINOR_TICK = 1;
+    protected  static final int SLIDER_DEFAULT_MAJOR_TICK = 5;
+
     /**
      * the String
      *
@@ -12622,14 +12629,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * Make the skip factor slider.
      * @return  slider for setting skip factor
      */
-    protected Component doMakeSkipFactorSlider() {
+    protected Component doMakeSkipFactorSlider(int min, int max, int skip, int minor, int major) {
     	
-        skipSlider = new JSlider(0, 10, skipValue);
+        skipSlider = new JSlider(min, max, skip);
         skipSlider.setPaintTicks(true);
         skipSlider.setPaintLabels(true);
         skipSlider.setToolTipText("Change sampling factor");
-        skipSlider.setMajorTickSpacing(5);
-        skipSlider.setMinorTickSpacing(1);
+        skipSlider.setMajorTickSpacing(major);
+        skipSlider.setMinorTickSpacing(minor);
+        skipSlider.setPreferredSize(new Dimension(350, 80));
         skipSlider.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 if (skipSlider.getValueIsAdjusting()) {
@@ -12687,6 +12695,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         skipPanel.add(skipTextField);
 
         return skipPanel;
+    }
+
+    protected Component doMakeSkipFactorSlider() {
+        return doMakeSkipFactorSlider(SLIDER_DEFAULT_MIN,SLIDER_DEFAULT_MAX, SLIDER_DEFAULT_SKIP, SLIDER_DEFAULT_MINOR_TICK, SLIDER_DEFAULT_MAJOR_TICK);
     }
 
     /**

@@ -196,6 +196,10 @@ public class ValuePlanViewControl extends PlanViewControl {
         super.propertyChange(evt);
     }
 
+    @Override
+    protected Component doMakeSkipFactorSlider(int min, int max, int skip, int minor, int major) {
+        return super.doMakeSkipFactorSlider(SLIDER_DEFAULT_MIN, 100, SLIDER_DEFAULT_SKIP, 5, 10);
+    }
 
     /**
      * The station model changed
