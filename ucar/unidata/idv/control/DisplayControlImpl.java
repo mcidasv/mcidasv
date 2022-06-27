@@ -12658,6 +12658,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         
     	skipTextField = new JTextField(5);
     	skipTextField.setText(Integer.toString(skipValue));
+        skipSlider.setValue(skipValue);
 		skipTextField.addActionListener(new ActionListener() {
 
 			@Override
