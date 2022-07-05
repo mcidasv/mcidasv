@@ -469,7 +469,8 @@
      label="W component of wind"
      aliases="Vertical_velocity_pressure_sigma,
      Pressure_Vertical_velocity_isobaric_*.*_Hour_Average,
-     Pressure_Vertical_velocity_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average"/>
+     Pressure_Vertical_velocity_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average,
+     Vertical_velocity_geometric_isobaric"/>
   <alias
      name="SPEED"
      label="Wind speed"
