@@ -3420,6 +3420,7 @@ public class DataSourceImpl extends SharableImpl implements DataSource,
         if (properties != null) {
             properties.put(PROP_TITLE, newName);
             properties.put(PROP_NAME, newName);
+            propertiesDialog.setTitle(newName);
         }
 
         setAlias(aliasFld.getText().trim());
