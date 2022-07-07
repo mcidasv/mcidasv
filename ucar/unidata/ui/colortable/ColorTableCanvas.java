@@ -65,6 +65,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
@@ -551,8 +552,9 @@ public class ColorTableCanvas extends JPanel implements MouseMotionListener,
         nameLabel = new JLabel(currentColorTable.getName());
         Font font = nameLabel.getFont();
         nameLabel.setFont(font.deriveFont(Font.ITALIC | Font.BOLD));
-        categoryField = new JComboBox(
-            editor.getColorTableManager().getCategories().toArray());
+       Object[] items = (editor.getColorTableManager().getCategories().toArray());
+        Arrays.sort(items);
+        categoryField = new JComboBox(items);
         categoryField.setToolTipText("Use \">\" to define sub-categories");
         categoryField.setEditable(true);
         categoryField.setSelectedItem(currentColorTable.getCategory());
