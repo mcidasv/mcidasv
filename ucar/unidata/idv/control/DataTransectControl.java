@@ -67,6 +67,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 
+
 /**
  * Class for displaying transects of data along a cross section line.
  *
@@ -84,6 +85,12 @@ public class DataTransectControl extends CrossSectionControl {
 
     /** track width */
     int lineWidth = 2;
+
+    /** slider for setting line width */
+    protected JSlider slider;
+
+    /** text field for setting line width, complements slider */
+    protected JTextField width;
 
     /**
      * Default Constructor
@@ -180,36 +187,59 @@ public class DataTransectControl extends CrossSectionControl {
      * @return  slider
      */
     private Component doMakeWidthSlider() {
-        final JLabel lineWidthLbl =
-            GuiUtils.getFixedWidthLabel(StringUtil.padLeft(""
-                    + getLineWidth(), 3));
-        ChangeListener listener = new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                JSlider slide = (JSlider) e.getSource();
-                if (slide.getValueIsAdjusting()) {
-                    return;
-                }
-                setLineWidth(slide.getValue());
-                lineWidthLbl.setText(StringUtil.padLeft("" + getLineWidth(),
-                        3));
-            }
-        };
+//        final JLabel lineWidthLbl =
+//            GuiUtils.getFixedWidthLabel(StringUtil.padLeft(""
+//                    + getLineWidth(), 3));
 
-        JComponent[] sliderComps = GuiUtils.makeSliderPopup(1, 20,
-                                       getLineWidth(), listener);
-        JSlider slider = (JSlider) sliderComps[1];
-
-        sliderComps[0].setToolTipText("Change Line Width");
+        slider = new JSlider(1, 21, 1);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         slider.setToolTipText("Change width of line");
         slider.setMajorTickSpacing(5);
         slider.setMinorTickSpacing(1);
         slider.setSnapToTicks(true);
-        return GuiUtils.left(GuiUtils.hbox(lineWidthLbl, new JLabel(" "),
-                                           sliderComps[0]));
-    }
+        slider.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                if (slider.getValueIsAdjusting()) {
+                    return;
+                }
+                setLineWidth(slider.getValue());
+                width.setText(Integer.toString(slider.getValue()));
+            }
+        });
 
+        width = new JTextField(5);
+        width.setText(Integer.toString(lineWidth));
+        slider.setValue(lineWidth);
+        width.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String s = width.getText();
+                if((s !=null)) {
+                    try {
+                        int newWidthVal = Integer.parseInt(s);
+                        if ((newWidthVal < slider.getMinimum()) || (newWidthVal > slider.getMaximum())) {
+                            // show dialog
+                            JOptionPane
+                                    .showMessageDialog(null,
+                                            "Invalid width Value, must be within slider range.");
+                        } else {
+                            slider.setValue(newWidthVal);
+                            setLineWidth(slider.getValue());
+                        }
+                    } catch (NumberFormatException nfe) {
+                        // just reset to last valid number
+                        width.setText(Integer.toString(slider.getValue()));
+                    }
+                }
+            }
+        });
+
+        JPanel jp = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        jp.add(slider);
+        jp.add(width);
+        return jp;
+    }
 
     /**
      * Create the <code>DisplayableData</code> that will be used
