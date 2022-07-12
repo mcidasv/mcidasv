@@ -61,6 +61,7 @@ import java.awt.event.*;
 
 import java.rmi.RemoteException;
 
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.*;
@@ -187,15 +188,19 @@ public class DataTransectControl extends CrossSectionControl {
      * @return  slider
      */
     private Component doMakeWidthSlider() {
-//        final JLabel lineWidthLbl =
-//            GuiUtils.getFixedWidthLabel(StringUtil.padLeft(""
-//                    + getLineWidth(), 3));
 
-        slider = new JSlider(1, 21, 1);
+        slider = new JSlider(1, 20, 1);
+        // TJJ - create custom slider labels, since we want 1 to 20 inclusive
+        Hashtable<Integer, JComponent> sliderTicks = new Hashtable<>();
+        sliderTicks.put(1, new JLabel("1"));
+        sliderTicks.put(5, new JLabel("5"));
+        sliderTicks.put(10, new JLabel("10"));
+        sliderTicks.put(15, new JLabel("15"));
+        sliderTicks.put(20, new JLabel("20"));
+        slider.setLabelTable(sliderTicks);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         slider.setToolTipText("Change width of line");
-        slider.setMajorTickSpacing(5);
         slider.setMinorTickSpacing(1);
         slider.setSnapToTicks(true);
         slider.addChangeListener(new ChangeListener() {
@@ -222,7 +227,7 @@ public class DataTransectControl extends CrossSectionControl {
                             // show dialog
                             JOptionPane
                                     .showMessageDialog(null,
-                                            "Invalid width Value, must be within slider range.");
+                                            "Invalid width value, must be within slider range.");
                         } else {
                             slider.setValue(newWidthVal);
                             setLineWidth(slider.getValue());

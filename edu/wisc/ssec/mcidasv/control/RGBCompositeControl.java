@@ -562,12 +562,12 @@ public class RGBCompositeControl extends DisplayControlImpl {
             String bluHigh = bluHighTxtFld.getText().trim();
             updateBluRange(Double.valueOf(bluLow), Double.valueOf(bluHigh));
 
-            String tmp = redGammaTxtFld.getText().trim();
-            updateRedGamma(Double.valueOf(tmp));
-            tmp = grnGammaTxtFld.getText().trim();
-            updateGrnGamma(Double.valueOf(tmp));
-            tmp = bluGammaTxtFld.getText().trim();
-            updateBluGamma(Double.valueOf(tmp));
+            String tmp1 = redGammaTxtFld.getText().trim();
+            updateRedGamma(Double.valueOf(tmp1));
+            String tmp2 = grnGammaTxtFld.getText().trim();
+            updateGrnGamma(Double.valueOf(tmp2));
+            String tmp3 = bluGammaTxtFld.getText().trim();
+            updateBluGamma(Double.valueOf(tmp3));
         });
 
         JPanel topPanel = new JPanel(new MigLayout());
