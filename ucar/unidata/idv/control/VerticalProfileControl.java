@@ -59,6 +59,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ucar.unidata.data.DataChoice;
 import ucar.unidata.data.DataInstance;
+import ucar.unidata.data.DataUtil;
 import ucar.unidata.data.grid.GridDataInstance;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.idv.control.chart.LineState;
@@ -69,6 +70,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.ObjectListener;
 import ucar.unidata.util.Range;
 
+import ucar.visad.quantities.CommonUnits;
 import visad.CommonUnit;
 import visad.CoordinateSystem;
 import visad.ErrorEstimate;
@@ -141,8 +143,13 @@ public class VerticalProfileControl extends LineProbeControl {
     /** The animation widget */
     private JComponent aniWidget;
 
-    /** Show the parameter table - visible by default */
+    /** Show the jtable */
     private boolean showTable = true;
+
+    /** _more_ */
+    private Unit altUnit = null;
+
+    private String altCoord = PRESSURE_COORD;
 
     /**
      * Default constructor; set attribute flags
@@ -517,6 +524,12 @@ public class VerticalProfileControl extends LineProbeControl {
                     info.getDataInstance().getRawUnit(0));
         }
         info.setUnit(vpUnit);
+        if (altUnit == null && altCoord.equals(PRESSURE_COORD)) {
+            info.setAltitudeUnit(CommonUnits.HECTOPASCAL);
+            altUnit = CommonUnits.HECTOPASCAL;
+        } else if(altUnit == null){
+            info.setAltitudeUnit(CommonUnit.meter);
+        }
         Range vpRange = info.getLineState().getRange();
 
         if (vpRange == null) {
@@ -662,7 +675,12 @@ public class VerticalProfileControl extends LineProbeControl {
                     vUnit = cs.getReferenceUnits()[2];
                 }
                 float[] alts = domainVals[2];
-                if ( !vUnit.equals(CommonUnit.meter)) {
+                if (altUnit != null && altUnit.isConvertible(CommonUnits.HECTOPASCAL)) {
+                    CoordinateSystem pressToHeightCS =
+                            DataUtil.getPressureToHeightCS(DataUtil.STD_ATMOSPHERE);
+                    float[][] hvals = pressToHeightCS.fromReference(new float[][]{alts});
+                    alts = hvals[0];  //altUnit.toThis(alts, vUnit);
+                } else if ( !vUnit.equals(CommonUnit.meter)) {
                     alts = CommonUnit.meter.toThis(alts, vUnit);
                 }
                 try {  // domain might have NaN's in it
