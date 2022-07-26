@@ -84,15 +84,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -552,6 +544,7 @@ public class JythonManager extends IdvManager implements ActionListener,
             libHolders = new ArrayList<>(resources.size() * 10);
             int systemCnt = 1;
             Map<String, String> seen = new HashMap<>();
+            TreeMap<String, JythonManager.LibHolder> systemLibs = new TreeMap<String, JythonManager.LibHolder>();
             for (int i = 0; i < resources.size(); i++) {
                 String showInEditor = resources.getProperty("showineditor", i);
                 if ((showInEditor != null) && "false".equals(showInEditor)) {
@@ -603,9 +596,21 @@ public class JythonManager extends IdvManager implements ActionListener,
                     } else if (category != null) {
                         treeCategory = category;
                     }
-                    treePanel.addComponent(libHolder.outerContents, treeCategory, label, null);
-                }
+
+                    if (treeCategory.equals("System")){
+                        systemLibs.put(label, libHolder);
+                    }
+                    else {
+                        treePanel.addComponent(libHolder.outerContents, treeCategory, label, null);
+                    }
+
+                    }
             }
+            //loop over treemap
+            for (JythonManager.LibHolder holder : systemLibs.values()){
+                treePanel.addComponent(holder.outerContents, "System", holder.getName(), null);
+            }
+
             String tmpPath = getIdv().getStore().getTmpFile("tmp.py");
             tmpHolder = makeLibHolder(false, "Temporary Jython", tmpPath, "");
             treePanel.addComponent(tmpHolder.outerContents, null, "Temporary", null);
