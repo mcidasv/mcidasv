@@ -35,6 +35,7 @@ import static javax.swing.GroupLayout.Alignment.TRAILING;
 import static javax.swing.GroupLayout.DEFAULT_SIZE;
 import static javax.swing.GroupLayout.PREFERRED_SIZE;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
+import static ucar.unidata.util.GuiUtils.*;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -354,7 +355,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
      */
     @Override public void actionPerformed(ActionEvent event) {
         String cmd = event.getActionCommand();
-        if (!GuiUtils.CMD_HELP.equals(cmd) || labelList == null) {
+        if (!CMD_HELP.equals(cmd) || labelList == null) {
             super.actionPerformed(event);
             return;
         }
@@ -579,7 +580,13 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             }
         });
         
-        JPanel buttons = GuiUtils.makeApplyOkHelpCancelButtons(this);
+        JPanel buttons = GuiUtils.makeButtons(this, new String[]{"Apply", "OK", "Help",
+                "Cancel"}, new String[]{
+                CMD_APPLY,
+                CMD_OK, CMD_HELP, CMD_CANCEL}, new String[] {"Accept changed preferences and keep this window open",
+                "Accept changed preferences and close this window",
+                "Open the User Guide page for User Preferences",
+                "Exit User Preferences"}, null);
         buttonPane = McVGuiUtils.makePrettyButtons(buttons);
         
         contents = new JPanel();

@@ -409,9 +409,15 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JPanel panel = new JPanel(new FlowLayout());
         // Apply doesn't really mean anything in standalone mode...
 //        panel.add(new ApplyButton());
-        panel.add(new OkButton());
-        panel.add(new HelpButton());
-        panel.add(new CancelButton());
+        OkButton okBtn = new OkButton();
+        okBtn.setToolTipText("Accept changed preferences and close this window");
+        HelpButton hlpBtn = new HelpButton();
+        hlpBtn.setToolTipText("Open the User Guide Page for User Preferences");
+        CancelButton cnclBtn = new CancelButton();
+        cnclBtn.setToolTipText("Exit User Preferences");
+        panel.add(okBtn);
+        panel.add(hlpBtn);
+        panel.add(cnclBtn);
         panel = McVGuiUtils.makePrettyButtons(panel);
         return panel;
     }
