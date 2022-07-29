@@ -65,9 +65,7 @@ import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,7 +82,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -111,9 +118,7 @@ import edu.wisc.ssec.mcidasv.util.FileFinder;
 import edu.wisc.ssec.mcidasv.util.LoudPyStringMap;
 import edu.wisc.ssec.mcidasv.util.pathwatcher.OnFileChangeListener;
 
-import org.python.core.CompileMode;
 import org.python.core.Py;
-import org.python.core.PyCode;
 import org.python.core.PyFunction;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -544,7 +549,7 @@ public class JythonManager extends IdvManager implements ActionListener,
             libHolders = new ArrayList<>(resources.size() * 10);
             int systemCnt = 1;
             Map<String, String> seen = new HashMap<>();
-            TreeMap<String, JythonManager.LibHolder> systemLibs = new TreeMap<String, JythonManager.LibHolder>();
+            TreeMap<String, LibHolder> systemLibs = new TreeMap<String, JythonManager.LibHolder>();
             for (int i = 0; i < resources.size(); i++) {
                 String showInEditor = resources.getProperty("showineditor", i);
                 if ((showInEditor != null) && "false".equals(showInEditor)) {
@@ -606,7 +611,7 @@ public class JythonManager extends IdvManager implements ActionListener,
 
                     }
             }
-            //loop over treemap
+            // Populate tree menu with System libraries found in the previous loop
             for (JythonManager.LibHolder holder : systemLibs.values()){
                 treePanel.addComponent(holder.outerContents, "System", holder.getName(), null);
             }
