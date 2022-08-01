@@ -39,14 +39,7 @@ import static ucar.unidata.util.GuiUtils.makeDynamicMenu;
 import static ucar.unidata.util.GuiUtils.makePopupMenu;
 import static ucar.unidata.util.GuiUtils.topCenterBottom;
 import static ucar.unidata.util.GuiUtils.wrap;
-import static ucar.unidata.util.IOUtil.cleanFileName;
-import static ucar.unidata.util.IOUtil.getFileTail;
-import static ucar.unidata.util.IOUtil.getInputStream;
-import static ucar.unidata.util.IOUtil.joinDir;
-import static ucar.unidata.util.IOUtil.makeDir;
-import static ucar.unidata.util.IOUtil.moveFile;
-import static ucar.unidata.util.IOUtil.readContents;
-import static ucar.unidata.util.IOUtil.writeFile;
+import static ucar.unidata.util.IOUtil.*;
 import static ucar.unidata.util.LogUtil.userErrorMessage;
 import static ucar.unidata.util.LogUtil.userMessage;
 import static ucar.unidata.util.StringUtil.listToStringArray;
@@ -595,22 +588,27 @@ public class JythonManager extends IdvManager implements ActionListener,
 
                     libHolder = makeLibHolder(editable, label, path, text);
                     String category = resources.getProperty("category", i);
-                    String treeCategory = null;
+
+                    // Jython files within JAR plugins apparently do not set the category property, so
+                    // we need to initialize treeCategory to something other than null to avoid a
+                    // NullPointerException at the "treeCategory.equals(...)" check below.
+                    String treeCategory = "Uncategorized";
                     if (libHolder.isEditable()) {
                         treeCategory = "Local Jython";
+                    } else if (getFileRoot(path).endsWith(".jar!")) {
+                        treeCategory = "Plugins";
                     } else if (category != null) {
                         treeCategory = category;
                     }
 
-                    if (treeCategory.equals("System")){
+                    if (treeCategory.equals("System")) {
                         systemLibs.put(label, libHolder);
-                    }
-                    else {
+                    } else {
                         treePanel.addComponent(libHolder.outerContents, treeCategory, label, null);
                     }
-
-                    }
+                }
             }
+
             // Populate tree menu with System libraries found in the previous loop
             for (JythonManager.LibHolder holder : systemLibs.values()){
                 treePanel.addComponent(holder.outerContents, "System", holder.getName(), null);
