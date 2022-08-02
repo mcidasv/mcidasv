@@ -44,6 +44,9 @@ public class VertScaleInfo extends ucar.visad.display.AxisScaleInfo {
     /** Units of the range values */
     public Unit unit;
 
+    /** Default number format */
+    private static String numFormat = "##0";
+
     /** Is visible */
     public boolean visible;
 
@@ -112,6 +115,21 @@ public class VertScaleInfo extends ucar.visad.display.AxisScaleInfo {
      */
     public void setMinorDivision(int minorDivision) {
         this.minorDivision = minorDivision;
+    }
+
+    /**
+     * @return the numFormat
+     */
+    public String getNumFormat() {
+
+        return numFormat;
+    }
+
+    /**
+     * @param numFormat the numFormat to set
+     */
+    public void setNumFormat(String numFormat) {
+        this.numFormat = numFormat;
     }
 
     /**

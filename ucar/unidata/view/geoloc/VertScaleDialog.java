@@ -79,6 +79,9 @@ public class VertScaleDialog extends JPanel implements ActionListener {
     /** combo box for selecting units */
     private JComboBox unitCombo;
 
+    /** combo box for selecting number format */
+    private JComboBox formatCombo;
+
     /** Is the vertical scale visible */
     private JCheckBox jcbVisible;
 
@@ -88,9 +91,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
     /** Vertical scale minor increment */
     private JSpinner vertMinorSpinner;
 
-    /**
-     * Axis font selector
-     */
+    /** Axis font selector */
     private FontSelector fontSelector;
 
     /**
@@ -129,6 +130,14 @@ public class VertScaleDialog extends JPanel implements ActionListener {
                 GuiUtils.rLabel("Units: "),
                 unitCombo = GuiUtils.getEditableBox(Misc.toList(new String[] {
                         "m", "km", "feet", "fathoms" }), null),
+                GuiUtils.rLabel("Number Format: "),
+                formatCombo = GuiUtils.getEditableBox(Misc.toList(new String[] {"##0",
+                        "##0.0",
+                        "##0.0#",
+                        "##0.0##",
+                        "0.0",
+                        "0.00",
+                        "0.000"}), null),
                 GuiUtils.rLabel("Major Increment: "),
                 vertIncrement = new JTextField(),
                 GuiUtils.rLabel("Minor Division: "),
@@ -239,6 +248,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
         min.setText(Misc.format(transfer.minVertRange));
         max.setText(Misc.format(transfer.maxVertRange));
         unitCombo.setSelectedItem(transfer.unit.toString());
+        formatCombo.setSelectedItem(transfer.getNumFormat());
 
         // minor increment
         vertMinorSpinner.setValue(transfer.getMinorDivision());
@@ -313,6 +323,7 @@ public class VertScaleDialog extends JPanel implements ActionListener {
         newTransfer.setMajorIncrement(Misc.parseNumber(vertIncrement.getText()));
         newTransfer.setMinorDivision(Integer.valueOf(vertMinorSpinner.getValue().toString()));
         newTransfer.setFont(fontSelector.getFont());
+        newTransfer.setNumFormat((String)formatCombo.getSelectedItem());
 
         // Force redraw each time rather than checking equality between
         // newTransfer and vertScaleInfo. This is necessary to ensure the

@@ -991,7 +991,9 @@ public abstract class MapProjectionDisplay extends NavigatedDisplay {
         int          minorIncrement = getVertScaleInfo().getMinorDivision();
         List<Double> minorTicks   = new ArrayList<Double>();
         double majorIncrement = getVertScaleInfo().getMajorIncrement();
-        
+
+        labelFormat = new DecimalFormat(vertScaleInfo.getNumFormat());
+
         Hashtable<Double, String> labelTable = new Hashtable<Double, String>();
 
         labelTable.put(new Double(maxmin[0]), labelFormat.format(bottom));
