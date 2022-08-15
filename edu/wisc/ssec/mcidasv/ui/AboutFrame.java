@@ -141,6 +141,7 @@ class AboutFrame extends JFrame implements ChangeListener {
         JPanel sysTab = new JPanel();
         JScrollPane sysScrollPane = new JScrollPane();
         sysTextArea = new JTextArea();
+
         textSearcher = new TextSearcher(sysTextArea);
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -181,6 +182,7 @@ class AboutFrame extends JFrame implements ChangeListener {
                 }
             }
         });
+
 
         sysScrollPane.setViewportView(sysTextArea);
 
