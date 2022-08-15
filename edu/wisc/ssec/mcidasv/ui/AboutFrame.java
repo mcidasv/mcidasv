@@ -35,11 +35,12 @@ import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.border.BevelBorder.RAISED;
 
 import static ucar.unidata.util.GuiUtils.getImageIcon;
-import static ucar.unidata.util.LayoutUtil.inset;
-import static ucar.unidata.util.LayoutUtil.topCenter;
+import static ucar.unidata.util.LayoutUtil.*;
 
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -49,24 +50,20 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.swing.GroupLayout;
-import javax.swing.JEditorPane;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.Highlighter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ucar.unidata.idv.JythonManager;
+import ucar.unidata.ui.TextSearcher;
+import ucar.unidata.util.GuiUtils;
+import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.Misc;
 
 import edu.wisc.ssec.mcidasv.Constants;
@@ -110,6 +107,9 @@ class AboutFrame extends JFrame implements ChangeListener {
     /** Whether or not the system information has been collected. */
     private final AtomicBoolean hasSysInfo;
 
+    /** the text searching widget */
+    private TextSearcher textSearcher;
+
     /**
      * Creates new form AboutFrame
      *
@@ -141,6 +141,7 @@ class AboutFrame extends JFrame implements ChangeListener {
         JPanel sysTab = new JPanel();
         JScrollPane sysScrollPane = new JScrollPane();
         sysTextArea = new JTextArea();
+        textSearcher = new TextSearcher(sysTextArea);
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(WINDOW_TITLE);
@@ -164,19 +165,39 @@ class AboutFrame extends JFrame implements ChangeListener {
         sysTextArea.setFont(new Font(Font.MONOSPACED, 0, 12)); // NOI18N
         sysTextArea.setCaretPosition(0);
         sysTextArea.setLineWrap(false);
+        sysTextArea.addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent e) {
+                if (McIDASV.isMac() && e.isMetaDown() && e.getKeyCode() == KeyEvent.VK_F) {
+                    textSearcher.getFindFld().requestFocusInWindow();
+                } else if (!McIDASV.isMac() && GuiUtils.isControlKey(e, KeyEvent.VK_F)) {
+                    textSearcher.getFindFld().requestFocusInWindow();
+                } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    JTextField field = textSearcher.getFindFld();
+                    boolean highlights = textSearcher.getTextWrapper().hasHighlights();
+                    if (!field.getText().isEmpty() && highlights) {
+                        textSearcher.getTextWrapper().removeHighlights();
+                        field.setText("");
+                    }
+                }
+            }
+        });
+
         sysScrollPane.setViewportView(sysTextArea);
 
         GroupLayout sysTabLayout = new GroupLayout(sysTab);
         sysTab.setLayout(sysTabLayout);
         sysTabLayout.setHorizontalGroup(
             sysTabLayout.createParallelGroup(LEADING)
-            .addGroup(sysTabLayout.createSequentialGroup()
-                .addComponent(sysScrollPane))
+            .addGroup(sysTabLayout.createParallelGroup()
+                .addComponent(sysScrollPane)
+                    .addComponent(textSearcher))
         );
         sysTabLayout.setVerticalGroup(
             sysTabLayout.createParallelGroup(LEADING)
             .addGroup(sysTabLayout.createSequentialGroup()
-                .addComponent(sysScrollPane))
+                .addComponent(sysScrollPane)
+                    .addComponent(textSearcher))
+
         );
 
         tabbedPanel.addTab(SYS_TAB_TITLE, sysTab);
@@ -197,6 +218,7 @@ class AboutFrame extends JFrame implements ChangeListener {
         pack();
         setSize(450, 375);
         setLocationRelativeTo(mcv.getIdvUIManager().getFrame());
+
     }
 
     private JPanel buildAboutMcv() {
@@ -231,9 +253,12 @@ class AboutFrame extends JFrame implements ChangeListener {
 
             }
         });
+
         JPanel contents = topCenter(inset(iconLbl, 5), inset(editor, 5));
         contents.setBorder(createBevelBorder(RAISED, GRAY, GRAY));
         return contents;
+
+
     }
 
     /**
