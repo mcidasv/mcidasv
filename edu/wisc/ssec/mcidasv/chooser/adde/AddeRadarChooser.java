@@ -34,7 +34,8 @@ import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.LayoutStyle.ComponentPlacement.RELATED;
 
-import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -544,21 +545,36 @@ public class AddeRadarChooser extends AddeImageChooser {
     /**
      * Set the relative and absolute extra components.
      */
-    @Override protected JPanel makeTimesPanel() {
-        // show the time driver if the rest of the choosers are doing so.
-        JPanel timesPanel =
-            super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
+//    @Override protected JPanel makeTimesPanel() {
+//        // show the time driver if the rest of the choosers are doing so.
+//        JPanel timesPanel =
+//            super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
+//
+//        // Make a new timesPanel that has extra components tacked on the
+//        // bottom, inside the tabs
+//        Component[] comps = timesPanel.getComponents();
+//
+//        if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
+//            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
+//            timesCardPanelExtra.add(new JPanel(), "relative");
+//            timesCardPanelExtra.add(getExtraTimeComponent(), "absolute");
+//            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
+//        }
+//        return timesPanel;
+//    }
 
-        // Make a new timesPanel that has extra components tacked on the
-        // bottom, inside the tabs
-        Component[] comps = timesPanel.getComponents();
-
-        if ((comps.length == 1) && (comps[0] instanceof JTabbedPane)) {
-            timesCardPanelExtra = new GuiUtils.CardLayoutPanel();
-            timesCardPanelExtra.add(new JPanel(), "relative");
-            timesCardPanelExtra.add(getExtraTimeComponent(), "absolute");
-            timesPanel = GuiUtils.centerBottom(comps[0], timesCardPanelExtra);
-        }
+    //The previous makeTimesPanel method was an override of makeTimesPanel() from AddeImageChooser.java
+    //Not sure if the if block in the previous method was working/required. Hence it has been left commented out
+    //The makeTimesPanel method below is an override of the makeTimesPanel() from TimesChooser.java
+    // and is introduced to include the Num Images text field [2793] -PM
+    @Override
+    protected JPanel makeTimesPanel() {
+        JPanel timesPanel = super.makeTimesPanel(false, true, getIdv().getUseTimeDriver());
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(archiveDayBtn);
+        buttonPanel.add(new JLabel("Num Images: "));
+        buttonPanel.add(imageCountTextField);
+        underTimelistPanel.add(BorderLayout.CENTER, buttonPanel);
         return timesPanel;
     }
 }
