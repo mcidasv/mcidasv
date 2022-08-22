@@ -218,7 +218,7 @@ class AboutFrame extends JFrame implements ChangeListener {
         tabbedPanel.addChangeListener(this);
 
         pack();
-        setSize(450, 375);
+        setSize(500, 375);
         setLocationRelativeTo(mcv.getIdvUIManager().getFrame());
 
     }
@@ -284,6 +284,7 @@ class AboutFrame extends JFrame implements ChangeListener {
                     sysTextArea.setText(sysInfo);
                     caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
                     hasSysInfo.set(true);
+                    sysTextArea.requestFocus();
                 });
             }
         });
