@@ -35,7 +35,8 @@ import static javax.swing.GroupLayout.Alignment.LEADING;
 import static javax.swing.border.BevelBorder.RAISED;
 
 import static ucar.unidata.util.GuiUtils.getImageIcon;
-import static ucar.unidata.util.LayoutUtil.*;
+import static ucar.unidata.util.LayoutUtil.inset;
+import static ucar.unidata.util.LayoutUtil.topCenter;
 
 import java.awt.Cursor;
 import java.awt.Font;
@@ -50,20 +51,27 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.JEditorPane;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.DefaultCaret;
-import javax.swing.text.Highlighter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ucar.unidata.idv.JythonManager;
 import ucar.unidata.ui.TextSearcher;
 import ucar.unidata.util.GuiUtils;
-import ucar.unidata.util.LayoutUtil;
 import ucar.unidata.util.Misc;
 
 import edu.wisc.ssec.mcidasv.Constants;
