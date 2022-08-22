@@ -96,6 +96,7 @@ import ucar.unidata.util.Misc;
 import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.xml.XmlNodeList;
+import ucar.unidata.xml.XmlObjectStore;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
 import ucar.visad.UtcDate;
@@ -396,7 +397,8 @@ public class AddeImageChooser extends AddeChooser implements
         archiveDayBtn.setToolTipText("Select a specific day and time range");
         
         // Initialize the image count to default
-        imageCountTextField = new JTextField(AddeImageChooser.DEFAULT_ARCHIVE_IMAGE_COUNT, 4);
+        String numImage = getIdv().getStore().get(PREF_NUM_IMAGE_PRESET_IMGCHOOSER, AddeImageChooser.DEFAULT_ARCHIVE_IMAGE_COUNT);
+        imageCountTextField = new JTextField(numImage, 4);
         imageCountTextField.addActionListener(e -> readTimes(false));
         imageCountTextField.setToolTipText(
             "<html>Enter a numerical value or the word ALL and press Enter<br/><br/>" +
@@ -441,6 +443,9 @@ public class AddeImageChooser extends AddeChooser implements
             }
             numTimes = imageCountTextField.getText();
         }
+        XmlObjectStore imgStore = getIdv().getStore();
+        imgStore.put(PREF_NUM_IMAGE_PRESET_IMGCHOOSER, countStr);
+        imgStore.save();
         return 0;
     }
 

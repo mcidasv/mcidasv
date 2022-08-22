@@ -243,6 +243,11 @@ public interface Constants extends IdvConstants {
     /** Whether or not to show the McIDAS-V {@literal "system"} bundles. */
     String PREF_SHOW_SYSTEM_BUNDLES = "mcidasv.showsystembundles";
 
+    String PREF_NUM_IMAGE_PRESET_IMGCHOOSER = "mcidasv.numentries.imgchooser";
+
+    String PREF_NUM_IMAGE_PRESET_RADARCHOOSER = "mcidasv.numentries.rdrchooser";
+
+
     /**
      * Show large or small icons. If PREF_TBM_ICONS is disabled, this pref
      * has no meaning.

@@ -47,7 +47,8 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 
 import org.w3c.dom.Element;
 
@@ -67,6 +68,7 @@ import ucar.unidata.util.Misc;
 
 
 import edu.wisc.ssec.mcidasv.util.McVGuiUtils;
+import ucar.unidata.xml.XmlObjectStore;
 
 /**
  * Widget to select NEXRAD radar images from a remote ADDE server
@@ -95,6 +97,8 @@ public class AddeRadarChooser extends AddeImageChooser {
     /** station table */
     private List nexradStations;
 
+    private static final String DEFAULT_ARCHIVE_IMAGE_COUNT = "100";
+
 
 
     /**
@@ -110,6 +114,15 @@ public class AddeRadarChooser extends AddeImageChooser {
         super(mgr, root);
         this.nexradStations =
             getIdv().getResourceManager().findLocationsByType("radar");
+        String numImage = getIdv().getStore().get(PREF_NUM_IMAGE_PRESET_RADARCHOOSER, AddeRadarChooser.DEFAULT_ARCHIVE_IMAGE_COUNT);
+        imageCountTextField = new JTextField(numImage, 4);
+        imageCountTextField.addActionListener(e -> readTimes(false));
+        imageCountTextField.setToolTipText(
+                "<html>Enter a numerical value or the word ALL and press Enter<br/><br/>" +
+                        "By default, up to the 100 most recent times are listed.<br/><br/>" +
+                        "You may set this field to any positive integer, or the value ALL.<br/>" +
+                        "Using ALL may take awhile for datasets with many times.</html>"
+        );
     }
 
     /**
@@ -576,5 +589,77 @@ public class AddeRadarChooser extends AddeImageChooser {
         buttonPanel.add(imageCountTextField);
         underTimelistPanel.add(BorderLayout.CENTER, buttonPanel);
         return timesPanel;
+    }
+
+    /**
+     * Number of absolute times to list in the chooser.
+     * Must be a positive integer, or the word "ALL".
+     * Will throw up a dialog for invalid entries.
+     *
+     * @return 0 for valid entries, -1 for invalid
+     */
+    private int parseImageCount() {
+        String countStr = imageCountTextField.getText();
+        try {
+            int newCount = Integer.parseInt(countStr);
+            // Make sure it's reasonable
+            if (newCount > 0) {
+                int addeParam = 0 - newCount + 1;
+                numTimes = "" + addeParam;
+            } else {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException nfe) {
+            // Still ok if they entered "ALL"
+            if (imageCountTextField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "Empty field, please enter a valid positive integer");
+                return -1;
+            }
+            if (! imageCountTextField.getText().equalsIgnoreCase("all")) {
+                JOptionPane.showMessageDialog(this,
+                        "Invalid entry: " + imageCountTextField.getText());
+                return -1;
+            }
+            numTimes = imageCountTextField.getText();
+        }
+        XmlObjectStore imgStore = getIdv().getStore();
+        imgStore.put(PREF_NUM_IMAGE_PRESET_RADARCHOOSER, countStr);
+        imgStore.save();
+        return 0;
+    }
+
+    /**
+     * Read the set of image times available for the current server/group/type
+     * This method is a wrapper, setting the wait cursor and wrapping the call
+     * to {@link #readTimesInner(boolean)}; in a try/catch block
+     */
+    @Override public void readTimes() {
+        readTimes(false);
+    }
+
+    public void readTimes(boolean forceAll) {
+
+        // Make sure there is a valid entry in the image count text field
+        if (parseImageCount() < 0) return;
+
+        clearTimesList();
+        if (!canReadTimes()) {
+            return;
+        }
+        Misc.run(new Runnable() {
+            public void run() {
+                updateStatus();
+                showWaitCursor();
+                try {
+                    readTimesInner(forceAll);
+                    checkSetNav();
+                } catch (Exception e) {
+                    handleConnectionError(e);
+                }
+                showNormalCursor();
+                updateStatus();
+            }
+        });
     }
 }
