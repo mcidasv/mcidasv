@@ -138,18 +138,19 @@ public class TextSearcher extends JPanel {
 
 
 
-        findFld.addActionListener(GuiUtils.makeActionListener(this,
-                "doSearch", null));
+        findFld.addActionListener((e) -> this.doSearch());
         findFld.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                if (isSearchPreviousKey(e)) {
-                    doSearchPrevious();
-                } else if (isSearchNextKey(e)) {
-                    doSearch();
-                } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    returnFocus();
-                } else if (e.getKeyCode() != KeyEvent.VK_ENTER) {
-                    doSearch();
+                if ((findFld.getText().length() > 0) && (e.getKeyChar() != KeyEvent.CHAR_UNDEFINED)) {
+                    if (isSearchPreviousKey(e)) {
+                        doSearchPrevious();
+                    } else if (isSearchNextKey(e)) {
+                        doSearch();
+                    } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        returnFocus();
+                    } else if (e.getKeyCode() != KeyEvent.VK_ENTER) {
+                        doSearch();
+                    }
                 }
             }
         });
