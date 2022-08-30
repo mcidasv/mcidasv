@@ -434,6 +434,12 @@
     <params p1="u-component_of_storm_motion_layer_between_two_heights_above_ground_layer" p2="v-component_of_storm_motion_layer_between_two_heights_above_ground_layer"/>
     <params p1="u-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average" p2="v-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average"/>
     <params p1="u-component_of_wind_height_above_ground_*.*_Hour_Average" p2="v-component_of_wind_height_above_ground_*.*_Hour_Average"/>
+    <params p1="100_metre_U_wind_component_surface" p2="100_metre_V_wind_component_surface"/>
+    <params p1="10_metre_U_wind_component_surface" p2="10_metre_V_wind_component_surface"/>
+    <params p1="Neutral_wind_at_10_m_u-component_surface" p2="Neutral_wind_at_10_m_v-component_surface"/>
+    <params p1="U_component_of_wind_isobaric" p2="V_component_of_wind_isobaric"/>
+    <params p1="VAR_10U" p2="VAR_10V"/>
+    <params p1="VAR_100U" p2="VAR_100V"/>
   </paramgroup>
   <paramgroup description="" name="u_and_v">
     <params p1="u-component_of_wind_altitude_above_msl_ens" p2="v-component_of_wind_altitude_above_msl_ens"/>
@@ -450,6 +456,17 @@
     <params p1="u-component_of_storm_motion_layer_between_two_heights_above_ground_layer" p2="v-component_of_storm_motion_layer_between_two_heights_above_ground_layer"/>
     <params p1="u-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average" p2="v-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average"/>
     <params p1="u-component_of_wind_height_above_ground_*.*_Hour_Average" p2="v-component_of_wind_height_above_ground_*.*_Hour_Average"/>
+    <params p1="100_metre_U_wind_component_surface" p2="100_metre_V_wind_component_surface"/>
+    <params p1="10_metre_U_wind_component_surface" p2="10_metre_V_wind_component_surface"/>
+    <params p1="Neutral_wind_at_10_m_u-component_surface" p2="Neutral_wind_at_10_m_v-component_surface"/>
+    <params p1="U_component_of_wind_isobaric" p2="V_component_of_wind_isobaric"/>
+    <params p1="VAR_10U" p2="VAR_10V"/>
+    <params p1="VAR_100U" p2="VAR_100V"/>
+  </paramgroup>
+  <paramgroup description="" name="u_v_w">
+    <params p1="U" p2="V" p3="W"/>
+    <params p1="u" p2="v" p3="w"/>
+    <params p1="U_component_of_wind_isobaric" p2="V_component_of_wind_isobaric" p3="Vertical_velocity_isobaric"/>
   </paramgroup>
   <!-- RMC Nov 2020 Inq 2940 -->
   <paramgroup description="AVHRR Night Microphysics RGB" name="AVHRR_RGB_NightMicrophysics">
