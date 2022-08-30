@@ -205,7 +205,12 @@
      Temperature_height_above_ground_*.*_Hour_Average,
      tasmax,
      tasmin,
-     tavg"/>
+     tavg,
+     2_metre_temperature_surface,
+     Maximum_temperature_at_*.*_metres_in_the_last_*.*_hours_surface_*.*_Hour,
+     Maximum_temperature_at_*.*_metres_since_previous_post-processing_surface_*.*_Hour,
+     Minimum_temperature_at_*.*_metres_in_the_last_*.*_hours_surface_*.*_Hour,
+     Minimum_temperature_at_*.*_metres_since_previous_post-processing_surface_*.*_Hour"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -357,7 +362,12 @@
      u-component_of_storm_motion_layer_between_two_heights_above_ground_layer,
      u-component_of_wind_hybrid_*.*_Hour_Average,
      u-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average,
-     u-component_of_wind_height_above_ground_*.*_Hour_Average"/>
+     u-component_of_wind_height_above_ground_*.*_Hour_Average,
+     10_metre_U_wind_component_surface,
+     100_metre_U_wind_component_surface,
+     Neutral_wind_at_10_m_u-component_surface,
+     VAR_10U,
+     VAR_100U"/>
   <alias
      name="V"
      label="V component of wind"
@@ -443,7 +453,12 @@
      component_of_storm_motion_layer_between_two_heights_above_ground_layer,
      v-component_of_wind_hybrid_*.*_Hour_Average,
      v-component_of_wind_layer_between_two_pressure_difference_from_ground_layer_*.*_Hour_Average,
-     v-component_of_wind_height_above_ground_*.*_Hour_Average"/>
+     v-component_of_wind_height_above_ground_*.*_Hour_Average,
+     10_metre_V_wind_component_surface,
+     100_metre_V_wind_component_surface,
+     Neutral_wind_at_10_m_v-component_surface,
+     VAR_10V,
+     VAR_100V"/>
   <!-- end inq1759 -->
     <alias
      name="DIR"
@@ -507,7 +522,8 @@
      Dewpoint_temperature_height_above_ground_weightedMean,
      Dewpoint_temperature_isobaric_weightedMean,
      Dewpoint_temperature_Analysis_height_above_ground,
-     Dewpoint_temperature_height_above_ground_UnknownProbType193"/>
+     Dewpoint_temperature_height_above_ground_UnknownProbType193,
+     2_metre_dewpoint_temperature_surface"/>
   <alias
      name="THETA"
      label="Potential Temperature"
@@ -544,7 +560,9 @@
      .*.Pressure_reduced_to_MSL_msl,
      MSLP_Eta_model_reduction_msl_weightedMean,
      prmslmsl,
-     Mean_sea_level_pressure_ETA_model_msl"/>
+     Mean_sea_level_pressure_ETA_model_msl,
+     Mean_sea_level_pressure_surface,
+     Surface_pressure_surface"/>
   <alias
      name="MIXR"
      label="Mixing Ratio"
