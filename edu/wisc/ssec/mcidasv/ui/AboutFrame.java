@@ -40,6 +40,7 @@ import static ucar.unidata.util.LayoutUtil.topCenter;
 
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.BorderLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -191,24 +192,11 @@ class AboutFrame extends JFrame implements ChangeListener {
             }
         });
 
-
         sysScrollPane.setViewportView(sysTextArea);
 
-        GroupLayout sysTabLayout = new GroupLayout(sysTab);
-        sysTab.setLayout(sysTabLayout);
-        sysTabLayout.setHorizontalGroup(
-            sysTabLayout.createParallelGroup(LEADING)
-            .addGroup(sysTabLayout.createParallelGroup()
-                .addComponent(sysScrollPane)
-                    .addComponent(textSearcher))
-        );
-        sysTabLayout.setVerticalGroup(
-            sysTabLayout.createParallelGroup(LEADING)
-            .addGroup(sysTabLayout.createSequentialGroup()
-                .addComponent(sysScrollPane)
-                    .addComponent(textSearcher))
-
-        );
+        sysTab.setLayout(new BorderLayout());
+        sysTab.add(sysScrollPane);
+        sysTab.add(textSearcher, BorderLayout.SOUTH);
 
         tabbedPanel.addTab(SYS_TAB_TITLE, sysTab);
 
