@@ -68,6 +68,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -341,9 +342,17 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.topBottom(useCmsCollectorCheckBox, scalingPanel, McVGuiUtils.Prefer.TOP));
 
         JTextField jvmArgsField = jvmArgs.getComponent();
-        JPanel jvmPanel = McVGuiUtils.makeLabeledComponent("Java Flags:", jvmArgsField);
-        
-        
+
+        JButton warningBtn = McVGuiUtils.makeImageButton(Constants.ICON_EXCLAMATION_SMALL, "Warning");
+        warningBtn.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null, "This option refers to official Java VM options. " +
+                    "Modifications with invalid arguments could break your install.", "Warning", JOptionPane.OK_OPTION);
+        });
+
+        JPanel jvmPanel = new JPanel(new BorderLayout());
+                jvmPanel.add(McVGuiUtils.makeLabeledComponent("Java Flags:", jvmArgsField), BorderLayout.CENTER);
+                jvmPanel.add(warningBtn, BorderLayout.EAST);
+
         // TJJ Nov 2018 
         // Add note at top of Startup Options alerting user a restart may be needed
         JLabel restartLabel = new JLabel("Note: Most startup options require a McIDAS-V restart to take effect");
