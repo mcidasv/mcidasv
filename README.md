@@ -45,7 +45,7 @@ Things of Interest
     |   ├── windows-amd64               * 64-bit Windows dependencies.
     |   └── windows-i586                * 32-bit Windows dependencies.
     |
-    ├── release                         * Files used by install4J.
+    ├── release                         * Files used by install4j.
     ├── tools                           
     │   ├── apidocs                     
     │   └── external                    
