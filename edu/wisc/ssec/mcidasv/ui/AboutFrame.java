@@ -214,7 +214,7 @@ class AboutFrame extends JFrame implements ChangeListener {
         tabbedPanel.addChangeListener(this);
 
         pack();
-        setSize(500, 375);
+        setSize(600, 600);
         setLocationRelativeTo(mcv.getIdvUIManager().getFrame());
 
     }
