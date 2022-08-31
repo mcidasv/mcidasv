@@ -38,9 +38,9 @@ import static ucar.unidata.util.GuiUtils.getImageIcon;
 import static ucar.unidata.util.LayoutUtil.inset;
 import static ucar.unidata.util.LayoutUtil.topCenter;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.BorderLayout;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -195,8 +195,8 @@ class AboutFrame extends JFrame implements ChangeListener {
         sysScrollPane.setViewportView(sysTextArea);
 
         sysTab.setLayout(new BorderLayout());
-            sysTab.add(sysScrollPane);
-            sysTab.add(textSearcher, BorderLayout.SOUTH);
+        sysTab.add(sysScrollPane);
+        sysTab.add(textSearcher, BorderLayout.SOUTH);
 
         tabbedPanel.addTab(SYS_TAB_TITLE, sysTab);
 
@@ -214,7 +214,7 @@ class AboutFrame extends JFrame implements ChangeListener {
         tabbedPanel.addChangeListener(this);
 
         pack();
-        setSize(500, 500);
+        setSize(500, 375);
         setLocationRelativeTo(mcv.getIdvUIManager().getFrame());
 
     }
