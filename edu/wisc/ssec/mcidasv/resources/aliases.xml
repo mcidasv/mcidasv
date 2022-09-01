@@ -514,7 +514,9 @@
      f10m,
      wind_speed_cloud_top_nwp,
      wind_speed_10m_nwp,
-     sar_wind"/>
+     sar_wind,
+     10_metre_wind_gust_in_the_last_*.*_hours_surface_*.*_Hour,
+     10_metre_wind_gust_since_previous_post-processing_surface_*.*_Hour"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
