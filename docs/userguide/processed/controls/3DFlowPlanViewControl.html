@@ -48,7 +48,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/3DFlowPl
 		<li>3D Volume Streamline Colored by Another Parameter</li>
 </ul>
 	The controls for the 3D Vector Cross Section display are similar to those of the <a href="FlowPlanViewControl.html">Flow Display Controls</a>. Note that in order to create these displays, at least four timesteps must be selected. The <strong>Layer Controls</strong> listed below apply for the 3D Volume Vector, Trajectory, and Streamline displays:</p>
-    <div class="images"><img src="images/3dVolumeControls.gif" width="468" height="475" alt="Image 1: 3D Volume Flow Display Controls"/><br>
+    <div class="images"><img src="images/3dVolumeControls.gif" width="467" height="550" alt="Image 1: 3D Volume Flow Display Controls"/><br>
 <span class="caption">Image 1: 3D Volume Flow Display Controls</span></div>
 <div class="pagesubtitle">Properties</div>
 <ul class="propertylist">
@@ -67,7 +67,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/3DFlowPl
       <li class="propertylistitem"><strong>Length Offset -</strong> Sets the number of timesteps to include in each trajectory.</li>
       <li class="propertylistitem"><strong>Arrow -</strong>
     Adds an arrow head to the trajectories if the Line <strong>Trajectory Form</strong> is selected.</li>
-    <li class="propertylistitem"><strong>Trajectory Start Level -</strong> Sets the vertical level where the trajectories will originate from. If 'All Levels' is selected then trajectories will originate from all levels. </ul>
+    <li class="propertylistitem"><strong>Trajectory Start Level -</strong> Sets the vertical level where the trajectories will originate from. If 'All Levels' is selected then trajectories will originate from all levels. </li>
+     <li class="propertylistitem"><strong>Trajectory End Level -</strong> Sets the vertical level where the trajectories will end. If 'All Levels' is selected then trajectories will end at all levels. </li></ul>
     <li class="propertylistitem"><strong>Streamlines -</strong> Displays streamlines in the Main Display window.</li>
       <ul class="propertylist">
       <li class="propertylistitem"><strong>Streamline Form -</strong> Allows for selecting the type of streamline used in the display. The options are Line, Cylinder, Ribbon, and Deform Ribbon.</li>
@@ -75,7 +76,9 @@ function setParentPage() { if (parent.setPage) parent.setPage('controls/3DFlowPl
       <li class="propertylistitem"><strong>Arrow -</strong>
         Adds an arrow head to the streamlines if the Line <strong>Streamline Form</strong> is selected.</li>
       <li class="propertylistitem"><strong>Smooth Factor -</strong> Allows for smoothing the display based on a smoothing factor entered in the text entry box.</li>
-    <li class="propertylistitem"><strong>Streamline Start Level -</strong> Sets the vertical level where the streamlines will originate from. If 'All Levels' is selected then streamlines will originate from all levels. </ul></ul>
+    <li class="propertylistitem"><strong>Streamline Start Level -</strong> Sets the vertical level where the streamlines will originate from. If 'All Levels' is selected then streamlines will originate from all levels. </li>
+    <li class="propertylistitem"><strong>Streamline End Level -</strong> Sets the vertical level where the streamlines will end. If 'All Levels' is selected then streamlines will end at all levels. </li></ul></ul>
+  <li class="propertylistitem"><strong>Arrow Scale -</strong> Sets the size of the arrows of the vectors or trajectories. </li>
   <li class="propertylistitem"><strong>XY Skip -</strong> Defines the number
     of grid points that are skipped to mitigate cluttering in the display in the x/y direction. A skip interval of 0 utilizes all grid points, 1 uses every other
       grid point, 2 uses every third grid point, etc. This value can be modified by typing a value into the text field and pressing Enter or by using the slider button.</li>
