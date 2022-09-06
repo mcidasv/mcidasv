@@ -214,7 +214,7 @@ def VIIRSDayLandCloudFireRGB(I4, I2, I1):
 # VIIRS SDR Fire Temperature RGB
 def VIIRSFireTemperatureRGB(M12, M11, M10):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Fire_Temperature_RGB_Quick_Guide_10182018.pdf
-    # red = M12 (3.7um) - 0C to 60C rescaled to 0 to 255; gamma 0.4
+    # red = M12 (3.7um) - 0C to 70C rescaled to 0 to 255; gamma 0.4
     # grn = M11 (0.86um) - 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
     # blu = M10 (0.64um) - 0% to 75% reflectance rescaled to 0 to 255; gamma 1.0
 
@@ -227,7 +227,7 @@ def VIIRSFireTemperatureRGB(M12, M11, M10):
 
     grd750 = makeGrid(M12, 750)
 
-    red = 255*(rescale(M12, 273.15, 333.15, 0, 1)**2.5)
+    red = 255*(rescale(M12, 273.15, 343.15, 0, 1)**2.5)
     grn = rescale(M11, 0, 100, 0, 255)
     blu = rescale(M10, 0, 75, 0, 255)
 
@@ -398,10 +398,10 @@ def VIIRSEdrDayLandCloudFireRGB(I4, I2, I1):
 # VIIRS EDR Fire Temperature RGB
 def VIIRSEdrFireTemperatureRGB(M12, M11, M10):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Fire_Temperature_RGB_Quick_Guide_10182018.pdf
-    # red = M12 (3.7um) - 0C to 60C rescaled to 0 to 255; gamma 0.4
+    # red = M12 (3.7um) - 0C to 70C rescaled to 0 to 255; gamma 0.4
     # grn = M11 (0.86um) - 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
     # blu = M10 (0.64um) - 0% to 75% reflectance rescaled to 0 to 255; gamma 1.0
-    red = 255*(rescale(M12, 273.15, 333.15, 0, 1)**2.5)
+    red = 255*(rescale(M12, 273.15, 343.15, 0, 1)**2.5)
     grn = rescale(M11, 0, 100, 0, 255)
     blu = rescale(M10, 0, 75, 0, 255)
     return combineRGB(red, grn, blu)
