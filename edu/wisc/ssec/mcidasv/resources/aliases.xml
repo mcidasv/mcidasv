@@ -81,7 +81,11 @@
      ta.*_env.*,
      ta.*_ch.*_las,
      ta.*rc_ch.*_uas,
-     ta.*_img.*"/>
+     ta.*_img.*,
+     amsu_bt,
+     hirs_ir_bt,
+     mhs_bt,
+     Brightness_Temperature_*.*_GH*.*"/>
   
   <alias 
      name="Refl"
@@ -477,7 +481,8 @@
      wdirsfc,
      Wind_direction_from_which_blowing_surface,
      wind_direction_cloud_top_nwp,
-     wind_direction_10m_nwp"/>
+     wind_direction_10m_nwp,
+     GFS_Model_WDIR"/>
   <!-- bob inq2791 05/2019 -->
   <alias
      name="W"
@@ -516,7 +521,8 @@
      wind_speed_10m_nwp,
      sar_wind,
      10_metre_wind_gust_in_the_last_*.*_hours_surface_*.*_Hour,
-     10_metre_wind_gust_since_previous_post-processing_surface_*.*_Hour"/>
+     10_metre_wind_gust_since_previous_post-processing_surface_*.*_Hour,
+     GFS_Model_WSPD"/>
   <alias
      name="DEWPOINT"
      label="Dewpoint"
