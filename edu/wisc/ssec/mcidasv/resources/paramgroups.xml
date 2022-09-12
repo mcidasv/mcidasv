@@ -417,6 +417,7 @@
   <paramgroup description="" name="speed_and_dir">
     <params p1="wind_speed" p2="wind_dir"/>
     <params p1="model_speed" p2="model_dir"/>
+    <params p1="GFS_Model_WSPD" p2="GFS_Model_WDIR"/>
   </paramgroup>
   <!-- RMC Sep 2020 Inq 2926 -->
   <paramgroup description="" name="u_v">
