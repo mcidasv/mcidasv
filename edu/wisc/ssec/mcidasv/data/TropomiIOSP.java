@@ -58,6 +58,8 @@ import ucar.nc2.constants._Coordinate;
 import ucar.nc2.iosp.AbstractIOServiceProvider;
 import ucar.nc2.util.CancelTask;
 
+import javax.swing.JOptionPane;
+
 /**
  * @author tommyj
  *
@@ -145,6 +147,8 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
 
         // TJJ - kick out anything not supported (most) L2 right now
         if (filename.contains("_L1B_") || filename.contains("_L2__NP")) {
+            JOptionPane.showMessageDialog(null, "McIDAS-V is unable to read your file. " +
+                    "Only TROPOMI Level 2 Products are supported at this time.", "Warning", JOptionPane.OK_OPTION);
             return;
         }
 

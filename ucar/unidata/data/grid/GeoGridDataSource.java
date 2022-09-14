@@ -44,6 +44,8 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1384,12 +1386,15 @@ public class GeoGridDataSource extends GridDataSource {
             /* NEW WAY! */
             // Pass the widget ourself, so it can run its own doMakeDataChoices!
             // possibility for endless loops, I know!  TODO: investigate a better way.
-            BadNetCDFWidget bncWidget = new BadNetCDFWidget(ncFile, getIdv());
-            bncWidget.showChoices();
-            
+
+            String filename =Paths.get(ncFile.getLocation()).getFileName().toString();
+            if (! filename.contains("_L1B_") && ! filename.contains("_L2__NP")){
+                BadNetCDFWidget bncWidget = new BadNetCDFWidget(ncFile, getIdv());
+                bncWidget.showChoices();
+            }
             setInError(true, false, "");
-            
-           return;
+
+            return;
         }
 
         if (max3D > 0) {
