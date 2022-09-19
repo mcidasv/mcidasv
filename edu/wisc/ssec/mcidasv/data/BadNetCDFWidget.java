@@ -177,6 +177,7 @@ public class BadNetCDFWidget implements Constants {
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                 dialog.setVisible(true);
                 dialog.toFront();
+                dialog.setSize(650, 650);
             } catch (Exception e) {
                 logger.error("Could not show choices", e);
             }
