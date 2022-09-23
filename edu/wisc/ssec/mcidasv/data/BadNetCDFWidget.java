@@ -597,7 +597,7 @@ public class BadNetCDFWidget implements Constants {
         public BadNetCDFDialog() {
             setTitle("Non-Compliant NetCDF Tool");
             setMinimumSize(new Dimension(725, 340));
-            setBounds(100, 100, 725, 350);
+            setBounds(100, 100, 725, 340);
             Container contentPane = getContentPane();
             
             JLabel headerLabel =
