@@ -177,7 +177,6 @@ public class BadNetCDFWidget implements Constants {
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
                 dialog.setVisible(true);
                 dialog.toFront();
-                dialog.setSize(650, 650);
             } catch (Exception e) {
                 logger.error("Could not show choices", e);
             }
@@ -598,7 +597,7 @@ public class BadNetCDFWidget implements Constants {
         public BadNetCDFDialog() {
             setTitle("Non-Compliant NetCDF Tool");
             setMinimumSize(new Dimension(725, 340));
-            setBounds(100, 100, 725, 340);
+            setBounds(100, 100, 725, 350);
             Container contentPane = getContentPane();
             
             JLabel headerLabel =
