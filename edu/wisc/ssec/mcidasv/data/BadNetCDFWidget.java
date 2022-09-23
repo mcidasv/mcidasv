@@ -596,8 +596,7 @@ public class BadNetCDFWidget implements Constants {
         
         public BadNetCDFDialog() {
             setTitle("Non-Compliant NetCDF Tool");
-            setMinimumSize(new Dimension(725, 340));
-            setBounds(100, 100, 725, 340);
+            setLocation(100,100);
             Container contentPane = getContentPane();
             
             JLabel headerLabel =
@@ -701,7 +700,7 @@ public class BadNetCDFWidget implements Constants {
             contentPane.add(noncompliantLabel,  "alignx left, aligny baseline");
             contentPane.add(noncompliantButton, "growx, aligny baseline, wrap");
             contentPane.add(closeButton,        "alignx left, aligny baseline");
-            
+            pack();
         }
     }
 
