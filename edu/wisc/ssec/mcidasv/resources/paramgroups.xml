@@ -441,6 +441,11 @@
     <params p1="U_component_of_wind_isobaric" p2="V_component_of_wind_isobaric"/>
     <params p1="VAR_10U" p2="VAR_10V"/>
     <params p1="VAR_100U" p2="VAR_100V"/>
+    <params p1="x_wind_10m" p2="y_wind_10m"/>
+    <params p1="x_wind_gust_10m" p2="y_wind_gust_10m"/>
+    <params p1="x_wind_ml" p2="y_wind_ml"/>
+    <params p1="x_wind_pl" p2="y_wind_pl"/>
+    <params p1="x_wind_z" p2="y_wind_z"/>
   </paramgroup>
   <paramgroup description="" name="u_and_v">
     <params p1="u-component_of_wind_altitude_above_msl_ens" p2="v-component_of_wind_altitude_above_msl_ens"/>
@@ -463,6 +468,11 @@
     <params p1="U_component_of_wind_isobaric" p2="V_component_of_wind_isobaric"/>
     <params p1="VAR_10U" p2="VAR_10V"/>
     <params p1="VAR_100U" p2="VAR_100V"/>
+    <params p1="x_wind_10m" p2="y_wind_10m"/>
+    <params p1="x_wind_gust_10m" p2="y_wind_gust_10m"/>
+    <params p1="x_wind_ml" p2="y_wind_ml"/>
+    <params p1="x_wind_pl" p2="y_wind_pl"/>
+    <params p1="x_wind_z" p2="y_wind_z"/>
   </paramgroup>
   <paramgroup description="" name="u_v_w">
     <params p1="U" p2="V" p3="W"/>
