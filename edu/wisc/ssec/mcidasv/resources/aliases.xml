@@ -214,7 +214,18 @@
      Maximum_temperature_at_*.*_metres_in_the_last_*.*_hours_surface_*.*_Hour,
      Maximum_temperature_at_*.*_metres_since_previous_post-processing_surface_*.*_Hour,
      Minimum_temperature_at_*.*_metres_in_the_last_*.*_hours_surface_*.*_Hour,
-     Minimum_temperature_at_*.*_metres_since_previous_post-processing_surface_*.*_Hour"/>
+     Minimum_temperature_at_*.*_metres_since_previous_post-processing_surface_*.*_Hour,
+     air_temperature_0m,
+     SFX_TS,
+     SFX_TS_WATER,
+     air_temperature_max,
+     air_temperature_min,
+     SFX_T2M,
+     air_temperature_2m,
+     SFX_X002T2M_P,
+     SFX_T2M_SEA,
+     SFX_T2M_TEB,
+     SFX_T2M_WAT"/>
   <alias
      name="RH"
      label="Relative humidity"
@@ -273,7 +284,16 @@
      Minimum_Relative_Humidity_height_above_ground_*.*_Hour_Minimum,
      Relative_humidity_isobaric_weightedMean,
      rh2m,
-     Relative_humidity_layer_between_two_sigmas_layer"/>
+     Relative_humidity_layer_between_two_sigmas_layer,
+     relative_humidity_z,
+     SFX_HU2M,
+     relative_humidity_2m,
+     SFX_HU2M_WAT,
+     SFX_HU2M_ISBA,
+     SFX_X001HU2M_P,
+     SFX_X002HU2M_P,
+     SFX_HU2M_SEA,
+     SFX_HU2M_TEB"/>
   <alias
      name="Z"
      label="Z"
