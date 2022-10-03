@@ -126,6 +126,7 @@ import ucar.unidata.data.DataSourceImpl;
 import ucar.unidata.data.DataTimeRange;
 import ucar.unidata.data.DerivedDataChoice;
 import ucar.unidata.data.DirectDataChoice;
+import ucar.unidata.data.GeoLocationInfo;
 import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.GeoSelectionPanel;
 import ucar.unidata.data.grid.GridDataInstance;
@@ -173,6 +174,7 @@ import ucar.unidata.util.StringUtil;
 import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.GlobeDisplay;
+import ucar.unidata.view.geoloc.MapProjectionDisplay;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
 import ucar.unidata.xml.XmlObjectStore;
 import ucar.visad.UtcDate;
@@ -199,11 +201,13 @@ import visad.DisplayListener;
 import visad.DisplayRealType;
 import visad.FieldImpl;
 import visad.FunctionType;
+import visad.Gridded2DSet;
 import visad.GriddedSet;
 import visad.LocalDisplay;
 import visad.ProjectionControl;
 import visad.Real;
 import visad.RealTuple;
+import visad.RealTupleType;
 import visad.RealType;
 import visad.Set;
 import visad.SetType;
@@ -13035,6 +13039,57 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     public boolean getUsesTimeDriver() {
         return this.usesTimeDriver;
+    }
+
+    /**
+     When we relocate a bundle this gets called to relocate the display
+     This method gets overwritten by the probe and cross section displays
+     so they can move their selection points to a new location
+     @param originalBounds The original bounds of the datasource
+     @param newBounds  The relocated bounds of the datasource
+     */
+    public void relocateDisplay(LatLonRect originalBounds, LatLonRect newBounds) {
+        this.relocateDisplay(originalBounds, newBounds, false);
+    }
+
+    /**
+     When we relocate a bundle this gets called to relocate the display
+     This method gets overwritten by the probe and cross section displays
+     so they can move their selection points to a new location
+     @param originalBounds The original bounds of the datasource
+     @param newBounds  The relocated bounds of the datasource
+     */
+    public void relocateDisplay(LatLonRect originalBounds, LatLonRect newBounds, boolean useDataProjection) {
+        if(dataSelection == null)
+            getDataSelection();
+        GeoSelection gs = dataSelection.getGeoSelection();
+        if(gs == null)
+            gs = new GeoSelection();
+        GeoLocationInfo ginfo = new GeoLocationInfo(newBounds);
+        gs.setBoundingBox(ginfo);
+        NavigatedDisplay navDisplay = getNavigatedDisplay();
+
+        if(navDisplay instanceof MapProjectionDisplay) {
+            float[][] values = new float[2][2];
+
+            values[0][0] = (float) newBounds.getLatMax();
+            values[0][1] = (float) newBounds.getLatMin();
+            values[1][0] = (float) newBounds.getLonMax();
+            values[1][1] = (float) newBounds.getLonMin();
+
+            // values       = project.toReference(values);
+            try {
+                Gridded2DSet region =
+                        new Gridded2DSet(RealTupleType.LatitudeLongitudeTuple, values, 2);
+
+                ((MapProjectionDisplay) navDisplay).setMapRegion(region);
+
+            } catch (Exception e) {
+
+            }
+        }
+
+
     }
 
     /**
