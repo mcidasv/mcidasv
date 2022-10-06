@@ -194,7 +194,12 @@ public class DraggableTabbedPane extends JTabbedPane implements
 //            setUI(new CloseableTabbedPaneUI(SwingConstants.LEFT));
             setUI(new FlatTabbedPaneUI());
         }
-        currentTabColor = "#"+Integer.toHexString(javax.swing.UIManager.getColor("TabbedPane.contentAreaColor").getRGB()).substring(2);
+
+        try {
+            currentTabColor = "#" + Integer.toHexString(javax.swing.UIManager.getColor("TabbedPane.contentAreaColor").getRGB()).substring(2);
+        } catch (NullPointerException npe) {
+            logger.warn("Couldn't change currentTabColor, defaulting to Metal L&F");
+        }
     }
 
     /**
