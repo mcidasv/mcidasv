@@ -294,6 +294,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         LoggerLevelOption logLevel = optMaster.getLoggerLevelOption("LOG_LEVEL");
         TextOption textureWidth = optMaster.getTextOption("TEXTURE_WIDTH");
         TextOption scaling = optMaster.getTextOption("MCV_SCALING");
+        BooleanOption darkMode = optMaster.getBooleanOption("USE_DARK_MODE");
         
         JPanel startupPanel = new JPanel();
         startupPanel.setBorder(BorderFactory.createTitledBorder("Startup Options"));
@@ -331,6 +332,9 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JCheckBox useNpotCheckBox = useNpot.getComponent();
         useNpotCheckBox.setText(useNpot.getLabel());
 
+        JCheckBox useDarkModeCheckBox = darkMode.getComponent();
+        useDarkModeCheckBox.setText(darkMode.getLabel());
+
         // this is a JComboBox<String>; kinda struggling to represent this
         // in java's type system.
         JComboBox logLevelComboBox = logLevel.getComponent();
@@ -338,8 +342,8 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
         JPanel logLevelPanel = McVGuiUtils.makeLabeledComponent(logLevel.getLabel()+':', logLevelComboBox);
         
         JPanel scalingPanel = McVGuiUtils.makeLabeledComponent(scaling.getLabel()+':', scaling.getComponent());
-        
-        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.topBottom(useCmsCollectorCheckBox, scalingPanel, McVGuiUtils.Prefer.TOP));
+
+        JPanel miscPanel = McVGuiUtils.makeLabeledComponent("Misc:", McVGuiUtils.vertical(useCmsCollectorCheckBox, useDarkModeCheckBox, scalingPanel));
 
         JTextField jvmArgsField = jvmArgs.getComponent();
 

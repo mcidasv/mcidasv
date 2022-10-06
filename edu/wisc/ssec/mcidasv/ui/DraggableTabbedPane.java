@@ -69,6 +69,7 @@ import javax.swing.text.View;
 import java.util.EnumMap;
 import java.util.List;
 
+import com.formdev.flatlaf.ui.FlatTabbedPaneUI;
 import org.w3c.dom.Element;
 
 import org.slf4j.Logger;
@@ -190,9 +191,10 @@ public class DraggableTabbedPane extends JTabbedPane implements
             setUI(new CloseableMetalTabbedPaneUI(SwingConstants.LEFT));
             currentTabColor = INDEX_COLOR_METAL;
         } else {
-            setUI(new CloseableTabbedPaneUI(SwingConstants.LEFT));
-            currentTabColor = INDEX_COLOR_UGLY_TABS;
+//            setUI(new CloseableTabbedPaneUI(SwingConstants.LEFT));
+            setUI(new FlatTabbedPaneUI());
         }
+        currentTabColor = "#"+Integer.toHexString(javax.swing.UIManager.getColor("TabbedPane.contentAreaColor").getRGB()).substring(2);
     }
 
     /**
@@ -732,12 +734,16 @@ public class DraggableTabbedPane extends JTabbedPane implements
         {
             if (showTabArea(group, tabPane)) {
                 if (isSelected) {
-                    g.setColor(selected);
+//                    g.setColor(selected);
+                    g.setColor(javax.swing.UIManager.getColor("TabbedPane.focusColor"));
                 } else {
-                    g.setColor(unselected);
+//                    g.setColor(unselected);
+                    g.setColor(javax.swing.UIManager.getColor("TabbedPane.contentAreaColor"));
                 }
                 g.fillRect(x, y, w, h);
-                g.setColor(selected);
+//                g.setColor(selected);
+//                g.setColor(javax.swing.UIManager.getColor("TabbedPane.focusColor"));
+                g.setColor(Color.MAGENTA);
                 g.drawLine(x, y, x, y + h);
             }
         }

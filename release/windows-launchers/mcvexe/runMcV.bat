@@ -152,6 +152,13 @@ SET TEXTURE_SIZE=%TEXTURE_WIDTH%
 SET TEXTURE_SIZE=4096
 )
 
+REM control dark mode
+IF "%USE_DARK_MODE%"=="1" (
+set DARK_MODE=true
+) ELSE (
+SET DARK_MODE=false
+)
+
 REM if the user has disabled loading layout.mcv we need to pass -nodefault
 if "%DEFAULT_LAYOUT%"=="0" (
 SET USE_LAYOUT_BUNDLE=-nodefault

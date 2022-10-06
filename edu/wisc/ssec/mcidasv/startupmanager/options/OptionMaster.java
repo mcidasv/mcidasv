@@ -77,6 +77,7 @@ public class OptionMaster {
         { "JVM_OPTIONS", "Java Virtual Machine Options", "", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
         { "TEXTURE_WIDTH", "Texture Size", "4096", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
         { "MCV_SCALING", "GUI Scaling", "1", Type.TEXT, OptionPlatform.ALL, Visibility.VISIBLE },
+        { "USE_DARK_MODE", "Enable Dark Mode", "0", Type.BOOLEAN, OptionPlatform.ALL, Visibility.VISIBLE },
     };
     
     /**

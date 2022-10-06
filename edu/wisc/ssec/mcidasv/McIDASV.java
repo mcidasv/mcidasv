@@ -71,6 +71,8 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 import edu.wisc.ssec.mcidas.adde.AddeURL;
 import edu.wisc.ssec.mcidas.adde.AddeURLStreamHandler;
 
@@ -1789,7 +1791,14 @@ public class McIDASV extends IntegratedDataViewer {
         // this becomes the default in 1.8.0_162, but we need to ship with
         // 1.8.0_152.
         Security.setProperty("crypto.policy", "unlimited");
-        
+
+        // Configure GUI look and feel before any UI stuff
+        boolean useDarkMode = Boolean.parseBoolean(System.getProperty("mcidasv.darkmode", "false"));
+        System.out.println("DARK MODE PROPERTY: "+useDarkMode);
+        if (useDarkMode) {
+            FlatDarkLaf.setup();
+        }
+
         // the following two lines are required if we want to embed JavaFX
         // widgets into McV (which is Swing). The first line initializes the
         // JavaFX runtime, and the second line allows the JavaFX runtime to
