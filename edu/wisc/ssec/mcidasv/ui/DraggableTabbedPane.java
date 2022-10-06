@@ -105,8 +105,8 @@ public class DraggableTabbedPane extends JTabbedPane implements
     private static final String IDX_ICON = 
         "/edu/wisc/ssec/mcidasv/resources/icons/tabmenu/go-down.png";
 
-    private static final Color unselected = new Color(165, 165, 165);
-    private static final Color selected = new Color(225, 225, 225);
+    private static Color unselected = new Color(165, 165, 165);
+    private static Color selected = new Color(225, 225, 225);
 
     private static final String INDEX_COLOR_METAL = "#AAAAAA";
 
@@ -187,19 +187,27 @@ public class DraggableTabbedPane extends JTabbedPane implements
         addMouseListener(this);
         addMouseMotionListener(this);
 
+        System.out.println("getUI returned: "+getUI().getClass().getCanonicalName());
+
         if (getUI() instanceof MetalTabbedPaneUI) {
             setUI(new CloseableMetalTabbedPaneUI(SwingConstants.LEFT));
             currentTabColor = INDEX_COLOR_METAL;
+        } else if (!(getUI() instanceof FlatTabbedPaneUI)) {
+            setUI(new CloseableTabbedPaneUI(SwingConstants.LEFT));
+            currentTabColor = INDEX_COLOR_UGLY_TABS;
         } else {
-//            setUI(new CloseableTabbedPaneUI(SwingConstants.LEFT));
             setUI(new FlatTabbedPaneUI());
+
+            try {
+                selected = javax.swing.UIManager.getColor("TabbedPane.focusColor");
+                unselected = javax.swing.UIManager.getColor("TabbedPane.contentAreaColor");
+                currentTabColor = "#" + Integer.toHexString(javax.swing.UIManager.getColor("TabbedPane.contentAreaColor").getRGB()).substring(2);
+            } catch (NullPointerException npe) {
+                logger.warn("Couldn't change currentTabColor, defaulting to Metal L&F");
+            }
         }
 
-        try {
-            currentTabColor = "#" + Integer.toHexString(javax.swing.UIManager.getColor("TabbedPane.contentAreaColor").getRGB()).substring(2);
-        } catch (NullPointerException npe) {
-            logger.warn("Couldn't change currentTabColor, defaulting to Metal L&F");
-        }
+
     }
 
     /**
@@ -638,7 +646,11 @@ public class DraggableTabbedPane extends JTabbedPane implements
         }
         title = "<html><font color=\"" + currentTabColor+"\">"+displayNumber+"</font>"+title+"</html>";
         if (showTabArea(group, this)) {
-            super.addTab(title, new TabButton(), component);
+            if (getUI() instanceof FlatTabbedPaneUI) {
+                super.addTab(title, component);
+            } else {
+                super.addTab(title, new TabButton(), component);
+            }
         } else {
             super.addTab("", component);
         }
@@ -739,16 +751,12 @@ public class DraggableTabbedPane extends JTabbedPane implements
         {
             if (showTabArea(group, tabPane)) {
                 if (isSelected) {
-//                    g.setColor(selected);
-                    g.setColor(javax.swing.UIManager.getColor("TabbedPane.focusColor"));
+                    g.setColor(selected);
                 } else {
-//                    g.setColor(unselected);
-                    g.setColor(javax.swing.UIManager.getColor("TabbedPane.contentAreaColor"));
+                    g.setColor(unselected);
                 }
                 g.fillRect(x, y, w, h);
-//                g.setColor(selected);
-//                g.setColor(javax.swing.UIManager.getColor("TabbedPane.focusColor"));
-                g.setColor(Color.MAGENTA);
+                g.setColor(selected);
                 g.drawLine(x, y, x, y + h);
             }
         }
