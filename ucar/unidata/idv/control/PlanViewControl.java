@@ -45,7 +45,12 @@ import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
 
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -56,16 +61,17 @@ import java.beans.PropertyChangeEvent;
 
 import java.rmi.RemoteException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
-import javax.swing.plaf.DimensionUIResource;
-import javax.swing.text.JTextComponent;
 
 
 /**
