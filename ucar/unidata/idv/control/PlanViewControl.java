@@ -45,10 +45,7 @@ import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
 
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Insets;
-import java.awt.Label;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -59,14 +56,16 @@ import java.beans.PropertyChangeEvent;
 
 import java.rmi.RemoteException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
+import javax.swing.plaf.DimensionUIResource;
+import javax.swing.text.JTextComponent;
 
 
 /**
@@ -101,6 +100,17 @@ public abstract class PlanViewControl extends GridDisplayControl {
 
     /** cycle level checkbox */
     private JCheckBox cycleLevelsCbx;
+
+    /** Slider to forward through levels */
+    private JSlider forwardLevels;
+
+    private JLabel forward;
+
+    private JTextField forwardText;
+
+    int forwardValue = 1;
+
+    private JPanel levelsPanel;
 
     /** list of current levels */
     protected Object[] currentLevels;
@@ -461,7 +471,63 @@ public abstract class PlanViewControl extends GridDisplayControl {
             }
         });
 
+        forward = new JLabel("Forward Levels: ");
 
+        forwardLevels = new JSlider(500, 10000, forwardValue*1000);
+        Hashtable<Integer, JComponent> sliderTicks = new Hashtable<>();
+        sliderTicks.put(500, new JLabel("0.5"));
+        sliderTicks.put(2500, new JLabel("2.5"));
+        sliderTicks.put(5000, new JLabel("5"));
+        sliderTicks.put(7500, new JLabel("7.5"));
+        sliderTicks.put(10000, new JLabel("10"));
+        forwardLevels.setPreferredSize(new Dimension(400, 50));
+        forwardLevels.setLabelTable(sliderTicks);
+        forwardLevels.setPaintTicks(true);
+        forwardLevels.setPaintLabels(true);
+        forwardLevels.setSnapToTicks(true);
+        forwardLevels.setMinorTickSpacing(500);
+        forwardLevels.setToolTipText("Time in seconds to cycle between levels");
+        forwardLevels.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                if (forwardLevels.getValueIsAdjusting()) {
+                    return;
+                }
+                forwardText.setText(Double.toString((double) forwardLevels.getValue()/1000));
+            }});
+
+        forwardText = new JTextField(5);
+        forwardText.setText(Double.toString((double)forwardValue));
+        forwardLevels.setValue(forwardValue*1000);
+        forwardText.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String s = forwardText.getText();
+                if((s !=null)) {
+                    try {
+                        double newForwardVal = Double.parseDouble(s);
+                        if ((newForwardVal < (double)forwardLevels.getMinimum()/1000) || (newForwardVal > (double)forwardLevels.getMaximum()/1000)) {
+                            // show dialog
+                            JOptionPane
+                                    .showMessageDialog(null,
+                                            "Invalid value, must be within slider range.");
+                        } else {
+                            forwardLevels.setValue((int) (newForwardVal*1000));
+                        }
+                    } catch (NumberFormatException nfe) {
+                        // just reset to last valid number
+                        forwardText.setText(Double.toString((double) forwardLevels.getValue()/1000));
+                    }
+                }
+            }
+        });
+
+
+        levelsPanel  = new JPanel(new FlowLayout(FlowLayout.LEADING, 10,10));
+        levelsPanel.add(levelReadout);
+        levelsPanel.add(cycleLevelsCbx);
+        levelsPanel.add(forward);
+        levelsPanel.add(forwardText);
+        levelsPanel.add(forwardLevels);
 
         // create the actual displayable; see code in sub class
         planDisplay = createPlanDisplay();
@@ -860,7 +926,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
             }
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(forwardLevels.getValue());
             } catch (InterruptedException ie) {
                 return;
             }
@@ -907,6 +973,10 @@ public abstract class PlanViewControl extends GridDisplayControl {
         levelDownBtn.setEnabled(levelEnabled);
         levelLabel.setEnabled(levelEnabled);
         cycleLevelsCbx.setEnabled(levelEnabled);
+        forward.setEnabled(levelEnabled);
+        forwardText.setEnabled(levelEnabled);
+        forwardLevels.setEnabled(levelEnabled);
+
 
         if (levels == null) {
             setLevelReadoutLabel(formatLevel(null));
@@ -1655,11 +1725,13 @@ public abstract class PlanViewControl extends GridDisplayControl {
                     GuiUtils.WT_N);
             JPanel levelSelector = GuiUtils.doLayout(new Component[] {
                             levelBox,
-                            levelUpDown }, 2, GuiUtils.WT_N,
+                            levelUpDown }, 2,GuiUtils.WT_N,
                     GuiUtils.WT_N);
             controlWidgets.add(new WrapperWidget(this, levelLabel,
-                    GuiUtils.left(levelSelector),
-                    GuiUtils.centerRight(levelReadout, cycleLevelsCbx)));
+                    GuiUtils.doLayout(new Component[] {
+                                    levelSelector,
+                                    levelsPanel }, 2,GuiUtils.WT_N,
+                            GuiUtils.WT_N)));
         }
         if (getParameterIsTopography()) {
             if (verticalRange == null) {
