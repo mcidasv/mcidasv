@@ -170,12 +170,6 @@ public class EntryStore {
     /** Path to the user's {@literal "RESOLV.SRV"}. */
     private final String ADDE_RESOLV;
 
-    /**
-     * Value of {@literal "MCTRACE"} environment variable for mcservl.
-     * Currently set to {@literal "0"} within {@link EntryStore#EntryStore}.
-     */
-    private final String MCTRACE;
-
     /** Which port is this particular manager operating on */
     private static String localPort;
 
@@ -215,8 +209,7 @@ public class EntryStore {
         McIDASV mcv = McIDASV.getStaticMcv();
         USER_DIRECTORY = mcv.getUserDirectory();
         ADDE_RESOLV = mcv.getUserFile("RESOLV.SRV");
-        MCTRACE = "0";
-        
+
         if (McIDASV.isWindows()) {
             ADDE_MCSERVL = ADDE_BIN + "\\mcservl.exe";
         } else {
@@ -325,7 +318,7 @@ public class EntryStore {
             "MCPATH=" + USER_DIRECTORY+':'+ADDE_DATA,
             "MCUSERDIR=" + USER_DIRECTORY,
             "MCNOPREPEND=1",
-            "MCTRACE=" + MCTRACE,
+            "MCTRACE=" + (Boolean.parseBoolean(System.getProperty("debug.adde.reqs", "false")) ? "1" : "0"),
             "MCTRACK=NO",
             "MCJAVAPATH=" + System.getProperty("java.home"),
             "MCBUFRJARPATH=" + ADDE_BIN,
@@ -352,7 +345,7 @@ public class EntryStore {
             "LD_LIBRARY_PATH=" + ADDE_BIN,
             "DYLD_LIBRARY_PATH=" + ADDE_BIN,
             "MCNOPREPEND=1",
-            "MCTRACE=" + MCTRACE,
+            "MCTRACE=" + (Boolean.parseBoolean(System.getProperty("debug.adde.reqs", "false")) ? "1" : "0"),
             "MCTRACK=NO",
             "MCJAVAPATH=" + System.getProperty("java.home"),
             "MCBUFRJARPATH=" + ADDE_BIN
@@ -826,7 +819,7 @@ public class EntryStore {
      * Returns the {@link Set} of {@link LocalAddeEntry LocalAddeEntries} that
      * will be saved between McIDAS-V sessions.
      * 
-     * <p>Note: all this does is check {@link LocalAddeEntry#isTemporary} field. 
+     * <p>Note: all this does is check {@link LocalAddeEntry#isEntryTemporary()}.
      * 
      * @return Local ADDE entries that will be saved for the next session.
      */
