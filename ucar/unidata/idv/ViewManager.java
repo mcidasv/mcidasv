@@ -6214,6 +6214,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     "Set the background color to be transparent");
                 mainDisplayBtn = new JRadioButton("Current View", true);
                 allViewsBtn    = new JRadioButton("All Views", false);
+
                 widthBox = new JComboBox(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9","10" });
                 widthBox.setToolTipText("Set the line width");
                 widthBox.setMaximumSize(new Dimension(30, 16));
