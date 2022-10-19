@@ -7,7 +7,7 @@
         action="jython:System.setProperty('debug.adde.reqs', 'true');"/>
 
     <action id="mcidasv.servermanager.debug.disable"
-        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/range-bearing%d.png"
+        image="/edu/wisc/ssec/mcidasv/resources/icons/toolbar/awooga%d.png"
         group="Jython"
         description="Disable ADDE Debug Output"
         action="jython:System.setProperty('debug.adde.reqs', 'false');"/>
