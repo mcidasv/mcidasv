@@ -208,6 +208,8 @@ import javax.swing.event.ChangeListener;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
+import static ucar.unidata.idv.control.MapDisplayControl.DEFAULT_MAP_COLOR;
+
 /**
  * A wrapper around a {@link ucar.visad.display.DisplayMaster}.
  * Provides an interface for managing user interactions, gui creation, etc.
@@ -373,6 +375,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     /** All views button */
     private static JRadioButton allViewsBtn;
+
+    private static JComboBox widthBox;
+
+    private ColorSwatchComponent colorButton;
+
+    private JPanel borderPanel;
 
     /** For capturing images */
     private static JCheckBox backgroundTransparentBtn;
@@ -6206,6 +6214,20 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     "Set the background color to be transparent");
                 mainDisplayBtn = new JRadioButton("Current View", true);
                 allViewsBtn    = new JRadioButton("All Views", false);
+                widthBox = new JComboBox(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9","10" });
+                widthBox.setToolTipText("Set the line width");
+                widthBox.setMaximumSize(new Dimension(30, 16));
+                widthBox.setEditable(true);
+
+                colorButton = new ColorSwatchComponent(getStore(), DEFAULT_MAP_COLOR,
+                        "Set Map Line Color");
+                colorButton.setToolTipText("Set the line color");
+                colorButton.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+
+                borderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                borderPanel.add(widthBox);
+                borderPanel.add(colorButton);
+
                 contentsBtn    = new JRadioButton("Current View & Legend",
                         false);
                 fullWindowBtn = new JRadioButton("Full Window", false);
@@ -6242,7 +6264,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                             8, 10, 0)));
             } else {
                 comps.add(GuiUtils.inset(GuiUtils.vbox(mainDisplayBtn,
-                        contentsBtn, allViewsBtn, fullWindowBtn), new Insets(2,
+                        contentsBtn, allViewsBtn, borderPanel, fullWindowBtn), new Insets(2,
                             8, 10, 0)));                
             }
             
@@ -6367,8 +6389,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     List<BufferedImage> images = makeBufferedImages(views,
                                                      whichComponent);
                     BufferedImage image =
-                        (BufferedImage) ImageUtils.gridImages2(images, 0,
-                            Color.GRAY,
+                        (BufferedImage) ImageUtils.gridImages2(images, Integer.parseInt((String) widthBox.getSelectedItem()),
+                            colorButton.getBackground(),
                             ImageUtils.getColumnCountFromComps(views));
 
                     if ((image != null)
