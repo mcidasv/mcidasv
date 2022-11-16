@@ -32,7 +32,11 @@
     -->
     <property name="uiscale" value="1" />
 
-    <property name="darkmode" value="true" />
+    <!--
+      Used to control the "mcidasv.darkmode" property via the Ant commandline (like uiscale).
+      Default behavior is to disable the dark mode L&F.
+    -->
+    <property name="darkmode" value="false" />
 
     <!--
       This section attempts to set the path to the local ADDE servers in
@@ -201,7 +205,7 @@
     <property name="idv.version" value="5.7" />
     <property name="ncidv.version" value="4.6.15-SNAPSHOT" />
     <property name="visad.version" value="2.0-SNAPSHOT" />
-    <property name="flatlaf.version" value="2.4" />
+    <property name="flatlaf.version" value="2.6" />
 <!--    <property name="jansi.version" value="2.4.0" />-->
 
     <!-- note that the J3D JARs available from http://jogamp.org/deployment/java3d/
@@ -212,8 +216,8 @@
     <!-- The CLASSPATH specified within McV's manifest 
          Note: if you're going to modify this property, be sure to make similar
          modifications to the "mcv.libs" fileset. -->
-<!--    <property name="jar.base.classpath" value="jansi-${jansi.version}.jar ${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar jcodec-javase-${jcodec.version}.jar jcodec-${jcodec.version}.jar flatlaf-${flatlaf.version}.jar" />-->
-    <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar jcodec-javase-${jcodec.version}.jar jcodec-${jcodec.version}.jar flatlaf-${flatlaf.version}.jar" />
+<!--    <property name="jar.base.classpath" value="jansi-${jansi.version}.jar ${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar jcodec-javase-${jcodec.version}.jar jcodec-${jcodec.version}.jar flatlaf-${flatlaf.version}.jar flatlaf-extras-${flatlaf.version}.jar flatlaf-intellij-themes-${flatlaf.version}.jar flatlaf-swingx-${flatlaf.version}.jar" />-->
+    <property name="jar.base.classpath" value="${userguide.jarname} ncIdv-${ncidv.version}.jar external-${idv.version}.jar jogamp-all-${jogamp.version}.jar sysout-over-slf4j-${sysout.version}.jar miglayout-core-${miglayout.version}.jar miglayout-swing-${miglayout.version}.jar eventbus-${eventbus.version}.jar logback-core-${logback.version}.jar logback-classic-${logback.version}.jar log4j-over-slf4j-${slf4j.version}.jar slf4j-api-${slf4j.version}.jar ${local-idv.jarname}commons-math3-${commons-math.version}.jar rsyntaxtextarea-${rsyntaxtextarea.version}.jar jul-to-slf4j-${slf4j.version}.jar local-visad-${idv.version}.jar visad-${visad.version}.jar idv-${idv.version}.jar ${userguide.jarname} JSatTrak-${jsattrack.version}.jar swingx-common-${swingx.version}.jar j3dcore-${java3d.version}.jar j3dutils-${java3d.version}.jar vecmath-${java3d.version}.jar jython-standalone-${jython.version}.jar juniversalchardet-${juniversalchardet.version}.jar commons-httpclient-${commons-httpclient.version}.jar jcodec-javase-${jcodec.version}.jar jcodec-${jcodec.version}.jar flatlaf-${flatlaf.version}.jar flatlaf-extras-${flatlaf.version}.jar flatlaf-intellij-themes-${flatlaf.version}.jar flatlaf-swingx-${flatlaf.version}.jar" />
 
     <!-- List of McIDAS-V JAR files. 
          Note: if you're going to modify this fileset, be sure to make similar
@@ -221,6 +225,9 @@
     <fileset id="mcv.libs" dir="${dist.dir}">
 <!--        <include name="jansi-${jansi.version}.jar" />-->
         <include name="flatlaf-${flatlaf.version}.jar" />
+        <include name="flatlaf-extras-${flatlaf.version}.jar" />
+        <include name="flatlaf-intellij-themes-${flatlaf.version}.jar" />
+        <include name="flatlaf-swingx-${flatlaf.version}.jar" />
         <include name="jcodec-${jcodec.version}.jar" />
         <include name="jcodec-javase-${jcodec.version}.jar" />
         <include name="commons-httpclient-${commons-httpclient.version}.jar" />
@@ -1749,6 +1756,7 @@
             <sysproperty key="visad.java3d.imageByRef" value="true" />
             <sysproperty key="visad.java3d.geometryByRef" value="true" />
             <sysproperty key="python.security.respectJavaAccessibility" value="false" />
+            <sysproperty key="mcidasv.darkmode" value="${darkmode}" />
             <!--
             <sysproperty key="sun.java2d.opengl" value="True" />
             <sysproperty key="sun.java2d.trace" value="log,timestamp,count,out:./java2d.log,verbose" />
