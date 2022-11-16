@@ -113,7 +113,7 @@ class AboutFrame extends JFrame implements ChangeListener {
      */
     private JTextArea sysTextArea;
 
-    /** Whether or not the system information has been collected. */
+    /** Whether the system information has been collected. */
     private final AtomicBoolean hasSysInfo;
 
     /** the text searching widget */
@@ -127,17 +127,20 @@ class AboutFrame extends JFrame implements ChangeListener {
      * @throws NullPointerException if {@code mcv} is {@code null}.
      */
     AboutFrame(final McIDASV mcv) {
-        Objects.requireNonNull("mcv reference cannot be null");
+        Objects.requireNonNull(mcv,"mcv reference cannot be null");
         this.mcv = mcv;
         this.hasSysInfo = new AtomicBoolean(false);
         initComponents();
     }
 
+    /**
+     * Convenience method for calling {@link SystemState#getStateAsString(McIDASV, boolean)}.
+     *
+     * @return <i>All</i> of the relevant McIDAS-V system properties, stuffed into a single {@code String}.
+     */
     private String getSystemInformation() {
         return SystemState.getStateAsString(mcv, true);
     }
-
-    // TODO: refactor the initComponents and buildAboutMcv methods.
 
     /**
      * Called by the constructor to initialize the {@literal "About"} window.
@@ -172,7 +175,7 @@ class AboutFrame extends JFrame implements ChangeListener {
         sysTextArea.setText(PLEASE_WAIT);
 
         sysTextArea.setEditable(false);
-        sysTextArea.setFont(new Font(Font.MONOSPACED, 0, 12)); // NOI18N
+        sysTextArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         sysTextArea.setCaretPosition(0);
         sysTextArea.setLineWrap(false);
         sysTextArea.addKeyListener(new KeyAdapter() {
@@ -216,9 +219,16 @@ class AboutFrame extends JFrame implements ChangeListener {
         pack();
         setSize(600, 600);
         setLocationRelativeTo(mcv.getIdvUIManager().getFrame());
-
     }
 
+    /**
+     * Populate the regular "About McIDAS-V" tab.
+     * <p>
+     * Contains information like build date, a link to our website, etc.
+     * </p>
+     *
+     * @return Panel suitable for using inside a {@link JTabbedPane}.
+     */
     private JPanel buildAboutMcv() {
         StateManager stateManager = (StateManager)mcv.getStateManager();
 
@@ -248,24 +258,21 @@ class AboutFrame extends JFrame implements ChangeListener {
                 } catch (MalformedURLException e) {
                     logger.warn("Malformed URL: '"+url+"'", e);
                 }
-
             }
         });
 
         JPanel contents = topCenter(inset(iconLbl, 5), inset(editor, 5));
         contents.setBorder(createBevelBorder(RAISED, GRAY, GRAY));
         return contents;
-
-
     }
 
     /**
      * Populates the {@literal "System Information"} tab.
-     *
+     * <p>
      * The system information is collected on a separate thread, and when done,
      * the results are added to the tab (on the Event Dispatch Thread).
      */
-    void populateSystemTab() {
+    private void populateSystemTab() {
         Misc.runInABit(500, () -> {
             if (!hasSysInfo.get()) {
                 String sysInfo = getSystemInformation();
@@ -288,7 +295,7 @@ class AboutFrame extends JFrame implements ChangeListener {
 
     /**
      * Respond to a change in the {@link JTabbedPane}.
-     *
+     * <p>
      * If the user has decided to make the {@literal "System Information"} tab
      * visible, this method will call {@link #populateSystemTab()}.
      *
