@@ -913,8 +913,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         GuiUtils.setHFill();
 
         JPanel filePanel = GuiUtils.doLayout(null, new Component[] {
-            GuiUtils.rLabel("Image Quality:"),
-            GuiUtils.left(GuiUtils.hbox(hiBtn, medBtn, lowBtn)),
             GuiUtils.filler(), GuiUtils.right(alternateDirCbx),
             // GuiUtils.filler(),
             // GuiUtils.filler(),

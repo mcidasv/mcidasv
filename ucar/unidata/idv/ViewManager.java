@@ -6268,10 +6268,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                         contentsBtn, allViewsBtn, borderPanel, fullWindowBtn), new Insets(2,
                             8, 10, 0)));                
             }
-            
-            comps.add(new JLabel("Quality:"));
-            comps.add(GuiUtils.inset(GuiUtils.hbox(hiBtn, medBtn, lowBtn),
-                                     new Insets(3, 0, 1, 0)));
+
             comps.add(backgroundTransparentBtn);
 
             if (publishCbx != null) {
