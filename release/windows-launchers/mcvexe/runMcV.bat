@@ -168,7 +168,7 @@ SET USE_LAYOUT_BUNDLE=
 
 SET LOGBACK_CONFIG="%MCV_USERPATH%\logback.xml"
 
-SET MCV_FLAGS=-J-Didv.3d=%ENABLE_3D% -J-Dvisad.java3d.noerasebackground=true -J-Dvisad.java3d.textureNpot=%ALLOW_NPOT% -J-Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -J-Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -J-DtextureWidthMax=%TEXTURE_SIZE% -userpath "%MCV_USERPATH%"
+SET MCV_FLAGS=-J-Didv.3d=%ENABLE_3D% -J-Dvisad.java3d.noerasebackground=true -J-Dvisad.java3d.textureNpot=%ALLOW_NPOT% -J-Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -J-Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -J-DtextureWidthMax=%TEXTURE_SIZE% -forceaqua -userpath "%MCV_USERPATH%"
 
 REM Append the specified startup bundle to the args getting passed to Mcv
 IF NOT DEFINED STARTUP_BUNDLE GOTO endbundle

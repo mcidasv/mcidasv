@@ -295,7 +295,7 @@ else
   JAVA_FLAGS="-Xmx${HEAP_SIZE} ${INIT_HEAP} ${THREAD_STACK} ${YOUNG_GEN} ${GC_ARGS} ${JVM_ARGS} -Dsun.java2d.uiScale=$SCALING -Dmcidasv.darkmode=$DARK_MODE -Dloglevel=\"${LOGGING_LEVEL}\" -Dlogback.configurationFile=\"${LOGBACK_CONFIG}\" -Dmcv.userpath=\"${MCV_USERPATH}\" -Dmcv.logpath=\"${MCV_LOGPATH}\" -Dfile.encoding=UTF-8 -Dpython.security.respectJavaAccessibility=false"
 fi
 
-MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -DtextureWidthMax=${TEXTURE_SIZE}"
+MCV_FLAGS="${COLLAB_MODE} ${COLLAB_PORT} ${ENABLE_DEBUG} -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=${ALLOW_NPOT} -Dvisad.java3d.imageByRef=${IMAGE_BY_REF} -Dvisad.java3d.geometryByRef=${GEOMETRY_BY_REF} -Didv.3d=${IDV_3D} -DtextureWidthMax=${TEXTURE_SIZE} -forceaqua"
 
 # should mcv show the welcome window prior to starting
 if [ "${SHOW_WELCOME}" = "1" ]; then

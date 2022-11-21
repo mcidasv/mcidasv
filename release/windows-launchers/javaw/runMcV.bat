@@ -203,7 +203,7 @@ SET DARK_MODE=false
 
 SET LOGBACK_CONFIG="%MCV_USERPATH%\logback.xml"
 
-SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=%ALLOW_NPOT% -Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -DtextureWidthMax=%TEXTURE_SIZE% -userpath "%MCV_USERPATH%"
+SET MCV_FLAGS=-Didv.3d=%ENABLE_3D% -Dvisad.java3d.noerasebackground=true -Dvisad.java3d.textureNpot=%ALLOW_NPOT% -Dvisad.java3d.imageByRef=%IMAGE_BY_REF% -Dvisad.java3d.geometryByRef=%GEOMETRY_BY_REF% -DtextureWidthMax=%TEXTURE_SIZE% -forceaqua -userpath "%MCV_USERPATH%"
 
 REM the unwelcome stuff is used for stress testing mcv startup
 IF DEFINED MCV_UNWELCOME_DELAY (
