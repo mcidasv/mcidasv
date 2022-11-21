@@ -1470,17 +1470,32 @@
 
     <!-- 
     Removes the following from external.jar:
-        org/slf4j directory
+        edu/wisc/ssec/mcidasv, javax/xml, org/apache/batik, org/apache/commons/io, org/apache/commons/logging,
+        org/apache/fop, org/apache/xml/serializer, org/apache/xmlcommons, org/apache/xmlgraphics, org/slf4j,
+        org/w3c, org/xml
         jythonlib.jar
     -->
     <target name="external.cleanup" depends="build" description="Remove redundant/unneeded class files from external.jar">
         <mkdir dir="${dist.dir}/tmp" />
-        <unzip src="${dist.dir}/external-${idv.version}.jar" dest="${dist.dir}/tmp" />
+        <unzip src="${dist.dir}/external-trimmed-${idv.version}.jar" dest="${dist.dir}/tmp" />
+
+        <delete dir="${dist.dir}/tmp/edu/wisc/ssec/mcidasv" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/javax/xml" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/org/apache/batik" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/org/apache/commons/io" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/org/apache/commons/logging" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/org/apache/fop" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/org/apache/xml/serializer" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/org/apache/xmlcommons" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/org/apache/xmlgraphics" failonerror="false" />
         <delete dir="${dist.dir}/tmp/org/slf4j" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/org/w3c" failonerror="false" />
+        <delete dir="${dist.dir}/tmp/org/xml" failonerror="false" />
         <delete file="${dist.dir}/tmp/jythonlib.jar" failonerror="false" />
+
         <delete file="${dist.dir}/external-${idv.version}.jar" failonerror="false" />
         
-        <jar destfile="${dist.dir}/external-${idv.version}.jar" 
+        <jar destfile="${dist.dir}/external-trimmed-${idv.version}.jar"
              basedir="${dist.dir}/tmp" 
              index="true"
              manifest="${dist.dir}/tmp/META-INF/MANIFEST.MF"/>
