@@ -6,22 +6,22 @@
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
  * http://www.ssec.wisc.edu/mcidas
- * 
+ *
  * All Rights Reserved
- * 
+ *
  * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
- * 
+ * some McIDAS-V source code is based on IDV and VisAD source code.
+ *
  * McIDAS-V is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * McIDAS-V is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
@@ -177,6 +177,7 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Group;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -354,19 +355,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
             new TwoFacedObject("Upper Right", "ur"),
             new TwoFacedObject("Lower Right", "lr"),
             new TwoFacedObject("Center", "mm"), };
-    
+
     /** Are we using the globe display */
     protected boolean useGlobeDisplay = false;
-    
+
     /** background color for filled globe */
     protected Color globeBackgroundColor = null;
-    
+
     /** z level (really radius) for where to put the globe fill layer */
     protected double globeBackgroundLevel = -0.01;
-    
+
     /** globe fill background stuff */
     protected ZSlider globeBackgroundLevelSlider;
-    
+
     /** globe fill background stuff */
     protected JComponent globeBackgroundColorComp;
 
@@ -375,6 +376,8 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     /** All views button */
     private static JRadioButton allViewsBtn;
+
+    private static JCheckBox borderBtn;
 
     private static JComboBox widthBox;
 
@@ -769,7 +772,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     /** For globe background visibility */
     private JCheckBox globeBackgroundVisibility;
-    
+
     /** For logo properties */
     private JCheckBox logoVisCbx;
 
@@ -960,9 +963,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
             // getMaster().addDisplayable(animation);
         }
 
-        initializeBooleanProperty(new BooleanProperty(PREF_AUTO_DEPTH, 
-                                                      LABEL_AUTO_DEPTH, 
-                                                      LABEL_AUTO_DEPTH, 
+        initializeBooleanProperty(new BooleanProperty(PREF_AUTO_DEPTH,
+                                                      LABEL_AUTO_DEPTH,
+                                                      LABEL_AUTO_DEPTH,
                                                       DEFAULT_AUTO_DEPTH));
         Trace.call1("ViewManager.init initWith");
         initWith(this);
@@ -1171,7 +1174,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             synchronized (legends) {
                 legends.add(sideLegend);
             }
-        
+
 
             sideLegendComponent = getSideComponent(sideLegend.getContents());
             sideLegendContainer = new JPanel(new BorderLayout());
@@ -1188,7 +1191,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                     ? centerPanel
                                     : sideLegendContainer);
 
-            mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, 
+            mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                                        leftComp,rightComp);
 
             if (legendOnLeft) {
@@ -1432,14 +1435,14 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 cbx.setToolTipText(Constants.TOOLTIP_PROGRESSIVE_RESOLUTION);
             }
 
-            // TJJ May 2017 
+            // TJJ May 2017
             // Leave logo visibility out of UI, since that is now moved to logo panel
             // This block prevents that checkbox from being added to top panel
-            
+
             // TJJ Nov 2019
             // Now taking same approach with Glove View background visibility
-            
-            if (! ((bp.getId().equals(PREF_LOGO_VISIBILITY) || 
+
+            if (! ((bp.getId().equals(PREF_LOGO_VISIBILITY) ||
                    (bp.getId().equals(MapViewManager.PREF_SHOWGLOBEBACKGROUND))))) {
                 propertiesMap.put(cbx, bp);
                 props.add(GuiUtils.left(cbx));
@@ -1519,7 +1522,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
               GuiUtils.makeColorSwatchWidget(getStore(),
                                              ((MapViewManager) this).getGlobeBackgroundColorToUse(),
                                              "Globe Background Color");
-  
+
           bgComps[0].setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
           globeBackgroundColorComp = bgComps[0];
           globePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -1531,7 +1534,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
           globePanel.setBorder(
                   BorderFactory.createTitledBorder("Globe Display"));
         }
-                
+
         JPanel fullScreenPanel =
             GuiUtils.left(GuiUtils.hbox(new JLabel(" Width: "),
                                         fullScreenWidthFld,
@@ -1571,7 +1574,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
         // TJJ Jan 2018 - reworking Logo panel layout
         // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=1933
-        
+
         JPanel logoPanel = new JPanel();
         logoPanel.setLayout(new BoxLayout(logoPanel, BoxLayout.PAGE_AXIS));
 
@@ -1587,7 +1590,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         final JTextField logoSizeTextField = new JTextField("" + logoScale);
         // Legal values will never be more than three characters, e.g. 1.5
         logoSizeTextField.setColumns(3);
-        
+
         ActionListener logoListener = new ActionListener() {
 
             @Override
@@ -1603,13 +1606,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     JOptionPane.showMessageDialog(null, "Value provided is not a floating point number within valid range (0.1 to 2.0)");
                 }
             }
-            
+
         };
         logoSizeTextField.addActionListener(logoListener);
 
         logoSizer.setMinorTickSpacing(1);
         logoSizer.setPaintTicks(true);
-        
+
         // TJJ Jan 2018 - create custom labels since we want float values for scale multiplier
         Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
         labelTable.put(1, new JLabel("0.1"));
@@ -1627,34 +1630,34 @@ public class ViewManager extends SharableImpl implements ActionListener,
         };
         logoSizer.addChangeListener(scaleListener);
         logoSizer.setToolTipText("Change Logo Scale Value");
-        
+
         logoScalePanel.add(logoSizeTextField);
         logoScalePanel.add(logoSizer);
 
         JPanel logoTop = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoTop.add(logoVisCbx);
-        
+
         JPanel logoMiddle = new JPanel(new BorderLayout());
         logoMiddle.add(logoFileField, BorderLayout.CENTER);
         logoMiddle.add(browseButton, BorderLayout.LINE_END);
-        
+
         JPanel logoBottomOne = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoBottomOne.add(new JLabel("Screen Position:"));
         logoBottomOne.add(logoPositionBox);
         logoBottomOne.add(new JLabel("Offset:"));
         logoBottomOne.add(logoOffsetTextField);
-        
+
         JPanel logoBottomTwo = new JPanel(new FlowLayout(FlowLayout.LEFT));
         logoBottomTwo.add(new JLabel("Scale:"));
         logoBottomTwo.add(logoScalePanel);
-        
+
         logoPanel.add(logoTop);
         logoPanel.add(logoMiddle);
         logoPanel.add(logoBottomOne);
         logoPanel.add(logoBottomTwo);
-        
+
         logoPanel.setBorder(BorderFactory.createTitledBorder("Logo"));
-        
+
         // If we are in a Globe Display include the box with those parameters
         JComponent outerWrapper = null;
         if (useGlobeDisplay) {
@@ -2150,7 +2153,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             for (Enumeration keys = propertiesMap.keys();
                     keys.hasMoreElements(); ) {
                 JCheckBox       cbx = (JCheckBox) keys.nextElement();
-                
+
                 BooleanProperty bp  = (BooleanProperty) propertiesMap.get(cbx);
                 if (Objects.equals(bp.getId(), PREF_LOGO_VISIBILITY)) {
                     // this is done to avoid flashing the logo inadvertently
@@ -2223,12 +2226,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 if (comp == null) {
                     return;
                 }
-                
+
                 int scale = Integer.parseInt(System.getProperty("sun.java2d.uiScale", "1"));
                 Rectangle bounds = comp.getBounds();
                 bounds.width = bounds.width * scale;
                 bounds.height = bounds.height * scale;
-                
+
                 // System.out.println("window bounds: " + bounds);
                 if ((bounds.width == 0) || (bounds.height == 0)
                         || (logoFile == null) || logoFile.isEmpty()
@@ -2252,7 +2255,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 Point ap = ImageUtils.parsePoint(getLogoPosition(), bounds);
 
                 // System.out.println("screen point = " + ap);
-                
+
                 int      baseX   = ap.x * scale;
                 int      baseY   = ap.y * scale;
                 float    zval    = getPerspectiveView()
@@ -2957,7 +2960,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
      *
      * @param props  the properties
      */
-    
+
     protected void getInitialBooleanProperties(List props) {
         props.add(new BooleanProperty(PREF_WIREFRAME, "Show Wireframe Box",
                                       "", true));
@@ -3915,7 +3918,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             };
 
             t.start();
-            
+
             this.setVisibilityAnimationCheckBox(ON);
         } else {
             this.setVisibilityAnimationCheckBox(OFF);
@@ -6214,20 +6217,36 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     "Set the background color to be transparent");
                 mainDisplayBtn = new JRadioButton("Current View", true);
                 allViewsBtn    = new JRadioButton("All Views", false);
+                borderBtn      = new JCheckBox("Borders Visible", false);
 
                 widthBox = new JComboBox(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9","10" });
                 widthBox.setToolTipText("Set the line width");
                 widthBox.setMaximumSize(new Dimension(30, 16));
                 widthBox.setEditable(true);
 
-                colorButton = new ColorSwatchComponent(getStore(), DEFAULT_MAP_COLOR,
+                colorButton = new ColorSwatchComponent(getStore(), new Color(255,255, 255),
                         "Set Map Line Color");
                 colorButton.setToolTipText("Set the line color");
                 colorButton.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
 
-                borderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-                borderPanel.add(widthBox);
-                borderPanel.add(colorButton);
+                borderPanel = new JPanel();
+                GroupLayout layout = new GroupLayout(borderPanel);
+                borderPanel.setLayout(layout);
+                layout.setAutoCreateGaps(true);
+                layout.setHorizontalGroup(
+                        layout.createParallelGroup()
+                                .addComponent(borderBtn)
+                                .addGroup(layout.createSequentialGroup()
+                                        .addComponent(widthBox)
+                                        .addComponent(colorButton)
+                                ));
+                layout.setVerticalGroup(
+                        layout.createSequentialGroup()
+                                .addComponent(borderBtn)
+                                .addGroup(layout.createParallelGroup()
+                                        .addComponent(widthBox)
+                                        .addComponent(colorButton)
+                                ));
 
                 contentsBtn    = new JRadioButton("Current View & Legend",
                         false);
@@ -6244,20 +6263,21 @@ public class ViewManager extends SharableImpl implements ActionListener,
             lowBtn.setBorder(null);
             mainDisplayBtn.setBorder(null);
             allViewsBtn.setBorder(null);
+            borderBtn.setBorder(null);
             contentsBtn.setBorder(null);
             fullWindowBtn.setBorder(null);
 
             List comps = new ArrayList();
 
             comps.add(new JLabel("Capture What:"));
-            
+
             // TJJ Feb 2018
             // Don't include All Views button for Soundings or Hodographs
             // http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2570
-            
+
             String viewManagerType = getTypeName();
-            if ((viewManagerType != null) && 
-                     (viewManagerType.contains("Sounding") || 
+            if ((viewManagerType != null) &&
+                     (viewManagerType.contains("Sounding") ||
                       viewManagerType.contains("Hodograph"))) {
                 logger.debug("Leaving All Views button out of UI since this is a Sounding or Hodograph Display...");
                 comps.add(GuiUtils.inset(GuiUtils.vbox(mainDisplayBtn,
@@ -6266,7 +6286,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             } else {
                 comps.add(GuiUtils.inset(GuiUtils.vbox(mainDisplayBtn,
                         contentsBtn, allViewsBtn, borderPanel, fullWindowBtn), new Insets(2,
-                            8, 10, 0)));                
+                            8, 10, 0)));
             }
 
             comps.add(backgroundTransparentBtn);
@@ -6336,12 +6356,12 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 }
 
                 float quality = 1.0f;
-
-                if (medBtn.isSelected()) {
-                    quality = 0.6f;
-                } else if (lowBtn.isSelected()) {
-                    quality = 0.2f;
-                }
+                //Not needed anymore [3033]
+//                if (medBtn.isSelected()) {
+//                    quality = 0.6f;
+//                } else if (lowBtn.isSelected()) {
+//                    quality = 0.2f;
+//                }
 
                 if (false && mainDisplayBtn.isSelected()) {
 
@@ -6385,11 +6405,18 @@ public class ViewManager extends SharableImpl implements ActionListener,
                     }
 
                     List<BufferedImage> images = makeBufferedImages(views,
-                                                     whichComponent);
+                            whichComponent);
+
+                    Color bgColor = Color.GRAY;
+                    int width = 1;
+                    if (borderBtn.isSelected()) {
+                        width = Integer.parseInt((String) widthBox.getSelectedItem());
+                        bgColor = colorButton.getBackground();
+                    }
+
                     BufferedImage image =
-                        (BufferedImage) ImageUtils.gridImages2(images, Integer.parseInt((String) widthBox.getSelectedItem()),
-                            colorButton.getBackground(),
-                            ImageUtils.getColumnCountFromComps(views));
+                            (BufferedImage) ImageUtils.gridImages2(images, width,
+                                    bgColor, ImageUtils.getColumnCountFromComps(views));
 
                     if ((image != null)
                             && backgroundTransparentBtn.isSelected()) {
@@ -6556,22 +6583,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
                          + loc.y + " dimension:" + dim.width + "x"
                          + dim.height, exc);
         }
-        
+
         return image;
     }
-    
+
     // definitely not fast...
     private static BufferedImage scaleImg(final BufferedImage before,
-                                          final double scale) 
+                                          final double scale)
     {
         int w = before.getWidth();
         int h = before.getHeight();
         int w2 = (int) (w * scale);
         int h2 = (int) (h * scale);
         BufferedImage after = new BufferedImage(w2, h2, before.getType());
-        AffineTransform scaleInstance = 
+        AffineTransform scaleInstance =
             AffineTransform.getScaleInstance(scale, scale);
-        AffineTransformOp scaleOp = 
+        AffineTransformOp scaleOp =
             new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BICUBIC);
         scaleOp.filter(before, after);
         return after;
@@ -7972,7 +7999,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     public void setLogoScale(float scale) {
         logoScale = scale;
     }
-    
+
     // START MCV INQUIRY 2718 changes
     // the "logo changed" logic can be attributed to McV deciding to switch
     // on the logo by default...but we also wanted this to happen for users
@@ -7981,7 +8008,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     // the PREF_LOGO_CHANGED property is actually set in the "miscManager"
     // class in McIdasPreferenceManager.
     public static String PREF_LOGO_CHANGED = "idv.viewmanager.logo.somethingchanged";
-    
+
     /**
      * Set the logo visibility
      *
@@ -8008,7 +8035,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
     }
     // END MCV INQUIRY 2718 CHANGES
-    
+
     /**
      * Ensure that there is only one time driver for this view
      *
@@ -8344,7 +8371,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
     private static final String SLOWER = "Slower";
 
     private String animationCheckBox = OFF;
-    
+
     public void fasterVisibilityAnimation() {
         setVisibilityAnimationCheckBox(FASTER);
         if (animationSpeed > 300) {
@@ -8352,22 +8379,22 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
         logger.trace("animationSpeed: {}", animationSpeed);
     }
-    
+
     public void slowerVisibilityAnimation() {
         setVisibilityAnimationCheckBox(SLOWER);
         animationSpeed += 200;
         logger.trace("animationSpeed: {}", animationSpeed);
     }
-    
+
     public void setVisibilityAnimationSpeed(int animationSpeed) {
         this.animationSpeed = animationSpeed;
         logger.trace("animationSpeed: {}", animationSpeed);
     }
-    
+
     public int getVisibilityAnimationSpeed() {
         return this.animationSpeed;
     }
-    
+
     public void setVisibilityAnimationCheckBox(String value) {
         final boolean enabled;
         if (ON.equals(value) || FASTER.equals(value) || SLOWER.equals(value)) {
@@ -8386,7 +8413,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
             }
         });
     }
-    
+
     public void setAnimatedVisibilityCheckBox(boolean enabled) {
         if (enabled) {
             setVisibilityAnimationCheckBox(ON);
@@ -8395,7 +8422,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
         }
         setAnimatedVisibility(enabled);
     }
-    
+
     public String getVisibilityAnimationCheckBox() {
 
         return animationCheckBox;
@@ -8408,19 +8435,19 @@ public class ViewManager extends SharableImpl implements ActionListener,
     /* For Inquiry 2053 */
     /** {@literal "Auto Depth Offset"} preference ID. */
     public static final String PREF_AUTO_DEPTH = "View.AutoDepthOffset";
-    
+
     /** {@literal "Auto Depth Offset"} label. */
-    public static final String LABEL_AUTO_DEPTH = 
+    public static final String LABEL_AUTO_DEPTH =
         "Enable Automatic Depth Offsetting";
 
-    /** 
+    /**
      * {@literal "Auto Depth Offset"} default value (default is {@code true}. 
      */
     public static final boolean DEFAULT_AUTO_DEPTH = true;
 
     /**
      * Control {@literal "Auto Depth Offset"} status.
-     * 
+     *
      * @param value New auto depth offset status. 
      */
     public void setAutoDepth(boolean value) {
@@ -8441,9 +8468,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     /**
      * Returns {@literal "Auto Depth Offset"} status.
-     * 
+     *
      * @return Whether or not auto depth offset should be used.
-     * 
+     *
      * @see #DEFAULT_AUTO_DEPTH
      */
     public boolean getAutoDepth() {
