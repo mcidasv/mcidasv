@@ -1770,7 +1770,16 @@ public class McIDASV extends IntegratedDataViewer {
             return IOUtil.getURL(u.getPath(), McIDASV.class).openConnection();
         }
     }
-    
+
+    /**
+     * Check the value of the {@code mcidasv.darkmode} system property.
+     *
+     * @return {@code true} if dark mode should be enabled, {@code false} otherwise.
+     */
+    public static boolean isDarkMode() {
+        return Boolean.parseBoolean(System.getProperty("mcidasv.darkmode", "false"));
+    }
+
     /**
      * Configure the logging and create the McIDAS-V object responsible for
      * initializing the application session.
@@ -1793,9 +1802,7 @@ public class McIDASV extends IntegratedDataViewer {
         Security.setProperty("crypto.policy", "unlimited");
 
         // Configure GUI look and feel before any UI stuff
-        boolean useDarkMode = Boolean.parseBoolean(System.getProperty("mcidasv.darkmode", "false"));
-        System.out.println("DARK MODE PROPERTY: "+useDarkMode);
-        if (useDarkMode) {
+        if (isDarkMode()) {
             FlatDarkLaf.setup();
         }
 
