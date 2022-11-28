@@ -6,15 +6,14 @@
 <RSyntaxTheme version="1.0">
 
     <!--  General editor colors. -->
-    <!--<background color="2E2E2E"/>-->
-    <background color="45484A" />
+    <background color="383A38"/>
     <caret color="D2D2D2"/>
     <selection useFG="false" bg="4C4C4C" roundedEdges="false"/>
-    <currentLineHighlight color="383A38" fade="false"/>
+    <currentLineHighlight color="45484A" fade="false"/>
     <marginLine fg="394448"/>
     <markAllHighlight color="383A38"/>
-    <markOccurrencesHighlight color="383A38" border="false"/>
-    <matchedBracket fg="F0F0F0" bg="45484A" highlightBoth="true" animate="true"/>
+    <markOccurrencesHighlight color="45484A" border="false"/>
+    <matchedBracket fg="F0F0F0" bg="383A38" highlightBoth="true" animate="true"/>
     <hyperlinks fg="A082BD"/>
     <secondaryLanguages>
         <language index="1" bg="333344"/>

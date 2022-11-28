@@ -36,9 +36,12 @@ import javax.swing.event.UndoableEditListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.undo.UndoManager;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A bare-bones text editor that can do relatively robust syntax highlighting
@@ -49,6 +52,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
  * project.</p>
  */
 public class JythonEditor implements UndoableEditListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(JythonEditor.class);
 
     /** Text area that contains the syntax-highlighted text. */
     private final McvJythonTextArea textArea;
@@ -64,6 +69,9 @@ public class JythonEditor implements UndoableEditListener {
      */
     public JythonEditor() {
         textArea = new McvJythonTextArea(20, 60);
+        if (McIDASV.isDarkMode()) {
+            UIManager.applyTextTheme(getClass(), textArea, "/edu/wisc/ssec/mcidasv/resources/monokai-flatlaf.xml");
+        }
 
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
 

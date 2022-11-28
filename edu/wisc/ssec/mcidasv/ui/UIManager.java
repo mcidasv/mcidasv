@@ -53,6 +53,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -109,6 +111,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -558,6 +562,23 @@ public class UIManager extends IdvUIManager implements ActionListener {
             }
         } else {
             super.loadLookAndFeel();
+        }
+    }
+
+    /**
+     * Apply a specified RSyntaxTextArea theme to a given text area.
+     *
+     * @param clazz Class used to read {@code themePath}.
+     * @param textArea Text area to which the theme should be applied.
+     * @param themePath Path to the RSyntaxTextArea theme to apply.
+     */
+    public static void applyTextTheme(Class<?> clazz, RSyntaxTextArea textArea, String themePath) {
+        try {
+            InputStream in = clazz.getResourceAsStream(themePath);
+            Theme theme = Theme.load(in);
+            theme.apply(textArea);
+        } catch (IOException e) {
+            logger.error("Could not change theme", e);
         }
     }
 

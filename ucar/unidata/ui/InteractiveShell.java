@@ -80,6 +80,7 @@ import javax.swing.text.html.parser.ParserDelegator;
 
 import edu.wisc.ssec.mcidasv.McIDASV;
 
+import edu.wisc.ssec.mcidasv.ui.UIManager;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -300,23 +301,6 @@ public class InteractiveShell implements HyperlinkListener {
     }
 
     /**
-     * Apply a specified RSyntaxTextArea theme to a given text area.
-     *
-     * @param clazz Class used to read {@code themePath}.
-     * @param textArea Text area to which the theme should be applied.
-     * @param themePath Path to the RSyntaxTextArea theme to apply.
-     */
-    private static void applyTextTheme(Class<?> clazz, RSyntaxTextArea textArea, String themePath) {
-        try {
-            InputStream in = clazz.getResourceAsStream(themePath);
-            Theme theme = Theme.load(in);
-            theme.apply(textArea);
-        } catch (IOException e) {
-            logger.error("Could not change theme", e);
-        }
-    }
-
-    /**
      * _more_
      *
      * @return _more_
@@ -356,7 +340,7 @@ public class InteractiveShell implements HyperlinkListener {
         ((RSyntaxTextArea)commandArea).setTabsEmulated(true);
 
         if (McIDASV.isDarkMode()) {
-            applyTextTheme(getClass(), (RSyntaxTextArea)commandArea, "/edu/wisc/ssec/mcidasv/resources/monokai-flatlaf.xml");
+            UIManager.applyTextTheme(getClass(), (RSyntaxTextArea)commandArea, "/edu/wisc/ssec/mcidasv/resources/monokai-flatlaf.xml");
         }
 
         commandArea.setTabSize(4);
