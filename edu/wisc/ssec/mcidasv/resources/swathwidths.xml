@@ -207,6 +207,7 @@
   <satellite name="JASON-3" width="5"/>
   <satellite name="JASON 3" width="5"/>
   <satellite name="JPSS-1" width="3040"/>
+  <satellite name="JPSS-2" width="3040"/>
   <satellite name="KALPANA-1 (METSAT 1)" width=""/>
   <satellite name="KANOPUS-V1" width="23"/>
   <satellite name="KANOPUS-V 1" width="23"/>
@@ -282,6 +283,13 @@
   <satellite name="NOAA20" width="3040"/>
   <satellite name="NOAA 20 [+]" width="3040"/>
   <satellite name="NOAA 20" width="3040"/>
+  <satellite name="NOAA 20 (JPSS-1) [+]" width="3040"/>
+  <satellite name="NOAA 20 (JPSS-1)" width="3040"/>
+  <satellite name="NOAA21" width="3040"/>
+  <satellite name="NOAA 21 [+]" width="3040"/>
+  <satellite name="NOAA 21" width="3040"/>
+  <satellite name="NOAA 21 (JPSS-2) [+]" width="3040"/>
+  <satellite name="NOAA 21 (JPSS-2)" width="3040"/>
   <satellite name="NPP" width="3040"/>
   <satellite name="NUSAT-3 (MILANESAT)" width="940"/>
   <satellite name="NUSTAR" width="240"/>
