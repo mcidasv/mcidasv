@@ -20,14 +20,10 @@
 
 package ucar.unidata.idv.control;
 
-
 import ucar.unidata.collab.Sharable;
 import ucar.unidata.data.*;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.geoloc.LatLonRect;
-import ucar.unidata.idv.IdvConstants;
-import ucar.unidata.idv.MapViewManager;
-import ucar.unidata.idv.ViewManager;
 import ucar.unidata.util.ColorTable;
 import ucar.unidata.util.GuiUtils;
 import ucar.unidata.util.Misc;
@@ -43,7 +39,6 @@ import visad.*;
 
 import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
-
 
 import java.awt.Component;
 import java.awt.Container;
@@ -114,7 +109,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
 
     private JTextField forwardText;
 
-    int forwardValue = 1;
+    private float forwardValue = 1.0f;
 
     private JPanel levelsPanel;
 
@@ -242,6 +237,22 @@ public abstract class PlanViewControl extends GridDisplayControl {
      */
     protected FieldImpl getCurrentSlice() throws Exception {
         return currentSlice;
+    }
+
+    /**
+     * Needed for bundles/persistence - pressure levels dwell rate slider and text box
+     * @return
+     */
+    public float getForwardValue() {
+        return forwardValue;
+    }
+
+    /**
+     * Needed for bundles/persistence - pressure levels dwell rate slider and text box
+     * @param forwardValue
+     */
+    public void setForwardValue(float forwardValue) {
+        this.forwardValue = forwardValue;
     }
 
     /**
@@ -428,7 +439,6 @@ public abstract class PlanViewControl extends GridDisplayControl {
 
         datachoice = dataChoice;
 
-        //        debug("PV-1");
         Trace.call1("PlanView.init");
 
         Trace.call1("PlanView.initMisc");
@@ -479,7 +489,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
 
         forward = new JLabel("Forward Levels: ");
 
-        forwardLevels = new JSlider(500, 10000, forwardValue*1000);
+        forwardLevels = new JSlider(500, 10000, (int) forwardValue * 1000);
         Hashtable<Integer, JComponent> sliderTicks = new Hashtable<>();
         sliderTicks.put(500, new JLabel("0.5"));
         sliderTicks.put(2500, new JLabel("2.5"));
@@ -498,30 +508,31 @@ public abstract class PlanViewControl extends GridDisplayControl {
                 if (forwardLevels.getValueIsAdjusting()) {
                     return;
                 }
-                forwardText.setText(Double.toString((double) forwardLevels.getValue()/1000));
+                forwardValue = (float) (forwardLevels.getValue() / 1000);
+                forwardText.setText(Float.toString(forwardValue));
             }});
 
         forwardText = new JTextField(5);
-        forwardText.setText(Double.toString((double)forwardValue));
-        forwardLevels.setValue(forwardValue*1000);
+        forwardText.setText(Float.toString(forwardValue));
+        forwardLevels.setValue((int) forwardValue * 1000);
         forwardText.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String s = forwardText.getText();
-                if((s !=null)) {
+                if (s !=null) {
                     try {
-                        double newForwardVal = Double.parseDouble(s);
-                        if ((newForwardVal < (double)forwardLevels.getMinimum()/1000) || (newForwardVal > (double)forwardLevels.getMaximum()/1000)) {
-                            // show dialog
-                            JOptionPane
-                                    .showMessageDialog(null,
+                        float newForwardVal = Float.parseFloat(s);
+                        if ((newForwardVal < (float) forwardLevels.getMinimum() / 1000) ||
+                            (newForwardVal > (float) forwardLevels.getMaximum() / 1000)) {
+                            JOptionPane.showMessageDialog(null,
                                             "Invalid value, must be within slider range.");
                         } else {
-                            forwardLevels.setValue((int) (newForwardVal*1000));
+                            forwardLevels.setValue((int) (newForwardVal * 1000));
+                            forwardValue = newForwardVal;
                         }
                     } catch (NumberFormatException nfe) {
                         // just reset to last valid number
-                        forwardText.setText(Double.toString((double) forwardLevels.getValue()/1000));
+                        forwardText.setText(Float.toString((float) forwardLevels.getValue() / 1000));
                     }
                 }
             }
