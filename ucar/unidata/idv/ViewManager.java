@@ -6220,13 +6220,13 @@ public class ViewManager extends SharableImpl implements ActionListener,
                 borderBtn      = new JCheckBox("Borders Visible", false);
 
                 widthBox = new JComboBox(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9","10" });
-                widthBox.setToolTipText("Set the line width");
+                widthBox.setToolTipText("Set the border width");
                 widthBox.setMaximumSize(new Dimension(30, 16));
                 widthBox.setEditable(true);
 
                 colorButton = new ColorSwatchComponent(getStore(), new Color(255,255, 255),
                         "Set Map Line Color");
-                colorButton.setToolTipText("Set the line color");
+                colorButton.setToolTipText("Set the border color");
                 colorButton.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
 
                 borderPanel = new JPanel();
@@ -6248,8 +6248,7 @@ public class ViewManager extends SharableImpl implements ActionListener,
                                         .addComponent(colorButton)
                                 ));
 
-                contentsBtn    = new JRadioButton("Current View & Legend",
-                        false);
+                contentsBtn = new JRadioButton("Current View & Legend", false);
                 fullWindowBtn = new JRadioButton("Full Window", false);
                 GuiUtils.buttonGroup(mainDisplayBtn, allViewsBtn, fullWindowBtn).add(contentsBtn);
             }
