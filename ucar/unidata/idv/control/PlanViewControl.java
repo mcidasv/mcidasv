@@ -21,7 +21,11 @@
 package ucar.unidata.idv.control;
 
 import ucar.unidata.collab.Sharable;
-import ucar.unidata.data.*;
+import ucar.unidata.data.DataChoice;
+import ucar.unidata.data.DataSelection;
+import ucar.unidata.data.DerivedDataChoice;
+import ucar.unidata.data.GeoLocationInfo;
+import ucar.unidata.data.GeoSelection;
 import ucar.unidata.data.grid.GridUtil;
 import ucar.unidata.geoloc.LatLonRect;
 import ucar.unidata.util.ColorTable;
@@ -31,43 +35,65 @@ import ucar.unidata.util.Range;
 import ucar.unidata.util.Trace;
 import ucar.unidata.util.TwoFacedObject;
 import ucar.unidata.view.geoloc.NavigatedDisplay;
-
 import ucar.visad.Util;
-import ucar.visad.display.*;
+import ucar.visad.display.Contour2DDisplayable;
+import ucar.visad.display.DisplayableData;
+import ucar.visad.display.Grid2DDisplayable;
+import ucar.visad.display.GridDisplayable;
+import ucar.visad.display.ScalarMapSet;
+import ucar.visad.display.SelectorDisplayable;
+import ucar.visad.display.ZSelector;
 
-import visad.*;
-
+import visad.Data;
+import visad.DisplayRealType;
+import visad.FieldImpl;
+import visad.MathType;
+import visad.Real;
+import visad.RealTupleType;
+import visad.RealType;
+import visad.ScalarMap;
+import visad.Unit;
+import visad.VisADException;
 import visad.georef.EarthLocation;
 import visad.georef.EarthLocationTuple;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Insets;
-import java.awt.Label;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-
-import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeEvent;
-
-import java.rmi.RemoteException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeEvent;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class to handle all kinds of PlanViews.  A plan view is a
@@ -183,8 +209,6 @@ public abstract class PlanViewControl extends GridDisplayControl {
 
     /** Keep around the  range of the last level */
     private Range levelColorRange;
-
-    //    private boolean levelAnimation = false;
 
     /** polygon mode */
     int polygonMode = Grid2DDisplayable.POLYGON_FILL;
@@ -487,7 +511,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
             }
         });
 
-        forward = new JLabel("Forward Levels: ");
+        forward = new JLabel("Dwell (seconds): ");
 
         forwardLevels = new JSlider(500, 10000, (int) forwardValue * 1000);
         Hashtable<Integer, JComponent> sliderTicks = new Hashtable<>();
@@ -496,7 +520,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
         sliderTicks.put(5000, new JLabel("5"));
         sliderTicks.put(7500, new JLabel("7.5"));
         sliderTicks.put(10000, new JLabel("10"));
-        forwardLevels.setPreferredSize(new Dimension(400, 50));
+
         forwardLevels.setLabelTable(sliderTicks);
         forwardLevels.setPaintTicks(true);
         forwardLevels.setPaintLabels(true);
@@ -538,10 +562,11 @@ public abstract class PlanViewControl extends GridDisplayControl {
             }
         });
 
-
-        levelsPanel  = new JPanel(new FlowLayout(FlowLayout.LEADING, 10,10));
+        levelsPanel  = new JPanel(new FlowLayout(FlowLayout.LEFT));
         levelsPanel.add(levelReadout);
+        levelsPanel.add(Box.createHorizontalStrut(10));
         levelsPanel.add(cycleLevelsCbx);
+        levelsPanel.add(Box.createHorizontalStrut(10));
         levelsPanel.add(forward);
         levelsPanel.add(forwardText);
         levelsPanel.add(forwardLevels);
@@ -551,8 +576,6 @@ public abstract class PlanViewControl extends GridDisplayControl {
         // make visible and add it to display
         planDisplay.setVisible(true);
 
-
-        //addDisplayable (planDisplay);
         displayIs3D = isDisplay3D();
 
         // Create a zSelector, a small selector point in the VisAD display that
@@ -1420,7 +1443,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
             }
         }
 
-        setLevelReadoutLabel("Current level: " + formatLevel(level));
+        setLevelReadoutLabel(formatLevel(level));
         String dlTemplate = getDisplayListTemplate();
         if (dlTemplate.contains(MACRO_LEVEL)) {
             updateLegendAndList();
@@ -1734,7 +1757,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
     public void getControlWidgets(List<ControlWidget> controlWidgets)
             throws VisADException, RemoteException {
         super.getControlWidgets(controlWidgets);
-        //Allow derived classes to turn off the display of the widget
+        // Allow derived classes to turn off the display of the widget
         if (shouldShowLevelWidget()) {
             JPanel levelUpDown = GuiUtils.doLayout(new Component[] {
                             levelUpBtn,
@@ -1744,11 +1767,9 @@ public abstract class PlanViewControl extends GridDisplayControl {
                             levelBox,
                             levelUpDown }, 2,GuiUtils.WT_N,
                     GuiUtils.WT_N);
-            controlWidgets.add(new WrapperWidget(this, levelLabel,
-                    GuiUtils.doLayout(new Component[] {
-                                    levelSelector,
-                                    levelsPanel }, 2,GuiUtils.WT_N,
-                            GuiUtils.WT_N)));
+
+            controlWidgets.add(new WrapperWidget(this, GuiUtils.rLabel(levelLabel.getText()),
+                    GuiUtils.left(GuiUtils.hbox(levelSelector, levelsPanel))));
         }
         if (getParameterIsTopography()) {
             if (verticalRange == null) {
