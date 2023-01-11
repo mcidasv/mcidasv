@@ -339,7 +339,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	List<NetCDFFile> ncdfal = new ArrayList<>();
     	
     	// we should be able to find an XML Product Profile for each data/product type
-    	SuomiNPPProductProfile nppPP = null;
+		Map<String, SuomiNPPProductProfile> profiles = new HashMap<>();
+
     	// and also Profile metadata for geolocation variables
     	boolean haveGeoMetaData = false;
     	
@@ -347,8 +348,6 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	int granuleCount = 1;
     	   	
     	try {
-    		
-    		nppPP = new SuomiNPPProductProfile();
     		
     		// for each source file provided, find the appropriate geolocation,
     		// get the nominal time and various other granule-level metadata
@@ -447,22 +446,20 @@ public class SuomiNPPDataSource extends HydraDataSource {
 													// http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2634
 													// The regular SDR profile lets us visualize it.
 													if (productName.equals("CrIS-FS-SDR")) productName = "CrIS-SDR";
-													
-													String productProfileFileName = nppPP
-															.getProfileFileName(productName);
-													logger.trace("Found profile: " + productProfileFileName);
+
+													SuomiNPPProductProfile profile = new SuomiNPPProductProfile();
+													String productProfileFileName = profile.getProfileFileName(productName);
+													logger.info("Found profile: " + productProfileFileName + " for prod: " + productName);
+													profiles.put(productName, profile);
 													if (productProfileFileName == null) {
-														throw new Exception(
-																"XML Product Profile not found in catalog");
+														throw new Exception("XML Product Profile not found in catalog for: " + productName);
 													}
 													try {
-														nppPP.addMetaDataFromFile(productProfileFileName);
+														profile.addMetaDataFromFile(productProfileFileName);
 													} catch (Exception nppppe) {
 														logger.error("Error parsing XML Product Profile: "
 																+ productProfileFileName);
-														throw new Exception(
-																"XML Product Profile Error",
-																nppppe);
+														throw new Exception("XML Product Profile Error", nppppe);
 													}
 												}
 											}
@@ -554,8 +551,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     			if (! isCombinedProduct) {
 	
 	    			if (isNOAA) {
-						geoFilename = s.substring(0,
-								s.lastIndexOf(File.separatorChar) + 1);
+						geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1);
 						// check if we have the whole file name or just the prefix
 						String geoProductID = iterator.next();
 						if (geoProductID.endsWith("h5")) {
@@ -615,11 +611,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 									String s2 = fName.substring(prdStartIdx,
 											prdStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 									if (s1.equals(s2)) {
-										geoFilename = s
-												.substring(
-														0,
-														s.lastIndexOf(File.separatorChar) + 1)
-												+ fName;
+										geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
 										break;
 									}
 								}
@@ -634,11 +626,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
 									String s2 = fName.substring(prdStartIdx,
 											prdStartIdx + JPSSUtilities.NOAA_CREATION_DATE_INDEX);
 									if (s1.equals(s2)) {
-										geoFilename = s
-												.substring(
-														0,
-														s.lastIndexOf(File.separatorChar) + 1)
-												+ fName;
+										geoFilename = s.substring(0, s.lastIndexOf(File.separatorChar) + 1) + fName;
 										break;
 									}
 								}
@@ -995,9 +983,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						String geoBaseName = subG.getShortName();
     	    						geoBaseName = geoBaseName.substring(0, geoBaseName.indexOf('_'));
     	    						if (! haveGeoMetaData) {
-        	    						String geoProfileFileName = nppPP.getProfileFileName(geoBaseName);
+										SuomiNPPProductProfile profile = new SuomiNPPProductProfile();
+                                        String geoProfileFileName = profile.getProfileFileName(geoBaseName);
+										logger.info("Found profile: " + geoProfileFileName + " for prod: " + geoBaseName);
+										if (geoProfileFileName == null) {
+											throw new Exception("XML Product Profile not found in catalog for: " + geoBaseName);
+										}
 	    								// also add meta data from geolocation profile
-	    								nppPP.addMetaDataFromFile(geoProfileFileName);
+										profile.addMetaDataFromFile(geoProfileFileName);
+										profiles.put(geoBaseName, profile);
     	    							haveGeoMetaData = true;
     	    						}
     	    						List<Variable> vl = subG.getVariables();
@@ -1047,6 +1041,20 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    						logger.trace("Variable: " + vName);
     	    						String varShortName = vName.substring(vName.lastIndexOf(SEPARATOR_CHAR) + 1);
 
+									// Pull out the profile pertaining to this variable
+									SuomiNPPProductProfile matchingProfile = null;
+									Set<String> keys = profiles.keySet();
+									for (String key : keys) {
+										if (v.getFullName().contains(key)) {
+											matchingProfile = profiles.get(key);
+											break;
+										}
+									}
+
+									if (matchingProfile == null) {
+										throw new VisADException("No profile found for " + varShortName);
+									}
+
     	    						// Special code to handle quality flags. We throw out anything
     	    						// that does not match bounds of the geolocation data
     	    						
@@ -1082,8 +1090,8 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	    							logger.trace("SKIPPING QF, does not match geo bounds: " + varShortName);
         	    							continue;
         	    						}
-        	    						
-    	    							ArrayList<QualityFlag> qfal = nppPP.getQualityFlags(varShortName);
+
+                                        ArrayList<QualityFlag> qfal = matchingProfile.getQualityFlags(varShortName);
     	    							if (qfal != null) {
     	    								for (QualityFlag qf : qfal) {
     	    									qf.setPackedName(vName);
@@ -1203,7 +1211,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							//     create and poke attributes with this data
     	    							//   endif
 
-    	    							String factorsVarName = nppPP.getScaleFactorName(varShortName);
+                                        String factorsVarName = matchingProfile.getScaleFactorName(varShortName);
     	    							if (factorsVarName != null) {
                                             logger.debug("Mapping: " + varShortName + " to: " + factorsVarName);
     	    								for (Variable fV : vl) {
@@ -1225,14 +1233,14 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    							Attribute a1 = new Attribute("scale_factor", scaleVal);
     	    							v.addAttribute(a1);
     	    							Attribute a2 = new Attribute("add_offset", offsetVal);
-    	    							v.addAttribute(a2);  
+                                        v.addAttribute(a2);
 
     	    							// add valid range and fill value attributes here
     	    							// try to fill in valid range
-    	    							if (nppPP.hasNameAndMetaData(varShortName)) {
-    	    								String rangeMin = nppPP.getRangeMin(varShortName);
-    	    								String rangeMax = nppPP.getRangeMax(varShortName);
-    	    								logger.trace("range min: " + rangeMin + ", range max: " + rangeMax);
+                                        if (matchingProfile.hasNameAndMetaData(varShortName)) {
+                                            String rangeMin = matchingProfile.getRangeMin(varShortName);
+                                            String rangeMax = matchingProfile.getRangeMax(varShortName);
+                                            logger.trace("range min: " + rangeMin + ", range max: " + rangeMax);
     	    								// only store range attribute if VALID range found
     	    								if ((rangeMin != null) && (rangeMax != null)) {
     	    									int [] shapeArr = new int [] { 2 };
@@ -1254,7 +1262,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
     	    								// check for and load fill values too...
 
     	    								// we need to check two places, first, the XML product profile
-    	    								ArrayList<Float> fval = nppPP.getFillValues(varShortName);
+                                            ArrayList<Float> fval = matchingProfile.getFillValues(varShortName);
 
     	    								// 2nd, does the variable already have one defined?
     	    								// if there was already a fill value associated with this variable, make
@@ -1529,8 +1537,22 @@ public class SuomiNPPDataSource extends HydraDataSource {
         	spectTable.put("range_name", pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1));
         	
         	// set the valid range hash if data is available
-        	if (nppPP != null) {
-        		if (nppPP.getRangeMin(pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1)) != null) {
+			// Pull out the profile pertaining to this variable
+			SuomiNPPProductProfile stProfile = null;
+			Set<String> keys = profiles.keySet();
+			for (String key : keys) {
+				if (productName.contains(key)) {
+					stProfile = profiles.get(key);
+					break;
+				}
+			}
+
+			if (stProfile == null) {
+				throw new VisADException("No profile found for " + productName);
+			}
+
+            if (stProfile != null) {
+                if (stProfile.getRangeMin(pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1)) != null) {
         			swathTable.put("valid_range", "valid_range");
         		}
         	}
@@ -1595,7 +1617,7 @@ public class SuomiNPPDataSource extends HydraDataSource {
         		// setting NOAA-format units
         		String varName = pStr.substring(pStr.indexOf(SEPARATOR_CHAR) + 1);
         		String varShortName = pStr.substring(pStr.lastIndexOf(SEPARATOR_CHAR) + 1);
-        		String units = nppPP.getUnits(varShortName);
+                String units = stProfile.getUnits(varShortName);
 
                 // setting NASA-format and Enterprise EDR units
         		if (! isNOAA) {
