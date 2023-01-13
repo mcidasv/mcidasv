@@ -381,9 +381,9 @@ public class ViewManager extends SharableImpl implements ActionListener,
 
     private static JComboBox widthBox;
 
-    private ColorSwatchComponent colorButton;
+    private static ColorSwatchComponent colorButton;
 
-    private JPanel borderPanel;
+    private static JPanel borderPanel;
 
     /** For capturing images */
     private static JCheckBox backgroundTransparentBtn;
