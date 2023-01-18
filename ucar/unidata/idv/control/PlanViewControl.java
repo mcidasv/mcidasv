@@ -532,7 +532,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
                 if (forwardLevels.getValueIsAdjusting()) {
                     return;
                 }
-                forwardValue = (float) (forwardLevels.getValue() / 1000);
+                forwardValue = ((float) forwardLevels.getValue() / 1000.0f);
                 forwardText.setText(Float.toString(forwardValue));
             }});
 
@@ -543,7 +543,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String s = forwardText.getText();
-                if (s !=null) {
+                if (s != null) {
                     try {
                         float newForwardVal = Float.parseFloat(s);
                         if ((newForwardVal < (float) forwardLevels.getMinimum() / 1000) ||
@@ -556,7 +556,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
                         }
                     } catch (NumberFormatException nfe) {
                         // just reset to last valid number
-                        forwardText.setText(Float.toString((float) forwardLevels.getValue() / 1000));
+                        forwardText.setText(Float.toString((float) forwardLevels.getValue() / 1000.0f));
                     }
                 }
             }
