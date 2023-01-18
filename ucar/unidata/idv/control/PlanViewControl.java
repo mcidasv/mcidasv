@@ -536,7 +536,7 @@ public abstract class PlanViewControl extends GridDisplayControl {
                 forwardText.setText(Float.toString(forwardValue));
             }});
 
-        forwardText = new JTextField(5);
+        forwardText = new JTextField(3);
         forwardText.setText(Float.toString(forwardValue));
         forwardLevels.setValue((int) forwardValue * 1000);
         forwardText.addActionListener(new ActionListener() {
