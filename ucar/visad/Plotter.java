@@ -21,6 +21,8 @@
 package ucar.visad;
 
 
+import edu.wisc.ssec.mcidasv.startupmanager.Platform;
+import edu.wisc.ssec.mcidasv.startupmanager.StartupManager;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -613,7 +615,13 @@ public class Plotter {
 
         String pngFile;
         if (useTemporaryFile) {
-            Path baseDir = Paths.get("/tmp");
+            Path baseDir;
+            if (StartupManager.getInstance().getPlatform() == Platform.WINDOWS) {
+                String userProfile = System.getenv("UserProfile");
+                baseDir = Paths.get(userProfile, "AppData", "Local", "Temp");
+            } else {
+                baseDir = Paths.get("/tmp");
+            }
             pngFile = Files.createTempFile(baseDir, "mcidasv-png-", ".png").toString();
         } else {
             pngFile = filename;
