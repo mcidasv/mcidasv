@@ -21,8 +21,7 @@
 package ucar.visad;
 
 
-import org.apache.batik.dom.svg.SVGDOMImplementation;
-import org.apache.batik.ext.awt.image.codec.tiff.TIFFEncodeParam;
+import org.apache.batik.anim.dom.SVGDOMImplementation;
 
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.swing.JSVGCanvas;
@@ -36,6 +35,8 @@ import org.apache.batik.transcoder.image.TIFFTranscoder;
 import org.apache.fop.render.ps.PSTranscoder;
 import org.apache.fop.svg.PDFTranscoder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,6 +56,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -93,9 +97,13 @@ public class Plotter {
     /** Specifies a format of DIFAX */
     public static final int DIFAX = 6;
 
+    public static final int GIF = 7;
+
+    public static final int MP4 = 8;
+
     /** The different file formats supported */
     public static final String[] FORMATS = {
-        "svg", "png", "jpg", "ps", "pdf", "tiff", "difax"
+        "svg", "png", "jpg", "ps", "pdf", "tiff", "difax", "gif", "mp4"
     };
 
     /** The document being created */
@@ -323,7 +331,7 @@ public class Plotter {
         // the rendered data before it is written to file
         if (format == Plotter.SVG) {
             graphics = initialiseSVG(plottable);
-        } else if (format == Plotter.PNG) {
+        } else if ((format == Plotter.PNG) || (format == Plotter.GIF)) {
             graphics = initialisePNG(plottable);
         } else if (format == Plotter.JPG) {
             graphics = initialiseJPG(plottable);
@@ -367,6 +375,8 @@ public class Plotter {
             finaliseTIFF(graphics);
         } else if (format == Plotter.DIFAX) {
             finaliseDIFAX(graphics);
+        } else if (format == Plotter.GIF) {
+            finaliseGIF(graphics);
         }
     }
 
@@ -392,6 +402,7 @@ public class Plotter {
         // Create a fresh document
         DOMImplementation domImpl =
             SVGDOMImplementation.getDOMImplementation();
+        logger.trace("SVG dom impl: {}", domImpl);
         String nameSpace = SVGDOMImplementation.SVG_NAMESPACE_URI;
         // Create a blank SVG document. This MUST contain the SVG
         // NameSpace.
@@ -561,6 +572,28 @@ public class Plotter {
         return graphics2d;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(Plotter.class);
+
+    private void finaliseGIF(Graphics2D graphics) throws Exception {
+        String pngFile = finalisePNG(graphics, true);
+        File input = new File(pngFile);
+        File output = new File(filename);
+        BufferedImage image;
+        try {
+            image = ImageIO.read(input);
+            BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+            newImage.createGraphics().drawImage(image, 0, 0, Color.WHITE, null);
+            ImageIO.write(newImage, "gif", output);
+            input.delete();
+        } catch (IOException e) {
+            logger.error("Could not convert PNG to GIF", e);
+        }
+    }
+
+    private void finalisePNG(Graphics2D graphics) throws Exception {
+        finalisePNG(graphics, false);
+    }
+
     /**
      * Dump the Graphics2D into a DOM document, then transcode this into a
      * PNG file using the batik SVG transcoder
@@ -569,7 +602,7 @@ public class Plotter {
      *
      * @throws Exception On badness
      */
-    private void finalisePNG(Graphics2D graphics) throws Exception {
+    private String finalisePNG(Graphics2D graphics, boolean useTemporaryFile) throws Exception {
 
         Document svgDocument = (Document) document;
         // Get the root of the blank SVG Document
@@ -577,10 +610,21 @@ public class Plotter {
         // Append the root from the SVG Generator to the SVG Document
         Element svgRoot = ((SVGGraphics2D) graphics).getRoot(docRoot);
 
+
+        String pngFile;
+        if (useTemporaryFile) {
+            Path baseDir = Paths.get("/tmp");
+            pngFile = Files.createTempFile(baseDir, "mcidasv-png-", ".png").toString();
+        } else {
+            pngFile = filename;
+        }
+
+        logger.trace("useTemp: {} pngFile: '{}'", useTemporaryFile, pngFile);
+
         // Use the transcoder to convert the SVG Document to a PNG file
         try {
             BufferedOutputStream pngStream =
-                new BufferedOutputStream(new FileOutputStream(filename));
+                new BufferedOutputStream(new FileOutputStream(pngFile));
             TranscoderInput  transcoderIn  = new TranscoderInput(svgDocument);
             TranscoderOutput transcoderOut = new TranscoderOutput(pngStream);
 
@@ -597,9 +641,10 @@ public class Plotter {
             if (colourDepth < 16) {
                 // Convert it to an indexed image, with
                 // a colour palette
-                File file = new File(filename);
+                File file = new File(pngFile);
                 indexImage(colourDepth, file, "png");
             }
+
         } catch (FileNotFoundException e) {
             handleError(e);
             System.err.println("Plotter.finalisePNG: " + e);
@@ -610,7 +655,7 @@ public class Plotter {
             handleError(e);
             System.err.println("Plotter.finalisePNG: " + e);
         }
-
+        return pngFile;
     }
 
     /**
