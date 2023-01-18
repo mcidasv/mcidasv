@@ -130,14 +130,29 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
      * @param columns the number of columns when there are multiple images
      */
     public VectorGraphicsRenderer(List<? extends ViewManager> viewManagers, int columns) {
-        List<BufferedImage> l = new ArrayList<BufferedImage>(viewManagers.size());
+        List<BufferedImage> l;
 
-        for (ViewManager viewManager : viewManagers) {
-            l.add(makeImage(viewManager));
+        if (viewManagers.size() == 1) {
+            l = new ArrayList<>(1);
+//            if (viewManagers.get(0).hasMultipleFrames()) {
+//                logger.trace("VIEWMANAGER HAS MULTIPLE FRAMES: {}", viewManagers.get(0).getAnimationFrameCount());
+//                List<BufferedImage> imgs = makeImages(viewManagers.get(0));
+//                l.add(imgs.get(0));
+                l.add(makeImage(viewManagers.get(0)));
+//            }
+        } else {
+            l =  new ArrayList<BufferedImage>(viewManagers.size());
+            for (ViewManager viewManager : viewManagers) {
+                l.add(makeImage(viewManager));
+            }
+
         }
-
         images  = (BufferedImage) ImageUtils.gridImages2(l, 0, Color.GRAY, columns);
         fullDim = new Dimension(images.getWidth(), images.getHeight());
+
+
+
+
     }
 
     /**
@@ -236,6 +251,25 @@ public class VectorGraphicsRenderer implements Plotter.Plottable {
     }
 
     private static final Logger logger = LoggerFactory.getLogger(VectorGraphicsRenderer.class);
+
+    private List<BufferedImage> makeImages(ViewManager viewManager) {
+        int frames = viewManager.getAnimationFrameCount();
+        if (frames == -1) {
+            logger.error("viewManager returned negative frame count!");
+            return null;
+        }
+
+        viewManager.getAnimationWidget().gotoBeginning();
+        List<BufferedImage> images = new ArrayList<>(frames);
+        for (int i = 0; i < frames; i++) {
+            logger.trace("Processing frame {}", i);
+            viewManager.getAnimationWidget().gotoIndex(i);
+            BufferedImage image = makeImage(viewManager);
+            images.add(image);
+        }
+        logger.trace("return list of imgs {}", images);
+        return images;
+    }
 
     /**
      * Make image.

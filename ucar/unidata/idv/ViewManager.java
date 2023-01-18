@@ -4982,6 +4982,33 @@ public class ViewManager extends SharableImpl implements ActionListener,
     }
 
     /**
+     * Determine if there are multiple animation {@literal "frames"}.
+     *
+     * @return {@code true} if there are multiple frames, {@code false} otherwise. If there was a problem
+     * determining number of frames, {@code false} will be returned.
+     */
+    public boolean hasMultipleFrames() {
+        return getAnimationFrameCount() > 1;
+    }
+
+    /**
+     * Get the number of frames associated with this ViewManager.
+     *
+     * @return Either the number of frames, or {@code -1} if there was a problem.
+     */
+    public int getAnimationFrameCount() {
+        int result = -1;
+        if (animationWidget != null) {
+            DateTime[] timeSteps = animationWidget.getTimes();
+            if (timeSteps != null) {
+                result = timeSteps.length;
+            }
+        }
+        logger.trace("returning {}", result);
+        return result;
+    }
+
+    /**
      * Set the ExternalAnimation property.
      *
      * @param value The new value for ExternalAnimation
