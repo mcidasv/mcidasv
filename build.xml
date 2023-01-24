@@ -1665,7 +1665,7 @@
                    version="${version.internal}"
                    icon="${bundle.icon}"
                    mainclassname="edu.wisc.ssec.mcidasv.McIDASV"
-                   copyright="2022"
+                   copyright="2023"
                    debug="true"
                    applicationCategory="public.app-category.weather">
 
