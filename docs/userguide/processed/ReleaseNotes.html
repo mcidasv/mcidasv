@@ -71,6 +71,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#dateline1_1.9">MODIS and JPSS Dateline</a></strong></li>
     <li><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">MultiSpectral Display Probe Placement</a></strong></li>
     <li><strong><a class="faq-question-link" href="#awips_1.9">New AWIPS Color Tables</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#star_1.9">New NOAA STAR Color Tables</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat4_1.9">Other
@@ -117,19 +118,24 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div class="faq-category"><a name="remoteServers1.9" id="remoteServers1.9"></a>
     <h4>Remote Servers/Datasets</h4>
     <div class="faq-answer">
-      <p>Added new imagery datasets for GOES-16 and GOES-17 data. These servers/datasets are:</p>
+      <p>Added new imagery datasets for GOES-R series data. These servers/datasets are:</p>
       <ul>
-        <li>adde.ucar.edu:</li>
+        <li>adde.ssec.wisc.edu/adde.ucar.edu/atm.ucar.edu/lead.unidata.ucar.edu:</li>
       	  <ul>
-      	    <li>RTGOESR - GOES-16 L1b imagery</li>
-      	 	<li>RTGOESS - GOES-17 L1b imagery</li>
-		    <li>NPGOESR - GOES-16 L1b and L2 imagery</li>
-     	    <li>NPGOESS - GOES-17 L1b imagery</li>
-      	  </ul>
-      	<li>atm.ucar.edu:</li>
-      	  <ul>
-      	    <li>RTGOESS - GOES-17 L1b imagery</li>
-      	  	<li>NPGOESS - GOES-17 L1b imagery</li>
+      	    <li>EAST - GOES East L1b imagery</li>
+      	    <li>L2GEAST - GOES East L2 imagery</li>
+      	    <li>L2GOESR - GOES-R L2 imagery</li>
+      	    <li>L2GOESS - GOES-S L2 imagery</li>
+      	    <li>L2GWEST - GOES West L2 imagery</li>
+      	    <li>NPGOESR - GOES-16 L1b and L2 imagery</li>
+            <li>NPGOESS - GOES-17 L1b imagery</li>
+      	    <li>RTDDST - GOES East/West Debra Dust data</li>
+      	    <li>RTGEOC - GOES East/West GeoColor data</li>
+      	    <li>RTGOESR - GOES-R L1b imagery</li>
+      	 	<li>RTGOESS - GOES-S L1b imagery</li>
+      	 	<li>RTGOEST - GOES-T L1b imagery</li>
+      	 	<li>RTSNCL - GOES East/West Cloud Snow data</li>
+      	 	<li>WEST - GOES West L1b imagery</li>
       	  </ul>
       </ul>
     </div>
@@ -165,6 +171,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-category"><a name="awips_1.9" id="awips_1.9"></a>
     <h4><strong><a class="faq-question-link" href="#nucaps_1.9">New AWIPS Color Tables</a></strong></h4>
     <div class="faq-answer">Added several new color tables used to display gridded NUCAPS data from NASA SPoRT. These enhancements can be found under the &quot;Satellite &gt; NUCAPS&quot; menu of the Color Table Editor. The color tables in this category are the defaults for any variable displayed from NASA SPoRT gridded NUCAPS files, though they can be applied to any displayed layer that uses an enhancement. A variety of additional AWIPS enhancements were added to the &quot;AWIPS&quot; menu of the enhancements. Many of these enhancements are under the &quot;AWIPS &gt; Grid&quot; menu.</div>
+</div>
+<div class="faq-category"><a name="star_1.9" id="star_1.9"></a>
+    <h4><strong><a class="faq-question-link" href="#nucaps_1.9">New NOAA STAR Color Tables</a></strong></h4>
+    <div class="faq-answer">Added several new color tables used by NOAA STAR to display GOES-R series level 1b imagery data. These can be found under the &quot;Satellite &gt; GOES-R &gt; STAR&quot; menu of the Color Table Editor. Note that these enhancements are designed to display correctly on Brightness (0 - 255) data.</div>
 </div>
 <div class="faq-bottom">
   <div class="faq-category-title"><a name="faq1_cat4_1.9" id="faq1_cat4_1.9"></a>Other
@@ -228,12 +238,12 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
       Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.
-    Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported. A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well. Added support for many JPSS VIIRS Products (Granule) available from NOAA CLASS.</div>
+    Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported. A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well. Added support for many JPSS VIIRS Products (Granule) available from NOAA CLASS. Fixed a bug where certain imagery SDR bands/calibrations would not display correctly in multi-banded files or data sources.</div>
   </div>
   <div class="faq-category"><a name="glm1.9" id="glm1.9"></a>
     <h4>GLM Chooser</h4>
     <div class="faq-answer">
-      <p>Added a GLM chooser to the list of Under Development choosers. This chooser is capable of loading GOES-16 and GOES-17 GLM (Group, Event, Flash) data through remote ADDE. From the Increment option in the Data Sources tab, the user can specify the number of minutes of data to bin together into one timestep. This defaults to 5 minutes. To display the data, a gridded display or point data can be drawn.</p>
+      <p>Added a GLM chooser to the list of Under Development choosers. This chooser is capable of loading GOES-R series GLM (Group, Event, Flash) data through remote ADDE. From the Increment option in the Data Sources tab, the user can specify the number of minutes of data to bin together into one timestep. This defaults to 5 minutes. To display the data, a gridded display or point data can be drawn.</p>
     </div>
   </div>
 </div>

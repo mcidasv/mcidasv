@@ -308,22 +308,33 @@ servers, see the <a href="choosers/index.html">Data Sources</a> section.</p>
 </ul>
 <p>Additional datasets:</p>
 <ul>
-<li><strong>adde.ssec.wisc.edu</strong></li>
+<li><strong>adde.ssec.wisc.edu</strong>/<strong>adde.ucar.edu</strong>/<strong>atm.ucar.edu</strong>/<strong>lead.unidata.ucar.edu</strong></li>
 <ul>
 <li><strong>BLIZZARD -</strong> Archived data from the 1993 Storm of the Century.</li>
 <li><strong>CIMSS -</strong> Products derived from one or more channels, made by CIMSS, SSEC.</li>
+<li><strong>EAST -</strong> GOES East FD, CONUS, M1, and M2 level 1b data.</li>
 <li><strong>GINIALL -</strong> GINI images over different regions with different resolutions.</li>
 <li><strong>GINICOMP -</strong> GINIEAST AND GINIWEST composites.</li>
 <li><strong>GINIEAST -</strong> GOES East images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 1.</li>
 <li><strong>GINIWEST -</strong> GOES West images, remapped to conic, Mercator (cylindrical equidistant), or polar projections channel 2.</li>
 <li><strong>GLOBAL -</strong> Global composite IR and WV images</li>
 <li><strong>IMAGEALL -</strong> GOES images, Antarctic composites and Radar.</li>
-<li><strong>RTGOES</strong></li>
+<li><strong>L2GEAST -</strong> GOES East level 2 data.</li>
+<li><strong>L2GOESR -</strong> GOES-R level 2 data.</li>
+<li><strong>L2GOESS -</strong> GOES-S level 2 data.</li>
+<li><strong>L2GWEST -</strong> GOES West level 2 data.</li>
 <li><strong>NEXRCALL -</strong> Composites of radar reflectivity, echo tops, and storm precipitation with different resolutions.</li>
 <li><strong>NEXRCOMP -</strong> Composites of NEXRAD imagery (1km,
     6km, 10 km radar coded message, 1-hour precipitation total, storm total precipitation).</li>
+<li><strong>RTDDST -</strong> GOES East/West Debra Dust data.</li>
+<li><strong>RTGEOC -</strong> GOES East/West GeoColor data.</li>
+<li><strong>RTGOESR -</strong> GOES-R level 1b data.</li>
+<li><strong>RTGOESS -</strong> GOES-S level 1b data.</li>
+<li><strong>RTGOEST -</strong> GOES-T level 1b data.</li>
 <li><strong>RTIMAGES -</strong> GOES East and West images in native view, not remapped. Also some global Mollweide images, and an Antarctic composite.</li>
+<li><strong>RTSNCL -</strong> GOES East/West Cloud Snow data.</li>
 <li><strong>TOPO -</strong> Plots land elevations with different projections using the color scales relevant to the chosen descriptor. The image will remap.</li>
+<li><strong>WEST -</strong> GOES West FD, CONUS, M1, and M2 level 1b data.</li>
 <li><strong>NEXRALL -</strong> NEXRAD imagery of a variety of products for individual sites.</li>
 <li><strong>RTNEXRAD -</strong> NEXRAD imagery of a variety of products for individual sites.</li>
 <li><strong>RTPTSRC -</strong> Point data from hourly observations, planes, ships, and soundings.</li>
@@ -332,14 +343,6 @@ servers, see the <a href="choosers/index.html">Data Sources</a> section.</p>
 <li><strong>140.90.213.161</strong></li>
 <ul>
 <li><strong>PUB -</strong> GOES-East, GOES-West, Meteosat (MSG), and Himawari imagery and products.</li>
-</ul>
-<li><strong>adde.ucar.edu/atm.ucar.edu/lead.unidata.ucar.edu -</strong> Contains many of the datasets as adde.ssec.wisc.edu (above) with additional datasets for GOES 16/17 data.</li>
-<ul>
-<li><strong>L2GOESR -</strong> GOES 16 level 2 data.</li>
-<li><strong>NPGOESR -</strong> GOES 16 FD, CONUS, M1, and M2 level 1b data and level 2 products.</li>
-<li><strong>NPGOESS -</strong> GOES 17 FD, CONUS, M1, and M2 level 1b data.</li>
-<li><strong>RTGOESR -</strong> GOES 16 FD, CONUS, M1, and M2 level 1b data.</li>
-<li><strong>RTGOESS -</strong> GOES 17 FD, CONUS, M1, and M2 level 1b data.</li>
 </ul>
 </ul>
 <div class="pagesubsubtitle"><a name="thredds" id="thredds"></a>THREDDS Data Server (TDS)/OPeNDAP</div>
@@ -371,7 +374,7 @@ bytes&quot; headers. See the <a href="choosers/UrlChooser.html">Choosing a URL</
 <div class="pagesubtitle"><a name="netcdf" id="netcdf"></a>netCDF files</div>
 <p>The Network Common Data Form (<a href="http://www.unidata.ucar.edu/software/netcdf" target="_blank">netCDF</a>) provides a common data access method for Unidata applications. This format can be used to store a variety of data types that encompass single-point observations, time series, regular grids, and satellite and radar images. The mere use of netCDF by itself is not sufficient to make data &quot;self-describing&quot; and meaningful to McIDAS-V.</p>
 <p>Generally, McIDAS-V requires that datasets in netCDF format use <a href="http://www.unidata.ucar.edu/software/netcdf/conventions.html" target="_blank">metadata conventions</a> to be able to fully understand and geolocate the dataset.
-    These conventions provide documented <a href="http://www.unidata.ucar.edu/software/netcdf/docs/BestPractices.html" target="_blank">&quot;best
+    These conventions provide documented <a href="https://docs.unidata.ucar.edu/nug/current/best_practices.html" target="_blank">&quot;best
     practices&quot;</a>. Using conventions with netCDF ensures your data
     is complete and self-describing, and can be used by others. We
     recommend you use CF, COARDS, or NUWG conventions for netCDF data files for
