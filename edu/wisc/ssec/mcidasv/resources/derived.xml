@@ -984,6 +984,16 @@
             <paramgroup categories="" name="JPSS_RGB_Snowmelt"/>
         </operands>
     </derived>
+    <derived description="VIIRS SDR Sea Spray RGB" formula="VIIRSSeaSprayRGB(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_SDR_SEA_SPRAY_RGB" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="JPSS_RGB_SeaSpray"/>
+        </operands>
+    </derived>
     <!-- RMC inq 2982 Apr 2022 -->
 	<derived description="VIIRS EDR NDVI" formula="VIIRSEdrNDVI(D1[label=I1 Reflectance], D2[label=I2 Reflectance])" id="VIIRS_EDR_NDVI" isdefault="true" isenduser="true" override="true">
         <categories>
@@ -1111,7 +1121,17 @@
             <paramgroup categories="" name="JPSS_EDR_RGB_Snowmelt"/>
         </operands>
     </derived>
-	<!-- end inq 2982 -->
+    <derived description="VIIRS EDR Sea Spray RGB" formula="VIIRSEdrSeaSprayRGB(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_EDR_SEA_SPRAY_RGB" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+        </categories>
+        <operands>
+            <paramgroup name="JPSS_EDR_RGB_SeaSpray"/>
+        </operands>
+    </derived>
+    <!-- end inq 2982 -->
     <derived description="MSG Airmass RGB" formula="MSGAirmassRGB(D1[label=Band 5 Temperature], D2[label=Band 6 Temperature], D3[label=Band 8 Temperature], D4[label=Band 9 Temperature])" id="msgairmass" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-MSG Functions"/>
