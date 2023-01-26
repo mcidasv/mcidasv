@@ -384,7 +384,7 @@
                  class="edu.wisc.ssec.mcidasv.chooser.adde.ImageChooser" />
     </panel>
 
-	<panel title="GLM" category="Under Development" layout="border" tabtooltip="For accessing GOES-16/17 Geostationary Lightning Mapper (GLM) data">
+	<panel title="GLM" category="Under Development" layout="border" tabtooltip="For accessing GOES-R Series Geostationary Lightning Mapper (GLM) data">
 		<chooser id="chooser.glm"
 				 title="GLM"
 				 menutitle="Compatibility Testing"
