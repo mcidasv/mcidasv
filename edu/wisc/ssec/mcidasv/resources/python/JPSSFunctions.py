@@ -325,6 +325,31 @@ def VIIRSSnowmeltRGB(M10, M8, M5):
 
     return package(inM5, rgb)
 
+# VIIRS SDR Sea Spray RGB
+def VIIRSSeaSprayRGB(I1, I2, I4, I5):
+    # https://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Sea_Spray_RGB_Quick_Guide_v2.pdf
+    # red = I4 (3.7um) - I5 (11.45)  - 0C to 10C rescaled to 0 to 255; gamma 1.0
+    # grn = I2 (0.86um) - 1% to 20% reflectance rescaled to 0 to 255; gamma 0.6
+    # blu = I1 (0.64um) - 2% to 25% reflectance rescaled to 0 to 255; gamma 0.6
+
+    inI1 = I1
+    I1 = unpackage(I1)
+    inI2 = I2
+    I2 = unpackage(I2)
+    inI4 = I4
+    I4 = unpackage(I4)
+    inI5 = I5
+    I5 = unpackage(I5)
+
+    grd375 = makeGrid(I1, 375)
+
+    red = rescale(sub(I4, I5), 0, 10, 0, 255)
+    grn = 255*(rescale(I2, .01, .20, 0, 1)**1.66)
+    blu = 255*(rescale(I1, .02, .25, 0, 1)**1.66)
+
+    rgb = MultiSpectralDataSource.swathToGrid(grd375, [red, grn, blu], 1.0)
+    return package(inI1, rgb)
+
 # The below functions are for VIIRS EDR data.  EDR data
 # do not have bowtie deletion lines, so removal is not needed
 
@@ -443,3 +468,15 @@ def VIIRSEdrSnowmeltRGB(M10, M8, M5):
     grn = rescale(M8, 0, 100, 0, 255)
     blu = rescale(M5, 0, 100, 0, 255)
     return combineRGB(red, grn, blu)
+
+# VIIRS EDR Sea Spray RGB
+def VIIRSEdrSeaSprayRGB(I1, I2, I4, I5):
+    # https://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Sea_Spray_RGB_Quick_Guide_v2.pdf
+    # red = I4 (3.7um) - I5 (11.45)  - 0C to 10C rescaled to 0 to 255; gamma 1.0
+    # grn = I2 (0.86um) - 1% to 20% reflectance rescaled to 0 to 255; gamma 0.6
+    # blu = I1 (0.64um) - 2% to 25% reflectance rescaled to 0 to 255; gamma 0.6
+
+    red = rescale(sub(I4, I5), 0, 10, 0, 255)
+    grn = 255*(rescale(I2, .01, .20, 0, 1)**1.66)
+    blu = 255*(rescale(I1, .02, .25, 0, 1)**1.66)
+    return mycombineRGB(red, grn, blu)
