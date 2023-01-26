@@ -38,9 +38,6 @@ import org.jcodec.common.VideoCodecMeta;
 import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.model.ColorSpace;
 import org.jcodec.common.model.Picture;
-import org.jcodec.common.model.Rational;
-import org.jcodec.common.model.Size;
-import org.jcodec.javase.scale.AWTUtil;
 import org.jcodec.scale.ColorUtil;
 import org.jcodec.scale.Transform;
 import org.slf4j.Logger;
@@ -404,9 +401,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
     /** Captures one frame */
     JButton grabBtn;
 
-    /** radio button for high image quality */
-    private JRadioButton hiBtn;
-
     /** The IDV */
     private IntegratedDataViewer idv;
 
@@ -419,17 +413,11 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
     /** File path of the last previewed image */
     String lastPreview;
 
-    /** radio button for low image quality */
-    private JRadioButton lowBtn;
-
     /** The window for the main gui */
     JDialog mainDialog;
 
     /** Capture the main display */
     JRadioButton mainDisplayBtn;
-
-    /** radio button for medium image quality */
-    private JRadioButton medBtn;
 
     /** If non-null then we use this and don't ask the user. */
     private String movieFileName;
@@ -829,10 +817,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                 }
             }
         });
-        hiBtn  = new JRadioButton("High", true);
-        medBtn = new JRadioButton("Medium", false);
-        lowBtn = new JRadioButton("Low", false);
-        GuiUtils.buttonGroup(hiBtn, medBtn).add(lowBtn);
         grabBtn           = makeButton("One Image", CMD_GRAB);
         grabAutoBtn       = makeButton("Automatically", GuiUtils.CMD_START);
         grabAnimationBtn  = makeButton("Time Animation", CMD_GRAB_ANIMATION);
@@ -913,10 +897,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         GuiUtils.setHFill();
 
         JPanel filePanel = GuiUtils.doLayout(null, new Component[] {
-            GuiUtils.filler(), GuiUtils.right(alternateDirCbx),
-            // GuiUtils.filler(),
-            // GuiUtils.filler(),
-            // addAltComp(GuiUtils.rLabel("Directory:")),
+            GuiUtils.left(alternateDirCbx),
             addAltComp(alternateDirFld), addAltComp(alternateDirBtn),
             addAltComp(GuiUtils.rLabel("Filename Template:")),
             addAltComp(fileTemplateFld), addAltComp(overwriteCbx)
@@ -1363,14 +1344,8 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
      * @return the image quality
      */
     private float getImageQuality() {
+        // TJJ Jan 2023 - high quality only now
         float quality = 1.0f;
-
-        if (medBtn.isSelected()) {
-            quality = 0.6f;
-        } else if (lowBtn.isSelected()) {
-            quality = 0.2f;
-        }
-
         return quality;
     }
 
