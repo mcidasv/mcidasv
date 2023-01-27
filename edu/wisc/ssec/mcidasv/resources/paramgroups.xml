@@ -110,6 +110,19 @@
     <params p1="190_Band4_ALB" p2="190_Band2_ALB" p3="190_Band5_ALB"/>
     <params p1="192_Band4_ALB" p2="192_Band2_ALB" p3="192_Band5_ALB"/>
   </paramgroup>
+  <paramgroup description="ABI Day Rocket Plume RGB" name="ABI_RGB_DayRocketPlume">
+    <params p1="186_Band2_ALB" p2="186_Band7_TEMP" p3="186_Band8_TEMP"/>
+    <params p1="188_Band2_ALB" p2="188_Band7_TEMP" p3="188_Band8_TEMP"/>
+    <params p1="190_Band2_ALB" p2="190_Band7_TEMP" p3="190_Band8_TEMP"/>
+    <params p1="192_Band2_ALB" p2="192_Band7_TEMP" p3="192_Band8_TEMP"/>
+  </paramgroup>
+  <paramgroup description="ABI Night Rocket Plume RGB" name="ABI_RGB_NightRocketPlume">
+    <params p1="186_Band7_TEMP" p2="186_Band8_TEMP" p3="186_Band10_TEMP"/>
+    <params p1="188_Band7_TEMP" p2="188_Band8_TEMP" p3="188_Band10_TEMP"/>
+    <params p1="190_Band7_TEMP" p2="190_Band8_TEMP" p3="190_Band10_TEMP"/>
+    <params p1="192_Band7_TEMP" p2="192_Band8_TEMP" p3="192_Band10_TEMP"/>
+    <params p1="CMI_C07" p2="CMI_C08" p3="CMI_C10"/>
+  </paramgroup>
   <paramgroup description="AHI Natural Color RGB" name="AHI_RGB_NaturalColor">
     <params p1="86_Band3_ALB" p2="86_Band4_ALB" p3="86_Band5_ALB"/>
     <params p1="286_Band3_ALB" p2="286_Band4_ALB" p3="286_Band5_ALB"/>
