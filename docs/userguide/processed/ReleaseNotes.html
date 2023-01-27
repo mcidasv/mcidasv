@@ -57,10 +57,13 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <li><strong><a class="faq-question-link" href="#orbitTracks1.9">Orbit Tracks Chooser</a></strong></li>
     <li><strong><a class="faq-question-link" href="#localServers1.9">Local Servers</a></strong></li>
     <li><strong><a class="faq-question-link" href="#remoteServers1.9">Remote Servers/Datasets</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#archivePoint1.9">Remote Archive Point Data</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#absolute1.9">Absolute Times in Choosers</a></strong></li>
     <li><strong><a class="faq-question-link" href="#aliases1.9">Gridded Aliases</a></strong></li>
     <li><strong><a class="faq-question-link" href="#tropomi1.9">TROPOMI</a></strong></li>
     <li><strong><a class="faq-question-link" href="#nucaps1.9">Gridded NUCAPS</a></strong></li>
     <li><strong><a class="faq-question-link" href="#warning1.9">NWS Warnings</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#cycle1.9">Layer Cycling Speed</a></strong></li>
   </ul>
 </div>
 <div class="faq-category-title"><a class="faq-category-link" href="#faq1_cat3_1.9">Display
@@ -120,7 +123,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
     <div class="faq-answer">
       <p>Added new imagery datasets for GOES-R series data. These servers/datasets are:</p>
       <ul>
-        <li>adde.ssec.wisc.edu/adde.ucar.edu/atm.ucar.edu/lead.unidata.ucar.edu:</li>
+     <li>adde.ssec.wisc.edu/adde.ucar.edu/atm.ucar.edu/lead.unidata.ucar.edu:</li>
       	  <ul>
       	    <li>EAST - GOES East L1b imagery</li>
       	    <li>L2GEAST - GOES East L2 imagery</li>
@@ -140,6 +143,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
       </ul>
     </div>
     </div>
+    <div class="faq-category"><a name="archivePoint1.9" id="archivePoint1.9"></a>
+    <h4>Remote Archive Point Data</h4>
+    <div class="faq-answer">
+      <p>Added the ability to work with remote archive point data through the Point Observations&gt;Plot/Contour chooser. Once the Point Type is selected, a window will appear prompting for a day to search for. This day can be changed in the Absolute Times tab of the chooser.</p>
+    </div>
+    </div>
+      <div class="faq-category"><a name="absolute1.9" id="absolute1.9"></a>
+    <h4>Absolute Times in Choosers</h4>
+    <div class="faq-answer">
+      <p>Added new functionality to the Absolute Times tab of the Radar&gt;Level II&gt; Remote, Radar&gt;Level III, and Point Observations&gt;Plot/Contour choosers to allow the user to specify a day, range of times, and number of times to list.</p>
+    </div>
+    </div>
     <div class="faq-category"><a name="aliases1.9" id="aliases1.9"></a>
     <h4>Gridded Aliases</h4>
     <div class="faq-answer">Several gridded variables from GFS (Global Forecast System), HRRR (High Resolution Rapid Refresh), SREF (Short Range Ensemble Forecasting), NDFD (National Digital Forecast Database), RTMA (Real Time Mesoscale Analysis), <span id="value_summary_text">FNMOC COAMPS (Fleet Numerical Meteorology and Oceanography Center </span>Coupled Ocean/Atmosphere Mesoscale Prediction System), and NCEP National Blend of Models data were added to the list of known variables/aliases. All of these data sources are available through the default Gridded Data &gt; Remote catalog, as well as the General &gt;Files/Directories chooser with local gridded data.  Adding these variables to the list of aliases allows for McIDAS-V to recognize them and therefore create derived fields and display the variables using the parameter defaults.</div>
@@ -155,6 +170,10 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 	<div class="faq-category"><a name="warning1.9" id="warning1.9"></a>
     <h4>NWS Warnings</h4>
     <div class="faq-answer">Added a new menu item to the Main Display window (Display &gt; Text Data &gt; NWS Hazard Warning (from server)) that allows for plotting currently active severe weather warning (e.g. Severe Thunderstorm Warning, Tornado Warning) polygons in the Main Display window. This menu item adds a data source for the warnings to the Field Selector, and Create Display must be clicked in order for the polygons to be drawn in the Main Display.</div>
+	</div>
+    <div class="faq-category"><a name="cycle1.9" id="cycle1.9"></a>
+    <h4>Layer Cycling Speed</h4>
+    <div class="faq-answer">Added the ability to control the cycling speed when switching between displayed layers of 2D levels of a 3D variable.  For example, a 2D contour display of a 3D temperature variable.  There is now a Dwell setting in the Layer Controls to control the speed that the display cycles through the various 2D levels in the 3D variable. This is available for various gridded, point data, and radar displays.</div>
 	</div>
 </div>
 <div class="faq-bottom">
