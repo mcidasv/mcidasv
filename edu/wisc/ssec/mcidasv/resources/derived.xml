@@ -661,6 +661,28 @@
             <paramgroup name="ABI_RGB_CloudType"/>
         </operands>
     </derived>
+    <derived description="ABI Day Rocket Plume RGB" formula="ABIDayRocketRGB(D1[label=Band 2 Albedo], D2[label=Band 7 Temperature], D3[label=Band 8 Temperature])" id="abidayrocket" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-ABI Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="ABI_RGB_DayRocketPlume"/>
+        </operands>
+    </derived>
+    <derived description="ABI Night Rocket Plume RGB" formula="ABINightRocketRGB(D1[label=Band 7 Temperature], D2[label=Band 8 Temperature], D3[label=Band 10 Temperature])" id="abinightrocket" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-ABI Functions"/>
+            <category value="display:imagecontroloverz"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="ABI_RGB_NightRocketPlume"/>
+        </operands>
+    </derived>
     <derived description="AHI Airmass RGB" formula="AHIAirmassRGB(D1[label=Band 8 Temperature], D2[label=Band 10 Temperature], D3[label=Band 12 Temperature], D4[label=Band 13 Temperature])" id="ahiairmass" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-AHI Functions"/>
