@@ -244,6 +244,31 @@ def ABICloudTypeRGB(b4A, b2A, b5A):
     blu = 255*(rescale(b5A, 0, 50, 0, 1)**0.7)
     return combineRGB(red, grn, blu)
 
+# ABI Day Rocket Plume RGB
+def ABIDayRocketRGB(b2A, b7T, b8T):
+    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/QuickGuide_Template_GOESRBanner_Plume_day.pdf
+    # red = band7; 273K to 338K rescaled to 0 to 255
+    # grn = band8; 233K to 253K rescaled to 0 to 255
+    # blu = band2; 0% to 80% rescaled to 0 to 255
+    time_steps = b7T.getLength()
+    for i in range(time_steps):
+       b7T.setSample(i, resampleGrid(b7T[i], b2A[i]))
+    red = rescale(b7T, 273, 338, 0, 255)
+    grn = rescale(b8T, 233, 253, 0, 255)
+    blu = rescale(b2A, 0, 80, 0, 255)
+    return combineRGB(red, grn, blu)
+
+# ABI Night Rocket Plume RGB
+def ABINightRocketRGB(b7T, b8T, b10T):
+    # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/QuickGuide_Template_GOESRBanner_Plume_night.pdf
+    # red = band7; 273K to 338K rescaled to 0 to 255
+    # grn = band8; 220K to 280K rescaled to 0 to 255
+    # blu = band10; 230K to 290K rescaled to 0 to 255
+    red = rescale(b7T, 273, 338, 0, 255)
+    grn = rescale(b8T, 220, 280, 0, 255)
+    blu = rescale(b10T, 230, 290, 0, 255)
+    return combineRGB(red, grn, blu)
+
 # Split Ozone Channel Difference
 def ABIOzoneDifference(b12T, b13T):
     # http://cimss.ssec.wisc.edu/goes/OCLOFactSheetPDFs/ABIQuickGuide_SplitOzoneDiff.pdf
