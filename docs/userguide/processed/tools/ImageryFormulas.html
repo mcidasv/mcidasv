@@ -146,7 +146,7 @@ of the latitudes at each point.</li>
 </li>
 </ul>
 <div class="pagesubtitle">ABI Functions<a name="abiFunctions" id="abiFunctions"></a></div>
-<p>The following describes each formula included in the ABI (Advanced Baseline Imager - GOES-16 through GOES-19) Functions section of McIDAS-V. These formulas create displays of various RGB and channel difference products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> ABI Functions tree. For specifics about the usage of each of these products (except ABI True Color RGB), see the <a href="http://rammb.cira.colostate.edu/training/visit/quick_guides/">CIRA VISIT Quick Guides</a>.</p>
+<p>The following describes each formula included in the ABI (Advanced Baseline Imager - GOES-16 through GOES-19) Functions section of McIDAS-V. These formulas create displays of various RGB and channel difference products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> ABI Functions tree. For specifics about the usage of each of these products (except ABI True Color RGB), see the <a href="https://rammb2.cira.colostate.edu/training/visit/quick_reference/#tab17">CIRA VISIT Quick Guides</a>.</p>
 <ul class="propertylist">
 <li class="propertylistitem"><strong>ABI Airmass RGB (Band 8 Temperature, Band 10 Temperature, Band 12 Temperature, Band 13 Temperature) -</strong> Distinguishes between different air masses (e.g. warn, cold, moist, dry) and highlights potential vorticity anomalies.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
@@ -431,7 +431,39 @@ of the latitudes at each point.</li>
         <p><em>Band 5 Albedo </em></p>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
-        <p>ABI band 5 (1.6um) albedo</p>
+        <p>ABI band 5 (1.6um) albedo.</p>
+        </td>
+      </tr>
+  </table>
+</li>
+<li class="propertylistitem"><strong>ABI Day Rocket Plume RGB (Band 2 Albedo, Band 7 Temperature, Band 8 Temperature) -</strong> Allows for tracking the plume associated with rockets and other hotspots during daytime hours.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 2 Albedo</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>ABI band 2 (0.64um) albedo.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 7 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>ABI band 7 (3.9um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 8 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>ABI band 8 (6.2um) temperature.</p>
         </td>
       </tr>
   </table>
@@ -580,7 +612,7 @@ of the latitudes at each point.</li>
    </strong></tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 13T</em></p>
+   <p><em>Band 13 T</em>emperature</p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
    <p>ABI band 13 (10.3um) temperature.</p>
@@ -588,13 +620,45 @@ of the latitudes at each point.</li>
    </tr>
    <tr>
    <td width="145" colspan="1" rowspan="1" valign="top">
-   <p><em>Band 7T</em></p>
+   <p><em>Band 7 T</em>emperature</p>
    </td>
    <td width="510" colspan="2" rowspan="1" valign="top">
    <p>ABI band 7 (3.9um) temperature</p>
    </td>
    </tr>
 </table></li>
+<li class="propertylistitem"><strong>ABI Night Rocket Plume RGB (Band 7 Temperature, Band 8 Temperature, Band 10 Temperature) -</strong> Allows for tracking the plume associated with rockets and other hotspots during day and nighttime hours.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 7 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>ABI band 7 (3.9um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 8 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>ABI band 8 (6.2um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>Band 10 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>ABI band 10 (7.3um) temperature.</p>
+        </td>
+      </tr>
+  </table>
+</li>
 <li class="propertylistitem"><strong>ABI Nighttime Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong> Distinguishes between low clouds and fog.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
