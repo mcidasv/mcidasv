@@ -27,6 +27,7 @@
  */
 package edu.wisc.ssec.mcidasv;
 
+import static edu.wisc.ssec.mcidasv.McIdasPreferenceManager.PROP_NEW_FONT_RENDERING;
 import static ucar.unidata.util.GuiUtils.makeMenu;
 import static ucar.unidata.util.MenuUtil.MENU_SEPARATOR;
 
@@ -34,11 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import edu.wisc.ssec.mcidasv.startupmanager.options.BooleanOption;
 import org.python.util.PythonInterpreter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
 import edu.wisc.ssec.mcidasv.util.CollectionHelpers;
 
 import ucar.unidata.data.DataSource;
@@ -187,5 +187,30 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
 
         return menuItems;
     }
-    
+
+    /**
+     * Determine if the user should be warned about a potential bug that we've been unable to resolve.
+     *
+     * <p>The conditions for the bug to appear are:
+     * <ul>
+     *     <li>In background mode (i.e. running a script).</li>
+     *     <li>Geometry by reference is <b>disabled</b>.</li>
+     *     <li>New font rendering is <b>enabled</b>.</li>
+     * </ul>
+     *
+     * @return {@code true} if the user's configuration has made it possible for bug to manifest.
+     */
+    public static boolean shouldWarnImageCapturing() {
+        boolean backgroundMode = McIDASV.getStaticMcv().getArgsManager().isScriptingMode();
+        boolean shouldWarn = false;
+        OptionMaster optMaster = OptionMaster.getInstance();
+        BooleanOption useGeometryByRef = optMaster.getBooleanOption("USE_GEOBYREF");
+        if (useGeometryByRef != null) {
+            shouldWarn = backgroundMode
+                    && "0".equals(useGeometryByRef.getValue())
+                    && Boolean.parseBoolean(System.getProperty(PROP_NEW_FONT_RENDERING, "false"));
+        }
+        return shouldWarn;
+    }
+
 }

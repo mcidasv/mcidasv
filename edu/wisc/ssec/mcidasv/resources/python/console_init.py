@@ -184,7 +184,12 @@ if _isInteractive:
             if ext == '.py':
                 globals()[modname] = __import__(modname, globals(), locals(), ['*'], -1)
             del modname, ext
-            
+
+
+from edu.wisc.ssec.mcidasv import JythonManager as McvJythonManager
+if McvJythonManager.shouldWarnImageCapturing():
+    print("*** Geometry by reference must be enabled for layer labels to appear with new font rendering ***")
+
 ___init_finished = True
 
 # Clean up stuff that is only useful for this script/module. *almost* 

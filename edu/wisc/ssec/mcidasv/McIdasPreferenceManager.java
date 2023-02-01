@@ -1289,10 +1289,9 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 EventBus.publish("McvPreference.ProgRez", theStore.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false));
                 
                 Hashtable table = (Hashtable)data;
-                String fontRenderProp = "visad.newfontrendering";
-                if (table.containsKey(fontRenderProp)) {
-                    logger.trace("setting new font rendering: {}", theStore.get(fontRenderProp));
-                    System.setProperty(fontRenderProp, Boolean.toString((boolean)theStore.get(fontRenderProp)));
+                if (table.containsKey(PROP_NEW_FONT_RENDERING)) {
+                    logger.trace("setting new font rendering: {}", theStore.get(PROP_NEW_FONT_RENDERING));
+                    System.setProperty(PROP_NEW_FONT_RENDERING, Boolean.toString((boolean)theStore.get(PROP_NEW_FONT_RENDERING)));
                 }
             }
         };
