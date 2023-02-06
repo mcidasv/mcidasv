@@ -28,7 +28,8 @@
 
 package edu.wisc.ssec.mcidasv.ui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -39,10 +40,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import com.formdev.flatlaf.FlatClientProperties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -66,6 +78,8 @@ import ucar.unidata.util.LogUtil;
 import ucar.unidata.util.Msg;
 import ucar.unidata.xml.XmlResourceCollection;
 import ucar.unidata.xml.XmlUtil;
+
+import edu.wisc.ssec.mcidasv.McIDASV;
 import edu.wisc.ssec.mcidasv.PersistenceManager;
 
 /**
@@ -215,20 +229,28 @@ public class McvComponentGroup extends IdvComponentGroup {
                 (BiConsumer<JTabbedPane, Integer>) (tabPane, tabIndex) -> {
                     destroyDisplay(tabIndex);
                 });
-//        tabbedPane.addMouseListener(new TabPopupListener());
+
+        // dark mode results in the previous MouseListener in DraggableTabbed not being able to
+        // listen for mouse clicks. being unable to detect mouse clicks means that we lose the
+        // ability to rename tabs via double-clicking on the tab.
+        if (McIDASV.isDarkMode()) {
+            tabbedPane.addMouseListener(new MouseAdapter() {
+                @Override public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+                        int eventX = e.getX();
+                        int eventY = e.getY();
+                        int tabIndex = tabbedPane.getUI().tabForCoordinate(tabbedPane, eventX, eventY);
+                        if (tabIndex >= 0) {
+                            renameDisplay(tabIndex);
+                        }
+                    }
+                    super.mouseClicked(e);
+                }
+            });
+        }
 
         container = new JPanel(new BorderLayout());
         container.add(tabbedPane);
-//        container.addComponentListener(new ComponentListener() {
-//            @Override public void componentHidden(ComponentEvent e) {
-//                
-//            }
-//            @Override public void componentShown(ComponentEvent e) {
-//                
-//            }
-//            @Override public void componentMoved(ComponentEvent e) {}
-//            @Override public void componentResized(ComponentEvent e) {}
-//        });
         GuiUtils.handleHeavyWeightComponentsInTabs(tabbedPane);
         initDone = true;
     }
