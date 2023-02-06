@@ -681,7 +681,9 @@ public class InteractiveShell implements HyperlinkListener {
     public void errorOutput(String m) {
         output("<font color=\"red\">" + m + "</font><br/>");
     }
-    
+
+
+
     /**
      * _more_
      *
@@ -692,14 +694,18 @@ public class InteractiveShell implements HyperlinkListener {
         String encoded1 = encodeBase64(evalCode.getBytes());
         String textCode = new StringBuilder("text:").append(code).toString();
         String encoded2 = encodeBase64(textCode.getBytes());
-        output(new StringBuilder("<div style=\"margin:0; margin-bottom:1; background-color:#cccccc; \"><table width=\"100%\"><tr><td>")
-//            .append("<pre>").append(formatCode(code)).append("</pre>")
-            .append(formatCode(code))
-            .append("</td><td align=\"right\" valign=\"top\"><a href=\"")
-            .append(encoded2)
-            .append("\"><img src=\"idvresource:/auxdata/ui/icons/Down16.gif\" border=0></a><a href=\"")
-            .append(encoded1)
-            .append("\"><img alt=\"Reload\" src=\"idvresource:/auxdata/ui/icons/Refresh16.gif\" border=0></a></td></tr></table></div>").toString());
+        StringBuilder tmp;
+        if (McIDASV.isDarkMode()) {
+            tmp = new StringBuilder("<div style=\"margin:0; margin-bottom:1; background-color:#747C82; \"><table width=\"100%\"><tr><td>");
+        } else {
+            tmp = new StringBuilder("<div style=\"margin:0; margin-bottom:1; background-color:#cccccc; \"><table width=\"100%\"><tr><td>");
+        }
+        output(tmp.append(formatCode(code))
+                  .append("</td><td align=\"right\" valign=\"top\"><a href=\"")
+                  .append(encoded2)
+                  .append("\"><img src=\"idvresource:/auxdata/ui/icons/Down16.gif\" border=0></a><a href=\"")
+                  .append(encoded1)
+                  .append("\"><img alt=\"Reload\" src=\"idvresource:/auxdata/ui/icons/Refresh16.gif\" border=0></a></td></tr></table></div>").toString());
     }
     
     /**
