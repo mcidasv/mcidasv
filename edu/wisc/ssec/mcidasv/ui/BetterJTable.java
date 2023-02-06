@@ -27,6 +27,8 @@
  */
 package edu.wisc.ssec.mcidasv.ui;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -51,8 +53,11 @@ import javax.swing.table.TableModel;
 
 public class BetterJTable extends JTable {
 
-    private static final Color EVEN_ROW_COLOR = new Color(241, 245, 250);
+    private static final Color ROW_COLOR_LIGHT = new Color(241, 245, 250);
     private static final Color TABLE_GRID_COLOR = new Color(0xd9d9d9);
+
+    private static final Color DARK_ROW_COLOR_ONE = new Color(32, 28, 29);
+    private static final Color DARK_ROW_COLOR_TWO = new Color(42, 39, 40);
 
     private static final CellRendererPane CELL_RENDER_PANE = new CellRendererPane();
 
@@ -71,7 +76,9 @@ public class BetterJTable extends JTable {
         setTableHeader(createTableHeader());
         getTableHeader().setReorderingAllowed(false);
         setOpaque(false);
-        setGridColor(TABLE_GRID_COLOR);
+        if (!McIDASV.isDarkMode()) {
+            setGridColor(TABLE_GRID_COLOR);
+        }
         // turn off grid painting as we'll handle this manually in order to paint
         // grid lines over the entire viewport.
         setShowGrid(false);
@@ -135,10 +142,20 @@ public class BetterJTable extends JTable {
 
         private final JTable fTable;
 
+        private final Color COLOR_ONE;
+        private final Color COLOR_TWO;
+
         public StripedViewport(JTable table) {
             fTable = table;
             setOpaque(false);
             initListeners();
+            if (McIDASV.isDarkMode()) {
+                COLOR_ONE = DARK_ROW_COLOR_ONE;
+                COLOR_TWO = DARK_ROW_COLOR_TWO;
+            } else {
+                COLOR_ONE = getBackground();
+                COLOR_TWO = ROW_COLOR_LIGHT;
+            }
         }
 
         private void initListeners() {
@@ -175,7 +192,10 @@ public class BetterJTable extends JTable {
 
         @Override protected void paintComponent(Graphics g) {
             paintStripedBackground(g);
-            paintVerticalGridLines(g);
+            // dark mode just looks better without the vertical lines separating cells
+            if (!McIDASV.isDarkMode()) {
+                paintVerticalGridLines(g);
+            }
             super.paintComponent(g);
         }
 
@@ -202,7 +222,8 @@ public class BetterJTable extends JTable {
         }
 
         private Color getRowColor(int row) {
-            return row % 2 == 0 ? EVEN_ROW_COLOR : getBackground();
+            Color c = row % 2 == 0 ? COLOR_TWO : COLOR_ONE;
+            return c;
         }
 
         private void paintVerticalGridLines(Graphics g) {
@@ -212,7 +233,9 @@ public class BetterJTable extends JTable {
                 TableColumn column = fTable.getColumnModel().getColumn(i);
                 // increase the x position by the width of the current column.
                 x += column.getWidth();
-                g.setColor(TABLE_GRID_COLOR);
+                if (!McIDASV.isDarkMode()) {
+                    g.setColor(TABLE_GRID_COLOR);
+                }
                 // draw the grid line (not sure what the -1 is for, but BasicTableUI
                 // also does it.
                 g.drawLine(x - 1, g.getClipBounds().y, x - 1, getHeight());
