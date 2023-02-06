@@ -2466,10 +2466,19 @@ public class JythonManager extends IdvManager implements ActionListener,
                 bottom = saveBtn;
             }
             this.outerContents = topCenterBottom(inset(new JLabel(label), 5), wrapper, wrap(saveBtn));
+
+
             if (!editable) {
                 textComponent.setEditable(false);
-                textComponent.setBackground(COLOR_DISABLED);
-                pythonEditor.getLineNumberComponent().setBackground(COLOR_DISABLED);
+                if (McIDASV.isDarkMode()) {
+                    Color darkDisabled = new Color(59, 62, 64);
+                    textComponent.setForeground(new Color(186, 186, 186));
+                    textComponent.setBackground(darkDisabled);
+                    pythonEditor.getLineNumberComponent().setBackground(darkDisabled);
+                } else {
+                    textComponent.setBackground(COLOR_DISABLED);
+                    pythonEditor.getLineNumberComponent().setBackground(COLOR_DISABLED);
+                }
             }
         }
         
