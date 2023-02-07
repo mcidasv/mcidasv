@@ -880,13 +880,13 @@
         </categories>
         <operands categories=""/>
     </derived>
-    <derived description="VIIRS SDR Day Land Cloud Fire RGB" formula="VIIRSDayLandCloudFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="viirsdaylandcloudfire" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS SDR Day Fire RGB" formula="VIIRSDayFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="viirsdayfire" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
-            <paramgroup categories="" name="JPSS_RGB_DayLandCloudFire"/>
+            <paramgroup categories="" name="JPSS_RGB_DayFire"/>
         </operands>
     </derived>
     <derived description="VIIRS SDR Dust RGB" formula="VIIRSDustRGB(D1[label=M14 Temperature], D2[label=M15 Temperature], D3[label=M16 Temperature])" id="viirsDust" isdefault="true" isenduser="true" override="true">
@@ -1006,7 +1006,7 @@
             <paramgroup categories="" name="JPSS_RGB_Snowmelt"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR Sea Spray RGB" formula="VIIRSSeaSprayRGB(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_SDR_SEA_SPRAY_RGB" isdefault="true" isenduser="true">
+    <derived description="VIIRS SDR Sea Spray RGB" formula="VIIRSSeaSprayRGB(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_SDR_SEA_SPRAY_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
             <category value="display:imagecontrol"/>
@@ -1098,13 +1098,13 @@
             <paramgroup name="JPSS_EDR_RGB_CloudPhase"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Day Land Cloud Fire RGB" formula="VIIRSEdrDayLandCloudFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_EDR_DAY_LAND_CLOUD_FIRE_RGB" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS EDR Day Fire RGB" formula="VIIRSEdrDayFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_EDR_DAY_FIRE_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
             <category value="display:rgbcomposite"/>
         </categories>
         <operands categories="">
-            <paramgroup categories="" name="JPSS_EDR_RGB_DayLandCloudFire"/>
+            <paramgroup categories="" name="JPSS_EDR_RGB_DayFire"/>
         </operands>
     </derived>
     <derived description="VIIRS EDR Fire Temperature RGB" formula="VIIRSEdrFireTemperatureRGB(D1[label=M12 Temperature], D2[label=M11 Reflectance], D3[label=M10 Reflectance])" id="VIIRS_EDR_FIRE_TEMPERATURE_RGB" isdefault="true" isenduser="true" override="true">
@@ -1143,7 +1143,7 @@
             <paramgroup categories="" name="JPSS_EDR_RGB_Snowmelt"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Sea Spray RGB" formula="VIIRSEdrSeaSprayRGB(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_EDR_SEA_SPRAY_RGB" isdefault="true" isenduser="true">
+    <derived description="VIIRS EDR Sea Spray RGB" formula="VIIRSEdrSeaSprayRGB(D1[label=I1 Reflectance], D2[label=I2 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_EDR_SEA_SPRAY_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
             <category value="display:imagecontrol"/>
