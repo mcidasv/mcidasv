@@ -187,8 +187,8 @@ def VIIRSNightMicrophysicsRGB(M12, M15, M16):
     return package(inM12, rgb)
   
 
-# VIIRS SDR Day Land Cloud Fire RGB
-def VIIRSDayLandCloudFireRGB(I4, I2, I1):
+# VIIRS SDR Day Fire RGB
+def VIIRSDayFireRGB(I4, I2, I1):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Day_Land_Cloud_Fire_RGB_Quick_Guide_10182018.pdf
     # red = I4 (3.7um) - 0C to 60C rescaled to 0 to 255; gamma 0.4
     # grn = I2 (0.86um) - 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
@@ -409,8 +409,8 @@ def VIIRSEdrNightMicrophysicsRGB(M12, M15, M16):
     blu = rescale(M15, 243, 293, 0, 255)
     return combineRGB(red, grn, blu)
 
-# VIIRS Edr Day Land Cloud Fire RGB
-def VIIRSEdrDayLandCloudFireRGB(I4, I2, I1):
+# VIIRS Edr Day Fire RGB
+def VIIRSEdrDayFireRGB(I4, I2, I1):
     # http://rammb.cira.colostate.edu/training/visit/quick_guides/VIIRS_Day_Land_Cloud_Fire_RGB_Quick_Guide_10182018.pdf
     # red = I4 (3.7um) - 0C to 60C rescaled to 0 to 255; gamma 0.4
     # grn = I2 (0.86um) - 0% to 100% reflectance rescaled to 0 to 255; gamma 1.0
