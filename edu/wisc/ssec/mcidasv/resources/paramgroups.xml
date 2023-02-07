@@ -235,7 +235,7 @@
     <params p1="himawari_8_ahi_channel_11_brightness_temperature" p2="himawari_8_ahi_channel_13_brightness_temperature" p3="himawari_8_ahi_channel_14_brightness_temperature" p4="himawari_8_ahi_channel_15_brightness_temperature"/>
     <params p1="temp_8_5um_nom" p2="temp_10_4um_nom" p3="temp_11_0um_nom" p4="temp_12_0um_nom"/>
   </paramgroup>
-  <paramgroup description="JPSS Day Land Cloud Fire RGB" name="JPSS_RGB_DayLandCloudFire">
+  <paramgroup description="JPSS Day Fire RGB" name="JPSS_RGB_DayFire">
     <params p1="VIIRS-I4-SDR_All/BrightnessTemperature" p2="VIIRS-I2-SDR_All/Reflectance" p3="VIIRS-I1-SDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS NDVI" name="JPSS_NDVI">
@@ -274,7 +274,7 @@
   <paramgroup description="JPSS NDSI" name="JPSS_NDSI">
     <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance"/>
   </paramgroup>
-    <paramgroup description="JPSS EDR Day Land Cloud Fire RGB" name="JPSS_EDR_RGB_DayLandCloudFire">
+    <paramgroup description="JPSS EDR Day Fire RGB" name="JPSS_EDR_RGB_DayFire">
     <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
   </paramgroup>
   <paramgroup description="JPSS EDR NDVI" name="JPSS_EDR_NDVI">
