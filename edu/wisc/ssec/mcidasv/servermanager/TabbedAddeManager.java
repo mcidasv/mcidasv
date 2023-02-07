@@ -89,6 +89,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import edu.wisc.ssec.mcidasv.McIDASV;
 import net.miginfocom.swing.MigLayout;
 
 import org.bushe.swing.event.EventBus;
@@ -503,11 +504,11 @@ public class TabbedAddeManager extends JFrame {
     public void initComponents() {
         Dimension frameSize = new Dimension(730, 460);
         Help.setTopDir(HELP_TOP_DIR);
-        system = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/padlock_closed.png");
-        mctable = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/bug.png");
-        user = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/hand_pro.png");
-        invalid = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/emotion_sad.png");
-        unverified = icon("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/eye_inv.png");
+        system = icon("padlock_closed.png");
+        mctable = icon("bug.png");
+        user = icon("hand_pro.png");
+        invalid = icon("emotion_sad.png");
+        unverified = icon("eye.png");
         setTitle("ADDE Data Manager");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(frameSize);
@@ -1659,15 +1660,25 @@ public class TabbedAddeManager extends JFrame {
     }
 
     /**
-     * Construct an {@link Icon} object using the image at the specified
-     * {@code path}.
+     * Create an {@code Icon} from the name of one the server manager icons.
+     *
+     * <p>Note: this method expects the server manager icons to live in the
+     * same directory within the McIDAS-V JAR file. Currently, the directory is
+     * {@code /edu/wisc/ssec/mcidasv/resources/icons/servermanager/}.
      * 
-     * @param path Path to image to use as an icon. Should not be {@code null}.
+     * @param icon Name of icon within server manager icon directory to use.
+     *             Should not be {@code null}.
      * 
-     * @return Icon object with the desired image.
+     * @return {@code Icon} object with the desired image.
      */
-    private static Icon icon(final String path) {
-        return GuiUtils.getImageIcon(path, TabbedAddeManager.class, true);
+    private static Icon icon(final String icon) {
+        // keep the trailing slash at the end of the path.
+        StringBuilder path = new StringBuilder("/edu/wisc/ssec/mcidasv/resources/icons/servermanager/");
+        if (McIDASV.isDarkMode()) {
+            path.append("inverted_");
+        }
+        path.append(icon);
+        return GuiUtils.getImageIcon(path.toString(), TabbedAddeManager.class, true);
     }
 
     /**
