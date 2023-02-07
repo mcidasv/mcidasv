@@ -28,6 +28,9 @@
 
 package ucar.unidata.idv.ui;
 
+import edu.wisc.ssec.mcidasv.Constants;
+import edu.wisc.ssec.mcidasv.ui.ColorSwatchComponent;
+
 import ij.ImagePlus;
 
 import org.jcodec.api.SequenceEncoder;
@@ -103,6 +106,7 @@ import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -474,6 +478,18 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
     /** Whether or not animated GIFs should use a global color palette. */
     private boolean globalPalette = false;
 
+    /** Check to add borders to captured movie */
+    private static JCheckBox borderBtn;
+
+    /** Width of added borders */
+    private static JComboBox widthBox;
+
+    /** Color of added borders */
+    private static ColorSwatchComponent colorButton;
+
+    /** Enclosing panel for border UI */
+    private static JPanel borderPanel;
+
     /**
      * Create me with the given {@link ucar.unidata.idv.ViewManager}
      *
@@ -782,6 +798,52 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
 
         btns.add(beepCbx);
 
+        backgroundTransparentBtn = new JCheckBox("Background Transparent");
+        backgroundTransparentBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                if (backgroundTransparentBtn.isSelected()
+                        && !notifiedForTransparent) {
+                    LogUtil.userMessage(
+                            "Note: Only KMZ files can be saved with background transparency on");
+                }
+
+                notifiedForTransparent = true;
+            }
+        });
+
+        btns.add(backgroundTransparentBtn);
+
+        borderBtn = new JCheckBox("Borders Visible", false);
+
+        widthBox = new JComboBox(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9","10" });
+        widthBox.setToolTipText("Set the border width");
+        widthBox.setMaximumSize(new Dimension(30, 16));
+        widthBox.setEditable(true);
+
+        colorButton = new ColorSwatchComponent(viewManager.getStore(), new Color(255,255, 255),
+                "Set Map Line Color");
+        colorButton.setToolTipText("Set the border color");
+        colorButton.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
+
+        borderPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(borderPanel);
+        borderPanel.setLayout(layout);
+        layout.setAutoCreateGaps(true);
+        layout.setHorizontalGroup(
+                layout.createParallelGroup()
+                        .addComponent(borderBtn)
+                        .addGroup(layout.createSequentialGroup()
+                                .addComponent(widthBox)
+                                .addComponent(colorButton)
+                        ));
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(borderBtn)
+                        .addGroup(layout.createParallelGroup()
+                                .addComponent(widthBox)
+                                .addComponent(colorButton)
+                        ));
+
         JComponent whatPanel = GuiUtils.vbox(btns);
 
         if (dfltAltDir == null) {
@@ -874,23 +936,11 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             GuiUtils.filler(maxBtnWidth + 10, 1), GuiUtils.filler(),
         }, 2, GuiUtils.WT_N, GuiUtils.WT_N);
 
-        backgroundTransparentBtn = new JCheckBox("Background Transparent");
-        backgroundTransparentBtn.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                if (backgroundTransparentBtn.isSelected()
-                        && !notifiedForTransparent) {
-                    LogUtil.userMessage(
-                        "Note: Only KMZ files can be saved with background transparency on");
-                }
-
-                notifiedForTransparent = true;
-            }
-        });
         capturePanel = GuiUtils.hbox(
             GuiUtils.top(capturePanel),
             GuiUtils.top(
                 GuiUtils.inset(
-                    GuiUtils.vbox(whatPanel, backgroundTransparentBtn),
+                    GuiUtils.vbox(whatPanel, borderPanel),
                     new Insets(0, 10, 0, 0))));
         capturePanel = GuiUtils.inset(GuiUtils.left(capturePanel), 5);
         capturePanel.setBorder(BorderFactory.createTitledBorder("Capture"));
@@ -1883,7 +1933,6 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     overwriteCbx.setSelected(true);
                 }
 
-                // System.err.println ("ImageSequenceGrabber file dir: " +getFileDirectory() +" path: " +  path);
                 DateTime time = null;
 
                 time = (((getAnimation() != null)
@@ -1907,26 +1956,31 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                         Misc.sleep(100);
                     }
 
-                    if (imageGenerator != null) {  //I guess we are in scripting mode.
-                        BufferedImage image;
-                        boolean combine = XmlUtil.getAttribute(scriptingNode,
-                                              ImageGenerator.ATTR_COMBINE,
-                                              false);
-                        if (combine) {
-                            List<Image> images = new LinkedList<Image>();
+                    Color bgColor = Color.GRAY;
+                    int width = 1;
+                    if (borderBtn.isSelected()) {
+                        width = Integer.parseInt((String) widthBox.getSelectedItem());
+                        bgColor = colorButton.getBackground();
+                    }
 
-                            for (Object o :
-                                    viewManager.getVMManager()
-                                        .getViewManagers()) {
+                    if (imageGenerator != null) {  //I guess we are in scripting mode.
+
+                        BufferedImage image;
+                        boolean combine = XmlUtil.getAttribute(scriptingNode, ImageGenerator.ATTR_COMBINE, false);
+
+                        if (combine) {
+                            List<BufferedImage> images = new LinkedList<BufferedImage>();
+
+                            for (Object o : viewManager.getVMManager().getViewManagers()) {
                                 ViewManager vm = (ViewManager) o;
                                 vm.getAnimation().setAniValue(time);
                                 images.add(vm.getMaster().getImage(false));
                             }
                             int cols = 2;
-                            cols = XmlUtil.getAttribute(scriptingNode,
-                            		ImageGenerator.ATTR_COLUMNS, cols);
+                            cols = XmlUtil.getAttribute(scriptingNode, ImageGenerator.ATTR_COLUMNS, cols);
+
                             image = (BufferedImage) ImageUtils.gridImages2(
-                                images, 0, Color.BLACK, cols);
+                                images, width, bgColor, cols);
 
                         } else {
                             image = viewManager.getMaster().getImage(false);
@@ -1944,6 +1998,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                                 imageProperties);
                         subsetBounds(bounds, imageProperties);
                     } else {
+
                         List<Component> components =
                             new LinkedList<Component>();
 
@@ -1977,10 +2032,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                             components.add(viewManager.getContents());
                         }
 
-                        Image image = captureImages(
-                                          components,
-                                          ImageUtils.getColumnCountFromComps(
-                                              components));
+                        Image image = captureImages(components, width, bgColor, ImageUtils.getColumnCountFromComps(components));
 
                         if (allViewsBtn.isSelected()) {
 
@@ -2027,7 +2079,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
      * @return the image
      * @throws AWTException the aWT exception
      */
-    public Image captureImages(List<? extends Component> components, int cols)
+    public Image captureImages(List<? extends Component> components, int width, Color color, int cols)
             throws AWTException {
         List<Image> images = new LinkedList<Image>();
 
@@ -2035,7 +2087,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
             images.add(captureImage(c));
         }
 
-        return ImageUtils.gridImages2(images, 0, Color.GRAY, cols);
+        return ImageUtils.gridImages2(images, width, color, cols);
     }
 
     /**
