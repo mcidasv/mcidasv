@@ -1956,8 +1956,9 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                         Misc.sleep(100);
                     }
 
+                    // Gray and zero width will prevent borders from being created when checkbox is inactive
                     Color bgColor = Color.GRAY;
-                    int width = 1;
+                    int width = 0;
                     if (borderBtn.isSelected()) {
                         width = Integer.parseInt((String) widthBox.getSelectedItem());
                         bgColor = colorButton.getBackground();
