@@ -207,9 +207,14 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         BooleanOption useGeometryByRef = optMaster.getBooleanOption("USE_GEOBYREF");
         if (useGeometryByRef != null) {
             shouldWarn = backgroundMode
-                    && "0".equals(useGeometryByRef.getValue())
+                    && !Boolean.parseBoolean(System.getProperty("visad.java3d.geometryByRef"))
                     && Boolean.parseBoolean(System.getProperty(PROP_NEW_FONT_RENDERING, "false"));
         }
+//        System.out.println("background mode: "+backgroundMode);
+//        System.out.println("geo by ref: "+Boolean.parseBoolean(System.getProperty("visad.java3d.geometryByRef")));
+//        System.out.println("new fonts: "+Boolean.parseBoolean(System.getProperty(PROP_NEW_FONT_RENDERING, "false")));
+//        System.out.println("shouldWarn: "+shouldWarn);
+//        System.out.println("props:\n"+System.getProperties());
         return shouldWarn;
     }
 

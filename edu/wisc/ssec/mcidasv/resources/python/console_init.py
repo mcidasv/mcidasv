@@ -185,10 +185,10 @@ if _isInteractive:
                 globals()[modname] = __import__(modname, globals(), locals(), ['*'], -1)
             del modname, ext
 
-
 from edu.wisc.ssec.mcidasv import JythonManager as McvJythonManager
 if McvJythonManager.shouldWarnImageCapturing():
-    print("*** Geometry by reference must be enabled for layer labels to appear with new font rendering ***")
+    print("*** Geometry by reference must be enabled for background scripts to run McIDAS-V with new font rendering enabled. Exiting. ***")
+    System.exit(1)
 
 ___init_finished = True
 
