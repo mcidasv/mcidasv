@@ -42,7 +42,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('display_controls/
 <p>The user can save a display as an image by selecting the <strong>View-&gt;Capture-&gt;Image...</strong> menu
 item in the Main Display window. A file dialog will open where you can enter a file name for the image
 file. McIDAS-V supports JPEG, PNG, GIF, PDF, PS, and SVG formats. From this File
-Dialog you can also  select whether or not the background is transparent.</p>
+Dialog you can also  select whether or not the background is transparent. The <span class="propertylistitem">Borders Visible controls adds a border around panels when capturing an image with the All Views option. When enabled, borders the thickness specified in the dropdown and color specified in the swatch will be added around each panel.</span></p>
 <p>Note: When capturing an image, the Main Display window cannot be obscured.</p>
 <p>McIDAS-V can also write out an image and the corresponding Google Earth KML
   or KMZ file. For this to be correct, the projection must be a Lat/Lon geographic
@@ -62,7 +62,7 @@ item in the Main Display window. A <strong>Print</strong> dialog will popup wher
 <div class="pagesubtitle"><a name="moviecapture" id="moviecapture"></a>Saving QuickTime Movies</div>
 <p>You can save any sequence of displays as a movie. Select the <strong>View-&gt;Capture-&gt;Movie...</strong> menu
 item in the Main Display window to open the Movie Capture window:</p>
-<div class="images"><img src="images/VMImageCapturePopup.gif" width="574" height="493" alt="Image 1: Movie Capture Window"/><br>
+<div class="images"><img src="images/VMImageCapturePopup.gif" width="488" height="544" alt="Image 1: Movie Capture Window"/><br>
 <span class="caption">Image 1: Movie Capture Window</span></div>
 <div class="pagesubtitle">Properties</div>
 <p>Note: More information about these controls is found in the <a href="#create">Creating a Movie</a> section below.</p>
@@ -83,6 +83,7 @@ item in the Main Display window to open the Movie Capture window:</p>
 <li class="propertylistitem"><strong>Full Screen -</strong> Captures everything visible on the monitor.</li>
 <li class="propertylistitem"><strong>Beep -</strong> Produces a beeping noise at the beginning of each frame captured in the movie.</li>
 <li class="propertylistitem"><strong>Background Transparent -</strong> Captures the movie with the background image transparent.</li>
+<li class="propertylistitem"><strong>Borders Visible -</strong> Adds a border around panels when capturing a movie with the All Views option. When enabled, borders the thickness specified in the dropdown and color specified in the swatch will be added around each panel.</li>
 </ul>
 <li class="propertylistitem"><strong>Image Files -</strong></li>
 <ul class="propertylist">
