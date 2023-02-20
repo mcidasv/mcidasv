@@ -413,16 +413,24 @@
     <params p1="101_Band1_REF" p2="101_Band2_REF"/>
     <params p1="111_Band1_REF" p2="111_Band2_REF"/>
     <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_1" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2"/>
+    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b01" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b02"/>
+    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b01_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b02_1"/>
+    <params p1="MODIS_Grid_2D/Data_Fields/sur_refl_b01_1" p2="MODIS_Grid_2D/Data_Fields/sur_refl_b02_1"/>
+    <params p1="MOD_Grid_250m_Surface_Reflectance/Data_Fields/sur_refl_b01" p2="MOD_Grid_250m_Surface_Reflectance/Data_Fields/sur_refl_b02"/>
   </paramgroup>
   <paramgroup description="MODIS NDSI" name="MODIS_NDSI">
     <params p1="101_Band4_REF" p2="101_Band6_REF"/>
     <params p1="111_Band4_REF" p2="111_Band6_REF"/>
     <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_4" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_6"/>
+    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b04" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b06"/>
+    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b04_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b06_1"/>
   </paramgroup>
   <paramgroup description="MODIS NDWI" name="MODIS_NDWI">
     <params p1="101_Band2_REF" p2="101_Band4_REF"/>
     <params p1="111_Band2_REF" p2="111_Band4_REF"/>
     <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_4"/>
+    <params p1="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b02" p2="MOD_Grid_500m_Surface_Reflectance/Data_Fields/sur_refl_b04"/>
+    <params p1="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b02_1" p2="MODIS_Grid_500m_2D/Data_Fields/sur_refl_b04_1"/>
   </paramgroup>
   <paramgroup description="MODIS EVI" name="MODIS_EVI">
     <params p1="101_Band1_REF" p2="101_Band2_REF" p3="101_Band3_REF"/>
