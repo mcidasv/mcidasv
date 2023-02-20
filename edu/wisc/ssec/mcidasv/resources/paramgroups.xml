@@ -412,14 +412,17 @@
   <paramgroup description="MODIS NDVI" name="MODIS_NDVI">
     <params p1="101_Band1_REF" p2="101_Band2_REF"/>
     <params p1="111_Band1_REF" p2="111_Band2_REF"/>
+    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_1" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2"/>
   </paramgroup>
   <paramgroup description="MODIS NDSI" name="MODIS_NDSI">
     <params p1="101_Band4_REF" p2="101_Band6_REF"/>
     <params p1="111_Band4_REF" p2="111_Band6_REF"/>
+    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_4" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_6"/>
   </paramgroup>
   <paramgroup description="MODIS NDWI" name="MODIS_NDWI">
     <params p1="101_Band2_REF" p2="101_Band4_REF"/>
     <params p1="111_Band2_REF" p2="111_Band4_REF"/>
+    <params p1="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_2" p2="MODIS_SWATH_TYPE_L2/Data_Fields/1km_Surface_Reflectance_Band_4"/>
   </paramgroup>
   <paramgroup description="MODIS EVI" name="MODIS_EVI">
     <params p1="101_Band1_REF" p2="101_Band2_REF" p3="101_Band3_REF"/>
