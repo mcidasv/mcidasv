@@ -81,8 +81,8 @@ public class TropomiIOSP extends AbstractIOServiceProvider {
     private static final String TROPOMI_L2_REGEX =
             // Mission Name (ex: S5P)
             "\\w\\w\\w" + TROPOMI_FIELD_SEPARATOR +
-            // Type of data: Real-Time, Offline, or Reprocessed
-            "(NRTI|OFFL|RPRO)" + TROPOMI_FIELD_SEPARATOR +
+            // Type of data: Real-Time, Offline, Reprocessed, or Products Algorithm Laboratory
+            "(NRTI|OFFL|RPRO|PAL_)" + TROPOMI_FIELD_SEPARATOR +
             // Product Identifier
             "(L2_|L1B)" + TROPOMI_FIELD_SEPARATOR +
             // Product (can be up to six characters, separator-padded if less, e.g. CH4___)
