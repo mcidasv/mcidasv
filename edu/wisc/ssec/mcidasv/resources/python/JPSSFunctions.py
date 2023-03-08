@@ -297,7 +297,7 @@ def VIIRSCloudTypeRGB(M9, M5, M10):
     grd750 = makeGrid(M9, 750)
     
     red = 255*(rescale(M9, 0, 0.10, 0, 1)**(1/0.66))
-    grn = 255*(rescale(M5, 0, 0.78, 0, 255)
+    grn = rescale(M5, 0, 0.78, 0, 255)
     blu = rescale(M10, 0, 0.59, 0, 255)
 
     rgb = MultiSpectralDataSource.swathToGrid(grd750, [red, grn, blu], 1.0)
