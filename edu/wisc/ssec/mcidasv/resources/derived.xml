@@ -913,7 +913,7 @@
             <paramgroup categories="" name="JPSS_RGB_FireTemperature"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR Natural Color SVM RGB" formula="VIIRSNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_Natural_Color_RGB" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS SDR Natural Color M-Band RGB" formula="VIIRSNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_Natural_Color_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
             <category value="display:rgbcomposite"/>
@@ -1165,17 +1165,6 @@
             <paramgroup name="JPSS_EDR_RGB_NightMicrophysics"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Cloud Phase RGB" formula="VIIRSEdrCloudPhaseRGB(D1[label=M10 Reflectance], D2[label=M11 Reflectance], D3[label=M1 Reflectance])" id="VIIRS_EDR_Cloud_Phase_RGB" isdefault="true" isenduser="true" override="true">
-        <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
-            <category value="display:rgbcomposite"/>
-            <category value="display:imagecontrol"/>
-            <category value="display:imagecontroloverz"/>
-        </categories>
-        <operands>
-            <paramgroup name="JPSS_EDR_RGB_CloudPhase"/>
-        </operands>
-    </derived>
     <derived description="VIIRS EDR Day Fire RGB" formula="VIIRSEdrDayFireRGB(D1[label=I4 Temperature], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_EDR_DAY_FIRE_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
@@ -1274,7 +1263,7 @@
             <paramgroup name="JPSS_EDR_RGB_DayCloudPhaseDistinctionI"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Day Snow-Fog M-Band RGB" formula="VIIRSEdrDaySnowFogMRGB(D1[label=M7 Reflectance], D2[label=M10 Reflectance], D3[label=M12 Temperature], D4[label=M15 Temperature])" id="VIIRS_EDR_DAY_CLOUD_PHASE_M_RGB" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS EDR Day Snow-Fog M-Band RGB" formula="VIIRSEdrDaySnowFogMRGB(D1[label=M7 Reflectance], D2[label=M10 Reflectance], D3[label=M12 Temperature], D4[label=M15 Temperature])" id="VIIRS_EDR_DAY_SNOW_FOG_M_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
             <category value="display:imagecontrol"/>
@@ -1285,7 +1274,7 @@
             <paramgroup name="JPSS_EDR_RGB_DayCloudSnowFogM"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Day Snow-Fog I-Band RGB" formula="VIIRSEdrDaySnowFogIRGB(D1[label=I2 Reflectance], D2[label=I3 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_EDR_DAY_CLOUD_PHASE_I_RGB" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS EDR Day Snow-Fog I-Band RGB" formula="VIIRSEdrDaySnowFogIRGB(D1[label=I2 Reflectance], D2[label=I3 Reflectance], D3[label=I4 Temperature], D4[label=I5 Temperature])" id="VIIRS_EDR_DAY_SNOW_FOG_I_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
             <category value="display:imagecontrol"/>
