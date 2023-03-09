@@ -232,7 +232,7 @@ def VIIRSNaturalColorIRGB(I3, I2, I1):
 
 
 # VIIRS SDR Day Cloud Phase Distinction M-Band RGB
-def VIIRSCloudPhaseRGB(M10, M11, M1):
+def VIIRSDayCloudPhaseMRGB(M5, M10, M15):
     # https://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_DayCloudPhaseDistinction_final_v2.pdf
     # red = M15 (10.763um); 7.5C to -53.5C (280.65K to 219.65) rescaled to 0 to 255; gamma 1.0
     # grn = M5 (0.672um);   0 to 78% reflectance rescaled to 0 to 255; gamma 1.0
