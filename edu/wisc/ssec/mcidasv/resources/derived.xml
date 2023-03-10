@@ -547,6 +547,7 @@
     <derived description="ABI Day Fire RGB" formula="ABIDayFireRGB(D1[label=Band 2 Albedo], D2[label=Band 3 Albedo], D3[label=Band 6 Albedo])" id="abidaylandcloudfire" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
+            <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
         </categories>
@@ -557,6 +558,7 @@
     <derived description="ABI Day Land Cloud RGB" formula="ABIDayLandCloudRGB(D1[label=Band 2 Albedo], D2[label=Band 3 Albedo], D3[label=Band 5 Albedo])" id="abidaylandcloud" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
+            <category value="display:rgbcomposite"/>
             <category value="display:imagecontrol"/>
             <category value="display:imagecontroloverz"/>
         </categories>
@@ -601,6 +603,8 @@
         <categories>
             <category display="true" value="Imagery-ABI Functions"/>
             <category value="display:rgbcomposite"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:imagecontroloverz"/>
         </categories>
         <operands categories="">
             <paramgroup categories="" name="ABI_RGB_FireTemperature"/>
