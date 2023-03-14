@@ -25,3 +25,9 @@ build/*
 
 # Vim swap files
 .*.swp
+
+# things related to code signing that shouldn't be in the repo
+*.pfx
+*.p12s
+signing/*
+
