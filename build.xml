@@ -103,14 +103,14 @@
     <!-- Attempt to load the version property file -->
     <property file="${resource.dir}/version.properties" />
     <property name="mcv.version" value="${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release}-SNAPSHOT" />
-    
-    <property name="media.dir" location="${base.dir}/../install4j/media" />
+    <property name="install4j.dir" value="${base.dir}/../install4j" />
+    <property name="media.dir" location="${install4j.dir}/media" />
     <property name="source.file" value="McIDAS-V_${mcidasv.version.major}.${mcidasv.version.minor}${mcidasv.version.release}_source.jar" />
  
     <!-- Binary file definitions -->
     <property name="java.bin" location="../java_jdk/bin/java" />
     <property name="jhindexer.bin" location="../jh2.0/javahelp/bin/jhindexer" />
-    <property name="install4jc.bin" location="${base.dir}/../install4j/bin/install4jc" />
+    <property name="install4jc.bin" location="${install4j.dir}/bin/install4jc" />
 
     <!-- Required library jar file names -->
     <property name="visad.jar" value="visad.jar" />
@@ -152,6 +152,16 @@
     <property name="run.largeheap" value="6G" />
 
     <property name="logback.default.config" value="${userpath.dir}/logback.xml" />
+
+    <!--
+      This value is meant to be set from the commandline, and is used in the
+      "installers" target.
+
+      Linux example:
+          ant -Dwindows.keystore=$(cat SOME_FILE_CONTAINING_PASSWORD.txt) dist installers
+    -->
+    <property name="windows.keystore" value="DUMMY VALUE" />
+
 
     <!-- VisAD Properties -->
     <!-- visad.texturemax is a workaround for the bizarro problem detailed at
@@ -1539,9 +1549,11 @@
 
     <!-- Make the installers with install4j -->
     <target name="installers" depends="installer_custom_code" description="Make the installers with install4j">
+        <!-- see comment attached to the "windows.keystore" property for usage info -->
         <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
             <arg value="-D" />
             <arg value="IDV_VERSION=${idv.version}" />
+            <arg value="--win-keystore-password=${windows.keystore}" />
             <arg value="mcidasv.install4j" />
         </exec>
     </target>
