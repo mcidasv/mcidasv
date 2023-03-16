@@ -445,10 +445,15 @@ public class SuomiNPPDataSource extends HydraDataSource {
 													// track down existence of an official Product Profile for it.
 													// http://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2634
 													// The regular SDR profile lets us visualize it.
-													if (productName.equals("CrIS-FS-SDR")) productName = "CrIS-SDR";
 
 													SuomiNPPProductProfile profile = new SuomiNPPProductProfile();
-													String productProfileFileName = profile.getProfileFileName(productName);
+													String productProfileFileName = null;
+													if (productName.equals("CrIS-FS-SDR")) {
+														productProfileFileName = profile.getProfileFileName("CrIS-SDR");
+													} else {
+														productProfileFileName = profile.getProfileFileName(productName);
+													}
+
 													logger.info("Found profile: " + productProfileFileName + " for prod: " + productName);
 													profiles.put(productName, profile);
 													if (productProfileFileName == null) {
