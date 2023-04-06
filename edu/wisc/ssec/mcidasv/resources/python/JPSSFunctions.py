@@ -560,10 +560,10 @@ def VIIRSEdrNaturalColorIRGB(I3, I2, I1):
 
 # VIIRS EDR Day Cloud Type RGB
 def VIIRSEdrCloudTypeRGB(M9, M5, M10):
-    # red = M9 (1.378um);  0  - 10 reflectance rescaled to 0 to 255; gamma 0.66
-    # grn = M5 (0.672um);  0  - 78 reflectance rescaled to 0 to 255; gamma 1.0
-    # blu = M10 (1.612um); 0 - 59 reflectance rescaled to 0 to 255; gamma 1.0
-    red = 255*(rescale(M9, 0, 10, 0, 1)**(1/0.66))
+    # red = M9 (1.378um);  0 to 10 reflectance rescaled to 0 to 255; gamma 0.66
+    # grn = M5 (0.672um);  0 to 78 reflectance rescaled to 0 to 255; gamma 1.0
+    # blu = M10 (1.612um); 0 to 59 reflectance rescaled to 0 to 255; gamma 1.0
+    red = 255*(rescale(M9, 0, .10, 0, 1)**(1/0.66))
     grn = rescale(M5, 0, 0.78, 0, 255)
     blu = rescale(M10, 0, 0.59, 0, 255)
     return combineRGB(red, grn, blu)
@@ -643,9 +643,9 @@ def VIIRSEdrDaySnowFogMRGB(M7, M10, M12, M15):
 # VIIRS EDR Day Snow-Fog I-Band RGB
 def VIIRSEdrDaySnowFogIRGB(I2, I3, I4, I5):
     # https://rammb.cira.colostate.edu/training/visit/quick_guides/QuickGuide_DaySnowFogRGB_final_v2.pdf
-    # red = I2 (0.865um);         0 - 100 reflectance rescaled to 0 to 255; gamma 1.7
-    # grn = I3 (1.61um);          0 - 70 reflectance rescaled to 0 to 255; gamma 1.7
-    # blu = I4-I5 (3.74um-11.45); 0C - 30C rescaled to 0 to 255; gamma 1.7
+    # red = I2 (0.865um);         0 to 100 reflectance rescaled to 0 to 255; gamma 1.7
+    # grn = I3 (1.61um);          0 to 70 reflectance rescaled to 0 to 255; gamma 1.7
+    # blu = I4-I5 (3.74um-11.45); 0C to 30C rescaled to 0 to 255; gamma 1.7
     red = 255*(rescale(I2, 0, 1, 0, 1)**(1/1.7))
     grn = 255*(rescale(I3, 0, 0.7, 0, 1)**(1/1.7))
     blu = 255*(rescale(I4-I5, 0, 30, 0, 1)**(1/1.7))
