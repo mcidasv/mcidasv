@@ -59,6 +59,7 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -327,7 +328,19 @@ public class DraggableTabbedPane extends JTabbedPane implements
             // make sure the user chose to drop over a valid area/thing first
             // then do the actual drop.
             if ((dropIndex != -1) && (getComponentAt(dropIndex) != null)) {
-                doDrop(sourceIndex, dropIndex);
+                // TJJ Apr 2023
+                // https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=3047
+                // Will resolve macOS tab reordering problem after 1.9 release
+                if (System.getProperty("os.name").contains("Mac OS X")) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Tab drag-and-drop has been disabled on macOS until the next release, apologies.",
+                            "Tab Reorder on macOS",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                } else {
+                    doDrop(sourceIndex, dropIndex);
+                }
             }
 
             // clean up anything associated with the current drag and drop
