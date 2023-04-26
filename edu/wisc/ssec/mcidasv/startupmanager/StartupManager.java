@@ -185,19 +185,31 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
      * Figures out the type of platform. Queries the {@literal "os.name"}
      * system property to determine the platform type.
      * 
-     * @return {@link Platform#UNIXLIKE} or {@link Platform#WINDOWS}.
+     * @return {@link Platform#UNIXLIKE}, {@link Platform#WINDOWS},
+     * or {@link Platform#MAC}.
      */
     private Platform determinePlatform() {
         String os = System.getProperty("os.name");
         if (os == null) {
-            throw new RuntimeException();
+            throw new RuntimeException("Java could not determine operating system!");
         }
-        return os.startsWith("Windows") ? Platform.WINDOWS : Platform.UNIXLIKE;
+
+        Platform p;
+        if (os.startsWith("Windows")) {
+            p = Platform.WINDOWS;
+        } else if (os.startsWith("Mac")) {
+            p = Platform.MAC;
+        } else if (os.startsWith("Linux")) {
+            p = Platform.UNIXLIKE;
+        } else {
+            throw new RuntimeException("Unsupported operating system '"+os+'\'');
+        }
+        return p;
     }
     
     /** 
-     * Returns either {@link Platform#UNIXLIKE} or 
-     * {@link Platform#WINDOWS}.
+     * Returns either {@link Platform#UNIXLIKE}, {@link Platform#WINDOWS},
+     * or {@link Platform#MAC}.
      * 
      * @return The platform as determined by {@link #determinePlatform()}.
      */
@@ -277,7 +289,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     /**
      * Creates and returns the advanced preferences panel.
      * 
-     * @return Panel with all of the various startup options.
+     * @return Panel with all the various startup options.
      */
     private JPanel buildAdvancedPanel() {
         OptionMaster optMaster = OptionMaster.getInstance();
@@ -462,7 +474,7 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
     /**
      * Returns a panel containing the Apply/Ok/Help/Cancel buttons.
      * 
-     * @return Panel containing the the command row.
+     * @return Panel containing the command row.
      */
     public JPanel getCommandRow() {
         if (COMMAND_ROW_PANEL == null) {

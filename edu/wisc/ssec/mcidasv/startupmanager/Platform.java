@@ -40,17 +40,21 @@ import edu.wisc.ssec.mcidasv.startupmanager.options.OptionMaster;
  * Represents platform specific details used by McIDAS-V. In particular, there
  * are useful methods related to the McIDAS-V {@literal "userpath"}.
  *
- * <p>Currently McIDAS-V distinguishes between {@literal "Unix-like"} and
- * {@literal "Windows"}; these can be accessed using {@code Platform.UNIXLIKE}
- * or {@code Platform.WINDOWS}.</p>
+ * <p>Currently McIDAS-V distinguishes between {@literal "Unix-like"}, macOS,
+ * and {@literal "Windows"}; these can be accessed using
+ * {@code Platform.UNIXLIKE}, {@code Platform.WINDOWS},
+ * or {@code Platform.MAC}.</p>
  */
 public enum Platform {
     /** Instance of unix-specific platform information. */
     UNIXLIKE("runMcV.prefs", "\n"),
-    
+
+    /** macOS-specicfic platform information. */
+    MAC("runMcV.prefs", "\n"),
+
     /** Instance of windows-specific platform information. */
     WINDOWS("runMcV-Prefs.bat", "\r\n");
-    
+
     /** Path to the user's {@literal "userpath"} directory. */
     private String userDirectory;
     
