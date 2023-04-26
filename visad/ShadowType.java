@@ -4061,7 +4061,7 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
 //              logger.trace("\t{},{}={}", i, j, spatial_values[i][j]);
 //            }
 
-          }
+//          }
 //          TextLabel textLabel = new TextLabel(text_control, true);
 //          DisplayRendererJ3D displayRenderer =
 //                  (DisplayRendererJ3D) display.getDisplayRenderer();
