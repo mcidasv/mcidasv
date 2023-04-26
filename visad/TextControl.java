@@ -97,7 +97,8 @@ public class TextControl extends Control {
   private ProjectionControlListener pcl = null;
   
   private String textType = null;
-  
+
+
   /**
    * A class to represent the different types of justification.
    * Use a class so the user can't just pass in an arbitrary integer
@@ -190,7 +191,33 @@ public class TextControl extends Control {
     super.nullControl();
   }
 
-  /** set the font; in the initial release this has no effect
+  public float getAngle() {
+    return 0.0f;
+  }
+
+  public float getPitch() {
+    return 0.0f;
+  }
+
+  public float getGroundElevation() {
+    return 0.0f;
+  }
+
+  public float getElevation() {
+    return 0.0f;
+  }
+
+  private ShadowType.LabelStuff labelStuff;
+
+  public ShadowType.LabelStuff getLabelStuff() {
+    return labelStuff;
+  }
+
+  public void setLabelStuff(ShadowType.LabelStuff ls) {
+    labelStuff = ls;
+  }
+
+                            /** set the font; in the initial release this has no effect
   *
   * @param f is the java.awt.Font or the visad.util.HersheyFont
   */
