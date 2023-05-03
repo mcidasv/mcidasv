@@ -235,9 +235,10 @@ application/x-java-jnlp-file JNLP
 </div>
     <a name="maplines" id="maplines"></a>
     <div class="faq-question">
-      <h4>Q. How do I fix the spurious map lines in my Main Display window?</h4></div>
+      <h4>Q. How do I fix the spurious or missing map lines in my Main Display window?</h4></div>
 <div class="faq-answer"><strong>A.</strong> If you run into this problem, you should first try changing your <strong><a href="tools/preferences/AdvancedPreferences.html#geobyref">Enable access to geometry by reference</a></strong> VisAD setting in the <strong>Advanced</strong> tab of the User Preferences window.&nbsp;You can get to the User&nbsp;Preferences window through the <strong>Edit-&gt;Preferences</strong> menu item in the Main Display window. This option is turned on by default, but turning this option off can help to remove random/extraneous map lines that sometimes appear in the display. This is a problem that may occur more frequently on systems with ATI graphics cards. After changing this preference, click <strong>OK</strong> and restart McIDAS-V (any changes to the Advanced Preference require a restart to take affect).</p>
     <p>If this did not solve the map line problem, look in the <strong>Layer Controls</strong> tab of the Data Explorer for the <a href="controls/MapDisplayControl.html">Default Background Maps</a>. Determine which map is causing the spurious lines by toggling the visibility of the maps on and off. Once you determine which map is causing the lines, change the <strong>Fast Rendering</strong> option for this map.</p>
+    <p>If there are no map lines visible in the <strong>Main Display</strong>, disabling geometry by reference and restarting the session may add map lines to the display.</p>
 </div>
     <a name="blank" id="blank"></a>
      <div class="faq-question">
