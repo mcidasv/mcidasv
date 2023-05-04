@@ -49,6 +49,9 @@ scmiadir scmiaget
 
 abinadir abinaget
 
+viiradir viiraget
+warcadir warcaget 
+
 vpserv
 atokserv
 mdfhserv
