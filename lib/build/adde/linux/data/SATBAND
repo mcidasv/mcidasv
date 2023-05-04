@@ -66,6 +66,18 @@ BRes 1.0 1.0
  17 DESC='Digital Accumulation Array'
  18 DESC='Melting Layer'
  19 DESC='Base Spectrum Width'
+Cal PRD
+BRes 1.0 1.0
+ 24 DESC='DVL Digital Vertical Liquid Water'
+ 25 DESC='HHC Hybrid Hydrometeor Classification'
+ 26 DESC='EET Enhanced Echo Tops'
+ 27 DESC='N0R Base Reflectivity'
+ 28 DESC='DHR Digital Hybrid Reflectivity'
+ 29 DESC='DVL Digital Vertical Liquid Water'
+ 30 DESC='N1P 1-hour Precipitation'
+ 31 DESC='NTP Storm Total Precipitation'
+ 32 DESC='N0Q High Resolution Base Reflectivity'
+ 33 DESC='N0B Super Resolution Base Reflectivity'
 EndSat
 Sat 8
 Cal MAMS
@@ -5052,22 +5064,22 @@ EndSat
 Sat 186 188 190 192
 Cal ABIN 
 BRes 0.5 0.5
-1 DESC='0.47 um VIS aerosol-over-land' WN=21266 cm-1 WL=0.47 um
-2 DESC='0.64 um VIS clouds fog, insol, winds' WN=15712 cm-1 WL=0.64 um
-3 DESC='0.86 um Near IR veg/burn scar,aerosol, wind' WN=11575 cm-1 WL=0.86 um
-4 DESC='1.37 um Near IR cirrus cloud' WN=7282 cm-1 WL=1.37 um
-5 DESC='1.6 um Near IR cloud phase, snow' WN=6215 cm-1 WL=1.6 um
-6 DESC='2.2 um Near IR land/cloud, vege, snow' WN=4459 cm-1 WL=2.2 um
-7 DESC='3.9 um IR Sfc, cloud, fog, fire, winds' WN=2570 cm-1 WL=3.9 um
-8 DESC='6.2 um IR High-level WV, winds, rainfall' WN=1621 cm-1 WL=6.2 um
-9 DESC='6.9 um IR Mid-level WV, winds, rainfall' WN=1444 cm-1 WL=6.9 um
-10 DESC='7.3 um IR Lower-level WV, winds & SO2' WN=1363 cm-1 WL=7.3 um
-11 DESC='8.4 um IR Total WV cloud phase, dust' WN=1184 cm-1 WL=8.4 um
-12 DESC='9.6 um IR Total ozone,turbulence,wind' WN=1041 cm-1 WL=9.6 um
-13 DESC='10.3 um IR Surface & cloud' WN=968 cm-1 WL=10.3 um
+ 1 DESC='0.47 um VIS Daytime aerosols over land' WN=21266 cm-1 WL=0.47 um
+ 2 DESC='0.64 um VIS Clouds,fog,insolation,wind' WN=15712 cm-1 WL=0.64 um
+ 3 DESC='0.86 um NIR Veg/burn scar,aerosols,wind' WN=11575 cm-1 WL=0.86 um
+ 4 DESC='1.37 um NIR Cirrus clouds' WN=7282 cm-1 WL=1.37 um
+ 5 DESC=' 1.6 um NIR Cloud phase,snow' WN=6215 cm-1 WL=1.6 um
+ 6 DESC=' 2.2 um NIR Land/cloud,vegetation,snow' WN=4459 cm-1 WL=2.2 um
+ 7 DESC=' 3.9 um IR Sfc,cloud,fog,fire,wind' WN=2570 cm-1 WL=3.9 um
+ 8 DESC=' 6.2 um IR Hi-level WV,wind,rainfall' WN=1621 cm-1 WL=6.2 um
+ 9 DESC=' 6.9 um IR Mid-level WV,wind,rainfall' WN=1444 cm-1 WL=6.9 um
+10 DESC=' 7.3 um IR Lower-level WV,wind,SO2' WN=1363 cm-1 WL=7.3 um
+11 DESC=' 8.4 um IR Total WV cloud phase,dust' WN=1184 cm-1 WL=8.4 um
+12 DESC=' 9.6 um IR Total ozone,turbulence,wind' WN=1041 cm-1 WL=9.6 um
+13 DESC='10.3 um IR Surface and cloud' WN=968 cm-1 WL=10.3 um
 14 DESC='11.2 um IR Imagery,SST,clouds,rainfall' WN=894 cm-1 WL=11.2 um
-15 DESC='12.3 um IR Total water, ash, and SST' WN=815 cm-1 WL=12.3 um
-16 DESC='13.3 um IR Air temp, cloud hgt and amt' WN=754 cm-1 WL=13.3 um
+15 DESC='12.3 um IR Total water,ash,SST' WN=815 cm-1 WL=12.3 um
+16 DESC='13.3 um IR Air temp,cloud hgt and amt' WN=754 cm-1 WL=13.3 um
 Cal ABIS
 BRes 1.0 1.0
 1 DESC='0.47 um VIS aerosol-over-land' WN=21277 cm-1 WL=0.47 um
@@ -5100,7 +5112,7 @@ BRes 0.5 0.5
 10 DESC='7.3 um IR Lower-level WV, winds & SO2' WN=1363 cm-1 WL=7.3 um
 11 DESC='8.4 um IR Total WV cloud phase, dust' WN=1184 cm-1 WL=8.4 um
 12 DESC='9.6 um IR Total ozone,turbulence,wind' WN=1041 cm-1 WL=9.6 um
-13 DESC='10.3 um IR Surface & cloud' WN=968 cm-1 WL=10.3 um
+13 DESC='10.3 um IR Surface and cloud' WN=968 cm-1 WL=10.3 um
 14 DESC='11.2 um IR Imagery,SST,clouds,rainfall' WN=894 cm-1 WL=11.2 um
 15 DESC='12.3 um IR Total water, ash, and SST' WN=815 cm-1 WL=12.3 um
 16 DESC='13.3 um IR Air temp, cloud hgt and amt' WN=754 cm-1 WL=13.3 um
@@ -5136,45 +5148,51 @@ EndSat
 Sat 187 189 191 193
 Cal ABIN 
 BRes 0.5 0.5
- 1 DESC='L2: ACM  - Cloud Mask'
- 2 DESC='L2: CTP  - Cloud Top Pressure'
+ 1 DESC='L2: ACM - Cloud Mask'
+ 2 DESC='L2: CTP - Cloud Top Pressure'
  3 DESC='L2: ACHA - Cloud Top Height'
  4 DESC='L2: ACHT - Cloud Top Temperature'
  5 DESC='L2: ACTP - Cloud Top Phase'
- 6 DESC='L2: COD  - Cloud Optical Depth'
- 7 DESC='L2: CPS  - Cloud Particle Size'
- 8 DESC='L2: DSI  - Lifted Index'
- 9 DESC='L2: DSI  - CAPE'
-10 DESC='L2: DSI  - Total Totals'
-11 DESC='L2: DSI  - Showalter Index'
-12 DESC='L2: DSI  - K-Index'
-13 DESC='L2: TPW  - Total Precipitable Water'
-14 DESC='L2: FDC  - Fire Detection Area' 
-15 DESC='L2: FDC  - Fire Detection Temp'
-16 DESC='L2: FDC  - Fire Detection Mask' 
-17 DESC='L2: FDC  - Fire Detection Power' 
-18 DESC='L2: LST  - Land Surface Temperature'
-19 DESC='L2: ADP  - Aerosol Detection'
-20 DESC='L2: ADP  - Aerosol Detection Smoke'
-21 DESC='L2: ADP  - Aerosol Detection Dust'
-22 DESC='L2: AOD  - Aerosol Optical Depth'
-23 DESC='L2: FSC  - Fractional Snow Cover'
+ 6 DESC='L2: COD - Cloud Optical Depth'
+ 7 DESC='L2: CPS - Cloud Particle Size'
+ 8 DESC='L2: DSI - Lifted Index'
+ 9 DESC='L2: DSI - CAPE'
+10 DESC='L2: DSI - Total Totals'
+11 DESC='L2: DSI - Showalter Index'
+12 DESC='L2: DSI - K-Index'
+13 DESC='L2: TPW - Total Precipitable Water'
+14 DESC='L2: FDC - Fire Detection Area' 
+15 DESC='L2: FDC - Fire Detection Temp'
+16 DESC='L2: FDC - Fire Detection Mask' 
+17 DESC='L2: FDC - Fire Detection Power' 
+18 DESC='L2: LST - Land Surface Temperature'
+19 DESC='L2: ADP - Aerosol Detection'
+20 DESC='L2: ADP - Aerosol Detection Smoke'
+21 DESC='L2: ADP - Aerosol Detection Dust'
+22 DESC='L2: AOD - Aerosol Optical Depth'
+23 DESC='L2: FSC - Fractional Snow Cover'
 24 DESC='L2: RRQP - Rain Rate / QPE'
-25 DESC='L2: SST  - Sea Surface Temperature'
-26 DESC='L2: VAA  - Volcanic Ash Height'
-27 DESC='L2: VAA  - Volcanic Ash Mass Loading'
-28 DESC='L2: GLM  - Flash Extent Density'
-29 DESC='L2: GLM  - Flash Centroid Density'
-30 DESC='L2: GLM  - Minimum Flash Area'
-31 DESC='L2: GLM  - Average Flash Area'
-32 DESC='L2: GLM  - Total Energy'
-33 DESC='L2: GLM  - Group Extent Density'
-34 DESC='L2: GLM  - Group Centroid Density'
-35 DESC='L2: GLM  - Average Group Area'
-36 DESC='L2: GFLS - Fog Depth'
-37 DESC='L2: GFLS - IFR Fog Probability'
-38 DESC='L2: GFLS - LIFR Fog Probability'
-39 DESC='L2: GFLS - MIFR Fog Probability'
+25 DESC='L2: SST - Sea Surface Temperature'
+26 DESC='L2: VAA - Volcanic Ash Height'
+27 DESC='L2: VAA - Volcanic Ash Mass Loading'
+28 DESC='L2: GLM - TTU Flash Extent Density'
+29 DESC='L2: GLM - TTU Flash Centroid Density'
+30 DESC='L2: GLM - TTU Minimum Flash Area'
+31 DESC='L2: GLM - TTU Average Flash Area'
+32 DESC='L2: GLM - TTU Total Energy'
+33 DESC='L2: GLM - TTU Group Extent Density'
+34 DESC='L2: GLM - TTU Group Centroid Density'
+35 DESC='L2: GLM - TTU Average Group Area'
+36 DESC='L2: GLM - VLAB Flash Extent Density'
+37 DESC='L2: GLM - VLAB Total Optical Energy'
+38 DESC='L2: GLM - VLAB Minimum Flash Area'
+39 DESC='L3: GLM - VLAB Flash Extent Density w5u1'
+40 DESC='L3: GLM - VLAB Total Optical Energy w5u1'
+41 DESC='L3: GLM - VLAB Minimum Flash Area w5u1'
+42 DESC='L2: GFLS - Fog Depth'
+43 DESC='L2: GFLS - IFR Fog Probability'
+44 DESC='L2: GFLS - LIFR Fog Probability'
+45 DESC='L2: GFLS - MIFR Fog Probability'
 Cal NSSX
 BRes 1.0 1.0
 1 DESC='NSS: Cloud Type'
@@ -5212,6 +5230,26 @@ BRes 1.0 1.0
  3 DESC='6.750 um IR Mid-level Water Vapor' WL=6.75 um WN=1481.48 cm-1
  4 DESC='10.80 um IR Surface/Cloud-top Temp' WL=10.8 um WN=925.92 cm-1
  5 DESC='12.00 um IR SFC/Cloud Temp, Low-level WV' WL=12.0 um WN=833.33 cm-1
+EndSat
+Sat 251
+Cal AMIP
+BRes 0.5 0.5
+ 1 DESC='0.47 um Blue band - aerosol,coastl water' WL=0.47 um WN=21276.5 cm-1
+ 2 DESC='0.511 um Green Band - daytime land,clouds' WL=0.511 um WN=19569.4 cm-1
+ 3 DESC='0.64 um Red band - clouds,fog,insolation' WL=0.64 um WN=15625 cm-1
+ 4 DESC='0.856 um Daytime veg, burn scar, aerosols' WL=0.856 um WN=11682.2 cm-1
+ 5 DESC='1.38 um Near IR cirrus cloud' WL=1.38 um WN=7246.3 cm-1
+ 6 DESC='1.61 um Cloud-top phase and snow' WL=1.61 um WN=6211.1 cm-1
+ 7 DESC='3.830 um IR Low Cloud/Fog Fire detection' WL=3.830 um WN=2610.9 cm-1
+ 8 DESC='6.241 um IR Upper-Level Water vapor' WL=6.241 um WN=1602.3 cm-1
+ 9 DESC='6.952 um IR Mid-Level Water vapor' WL=6.952 um WN=1438.4 cm-1
+10 DESC='7.344 um IR Low-Level Water vapor & SO2' WL=7.344 um WN=1361.6 cm-1
+11 DESC='8.592 um Total Water,Cloud Phase,Dust' WL=8.592 um WN=1163.8 cm-1
+12 DESC='9.625 um Total Ozone and turbulence' WL=9.625 um WN=1038.9 cm-1
+13 DESC='10.403 um IR Surface/Cloud-top Temp' WL=10.403 um WN=961.2 cm-1
+14 DESC='11.212 um IR Sea Surface/Cloud-top Temp' WL=11.212 um 891.9 cm-1
+15 DESC='12.364 um Total Water and Ash and SST' WL=12.364 um WN=808.7 cm-1
+16 DESC='13.31 um Cloud height and amounts' WL=13.31 um WN=751.3 cm-1
 EndSat
 Sat 300 301 302 303 304 320 321 322 323 324 325 326 327 328 329
 Cal VIIR
@@ -5508,4 +5546,24 @@ BRes 1.0 1.0
  8 DESC='0.505 um Ocean color' WL=0.505 um WN=19802 cm-1
  9 DESC='0.55 um Ocean color' WL=0.55 um WN=18181 cm-1
 10 DESC='0.932 um Water vapor' WL=0.932 um WN=10730 cm-1
+EndSat
+Sat 355 356 357
+Cal FCIN
+BRes 1.0 1.0
+ 1 DESC='0.444 um VIS Daytime aerosols over land' WL=0.444 um WN=22523 cm-1
+ 2 DESC='0.510 um VIS Ocean Plankton Biogeochem' WL=0.510 um WN=19608 cm-1
+ 3 DESC='0.640 um VIS Clouds,fog,insolation,wind' WL=0.640 um WN=15625 cm-1
+ 4 DESC='0.865 um VIS Veg/burn scar,aerosols,wind' WL=0.865 um WN=11561 cm-1
+ 5 DESC='0.914 um VIS Atmospheric Water Vapor' WL=0.914 um WN=10941 cm-1
+ 6 DESC=' 1.38 um NIR Cirrus clouds' WL=1.38 um WN=7246 cm-1
+ 7 DESC=' 1.61 um NIR Cloud-top phase/size,snow' WL=1.61 um WN=6211 cm-1
+ 8 DESC=' 2.25 um NIR Land/cloud,vegetation,snow' WL=2.25 um WN=4444 cm-1
+ 9 DESC=' 3.80 um IR  Sfc,cloud,fog,fire,wind' WL=3.80 um WN=2632 cm-1
+10 DESC=' 6.30 um WV  Hi-level WV,wind,rainfall' WL=6.30 um WN=1587 cm-1
+11 DESC=' 7.35 um WV  Lower-level WV,wind,SO2' WL=7.35 um WN=1370 cm-1
+12 DESC=' 8.70 um IR  Total WV cloud phase,dust' WL=8.70 um WN=1149 cm-1
+13 DESC=' 9.66 um IR  Total ozone,turbulence,wind' WL=9.66 um WN=1035 cm-1
+14 DESC=' 10.5 um IR  Surface and cloud' WL=10.5 um WN=952 cm-1
+15 DESC=' 12.3 um IR  Total water,ash,SST' WL=12.3 um WN=813 cm-1
+16 DESC=' 13.3 um IR  Air temp,cloud hgt and amt' WL=13.3 um WN=752 cm-1
 EndSat
