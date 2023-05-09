@@ -27,7 +27,7 @@
  */
 package edu.wisc.ssec.mcidasv;
 
-import static edu.wisc.ssec.mcidasv.McIdasPreferenceManager.PROP_NEW_FONT_RENDERING;
+import static edu.wisc.ssec.mcidasv.McIdasPreferenceManager.PROP_HIQ_FONT_RENDERING;
 import static ucar.unidata.util.GuiUtils.makeMenu;
 import static ucar.unidata.util.MenuUtil.MENU_SEPARATOR;
 
@@ -208,11 +208,11 @@ public class JythonManager extends ucar.unidata.idv.JythonManager {
         if (useGeometryByRef != null) {
             shouldWarn = backgroundMode
                     && !Boolean.parseBoolean(System.getProperty("visad.java3d.geometryByRef"))
-                    && Boolean.parseBoolean(System.getProperty(PROP_NEW_FONT_RENDERING, "false"));
+                    && Boolean.parseBoolean(System.getProperty(PROP_HIQ_FONT_RENDERING, "false"));
         }
 //        System.out.println("background mode: "+backgroundMode);
 //        System.out.println("geo by ref: "+Boolean.parseBoolean(System.getProperty("visad.java3d.geometryByRef")));
-//        System.out.println("new fonts: "+Boolean.parseBoolean(System.getProperty(PROP_NEW_FONT_RENDERING, "false")));
+//        System.out.println("new fonts: "+Boolean.parseBoolean(System.getProperty(PROP_HIQ_FONT_RENDERING, "false")));
 //        System.out.println("shouldWarn: "+shouldWarn);
 //        System.out.println("props:\n"+System.getProperties());
         return shouldWarn;

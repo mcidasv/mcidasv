@@ -165,7 +165,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
     public static final float LOGO_SCALE_MIN = 0.1f;
     public static final float LOGO_SCALE_MAX = 2.0f;
     
-    public static final String PROP_NEW_FONT_RENDERING = "visad.newfontrendering";
+    public static final String PROP_HIQ_FONT_RENDERING = "visad.newfontrendering";
     
     public static final String PROP_IS_OFFSCREEN = "visad.offscreen";
     
@@ -965,11 +965,10 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show \"Please Wait\" Message", MapViewManager.PREF_WAITMSG, Boolean.valueOf(mappy.getWaitMessageVisible()) },
             { "Reset Projection With New Data", MapViewManager.PREF_PROJ_USEFROMDATA },
             { ViewManager.LABEL_AUTO_DEPTH, ViewManager.PREF_AUTO_DEPTH, mappy.getAutoDepth() },
-            { arLabel, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) },
-            { "Use new layer label rendering (Under Development)", PROP_NEW_FONT_RENDERING, Boolean.parseBoolean(System.getProperty(PROP_NEW_FONT_RENDERING, "false")) }
-            
+            { arLabel, MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, Boolean.valueOf(getStore().get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false)) }
         };
         JPanel panelPanel = makePrefPanel(panelObjects, widgets, getStore());
+
         JCheckBox adaptiveRezCheckBox = widgets.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION);
         adaptiveRezCheckBox.setVerticalTextPosition(SwingConstants.TOP);
 
@@ -1055,6 +1054,25 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
                 GAP_RELATED
             )
         );
+
+        // Layer Label Rendering - see Inq #2532
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel labelLabel = new JLabel("Layer Label Rendering: ");
+
+        // String labelTypeValue = getStore().get(PREF_LABEL_RENDERING, DisplayControlImpl.WEIGHTED_AVERAGE);
+        boolean layerLabelState = Boolean.parseBoolean(System.getProperty(PROP_HIQ_FONT_RENDERING, "true"));
+        JRadioButton labelJava = new JRadioButton("Java", layerLabelState);
+        labelJava.setToolTipText("Supports most fonts");
+
+        JRadioButton labelVisAD = new JRadioButton("Legacy VisAD", !(layerLabelState));
+        labelVisAD.setToolTipText("Legacy VisAD Hershey Font");
+
+        GuiUtils.buttonGroup(labelJava, labelVisAD);
+        labelPanel.add(labelLabel);
+        labelPanel.add(labelJava);
+        labelPanel.add(labelVisAD);
+        fontPanel.add(labelPanel);
+
         fontPanel.setBorder(BorderFactory.createTitledBorder("Layer List Properties"));
 
         List<ProjectionImpl> projections = (List<ProjectionImpl>)mappy.getProjectionList();
@@ -1251,6 +1269,7 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         PreferenceManager miscManager = new PreferenceManager() {
             // applyWidgets called the same way the IDV does it.
             public void applyPreference(XmlObjectStore theStore, Object data) {
+
                 savePrefsFromWidgets((Hashtable)data, theStore);
     
                 // START MCV INQUIRY 2718 changes
@@ -1287,12 +1306,11 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
 //                theStore.put(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, )
                 ViewManager.setHighlightBorder(border[0].getBackground());
                 EventBus.publish("McvPreference.ProgRez", theStore.get(MapViewManager.PREF_USE_PROGRESSIVE_RESOLUTION, false));
-                
-                Hashtable table = (Hashtable)data;
-                if (table.containsKey(PROP_NEW_FONT_RENDERING)) {
-                    logger.trace("setting new font rendering: {}", theStore.get(PROP_NEW_FONT_RENDERING));
-                    System.setProperty(PROP_NEW_FONT_RENDERING, Boolean.toString((boolean)theStore.get(PROP_NEW_FONT_RENDERING)));
-                }
+
+                boolean hiqLabelState = labelJava.isSelected();
+                theStore.put(PROP_HIQ_FONT_RENDERING, hiqLabelState);
+                System.setProperty(PROP_HIQ_FONT_RENDERING, Boolean.toString(hiqLabelState));
+
             }
         };
         
