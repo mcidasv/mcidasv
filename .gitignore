@@ -28,6 +28,6 @@ build/*
 
 # things related to code signing that shouldn't be in the repo
 *.pfx
-*.p12s
+*.p12
 signing/*
 
