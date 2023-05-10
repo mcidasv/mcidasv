@@ -154,13 +154,16 @@
     <property name="logback.default.config" value="${userpath.dir}/logback.xml" />
 
     <!--
-      This value is meant to be set from the commandline, and is used in the
+      These values are meant to be set from the commandline, and is used in the
       "installers" target.
 
       Linux example:
-          ant -Dwindows.keystore=$(cat SOME_FILE_CONTAINING_PASSWORD.txt) dist installers
+          ant -Dwindows.keystore=$(cat SOME_FILE_CONTAINING_PASSWORD.txt) \
+              -Dmacos.keystore=$(cat ANOTHER_FILE_CONTAINING_MACOS_PASS.txt) \
+              dist installers
     -->
     <property name="windows.keystore" value="DUMMY VALUE" />
+    <property name="macos.keystore" value="DUMMY VALUE" />
 
 
     <!-- VisAD Properties -->
@@ -1554,6 +1557,7 @@
             <arg value="-D" />
             <arg value="IDV_VERSION=${idv.version}" />
             <arg value="--win-keystore-password=${windows.keystore}" />
+            <arg value="--mac-keystore-password=${macos.keystore}" />
             <arg value="mcidasv.install4j" />
         </exec>
     </target>
