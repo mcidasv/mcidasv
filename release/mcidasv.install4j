@@ -11,8 +11,9 @@
       <variable name="IDV_VERSION" value="5.7" />
       <variable name="sys.ext.timestampUrl" value="http://timestamp.digicert.com" />
       <variable name="WINDOWS_CERT_PATH" value="${compiler:sys.install4jHome}/../signing/University of Wisconsin-Madison.pfx" />
+      <variable name="MACOS_CERT_PATH" value="${compiler:sys.install4jHome}/../signing/UW-Madison Shared Apps Developer ID Application 20260204.p12" />
     </variables>
-    <codeSigning windowsEnabled="true" windowsPkcs12File="${compiler:WINDOWS_CERT_PATH}" />
+    <codeSigning macEnabled="true" macPkcs12File="${compiler:MACOS_CERT_PATH}" windowsEnabled="true" windowsPkcs12File="${compiler:WINDOWS_CERT_PATH}" />
     <jreBundles>
       <modules />
     </jreBundles>
@@ -1471,7 +1472,7 @@ return console.askYesNo(message, true);
         <entry filesetId="9158" />
       </exclude>
     </unixInstaller>
-    <macosFolder name="Mac OS X" id="12" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true">
+    <macosFolder name="Mac OS X" id="12" mediaFileName="${compiler:sys.shortName}_${compiler:sys.version}_macosx_x86_installer" installDir="${compiler:INSTALLDIR}" overridePrincipalLanguage="true" signLaunchers="true">
       <excludedComponents>
         <component id="7274" />
         <component id="9167" />
