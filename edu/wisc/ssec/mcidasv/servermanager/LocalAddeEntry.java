@@ -94,7 +94,7 @@ public class LocalAddeEntry implements AddeEntry {
         // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
         // in mcvadde.py.
         ABIN, AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4,  
-        MOD8, MODR, MSGT, MTST, SCMI, SMIN, TMIN, MD, INDS, INDI, WARI, INVALID
+        MOD8, MODR, MSGT, MTST, SCMI, SMIN, TMIN, MD, INDS, INDI, WARC, WARI, INVALID
     }
 
     /**
@@ -123,7 +123,8 @@ public class LocalAddeEntry implements AddeEntry {
         AMSRE_RAIN_PRODUCT(ServerName.AMRR, "AMSR-E Rain Product"),
         GINI(ServerName.GINI, "GINI"),
         GOES16_ABI(ServerName.ABIN, "GOES ABI", "GOES ABI"),
-        HIMAWARI8(ServerName.WARI, "Himawari 8", "Himawari 8"),        
+        HIMAWARI8(ServerName.WARI, "Himawari 8", "Himawari 8"),
+        HIMAWARICAST(ServerName.WARC, "HimawariCast", "HimawariCast"),
         INSAT3D_IMAGER(ServerName.INDI, "INSAT-3D Imager", "INSAT-3D Imager"),
         INSAT3D_SOUNDER(ServerName.INDS, "INSAT-3D Sounder", "INSAT-3D Sounder"),
         LRIT_GOES9(ServerName.FSDX, "LRIT GOES-9", "EUMETCast LRIT GOES-9"),
