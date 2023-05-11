@@ -91,6 +91,7 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.GINI,
             AddeFormat.GOES16_ABI,
             AddeFormat.HIMAWARI8,
+            AddeFormat.HIMAWARICAST,
             AddeFormat.INSAT3D_IMAGER,
             AddeFormat.INSAT3D_SOUNDER,
             AddeFormat.LRIT_GOES9,
@@ -209,6 +210,7 @@ public class LocalEntryEditor extends JDialog {
         if (McIDASV.isWindows()) {
             formats.removeElement(AddeFormat.GOES16_ABI);
             formats.removeElement(AddeFormat.HIMAWARI8);
+            formats.removeElement(AddeFormat.HIMAWARICAST);
             formats.removeElement(AddeFormat.INSAT3D_IMAGER);
             formats.removeElement(AddeFormat.INSAT3D_SOUNDER);
             formats.removeElement(AddeFormat.SCMI);
