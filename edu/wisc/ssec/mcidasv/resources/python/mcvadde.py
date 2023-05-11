@@ -232,6 +232,8 @@ _formats = {
     "ABIN":                                                    AddeFormat.GOES16_ABI,
     "Himawari-8":                                              AddeFormat.HIMAWARI8,
     "WARI":                                                    AddeFormat.HIMAWARI8,
+    "HimawariCast":                                            AddeFormat.HIMAWARICAST,
+    "WARC":                                                    AddeFormat.HIMAWARICAST,
     "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
     "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
     "INSAT3D_SOUNDER":                                         AddeFormat.INSAT3D_SOUNDER,
@@ -814,6 +816,7 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
             "GINI"                                                     "GINI"
             The following servers are not supported on Windows
             "Himawari-8"                                               "WARI"
+            "HimawariCast"                                             "WARC"
             "INSAT-3D Imager"                                          "INSAT3D_IMAGER"
             "INSAT-3D Sounder"                                         "INSAT3D_SOUNDER"
             "GOES ABI"                                                 "ABIN"
