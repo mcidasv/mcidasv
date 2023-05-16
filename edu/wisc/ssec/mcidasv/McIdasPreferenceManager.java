@@ -958,7 +958,6 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
             { "Show Wireframe Box", MapViewManager.PREF_WIREFRAME, Boolean.valueOf(mappy.getWireframe()) },
             { "Show Cursor Readout", MapViewManager.PREF_SHOWCURSOR, Boolean.valueOf(mappy.getShowCursor()) },
             { "Clip View At Box", MapViewManager.PREF_3DCLIP, Boolean.valueOf(mappy.getClipping()) },
-            { "Show Layer List in Panel", MapViewManager.PREF_SHOWDISPLAYLIST, Boolean.valueOf(mappy.getShowDisplayList()) },
             { "Show Times In Panel", MapViewManager.PREF_ANIREADOUT, Boolean.valueOf(mappy.getAniReadout()) },
             { "Show Map Display Scales", MapViewManager.PREF_SHOWSCALES, Boolean.valueOf(mappy.getLabelsVisible()) },
             { "Show Transect Display Scales", MapViewManager.PREF_SHOWTRANSECTSCALES, Boolean.valueOf(mappy.getTransectLabelsVisible()) },
@@ -1041,22 +1040,15 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         dlColorWidget.setPreferredSize(Constants.DEFAULT_COLOR_PICKER_SIZE);
         JPanel dlColPanel = new JPanel(new FlowLayout());
         dlColPanel.add(dlColorWidget);
-                
-        JPanel fontPanel = GuiUtils.vbox(
-            GuiUtils.hbox(
-                McVGuiUtils.makeLabelRight("Font:", Width.ONEHALF),
-                GuiUtils.left(fontSelector.getComponent()),
-                GAP_RELATED
-            ),
-            GuiUtils.hbox(
-                McVGuiUtils.makeLabelRight("Color:", Width.ONEHALF),
-                GuiUtils.left(GuiUtils.hbox(dlColPanel, dlColorWidget.getClearButton(), GAP_RELATED)),
-                GAP_RELATED
-            )
-        );
 
         // Layer Label Rendering - see Inq #2532
-        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        Object[][] layerListObjects = {
+                {"Show Layer List in Panel", MapViewManager.PREF_SHOWDISPLAYLIST, Boolean.valueOf(mappy.getShowDisplayList())}
+        };
+        JPanel layerListPanel = makePrefPanel(layerListObjects, widgets, getStore());
+
+        JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         JLabel labelLabel = new JLabel("Layer Label Rendering: ");
 
         // String labelTypeValue = getStore().get(PREF_LABEL_RENDERING, DisplayControlImpl.WEIGHTED_AVERAGE);
@@ -1071,7 +1063,20 @@ public class McIdasPreferenceManager extends IdvPreferenceManager implements Lis
         labelPanel.add(labelLabel);
         labelPanel.add(labelJava);
         labelPanel.add(labelVisAD);
-        fontPanel.add(labelPanel);
+        JPanel fontPanel = GuiUtils.vbox(
+                GuiUtils.hbox(
+                        McVGuiUtils.makeLabelRight("Font:", Width.ONEHALF),
+                        GuiUtils.left(fontSelector.getComponent()),
+                        GAP_RELATED
+                ),
+                GuiUtils.hbox(
+                        McVGuiUtils.makeLabelRight("Color:", Width.ONEHALF),
+                        GuiUtils.left(dlColPanel),
+                        GAP_RELATED
+                ),
+                layerListPanel,
+                labelPanel
+        );
 
         fontPanel.setBorder(BorderFactory.createTitledBorder("Layer List Properties"));
 
