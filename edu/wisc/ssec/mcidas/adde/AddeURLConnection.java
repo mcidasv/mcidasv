@@ -1131,6 +1131,12 @@ public class AddeURLConnection extends URLConnection
             if (lctestString.startsWith("day"))       // day keyword
             {
                 buf.append(" ");
+                // TJJ May 2023
+                // Core JPSS servers count on two DAY keyword parameters.
+                // If only one supplied, duplicate it as the 2nd parameter.
+                if (! testString.contains(" ")) {
+                    testString = testString + " " + testString.substring(4);
+                }
                 buf.append(testString);
             }
             else
@@ -1686,7 +1692,7 @@ public class AddeURLConnection extends URLConnection
         String numString = "NUM=1";
         String dTimeString = "DTIME=96.0000";
         String traceString = "TRACE=0";
-        String dayString = "DAY="+McIDASUtil.mcSecsToDayTime(System.currentTimeMillis()/1000l)[0];
+        String dayString = "DAY=" + McIDASUtil.mcSecsToDayTime(System.currentTimeMillis() / 1000l)[0];
         // Mandatory strings
         String groupString = "RTWXTEXT";
 
