@@ -116,7 +116,12 @@ public class LocalEntryEditor extends JDialog {
             AddeFormat.NOAA_AVHRR_L1B,
             AddeFormat.SCMI,
             AddeFormat.SSMI,
-            AddeFormat.TRMM           
+            AddeFormat.TRMM,
+            AddeFormat.VIIRSI,
+            AddeFormat.VIIRSM,
+            AddeFormat.VIIRSD,
+            AddeFormat.VIIREI,
+            AddeFormat.VIIREM,
             // AddeFormat.MCIDAS_MD
         });
 
@@ -214,6 +219,11 @@ public class LocalEntryEditor extends JDialog {
             formats.removeElement(AddeFormat.INSAT3D_IMAGER);
             formats.removeElement(AddeFormat.INSAT3D_SOUNDER);
             formats.removeElement(AddeFormat.SCMI);
+            formats.removeElement(AddeFormat.VIIRSI);
+            formats.removeElement(AddeFormat.VIIRSM);
+            formats.removeElement(AddeFormat.VIIRSD);
+            formats.removeElement(AddeFormat.VIIREI);
+            formats.removeElement(AddeFormat.VIIREM);
         }
 
         formatComboBox.setModel(formats);
