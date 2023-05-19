@@ -1033,11 +1033,62 @@ public class EntryTransforms {
             String driveLetter = newFileMask.substring(0, 1).toLowerCase();
             newFileMask = newFileMask.substring(3);
             newFileMask = newFileMask.replace('\\', '/');
-            s.append(",MASK=/cygdrive/").append(driveLetter).append('/').append(newFileMask);
+            if (format == AddeFormat.VIIRSM)  {
+                s.append(",MASK=cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/SVM*,Q=/cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/GMTCO*");
+            }
+            else if (format == AddeFormat.VIIRSI)  {
+                s.append(",MASK=cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/SVI*,Q=/cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/GITCO*");
+            }
+            else if (format == AddeFormat.VIIRSD)  {
+                s.append(",MASK=cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/SVD*,Q=/cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/GDNBO*");
+            }
+            else if (format == AddeFormat.VIIREM)  {
+                s.append(",MASK=cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/VM*,Q=/cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/GMGTO*");
+            }
+            else if (format == AddeFormat.VIIREI)  {
+                s.append(",MASK=cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/VI*,Q=/cygdrive/").append(driveLetter).append('/').append(newFileMask).append("/GIGTO*");
+            }
+            else {
+                s.append(",MASK=/cygdrive/").append(driveLetter).append('/').append(newFileMask);
+            }
         } else {
-            s.append(",MASK=").append(tmpFileMask);
+            if (format == AddeFormat.VIIRSM)  {
+                s.append(",MASK=").append(tmpFileMask).append("/SVM*,Q=").append(tmpFileMask).append("/GMTCO*");
+            }
+            else if (format == AddeFormat.VIIRSI)  {
+                s.append(",MASK=").append(tmpFileMask).append("/SVI*,Q=").append(tmpFileMask).append("/GITCO*");
+            }
+            else if (format == AddeFormat.VIIRSD)  {
+                s.append(",MASK=").append(tmpFileMask).append("/SVD*,Q=").append(tmpFileMask).append("/GDNBO*");
+            }
+            else if (format == AddeFormat.VIIREM)  {
+                s.append(",MASK=").append(tmpFileMask).append("/VM**,Q=").append(tmpFileMask).append("/GMGTO*");
+            }
+            else if (format == AddeFormat.VIIREI)  {
+                s.append(",MASK=").append(tmpFileMask).append("/VI**,Q=").append(tmpFileMask).append("/GIGTO*");
+            }
+            else {
+                s.append(",MASK=").append(tmpFileMask);
+            }
         }
         // local servers seem to really like trailing commas!
-        return s.append('/').append(format.getFileFilter()).append(',').toString(); 
+        if (format ==AddeFormat.VIIRSM)  {
+            return s.append(',').toString();
+        }
+        if (format ==AddeFormat.VIIRSI)  {
+            return s.append(',').toString();
+        }
+        if (format ==AddeFormat.VIIRSM)  {
+            return s.append(',').toString();
+        }
+        if (format ==AddeFormat.VIIREM)  {
+            return s.append(',').toString();
+        }
+        if (format ==AddeFormat.VIIREI)  {
+            return s.append(',').toString();
+        }
+        else {
+            return s.append('/').append(format.getFileFilter()).append(',').toString(); 
+        }
     }
 }
