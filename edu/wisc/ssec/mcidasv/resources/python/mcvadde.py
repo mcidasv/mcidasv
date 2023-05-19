@@ -234,6 +234,16 @@ _formats = {
     "WARI":                                                    AddeFormat.HIMAWARI8,
     "HimawariCast":                                            AddeFormat.HIMAWARICAST,
     "WARC":                                                    AddeFormat.HIMAWARICAST,
+    "VIIRS SDR Day/Night Band":                                AddeFormat.VIIRSD,
+    "VIIRSD":                                                  AddeFormat.VIIRSD,
+    "VIIRS SDR I-Band":                                        AddeFormat.VIIRSI,
+    "VIIRSI":                                                  AddeFormat.VIIRSI,
+    "VIIRS SDR M-Band":                                        AddeFormat.VIIRSM,
+    "VIIRSM":                                                  AddeFormat.VIIRSM,
+    "VIIRS EDR I-Band":                                        AddeFormat.VIIREI,
+    "VIIREI":                                                  AddeFormat.VIIREI,
+    "VIIRS EDR M-Band":                                        AddeFormat.VIIREM,
+    "VIIREM":                                                  AddeFormat.VIIREM,
     "INSAT3D_IMAGER":                                          AddeFormat.INSAT3D_IMAGER,
     "INSAT-3D Imager":                                         AddeFormat.INSAT3D_IMAGER,
     "INSAT3D_SOUNDER":                                         AddeFormat.INSAT3D_SOUNDER,
@@ -821,6 +831,7 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
             "INSAT-3D Sounder"                                         "INSAT3D_SOUNDER"
             "GOES ABI"                                                 "ABIN"
             "Sectorized CMI"                                           "SCMI"
+            "VIIRS"                                                    "VIIR"
             =========================================================  ============
                     
     Returns:
