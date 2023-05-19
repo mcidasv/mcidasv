@@ -94,7 +94,7 @@ public class LocalAddeEntry implements AddeEntry {
         // LocalEntryEditor and LocalEntryShortcut, and the _formats dictionary
         // in mcvadde.py.
         ABIN, AREA, AMSE, AMSR, AMRR, GINI, FSDX, OMTP, LV1B, MODS, MODX, MOD4,  
-        MOD8, MODR, MSGT, MTST, SCMI, SMIN, TMIN, MD, INDS, INDI, WARC, WARI, INVALID
+        MOD8, MODR, MSGT, MTST, SCMI, SMIN, TMIN, MD, INDS, INDI, WARC, WARI, VIIR, INVALID
     }
 
     /**
@@ -150,6 +150,11 @@ public class LocalAddeEntry implements AddeEntry {
         SCMI(ServerName.SCMI, "SCMI", "Sectorized CMI"),
         SSMI(ServerName.SMIN, "SSMI", "Terrascan netCDF (SMIN)"),
         TRMM(ServerName.TMIN, "TRMM", "Terrascan netCDF (TMIN)"),
+        VIIRSD(ServerName.VIIR, "VIIRS SDR Day/Night Band", "JPSS VIIRS SDR Day/Night Band"),
+		VIIRSI(ServerName.VIIR, "VIIRS SDR I-Band", "JPSS VIIRS SDR I-Band"),
+        VIIRSM(ServerName.VIIR, "VIIRS SDR M-Band", "JPSS VIIRS SDR M-Band"),
+		VIIREI(ServerName.VIIR, "VIIRS EDR I-Band", "JPSS VIIRS EDR I-Band"),
+		VIIREM(ServerName.VIIR, "VIIRS EDR M-Band", "JPSS VIIRS EDR M-Band"),
         INVALID(ServerName.INVALID, "", "", EntryType.INVALID);
 
         /** Name of the McIDAS-X server. */
