@@ -1062,10 +1062,10 @@ public class EntryTransforms {
                 s.append(",MASK=").append(tmpFileMask).append("/SVD*,Q=").append(tmpFileMask).append("/GDNBO*");
             }
             else if (format == AddeFormat.VIIREM)  {
-                s.append(",MASK=").append(tmpFileMask).append("/VM**,Q=").append(tmpFileMask).append("/GMGTO*");
+                s.append(",MASK=").append(tmpFileMask).append("/VM*,Q=").append(tmpFileMask).append("/GMGTO*");
             }
             else if (format == AddeFormat.VIIREI)  {
-                s.append(",MASK=").append(tmpFileMask).append("/VI**,Q=").append(tmpFileMask).append("/GIGTO*");
+                s.append(",MASK=").append(tmpFileMask).append("/VI*,Q=").append(tmpFileMask).append("/GIGTO*");
             }
             else {
                 s.append(",MASK=").append(tmpFileMask);
@@ -1073,19 +1073,19 @@ public class EntryTransforms {
         }
         // local servers seem to really like trailing commas!
         if (format ==AddeFormat.VIIRSM)  {
-            return s.append(',').toString();
+            return s.append(',').toString().replace("/SVM*/", "/");
         }
         if (format ==AddeFormat.VIIRSI)  {
-            return s.append(',').toString();
+            return s.append(',').toString().replace("/SVI*/", "/");
         }
         if (format ==AddeFormat.VIIRSM)  {
-            return s.append(',').toString();
+            return s.append(',').toString().replace("/SVD*/", "/");
         }
         if (format ==AddeFormat.VIIREM)  {
-            return s.append(',').toString();
+            return s.append(',').toString().replace("/VM*/", "/");
         }
         if (format ==AddeFormat.VIIREI)  {
-            return s.append(',').toString();
+            return s.append(',').toString().replace("/VI*/", "/");
         }
         else {
             return s.append('/').append(format.getFileFilter()).append(',').toString(); 
