@@ -301,11 +301,6 @@
   </paramgroup>
   <paramgroup description="JPSS NDSI" name="JPSS_NDSI">
     <params p1="VIIRS-I1-SDR_All/Reflectance" p2="VIIRS-I3-SDR_All/Reflectance"/>
-    <params p1="325_Band1_REF" p2="325_Band3_REF"/>
-    <params p1="326_Band1_REF" p2="326_Band3_REF"/>
-    <params p1="327_Band1_REF" p2="327_Band3_REF"/>
-    <params p1="328_Band1_REF" p2="328_Band3_REF"/>
-    <params p1="329_Band1_REF" p2="329_Band3_REF"/>
   </paramgroup>
     <paramgroup description="JPSS EDR Day Fire RGB" name="JPSS_EDR_RGB_DayFire">
     <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
