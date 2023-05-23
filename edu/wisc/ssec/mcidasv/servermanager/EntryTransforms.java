@@ -1078,7 +1078,7 @@ public class EntryTransforms {
         if (format ==AddeFormat.VIIRSI)  {
             return s.append(',').toString().replace("/SVI*/", "/");
         }
-        if (format ==AddeFormat.VIIRSM)  {
+        if (format ==AddeFormat.VIIRSD)  {
             return s.append(',').toString().replace("/SVD*/", "/");
         }
         if (format ==AddeFormat.VIIREM)  {
