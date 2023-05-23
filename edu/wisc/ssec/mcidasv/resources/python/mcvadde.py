@@ -831,7 +831,11 @@ def makeLocalADDEEntry(dataset, mask, format, imageType=None, save=False):
             "INSAT-3D Sounder"                                         "INSAT3D_SOUNDER"
             "GOES ABI"                                                 "ABIN"
             "Sectorized CMI"                                           "SCMI"
-            "VIIRS"                                                    "VIIR"
+            "VIIRS SDR Day/Night Band"                                 "VIIRSD"
+            "VIIRS SDR I-Band"                                         "VIIRSI"
+            "VIIRS SDR M-Band"                                         "VIIRSM"
+            "VIIRS EDR I-Band"                                         "VIIREI"
+            "VIIRS EDR M-Band"                                         "VIIREM"
             =========================================================  ============
                     
     Returns:
