@@ -304,11 +304,11 @@
   </paramgroup>
     <paramgroup description="JPSS EDR Day Fire RGB" name="JPSS_EDR_RGB_DayFire">
     <params p1="VIIRS-I4-IMG-EDR_All/BrightnessTemperature" p2="VIIRS-I2-IMG-EDR_All/Reflectance" p3="VIIRS-I1-IMG-EDR_All/Reflectance"/>
-    <params p1="325_Band10_REF" p2="325_Band15_REF" p3="325_Band20_TEMP"/>
-    <params p1="326_Band10_REF" p2="326_Band15_REF" p3="326_Band20_TEMP"/>
-    <params p1="327_Band10_REF" p2="327_Band15_REF" p3="327_Band20_TEMP"/>
-    <params p1="328_Band10_REF" p2="328_Band15_REF" p3="328_Band20_TEMP"/>
-    <params p1="329_Band10_REF" p2="329_Band15_REF" p3="329_Band20_TEMP"/>
+    <params p1="325_Band4_TEMP" p2="325_Band2_REF" p3="325_Band1_REF"/>
+    <params p1="326_Band4_TEMP" p2="326_Band2_REF" p3="326_Band1_REF"/>
+    <params p1="327_Band4_TEMP" p2="327_Band2_REF" p3="327_Band1_REF"/>
+    <params p1="328_Band4_TEMP" p2="328_Band2_REF" p3="328_Band1_REF"/>
+    <params p1="329_Band4_TEMP" p2="329_Band2_REF" p3="329_Band1_REF"/>
   </paramgroup>
   <paramgroup description="JPSS EDR NDVI" name="JPSS_EDR_NDVI">
     <params p1="VIIRS-I1-IMG-EDR_All/Reflectance" p2="VIIRS-I2-IMG-EDR_All/Reflectance"/>
