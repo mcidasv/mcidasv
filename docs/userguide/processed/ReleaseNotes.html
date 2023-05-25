@@ -117,7 +117,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 	</div>
     <div class="faq-category"><a name="localServers1.9" id="localServers1.9"></a>
     <h4>Local Servers</h4>
-    <div class="faq-answer">Updated local ADDE servers on Linux and OS X/macOS platforms.</div>
+    <div class="faq-answer">Updated local ADDE servers on Linux and OS X/macOS platforms. New servers include HimawariCast (WARC) as well as VIIRS for M, I, and Day/Night Band SDRs, and M and I band Imagery EDRs.</div>
 	</div>
   <div class="faq-category"><a name="remoteServers1.9" id="remoteServers1.9"></a>
     <h4>Remote Servers/Datasets</h4>
@@ -274,8 +274,18 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div class="faq-category"><a name="jpss1.9" id="jpss1.9"></a>
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
-      Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.
-    Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported. A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well. Added support for many JPSS VIIRS Products (Granule) available from NOAA CLASS. Fixed a bug where certain imagery SDR bands/calibrations would not display correctly in multi-banded files or data sources.</div>
+      <p>Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.
+        Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported. A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well. Added support for many JPSS VIIRS Products (Granule) available from NOAA CLASS. Fixed a bug where certain imagery SDR bands/calibrations would not display correctly in multi-banded files or data sources.</p>
+      <p>The ability to access remote VIIRS (SDR and imagery EDR) datasets is available on all platforms. Local servers have been added for VIIRS data on macOS and Linux platforms. When adding local VIIRS datasets, there are individual formats for:</p>
+      <ul>
+    <li>VIIRS SDR I-Band</li>
+    <li>VIIRS SDR M-Band</li>
+    <li>VIIRS SDR Day/Night Band</li>
+    <li>VIIRS EDR I-Band</li>
+    <li>VIIRS EDR M-Band</li>
+    </ul>
+      <p>With local datasets, the data and geolocation must be in separate files in the same directory, follow the standard NOAA CLASS naming convention, and use terrain-corrected geolocation.</p>
+    </div>
   </div>
   <div class="faq-category"><a name="glm1.9" id="glm1.9"></a>
     <h4>GLM Chooser</h4>

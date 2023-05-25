@@ -48,7 +48,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
   <li class="propertylistitem"><strong>Dataset</strong> - Sets the dataset name for the local server entry. The dataset name is limited to eight characters or less.</li>
   <li class="propertylistitem"><strong>Image Type</strong> - Sets the image type name for the new local server entry. This will appear under the <strong>Image Type</strong> pull down menu in the Satellite Imagery chooser.</li>
   <li class="propertylistitem"><strong><a name="format" id="format"></a>Format</strong> - Sets the format of the image files. The following formats are supported in McIDAS-V:
-      <ul>
+    <ul>
         <!--<li>AIRS Level 1b</li>-->
         <li>AMSR-E L 1b</li>
         <li>AMSR-E L 2a</li>
@@ -136,17 +136,50 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/LocalDataMa
             <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
             <li>The file names must match the JMA HSD (Himawari Standard Data) image file naming convention, <strong>HS_aaa_yyyymmdd_hhnn_Bbb_cccc_Rjj_Skkll.DAT</strong>, described in the <a href="http://www.data.jma.go.jp/mscweb/en/himawari89/space_segment/hsd_sample/HS_D_users_guide_en_v12.pdf" target="_blank"><em>Himawari Standard Data User's Guide</em></a>.</li>
         </ul>
+        <li>HimawariCast</li>
+        <ul>
+        <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
+        <li>This server allows access to HimawariCast HRIT files in the JMA standard (segmented or combined) format.  The file names should look similar to <strong>IMG_DK01B16_201508290810_010</strong> or <strong>IMG_DK01IR2_201601120130</strong>: </li></ul>
         <li>INSAT-3D Imager</li>
         <ul>
             <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
         </ul>
-        <li>INSAT-3D Sounder</li>
+      <li>INSAT-3D Sounder</li>
+      <ul>
+          <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
+      </ul>
+      <li>VIIRS</li>
         <ul>
-            <li>Note: This server is available on Linux and OS X/macOS platforms.</li>
+        <li>Note: These servers are available on Linux and OS X/macOS platforms.  To use these servers, the data (SVM*, SVI*, SVD*, VM*, VI*) and terrain-corrected geolocation files (GMTCO*, GITCO*, GDNBO*, GMGTO*, GIGTO*) must be in separate files in the same directory and use the standard CLASS naming of the data. Below are a list of the server formats and sample data and geolocation file names.</li>
+        <li>VIIRS SDR I-Band</li>
+            <ul>
+<li>SVI01_j01_d20230517_t1758260_e1804060_b28466_c20230517182458454010_oebc_ops.h5</li>
+ <li>GITCO_j01_d20230517_t1758260_e1804060_b28466_c20230517182338512572_oebc_ops.h5</li>
+            </ul>
+        <li>VIIRS SDR M-Band</li>
+            <ul>
+<li>SVM01_j01_d20230517_t1758260_e1804060_b28466_c20230517182509745482_oebc_ops.h5</li>
+ <li>GMTCO_j01_d20230517_t1758260_e1804060_b28466_c20230517182343780287_oebc_ops.h5</li>
+            </ul>
+        <li>VIIRS SDR Day/Night Band</li>
+            <ul>
+<li>SVDNB_j01_d20230517_t1758260_e1804060_b28466_c20230517182454541492_oebc_ops.h5</li>
+ <li>GDNBO_j01_d20230517_t1758260_e1804060_b28466_c20230517182331066299_oebc_ops.h5</li>
+            </ul>
+        <li>VIIRS EDR I-Band</li>
+            <ul>
+<li>VI1BO_j01_d20230517_t1758099_e1804180_b28466_c20230517182553878026_oebc_ops.h5</li>
+ <li>GITCO_j01_d20230517_t1758260_e1804060_b28466_c20230517182338512572_oebc_ops.h5</li>
+            </ul>
+        <li>VIIRS EDR M-Band</li>
+            <ul>
+<li>VM01O_j01_d20230517_t1758099_e1804180_b28466_c20230517182545079500_oebc_ops.h5</li>
+ <li>GIMGO_j01_d20230517_t1758260_e1804060_b28466_c20230517182336486989_oebc_ops.h5</li>
+            </ul>
         </ul>
       </ul>
   </li>
-  <li class="propertylistitem"><strong>Directory</strong><strong></strong> - Represents the location of the local files using the pop up navigation box. <strong>At this time, only a directory can be selected. An option to add files by file mask will be added in the future.</strong></li>
+  <li class="propertylistitem"><strong>Directory</strong><strong></strong> - Represents the location of the local files using the pop up navigation box. At this time, only a directory can be selected. An option to add files by file mask will be added in the future.</li>
   <li class="propertylistitem"><img src="images/addemanager/AddNewDatasetButton.gif" width="131" height="26" alt="Add New Dataset button" align="absmiddle"><strong> -</strong> Opens the <a href="#add_new_entry">Add Local Dataset</a> window, allowing you to create a new local dataset.</li>
   <li class="propertylistitem"><img src="images/addemanager/EditDatasetButton.gif" width="102" height="26" alt="Edit Dataset button" align="absmiddle"><strong> -</strong> Opens the <a href="#edit_entry">Edit Local Dataset</a> window, allowing you to edit the dataset that is currently selected in the <strong>Local Data</strong> tab.</li>
   <li class="propertylistitem"><img src="images/addemanager/RemoveSelectionButton.gif" width="136" height="26" align="absmiddle"><strong> -</strong> Removes the currently selected local dataset.</li>
