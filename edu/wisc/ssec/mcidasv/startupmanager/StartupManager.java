@@ -82,6 +82,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.ToolTipManager;
 
 import edu.wisc.ssec.mcidasv.startupmanager.options.FileOption;
 import edu.wisc.ssec.mcidasv.util.GetMem;
@@ -346,6 +347,10 @@ public class StartupManager implements edu.wisc.ssec.mcidasv.Constants {
 
         JCheckBox useDarkModeCheckBox = darkMode.getComponent();
         useDarkModeCheckBox.setText(darkMode.getLabel());
+        if (platform != Platform.MAC) {
+            ToolTipManager.sharedInstance().setInitialDelay(0);
+            useDarkModeCheckBox.setToolTipText("Dark Mode not yet supported on this operating system");
+        }
 
         // this is a JComboBox<String>; kinda struggling to represent this
         // in java's type system.
