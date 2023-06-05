@@ -4025,82 +4025,12 @@ System.out.println("adjusted flow values = " + flow_values[0][0] + " " +
 
       boolean anyTextCreated = false;
       if (text_value != null && text_control != null) {
-        if (text_control.getTextType().startsWith("Display_List_Text")) {
-//          logger.trace("text type: {} value: {}", text_control.getTextType(), text_value);
-//          logger.trace("group: {} class: {}", group, group.getClass().getName());
-//          logger.trace("color_values: {}", color_values);
-
-          byte r = -1;
-          byte g = -1;
-          byte b = -1;
-          byte a = -1;
-          int color_length = 0;
-          if (color_values != null) {
-            color_length = color_values.length;
-          }
-//          r = color_values[0][0];
-//          g = color_values[1][0];
-//          b = color_values[2][0];
-          r = (byte)255;
-          g = (byte)255;
-          b = (byte)255;
-          if (color_length > 3) {
-            a = color_values[3][0];
-          }
-//          float[] bomColors = { color_values[0][0], color_values[1][0], color_values[2][0] };
-          // once values are getting passed: r_float = r / 255;
-          float[] bomColors = { 1.0f, 1.0f, 1.0f };
-//          Color c = new Color(r, g, b);
-//          c.getRGB()
-          LabelStuff labelMeta = new LabelStuff(text_value, 0, 500, r, g, b, a);
-          text_control.setLabelStuff(labelMeta);
-//          logger.trace("R: {} G: {} B: {} A: {}", r, g, b, a);
-//          logger.trace("textctrl offset: {}", text_control.getOffset());
-//          for (int i = 0; i < spatial_values.length; i++) {
-//            for (int j = 0; j < spatial_values[i].length; j++) {
-//              logger.trace("\t{},{}={}", i, j, spatial_values[i][j]);
-//            }
-
-//          }
-//          TextLabel textLabel = new TextLabel(text_control, true);
-//          DisplayRendererJ3D displayRenderer =
-//                  (DisplayRendererJ3D) display.getDisplayRenderer();
-//          displayRenderer.getRoot().addChild(textLabel);
-//          ((BranchGroup)group).addChild(textLabel);
-
-//          ScreenAnnotatorUtils.makeJLabelShape3D((DisplayImplJ3D)display, text_value, 0, 500, bomColors, text_control.getFont(), 0.0, 15, Text3D.ALIGN_CENTER, Text3D.PATH_RIGHT);
-//          ScreenAnnotator sa = new ScreenAnnotatorJ3D(display);
-//          screenAnnotator.clear();
-
-//          logger.trace("bomColors: {}", bomColors);
-          Component comp = display.getComponent();
-          int scale = Integer.parseInt(System.getProperty("sun.java2d.uiScale", "1"));
-          Rectangle bounds = comp.getBounds();
-          bounds.width = bounds.width * scale * scale; // huh? why does this work from within viewmanager?
-          bounds.height = bounds.height * scale * scale;
-//          logger.trace("display bounds: {}", bounds);
-//          logger.trace("text_control: size={} getfont.getsize={}", text_control.getSize(), text_control.getFont().getSize());
-
-          int x = bounds.width / 2;
-          int y = bounds.height - 10;
-//          logger.trace("x = {} y = {}", x, y);
-//          JLabelJ3D label = new JLabelJ3D(text_value, 0, 500, bomColors, text_control.getFont(), 0.0, 200, Text3D.ALIGN_CENTER, Text3D.PATH_RIGHT);
-          JLabelJ3D label = new JLabelJ3D(text_value, x, y, bomColors, text_control.getFont(), 0.0, text_control.getFont().getSize()*scale, Text3D.ALIGN_CENTER, Text3D.PATH_RIGHT);
-          screenAnnotator.add(label);
-
-//          BranchGroup bgApproach = ScreenAnnotatorUtils.makeJLabelShape3D((DisplayImplJ3D)display, text_value, 0, 500, bomColors, text_control.getFont(), 0.0, 15, Text3D.ALIGN_CENTER, Text3D.PATH_RIGHT);
-
-          screenAnnotator.draw();
-        }
-      } else {
-          String[] text_values = {text_value};
-//          logger.trace("WTF: text_value={}, text type={}", text_value, text_control.getTextType());
-          array = shadow_api.makeText(text_values, text_control, spatial_values,
-                  color_values, range_select);
-          shadow_api.addTextToGroup(group, array, mode, constant_alpha,
-                  constant_color);
-          anyTextCreated = true;
-//        }
+        String[] text_values = {text_value};
+        array = shadow_api.makeText(text_values, text_control, spatial_values,
+                color_values, range_select);
+        shadow_api.addTextToGroup(group, array, mode, constant_alpha,
+                constant_color);
+        anyTextCreated = true;
       }
 
       boolean anyFlowCreated = false;
