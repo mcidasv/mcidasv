@@ -928,7 +928,7 @@
             <paramgroup categories="" name="JPSS_RGB_NaturalColor"/>
         </operands>
     </derived>
-    <derived description="VIIRS SDR Natural Color SVI RGB" formula="VIIRSNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_Natural_Color_SVI_RGB" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS SDR Natural Color I-Band RGB" formula="VIIRSNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_Natural_Color_SVI_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
             <category value="display:rgbcomposite"/>
@@ -991,17 +991,6 @@
         </categories>
         <operands categories="">
             <paramgroup categories="" name="JPSS_RGB_TrueColor"/>
-        </operands>
-    </derived>
-    <derived description="VIIRS SDR Cloud Phase Distinction RGB" formula="VIIRSCloudPhaseRGB(D1[label=M10 Reflectance], D2[label=M11 Reflectance], D3[label=M1 Reflectance])" id="VIIRS_Cloud_Phase_RGB" isdefault="true" isenduser="true" override="true">
-        <categories>
-            <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS SDR"/>
-            <category value="display:rgbcomposite"/>
-            <category value="display:imagecontrol"/>
-            <category value="display:imagecontroloverz"/>
-        </categories>
-        <operands>
-            <paramgroup name="JPSS_RGB_CloudPhase"/>
         </operands>
     </derived>
     <derived description="VIIRS SDR Day Cloud Type RGB" formula="VIIRSCloudTypeRGB(D1[label=M9 Reflectance], D2[label=M5 Reflectance], D3[label=M10 Reflectance])" id="VIIRS_Cloud_Type_RGB" isdefault="true" isenduser="true" override="true">
@@ -1109,7 +1098,7 @@
             <paramgroup categories="" name="JPSS_EDR_NDVI"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Natural Color SVM RGB" formula="VIIRSEdrNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_EDR_Natural_Color_RGB" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS EDR Natural Color M-Band RGB" formula="VIIRSEdrNaturalColorRGB(D1[label=M10 Reflectance], D2[label=M7 Reflectance], D3[label=M5 Reflectance])" id="VIIRS_EDR_Natural_Color_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
             <category value="display:rgbcomposite"/>
@@ -1191,7 +1180,7 @@
             <paramgroup categories="" name="JPSS_EDR_RGB_FireTemperature"/>
         </operands>
     </derived>
-    <derived description="VIIRS EDR Natural Color SVI RGB" formula="VIIRSEdrNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_EDR_Natural_Color_SVI_RGB" isdefault="true" isenduser="true" override="true">
+    <derived description="VIIRS EDR Natural Color I-Band RGB" formula="VIIRSEdrNaturalColorIRGB(D1[label=I3 Reflectance], D2[label=I2 Reflectance], D3[label=I1 Reflectance])" id="VIIRS_EDR_Natural_Color_SVI_RGB" isdefault="true" isenduser="true" override="true">
         <categories>
             <category display="true" value="Imagery-JPSS Functions (Under Development)-VIIRS EDR"/>
             <category value="display:rgbcomposite"/>
