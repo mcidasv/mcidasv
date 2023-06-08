@@ -1583,6 +1583,17 @@
             <paramgroup categories="" name="MODIS_RGB_FalseColor"/>
         </operands>
     </derived>
+    <derived description="CLAVRx Cloud Type RGB" formula="CLAVRxCloudTypeRGB(D1[label=1.378um Reflectance], D2[label=0.64um Reflectance], D3[label=1.61um Reflectance])" id="clavrxcloudtypergb" isdefault="true" isenduser="true">
+        <categories>
+            <category display="true" value="Imagery-CLAVRx Functions"/>
+            <category value="display:imagecontrol"/>
+            <category value="display:rgbcomposite"/>
+            <category value="display:imagecontroloverz"/>
+        </categories>
+        <operands categories="">
+            <paramgroup categories="" name="CLAVRx_RGB_CloudType"/>
+        </operands>
+    </derived>
     <!-- Adding derived TROPOMI L2 formulas for easy access to different units - RMC - INQ 2881 - Mar 2020 -->
     <!-- SO2 -->
     <derived description="systematic error of the total vertical column density of sulfur dioxide for the polluted scenario (DU)" formula="newUnit((D1 * 2241.15), 'Dobson', 'Dobson')" id="syst_err_tot_vert_col_DU" isdefault="true" isenduser="false" override="true">
