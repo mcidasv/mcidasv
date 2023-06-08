@@ -505,7 +505,7 @@
     <resource label="Sandwich Product" location="%APPPATH%/python/utilities/sandwich.py">
       <property name="category" value="System"/>
     </resource>
-    <resource label="Image Routines" location="%IDVPATH%/python/image.py">
+    <resource label="Image Routines" location="%APPPATH%/python/image.py">
       <property name="category" value="System"/>
     </resource>
     <resource label="AVHRR Routines" location="%APPPATH%/python/AVHRRFunctions.py">
