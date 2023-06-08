@@ -573,6 +573,9 @@
     <params p1="model_speed" p2="model_dir"/>
     <params p1="GFS_Model_WSPD" p2="GFS_Model_WDIR"/>
   </paramgroup>
+  <paramgroup description="CLAVRx Cloud Type RGB" name="CLAVRx_RGB_CloudType">
+    <params p1="refl_1_38um_nom" p2="refl_0_65um_nom" p3="refl_1_60um_nom"/>
+  </paramgroup>
   <!-- RMC Sep 2020 Inq 2926 -->
   <paramgroup description="" name="u_v">
     <params p1="u-component_of_wind_altitude_above_msl_ens" p2="v-component_of_wind_altitude_above_msl_ens"/>
