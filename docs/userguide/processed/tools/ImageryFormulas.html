@@ -36,6 +36,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
   <li><a href="#ahiFunctions">AHI Functions</a></li>
   <li><a href="#avhrrFunctions">AVHRR Functions</a></li>
   <li><a href="#imageFilters">Image Filters</a></li>
+  <li><a href="#viirsEdr">JPSS Functions - VIIRS EDR</a></li>
+  <li><a href="#viirsSdr">JPSS Functions - VIIRS SDR</a></li>
   <li><a href="#modisFunctions">MODIS Functions</a></li>
   <li><a href="#msgFunctions">MSG Functions</a></li>
 </ul>
@@ -659,7 +661,7 @@ of the latitudes at each point.</li>
       </tr>
   </table>
 </li>
-<li class="propertylistitem"><strong>ABI Nighttime Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong> Distinguishes between low clouds and fog.
+<li class="propertylistitem"><strong>ABI Nighttime Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong> Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -1334,7 +1336,7 @@ of the latitudes at each point.</li>
       </tr>
 </table>
 </li>
-<li class="propertylistitem"><strong>AHI Night Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong> Distinguishes between low clouds and fog.
+<li class="propertylistitem"><strong>AHI Night Microphysics RGB (Band 7 Temperature, Band 13 Temperature, Band 15 Temperature) -</strong>Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
   <table id="miscformulas2" cellpadding="0" cellspacing="0" border="1">
     <tr>
       <td colspan="1"><strong>Input Parameter</strong></td>
@@ -1507,7 +1509,7 @@ of the latitudes at each point.</li>
   </table>
 </li>
 </ul>
-<div class="pagesubtitle">AVHRR Functions<a name="avhrrFunctions" id="msgFunctions"></a></div>
+<div class="pagesubtitle">AVHRR Functions<a name="avhrrFunctions" id="avhrrFunctions"></a></div>
 <p>The following describes each formula included in the AVHRR (Advanced Very High Resolution Radiometer - METOP/NOAA) Functions section of McIDAS-V. These formulas create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> AVHRR Functions tree.
 <ul class="propertylist">
 <li class="propertylistitem"><strong>AVHRR Cloud RGB (Band 1 Reflectance, Band 2 Reflectance, Band 4 Temperature) -</strong> Distinguishes between different types of clouds and cloud-free areas.
@@ -2372,6 +2374,1150 @@ then <em>ddataset</em> = <em>sdataset</em><br>
 else <em>ddataset</em> = (average of the surrounding <em>sdataset</em> element values) </p>
 </td>
 </tr>
+</table>
+</li>
+</ul>
+<div class="pagesubtitle">JPSS Functions - VIIRS EDR<a name="viirsEdr" id="viirsEdr"></a></div>
+<p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) EDR (Environmental Data Record)  section of McIDAS-V. These formulas, designed to work with imagery EDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. These are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> JPSS Functions -&gt; VIIRS EDR tree.
+<ul class="propertylist">
+<li class="propertylistitem"><strong>VIIRS EDR Ash RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) - </strong>Monitors volcanic ash and sulfur dioxide gas.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM14 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 14 (8.55um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Day Cloud Phase Distinction I-Band RGB (SVI01 Reflectance, SVI03 Reflectance, SVI05 Temperature) -</strong> Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVI bands of 375m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 3 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI05 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 5 (11.45um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Day Cloud Phase Distinction M-Band RGB (SVM05 Reflectance, SVM10 Reflectance, SVM15 Temperature) - </strong>Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVM bands of 750m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Day Cloud Type RGB (SVM09 Reflectance, SVM05 Reflectance, SVM10 Reflectance) -</strong> Distinguishes between low clouds and fog.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM09 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 9 (8.7um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Day Fire RGB (SVI04 Temperature, SVI02 Reflectance, SVI01 Reflectance) -</strong> Distinguishes between smoke, vegetation health and burn scars, and hot spots from fires.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI04 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 4 (3.74um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Day Snow-Fog I-Band RGB (SVI02 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Distinguishes between snow and clouds.  This is designed for SVI bands of 375m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 3 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI04 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 4 (3.74um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI05 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 5 (11.45um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Day Snow-Fog M-Band RGB (SVM07 Reflectance, SVM10 Reflectance, SVM12 Temperature, SVM15 Temperature) - </strong>Distinguishes between snow and clouds.  This is designed for SVM bands of 750m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM07 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 7 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p> VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM12 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 12 (3.7um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Dust RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Contrasts between dusts and clouds.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM14 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 14 (8.55um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Fire Temperature RGB (SVM12 Temperature, SVM11 Reflectance, SVM10 Reflectance) -</strong> Detects fire activity and provides a qualitative estimate of intensity.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM12 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 12 (3.7um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM11 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 11 (2.25um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Natural Color I-Band RGB (SVI03 Reflectance, SVI02 Reflectance, SVI01 Reflectance) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
+ This is designed for SVI bands of 375m resolution. 
+   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 3 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Natural Color M-Band RGB (SVM10 Reflectance, SVM07 Reflectance, SVM05 Reflectance) - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
+ This is designed for SVM bands of 750m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM07 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 7 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR NDSI (SVI01 Reflectance, SVI03 Reflectance) -</strong> The Normalized Difference Snow Index (NDSI) is an index related to the   presence of snow cover in a pixel. Using an enhancement ranging from -1   to 1, values greater than 0.0 are considered to have some snow present   and values less than or equal to 0.0 are considered snow-free land.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 3 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR NDVI (SVI01 Reflectance, SVI02 Reflectance) -</strong> The Normalized Difference Vegetation Index (NDVI) quantifies the amount   of live green vegetation using an enhancement ranging from -1 to 1.  In   general, negative numbers indicate water, whereas positive values   indicate vegetation.  The closer the number is to 1, the more dense   green vegetation at that location.    
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Nighttime Microphysics RGB (SVM12 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM12 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 12 (3.7um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Detects sea spray particles over bodies of water.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI04 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 4 (3.74um) temperature.</p>
+        </td>
+          <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI05 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 5 (11.45um) temperature.</p>
+        </td>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR Snowmelt RGB (SVM10 Reflectance, SVM08 Reflectance, SVM05 Reflectance) -</strong> Distinguishes between newer/drier snow and older/wetter snow and areas of freezing rain and sleet accumulation.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM08 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 8 (1.24um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS EDR True Color RGB (SVM05 Reflectance, SVM04 Reflectance, SVM03 Reflectance) -</strong> Displays an image of approximately what would be seen from the   satellite, with green vegetation, brown inactive vegetation/soil, and   blue water.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM04 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 4 (0.555um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 3 (0.488um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+</ul>
+<div class="pagesubtitle">JPSS Functions - VIIRS SDR<a name="viirsSdr" id="viirsSdr"></a></div>
+<p>The following describes each formula included in the JPSS (Joint Polar Satellite System) Functions - VIIRS (Visible Infrared Imaging Radiometer Suite) SDR (Sensor Data Record)  section of McIDAS-V. These formulas, designed to work with imagery SDR data from JPSS satellites, create displays of various RGB products that are useful to visualize different features. All of the RGB and channel combination functions use Swath To Grid to remap the data to a gridded projection and remove bowtie deletion lines. Other than Swath To Grid, these are also derived formulas, meaning if a data source is loaded containing the necessary bands for a formula, they will be listed in the Field Selector under the Imagery -> JPSS Functions -&gt; VIIRS SDR tree.
+<ul class="propertylist">
+<li class="propertylistitem"><strong>Swath To Grid - Bowtie Removal (field, resolution_in_meters, mode) - </strong>Remaps SDR data into a gridded projection and removes bowtie deletion lines.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>field</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>Band/calibration to remap and remove bowtie deletion lines from.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>resolution_in_meters</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>Resolution (in meters) of the data exported from Swath To Grid. Default=750m</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>mode</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>Sets the sampling used when creating the data. Currently, the only option is the default of 0 which will use nearest neighbor or bilinear interpolation.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Ash RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) - </strong>Monitors volcanic ash and sulfur dioxide gas.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM14 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 14 (8.55um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Day Cloud Phase Distinction I-Band RGB (SVI01 Reflectance, SVI03 Reflectance, SVI05 Temperature) -</strong> Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVI bands of 375m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 3 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI05 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 5 (11.45um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Day Cloud Phase Distinction M-Band RGB (SVM05 Reflectance, SVM10 Reflectance, SVM15 Temperature) - </strong>Distinguishes between water and ice clouds and gives information about cloud top particle size.  This is designed for SVM bands of 750m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Day Cloud Type RGB (SVM09 Reflectance, SVM05 Reflectance, SVM10 Reflectance) -</strong> Distinguishes between low clouds and fog.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM09 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 9 (8.7um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Day Fire RGB (SVI04 Temperature, SVI02 Reflectance, SVI01 Reflectance) -</strong> Distinguishes between smoke, vegetation health and burn scars, and hot spots from fires.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI04 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 4 (3.74um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Day Snow-Fog I-Band RGB (SVI02 Reflectance, SVI03 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Distinguishes between snow and clouds.  This is designed for SVI bands of 375m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 3 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI04 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 4 (3.74um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI05 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 5 (11.45um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Day Snow-Fog M-Band RGB (SVM07 Reflectance, SVM10 Reflectance, SVM12 Temperature, SVM15 Temperature) - </strong>Distinguishes between snow and clouds.  This is designed for SVM bands of 750m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM07 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 7 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p> VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM12 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 12 (3.7um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Dust RGB (SVM14 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Contrasts between dusts and clouds.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM14 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 14 (8.55um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Fire Temperature RGB (SVM12 Temperature, SVM11 Reflectance, SVM10 Reflectance) -</strong> Detects fire activity and provides a qualitative estimate of intensity.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM12 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 12 (3.7um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM11 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 11 (2.25um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Natural Color I-Band RGB (SVI03 Reflectance, SVI02 Reflectance, SVI01 Reflectance) -</strong> Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
+ This is designed for SVI bands of 375m resolution. 
+   <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 3 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Natural Color M-Band RGB (SVM10 Reflectance, SVM07 Reflectance, SVM05 Reflectance) - </strong>Discriminates between water and ice clouds as well as vegetation versus brown inactive vegetation or soil.
+ This is designed for SVM bands of 750m resolution.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM07 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 7 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR NDSI (SVI01 Reflectance, SVI03 Reflectance) -</strong> The Normalized Difference Snow Index (NDSI) is an index related to the   presence of snow cover in a pixel. Using an enhancement ranging from -1   to 1, values greater than 0.0 are considered to have some snow present   and values less than or equal to 0.0 are considered snow-free land.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 3 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR NDVI (SVI01 Reflectance, SVI02 Reflectance) -</strong> The Normalized Difference Vegetation Index (NDVI) quantifies the amount   of live green vegetation using an enhancement ranging from -1 to 1.  In   general, negative numbers indicate water, whereas positive values   indicate vegetation.  The closer the number is to 1, the more dense   green vegetation at that location.    
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Nighttime Microphysics RGB (SVM12 Temperature, SVM15 Temperature, SVM16 Temperature) -</strong> Distinguishes between low clouds and fog, enhances areas of low and warm clouds indicating where fog is most likely, and helps to identify other cloud types in the mid and upper atmosphere.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM12 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 12 (3.7um) temperature.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM15 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 15 (10.76um) temperature.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM16 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 16 (12.01um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Sea Spray RGB (SVI01 Reflectance, SVI02 Reflectance, SVI04 Temperature, SVI05 Temperature) -</strong> Detects sea spray particles over bodies of water.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI01 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVI band 1 (0.64um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI02 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 2 (0.865um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI04 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 4 (3.74um) temperature.</p>
+        </td>
+          <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVI05 Temperature</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVI band 5 (11.45um) temperature.</p>
+        </td>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR Snowmelt RGB (SVM10 Reflectance, SVM08 Reflectance, SVM05 Reflectance) -</strong> Distinguishes between newer/drier snow and older/wetter snow and areas of freezing rain and sleet accumulation.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM10 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 10 (1.61um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM08 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 8 (1.24um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+</table>
+</li>
+<li class="propertylistitem"><strong>VIIRS SDR True Color RGB (SVM05 Reflectance, SVM04 Reflectance, SVM03 Reflectance) -</strong> Displays an image of approximately what would be seen from the   satellite, with green vegetation, brown inactive vegetation/soil, and   blue water.
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM05 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>VIIRS SVM band 5 (0.672um) reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM04 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 4 (0.555um) reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>SVM03 Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>VIIRS SVM band 3 (0.488um) reflectance.</p>
+        </td>
+      </tr>
 </table>
 </li>
 </ul>
