@@ -6,22 +6,22 @@
  * University of Wisconsin - Madison
  * 1225 W. Dayton Street, Madison, WI 53706, USA
  * http://www.ssec.wisc.edu/mcidas
- * 
+ *
  * All Rights Reserved
- * 
+ *
  * McIDAS-V is built on Unidata's IDV and SSEC's VisAD libraries, and
- * some McIDAS-V source code is based on IDV and VisAD source code.  
- * 
+ * some McIDAS-V source code is based on IDV and VisAD source code.
+ *
  * McIDAS-V is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * McIDAS-V is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser Public License
  * along with this program.  If not, see http://www.gnu.org/licenses.
  */
@@ -720,7 +720,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     protected String paramName;
 
     /** The template for the display list label */
-    private String displayListTemplate;
+    protected String displayListTemplate;
 
     /** The template for the legend label */
     private String legendLabelTemplate;
@@ -795,7 +795,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *  by the idv/controls.properties and ControlDescriptor code.
      *  We keep it around for when the control is persisted.
      */
-    private String displayId;
+    protected String displayId;
 
 
     /**
@@ -914,7 +914,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
     /** slider for setting skip values */
     protected JSlider skipSlider;
-    
+
     /** text field for setting skip values, complements slider */
     protected JTextField skipTextField;
 
@@ -991,7 +991,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     private String smoothingType = LABEL_NONE;
 
     /**
-     * Flag for progressive resolution.  
+     * Flag for progressive resolution.
      */
     public boolean isProgressiveResolution = false;
 
@@ -1170,7 +1170,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
 
 
-        // we do this here because time driver properties 
+        // we do this here because time driver properties
         // might be changed by the display settings.
         logger.trace("before update={}", this.dataSelection);
         updateDataSelection(this.dataSelection);
@@ -1296,7 +1296,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     //Calculate the bounds (if we can) so we don't fire an extra viewpointChanged event later
                     lastBounds = calculateRectangle();
                 } catch (Exception exc) {
-                    //noop here 
+                    //noop here
                 }
                 projectionControlListeningTo =
                     navDisplay.getDisplay().getProjectionControl();
@@ -1328,7 +1328,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
 
         doInitialUpdateLegendAndList();
-        
+
         if (matchDisplayRegion && !getShoulDoProgressiveResolution()) {
             matchDisplayRegion = false;
         }
@@ -1539,7 +1539,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * that allows derived classes to do any further initialization.
      */
     public void initDone() {}
-    
+
     /**
      * Add a property change listener.
      *
@@ -2757,7 +2757,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     	//System.out.println("control changed");
         checkBoundsChange();
     }
-        
+
     /**
      * Check to see if the screen bounds have changed
      */
@@ -2785,7 +2785,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             //This is the time we last called this method
             lastControlChangeTime = System.currentTimeMillis();
 
-            //Do we have a pending loadData already running? 
+            //Do we have a pending loadData already running?
             if (controlChangePending) {
                 return;
             }
@@ -2798,7 +2798,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 public void run() {
                     NavigatedDisplay navDisplay = getNavigatedDisplay();
                     while (true) {
-                        // Check if we can load data 
+                        // Check if we can load data
                         if (navDisplay.getIsAnimating()
                                 || (lastControlChangeTime
                                     != lastCheckControlChangeTime)) {
@@ -2843,7 +2843,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         }
     }
-    
+
     /**
      * Method to calculate screen bounds to load new data
      */
@@ -2851,7 +2851,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
         NavigatedDisplay nd = getNavigatedDisplay();
         if (nd != null) {
-            GeoSelection geoSelection = 
+            GeoSelection geoSelection =
             	getDataSelection().getGeoSelection(true);
             getViewManager().setProjectionFromData(false);
             try {
@@ -2866,7 +2866,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 EarthLocation el = nd.screenToEarthLocation(
             		(int) (sbox.getWidth()/2), (int)(sbox.getHeight()/2));
                 LatLonPointImpl llpi =
-                    new LatLonPointImpl(el.getLatitude().getValue(),  
+                    new LatLonPointImpl(el.getLatitude().getValue(),
                     		            el.getLongitude().getValue());
                 //System.out.print(llpi + "\n");
 
@@ -3380,7 +3380,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
         dataChoice.setDataSelection(mySelection);
         // }
-         * 
+         *
          */
         DataInstance di = doMakeDataInstance(dataChoice);
 
@@ -3754,30 +3754,30 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      */
     protected DataSelection updateDataSelection(DataSelection dataSelection)
             throws VisADException, RemoteException {
-    	
+
     	// update the geoselection to include at least the screen bounds
     	// and the screen lat/lon box if usedisplay area
-        GeoSelection geoSelection = 
+        GeoSelection geoSelection =
         	dataSelection.getGeoSelection(true);
         logger.trace("geoSelection={}", geoSelection);
         // always update the screen size
         NavigatedDisplay navDisplay = getNavigatedDisplay();
       	Rectangle2D sbox = null;
-      	
+
       	// TJJ Inq 2167
       	// navDisplay sometimes null here, e.g. when a 2nd Data Transect is added
       	// to display using full-Earth imagery (see Inq for details). I'm sure
       	// there's a good reason (off-Earth bounding box?), but this seems to fix it.
-      	
+
       	if (navDisplay != null) {
       	    sbox = navDisplay.getScreenBounds();
       	    logger.trace("navDisplay={} sbox={}", navDisplay, sbox);
       	    geoSelection.setScreenBound(sbox);
       	    logger.trace("new geoselection stuff={}", geoSelection);
       	}
-        
+
         boolean levelChanged = dataSelection.getProperty("levelChanged", false);
-        //if (Misc.equals(dataSelection.getProperty(DataSelection.PROP_REGIONOPTION), 
+        //if (Misc.equals(dataSelection.getProperty(DataSelection.PROP_REGIONOPTION),
         //		DataSelection.PROP_USEDISPLAYAREA) && !levelChanged) {
         logger.trace("*** 1826: matchDisplayRegion={} !levelChanged={} useFullBounds={} hasSpatialSubset={}", getMatchDisplayRegion(), !levelChanged, geoSelection.getUseFullBounds(), dataSelection.getGeoSelection().hasSpatialSubset());
         if (getMatchDisplayRegion() && !levelChanged) {
@@ -3806,7 +3806,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         		(int) (sbox.getWidth()/2), (int)(sbox.getHeight()/2));
             logger.trace("after screenToEarthLocation={}", dataSelection);
             LatLonPointImpl llpi =
-                    new LatLonPointImpl(el.getLatitude().getValue(),  
+                    new LatLonPointImpl(el.getLatitude().getValue(),
                     		            el.getLongitude().getValue());
             logger.trace("before putProp={}", dataSelection);
             dataSelection.putProperty("centerPosition", llpi);
@@ -4096,7 +4096,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         try {
             String template = applyMacrosToTemplate(getDisplayListTemplate(),
                                   false);
-            //if(this instanceof PlanViewControl) 
+            //if(this instanceof PlanViewControl)
             //    System.err.println("Using:" + template);
 
             Set      s   = getDataTimeSet();
@@ -4287,7 +4287,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         // MJH 2013-05-16:  hack so that %longname% macro gets set consistently
         // for data choices from AddeImageParameterDataSource.  (I can't just
         // force dataChoice.getDescription() to get initialized consistently,
-        // because that would screw up the Field Selector data tree.)  This 
+        // because that would screw up the Field Selector data tree.)  This
         // should probably be temporary.  (See doMakeDataChoices in ImageDataSource-
         // the behavior is different depending on whether there is more than
         // one calibration unit present).
@@ -4301,7 +4301,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         }
         // end hack
-        
+
         return ((dataChoice == null)
                 ? null
                 : dataChoice.getDescription());
@@ -4351,7 +4351,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         }
         if (dataSourceName == null && getDataChoice() != null) {
-            // mjh: if dataSourceName is still null, try to get it from from a 
+            // mjh: if dataSourceName is still null, try to get it from from a
             // data choice property.  this lets us set %datasourcename% from scripting...
             dataSourceName = getDataChoice().getProperty("datasourcename", null);
         }
@@ -5668,7 +5668,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                           true);
 
             if (set == null) {
-                //if(this instanceof PlanViewControl) 
+                //if(this instanceof PlanViewControl)
                 //    System.err.println ("      no set ");
                 continue;
             }
@@ -6630,8 +6630,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
 
 
     /**
-     * Called by ISL. 
-     * Write out some data defined by the what parameter to the given file. 
+     * Called by ISL.
+     * Write out some data defined by the what parameter to the given file.
      * This method throws an UnimplementedException. Derived classes need to
      * overwrite this to write out the appropriate data
      *
@@ -7555,7 +7555,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         }
 
 
-        //Just to be on the safe side (for memory leaks) 
+        //Just to be on the safe side (for memory leaks)
         //null out all references that we have.
         colorTable            = null;
         controlContext        = null;
@@ -8062,7 +8062,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *
      * @return the slider
      */
-    
+
     protected JSlider doMakeTextureSlider() {
         if (textureSlider == null) {
             textureSlider = GuiUtils.makeSlider(1, 21, textureQuality, this,
@@ -8071,7 +8071,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             labels.put(new Integer(1), GuiUtils.lLabel("High"));
             labels.put(new Integer(10), GuiUtils.cLabel("Medium"));
             labels.put(new Integer(21), GuiUtils.rLabel("Low"));
-            
+
             // TJJ Jun 2018 - invert so low on left, high on right
             textureSlider.setInverted(true);
             textureSlider.setLabelTable(labels);
@@ -8252,8 +8252,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     protected boolean isDisplayUnitAlsoColorUnit() {
         return true;
     }
-    
-    
+
+
     /**
      * The user has chosen a new unit for display.
      *
@@ -8266,8 +8266,8 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (newUnit == null) {
             return true;
         }
-        
-        
+
+
         //If we haven't initialized yet just set the unit and return
         if ( !getHaveInitialized()) {
             /*            if (isDisplayUnitAlsoColorUnit()) {
@@ -8278,7 +8278,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             setDisplayUnit(newUnit);
             return true;
         }
-        
+
         Unit oldUnit = getDisplayUnit();
         try {
             return innerChangeDisplayUnit(newUnit, applyToDisplayable);
@@ -8290,20 +8290,20 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             return false;
         }
     }
-    
+
     private boolean innerChangeDisplayUnit(Unit newUnit, boolean applyToDisplayable)
         throws Exception
     {
         if (newUnit == null) {
             return true;
         }
-        
+
         //If we haven't initialized yet just set the unit and return
         if ( !getHaveInitialized()) {
             setDisplayUnit(newUnit);
             return true;
         }
-        
+
         Unit oldUnit = getDisplayUnit();
         //Do this first because it uses displayUnit as the old unit
         if (isDisplayUnitAlsoColorUnit()) {
@@ -8315,7 +8315,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         ContourInfo contourInfo = getContourInfo();
         if ((contourInfo != null) && (oldUnit != null)) {
             ContourInfo newContourInfo = new ContourInfo(contourInfo);
-            
+
             //New interval setting code:
             //Try to preserve how many lines there were between min and max
             double oldRange =
@@ -8324,14 +8324,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 ? (int) (oldRange
                 / newContourInfo.getInterval())
                 : 0);
-                
+
             newContourInfo.setBase(
                 (float) newUnit.toThis(newContourInfo.getBase(), oldUnit));
             newContourInfo.setMin(
                 (float) newUnit.toThis(newContourInfo.getMin(), oldUnit));
             newContourInfo.setMax(
                 (float) newUnit.toThis(newContourInfo.getMax(), oldUnit));
-                
+
             //New interval setting code:
             double newRange =
                 newContourInfo.getMax() - newContourInfo.getMin();
@@ -8348,14 +8348,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             applyDisplayUnit();
         }
         updateListOrLegendWithMacro(MACRO_DISPLAYUNIT);
-        
+
         displayUnitChanged(oldUnit, newUnit);
         if ( !applyProperties()) {
             return false;
         }
         return true;
     }
-    
+
     /**
      * If the display list or legend templates contain <code>macro</code>
      * update the appropriate UI component
@@ -8387,7 +8387,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             setUnitForColor(newUnit);
             return true;
         }
-    
+
         Unit oldUnit = getUnitForColor();
         try {
             setUnitForColor(newUnit);
@@ -8416,7 +8416,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             throw new VisADException(e);
         }
     }
-    
+
     /**
      * The user has chosen a new unit for color.
      *
@@ -8814,7 +8814,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      *
      * @return true if the time is in the label
      */
-    
+
     private boolean checkTimestampLabel(Real time) {
 
         boolean hasTimestamp = shouldAddAnimationListener();
@@ -8822,7 +8822,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         if (! hasTimestamp) {
             return false;
         }
-        
+
         // A non-null time was passed in, use this
         if (time != null) {
             try {
@@ -8846,7 +8846,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
         // Existing code below implies there is one more thing to try, and seems to be
         // working for case where timestamp macro is applied to loaded image. We still
         // safely and quickly bail out if getDataTimeSet() returns null.
-        
+
         if (time == null) {
             try {
                 Set timeSet = getDataTimeSet();
@@ -8855,14 +8855,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     firstTime   = null;
                     return false;
                 } else {
-                    
+
                     // TJJ Aug 2017 - if we got here, we got the data time set
                     // Init time for timestamp label to first in set
                     time = (Real) timeSet.__getitem__(0);
-                    
+
                     currentTime = new DateTime(time);
                     Unit setUnit = timeSet.getSetUnits()[0];
-    
+
                     if (Unit.canConvert(time.getUnit(), setUnit)) {
                         if (timeSet.getLength() > 0) {
                             Data firstSetTime = timeSet.__getitem__(0);
@@ -8882,14 +8882,14 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                             RealTuple rt = DataUtility.getSample(timeSet, index);
                             DateTime dataTime =
                                 new DateTime((Real) rt.getComponent(0));
-    
+
                             currentTime = dataTime;
                         }
                     }
                 }
             } catch (Exception exc) {
                 logException("Setting time string", exc);
-    
+
             }
         }
 
@@ -9994,7 +9994,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @param shouldShare  true if this property should be shared
      */
     private void setDisplayVisibility(boolean on, boolean shouldShare) {
-        //Make sure we don't loop forever because we setSelected on other 
+        //Make sure we don't loop forever because we setSelected on other
         //checkboxes which triggers the event which ends up calling this method
         if (settingVisibility) {
             return;
@@ -12634,7 +12634,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @return  slider for setting skip factor
      */
     protected Component doMakeSkipFactorSlider(int min, int max, int skip, int minor, int major) {
-    	
+
         skipSlider = new JSlider(min, max, skip);
         skipSlider.setPaintTicks(true);
         skipSlider.setPaintLabels(true);
@@ -12656,10 +12656,10 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 });
             }
         });
-        
+
     	// TJJ Jul 2015, add text field to complement slider for UI consistency
     	// Inq #1964
-        
+
     	skipTextField = new JTextField(5);
     	skipTextField.setText(Integer.toString(skipValue));
         skipSlider.setValue(skipValue);
@@ -12919,7 +12919,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
             }
         }
     }
-    
+
     /**
      * Set the smoothing type
      *
@@ -13132,7 +13132,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @return  true if display and view supports it
      */
     public boolean getShoulDoProgressiveResolution() {
-    	boolean shouldDo = 
+    	boolean shouldDo =
             canDoProgressiveResolution() &&
             getIsProgressiveResolution();
         MapViewManager mvm = getMapViewManager();
@@ -13223,7 +13223,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 this.isProgressiveResolution);
         }
     }
-    
+
     /**
      * Should we match the display region for spatial bounds
      * @return true if match display region
@@ -13231,7 +13231,7 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     public boolean getMatchDisplayRegion() {
     	return matchDisplayRegion;
     }
-    
+
     /**
      * Set whether we should match the display region for spatial bounds
      * @param useDR  true if match display region

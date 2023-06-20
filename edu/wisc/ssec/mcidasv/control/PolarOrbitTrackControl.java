@@ -327,7 +327,35 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             logger.error("problem reading swathwidths.xml", e);
         }
     }
-    
+
+    /**
+     * Get the DisplayListTemplate property. This method is a fair bit different from its parent,
+     * in order to allow overrides to utilize the default display list template method.
+     * TJJ Jun 2023 - See https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2772
+     *
+     * @return The DisplayListTemplate
+     */
+    public String getDisplayListTemplate() {
+        if (displayListTemplate == null) {
+            String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+            boolean haveData = (getShortParamName() != null);
+            pref = pref + (haveData ? ".data" : ".nodata");
+            displayListTemplate = getStore().get(pref, getDefaultDisplayListTemplate());
+        }
+        return displayListTemplate;
+    }
+
+    /**
+     * Override because the base class template results in a very long layer label.
+     * TJJ Jun 2023 - See https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2772
+     *
+     * @return The DefaultDisplayListTemplate
+     */
+    @Override protected String getDefaultDisplayListTemplate() {
+        return (getShortParamName() != null)  // haveData
+                ? MACRO_DISPLAYNAME + " - " + MACRO_TIMESTAMP : MACRO_DISPLAYNAME;
+    }
+
     /**
      * Deal with action events
      *
@@ -1204,7 +1232,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
         
         // fetch the label superclass would normally generate
         Data data = super.getDisplayListData();
-        
+
         // if so, modify label with time range for this selection
         if (hasTimeMacro) {
             try {
@@ -1370,7 +1398,7 @@ public class PolarOrbitTrackControl extends DisplayControlImpl {
             jcbLabels.getModel().setSelected(showingLabels);
         });
     }
-    
+
     @Override public boolean init(DataChoice dataChoice)
         throws VisADException, RemoteException
     {
