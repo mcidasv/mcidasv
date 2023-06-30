@@ -773,6 +773,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         double initRate = store.get(PREF_MOVIE_FRAMES_PER_SECOND, 2.0);
         double initPause = store.get(PREF_MOVIE_END_PAUSE, 2.0);
         displayRateFld = new JTextField("" + initRate, 3);
+        displayRateFld.setToolTipText("Decimal values are rounded up to the nearest whole number");
         endPauseFld    = new JTextField("" + initPause, 3);
         endPauseFld.setToolTipText(
             "Number of seconds to pause on last frame of animated GIF");
@@ -2414,7 +2415,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
                     //    logger.trace("IMG WRAPPER: path: {}", img.getPath());
                     //}
 
-                    SequenceEncoder enc = SequenceEncoder.createSequenceEncoder(output, (int)displayRate);
+                    SequenceEncoder enc = SequenceEncoder.createSequenceEncoder(output, (int) Math.ceil(displayRate));
                     List<String> imageList = ImageWrapper.makeFileList(images);
                     for (String image : imageList) {
                         if (image.endsWith(".jpg")) {
