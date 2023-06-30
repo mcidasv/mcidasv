@@ -773,7 +773,7 @@ public class ImageSequenceGrabber implements Runnable, ActionListener {
         double initRate = store.get(PREF_MOVIE_FRAMES_PER_SECOND, 2.0);
         double initPause = store.get(PREF_MOVIE_END_PAUSE, 2.0);
         displayRateFld = new JTextField("" + initRate, 3);
-        displayRateFld.setToolTipText("Decimal values are rounded up to the nearest whole number");
+        displayRateFld.setToolTipText("Fractional values are rounded up to the nearest whole number");
         endPauseFld    = new JTextField("" + initPause, 3);
         endPauseFld.setToolTipText(
             "Number of seconds to pause on last frame of animated GIF");
