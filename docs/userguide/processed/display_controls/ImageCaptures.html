@@ -117,8 +117,22 @@ saved in a temporary directory and will be removed. You can use the following te
 <li class="propertylistitem"><strong>%time% -</strong> Represents the animation time in the default format.</li>
 <li class="propertylistitem"><strong>%time:time format% -</strong> Begins with "time:" and contains a time format string using the the same date formatting rules described in the User Preferences window's <a href="../tools/preferences/FormatPreferences.html"><strong>Formats &amp; Data</strong></a> tab.</li>
 </ul>
-<li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26"align=absmiddle> button to specify the name and format of the movie you want to save.</li>
-<li class="propertylistitem">When saving a movie, in the Save dialog, there is an option for '<strong>Use 'global' GIF color palette</strong>'. This option is applicable for animated GIF movies, and it is enabled by default. Animated GIFs are limited to 256 colors, and this option uses the same 256 colors for every frame in the loop when the setting is enabled. Enabling this option allows for certain display settings such as a color scale to remain constant throughout the loop. If this option is disabled, then each frame uses it's own color palette, so one color may represent one value in one frame, and the same color may represent a different value in the next frame. One circumstance where disabling this option may be ideal is if the movie starts with a low-light scene (not many colors) and there is no color scale in the display.</li>
+<li class="propertylistitem">When done capturing the frames, select the <img src="images/SaveMovie.gif" alt="Save Movie button" width="98" height="26" align="absmiddle"> button. This opens a Save window several options to customize the animation:</li>
+    <ul>
+<li class="propertylistitem"><strong>Frames per second -</strong> Sets the speed that the animation will play.  A value of 1 shows 1 frame per second, whereas 2 will play faster at a rate of 2 frames per second.  For mp4 format, any fractional value will be rounded up to the nearest whole number.</li>
+<li class="propertylistitem"><strong>End Frame Pause -</strong> Sets the time (in seconds) that the last frame of the animation will remain visible before ending or restarting the animation. This option is applicable to animated GIFs.</li>
+<li class="propertylistitem"><strong>Use 'global' GIF color palette -</strong> Sets the color scheme to be used for the frames of the animation. This option is applicable for animated GIF movies, and it is enabled by default. Animated GIFs are limited to 256 colors, and this option uses the same 256 colors for every frame in the loop when the setting is enabled. Enabling this option allows for certain display settings such as a color scale to remain constant throughout the loop. If this option is disabled, then each frame uses it's own color palette, so one color may represent one value in one frame, and the same color may represent a different value in the next frame. One circumstance where disabling this option may be ideal is if the movie starts with a low-light scene (not many colors) and there is no color scale in the display.</li>
+<li class="propertylistitem"><strong>File Name -</strong> Sets the name and location to save the animation to.</li>
+<li class="propertylistitem"><strong>Files of Type -</strong> Sets the animation format to use.  There are several available options, including:</li>
+<ul>
+    <li class="propertylistitem">MPEG-4 files (*.mp4)</li>
+    <li class="propertylistitem">QuickTime files (*.mov)</li>
+    <li class="propertylistitem">AVI files (*.avi)</li>
+    <li class="propertylistitem">Animated GIF (*.gif)</li>
+    <li class="propertylistitem">Compressed Zip (*.zip)</li>
+    <li class="propertylistitem">Google Earth KMZ Files (*.kmz)</li>
+    <li class="propertylistitem">AniS or FlAniS HTML File (*.html)</li></ul>
+    </ul>
 </ul>
 <div class="pagesubtitle"><a name="movieplayback" id="movieplayback"></a>Playing QuickTime Movies</div>
     <p>McIDAS-V supports displaying certain types of QuickTime movies (including
