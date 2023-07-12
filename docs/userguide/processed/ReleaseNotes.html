@@ -71,7 +71,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 <div class="faq-category">
   
   <ul class="noindent">
-    <li><strong><a class="faq-question-link" href="#dateline1_1.9">MODIS and JPSS Dateline</a></strong></li>
+    <li><strong><a class="faq-question-link" href="#dateline1_1.9">MODIS and JPSS Dateline Improvements</a></strong></li>
     <li><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">MultiSpectral Display Probe Placement</a></strong></li>
     <li><strong><a class="faq-question-link" href="#awips_1.9">New AWIPS Color Tables</a></strong></li>
     <li><strong><a class="faq-question-link" href="#star_1.9">New NOAA STAR Color Tables</a></strong></li>
@@ -196,8 +196,8 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div class="faq-category-title"><a name="faq1_cat3_1.9" id="faq1_cat3_1.9"></a>Display
     Changes</div>
   <div class="faq-category"><a name="dateline1_1.9" id="dateline1_1.9"></a>
-    <h4>MODIS and JPSS Dateline</h4>
-    <div class="faq-answer">Improvements were made in the Region tab of the Field Selector to allow for subsetting across the dateline for MODIS data loaded through the HYDRA chooser, as well as VIIRS SDRs loaded through the Under Development &gt; JPSS chooser. Additionally, probing in the Main Display now works on both sides of the dateline.</div>
+    <h4>MODIS and JPSS Dateline Improvements</h4>
+    <div class="faq-answer">Improvements were made in the Region tab of the Field Selector to allow for subsetting across the dateline for MODIS data loaded through the HYDRA chooser, as well as VIIRS SDRs and imagery EDRs loaded through the Under Development &gt; JPSS chooser. Additionally, probing in the Main Display now works on both sides of the dateline.</div>
   </div>
   <div class="faq-category"><a name="multispectral_probe1_1.9" id="multispectral_probe1_1.9"></a>
     <h4><strong><a class="faq-question-link" href="#multispectral_probe1_1.9">MultiSpectral Display Probe Placement</a></strong></h4>
@@ -209,7 +209,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 </div>
 <div class="faq-category"><a name="star_1.9" id="star_1.9"></a>
     <h4><strong><a class="faq-question-link" href="#nucaps_1.9">New NOAA STAR Color Tables</a></strong></h4>
-    <div class="faq-answer">Added several new color tables used by NOAA STAR to display GOES-R series level 1b imagery data. These can be found under the &quot;Satellite &gt; GOES-R &gt; STAR&quot; menu of the Color Table Editor. Note that these enhancements are designed to display correctly on Brightness (0 - 255) data.</div></div>
+    <div class="faq-answer">Added several new color tables used by NOAA STAR to display GOES-R series level 1b imagery data. These can be found under the &quot;Satellite &gt; GOES-R &gt; STAR&quot; menu of the Color Table Editor. Note that these enhancements are designed to display correctly on Brightness (0 - 255) calibration data.</div></div>
     <div class="faq-category"><a name="rh_1.9" id="rh_1.9"></a>
     <h4>Improved Relative Humidity Enhancement</h4>
     <div class="faq-answer">Improved the System &gt; Relative Humidity enhancement. Prior to McIDAS-V 1.9, the Relative Humidity enhancement had 20 color bins. The enhancement in version 1.9 now has 100 bins. The increase in the number of bins allows for a smoother transition of color between values and the ability to see more variation in displays.</div>
@@ -247,7 +247,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
 	</div>
     <div class="faq-category"><a name="alphabetical_1.9" id="alphabetical_1.9"></a>
     <h4>Alphabetical Field Listing</h4>
-    <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This listing makes the list of variables/fields more organized and easier to navigate through.</div>
+    <div class="faq-answer">Organized the list of fields in the Field Selector alphabetically and/or monotonically. This makes the list of variables/fields more organized and easier to navigate through.</div>
 	</div>
 	<div class="faq-category"><a name="labels_1.9" id="labels_1.9"></a>
     <h4>Location Labels</h4>
@@ -284,23 +284,29 @@ function setParentPage() { if (parent.setPage) parent.setPage('ReleaseNotes.html
   <div class="faq-category"><a name="jpss1.9" id="jpss1.9"></a>
     <h4>JPSS Chooser</h4>
     <div class="faq-answer">
-      <p>Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display. Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.
-        Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported. A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well. Added support for many JPSS VIIRS Products (Granule) available from NOAA CLASS. Fixed a bug where certain imagery SDR bands/calibrations would not display correctly in multi-banded files or data sources.</p>
-      <p>The ability to access remote VIIRS (SDR and imagery EDR) datasets is available on all platforms. Local servers have been added for VIIRS data on macOS and Linux platforms. When adding local VIIRS datasets, there are individual formats for:</p>
+      <ul>
+        <li>Added the ability to subset a region that crosses the dateline in the Region tab of the Field Selector. This allows users to display data that straddles the dateline at the native resolution of the data. Also, the user can now probe the data on either side of the dateline and see calibrated values output below the display.</li>
+        <li>Data objects returned from loadJPSSImage now include timestamp information, which allows for the %timestamp% macro to work in the layer label, as well as allowing the time to appear in the Time Animation Widget.</li>
+        <li>Imagery EDR (Environmental Data Record) files for all 5 I-bands and 16 M-bands are supported.</li>
+        <li>A variety of RGB and channel combination formulas have been added to the Formulas panel of the Field Selector, with separate categories for SDR (Sensor Data Record) and EDR formulas. Extra processing is done for the SDR formulas to remove the bowtie deletion lines. All of these formulas are available as derived products as well.</li>
+        <li>Added support for many JPSS VIIRS Products (Granule) available from NOAA CLASS.</li>
+        <li>Fixed a bug where certain imagery SDR bands/calibrations would not display correctly in multi-banded files or data sources.</li>
+        <li>The ability to access remote VIIRS (SDR and imagery EDR) datasets is available on all platforms.</li>
+        <li>Local servers have been added for VIIRS data on macOS and Linux platforms. When adding local VIIRS datasets, there are individual formats for:
       <ul>
     <li>VIIRS SDR I-Band</li>
     <li>VIIRS SDR M-Band</li>
     <li>VIIRS SDR Day/Night Band</li>
     <li>VIIRS EDR I-Band</li>
     <li>VIIRS EDR M-Band</li>
-    </ul>
-      <p>With local datasets, the data and geolocation must be in separate files in the same directory, follow the standard NOAA CLASS naming convention, and use terrain-corrected geolocation.</p>
+            </ul></li>
+      <p>With local datasets, the data and geolocation must be in separate files in the same directory, follow the standard NOAA CLASS naming convention, and use terrain-corrected geolocation.</p></ul>
     </div>
   </div>
   <div class="faq-category"><a name="glm1.9" id="glm1.9"></a>
     <h4>GLM Chooser</h4>
     <div class="faq-answer">
-      <p>Added a GLM chooser to the list of Under Development choosers. This chooser is capable of loading GOES-R series GLM (Group, Event, Flash) data through remote ADDE. From the Increment option in the Data Sources tab, the user can specify the number of minutes of data to bin together into one timestep. This defaults to 5 minutes. To display the data, a gridded display or point data can be drawn.</p>
+      <p>Added a GLM (Geostationary Lightning Mapper) chooser to the list of Under Development choosers. This chooser is capable of loading GOES-R series GLM (Group, Event, Flash) data through remote ADDE. From the Increment option in the Data Sources tab, the user can specify the number of minutes of data to bin together into one timestep. This defaults to 5 minutes. To display the data, a gridded display or point data can be drawn.</p>
     </div>
   </div>
 </div>
