@@ -12413,17 +12413,27 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     public String getDisplayListTemplate() {
         if (displayListTemplate == null) {
             boolean haveData = (getShortParamName() != null);
+            // PM July 2023 - edits made for inquiry #2774
+            DataChoice dataChoice = getDataChoice();
+            if (dataChoice instanceof DirectDataChoice) {
+                DataSource dataSource = ((DirectDataChoice) dataChoice).getDataSource();
+                if (dataSource instanceof SuomiNPPDataSource) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref = pref + (haveData ? ".data" : ".nodata");
+                    return displayListTemplate = getStore().get(pref, getDefaultDisplayListTemplateJPSS());
+                }
+            }
             displayListTemplate = getStore().get(PREF_DISPLAYLIST_TEMPLATE
                     + "." + displayId, (String) null);
             if (displayListTemplate == null) {
-                String pref = PREF_DISPLAYLIST_TEMPLATE + (haveData
-                        ? ".data"
-                        : ".nodata");
-                displayListTemplate = getStore().get(pref,
-                        getDefaultDisplayListTemplate());
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + (haveData
+                            ? ".data"
+                            : ".nodata");
+                    return displayListTemplate = getStore().get(pref,
+                            getDefaultDisplayListTemplate());
+                }
             }
-        }
-        return displayListTemplate;
+       return displayListTemplate;
     }
 
 
@@ -12432,13 +12442,23 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
      * @return the default template
      */
     protected String getDefaultDisplayListTemplate() {
-
-        return (getShortParamName() != null)  // haveData
+       return (getShortParamName() != null)  // haveData
                ? MACRO_SHORTNAME + " - " + MACRO_DISPLAYNAME + " "
                  + MACRO_TIMESTAMP
                : MACRO_DISPLAYNAME;
     }
 
+    /**
+     * Seperate default template for local data files (such as through the JPSS chooser).
+     * TJJ July 2023 - See https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2774
+     *
+     * @return The DefaultDisplayListTemplateJPSS
+     */
+     protected String getDefaultDisplayListTemplateJPSS() {
+         return (getShortParamName() != null)  // haveData
+                 ? MACRO_LONGNAME + " - " + MACRO_TIMESTAMP
+                 : MACRO_DISPLAYNAME;
+    }
 
     /**
      * Set the LegendLabel property.
@@ -12457,18 +12477,29 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     public String getLegendLabelTemplate() {
         if (legendLabelTemplate == null) {
             boolean haveData = (getShortParamName() != null);
+            // PM July 2023 - edits made for inquiry #2774
+            DataChoice dataChoice = getDataChoice();
+            if (dataChoice instanceof DirectDataChoice) {
+                DataSource dataSource = ((DirectDataChoice) dataChoice).getDataSource();
+                if (dataSource instanceof SuomiNPPDataSource) {
+                    String pref = PREF_LEGENDLABEL_TEMPLATE + '.' + displayId;
+                    pref = pref + (haveData ? ".data" : ".nodata");
+                    return legendLabelTemplate = getStore().get(pref, (haveData
+                            ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME
+                            : MACRO_DISPLAYNAME));
+                }
+            }
             legendLabelTemplate = getStore().get(PREF_LEGENDLABEL_TEMPLATE
                     + "." + displayId, (String) null);
             if (legendLabelTemplate == null) {
                 String pref = PREF_LEGENDLABEL_TEMPLATE + (haveData
                         ? ".data"
                         : ".nodata");
-                legendLabelTemplate = getStore().get(pref, (haveData
+                return  legendLabelTemplate = getStore().get(pref, (haveData
                         ? MACRO_SHORTNAME + " - " + MACRO_DISPLAYNAME
                         : MACRO_DISPLAYNAME));
             }
         }
-
         return legendLabelTemplate;
     }
 
