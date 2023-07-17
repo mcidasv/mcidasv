@@ -106,6 +106,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.text.JTextComponent;
 
+import edu.wisc.ssec.mcidasv.data.adde.AddePointDataSource;
 import org.bushe.swing.event.EventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12420,7 +12421,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                 if (dataSource instanceof SuomiNPPDataSource) {
                     String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
                     pref = pref + (haveData ? ".data" : ".nodata");
-                    return displayListTemplate = getStore().get(pref, getDefaultDisplayListTemplateJPSS());
+                    return displayListTemplate = getStore().get(pref,
+                            getDefaultDisplayListTemplateJPSS());
+                }
+                // PM July 2023 - edits made for inquiry #2771
+                if (dataSource instanceof AddePointDataSource) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref = pref + (haveData ? ".data" : ".nodata");
+                    return displayListTemplate = getStore().get(pref,
+                            getDefaultDisplayListTemplatePoint());
                 }
             }
             displayListTemplate = getStore().get(PREF_DISPLAYLIST_TEMPLATE
@@ -12461,6 +12470,20 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
     }
 
     /**
+     * Seperate default template for Gridded Display of Point Data.
+     * TJJ July 2023 - See https://mcidas.ssec.wisc.edu/inquiry-v/?inquiry=2771
+     *
+     * @return The DefaultDisplayListTemplatePoint
+     */
+    protected String getDefaultDisplayListTemplatePoint() {
+        return (getShortParamName() != null)  // haveData
+                ? MACRO_DATASOURCENAME + " - " + MACRO_SHORTNAME +
+                " at " + PlanViewControl.MACRO_LEVEL + " - " + MACRO_TIMESTAMP
+                : MACRO_DISPLAYNAME;
+    }
+
+
+    /**
      * Set the LegendLabel property.
      *
      * @param value The new value for LegendLabel
@@ -12487,6 +12510,15 @@ public abstract class DisplayControlImpl extends DisplayControlBase implements D
                     return legendLabelTemplate = getStore().get(pref, (haveData
                             ? MACRO_LONGNAME + " - " + MACRO_DISPLAYNAME
                             : MACRO_DISPLAYNAME));
+                }
+                // PM July 2023 - edits made for inquiry #2771
+                if (dataSource instanceof AddePointDataSource) {
+                    String pref = PREF_DISPLAYLIST_TEMPLATE + '.' + displayId;
+                    pref = pref + (haveData ? ".data" : ".nodata");
+                    return legendLabelTemplate = getStore().get(pref, (haveData
+                            ? MACRO_DATASOURCENAME + " - " + MACRO_SHORTNAME + " at "
+                            + PlanViewControl.MACRO_LEVEL + " - " +
+                            MACRO_DISPLAYNAME : MACRO_DISPLAYNAME));
                 }
             }
             legendLabelTemplate = getStore().get(PREF_LEGENDLABEL_TEMPLATE
