@@ -35,6 +35,7 @@ function setParentPage() { if (parent.setPage) parent.setPage('tools/ImageryForm
   <li><a href="#abiFunctions">ABI Functions</a></li>
   <li><a href="#ahiFunctions">AHI Functions</a></li>
   <li><a href="#avhrrFunctions">AVHRR Functions</a></li>
+  <li><a href="#clavrxFunctions">CLAVRx Functions</a></li>
   <li><a href="#imageFilters">Image Filters</a></li>
   <li><a href="#viirsEdr">JPSS Functions - VIIRS EDR</a></li>
   <li><a href="#viirsSdr">JPSS Functions - VIIRS SDR</a></li>
@@ -1635,6 +1636,42 @@ of the latitudes at each point.</li>
         </td>
       <td width="510" colspan="2" rowspan="1" valign="top">
         <p>AVHRR band 5 (12.0um) temperature.</p>
+        </td>
+      </tr>
+</table>
+</li>
+</ul>
+<div class="pagesubtitle">CLAVRx Functions<a name="clavrxFunctions" id="clavrxFunctions"></a></div>
+<p>The following describes each formula included in the CLAVRx (NOAA Clouds from AVHRR Extended) Functions section of McIDAS-V. This formula displays an RGB product that is useful to visualize different features. This is also a derived formula, meaning if a data source is loaded containing the necessary bands for the formula, it will be listed in the Field Selector under the Imagery -> CLAVRx Functions tree.
+<ul class="propertylist">
+<li class="propertylistitem"><strong>CLAVRx Cloud Type RGB (1.378um Reflectance, 0.64um Reflectance, 1.61um Reflectance) - </strong>Distinguishes between cirrus (red), opaque ice (yellow), water clouds (cyan), snow (green), and lofted water clouds (white).
+  <table id="miscformulas1" cellpadding="0" cellspacing="0" border="1">
+    <tr>
+      <td colspan="1"><strong>Input Parameter</strong></td>
+      <td width="630"><strong>Definition
+      </strong></tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>1.378um Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top" nowrap>
+        <p>CLAVRx 1.378um reflectance.</p>
+        </td>
+      </tr>
+    <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>0.64um Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>CLAVRx 0.64um reflectance.</p>
+        </td>
+      </tr>
+      <tr>
+      <td width="145" colspan="1" rowspan="1" valign="top">
+        <p><em>1.61um Reflectance</em></p>
+        </td>
+      <td width="510" colspan="2" rowspan="1" valign="top">
+        <p>CLAVRx 1.61um reflectance.</p>
         </td>
       </tr>
 </table>
