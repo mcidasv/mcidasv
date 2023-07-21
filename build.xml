@@ -1576,7 +1576,7 @@
     <target name="installers_macos" depends="installer_custom_code" description="Separate installer task for building on macOS machines">
         <exec dir="${release.dir}" executable="${install4jc.bin}" failifexecutionfails="true">
             <arg value="-D" />
-            <arg value="IDV_VERSION=${idv.version}" />
+            <arg value="IDV_VERSION=${idv.version},BASEDIR=/Users/jbeavers/work/install4j" />
             <arg value="--mac-keystore-password=${macos.keystore}" />
             <!--
               The notarization account is unfortunately my (Jon's) email
